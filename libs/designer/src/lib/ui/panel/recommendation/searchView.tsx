@@ -1,51 +1,58 @@
+import type { RootState } from '../../../core';
+import { addOperation } from '../../../core/actions/bjsworkflow/add';
+import { useDiscoveryIds } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { SearchService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 import React, { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 type SearchViewProps = {
   searchTerm: string;
+  allOperations: DiscoveryOperation<DiscoveryResultTypes>[];
+  groupByConnector: boolean;
 };
 
 type SearchResults = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>[];
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
+  const { searchTerm, allOperations, groupByConnector } = props;
+
   const dispatch = useDispatch();
+
+  const rootState: RootState = useSelector((state: RootState) => state);
+  const discoveryIds = useDiscoveryIds();
 
   const [searchResults, setSearchResults] = useState<SearchResults>([]);
 
-  const searchTerms = useQuery(
-    ['allOperations'],
-    () => {
-      const searchService = SearchService();
-      return searchService.preloadOperations();
-    },
-    {
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
-    }
-  );
-
   useEffect(() => {
+    if (!allOperations) return;
     const options = {
       includeScore: true,
       keys: ['properties.summary', 'properties.description'],
     };
-    if (searchTerms.data) {
-      const fuse = new Fuse(searchTerms.data, options);
-
-      setSearchResults(fuse.search(props.searchTerm));
+    if (allOperations) {
+      const fuse = new Fuse(allOperations, options);
+      setSearchResults(fuse.search(searchTerm));
     }
-  }, [props.searchTerm, searchTerms]);
+  }, [searchTerm, allOperations]);
 
-  const onOperationClick = (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-    const apiId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
-    dispatch(selectOperationGroupId(apiId));
+  const onConnectorClick = (connectorId: string) => {
+    dispatch(selectOperationGroupId(connectorId));
   };
 
-  return <SearchResultsGrid onOperationClick={onOperationClick} operationSearchResults={searchResults}></SearchResultsGrid>;
+  const onOperationClick = (id: string) => {
+    const operation = searchResults.map((result) => result.item).find((o: any) => o.id === id);
+    addOperation(operation, discoveryIds, id, dispatch, rootState);
+  };
+
+  return (
+    <SearchResultsGrid
+      onConnectorClick={onConnectorClick}
+      onOperationClick={onOperationClick}
+      operationSearchResults={searchResults.map((result) => result.item)}
+      groupByConnector={groupByConnector}
+    />
+  );
 };

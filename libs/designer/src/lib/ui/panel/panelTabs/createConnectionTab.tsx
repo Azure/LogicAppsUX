@@ -11,7 +11,7 @@ import { ConnectionService } from '@microsoft-logic-apps/designer-client-service
 import type { ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
 import { CreateConnection, getIdLeaf } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 const CreateConnectionTab = () => {
@@ -24,6 +24,10 @@ const CreateConnectionTab = () => {
   const connectionMetadata = getConnectionMetadata(operationManifest);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (connector === undefined) dispatch(showDefaultTabs());
+  }, [connector, dispatch]);
 
   const createConnectionCallback = useCallback(
     async (newName: string, selectedParameterSet?: ConnectionParameterSet, parameterValues: Record<string, any> = {}) => {
@@ -69,10 +73,7 @@ const CreateConnectionTab = () => {
   }, [dispatch]);
 
   // By the time you get to this component, there should always be a connector associated
-  if (connector === undefined) {
-    dispatch(showDefaultTabs());
-    return <p></p>;
-  }
+  if (connector === undefined) return <p></p>;
 
   return (
     <CreateConnection

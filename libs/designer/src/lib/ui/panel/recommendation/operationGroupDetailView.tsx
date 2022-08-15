@@ -1,39 +1,37 @@
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
+import { useDiscoveryIds, useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import type { RootState } from '../../../core/store';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import type { OperationActionData } from '@microsoft/designer-ui';
-import { OperationGroupDetailsPage } from '@microsoft/designer-ui';
+import { getConnectorCategoryString, OperationGroupDetailsPage } from '@microsoft/designer-ui';
 import { useDispatch, useSelector } from 'react-redux';
 
 type OperationGroupDetailViewProps = {
-  selectedSearchedOperations: DiscoveryOperation<DiscoveryResultTypes>[];
+  groupOperations: DiscoveryOperation<DiscoveryResultTypes>[];
 };
 
 export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) => {
   const dispatch = useDispatch();
 
-  const { selectedSearchedOperations } = props;
+  const { groupOperations } = props;
 
   const rootState = useSelector((state: RootState) => state);
-  const { discoveryIds, selectedNode } = useSelector((state: RootState) => state.panel);
+
+  const discoveryIds = useDiscoveryIds();
+  const selectedNode = useSelectedNodeId();
 
   const onOperationClick = (id: string) => {
-    const operation = selectedSearchedOperations.find((o) => o.id === id);
+    const operation = groupOperations.find((o) => o.id === id);
     addOperation(operation, discoveryIds, selectedNode, dispatch, rootState);
   };
 
-  const onClickBack = () => {
-    dispatch(selectOperationGroupId(''));
-  };
-
-  const operationGroupActions: OperationActionData[] = selectedSearchedOperations.map((operation) => {
+  const operationGroupActions: OperationActionData[] = groupOperations.map((operation) => {
     return {
       id: operation.id,
       title: operation.name,
       description: operation.description ?? operation.properties.description,
       summary: operation.properties.summary,
-      category: 'Built-in', // TODO - Look at category from operation properties [from backend]
+      category: getConnectorCategoryString(operation.properties.api.id),
       connectorName: operation.properties.api.displayName,
       brandColor: operation.properties.api.brandColor,
     };
@@ -42,12 +40,11 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
   return (
     <>
       {
-        selectedSearchedOperations.length > 0 ? (
+        groupOperations.length > 0 ? (
           <OperationGroupDetailsPage
-            operationApi={selectedSearchedOperations[0].properties.api}
+            operationApi={groupOperations[0].properties.api}
             operationActionsData={operationGroupActions}
-            onClickOperation={onOperationClick}
-            onClickBack={onClickBack}
+            onOperationClick={onOperationClick}
           />
         ) : null // loading logic goes here
       }

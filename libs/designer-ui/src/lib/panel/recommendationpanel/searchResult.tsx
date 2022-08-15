@@ -1,46 +1,80 @@
-import { OperationCard } from '../../actionsummarycard/card';
+import { getConnectorCategoryString } from '../../utils';
+import type { OperationActionData } from './interfaces';
+import { OperationSearchCard } from './operationSearchCard';
+import { OperationSearchGroup } from './operationSearchGroup';
 import { List } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import type Fuse from 'fuse.js';
+import { labelCase } from '@microsoft-logic-apps/utils';
 import type { PropsWithChildren } from 'react';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 export type SearchResultsGridProps = {
-  operationSearchResults: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>[];
-  onOperationClick: (operation: DiscoveryOperation<DiscoveryResultTypes>) => void;
+  operationSearchResults: DiscoveryOperation<DiscoveryResultTypes>[];
+  onConnectorClick: (connectorId: string) => void;
+  onOperationClick: (operationId: string) => void;
+  groupByConnector?: boolean;
 };
 
 export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProps>> = (props) => {
-  const [operationSearchResults, setOperationSearchResults] = React.useState([...props.operationSearchResults]);
+  const { operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } = props;
 
-  React.useEffect(() => {
-    setOperationSearchResults([...props.operationSearchResults]);
-  }, [props.operationSearchResults]);
+  const apiIds = useMemo(
+    () => Array.from(new Set(operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties?.api?.id))),
+    [operationSearchResults]
+  );
 
   const onRenderOperationCell = React.useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes> | undefined, _index: number | undefined) => {
       if (!operation) return;
-      const properties = operation.properties;
-
       return (
-        <OperationCard
-          category="Azure"
-          onClick={() => props.onOperationClick(operation)}
-          iconUrl={properties.api.iconUri}
-          title={properties.description}
+        <OperationSearchCard
           key={operation.id}
-          id={operation.id}
-          connectorName={properties.api.displayName}
-          subtitle={properties.description}
+          operationActionData={OperationActionDataFromOperation(operation)}
+          onClick={() => onOperationClick(operation.id)}
+          showImage={true}
+          style={{ marginBottom: '8px' }}
         />
       );
     },
-    [props]
+    [onOperationClick]
   );
+
+  if (operationSearchResults.length === 0) {
+    return <p>{'No Results'}</p>;
+  }
 
   return (
     <div className="msla-result-list">
-      <List items={operationSearchResults.map((result) => result.item)} onRenderCell={onRenderOperationCell}></List>
+      {groupByConnector ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          {apiIds.map((apiId) => {
+            const operations = operationSearchResults.filter((res) => res?.properties.api.id === apiId);
+            if (operations.length === 0) return null;
+            const api = operations[0].properties.api;
+            return (
+              <OperationSearchGroup
+                key={apiId}
+                operationApi={api}
+                operationActionsData={operations.map((operation) => OperationActionDataFromOperation(operation))}
+                onConnectorClick={onConnectorClick}
+                onOperationClick={onOperationClick}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <List items={operationSearchResults} onRenderCell={onRenderOperationCell} />
+      )}
     </div>
   );
 };
+
+const OperationActionDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => ({
+  id: operation.id,
+  title: labelCase(operation.name),
+  description: operation.properties.description,
+  brandColor: operation.properties.api.brandColor,
+  iconUri: operation.properties.api.iconUri,
+  connectorName: operation.properties.api.displayName,
+  category: getConnectorCategoryString(operation.properties.api.id),
+});
