@@ -76,10 +76,10 @@ export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDi
           },
         ]
       : []),
-    ...(connectionRequired
+    ...(connectionRequired || connectionDisplayName
       ? [
           {
-            active: !!connectionDisplayName,
+            active: true,
             content: connectionDisplayName || connectionTitle,
             iconProps: connectionIconProps,
             title: connectionTitle,
