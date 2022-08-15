@@ -1,6 +1,6 @@
 import type { ConnectorSummaryCardProps } from '.';
 import { ConnectorSummaryCard } from '.';
-import { ConnectorsMock, getConnectorCategory } from '@microsoft-logic-apps/utils';
+import { ConnectorsMock, getConnectorCategoryString } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -22,7 +22,7 @@ Card.args = {
   description: connector.properties['description'],
   iconUrl: connector.properties.iconUri,
   brandColor: connector.properties.brandColor,
-  category: getConnectorCategory(connector.id),
+  category: getConnectorCategoryString(connector.id),
   onClick: () => alert('Clicked :' + connector.id),
 };
 

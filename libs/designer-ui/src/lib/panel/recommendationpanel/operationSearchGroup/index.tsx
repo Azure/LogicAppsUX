@@ -3,7 +3,7 @@ import type { OperationActionData } from '../interfaces';
 import { OperationSearchCard } from '../operationSearchCard';
 import { Link } from '@fluentui/react';
 import type { OperationApi } from '@microsoft-logic-apps/utils';
-import { getConnectorCategory } from '@microsoft-logic-apps/utils';
+import { getConnectorCategoryString } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 export interface OperationSearchGroupProps {
@@ -19,7 +19,7 @@ export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
 
   const intl = useIntl();
 
-  const category = getConnectorCategory(id);
+  const category = getConnectorCategoryString(id);
 
   const seeMoreText = intl.formatMessage({
     defaultMessage: 'See more',

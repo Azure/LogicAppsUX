@@ -3221,6 +3221,12 @@
       "value": "Required. The number to divide the Dividend by."
     }
   ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
+    }
+  ],
   "egLI8P": [
     {
       "type": 0,
@@ -3937,6 +3943,12 @@
     {
       "type": 0,
       "value": "Required. The name of the property to remove."
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
