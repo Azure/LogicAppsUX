@@ -1,4 +1,4 @@
-.msla-op-action-container {
+.msla-op-search-card-container {
   position: relative;
   background-color: #fff;
   border-radius: 2px;
@@ -24,14 +24,22 @@
     box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
   }
 
-  .msla-op-action-color-line {
+  .msla-op-search-card-color-line {
     width: 4px;
     height: 100%;
     position: absolute;
     left: 0px;
   }
 
-  .msla-op-action-name {
+  .msla-op-search-card-image {
+    display: flex;
+    min-width: 24px;
+    height: 24px;
+    border-radius: 2px;
+    margin: -4px 0px;
+  }
+
+  .msla-op-search-card-name {
     flex-grow: 1;
     overflow: hidden;
     white-space: nowrap;
@@ -41,29 +49,16 @@
     text-align: left;
   }
 
-  .msla-op-action-badge {
-    height: 18px;
-    border-radius: 64px;
-    padding: 0px 6px;
-    font-size: 12px;
-    line-height: 16px;
-    font-weight: 600;
-    background: rgb(235, 243, 252);
-    border: 1px solid rgb(180, 214, 250);
-    color: rgb(17, 94, 163);
-    flex: 0 0 auto;
-  }
-
-  .msla-op-action-info {
+  .msla-op-search-card-info {
     height: 16px;
     width: 16px;
   }
 }
 
-.msla-op-action-tooltip-title {
+.msla-op-search-card-tooltip-title {
   font: 14px/20px @semibold-font-family;
 }
 
-.msla-op-action-tooltip-subtitle {
+.msla-op-search-card-tooltip-subtitle {
   font: 11px/20px;
 }

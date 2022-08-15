@@ -1,5 +1,6 @@
-import type { ConnectorSummaryCardProps } from './connectorsummarycard';
-import { ConnectorSummaryCard } from './connectorsummarycard';
+import type { ConnectorSummaryCardProps } from '.';
+import { ConnectorSummaryCard } from '.';
+import { getConnectorCategoryString } from '../utils';
 import { ConnectorsMock } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
@@ -7,16 +8,32 @@ export default {
   component: ConnectorSummaryCard,
   title: 'Components/ConnectorSummaryCard',
 } as ComponentMeta<typeof ConnectorSummaryCard>;
-export const Container: ComponentStory<typeof ConnectorSummaryCard> = (args: ConnectorSummaryCardProps) => (
-  <ConnectorSummaryCard {...args} />
+
+export const Card: ComponentStory<typeof ConnectorSummaryCard> = (args: ConnectorSummaryCardProps) => (
+  <div style={{ padding: '16px', width: '300px' }}>
+    <ConnectorSummaryCard {...args} />
+  </div>
 );
 
 const connector = ConnectorsMock[0];
 
-Container.args = {
-  connectorName: connector.properties.displayName,
-  description: connector.properties.swagger ? connector.properties.swagger['info']['description'] : '',
+Card.args = {
   id: connector.id,
+  connectorName: connector.properties.displayName,
+  description: connector.properties['description'],
   iconUrl: connector.properties.iconUri,
   brandColor: connector.properties.brandColor,
+  category: getConnectorCategoryString(connector.id),
+  onClick: () => alert('Clicked :' + connector.id),
+};
+
+export const NoCard: ComponentStory<typeof ConnectorSummaryCard> = (args: ConnectorSummaryCardProps) => (
+  <div style={{ padding: '16px', width: '300px' }}>
+    <ConnectorSummaryCard {...args} />
+  </div>
+);
+
+NoCard.args = {
+  ...Card.args,
+  isCard: false,
 };
