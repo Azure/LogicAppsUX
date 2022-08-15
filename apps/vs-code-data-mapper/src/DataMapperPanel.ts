@@ -3,6 +3,8 @@ import { join } from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 import type { WebviewPanel, Disposable, ExtensionContext } from 'vscode';
 
+type MessageType = { command: any; data: any };
+
 export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
   public static readonly viewType = 'dataMapperWebview';
@@ -30,7 +32,7 @@ export default class DataMapperPanel {
     this.currentPanel = new DataMapperPanel(panel, context.extensionPath);
   }
 
-  public sendMsgToWebview(msg: MessageEvent) {
+  public sendMsgToWebview(msg: MessageEvent<MessageType>) {
     this._panel.webview.postMessage(msg);
   }
 
@@ -75,7 +77,7 @@ export default class DataMapperPanel {
   }
 
   // TODO: figure out what messages we expect to receive from DM app
-  private _handleWebviewMsg(msg: MessageEvent) {
+  private _handleWebviewMsg(msg: MessageEvent<MessageType>) {
     console.log(msg);
   }
 }

@@ -1,22 +1,22 @@
-import { WebViewMsgHandler } from '../WebViewMsgHandler';
-import type { RootState } from '../state/Store';
+import { VSCodeContext, WebViewMsgHandler } from '../WebViewMsgHandler';
 import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
-import { useSelector } from 'react-redux';
+import { useContext } from 'react';
 
 export const App = (): JSX.Element => {
-  const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
-  const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
-  const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
-  const availableSchemas = useSelector((state: RootState) => state.schemaDataLoader.availableSchemas);
+  const vscode = useContext(VSCodeContext);
 
   const saveStateCall = () => {
     console.log('App called to save Data Map');
+    vscode.postMessage({
+      cmd: 'saveDataMap',
+      msg: {},
+    });
   };
 
   return (
     <WebViewMsgHandler>
       <DataMapperDesignerProvider locale="en-US" options={{}}>
-        <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={availableSchemas}>
+        <DataMapDataProvider inputSchema={undefined} outputSchema={undefined}>
           <DataMapperDesigner saveStateCall={saveStateCall} />
         </DataMapDataProvider>
       </DataMapperDesignerProvider>
