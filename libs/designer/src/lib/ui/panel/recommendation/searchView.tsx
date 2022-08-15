@@ -43,7 +43,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
   };
 
   const onOperationClick = (id: string) => {
-    const operation = (searchResults as any).find((o: any) => o.id === id);
+    const operation = searchResults.map((result) => result.item).find((o: any) => o.id === id);
     addOperation(operation, discoveryIds, id, dispatch, rootState);
   };
 
@@ -51,7 +51,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     <SearchResultsGrid
       onConnectorClick={onConnectorClick}
       onOperationClick={onOperationClick}
-      operationSearchResults={searchResults as any}
+      operationSearchResults={searchResults.map((result) => result.item)}
       groupByConnector={groupByConnector}
     />
   );
