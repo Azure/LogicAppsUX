@@ -4,8 +4,8 @@ import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateValidationState } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
+import { ReviewList } from '../../components/reviewList/reviewList';
 import { getOverallValidationStatus, parseValidationData } from './helper';
-import { ValidationList } from './validationList';
 import { Text } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -73,7 +73,7 @@ export const Validation: React.FC = () => {
         {intlText.REVIEW_DESCRIPTION}
       </Text>
       <div className="msla-export-validation-list">
-        <ValidationList isValidationLoading={isValidationLoading} validationItems={validationItems} validationGroups={validationGroups} />
+        <ReviewList isValidationLoading={isValidationLoading} validationItems={validationItems} validationGroups={validationGroups} />
       </div>
     </div>
   );

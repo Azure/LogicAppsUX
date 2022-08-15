@@ -8,13 +8,13 @@ import { DetailsRow, GroupedList, GroupHeader, SelectionMode, Shimmer } from '@f
 import type { IGroup } from '@fluentui/react';
 import { useMemo } from 'react';
 
-export interface IValidationListProps {
+export interface IReviewListProps {
   isValidationLoading: boolean;
   validationItems: IGroupedItem[];
   validationGroups: IGroupedGroup[];
 }
 
-export const ValidationList: React.FC<IValidationListProps> = ({ isValidationLoading, validationItems, validationGroups }) => {
+export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, validationItems, validationGroups }) => {
   const getGroupIcon = (groupStatus: string): JSX.Element | null => {
     switch (groupStatus) {
       case ValidationStatus.succeeded: {
