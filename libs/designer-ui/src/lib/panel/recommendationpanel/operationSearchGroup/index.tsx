@@ -1,9 +1,9 @@
 import { ConnectorSummaryCard } from '../../../connectorsummarycard';
+import { getConnectorCategoryString } from '../../../utils';
 import type { OperationActionData } from '../interfaces';
 import { OperationSearchCard } from '../operationSearchCard';
 import { Link } from '@fluentui/react';
 import type { OperationApi } from '@microsoft-logic-apps/utils';
-import { getConnectorCategoryString } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 export interface OperationSearchGroupProps {

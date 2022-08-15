@@ -1,20 +1,4 @@
 import { equals } from './functions';
-import { getIntl } from '@microsoft-logic-apps/intl';
-
-export const getConnectorCategoryString = (connectorId: string): string => {
-  const intl = getIntl();
-
-  const builtInText = intl.formatMessage({
-    defaultMessage: 'Built-in',
-    description: '"Built-in" category name',
-  });
-  const azureText = intl.formatMessage({
-    defaultMessage: 'Azure',
-    description: 'Azure name text (not sure if this changes in different languages)',
-  });
-
-  return isBuiltInConnector(connectorId) ? builtInText : azureText;
-};
 
 export const isBuiltInConnector = (connectorId: string) => {
   // NOTE(lakshmia): connectorId format: connectionProviders/{connector}

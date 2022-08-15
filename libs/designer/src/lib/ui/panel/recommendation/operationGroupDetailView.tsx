@@ -2,9 +2,8 @@ import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useDiscoveryIds, useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import type { RootState } from '../../../core/store';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { getConnectorCategoryString } from '@microsoft-logic-apps/utils';
 import type { OperationActionData } from '@microsoft/designer-ui';
-import { OperationGroupDetailsPage } from '@microsoft/designer-ui';
+import { getConnectorCategoryString, OperationGroupDetailsPage } from '@microsoft/designer-ui';
 import { useDispatch, useSelector } from 'react-redux';
 
 type OperationGroupDetailViewProps = {

@@ -1,6 +1,6 @@
 import { ConnectorSummaryCard } from '../../connectorsummarycard';
+import { getConnectorCategoryString } from '../../utils';
 import type { Connector } from '@microsoft-logic-apps/utils';
-import { getConnectorCategoryString } from '@microsoft-logic-apps/utils';
 
 export type BrowseGridProps = {
   onConnectorSelected: (connectorId: string) => void;

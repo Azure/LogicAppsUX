@@ -1,6 +1,7 @@
 import type { ConnectorSummaryCardProps } from '.';
 import { ConnectorSummaryCard } from '.';
-import { ConnectorsMock, getConnectorCategoryString } from '@microsoft-logic-apps/utils';
+import { getConnectorCategoryString } from '../utils';
+import { ConnectorsMock } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {

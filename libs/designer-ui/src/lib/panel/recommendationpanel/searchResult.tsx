@@ -1,9 +1,10 @@
+import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
 import { List } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { getConnectorCategoryString, labelCase } from '@microsoft-logic-apps/utils';
+import { labelCase } from '@microsoft-logic-apps/utils';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 
