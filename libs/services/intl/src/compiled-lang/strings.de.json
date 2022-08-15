@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Dieser Connector verfügt über mehrere Versionen, ist integriert und wird in Azure gehostet. Verwenden Sie integrierte Features für optimale Leistung, Authentifizierung mit Verbindungszeichenfolgen und andere Features. Verwenden Sie „in Azure gehostet“ für andere Authentifizierungsoptionen."
     }
   ],
   "/WW7If": [
@@ -678,7 +678,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Hybridconnector"
     }
   ],
   "63/zYN": [
@@ -972,7 +972,7 @@
   "AHB418": [
     {
       "type": 0,
-      "value": "Filter Actions"
+      "value": "Filteraktionen"
     }
   ],
   "AIL7WX": [
@@ -1734,7 +1734,7 @@
   "L4RJF0": [
     {
       "type": 0,
-      "value": "There are no results for your search"
+      "value": "Es gibt keine Ergebnisse für Ihre Suche."
     }
   ],
   "LCUU5q": [
@@ -2648,7 +2648,7 @@
   "XH94im": [
     {
       "type": 0,
-      "value": "Ensure words are spelled correctly."
+      "value": "Stellen Sie sicher, dass die Wörter richtig geschrieben sind."
     }
   ],
   "XN9RvJ": [
@@ -2790,7 +2790,7 @@
   "YfwZJO": [
     {
       "type": 0,
-      "value": "Search Tips"
+      "value": "Suchtipps"
     }
   ],
   "YoQara": [
@@ -2964,11 +2964,15 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Nach "
     },
     {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " ausführen"
     }
   ],
   "bx3qeC": [
@@ -3046,7 +3050,7 @@
   "cVSEzV": [
     {
       "type": 0,
-      "value": "description for "
+      "value": "Beschreibung für "
     },
     {
       "type": 1,
@@ -3116,7 +3120,7 @@
   "dOpdsP": [
     {
       "type": 0,
-      "value": "Update"
+      "value": "Aktualisieren"
     }
   ],
   "dSTRb/": [
@@ -3938,7 +3942,7 @@
   "n7wxxN": [
     {
       "type": 0,
-      "value": "Try less specific keywords."
+      "value": "Versuchen Sie es mit weniger spezifischen Schlüsselwörtern."
     }
   ],
   "nGds/r": [
@@ -4644,7 +4648,7 @@
   "vVJuus": [
     {
       "type": 0,
-      "value": "The expression is invalid."
+      "value": "Der Ausdruck ist ungültig."
     }
   ],
   "vXwYXe": [
@@ -4956,7 +4960,7 @@
   "zTKAc9": [
     {
       "type": 0,
-      "value": "Select Actions"
+      "value": "Aktionen auswählen"
     }
   ],
   "zUgja+": [

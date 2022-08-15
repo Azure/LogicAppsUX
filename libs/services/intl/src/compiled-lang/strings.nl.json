@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Deze connector heeft meerdere versies, ingebouwd en gehost door Azure. Gebruik ingebouwd voor de beste prestaties, verificatie van verbindingsreeksen en andere functies. Gebruik door Azure gehost voor andere verificatieopties."
     }
   ],
   "/WW7If": [
@@ -678,7 +678,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Hybride connector"
     }
   ],
   "63/zYN": [
@@ -972,7 +972,7 @@
   "AHB418": [
     {
       "type": 0,
-      "value": "Filter Actions"
+      "value": "Filteracties"
     }
   ],
   "AIL7WX": [
@@ -1734,7 +1734,7 @@
   "L4RJF0": [
     {
       "type": 0,
-      "value": "There are no results for your search"
+      "value": "Er zijn geen resultaten voor uw zoekactie"
     }
   ],
   "LCUU5q": [
@@ -2648,7 +2648,7 @@
   "XH94im": [
     {
       "type": 0,
-      "value": "Ensure words are spelled correctly."
+      "value": "Controleer of woorden goed gespeld zijn."
     }
   ],
   "XN9RvJ": [
@@ -2790,7 +2790,7 @@
   "YfwZJO": [
     {
       "type": 0,
-      "value": "Search Tips"
+      "value": "Zoektips"
     }
   ],
   "YoQara": [
@@ -2964,7 +2964,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Uitvoeren na "
     },
     {
       "type": 1,
@@ -3046,7 +3046,7 @@
   "cVSEzV": [
     {
       "type": 0,
-      "value": "description for "
+      "value": "beschrijving voor "
     },
     {
       "type": 1,
@@ -3116,7 +3116,7 @@
   "dOpdsP": [
     {
       "type": 0,
-      "value": "Update"
+      "value": "Bijwerken"
     }
   ],
   "dSTRb/": [
@@ -3196,7 +3196,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "er heeft een time-out plaatsgevonden"
+      "value": "er is een time-out opgetreden"
     }
   ],
   "e00zot": [
@@ -3938,7 +3938,7 @@
   "n7wxxN": [
     {
       "type": 0,
-      "value": "Try less specific keywords."
+      "value": "Probeer minder specifieke trefwoorden."
     }
   ],
   "nGds/r": [
@@ -4644,7 +4644,7 @@
   "vVJuus": [
     {
       "type": 0,
-      "value": "The expression is invalid."
+      "value": "De expressie is ongeldig."
     }
   ],
   "vXwYXe": [
@@ -4956,7 +4956,7 @@
   "zTKAc9": [
     {
       "type": 0,
-      "value": "Select Actions"
+      "value": "Acties selecteren"
     }
   ],
   "zUgja+": [

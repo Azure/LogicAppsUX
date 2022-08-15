@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Tento konektor má více verzí, integrovaných a hostovaných v Azure. Využijte integrované verze pro zajištění nejlepšího výkonu, ověřování připojovacího řetězce a dalších funkcí. Pro další možnosti ověřování použijte verze hostované v Azure."
     }
   ],
   "/WW7If": [
@@ -712,7 +712,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Hybridní konektor"
     }
   ],
   "63/zYN": [
@@ -958,7 +958,7 @@
   "9RjyJ4": [
     {
       "type": 0,
-      "value": "Další informace."
+      "value": "Přečtěte si další informace."
     }
   ],
   "9SuA/E": [
@@ -1006,7 +1006,7 @@
   "AHB418": [
     {
       "type": 0,
-      "value": "Filter Actions"
+      "value": "Akce filtru"
     }
   ],
   "AIL7WX": [
@@ -1834,7 +1834,7 @@
   "L4RJF0": [
     {
       "type": 0,
-      "value": "There are no results for your search"
+      "value": "Vaše hledání nemá žádné výsledky."
     }
   ],
   "LCUU5q": [
@@ -2766,7 +2766,7 @@
   "XH94im": [
     {
       "type": 0,
-      "value": "Ensure words are spelled correctly."
+      "value": "Ujistěte se, že ve slovech není překlep."
     }
   ],
   "XN9RvJ": [
@@ -2908,7 +2908,7 @@
   "YfwZJO": [
     {
       "type": 0,
-      "value": "Search Tips"
+      "value": "Tipy pro vyhledávání"
     }
   ],
   "YoQara": [
@@ -2962,7 +2962,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Další informace"
+      "value": "Více informací"
     }
   ],
   "ZbX8xq": [
@@ -3082,7 +3082,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Spustit po "
     },
     {
       "type": 1,
@@ -3164,7 +3164,7 @@
   "cVSEzV": [
     {
       "type": 0,
-      "value": "description for "
+      "value": "popis pro "
     },
     {
       "type": 1,
@@ -3234,7 +3234,7 @@
   "dOpdsP": [
     {
       "type": 0,
-      "value": "Update"
+      "value": "Aktualizovat"
     }
   ],
   "dSTRb/": [
@@ -4078,7 +4078,7 @@
   "n7wxxN": [
     {
       "type": 0,
-      "value": "Try less specific keywords."
+      "value": "Zkuste méně konkrétní klíčová slova."
     }
   ],
   "nGds/r": [
@@ -4806,7 +4806,7 @@
   "vVJuus": [
     {
       "type": 0,
-      "value": "The expression is invalid."
+      "value": "Výraz je neplatný."
     }
   ],
   "vXwYXe": [
@@ -5118,7 +5118,7 @@
   "zTKAc9": [
     {
       "type": 0,
-      "value": "Select Actions"
+      "value": "Vybrat akce"
     }
   ],
   "zUgja+": [

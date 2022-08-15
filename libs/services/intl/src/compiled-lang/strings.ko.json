@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "이 커넥터에는 기본 제공되는 버전, Azure 호스트되는 버전과 같이 여러 버전이 있습니다. 최상의 성능과 연결 문자열 인증 및 기타 기능을 위해서는 기본 제공을 사용하세요. 다른 인증 옵션을 위해서는 Azure 호스트되는 버전을 사용하세요."
     }
   ],
   "/WW7If": [
@@ -667,7 +667,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "하이브리드 커넥터"
     }
   ],
   "63/zYN": [
@@ -961,7 +961,7 @@
   "AHB418": [
     {
       "type": 0,
-      "value": "Filter Actions"
+      "value": "작업 필터링"
     }
   ],
   "AIL7WX": [
@@ -1682,7 +1682,7 @@
   "L4RJF0": [
     {
       "type": 0,
-      "value": "There are no results for your search"
+      "value": "검색 결과가 없음"
     }
   ],
   "LCUU5q": [
@@ -2573,7 +2573,7 @@
   "XH94im": [
     {
       "type": 0,
-      "value": "Ensure words are spelled correctly."
+      "value": "단어의 철자가 올바른지 확인합니다."
     }
   ],
   "XN9RvJ": [
@@ -2715,7 +2715,7 @@
   "YfwZJO": [
     {
       "type": 0,
-      "value": "Search Tips"
+      "value": "검색 팁"
     }
   ],
   "YoQara": [
@@ -2769,7 +2769,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "추가 정보"
+      "value": "자세히 표시"
     }
   ],
   "ZbX8xq": [
@@ -2888,12 +2888,12 @@
   ],
   "bwfJdj": [
     {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " 다음에 실행"
     }
   ],
   "bx3qeC": [
@@ -2970,12 +2970,12 @@
   ],
   "cVSEzV": [
     {
-      "type": 0,
-      "value": "description for "
-    },
-    {
       "type": 1,
       "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "에 대한 설명"
     }
   ],
   "ci6ex1": [
@@ -3041,7 +3041,7 @@
   "dOpdsP": [
     {
       "type": 0,
-      "value": "Update"
+      "value": "업데이트"
     }
   ],
   "dSTRb/": [
@@ -3832,7 +3832,7 @@
   "n7wxxN": [
     {
       "type": 0,
-      "value": "Try less specific keywords."
+      "value": "덜 구체적인 키워드로 시도하세요."
     }
   ],
   "nGds/r": [
@@ -4527,7 +4527,7 @@
   "vVJuus": [
     {
       "type": 0,
-      "value": "The expression is invalid."
+      "value": "식이 잘못되었습니다."
     }
   ],
   "vXwYXe": [
@@ -4835,7 +4835,7 @@
   "zTKAc9": [
     {
       "type": 0,
-      "value": "Select Actions"
+      "value": "작업 선택"
     }
   ],
   "zUgja+": [

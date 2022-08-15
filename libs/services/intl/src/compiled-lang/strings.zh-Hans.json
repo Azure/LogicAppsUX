@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "此连接器具有多个内置和 Azure 托管版本。将内置版本用于获得最佳性能、连接字符串身份验证和其他功能。将 Azure 托管版本用于其他身份验证选项。"
     }
   ],
   "/WW7If": [
@@ -671,7 +671,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "混合连接器"
     }
   ],
   "63/zYN": [
@@ -965,7 +965,7 @@
   "AHB418": [
     {
       "type": 0,
-      "value": "Filter Actions"
+      "value": "筛选器操作"
     }
   ],
   "AIL7WX": [
@@ -1686,7 +1686,7 @@
   "L4RJF0": [
     {
       "type": 0,
-      "value": "There are no results for your search"
+      "value": "没有搜索到结果"
     }
   ],
   "LCUU5q": [
@@ -2581,7 +2581,7 @@
   "XH94im": [
     {
       "type": 0,
-      "value": "Ensure words are spelled correctly."
+      "value": "请确保单词拼写正确。"
     }
   ],
   "XN9RvJ": [
@@ -2723,7 +2723,7 @@
   "YfwZJO": [
     {
       "type": 0,
-      "value": "Search Tips"
+      "value": "搜索提示"
     }
   ],
   "YoQara": [
@@ -2777,7 +2777,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "了解更多"
+      "value": "阅读更多信息"
     }
   ],
   "ZbX8xq": [
@@ -2897,11 +2897,15 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "在 "
     },
     {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " 之后运行"
     }
   ],
   "bx3qeC": [
@@ -2978,12 +2982,12 @@
   ],
   "cVSEzV": [
     {
-      "type": 0,
-      "value": "description for "
-    },
-    {
       "type": 1,
       "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 的说明"
     }
   ],
   "ci6ex1": [
@@ -3049,7 +3053,7 @@
   "dOpdsP": [
     {
       "type": 0,
-      "value": "Update"
+      "value": "更新"
     }
   ],
   "dSTRb/": [
@@ -3860,7 +3864,7 @@
   "n7wxxN": [
     {
       "type": 0,
-      "value": "Try less specific keywords."
+      "value": "请尝试不太特定的关键字。"
     }
   ],
   "nGds/r": [
@@ -4563,7 +4567,7 @@
   "vVJuus": [
     {
       "type": 0,
-      "value": "The expression is invalid."
+      "value": "表达式无效。"
     }
   ],
   "vXwYXe": [
@@ -4875,7 +4879,7 @@
   "zTKAc9": [
     {
       "type": 0,
-      "value": "Select Actions"
+      "value": "选择操作"
     }
   ],
   "zUgja+": [

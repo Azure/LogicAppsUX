@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Ten łącznik ma wiele wersji, wbudowanych i hostowanych na platformie Azure. Użyj werji wbudowanej, aby uzyskać najlepszą wydajność, uwierzytelnianie parametrów połączenia i inne funkcje. Użyj hostowanej platformy Azure, aby uzyskać inne opcje uwierzytelniania."
     }
   ],
   "/WW7If": [
@@ -716,7 +716,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Łącznik hybrydowy"
     }
   ],
   "63/zYN": [
@@ -1010,7 +1010,7 @@
   "AHB418": [
     {
       "type": 0,
-      "value": "Filter Actions"
+      "value": "Akcje filtru"
     }
   ],
   "AIL7WX": [
@@ -1838,7 +1838,7 @@
   "L4RJF0": [
     {
       "type": 0,
-      "value": "There are no results for your search"
+      "value": "Nie ma wyników dla Twojego wyszukiwania"
     }
   ],
   "LCUU5q": [
@@ -2770,7 +2770,7 @@
   "XH94im": [
     {
       "type": 0,
-      "value": "Ensure words are spelled correctly."
+      "value": "Upewnij się, że pisownia wyrazów jest prawidłowa."
     }
   ],
   "XN9RvJ": [
@@ -2912,7 +2912,7 @@
   "YfwZJO": [
     {
       "type": 0,
-      "value": "Search Tips"
+      "value": "Porady dotyczące wyszukiwania"
     }
   ],
   "YoQara": [
@@ -3086,7 +3086,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Uruchom po "
     },
     {
       "type": 1,
@@ -3168,7 +3168,7 @@
   "cVSEzV": [
     {
       "type": 0,
-      "value": "description for "
+      "value": "opis łącznika "
     },
     {
       "type": 1,
@@ -3238,7 +3238,7 @@
   "dOpdsP": [
     {
       "type": 0,
-      "value": "Update"
+      "value": "Aktualizuj"
     }
   ],
   "dSTRb/": [
@@ -4090,7 +4090,7 @@
   "n7wxxN": [
     {
       "type": 0,
-      "value": "Try less specific keywords."
+      "value": "Spróbuj użyć mniej konkretnych słów kluczowych."
     }
   ],
   "nGds/r": [
@@ -4818,7 +4818,7 @@
   "vVJuus": [
     {
       "type": 0,
-      "value": "The expression is invalid."
+      "value": "Wyrażenie jest nieprawidłowe."
     }
   ],
   "vXwYXe": [
@@ -5130,7 +5130,7 @@
   "zTKAc9": [
     {
       "type": 0,
-      "value": "Select Actions"
+      "value": "Wybierz akcje"
     }
   ],
   "zUgja+": [

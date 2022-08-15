@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Bu bağlayıcının yerleşik ve Azure’da barındırılan olmak üzere birden çok sürümü var. En iyi performans, bağlantı dizesi kimlik doğrulaması ve diğer özellikler için yerleşik sürümü kullanın. Diğer kimlik doğrulama seçenekleri için Azure’da barındırılan sürümü kullanın."
     }
   ],
   "/WW7If": [
@@ -678,7 +678,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Karma Bağlayıcı"
     }
   ],
   "63/zYN": [
@@ -972,7 +972,7 @@
   "AHB418": [
     {
       "type": 0,
-      "value": "Filter Actions"
+      "value": "Eylemleri Filtrele"
     }
   ],
   "AIL7WX": [
@@ -1726,7 +1726,7 @@
   "L4RJF0": [
     {
       "type": 0,
-      "value": "There are no results for your search"
+      "value": "Aramanız için sonuç yok"
     }
   ],
   "LCUU5q": [
@@ -2304,7 +2304,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Daha az göster"
+      "value": "Daha azını oku"
     }
   ],
   "T0BFpC": [
@@ -2628,7 +2628,7 @@
   "XH94im": [
     {
       "type": 0,
-      "value": "Ensure words are spelled correctly."
+      "value": "Sözcüklerin doğru yazıldığından emin olun."
     }
   ],
   "XN9RvJ": [
@@ -2770,7 +2770,7 @@
   "YfwZJO": [
     {
       "type": 0,
-      "value": "Search Tips"
+      "value": "Arama İpuçları"
     }
   ],
   "YoQara": [
@@ -2824,7 +2824,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Daha fazla bilgi"
+      "value": "Daha fazlasını oku"
     }
   ],
   "ZbX8xq": [
@@ -2943,12 +2943,12 @@
   ],
   "bwfJdj": [
     {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " düğümünden sonra çalıştır"
     }
   ],
   "bx3qeC": [
@@ -3025,12 +3025,12 @@
   ],
   "cVSEzV": [
     {
-      "type": 0,
-      "value": "description for "
-    },
-    {
       "type": 1,
       "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " açıklaması"
     }
   ],
   "ci6ex1": [
@@ -3096,7 +3096,7 @@
   "dOpdsP": [
     {
       "type": 0,
-      "value": "Update"
+      "value": "Güncelleştir"
     }
   ],
   "dSTRb/": [
@@ -3898,7 +3898,7 @@
   "n7wxxN": [
     {
       "type": 0,
-      "value": "Try less specific keywords."
+      "value": "Daha genel anlamlı anahtar sözcükler kullanmayı deneyin."
     }
   ],
   "nGds/r": [
@@ -4604,7 +4604,7 @@
   "vVJuus": [
     {
       "type": 0,
-      "value": "The expression is invalid."
+      "value": "İfade geçersiz."
     }
   ],
   "vXwYXe": [
@@ -4912,7 +4912,7 @@
   "zTKAc9": [
     {
       "type": 0,
-      "value": "Select Actions"
+      "value": "Eylemleri Seç"
     }
   ],
   "zUgja+": [
