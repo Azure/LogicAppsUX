@@ -25,7 +25,7 @@ import type { Dispatch } from '@reduxjs/toolkit';
 export const addOperation = (
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined,
   discoveryIds: IdsForDiscovery,
-  selectedNode: string,
+  nodeId: string,
   dispatch: Dispatch,
   rootState: RootState
 ) => {
@@ -33,7 +33,7 @@ export const addOperation = (
 
   const addPayload: AddNodePayload = {
     operation,
-    id: selectedNode,
+    id: nodeId,
     parentId: discoveryIds.parentId ?? '',
     childId: discoveryIds.childId ?? '',
     graphId: discoveryIds.graphId,
@@ -44,17 +44,17 @@ export const addOperation = (
   const operationKind = operation.properties.operationKind ?? '';
   dispatch(addNode(addPayload));
   const operationPayload: AddNodeOperationPayload = {
-    id: selectedNode,
+    id: nodeId,
     type: operationType,
     connectorId,
     operationId,
   };
   dispatch(initializeOperationInfo(operationPayload));
 
-  initializeOperationDetails(selectedNode, { connectorId, operationId }, operationType, operationKind, rootState, dispatch);
+  initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, rootState, dispatch);
 
   getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
-  dispatch(switchToOperationPanel(selectedNode));
+  dispatch(switchToOperationPanel(nodeId));
   return;
 };
 
