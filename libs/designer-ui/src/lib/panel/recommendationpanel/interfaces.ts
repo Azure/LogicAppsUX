@@ -3,7 +3,7 @@ export interface OperationActionData {
   title: string;
   description?: string;
   summary?: string;
-  category: 'Built-in' | 'Azure' | '';
+  category?: string;
   connectorName?: string;
   brandColor?: string;
   iconUri?: string;

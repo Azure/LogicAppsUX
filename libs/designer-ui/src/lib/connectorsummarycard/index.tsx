@@ -7,7 +7,7 @@ export interface ConnectorSummaryCardProps {
   description?: string;
   iconUrl: string;
   brandColor?: string;
-  category: 'Built-in' | 'Azure' | '';
+  category: string;
   onClick?: (id: string) => void;
   isCard?: boolean;
 }

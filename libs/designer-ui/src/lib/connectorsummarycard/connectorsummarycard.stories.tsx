@@ -1,6 +1,6 @@
 import type { ConnectorSummaryCardProps } from '.';
 import { ConnectorSummaryCard } from '.';
-import { ConnectorsMock, isBuiltInConnector } from '@microsoft-logic-apps/utils';
+import { ConnectorsMock, getConnectorCategory } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -22,7 +22,7 @@ Card.args = {
   description: connector.properties['description'],
   iconUrl: connector.properties.iconUri,
   brandColor: connector.properties.brandColor,
-  category: isBuiltInConnector(connector.id) ? 'Built-in' : 'Azure',
+  category: getConnectorCategory(connector.id),
   onClick: () => alert('Clicked :' + connector.id),
 };
 

@@ -3,7 +3,7 @@ import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
 import { List } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { labelCase, isBuiltInConnector } from '@microsoft-logic-apps/utils';
+import { getConnectorCategory, labelCase } from '@microsoft-logic-apps/utils';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 
@@ -75,5 +75,5 @@ const OperationActionDataFromOperation = (operation: DiscoveryOperation<Discover
   brandColor: operation.properties.api.brandColor,
   iconUri: operation.properties.api.iconUri,
   connectorName: operation.properties.api.displayName,
-  category: isBuiltInConnector(operation.properties.api.id) ? 'Built-in' : 'Azure',
+  category: getConnectorCategory(operation.properties.api.id),
 });

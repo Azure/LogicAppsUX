@@ -1,39 +1,53 @@
-import { equals, getPropertyValue } from './functions';
+import { equals } from './functions';
 
-const BUILT_IN_CONNECTOR_IDS = {
-  APIMANAGEMENT: 'connectionProviders/apimanagement',
-  APPSERVICES: 'connectionProviders/appservice',
-  FUNCTION: 'connectionProviders/function',
-  WORKFLOW: 'connectionProviders/workflow',
-  BATCH_GROUP: 'connectionProviders/batch',
-  BUTTON_GROUP: 'connectionProviders/buttonGroup',
-  CONTROL_GROUP: 'connectionProviders/control',
-  DATA_OPERATIONS_GROUP: 'connectionProviders/dataOperation',
-  DATETIME_GROUP: 'connectionProviders/datetime',
-  GEOFENCE_GROUP: 'connectionProviders/geofenceGroup',
-  HTTP_GROUP: 'connectionProviders/http',
-  INTEGRATION_ACCOUNT_GROUP: 'connectionProviders/integrationAccount',
-  POWERAPPS_GROUP: 'connectionProviders/powerappsGroup',
-  REQUEST_RESPONSE_GROUP: 'connectionProviders/request',
-  SCHEDULE_GROUP: 'connectionProviders/schedule',
-  TEAMS_GROUP: 'connectionProviders/teams',
-  VARIABLE_GROUP: 'connectionProviders/variable',
-  VIRTUALAGENT_GROUP: 'connectionProviders/virtualagentGroup',
+export const getConnectorCategory = (connectorId: string): string => (isBuiltInConnector(connectorId) ? 'Built-in' : 'Azure');
+
+export const isBuiltInConnector = (connectorId: string) => {
+  // NOTE(lakshmia): connectorId format: connectionProviders/{connector}
+  const fields = connectorId.split('/');
+  if (fields.length !== 2) return false;
+  return equals(fields[0], 'connectionProviders');
 };
 
-export function isBuiltInConnector(connectorId: string): boolean {
-  return (
-    Object.keys(BUILT_IN_CONNECTOR_IDS).some((c) => equals(getPropertyValue(BUILT_IN_CONNECTOR_IDS, c), connectorId)) ||
-    isBuiltInSwaggerConnector(connectorId)
-  );
-}
+export const isCustomConnector = (connectorId: string) => {
+  // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Web/customApis/{connector}
+  const fields = connectorId.split('/');
+  if (fields.length !== 9) return false;
 
-const BUILT_IN_SWAGGER_CONNECTOR_IDS = {
-  FLAT_FILE_GROUP: 'connectionProviders/flatFile',
-  LIQUID_GROUP: 'connectionProviders/liquid',
-  XML_GROUP: 'connectionProviders/xml',
+  if (!equals(fields[1], 'subscriptions')) return false;
+  if (!equals(fields[3], 'resourcegroups')) return false;
+  if (!equals(fields[5], 'providers')) return false;
+  if (!equals(fields[6], 'microsoft.web')) return false;
+  if (!equals(fields[7], 'customApis')) return false;
+
+  return true;
 };
 
-export function isBuiltInSwaggerConnector(connectorId: string): boolean {
-  return Object.keys(BUILT_IN_SWAGGER_CONNECTOR_IDS).some((c) => equals(getPropertyValue(BUILT_IN_SWAGGER_CONNECTOR_IDS, c), connectorId));
-}
+export const isIsManagedConnector = (connectorId: string) => {
+  // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Logic/integrationServiceEnvironments/{ise}/managedApis/{connector}
+  const fields = connectorId.split('/');
+  if (fields.length !== 11) return false;
+
+  if (!equals(fields[1], 'subscriptions')) return false;
+  if (!equals(fields[3], 'resourcegroups')) return false;
+  if (!equals(fields[5], 'providers')) return false;
+  if (!equals(fields[6], 'microsoft.logic')) return false;
+  if (!equals(fields[7], 'integrationserviceenvironments')) return false;
+  if (!equals(fields[9], 'managedapis')) return false;
+
+  return true;
+};
+
+export const isSharedManagedConnector = (connectorId: string) => {
+  // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/providers/Microsoft.Web/locations/{location}/managedApis/{connector}
+  const fields = connectorId.split('/');
+  if (fields.length !== 9) return false;
+
+  if (!equals(fields[1], 'subscriptions')) return false;
+  if (!equals(fields[3], 'providers')) return false;
+  if (!equals(fields[4], 'microsoft.web')) return false;
+  if (!equals(fields[5], 'locations')) return false;
+  if (!equals(fields[7], 'managedapis')) return false;
+
+  return true;
+};

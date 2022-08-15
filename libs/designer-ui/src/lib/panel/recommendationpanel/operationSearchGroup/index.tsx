@@ -3,7 +3,7 @@ import type { OperationActionData } from '../interfaces';
 import { OperationSearchCard } from '../operationSearchCard';
 import { Link } from '@fluentui/react';
 import type { OperationApi } from '@microsoft-logic-apps/utils';
-import { isBuiltInConnector } from '@microsoft-logic-apps/utils';
+import { getConnectorCategory } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 export interface OperationSearchGroupProps {
@@ -19,7 +19,7 @@ export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
 
   const intl = useIntl();
 
-  const category = isBuiltInConnector(id) ? 'Built-in' : 'Azure';
+  const category = getConnectorCategory(id);
 
   const seeMoreText = intl.formatMessage({
     defaultMessage: 'See more',

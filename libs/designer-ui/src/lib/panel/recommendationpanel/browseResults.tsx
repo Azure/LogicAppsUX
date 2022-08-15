@@ -1,6 +1,6 @@
 import { ConnectorSummaryCard } from '../../connectorsummarycard';
 import type { Connector } from '@microsoft-logic-apps/utils';
-import { isBuiltInConnector } from '@microsoft-logic-apps/utils';
+import { getConnectorCategory } from '@microsoft-logic-apps/utils';
 
 export type BrowseGridProps = {
   onConnectorSelected: (connectorId: string) => void;
@@ -23,7 +23,7 @@ export const BrowseGrid = (props: BrowseGridProps) => {
               iconUrl={properties.iconUri}
               brandColor={properties.brandColor}
               onClick={props.onConnectorSelected}
-              category={isBuiltInConnector(connector.id) ? 'Built-in' : 'Azure'}
+              category={getConnectorCategory(connector.id)}
             />
           );
         })}
