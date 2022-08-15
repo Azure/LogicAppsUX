@@ -1,4 +1,4 @@
-import { SchemaTypes } from '../configPanel/EditorConfigPanel';
+import { SchemaTypes } from '../../models';
 import type { SchemaCardWrapperProps } from './SchemaCard';
 import { SchemaCardWrapper } from './SchemaCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
