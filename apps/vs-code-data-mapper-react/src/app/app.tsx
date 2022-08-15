@@ -3,7 +3,6 @@ import type { RootState } from '../state/Store';
 import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
 import { useSelector } from 'react-redux';
 
-// TODO - Load data map
 export const App = (): JSX.Element => {
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
   const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
