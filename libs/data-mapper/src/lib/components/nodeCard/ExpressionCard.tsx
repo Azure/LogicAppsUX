@@ -4,6 +4,7 @@ import { createFocusOutlineStyle, makeStyles, shorthands } from '@fluentui/react
 import type { FunctionComponent } from 'react';
 
 export interface ExpressionCardProps {
+  iconName: string;
   onClick?: () => void;
   disabled?: boolean;
 }
@@ -39,12 +40,12 @@ const useStyles = makeStyles({
   }),
 });
 
-export const ExpressionCard: FunctionComponent<ExpressionCardProps> = ({ onClick, disabled }) => {
+export const ExpressionCard: FunctionComponent<ExpressionCardProps> = ({ iconName, onClick }) => {
   const classes = useStyles();
 
   return (
-    <NodeCard onClick={onClick} disabled={disabled} childClasses={classes}>
-      <Icon iconName="Variable" />
+    <NodeCard onClick={onClick} childClasses={classes}>
+      <Icon iconName={iconName} />
     </NodeCard>
   );
 };
