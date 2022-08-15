@@ -30,6 +30,10 @@ export default class DataMapperPanel {
     this.currentPanel = new DataMapperPanel(panel, context.extensionPath);
   }
 
+  public sendMsgToWebview(msg: MessageEvent) {
+    this._panel.webview.postMessage(msg);
+  }
+
   // TODO: revive()
 
   private constructor(panel: WebviewPanel, extPath: string) {
