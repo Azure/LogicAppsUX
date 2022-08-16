@@ -54,13 +54,16 @@ function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, l
   };
 
   return customLabel ? (
-    <TextField
-      className="msla-setting-row-text-input"
-      disabled={readOnly}
-      value={valuesInString}
-      onChange={onTextFieldChange}
-      styles={textFieldStyles}
-    />
+    <>
+      {customLabel()}
+      <TextField
+        className="msla-setting-row-text-input"
+        disabled={readOnly}
+        value={valuesInString}
+        onChange={onTextFieldChange}
+        styles={textFieldStyles}
+      />
+    </>
   ) : (
     <div className="msla-setting-section-row">
       <TextField

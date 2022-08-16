@@ -1,4 +1,4 @@
-import { css } from '@fluentui/react';
+import { Label as FluentLabel } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 export interface LabelProps {
@@ -14,12 +14,12 @@ interface RequiredParameterMarkerProps {
   isRequiredField: boolean;
 }
 
-export const Label: React.FC<LabelProps> = ({ className, htmlFor, id, isRequiredField = false, text, tooltip }) => {
+export const Label: React.FC<LabelProps> = ({ htmlFor, id, isRequiredField = false, text, tooltip }) => {
   return (
-    <label className={css(className, 'msla-label')} htmlFor={htmlFor} id={id} title={tooltip || text}>
+    <FluentLabel htmlFor={htmlFor} id={id} title={tooltip || text}>
       <RequiredParameterMarker isRequiredField={isRequiredField} />
       {text}
-    </label>
+    </FluentLabel>
   );
 };
 

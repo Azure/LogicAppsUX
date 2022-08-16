@@ -29,6 +29,19 @@ export const Tracking = ({
     description: 'title for tracked properties setting',
   });
 
+  const clientIdTrackingTitle = intl.formatMessage({
+    defaultMessage: 'Custom Tracking Id',
+    description: 'title for client tracking id setting',
+  });
+  const clientTrackingTootltipText = intl.formatMessage({
+    defaultMessage: 'Set the tracking id for the run. For split-on this tracking id is for the initiating request.',
+    description: 'description for client tracking id setting',
+  });
+  const trackingTitle = intl.formatMessage({
+    defaultMessage: 'Tracking',
+    description: 'title for tracking component',
+  });
+
   const trackedPropertiesLabel = <SettingLabel labelText={trackedPropertiesTitle} isChild={false} />;
 
   const onTrackedPropertiesChangeCallback = useCallback(
@@ -46,9 +59,13 @@ export const Tracking = ({
     [onClientTrackingIdChange]
   );
 
+  const clientTrackingIdLabel = (
+    <SettingLabel labelText={clientIdTrackingTitle} infoTooltipText={clientTrackingTootltipText} isChild={false} />
+  );
+
   const trackingSectionProps: SettingSectionProps = {
     id: 'tracking',
-    title: trackedPropertiesTitle,
+    title: trackingTitle,
     sectionName: constants.SETTINGSECTIONS.TRACKING,
     expanded,
     onHeaderClick,
@@ -59,6 +76,7 @@ export const Tracking = ({
           readOnly,
           value: correlation?.value?.clientTrackingId ?? '',
           onValueChange: onClientTrackingIdChangeCallback,
+          customLabel: () => clientTrackingIdLabel,
         },
         visible: correlation?.isSupported,
       },

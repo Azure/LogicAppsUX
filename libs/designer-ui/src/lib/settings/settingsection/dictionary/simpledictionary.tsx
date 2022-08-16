@@ -3,6 +3,7 @@ import type { EventHandler } from '../../../eventhandler';
 import { Label } from '../../../label';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryItemProps, SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
+import { useId } from '@fluentui/react-hooks';
 import { guid } from '@microsoft-logic-apps/utils';
 import { useDebouncedEffect } from '@react-hookz/web';
 import React, { useEffect, useState } from 'react';
@@ -67,20 +68,27 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({ disabled, ti
     });
   };
 
-  console.log(values);
+  const dictionaryFieldID = useId('anInput');
   return (
     <>
-      {values.map((x) => (
-        <SimpleDictionaryItem
-          item={{ key: x.key, value: x.value, index: x.index }}
-          key={x.index}
-          allowDeletion={x.index + 1 !== values.length}
-          disabled={disabled}
-          readOnly={readOnly}
-          onDelete={handleItemDelete}
-          onChange={handleItemChange}
-        />
-      ))}
+      <div className="msla-input-parameter-label">
+        <div className="msla-dictionary-control-label">
+          <Label htmlFor={dictionaryFieldID} text={'Tracked Properties'} />
+        </div>
+      </div>
+      <div id={dictionaryFieldID}>
+        {values.map((x) => (
+          <SimpleDictionaryItem
+            item={{ key: x.key, value: x.value, index: x.index }}
+            key={x.index}
+            allowDeletion={x.index + 1 !== values.length}
+            disabled={disabled}
+            readOnly={readOnly}
+            onDelete={handleItemDelete}
+            onChange={handleItemChange}
+          />
+        ))}
+      </div>
     </>
   );
 };
