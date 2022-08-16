@@ -15,10 +15,11 @@ import { useDispatch } from 'react-redux';
 
 export interface DropZoneProps {
   graphId: string;
-  parent?: string;
-  child?: string;
+  parentId?: string;
+  childId?: string;
 }
-export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) => {
+
+export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
 
@@ -36,8 +37,17 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) =>
 
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
-    dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds: { childId: child, parentId: parent, graphId } }));
-  }, [child, dispatch, graphId, parent]);
+    dispatch(
+      expandDiscoveryPanel({
+        nodeId: newId,
+        discoveryIds: {
+          graphId,
+          childId,
+          parentId,
+        },
+      })
+    );
+  }, [dispatch, graphId, childId, parentId]);
 
   const addParallelBranch = useCallback(() => {
     // TODO: Implement parallel branching
@@ -47,8 +57,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) =>
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     // The type (or types) to accept - strings or symbols
     accept: 'BOX',
-    drop: () => ({ child: child, parent: parent }), // danielle check this, graph id
-    canDrop: (item) => (item as any).id !== child,
+    drop: () => ({ child: childId, parent: parentId }), // danielle check this, graph id
+    canDrop: (item) => (item as any).id !== childId,
     // Props to collect
     collect: (monitor) => ({
       isOver: monitor.isOver(),
@@ -79,12 +89,12 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) =>
       )}
       {!isOver && (
         <>
-          <ActionButtonV2 id={`msla-edge-button-${parent}-${child}`} title={tooltipText} onClick={actionButtonClick} />
+          <ActionButtonV2 id={`msla-edge-button-${parentId}-${childId}`} title={tooltipText} onClick={actionButtonClick} />
           {showCallout && (
             <Callout
               role="dialog"
               gapSpace={0}
-              target={`#msla-edge-button-${parent}-${child}`}
+              target={`#msla-edge-button-${parentId}-${childId}`}
               onDismiss={toggleIsCalloutVisible}
               onMouseLeave={toggleIsCalloutVisible}
               directionalHint={DirectionalHint.bottomCenter}
@@ -93,7 +103,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parent, child }) =>
                 <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
                   {newActionText}
                 </ActionButton>
-                {child ? (
+                {childId ? (
                   <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
                     {newBranchText}
                   </ActionButton>
