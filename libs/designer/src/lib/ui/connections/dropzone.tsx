@@ -76,6 +76,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
     toggleIsCalloutVisible();
   };
 
+  const buttonId = `msla-edge-button-${parentId?.replace('#', '')}-${childId?.replace('#', '')}`;
+
   return (
     <div
       ref={drop}
@@ -89,12 +91,12 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
       )}
       {!isOver && (
         <>
-          <ActionButtonV2 id={`msla-edge-button-${parentId}-${childId}`} title={tooltipText} onClick={actionButtonClick} />
+          <ActionButtonV2 id={buttonId} title={tooltipText} onClick={actionButtonClick} />
           {showCallout && (
             <Callout
               role="dialog"
               gapSpace={0}
-              target={`#msla-edge-button-${parentId}-${childId}`}
+              target={`#${buttonId}`}
               onDismiss={toggleIsCalloutVisible}
               onMouseLeave={toggleIsCalloutVisible}
               directionalHint={DirectionalHint.bottomCenter}
