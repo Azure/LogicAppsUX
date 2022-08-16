@@ -1,4 +1,4 @@
-import type { RootState } from '../../../core';
+import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useDiscoveryIds } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
@@ -6,7 +6,7 @@ import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -19,9 +19,8 @@ type SearchResults = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>[]
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const { searchTerm, allOperations, groupByConnector } = props;
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const rootState: RootState = useSelector((state: RootState) => state);
   const discoveryIds = useDiscoveryIds();
 
   const [searchResults, setSearchResults] = useState<SearchResults>([]);
@@ -44,7 +43,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const onOperationClick = (id: string) => {
     const operation = searchResults.map((result) => result.item).find((o: any) => o.id === id);
-    addOperation(operation, discoveryIds, id, dispatch, rootState);
+    dispatch(addOperation({ operation, discoveryIds, nodeId: id }));
   };
 
   return (
