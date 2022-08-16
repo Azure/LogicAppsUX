@@ -1,4 +1,4 @@
-import { store } from '../../../core';
+import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useDiscoveryIds } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
@@ -19,7 +19,7 @@ type SearchResults = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>[]
 export const SearchView: React.FC<SearchViewProps> = (props) => {
   const { searchTerm, allOperations, groupByConnector } = props;
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const discoveryIds = useDiscoveryIds();
 
@@ -43,7 +43,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const onOperationClick = (id: string) => {
     const operation = searchResults.map((result) => result.item).find((o: any) => o.id === id);
-    store.dispatch(addOperation(operation, discoveryIds, id));
+    dispatch(addOperation({ operation, discoveryIds, nodeId: id }));
   };
 
   return (

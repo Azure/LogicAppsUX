@@ -22,13 +22,16 @@ import { OperationManifestService } from '@microsoft-logic-apps/designer-client-
 import type { DiscoveryOperation, DiscoveryResultTypes, OperationInfo } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const addOperation = (
-  operation: DiscoveryOperation<DiscoveryResultTypes> | undefined,
-  discoveryIds: IdsForDiscovery,
-  nodeId: string
-) => {
-  return (dispatch: Dispatch, getState: () => RootState) => {
+type AddOperationPayload = {
+  operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
+  discoveryIds: IdsForDiscovery;
+  nodeId: string;
+};
+export const addOperation = createAsyncThunk(
+  'addOperation',
+  async ({ operation, discoveryIds, nodeId }: AddOperationPayload, { dispatch, getState }) => {
     if (!operation) return; // Just an optional catch, should never happen
 
     const addPayload: AddNodePayload = {
@@ -51,14 +54,14 @@ export const addOperation = (
     };
     setDefaultConnectionForNode(nodeId, connectorId, dispatch);
     dispatch(initializeOperationInfo(operationPayload));
-    const newWorkflowState = getState().workflow;
+    const newWorkflowState = (getState() as RootState).workflow;
     initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
 
     getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
     dispatch(switchToOperationPanel(nodeId));
     return;
-  };
-};
+  }
+);
 
 export const initializeOperationDetails = async (
   nodeId: string,
