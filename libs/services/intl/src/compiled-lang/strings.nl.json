@@ -345,6 +345,12 @@
       "value": "Codeweergave weergeven"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -921,22 +927,10 @@
       "value": "Geeft als resultaat een object met een extra eigenschapwaardepaar"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Meer informatie."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "paneel"
     }
   ],
   "9djnqI": [
@@ -1529,6 +1523,12 @@
       "value": "(UTC+07:00) Barnaoel, Gorno-Altajsk"
     }
   ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
+    }
+  ],
   "IngtMG": [
     {
       "type": 0,
@@ -1785,6 +1785,12 @@
     {
       "type": 0,
       "value": "Nieuwe toevoegen"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2441,6 +2447,12 @@
       "value": "(UTC-06:00) Centraal-Amerika"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -3031,6 +3043,12 @@
       "value": "Vereist. De waarde waarvan de index moet worden doorzocht."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3041,16 +3059,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "beschrijving voor "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3105,12 +3113,6 @@
     {
       "type": 0,
       "value": "Meer informatie"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Selecteren"
     }
   ],
   "dOpdsP": [
@@ -3233,6 +3235,12 @@
     {
       "type": 0,
       "value": "Vereist. Het getal waardoor het deeltal moet worden gedeeld."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3383,6 +3391,16 @@
     {
       "type": 0,
       "value": "Triggervoorwaarden"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3959,6 +3977,12 @@
       "value": "Vereist. De naam van de eigenschap die moet worden verwijderd."
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -4025,6 +4049,12 @@
     {
       "type": 0,
       "value": "Inhoudsoverdracht"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4431,6 +4461,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexico, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4473,12 +4509,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Trigger"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4501,12 +4531,6 @@
     {
       "type": 0,
       "value": "Weergavenaam"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Bewerkingen"
     }
   ],
   "u/KSPz": [
@@ -4875,16 +4899,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Hawaii"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "yVh9kr": [

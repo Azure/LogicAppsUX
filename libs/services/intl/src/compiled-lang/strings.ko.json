@@ -334,6 +334,12 @@
       "value": "코드 보기 표시"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -910,22 +916,10 @@
       "value": "추가적인 속성 값 쌍을 사용하여 개체 반환"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "자세히 알아보세요."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "패널"
     }
   ],
   "9djnqI": [
@@ -1488,6 +1482,12 @@
       "value": "(UTC+07:00) 바르나울, 고르노알타이스크"
     }
   ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
+    }
+  ],
   "IngtMG": [
     {
       "type": 0,
@@ -1725,6 +1725,12 @@
     {
       "type": 0,
       "value": "새로 추가"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2366,6 +2372,12 @@
       "value": "(UTC-06:00) 중앙 아메리카"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2956,6 +2968,12 @@
       "value": "필수 항목으로, 인덱스를 검색할 값입니다."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -2966,16 +2984,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 트리폴리"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": "에 대한 설명"
     }
   ],
   "ci6ex1": [
@@ -3030,12 +3038,6 @@
     {
       "type": 0,
       "value": "자세한 정보"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "선택"
     }
   ],
   "dOpdsP": [
@@ -3154,6 +3156,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 피제수를 나눌 숫자입니다."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3304,6 +3312,16 @@
     {
       "type": 0,
       "value": "트리거 조건"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3853,6 +3871,12 @@
       "value": "필수 항목으로, 제거할 속성의 이름입니다."
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -3919,6 +3943,12 @@
     {
       "type": 0,
       "value": "콘텐츠 전송"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4314,6 +4344,12 @@
       "value": "(UTC-06:00) 과달라하라, 멕시코시티, 몬테레이"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4356,12 +4392,6 @@
       "value": "(UTC+06:00) 노보시비르스크"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "트리거"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4384,12 +4414,6 @@
     {
       "type": 0,
       "value": "표시 이름"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "작업"
     }
   ],
   "u/KSPz": [
@@ -4754,16 +4778,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00) 하와이"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": "의 로고"
     }
   ],
   "yVh9kr": [

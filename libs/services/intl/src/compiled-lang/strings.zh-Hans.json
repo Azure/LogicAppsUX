@@ -338,6 +338,12 @@
       "value": "显示代码视图"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -914,22 +920,10 @@
       "value": "返回一个对象，此对象具有其他的属性值对"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "了解详细信息。"
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "面板"
     }
   ],
   "9djnqI": [
@@ -1492,6 +1486,12 @@
       "value": "(UTC+07:00) 巴尔瑙尔，戈尔诺-阿尔泰斯克"
     }
   ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
+    }
+  ],
   "IngtMG": [
     {
       "type": 0,
@@ -1729,6 +1729,12 @@
     {
       "type": 0,
       "value": "新增"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2370,6 +2376,12 @@
       "value": "(UTC-06:00)中美洲"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2968,6 +2980,12 @@
       "value": "必需。要搜索其索引的值。"
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -2978,16 +2996,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00)的黎波里"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " 的说明"
     }
   ],
   "ci6ex1": [
@@ -3042,12 +3050,6 @@
     {
       "type": 0,
       "value": "了解详细信息"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "选择"
     }
   ],
   "dOpdsP": [
@@ -3170,6 +3172,12 @@
     {
       "type": 0,
       "value": "必需。被除数要除以的数字。"
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3320,6 +3328,16 @@
     {
       "type": 0,
       "value": "触发器条件"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3885,6 +3903,12 @@
       "value": "必填。要删除的属性名称。"
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -3959,6 +3983,12 @@
     {
       "type": 0,
       "value": "内容传输"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4354,6 +4384,12 @@
       "value": "(UTC-06:00)瓜达拉哈拉，墨西哥市，蒙特雷"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4396,12 +4432,6 @@
       "value": "(UTC+06:00) 新西伯利亚"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "触发器"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4424,12 +4454,6 @@
     {
       "type": 0,
       "value": "显示名称"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "操作"
     }
   ],
   "u/KSPz": [
@@ -4798,16 +4822,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00)夏威夷"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " 徽标"
     }
   ],
   "yVh9kr": [
