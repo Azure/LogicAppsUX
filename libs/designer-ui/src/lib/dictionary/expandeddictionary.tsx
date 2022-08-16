@@ -11,7 +11,7 @@ import { useIntl } from 'react-intl';
 export interface ExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
   setItems: (items: DictionaryEditorItemProps[]) => void;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  GetTokenPicker: (editorId: string, labelId: string, initialExpression?: string, onClick?: (b: boolean) => void) => JSX.Element;
 }
 
 export const ExpandedDictionary = ({ items, GetTokenPicker, setItems }: ExpandedDictionaryProps): JSX.Element => {

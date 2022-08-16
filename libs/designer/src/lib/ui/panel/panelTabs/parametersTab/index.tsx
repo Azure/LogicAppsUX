@@ -102,7 +102,7 @@ const ParameterSection = ({
     [nodeId, group.id, isTrigger, operationInfo, nodeInputs, dependencies, nodeSettings, dispatch]
   );
 
-  const GetTokenPicker = (editorId: string, labelId: string, onClick?: (b: boolean) => void): JSX.Element => {
+  const GetTokenPicker = (editorId: string, labelId: string, initialExpression?: string, onClick?: (b: boolean) => void): JSX.Element => {
     // check to see if there's a custom Token Picker
     return (
       <TokenPicker
@@ -111,7 +111,7 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         expressionGroup={expressionGroup}
         setInTokenPicker={onClick}
-        initialExpression={''}
+        initialExpression={initialExpression ?? ''}
       />
     );
   };

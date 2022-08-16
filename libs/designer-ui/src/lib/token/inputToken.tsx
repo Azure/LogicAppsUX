@@ -1,5 +1,6 @@
 import { getBrandColorRgbA } from '../card/utils';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
+import { CHANGE_TOKENPICKER_EXPRESSION } from '../editor/base/plugins/TokenPickerHandler';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { NodeKey } from 'lexical';
 import { useIntl } from 'react-intl';
@@ -21,8 +22,12 @@ export const DELETE = '\u00D7';
 export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor, icon, readOnly, title, nodeKey }) => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+
+  const handleTokenClicked = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
+    if (nodeKey) {
+      editor.dispatchCommand(CHANGE_TOKENPICKER_EXPRESSION, nodeKey);
+    }
   };
 
   const tokenStyle = {
@@ -62,7 +67,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor,
   };
 
   return (
-    <div className="msla-token msla-input-token" onClick={handleClick} style={tokenStyle}>
+    <div className="msla-token msla-input-token" onClick={handleTokenClicked} style={tokenStyle}>
       <div className="msla-token-title" title={description}>
         {title}
       </div>

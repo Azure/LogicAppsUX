@@ -24,7 +24,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   required?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  GetTokenPicker: (editorId: string, labelId: string, initialExpression?: string, onClick?: (b: boolean) => void) => JSX.Element;
   onValueChange?: ChangeHandler;
 }
 

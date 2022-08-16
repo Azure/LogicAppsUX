@@ -13,7 +13,7 @@ export interface ExpandedArrayProps {
   items: ArrayEditorItemProps[];
   canDeleteLastItem: boolean;
   readOnly: boolean;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  GetTokenPicker: (editorId: string, labelId: string, initialExpression?: string, onClick?: (b: boolean) => void) => JSX.Element;
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
 }
 

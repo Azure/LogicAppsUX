@@ -8,6 +8,7 @@ import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
 import TokenPickerButton from './plugins/TokenPickerButton';
+import TokenPickerHandler from './plugins/TokenPickerHandler';
 import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
 import type { ValidationProps } from './plugins/Validation';
@@ -50,7 +51,7 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   tokenPickerButtonProps?: TokenPickerButtonProps;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  GetTokenPicker: (editorId: string, labelId: string, initialExpression?: string, onClick?: (b: boolean) => void) => JSX.Element;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -95,6 +96,7 @@ export const BaseEditor = ({
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
   const [showTokenPicker, setShowTokenPicker] = useState(true);
   const [inTokenPicker, setInTokenPicker] = useState(false);
+  const [initialExpression, setInitialExpression] = useState('');
   const initialConfig = {
     theme: defaultTheme,
     onError,
@@ -174,11 +176,14 @@ export const BaseEditor = ({
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}
-        {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? GetTokenPicker(editorId, labelId, onClickTokenPicker) : null}
+        {(showTokenPickerButton && showTokenPicker) || inTokenPicker
+          ? GetTokenPicker(editorId, labelId, initialExpression, onClickTokenPicker)
+          : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
-        <InsertTokenNode />
-        <DeleteTokenNode />
+        {tokens ? <InsertTokenNode /> : null}
+        {tokens ? <DeleteTokenNode /> : null}
+        {tokens ? <TokenPickerHandler setInitialExpression={setInitialExpression} /> : null}
         {children}
       </div>
     </LexicalComposer>

@@ -6,7 +6,7 @@ import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { ICalloutContentStyles, PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
 import type { editor } from 'monaco-editor';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export type { Token as OutputToken } from './models/token';
 
@@ -47,6 +47,14 @@ export function TokenPicker({
   const [isEditing, setIsEditing] = useState<boolean>(initialExpression !== '' ?? false);
   const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: initialExpression, selectionStart: 0, selectionEnd: 0 });
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+
+  useEffect(() => {
+    if (initialExpression) {
+      setExpression({ value: initialExpression, selectionStart: 0, selectionEnd: 0 });
+      setIsEditing(true);
+      setSelectedKey(TokenPickerMode.EXPRESSION);
+    }
+  }, [initialExpression]);
 
   const handleSelectKey = (item?: PivotItem) => {
     if (item?.props?.itemKey) {
