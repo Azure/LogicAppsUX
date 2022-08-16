@@ -383,6 +383,12 @@
       "value": "Pokaż widok kodu"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -959,22 +965,10 @@
       "value": "Zwraca obiekt z parą dodatkowych wartości właściwości"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Dowiedz się więcej."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -1611,6 +1605,12 @@
       "value": "(UTC+07:00) Barnauł, Gornoałtajsk"
     }
   ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
+    }
+  ],
   "IngtMG": [
     {
       "type": 0,
@@ -1889,6 +1889,12 @@
     {
       "type": 0,
       "value": "Dodaj nowe"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2563,6 +2569,12 @@
       "value": "(UTC-06:00) Ameryka Środkowa"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -3153,6 +3165,12 @@
       "value": "Parametr wymagany. Wartość, której indeks jest wyszukiwany."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3163,16 +3181,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Trypolis"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "opis łącznika "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3227,12 +3235,6 @@
     {
       "type": 0,
       "value": "Dowiedz się więcej"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Wybierz"
     }
   ],
   "dOpdsP": [
@@ -3355,6 +3357,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba, przez którą dzielona jest dzielna."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3505,6 +3513,16 @@
     {
       "type": 0,
       "value": "Warunki wyzwalacza"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -4111,6 +4129,12 @@
       "value": "Wymagane. Nazwa właściwości do usunięcia."
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -4177,6 +4201,12 @@
     {
       "type": 0,
       "value": "Transfer zawartości"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4605,6 +4635,12 @@
       "value": "(UTC-06:00) Guadalajara, Meksyk, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4647,12 +4683,6 @@
       "value": "(UTC+06:00) Nowosybirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Wyzwalacz"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4675,12 +4705,6 @@
     {
       "type": 0,
       "value": "Nazwa wyświetlana"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operacje"
     }
   ],
   "u/KSPz": [
@@ -5049,16 +5073,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Hawaje"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo dla łącznika "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "yVh9kr": [
