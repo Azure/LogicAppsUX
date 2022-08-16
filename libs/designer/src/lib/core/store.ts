@@ -7,7 +7,6 @@ import settingsReducer from './state/settingSlice';
 import tokens from './state/tokensSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import { configureStore } from '@reduxjs/toolkit';
-import thunk from 'redux-thunk';
 
 export const store = configureStore({
   reducer: {
@@ -23,7 +22,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: false,
-    }).concat(thunk),
+    }),
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

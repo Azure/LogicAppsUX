@@ -1,9 +1,10 @@
-import { store } from '../../../core';
+import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useDiscoveryIds, useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { getConnectorCategoryString, OperationGroupDetailsPage } from '@microsoft/designer-ui';
+import { useDispatch } from 'react-redux';
 
 type OperationGroupDetailViewProps = {
   groupOperations: DiscoveryOperation<DiscoveryResultTypes>[];
@@ -14,10 +15,10 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
 
   const discoveryIds = useDiscoveryIds();
   const selectedNode = useSelectedNodeId();
-
+  const dispatch = useDispatch<AppDispatch>();
   const onOperationClick = (id: string) => {
     const operation = groupOperations.find((o) => o.id === id);
-    store.dispatch(addOperation(operation, discoveryIds, selectedNode));
+    dispatch(addOperation({ operation, discoveryIds, nodeId: selectedNode }));
   };
 
   const operationGroupActions: OperationActionData[] = groupOperations.map((operation) => {
