@@ -11,9 +11,9 @@ export interface ExpressionCardProps {
 
 const useStyles = makeStyles({
   root: {
-    width: '24px',
-    minWidth: '24px',
-    height: '24px',
+    width: '32px',
+    minWidth: '32px',
+    height: '32px',
     backgroundColor: '#8764b8',
     color: 'white',
     textAlign: 'center',

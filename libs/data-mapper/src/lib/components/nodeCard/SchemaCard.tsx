@@ -1,7 +1,7 @@
 import { SchemaTypes } from '../../models';
 import { NodeCard } from './NodeCard';
 import { Icon, Text } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { createFocusOutlineStyle, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 
@@ -26,7 +26,7 @@ const useStyles = makeStyles({
     height: '44px',
     backgroundColor: tokens.colorNeutralBackground1,
     opacity: 1,
-    ...shorthands.borderRadius('5px'),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
 
     '&:enabled': {
       '&:hover': {
@@ -36,25 +36,25 @@ const useStyles = makeStyles({
   },
 
   cardIcon: {
-    backgroundColor: '#ebf3fc',
-    color: '#0f6cbd',
-    fontSize: '20px',
+    backgroundColor: tokens.colorBrandBackground2,
+    borderStartStartRadius: tokens.borderRadiusMedium,
+    borderEndStartRadius: tokens.borderRadiusMedium,
+    color: tokens.colorBrandForeground1,
+    fontSize: '24px',
     lineHeight: '44px',
-    width: '44px',
     textAlign: 'center',
-    borderStartStartRadius: '5px',
-    borderEndStartRadius: '5px',
+    width: '44px',
   },
   cardText: {
-    fontStyle: 'normal',
-    fontWeight: 600,
-    fontSize: '14px',
+    ...typographyStyles.body1Strong,
     alignSelf: 'center',
+    color: tokens.colorNeutralForeground1,
     paddingLeft: '8px',
     paddingRight: '8px',
     textAlign: 'center',
   },
   cardChevron: {
+    color: tokens.colorNeutralForeground3,
     width: '20px',
     height: '18px',
     paddingLeft: '12px',
@@ -102,7 +102,7 @@ export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ l
         <Text className={classes.cardText} block={true} nowrap={true}>
           {label}
         </Text>
-        <div className={classes.cardChevron}>{schemaType === SchemaTypes.Output && isLeaf && <Icon iconName="ChevronRightMed" />}</div>
+        <div className={classes.cardChevron}>{schemaType === SchemaTypes.Output && !isLeaf && <Icon iconName="ChevronRightMed" />}</div>
       </NodeCard>
     </div>
   );
