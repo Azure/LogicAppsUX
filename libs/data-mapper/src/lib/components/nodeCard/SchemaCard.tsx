@@ -20,13 +20,13 @@ export interface SchemaCardWrapperProps {
 
 const useStyles = makeStyles({
   root: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '200px',
-    height: '44px',
-    backgroundColor: tokens.colorNeutralBackground1,
-    opacity: 1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    backgroundColor: tokens.colorNeutralBackground1,
+    display: 'block',
+    flexDirection: 'row',
+    height: '44px',
+    opacity: 1,
+    width: '200px',
 
     '&:enabled': {
       '&:hover': {
@@ -34,7 +34,6 @@ const useStyles = makeStyles({
       },
     },
   },
-
   cardIcon: {
     backgroundColor: tokens.colorBrandBackground2,
     borderStartStartRadius: tokens.borderRadiusMedium,
@@ -43,7 +42,9 @@ const useStyles = makeStyles({
     fontSize: '24px',
     lineHeight: '44px',
     textAlign: 'center',
-    width: '44px',
+    flexGrow: '0',
+    flexShrink: '0',
+    flexBasis: '44px',
   },
   cardText: {
     ...typographyStyles.body1Strong,
@@ -55,9 +56,9 @@ const useStyles = makeStyles({
   },
   cardChevron: {
     color: tokens.colorNeutralForeground3,
-    width: '20px',
-    height: '18px',
-    paddingLeft: '12px',
+    display: 'flex',
+    fontSize: '16px',
+    paddingRight: '8px',
   },
 
   focusIndicator: createFocusOutlineStyle({
@@ -102,7 +103,11 @@ export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ l
         <Text className={classes.cardText} block={true} nowrap={true}>
           {label}
         </Text>
-        <div className={classes.cardChevron}>{schemaType === SchemaTypes.Output && !isLeaf && <Icon iconName="ChevronRightMed" />}</div>
+        {schemaType === SchemaTypes.Output && !isLeaf && (
+          <div className={classes.cardChevron}>
+            <Icon iconName="ChevronRightMed" />
+          </div>
+        )}
       </NodeCard>
     </div>
   );
