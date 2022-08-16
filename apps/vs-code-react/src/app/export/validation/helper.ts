@@ -1,15 +1,5 @@
 import { StyledWorkflowPart, ValidationStatus, WorkflowPart } from '../../../run-service';
 import type { IValidationData, IGroupedItem, IGroupedGroup, IWorkflowValidation } from '../../../run-service';
-import type { IShimmerElement } from '@fluentui/react';
-import { ShimmerElementType } from '@fluentui/react';
-
-export const getValidationListColumns = () => {
-  return [
-    { key: 'action', name: 'action', fieldName: 'action', minWidth: 170, maxWidth: 250, isResizable: true },
-    { key: 'status', name: 'status', fieldName: 'status', minWidth: 170, maxWidth: 250, isResizable: true },
-    { key: 'message', name: 'message', fieldName: 'message', minWidth: 170, maxWidth: 250, isResizable: true },
-  ];
-};
 
 const getDetailsErrors = (itemsSchema: any, actionName: string): Array<IGroupedItem> => {
   const { details, validationState } = itemsSchema;
@@ -115,8 +105,8 @@ const getIndexStart = (workflowsGroups: Array<IGroupedGroup>, children: Array<IG
   return indexStart;
 };
 
-export const parseValidationData = (validationData: IValidationData) => {
-  const workflowsSchema: Record<string, IWorkflowValidation> = validationData?.properties?.workflows ?? {};
+export const parseValidationData = (validationData: IValidationData | undefined) => {
+  const workflowsSchema: Record<string, IWorkflowValidation> = validationData?.workflows ?? {};
   const workflowsGroups: Array<IGroupedGroup> = [];
   const workflowsItems: Array<IGroupedItem> = [];
 
@@ -162,18 +152,5 @@ export const parseValidationData = (validationData: IValidationData) => {
 };
 
 export const getOverallValidationStatus = (validationData: IValidationData): string => {
-  return validationData?.properties?.validationState ?? '';
-};
-
-export const getShimmerElements = () => {
-  const shimmerFirstRow: IShimmerElement[] = [
-    { type: ShimmerElementType.gap, width: '15%' },
-    { type: ShimmerElementType.line, width: '100%' },
-  ];
-
-  const shimmerSecondRow = [
-    { type: ShimmerElementType.gap, width: '35%' },
-    { type: ShimmerElementType.line, width: '100%' },
-  ];
-  return { firstRow: shimmerFirstRow, secondRow: shimmerSecondRow };
+  return validationData?.validationState ?? '';
 };

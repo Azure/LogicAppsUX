@@ -1,4 +1,4 @@
-import type { ExportData, ITargetDirectory, ManagedConnections, ProjectName, WorkflowsList } from '../run-service';
+import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, ProjectName, WorkflowsList } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -10,6 +10,7 @@ export interface InitializePayload {
   accessToken?: string;
   workflowProperties: OverviewPropertiesProps;
   project: ProjectName;
+  reviewContent?: IValidationData;
 }
 
 export enum Status {
@@ -29,6 +30,7 @@ export interface InitializedVscodeState {
   exportData: ExportData;
   statuses?: string[];
   finalStatus?: Status;
+  reviewContent?: IValidationData;
 }
 
 interface UninitializedVscodeState {
@@ -47,7 +49,7 @@ export const vscodeSlice = createSlice({
   initialState: initialState as VscodeState,
   reducers: {
     initialize: (state: VscodeState, action: PayloadAction<InitializePayload>) => {
-      const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, project } = action.payload;
+      const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, project, reviewContent } = action.payload;
       state.initialized = true;
       const initializedState = state as InitializedVscodeState;
       initializedState.project = project;
@@ -56,6 +58,7 @@ export const vscodeSlice = createSlice({
       initializedState.baseUrl = baseUrl;
       initializedState.corsNotice = corsNotice;
       initializedState.workflowProperties = workflowProperties;
+      initializedState.reviewContent = reviewContent;
       initializedState.exportData = {
         selectedWorkflows: [],
         selectedSubscription: '',

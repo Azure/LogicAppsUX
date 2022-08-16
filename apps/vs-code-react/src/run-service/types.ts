@@ -154,6 +154,7 @@ interface RunTriggerHistoryProperties {
 export enum ProjectName {
   export = 'export',
   overview = 'overview',
+  review = 'review',
 }
 
 export interface WorkflowProperties {
@@ -255,6 +256,7 @@ export enum RouteName {
   overview = 'overview',
   summary = 'summary',
   status = 'status',
+  review = 'review',
 }
 
 export enum ValidationStatus {
@@ -271,10 +273,8 @@ export interface IWorkflowValidation {
 }
 
 export interface IValidationData {
-  properties: {
-    validationState: string;
-    workflows: Record<string, IWorkflowValidation>;
-  };
+  validationState: string;
+  workflows: Record<string, IWorkflowValidation>;
 }
 
 export interface IGroupedGroup {

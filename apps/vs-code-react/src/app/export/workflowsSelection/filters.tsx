@@ -1,4 +1,4 @@
-import { SearchableDropdown } from '../components/searchableDropdown';
+import { SearchableDropdown } from '../../components/searchableDropdown';
 import { TextField } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
