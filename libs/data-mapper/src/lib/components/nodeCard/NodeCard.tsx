@@ -11,7 +11,6 @@ interface NodeCardProps {
 
 const useStyles = makeStyles({
   root: {
-    display: 'block',
     opacity: 1,
     boxShadow: tokens.shadow4,
     cursor: 'pointer',
