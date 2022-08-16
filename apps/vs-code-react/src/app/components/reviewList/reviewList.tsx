@@ -4,6 +4,7 @@ import SuccessIcon from '../../../resources/Success.svg';
 import { ValidationStatus } from '../../../run-service';
 import type { IGroupedGroup, IGroupedItem } from '../../../run-service';
 import { getShimmerElements, getValidationListColumns } from './helper';
+import './styles.less';
 import { DetailsRow, GroupedList, GroupHeader, SelectionMode, Shimmer } from '@fluentui/react';
 import type { IGroup } from '@fluentui/react';
 import { useMemo } from 'react';
@@ -37,10 +38,10 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
 
     return new Array(4).fill(0).map((_element, index) => {
       return (
-        <div className="msla-export-validation-list-shimmer" key={index}>
-          <Shimmer className="msla-export-validation-list-shimmer-item" />
-          <Shimmer className="msla-export-validation-list-shimmer-item" shimmerElements={shimmerDetails.firstRow} />
-          <Shimmer className="msla-export-validation-list-shimmer-item" shimmerElements={shimmerDetails.secondRow} />
+        <div className="review-list-shimmer" key={index}>
+          <Shimmer className="review-list-shimmer-item" />
+          <Shimmer className="review-list-shimmer-item" shimmerElements={shimmerDetails.firstRow} />
+          <Shimmer className="review-list-shimmer-item" shimmerElements={shimmerDetails.secondRow} />
         </div>
       );
     });
@@ -71,9 +72,9 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
         const groupIcon = getGroupIcon(props?.group?.status);
 
         return (
-          <div className="msla-export-validation-list-header">
+          <div className="review-list-header">
             <GroupHeader
-              className="msla-export-validation-list-header-text"
+              className="review-list-header-text"
               styles={{ headerCount: headerCountStyle }}
               {...props}
               onToggleSelectGroup={toggleCollapse}
@@ -92,14 +93,16 @@ export const ReviewList: React.FC<IReviewListProps> = ({ isValidationLoading, va
     };
 
     return (
-      <GroupedList
-        items={validationItems}
-        groups={validationGroups}
-        onRenderCell={onRenderCell}
-        selectionMode={SelectionMode.none}
-        compact={true}
-        groupProps={groupedListProps}
-      />
+      <div className="review-list">
+        <GroupedList
+          items={validationItems}
+          groups={validationGroups}
+          onRenderCell={onRenderCell}
+          selectionMode={SelectionMode.none}
+          compact={true}
+          groupProps={groupedListProps}
+        />
+      </div>
     );
   }, [validationItems, validationGroups]);
 
