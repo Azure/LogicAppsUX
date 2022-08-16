@@ -41,7 +41,7 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const graph = getWorkflowNodeFromGraphState(state, action.payload.graphId);
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.discoveryIds.graphId);
       if (!graph) {
         throw new Error('graph not set');
       }
