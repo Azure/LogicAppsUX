@@ -32,7 +32,7 @@ type AddOperationPayload = {
 export const addOperation = createAsyncThunk(
   'addOperation',
   async ({ operation, discoveryIds, nodeId }: AddOperationPayload, { dispatch, getState }) => {
-    if (!operation) return; // Just an optional catch, should never happen
+    if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
 
     const addPayload: AddNodePayload = {
       operation,
