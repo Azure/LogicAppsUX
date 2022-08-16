@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { EventHandler } from '../../../eventhandler';
 import { Label } from '../../../label';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
-import type { SimpleDictionaryItemProps, SimpleDictionaryRowModel } from './simpledictionaryitem';
+import type { SimpleDictionaryItemProps, SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
 import { guid } from '@microsoft-logic-apps/utils';
-import React, { useState } from 'react';
+import { useDebouncedEffect } from '@react-hookz/web';
+import React, { useEffect, useState } from 'react';
 
 export interface SimpleDictionaryProps {
   disabled?: boolean;
@@ -13,118 +15,72 @@ export interface SimpleDictionaryProps {
   onChange?: EventHandler<Record<string, string> | undefined>;
 }
 
-const convertDictionaryToKeyValuePair = (value?: Record<string, string>): SimpleDictionaryRowModel[] => {
-  const result: SimpleDictionaryRowModel[] = [];
-  if (value) {
-    for (const key of Object.keys(value)) {
-      result.push({
-        id: guid(),
-        key,
-        value: value[key],
-      });
-    }
-  }
-
-  result.push({
-    id: guid(),
-    key: undefined,
-    value: undefined,
-  });
-
-  return result;
-};
-
-const convertItemsModelToDictionary = (items: SimpleDictionaryRowModel[]): Record<string, string> | undefined => {
-  let result: Record<string, string> | undefined;
-  let newItems = [...items];
-  if (items[items.length - 1].value?.length === 1) {
-    newItems = [...items, { id: guid(), key: '', value: '' }];
-  }
-  if (newItems.length > 0) {
-    result = {};
-    for (const item of newItems) {
-      if (item.key !== undefined) {
-        result[item.key] = item.value || '';
-      }
-    }
-
-    if (Object.keys(result).length === 0) {
-      result = undefined;
-    }
-  }
-
-  return result;
-};
-
-const renderLabel = (name: string, elementId: string): JSX.Element => (
-  <div className="msla-input-parameter-label">
-    <div className="msla-dictionary-control-label">
-      <Label htmlFor={elementId} text={name} />
-    </div>
-  </div>
-);
-
 export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({ disabled, title, readOnly, value, onChange }): JSX.Element => {
-  const [items, setItems] = useState(convertDictionaryToKeyValuePair(value));
+  const [values, setValues] = useState([
+    ...Object.entries(value ?? {}).map(([key, value], index) => ({
+      key,
+      value,
+      index,
+    })),
+    { key: '', value: '', index: Object.keys(value ?? {}).length },
+  ]);
 
-  const elementId = guid();
+  useDebouncedEffect(
+    () => {
+      onChange?.(
+        values
+          .filter((x) => x.key && x.key !== '')
+          .reduce((acc, val) => {
+            return {
+              ...acc,
+              [val.key]: val.value,
+            };
+          }, {})
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [values],
+    500,
+    1000
+  );
 
   const handleItemDelete = (e: SimpleDictionaryRowModel): void => {
-    const newItems = items.filter((item) => item.id !== e.id);
-    setItems(newItems);
-
-    if (e.key !== undefined && e.value !== undefined && onChange) {
-      const newValue = convertItemsModelToDictionary(newItems);
-      onChange(newValue);
-    }
+    setValues((oldValues) => oldValues.filter((x) => x.index !== e.index).map((x, i) => ({ ...x, index: i })));
   };
 
-  const handleItemChange = (e: SimpleDictionaryRowModel): void => {
-    const newItems = [...items];
-    for (const item of newItems) {
-      if (item.id === e.id) {
-        item.key = e.key;
-        item.value = e.value;
-        break;
+  const handleItemChange = (e: SimpleDictionaryChangeModel): void => {
+    setValues((oldValues) => {
+      const newValues = oldValues.map((v) => {
+        if (v.index === e.index) {
+          return {
+            ...v,
+            key: e.key,
+            value: e.value,
+          };
+        }
+        return v;
+      });
+      if (e.index + 1 === oldValues.length) {
+        newValues.push({ key: '', value: '', index: e.index + 1 });
       }
-    }
-    // setItems(newItems);
-
-    if (onChange) {
-      const newValue = convertItemsModelToDictionary(newItems);
-      onChange(newValue);
-    }
+      return newValues;
+    });
   };
 
-  const renderDictionaryItem = (item: SimpleDictionaryRowModel, itemIndex: number, isLastItem: boolean): JSX.Element => {
-    const props: SimpleDictionaryItemProps = {
-      item,
-      itemIndex: itemIndex + 1,
-      isLastItem,
-      disabled,
-      readOnly,
-      onDelete: handleItemDelete,
-      onChange: handleItemChange,
-    };
-
-    return <SimpleDictionaryItem key={item.id} {...props} />;
-  };
-
-  const itemCount = items.length;
-  const lastItemId = itemCount ? items[itemCount - 1].id : undefined;
-  const renderedKeyValuePairs = items.map((item, index) => renderDictionaryItem(item, index, /* isLastItem */ item.id === lastItemId));
-  const label = title ? renderLabel(title, elementId) : null;
-  let parameterClassName = title
-    ? 'msla-input-parameter-box msla-dictionary'
-    : 'msla-input-parameter-box msla-input-parameter-box-no-label msla-dictionary';
-  parameterClassName += ' msla-token-picker-non-dismissible-control';
-
+  console.log(values);
   return (
-    <div className="msla-simple-dictionary msla-input-parameter msla-dictionary-parameter">
-      {label}
-      <div id={elementId} className="msla-dictionary-container">
-        <div className={parameterClassName}>{renderedKeyValuePairs}</div>
-      </div>
-    </div>
+    <>
+      {values.map((x) => (
+        <SimpleDictionaryItem
+          item={{ key: x.key, value: x.value, index: x.index }}
+          key={x.index}
+          allowDeletion={x.index + 1 !== values.length}
+          disabled={disabled}
+          readOnly={readOnly}
+          onDelete={handleItemDelete}
+          onChange={handleItemChange}
+        />
+      ))}
+    </>
   );
 };

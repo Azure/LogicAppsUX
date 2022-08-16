@@ -7,18 +7,22 @@ import * as React from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SimpleDictionaryRowModel {
-  id: string;
-  key?: string;
-  value?: string;
+  key: string;
+  value: string;
+  index: number;
 }
 
+export interface SimpleDictionaryChangeModel {
+  index: number;
+  key: string;
+  value: string;
+}
 export interface SimpleDictionaryItemProps {
   disabled?: boolean;
-  isLastItem?: boolean;
+  allowDeletion?: boolean;
   item: SimpleDictionaryRowModel;
-  itemIndex?: number;
   readOnly?: boolean;
-  onChange?: EventHandler<SimpleDictionaryRowModel>;
+  onChange?: EventHandler<SimpleDictionaryChangeModel>;
   onDelete?: EventHandler<SimpleDictionaryRowModel>;
 }
 
@@ -28,7 +32,7 @@ const deleteButtonIconProps: IIconProps = {
 
 export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
   disabled,
-  isLastItem,
+  allowDeletion,
   item,
   readOnly,
   onChange,
@@ -59,21 +63,8 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
     description: 'A placeholder for the dictionary value field',
   });
 
-  const className = disabled ? 'msla-dictionary-item msla-disabled' : 'msla-dictionary-item';
-  const keyClassName = isLastItem
-    ? 'msla-dictionary-item-cell msla-input-parameter-dictionary-key msla-dictionary-item-last'
-    : 'msla-dictionary-item-cell msla-input-parameter-dictionary-key';
-
-  const valueClassName = isLastItem
-    ? 'msla-dictionary-item-cell msla-input-parameter-dictionary-value msla-dictionary-item-last'
-    : 'msla-dictionary-item-cell msla-input-parameter-dictionary-value';
-
   const renderDelete = (): JSX.Element | null => {
     const deleteButtonClass = 'msla-button msla-dictionary-item-delete';
-
-    if (isLastItem || disabled || readOnly) {
-      return null;
-    }
 
     return (
       <TooltipHost content={dictionaryItemDelete}>
@@ -87,20 +78,22 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
     );
   };
 
-  const handleKeyChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined): void => {
+  const handleKeyChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     if (onChange) {
       onChange({
-        ...item,
-        key: newValue,
+        value: item.value,
+        index: item.index,
+        key: newValue ?? '',
       });
     }
   };
 
-  const handleValueChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined): void => {
+  const handleValueChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     if (onChange) {
       onChange({
-        ...item,
-        value: newValue,
+        index: item.index,
+        key: item.key,
+        value: newValue ?? '',
       });
     }
   };
@@ -113,12 +106,12 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
     }
   };
 
+  console.log(item.index);
   return (
-    <div className={className}>
-      <div className={keyClassName}>
+    <div style={{ display: 'grid', gridTemplateColumns: '45% 45% 10%' }}>
+      <div style={{ padding: '5px' }}>
         <TextField
           ariaLabel={itemKeyAriaLabel}
-          className="msla-dictionary-item-textfield"
           disabled={disabled}
           readOnly={readOnly}
           spellCheck={false}
@@ -127,10 +120,9 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
           placeholder={dictionaryItemKeyPlaceholder}
         />
       </div>
-      <div className={valueClassName}>
+      <div style={{ padding: '5px' }}>
         <TextField
           ariaLabel={itemValueAriaLabel}
-          className="msla-dictionary-item-textfield"
           disabled={disabled}
           readOnly={readOnly}
           value={item.value}
@@ -138,7 +130,7 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
           placeholder={dictionaryItemValuePlaceholder}
         />
       </div>
-      {renderDelete()}
+      {allowDeletion && !disabled ? renderDelete() : null}
     </div>
   );
 };
