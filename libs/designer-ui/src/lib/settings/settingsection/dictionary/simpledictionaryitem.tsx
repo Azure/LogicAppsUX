@@ -106,7 +106,6 @@ export const SimpleDictionaryItem: React.FC<SimpleDictionaryItemProps> = ({
     }
   };
 
-  console.log(item.index);
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '45% 45% 10%' }}>
       <div style={{ padding: '5px' }}>
