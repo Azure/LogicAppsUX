@@ -105,8 +105,8 @@ const getIndexStart = (workflowsGroups: Array<IGroupedGroup>, children: Array<IG
   return indexStart;
 };
 
-export const parseValidationData = (validationData: IValidationData) => {
-  const workflowsSchema: Record<string, IWorkflowValidation> = validationData?.properties?.workflows ?? {};
+export const parseValidationData = (validationData: IValidationData | undefined) => {
+  const workflowsSchema: Record<string, IWorkflowValidation> = validationData?.workflows ?? {};
   const workflowsGroups: Array<IGroupedGroup> = [];
   const workflowsItems: Array<IGroupedItem> = [];
 
@@ -152,5 +152,5 @@ export const parseValidationData = (validationData: IValidationData) => {
 };
 
 export const getOverallValidationStatus = (validationData: IValidationData): string => {
-  return validationData?.properties?.validationState ?? '';
+  return validationData?.validationState ?? '';
 };

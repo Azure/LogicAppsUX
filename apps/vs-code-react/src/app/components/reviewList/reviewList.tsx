@@ -9,7 +9,7 @@ import type { IGroup } from '@fluentui/react';
 import { useMemo } from 'react';
 
 export interface IReviewListProps {
-  isValidationLoading: boolean;
+  isValidationLoading?: boolean;
   validationItems: IGroupedItem[];
   validationGroups: IGroupedGroup[];
 }

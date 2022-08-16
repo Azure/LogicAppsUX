@@ -273,10 +273,8 @@ export interface IWorkflowValidation {
 }
 
 export interface IValidationData {
-  properties: {
-    validationState: string;
-    workflows: Record<string, IWorkflowValidation>;
-  };
+  validationState: string;
+  workflows: Record<string, IWorkflowValidation>;
 }
 
 export interface IGroupedGroup {

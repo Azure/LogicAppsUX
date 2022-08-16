@@ -43,8 +43,8 @@ export const Validation: React.FC = () => {
     return apiService.validateWorkflows(selectedWorkflows, selectedSubscription, location);
   };
 
-  const onValidationSuccess = (successData: IValidationData) => {
-    const overallValidationStatus = getOverallValidationStatus(successData);
+  const onValidationSuccess = (successData: { properties: IValidationData }) => {
+    const overallValidationStatus = getOverallValidationStatus(successData?.properties);
     dispatch(
       updateValidationState({
         validationState: overallValidationStatus,
@@ -62,7 +62,7 @@ export const Validation: React.FC = () => {
   );
 
   const { validationItems = [], validationGroups = [] }: any =
-    isValidationLoading || !validationData ? {} : parseValidationData(validationData);
+    isValidationLoading || !validationData ? {} : parseValidationData(validationData?.properties);
 
   return (
     <div className="msla-export-validation">
