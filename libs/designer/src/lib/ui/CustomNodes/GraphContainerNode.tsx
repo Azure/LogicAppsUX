@@ -28,7 +28,7 @@ const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePositio
       </div>
       {showLeafComponents && (
         <div className="edge-drop-zone-container">
-          <DropZone graphId={nodeMetadata?.graphId ?? ''} parent={id} />
+          <DropZone graphId={nodeMetadata?.graphId ?? ''} parentId={id} />
         </div>
       )}
     </>

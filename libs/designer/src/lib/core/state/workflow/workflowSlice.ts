@@ -41,14 +41,12 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const graph = getWorkflowNodeFromGraphState(state, action.payload.graphId);
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.discoveryIds.graphId);
       if (!graph) {
         throw new Error('graph not set');
       }
 
-      addNodeToWorkflow(action.payload, graph, state.nodesMetadata);
-
-      // Danielle still need to add to OperationsState, will complete later in S10! https://msazure.visualstudio.com/DefaultCollection/One/_workitems/edit/14429900
+      addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
       const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');

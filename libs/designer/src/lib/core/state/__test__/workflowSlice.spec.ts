@@ -7,7 +7,9 @@ describe('workflow slice reducers', () => {
   it('should add initial node to the workflow', () => {
     const mockAddNode: AddNodePayload = {
       id: '123',
-      graphId: 'root',
+      discoveryIds: {
+        graphId: 'root',
+      },
     };
     const state = reducer(initialState, addNode(mockAddNode));
     expect(state.graph?.children).toEqual([

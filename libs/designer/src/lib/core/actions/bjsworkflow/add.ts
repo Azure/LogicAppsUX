@@ -34,9 +34,7 @@ export const addOperation = (
   const addPayload: AddNodePayload = {
     operation,
     id: nodeId,
-    parentId: discoveryIds.parentId ?? '',
-    childId: discoveryIds.childId ?? '',
-    graphId: discoveryIds.graphId,
+    discoveryIds,
   };
   const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
   const operationId = operation.id;

@@ -1,4 +1,4 @@
-import { addWorkflowNode, createNodeWithDefaultSize, insertMiddleWorkflowEdge, setWorkflowEdge } from '../addNodeToWorkflow';
+import { createNodeWithDefaultSize, addNodeToWorkflow } from '../addNodeToWorkflow';
 import type { WorkflowNode } from '../models/workflowNode';
 import { mockGraph } from './mocks/workflowMock';
 
@@ -14,25 +14,46 @@ describe('edit workflow', () => {
   // The null coalescing operators are just to avoid linting errors, all the nodes exist in the mock
 
   it('adds middle workflow node', () => {
-    // insert as new second node
-    addWorkflowNode(nodeToAdd, graph);
-    const parentNode = graph?.children?.[0].id ?? '';
-    const childNode = graph?.children?.[1].id ?? '';
-    setWorkflowEdge(parentNode, nodeToAdd.id, graph);
+    const parentId = graph?.children?.[0].id ?? '';
+    const childId = graph?.children?.[1].id ?? '';
 
-    insertMiddleWorkflowEdge(parentNode, nodeToAdd.id, childNode, graph);
+    addNodeToWorkflow(
+      {
+        operation: {} as any,
+        id: 'post_in_teams',
+        discoveryIds: {
+          graphId: graph.id,
+          parentId: parentId,
+          childId: childId,
+        },
+      },
+      graph,
+      {} as any
+    );
 
-    expect(graph?.edges?.find((edge) => edge.source === parentNode && edge.target === nodeToAdd.id)).toBeDefined();
-    expect(graph?.edges?.find((edge) => edge.source === nodeToAdd.id && edge.target === childNode)).toBeDefined();
+    expect(graph?.edges?.find((edge) => edge.source === parentId && edge.target === nodeToAdd.id)).toBeDefined();
+    expect(graph?.edges?.find((edge) => edge.source === nodeToAdd.id && edge.target === childId)).toBeDefined();
     // edge from parent to original child should be undefined
-    expect(graph?.edges?.find((edge) => edge.source === parentNode && edge.target === childNode)).toBeUndefined();
+    expect(graph?.edges?.find((edge) => edge.source === parentId && edge.target === childId)).toBeUndefined();
   });
 
   it('adds workflow edge to insert node as last', () => {
-    addWorkflowNode(nodeToAdd, graph);
-    const parentNode = graph?.children?.[3].id ?? '';
-    expect(!!parentNode).toBeTruthy();
-    setWorkflowEdge(parentNode, nodeToAdd.id, graph);
-    expect(graph?.edges?.find((edge) => edge.source === parentNode && edge.target === nodeToAdd.id)).toBeDefined();
+    const parentId = graph?.children?.[3].id ?? '';
+
+    addNodeToWorkflow(
+      {
+        operation: {} as any,
+        id: 'post_in_teams',
+        discoveryIds: {
+          graphId: graph.id,
+          parentId: parentId,
+          childId: undefined,
+        },
+      },
+      graph,
+      {} as any
+    );
+
+    expect(graph?.edges?.find((edge) => edge.source === parentId && edge.target === nodeToAdd.id)).toBeDefined();
   });
 });

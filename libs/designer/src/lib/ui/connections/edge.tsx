@@ -13,8 +13,8 @@ interface EdgeContentProps {
   x: number;
   y: number;
   graphId: string;
-  parent: string | undefined;
-  child: string | undefined;
+  parentId?: string;
+  childId?: string;
 }
 
 const EdgeContent = (props: EdgeContentProps) => (
@@ -27,7 +27,7 @@ const EdgeContent = (props: EdgeContentProps) => (
     requiredExtensions="http://www.w3.org/1999/xhtml"
   >
     <div style={{ padding: '4px' }}>
-      <DropZone graphId={props.graphId} parent={props.parent} child={props.child} />
+      <DropZone graphId={props.graphId} parentId={props.parentId} childId={props.childId} />
     </div>
   </foreignObject>
 );
@@ -58,8 +58,9 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   style = {},
 }) => {
   const readOnly = useReadOnly();
-  const edgeTargets = useNodeEdgeTargets(source);
   const operationData = useActionMetadata(target) as LogicAppsV2.ActionDefinition;
+  const edgeSources = Object.keys(operationData?.runAfter ?? {});
+  const edgeTargets = useNodeEdgeTargets(source);
   const nodeMetadata = useNodeMetadata(source);
   const sourceId = source.includes('-#') ? source.split('-#')[0] : undefined;
   const graphId = sourceId ?? nodeMetadata?.graphId ?? '';
@@ -84,6 +85,19 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
   const showRunAfter = runAfterStatuses.length;
 
+  const showSourceButton = edgeTargets[edgeTargets.length - 1] === target;
+  const showTargetButton = edgeSources?.[edgeSources.length - 1] === source;
+
+  const multipleSources = edgeSources.length > 1;
+  const multipleTargets = edgeTargets.length > 1;
+  const onlyEdge = !multipleSources && !multipleTargets;
+
+  let dynamicMidEdgeY =
+    // sourceY + 64
+    multipleSources && !multipleTargets ? targetY - 64 : multipleTargets && !multipleSources ? sourceY + 64 : edgeCenterY;
+
+  if (numRunAfters !== 0) dynamicMidEdgeY -= 4;
+
   const d = useMemo(() => {
     return getSmoothStepPath({
       sourceX,
@@ -93,16 +107,9 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       targetY: (numRunAfters !== 0 ? targetY - runAfterHeight : targetY) - 2, // move up to allow space for run after indicator
       targetPosition,
       borderRadius: 8,
-      centerY: sourceY + 64,
+      centerY: dynamicMidEdgeY,
     });
-  }, [numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
-
-  const showSourceButton = edgeTargets[edgeTargets.length - 1] === target;
-  const showTargetButton = Object.keys(operationData?.runAfter ?? {})?.[Object.keys(operationData?.runAfter ?? {}).length - 1] === source;
-
-  const multipleSources = Object.keys(operationData?.runAfter ?? {}).length > 1;
-  const multipleTargets = edgeTargets.length > 1;
-  const onlyEdge = !multipleSources && !multipleTargets;
+  }, [dynamicMidEdgeY, numRunAfters, sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
   return (
     <>
@@ -130,8 +137,8 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               x={sourceX - foreignObjectWidth / 2}
               y={sourceY + 28 - foreignObjectHeight / 2}
               graphId={graphId}
-              parent={source}
-              child={!multipleTargets ? target : undefined}
+              parentId={source}
+              childId={!multipleTargets ? target : undefined}
             />
           )}
 
@@ -139,10 +146,10 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           {(onlyEdge || (multipleTargets && multipleSources)) && (
             <EdgeContent
               x={edgeCenterX - foreignObjectWidth / 2}
-              y={edgeCenterY - foreignObjectHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
+              y={dynamicMidEdgeY - foreignObjectHeight / 2} // Make a little more room for run after
               graphId={graphId}
-              parent={source}
-              child={target}
+              parentId={source}
+              childId={target}
             />
           )}
 
@@ -152,8 +159,8 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               x={targetX - foreignObjectWidth / 2}
               y={targetY - 32 - foreignObjectHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
               graphId={graphId}
-              parent={!multipleSources ? source : undefined}
-              child={target}
+              parentId={!multipleSources ? source : undefined}
+              childId={target}
             />
           )}
         </>

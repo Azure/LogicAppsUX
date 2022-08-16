@@ -101,7 +101,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>
-          <DropZone graphId={metadata?.graphId ?? ''} parent={id} />
+          <DropZone graphId={metadata?.graphId ?? ''} parentId={id} />
         </div>
       ) : null}
     </>
