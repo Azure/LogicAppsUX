@@ -16,10 +16,10 @@ export const createNodeWithDefaultSize = (id: string): WorkflowNode => {
 };
 
 export const addNodeToWorkflow = (
-  state: WorkflowState,
   payload: AddNodePayload,
   workflowGraph: WorkflowNode,
-  nodesMetadata: NodesMetadata
+  nodesMetadata: NodesMetadata,
+  state: WorkflowState
 ) => {
   // Add Node Data
   nodesMetadata[payload.id] = { graphId: payload.discoveryIds.graphId };
@@ -99,7 +99,8 @@ const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, newTarge
   });
 };
 
-const reassignAllNodeRunAfter = (state: WorkflowState, oldNodeId: string, newNodeId: string) => {
+const reassignAllNodeRunAfter = (state: WorkflowState | undefined, oldNodeId: string, newNodeId: string) => {
+  if (!state) return;
   const runAfter = (state.operations[oldNodeId] as LogicAppsV2.ActionDefinition).runAfter;
   state.operations[newNodeId] = { ...state.operations[newNodeId], runAfter };
   (state.operations[oldNodeId] as LogicAppsV2.ActionDefinition).runAfter = {
@@ -107,7 +108,8 @@ const reassignAllNodeRunAfter = (state: WorkflowState, oldNodeId: string, newNod
   };
 };
 
-const reassignNodeRunAfter = (state: WorkflowState, nodeId: string, oldTargetId: string, newTargetId: string) => {
+const reassignNodeRunAfter = (state: WorkflowState | undefined, nodeId: string, oldTargetId: string, newTargetId: string) => {
+  if (!state) return;
   const runAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition).runAfter;
   const data = runAfter?.[oldTargetId];
   if (data) {
