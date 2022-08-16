@@ -45,14 +45,14 @@
           "command": "dataMapperExtension.loadDataMapFile",
           "group": "navigation"
         }
-      ],
-      "submenus": [
-        {
-          "id": "dataMapperExtension.dataMapperMenu",
-          "label": "Data Mapper"
-        }
       ]
-    }
+    },
+    "submenus": [
+      {
+        "id": "dataMapperExtension.dataMapperMenu",
+        "label": "Data Mapper"
+      }
+    ]
   },
   "extensionDependencies": [
     "ms-vscode.azure-account"

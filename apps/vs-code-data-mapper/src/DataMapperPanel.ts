@@ -3,7 +3,12 @@ import { join } from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 import type { WebviewPanel, Disposable, ExtensionContext } from 'vscode';
 
-type MessageType = { command: any; data: any };
+// TODO: compiler errors if using this
+//import type { Schema, DataMap } from '@microsoft/logic-apps-data-mapper';
+
+// NOTE: Same as WebViewMsgHandler in ""-react src - TODO: find way to tie in together
+// TODO: should be Schema and DataMap for data's type respectively
+type MessageType = { command: 'loadInputSchema' | 'loadOutputSchema'; data: any } | { command: 'loadDataMap'; data: any };
 
 export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
@@ -32,7 +37,7 @@ export default class DataMapperPanel {
     this.currentPanel = new DataMapperPanel(panel, context.extensionPath);
   }
 
-  public sendMsgToWebview(msg: MessageEvent<MessageType>) {
+  public sendMsgToWebview(msg: MessageType) {
     this._panel.webview.postMessage(msg);
   }
 
@@ -44,6 +49,9 @@ export default class DataMapperPanel {
 
     this._setWebviewHtml(extPath);
 
+    // Handle messages from the webview (Data Mapper component)
+    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperPanel.contextSubscriptionsRef);
+
     this._panel.onDidDispose(
       () => {
         DataMapperPanel.currentPanel = undefined;
@@ -51,9 +59,6 @@ export default class DataMapperPanel {
       null,
       DataMapperPanel.contextSubscriptionsRef
     );
-
-    // Handle messages from the webview (Data Mapper component)
-    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperPanel.contextSubscriptionsRef);
   }
 
   private async _setWebviewHtml(extensionPath: string) {
@@ -73,6 +78,7 @@ export default class DataMapperPanel {
       const uri = Uri.file(path);
       return `${prefix}="${this._panel.webview.asWebviewUri(uri)}"`;
     };
+
     this._panel.webview.html = html.replace(matchLinks, toUri);
   }
 

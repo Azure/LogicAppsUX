@@ -3,6 +3,10 @@ import type { Schema } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+// NOTE: This is copied from DM-standalone and thus very cluttered -
+// For VSCode, pay attention to 'json' loadingMethod until we lock in
+// how we want to label this type of schema loading
+
 export interface SchemaLoadingState {
   armToken?: string;
   inputResourcePath?: string;
@@ -87,6 +91,12 @@ export const schemaDataLoaderSlice = createSlice({
     },
     changeLoadingMethod: (state, action: PayloadAction<'file' | 'arm'>) => {
       state.loadingMethod = action.payload;
+    },
+    changeInputSchema: (state, action: PayloadAction<Schema>) => {
+      state.inputSchema = action.payload;
+    },
+    changeOutputSchema: (state, action: PayloadAction<Schema>) => {
+      state.outputSchema = action.payload;
     },
   },
   extraReducers: (builder) => {
