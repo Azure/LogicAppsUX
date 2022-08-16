@@ -137,7 +137,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
 
   const internalSettings = (
     <>
-      {expanded || !showHeading ? renderSettings(settings, isReadOnly) : null}
+      {expanded || !showHeading ? <Setting isReadOnly={isReadOnly} settings={settings} /> : null}
       {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
     </>
   );
@@ -168,7 +168,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   );
 };
 
-const renderSettings = (settings: Settings[], isReadOnly?: boolean): JSX.Element => {
+const Setting = ({ settings, isReadOnly }: { settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
   return (
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
