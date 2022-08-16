@@ -46,7 +46,7 @@ export const workflowSlice = createSlice({
         throw new Error('graph not set');
       }
 
-      addNodeToWorkflow(action.payload, graph, state.nodesMetadata);
+      addNodeToWorkflow(state, action.payload, graph, state.nodesMetadata);
 
       // Danielle still need to add to OperationsState, will complete later in S10! https://msazure.visualstudio.com/DefaultCollection/One/_workitems/edit/14429900
     },
