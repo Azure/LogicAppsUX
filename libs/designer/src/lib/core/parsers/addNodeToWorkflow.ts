@@ -110,7 +110,8 @@ const reassignAllNodeRunAfter = (state: WorkflowState | undefined, oldNodeId: st
 
 const reassignNodeRunAfter = (state: WorkflowState | undefined, nodeId: string, oldTargetId: string, newTargetId: string) => {
   if (!state) return;
-  const runAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition).runAfter;
+  const runAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter;
+  if (!runAfter) return;
   const data = runAfter?.[oldTargetId];
   if (data) {
     runAfter[newTargetId] = data;
