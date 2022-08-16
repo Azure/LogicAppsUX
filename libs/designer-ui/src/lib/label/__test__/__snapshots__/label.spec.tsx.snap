@@ -2,7 +2,7 @@
 
 exports[`lib/label className should set the "class" attribute 1`] = `
 <label
-  className="class-name msla-label"
+  className="ms-Label class-name msla-label root-109"
   title="label text"
 >
   label text
@@ -11,7 +11,7 @@ exports[`lib/label className should set the "class" attribute 1`] = `
 
 exports[`lib/label htmlFor should set the "for" attribute 1`] = `
 <label
-  className="msla-label"
+  className="ms-Label msla-label root-109"
   htmlFor="an-input"
   title="label text"
 >
@@ -21,7 +21,7 @@ exports[`lib/label htmlFor should set the "for" attribute 1`] = `
 
 exports[`lib/label id should set the "id" attribute 1`] = `
 <label
-  className="msla-label"
+  className="ms-Label msla-label root-109"
   id="label-id"
   title="label text"
 >
@@ -31,7 +31,7 @@ exports[`lib/label id should set the "id" attribute 1`] = `
 
 exports[`lib/label isRequiredField should render the required parameter marker if set 1`] = `
 <label
-  className="msla-label"
+  className="ms-Label msla-label root-109"
   title="label text"
 >
   <span
@@ -46,7 +46,7 @@ exports[`lib/label isRequiredField should render the required parameter marker i
 
 exports[`lib/label should construct 1`] = `
 <label
-  className="msla-label"
+  className="ms-Label msla-label root-109"
   title="label"
 >
   label
@@ -55,7 +55,7 @@ exports[`lib/label should construct 1`] = `
 
 exports[`lib/label tooltip should set the "title" attribute if tooltip is set 1`] = `
 <label
-  className="msla-label"
+  className="ms-Label msla-label root-109"
   title="title"
 >
   <span

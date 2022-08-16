@@ -2,6 +2,7 @@ import type { SectionProps, TextChangeHandler } from '..';
 import constants from '../../../common/constants';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 type DictionaryRecordChangeHandler = (newVal: Record<string, string>) => void;
@@ -22,6 +23,12 @@ export const Tracking = ({
   onTrackedPropertiesStringValueChange,
 }: TrackingSectionProps): JSX.Element | null => {
   const intl = useIntl();
+
+  const trackedPropertiesTitle = intl.formatMessage({
+    defaultMessage: 'Tracked Properties',
+    description: 'title for tracked properties setting',
+  });
+
   const clientIdTrackingTitle = intl.formatMessage({
     defaultMessage: 'Custom Tracking Id',
     description: 'title for client tracking id setting',
@@ -34,16 +41,27 @@ export const Tracking = ({
     defaultMessage: 'Tracking',
     description: 'title for tracking component',
   });
-  const trackedPropertiesTitle = intl.formatMessage({
-    defaultMessage: 'Tracked Properties',
-    description: 'title for tracked properties setting',
-  });
+
+  const trackedPropertiesLabel = <SettingLabel labelText={trackedPropertiesTitle} isChild={false} />;
+
+  const onTrackedPropertiesChangeCallback = useCallback(
+    (newVal) => onTrackedPropertiesDictionaryValueChanged(newVal as Record<string, string>),
+    [onTrackedPropertiesDictionaryValueChanged]
+  );
+
+  const onTrackedPropertiesStringValueChanged = useCallback(
+    (newVal) => onTrackedPropertiesStringValueChange(newVal),
+    [onTrackedPropertiesStringValueChange]
+  );
+
+  const onClientTrackingIdChangeCallback = useCallback(
+    (_, newVal) => onClientTrackingIdChange(newVal as string),
+    [onClientTrackingIdChange]
+  );
 
   const clientTrackingIdLabel = (
     <SettingLabel labelText={clientIdTrackingTitle} infoTooltipText={clientTrackingTootltipText} isChild={false} />
   );
-
-  const trackedPropertiesLabel = <SettingLabel labelText={trackedPropertiesTitle} isChild={false} />;
 
   const trackingSectionProps: SettingSectionProps = {
     id: 'tracking',
@@ -57,8 +75,8 @@ export const Tracking = ({
         settingProp: {
           readOnly,
           value: correlation?.value?.clientTrackingId ?? '',
+          onValueChange: onClientTrackingIdChangeCallback,
           customLabel: () => clientTrackingIdLabel,
-          onValueChange: (_, newVal) => onClientTrackingIdChange(newVal as string),
         },
         visible: correlation?.isSupported,
       },
@@ -67,8 +85,8 @@ export const Tracking = ({
         settingProp: {
           readOnly,
           values: trackedProperties?.value,
-          onDictionaryChange: (newVal) => onTrackedPropertiesDictionaryValueChanged(newVal as Record<string, string>),
-          onTextFieldChange: (_, newVal) => onTrackedPropertiesStringValueChange(newVal as string),
+          onDictionaryChange: onTrackedPropertiesChangeCallback,
+          onTextFieldChange: onTrackedPropertiesStringValueChanged,
           customLabel: () => trackedPropertiesLabel,
         },
         visible: trackedProperties?.isSupported,
