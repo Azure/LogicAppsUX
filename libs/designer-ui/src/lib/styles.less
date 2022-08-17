@@ -1,6 +1,5 @@
 @import './reset.less';
 @import './actionbuttonv2/actionbuttonv2.less';
-@import './actionsummarycard/actionsummarycard.less';
 @import './common.less';
 @import './connectioncontainer.less';
 @import './variables.less';
@@ -29,13 +28,13 @@
 @import './htmleditor.less';
 @import './htmlcodevieweditor.less';
 @import './htmlwysiwygeditor.less';
+@import './infoDot/infoDot.less';
 @import './inputcontrol/inputcontrol.less';
 @import './label/label.less';
 @import './modaldialog/modaldialog.less';
 @import './pager/pager.less';
 @import './panel/panel.less';
 @import './panel/recommendationpanel/recommendation.less';
-@import './panel/recommendationpanel/operationGroupDetails/operationGroupDetails.less';
 @import './schemaeditor/schemaeditor.less';
 @import './table/table.less';
 @import './textbox/textbox.less';
@@ -59,7 +58,7 @@
 @import './editor/base/tokenpicker.less';
 @import './editor/base/editor.less';
 @import './peek/peek.less';
-@import './intellisensecontrol/intellisensecontrol.less';
+@import './expressioneditor/expressioneditor.less';
 @import './rulescontrol/rulescontrol.less';
 @import './itemspicker/itemspicker.less';
 @import './schemadataeditorcard.less';
@@ -390,6 +389,24 @@ body.dark {
   .msla-drop-zone {
     height: unset;
   }
+}
+
+.msla-psuedo-badge {
+  height: 18px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  flex: 0 0 auto;
+  color: rgba(47, 107, 183, 1);
+
+  // padding: 0px 6px;
+  // border: 1px solid rgb(180, 214, 250);
+  // border-radius: 64px;
+  // background: rgb(235, 243, 252);
+
+  padding: 0px 4px;
+  border: 1px solid rgba(47, 107, 183, 1);
+  border-radius: 2px;
 }
 
 .react-flow__node {

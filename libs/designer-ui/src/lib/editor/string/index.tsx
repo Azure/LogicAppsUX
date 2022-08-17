@@ -9,7 +9,7 @@ export interface StringEditorProps extends BaseEditorProps {
   singleLine?: boolean;
 }
 
-export const StringEditor = ({ placeholder, className, singleLine, initialValue, tokenGroup, onChange }: StringEditorProps) => {
+export const StringEditor = ({ placeholder, className, singleLine, initialValue, GetTokenPicker, onChange }: StringEditorProps) => {
   const [value, setValue] = useState(initialValue);
   const onValueChange = (newValue: ValueSegment[]): void => setValue(newValue);
   const handleBlur = () => {
@@ -25,7 +25,7 @@ export const StringEditor = ({ placeholder, className, singleLine, initialValue,
       initialValue={value}
       BasePlugins={{ tokens: true }}
       onBlur={handleBlur}
-      tokenGroup={tokenGroup}
+      GetTokenPicker={GetTokenPicker}
     >
       {singleLine ? <SingleLine /> : null}
       <Change setValue={onValueChange} />

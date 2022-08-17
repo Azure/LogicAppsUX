@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Ten łącznik ma wiele wersji, wbudowanych i hostowanych na platformie Azure. Użyj werji wbudowanej, aby uzyskać najlepszą wydajność, uwierzytelnianie parametrów połączenia i inne funkcje. Użyj hostowanej platformy Azure, aby uzyskać inne opcje uwierzytelniania."
     }
   ],
   "/WW7If": [
@@ -381,6 +381,12 @@
     {
       "type": 0,
       "value": "Pokaż widok kodu"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -716,7 +722,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Łącznik hybrydowy"
     }
   ],
   "63/zYN": [
@@ -959,22 +965,10 @@
       "value": "Zwraca obiekt z parą dodatkowych wartości właściwości"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -1005,6 +999,12 @@
     {
       "type": 0,
       "value": "Zwraca wartość true, jeśli oba parametry mają wartość true"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Akcje filtru"
     }
   ],
   "AIL7WX": [
@@ -1506,7 +1506,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Zobacz mniej"
     }
   ],
   "Gmya+V": [
@@ -1603,6 +1603,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnauł, Gornoałtajsk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
     }
   ],
   "IngtMG": [
@@ -1829,6 +1835,12 @@
       "value": "Zwraca składnik dnia tygodnia z sygnatury czasowej ciągu"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "Nie ma wyników dla Twojego wyszukiwania"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1870,13 +1882,19 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Dodaj gałąź równoległą"
     }
   ],
   "Lft/is": [
     {
       "type": 0,
       "value": "Dodaj nowe"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2434,7 +2452,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Mniej informacji"
     }
   ],
   "T0BFpC": [
@@ -2549,6 +2567,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Ameryka Środkowa"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2755,6 +2779,12 @@
       "value": "Ponów próbę"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Upewnij się, że pisownia wyrazów jest prawidłowa."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2770,7 +2800,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Wstaw nowy krok"
     }
   ],
   "XTYYks": [
@@ -2891,6 +2921,12 @@
       "value": "Zwraca pojedynczą tablicę lub obiekt ze wszystkimi elementami z dowolnej tablicy lub obiektu przekazanego do tej funkcji. Parametry funkcji mogą być zestawem obiektów lub zestawem tablic (nie ich kombinacją). Jeśli w końcowych danych wyjściowych istnieją dwa obiekty o tej samej nazwie, ostatni obiekt o danej nazwie jest wyświetlany w obiekcie końcowym."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Porady dotyczące wyszukiwania"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2942,7 +2978,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Więcej informacji"
     }
   ],
   "ZbX8xq": [
@@ -3062,7 +3098,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Uruchom po "
     },
     {
       "type": 1,
@@ -3129,6 +3165,12 @@
       "value": "Parametr wymagany. Wartość, której indeks jest wyszukiwany."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3139,16 +3181,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Trypolis"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3205,10 +3237,10 @@
       "value": "Dowiedz się więcej"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Wybierz"
+      "value": "Aktualizuj"
     }
   ],
   "dSTRb/": [
@@ -3288,7 +3320,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "przekroczono limit czasu"
     }
   ],
   "e00zot": [
@@ -3325,6 +3357,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba, przez którą dzielona jest dzielna."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3475,6 +3513,16 @@
     {
       "type": 0,
       "value": "Warunki wyzwalacza"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3982,7 +4030,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Dodaj akcję"
     }
   ],
   "mGUdCO": [
@@ -4057,6 +4105,12 @@
       "value": "Parametr wymagany. Wartość konwertowana na liczbę zmiennoprzecinkową."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Spróbuj użyć mniej konkretnych słów kluczowych."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -4073,6 +4127,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa właściwości do usunięcia."
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4141,6 +4201,12 @@
     {
       "type": 0,
       "value": "Transfer zawartości"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4569,6 +4635,12 @@
       "value": "(UTC-06:00) Guadalajara, Meksyk, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4611,12 +4683,6 @@
       "value": "(UTC+06:00) Nowosybirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Wyzwalacz"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4639,12 +4705,6 @@
     {
       "type": 0,
       "value": "Nazwa wyświetlana"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operacje"
     }
   ],
   "u/KSPz": [
@@ -4777,6 +4837,12 @@
     {
       "type": 0,
       "value": "Usuń"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "Wyrażenie jest nieprawidłowe."
     }
   ],
   "vXwYXe": [
@@ -5009,16 +5075,6 @@
       "value": "(UTC-10:00) Hawaje"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo dla łącznika "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -5083,6 +5139,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Ciąg przekonwertowany na wartość typu natywnego."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Wybierz akcje"
     }
   ],
   "zUgja+": [

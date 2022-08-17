@@ -6,9 +6,12 @@ import { useNodeConnectionName } from '../../../../core/state/selectors/actionMe
 import type { RootState } from '../../../../core/store';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import { updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
+import type { TokenGroup } from '../../../../core/utils/tokens';
+import { getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
+import { TokenPicker } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,15 +19,27 @@ import { useDispatch, useSelector } from 'react-redux';
 export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
+  const tokenstate = useSelector((state: RootState) => state.tokens);
   const readOnly = useReadOnly();
 
   const connectionName = useNodeConnectionName(selectedNodeId);
+
+  const tokenGroup = getOutputTokenSections(tokenstate, selectedNodeId);
+
+  const expressionGroup = getExpressionTokenSections();
 
   return (
     <>
       {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
         <div key={sectionName}>
-          <ParameterSection nodeId={selectedNodeId} group={inputs.parameterGroups[sectionName]} readOnly={readOnly} />
+          <ParameterSection
+            key={selectedNodeId}
+            nodeId={selectedNodeId}
+            group={inputs.parameterGroups[sectionName]}
+            readOnly={readOnly}
+            tokenGroup={tokenGroup}
+            expressionGroup={expressionGroup}
+          />
         </div>
       ))}
       {connectionName && <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />}
@@ -32,7 +47,19 @@ export const ParametersTab = () => {
   );
 };
 
-const ParameterSection = ({ nodeId, group, readOnly }: { nodeId: string; group: ParameterGroup; readOnly: boolean | undefined }) => {
+const ParameterSection = ({
+  nodeId,
+  group,
+  readOnly,
+  tokenGroup,
+  expressionGroup,
+}: {
+  nodeId: string;
+  group: ParameterGroup;
+  readOnly: boolean | undefined;
+  tokenGroup: TokenGroup[];
+  expressionGroup: TokenGroup[];
+}) => {
   const dispatch = useDispatch();
   const {
     isTrigger,
@@ -75,6 +102,20 @@ const ParameterSection = ({ nodeId, group, readOnly }: { nodeId: string; group: 
     [nodeId, group.id, isTrigger, operationInfo, nodeInputs, dependencies, nodeSettings, dispatch]
   );
 
+  const GetTokenPicker = (editorId: string, labelId: string, onClick?: (b: boolean) => void): JSX.Element => {
+    // check to see if there's a custom Token Picker
+    return (
+      <TokenPicker
+        editorId={editorId}
+        labelId={labelId}
+        tokenGroup={tokenGroup}
+        expressionGroup={expressionGroup}
+        setInTokenPicker={onClick}
+        initialExpression={''}
+      />
+    );
+  };
+
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI)
     .map((param) => {
@@ -91,6 +132,7 @@ const ParameterSection = ({ nodeId, group, readOnly }: { nodeId: string; group: 
           editorViewModel: param.editorViewModel,
           placeholder: param.placeholder,
           tokenEditor: true,
+          GetTokenPicker: GetTokenPicker,
           onValueChange: (newState: ChangeState) => onValueChange(param.id, newState),
         },
       };

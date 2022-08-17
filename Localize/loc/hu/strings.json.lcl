@@ -138,6 +138,9 @@
       <Item ItemId=";/VcZ9g" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ennek az összekötőnek több verziója van: beépített és Azure-ban üzemeltetett. Használja a beépített verziót a legjobb teljesítmény, a kapcsolati sztringes hitelesítés és egyéb funkciók eléréséhez. Használja az Azure-ban üzemeltetett verziót egyéb hitelesítési lehetőségek eléréséhez.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1020,6 +1023,9 @@
       <Item ItemId=";6+RwRp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Hybrid Connector]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hibrid összekötő]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1451,6 +1457,15 @@
           <Val><![CDATA[Returns true if both parameters are true]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Igaz értéket ad vissza, ha mindkét paraméter igaz.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AHB418" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Filter Actions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Szűrési műveletek]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2567,6 +2582,15 @@
           <Val><![CDATA[Returns the day of week component of a string timestamp]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Egy sztring típusú időbélyegnek a hét napját megadó összetevőjét adja vissza.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";L4RJF0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[There are no results for your search]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A keresés nem adott eredményeket]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3843,6 +3867,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";XH94im" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Ensure words are spelled correctly.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ügyeljen arra, hogy helyesen írja be a szavakat.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";XN9RvJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-08:00) Baja California]]></Val>
@@ -4019,6 +4052,15 @@
           <Val><![CDATA[Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Egyetlen olyan tömböt vagy objektumot ad vissza, amely a függvénynek átadott tömbök vagy objektumok bármelyikében szereplő elemeket tartalmazza. A függvény paramétereit egy objektumhalmazban vagy egy tömbökből álló halmazban (a kettő kombinációjával viszont nem) lehet megadni. Két egyforma nevű objektum szereplése esetén a végső objektumban az utolsó adott nevű objektum fog megjelenni.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";YfwZJO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Search Tips]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tippek a kereséshez]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4278,6 +4320,9 @@
       <Item ItemId=";bwfJdj" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Run after {sourceNodeId}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Futtatás a(z) {sourceNodeId} után]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4389,6 +4434,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";cVSEzV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[description for {connectorName}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[a(z) {connectorName} leírása]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ci6ex1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Value]]></Val>
@@ -4475,6 +4529,15 @@
           <Val><![CDATA[Select]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Kijelölés]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dOpdsP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Update]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Frissítés]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5625,6 +5688,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";n7wxxN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Try less specific keywords.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Használjon kevésbé specifikus kulcsszavakat.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";nGds/r" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The object to check if it is less than or equal to value being compared to.]]></Val>
@@ -6645,6 +6717,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";vVJuus" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[The expression is invalid.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A kifejezés érvénytelen.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";vXwYXe" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+06:00) Astana]]></Val>
@@ -7082,6 +7163,15 @@
           <Val><![CDATA[Required. The string that is converted to a native type value.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Kötelező megadni. A natív típusú értékké alakítandó sztring.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";zTKAc9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select Actions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Műveletek kiválasztása]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

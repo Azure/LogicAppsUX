@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Tento konektor má více verzí, integrovaných a hostovaných v Azure. Využijte integrované verze pro zajištění nejlepšího výkonu, ověřování připojovacího řetězce a dalších funkcí. Pro další možnosti ověřování použijte verze hostované v Azure."
     }
   ],
   "/WW7If": [
@@ -377,6 +377,12 @@
     {
       "type": 0,
       "value": "Zobrazit zobrazení kódu"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -712,7 +718,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Hybridní konektor"
     }
   ],
   "63/zYN": [
@@ -955,22 +961,10 @@
       "value": "Vrátí objekt s jedním párem vlastnost-hodnota navíc."
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -1001,6 +995,12 @@
     {
       "type": 0,
       "value": "Vrátí true, pokud jsou oba parametry true."
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Akce filtru"
     }
   ],
   "AIL7WX": [
@@ -1601,6 +1601,12 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altajsk"
     }
   ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
+    }
+  ],
   "IngtMG": [
     {
       "type": 0,
@@ -1825,6 +1831,12 @@
       "value": "Vrátí část řetězcového časového razítka, která představuje den v týdnu."
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "Vaše hledání nemá žádné výsledky."
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1866,13 +1878,19 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Přidat paralelní větev"
     }
   ],
   "Lft/is": [
     {
       "type": 0,
       "value": "Přidat nový"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2430,7 +2448,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Méně informací"
     }
   ],
   "T0BFpC": [
@@ -2545,6 +2563,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Střední Amerika"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2751,6 +2775,12 @@
       "value": "Zkusit znovu"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ujistěte se, že ve slovech není překlep."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2766,7 +2796,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Vloží nový krok."
     }
   ],
   "XTYYks": [
@@ -2887,6 +2917,12 @@
       "value": "Vrátí jedno pole nebo objekt, kde všechny prvky jsou buď v poli, nebo objektu předávaném této funkci. Parametry pro tuto funkci můžou být buď sada objektů, nebo sada polí (ne kombinace obou). Pokud jsou v konečném výstupu dva objekty se stejným názvem, zahrne se do konečného objektu poslední objekt s tímto názvem."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Tipy pro vyhledávání"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2938,7 +2974,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Více informací"
     }
   ],
   "ZbX8xq": [
@@ -3058,7 +3094,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Spustit po "
     },
     {
       "type": 1,
@@ -3125,6 +3161,12 @@
       "value": "Vyžadováno. Hodnota, jejíž index se má hledat."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3135,16 +3177,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3201,10 +3233,10 @@
       "value": "Další informace"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Vybrat"
+      "value": "Aktualizovat"
     }
   ],
   "dSTRb/": [
@@ -3284,7 +3316,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "vypršel časový limit"
     }
   ],
   "e00zot": [
@@ -3321,6 +3353,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Číslo, kterým se má dělit dělenec."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3471,6 +3509,16 @@
     {
       "type": 0,
       "value": "Podmínky aktivační události"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3970,7 +4018,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Přidat akci"
     }
   ],
   "mGUdCO": [
@@ -4045,6 +4093,12 @@
       "value": "Vyžadováno. Hodnota, která se má převést na číslo s plovoucí desetinnou čárkou."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Zkuste méně konkrétní klíčová slova."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -4061,6 +4115,12 @@
     {
       "type": 0,
       "value": "Povinné. Název vlastnosti, která se odebere"
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4129,6 +4189,12 @@
     {
       "type": 0,
       "value": "Přenos obsahu"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4557,6 +4623,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4599,12 +4671,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Trigger"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4627,12 +4693,6 @@
     {
       "type": 0,
       "value": "Zobrazovaný název"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operace"
     }
   ],
   "u/KSPz": [
@@ -4765,6 +4825,12 @@
     {
       "type": 0,
       "value": "Odstranit"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "Výraz je neplatný."
     }
   ],
   "vXwYXe": [
@@ -4997,16 +5063,6 @@
       "value": "(UTC-10:00) Havajské ostrovy"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo pro "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -5071,6 +5127,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který se převede na hodnotu nativního typu."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Vybrat akce"
     }
   ],
   "zUgja+": [

@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Deze connector heeft meerdere versies, ingebouwd en gehost door Azure. Gebruik ingebouwd voor de beste prestaties, verificatie van verbindingsreeksen en andere functies. Gebruik door Azure gehost voor andere verificatieopties."
     }
   ],
   "/WW7If": [
@@ -343,6 +343,12 @@
     {
       "type": 0,
       "value": "Codeweergave weergeven"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -678,7 +684,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Hybride connector"
     }
   ],
   "63/zYN": [
@@ -921,22 +927,10 @@
       "value": "Geeft als resultaat een object met een extra eigenschapwaardepaar"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "paneel"
     }
   ],
   "9djnqI": [
@@ -967,6 +961,12 @@
     {
       "type": 0,
       "value": "Indien beide parameters waar zijn, wordt Waar geretourneerd"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filteracties"
     }
   ],
   "AIL7WX": [
@@ -1424,7 +1424,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Minder weergeven"
     }
   ],
   "Gmya+V": [
@@ -1521,6 +1521,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaoel, Gorno-Altajsk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
     }
   ],
   "IngtMG": [
@@ -1725,6 +1731,12 @@
       "value": "Het onderdeel dag van de week van een tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "Er zijn geen resultaten voor uw zoekactie"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1766,13 +1778,19 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Een parallelle vertakking toevoegen"
     }
   ],
   "Lft/is": [
     {
       "type": 0,
       "value": "Nieuwe toevoegen"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2312,7 +2330,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Minder lezen"
     }
   ],
   "T0BFpC": [
@@ -2427,6 +2445,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Centraal-Amerika"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2633,6 +2657,12 @@
       "value": "Opnieuw proberen"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Controleer of woorden goed gespeld zijn."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2648,7 +2678,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Een nieuwe stap invoegen"
     }
   ],
   "XTYYks": [
@@ -2769,6 +2799,12 @@
       "value": "Hiermee wordt één matrix of één object opgehaald met alle elementen die in beide matrices of beide objecten voorkomen die voor deze functie zijn ingevoerd. De parameters voor de functie kunnen een set objecten zijn of een set matrices (niet een combinatie). Als er twee objecten met dezelfde naam zijn, wordt het laatste object met de betreffende naam weergegeven in het uiteindelijke object."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Zoektips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2820,7 +2856,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Meer informatie"
     }
   ],
   "ZbX8xq": [
@@ -2940,7 +2976,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Uitvoeren na "
     },
     {
       "type": 1,
@@ -3007,6 +3043,12 @@
       "value": "Vereist. De waarde waarvan de index moet worden doorzocht."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3017,16 +3059,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3083,10 +3115,10 @@
       "value": "Meer informatie"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Selecteren"
+      "value": "Bijwerken"
     }
   ],
   "dSTRb/": [
@@ -3166,7 +3198,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "er is een time-out opgetreden"
     }
   ],
   "e00zot": [
@@ -3203,6 +3235,12 @@
     {
       "type": 0,
       "value": "Vereist. Het getal waardoor het deeltal moet worden gedeeld."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3353,6 +3391,16 @@
     {
       "type": 0,
       "value": "Triggervoorwaarden"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3830,7 +3878,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Een actie toevoegen"
     }
   ],
   "mGUdCO": [
@@ -3905,6 +3953,12 @@
       "value": "Vereist. De waarde die wordt geconverteerd naar een drijvend-kommagetal."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Probeer minder specifieke trefwoorden."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3921,6 +3975,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de eigenschap die moet worden verwijderd."
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3989,6 +4049,12 @@
     {
       "type": 0,
       "value": "Inhoudsoverdracht"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4395,6 +4461,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexico, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4437,12 +4509,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Trigger"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4465,12 +4531,6 @@
     {
       "type": 0,
       "value": "Weergavenaam"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Bewerkingen"
     }
   ],
   "u/KSPz": [
@@ -4603,6 +4663,12 @@
     {
       "type": 0,
       "value": "Verwijderen"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "De expressie is ongeldig."
     }
   ],
   "vXwYXe": [
@@ -4835,16 +4901,6 @@
       "value": "(UTC-10:00) Hawaii"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4909,6 +4965,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die wordt geconverteerd naar een systeemeigen waarde."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Acties selecteren"
     }
   ],
   "zUgja+": [
