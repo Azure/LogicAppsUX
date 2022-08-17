@@ -39,7 +39,7 @@ export const WebViewCommunication: React.FC = ({ children }) => {
         dispatch(setFinalStatus(message.data));
         break;
       default:
-        throw new Error('Unknown post message recieved');
+        throw new Error('Unknown post message received');
     }
   });
   useEffect(() => {

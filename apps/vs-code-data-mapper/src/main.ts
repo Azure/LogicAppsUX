@@ -1,35 +1,16 @@
-import { promises as fs } from 'fs';
-import { join } from 'path';
+import { registerCommands } from './commands/commands';
 import type { ExtensionContext } from 'vscode';
-import { commands, window, ViewColumn, Uri } from 'vscode';
+import { commands, window } from 'vscode';
 
 export function activate(context: ExtensionContext) {
-  // Register command "start"
-  commands.registerCommand('dataMapperExtension.start', async () => {
-    const panel = window.createWebviewPanel(
-      'webview', // Key used to reference the panel
-      'webview', // Title display in the tab
-      ViewColumn.Active, // Editor column to show the new webview panel in.
-      { enableScripts: true }
-    );
+  window.showInformationMessage('Data Mapper extension has loaded!'); // TESTING ITEM
 
-    const indexPath = join(context.extensionPath, 'webview/index.html');
-    const html = await fs.readFile(indexPath, 'utf-8');
-    // 1. Get all link prefixed by href or src
-    const matchLinks = /(href|src)="([^"]*)"/g;
-    // 2. Transform the result of the regex into a vscode's URI format
-    const toUri = (_, prefix: 'href' | 'src', link: string) => {
-      // For
-      if (link === '#') {
-        return `${prefix}="${link}"`;
-      }
-      // For scripts & links
-      const path = join(context.extensionPath, 'webview', link);
-      const uri = Uri.file(path);
-      return `${prefix}="${panel.webview.asWebviewUri(uri)}"`;
-    };
-    panel.webview.html = html.replace(matchLinks, toUri);
+  // Set supported file extensions for context menu detection
+  commands.executeCommand('setContext', 'dataMapperExtension.supportedFileExts', [
+    '.xslt', // Data Maps
+    '.json', // Schemas
+    '.xml',
+  ]);
 
-    context.subscriptions.push(panel);
-  });
+  registerCommands(context);
 }

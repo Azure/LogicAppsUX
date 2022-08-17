@@ -9,7 +9,48 @@
     "commands": [
       {
         "command": "dataMapperExtension.start",
-        "title": "Open New Data Mapper"
+        "title": "Open Data Mapper"
+      },
+      {
+        "command": "dataMapperExtension.loadInputSchemaFile",
+        "title": "Load input schema"
+      },
+      {
+        "command": "dataMapperExtension.loadOutputSchemaFile",
+        "title": "Load output schema"
+      },
+      {
+        "command": "dataMapperExtension.loadDataMapFile",
+        "title": "Load data map"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "submenu": "dataMapperExtension.dataMapperMenu",
+          "group": "navigation",
+          "when": "resourceExtname in dataMapperExtension.supportedFileExts"
+        }
+      ],
+      "dataMapperExtension.dataMapperMenu": [
+        {
+          "command": "dataMapperExtension.loadInputSchemaFile",
+          "group": "navigation"
+        },
+        {
+          "command": "dataMapperExtension.loadOutputSchemaFile",
+          "group": "navigation"
+        },
+        {
+          "command": "dataMapperExtension.loadDataMapFile",
+          "group": "navigation"
+        }
+      ]
+    },
+    "submenus": [
+      {
+        "id": "dataMapperExtension.dataMapperMenu",
+        "label": "Data Mapper"
       }
     ]
   },
