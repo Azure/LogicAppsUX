@@ -56,7 +56,6 @@ export const addOperation = createAsyncThunk(
     initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
 
     getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
-    // dispatch(switchToOperationPanel(nodeId));
     return;
   }
 );
@@ -101,8 +100,8 @@ export const setDefaultConnectionForNode = async (nodeId: string, connectorId: s
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id }));
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
-    dispatch(switchToOperationPanel(nodeId));
   }
+  dispatch(switchToOperationPanel(nodeId));
 };
 
 export const addTokensAndVariables = (
