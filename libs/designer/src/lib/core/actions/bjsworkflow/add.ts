@@ -7,7 +7,7 @@ import { changeConnectionMapping } from '../../state/connection/connectionSlice'
 import type { AddNodeOperationPayload } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { IdsForDiscovery } from '../../state/panel/panelInterfaces';
-import { switchToOperationPanel } from '../../state/panel/panelSlice';
+import { switchToOperationPanel, isolateTab } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
@@ -56,7 +56,7 @@ export const addOperation = createAsyncThunk(
     initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
 
     getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
-    dispatch(switchToOperationPanel(nodeId));
+    // dispatch(switchToOperationPanel(nodeId));
     return;
   }
 );
@@ -99,6 +99,9 @@ export const setDefaultConnectionForNode = async (nodeId: string, connectorId: s
   const connections = await getConnectionsForConnector(connectorId);
   if (connections.length !== 0) {
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id }));
+  } else {
+    dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
+    dispatch(switchToOperationPanel(nodeId));
   }
 };
 
