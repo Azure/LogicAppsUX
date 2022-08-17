@@ -2,7 +2,8 @@ import type { SelectedWorkflowsList, WorkflowsList } from '../../../run-service'
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { updateSelectedItems } from './helper';
-import { Shimmer, Text } from '@fluentui/react';
+import { IconButton, Shimmer, Text } from '@fluentui/react';
+import type { IIconProps } from '@fluentui/react';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -11,9 +12,10 @@ export interface ISelectedListProps {
   isLoading: boolean;
   allWorkflows: WorkflowsList[];
   renderWorkflows: WorkflowsList[] | null;
+  deselectWorkflow: (workflowKey: string) => void;
 }
 
-export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, allWorkflows, renderWorkflows }) => {
+export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, allWorkflows, renderWorkflows, deselectWorkflow }) => {
   const intl = useIntl();
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { exportData } = vscodeState as InitializedVscodeState;
@@ -33,26 +35,6 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, allWorkf
     });
   }, []);
 
-  const getList = (list: SelectedWorkflowsList[]) => {
-    return list.map((workflow: SelectedWorkflowsList) => {
-      const { name, resourceGroup } = workflow;
-      return (
-        <div key={workflow.key} className="msla-export-workflows-panel-selected-list-item">
-          <Text variant="large" nowrap block className="msla-export-workflows-panel-selected-list-item-text">
-            {name + ' '}
-          </Text>
-          <div className="msla-export-workflows-panel-selected-list-item-subtext">
-            (
-            <Text variant="medium" nowrap block>
-              {resourceGroup}
-            </Text>
-            )
-          </div>
-        </div>
-      );
-    });
-  };
-
   useEffect(() => {
     const items = !allItems.length ? allWorkflows : allItems;
     const updatedItems = updateSelectedItems(items, renderWorkflows, selectedWorkflows);
@@ -62,8 +44,33 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, allWorkf
 
   const renderItems = useMemo(() => {
     const selectedItems = [...allItems.filter((item) => item.selected)];
+
+    const getList = (list: SelectedWorkflowsList[]) => {
+      return list.map((workflow: SelectedWorkflowsList) => {
+        const { name, resourceGroup } = workflow;
+        const deselectIcon: IIconProps = { iconName: 'Cancel' };
+        const deselectButton = <IconButton iconProps={deselectIcon} aria-label="cancel" onClick={() => deselectWorkflow(workflow.key)} />;
+
+        return (
+          <div key={workflow.key} className="msla-export-workflows-panel-selected-list-item">
+            {deselectButton}
+            <Text variant="large" nowrap block className="msla-export-workflows-panel-selected-list-item-text">
+              {name + ' '}
+            </Text>
+            <div className="msla-export-workflows-panel-selected-list-item-subtext">
+              (
+              <Text variant="medium" nowrap block>
+                {resourceGroup}
+              </Text>
+              )
+            </div>
+          </div>
+        );
+      });
+    };
+
     return isLoading ? shimmerList : getList(selectedItems);
-  }, [isLoading, shimmerList, allItems]);
+  }, [isLoading, shimmerList, allItems, deselectWorkflow]);
 
   return (
     <div className="msla-export-workflows-panel-selected">

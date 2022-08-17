@@ -100,8 +100,10 @@ export const WorkflowsSelection: React.FC = () => {
     allItemsSelected.current = updatedItems;
   }, [selectedWorkflows, renderWorkflows, allWorkflows]);
 
-  const selection = useMemo(() => {
+  const selection: Selection = useMemo(() => {
+    console.log('charlie22', selectedWorkflows);
     const onItemsChange = () => {
+      console.log('charlie3', selectedWorkflows);
       const actualSelection = selectedWorkflows.length ? selectedWorkflows : [...allItemsSelected.current.filter((item) => item.selected)];
       if (selection && selection.getItems().length > 0 && actualSelection.length > 0) {
         actualSelection.forEach((workflow: WorkflowsList) => {
@@ -111,6 +113,7 @@ export const WorkflowsSelection: React.FC = () => {
     };
 
     const onSelectionChanged = () => {
+      console.log('charlie4', selectedWorkflows);
       const currentSelection = selection.getSelection() as Array<WorkflowsList>;
       dispatch(
         updateSelectedWorkFlows({
@@ -209,6 +212,15 @@ export const WorkflowsSelection: React.FC = () => {
     );
   }, [resourceGroups, isWorkflowsLoading, allWorkflows, searchString]);
 
+  const deselectWorkflow = (itemKey: string) => {
+    const newSelection = [...selectedWorkflows.filter((item) => item.key !== itemKey)];
+    dispatch(
+      updateSelectedWorkFlows({
+        selectedWorkflows: newSelection,
+      })
+    );
+  };
+
   return (
     <div className="msla-export-workflows-panel">
       <div className="msla-export-workflows-panel-list">
@@ -227,6 +239,7 @@ export const WorkflowsSelection: React.FC = () => {
         isLoading={isWorkflowsLoading || renderWorkflows === null}
         allWorkflows={allWorkflows.current}
         renderWorkflows={renderWorkflows}
+        deselectWorkflow={deselectWorkflow}
       />
     </div>
   );
