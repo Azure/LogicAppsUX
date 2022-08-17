@@ -65,7 +65,6 @@ export const getChildrenNodes = (node: ElementNode, nodeMap?: Map<string, ValueS
   return text;
 };
 
-// TODO find out how to exit out of recursion when something is found
 export const findChildNode = (node: ElementNode, nodeKey: string, tokenType?: TokenType): ValueSegment | null => {
   let foundNode: ValueSegment | null = null;
   node.__children.find((child) => {

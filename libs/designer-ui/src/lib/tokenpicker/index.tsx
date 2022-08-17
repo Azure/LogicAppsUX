@@ -59,9 +59,9 @@ export function TokenPicker({
 
     setTimeout(() => {
       expressionEditorRef.current?.setSelection({
-        startLineNumber: 1,
+        startLineNumber: s.length + 1,
         startColumn: 1,
-        endLineNumber: 1,
+        endLineNumber: s.length + 1,
         endColumn: 1,
       });
       expressionEditorRef.current?.focus();
