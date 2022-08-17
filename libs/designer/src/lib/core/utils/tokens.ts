@@ -156,6 +156,7 @@ export function getExpressionTokenSections(): TokenGroup[] {
 export function getOutputTokenSections(state: TokensState, nodeId: string): TokenGroup[] {
   const { variables, outputTokens } = state;
   const nodeTokens = outputTokens[nodeId];
+  if (!nodeTokens) return [];
   const variableTokenGroup = {
     id: 'variables',
     label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),

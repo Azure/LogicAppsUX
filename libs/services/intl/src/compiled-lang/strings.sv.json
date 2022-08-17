@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Det här anslutningsprogrammet har flera versioner, inbyggt och Azure-baserat. Använd det inbyggda alternativet för bästa prestanda, autentisering av anslutningssträngar och andra funktioner. Använd det Azure-baserade alternativet för andra autentiseringsalternativ."
     }
   ],
   "/WW7If": [
@@ -343,6 +343,12 @@
     {
       "type": 0,
       "value": "Visa kodvy"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -678,7 +684,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Hybridanslutning"
     }
   ],
   "63/zYN": [
@@ -921,22 +927,10 @@
       "value": "Returnerar ett objekt med ett extra egenskapsvärdepar"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -967,6 +961,12 @@
     {
       "type": 0,
       "value": "Returnerar sant om båda parametrarna är sanna"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filteråtgärder"
     }
   ],
   "AIL7WX": [
@@ -1523,6 +1523,12 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
+    }
+  ],
   "IngtMG": [
     {
       "type": 0,
@@ -1725,6 +1731,12 @@
       "value": "Returnerar en strängtidsstämpels veckokomponent"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": " Det finns inte något resultat för din sökning"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1766,13 +1778,19 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Lägg till en parallell gren"
     }
   ],
   "Lft/is": [
     {
       "type": 0,
       "value": "Lägg till nytt"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2312,7 +2330,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Läs mindre"
     }
   ],
   "T0BFpC": [
@@ -2427,6 +2445,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Centralamerika"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2633,6 +2657,12 @@
       "value": "Försök igen"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Kontrollera att orden stavas korrekt."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2648,7 +2678,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Infoga ett nytt steg"
     }
   ],
   "XTYYks": [
@@ -2769,6 +2799,12 @@
       "value": "Returnerar en enskild matris eller ett objekt med alla de element som finns i den matris eller det objekt som har skickats till den här funktionen. Funktionens parametrar kan antingen vara en uppsättning objekt eller en uppsättning matriser (inte en blandning av båda). Om det finns två objekt med samma namn i utdata, så visas det sista objektet med det namnet i det slutliga objektet."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Söktips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2820,7 +2856,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Läs mer"
     }
   ],
   "ZbX8xq": [
@@ -2940,7 +2976,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Kör efter "
     },
     {
       "type": 1,
@@ -3007,6 +3043,12 @@
       "value": "Obligatoriskt. Det värde det ska sökas efter i indexet."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3017,16 +3059,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3083,10 +3115,10 @@
       "value": "Läs mer"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Välj"
+      "value": "Uppdatera"
     }
   ],
   "dSTRb/": [
@@ -3166,7 +3198,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "tidsgränsen har uppnåtts"
     }
   ],
   "e00zot": [
@@ -3203,6 +3235,12 @@
     {
       "type": 0,
       "value": "Krävs. Talet att dela nämnaren med."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3353,6 +3391,16 @@
     {
       "type": 0,
       "value": "Utlösarvillkor"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3830,7 +3878,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Lägga till en åtgärd"
     }
   ],
   "mGUdCO": [
@@ -3905,6 +3953,12 @@
       "value": "Obligatoriskt. Det värde som konverteras till ett flyttalsnummer."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Försök med mindre specifika nyckelord."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3921,6 +3975,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Namnet på den egenskap som ska tas bort."
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3989,6 +4049,12 @@
     {
       "type": 0,
       "value": "Innehållsöverföring"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4395,6 +4461,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4437,12 +4509,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Utlös"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4465,12 +4531,6 @@
     {
       "type": 0,
       "value": "Visningsnamn"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Åtgärder"
     }
   ],
   "u/KSPz": [
@@ -4603,6 +4663,12 @@
     {
       "type": 0,
       "value": "Ta bort"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "Uttrycket är ogiltigt."
     }
   ],
   "vXwYXe": [
@@ -4835,16 +4901,6 @@
       "value": "(UTC-10:00) Hawaii"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logotyp för "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4909,6 +4965,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den sträng som konverteras till ett värde av ursprunglig typ."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Välj åtgärder"
     }
   ],
   "zUgja+": [

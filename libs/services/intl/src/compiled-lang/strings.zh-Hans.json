@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "此连接器具有多个内置和 Azure 托管版本。将内置版本用于获得最佳性能、连接字符串身份验证和其他功能。将 Azure 托管版本用于其他身份验证选项。"
     }
   ],
   "/WW7If": [
@@ -336,6 +336,12 @@
     {
       "type": 0,
       "value": "显示代码视图"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -671,7 +677,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "混合连接器"
     }
   ],
   "63/zYN": [
@@ -914,22 +920,10 @@
       "value": "返回一个对象，此对象具有其他的属性值对"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "面板"
     }
   ],
   "9djnqI": [
@@ -960,6 +954,12 @@
     {
       "type": 0,
       "value": "如果两个参数均为 true，则返回 true"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "筛选器操作"
     }
   ],
   "AIL7WX": [
@@ -1387,7 +1387,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "查看更少"
     }
   ],
   "Gmya+V": [
@@ -1484,6 +1484,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) 巴尔瑙尔，戈尔诺-阿尔泰斯克"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
     }
   ],
   "IngtMG": [
@@ -1677,6 +1683,12 @@
       "value": "返回字符串时间戳星期组件的某天"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "没有搜索到结果"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1710,13 +1722,19 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "添加并行分支"
     }
   ],
   "Lft/is": [
     {
       "type": 0,
       "value": "新增"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2241,7 +2259,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "阅读简略信息"
     }
   ],
   "T0BFpC": [
@@ -2356,6 +2374,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00)中美洲"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2566,6 +2590,12 @@
       "value": "重试"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "请确保单词拼写正确。"
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2581,7 +2611,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "插入新步骤"
     }
   ],
   "XTYYks": [
@@ -2702,6 +2732,12 @@
       "value": "返回一个数组或对象，它的所有元素均位于传入此函数的数组或对象中。此函数的参数可以是一组对象或一组数据(不可两者混合)。如果两个对象在最终输出中的名称相同，则最终对象中将显示后一个对象的名称。"
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "搜索提示"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2753,7 +2789,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "阅读更多信息"
     }
   ],
   "ZbX8xq": [
@@ -2873,11 +2909,15 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "在 "
     },
     {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " 之后运行"
     }
   ],
   "bx3qeC": [
@@ -2940,6 +2980,12 @@
       "value": "必需。要搜索其索引的值。"
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -2950,16 +2996,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00)的黎波里"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3016,10 +3052,10 @@
       "value": "了解详细信息"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "选择"
+      "value": "更新"
     }
   ],
   "dSTRb/": [
@@ -3099,7 +3135,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "已超时"
     }
   ],
   "e00zot": [
@@ -3136,6 +3172,12 @@
     {
       "type": 0,
       "value": "必需。被除数要除以的数字。"
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3286,6 +3328,16 @@
     {
       "type": 0,
       "value": "触发器条件"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3752,7 +3804,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "添加操作"
     }
   ],
   "mGUdCO": [
@@ -3827,6 +3879,12 @@
       "value": "必需。转换为浮点数的值。"
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "请尝试不太特定的关键字。"
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3843,6 +3901,12 @@
     {
       "type": 0,
       "value": "必填。要删除的属性名称。"
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3919,6 +3983,12 @@
     {
       "type": 0,
       "value": "内容传输"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4314,6 +4384,12 @@
       "value": "(UTC-06:00)瓜达拉哈拉，墨西哥市，蒙特雷"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4356,12 +4432,6 @@
       "value": "(UTC+06:00) 新西伯利亚"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "触发器"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4384,12 +4454,6 @@
     {
       "type": 0,
       "value": "显示名称"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "操作"
     }
   ],
   "u/KSPz": [
@@ -4522,6 +4586,12 @@
     {
       "type": 0,
       "value": "删除"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "表达式无效。"
     }
   ],
   "vXwYXe": [
@@ -4754,16 +4824,6 @@
       "value": "(UTC-10:00)夏威夷"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " 徽标"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4828,6 +4888,12 @@
     {
       "type": 0,
       "value": "必需。转换为本机类型值的字符串。"
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "选择操作"
     }
   ],
   "zUgja+": [

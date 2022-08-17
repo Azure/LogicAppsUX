@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Bu bağlayıcının yerleşik ve Azure’da barındırılan olmak üzere birden çok sürümü var. En iyi performans, bağlantı dizesi kimlik doğrulaması ve diğer özellikler için yerleşik sürümü kullanın. Diğer kimlik doğrulama seçenekleri için Azure’da barındırılan sürümü kullanın."
     }
   ],
   "/WW7If": [
@@ -343,6 +343,12 @@
     {
       "type": 0,
       "value": "Kod görünümünü göster"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -678,7 +684,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Karma Bağlayıcı"
     }
   ],
   "63/zYN": [
@@ -921,22 +927,10 @@
       "value": "Ek özellik-değer çifti içeren bir nesneyi döndürür"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -967,6 +961,12 @@
     {
       "type": 0,
       "value": "İki parametre de true ise true döndürür"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Eylemleri Filtrele"
     }
   ],
   "AIL7WX": [
@@ -1416,7 +1416,7 @@
   "Gi72X5": [
     {
       "type": 0,
-      "value": "See Less"
+      "value": "Daha Az Göster"
     }
   ],
   "Gmya+V": [
@@ -1513,6 +1513,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
     }
   ],
   "IngtMG": [
@@ -1717,6 +1723,12 @@
       "value": "Bir dize zaman damgası için haftanın günü bileşenini döndürür"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "Aramanız için sonuç yok"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1750,13 +1762,19 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Parallel dal ekle"
     }
   ],
   "Lft/is": [
     {
       "type": 0,
       "value": "Yeni ekle"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2292,7 +2310,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Daha azını oku"
     }
   ],
   "T0BFpC": [
@@ -2407,6 +2425,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Orta Amerika"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2613,6 +2637,12 @@
       "value": "Yeniden dene"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Sözcüklerin doğru yazıldığından emin olun."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2628,7 +2658,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Yeni bir adım ekleyin"
     }
   ],
   "XTYYks": [
@@ -2749,6 +2779,12 @@
       "value": "Bu işleve geçirilen dizi veya nesneden herhangi birindeki tüm öğeleri içeren tek bir dizi veya nesne döndürür. İşlevin parametreleri bir nesne kümesi ya da bir dizi kümesi olabilir (ikisinin karışımı olamaz). Son çıkışta aynı ada sahip iki nesne varsa, son nesnede bu ada sahip son nesne görünür."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Arama İpuçları"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2800,7 +2836,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Daha fazlasını oku"
     }
   ],
   "ZbX8xq": [
@@ -2919,12 +2955,12 @@
   ],
   "bwfJdj": [
     {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " düğümünden sonra çalıştır"
     }
   ],
   "bx3qeC": [
@@ -2987,6 +3023,12 @@
       "value": "Gerekli. Dizini aranacak değer."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -2997,16 +3039,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3063,10 +3095,10 @@
       "value": "Daha fazla bilgi edinin"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Seç"
+      "value": "Güncelleştir"
     }
   ],
   "dSTRb/": [
@@ -3142,7 +3174,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "zaman aşımına uğradı"
     }
   ],
   "e00zot": [
@@ -3179,6 +3211,12 @@
     {
       "type": 0,
       "value": "Gerekli. Bölünenin bölüneceği sayı."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3329,6 +3367,16 @@
     {
       "type": 0,
       "value": "Tetikleyici Koşulları"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3790,7 +3838,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Eylem ekle"
     }
   ],
   "mGUdCO": [
@@ -3865,6 +3913,12 @@
       "value": "Gerekli. Kayan noktalı sayıya dönüştürülen değer."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Daha genel anlamlı anahtar sözcükler kullanmayı deneyin."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3881,6 +3935,12 @@
     {
       "type": 0,
       "value": "Gerekli. Kaldırılacak özelliğin adı."
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3949,6 +4009,12 @@
     {
       "type": 0,
       "value": "İçerik Aktarımı"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4355,6 +4421,12 @@
       "value": "(UTC-06:00) Guadalahara, Mexico City, Monterey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4397,12 +4469,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Tetikleyici"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4425,12 +4491,6 @@
     {
       "type": 0,
       "value": "Görünen Ad"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "İşlemler"
     }
   ],
   "u/KSPz": [
@@ -4563,6 +4623,12 @@
     {
       "type": 0,
       "value": "Sil"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "İfade geçersiz."
     }
   ],
   "vXwYXe": [
@@ -4791,16 +4857,6 @@
       "value": "(UTC-10:00) Hawaii"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " logosu"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4865,6 +4921,12 @@
     {
       "type": 0,
       "value": "Gerekli. Yerel tür değerine dönüştürülen değer."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Eylemleri Seç"
     }
   ],
   "zUgja+": [

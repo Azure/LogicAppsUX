@@ -3,8 +3,9 @@ import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateManagedConnections } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
-import { SearchableDropdown } from '../components/searchableDropdown';
+import { SearchableDropdown } from '../../components/searchableDropdown';
 import { parseResourceGroupsData } from './helper';
+import { NewResourceGroup } from './newResourceGroup';
 import { Checkbox, Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -77,7 +78,7 @@ export const ManagedConnections: React.FC = () => {
     const resourceGroups: IDropdownOption[] =
       isResourceGroupsLoading || !resourceGroupsData ? [] : parseResourceGroupsData(resourceGroupsData);
 
-    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
+    const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement> | undefined, selectedOption?: IDropdownOption) => {
       if (selectedOption && selectedResourceGroup !== selectedOption.key) {
         const resourceGroupId = selectedOption.key as string;
         dispatch(
@@ -90,18 +91,27 @@ export const ManagedConnections: React.FC = () => {
       }
     };
 
+    const onAddNewResourceGroup = (selectedOption: IDropdownOption) => {
+      resourceGroupsData.resourceGroups.unshift({ name: selectedOption.key, location: selectedOption.data, text: selectedOption.text });
+
+      onChangeResourceGroup(undefined, selectedOption);
+    };
+
     return isConnectionsChecked ? (
-      <SearchableDropdown
-        placeholder={intlText.SELECT_OPTION}
-        label={intlText.RESOURCE_GROUP}
-        disabled={isResourceGroupsLoading || !resourceGroups.length}
-        options={resourceGroups}
-        className="msla-export-summary-connections-dropdown"
-        onChange={onChangeResourceGroup}
-        selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : null}
-        isLoading={isResourceGroupsLoading}
-        searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
-      />
+      <>
+        <SearchableDropdown
+          placeholder={intlText.SELECT_OPTION}
+          label={intlText.RESOURCE_GROUP}
+          disabled={isResourceGroupsLoading || !resourceGroups.length}
+          options={resourceGroups}
+          className="msla-export-summary-connections-dropdown"
+          onChange={onChangeResourceGroup}
+          selectedKey={selectedResourceGroup !== undefined ? selectedResourceGroup : null}
+          isLoading={isResourceGroupsLoading}
+          searchBoxPlaceholder={intlText.SEARCH_RESOURCE_GROUP}
+        />
+        <NewResourceGroup onAddNewResourceGroup={onAddNewResourceGroup} resourceGroups={resourceGroups} />
+      </>
     ) : null;
   }, [
     isConnectionsChecked,

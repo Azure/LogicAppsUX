@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "このコネクタには、組み込みと Azure ホステッドの複数のバージョンがあります。最適なパフォーマンス、接続文字列認証、およびその他の機能には、組み込みを使用します。その他の認証オプションには、Azure ホステッドを使用します。"
     }
   ],
   "/WW7If": [
@@ -332,6 +332,12 @@
     {
       "type": 0,
       "value": "コード ビューの表示"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -667,7 +673,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "ハイブリッド コネクタ"
     }
   ],
   "63/zYN": [
@@ -910,22 +916,10 @@
       "value": "追加のプロパティ値ペアが含まれるオブジェクトを返します"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "パネル"
     }
   ],
   "9djnqI": [
@@ -956,6 +950,12 @@
     {
       "type": 0,
       "value": "両方のパラメーターが true の場合は true を返します"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "フィルター操作:"
     }
   ],
   "AIL7WX": [
@@ -1482,6 +1482,12 @@
       "value": "(UTC+07:00) バルナウル、ゴルノ・アルタイスク"
     }
   ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
+    }
+  ],
   "IngtMG": [
     {
       "type": 0,
@@ -1673,6 +1679,12 @@
       "value": "文字列のタイムスタンプの曜日部分を返します"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "検索の結果がありません"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1706,13 +1718,19 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "並列分岐の追加"
     }
   ],
   "Lft/is": [
     {
       "type": 0,
       "value": "新規追加"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2237,7 +2255,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "表示を減らす"
     }
   ],
   "T0BFpC": [
@@ -2352,6 +2370,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) 中央アメリカ"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2558,6 +2582,12 @@
       "value": "再試行"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "単語の入力ミスがないことを確認する。"
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2573,7 +2603,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "新しいステップを挿入します"
     }
   ],
   "XTYYks": [
@@ -2694,6 +2724,12 @@
       "value": "この関数に渡されるアレイまたはオブジェクト内にあるすべての要素を含む単一のアレイまたはオブジェクトを返します。この関数のパラメーターには、一連のオブジェクトまたは一連のアレイを指定できます (混在させることはできません)。最終的な出力に同じ名前のオブジェクトが 2 つある場合は、その名前の付いた最後のオブジェクトが最終的なオブジェクトに表示されます。"
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "検索のヒント:"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2745,7 +2781,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "表示を増やす"
     }
   ],
   "ZbX8xq": [
@@ -2864,12 +2900,12 @@
   ],
   "bwfJdj": [
     {
-      "type": 0,
-      "value": "Run after "
-    },
-    {
       "type": 1,
       "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " の後に実行"
     }
   ],
   "bx3qeC": [
@@ -2932,6 +2968,12 @@
       "value": "必須。インデックスを検索する値。"
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -2942,16 +2984,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) トリポリ"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3008,10 +3040,10 @@
       "value": "詳細情報"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "選択"
+      "value": "更新"
     }
   ],
   "dSTRb/": [
@@ -3087,7 +3119,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "タイムアウトしました"
     }
   ],
   "e00zot": [
@@ -3124,6 +3156,12 @@
     {
       "type": 0,
       "value": "必須。Dividend を除算する数値。"
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3274,6 +3312,16 @@
     {
       "type": 0,
       "value": "トリガー条件"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3724,7 +3772,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "アクションの追加"
     }
   ],
   "mGUdCO": [
@@ -3799,6 +3847,12 @@
       "value": "必須。浮動小数点数に変換される値。"
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "より一般的なキーワードを試す。"
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3815,6 +3869,12 @@
     {
       "type": 0,
       "value": "必須。削除するプロパティの名前。"
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3883,6 +3943,12 @@
     {
       "type": 0,
       "value": "コンテンツ転送"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4278,6 +4344,12 @@
       "value": "(UTC-06:00) グアダラハラ、メキシコシティ、モンテレー"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4320,12 +4392,6 @@
       "value": "(UTC+06:00) ノボシビルスク"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "トリガー"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4348,12 +4414,6 @@
     {
       "type": 0,
       "value": "表示名"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "操作"
     }
   ],
   "u/KSPz": [
@@ -4486,6 +4546,12 @@
     {
       "type": 0,
       "value": "削除"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "式が無効です。"
     }
   ],
   "vXwYXe": [
@@ -4714,16 +4780,6 @@
       "value": "(UTC-10:00) ハワイ"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " のロゴ"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4788,6 +4844,12 @@
     {
       "type": 0,
       "value": "必須。ネイティブな型の値に変換される文字列。"
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "アクションの選択"
     }
   ],
   "zUgja+": [

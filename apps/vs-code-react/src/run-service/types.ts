@@ -154,6 +154,7 @@ interface RunTriggerHistoryProperties {
 export enum ProjectName {
   export = 'export',
   overview = 'overview',
+  review = 'review',
 }
 
 export interface WorkflowProperties {
@@ -238,6 +239,15 @@ export interface IDropDownOption {
   text: string;
 }
 
+export interface IResourceGroup {
+  name: string;
+  location: string;
+  id?: string;
+  subscriptionId?: string;
+  resourceGroup?: string;
+  text?: string;
+}
+
 export enum RouteName {
   export = 'export',
   instance_selection = 'instance-selection',
@@ -246,6 +256,7 @@ export enum RouteName {
   overview = 'overview',
   summary = 'summary',
   status = 'status',
+  review = 'review',
 }
 
 export enum ValidationStatus {
@@ -262,10 +273,8 @@ export interface IWorkflowValidation {
 }
 
 export interface IValidationData {
-  properties: {
-    validationState: string;
-    workflows: Record<string, IWorkflowValidation>;
-  };
+  validationState: string;
+  workflows: Record<string, IWorkflowValidation>;
 }
 
 export interface IGroupedGroup {
@@ -361,4 +370,15 @@ export enum StyledDetailCategory {
 export interface ITargetDirectory {
   fsPath: string;
   path: string;
+}
+
+export interface INamingRules {
+  minLength: number;
+  maxLength: number;
+  invalidCharsRegExp: RegExp;
+}
+
+export interface INamingValidation {
+  validationError: string;
+  validName: boolean;
 }

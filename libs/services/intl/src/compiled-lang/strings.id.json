@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Konektor ini memiliki beberapa versi, bawaan dan yang dihosting Azure. Gunakan bawaan untuk mendapatkan performa terbaik, autentikasi koneksi-string, dan fitur lainnya. Gunakan yang dihosting Azure untuk opsi autentikasi lainnya."
     }
   ],
   "/WW7If": [
@@ -332,6 +332,12 @@
     {
       "type": 0,
       "value": "Tampilkan tampilan kode"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -667,7 +673,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Konektor Hibrid"
     }
   ],
   "63/zYN": [
@@ -910,22 +916,10 @@
       "value": "Menghasilkan objek dengan pasangan nilai properti tambahan"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -956,6 +950,12 @@
     {
       "type": 0,
       "value": "Menampilkan true jika kedua parameter benar"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Tindakan"
     }
   ],
   "AIL7WX": [
@@ -1482,6 +1482,12 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
+    }
+  ],
   "IngtMG": [
     {
       "type": 0,
@@ -1673,6 +1679,12 @@
       "value": "Menampilkan komponen jumlah hari dalam seminggu dari tanda waktu string"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "Tidak ada hasil untuk pencarian Anda"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1706,13 +1718,19 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Tambahkan cabang paralel"
     }
   ],
   "Lft/is": [
     {
       "type": 0,
       "value": "Tambah baru"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2237,7 +2255,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Baca lebih sedikit"
     }
   ],
   "T0BFpC": [
@@ -2352,6 +2370,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Amerika Tengah"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2558,6 +2582,12 @@
       "value": "Coba lagi"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Pastikan kata dieja dengan benar."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2573,7 +2603,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Masukkan langkah baru"
     }
   ],
   "XTYYks": [
@@ -2694,6 +2724,12 @@
       "value": "Mengembalikan array tunggal atau objek tunggal dengan semua elemen yang ada dalam array atau objek yang dilewati. Parameter untuk fungsi dapat berupa sekumpulan objek atau sekumpulan susunan (bukan gabungan keduanya). Jika ada dua objek dengan nama yang sama, objek terakhir dengan nama tersebut muncul di objek akhir."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Tips Pencarian"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2745,7 +2781,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Baca selengkapnya"
     }
   ],
   "ZbX8xq": [
@@ -2865,7 +2901,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Jalankan setelah "
     },
     {
       "type": 1,
@@ -2932,6 +2968,12 @@
       "value": "Harus diisi. Nilai untuk mencari indeks."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -2942,16 +2984,6 @@
     {
       "type": 0,
       "value": "(UTC+02.00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3008,10 +3040,10 @@
       "value": "Pelajari selengkapnya"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Pilih"
+      "value": "Perbarui"
     }
   ],
   "dSTRb/": [
@@ -3091,7 +3123,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "habis waktu"
     }
   ],
   "e00zot": [
@@ -3128,6 +3160,12 @@
     {
       "type": 0,
       "value": "Wajib. Nomor untuk membagi Dividend."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3278,6 +3316,16 @@
     {
       "type": 0,
       "value": "Kondisi Pemicu"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3728,7 +3776,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Tambahkan tindakan"
     }
   ],
   "mGUdCO": [
@@ -3803,6 +3851,12 @@
       "value": "Harus diisi. Nilai yang dikonversi ke angka titik mengambang."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Coba kata kunci yang kurang spesifik."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3819,6 +3873,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama properti yang akan dihapus."
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3887,6 +3947,12 @@
     {
       "type": 0,
       "value": "Transfer Konten"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4282,6 +4348,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4324,12 +4396,6 @@
       "value": "(UTC+06.00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Pemicu"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4352,12 +4418,6 @@
     {
       "type": 0,
       "value": "Nama Tampilan"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operasi"
     }
   ],
   "u/KSPz": [
@@ -4490,6 +4550,12 @@
     {
       "type": 0,
       "value": "Hapus"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "Ekspresi tidak valid."
     }
   ],
   "vXwYXe": [
@@ -4722,16 +4788,6 @@
       "value": "(UTC-10.00) Hawaii"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo untuk "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4796,6 +4852,12 @@
     {
       "type": 0,
       "value": "Harus diisi. String yang dikonversi ke nilai jenis asli."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Pilih Tindakan"
     }
   ],
   "zUgja+": [

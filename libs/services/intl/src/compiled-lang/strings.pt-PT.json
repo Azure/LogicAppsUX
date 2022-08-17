@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Este conector tem várias versões, incorporada e alojada no Azure. Utilize a versão incorporada para obter o melhor desempenho, autenticação de cadeia de ligação e outras funcionalidades. Utilize a versão alojada no Azure para obter outras opções de autenticação."
     }
   ],
   "/WW7If": [
@@ -343,6 +343,12 @@
     {
       "type": 0,
       "value": "Mostrar vista de código"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -678,7 +684,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Conector Híbrido"
     }
   ],
   "63/zYN": [
@@ -921,22 +927,10 @@
       "value": "Devolve um objeto com um par de valores de propriedade adicionais"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "painel"
     }
   ],
   "9djnqI": [
@@ -967,6 +961,12 @@
     {
       "type": 0,
       "value": "Devolve verdadeiro se ambos os parâmetros forem verdadeiros"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filtrar Ações"
     }
   ],
   "AIL7WX": [
@@ -1523,6 +1523,12 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
     }
   ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
+    }
+  ],
   "IngtMG": [
     {
       "type": 0,
@@ -1725,6 +1731,12 @@
       "value": "Devolve o dia do componente da semana de um carimbo de data/hora de cadeia"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "Não existem resultados para a pesquisa"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1766,13 +1778,19 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Adicionar um ramo paralelo"
     }
   ],
   "Lft/is": [
     {
       "type": 0,
       "value": "Adicionar novo"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2308,7 +2326,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Ler menos"
     }
   ],
   "T0BFpC": [
@@ -2423,6 +2441,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) América Central"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2629,6 +2653,12 @@
       "value": "Tentar novamente"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Assegure-se de que todas as palavras são escritas corretamente."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2644,7 +2674,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Inserir um novo passo"
     }
   ],
   "XTYYks": [
@@ -2765,6 +2795,12 @@
       "value": "Devolve uma matriz ou um objeto únicos com todos os elementos que existem na matriz ou no objeto transmitidos a esta função. Os parâmetros da função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura de ambos). Se existirem dois objetos com o mesmo nome no resultado final, o último objeto com esse nome aparece no objeto final."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Sugestões de Pesquisa"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2816,7 +2852,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "Ler mais"
     }
   ],
   "ZbX8xq": [
@@ -2936,7 +2972,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Executar após "
     },
     {
       "type": 1,
@@ -3003,6 +3039,12 @@
       "value": "Obrigatório. O valor cujo índice deve ser pesquisado."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3013,16 +3055,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Trípoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3079,10 +3111,10 @@
       "value": "Saber mais"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Selecionar"
+      "value": "Atualizar"
     }
   ],
   "dSTRb/": [
@@ -3162,7 +3194,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "tempo limite esgotado"
     }
   ],
   "e00zot": [
@@ -3199,6 +3231,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O número pelo qual se divide o Dividendo."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3349,6 +3387,16 @@
     {
       "type": 0,
       "value": "Condições do Acionador"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3834,7 +3882,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Adicionar uma ação"
     }
   ],
   "mGUdCO": [
@@ -3909,6 +3957,12 @@
       "value": "Obrigatório. O valor que é convertido num número de vírgula flutuante."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Experimente com palavras-chave menos específicas."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3925,6 +3979,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da propriedade a remover."
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3993,6 +4053,12 @@
     {
       "type": 0,
       "value": "Transferência de Conteúdo"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4399,6 +4465,12 @@
       "value": "(UTC-06:00) Guadalajara, Cidade do México, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4441,12 +4513,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Acionar"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4469,12 +4535,6 @@
     {
       "type": 0,
       "value": "Nome a Apresentar"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operações"
     }
   ],
   "u/KSPz": [
@@ -4607,6 +4667,12 @@
     {
       "type": 0,
       "value": "Eliminar"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "A expressão é inválida."
     }
   ],
   "vXwYXe": [
@@ -4839,16 +4905,6 @@
       "value": "(UTC-10:00) Havai"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logótipo do "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4913,6 +4969,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia que é convertida num valor de tipo nativo."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Selecionar Ações"
     }
   ],
   "zUgja+": [

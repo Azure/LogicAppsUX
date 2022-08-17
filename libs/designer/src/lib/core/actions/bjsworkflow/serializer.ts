@@ -13,14 +13,13 @@ import {
   getJSONValueFromString,
   parameterValueToString,
 } from '../../utils/parameters/helper';
-import type { GraphEdge, Settings } from './settings';
+import type { Settings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { Segment } from '@microsoft-logic-apps/parsers';
 import { cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest, SubGraphDetail } from '@microsoft-logic-apps/utils';
 import {
-  RUN_AFTER_STATUS,
   equals,
   isNullOrUndefined,
   safeSetObjectPropertyValue,
@@ -130,7 +129,8 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const inputPathValue = serializeOperationParameters(inputsToSerialize, manifest);
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? { ...inputPathValue, ...hostInfo } : inputPathValue;
-  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata) ? undefined : getRunAfter(nodeSettings);
+  const operationFromWorkflow = rootState.workflow.operations[operationId];
+  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata) ? undefined : getRunAfter(operationFromWorkflow);
   const recurrence =
     isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata) &&
     manifest.properties.recurrence &&
@@ -635,19 +635,6 @@ const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | undefined
 
 //#endregion
 
-// TODO (Andrew) - To update from workflow graph when it stores the statuses.
-const getRunAfter = (settings: Settings): LogicAppsV2.RunAfter => {
-  const edges = settings.runAfter?.value ?? [];
-
-  const normalizeStatuses: Record<string, string> = {
-    [RUN_AFTER_STATUS.SUCCEEDED]: Constants.FLOW_STATUS.SUCCEEDED,
-    [RUN_AFTER_STATUS.FAILED]: Constants.FLOW_STATUS.FAILED,
-    [RUN_AFTER_STATUS.SKIPPED]: Constants.FLOW_STATUS.SKIPPED,
-    [RUN_AFTER_STATUS.TIMEDOUT]: Constants.FLOW_STATUS.TIMEDOUT,
-  };
-
-  return edges.reduce((previous: LogicAppsV2.RunAfter, edge: GraphEdge) => {
-    const { predecessorId, statuses } = edge;
-    return { ...previous, [predecessorId]: statuses.map((status) => normalizeStatuses[status.toUpperCase()]) };
-  }, {});
+const getRunAfter = (operation: LogicAppsV2.ActionDefinition): LogicAppsV2.RunAfter => {
+  return operation.runAfter ?? {};
 };

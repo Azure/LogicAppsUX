@@ -86,7 +86,7 @@
   "/VcZ9g": [
     {
       "type": 0,
-      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
+      "value": "Ce connecteur a plusieurs versions, intégrées et hébergées par Azure. Utilisez le composant intégré pour optimiser les performances, l’authentification de chaîne de connexion et d’autres fonctionnalités. Utilisez l’hébergement Azure pour d’autres options d’authentification."
     }
   ],
   "/WW7If": [
@@ -343,6 +343,12 @@
     {
       "type": 0,
       "value": "Afficher la vue de code"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -678,7 +684,7 @@
   "6+RwRp": [
     {
       "type": 0,
-      "value": "Hybrid Connector"
+      "value": "Connecteur hybride"
     }
   ],
   "63/zYN": [
@@ -921,22 +927,10 @@
       "value": "Renvoie un objet avec une paire de valeurs de propriété supplémentaires"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Learn more."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panneau"
     }
   ],
   "9djnqI": [
@@ -967,6 +961,12 @@
     {
       "type": 0,
       "value": "Retourne true si les deux paramètres ont la valeur true"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Actions de filtrage"
     }
   ],
   "AIL7WX": [
@@ -1515,6 +1515,12 @@
       "value": "(UTC+07:00) Barnaul, Gorno-Altaïsk"
     }
   ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
+    }
+  ],
   "IngtMG": [
     {
       "type": 0,
@@ -1717,6 +1723,12 @@
       "value": "Retourne le jour du composant Semaine d'un horodateur de chaîne"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "Il n’y a aucun résultat de recherche."
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1750,13 +1762,19 @@
   "LZm3ze": [
     {
       "type": 0,
-      "value": "Add a parallel branch"
+      "value": "Ajouter une branche parallèle"
     }
   ],
   "Lft/is": [
     {
       "type": 0,
       "value": "Ajouter"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2292,7 +2310,7 @@
   "SyFXM3": [
     {
       "type": 0,
-      "value": "Read less"
+      "value": "Moins d’infos"
     }
   ],
   "T0BFpC": [
@@ -2407,6 +2425,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Amérique centrale"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2613,6 +2637,12 @@
       "value": "Réessayer"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Vérifiez que les mots sont correctement orthographiés."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2628,7 +2658,7 @@
   "XQs+wW": [
     {
       "type": 0,
-      "value": "Insert a new step"
+      "value": "Insérer une nouvelle étape"
     }
   ],
   "XTYYks": [
@@ -2749,6 +2779,12 @@
       "value": "Retourne un unique tableau ou objet avec tous les éléments qui sont dans l'objet ou tableau transmis à cette fonction. Les paramètres de la fonction peuvent être un ensemble d'objets ou de tableaux (et non un mélange des deux). Si deux objets portent le même nom dans la sortie finale, le dernier objet avec ce nom s'affiche dans l'objet final."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Astuces pour la recherche"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
@@ -2800,7 +2836,7 @@
   "ZbCS4a": [
     {
       "type": 0,
-      "value": "Read more"
+      "value": "En savoir plus"
     }
   ],
   "ZbX8xq": [
@@ -2920,7 +2956,7 @@
   "bwfJdj": [
     {
       "type": 0,
-      "value": "Run after "
+      "value": "Exécuter après "
     },
     {
       "type": 1,
@@ -2987,6 +3023,12 @@
       "value": "Obligatoire. Valeur pour laquelle rechercher l'index."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -2997,16 +3039,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3063,10 +3095,10 @@
       "value": "En savoir plus"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Sélectionner"
+      "value": "Mettre à jour"
     }
   ],
   "dSTRb/": [
@@ -3146,7 +3178,7 @@
   "dxh2CJ": [
     {
       "type": 0,
-      "value": "timed out"
+      "value": "délai dépassé"
     }
   ],
   "e00zot": [
@@ -3183,6 +3215,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nombre par lequel diviser le dividende."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
     }
   ],
   "egLI8P": [
@@ -3333,6 +3371,16 @@
     {
       "type": 0,
       "value": "Conditions du déclencheur"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3802,7 +3850,7 @@
   "mCzkXX": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Ajouter une action"
     }
   ],
   "mGUdCO": [
@@ -3877,6 +3925,12 @@
       "value": "Obligatoire. Valeur convertie en nombre à virgule flottante."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Essayez des mots clés moins spécifiques."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3893,6 +3947,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la propriété à supprimer."
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3961,6 +4021,12 @@
     {
       "type": 0,
       "value": "Transfert de contenu"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -4367,6 +4433,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexico, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4409,12 +4481,6 @@
       "value": "(UTC+06:00) Novossibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Déclencheur"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4437,12 +4503,6 @@
     {
       "type": 0,
       "value": "Nom d'affichage"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Opérations"
     }
   ],
   "u/KSPz": [
@@ -4575,6 +4635,12 @@
     {
       "type": 0,
       "value": "Supprimer"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "L'expression n'est pas valide."
     }
   ],
   "vXwYXe": [
@@ -4807,16 +4873,6 @@
       "value": "(UTC-10:00) Hawaï"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo pour "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4881,6 +4937,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne convertie en une valeur de type native."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Sélectionner des actions"
     }
   ],
   "zUgja+": [

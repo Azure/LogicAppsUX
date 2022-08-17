@@ -69,10 +69,7 @@ const CreateConnectionTab = () => {
   }, [dispatch]);
 
   // By the time you get to this component, there should always be a connector associated
-  if (connector === undefined) {
-    dispatch(showDefaultTabs());
-    return <p></p>;
-  }
+  if (connector === undefined) return <p></p>;
 
   return (
     <CreateConnection

@@ -3,9 +3,10 @@ import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, isWorkflowNode } from '../par
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
+import { useThrottledEffect } from '@microsoft-logic-apps/utils';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import type { Edge, Node } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 
@@ -126,7 +127,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
           'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,
           'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.onlyEdge,
         }),
-        ...(node.children?.[node.children.length - 1].id.endsWith('#footer') && {
+        ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
           'elk.padding': '[top=0,left=16,bottom=0,right=16]',
         }),
       },
@@ -177,22 +178,4 @@ export const exportForTesting = {
   convertElkGraphToReactFlow,
   convertWorkflowGraphToElkGraph,
   elkLayout,
-};
-
-export const useThrottledEffect = (effect: () => void, deps: any[], delay: number) => {
-  const timestamp = useRef(Date.now());
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const callback = useCallback(effect, deps); // Our trace was making this loop infinitely if we depend on the effect
-
-  useEffect(() => {
-    const timeoutFunc = () => {
-      if (Date.now() - timestamp.current >= delay) {
-        callback();
-        timestamp.current = Date.now();
-      }
-    };
-    const handler = setTimeout(timeoutFunc, delay - (Date.now() - timestamp.current));
-    return () => clearTimeout(handler);
-  }, [callback, delay]);
 };
