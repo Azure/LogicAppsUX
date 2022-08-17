@@ -29,7 +29,24 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     if (!allOperations) return;
     const options = {
       includeScore: true,
-      keys: ['properties.summary', 'properties.description'],
+      keys: [
+        {
+          name: 'properties.summary', // Operation 'name'
+          weight: 2,
+        },
+        {
+          name: 'properties.description',
+          weight: 1,
+        },
+        {
+          name: 'properties.api.displayName', // Connector 'name'
+          weight: 2,
+        },
+        {
+          name: 'properties.api.description',
+          weight: 1,
+        },
+      ],
     };
     if (allOperations) {
       const fuse = new Fuse(allOperations, options);

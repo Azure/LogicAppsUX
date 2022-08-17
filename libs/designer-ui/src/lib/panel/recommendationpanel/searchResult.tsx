@@ -4,7 +4,6 @@ import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
 import { List } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { labelCase } from '@microsoft-logic-apps/utils';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 
@@ -69,9 +68,9 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   );
 };
 
-const OperationActionDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => ({
+export const OperationActionDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => ({
   id: operation.id,
-  title: labelCase(operation.name),
+  title: operation.properties.summary,
   description: operation.properties.description,
   brandColor: operation.properties.api.brandColor,
   iconUri: operation.properties.api.iconUri,
