@@ -4,6 +4,7 @@ import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationRes
 import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
+import { LoggerService } from '../logger';
 import { azureFunctionConnectorId } from './operationmanifest';
 import type {
   Connection,
@@ -98,6 +99,13 @@ type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnection
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
 
+interface AzureOperationsFetchResponse {
+  nextLink: string;
+  value: DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[];
+}
+
+type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
+
 const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 
@@ -124,11 +132,11 @@ export class StandardConnectionService implements IConnectionService {
     return;
   }
 
-  public async getAllOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+  public async getAllOperations(): Promise<DiscoveryOpArray> {
     return [...(await this.getAllBuiltInOperations()), ...(await this.getAllAzureOperations())];
   }
 
-  private async getAllBuiltInOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+  private async getAllBuiltInOperations(): Promise<DiscoveryOpArray> {
     if (this.isStandalone) {
       return Promise.resolve([...almostAllBuiltInOperations]);
     }
@@ -138,12 +146,20 @@ export class StandardConnectionService implements IConnectionService {
       'api-version': apiVersion,
       workflowKind: 'stateful',
     };
-    const response = await httpClient.get<{ value: DiscoveryOperation<DiscoveryResultTypes>[] }>({ uri, queryParameters });
+    const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
     console.log(response);
     return response.value;
   }
 
-  private async getAllAzureOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+  private async getAllAzureOperations(skipToken?: string): Promise<DiscoveryOpArray> {
+    const traceId = !skipToken
+      ? LoggerService().startTrace({
+          name: 'Get All Azure Operations',
+          action: 'getAllAzureOperations',
+          source: 'connection.ts',
+        })
+      : '';
+
     const {
       apiHubServiceDetails: { location, apiVersion, subscriptionId },
       httpClient,
@@ -155,9 +171,13 @@ export class StandardConnectionService implements IConnectionService {
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
       $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
+      $top: '250', // This is the number of results that can be returned in a single call
+      $skiptoken: skipToken ?? 0,
     };
-    const response = await httpClient.get<{ value: DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[] }>({ uri, queryParameters });
-    return response.value;
+    const { nextLink, value } = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
+    const nextSets = nextLink ? await this.getAllAzureOperations(nextLink.split('&%24skiptoken=')?.[1]) : ([] as DiscoveryOpArray);
+    if (!skipToken) LoggerService().endTrace(traceId);
+    return [...value, ...nextSets];
   }
 
   async getAllConnectors(): Promise<Connector[]> {

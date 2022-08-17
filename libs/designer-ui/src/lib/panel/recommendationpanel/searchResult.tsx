@@ -38,29 +38,33 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     [onOperationClick]
   );
 
-  if (operationSearchResults.length === 0) {
-    return <p>{'No Results'}</p>;
-  }
+  const onRenderOperationGroup = React.useCallback(
+    (apiId: string | undefined, _index: number | undefined) => {
+      if (!apiId) return;
+      const operations = operationSearchResults.filter((res) => res?.properties.api.id === apiId);
+      if (operations.length === 0) return null;
+      const api = operations[0].properties.api;
+      return (
+        <div style={{ marginBottom: '24px' }}>
+          <OperationSearchGroup
+            key={apiId}
+            operationApi={api}
+            operationActionsData={operations.map((operation) => OperationActionDataFromOperation(operation))}
+            onConnectorClick={onConnectorClick}
+            onOperationClick={onOperationClick}
+          />
+        </div>
+      );
+    },
+    [onConnectorClick, onOperationClick, operationSearchResults]
+  );
+
+  if (operationSearchResults.length === 0) return <p>{'No Results'}</p>;
 
   return (
     <div className="msla-result-list">
       {groupByConnector ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {apiIds.map((apiId) => {
-            const operations = operationSearchResults.filter((res) => res?.properties.api.id === apiId);
-            if (operations.length === 0) return null;
-            const api = operations[0].properties.api;
-            return (
-              <OperationSearchGroup
-                key={apiId}
-                operationApi={api}
-                operationActionsData={operations.map((operation) => OperationActionDataFromOperation(operation))}
-                onConnectorClick={onConnectorClick}
-                onOperationClick={onOperationClick}
-              />
-            );
-          })}
-        </div>
+        <List items={apiIds} onRenderCell={onRenderOperationGroup} />
       ) : (
         <List items={operationSearchResults} onRenderCell={onRenderOperationCell} />
       )}

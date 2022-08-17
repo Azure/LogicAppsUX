@@ -1,5 +1,5 @@
 import { InfoDot } from '../infoDot';
-import { Text, Image, ImageFit, css } from '@fluentui/react';
+import { Text, css } from '@fluentui/react';
 
 export interface ConnectorSummaryCardProps {
   id: string;
@@ -18,12 +18,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
   const handleClick = () => onClick?.(id);
 
   const ConnectorImage = () => (
-    <Image
-      className={css('msla-connector-summary-image', !isCard && 'large')}
-      alt={connectorName}
-      src={iconUrl}
-      imageFit={ImageFit.contain}
-    />
+    <img className={css('msla-connector-summary-image', !isCard && 'large')} alt={connectorName} src={iconUrl} />
   );
 
   const Content = () => (
