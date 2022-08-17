@@ -44,7 +44,6 @@ export function ExpressionEditor({ initialValue, editorRef, onBlur }: Expression
       const oldPosition = editorRef.current.getPosition();
       const currentValue = editorRef.current.getValue();
       const newValue = currentValue.replace(/\r\n/g, '');
-      console.log('here');
       editorRef.current.setValue(newValue);
 
       if (oldPosition) {

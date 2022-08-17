@@ -1,3 +1,4 @@
+import TokenPickerHandler from '../editor/base/plugins/TokenPickerHandler';
 import type { ExpressionEditorEvent } from '../expressioneditor';
 import type { TokenGroup } from './models/token';
 import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
@@ -6,7 +7,7 @@ import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { ICalloutContentStyles, PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
 import type { editor } from 'monaco-editor';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 export type { Token as OutputToken } from './models/token';
 
@@ -28,8 +29,8 @@ export interface TokenPickerProps {
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   initialMode?: TokenPickerMode;
-  initialExpression: string;
-  setInTokenPicker?: (b: boolean) => void;
+  tokenPickerFocused?: (b: boolean) => void;
+  setShowTokenPickerButton?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
 }
 export function TokenPicker({
@@ -38,23 +39,32 @@ export function TokenPicker({
   tokenGroup,
   expressionGroup,
   initialMode,
-  initialExpression,
-  setInTokenPicker,
+  tokenPickerFocused,
   onSearchTextChanged,
 }: TokenPickerProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
-  const [isEditing, setIsEditing] = useState<boolean>(initialExpression !== '' ?? false);
-  const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: initialExpression, selectionStart: 0, selectionEnd: 0 });
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [updatingExpression, setUpdatingExpression] = useState(false);
+  const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: '', selectionStart: 0, selectionEnd: 0 });
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const handleUpdateExpressionToken = (s: string) => {
+    setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
+    setSelectedKey(TokenPickerMode.EXPRESSION);
+    tokenPickerFocused?.(true);
+    setUpdatingExpression(true);
+    setIsEditing(true);
 
-  useEffect(() => {
-    if (initialExpression) {
-      setExpression({ value: initialExpression, selectionStart: 0, selectionEnd: 0 });
-      setIsEditing(true);
-      setSelectedKey(TokenPickerMode.EXPRESSION);
-    }
-  }, [initialExpression]);
+    setTimeout(() => {
+      expressionEditorRef.current?.setSelection({
+        startLineNumber: 1,
+        startColumn: 1,
+        endLineNumber: 1,
+        endColumn: 1,
+      });
+      expressionEditorRef.current?.focus();
+    }, 50);
+  };
 
   const handleSelectKey = (item?: PivotItem) => {
     if (item?.props?.itemKey) {
@@ -80,54 +90,57 @@ export function TokenPicker({
   };
 
   return (
-    <Callout
-      role="dialog"
-      ariaLabelledBy={labelId}
-      gapSpace={gapSpace}
-      target={`#${editorId}`}
-      isBeakVisible={true}
-      beakWidth={beakWidth}
-      directionalHint={directionalHint}
-      onMouseDown={() => {
-        setInTokenPicker?.(true);
-      }}
-      onDismiss={() => {
-        setInTokenPicker?.(false);
-      }}
-      onRestoreFocus={() => {
-        return;
-      }}
-      styles={calloutStyles}
-    >
-      <div className="msla-token-picker-container">
-        <div className="msla-token-picker">
-          <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} />
-          <TokenPickerSearch
-            selectedKey={selectedKey}
-            searchQuery={searchQuery}
-            setSearchQuery={handleUpdateSearch}
-            expressionEditorRef={expressionEditorRef}
-            expressionEditorBlur={onExpressionEditorBlur}
-            expression={expression}
-            setExpression={setExpression}
-            setSelectedKey={setSelectedKey}
-            updatingExpression={initialExpression !== ''}
-            isEditing={isEditing}
-            setIsEditing={setIsEditing}
-          />
+    <>
+      <Callout
+        role="dialog"
+        ariaLabelledBy={labelId}
+        gapSpace={gapSpace}
+        target={`#${editorId}`}
+        isBeakVisible={true}
+        beakWidth={beakWidth}
+        directionalHint={directionalHint}
+        onMouseDown={() => {
+          tokenPickerFocused?.(true);
+        }}
+        onDismiss={() => {
+          tokenPickerFocused?.(false);
+        }}
+        onRestoreFocus={() => {
+          return;
+        }}
+        styles={calloutStyles}
+      >
+        <div className="msla-token-picker-container">
+          <div className="msla-token-picker">
+            <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} />
+            <TokenPickerSearch
+              selectedKey={selectedKey}
+              searchQuery={searchQuery}
+              setSearchQuery={handleUpdateSearch}
+              expressionEditorRef={expressionEditorRef}
+              expressionEditorBlur={onExpressionEditorBlur}
+              expression={expression}
+              setExpression={setExpression}
+              setSelectedKey={setSelectedKey}
+              updatingExpression={updatingExpression}
+              isEditing={isEditing}
+              setIsEditing={setIsEditing}
+            />
 
-          <TokenPickerSection
-            expressionEditorRef={expressionEditorRef}
-            selectedKey={selectedKey}
-            tokenGroup={tokenGroup ?? []}
-            expressionGroup={expressionGroup ?? []}
-            searchQuery={searchQuery}
-            expression={expression}
-            editMode={initialExpression !== '' || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
-            setExpression={setExpression}
-          />
+            <TokenPickerSection
+              expressionEditorRef={expressionEditorRef}
+              selectedKey={selectedKey}
+              tokenGroup={tokenGroup ?? []}
+              expressionGroup={expressionGroup ?? []}
+              searchQuery={searchQuery}
+              expression={expression}
+              editMode={updatingExpression || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
+              setExpression={setExpression}
+            />
+          </div>
         </div>
-      </div>
-    </Callout>
+      </Callout>
+      <TokenPickerHandler handleUpdateExpressionToken={handleUpdateExpressionToken} />
+    </>
   );
 }

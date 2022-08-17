@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 export type CollapsedDictionaryProps = {
   isValid?: boolean;
   collapsedValue: ValueSegment[];
-  GetTokenPicker: (editorId: string, labelId: string, intialExpression?: string, onClick?: (b: boolean) => void) => JSX.Element;
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   setCollapsedValue: (val: ValueSegment[]) => void;

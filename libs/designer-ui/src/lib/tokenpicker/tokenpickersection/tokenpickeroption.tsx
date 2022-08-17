@@ -87,7 +87,7 @@ export const TokenPickerOptions = ({
   };
 
   const handleExpressionTokenMode = (token: OutputToken) => {
-    const expression = token.description ?? '';
+    const expression = token.value ?? '';
     insertExpressionText(expression, 0);
   };
   const handleExpressionTokenModeToken = (token: OutputToken) => {

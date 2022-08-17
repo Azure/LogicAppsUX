@@ -26,7 +26,7 @@ const testTokenGroup: TokenGroup[] = [
 export const ScratchTab = () => {
   const expressionGroup = getExpressionTokenSections();
 
-  const GetTokenPicker = (editorId: string, labelId: string, initialExpression?: string, onClick?: (b: boolean) => void): JSX.Element => {
+  const GetTokenPicker = (editorId: string, labelId: string, onClick?: (b: boolean) => void): JSX.Element => {
     // check to see if there's a custom Token Picker
     return (
       <TokenPicker
@@ -34,8 +34,7 @@ export const ScratchTab = () => {
         labelId={labelId}
         tokenGroup={testTokenGroup}
         expressionGroup={expressionGroup}
-        setInTokenPicker={onClick}
-        initialExpression={initialExpression ?? ''}
+        tokenPickerFocused={onClick}
       />
     );
   };

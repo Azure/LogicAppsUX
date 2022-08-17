@@ -11,7 +11,7 @@ export interface CollapsedArrayProps {
   labelProps?: LabelProps;
   items: ArrayEditorItemProps[];
   isValid?: boolean;
-  GetTokenPicker: (editorId: string, labelId: string, initialExpression?: string, onClick?: (b: boolean) => void) => JSX.Element;
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
 }

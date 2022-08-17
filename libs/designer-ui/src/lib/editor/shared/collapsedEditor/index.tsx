@@ -16,7 +16,7 @@ interface CollapsedEditorBaseProps {
   initialValue?: ValueSegment[];
   errorMessage: string;
   collapsedValue?: ValueSegment[];
-  GetTokenPicker: (editorId: string, labelId: string, intitialExpression?: string, onClick?: (b: boolean) => void) => JSX.Element;
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   setIsValid?: Dispatch<SetStateAction<boolean>>;
   setCollapsedValue?: (val: ValueSegment[]) => void;
   onBlur?: () => void;

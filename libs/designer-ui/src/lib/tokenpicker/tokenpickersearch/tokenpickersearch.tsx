@@ -92,18 +92,23 @@ export const TokenPickerSearch = ({
       key: getExpressionTokenTitle(currExpression),
     };
 
-    editor.dispatchCommand(INSERT_TOKEN_NODE, {
-      brandColor: token.brandColor,
-      description: token.description ?? token.key,
-      title: token.title,
-      icon: token.icon ?? FxIcon,
-      data: {
-        id: guid(),
-        type: ValueSegmentType.TOKEN,
-        value: expression.value,
-        token: { ...token },
-      },
-    });
+    if (updatingExpression) {
+      console.log('updated token ' + token.key);
+    } else {
+      editor.dispatchCommand(INSERT_TOKEN_NODE, {
+        brandColor: token.brandColor,
+        description: token.description ?? token.key,
+        title: token.title,
+        icon: token.icon ?? FxIcon,
+        data: {
+          id: guid(),
+          type: ValueSegmentType.TOKEN,
+          value: expression.value,
+          token: { ...token },
+        },
+      });
+    }
+
     setSelectedKey(TokenPickerMode.TOKEN);
     setIsEditing(false);
   };
@@ -141,7 +146,7 @@ export const TokenPickerSearch = ({
         <div className="msla-token-picker-expression">
           <img src={isInverted ? FxTextBoxIconBlack : FxTextBoxIcon} role="presentation" alt="" height={32} width={32} />
           <div className="msla-expression-editor">
-            <ExpressionEditor initialValue="" editorRef={expressionEditorRef} onBlur={expressionEditorBlur} />
+            <ExpressionEditor initialValue={expression.value} editorRef={expressionEditorRef} onBlur={expressionEditorBlur} />
           </div>
           <div className="msla-token-picker-action-bar">
             <PrimaryButton

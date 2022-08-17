@@ -63,7 +63,7 @@ export interface ComboboxProps {
   useOption?: boolean;
   readOnly?: boolean; // TODO - Need to have readOnly version
   required?: boolean;
-  GetTokenPicker: (editorId: string, labelId: string, initialExpression?: string, onClick?: (b: boolean) => void) => JSX.Element;
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onChange?: ChangeHandler;
 }
 

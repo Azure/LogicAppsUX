@@ -8,7 +8,6 @@ import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
 import TokenPickerButton from './plugins/TokenPickerButton';
-import TokenPickerHandler from './plugins/TokenPickerHandler';
 import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
 import type { ValidationProps } from './plugins/Validation';
@@ -20,6 +19,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import { useFunctionalState } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -51,7 +51,7 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   tokenPickerButtonProps?: TokenPickerButtonProps;
-  GetTokenPicker: (editorId: string, labelId: string, initialExpression?: string, onClick?: (b: boolean) => void) => JSX.Element;
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -95,8 +95,7 @@ export const BaseEditor = ({
   const labelId = useId('msla-tokenpicker-callout-label');
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
   const [showTokenPicker, setShowTokenPicker] = useState(true);
-  const [inTokenPicker, setInTokenPicker] = useState(false);
-  const [initialExpression, setInitialExpression] = useState('');
+  const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const initialConfig = {
     theme: defaultTheme,
     onError,
@@ -109,7 +108,6 @@ export const BaseEditor = ({
         parseSegments(initialValue, tokens);
       }),
   };
-
   const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, validation } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
@@ -125,11 +123,10 @@ export const BaseEditor = ({
     onFocus?.();
   };
   const handleBlur = () => {
-    if (tokens && !inTokenPicker) {
-      setShowTokenPickerButton(false);
-    } else {
+    if (tokens && !getInTokenPicker()) {
       setInTokenPicker(false);
     }
+    setShowTokenPickerButton(false);
     onBlur?.();
   };
 
@@ -167,7 +164,7 @@ export const BaseEditor = ({
           />
         ) : null}
 
-        {(tokens && showTokenPickerButton) || inTokenPicker ? (
+        {(tokens && showTokenPickerButton) || getInTokenPicker() ? (
           <TokenPickerButton
             labelId={labelId}
             showTokenPicker={showTokenPicker}
@@ -176,14 +173,11 @@ export const BaseEditor = ({
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}
-        {(showTokenPickerButton && showTokenPicker) || inTokenPicker
-          ? GetTokenPicker(editorId, labelId, initialExpression, onClickTokenPicker)
-          : null}
+        {(showTokenPickerButton && showTokenPicker) || getInTokenPicker() ? GetTokenPicker(editorId, labelId, onClickTokenPicker) : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
         {tokens ? <InsertTokenNode /> : null}
         {tokens ? <DeleteTokenNode /> : null}
-        {tokens ? <TokenPickerHandler setInitialExpression={setInitialExpression} /> : null}
         {children}
       </div>
     </LexicalComposer>

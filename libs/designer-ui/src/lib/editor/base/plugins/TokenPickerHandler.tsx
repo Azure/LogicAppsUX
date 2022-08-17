@@ -1,29 +1,29 @@
+import { TokenType } from '../../models/parameter';
 import { findChildNode } from '../utils/helper';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalCommand } from 'lexical';
 import { $getRoot, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
-import type { Dispatch, SetStateAction } from 'react';
 import { useEffect } from 'react';
 
 export const CHANGE_TOKENPICKER_EXPRESSION: LexicalCommand<string> = createCommand();
 
 interface TokenPickerHandlerProps {
-  setInitialExpression?: Dispatch<SetStateAction<string>>;
+  handleUpdateExpressionToken?: (s: string) => void;
 }
 
-export default function TokenPickerHandler({ setInitialExpression }: TokenPickerHandlerProps): null {
+export default function TokenPickerHandler({ handleUpdateExpressionToken }: TokenPickerHandlerProps): null {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
     return editor.registerCommand<string>(
       CHANGE_TOKENPICKER_EXPRESSION,
       (payload: string) => {
-        setInitialExpression?.(findChildNode($getRoot(), payload)?.token?.value ?? '');
+        handleUpdateExpressionToken?.(findChildNode($getRoot(), payload, TokenType.FX)?.token?.description ?? '');
         return true;
       },
       COMMAND_PRIORITY_EDITOR
     );
-  }, [editor, setInitialExpression]);
+  }, [editor, handleUpdateExpressionToken]);
 
   return null;
 }

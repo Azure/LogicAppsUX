@@ -23,8 +23,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor,
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
 
-  const handleTokenClicked = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
+  const handleTokenClicked = () => {
     if (nodeKey) {
       editor.dispatchCommand(CHANGE_TOKENPICKER_EXPRESSION, nodeKey);
     }
