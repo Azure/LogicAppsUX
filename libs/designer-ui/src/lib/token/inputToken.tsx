@@ -1,6 +1,6 @@
 import { getBrandColorRgbA } from '../card/utils';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
-import { CHANGE_TOKENPICKER_EXPRESSION } from '../editor/base/plugins/TokenPickerHandler';
+import { CHANGE_TOKENPICKER_EXPRESSION } from '../tokenpicker/plugins/TokenPickerHandler';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { NodeKey } from 'lexical';
 import { useIntl } from 'react-intl';

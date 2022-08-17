@@ -1,11 +1,13 @@
-import TokenPickerHandler from '../editor/base/plugins/TokenPickerHandler';
 import type { ExpressionEditorEvent } from '../expressioneditor';
 import type { TokenGroup } from './models/token';
+import TokenPickerHandler from './plugins/TokenPickerHandler';
+import UpdateTokenNode from './plugins/UpdateTokenNode';
 import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
 import { TokenPickerSearch } from './tokenpickersearch/tokenpickersearch';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { ICalloutContentStyles, PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
+import type { NodeKey } from 'lexical';
 import type { editor } from 'monaco-editor';
 import { useRef, useState } from 'react';
 
@@ -45,14 +47,14 @@ export function TokenPicker({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [updatingExpression, setUpdatingExpression] = useState(false);
+  const [updatingExpression, setUpdatingExpression] = useState<NodeKey | null>(null);
   const [expression, setExpression] = useState<ExpressionEditorEvent>({ value: '', selectionStart: 0, selectionEnd: 0 });
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const handleUpdateExpressionToken = (s: string) => {
+  const handleUpdateExpressionToken = (s: string, n: NodeKey) => {
     setExpression({ value: s, selectionStart: 0, selectionEnd: 0 });
     setSelectedKey(TokenPickerMode.EXPRESSION);
     tokenPickerFocused?.(true);
-    setUpdatingExpression(true);
+    setUpdatingExpression(n);
     setIsEditing(true);
 
     setTimeout(() => {
@@ -89,6 +91,14 @@ export function TokenPicker({
     setExpression(e);
   };
 
+  const resetTokenPicker = () => {
+    setSearchQuery('');
+    setSelectedKey(TokenPickerMode.TOKEN);
+    setIsEditing(false);
+    setUpdatingExpression(null);
+    setExpression({ value: '', selectionStart: 0, selectionEnd: 0 });
+  };
+
   return (
     <>
       <Callout
@@ -120,11 +130,9 @@ export function TokenPicker({
               expressionEditorRef={expressionEditorRef}
               expressionEditorBlur={onExpressionEditorBlur}
               expression={expression}
-              setExpression={setExpression}
-              setSelectedKey={setSelectedKey}
               updatingExpression={updatingExpression}
               isEditing={isEditing}
-              setIsEditing={setIsEditing}
+              resetTokenPicker={resetTokenPicker}
             />
 
             <TokenPickerSection
@@ -134,13 +142,14 @@ export function TokenPicker({
               expressionGroup={expressionGroup ?? []}
               searchQuery={searchQuery}
               expression={expression}
-              editMode={updatingExpression || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
+              editMode={updatingExpression !== null || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
               setExpression={setExpression}
             />
           </div>
         </div>
       </Callout>
       <TokenPickerHandler handleUpdateExpressionToken={handleUpdateExpressionToken} />
+      <UpdateTokenNode />
     </>
   );
 }
