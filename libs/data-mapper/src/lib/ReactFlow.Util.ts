@@ -1,84 +1,84 @@
-import { SchemaTypes } from './components/configPanel/EditorConfigPanel';
 import type { SchemaNodeExtended } from './models/Schema';
+import { SchemaTypes } from './models/Schema';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import { Position } from 'react-flow-renderer';
 
-const rootInputX = 0;
-const rootInputY = 0;
-const childInputX = rootInputX + 30;
-const childInputYOffset = 60;
-
+const inputX = 100;
 const rootOutputX = 500;
-const rootOutputY = 0;
-const childOutputX = rootOutputX + 30;
-const childOutputYOffset = 60;
+const childXOffSet = 30;
 
-export const convertToReactFlowNode = (inputSchemaNode?: SchemaNodeExtended, outputSchemaNode?: SchemaNodeExtended): ReactFlowNode[] => {
+const rootY = 30;
+const rootYOffset = 60;
+
+export enum ReactFlowNodeType {
+  SchemaNode = 'schemaNode',
+  ExpressionNode = 'expressionNode',
+}
+
+export const convertToReactFlowNodes = (inputSchemaNodes: SchemaNodeExtended[], outputSchemaNode: SchemaNodeExtended): ReactFlowNode[] => {
   const reactFlowNodes: ReactFlowNode[] = [];
 
-  if (inputSchemaNode) {
+  inputSchemaNodes.forEach((inputNodes, index) => {
     reactFlowNodes.push({
-      id: `input-${inputSchemaNode.key}`,
+      id: `input-${inputNodes.key}`,
       data: {
-        label: inputSchemaNode.name,
+        label: inputNodes.name,
         schemaType: SchemaTypes.Input,
+        displayHandle: true,
       },
+      type: ReactFlowNodeType.SchemaNode,
       sourcePosition: Position.Right,
-      type: 'schemaCard',
       position: {
-        x: rootInputX,
-        y: rootInputY,
+        x: inputX,
+        y: rootY + rootYOffset * index,
       },
     });
+  });
 
-    inputSchemaNode.children?.forEach((childNode, index) => {
-      reactFlowNodes.push({
-        id: `input-${childNode.key}`,
-        data: {
-          label: childNode.name,
-          schemaType: SchemaTypes.Input,
-        },
-        type: 'schemaCard',
-        sourcePosition: Position.Right,
-        position: {
-          x: childInputX,
-          y: childInputYOffset * (index + 1),
-        },
-      });
-    });
-  }
+  reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(outputSchemaNode, SchemaTypes.Output, true));
 
-  if (outputSchemaNode) {
+  return reactFlowNodes;
+};
+
+export const convertToReactFlowParentAndChildNodes = (
+  parentSchemaNode: SchemaNodeExtended,
+  schemaType: SchemaTypes,
+  displayTargets: boolean
+): ReactFlowNode[] => {
+  const reactFlowNodes: ReactFlowNode[] = [];
+  const rootX = schemaType === SchemaTypes.Input ? inputX : rootOutputX;
+
+  reactFlowNodes.push({
+    id: `${schemaType}-${parentSchemaNode.key}`,
+    data: {
+      label: parentSchemaNode.name,
+      schemaType,
+      displayHandle: displayTargets,
+    },
+    type: ReactFlowNodeType.SchemaNode,
+    targetPosition: !displayTargets ? undefined : SchemaTypes.Input ? Position.Right : Position.Left,
+    position: {
+      x: rootX,
+      y: rootY,
+    },
+  });
+
+  parentSchemaNode.children?.forEach((childNode, index) => {
     reactFlowNodes.push({
-      id: `output-${outputSchemaNode.key}`,
+      id: `${schemaType}-${childNode.key}`,
       data: {
-        label: outputSchemaNode.name,
-        schemaType: SchemaTypes.Output,
+        label: childNode.name,
+        schemaType,
+        displayHandle: displayTargets,
       },
-      type: 'schemaCard',
-      targetPosition: Position.Left,
+      type: ReactFlowNodeType.SchemaNode,
+      targetPosition: !displayTargets ? undefined : SchemaTypes.Input ? Position.Right : Position.Left,
       position: {
-        x: rootOutputX,
-        y: rootOutputY,
+        x: rootX + childXOffSet,
+        y: rootY + rootYOffset * (index + 1),
       },
     });
-
-    outputSchemaNode.children?.forEach((childNode, index) => {
-      reactFlowNodes.push({
-        id: `output-${childNode.key}`,
-        data: {
-          label: childNode.name,
-          schemaType: SchemaTypes.Output,
-        },
-        type: 'schemaCard',
-        targetPosition: Position.Left,
-        position: {
-          x: childOutputX,
-          y: childOutputYOffset * (index + 1),
-        },
-      });
-    });
-  }
+  });
 
   return reactFlowNodes;
 };

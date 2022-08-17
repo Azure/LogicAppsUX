@@ -1,6 +1,6 @@
 export interface Workflow {
   definition: LogicAppsV2.WorkflowDefinition;
-  connectionReferences: Record<string, ConnectionReference>;
+  connectionReferences: ConnectionReferences;
   parameters?: Record<string, WorkflowParameter>;
 }
 
@@ -11,6 +11,9 @@ export interface ConnectionReference {
   connectionProperties?: Record<string, any>;
   authentication?: { type: string; identity?: string };
 }
+
+type ReferenceKey = string;
+export type ConnectionReferences = Record<ReferenceKey, ConnectionReference>;
 
 export interface WorkflowParameter {
   name: string;

@@ -3,7 +3,8 @@ import { Icon } from '@fluentui/react';
 import { createFocusOutlineStyle, makeStyles, shorthands } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 
-interface ExpressionCardProps {
+export interface ExpressionCardProps {
+  iconName: string;
   onClick?: () => void;
   disabled?: boolean;
 }
@@ -39,12 +40,12 @@ const useStyles = makeStyles({
   }),
 });
 
-export const ExpressionCard: FunctionComponent<ExpressionCardProps> = ({ onClick, disabled }) => {
+export const ExpressionCard: FunctionComponent<ExpressionCardProps> = ({ iconName, onClick, disabled }) => {
   const classes = useStyles();
 
   return (
     <NodeCard onClick={onClick} disabled={disabled} childClasses={classes}>
-      <Icon iconName="Variable" />
+      <Icon iconName={iconName} />
     </NodeCard>
   );
 };

@@ -12,38 +12,13 @@
     vertical-align: top;
     display: inline-block;
     align-self: flex-start;
-
-    .msla-array-toggle-button {
-      vertical-align: top;
-      display: inline-block;
-      padding: 0;
-
-      img {
-        width: @command-icon-width;
-        height: @command-icon-width;
-        vertical-align: middle;
-      }
-
-      &[disabled] {
-        cursor: default;
-        img {
-          opacity: 0.6;
-        }
-      }
-    }
   }
 
   .msla-array-container {
     flex: 1 1 100%;
 
-    .msla-array-content {
-      display: inline-block;
-      box-sizing: border-box;
-      width: 100%;
-    }
-
     &.msla-array-editor-collapsed {
-      padding: @padding 0 @padding @padding;
+      padding: 10px 0px 40px @padding;
       display: flex;
 
       .msla-input-parameter-label {
@@ -51,7 +26,9 @@
       }
 
       .msla-array-content {
-        width: calc(100% - @command-icon-width - @parameter-label-width - @parameter-label-inputbox-margin - 2px);
+        display: inline-block;
+        box-sizing: border-box;
+        width: calc(100% - @command-icon-width - @parameter-label-inputbox-margin);
 
         .msla-input-parameter-box {
           width: calc(100% - @parameter-label-inputbox-margin);
@@ -62,8 +39,8 @@
         }
       }
 
-      .msla-array-editor-container-collapsed {
-        width: 100%;
+      .msla-collapsed-editor-container {
+        width: 98%;
         border-radius: 2px;
 
         .editor-input {
@@ -101,7 +78,7 @@
   }
 
   .msla-array-item-container {
-    margin: @padding 0;
+    margin: 10px 0;
     padding: 0 @padding;
 
     .msla-array-item {
@@ -121,13 +98,12 @@
           resize: none;
           font-size: 15px;
           tab-size: 1;
-          min-height: 20px;
+          min-height: 30px;
           line-height: 30px;
           caret-color: #444;
           padding-inline-start: 5px;
           p {
             margin: 0;
-            line-height: 1.5rem;
           }
         }
         .editor-placeholder {
@@ -176,7 +152,8 @@
       font-size: @card-label-font-size;
     }
   }
-  .msla-array-editor-validation {
+  .msla-collapsed-editor-validation {
+    width: 50%;
     position: relative;
     color: rgb(224, 2, 2);
     left: 4px;

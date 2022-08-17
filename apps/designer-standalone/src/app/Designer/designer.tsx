@@ -14,15 +14,23 @@ const connectionService = new StandardConnectionService({
   baseUrl: '/url',
   apiVersion: '2018-11-01',
   httpClient,
+  apiHubServiceDetails: {
+    apiVersion: '2018-07-01-preview',
+    subscriptionId: '',
+    resourceGroup: '',
+    location: '',
+  },
+  readConnections: () => Promise.resolve({}),
 });
 const operationManifestService = new StandardOperationManifestService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
 });
+
 const searchService = new StandardSearchService();
 export const DesignerWrapper = () => {
-  const { workflowDefinition, readOnly, monitoringView } = useSelector((state: RootState) => state.workflowLoader);
+  const { workflowDefinition, readOnly, monitoringView, connections } = useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
     services: { connectionService, operationManifestService, searchService },
     readOnly,
@@ -34,7 +42,12 @@ export const DesignerWrapper = () => {
       <SettingsBox />
       <DesignerProvider locale="en-US" options={{ ...designerProviderProps }}>
         {workflowDefinition ? (
-          <BJSWorkflowProvider workflow={workflowDefinition}>
+          <BJSWorkflowProvider
+            workflow={{
+              definition: workflowDefinition,
+              connectionReferences: connections,
+            }}
+          >
             <Designer></Designer>
           </BJSWorkflowProvider>
         ) : null}

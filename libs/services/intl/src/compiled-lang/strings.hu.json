@@ -5,16 +5,10 @@
       "value": "OK"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Szűrők"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+      "value": "(UTC+08:00) Kuala Lumpur, Szingapúr"
     }
   ],
   "+dlOgj": [
@@ -32,7 +26,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Jelölje be a kapcsolat kijelöléséhez"
     }
   ],
   "+lpuMl": [
@@ -56,7 +50,7 @@
   "/B2CTz": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) Peking, Csungking, Hongkong, Urumcsi"
     }
   ],
   "/I/U8L": [
@@ -81,6 +75,18 @@
     {
       "type": 0,
       "value": "A tömb elemeit adja vissza, az indexszámmal kezdve."
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Kapcsolat módosítása"
+    }
+  ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "Ennek az összekötőnek több verziója van: beépített és Azure-ban üzemeltetett. Használja a beépített verziót a legjobb teljesítmény, a kapcsolati sztringes hitelesítés és egyéb funkciók eléréséhez. Használja az Azure-ban üzemeltetett verziót egyéb hitelesítési lehetőségek eléréséhez."
     }
   ],
   "/WW7If": [
@@ -110,13 +116,13 @@
   "/rjP4U": [
     {
       "type": 0,
-      "value": "(UTC) Coordinated Universal Time"
+      "value": "(UTC) Egyezményes világidő"
     }
   ],
   "/sMQhI": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Indiana (East)"
+      "value": "(UTC-05:00) Indiana (kelet)"
     }
   ],
   "/ut0u7": [
@@ -278,7 +284,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Jeruzsálem"
     }
   ],
   "1R6Vaa": [
@@ -337,6 +343,12 @@
     {
       "type": 0,
       "value": "Kódnézet megjelenítése"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -408,7 +420,7 @@
   "2NYPLt": [
     {
       "type": 0,
-      "value": "(UTC-03:30) Newfoundland"
+      "value": "(UTC-03:30) Új-Fundland"
     }
   ],
   "2Noh96": [
@@ -438,7 +450,7 @@
   "2ri1Kf": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damascus"
+      "value": "(UTC+02:00) Damaszkusz"
     }
   ],
   "2tTQ0A": [
@@ -450,7 +462,7 @@
   "2xhbE1": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Magadan"
+      "value": "(UTC+11:00) Magadán"
     }
   ],
   "33+WHG": [
@@ -459,10 +471,16 @@
       "value": "Azonosító"
     }
   ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Dinamikus tartalom hozzáadása"
+    }
+  ],
   "3FoqCK": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Tbilisi"
+      "value": "(UTC+04:00) Tbiliszi"
     }
   ],
   "3NhwIJ": [
@@ -480,7 +498,7 @@
   "3TD2V5": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06:00) Dakka"
     }
   ],
   "3X/ZDK": [
@@ -492,13 +510,13 @@
   "3afjx+": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Chita"
+      "value": "(UTC+09:00) Csita"
     }
   ],
   "3jlz+B": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Tehran"
+      "value": "(UTC+03:30) Teherán"
     }
   ],
   "3kI7xF": [
@@ -540,7 +558,7 @@
   "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04:00) Jereván"
     }
   ],
   "47kOXr": [
@@ -558,13 +576,13 @@
   "4Q7WzU": [
     {
       "type": 0,
-      "value": "Add a new connection"
+      "value": "Új kapcsolat hozzáadása"
     }
   ],
   "4XdZNj": [
     {
       "type": 0,
-      "value": "(UTC+01:00) West Central Africa"
+      "value": "(UTC+01:00) Nyugat-Közép-Afrika"
     }
   ],
   "4YKQAF": [
@@ -589,6 +607,12 @@
     {
       "type": 0,
       "value": "Kódtérkép be- és kikapcsolása"
+    }
+  ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a TokenPicker rejtett"
     }
   ],
   "4vcnOA": [
@@ -657,6 +681,12 @@
       "value": "Paraméter törlése"
     }
   ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hibrid összekötő"
+    }
+  ],
   "63/zYN": [
     {
       "type": 0,
@@ -720,7 +750,7 @@
   "7KxCGX": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Lord Howe Island"
+      "value": "(UTC+10:30) Lord Howe-sziget"
     }
   ],
   "7QymrD": [
@@ -750,7 +780,7 @@
   "7lvqST": [
     {
       "type": 0,
-      "value": "Invalid"
+      "value": "Érvénytelen"
     }
   ],
   "7yEdSt": [
@@ -792,7 +822,7 @@
   "8JEHiY": [
     {
       "type": 0,
-      "value": "Saturday"
+      "value": "Szombat"
     }
   ],
   "8JFxmV": [
@@ -816,7 +846,7 @@
   "8Y5xpK": [
     {
       "type": 0,
-      "value": "Thursday"
+      "value": "Csütörtök"
     }
   ],
   "8j+a0n": [
@@ -828,7 +858,7 @@
   "8pPivj": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Norfolk Island"
+      "value": "(UTC+11:00) Norfolk-sziget"
     }
   ],
   "8to63i": [
@@ -870,7 +900,7 @@
   "949s+r": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08:00) Ulánbátor"
     }
   ],
   "99vsJy": [
@@ -882,7 +912,7 @@
   "9EmN2M": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Mégse"
     }
   ],
   "9JuvQ4": [
@@ -903,12 +933,6 @@
       "value": "12"
     }
   ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
-    }
-  ],
   "9djnqI": [
     {
       "type": 0,
@@ -924,13 +948,13 @@
   "9pdXmX": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+      "value": "(UTC+01:00) Amszterdam, Berlin, Bern, Róma, Stockholm, Bécs"
     }
   ],
   "9pl7QP": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Atlantic Time (Canada)"
+      "value": "(UTC-04:00) Atlanti-óceáni idő (Kanada)"
     }
   ],
   "9u/Ae3": [
@@ -939,10 +963,16 @@
       "value": "Igaz értéket ad vissza, ha mindkét paraméter igaz."
     }
   ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Szűrési műveletek"
+    }
+  ],
   "AIL7WX": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Gaza, Hebron"
+      "value": "(UTC+02:00) Gáza, Hebron"
     }
   ],
   "ALImBL": [
@@ -966,7 +996,7 @@
   "AYaqW/": [
     {
       "type": 0,
-      "value": "(UTC+06:30) Yangon (Rangoon)"
+      "value": "(UTC+06:30) Yangon (Rangun)"
     }
   ],
   "ArTh0/": [
@@ -1024,7 +1054,7 @@
   "BAgRzO": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Coordinated Universal Time-08"
+      "value": "(UTC-08:00) Egyezményes világidő-08"
     }
   ],
   "BBD8Em": [
@@ -1066,7 +1096,7 @@
   "BVOUxP": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Havana"
+      "value": "(UTC-05:00) Havanna"
     }
   ],
   "Bn8iTS": [
@@ -1102,7 +1132,7 @@
   "Cy9qeQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+      "value": "(UTC+02:00) Helsinki, Kijev, Riga, Szófia, Tallinn, Vilnius"
     }
   ],
   "D+Ptnq": [
@@ -1117,6 +1147,12 @@
       "value": "Kötelező megadni. Az a sztring, amelyből el kell távolítani a kezdő és záró szóközöket."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Hasznosadat-minta használata a séma generálásához"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -1126,13 +1162,19 @@
   "DfS13/": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Aleutian Islands"
+      "value": "(UTC-10:00) Aleut-szigetek"
     }
   ],
   "DuXV2M": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Azores"
+      "value": "(UTC-01:00) Azori-szigetek"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Futtatás a következő után:"
     }
   ],
   "DysO/Q": [
@@ -1144,7 +1186,7 @@
   "E9OS+9": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Coordinated Universal Time-09"
+      "value": "(UTC-09:00) Egyezményes világidő-09"
     }
   ],
   "ECZC6Y": [
@@ -1162,7 +1204,7 @@
   "EYqGxA": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Athens, Bucharest"
+      "value": "(UTC+02:00) Athén, Bukarest"
     }
   ],
   "EZz5q7": [
@@ -1180,13 +1222,13 @@
   "Eqgm4v": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+      "value": "(UTC-05:00) Keleti idő (Amerikai Egyesült Államok és Kanada)"
     }
   ],
   "ExaACE": [
     {
       "type": 0,
-      "value": "Connection display name"
+      "value": "Kapcsolat megjelenített neve"
     }
   ],
   "F3IDl8": [
@@ -1198,7 +1240,7 @@
   "F489Vg": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Irkutsk"
+      "value": "(UTC+08:00) Irkutszk"
     }
   ],
   "FDF4Qb": [
@@ -1222,7 +1264,7 @@
   "FHsP9y": [
     {
       "type": 0,
-      "value": "(UTC+05:45) Kathmandu"
+      "value": "(UTC+05:45) Katmandu"
     }
   ],
   "FIT7i0": [
@@ -1270,7 +1312,7 @@
   "FXC0Zi": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03:00) Bagdad"
     }
   ],
   "FXLR5M": [
@@ -1335,6 +1377,20 @@
       "value": "Állapot"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Érvénytelen formátum szerinti felosztás a következőben: „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "”."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1365,6 +1421,12 @@
       "value": "Igaz értéket ad vissza, ha a paraméterek hamisak."
     }
   ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "Kevesebb megjelenítése"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -1380,7 +1442,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Kijelölés megszakítása"
     }
   ],
   "GzQQqH": [
@@ -1413,6 +1475,12 @@
       "value": "Kötelező megadni. A visszaadandó űrlapadatérték kulcsneve."
     }
   ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Dinamikus tartalom hozzáadására szolgáló gomb, ha a TokenPicker látható"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -1434,13 +1502,13 @@
   "IPbBB2": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Fiji"
+      "value": "(UTC+12:00) Fidzsi"
     }
   ],
   "IUE/lQ": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Cabo Verde Is."
+      "value": "(UTC-01:00) Cabo Verde"
     }
   ],
   "IW2MjQ": [
@@ -1452,7 +1520,13 @@
   "IjZFjQ": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+      "value": "(UTC+07:00) Barnaul, Gorno-Altajszk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
     }
   ],
   "IngtMG": [
@@ -1488,7 +1562,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Törlés"
     }
   ],
   "JNQHws": [
@@ -1506,7 +1580,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Új elem hozzáadása"
     }
   ],
   "Jaz3EC": [
@@ -1624,7 +1698,7 @@
   "Khc8lS": [
     {
       "type": 0,
-      "value": "(UTC-09:30) Marquesas Islands"
+      "value": "(UTC-09:30) Marquises-szigetek"
     }
   ],
   "KlvTze": [
@@ -1636,13 +1710,13 @@
   "KoBDbT": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Coordinated Universal Time-02"
+      "value": "(UTC-02:00) Egyezményes világidő-02"
     }
   ],
   "Kw3bWO": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Istanbul"
+      "value": "(UTC+02:00) Isztambul"
     }
   ],
   "L+PY+j": [
@@ -1657,16 +1731,42 @@
       "value": "Egy sztring típusú időbélyegnek a hét napját megadó összetevőjét adja vissza."
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "A keresés nem adott eredményeket"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
       "value": "Figyelmeztetés"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "Több megjelenítése"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
-      "value": "Creating..."
+      "value": "Létrehozás..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Érvénytelen típusú érték szerinti felosztás: „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "”. A felosztás nincs a tömbben."
     }
   ],
   "LS8rfZ": [
@@ -1675,10 +1775,22 @@
       "value": "A séma visszaadása egy URI azonosítóból"
     }
   ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Párhuzamos ág hozzáadása"
+    }
+  ],
   "Lft/is": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Új hozzáadása"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -1702,13 +1814,13 @@
   "LvpxiA": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "Átjáró"
     }
   ],
   "Lwe7tQ": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lisszabon, London"
     }
   ],
   "M0HMjE": [
@@ -1720,7 +1832,7 @@
   "M48CGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) Salamon-szigetek, Új-Kaledónia"
     }
   ],
   "M6U2LE": [
@@ -1798,25 +1910,25 @@
   "NeyUAh": [
     {
       "type": 0,
-      "value": "(UTC-03:00) City of Buenos Aires"
+      "value": "(UTC-03:00) Buenos Aires"
     }
   ],
   "NkUgXU": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Minsk"
+      "value": "(UTC+03:00) Minszk"
     }
   ],
   "NvANon": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Alaska"
+      "value": "(UTC-09:00) Alaszka"
     }
   ],
   "NvJDn/": [
     {
       "type": 0,
-      "value": "Tuesday"
+      "value": "Kedd"
     }
   ],
   "O+8vRv": [
@@ -1846,7 +1958,7 @@
   "OGUVGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Bougainville Island"
+      "value": "(UTC+11:00) Bougainville-sziget"
     }
   ],
   "OH9xlX": [
@@ -1858,7 +1970,7 @@
   "OKszbi": [
     {
       "type": 0,
-      "value": "Connection Name"
+      "value": "Kapcsolat neve"
     }
   ],
   "OSHNZ2": [
@@ -1984,7 +2096,7 @@
   "PeLrFb": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+      "value": "(UTC+03:00) Moszkva, Szentpétervár, Volgográd"
     }
   ],
   "PfCJlN": [
@@ -1996,7 +2108,7 @@
   "PmB0J7": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Turks and Caicos"
+      "value": "(UTC-04:00) Turks- és Caicos-szigetek"
     }
   ],
   "Pvm0xB": [
@@ -2008,7 +2120,7 @@
   "Q+oELo": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Izhevsk, Samara"
+      "value": "(UTC+04:00) Izsevszk, Szamara"
     }
   ],
   "Q/7unA": [
@@ -2116,7 +2228,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Váltás a teljes tömb bevitelére"
     }
   ],
   "RhH4pF": [
@@ -2166,7 +2278,7 @@
   "SADSSs": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+      "value": "(UTC+12:00) Petropavlovszk-Kamcsatszkij – régi"
     }
   ],
   "SKXopi": [
@@ -2209,6 +2321,18 @@
       "value": "Egyéni követési azonosító"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Kész"
+    }
+  ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Kevesebb információ"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2218,7 +2342,7 @@
   "T6VIym": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Név"
     }
   ],
   "T7zcR6": [
@@ -2248,13 +2372,13 @@
   "TNEttQ": [
     {
       "type": 0,
-      "value": "Friday"
+      "value": "Péntek"
     }
   ],
   "TNzcrv": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Vladivostok"
+      "value": "(UTC+10:00) Vlagyivosztok"
     }
   ],
   "TO7qos": [
@@ -2272,7 +2396,7 @@
   "TX4Kdr": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Új kapcsolat létrehozása"
     }
   ],
   "TZv5JE": [
@@ -2302,7 +2426,7 @@
   "TqPfth": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+      "value": "(UTC+01:00) Brüsszel, Koppenhága, Madrid, Párizs"
     }
   ],
   "Twfck/": [
@@ -2320,7 +2444,13 @@
   "U1NiVg": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central America"
+      "value": "(UTC-06:00) Közép-Amerika"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2332,7 +2462,7 @@
   "U56j9a": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Easter Island"
+      "value": "(UTC-06:00) Húsvét-sziget"
     }
   ],
   "UCNM4L": [
@@ -2353,12 +2483,6 @@
       "value": "A tartalom a biztonsági konfiguráció miatt nem jelenik meg."
     }
   ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Save"
-    }
-  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2368,7 +2492,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Adjon egy nevet a kapcsolatnak."
     }
   ],
   "V+/c21": [
@@ -2386,7 +2510,7 @@
   "VE3cxq": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+      "value": "(UTC-07:00) Hegyi idő (Amerikai Egyesült Államok és Kanada)"
     }
   ],
   "VKAk5g": [
@@ -2416,7 +2540,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Váltás a tömbelem részletes bemeneteire"
     }
   ],
   "VZHick": [
@@ -2429,6 +2553,20 @@
     {
       "type": 0,
       "value": "Futtatási előzmények"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "„"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "“ használata egyéni értékként"
     }
   ],
   "W070M2": [
@@ -2450,7 +2588,13 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Törlés"
+    }
+  ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy érvényes tulajdonságtárat"
     }
   ],
   "WS9kXD": [
@@ -2513,6 +2657,12 @@
       "value": "Újrapróbálkozás"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ügyeljen arra, hogy helyesen írja be a szavakat."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2525,10 +2675,16 @@
       "value": "Kapcsolat neve"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Új lépés beszúrása"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09:00) Szöul"
     }
   ],
   "XTuxmH": [
@@ -2552,13 +2708,13 @@
   "XX1ioe": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Kuwait, Riyadh"
+      "value": "(UTC+03:00) Kuvait, Rijád"
     }
   ],
   "XaS4ds": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+      "value": "(UTC-08:00) Csendes-óceáni idő (Amerikai Egyesült Államok és Kanada)"
     }
   ],
   "Xnn0uj": [
@@ -2643,10 +2799,22 @@
       "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely a függvénynek átadott tömbök vagy objektumok bármelyikében szereplő elemeket tartalmazza. A függvény paramétereit egy objektumhalmazban vagy egy tömbökből álló halmazban (a kettő kombinációjával viszont nem) lehet megadni. Két egyforma nevű objektum szereplése esetén a végső objektumban az utolsó adott nevű objektum fog megjelenni."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Tippek a kereséshez"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Nincs"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Kicsinyítés"
     }
   ],
   "Z4QLEf": [
@@ -2685,6 +2853,12 @@
       "value": "Kötelező megadni. Az érték, amellyel a sztring kezdődhet."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "További információ"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2694,7 +2868,7 @@
   "ZnGRMP": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Tomsk"
+      "value": "(UTC+07:00) Tomszk"
     }
   ],
   "a3QJzO": [
@@ -2718,7 +2892,7 @@
   "a7x6VI": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Taipei"
+      "value": "(UTC+08:00) Tajpej"
     }
   ],
   "aAXnqw": [
@@ -2736,7 +2910,7 @@
   "aH9SV7": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ashgabat, Tashkent"
+      "value": "(UTC+05:00) Asgabat, Taskent"
     }
   ],
   "aK4iLW": [
@@ -2766,7 +2940,7 @@
   "bS5DyV": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Kaliningrad"
+      "value": "(UTC+02:00) Kalinyingrád"
     }
   ],
   "bTrk+S": [
@@ -2796,13 +2970,27 @@
   "bnStSJ": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+      "value": "(UTC+05:30) Csennai, Kolkata (Kalkutta), Mumbai, Új-Delhi"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Futtatás a(z) "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " után"
     }
   ],
   "bx3qeC": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Brasilia"
+      "value": "(UTC-03:00) Brazíliaváros"
     }
   ],
   "bzF/qn": [
@@ -2859,10 +3047,16 @@
       "value": "Kötelező megadni. Az érték, melynek meg kell keresni az indexét."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Chokurdakh"
+      "value": "(UTC+11:00) Csokurdah"
     }
   ],
   "cVIZTQ": [
@@ -2925,10 +3119,10 @@
       "value": "További információ"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Kijelölés"
+      "value": "Frissítés"
     }
   ],
   "dSTRb/": [
@@ -2940,7 +3134,7 @@
   "dUZi34": [
     {
       "type": 0,
-      "value": "(UTC+12:45) Chatham Islands"
+      "value": "(UTC+12:45) Chatham-szigetek"
     }
   ],
   "dWFyfN": [
@@ -2958,13 +3152,27 @@
   "dWx21B": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Sakhalin"
+      "value": "(UTC+11:00) Szahalin"
+    }
+  ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Csatlakoztatva a következőhöz: "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "dgAu27": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03:00) Grönland"
     }
   ],
   "dhvk0u": [
@@ -2991,10 +3199,16 @@
       "value": "Sztring kettéosztása elválasztóval."
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "lejárt az időkorlátja"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
-      "value": "How often do you want to check for items?"
+      "value": "Milyen gyakran szeretne elemeket keresni?"
     }
   ],
   "e4Onhn": [
@@ -3006,7 +3220,7 @@
   "eGa1Wa": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ekaterinburg"
+      "value": "(UTC+05:00) Jekatyerinburg"
     }
   ],
   "eHgi14": [
@@ -3027,10 +3241,28 @@
       "value": "Kötelező megadni. A szám, mellyel el kell osztani az osztandót."
     }
   ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
+    }
+  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Kötelező megadni. A sztringrész kezdetének indexe az 1. paraméterben."
+    }
+  ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Válassza ki a sémát a legördülő listához."
+    }
+  ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Nincsenek a keresésnek megfelelő értékek"
     }
   ],
   "euC/DV": [
@@ -3087,6 +3319,12 @@
       "value": "Érték"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Nagyítás"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3096,7 +3334,7 @@
   "g5mMuM": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+      "value": "(UTC-03:00) Saint-Pierre és Miquelon"
     }
   ],
   "gCXOd5": [
@@ -3120,7 +3358,7 @@
   "gF+0/N": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Amman"
+      "value": "(UTC+02:00) Ammán"
     }
   ],
   "gIK0WG": [
@@ -3132,7 +3370,7 @@
   "gIc0YJ": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Kapcsolat neve"
     }
   ],
   "gKq3Jv": [
@@ -3159,22 +3397,46 @@
       "value": "Aktiválási feltételek"
     }
   ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
-  "gj+jEr": [
+  "gpbgjJ": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Érvénytelen érték szerinti felosztás: „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "”. Nem található a kimenetekben."
     }
   ],
   "gu9o9z": [
     {
       "type": 0,
       "value": "Until ciklusban való használat esetén ez a függvény a megadott ciklus aktuális iterációs indexét adja vissza."
+    }
+  ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "JSON-alapú hasznosadat-minta megadása vagy beillesztése."
     }
   ],
   "hBLPXK": [
@@ -3271,6 +3533,12 @@
       "value": "Sztring átalakítása nagybetűssé az invariáns kulturális környezet kis- és nagybetű-használati szabályai alapján."
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dinamikus tartalom"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3338,7 +3606,7 @@
   "j1VU25": [
     {
       "type": 0,
-      "value": "(UTC+14:00) Kiritimati Island"
+      "value": "(UTC+14:00) Karácsony-sziget"
     }
   ],
   "j2MU0b": [
@@ -3368,7 +3636,7 @@
   "jMLmag": [
     {
       "type": 0,
-      "value": "Create New"
+      "value": "Új létrehozása"
     }
   ],
   "jQ0Aqj": [
@@ -3393,6 +3661,22 @@
     {
       "type": 0,
       "value": "Szerkesztés JSON formátumban"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Nem sikerült létrehozni a sémát"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Nem támogatott jegyzékfájlkapcsolat hivatkozásának formátuma: "
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
     }
   ],
   "jsEMSu": [
@@ -3461,6 +3745,12 @@
       "value": "Egy Base 64 kódolású bementi sztringet sztringként ad vissza."
     }
   ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Minitérkép megjelenítése"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
@@ -3470,7 +3760,7 @@
   "kZCX7t": [
     {
       "type": 0,
-      "value": "Monday"
+      "value": "Hétfő"
     }
   ],
   "kZuYgD": [
@@ -3482,7 +3772,7 @@
   "kc5Mui": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Mid-Atlantic - Old"
+      "value": "(UTC-02:00) Közép-atlanti időzóna – régi"
     }
   ],
   "keb4r1": [
@@ -3494,7 +3784,7 @@
   "kneb9/": [
     {
       "type": 0,
-      "value": "(UTC-12:00) International Date Line West"
+      "value": "(UTC-12:00) Nemzetközi dátumválasztó vonal – nyugat"
     }
   ],
   "knylNW": [
@@ -3524,13 +3814,13 @@
   "lFve22": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+      "value": "(UTC+01:00) Szarajevó, Szkopje, Varsó, Zágráb"
     }
   ],
   "lIPWQ6": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+      "value": "(UTC+07:00) Bangkok, Hanoi, Dzsakarta"
     }
   ],
   "lPTdSf": [
@@ -3557,10 +3847,10 @@
       "value": "kihagyva"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Adjon meg egy érvényes tömböt"
     }
   ],
   "lgs5sf": [
@@ -3593,6 +3883,12 @@
       "value": "Név"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Művelet hozzáadása"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3620,7 +3916,7 @@
   "mZCHKf": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+      "value": "(UTC+12:00) Anadir, Petropavlovszk-Kamcsatszkij"
     }
   ],
   "mZRMD9": [
@@ -3633,6 +3929,12 @@
     {
       "type": 0,
       "value": "A munkafolyamat-metaadatokat tartalmazó fejlécek a kimenő Logic Apps-kérelemben való megjelenítésének letiltása."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -3659,6 +3961,12 @@
       "value": "Kötelező megadni. A lebegőpontos számmá alakítandó érték."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Használjon kevésbé specifikus kulcsszavakat."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3675,6 +3983,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az eltávolítandó tulajdonság neve."
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3745,10 +4059,16 @@
       "value": "Tartalomátvitel"
     }
   ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Krasnoyarsk"
+      "value": "(UTC+07:00) Krasznojarszk"
     }
   ],
   "oV0xQ9": [
@@ -3790,7 +4110,13 @@
   "p5tz8/": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Samoa"
+      "value": "(UTC+13:00) Szamoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Adja meg a kulcsot"
     }
   ],
   "pIczsS": [
@@ -3814,7 +4140,7 @@
   "pUeUDw": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+      "value": "(UTC+09:00) Oszaka, Szapporó, Tokió"
     }
   ],
   "pXmFGf": [
@@ -3880,7 +4206,7 @@
   "q9hf8i": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+      "value": "(UTC+04:00) Asztrahán, Uljanovszk"
     }
   ],
   "qGfwxW": [
@@ -3904,7 +4230,7 @@
   "qQoQFv": [
     {
       "type": 0,
-      "value": "Invalid connection."
+      "value": "Érvénytelen kapcsolat."
     }
   ],
   "qSejoi": [
@@ -3966,7 +4292,7 @@
   "qq/bq0": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Yakutsk"
+      "value": "(UTC+09:00) Jakutszk"
     }
   ],
   "qrxi0L": [
@@ -4014,7 +4340,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Érvénytelen a kapcsolat?"
     }
   ],
   "raBiud": [
@@ -4029,10 +4355,16 @@
       "value": "Egy értéket URI-ként kódolt értékként ad vissza."
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Kifejezés"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central Time (US & Canada)"
+      "value": "(UTC-06:00) Amerikai középidő (Amerikai Egyesült Államok és Kanada)"
     }
   ],
   "s5RV9B": [
@@ -4056,7 +4388,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Kapcsolat létrehozásának megszakítása"
     }
   ],
   "sW47JR": [
@@ -4098,7 +4430,7 @@
   "siYGSo": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Beirut"
+      "value": "(UTC+02:00) Bejrút"
     }
   ],
   "soqP+Z": [
@@ -4134,7 +4466,13 @@
   "tELkSC": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+      "value": "(UTC-06:00) Guadalajara, Mexikóváros, Monterrey"
+    }
+  ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
     }
   ],
   "tImHz/": [
@@ -4176,13 +4514,7 @@
   "tP+5fA": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Novosibirsk"
-    }
-  ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Aktiválás"
+      "value": "(UTC+06:00) Novoszibirszk"
     }
   ],
   "tZj2Xn": [
@@ -4206,13 +4538,7 @@
   "tsmuoF": [
     {
       "type": 0,
-      "value": "Display Name"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Műveletek"
+      "value": "Megjelenített név"
     }
   ],
   "u/KSPz": [
@@ -4224,7 +4550,7 @@
   "u6Gdft": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+      "value": "(UTC+04:00) Abu-Dzabi, Maszkat"
     }
   ],
   "uN4zFU": [
@@ -4251,6 +4577,12 @@
       "value": "Egy egész számmal megadott óraszám hozzáadása az átadott sztring típusú időbélyeghez."
     }
   ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Dinamikus tartalom keresése"
+    }
+  ],
   "uZH8Qs": [
     {
       "type": 0,
@@ -4272,13 +4604,19 @@
   "udNlco": [
     {
       "type": 0,
-      "value": "(UTC-11:00) Coordinated Universal Time-11"
+      "value": "(UTC-11:00) Egyezményes világidő-11"
     }
   ],
   "ui7GCl": [
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Változók"
     }
   ],
   "urAHv1": [
@@ -4317,6 +4655,12 @@
       "value": "Egy sztringbeli érték utolsó indexét adja vissza (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
     }
   ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "A kapcsoló állapotának kezelésére szolgáló gomb"
+    }
+  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4329,10 +4673,16 @@
       "value": "Törlés"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "A kifejezés érvénytelen."
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Astana"
+      "value": "(UTC+06:00) Asztana"
     }
   ],
   "va40BJ": [
@@ -4344,7 +4694,7 @@
   "vb/okJ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Cairo"
+      "value": "(UTC+02:00) Kairó"
     }
   ],
   "vcBAuU": [
@@ -4356,7 +4706,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Hozzon létre egy kapcsolatot a(z) "
     },
     {
       "type": 1,
@@ -4364,7 +4714,13 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " összekötő számára."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy egyéni értéket"
     }
   ],
   "vwH/XV": [
@@ -4382,7 +4738,13 @@
   "w5Hhig": [
     {
       "type": 0,
-      "value": "Sunday"
+      "value": "Vasárnap"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Oldal igazítása"
     }
   ],
   "wEaGWn": [
@@ -4394,7 +4756,7 @@
   "wF7C+h": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Mégse"
     }
   ],
   "wFCkpM": [
@@ -4419,6 +4781,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A sztring hossza."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Kattintson ide az elem törléséhez"
     }
   ],
   "wWVQuK": [
@@ -4448,7 +4816,7 @@
   "x+6ccf": [
     {
       "type": 0,
-      "value": "Wednesday"
+      "value": "Szerda"
     }
   ],
   "x0or2o": [
@@ -4496,13 +4864,13 @@
   "xZhieP": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Islamabad, Karachi"
+      "value": "(UTC+05:00) Iszlámábád, Karacsi"
     }
   ],
   "xb/DIr": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Coordinated Universal Time+12"
+      "value": "(UTC+12:00) Egyezményes világidő+12"
     }
   ],
   "xt5TeT": [
@@ -4541,16 +4909,6 @@
       "value": "(UTC-10:00) Hawaii"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " emblémája"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4560,13 +4918,13 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Válasszon ki egy meglévő kapcsolatot, vagy hozzon létre egy újat."
     }
   ],
   "yph4eq": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+      "value": "(UTC+01:00) Belgrád, Pozsony, Budapest, Ljubljana, Prága"
     }
   ],
   "yqRrQ/": [
@@ -4584,13 +4942,13 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Kapcsolódási átjáró"
     }
   ],
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "Menü"
     }
   ],
   "z4YYlQ": [
@@ -4605,16 +4963,34 @@
       "value": "Kötelező megadni. A tizedestörtté alakítandó érték."
     }
   ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy értéket"
+    }
+  ],
   "zIDVd9": [
     {
       "type": 0,
       "value": "Kötelező megadni. A natív típusú értékké alakítandó sztring."
     }
   ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Műveletek kiválasztása"
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Egyéni érték törlése"
+    }
+  ],
   "zbtUQ/": [
     {
       "type": 0,
-      "value": "(UTC+08:30) Pyongyang"
+      "value": "(UTC+08:30) Phenjan"
     }
   ],
   "zcZpHT": [

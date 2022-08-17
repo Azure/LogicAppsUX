@@ -1,15 +1,15 @@
 {
-  "name": "CustomerOrders.xsd",
+  "name": "CBRInputSchema2.xsd",
   "type": "XML",
-  "targetNamespace": "http://NewMapper.CustomerOrders",
-  "namespaces": {
-    "ns0": "http://NewMapper.CustomerOrders"
-  },
+  "targetNamespace": "http://CBR.CBRInputSchema",
+  "namespaces": { "ns0": "http://CBR.CBRInputSchema", "xs": "http://www.w3.org/2001/XMLSchema" },
   "schemaTreeRoot": {
-    "key": "/ns0:CustomerOrders",
-    "name": "CustomerOrders",
+    "key": "/ns0:CBRInputRecord",
+    "name": "CBRInputRecord",
     "namespacePrefix": "ns0",
-    "type": "ComplexType",
+    "namespaceUri": "http://CBR.CBRInputSchema",
+    "schemaNodeDataType": "None",
+    "properties": "NotSpecified",
     "children": []
   }
 }

@@ -1,19 +1,35 @@
 import type { RootState } from '../../store';
+import type { PanelState } from './panelInterfaces';
+import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
-export const useIsNodeSelected = (nodeId: string) => {
-  return useSelector((state: RootState) => state.panel.selectedNode === nodeId);
-};
+const getPanelState = (state: RootState) => state.panel;
 
-export const useRegisteredPanelTabs = () => useSelector((state: RootState) => state.panel.registeredTabs);
+export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.collapsed));
 
-export const usePanelTabByName = (tabName: string) => useSelector((state: RootState) => state.panel.registeredTabs[tabName]);
+export const useIsDiscovery = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.isDiscovery));
 
-export const useVisiblePanelTabs = () => {
-  return useSelector((state: RootState) => {
-    const visibleTabs = Object.values(state.panel.registeredTabs).filter((tab) => tab.visible !== false);
-    return visibleTabs.sort((a, b) => a.order - b.order);
-  });
-};
+export const useDiscoveryIds = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.discoveryIds));
 
-export const useSelectedPanelTabName = () => useSelector((state: RootState) => state.panel.selectedTabName);
+export const useSelectedOperationGroupId = () =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedOperationGroupId));
+
+export const useSelectedNodeId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNode));
+
+export const useIsNodeSelected = (nodeId: string) =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNode === nodeId));
+
+export const useRegisteredPanelTabs = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.registeredTabs));
+
+export const usePanelTabByName = (tabName: string) =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.registeredTabs[tabName]));
+
+export const useVisiblePanelTabs = () =>
+  useSelector(
+    createSelector(getPanelState, (state: PanelState) => {
+      const visibleTabs = Object.values(state.registeredTabs).filter((tab) => tab.visible !== false);
+      return visibleTabs.sort((a, b) => a.order - b.order);
+    })
+  );
+
+export const useSelectedPanelTabName = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedTabName));

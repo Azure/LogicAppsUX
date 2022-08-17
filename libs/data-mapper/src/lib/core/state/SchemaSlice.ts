@@ -1,72 +1,29 @@
-import type { Schema, SchemaExtended, SchemaNode, SchemaNodeExtended } from '../../models/Schema';
-import { convertSchemaToSchemaExtended } from '../../models/Schema';
+import type { Schema } from '../../models/Schema';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
-export interface UpdateBreadcrumbAction {
-  schema?: Schema;
-  currentNode?: SchemaNode;
-}
-
 export interface SchemaState {
-  inputSchema?: SchemaExtended;
-  outputSchema?: SchemaExtended;
-  availableSchemas?: Schema[];
-  currentInputNode?: SchemaNodeExtended;
-  currentOutputNode?: SchemaNodeExtended;
+  availableSchemas: Schema[];
 }
 
-export const initialSchemaState: SchemaState = {};
+export const initialSchemaState: SchemaState = {
+  availableSchemas: [],
+};
 
 export const schemaSlice = createSlice({
   name: 'schema',
   initialState: initialSchemaState,
   reducers: {
-    setInputSchema: (state, action: PayloadAction<Schema | undefined>) => {
-      const incomingSchema = action.payload;
-      if (incomingSchema) {
-        const extendedSchema = convertSchemaToSchemaExtended(incomingSchema);
-        state.inputSchema = extendedSchema;
-        state.currentInputNode = extendedSchema.schemaTreeRoot;
-      }
-    },
-    setInputSchemaExtended: (state, action: PayloadAction<SchemaExtended | undefined>) => {
-      state.inputSchema = action.payload;
-      state.currentInputNode = action.payload?.schemaTreeRoot;
-    },
-    setOutputSchema: (state, action: PayloadAction<Schema | undefined>) => {
-      const incomingSchema = action.payload;
-      if (incomingSchema) {
-        const extendedSchema = convertSchemaToSchemaExtended(incomingSchema);
-        state.outputSchema = extendedSchema;
-        state.currentOutputNode = extendedSchema.schemaTreeRoot;
-      }
-    },
-    setOutputSchemaExtended: (state, action: PayloadAction<SchemaExtended | undefined>) => {
-      state.outputSchema = action.payload;
-      state.currentOutputNode = action.payload?.schemaTreeRoot;
-    },
     setAvailableSchemas: (state, action: PayloadAction<Schema[] | undefined>) => {
-      state.availableSchemas = action.payload;
-    },
-
-    setCurrentInputNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {
-      state.currentInputNode = action.payload;
-    },
-    setCurrentOutputNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {
-      state.currentOutputNode = action.payload;
+      if (action.payload) {
+        state.availableSchemas = action.payload;
+      } else {
+        state.availableSchemas = [];
+      }
     },
   },
 });
 
-export const {
-  setInputSchema,
-  setInputSchemaExtended,
-  setOutputSchema,
-  setOutputSchemaExtended,
-  setAvailableSchemas,
-  setCurrentInputNode,
-  setCurrentOutputNode,
-} = schemaSlice.actions;
+export const { setAvailableSchemas } = schemaSlice.actions;
 
 export default schemaSlice.reducer;

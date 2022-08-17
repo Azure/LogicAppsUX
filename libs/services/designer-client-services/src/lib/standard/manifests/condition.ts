@@ -9,8 +9,8 @@ export default {
     description: 'Identifies which block of actions to execute based on the evaluation of condition input.',
 
     allowChildOperations: true,
-    childOperationsLocation: ['actions'],
     subGraphDetails: {
+      actions: {},
       else: {
         location: ['actions'],
       },

@@ -13,6 +13,7 @@ export interface ExpandedArrayProps {
   items: ArrayEditorItemProps[];
   canDeleteLastItem: boolean;
   readOnly: boolean;
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
 }
 
@@ -33,7 +34,14 @@ const menuButtonStyles: IIconStyles = {
   },
 };
 
-export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, setItems }: ExpandedArrayProps): JSX.Element => {
+export const ExpandedArray = ({
+  labelProps,
+  items,
+  canDeleteLastItem,
+  readOnly,
+  GetTokenPicker,
+  setItems,
+}: ExpandedArrayProps): JSX.Element => {
   const intl = useIntl();
 
   const addItemButtonLabel = intl.formatMessage({
@@ -42,7 +50,7 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
   });
 
   const renderLabel = (index: number): JSX.Element => {
-    const { text, isRequiredField } = labelProps;
+    const { text, isRequiredField } = labelProps as LabelProps;
     return (
       <div className="msla-array-editor-label">
         <Label text={text + ' Item - ' + (index + 1)} isRequiredField={isRequiredField} />
@@ -74,6 +82,8 @@ export const ExpandedArray = ({ labelProps, items, canDeleteLastItem, readOnly, 
               className="msla-array-editor-container-expanded"
               initialValue={item.content ?? []}
               BasePlugins={{ tokens: true, clearEditor: true }}
+              tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-array-editor-tokenpicker' }}
+              GetTokenPicker={GetTokenPicker}
             >
               <EditorChange item={item.content ?? []} items={items} setItems={setItems} index={index} />
             </BaseEditor>

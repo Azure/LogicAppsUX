@@ -1,76 +1,95 @@
 import type { SectionProps } from '../';
+import constants from '../../../common/constants';
+import type { AppDispatch, RootState } from '../../../core';
 import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
+import { addEdgeFromRunAfter, removeEdgeFromRunAfter, updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
-import { useEffect, useState } from 'react';
+import { labelCase } from '@microsoft-logic-apps/utils';
+import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
 
 // TODO: 14714481 We need to support all incoming edges and runAfterConfigMenu
+
 interface RunAfterProps extends SectionProps {
   allEdges: WorkflowEdge[];
 }
 
-export const RunAfter = ({ runAfter, readOnly = false }: RunAfterProps): JSX.Element | null => {
-  const [statuses, setStatuses] = useState<Record<string, string[]>>({});
-  const graphEdges = runAfter?.value;
+export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, nodeId }: RunAfterProps): JSX.Element | null => {
+  const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
+  const dispatch = useDispatch<AppDispatch>();
 
-  useEffect(() => {
-    setStatuses((): Record<string, string[]> => {
-      const record: Record<string, string[]> = {};
-      if (graphEdges) {
-        graphEdges.forEach((edge) => {
-          record[edge.predecessorId] = edge.statuses ?? [];
-        });
-      }
-      return record;
-    });
-  }, [graphEdges]);
-
-  const handleStatusChange = (key: string, status: string, checked?: boolean) => {
-    const updatedStatus: string[] = [...statuses[key]];
-
-    const index = updatedStatus?.findIndex((s) => s.toUpperCase() === status);
-    if (index !== -1) {
-      updatedStatus.splice(index, 1);
+  const handleStatusChange = (predecessorId: string, status: string, checked?: boolean) => {
+    if (!nodeData.runAfter) {
+      return;
     }
+    const updatedStatus: string[] = [...nodeData.runAfter[predecessorId]].filter((x) => x !== status);
+
     if (checked) {
       updatedStatus.push(status);
     }
 
-    const updatedStatuses = { ...statuses };
-    updatedStatuses[key] = updatedStatus;
-    setStatuses(updatedStatuses);
+    dispatch(
+      updateRunAfter({
+        childOperation: nodeId,
+        parentOperation: predecessorId,
+        statuses: updatedStatus,
+      })
+    );
   };
 
   const GetRunAfterProps = (): RunAfterActionDetailsProps[] => {
     const items: RunAfterActionDetailsProps[] = [];
-    graphEdges?.forEach((edge) => {
-      const { predecessorId } = edge;
+    Object.entries(nodeData?.runAfter ?? {}).forEach(([id, value]) => {
       items.push({
         collapsible: true,
         expanded: false,
-        id: predecessorId,
+        id: id,
         isDeleteVisible: true,
         readOnly: readOnly,
-        title: predecessorId,
-        statuses: statuses[predecessorId] ?? [],
+        title: labelCase(id),
+        statuses: value,
         onStatusChange: (status, checked) => {
-          handleStatusChange(predecessorId, status, checked);
+          handleStatusChange(id, status, checked);
+        },
+        onDelete: () => {
+          dispatch(
+            removeEdgeFromRunAfter({
+              parentOperationId: id,
+              childOperationId: nodeId,
+            })
+          );
         },
       });
     });
     return items;
   };
+  const intl = useIntl();
+  const runAfterTitle = intl.formatMessage({
+    defaultMessage: 'Run After',
+    description: 'title for run after setting section',
+  });
 
   const runAfterSectionProps: SettingSectionProps = {
     id: 'runAfter',
-    title: 'Run After',
-    expanded: false,
+    title: runAfterTitle,
+    sectionName: constants.SETTINGSECTIONS.RUNAFTER,
+    expanded,
+    onHeaderClick,
     settings: [
       {
         settingType: 'RunAfter',
         settingProp: {
           items: GetRunAfterProps(),
+          onEdgeAddition: (parentNode: string) => {
+            dispatch(
+              addEdgeFromRunAfter({
+                parentOperationId: parentNode,
+                childOperationId: nodeId,
+              })
+            );
+          },
         },
         visible: runAfter?.isSupported,
       },

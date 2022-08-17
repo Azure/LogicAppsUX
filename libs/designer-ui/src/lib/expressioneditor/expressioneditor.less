@@ -1,0 +1,31 @@
+.msla-expression-editor-container {
+  height: 100%;
+  background-color: #fff;
+
+  & > div {
+    height: 19px;
+
+    .monaco-editor {
+      top: 6px;
+
+      .decorationsOverviewRuler {
+        display: none;
+      }
+
+      .view-overlays .current-line {
+        border: none;
+      }
+
+      /* Undo after https://github.com/Microsoft/monaco-editor/issues/810 is fixed */
+      .wrapper {
+        overflow: hidden;
+      }
+    }
+  }
+}
+
+body.dark {
+  .msla-expression-editor-container {
+    background-color: rgb(30, 30, 30); /* monaco-editor vs-dark */
+  }
+}

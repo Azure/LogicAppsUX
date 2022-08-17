@@ -1,8 +1,8 @@
-import { SchemaTypes } from './EditorConfigPanel';
-import { ChoiceGroup, Dropdown, PrimaryButton, TextField } from '@fluentui/react';
+import { SchemaTypes } from '../../models/Schema';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
-import { useCallback, useState } from 'react';
+import { ChoiceGroup, Dropdown, PrimaryButton, TextField } from '@fluentui/react';
 import type { FunctionComponent } from 'react';
+import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export enum UploadSchemaTypes {
@@ -50,6 +50,10 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
   const uploadMessage = intl.formatMessage({
     defaultMessage: 'Select a file to upload',
     description: 'This is shown as a placeholder text for selecting a file to upload',
+  });
+  const dropdownAriaLabel = intl.formatMessage({
+    defaultMessage: 'Select the schema for dropdown',
+    description: 'Dropdown for selecting or changing the input or output schema ',
   });
 
   let uploadSelectLabelMessage = '';
@@ -108,12 +112,15 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
       {uploadType === UploadSchemaTypes.UploadNew && (
         <div className="upload-new">
           <TextField placeholder={uploadMessage} />
-          <PrimaryButton className="panel-button-right">{browseMessage}</PrimaryButton>
+          <PrimaryButton className="panel-button-right" aria-label={browseMessage}>
+            {browseMessage}
+          </PrimaryButton>
         </div>
       )}
 
       {uploadType === UploadSchemaTypes.SelectFrom && (
         <Dropdown
+          aria-label={dropdownAriaLabel}
           selectedKey={selectedSchema ? selectedSchema.key : undefined}
           placeholder={selectSchemaPlaceholderMessage}
           options={dataMapDropdownOptions ?? []}

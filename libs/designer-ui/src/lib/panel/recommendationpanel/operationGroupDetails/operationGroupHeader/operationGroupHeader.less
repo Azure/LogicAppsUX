@@ -1,0 +1,54 @@
+.msla-op-group-header {
+  display: flex;
+  gap: 8px;
+
+  .msla-op-group-image {
+    height: 64px;
+    min-width: 64px;
+    border-radius: 4px;
+  }
+
+  .msla-op-group-info {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow: hidden;
+
+    &.limited {
+      max-height: 64px;
+    }
+
+    .msla-op-group-title-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .msla-op-group-title {
+      font: 16px/20px @semibold-font-family;
+      font-weight: 600;
+      text-align: left;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      min-height: 20px;
+      flex: 1;
+    }
+
+    .msla-op-group-subtitle {
+      font-size: 14px;
+      line-height: 20px;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .msla-read-more-container {
+    position: absolute;
+    right: 0px;
+    bottom: 1px;
+    font-size: 14px;
+    background: white;
+  }
+}

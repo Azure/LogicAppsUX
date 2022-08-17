@@ -1,10 +1,39 @@
-import type { OperationSearchResult } from '../models/operation';
+import type {
+  BuiltInOperation,
+  DiscoveryOperation,
+  DiscoveryResultTypes,
+  SomeKindOfAzureOperationDiscovery,
+} from '../models/operationDiscoveryResults';
 
-export const MockSearchOperations: OperationSearchResult[] = [
+export const MockSearchOperationsBuiltIn: DiscoveryOperation<BuiltInOperation>[] = [
+  {
+    name: 'blobExists',
+    id: 'blobExists',
+    type: 'blobExists',
+    properties: {
+      api: {
+        id: '/serviceProviders/AzureBlob',
+        type: 'ServiceProvider',
+        name: 'AzureBlob',
+        displayName: 'Azure Blob',
+        iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1443/1.0.1443.2341/azureblob/icon.png',
+        brandColor: '#804998',
+        description: 'Connect to Azure Azure Blob Storage.',
+      },
+      summary: 'Checks if Blob exists in Azure Storage',
+      description: 'Checks if Blob exists in Azure Storage',
+      visibility: 'Important',
+      operationType: 'ServiceProvider',
+      brandColor: '#804998',
+      iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1443/1.0.1443.2341/azureblob/icon.png',
+    },
+  },
+];
+
+export const MockAzureOperation: DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[] = [
   {
     properties: {
       summary: 'When a blob is added or modified (properties only) (V2)',
-      category: 'Azure',
       description:
         'This operation triggers a flow when one or more blobs are added or modified in a container. This trigger will only fetch the file metadata. To get the file content, you can use the \\"Get file content\\" operation. The trigger does not fire if a file is added/updated in a subfolder. If it is required to trigger on subfolders, multiple triggers should be created.',
       visibility: 'important',
@@ -19,7 +48,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
           'Microsoft Azure Storage provides a massively scalable, durable, and highly available storage for data on the cloud, and serves as the data storage solution for modern applications. Connect to Blob Storage to perform various operations such as create, update, get and delete on blobs in your Azure Storage account.',
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1563/1.0.1563.2732/azureblob/icon.png',
         brandColor: '#804998',
-        category: 'Standard',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/azureblob',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -34,7 +63,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Azure',
       summary: 'When a rule is fired',
       description: 'Create an action which triggers when a rule is fired in IoT Central.',
       trigger: 'single',
@@ -48,7 +76,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
           'This is a legacy connector for Azure IoT Central V2 applications that will become deprecated in the future. You should use the Azure IoT Central V3 connector and applications instead. Azure IoT Central makes it easy to connect, monitor, and manage your IoT devices at scale. With the IoT Central V2 connector, you can trigger flows when a rule has fired and take action by creating new devices, updating existing devices, and deleting devices.',
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1544/1.0.1544.2640/iotcentral/icon.png',
         brandColor: '#0065d9',
-        category: 'Standard',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/iotcentral',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -63,7 +91,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Azure',
       summary: 'When a task is added',
       description: 'This operation triggers when a new task is created.',
       visibility: 'important',
@@ -79,7 +106,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
           'Outlook Tasks service lets you create, read, synchronize, update and delete your tasks that are secured by Azure Active Directory in Office 365 or a Microsoft account.',
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1445/1.0.1445.2347/outlooktasks/icon.png',
         brandColor: '#0072c6',
-        category: 'Standard',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/outlooktasks',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -94,7 +121,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Built-in',
       summary: 'When a task is completed',
       description: 'This operation triggers when a task is marked as complete.',
       visibility: 'advanced',
@@ -110,7 +136,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
           'Outlook Tasks service lets you create, read, synchronize, update and delete your tasks that are secured by Azure Active Directory in Office 365 or a Microsoft account.',
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1445/1.0.1445.2347/outlooktasks/icon.png',
         brandColor: '#0072c6',
-        category: 'Standard',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/outlooktasks',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -125,7 +151,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Azure',
       summary: 'When a dataflow refresh completes',
       description: 'This operation triggers when a dataflow refresh completes.',
       visibility: 'important',
@@ -141,7 +166,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
           "Dataflows are a self-service, cloud-based, data preparation technology that allows you to ingest, transform and load data into Common Data Service environments, Power BI workspaces or your organization's Azure Data Lake Gen2 account.",
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1567/1.0.1567.2748/dataflows/icon.png',
         brandColor: '#6264A7',
-        category: 'Standard',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/dataflows',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -156,7 +181,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Built-in',
       summary: 'When an Azure Security Center Alert is created or triggered',
       description:
         'Triggers when an alert is created in Security Center and matches the evaluation criteria configured in an automation, or when manually run on a specific alert.\nNote: automated running of this trigger requires enabling automation in Azure Security Center and enabling the Standard tier as a preliminary step.\nPlease visit Azure Security Center to do so.',
@@ -170,8 +194,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
         description:
           "Azure Security Center is a unified infrastructure security management system that strengthens the security posture of your data centers, and provides advanced threat protection across your hybrid workloads in the cloud - whether they're in Azure or not - as well as on premises",
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1554/1.0.1554.2707/ascalert/icon.png',
-        brandColor: '#0072C6',
-        category: 'Standard',
+        brandColor: '#95C515',
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/ascalert',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -188,7 +211,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Azure',
       summary: 'When an Azure Security Center Recommendation is created or triggered',
       description:
         'Triggers when a recommendation is created in Security Center and matches the evaluation criteria configured in an automation, or when manually run on a specific recommendation.\nNote: automated running of this trigger requires enabling automation in Azure Security Center.\nPlease visit Azure Security Center to do so.',
@@ -202,8 +224,8 @@ export const MockSearchOperations: OperationSearchResult[] = [
         description:
           "Azure Security Center is a unified infrastructure security management system that strengthens the security posture of your data centers, and provides advanced threat protection across your hybrid workloads in the cloud - whether they're in Azure or not - as well as on premises",
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1514/1.0.1514.2551/ascassessment/icon.png',
-        brandColor: '#0072C6',
-        category: 'Standard',
+        brandColor: '#95C515',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/ascassessment',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -220,7 +242,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Azure',
       summary: 'When a Security Center Regulatory Compliance Assessment is created or triggered',
       description:
         'Triggers when a regulatory compliance assessment is created in Security Center and matches the evaluation criteria configured in an automation. Note: automated running of this trigger requires enabling automation in Azure Security Center. Please visit Azure Security Center to do so.',
@@ -235,7 +256,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
           "Azure Security Center is a unified infrastructure security management system that strengthens the security posture of your data centers, and provides advanced threat protection across your hybrid workloads in the cloud - whether they're in Azure or not - as well as on premises",
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1511/1.0.1511.2542/ascregulatorycomplianceassessment/icon.png',
         brandColor: '#95C515',
-        category: 'Standard',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/ascregulatorycomplianceassessment',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -252,7 +273,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Built-in',
       summary: 'When one or more messages arrive in a queue (auto-complete)',
       description:
         'The operation receives one or more messages from a queue. If maximum message count is not provided, it reads 20 messages.',
@@ -268,7 +288,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
           'Connect to Azure Service Bus to send and receive messages. You can perform actions such as send to queue, send to topic, receive from queue, receive from subscription, etc.',
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1568/1.0.1568.2757/servicebus/icon.png',
         brandColor: '#c4d5ff',
-        category: 'Standard',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/servicebus',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -285,7 +305,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Azure',
       summary: 'When one or more messages arrive in a topic (auto-complete)',
       description:
         'The operation receives one or more messages from a topic. If maximum message count is not provided, it reads 20 messages.',
@@ -301,7 +320,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
           'Connect to Azure Service Bus to send and receive messages. You can perform actions such as send to queue, send to topic, receive from queue, receive from subscription, etc.',
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1568/1.0.1568.2757/servicebus/icon.png',
         brandColor: '#c4d5ff',
-        category: 'Standard',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/servicebus',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -318,7 +337,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Built-in',
       summary: 'When one or more messages arrive in a queue (peek-lock)',
       description:
         'The operation receives one or more messages from a queue with peek-lock. If maximum message count is not provided, it reads 20 messages.',
@@ -334,7 +352,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
           'Connect to Azure Service Bus to send and receive messages. You can perform actions such as send to queue, send to topic, receive from queue, receive from subscription, etc.',
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1568/1.0.1568.2757/servicebus/icon.png',
         brandColor: '#c4d5ff',
-        category: 'Standard',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/servicebus',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -351,7 +369,6 @@ export const MockSearchOperations: OperationSearchResult[] = [
   },
   {
     properties: {
-      category: 'Built-in',
       summary: 'When one or more messages arrive in a topic (peek-lock)',
       description:
         'The operation receives one or more messages from a topic with peek-lock. If maximum message count is not provided, it reads 20 messages.',
@@ -367,7 +384,7 @@ export const MockSearchOperations: OperationSearchResult[] = [
           'Connect to Azure Service Bus to send and receive messages. You can perform actions such as send to queue, send to topic, receive from queue, receive from subscription, etc.',
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1568/1.0.1568.2757/servicebus/icon.png',
         brandColor: '#c4d5ff',
-        category: 'Standard',
+
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/servicebus',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -383,3 +400,5 @@ export const MockSearchOperations: OperationSearchResult[] = [
     location: 'centralus',
   },
 ];
+
+export const MockSearchOperations: DiscoveryOperation<DiscoveryResultTypes>[] = [...MockSearchOperationsBuiltIn, ...MockAzureOperation];

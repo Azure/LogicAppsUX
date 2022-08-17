@@ -1,10 +1,11 @@
-import { setCurrentOutputNode, setOutputSchema } from '../../core/state/SchemaSlice';
+import { setCurrentOutputNode, setInitialOutputSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { convertSchemaToSchemaExtended } from '../../models/Schema';
 import { simpleMockSchema } from '../../models/__mocks__';
 import { EditorBreadcrumb } from './EditorBreadcrumb';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 import { Provider } from 'react-redux';
 
 interface MockStoreData {
@@ -13,7 +14,7 @@ interface MockStoreData {
 }
 
 const MockStore = ({ mockState, children }) => {
-  store.dispatch(setOutputSchema(mockState.schema));
+  store.dispatch(setInitialOutputSchema(mockState.schema));
   store.dispatch(setCurrentOutputNode(mockState.currentNode));
 
   return <Provider store={store}>{children}</Provider>;

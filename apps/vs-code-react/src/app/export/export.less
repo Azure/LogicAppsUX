@@ -7,7 +7,8 @@
 
   &-instance-panel {
     &-dropdown {
-      max-width: 350px;
+      width: 350px;
+      max-width: 400px;
       margin: 16px 0;
     }
   }
@@ -24,7 +25,7 @@
 
   &-workflows-panel {
     display: flex;
-    max-height: 60%;
+    max-height: 75%;
 
     &-filters {
       display: flex;
@@ -33,6 +34,24 @@
       &-input {
         width: 25%;
         margin-right: 10px;
+
+        input::placeholder {
+          font-style: normal;
+        }
+      }
+
+      &-dropdown {
+        width: 350px;
+        max-width: 400px;
+      }
+    }
+
+    &-limit-selection {
+      margin-top: 10px;
+
+      .ms-MessageBar-text {
+        display: inline-flex;
+        align-items: center;
       }
     }
 
@@ -42,10 +61,22 @@
       flex-direction: column;
       max-width: 75%;
 
+      .loading {
+        .ms-DetailsHeader-cell {
+          pointer-events: none;
+        }
+      }
+
       &-workflows {
         overflow: auto;
         margin: 15px 0;
         flex: 1;
+
+        &-empty {
+          display: inline-flex;
+          justify-content: center;
+          width: 100%;
+        }
       }
     }
 
@@ -76,13 +107,10 @@
         &-item {
           display: inline-flex;
           align-items: center;
+          margin-left: 10px;
 
           &-text {
             max-width: 45%;
-          }
-
-          .subtext-color {
-            color: #cccccc;
           }
 
           &-subtext {
@@ -92,6 +120,89 @@
             margin: 5px;
           }
         }
+
+        &-shimmer {
+          margin: 10px;
+        }
+      }
+    }
+  }
+
+  &-validation {
+    display: flex;
+    flex-direction: column;
+    height: 75%;
+
+    &-list {
+      flex: 2;
+      overflow: auto;
+      margin-top: 10px;
+    }
+  }
+
+  &-summary {
+    display: flex;
+    flex-direction: column;
+    height: 75%;
+
+    &-file-location {
+      margin-top: 10px;
+
+      &-text {
+        width: 40%;
+      }
+
+      &-button {
+        margin: 0 10px;
+      }
+
+      display: flex;
+      align-items: flex-end;
+    }
+
+    &-detail-list {
+      overflow: auto;
+      margin-top: 10px;
+      flex: 2;
+
+      .ms-DetailsRow-fields {
+        display: flex;
+        align-items: center;
+
+        .ms-DetailsRow-cell {
+          white-space: normal;
+        }
+      }
+
+      &-empty {
+        display: inline-flex;
+        justify-content: center;
+        width: 100%;
+      }
+    }
+
+    &-connections {
+      margin: 20px 0;
+
+      &-checkbox {
+        margin: 10px 0;
+      }
+
+      &-dropdown {
+        width: 30%;
+      }
+
+      &-button {
+        margin: 20px 20px 20px 0;
+      }
+    }
+
+    &-package-warning {
+      margin-top: 10px;
+
+      .ms-MessageBar-text {
+        display: inline-flex;
+        align-items: center;
       }
     }
   }

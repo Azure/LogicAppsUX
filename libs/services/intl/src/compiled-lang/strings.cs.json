@@ -5,16 +5,10 @@
       "value": "OK"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filtry"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+      "value": "(UTC+08:00) Kuala Lumpur, Singapur"
     }
   ],
   "+dlOgj": [
@@ -32,7 +26,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "Zaškrtnutím toto připojení vyberete."
     }
   ],
   "+lpuMl": [
@@ -56,7 +50,7 @@
   "/B2CTz": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00) Peking, Čchung-čching, Hongkong, Urumqi"
     }
   ],
   "/I/U8L": [
@@ -81,6 +75,18 @@
     {
       "type": 0,
       "value": "Vrátí prvek pole, který začíná na indexu Počet."
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Změnit připojení"
+    }
+  ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "Tento konektor má více verzí, integrovaných a hostovaných v Azure. Využijte integrované verze pro zajištění nejlepšího výkonu, ověřování připojovacího řetězce a dalších funkcí. Pro další možnosti ověřování použijte verze hostované v Azure."
     }
   ],
   "/WW7If": [
@@ -110,13 +116,13 @@
   "/rjP4U": [
     {
       "type": 0,
-      "value": "(UTC) Coordinated Universal Time"
+      "value": "Koordinovaný univerzální čas (UTC)"
     }
   ],
   "/sMQhI": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Indiana (East)"
+      "value": "(UTC-05:00) Indiana (východ)"
     }
   ],
   "/ut0u7": [
@@ -278,7 +284,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00) Jeruzalém"
     }
   ],
   "1R6Vaa": [
@@ -371,6 +377,12 @@
     {
       "type": 0,
       "value": "Zobrazit zobrazení kódu"
+    }
+  ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
     }
   ],
   "1ejxkP": [
@@ -472,7 +484,7 @@
   "2ri1Kf": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damascus"
+      "value": "(UTC+02:00) Damašek"
     }
   ],
   "2tTQ0A": [
@@ -493,6 +505,12 @@
       "value": "Identifikátor"
     }
   ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Přidat dynamický obsah"
+    }
+  ],
   "3FoqCK": [
     {
       "type": 0,
@@ -508,13 +526,13 @@
   "3PgHCT": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Chisinau"
+      "value": "(UTC+02:00) Kišiněv"
     }
   ],
   "3TD2V5": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06:00) Dháka"
     }
   ],
   "3X/ZDK": [
@@ -526,13 +544,13 @@
   "3afjx+": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Chita"
+      "value": "(UTC+09:00) Čita"
     }
   ],
   "3jlz+B": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Tehran"
+      "value": "(UTC+03:30) Teherán"
     }
   ],
   "3kI7xF": [
@@ -574,7 +592,7 @@
   "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04:00) Jerevan"
     }
   ],
   "47kOXr": [
@@ -592,13 +610,13 @@
   "4Q7WzU": [
     {
       "type": 0,
-      "value": "Add a new connection"
+      "value": "Přidat nové připojení"
     }
   ],
   "4XdZNj": [
     {
       "type": 0,
-      "value": "(UTC+01:00) West Central Africa"
+      "value": "(UTC+01:00) Západ střední Afriky"
     }
   ],
   "4YKQAF": [
@@ -623,6 +641,12 @@
     {
       "type": 0,
       "value": "Přepnout minimapu"
+    }
+  ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker skrytý"
     }
   ],
   "4vcnOA": [
@@ -691,6 +715,12 @@
       "value": "Odstranit parametr"
     }
   ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybridní konektor"
+    }
+  ],
   "63/zYN": [
     {
       "type": 0,
@@ -754,7 +784,7 @@
   "7KxCGX": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Lord Howe Island"
+      "value": "(UTC+10:30) Ostrov Lorda Howa"
     }
   ],
   "7QymrD": [
@@ -784,7 +814,7 @@
   "7lvqST": [
     {
       "type": 0,
-      "value": "Invalid"
+      "value": "Neplatné"
     }
   ],
   "7yEdSt": [
@@ -826,7 +856,7 @@
   "8JEHiY": [
     {
       "type": 0,
-      "value": "Saturday"
+      "value": "Sobota"
     }
   ],
   "8JFxmV": [
@@ -850,7 +880,7 @@
   "8Y5xpK": [
     {
       "type": 0,
-      "value": "Thursday"
+      "value": "Čtvrtek"
     }
   ],
   "8j+a0n": [
@@ -862,7 +892,7 @@
   "8pPivj": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Norfolk Island"
+      "value": "(UTC+11:00) Norfolk"
     }
   ],
   "8to63i": [
@@ -898,13 +928,13 @@
   "9/vdrb": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Hovd"
+      "value": "(UTC+07:00) Chovd"
     }
   ],
   "949s+r": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08:00) Ulánbátar"
     }
   ],
   "99vsJy": [
@@ -916,7 +946,7 @@
   "9EmN2M": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Zrušit"
     }
   ],
   "9JuvQ4": [
@@ -937,12 +967,6 @@
       "value": "12"
     }
   ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
-    }
-  ],
   "9djnqI": [
     {
       "type": 0,
@@ -958,19 +982,25 @@
   "9pdXmX": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+      "value": "(UTC+01:00) Amsterdam, Berlín, Bern, Řím, Stockholm, Vídeň"
     }
   ],
   "9pl7QP": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Atlantic Time (Canada)"
+      "value": "(UTC-04:00) Atlantik (Kanada)"
     }
   ],
   "9u/Ae3": [
     {
       "type": 0,
       "value": "Vrátí true, pokud jsou oba parametry true."
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Akce filtru"
     }
   ],
   "AIL7WX": [
@@ -982,7 +1012,7 @@
   "ALImBL": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Monrovia, Reykjavik"
+      "value": "(UTC+00:00) Monrovia, Reykjavík"
     }
   ],
   "ANbEeQ": [
@@ -1000,7 +1030,7 @@
   "AYaqW/": [
     {
       "type": 0,
-      "value": "(UTC+06:30) Yangon (Rangoon)"
+      "value": "(UTC+06:30) Yangon (Rangún)"
     }
   ],
   "ArTh0/": [
@@ -1080,7 +1110,7 @@
   "BAgRzO": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Coordinated Universal Time-08"
+      "value": "(UTC-08:00) Koordinovaný světový čas-08"
     }
   ],
   "BBD8Em": [
@@ -1158,7 +1188,7 @@
   "Cy9qeQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+      "value": "(UTC+02:00) Helsinky, Kyjev, Riga, Sofie, Tallinn, Vilnius"
     }
   ],
   "D+Ptnq": [
@@ -1173,6 +1203,12 @@
       "value": "Povinné. Řetězec, z jehož začátku a konce se odeberou prázdné znaky."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "K vygenerování schématu použijte ukázkovou datovou část."
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -1182,13 +1218,19 @@
   "DfS13/": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Aleutian Islands"
+      "value": "(UTC-10:00) Aleutské ostrovy"
     }
   ],
   "DuXV2M": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Azores"
+      "value": "(UTC-01:00) Azory"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Spustit po"
     }
   ],
   "DysO/Q": [
@@ -1200,7 +1242,7 @@
   "E9OS+9": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Coordinated Universal Time-09"
+      "value": "(UTC-09:00) Koordinovaný světový čas-09"
     }
   ],
   "ECZC6Y": [
@@ -1218,7 +1260,7 @@
   "EYqGxA": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Athens, Bucharest"
+      "value": "(UTC+02:00) Atény, Bukurešť"
     }
   ],
   "EZz5q7": [
@@ -1236,13 +1278,13 @@
   "Eqgm4v": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+      "value": "(UTC-05:00) Východ USA a Kanady"
     }
   ],
   "ExaACE": [
     {
       "type": 0,
-      "value": "Connection display name"
+      "value": "Zobrazovaný název připojení"
     }
   ],
   "F3IDl8": [
@@ -1278,7 +1320,7 @@
   "FHsP9y": [
     {
       "type": 0,
-      "value": "(UTC+05:45) Kathmandu"
+      "value": "(UTC+05:45) Káthmándú"
     }
   ],
   "FIT7i0": [
@@ -1326,7 +1368,7 @@
   "FXC0Zi": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03:00) Bagdád"
     }
   ],
   "FXLR5M": [
@@ -1413,6 +1455,20 @@
       "value": "Stav"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Neplatný formát rozdělení v „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1443,6 +1499,12 @@
       "value": "Vrátí true, pokud jsou parametry false."
     }
   ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "Zobrazit méně"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -1458,7 +1520,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "Zrušit výběr"
     }
   ],
   "GzQQqH": [
@@ -1491,6 +1553,12 @@
       "value": "Povinný parametr. Název klíče datové hodnoty ve formuláři, která se má vrátit."
     }
   ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Tlačítko pro přidání dynamického obsahu, pokud je ovládací prvek TokenPicker zobrazený"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -1512,13 +1580,13 @@
   "IPbBB2": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Fiji"
+      "value": "(UTC+12:00) Fidži"
     }
   ],
   "IUE/lQ": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Cabo Verde Is."
+      "value": "(UTC-01:00) Cabo Verde"
     }
   ],
   "IW2MjQ": [
@@ -1530,7 +1598,13 @@
   "IjZFjQ": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+      "value": "(UTC+07:00) Barnaul, Gorno-Altajsk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
     }
   ],
   "IngtMG": [
@@ -1566,7 +1640,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Odstranit"
     }
   ],
   "JNQHws": [
@@ -1584,7 +1658,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "Přidat novou položku"
     }
   ],
   "Jaz3EC": [
@@ -1724,19 +1798,19 @@
   "Khc8lS": [
     {
       "type": 0,
-      "value": "(UTC-09:30) Marquesas Islands"
+      "value": "(UTC-09:30) Souostroví Markézy"
     }
   ],
   "KlvTze": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Sri Jayawardenepura"
+      "value": "(UTC+05:30) Šrí Džajavardanapura"
     }
   ],
   "KoBDbT": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Coordinated Universal Time-02"
+      "value": "(UTC-02:00) Koordinovaný univerzální čas (UTC)-02"
     }
   ],
   "Kw3bWO": [
@@ -1757,16 +1831,42 @@
       "value": "Vrátí část řetězcového časového razítka, která představuje den v týdnu."
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "Vaše hledání nemá žádné výsledky."
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
       "value": "Upozornění"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "Zobrazit více"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
-      "value": "Creating..."
+      "value": "Vytváření…"
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Neplatný typ hodnoty rozdělení „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“ – rozdělení není v poli."
     }
   ],
   "LS8rfZ": [
@@ -1775,10 +1875,22 @@
       "value": "Vrátí schéma z identifikátoru URI."
     }
   ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Přidat paralelní větev"
+    }
+  ],
   "Lft/is": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Přidat nový"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -1802,13 +1914,13 @@
   "LvpxiA": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "Brána"
     }
   ],
   "Lwe7tQ": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lisabon, Londýn"
     }
   ],
   "M0HMjE": [
@@ -1820,7 +1932,7 @@
   "M48CGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00) Šalamounovy ostrovy, Nová Kaledonie"
     }
   ],
   "M6U2LE": [
@@ -1898,7 +2010,7 @@
   "NeyUAh": [
     {
       "type": 0,
-      "value": "(UTC-03:00) City of Buenos Aires"
+      "value": "(UTC-03:00) Buenos Aires"
     }
   ],
   "NkUgXU": [
@@ -1910,13 +2022,13 @@
   "NvANon": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Alaska"
+      "value": "(UTC-09:00) Aljaška"
     }
   ],
   "NvJDn/": [
     {
       "type": 0,
-      "value": "Tuesday"
+      "value": "Úterý"
     }
   ],
   "O+8vRv": [
@@ -1946,7 +2058,7 @@
   "OGUVGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Bougainville Island"
+      "value": "(UTC+11:00) Bougainville"
     }
   ],
   "OH9xlX": [
@@ -1958,7 +2070,7 @@
   "OKszbi": [
     {
       "type": 0,
-      "value": "Connection Name"
+      "value": "Název připojení"
     }
   ],
   "OSHNZ2": [
@@ -2084,7 +2196,7 @@
   "PeLrFb": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+      "value": "(UTC+03:00) Moskva, St. Petersburg, Volgograd"
     }
   ],
   "PfCJlN": [
@@ -2096,7 +2208,7 @@
   "PmB0J7": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Turks and Caicos"
+      "value": "(UTC-04:00) Turks a Caicos"
     }
   ],
   "Pvm0xB": [
@@ -2108,7 +2220,7 @@
   "Q+oELo": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Izhevsk, Samara"
+      "value": "(UTC+04:00) Iževsk, Samara"
     }
   ],
   "Q/7unA": [
@@ -2212,7 +2324,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "Přepne na vstup celého pole."
     }
   ],
   "RhH4pF": [
@@ -2284,7 +2396,7 @@
   "SADSSs": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+      "value": "(UTC+12:00) Petropavlovsk-Kamčatskij – starý čas"
     }
   ],
   "SKXopi": [
@@ -2327,6 +2439,18 @@
       "value": "Vlastní ID sledování"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Hotovo"
+    }
+  ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Méně informací"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2336,7 +2460,7 @@
   "T6VIym": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Název"
     }
   ],
   "T7zcR6": [
@@ -2366,7 +2490,7 @@
   "TNEttQ": [
     {
       "type": 0,
-      "value": "Friday"
+      "value": "Pátek"
     }
   ],
   "TNzcrv": [
@@ -2390,7 +2514,7 @@
   "TX4Kdr": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Vytvořit nové propojení"
     }
   ],
   "TZv5JE": [
@@ -2420,7 +2544,7 @@
   "TqPfth": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+      "value": "(UTC+01:00) Brusel, Kodaň, Madrid, Paříž"
     }
   ],
   "Twfck/": [
@@ -2438,7 +2562,13 @@
   "U1NiVg": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central America"
+      "value": "(UTC-06:00) Střední Amerika"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2450,7 +2580,7 @@
   "U56j9a": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Easter Island"
+      "value": "(UTC-06:00) Velikonoční ostrov"
     }
   ],
   "UCNM4L": [
@@ -2471,12 +2601,6 @@
       "value": "Kvůli konfiguraci zabezpečení se obsah nezobrazuje."
     }
   ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Save"
-    }
-  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2486,7 +2610,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "Zadejte název připojení."
     }
   ],
   "V+/c21": [
@@ -2504,7 +2628,7 @@
   "VE3cxq": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+      "value": "(UTC-07:00) Horská oblast USA a Kanady"
     }
   ],
   "VKAk5g": [
@@ -2534,7 +2658,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "Přepne na vstupy podrobností pro položku pole."
     }
   ],
   "VZHick": [
@@ -2547,6 +2671,20 @@
     {
       "type": 0,
       "value": "Historie spuštění"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Použít „"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "“ jako vlastní hodnotu"
     }
   ],
   "W070M2": [
@@ -2568,7 +2706,13 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "Vymazat"
+    }
+  ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Zadejte prosím platný slovník."
     }
   ],
   "WS9kXD": [
@@ -2631,6 +2775,12 @@
       "value": "Zkusit znovu"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ujistěte se, že ve slovech není překlep."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2643,10 +2793,16 @@
       "value": "Název připojení"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Vloží nový krok."
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09:00) Soul"
     }
   ],
   "XTuxmH": [
@@ -2670,13 +2826,13 @@
   "XX1ioe": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Kuwait, Riyadh"
+      "value": "(UTC+03:00) Kuvajt, Rijád"
     }
   ],
   "XaS4ds": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+      "value": "(UTC-08:00) Tichomoří (USA a Kanada)"
     }
   ],
   "Xnn0uj": [
@@ -2761,10 +2917,22 @@
       "value": "Vrátí jedno pole nebo objekt, kde všechny prvky jsou buď v poli, nebo objektu předávaném této funkci. Parametry pro tuto funkci můžou být buď sada objektů, nebo sada polí (ne kombinace obou). Pokud jsou v konečném výstupu dva objekty se stejným názvem, zahrne se do konečného objektu poslední objekt s tímto názvem."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Tipy pro vyhledávání"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "Žádné"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Oddálit"
     }
   ],
   "Z4QLEf": [
@@ -2803,6 +2971,12 @@
       "value": "Vyžadováno. Hodnota, kterou může řetězec začínat."
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Více informací"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2812,7 +2986,7 @@
   "ZnGRMP": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Tomsk"
+      "value": "(UTC+07:00) Tomská oblast"
     }
   ],
   "a3QJzO": [
@@ -2836,7 +3010,7 @@
   "a7x6VI": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Taipei"
+      "value": "(UTC+08:00) Tchaj-pej"
     }
   ],
   "aAXnqw": [
@@ -2854,7 +3028,7 @@
   "aH9SV7": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ashgabat, Tashkent"
+      "value": "(UTC+05:00) Ašchabád, Taškent"
     }
   ],
   "aK4iLW": [
@@ -2914,13 +3088,23 @@
   "bnStSJ": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+      "value": "(UTC+05:30) Čennaj, Kolkata (Kalkata), Mumbaí (Bombaj), Dillí"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Spustit po "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
     }
   ],
   "bx3qeC": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Brasilia"
+      "value": "(UTC-03:00) Brazílie"
     }
   ],
   "bzF/qn": [
@@ -2977,16 +3161,22 @@
       "value": "Vyžadováno. Hodnota, jejíž index se má hledat."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Chokurdakh"
+      "value": "(UTC+11:00) Čokurdach"
     }
   ],
   "cVIZTQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Tripoli"
+      "value": "(UTC+02:00) Tripolis"
     }
   ],
   "ci6ex1": [
@@ -3043,10 +3233,10 @@
       "value": "Další informace"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Vybrat"
+      "value": "Aktualizovat"
     }
   ],
   "dSTRb/": [
@@ -3058,7 +3248,7 @@
   "dUZi34": [
     {
       "type": 0,
-      "value": "(UTC+12:45) Chatham Islands"
+      "value": "(UTC+12:45) Chathamovy ostrovy"
     }
   ],
   "dWFyfN": [
@@ -3076,13 +3266,27 @@
   "dWx21B": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Sakhalin"
+      "value": "(UTC+11:00) Sachalin"
+    }
+  ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Připojeno k: "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "dgAu27": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03:00) Grónsko"
     }
   ],
   "dhvk0u": [
@@ -3109,10 +3313,16 @@
       "value": "Rozdělí řetězec pomocí oddělovače."
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "vypršel časový limit"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
-      "value": "How often do you want to check for items?"
+      "value": "Jak často chcete vyhledávat položky?"
     }
   ],
   "e4Onhn": [
@@ -3124,7 +3334,7 @@
   "eGa1Wa": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ekaterinburg"
+      "value": "(UTC+05:00) Jekatěrinburg"
     }
   ],
   "eHgi14": [
@@ -3145,10 +3355,28 @@
       "value": "Povinný parametr. Číslo, kterým se má dělit dělenec."
     }
   ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
+    }
+  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
+    }
+  ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Vyberte schéma pro rozevírací nabídku"
+    }
+  ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "Vašemu hledání neodpovídají žádné hodnoty."
     }
   ],
   "euC/DV": [
@@ -3190,7 +3418,7 @@
   "froV/0": [
     {
       "type": 0,
-      "value": "(UTC+04:30) Kabul"
+      "value": "(UTC+04:30) Kábul"
     }
   ],
   "ftwXvc": [
@@ -3205,6 +3433,12 @@
       "value": "Hodnota"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Přiblížit"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3214,7 +3448,7 @@
   "g5mMuM": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+      "value": "(UTC-03:00) Saint-Pierre a Miquelon"
     }
   ],
   "gCXOd5": [
@@ -3238,7 +3472,7 @@
   "gF+0/N": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Amman"
+      "value": "(UTC+02:00) Ammán"
     }
   ],
   "gIK0WG": [
@@ -3250,7 +3484,7 @@
   "gIc0YJ": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "Název připojení"
     }
   ],
   "gKq3Jv": [
@@ -3277,22 +3511,46 @@
       "value": "Podmínky aktivační události"
     }
   ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
-  "gj+jEr": [
+  "gpbgjJ": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Neplatná hodnota rozdělení „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“ – nelze najít ve výstupech."
     }
   ],
   "gu9o9z": [
     {
       "type": 0,
       "value": "Když se tato funkce použije v rámci smyčky until, vrátí aktuální index iterace zadané smyčky."
+    }
+  ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Zadejte nebo vložte ukázkovou datovou část JSON."
     }
   ],
   "hBLPXK": [
@@ -3407,6 +3665,12 @@
       "value": "Převede řetězec na velká písmena pomocí pravidel pro používání velkých a malých písmen v invariantní jazykové verzi."
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamický obsah"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3474,7 +3738,7 @@
   "j1VU25": [
     {
       "type": 0,
-      "value": "(UTC+14:00) Kiritimati Island"
+      "value": "(UTC+14:00) Ostrov Kiritimati"
     }
   ],
   "j2MU0b": [
@@ -3504,7 +3768,7 @@
   "jMLmag": [
     {
       "type": 0,
-      "value": "Create New"
+      "value": "Vytvořit nové"
     }
   ],
   "jQ0Aqj": [
@@ -3529,6 +3793,22 @@
     {
       "type": 0,
       "value": "Upravit ve formátu JSON"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Nepovedlo se vygenerovat schéma."
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Nepodporovaný formát odkazu na připojení manifestu: "
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
     }
   ],
   "jsEMSu": [
@@ -3597,6 +3877,12 @@
       "value": "Vrátí řetězcovou reprezentaci vstupního řetězce Base 64."
     }
   ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Zobrazit minimapu"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
@@ -3606,7 +3892,7 @@
   "kZCX7t": [
     {
       "type": 0,
-      "value": "Monday"
+      "value": "Pondělí"
     }
   ],
   "kZuYgD": [
@@ -3618,7 +3904,7 @@
   "kc5Mui": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Mid-Atlantic - Old"
+      "value": "(UTC-02:00) Střední Atlantik – starý čas"
     }
   ],
   "keb4r1": [
@@ -3630,7 +3916,7 @@
   "kneb9/": [
     {
       "type": 0,
-      "value": "(UTC-12:00) International Date Line West"
+      "value": "(UTC-12:00) Západní mezinárodní časová osa"
     }
   ],
   "knylNW": [
@@ -3660,13 +3946,13 @@
   "lFve22": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+      "value": "(UTC+01:00) Sarajevo, Skopje, Varšava, Záhřeb"
     }
   ],
   "lIPWQ6": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+      "value": "(UTC+07:00) Bangkok, Hanoj, Jakarta"
     }
   ],
   "lPTdSf": [
@@ -3693,10 +3979,10 @@
       "value": "přeskočeno"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Zadejte prosím platné pole."
     }
   ],
   "lgs5sf": [
@@ -3729,6 +4015,12 @@
       "value": "Název"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Přidat akci"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3756,7 +4048,7 @@
   "mZCHKf": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamčatskij"
     }
   ],
   "mZRMD9": [
@@ -3769,6 +4061,12 @@
     {
       "type": 0,
       "value": "Omezí aplikace Logic Apps tak, aby do odchozích požadavků nezahrnovaly hlavičky metadat pracovních postupů."
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "mx2IMJ": [
@@ -3795,6 +4093,12 @@
       "value": "Vyžadováno. Hodnota, která se má převést na číslo s plovoucí desetinnou čárkou."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Zkuste méně konkrétní klíčová slova."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3811,6 +4115,12 @@
     {
       "type": 0,
       "value": "Povinné. Název vlastnosti, která se odebere"
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3881,10 +4191,16 @@
       "value": "Přenos obsahu"
     }
   ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Krasnoyarsk"
+      "value": "(UTC+07:00) Krasnojarsk"
     }
   ],
   "oV0xQ9": [
@@ -3929,6 +4245,12 @@
       "value": "(UTC+13:00) Samoa"
     }
   ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Zadejte kód."
+    }
+  ],
   "pIczsS": [
     {
       "type": 0,
@@ -3950,7 +4272,7 @@
   "pUeUDw": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+      "value": "(UTC+09:00) Ósaka, Sapporo, Tokio"
     }
   ],
   "pXmFGf": [
@@ -4016,7 +4338,7 @@
   "q9hf8i": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+      "value": "(UTC+04:00) Astrachaň, Uljanovsk"
     }
   ],
   "qGfwxW": [
@@ -4040,7 +4362,7 @@
   "qQoQFv": [
     {
       "type": 0,
-      "value": "Invalid connection."
+      "value": "Neplatné připojení"
     }
   ],
   "qSejoi": [
@@ -4124,7 +4446,7 @@
   "qq/bq0": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Yakutsk"
+      "value": "(UTC+09:00) Jakutsk"
     }
   ],
   "qrxi0L": [
@@ -4172,7 +4494,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "Připojení je neplatné"
     }
   ],
   "raBiud": [
@@ -4187,10 +4509,16 @@
       "value": "Vrátí reprezentaci určité hodnoty zakódovanou jako identifikátor URI."
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Výraz"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central Time (US & Canada)"
+      "value": "(UTC-06:00) Střed USA a Kanady"
     }
   ],
   "s5RV9B": [
@@ -4214,7 +4542,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "Zrušit vytváření připojení"
     }
   ],
   "sW47JR": [
@@ -4256,7 +4584,7 @@
   "siYGSo": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Beirut"
+      "value": "(UTC+02:00) Bejrút"
     }
   ],
   "soqP+Z": [
@@ -4293,6 +4621,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+    }
+  ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
     }
   ],
   "tImHz/": [
@@ -4337,12 +4671,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Trigger"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4364,13 +4692,7 @@
   "tsmuoF": [
     {
       "type": 0,
-      "value": "Display Name"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operace"
+      "value": "Zobrazovaný název"
     }
   ],
   "u/KSPz": [
@@ -4382,7 +4704,7 @@
   "u6Gdft": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+      "value": "(UTC+04:00) Abú Dhabi, Maskat"
     }
   ],
   "uN4zFU": [
@@ -4409,6 +4731,12 @@
       "value": "Přidá celočíselný počet hodin do předaného řetězcového časového razítka."
     }
   ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Hledat v dynamickém obsahu"
+    }
+  ],
   "uZH8Qs": [
     {
       "type": 0,
@@ -4430,13 +4758,19 @@
   "udNlco": [
     {
       "type": 0,
-      "value": "(UTC-11:00) Coordinated Universal Time-11"
+      "value": "(UTC-11:00) Koordinovaný univerzální čas (UTC)-11"
     }
   ],
   "ui7GCl": [
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Proměnné"
     }
   ],
   "urAHv1": [
@@ -4466,13 +4800,19 @@
   "vD2lQy": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Asuncion"
+      "value": "(UTC-04:00) Asunción"
     }
   ],
   "vEBhDX": [
     {
       "type": 0,
       "value": "Vrátí poslední index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Tlačítko pro správu přepínacího stavu"
     }
   ],
   "vQcQkU": [
@@ -4485,6 +4825,12 @@
     {
       "type": 0,
       "value": "Odstranit"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "Výraz je neplatný."
     }
   ],
   "vXwYXe": [
@@ -4502,7 +4848,7 @@
   "vb/okJ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Cairo"
+      "value": "(UTC+02:00) Káhira"
     }
   ],
   "vcBAuU": [
@@ -4514,7 +4860,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "Vytvořte připojení pro "
     },
     {
       "type": 1,
@@ -4523,6 +4869,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Zadat vlastní hodnotu"
     }
   ],
   "vwH/XV": [
@@ -4540,7 +4892,13 @@
   "w5Hhig": [
     {
       "type": 0,
-      "value": "Sunday"
+      "value": "Neděle"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Přizpůsobení stránky"
     }
   ],
   "wEaGWn": [
@@ -4552,7 +4910,7 @@
   "wF7C+h": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Zrušit"
     }
   ],
   "wFCkpM": [
@@ -4577,6 +4935,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Délka podřetězce."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Kliknutím odstraníte položku."
     }
   ],
   "wWVQuK": [
@@ -4606,7 +4970,7 @@
   "x+6ccf": [
     {
       "type": 0,
-      "value": "Wednesday"
+      "value": "Středa"
     }
   ],
   "x0or2o": [
@@ -4654,13 +5018,13 @@
   "xZhieP": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Islamabad, Karachi"
+      "value": "(UTC+05:00) Islámábád, Karáčí"
     }
   ],
   "xb/DIr": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Coordinated Universal Time+12"
+      "value": "(UTC+12:00) Koordinovaný univerzální čas (UTC)+12"
     }
   ],
   "xt5TeT": [
@@ -4696,17 +5060,7 @@
   "yIZP4R": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Hawaii"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo pro "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
+      "value": "(UTC-10:00) Havajské ostrovy"
     }
   ],
   "yVh9kr": [
@@ -4718,13 +5072,13 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "Vyberte existující připojení nebo vytvořte nové."
     }
   ],
   "yph4eq": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+      "value": "(UTC+01:00) Bělehrad, Bratislava, Budapešť, Lublaň, Praha"
     }
   ],
   "yqRrQ/": [
@@ -4742,13 +5096,13 @@
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "Brána připojení"
     }
   ],
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "Nabídka"
     }
   ],
   "z4YYlQ": [
@@ -4763,16 +5117,34 @@
       "value": "Povinné. Hodnota převedená na desetinné číslo."
     }
   ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Zadejte hodnotu"
+    }
+  ],
   "zIDVd9": [
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který se převede na hodnotu nativního typu."
     }
   ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Vybrat akce"
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Vymazat vlastní hodnotu"
+    }
+  ],
   "zbtUQ/": [
     {
       "type": 0,
-      "value": "(UTC+08:30) Pyongyang"
+      "value": "(UTC+08:30) Pchjongjang"
     }
   ],
   "zcZpHT": [

@@ -1,8 +1,10 @@
-import { RouteName } from '../../../run-service';
+import { RouteName, ValidationStatus } from '../../../run-service';
 import type { RootState } from '../../../state/store';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
+import { Status } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton } from '@fluentui/react';
+import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -14,9 +16,12 @@ export const Navigation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse } = exportData;
+  const vscodeState = useSelector((state: RootState) => state.vscode) as InitializedVscodeState;
+  const { exportData } = vscodeState;
+  const { finalStatus } = vscodeState;
+  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory, packageUrl, managedConnections } =
+    exportData;
+  const { isManaged, resourceGroup, resourceGroupLocation } = managedConnections;
 
   const intlText = {
     NEXT: intl.formatMessage({
@@ -27,16 +32,18 @@ export const Navigation: React.FC = () => {
       defaultMessage: 'Back',
       description: 'Back button',
     }),
-    CANCEL: intl.formatMessage({
-      defaultMessage: 'Cancel',
-      description: 'Cancel button',
+    EXPORT: intl.formatMessage({
+      defaultMessage: 'Export',
+      description: 'Export button',
     }),
-  };
-
-  const onClickCancel = () => {
-    vscode.postMessage({
-      command: 'dispose',
-    });
+    EXPORT_WITH_WARNINGS: intl.formatMessage({
+      defaultMessage: 'Export with warnings',
+      description: 'Export with warnings button',
+    }),
+    FINISH: intl.formatMessage({
+      defaultMessage: 'finish',
+      description: 'Finish  button',
+    }),
   };
 
   const onClickBack = () => {
@@ -49,13 +56,37 @@ export const Navigation: React.FC = () => {
     switch (pathname) {
       case `/${RouteName.export}/${RouteName.instance_selection}`: {
         navigate(`/${RouteName.export}/${RouteName.workflows_selection}`);
+        break;
+      }
+      case `/${RouteName.export}/${RouteName.workflows_selection}`: {
+        navigate(`/${RouteName.export}/${RouteName.validation}`);
+        break;
+      }
+      case `/${RouteName.export}/${RouteName.validation}`: {
+        navigate(`/${RouteName.export}/${RouteName.summary}`);
+        break;
+      }
+      case `/${RouteName.export}/${RouteName.summary}`: {
+        navigate(`/${RouteName.export}/${RouteName.status}`);
+        vscode.postMessage({
+          command: ExtensionCommand.export_package,
+          targetDirectory,
+          packageUrl,
+          selectedSubscription,
+          resourceGroupName: isManaged ? resourceGroup : undefined,
+          location: isManaged ? resourceGroupLocation : undefined,
+        });
+        break;
       }
     }
   };
 
   const isBackDisabled = (): boolean => {
     const { pathname } = location;
-    return pathname === `/${RouteName.export}/${RouteName.instance_selection}`;
+    return (
+      pathname === `/${RouteName.export}/${RouteName.instance_selection}` ||
+      (pathname === `/${RouteName.export}/${RouteName.status}` && finalStatus !== Status.Succeeded && finalStatus !== Status.Failed)
+    );
   };
 
   const isNextDisabled = (): boolean => {
@@ -65,20 +96,43 @@ export const Navigation: React.FC = () => {
       case `/${RouteName.export}/${RouteName.instance_selection}`: {
         return selectedSubscription === '' || selectedIse === '';
       }
+      case `/${RouteName.export}/${RouteName.workflows_selection}`: {
+        return selectedSubscription === '' || selectedIse === '' || selectedWorkflows.length === 0;
+      }
+      case `/${RouteName.export}/${RouteName.validation}`: {
+        return validationState === '' || validationState === ValidationStatus.failed;
+      }
+      case `/${RouteName.export}/${RouteName.summary}`: {
+        return !packageUrl || targetDirectory.path === '' || (targetDirectory.path !== '' && isManaged && resourceGroup === undefined);
+      }
       default: {
         return true;
       }
     }
   };
 
+  const getNextText = (): string => {
+    const { pathname } = location;
+
+    switch (pathname) {
+      case `/${RouteName.export}/${RouteName.validation}`: {
+        return validationState === ValidationStatus.succeeded_with_warnings ? intlText.EXPORT_WITH_WARNINGS : intlText.EXPORT;
+      }
+      case `/${RouteName.export}/${RouteName.summary}`: {
+        const validationText =
+          validationState === ValidationStatus.succeeded_with_warnings ? intlText.EXPORT_WITH_WARNINGS : intlText.EXPORT;
+        return `${validationText} and ${intlText.FINISH}`;
+      }
+      default: {
+        return intlText.NEXT;
+      }
+    }
+  };
+
+  const nextText = getNextText();
+
   return (
     <div className="msla-export-navigation-panel">
-      <PrimaryButton
-        className="msla-export-navigation-panel-button"
-        text={intlText.CANCEL}
-        ariaLabel={intlText.CANCEL}
-        onClick={onClickCancel}
-      />
       <PrimaryButton
         className="msla-export-navigation-panel-button"
         text={intlText.BACK}
@@ -88,8 +142,8 @@ export const Navigation: React.FC = () => {
       />
       <PrimaryButton
         className="msla-export-navigation-panel-button"
-        text={intlText.NEXT}
-        ariaLabel={intlText.NEXT}
+        text={nextText}
+        ariaLabel={nextText}
         onClick={onClickNext}
         disabled={isNextDisabled()}
       />

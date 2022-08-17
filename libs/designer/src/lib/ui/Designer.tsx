@@ -1,6 +1,7 @@
 import { useLayout } from '../core/graphlayout';
 import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
-import { updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import { buildEdgeIdsBySource, updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import type { RootState } from '../core/store';
 import Controls from './Controls';
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
@@ -12,12 +13,13 @@ import { ButtonEdge } from './connections/edge';
 // import { OnlyEdge } from './connections/onlyEdge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
+import { useThrottledEffect } from '@microsoft-logic-apps/utils';
 import { useCallback } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
 import type { NodeChange } from 'react-flow-renderer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export interface DesignerProps {
   graphId?: string;
@@ -52,6 +54,9 @@ export const Designer = () => {
     },
     [dispatch]
   );
+
+  const graph = useSelector((state: RootState) => state.workflow.graph);
+  useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
 
   return (
     <DndProvider backend={HTML5Backend}>

@@ -1,8 +1,10 @@
-import connectionsReducer from './state/connectionSlice';
+import connectionsReducer from './state/connection/connectionSlice';
 import designerOptionsReducer from './state/designerOptions/designerOptionsSlice';
 import designerViewReducer from './state/designerView/designerViewSlice';
-import operationMetadataReducer from './state/operationMetadataSlice';
+import operationMetadataReducer from './state/operation/operationMetadataSlice';
 import panelReducer from './state/panel/panelSlice';
+import settingsReducer from './state/settingSlice';
+import tokens from './state/tokensSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import { configureStore } from '@reduxjs/toolkit';
 
@@ -12,8 +14,10 @@ export const store = configureStore({
     operations: operationMetadataReducer,
     panel: panelReducer,
     connections: connectionsReducer,
+    settings: settingsReducer,
     designerOptions: designerOptionsReducer,
     designerView: designerViewReducer,
+    tokens: tokens,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

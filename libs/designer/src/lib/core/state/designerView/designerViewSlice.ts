@@ -2,7 +2,7 @@ import type { DesignerViewState } from './designerViewInterfaces';
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: DesignerViewState = {
-  showMinimap: true,
+  showMinimap: false,
 };
 
 export const designerViewSlice = createSlice({

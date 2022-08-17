@@ -26,8 +26,8 @@ export const ExportApp: React.FC = () => {
     <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError}>
       <QueryClientProvider client={queryClient}>
         <div className="msla-export">
-          <Text variant="xxLarge" className="msla-export-title" nowrap block>
-            Export Logic App
+          <Text variant="xxLarge" className="msla-export-title" block>
+            Export logic app
           </Text>
           <Outlet
             context={{

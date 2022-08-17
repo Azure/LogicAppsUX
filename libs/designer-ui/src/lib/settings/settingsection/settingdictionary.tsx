@@ -8,27 +8,21 @@ import { isObject } from '@microsoft-logic-apps/utils';
 export type InputChangeHandler = (event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => void;
 
 export interface SettingDictionaryProps extends SettingProps {
-  values: any | Record<string, any> /* tslint:disable-line: no-any */;
+  values: any | Record<string, any>;
   onDictionaryChange?: EventHandler<Record<string, string> | undefined>;
   onTextFieldChange?: InputChangeHandler;
   label?: string;
 }
 
-export function SettingDictionary({
-  values,
-  readOnly,
-  onDictionaryChange,
-  onTextFieldChange,
-  customLabel,
-}: SettingDictionaryProps): JSX.Element | null {
+export function SettingDictionary({ values, readOnly, onDictionaryChange, onTextFieldChange }: SettingDictionaryProps): JSX.Element | null {
   if (values === undefined || isObject(values)) {
-    return <ValuesInDictionary values={values} readOnly={readOnly} onDictionaryChange={onDictionaryChange} customLabel={customLabel} />;
+    return <ValuesInDictionary values={values} readOnly={readOnly} onDictionaryChange={onDictionaryChange} />;
   } else {
     return <ValuesInTextField values={values} readOnly={readOnly} onTextFieldChange={onTextFieldChange} />;
   }
 }
 
-function ValuesInDictionary({ values, readOnly, onDictionaryChange, label, customLabel }: SettingDictionaryProps): JSX.Element {
+function ValuesInDictionary({ values, readOnly, onDictionaryChange, label }: SettingDictionaryProps): JSX.Element {
   let valuesInDictionary: Record<string, string> = {};
   if (isObject(values)) {
     valuesInDictionary = {};
@@ -37,22 +31,7 @@ function ValuesInDictionary({ values, readOnly, onDictionaryChange, label, custo
     }
   }
 
-  return customLabel ? (
-    <>
-      {customLabel()}
-      <div className="msla-operation-setting">
-        <div className="msla-setting-row-dictionary-input">
-          <SimpleDictionary
-            disabled={readOnly}
-            readOnly={readOnly}
-            title={'Tracked Properties'}
-            value={values}
-            onChange={onDictionaryChange}
-          />
-        </div>
-      </div>
-    </>
-  ) : (
+  return (
     <div className="msla-operation-setting">
       <div className="msla-setting-row-dictionary-input">
         <SimpleDictionary disabled={readOnly} readOnly={readOnly} title={label} value={values} onChange={onDictionaryChange} />
@@ -68,6 +47,12 @@ function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, l
   };
   // TODO (14725265) add check /support for ambiguous value types being passed in here
   const valuesInString = typeof values !== 'string' ? JSON.stringify(values) : values;
+  const handleTextFieldChange: InputChangeHandler = (ev, newVal) => {
+    if (newVal) {
+      onTextFieldChange?.(ev, newVal);
+    }
+  };
+
   return customLabel ? (
     <>
       {customLabel()}
@@ -86,7 +71,7 @@ function ValuesInTextField({ values, readOnly, onTextFieldChange, customLabel, l
         className="msla-setting-row-text-input"
         disabled={readOnly}
         value={valuesInString}
-        onChange={onTextFieldChange}
+        onChange={handleTextFieldChange}
         styles={textFieldStyles}
       />
     </div>

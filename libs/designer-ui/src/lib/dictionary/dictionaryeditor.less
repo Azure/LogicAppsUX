@@ -1,0 +1,131 @@
+@import (reference) '../variables.less';
+
+@command-icon-width: 16px;
+@padding: 5px;
+
+.msla-dictionary-editor-container {
+  display: flex;
+
+  .msla-dictionary-commands {
+    margin-top: @padding;
+    vertical-align: top;
+    display: inline-block;
+    align-self: flex-start;
+  }
+
+  .msla-dictionary-container {
+    flex: 1 1 100%;
+
+    &.msla-dictionary-editor-collapsed {
+      padding: 0px;
+      display: flex;
+
+      .msla-input-parameter-label {
+        align-self: center;
+      }
+
+      .msla-dictionary-content {
+        display: inline-block;
+        box-sizing: border-box;
+        width: calc(100% - @command-icon-width);
+
+        .msla-input-parameter-box {
+          width: calc(100% - @parameter-label-inputbox-margin);
+        }
+
+        .msla-input-parameter-error {
+          margin-left: 0;
+        }
+      }
+
+      .msla-collapsed-editor-container {
+        width: 100%;
+        border-radius: 2px;
+
+        .editor-input {
+          border: 1px solid @panel-mode-panel-border-color;
+          outline: none;
+          resize: none;
+          font-size: 15px;
+          tab-size: 1;
+          min-height: 75px;
+          line-height: 30px;
+          caret-color: #444;
+          padding-inline-start: 5px;
+          &:focus {
+            border: 1px solid rgb(0, 120, 212);
+          }
+          p {
+            margin: 0;
+            line-height: 1.5rem;
+          }
+        }
+        .editor-placeholder {
+          color: #696969;
+          overflow: hidden;
+          position: absolute;
+          text-overflow: ellipsis;
+          margin-top: -75px;
+          margin-left: 5px;
+          font-size: 15px;
+          user-select: none;
+          display: inline-block;
+          pointer-events: none;
+        }
+      }
+    }
+  }
+
+  .msla-dictionary-item-container {
+    margin: @padding 0;
+
+    .msla-dictionary-editor-item {
+      width: 100%;
+      display: table-row;
+      .msla-dictionary-item-cell {
+        border: 1px solid #989898;
+        display: table-cell;
+        vertical-align: top;
+        width: 49%;
+        padding-bottom: 5px;
+        .editor-input {
+          outline: none;
+          resize: none;
+          font-size: 15px;
+          tab-size: 1;
+          min-height: 30px;
+          line-height: 26px;
+          caret-color: #444;
+          padding-inline-start: 5px;
+          p {
+            margin: 0;
+          }
+        }
+        .editor-placeholder {
+          color: #696969;
+          overflow: hidden;
+          position: absolute;
+          text-overflow: ellipsis;
+          margin-top: -30px;
+          margin-left: 5px;
+          font-size: 15px;
+          user-select: none;
+          display: inline-block;
+          pointer-events: none;
+        }
+      }
+      .msla-dictionary-item-delete {
+        width: 25px;
+        height: 25px;
+        display: table-cell;
+      }
+    }
+  }
+  .msla-collapsed-editor-validation {
+    width: 50%;
+    position: relative;
+    color: rgb(224, 2, 2);
+    left: 4px;
+    font-size: 14px;
+  }
+}

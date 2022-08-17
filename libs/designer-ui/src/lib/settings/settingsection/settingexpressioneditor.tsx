@@ -4,10 +4,10 @@ import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';
 import type { ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-type ExpressionChangeHandler = (updatedExpressions: string[]) => void;
+export type ExpressionChangeHandler = (updatedExpressions: string[]) => void;
 export interface MultiAddExpressionEditorProps extends SettingProps {
   initialExpressions?: string[];
   onExpressionsChange: ExpressionChangeHandler;
@@ -59,7 +59,7 @@ export const ExpressionsEditor = ({
     description: 'label to add a condition',
   });
 
-  const defaultProps: Required<ExpressionsEditorProps> = {
+  const defaultProps: ExpressionsEditorProps = {
     initialExpressions,
     readOnly: false,
     onChange,
@@ -71,14 +71,8 @@ export const ExpressionsEditor = ({
     iconName: 'Add',
   };
 
-  const expressionRef = useRef<typeof Expression & { focus: any }>(); //TODO(andrewfowose): implement focus
+  // const expressionRef = useRef<typeof Expression & { focus: any }>(); //TODO(andrewfowose): implement focus
   const [expressions, setExpressions] = useState(initialExpressions);
-
-  const focus = (): void => {
-    if (expressionRef.current) {
-      expressionRef.current.focus();
-    }
-  };
 
   const handleAddClick = (): void => {
     const updatedExpressions = [...expressions];
@@ -86,7 +80,6 @@ export const ExpressionsEditor = ({
 
     onChange(updatedExpressions);
     setExpressions(updatedExpressions);
-    focus();
   };
 
   const handleChange = (index: number, newExpression: string): void => {
@@ -107,38 +100,25 @@ export const ExpressionsEditor = ({
 
   return (
     <>
-      {expressions.length < defaultProps.maximumExpressions ? (
+      {expressions.length < (defaultProps.maximumExpressions ?? 10) ? (
         <ActionButton disabled={readOnly} iconProps={addIconProps} text={addCondition} onClick={handleAddClick} />
       ) : null}
-      <Expressions ref={expressionRef} expressions={expressions} readOnly={readOnly} onChange={handleChange} onDelete={handleDelete} />
+      <Expressions expressions={expressions} readOnly={readOnly} onChange={handleChange} onDelete={handleDelete} />
     </>
   );
 };
 
 export interface ExpressionsProps extends SettingProps {
-  ref?: React.RefObject<any>;
   expressions: string[];
   onChange(index: number, newExpression: string): void;
   onDelete(index: number): void;
 }
 
 export const Expressions = ({ expressions, readOnly = false, onChange, onDelete }: ExpressionsProps): JSX.Element => {
-  const expressionRef = useRef<typeof Expressions & { focus: any }>();
   return (
     <>
-      {expressions.map((expression, index, array) => {
-        const ref = index === array.length - 1 ? { ref: expressionRef } : undefined;
-        return (
-          <Expression
-            key={index}
-            {...ref}
-            expression={expression}
-            index={index}
-            readOnly={readOnly}
-            onChange={onChange}
-            onDelete={onDelete}
-          />
-        );
+      {expressions.map((expression, index) => {
+        return <Expression key={index} expression={expression} index={index} readOnly={readOnly} onChange={onChange} onDelete={onDelete} />;
       })}
     </>
   );

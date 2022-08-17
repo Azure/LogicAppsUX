@@ -5,22 +5,16 @@
       "value": "确定"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "筛选器"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Kuala Lumpur, Singapore"
+      "value": "(UTC+08:00)吉隆坡，新加坡"
     }
   ],
   "+dlOgj": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Haiti"
+      "value": "(UTC-05:00) 海地"
     }
   ],
   "+g+mch": [
@@ -32,7 +26,7 @@
   "+iMTt7": [
     {
       "type": 0,
-      "value": "Check to select this connection"
+      "value": "选中以选择此连接"
     }
   ],
   "+lpuMl": [
@@ -50,13 +44,13 @@
   "/AtN16": [
     {
       "type": 0,
-      "value": "(UTC+09:30) Darwin"
+      "value": "(UTC+09:30)达尔文"
     }
   ],
   "/B2CTz": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+      "value": "(UTC+08:00)北京，重庆，香港特別行政区，乌鲁木齐"
     }
   ],
   "/I/U8L": [
@@ -68,7 +62,7 @@
   "/Igb36": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Brisbane"
+      "value": "(UTC+10:00)布里斯班"
     }
   ],
   "/NDLmg": [
@@ -81,6 +75,18 @@
     {
       "type": 0,
       "value": "返回数组中从索引计数开始计起的元素"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "更改连接"
+    }
+  ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "此连接器具有多个内置和 Azure 托管版本。将内置版本用于获得最佳性能、连接字符串身份验证和其他功能。将 Azure 托管版本用于其他身份验证选项。"
     }
   ],
   "/WW7If": [
@@ -110,13 +116,13 @@
   "/rjP4U": [
     {
       "type": 0,
-      "value": "(UTC) Coordinated Universal Time"
+      "value": "(UTC)协调世界时"
     }
   ],
   "/sMQhI": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Indiana (East)"
+      "value": "(UTC-05:00)印地安那(东部)"
     }
   ],
   "/ut0u7": [
@@ -140,7 +146,7 @@
   "09oqLb": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Baku"
+      "value": "(UTC+04:00)巴库"
     }
   ],
   "0FzNJV": [
@@ -188,7 +194,7 @@
   "0hxr5j": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Chetumal"
+      "value": "(UTC-05:00) 切图马尔"
     }
   ],
   "0i/6TR": [
@@ -200,7 +206,7 @@
   "0meqK1": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+      "value": "(UTC-05:00)波哥大，利马，基多，里约布兰科"
     }
   ],
   "0p+pJq": [
@@ -242,7 +248,7 @@
   "14lYtE": [
     {
       "type": 0,
-      "value": "18"
+      "value": "18 "
     }
   ],
   "1A1P5b": [
@@ -278,7 +284,7 @@
   "1Ogj/V": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Jerusalem"
+      "value": "(UTC+02:00)耶路撒冷"
     }
   ],
   "1R6Vaa": [
@@ -332,6 +338,12 @@
       "value": "显示代码视图"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -365,7 +377,7 @@
   "1zmMYu": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Caracas"
+      "value": "(UTC-04:00)加拉加斯"
     }
   ],
   "23fENy": [
@@ -401,7 +413,7 @@
   "2NYPLt": [
     {
       "type": 0,
-      "value": "(UTC-03:30) Newfoundland"
+      "value": "(UTC-03:30)纽芬兰"
     }
   ],
   "2Noh96": [
@@ -413,7 +425,7 @@
   "2b1yD3": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Auckland, Wellington"
+      "value": "(UTC+12:00)奥克兰，惠灵顿"
     }
   ],
   "2cVEMV": [
@@ -431,7 +443,7 @@
   "2ri1Kf": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Damascus"
+      "value": "(UTC+02:00)大马士革"
     }
   ],
   "2tTQ0A": [
@@ -443,7 +455,7 @@
   "2xhbE1": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Magadan"
+      "value": "(UTC+11:00)马加丹"
     }
   ],
   "33+WHG": [
@@ -452,10 +464,16 @@
       "value": "标识符"
     }
   ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "添加动态内容"
+    }
+  ],
   "3FoqCK": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Tbilisi"
+      "value": "(UTC+04:00)第比利斯"
     }
   ],
   "3NhwIJ": [
@@ -467,13 +485,13 @@
   "3PgHCT": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Chisinau"
+      "value": "(UTC+02:00)基希讷乌"
     }
   ],
   "3TD2V5": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Dhaka"
+      "value": "(UTC+06:00)达卡"
     }
   ],
   "3X/ZDK": [
@@ -485,13 +503,13 @@
   "3afjx+": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Chita"
+      "value": "(UTC+09:00)赤塔"
     }
   ],
   "3jlz+B": [
     {
       "type": 0,
-      "value": "(UTC+03:30) Tehran"
+      "value": "(UTC+03:30)德黑兰"
     }
   ],
   "3kI7xF": [
@@ -533,7 +551,7 @@
   "4/kJ8D": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Yerevan"
+      "value": "(UTC+04:00)耶烈万"
     }
   ],
   "47kOXr": [
@@ -551,13 +569,13 @@
   "4Q7WzU": [
     {
       "type": 0,
-      "value": "Add a new connection"
+      "value": "添加新的连接"
     }
   ],
   "4XdZNj": [
     {
       "type": 0,
-      "value": "(UTC+01:00) West Central Africa"
+      "value": "(UTC+01:00)中非西部"
     }
   ],
   "4YKQAF": [
@@ -584,6 +602,12 @@
       "value": "切换缩略图"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "当 TokenPicker 隐藏时添加动态内容的按钮"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -605,7 +629,7 @@
   "4wjJs0": [
     {
       "type": 0,
-      "value": "14"
+      "value": "14 "
     }
   ],
   "53PSgA": [
@@ -650,6 +674,12 @@
       "value": "删除参数"
     }
   ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "混合连接器"
+    }
+  ],
   "63/zYN": [
     {
       "type": 0,
@@ -659,13 +689,13 @@
   "65FlWi": [
     {
       "type": 0,
-      "value": "(UTC+08:45) Eucla"
+      "value": "(UTC+08:45)尤克拉"
     }
   ],
   "6XR3FS": [
     {
       "type": 0,
-      "value": "(UTC+09:30) Adelaide"
+      "value": "(UTC+09:30)阿德莱德"
     }
   ],
   "6jiO7t": [
@@ -695,7 +725,7 @@
   "6pd1bE": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Arizona"
+      "value": "(UTC-07:00)亚利桑那州"
     }
   ],
   "6qkBwz": [
@@ -713,7 +743,7 @@
   "7KxCGX": [
     {
       "type": 0,
-      "value": "(UTC+10:30) Lord Howe Island"
+      "value": "(UTC+10:30) 豪勋爵岛"
     }
   ],
   "7QymrD": [
@@ -743,7 +773,7 @@
   "7lvqST": [
     {
       "type": 0,
-      "value": "Invalid"
+      "value": "无效"
     }
   ],
   "7yEdSt": [
@@ -785,7 +815,7 @@
   "8JEHiY": [
     {
       "type": 0,
-      "value": "Saturday"
+      "value": "星期六"
     }
   ],
   "8JFxmV": [
@@ -809,7 +839,7 @@
   "8Y5xpK": [
     {
       "type": 0,
-      "value": "Thursday"
+      "value": "星期四"
     }
   ],
   "8j+a0n": [
@@ -821,7 +851,7 @@
   "8pPivj": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Norfolk Island"
+      "value": "(UTC+11:00) 诺福克岛"
     }
   ],
   "8to63i": [
@@ -857,13 +887,13 @@
   "9/vdrb": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Hovd"
+      "value": "(UTC+07:00)科布多"
     }
   ],
   "949s+r": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Ulaanbaatar"
+      "value": "(UTC+08:00)乌兰巴托"
     }
   ],
   "99vsJy": [
@@ -875,7 +905,7 @@
   "9EmN2M": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "9JuvQ4": [
@@ -896,12 +926,6 @@
       "value": "12"
     }
   ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "面板"
-    }
-  ],
   "9djnqI": [
     {
       "type": 0,
@@ -917,13 +941,13 @@
   "9pdXmX": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+      "value": "(UTC+01:00)阿姆斯特丹，柏林，伯尔尼，罗马，斯德哥尔摩，维也纳"
     }
   ],
   "9pl7QP": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Atlantic Time (Canada)"
+      "value": "(UTC-04:00)大西洋时间(加拿大)"
     }
   ],
   "9u/Ae3": [
@@ -932,16 +956,22 @@
       "value": "如果两个参数均为 true，则返回 true"
     }
   ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "筛选器操作"
+    }
+  ],
   "AIL7WX": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Gaza, Hebron"
+      "value": "(UTC+02:00) 加沙，希伯伦"
     }
   ],
   "ALImBL": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Monrovia, Reykjavik"
+      "value": "(UTC+00:00) 蒙罗维亚，雷克雅未克"
     }
   ],
   "ANbEeQ": [
@@ -959,7 +989,7 @@
   "AYaqW/": [
     {
       "type": 0,
-      "value": "(UTC+06:30) Yangon (Rangoon)"
+      "value": "(UTC+06:30)仰光"
     }
   ],
   "ArTh0/": [
@@ -1006,7 +1036,7 @@
   "BAgRzO": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Coordinated Universal Time-08"
+      "value": "(UTC-08:00) 协调世界时-08"
     }
   ],
   "BBD8Em": [
@@ -1042,13 +1072,13 @@
   "BSHFiw": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Perth"
+      "value": "(UTC+08:00)珀斯"
     }
   ],
   "BVOUxP": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Havana"
+      "value": "(UTC-05:00) 哈瓦那"
     }
   ],
   "Bn8iTS": [
@@ -1084,7 +1114,7 @@
   "Cy9qeQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+      "value": "(UTC+02:00)赫尔辛基，基辅，里加，索非亚，塔林，维尔纽斯"
     }
   ],
   "D+Ptnq": [
@@ -1099,6 +1129,12 @@
       "value": "必填。要从中移除前导空格和尾随空格的字符串。"
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "使用示例有效负载生成架构"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -1108,13 +1144,19 @@
   "DfS13/": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Aleutian Islands"
+      "value": "(UTC-10:00) 阿留申群岛"
     }
   ],
   "DuXV2M": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Azores"
+      "value": "(UTC-01:00)亚速尔群岛"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "随后运行"
     }
   ],
   "DysO/Q": [
@@ -1126,7 +1168,7 @@
   "E9OS+9": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Coordinated Universal Time-09"
+      "value": "(UTC-09:00) 协调世界时-09"
     }
   ],
   "ECZC6Y": [
@@ -1144,7 +1186,7 @@
   "EYqGxA": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Athens, Bucharest"
+      "value": "(UTC+02:00)雅典，布加勒斯特"
     }
   ],
   "EZz5q7": [
@@ -1162,13 +1204,13 @@
   "Eqgm4v": [
     {
       "type": 0,
-      "value": "(UTC-05:00) Eastern Time (US & Canada)"
+      "value": "(UTC-05:00)东部时间(美国和加拿大)(& )"
     }
   ],
   "ExaACE": [
     {
       "type": 0,
-      "value": "Connection display name"
+      "value": "连接显示名称"
     }
   ],
   "F3IDl8": [
@@ -1180,7 +1222,7 @@
   "F489Vg": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Irkutsk"
+      "value": "(UTC+08:00)伊尔库次克"
     }
   ],
   "FDF4Qb": [
@@ -1204,7 +1246,7 @@
   "FHsP9y": [
     {
       "type": 0,
-      "value": "(UTC+05:45) Kathmandu"
+      "value": "(UTC+05:45)加德满都"
     }
   ],
   "FIT7i0": [
@@ -1252,7 +1294,7 @@
   "FXC0Zi": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Baghdad"
+      "value": "(UTC+03:00)巴格达"
     }
   ],
   "FXLR5M": [
@@ -1306,6 +1348,12 @@
       "value": "状态"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "{splitOn} 中的拆分对象格式无效。"
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1336,6 +1384,12 @@
       "value": "如果参数为 false，则返回 true"
     }
   ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "查看更少"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -1351,7 +1405,7 @@
   "GtDOFg": [
     {
       "type": 0,
-      "value": "Cancel the selection"
+      "value": "取消所选内容"
     }
   ],
   "GzQQqH": [
@@ -1384,6 +1438,12 @@
       "value": "必需。要返回的表单数据值的键名称。"
     }
   ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "当 TokenPicker 显示时添加动态内容的按钮"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -1405,13 +1465,13 @@
   "IPbBB2": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Fiji"
+      "value": "(UTC+12:00)斐济"
     }
   ],
   "IUE/lQ": [
     {
       "type": 0,
-      "value": "(UTC-01:00) Cabo Verde Is."
+      "value": "(UTC-01:00) 佛得角群岛"
     }
   ],
   "IW2MjQ": [
@@ -1423,7 +1483,13 @@
   "IjZFjQ": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+      "value": "(UTC+07:00) 巴尔瑙尔，戈尔诺-阿尔泰斯克"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
     }
   ],
   "IngtMG": [
@@ -1459,7 +1525,7 @@
   "JErLDT": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "删除"
     }
   ],
   "JNQHws": [
@@ -1477,7 +1543,7 @@
   "JWl/LD": [
     {
       "type": 0,
-      "value": "Add new item"
+      "value": "添加新项"
     }
   ],
   "Jaz3EC": [
@@ -1513,7 +1579,7 @@
   "JpthWY": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Montevideo"
+      "value": "(UTC-03:00)蒙得维的亚"
     }
   ],
   "Jq2Y/o": [
@@ -1584,25 +1650,25 @@
   "Khc8lS": [
     {
       "type": 0,
-      "value": "(UTC-09:30) Marquesas Islands"
+      "value": "(UTC-09:30) 马克萨斯群岛"
     }
   ],
   "KlvTze": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Sri Jayawardenepura"
+      "value": "(UTC+05:30)斯里加亚渥登普拉"
     }
   ],
   "KoBDbT": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Coordinated Universal Time-02"
+      "value": "(UTC-02:00)协调世界时-02"
     }
   ],
   "Kw3bWO": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Istanbul"
+      "value": "(UTC+02:00)伊斯坦布尔"
     }
   ],
   "L+PY+j": [
@@ -1617,16 +1683,34 @@
       "value": "返回字符串时间戳星期组件的某天"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "没有搜索到结果"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
       "value": "警告"
     }
   ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "查看更多"
+    }
+  ],
   "LMB8am": [
     {
       "type": 0,
-      "value": "Creating..."
+      "value": "正在创建..."
+    }
+  ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "拆分对象值 {splitOn} 的类型无效，拆分对象不在数组中。"
     }
   ],
   "LS8rfZ": [
@@ -1635,10 +1719,22 @@
       "value": "返回 URI 的方案"
     }
   ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "添加并行分支"
+    }
+  ],
   "Lft/is": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "新增"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -1662,13 +1758,13 @@
   "LvpxiA": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "网关"
     }
   ],
   "Lwe7tQ": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+      "value": "(UTC+00:00)都柏林，爱丁堡，里斯本，伦敦"
     }
   ],
   "M0HMjE": [
@@ -1680,7 +1776,7 @@
   "M48CGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Solomon Is., New Caledonia"
+      "value": "(UTC+11:00)所罗门群岛，新喀里多尼亚"
     }
   ],
   "M6U2LE": [
@@ -1758,25 +1854,25 @@
   "NeyUAh": [
     {
       "type": 0,
-      "value": "(UTC-03:00) City of Buenos Aires"
+      "value": "(UTC-03:00) 布宜诺斯艾利斯"
     }
   ],
   "NkUgXU": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Minsk"
+      "value": "(UTC+03:00)明斯克"
     }
   ],
   "NvANon": [
     {
       "type": 0,
-      "value": "(UTC-09:00) Alaska"
+      "value": "(UTC-09:00)阿拉斯加"
     }
   ],
   "NvJDn/": [
     {
       "type": 0,
-      "value": "Tuesday"
+      "value": "星期二"
     }
   ],
   "O+8vRv": [
@@ -1806,7 +1902,7 @@
   "OGUVGd": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Bougainville Island"
+      "value": "(UTC+11:00) 布干维尔岛"
     }
   ],
   "OH9xlX": [
@@ -1818,7 +1914,7 @@
   "OKszbi": [
     {
       "type": 0,
-      "value": "Connection Name"
+      "value": "连接名称"
     }
   ],
   "OSHNZ2": [
@@ -1896,7 +1992,7 @@
   "PBvR9Q": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Araguaina"
+      "value": "(UTC-03:00)阿拉瓜伊纳"
     }
   ],
   "PF87Ew": [
@@ -1944,7 +2040,7 @@
   "PeLrFb": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Moscow, St. Petersburg, Volgograd"
+      "value": "(UTC+03:00)莫斯科，圣彼得堡，伏尔加格勒"
     }
   ],
   "PfCJlN": [
@@ -1956,7 +2052,7 @@
   "PmB0J7": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Turks and Caicos"
+      "value": "(UTC-04:00) 特克斯和凯科斯群岛"
     }
   ],
   "Pvm0xB": [
@@ -1968,7 +2064,7 @@
   "Q+oELo": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Izhevsk, Samara"
+      "value": "(UTC+04:00) 伊热夫斯克，萨马拉"
     }
   ],
   "Q/7unA": [
@@ -2072,7 +2168,7 @@
   "RZ1MIN": [
     {
       "type": 0,
-      "value": "Switch to input entire array"
+      "value": "切换到输入整个数组"
     }
   ],
   "RhH4pF": [
@@ -2099,7 +2195,7 @@
   "RkgScy": [
     {
       "type": 0,
-      "value": "6"
+      "value": "6 "
     }
   ],
   "S8P4N5": [
@@ -2111,7 +2207,7 @@
   "SADSSs": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+      "value": "(UTC+12:00)彼得罗巴甫洛夫斯克-堪察加 - 旧称"
     }
   ],
   "SKXopi": [
@@ -2154,6 +2250,18 @@
       "value": "自定义跟踪 ID"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "完成"
+    }
+  ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "阅读简略信息"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2163,7 +2271,7 @@
   "T6VIym": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名称"
     }
   ],
   "T7zcR6": [
@@ -2193,13 +2301,13 @@
   "TNEttQ": [
     {
       "type": 0,
-      "value": "Friday"
+      "value": "星期五"
     }
   ],
   "TNzcrv": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Vladivostok"
+      "value": "(UTC+10:00)符拉迪沃斯托克"
     }
   ],
   "TO7qos": [
@@ -2217,7 +2325,7 @@
   "TX4Kdr": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "创建新连接"
     }
   ],
   "TZv5JE": [
@@ -2241,13 +2349,13 @@
   "ToPmjE": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Cuiaba"
+      "value": "(UTC-04:00)库亚坝"
     }
   ],
   "TqPfth": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+      "value": "(UTC+01:00)布鲁塞尔，哥本哈根，马德里，巴黎"
     }
   ],
   "Twfck/": [
@@ -2265,7 +2373,13 @@
   "U1NiVg": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central America"
+      "value": "(UTC-06:00)中美洲"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
     }
   ],
   "U3iWVd": [
@@ -2277,7 +2391,7 @@
   "U56j9a": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Easter Island"
+      "value": "(UTC-06:00) 复活节岛"
     }
   ],
   "UCNM4L": [
@@ -2298,12 +2412,6 @@
       "value": "由于安全配置而未显示内容。"
     }
   ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Save"
-    }
-  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2313,7 +2421,7 @@
   "UtyRCH": [
     {
       "type": 0,
-      "value": "Enter a name for the connection"
+      "value": "输入连接的名称"
     }
   ],
   "V+/c21": [
@@ -2331,7 +2439,7 @@
   "VE3cxq": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Mountain Time (US & Canada)"
+      "value": "(UTC-07:00)山地时间(美国和加拿大)"
     }
   ],
   "VKAk5g": [
@@ -2361,7 +2469,7 @@
   "VXQbMw": [
     {
       "type": 0,
-      "value": "Switch to detail inputs for array item"
+      "value": "切换到数组项的详细信息输入"
     }
   ],
   "VZHick": [
@@ -2374,6 +2482,20 @@
     {
       "type": 0,
       "value": "运行历史记录"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "使用“"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "”作为自定义值"
     }
   ],
   "W070M2": [
@@ -2399,7 +2521,13 @@
   "WGwH45": [
     {
       "type": 0,
-      "value": "Clear"
+      "value": "清除"
+    }
+  ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "请输入有效的字典"
     }
   ],
   "WS9kXD": [
@@ -2462,10 +2590,16 @@
       "value": "重试"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "请确保单词拼写正确。"
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Baja California"
+      "value": "(UTC-08:00)下加利福尼亚"
     }
   ],
   "XOzn/3": [
@@ -2474,10 +2608,16 @@
       "value": "连接名称"
     }
   ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "插入新步骤"
+    }
+  ],
   "XTYYks": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Seoul"
+      "value": "(UTC+09:00)首尔"
     }
   ],
   "XTuxmH": [
@@ -2501,13 +2641,13 @@
   "XX1ioe": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Kuwait, Riyadh"
+      "value": "(UTC+03:00)科威特，利雅得"
     }
   ],
   "XaS4ds": [
     {
       "type": 0,
-      "value": "(UTC-08:00) Pacific Time (US & Canada)"
+      "value": "(UTC-08:00)太平洋时间(美国和加拿大)"
     }
   ],
   "Xnn0uj": [
@@ -2592,10 +2732,22 @@
       "value": "返回一个数组或对象，它的所有元素均位于传入此函数的数组或对象中。此函数的参数可以是一组对象或一组数据(不可两者混合)。如果两个对象在最终输出中的名称相同，则最终对象中将显示后一个对象的名称。"
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "搜索提示"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "无"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "缩小"
     }
   ],
   "Z4QLEf": [
@@ -2619,7 +2771,7 @@
   "ZQ4lji": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+      "value": "(UTC+10:00)堪培拉，墨尔本，悉尼"
     }
   ],
   "ZUaz3Y": [
@@ -2634,6 +2786,12 @@
       "value": "必需。字符串可以其开头的值。"
     }
   ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "阅读更多信息"
+    }
+  ],
   "ZbX8xq": [
     {
       "type": 0,
@@ -2643,7 +2801,7 @@
   "ZnGRMP": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Tomsk"
+      "value": "(UTC+07:00)托木斯克"
     }
   ],
   "a3QJzO": [
@@ -2667,7 +2825,7 @@
   "a7x6VI": [
     {
       "type": 0,
-      "value": "(UTC+08:00) Taipei"
+      "value": "(UTC+08:00)台北"
     }
   ],
   "aAXnqw": [
@@ -2685,7 +2843,7 @@
   "aH9SV7": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ashgabat, Tashkent"
+      "value": "(UTC+05:00)阿什哈巴德，塔什干"
     }
   ],
   "aK4iLW": [
@@ -2715,7 +2873,7 @@
   "bS5DyV": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Kaliningrad"
+      "value": "(UTC+02:00)加里宁格勒"
     }
   ],
   "bTrk+S": [
@@ -2745,13 +2903,27 @@
   "bnStSJ": [
     {
       "type": 0,
-      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+      "value": "(UTC+05:30)钦奈，加尔各答，孟买，新德里"
+    }
+  ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "在 "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " 之后运行"
     }
   ],
   "bx3qeC": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Brasilia"
+      "value": "(UTC-03:00)巴西利亚"
     }
   ],
   "bzF/qn": [
@@ -2769,7 +2941,7 @@
   "c1XmvN": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Nuku'alofa"
+      "value": "(UTC+13:00)努库阿洛法"
     }
   ],
   "c2XklE": [
@@ -2808,16 +2980,22 @@
       "value": "必需。要搜索其索引的值。"
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Chokurdakh"
+      "value": "(UTC+11:00)乔库尔达赫"
     }
   ],
   "cVIZTQ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Tripoli"
+      "value": "(UTC+02:00)的黎波里"
     }
   ],
   "ci6ex1": [
@@ -2847,7 +3025,7 @@
   "cr0UnG": [
     {
       "type": 0,
-      "value": "9"
+      "value": "9 "
     }
   ],
   "cscezV": [
@@ -2865,7 +3043,7 @@
   "d4xMIx": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Harare, Pretoria"
+      "value": "(UTC+02:00)哈拉雷，比勒陀利亚"
     }
   ],
   "dDYCuU": [
@@ -2874,10 +3052,10 @@
       "value": "了解详细信息"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "选择"
+      "value": "更新"
     }
   ],
   "dSTRb/": [
@@ -2889,7 +3067,7 @@
   "dUZi34": [
     {
       "type": 0,
-      "value": "(UTC+12:45) Chatham Islands"
+      "value": "(UTC+12:45) 查塔姆群岛"
     }
   ],
   "dWFyfN": [
@@ -2907,13 +3085,27 @@
   "dWx21B": [
     {
       "type": 0,
-      "value": "(UTC+11:00) Sakhalin"
+      "value": "(UTC+11:00)库页岛"
+    }
+  ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "已连接到 "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "。"
     }
   ],
   "dgAu27": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Greenland"
+      "value": "(UTC-03:00)格陵兰"
     }
   ],
   "dhvk0u": [
@@ -2940,10 +3132,16 @@
       "value": "使用分隔符拆分字符串"
     }
   ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "已超时"
+    }
+  ],
   "e00zot": [
     {
       "type": 0,
-      "value": "How often do you want to check for items?"
+      "value": "你希望多久检查一次项目?"
     }
   ],
   "e4Onhn": [
@@ -2955,7 +3153,7 @@
   "eGa1Wa": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Ekaterinburg"
+      "value": "(UTC+05:00)叶卡捷琳堡"
     }
   ],
   "eHgi14": [
@@ -2976,10 +3174,28 @@
       "value": "必需。被除数要除以的数字。"
     }
   ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
+    }
+  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "必需。其中子字符换以参数 1 开头的索引。"
+    }
+  ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "选择下拉列表的架构"
+    }
+  ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "没有与搜索匹配的值"
     }
   ],
   "euC/DV": [
@@ -3009,7 +3225,7 @@
   "faSDuD": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Port Louis"
+      "value": "(UTC+04:00)路易港"
     }
   ],
   "fg/34o": [
@@ -3021,7 +3237,7 @@
   "froV/0": [
     {
       "type": 0,
-      "value": "(UTC+04:30) Kabul"
+      "value": "(UTC+04:30)喀布尔"
     }
   ],
   "ftwXvc": [
@@ -3036,6 +3252,12 @@
       "value": "值"
     }
   ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "放大"
+    }
+  ],
   "g4igOR": [
     {
       "type": 0,
@@ -3045,7 +3267,7 @@
   "g5mMuM": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Saint Pierre and Miquelon"
+      "value": "(UTC-03:00) 圣皮埃尔和密克隆"
     }
   ],
   "gCXOd5": [
@@ -3069,7 +3291,7 @@
   "gF+0/N": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Amman"
+      "value": "(UTC+02:00)安曼"
     }
   ],
   "gIK0WG": [
@@ -3081,7 +3303,7 @@
   "gIc0YJ": [
     {
       "type": 0,
-      "value": "Connection name"
+      "value": "连接名称"
     }
   ],
   "gKq3Jv": [
@@ -3108,16 +3330,26 @@
       "value": "触发器条件"
     }
   ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Saskatchewan"
+      "value": "(UTC-06:00)萨斯喀彻温"
     }
   ],
-  "gj+jEr": [
+  "gpbgjJ": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "拆分对象值 {splitOn} 无效，在输出中找不到它。"
     }
   ],
   "gu9o9z": [
@@ -3126,10 +3358,16 @@
       "value": "在内部使用 until 循环时，此函数返回指定循环的当前迭代索引。"
     }
   ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "输入或粘贴示例 JSON 有效负载。"
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
+      "value": "(UTC-04:00)乔治敦，拉巴斯，马瑙斯，圣胡安"
     }
   ],
   "hN7iBP": [
@@ -3209,6 +3447,12 @@
       "value": "使用固定区域性的大小写规则将字符串转换为大写"
     }
   ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "动态内容"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3276,7 +3520,7 @@
   "j1VU25": [
     {
       "type": 0,
-      "value": "(UTC+14:00) Kiritimati Island"
+      "value": "(UTC+14:00)基里巴斯岛"
     }
   ],
   "j2MU0b": [
@@ -3306,7 +3550,7 @@
   "jMLmag": [
     {
       "type": 0,
-      "value": "Create New"
+      "value": "新建"
     }
   ],
   "jQ0Aqj": [
@@ -3331,6 +3575,26 @@
     {
       "type": 0,
       "value": "在 JSON 中编辑"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "无法生成架构"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "清单连接引用格式“"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "”不受支持"
     }
   ],
   "jsEMSu": [
@@ -3372,7 +3636,7 @@
   "kDsud+": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Cayenne, Fortaleza"
+      "value": "(UTC-03:00)卡宴，福塔雷萨"
     }
   ],
   "kHcCxH": [
@@ -3399,6 +3663,12 @@
       "value": "返回输入 based64 字符串的字符串表示形式"
     }
   ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "显示缩略图"
+    }
+  ],
   "kYivbS": [
     {
       "type": 0,
@@ -3408,7 +3678,7 @@
   "kZCX7t": [
     {
       "type": 0,
-      "value": "Monday"
+      "value": "星期一"
     }
   ],
   "kZuYgD": [
@@ -3420,7 +3690,7 @@
   "kc5Mui": [
     {
       "type": 0,
-      "value": "(UTC-02:00) Mid-Atlantic - Old"
+      "value": "(UTC-02:00)中大西洋 - 旧称"
     }
   ],
   "keb4r1": [
@@ -3432,7 +3702,7 @@
   "kneb9/": [
     {
       "type": 0,
-      "value": "(UTC-12:00) International Date Line West"
+      "value": "(UTC-12:00)国际日期变更线以西"
     }
   ],
   "knylNW": [
@@ -3462,13 +3732,13 @@
   "lFve22": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+      "value": "(UTC+01:00)萨拉热窝，斯科普里，华沙，萨格勒布"
     }
   ],
   "lIPWQ6": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+      "value": "(UTC+07:00)曼谷，河内，雅加达"
     }
   ],
   "lPTdSf": [
@@ -3495,10 +3765,10 @@
       "value": "已跳过"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "请输入有效的数组"
     }
   ],
   "lgs5sf": [
@@ -3531,6 +3801,12 @@
       "value": "名称"
     }
   ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "添加操作"
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -3558,7 +3834,7 @@
   "mZCHKf": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+      "value": "(UTC+12:00) 阿纳德尔、堪察加彼得罗巴甫洛夫斯克"
     }
   ],
   "mZRMD9": [
@@ -3571,6 +3847,12 @@
     {
       "type": 0,
       "value": "限制逻辑应用，使其不在传出请求中包含工作流元数据标头。"
+    }
+  ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "确定"
     }
   ],
   "mx2IMJ": [
@@ -3588,13 +3870,19 @@
   "n20T2h": [
     {
       "type": 0,
-      "value": "7"
+      "value": "7 "
     }
   ],
   "n35O/+": [
     {
       "type": 0,
       "value": "必需。转换为浮点数的值。"
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "请尝试不太特定的关键字。"
     }
   ],
   "nGds/r": [
@@ -3613,6 +3901,12 @@
     {
       "type": 0,
       "value": "必填。要删除的属性名称。"
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3691,10 +3985,16 @@
       "value": "内容传输"
     }
   ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
-      "value": "(UTC+07:00) Krasnoyarsk"
+      "value": "(UTC+07:00)克拉斯诺亚尔斯克"
     }
   ],
   "oV0xQ9": [
@@ -3706,7 +4006,7 @@
   "ol+TkT": [
     {
       "type": 0,
-      "value": "(UTC-03:00) Salvador"
+      "value": "(UTC-03:00)萨尔瓦多"
     }
   ],
   "orhWzV": [
@@ -3718,7 +4018,7 @@
   "oxH1L/": [
     {
       "type": 0,
-      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
+      "value": "(UTC-07:00)奇瓦瓦，拉巴斯，马萨特兰"
     }
   ],
   "p/0r2N": [
@@ -3736,7 +4036,13 @@
   "p5tz8/": [
     {
       "type": 0,
-      "value": "(UTC+13:00) Samoa"
+      "value": "(UTC+13:00)萨摩亚"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "输入密钥"
     }
   ],
   "pIczsS": [
@@ -3760,7 +4066,7 @@
   "pUeUDw": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+      "value": "(UTC+09:00)大阪，札幌，东京"
     }
   ],
   "pXmFGf": [
@@ -3826,7 +4132,7 @@
   "q9hf8i": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+      "value": "(UTC+04:00) 阿斯特拉罕州，乌里扬诺夫斯克州"
     }
   ],
   "qGfwxW": [
@@ -3850,7 +4156,7 @@
   "qQoQFv": [
     {
       "type": 0,
-      "value": "Invalid connection."
+      "value": "连接无效。"
     }
   ],
   "qSejoi": [
@@ -3901,7 +4207,7 @@
   "qq/bq0": [
     {
       "type": 0,
-      "value": "(UTC+09:00) Yakutsk"
+      "value": "(UTC+09:00)雅库茨克"
     }
   ],
   "qrxi0L": [
@@ -3913,7 +4219,7 @@
   "r1FQhf": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Windhoek"
+      "value": "(UTC+01:00)温特和克"
     }
   ],
   "r43nMc": [
@@ -3949,7 +4255,7 @@
   "rDt4Iu": [
     {
       "type": 0,
-      "value": "Is connection invalid"
+      "value": "连接是否无效"
     }
   ],
   "raBiud": [
@@ -3964,10 +4270,16 @@
       "value": "返回值的 URI 编码表示形式"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "表达式"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Central Time (US & Canada)"
+      "value": "(UTC-06:00)中部时间(美国和加拿大)"
     }
   ],
   "s5RV9B": [
@@ -3991,7 +4303,7 @@
   "sFwHQc": [
     {
       "type": 0,
-      "value": "Cancel creating a connection"
+      "value": "取消创建连接"
     }
   ],
   "sW47JR": [
@@ -4033,7 +4345,7 @@
   "siYGSo": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Beirut"
+      "value": "(UTC+02:00)贝鲁特"
     }
   ],
   "soqP+Z": [
@@ -4069,7 +4381,13 @@
   "tELkSC": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+      "value": "(UTC-06:00)瓜达拉哈拉，墨西哥市，蒙特雷"
+    }
+  ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
     }
   ],
   "tImHz/": [
@@ -4111,13 +4429,7 @@
   "tP+5fA": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Novosibirsk"
-    }
-  ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "触发器"
+      "value": "(UTC+06:00) 新西伯利亚"
     }
   ],
   "tZj2Xn": [
@@ -4135,31 +4447,25 @@
   "teZwo6": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Hobart"
+      "value": "(UTC+10:00)霍巴特"
     }
   ],
   "tsmuoF": [
     {
       "type": 0,
-      "value": "Display Name"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "操作"
+      "value": "显示名称"
     }
   ],
   "u/KSPz": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Santiago"
+      "value": "(UTC-04:00)圣地亚哥"
     }
   ],
   "u6Gdft": [
     {
       "type": 0,
-      "value": "(UTC+04:00) Abu Dhabi, Muscat"
+      "value": "(UTC+04:00)阿布扎比，马斯喀特"
     }
   ],
   "uN4zFU": [
@@ -4177,13 +4483,19 @@
   "uRurmg": [
     {
       "type": 0,
-      "value": "(UTC+10:00) Guam, Port Moresby"
+      "value": "(UTC+10:00)关岛，莫尔兹比港"
     }
   ],
   "uUlBZ8": [
     {
       "type": 0,
       "value": "将小时数的整数值添加到传入的字符串时间戳"
+    }
+  ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "搜索动态内容"
     }
   ],
   "uZH8Qs": [
@@ -4207,13 +4519,19 @@
   "udNlco": [
     {
       "type": 0,
-      "value": "(UTC-11:00) Coordinated Universal Time-11"
+      "value": "(UTC-11:00)协调世界时-11"
     }
   ],
   "ui7GCl": [
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "变量"
     }
   ],
   "urAHv1": [
@@ -4243,13 +4561,19 @@
   "vD2lQy": [
     {
       "type": 0,
-      "value": "(UTC-04:00) Asuncion"
+      "value": "(UTC-04:00)亚松森"
     }
   ],
   "vEBhDX": [
     {
       "type": 0,
       "value": "返回字符串内某值的最后一个索引(区分大小写，固定区域性)"
+    }
+  ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "用于管理切换状态的按钮"
     }
   ],
   "vQcQkU": [
@@ -4264,10 +4588,16 @@
       "value": "删除"
     }
   ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "表达式无效。"
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
-      "value": "(UTC+06:00) Astana"
+      "value": "(UTC+06:00)阿斯塔纳"
     }
   ],
   "va40BJ": [
@@ -4279,7 +4609,7 @@
   "vb/okJ": [
     {
       "type": 0,
-      "value": "(UTC+02:00) Cairo"
+      "value": "(UTC+02:00)开罗"
     }
   ],
   "vcBAuU": [
@@ -4291,7 +4621,7 @@
   "vr70Gn": [
     {
       "type": 0,
-      "value": "Create a connection for "
+      "value": "为 "
     },
     {
       "type": 1,
@@ -4299,7 +4629,13 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " 创建连接。"
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "输入自定义值"
     }
   ],
   "vwH/XV": [
@@ -4317,7 +4653,13 @@
   "w5Hhig": [
     {
       "type": 0,
-      "value": "Sunday"
+      "value": "星期日"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "适应页面"
     }
   ],
   "wEaGWn": [
@@ -4329,7 +4671,7 @@
   "wF7C+h": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "wFCkpM": [
@@ -4354,6 +4696,12 @@
     {
       "type": 0,
       "value": "必需。子字符串的长度。"
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "单击此处可删除项"
     }
   ],
   "wWVQuK": [
@@ -4383,7 +4731,7 @@
   "x+6ccf": [
     {
       "type": 0,
-      "value": "Wednesday"
+      "value": "星期三"
     }
   ],
   "x0or2o": [
@@ -4431,13 +4779,13 @@
   "xZhieP": [
     {
       "type": 0,
-      "value": "(UTC+05:00) Islamabad, Karachi"
+      "value": "(UTC+05:00)伊斯兰堡，卡拉奇"
     }
   ],
   "xb/DIr": [
     {
       "type": 0,
-      "value": "(UTC+12:00) Coordinated Universal Time+12"
+      "value": "(UTC+12:00)协调世界时+12"
     }
   ],
   "xt5TeT": [
@@ -4473,17 +4821,7 @@
   "yIZP4R": [
     {
       "type": 0,
-      "value": "(UTC-10:00) Hawaii"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " 徽标"
+      "value": "(UTC-10:00)夏威夷"
     }
   ],
   "yVh9kr": [
@@ -4495,13 +4833,13 @@
   "yoCi15": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one."
+      "value": "选择现有连接或创建新连接。"
     }
   ],
   "yph4eq": [
     {
       "type": 0,
-      "value": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+      "value": "(UTC+01:00)贝尔格莱德，布拉迪斯拉发，布达佩斯，卢布尔雅那，布拉格"
     }
   ],
   "yqRrQ/": [
@@ -4513,19 +4851,19 @@
   "yxsn7s": [
     {
       "type": 0,
-      "value": "(UTC+00:00) Casablanca"
+      "value": "(UTC+00:00)卡萨布兰卡"
     }
   ],
   "yyYtZV": [
     {
       "type": 0,
-      "value": "Connection gateway"
+      "value": "连接网关"
     }
   ],
   "z3VuE+": [
     {
       "type": 0,
-      "value": "Menu"
+      "value": "菜单"
     }
   ],
   "z4YYlQ": [
@@ -4540,16 +4878,34 @@
       "value": "必填。转换为小数的值。"
     }
   ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "输入值"
+    }
+  ],
   "zIDVd9": [
     {
       "type": 0,
       "value": "必需。转换为本机类型值的字符串。"
     }
   ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "选择操作"
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "清除自定义值"
+    }
+  ],
   "zbtUQ/": [
     {
       "type": 0,
-      "value": "(UTC+08:30) Pyongyang"
+      "value": "(UTC+08:30)平壤"
     }
   ],
   "zcZpHT": [
@@ -4561,7 +4917,7 @@
   "zggBvC": [
     {
       "type": 0,
-      "value": "(UTC+03:00) Nairobi"
+      "value": "(UTC+03:00)内罗比"
     }
   ],
   "ziYCiA": [

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
-import type { Operations, NodesMetadata } from '../../state/workflow/workflowSlice';
+import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '../models/workflowNode';
@@ -93,7 +93,7 @@ const buildGraphFromActions = (
 
     allActions[actionName] = { ...action };
 
-    const isRoot = Object.keys(action.runAfter ?? {}).length === 0;
+    const isRoot = Object.keys(action.runAfter ?? {}).length === 0 && parentNodeId;
     nodesMetadata[actionName] = { graphId, parentNodeId };
 
     if (isScopeAction(action)) {
@@ -168,10 +168,13 @@ const processScopeActions = (
     graphId: string,
     subgraphId: string,
     actions: LogicAppsV2.Actions | undefined,
-    subgraphType: SubgraphType
+    subgraphType: SubgraphType,
+    subGraphLocation: string | undefined
   ) => {
     const [graph, operations, metadata] = processNestedActions(subgraphId, parentNodeId, actions, true);
     if (!graph?.edges) graph.edges = [];
+
+    graph.subGraphLocation = subGraphLocation;
 
     nodes.push(graph);
     allActions = { ...allActions, ...operations };
@@ -245,14 +248,14 @@ const processScopeActions = (
 
   if (isSwitchAction(action)) {
     for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
-      applySubgraphActions(actionName, caseName, caseAction.actions, SUBGRAPH_TYPES.SWITCH_CASE);
+      applySubgraphActions(actionName, caseName, caseAction.actions, SUBGRAPH_TYPES.SWITCH_CASE, 'cases');
     }
-    applySubgraphActions(actionName, `${actionName}-addCase`, undefined, SUBGRAPH_TYPES.SWITCH_ADD_CASE);
-    applySubgraphActions(actionName, `${actionName}-defaultCase`, action.default?.actions, SUBGRAPH_TYPES.SWITCH_DEFAULT);
+    applySubgraphActions(actionName, `${actionName}-addCase`, undefined, SUBGRAPH_TYPES.SWITCH_ADD_CASE, undefined /* subGraphLocation */);
+    applySubgraphActions(actionName, `${actionName}-defaultCase`, action.default?.actions, SUBGRAPH_TYPES.SWITCH_DEFAULT, 'default');
     nodesMetadata = { ...nodesMetadata, [actionName]: { graphId: rootGraphId, actionCount: Object.entries(action.cases || {}).length } };
   } else if (isIfAction(action)) {
-    applySubgraphActions(actionName, `${actionName}-actions`, action.actions, SUBGRAPH_TYPES.CONDITIONAL_TRUE);
-    applySubgraphActions(actionName, `${actionName}-elseActions`, action.else?.actions, SUBGRAPH_TYPES.CONDITIONAL_FALSE);
+    applySubgraphActions(actionName, `${actionName}-actions`, action.actions, SUBGRAPH_TYPES.CONDITIONAL_TRUE, 'actions');
+    applySubgraphActions(actionName, `${actionName}-elseActions`, action.else?.actions, SUBGRAPH_TYPES.CONDITIONAL_FALSE, 'else');
     nodesMetadata = { ...nodesMetadata, [actionName]: { graphId: actionName, actionCount: 2 } };
   } else if (isUntilAction(action)) {
     applyUntilActions(actionName, action.actions);

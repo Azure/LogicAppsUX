@@ -1,9 +1,17 @@
 import Constants from '../../../../common/constants';
-import { getManifestBasedConnectionMapping } from '../../../actions/bjsworkflow/connections';
-import type { OperationMetadataState } from '../../../state/operationMetadataSlice';
+import {
+  getConnectionMappingForNode,
+  getLegacyConnectionReferenceKey,
+  getManifestBasedConnectionMapping,
+} from '../../../actions/bjsworkflow/connections';
+import type { OperationMetadataState } from '../../../state/operation/operationMetadataSlice';
 import type { RootState } from '../../../store';
 import type { StandardOperationManifestServiceOptions, IHttpClient } from '@microsoft-logic-apps/designer-client-services';
-import { InitOperationManifestService, StandardOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import {
+  InitOperationManifestService,
+  StandardOperationManifestService,
+  OperationManifestService,
+} from '@microsoft-logic-apps/designer-client-services';
 import { createItem } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import { ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
@@ -31,49 +39,123 @@ const serviceOptions: StandardOperationManifestServiceOptions = {
   httpClient: mockHttp,
 };
 
+let spy: any;
+
 describe('connection workflow mappings', () => {
-  beforeEach(() => {
+  afterEach(() => {
+    if (spy) {
+      spy.mockClear();
+    }
     jest.clearAllMocks();
+    jest.resetAllMocks();
+    jest.resetModules();
+    jest.restoreAllMocks();
+  });
+
+  it('should get the correct connectionId for OpenApi', async () => {
+    makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi);
+    const mockStdOperationManifestService = OperationManifestService();
+
+    const res = await getConnectionMappingForNode(mockApiConnection, nodeId, mockStdOperationManifestService, mockGetState);
+    if (res) {
+      expect(res[nodeId]).toEqual(connectionName);
+    } else {
+      throw Error();
+    }
   });
 
   it('should return undefined when there is no referenceKeyFormat', async () => {
     makeMockStdOperationManifestService('');
-    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockApiConnectionAction);
+    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockOpenApiConnection);
     expect(result).toBeUndefined();
   });
 
-  it('should get the correct connectionId for the node', async () => {
+  it('should get the correct connectionId for manifest', async () => {
+    makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi);
+    const mockStdOperationManifestService = OperationManifestService();
+    jest.spyOn(StandardOperationManifestService.prototype, 'isSupported').mockImplementation((): boolean => {
+      return true;
+    });
+
+    const res = await getConnectionMappingForNode(mockApiConnection, nodeId, mockStdOperationManifestService, mockGetState);
+    if (res) {
+      expect(res[nodeId]).toEqual(connectionName);
+    } else {
+      throw Error();
+    }
+  });
+
+  it('should get the correct connectionId for the node with reference key', async () => {
     makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi);
 
-    const res = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockApiConnectionAction);
+    const res = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockOpenApiConnection);
     if (res) {
       expect(res[nodeId]).toEqual(connectionName);
     }
+  });
+
+  it('should get correct key from legacy connection with explicit reference name', async () => {
+    const mockLegacyConnection = {
+      inputs: {
+        host: {
+          connection: {
+            referenceName: '123',
+          },
+        },
+      },
+    };
+    const key = getLegacyConnectionReferenceKey(mockLegacyConnection);
+    expect(key).toEqual('123');
+  });
+
+  it('should get correct key from legacy connection without reference name', async () => {
+    const mockLegacyConnection = {
+      inputs: {
+        host: {
+          connection: '123',
+        },
+      },
+    };
+    const key = getLegacyConnectionReferenceKey(mockLegacyConnection);
+    expect(key).toEqual('123');
   });
 });
 
 const mockGetState = (): RootState => {
   const state: Partial<OperationMetadataState> = {
-    operationInfo: { [nodeId]: { connectorId: '1', operationId: '2' } },
+    operationInfo: { [nodeId]: { type: 'TODO:', connectorId: '1', operationId: '2' } },
   };
   return { operations: state as OperationMetadataState } as RootState;
 };
 
-const mockApiConnectionAction: LogicAppsV2.OpenApiOperationAction = {
+const mockApiConnection: LogicAppsV2.OpenApiOperationAction = {
+  type: Constants.NODE.TYPE.API_CONNECTION,
+  inputs: {
+    host: {
+      apiId: '123',
+      operationId: '2',
+      connection: {
+        referenceName: connectionName,
+      },
+    },
+  },
+};
+
+const mockOpenApiConnection: LogicAppsV2.OpenApiOperationAction = {
   type: Constants.NODE.TYPE.OPEN_API_CONNECTION,
   inputs: {
     host: {
       apiId: '123',
       operationId: '2',
       connection: {
-        name: connectionName,
+        referenceName: connectionName,
       },
     },
   },
 };
 
 function makeMockStdOperationManifestService(referenceKeyFormat: ConnectionReferenceKeyFormat | '') {
-  jest
+  spy = jest
     .spyOn(StandardOperationManifestService.prototype, 'getOperationManifest')
     .mockImplementation((_connectorId: string, _operationId: string): Promise<OperationManifest> => {
       const mockManifest = { ...createItem };

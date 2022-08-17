@@ -8,27 +8,44 @@ export interface NodeTokens {
   upstreamNodeIds: string[];
 }
 
+export interface VariableDeclaration {
+  name: string;
+  type: string;
+}
+
 export interface TokensState {
   outputTokens: Record<string, NodeTokens>;
+  variables: Record<string, VariableDeclaration[]>;
 }
 
 const initialState: TokensState = {
   outputTokens: {},
+  variables: {},
 };
 
-export type AddTokensPayload = Record<string, NodeTokens>;
+export interface InitializeTokensAndVariablesPayload {
+  outputTokens: Record<string, NodeTokens>;
+  variables: Record<string, VariableDeclaration[]>;
+}
 
 export const tokensSlice = createSlice({
   name: 'tokens',
   initialState,
   reducers: {
-    initializeTokens: (state, action: PayloadAction<AddTokensPayload>) => {
-      state.outputTokens = action.payload;
+    initializeTokensAndVariables: (state, action: PayloadAction<InitializeTokensAndVariablesPayload>) => {
+      state.outputTokens = { ...state.outputTokens, ...action.payload.outputTokens };
+      state.variables = { ...state.variables, ...action.payload.variables };
+    },
+    updateTokens: (state, action: PayloadAction<{ id: string; tokens: Token[] }>) => {
+      const { id, tokens } = action.payload;
+      if (state.outputTokens[id]) {
+        state.outputTokens[id].tokens = tokens;
+      }
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeTokens } = tokensSlice.actions;
+export const { initializeTokensAndVariables, updateTokens } = tokensSlice.actions;
 
 export default tokensSlice.reducer;

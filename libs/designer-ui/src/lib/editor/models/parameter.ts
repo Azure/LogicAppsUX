@@ -26,7 +26,6 @@ export interface ParameterInfo {
   type: string;
   validationErrors?: string[];
   value: ValueSegment[];
-  viewModel?: any;
   visibility?: string;
 }
 
@@ -67,7 +66,7 @@ export interface Token {
     loopSource?: string;
     parentArrayName?: string;
     parentArrayKey?: string;
-    itemsSchema?: OpenAPIV2.SchemaObject;
+    itemSchema?: OpenAPIV2.SchemaObject;
   };
   brandColor?: string;
   description?: string;
@@ -79,7 +78,7 @@ export interface Token {
   name?: string;
   required?: boolean;
   source?: string;
-  title?: string;
+  title: string;
   tokenType: TokenType;
   type?: string;
 }

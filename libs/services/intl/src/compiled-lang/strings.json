@@ -5,12 +5,6 @@
       "value": "OK"
     }
   ],
-  "+GSexV": [
-    {
-      "type": 0,
-      "value": "Filters"
-    }
-  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -81,6 +75,18 @@
     {
       "type": 0,
       "value": "Returns the elements in the array starting at index Count"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Change connection"
+    }
+  ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "This connector has multiple versions, built-in and Azure-hosted. Use built-in for the best performance, connection-string authentication, and other features. Use Azure-hosted for other authentication options."
     }
   ],
   "/WW7If": [
@@ -339,6 +345,12 @@
       "value": "Show code view"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Learn more"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -457,6 +469,12 @@
     {
       "type": 0,
       "value": "Identifier"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Add dynamic content"
     }
   ],
   "3FoqCK": [
@@ -591,6 +609,12 @@
       "value": "Toggle Minimap"
     }
   ],
+  "4pm5yw": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is hidden"
+    }
+  ],
   "4vcnOA": [
     {
       "type": 0,
@@ -655,6 +679,12 @@
     {
       "type": 0,
       "value": "Delete Parameter"
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybrid Connector"
     }
   ],
   "63/zYN": [
@@ -903,12 +933,6 @@
       "value": "12"
     }
   ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
-    }
-  ],
   "9djnqI": [
     {
       "type": 0,
@@ -937,6 +961,12 @@
     {
       "type": 0,
       "value": "Returns true if both parameters are true"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filter Actions"
     }
   ],
   "AIL7WX": [
@@ -1117,6 +1147,12 @@
       "value": "Required. The string from which to remove leading and trailing whitespace."
     }
   ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Use sample payload to generate schema"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -1133,6 +1169,12 @@
     {
       "type": 0,
       "value": "(UTC-01:00) Azores"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Run After"
     }
   ],
   "DysO/Q": [
@@ -1335,6 +1377,12 @@
       "value": "Status"
     }
   ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in {splitOn}."
+    }
+  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -1363,6 +1411,12 @@
     {
       "type": 0,
       "value": "Returns true if the parameters are false"
+    }
+  ],
+  "Gi72X5": [
+    {
+      "type": 0,
+      "value": "See Less"
     }
   ],
   "Gmya+V": [
@@ -1413,6 +1467,12 @@
       "value": "Required. The key name of the form data value to return."
     }
   ],
+  "HQ8/tk": [
+    {
+      "type": 0,
+      "value": "Button to add dynamic content if TokenPicker is shown"
+    }
+  ],
   "HXLutF": [
     {
       "type": 0,
@@ -1453,6 +1513,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Return to browse"
     }
   ],
   "IngtMG": [
@@ -1657,10 +1723,22 @@
       "value": "Returns the day of week component of a string timestamp"
     }
   ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "There are no results for your search"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
       "value": "Warning"
+    }
+  ],
+  "LJmfmK": [
+    {
+      "type": 0,
+      "value": "See More"
     }
   ],
   "LMB8am": [
@@ -1669,16 +1747,34 @@
       "value": "Creating..."
     }
   ],
+  "LOwePI": [
+    {
+      "type": 0,
+      "value": "Invalid type on split on value {splitOn}, split on not in array."
+    }
+  ],
   "LS8rfZ": [
     {
       "type": 0,
       "value": "Returns the scheme from a URI"
     }
   ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Add a parallel branch"
+    }
+  ],
   "Lft/is": [
     {
       "type": 0,
       "value": "Add new"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "See more"
     }
   ],
   "LoGUT3": [
@@ -2209,6 +2305,18 @@
       "value": "Custom Tracking Id"
     }
   ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Done"
+    }
+  ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Read less"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2323,6 +2431,12 @@
       "value": "(UTC-06:00) Central America"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Group by Connector"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2351,12 +2465,6 @@
     {
       "type": 0,
       "value": "Content not shown due to security configuration."
-    }
-  ],
-  "UkSZnQ": [
-    {
-      "type": 0,
-      "value": "Save"
     }
   ],
   "Ur+wph": [
@@ -2431,6 +2539,20 @@
       "value": "Run History"
     }
   ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Use \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" as a custom value"
+    }
+  ],
   "W070M2": [
     {
       "type": 0,
@@ -2451,6 +2573,12 @@
     {
       "type": 0,
       "value": "Clear"
+    }
+  ],
+  "WLj8DH": [
+    {
+      "type": 0,
+      "value": "Please enter a valid dictionary"
     }
   ],
   "WS9kXD": [
@@ -2513,6 +2641,12 @@
       "value": "Retry"
     }
   ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Ensure words are spelled correctly."
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -2523,6 +2657,12 @@
     {
       "type": 0,
       "value": "Connection name"
+    }
+  ],
+  "XQs+wW": [
+    {
+      "type": 0,
+      "value": "Insert a new step"
     }
   ],
   "XTYYks": [
@@ -2643,10 +2783,22 @@
       "value": "Returns a single array or object with all the elements that are in either array or object passed to this function. The parameters for the function can either be a set of objects or a set of arrays (not a mixture thereof). If there are two objects with the same name in the final output, the last object with that name appears in the final object."
     }
   ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Search Tips"
+    }
+  ],
   "YoQara": [
     {
       "type": 0,
       "value": "None"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom out"
     }
   ],
   "Z4QLEf": [
@@ -2683,6 +2835,12 @@
     {
       "type": 0,
       "value": "Required. The value the string may start with."
+    }
+  ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Read more"
     }
   ],
   "ZbX8xq": [
@@ -2799,6 +2957,16 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
+  "bwfJdj": [
+    {
+      "type": 0,
+      "value": "Run after "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    }
+  ],
   "bx3qeC": [
     {
       "type": 0,
@@ -2857,6 +3025,12 @@
     {
       "type": 0,
       "value": "Required. The value to search the index of."
+    }
+  ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "View Documentation"
     }
   ],
   "cT2MlP": [
@@ -2925,10 +3099,10 @@
       "value": "Learn more"
     }
   ],
-  "dFInXP": [
+  "dOpdsP": [
     {
       "type": 0,
-      "value": "Select"
+      "value": "Update"
     }
   ],
   "dSTRb/": [
@@ -2961,6 +3135,20 @@
       "value": "(UTC+11:00) Sakhalin"
     }
   ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connected to "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "dgAu27": [
     {
       "type": 0,
@@ -2989,6 +3177,12 @@
     {
       "type": 0,
       "value": "Splits the string using a separator"
+    }
+  ],
+  "dxh2CJ": [
+    {
+      "type": 0,
+      "value": "timed out"
     }
   ],
   "e00zot": [
@@ -3027,10 +3221,28 @@
       "value": "Required. The number to divide the Dividend by."
     }
   ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Built-in"
+    }
+  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Required. The index of where the substring begins in parameter 1."
+    }
+  ],
+  "er+4Cd": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
+  "esOQ5p": [
+    {
+      "type": 0,
+      "value": "No values matching your search"
     }
   ],
   "euC/DV": [
@@ -3085,6 +3297,12 @@
     {
       "type": 0,
       "value": "Value"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom in"
     }
   ],
   "g4igOR": [
@@ -3159,22 +3377,38 @@
       "value": "Trigger Conditions"
     }
   ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Search results for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "gg0j4S": [
     {
       "type": 0,
       "value": "(UTC-06:00) Saskatchewan"
     }
   ],
-  "gj+jEr": [
+  "gpbgjJ": [
     {
       "type": 0,
-      "value": "Save the selected connection"
+      "value": "Invalid split on value {splitOn}, cannot find in outputs."
     }
   ],
   "gu9o9z": [
     {
       "type": 0,
       "value": "When used inside until loop, this function returns the current iteration index of the specified loop."
+    }
+  ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Enter or paste a sample JSON payload."
     }
   ],
   "hBLPXK": [
@@ -3261,6 +3495,12 @@
     {
       "type": 0,
       "value": "Converts a string to uppercase using the casing rules of the invariant culture"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamic content"
     }
   ],
   "iJOIca": [
@@ -3387,6 +3627,18 @@
       "value": "Edit in JSON"
     }
   ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Unable to generate schema"
+    }
+  ],
+  "jjYA4u": [
+    {
+      "type": 0,
+      "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
+    }
+  ],
   "jsEMSu": [
     {
       "type": 0,
@@ -3451,6 +3703,12 @@
     {
       "type": 0,
       "value": "Returns a string representation of an input based64 string"
+    }
+  ],
+  "kV/U0C": [
+    {
+      "type": 0,
+      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -3549,10 +3807,10 @@
       "value": "is skipped"
     }
   ],
-  "lfHj+F": [
+  "lcxLiq": [
     {
       "type": 0,
-      "value": "Please Enter a valid array"
+      "value": "Please enter a valid array"
     }
   ],
   "lgs5sf": [
@@ -3583,6 +3841,12 @@
     {
       "type": 0,
       "value": "Name"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "mGUdCO": [
@@ -3627,6 +3891,12 @@
       "value": "Limit Logic Apps to not include workflow metadata headers in the outgoing request."
     }
   ],
+  "mmF/SW": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -3651,6 +3921,12 @@
       "value": "Required. The value that is converted to a floating-point number."
     }
   ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Try less specific keywords."
+    }
+  ],
   "nGds/r": [
     {
       "type": 0,
@@ -3667,6 +3943,12 @@
     {
       "type": 0,
       "value": "Required. The name of the property to remove."
+    }
+  ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -3737,6 +4019,12 @@
       "value": "Content Transfer"
     }
   ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browse Operations"
+    }
+  ],
   "oRvVIW": [
     {
       "type": 0,
@@ -3783,6 +4071,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Enter key"
     }
   ],
   "pIczsS": [
@@ -4021,6 +4315,12 @@
       "value": "Returns a URI encoded representation of a value"
     }
   ],
+  "rjyBPU": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "rstpaK": [
     {
       "type": 0,
@@ -4129,6 +4429,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Return to search"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4171,12 +4477,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Trigger"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4199,12 +4499,6 @@
     {
       "type": 0,
       "value": "Display Name"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operations"
     }
   ],
   "u/KSPz": [
@@ -4243,6 +4537,12 @@
       "value": "Adds an integer number of hours to a string timestamp passed in"
     }
   ],
+  "uXJdAh": [
+    {
+      "type": 0,
+      "value": "Search dynamic content"
+    }
+  ],
   "uZH8Qs": [
     {
       "type": 0,
@@ -4271,6 +4571,12 @@
     {
       "type": 0,
       "value": "16"
+    }
+  ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variables"
     }
   ],
   "urAHv1": [
@@ -4309,6 +4615,12 @@
       "value": "Returns the last index of a value within a string (case-insensitive, invariant culture)"
     }
   ],
+  "vLXCIR": [
+    {
+      "type": 0,
+      "value": "Button for managing toggle state"
+    }
+  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4319,6 +4631,12 @@
     {
       "type": 0,
       "value": "Delete"
+    }
+  ],
+  "vVJuus": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
     }
   ],
   "vXwYXe": [
@@ -4359,6 +4677,12 @@
       "value": "."
     }
   ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "vwH/XV": [
     {
       "type": 0,
@@ -4375,6 +4699,12 @@
     {
       "type": 0,
       "value": "Sunday"
+    }
+  ],
+  "w9OL8U": [
+    {
+      "type": 0,
+      "value": "Page fit"
     }
   ],
   "wEaGWn": [
@@ -4411,6 +4741,12 @@
     {
       "type": 0,
       "value": "Required. The length of the substring."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Click to delete item"
     }
   ],
   "wWVQuK": [
@@ -4533,16 +4869,6 @@
       "value": "(UTC-10:00) Hawaii"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4597,10 +4923,28 @@
       "value": "Required. The value that is converted to a decimal number."
     }
   ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Enter value"
+    }
+  ],
   "zIDVd9": [
     {
       "type": 0,
       "value": "Required. The string that is converted to a native type value."
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Select Actions"
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
     }
   ],
   "zbtUQ/": [

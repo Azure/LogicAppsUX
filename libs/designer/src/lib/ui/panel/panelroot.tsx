@@ -1,15 +1,32 @@
 import constants from '../../common/constants';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useRegisteredPanelTabs, useSelectedPanelTabName, useVisiblePanelTabs } from '../../core/state/panel/panelSelectors';
-import { collapsePanel, expandPanel, hideAllTabs, registerPanelTabs, selectPanelTab, showAllTabs } from '../../core/state/panel/panelSlice';
-import { useIconUri, useNodeDescription, useNodeMetadata, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import {
+  useIsDiscovery,
+  useIsPanelCollapsed,
+  useRegisteredPanelTabs,
+  useSelectedNodeId,
+  useSelectedPanelTabName,
+  useVisiblePanelTabs,
+} from '../../core/state/panel/panelSelectors';
+import {
+  collapsePanel,
+  expandPanel,
+  isolateTab,
+  registerPanelTabs,
+  selectPanelTab,
+  setTabVisibility,
+  showDefaultTabs,
+} from '../../core/state/panel/panelSlice';
+import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useNodeDescription, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { setNodeDescription } from '../../core/state/workflow/workflowSlice';
-import type { RootState } from '../../core/store';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
+import { createConnectionTab } from './panelTabs/createConnectionTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
+import { selectConnectionTab } from './panelTabs/selectConnectionTab';
 import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
@@ -17,7 +34,7 @@ import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designe
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export const PanelRoot = (): JSX.Element => {
   const intl = useIntl();
@@ -26,9 +43,9 @@ export const PanelRoot = (): JSX.Element => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
-  const { collapsed, selectedNode, isDiscovery } = useSelector((state: RootState) => {
-    return state.panel;
-  });
+  const collapsed = useIsPanelCollapsed();
+  const selectedNode = useSelectedNodeId();
+  const isDiscovery = useIsDiscovery();
 
   const [width, setWidth] = useState(PanelSize.Auto);
 
@@ -40,13 +57,24 @@ export const PanelRoot = (): JSX.Element => {
   const operationInfo = useOperationInfo(selectedNode);
   const iconUriResult = useIconUri(operationInfo);
   const nodeMetaData = useNodeMetadata(selectedNode);
-  const showCommentBox = !isNullOrUndefined(comment);
+  let showCommentBox = !isNullOrUndefined(comment);
+
+  useEffect(() => {
+    const tabs = [monitoringTab, parametersTab, aboutTab, codeViewTab, SettingsTab, scratchTab, createConnectionTab, selectConnectionTab];
+    if (process.env.NODE_ENV !== 'production') {
+      tabs.push(scratchTab);
+    }
+    dispatch(registerPanelTabs(tabs));
+  }, [dispatch]);
 
   useEffect(() => {
     dispatch(
-      registerPanelTabs([{ ...monitoringTab, visible: !!isMonitoringView }, parametersTab, aboutTab, codeViewTab, SettingsTab, scratchTab])
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.MONITORING,
+        visible: isMonitoringView,
+      })
     );
-  }, [dispatch, readOnly, isMonitoringView]);
+  }, [dispatch, isMonitoringView]);
 
   useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))
@@ -59,11 +87,17 @@ export const PanelRoot = (): JSX.Element => {
 
   useEffect(() => {
     if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
-      dispatch(hideAllTabs({ exclude: [constants.PANEL_TAB_NAMES.MONITORING, constants.PANEL_TAB_NAMES.PARAMETERS] }));
+      dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
     } else {
-      dispatch(showAllTabs({ exclude: [constants.PANEL_TAB_NAMES.MONITORING] }));
+      dispatch(showDefaultTabs());
     }
-  }, [dispatch, selectedNode, nodeMetaData]);
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.MONITORING,
+        visible: isMonitoringView,
+      })
+    );
+  }, [dispatch, selectedNode, nodeMetaData, isMonitoringView]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -145,11 +179,8 @@ export const PanelRoot = (): JSX.Element => {
   };
 
   const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
-    if (showCommentBox) {
-      dispatch(setNodeDescription({ nodeId: selectedNode }));
-    } else {
-      dispatch(setNodeDescription({ nodeId: selectedNode, description: '' }));
-    }
+    dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
+    showCommentBox = !showCommentBox;
   };
 
   // TODO: 12798945? onClick for delete when node store gets built
@@ -157,16 +188,10 @@ export const PanelRoot = (): JSX.Element => {
     // TODO: 12798935 Analytics (event logging)
   };
 
-  const togglePanel = (): void => {
-    if (!collapsed) {
-      collapse();
-    } else {
-      expand();
-    }
-  };
+  const togglePanel = (): void => (!collapsed ? collapse() : expand());
 
   return isDiscovery ? (
-    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width}></RecommendationPanelContext>
+    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width} />
   ) : (
     <PanelContainer
       cardIcon={iconUriResult.result}

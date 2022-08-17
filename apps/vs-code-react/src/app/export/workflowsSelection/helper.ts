@@ -1,4 +1,4 @@
-import type { WorkflowsList, WorkflowProperties } from '../../../run-service/types';
+import type { WorkflowsList, WorkflowProperties, SelectedWorkflowsList } from '../../../run-service/types';
 import type { IDropdownOption } from '@fluentui/react';
 
 export const parseWorkflowData = (workflowsData: { workflows: Array<WorkflowProperties> }): Array<WorkflowsList> => {
@@ -55,9 +55,28 @@ export const getResourceGroup = (workflowID: string): string => {
   return separators[resourceGroupLocation];
 };
 
-export const getListColumns = () => {
+export const getListColumns = (nameTitle: string, resourceGroupTitle: string) => {
   return [
-    { key: 'column1', name: 'Name', fieldName: 'name', minWidth: 170, maxWidth: 250, isResizable: true },
-    { key: 'column2', name: 'Resource Group', fieldName: 'resourceGroup', minWidth: 170, maxWidth: 250, isResizable: true },
+    { key: 'name', name: nameTitle, fieldName: 'name', minWidth: 170, maxWidth: 250, isResizable: true },
+    { key: 'resourceGroup', name: resourceGroupTitle, fieldName: 'resourceGroup', minWidth: 170, maxWidth: 250, isResizable: true },
   ];
+};
+
+export const updateSelectedItems = (
+  items: WorkflowsList[] | SelectedWorkflowsList[],
+  renderWorkflows: WorkflowsList[] | null,
+  selectedWorkflows: WorkflowsList[]
+) => {
+  const copyItems = JSON.parse(JSON.stringify(items));
+
+  renderWorkflows?.forEach((workflow: WorkflowsList) => {
+    const isWorkflowInSelection = !!selectedWorkflows.find((selectedWorkflow: WorkflowsList) => selectedWorkflow.key === workflow.key);
+    const foundIndex = copyItems.findIndex((selectedItem: SelectedWorkflowsList | WorkflowsList) => selectedItem.key === workflow.key);
+
+    if (foundIndex !== -1) {
+      copyItems[foundIndex].selected = isWorkflowInSelection;
+    }
+  });
+
+  return copyItems;
 };

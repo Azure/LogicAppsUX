@@ -3,14 +3,15 @@ import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, isWorkflowNode } from '../par
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
+import { useThrottledEffect } from '@microsoft-logic-apps/utils';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type { Edge, Node } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
 
 export const layerSpacing = {
-  default: '50',
+  default: '64',
   readOnly: '32',
   onlyEdge: '16',
 };
@@ -38,12 +39,11 @@ const readOnlyOptions: Record<string, string> = {
   'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.readOnly,
 };
 
+const elk = new ELK();
 const defaultEdgeType = WORKFLOW_EDGE_TYPES.BUTTON_EDGE;
 const defaultNodeType = WORKFLOW_NODE_TYPES.OPERATION_NODE;
 
 const elkLayout = async (graph: ElkNode, readOnly?: boolean) => {
-  const elk = new ELK();
-
   const layout = await elk.layout(JSON.parse(JSON.stringify(graph)), {
     layoutOptions: {
       ...defaultLayoutOptions,
@@ -127,7 +127,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
           'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,
           'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.onlyEdge,
         }),
-        ...(node.children?.[node.children.length - 1].id.endsWith('#footer') && {
+        ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
           'elk.padding': '[top=0,left=16,bottom=0,right=16]',
         }),
       },
@@ -142,32 +142,34 @@ export const useLayout = (): [Node[], Edge[]] => {
 
   const readOnly = useReadOnly();
 
-  useEffect(() => {
-    if (!workflowGraph) {
-      return;
-    }
-    const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
-    const traceId = LoggerService().startTrace({
-      action: 'useLayout',
-      actionModifier: 'run Elk Layout',
-      name: 'Elk Layout',
-      source: 'elklayout.ts',
-    });
-    elkLayout(elkGraph, readOnly)
-      .then((g) => {
-        const [n, e] = convertElkGraphToReactFlow(g);
-        setReactFlowNodes(n);
-        setReactFlowEdges(e);
-        LoggerService().endTrace(traceId);
-      })
-      .catch((err) => {
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: 'useLayout',
-          message: err,
-        });
+  useThrottledEffect(
+    () => {
+      if (!workflowGraph) return;
+      const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
+      const traceId = LoggerService().startTrace({
+        action: 'useLayout',
+        actionModifier: 'run Elk Layout',
+        name: 'Elk Layout',
+        source: 'elklayout.ts',
       });
-  }, [workflowGraph, readOnly]);
+      elkLayout(elkGraph, readOnly)
+        .then((g) => {
+          const [n, e] = convertElkGraphToReactFlow(g);
+          setReactFlowNodes(n);
+          setReactFlowEdges(e);
+          LoggerService().endTrace(traceId);
+        })
+        .catch((err) => {
+          LoggerService().log({
+            level: LogEntryLevel.Error,
+            area: 'useLayout',
+            message: err,
+          });
+        });
+    },
+    [readOnly, workflowGraph],
+    200
+  );
 
   return [reactFlowNodes, reactFlowEdges];
 };

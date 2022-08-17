@@ -3,8 +3,9 @@ import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedIse, updateSelectedSubscripton } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
-import { parseIseData, parseSubscriptionsData } from './helper';
-import { Dropdown, Text } from '@fluentui/react';
+import { SearchableDropdown } from '../../components/searchableDropdown';
+import { getDropdownPlaceholder, parseIseData, parseSubscriptionsData } from './helper';
+import { Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -21,20 +22,19 @@ export const InstanceSelection: React.FC = () => {
 
   const intlText = {
     SELECT_TITLE: intl.formatMessage({
-      defaultMessage: 'Select Logic App Instance',
+      defaultMessage: 'Select logic app instance',
       description: 'Select logic app instance title',
     }),
     SELECT_DESCRIPTION: intl.formatMessage({
-      defaultMessage:
-        'Here you are able to export a selection of Logic Apps into a code format for re-usage and integration into larger Logic App schemas',
+      defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
       description: 'Select apps to export description',
     }),
     SELECTION_SUBSCRIPTION: intl.formatMessage({
-      defaultMessage: 'Select a Subscription',
+      defaultMessage: 'Select a subscription',
       description: 'Select a subscription',
     }),
     SELECTION_ISE: intl.formatMessage({
-      defaultMessage: 'Select an ISE (Integration Service Environment) instance',
+      defaultMessage: 'Select an integration service environment (ISE) instance',
       description: 'Select an ISE instance',
     }),
     SELECT_OPTION: intl.formatMessage({
@@ -46,8 +46,20 @@ export const InstanceSelection: React.FC = () => {
       description: 'No subscriptions available',
     }),
     EMPTY_ISE: intl.formatMessage({
-      defaultMessage: 'No ISE instances available',
-      description: 'No ISE instances available',
+      defaultMessage: 'No integration service environment (ISE) instances available',
+      description: 'No ISE instances available text',
+    }),
+    SEARCH_SUBSCRIPTION: intl.formatMessage({
+      defaultMessage: 'Find and select subscription',
+      description: 'Find and select subscription text',
+    }),
+    SEARCH_ISE: intl.formatMessage({
+      defaultMessage: 'Find and select integration service environment (ISE)',
+      description: 'Find ISE text',
+    }),
+    LOADING: intl.formatMessage({
+      defaultMessage: 'Loading...',
+      description: 'Loading text',
     }),
   };
 
@@ -68,6 +80,8 @@ export const InstanceSelection: React.FC = () => {
 
   const { data: subscriptionsData, isLoading: isSubscriptionsLoading } = useQuery<any>(QueryKeys.subscriptionData, loadSubscriptions, {
     refetchOnWindowFocus: false,
+    enabled: accessToken !== undefined,
+    retry: 4,
   });
 
   const {
@@ -81,9 +95,10 @@ export const InstanceSelection: React.FC = () => {
 
   const onChangeSubscriptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption && selectedSubscription !== selectedOption.key) {
+      const subscriptionId = selectedOption.key as string;
       dispatch(
         updateSelectedSubscripton({
-          selectedSubscription: selectedOption.key,
+          selectedSubscription: subscriptionId,
         })
       );
       refetchIse();
@@ -92,9 +107,11 @@ export const InstanceSelection: React.FC = () => {
 
   const onChangeIse = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption) {
+      const iseId = selectedOption.key as string;
       dispatch(
         updateSelectedIse({
-          selectedIse: selectedOption.key,
+          selectedIse: iseId,
+          location: selectedOption.data,
         })
       );
     }
@@ -104,31 +121,53 @@ export const InstanceSelection: React.FC = () => {
 
   const iseInstances: IDropdownOption[] = isIseLoading || selectedSubscription === '' || !iseData ? [] : parseIseData(iseData);
 
+  const subscriptionLoading = accessToken === undefined ? true : isSubscriptionsLoading;
+  const subscriptionPlaceholder = getDropdownPlaceholder(
+    subscriptionLoading,
+    subscriptions.length,
+    intlText.SELECT_OPTION,
+    intlText.EMPTY_SUBSCRIPTION,
+    intlText.LOADING
+  );
+
+  const iseLoading = selectedSubscription === '' ? false : isIseLoading;
+  const isePlaceholder = getDropdownPlaceholder(
+    iseLoading,
+    iseInstances.length,
+    intlText.SELECT_OPTION,
+    intlText.EMPTY_ISE,
+    intlText.LOADING
+  );
+
   return (
     <div className="msla-export-instance-panel">
-      <Text variant="xLarge" nowrap block>
+      <Text variant="xLarge" block>
         {intlText.SELECT_TITLE}
       </Text>
-      <Text variant="large" nowrap block>
+      <Text variant="large" block>
         {intlText.SELECT_DESCRIPTION}
       </Text>
-      <Dropdown
+      <SearchableDropdown
         label={intlText.SELECTION_SUBSCRIPTION}
         options={subscriptions}
-        placeholder={subscriptions.length ? intlText.SELECT_OPTION : intlText.EMPTY_SUBSCRIPTION}
+        placeholder={subscriptionPlaceholder}
         disabled={isSubscriptionsLoading || !subscriptions.length}
         onChange={onChangeSubscriptions}
         selectedKey={selectedSubscription !== '' ? selectedSubscription : null}
         className="msla-export-instance-panel-dropdown"
+        isLoading={subscriptionLoading}
+        searchBoxPlaceholder={intlText.SEARCH_SUBSCRIPTION}
       />
-      <Dropdown
+      <SearchableDropdown
         label={intlText.SELECTION_ISE}
         options={iseInstances}
-        placeholder={iseInstances.length ? intlText.SELECT_OPTION : intlText.EMPTY_ISE}
-        disabled={isIseLoading || selectedSubscription === '' || !iseInstances.length}
+        placeholder={isePlaceholder}
+        disabled={isSubscriptionsLoading || isIseLoading || selectedSubscription === '' || !iseInstances.length}
         onChange={onChangeIse}
         selectedKey={selectedIse !== '' ? selectedIse : null}
         className="msla-export-instance-panel-dropdown"
+        isLoading={iseLoading}
+        searchBoxPlaceholder={intlText.SEARCH_ISE}
       />
     </div>
   );

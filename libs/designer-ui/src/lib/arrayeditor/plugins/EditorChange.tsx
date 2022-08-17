@@ -1,17 +1,16 @@
 import type { ArrayEditorItemProps } from '..';
-import { ValueSegmentType } from '../../editor';
-import type { Segment } from '../../editor/base';
-import { $isTokenNode } from '../../editor/base/nodes/tokenNode';
-import { parseSegments } from '../../editor/base/parsesegments';
+import type { ValueSegment } from '../../editor';
+import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
+import { parseSegments } from '../../editor/base/utils/parsesegments';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import type { EditorState, ElementNode } from 'lexical';
-import { CLEAR_EDITOR_COMMAND, $getNodeByKey, $getRoot, $isElementNode, $isTextNode } from 'lexical';
+import type { EditorState } from 'lexical';
+import { CLEAR_EDITOR_COMMAND } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState, useEffect } from 'react';
 
 interface updateStateProps {
-  item: Segment[];
+  item: ValueSegment[];
   items: ArrayEditorItemProps[];
   index: number;
   setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
@@ -35,7 +34,7 @@ export const EditorChange = ({ item, items, index, setItems }: updateStateProps)
     const newValue = serializeEditorState(editorState);
     if (notEqual(item, newValue)) {
       const newItems = [...items];
-      newItems[index] = { content: serializeEditorState(editorState) };
+      newItems[index] = { content: newValue };
       setItems(newItems);
       editor.focus();
     }
@@ -43,44 +42,17 @@ export const EditorChange = ({ item, items, index, setItems }: updateStateProps)
   return <OnChangePlugin onChange={onChange} />;
 };
 
-function serializeEditorState(editorState: EditorState): Segment[] {
-  const segments: Segment[] = [];
-  editorState.read(() => {
-    getChildrenNodes($getRoot(), segments);
-  });
-  return segments;
-}
-const getChildrenNodes = (node: ElementNode, segments: Segment[]): void => {
-  node.__children.forEach((child) => {
-    const childNode = $getNodeByKey(child);
-    if (childNode && $isElementNode(childNode)) {
-      return getChildrenNodes(childNode, segments);
-    }
-    if ($isTextNode(childNode)) {
-      segments.push({ type: ValueSegmentType.LITERAL, value: childNode.__text });
-    } else if ($isTokenNode(childNode)) {
-      segments.push({
-        type: ValueSegmentType.TOKEN,
-        token: {
-          title: childNode.__title,
-          icon: childNode.__icon,
-          brandColor: childNode.__brandColor,
-          description: childNode.__description,
-        },
-      });
-    }
-  });
-};
-
-const notEqual = (a: Segment[], b: Segment[]): boolean => {
+const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
   if (a.length !== b.length) {
     return true;
   }
   for (let i = 0; i < a.length; i++) {
+    const newA = { token: a[i].token, value: a[i].value };
+    const newB = { token: b[i].token, value: b[i].value };
     if (a[i].type !== b[i].type) {
       return true;
     }
-    if (JSON.stringify(a[i]) !== JSON.stringify(b[i])) {
+    if (JSON.stringify(newA, Object.keys(newA).sort()) !== JSON.stringify(b[i], Object.keys(newB).sort())) {
       return true;
     }
   }

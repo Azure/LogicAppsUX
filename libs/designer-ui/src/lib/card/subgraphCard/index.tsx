@@ -1,5 +1,5 @@
 import { ActionButtonV2 } from '../../actionbuttonv2';
-import CollapseToggle from '../../collapseToggle';
+import NodeCollapseToggle from '../../nodeCollapseToggle';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
 import { labelCase, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
@@ -91,18 +91,16 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     onClick?.(data.id);
   };
 
+  const colorVars = { ['--brand-color' as any]: SubgraphTypeData[subgraphType].color };
+
   if (data.size === 'large') {
     return (
-      <div
-        className={css('msla-subgraph-card', data.size)}
-        style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
-        tabIndex={-1}
-      >
+      <div className={css('msla-subgraph-card', data.size)} style={colorVars} tabIndex={-1}>
         <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
         <button className="msla-subgraph-title" onClick={handleTitleClick}>
           {data.title}
         </button>
-        <CollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
+        <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
       </div>
     );
   } else if (data.size === 'small') {
@@ -111,7 +109,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         <div
           tabIndex={0}
           className={css('msla-subgraph-card', data.size)}
-          style={{ ['--main-color' as any]: SubgraphTypeData[subgraphType].color }}
+          style={colorVars}
           onClick={(e) => {
             handleTitleClick(e);
             handleCollapse?.(e);
@@ -119,7 +117,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         >
           <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
           <div className="msla-subgraph-title">{data.title}</div>
-          <CollapseToggle disabled collapsed={collapsed} />
+          <NodeCollapseToggle disabled collapsed={collapsed} />
         </div>
       </div>
     );

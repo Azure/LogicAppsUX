@@ -1,6 +1,5 @@
 @import './reset.less';
 @import './actionbuttonv2/actionbuttonv2.less';
-@import './actionsummarycard/actionsummarycard.less';
 @import './common.less';
 @import './connectioncontainer.less';
 @import './variables.less';
@@ -9,14 +8,13 @@
 @import './featurefeedback/featurefeedback.less';
 @import './codeeditor.less';
 @import './picker/picker.less';
-@import './collapseToggle/collapseToggle.less';
+@import './nodeCollapseToggle/nodeCollapseToggle.less';
 @import './card/batch.less';
 @import './card/card.less';
 @import './card/cardmonitor.less';
 @import './card/recurrence.less';
 @import './card/parametersmonitor/parametersmonitor.less';
 @import './card/triggerselector/triggerselector.less';
-// @import './card/runafterconfiguration/runafterconfiguration.less';
 @import './card/foreach/foreach.less';
 @import './card/until/until.less';
 @import './checkbox/checkbox.less';
@@ -26,17 +24,18 @@
 @import './datetimeeditor/datetimeeditor.less';
 @import './formfield/formfield.less';
 @import './formfieldgroup/formfieldgroup.less';
-@import './dictionary/dictionary.less';
+@import './dictionary/dictionaryeditor.less';
 @import './htmleditor.less';
 @import './htmlcodevieweditor.less';
 @import './htmlwysiwygeditor.less';
+@import './infoDot/infoDot.less';
 @import './inputcontrol/inputcontrol.less';
 @import './label/label.less';
 @import './modaldialog/modaldialog.less';
 @import './pager/pager.less';
 @import './panel/panel.less';
 @import './panel/recommendationpanel/recommendation.less';
-@import './schemaeditor2/schemaeditor.less';
+@import './schemaeditor/schemaeditor.less';
 @import './table/table.less';
 @import './textbox/textbox.less';
 @import './texteditor.less';
@@ -53,11 +52,13 @@
 @import './monitoring/statuspill/statuspill.less';
 @import './tip/tip.less';
 @import './arrayeditor/arrayeditor.less';
+@import './editor/shared/editorCollapseToggle.less';
 @import './fabric.less';
 @import './editor/monaco/monaco.less';
+@import './editor/base/tokenpicker.less';
 @import './editor/base/editor.less';
 @import './peek/peek.less';
-@import './intellisensecontrol/intellisensecontrol.less';
+@import './expressioneditor/expressioneditor.less';
 @import './rulescontrol/rulescontrol.less';
 @import './itemspicker/itemspicker.less';
 @import './schemadataeditorcard.less';
@@ -388,6 +389,24 @@ body.dark {
   .msla-drop-zone {
     height: unset;
   }
+}
+
+.msla-psuedo-badge {
+  height: 18px;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  flex: 0 0 auto;
+  color: rgba(47, 107, 183, 1);
+
+  // padding: 0px 6px;
+  // border: 1px solid rgb(180, 214, 250);
+  // border-radius: 64px;
+  // background: rgb(235, 243, 252);
+
+  padding: 0px 4px;
+  border: 1px solid rgba(47, 107, 183, 1);
+  border-radius: 2px;
 }
 
 .react-flow__node {

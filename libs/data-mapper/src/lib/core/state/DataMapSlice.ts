@@ -1,10 +1,10 @@
-import type { JsonInputStyle, SchemaExtended, SchemaNodeExtended } from '../../models';
-import { createSlice } from '@reduxjs/toolkit';
+import type { DataMap, SchemaExtended, SchemaNodeExtended } from '../../models';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 export interface DataMapState {
-  curDataMapOperation?: DataMapOperationState;
-  pristineDataMap?: DataMapOperationState;
+  curDataMapOperation: DataMapOperationState;
+  pristineDataMap: DataMapOperationState;
   isDirty: boolean;
 
   undoStack: DataMapOperationState[];
@@ -12,20 +12,57 @@ export interface DataMapState {
 }
 
 export interface DataMapOperationState {
-  curDataMap: JsonInputStyle;
-  currentInputSchemaExtended?: SchemaExtended;
-  currentOutputSchemaExtended?: SchemaExtended;
-  currentInputNode?: SchemaNodeExtended;
+  dataMap?: DataMap;
+  inputSchema?: SchemaExtended;
+  outputSchema?: SchemaExtended;
+  currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
 }
 
-const initialState: DataMapState = { isDirty: false, undoStack: [], redoStack: [] };
+const emptyPristineState: DataMapOperationState = { currentInputNodes: [] };
+const initialState: DataMapState = {
+  pristineDataMap: emptyPristineState,
+  curDataMapOperation: emptyPristineState,
+  isDirty: false,
+  undoStack: [],
+  redoStack: [],
+};
 
 export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    changeInputSchemaOperation: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
+    setInitialInputSchema: (state, action: PayloadAction<SchemaExtended>) => {
+      state.curDataMapOperation.inputSchema = action.payload;
+      state.pristineDataMap.inputSchema = action.payload;
+    },
+
+    setInitialOutputSchema: (state, action: PayloadAction<SchemaExtended>) => {
+      state.curDataMapOperation.outputSchema = action.payload;
+      state.curDataMapOperation.currentOutputNode = action.payload.schemaTreeRoot;
+      state.pristineDataMap.outputSchema = action.payload;
+      state.pristineDataMap.currentOutputNode = action.payload.schemaTreeRoot;
+    },
+
+    setInitialDataMap: (state) => {
+      const currentState = state.curDataMapOperation;
+      if (currentState.inputSchema && currentState.outputSchema) {
+        const newInitialState: DataMapOperationState = {
+          dataMap: {
+            srcSchemaName: currentState.inputSchema.name,
+            dstSchemaName: currentState.outputSchema.name,
+            mappings: { targetNodeKey: currentState.outputSchema.schemaTreeRoot.key },
+          },
+          currentInputNodes: [],
+          currentOutputNode: currentState.currentOutputNode || currentState.outputSchema.schemaTreeRoot,
+        };
+
+        state.curDataMapOperation = newInitialState;
+        state.pristineDataMap = newInitialState;
+      }
+    },
+
+    changeInputSchema: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
       const incomingDataMapOperation = action.payload;
 
       if (incomingDataMapOperation) {
@@ -36,7 +73,7 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    changeOutputSchemaOperation: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
+    changeOutputSchema: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
       const incomingDataMapOperation = action.payload;
       if (incomingDataMapOperation) {
         state.curDataMapOperation = incomingDataMapOperation;
@@ -46,17 +83,48 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    doDataMapOperation: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
-      const incomingDataMapOperation = action.payload;
-      if (incomingDataMapOperation) {
-        if (state.curDataMapOperation) {
-          state.undoStack = state.undoStack.slice(-19);
-          state.undoStack.push(state.curDataMapOperation);
-        }
-        state.curDataMapOperation = incomingDataMapOperation;
-        state.redoStack = [];
-        state.isDirty = true;
+    setCurrentInputNodes: (state, action: PayloadAction<SchemaNodeExtended[] | undefined>) => {
+      let nodes: SchemaNodeExtended[] = [];
+      if (action.payload) {
+        const uniqueNodes = state.curDataMapOperation.currentInputNodes.concat(action.payload).filter((node, index, self) => {
+          return self.findIndex((subNode) => subNode.key === node.key) === index;
+        });
+
+        nodes = uniqueNodes;
       }
+
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentInputNodes: nodes,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
+    toggleInputNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
+      let nodes = [...state.curDataMapOperation.currentInputNodes];
+      const existingNode = state.curDataMapOperation.currentInputNodes.find((currentNode) => currentNode.key === action.payload.key);
+      if (existingNode) {
+        nodes = state.curDataMapOperation.currentInputNodes.filter((currentNode) => currentNode.key !== action.payload.key);
+      } else {
+        nodes.push(action.payload);
+      }
+
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentInputNodes: nodes,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
+    setCurrentOutputNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentOutputNode: action.payload,
+      };
+
+      doDataMapOperation(state, newState);
     },
 
     undoDataMapOperation: (state) => {
@@ -84,8 +152,8 @@ export const dataMapSlice = createSlice({
       const inputSchemaExtended = action.payload.inputSchemaExtended;
       const outputSchemaExtended = action.payload.outputSchemaExtended;
       if (state.curDataMapOperation) {
-        state.curDataMapOperation.currentInputSchemaExtended = inputSchemaExtended;
-        state.curDataMapOperation.currentOutputSchemaExtended = outputSchemaExtended;
+        state.curDataMapOperation.inputSchema = inputSchemaExtended;
+        state.curDataMapOperation.outputSchema = outputSchemaExtended;
       }
       state.pristineDataMap = state.curDataMapOperation;
       state.isDirty = false;
@@ -101,9 +169,14 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
-  changeInputSchemaOperation,
-  changeOutputSchemaOperation,
-  doDataMapOperation,
+  setInitialInputSchema,
+  setInitialOutputSchema,
+  setInitialDataMap,
+  changeInputSchema,
+  changeOutputSchema,
+  setCurrentInputNodes,
+  toggleInputNode,
+  setCurrentOutputNode,
   undoDataMapOperation,
   redoDataMapOperation,
   saveDataMap,
@@ -111,3 +184,11 @@ export const {
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
+
+const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperationState) => {
+  state.undoStack = state.undoStack.slice(-19);
+  state.undoStack.push(state.curDataMapOperation);
+  state.curDataMapOperation = newCurrentState;
+  state.redoStack = [];
+  state.isDirty = true;
+};

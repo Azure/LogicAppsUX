@@ -1,14 +1,18 @@
 import { isWorkflowGraph, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode, WorkflowEdgeType, WorkflowNodeType } from '../parsers/models/workflowNode';
-import type { NodesMetadata } from '../state/workflow/workflowSlice';
+import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
+
+export const isRootNodeInGraph = (nodeId: string, graphId: string, nodesMetadata: NodesMetadata): boolean => {
+  return nodesMetadata[nodeId]?.graphId === graphId && !!nodesMetadata[nodeId]?.isRoot;
+};
 
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
   return !!nodesMetadata[nodeId]?.isRoot;
 };
 
 export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
-  return edges.filter((edge) => !edge.target.endsWith('#footer')).length === 0;
+  return edges.filter((edge) => edge.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE).length === 0;
 };
 
 // This is the starting size for all nodes
@@ -69,7 +73,7 @@ export const getUpstreamNodeIds = (
   return sourceNodeIds;
 };
 
-const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | undefined => {
+export const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | undefined => {
   if (currentNode.id === nodeId) {
     return currentNode;
   } else {
@@ -86,11 +90,11 @@ const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | unde
   }
 };
 
-const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: NodesMetadata): WorkflowNode | undefined => {
+export const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: NodesMetadata): WorkflowNode | undefined => {
   return getNode(nodesMetadata[nodeId].graphId, node);
 };
 
-const getImmediateSourceNodeIds = (graph: WorkflowNode, nodeId: string): string[] => {
+export const getImmediateSourceNodeIds = (graph: WorkflowNode, nodeId: string): string[] => {
   return (graph.edges ?? []).filter((edge) => edge.target === nodeId && !edge.id.includes('#')).map((edge) => edge.source);
 };
 

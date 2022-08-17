@@ -49,6 +49,7 @@ export enum OperationOptions {
 export enum ConnectionType {
   Function = 'function',
   ServiceProvider = 'serviceprovider',
+  ApiManagement = 'ApiManagement',
 }
 
 export enum ConnectionReferenceKeyFormat {
@@ -129,7 +130,21 @@ export interface Documentation {
   url: string;
 }
 
+export interface SubGraphDetail {
+  location?: string[];
+  inputs?: SwaggerSchema;
+  inputsLocation?: string[];
+  isAdditive?: boolean;
+}
+
+export interface InputsDependency {
+  outputLocation: string[];
+  name: string;
+  schema: 'UriTemplate' | 'Value' | 'ValueSchema';
+}
+
 type SwaggerSchema = any;
+
 export interface OperationManifest {
   properties: OperationManifestProperties;
 }
@@ -143,14 +158,7 @@ export interface OperationManifestProperties {
   allowChildOperations?: boolean;
   childOperationsLocation?: string[];
 
-  subGraphDetails?: {
-    [graphName: string]: {
-      location?: string[];
-      inputs?: SwaggerSchema;
-      inputsLocation?: string[];
-      isAdditive?: boolean;
-    };
-  };
+  subGraphDetails?: Record<string, SubGraphDetail>;
 
   statusBadge?: Badge;
   environmentBadge?: Badge;
@@ -169,6 +177,10 @@ export interface OperationManifestProperties {
   isInputsOptional?: boolean;
 
   outputs?: SwaggerSchema;
+  outputsSchema?: {
+    outputPaths: InputsDependency[];
+  };
+
   /*
    * NOTE(trbaratc): Output resolution takes place as follows. If no payload outputs are present, then use outputs.
    * If payload outputs are present then walk the path defined by alternativeOutputs.keyPath to find the outputsKey. If the outputsKey is not defined, use outputs.
@@ -206,4 +218,28 @@ export const SUBGRAPH_TYPES: Record<string, SubgraphType> = {
   SWITCH_DEFAULT: 'SWITCH_DEFAULT',
   SWITCH_ADD_CASE: 'SWITCH_ADD_CASE',
   UNTIL_DO: 'UNTIL_DO',
+};
+
+export enum RUN_AFTER_STATUS {
+  SUCCEEDED = 'SUCCEEDED',
+  FAILED = 'FAILED',
+  SKIPPED = 'SKIPPED',
+  TIMEDOUT = 'TIMEDOUT',
+}
+
+export const RUN_AFTER_COLORS = {
+  light: {
+    [RUN_AFTER_STATUS.SUCCEEDED]: '#428000',
+    [RUN_AFTER_STATUS.TIMEDOUT]: '#DB7500',
+    [RUN_AFTER_STATUS.SKIPPED]: '#605E5C',
+    [RUN_AFTER_STATUS.FAILED]: '#A4262C',
+    ['EMPTY']: '#fff',
+  },
+  dark: {
+    [RUN_AFTER_STATUS.SUCCEEDED]: '#92C353',
+    [RUN_AFTER_STATUS.TIMEDOUT]: '#FCE100',
+    [RUN_AFTER_STATUS.SKIPPED]: '#A19F9D',
+    [RUN_AFTER_STATUS.FAILED]: '#F1707B',
+    ['EMPTY']: '#323130',
+  },
 };

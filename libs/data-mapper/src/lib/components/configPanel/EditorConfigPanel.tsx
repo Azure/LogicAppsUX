@@ -8,32 +8,31 @@ import {
 import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
+import { SchemaTypes } from '../../models';
 import { ChangeSchemaView } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
 import axios from 'axios';
-import { useCallback, useEffect, useState } from 'react';
 import type { FunctionComponent } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-// import XMLParser from 'react-xml-parser';
-
-export enum SchemaTypes {
-  Input = 'input',
-  Output = 'output',
-}
-
 export interface EditorConfigPanelProps {
+  initialSetup: boolean;
   onSubmitInputSchema: (schema: Schema) => void;
   onSubmitOutputSchema: (schema: Schema) => void;
 }
 
 const authToken = 'bearer ...';
 
-export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ onSubmitInputSchema, onSubmitOutputSchema }) => {
+export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
+  initialSetup,
+  onSubmitInputSchema,
+  onSubmitOutputSchema,
+}) => {
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
   const isChangeSchemaPanelOpen = useSelector((state: RootState) => state.panel.isChangeSchemaPanelOpen);
@@ -173,11 +172,11 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
                 ? dispatch(openChangeOutputWarning())
                 : editOutputSchema();
             }}
-            disabled={
-              schemaType === SchemaTypes.Input
-                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation?.curDataMap.srcSchemaName
-                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation?.curDataMap.dstSchemaName
-            }
+            // disabled={ danielle to do
+            //   schemaType === SchemaTypes.Input
+            //     ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation?.dataMap?.srcSchemaName
+            //     : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation?.dataMap?.dstSchemaName
+            // }
           >
             {addMessage}
           </PrimaryButton>
@@ -187,6 +186,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
       </div>
     ),
     [
+      initialSetup,
       isChangeSchemaPanelOpen,
       schemaType,
       curDataMapOperation,
