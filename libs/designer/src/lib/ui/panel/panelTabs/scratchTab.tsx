@@ -34,8 +34,7 @@ export const ScratchTab = () => {
         labelId={labelId}
         tokenGroup={testTokenGroup}
         expressionGroup={expressionGroup}
-        setInTokenPicker={onClick}
-        initialExpression={''}
+        tokenPickerFocused={onClick}
       />
     );
   };

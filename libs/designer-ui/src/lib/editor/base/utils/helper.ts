@@ -1,4 +1,4 @@
-import type { ValueSegment } from '../../models/parameter';
+import type { ValueSegment, TokenType } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
 import type { ElementNode } from 'lexical';
@@ -63,4 +63,22 @@ export const getChildrenNodes = (node: ElementNode, nodeMap?: Map<string, ValueS
     return text;
   });
   return text;
+};
+
+export const findChildNode = (node: ElementNode, nodeKey: string, tokenType?: TokenType): ValueSegment | null => {
+  let foundNode: ValueSegment | null = null;
+  node.__children.find((child) => {
+    const childNode = $getNodeByKey(child);
+    if (childNode && $isElementNode(childNode)) {
+      const recurse = findChildNode(childNode, nodeKey, tokenType);
+      if (recurse) {
+        foundNode = recurse;
+      }
+    }
+    if ($isTokenNode(childNode) && nodeKey === childNode.__key && childNode.__data.token?.tokenType === tokenType) {
+      foundNode = childNode.__data;
+    }
+    return foundNode;
+  });
+  return foundNode;
 };

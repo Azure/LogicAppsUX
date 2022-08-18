@@ -11,7 +11,7 @@ export interface PanelState {
 }
 
 export interface IdsForDiscovery {
+  graphId: string;
   parentId?: string;
   childId?: string;
-  graphId: string;
 }

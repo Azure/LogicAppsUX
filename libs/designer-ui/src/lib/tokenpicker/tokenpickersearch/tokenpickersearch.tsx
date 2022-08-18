@@ -6,15 +6,18 @@ import type { ExpressionEditorEvent } from '../../expressioneditor';
 import { ExpressionEditor } from '../../expressioneditor';
 import FxTextBoxIconBlack from '../images/fx.svg';
 import FxTextBoxIcon from '../images/fx.white.svg';
+import { UPDATE_TOKEN_NODE } from '../plugins/UpdateTokenNode';
 import { TokenPickerMode } from '../tokenpickerpivot';
+import { getExpressionTokenTitle } from '../util';
 import type { IIconStyles, ITextField, ITextFieldStyles } from '@fluentui/react';
 import { PrimaryButton, FontSizes, Icon, TextField, useTheme } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { ExpressionParser, ExpressionType } from '@microsoft-logic-apps/parsers';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
-import { guid, UnsupportedException } from '@microsoft-logic-apps/utils';
+import { ExpressionParser } from '@microsoft-logic-apps/parsers';
+import type { Expression } from '@microsoft-logic-apps/parsers';
+import { guid } from '@microsoft-logic-apps/utils';
+import type { NodeKey } from 'lexical';
 import type { editor } from 'monaco-editor';
-import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
+import type { MutableRefObject } from 'react';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -39,13 +42,11 @@ interface TokenPickerSearchProps {
   searchQuery: string;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: ExpressionEditorEvent;
-  updatingExpression?: boolean;
+  updatingExpression?: NodeKey | null;
   isEditing: boolean;
-  setIsEditing: Dispatch<SetStateAction<boolean>>;
   setSearchQuery: (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string) => void;
   expressionEditorBlur: (e: ExpressionEditorEvent) => void;
-  setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
-  setSelectedKey: Dispatch<SetStateAction<TokenPickerMode>>;
+  resetTokenPicker: () => void;
   isDynamicContentAvailable: boolean;
 }
 
@@ -56,11 +57,9 @@ export const TokenPickerSearch = ({
   expression,
   updatingExpression,
   isEditing,
-  setIsEditing,
   setSearchQuery,
   expressionEditorBlur,
-  setExpression,
-  setSelectedKey,
+  resetTokenPicker,
   isDynamicContentAvailable,
 }: TokenPickerSearchProps): JSX.Element => {
   const intl = useIntl();
@@ -82,7 +81,6 @@ export const TokenPickerSearch = ({
       alert(invalidExpression);
       return;
     }
-    setExpression({ value: '', selectionEnd: 0, selectionStart: 0 });
 
     const token: Token = {
       tokenType: TokenType.FX,
@@ -94,20 +92,33 @@ export const TokenPickerSearch = ({
       key: getExpressionTokenTitle(currExpression),
     };
 
-    editor.dispatchCommand(INSERT_TOKEN_NODE, {
-      brandColor: token.brandColor,
-      description: token.description ?? token.key,
-      title: token.title,
-      icon: token.icon ?? FxIcon,
-      data: {
-        id: guid(),
-        type: ValueSegmentType.TOKEN,
-        value: expression.value,
-        token: { ...token },
-      },
-    });
-    setSelectedKey(TokenPickerMode.TOKEN);
-    setIsEditing(false);
+    if (updatingExpression) {
+      editor.dispatchCommand(UPDATE_TOKEN_NODE, {
+        updatedDescription: expression.value,
+        updatedTitle: token.title,
+        updatedData: {
+          id: guid(),
+          type: ValueSegmentType.TOKEN,
+          value: expression.value,
+          token: { ...token },
+        },
+        nodeKey: updatingExpression as NodeKey,
+      });
+    } else {
+      editor.dispatchCommand(INSERT_TOKEN_NODE, {
+        brandColor: token.brandColor,
+        description: token.description ?? token.key,
+        title: token.title,
+        icon: token.icon ?? FxIcon,
+        data: {
+          id: guid(),
+          type: ValueSegmentType.TOKEN,
+          value: expression.value,
+          token: { ...token },
+        },
+      });
+    }
+    resetTokenPicker();
   };
 
   const tokenPickerPlaceHolderText = intl.formatMessage({
@@ -145,7 +156,7 @@ export const TokenPickerSearch = ({
         <div className="msla-token-picker-expression">
           <img src={isInverted ? FxTextBoxIconBlack : FxTextBoxIcon} role="presentation" alt="" height={32} width={32} />
           <div className="msla-expression-editor">
-            <ExpressionEditor initialValue="" editorRef={expressionEditorRef} onBlur={expressionEditorBlur} />
+            <ExpressionEditor initialValue={expression.value} editorRef={expressionEditorRef} onBlur={expressionEditorBlur} />
           </div>
           <div className="msla-token-picker-action-bar">
             <PrimaryButton
@@ -159,19 +170,3 @@ export const TokenPickerSearch = ({
     </>
   );
 };
-
-export function getExpressionTokenTitle(expression: Expression): string {
-  switch (expression.type) {
-    case ExpressionType.NullLiteral:
-    case ExpressionType.BooleanLiteral:
-    case ExpressionType.NumberLiteral:
-    case ExpressionType.StringLiteral:
-      return (expression as ExpressionLiteral).value;
-    case ExpressionType.Function:
-      // eslint-disable-next-line no-case-declarations
-      const functionExpression = expression as ExpressionFunction;
-      return `${functionExpression.name}(${functionExpression.arguments.length > 0 ? '...' : ''})`;
-    default:
-      throw new UnsupportedException(`Unsupported expression type ${expression.type}.`);
-  }
-}

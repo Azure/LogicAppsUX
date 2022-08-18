@@ -1,47 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`recommendation panel renders connector card 1`] = `
-<StackItem
-  className="msla-connector-card ms-depth-4"
+<button
+  className="msla-connector-summary-card"
   onClick={[Function]}
-  tokens={
-    Object {
-      "childrenGap": 3,
-    }
-  }
 >
-  <Memo(Image)
-    alt="logo for Dropbox"
-    className="msla-card-logo"
-    imageFit={1}
-    maximizeFrame={false}
-    src="https://tip1icons.azureedge.net/dropbox.png"
-  />
-  <Text
-    block={true}
-    className="msla-card-title"
-  >
-    Dropbox
-  </Text>
-  <StyledTooltipHostBase
-    calloutProps={
-      Object {
-        "gapSpace": 0,
-      }
-    }
-    content="DropboxT is a service that keeps your files safe, synced, and easy to share. Connect to Dropbox to manage your files.
-                        You can perform various actions such as upload, update, get, and delete files in Dropbox."
-    id="/providers/Microsoft.PowerApps/apis/shared_dropbox-tooltip"
-    setAriaDescribedBy={false}
-  >
-    <CustomizedIconButton
-      aria-label="description for Dropbox"
-      iconProps={
-        Object {
-          "iconName": "info",
-        }
-      }
-    />
-  </StyledTooltipHostBase>
-</StackItem>
+  <Content />
+</button>
 `;
