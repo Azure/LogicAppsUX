@@ -1,3 +1,4 @@
+import { getSchemaList } from '../../core';
 import {
   closeAllWarning,
   openChangeInputWarning,
@@ -49,6 +50,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   const [downloadedSchema, setDownloadedSchema] = useState();
 
   const [errorMessage, setErrorMessage] = useState('');
+
+  // const data = useQuery(["schemas"], getSchemaList())
 
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -241,19 +244,22 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     ]
   );
 
-  const getSchemaList = async () => {
-    const { data } = await axios.get(
-      'https://management.azure.com/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}/hostruntime/admin/vfs/Artifacts/Schemas/?api-version=2018-11-01&relativepath=1',
-      {
-        headers: {
-          Authorization: authToken,
-        },
-      }
-    );
-    return data;
-  };
+  // const getSchemaList = async () => {
+  //   const { data } = await axios.get(
+  //     'https://management.azure.com/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}/hostruntime/admin/vfs/Artifacts/Schemas/?api-version=2018-11-01&relativepath=1',
+  //     {
+  //       headers: {
+  //         Authorization: authToken,
+  //       },
+  //     }
+  //   );
+  //   return data;
+  // };
 
-  const schemaListQuery = useQuery(['schemaList'], () => getSchemaList(), {});
+  const schemaListQuery = useQuery(['schemaList'], () => getSchemaList(), {
+    // staleTime: 1000 * 60 * 5,
+    // cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
+  });
 
   const schemaList = schemaListQuery.data;
 

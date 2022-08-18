@@ -32,6 +32,14 @@ export const DevToolbox: React.FC = () => {
     [dispatch]
   );
 
+  const resetToUseARM = useCallback(
+    (_: unknown, newValue?: string) => {
+      dispatch(dataMapDataLoaderSlice.actions.changeResourcePath(newValue ?? ''));
+      dispatch(loadDataMap());
+    },
+    [dispatch]
+  );
+
   const changeDataMapResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
       dispatch(dataMapDataLoaderSlice.actions.changeResourcePath((item?.key as string) ?? ''));
@@ -104,6 +112,7 @@ export const DevToolbox: React.FC = () => {
           <div>
             <TextField label="ARM Token" description="bearer auth token" onChange={changeArmTokenCB} value={armToken ?? ''} />
           </div>
+          <button onClick={resetToUseARM}>Set</button>
         </>
       ) : null}
       {loadingMethod === 'file' ? (

@@ -3,7 +3,7 @@ import { SchemaSelectionService } from './SchemaSelectionService';
 import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
 
 export interface ISchemaSelectionService {
-  getSchemas(subscriptionId: string, resourceGroupName: string, logicAppResource: string): Promise<any>;
+  getSchemas(): Promise<any>;
   getSchemaFile(subscriptionId: string, resourceGroupName: string, logicAppResource: string, schemaName: string): Promise<any>;
 }
 
@@ -17,9 +17,9 @@ export interface SchemaInfoProperties {
   path: string;
 }
 
-export interface SchemaInfos {
-  value: Array<SchemaInfoProperties>;
-}
+// export interface SchemaInfos {
+//   value: Array<SchemaInfoProperties>;
+// }
 
 export enum ResourceType {
   schemaList = 'schemaList',

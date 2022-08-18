@@ -1,4 +1,4 @@
-import type { ISchemaSelectionService, SchemaInfos } from '.';
+import type { ISchemaSelectionService, SchemaInfoProperties } from '.';
 
 export interface SchemaSelectionServiceOptions {
   baseUrl: string;
@@ -51,10 +51,9 @@ export class SchemaSelectionService implements ISchemaSelectionService {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
-    const schemaInfosResponse: SchemaInfos = await response.json();
-    const { value: schemaInfos } = schemaInfosResponse;
+    const schemaInfosResponse: Array<SchemaInfoProperties> = await response.json();
 
-    return { schemaInfos };
+    return schemaInfosResponse;
   }
 
   async getSchemaFile(xmlName: string): Promise<any> {
