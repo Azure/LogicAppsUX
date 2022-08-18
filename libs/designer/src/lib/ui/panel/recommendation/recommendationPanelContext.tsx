@@ -65,7 +65,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       {selectedOperationGroupId ? (
         <OperationGroupDetailView groupOperations={allOperationsForGroup} />
       ) : searchTerm ? (
-        <SearchView searchTerm={searchTerm} allOperations={allOperations.data ?? []} groupByConnector={isGrouped} />
+        <SearchView
+          searchTerm={searchTerm}
+          allOperations={allOperations.data ?? []}
+          groupByConnector={isGrouped}
+          isLoading={allOperations.isLoading}
+        />
       ) : (
         <BrowseView />
       )}

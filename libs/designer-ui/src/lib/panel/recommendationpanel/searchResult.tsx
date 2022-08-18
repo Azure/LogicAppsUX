@@ -2,12 +2,14 @@ import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
-import { List } from '@fluentui/react';
+import { List, Text } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 
 export type SearchResultsGridProps = {
+  searchTerm: string;
   operationSearchResults: DiscoveryOperation<DiscoveryResultTypes>[];
   onConnectorClick: (connectorId: string) => void;
   onOperationClick: (operationId: string) => void;
@@ -15,7 +17,9 @@ export type SearchResultsGridProps = {
 };
 
 export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProps>> = (props) => {
-  const { operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } = props;
+  const { searchTerm, operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } = props;
+
+  const intl = useIntl();
 
   const apiIds = useMemo(
     () => Array.from(new Set(operationSearchResults.filter((r) => r !== undefined).map((res) => res.properties?.api?.id))),
@@ -59,7 +63,22 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     [onConnectorClick, onOperationClick, operationSearchResults]
   );
 
-  if (operationSearchResults.length === 0) return <p>{'No Results'}</p>;
+  const noResultsText = intl.formatMessage(
+    {
+      defaultMessage: 'No results found for: {searchTerm}',
+      description: 'Text to show when there are no search results',
+    },
+    {
+      searchTerm: <strong>{`"${searchTerm}"`}</strong>,
+    }
+  );
+
+  if (operationSearchResults.length === 0)
+    return (
+      <div className="msla-no-results-container">
+        <Text>{noResultsText}</Text>
+      </div>
+    );
 
   return (
     <div className="msla-result-list">

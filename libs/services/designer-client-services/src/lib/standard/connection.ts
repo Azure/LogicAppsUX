@@ -167,7 +167,7 @@ export class StandardConnectionService implements IConnectionService {
   }
 
   private async batchAzureResourceRequests(uri: string, queryParams?: any): Promise<any[]> {
-    const batchSize = 25; // Number of calls to make in parallel
+    const batchSize = 50; // Number of calls to make in parallel
 
     const output: any[] = [];
     let batchIteration = 0;

@@ -1831,6 +1831,16 @@
       "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1955,6 +1965,12 @@
     {
       "type": 0,
       "value": "Connection Name"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3207,6 +3223,12 @@
     {
       "type": 0,
       "value": "Required. The name of the variable whose value you want."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [
