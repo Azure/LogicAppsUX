@@ -99,11 +99,7 @@ type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnection
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
 
-interface AzureOperationsFetchResponse {
-  nextLink: string;
-  value: DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[];
-}
-
+type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]>;
 type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
 
 const serviceProviderLocation = 'serviceProviderConnections';
@@ -112,7 +108,7 @@ const functionsLocation = 'functionConnections';
 export class StandardConnectionService implements IConnectionService {
   private _connections: Record<string, Connection> = {};
   private _subscriptionResourceGroupWebUrl = '';
-  private isStandalone = true;
+  private isStandalone = false;
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
     const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;
@@ -147,37 +143,74 @@ export class StandardConnectionService implements IConnectionService {
       workflowKind: 'stateful',
     };
     const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
-    console.log(response);
     return response.value;
   }
 
-  private async getAllAzureOperations(skipToken?: string): Promise<DiscoveryOpArray> {
-    const traceId = !skipToken
-      ? LoggerService().startTrace({
-          name: 'Get All Azure Operations',
-          action: 'getAllAzureOperations',
-          source: 'connection.ts',
-        })
-      : '';
+  private async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
+    if (this.isStandalone) return { value: [], hasMore: false };
 
     const {
-      apiHubServiceDetails: { location, apiVersion, subscriptionId },
+      apiHubServiceDetails: { apiVersion },
       httpClient,
     } = this.options;
-    if (this.isStandalone) {
-      return Promise.resolve(azureOperationsResponse);
-    }
-    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+
+    const pageSize = 250; // This is the number of results that can be returned in a single call
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
-      $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
-      $top: '250', // This is the number of results that can be returned in a single call
-      $skiptoken: skipToken ?? 0,
+      $top: pageSize.toString(),
+      $skiptoken: (pageNumber * pageSize).toString(),
+      ...queryParams,
     };
-    const { nextLink, value } = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
-    const nextSets = nextLink ? await this.getAllAzureOperations(nextLink.split('&%24skiptoken=')?.[1]) : ([] as DiscoveryOpArray);
-    if (!skipToken) LoggerService().endTrace(traceId);
-    return [...value, ...nextSets];
+
+    const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<Connector[]>>({ uri, queryParameters });
+    return { value, hasMore: !!nextLink };
+  }
+
+  private async batchAzureResourceRequests(uri: string, queryParams?: any): Promise<any[]> {
+    const batchSize = 25; // Number of calls to make in parallel
+
+    const output: any[] = [];
+    let batchIteration = 0;
+    let continueFetching = true;
+
+    while (continueFetching) {
+      await Promise.all(
+        Array.from(Array(batchSize).keys()).map(async (index) => {
+          const pageNum = batchIteration * batchSize + index;
+          const { value, hasMore } = await this.getAzureResourceByPage(uri, queryParams, pageNum);
+          output.push(...value);
+          if (index === batchSize - 1) {
+            continueFetching = hasMore;
+          }
+        })
+      );
+      batchIteration++;
+    }
+
+    return output;
+  }
+
+  private async getAllAzureOperations(): Promise<DiscoveryOpArray> {
+    const traceId = LoggerService().startTrace({
+      name: 'Get All Azure Operations',
+      action: 'getAllAzureOperations',
+      source: 'connection.ts',
+    });
+
+    const {
+      apiHubServiceDetails: { location, subscriptionId },
+    } = this.options;
+    if (this.isStandalone) return Promise.resolve(azureOperationsResponse);
+
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+    const queryParameters: QueryParameters = {
+      $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
+    };
+
+    const operations = await this.batchAzureResourceRequests(uri, queryParameters);
+
+    LoggerService().endTrace(traceId);
+    return operations;
   }
 
   async getAllConnectors(): Promise<Connector[]> {
@@ -201,30 +234,21 @@ export class StandardConnectionService implements IConnectionService {
       'api-version': apiVersion,
     };
     const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
-    console.log(response);
     return response.value;
   }
 
   private async getAllAzureConnectors(): Promise<Connector[]> {
-    const {
-      apiHubServiceDetails: { location, apiVersion, subscriptionId },
-      httpClient,
-    } = this.options;
     if (this.isStandalone) {
       const connectors = AzureConnectorMock.value as Connector[];
       const formattedConnectors = this.moveGeneralInformation(connectors);
       return Promise.resolve(formattedConnectors);
     } else {
+      const {
+        apiHubServiceDetails: { location, subscriptionId },
+      } = this.options;
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
-      const queryParameters: QueryParameters = {
-        'api-version': apiVersion,
-      };
-      const response = await httpClient.get<ContinuationTokenResponse<Connector[]>>({ uri, queryParameters });
-      // need to save continuation token to store
-      const connectors = response.value;
-      const formattedConnectors = this.moveGeneralInformation(connectors);
-      console.log(formattedConnectors);
-      return formattedConnectors;
+      const responseArray = await this.batchAzureResourceRequests(uri);
+      return this.moveGeneralInformation(responseArray);
     }
   }
 
