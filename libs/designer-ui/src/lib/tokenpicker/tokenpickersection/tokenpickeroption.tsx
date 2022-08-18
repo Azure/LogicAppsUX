@@ -46,19 +46,23 @@ export const TokenPickerOptions = ({
       const fuse = new Fuse(section.tokens, { keys: ['description', 'title'], threshold: 0.2 });
       const tokens = fuse.search(query).map((token) => token.item);
       setFilteredTokens(tokens);
-      setTokenLength((prevTokens) => {
-        const newTokens = prevTokens;
-        newTokens[index] = tokens.length;
-        return newTokens;
-      });
+      if (selectedKey === TokenPickerMode.TOKEN) {
+        setTokenLength((prevTokens) => {
+          const newTokens = prevTokens;
+          newTokens[index] = tokens.length;
+          return newTokens;
+        });
+      }
     } else {
-      setTokenLength((prevTokens) => {
-        const newTokens = prevTokens;
-        newTokens[index] = section.tokens.length;
-        return newTokens;
-      });
+      if (selectedKey === TokenPickerMode.TOKEN) {
+        setTokenLength((prevTokens) => {
+          const newTokens = prevTokens;
+          newTokens[index] = section.tokens.length;
+          return newTokens;
+        });
+      }
     }
-  }, [index, searchQuery, section.tokens, setTokenLength]);
+  }, [index, searchQuery, section.tokens, selectedKey, setTokenLength]);
 
   const buttonTextMore = intl.formatMessage({
     defaultMessage: 'See More',
