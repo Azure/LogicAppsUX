@@ -72,13 +72,12 @@ export function TokenPicker({
   };
 
   const isDynamicContentAvailable = (tokenGroup: TokenGroup[]): boolean => {
-    let result = false;
-    tokenGroup.forEach((tg) => {
+    for (const tg of tokenGroup) {
       if (tg.tokens.length > 0) {
-        result = true;
+        return true;
       }
-    });
-    return result;
+    }
+    return false;
   };
 
   return (
