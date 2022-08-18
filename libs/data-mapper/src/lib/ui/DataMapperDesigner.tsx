@@ -53,7 +53,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapperDesignerProps {
   saveStateCall: () => void;
-  setSelectedSchemaFile: (selectedSchemaFile: SchemaFile) => void;
+  setSelectedSchemaFile?: (selectedSchemaFile: SchemaFile) => void;
 }
 
 export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, setSelectedSchemaFile }) => {
@@ -101,6 +101,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
+    if (!setSelectedSchemaFile) return;
     // Will cause DM to ping VS Code for schema file contents (to be added to availableSchemas)
     // Then, DM implementation will handle loading the schema as either the initial input or output schema
     setSelectedSchemaFile(schemaFile);

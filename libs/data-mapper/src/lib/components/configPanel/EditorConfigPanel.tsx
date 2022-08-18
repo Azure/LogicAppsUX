@@ -116,6 +116,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   useEffect(() => {
     if (selectedSchemaFile) {
       onSubmitSchemaFileSelection(selectedSchemaFile);
+      setSelectedSchemaFile(undefined);
       closeSchemaPanel();
     }
   }, [closeSchemaPanel, selectedSchemaFile, onSubmitSchemaFileSelection, genericErrMsg]);

@@ -1,11 +1,7 @@
-import type { RootState } from './Store';
+//import type { RootState } from './Store';
 import type { Schema } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-
-// NOTE: This is copied from DM-standalone and thus very cluttered -
-// For VSCode, pay attention to 'json' loadingMethod until we lock in
-// how we want to label this type of schema loading
+import { createSlice } from '@reduxjs/toolkit';
 
 export interface SchemaLoadingState {
   armToken?: string;
@@ -24,38 +20,7 @@ const initialState: SchemaLoadingState = {
   outputResourcePath: '',
 };
 
-export const loadInputSchema = createAsyncThunk('schema/loadInputSchema', async (_: void, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
-  const inputResourcePath = currentState.schemaDataLoader.inputResourcePath;
-
-  // TODO ARM loading
-  if (currentState.schemaDataLoader.loadingMethod === 'arm') {
-    return undefined;
-  } else {
-    if (inputResourcePath) {
-      return loadSchemaFromMock(inputResourcePath);
-    }
-  }
-
-  return undefined;
-});
-
-export const loadOutputSchema = createAsyncThunk('schema/loadOutputSchema', async (_: void, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
-  const outputResourcePath = currentState.schemaDataLoader.outputResourcePath;
-
-  // TODO ARM loading
-  if (currentState.schemaDataLoader.loadingMethod === 'arm') {
-    return undefined;
-  } else {
-    if (outputResourcePath) {
-      return loadSchemaFromMock(outputResourcePath);
-    }
-  }
-
-  return undefined;
-});
-
+/*
 export const loadAvailableSchemas = createAsyncThunk('schema/loadAvailableSchemas', async (_: void, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   const availableSchemaPaths = currentState.schemaDataLoader.availableResourcesPaths;
@@ -72,6 +37,7 @@ export const loadAvailableSchemas = createAsyncThunk('schema/loadAvailableSchema
 
   return undefined;
 });
+*/
 
 export const schemaDataLoaderSlice = createSlice({
   name: 'schema',
@@ -98,7 +64,7 @@ export const schemaDataLoaderSlice = createSlice({
     changeOutputSchema: (state, action: PayloadAction<Schema>) => {
       state.outputSchema = action.payload;
     },
-  },
+  } /*
   extraReducers: (builder) => {
     builder.addCase(loadInputSchema.fulfilled, (state, action) => {
       state.inputSchema = action.payload;
@@ -126,14 +92,5 @@ export const schemaDataLoaderSlice = createSlice({
       // TODO change to null for error handling case
       state.availableSchemas = undefined;
     });
-  },
+  },*/,
 });
-
-const loadSchemaFromMock = async (resourcePath: string): Promise<Schema | undefined> => {
-  try {
-    const schema: Schema = await import(`../../../../__mocks__/schemas/${resourcePath}`);
-    return schema;
-  } catch {
-    return undefined;
-  }
-};

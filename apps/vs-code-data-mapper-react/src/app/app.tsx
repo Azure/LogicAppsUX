@@ -1,8 +1,17 @@
+import { VSCodeContext } from '../WebViewMsgHandler';
 import type { RootState } from '../state/Store';
 import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
+import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
+interface SchemaFile {
+  path: string;
+  type: 'input' | 'output';
+}
+
 export const App = (): JSX.Element => {
+  const vscode = useContext(VSCodeContext);
+
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
   const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
@@ -12,8 +21,11 @@ export const App = (): JSX.Element => {
     console.log('App called to save Data Map');
   };
 
-  const setSelectedSchemaFile = () => {
-    console.log('App called to read selected schema file');
+  const setSelectedSchemaFile = (selectedSchemaFile: SchemaFile) => {
+    vscode.postMessage({
+      command: 'readSelectedSchemaFile',
+      data: selectedSchemaFile,
+    });
   };
 
   return (

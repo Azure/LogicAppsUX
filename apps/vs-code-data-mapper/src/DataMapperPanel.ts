@@ -8,7 +8,8 @@ import type { WebviewPanel, Disposable, ExtensionContext } from 'vscode';
 
 // NOTE: Same as WebViewMsgHandler in ""-react src - TODO: find way to tie in together
 // TODO: should be Schema and DataMap for data's type respectively
-type MessageType = { command: 'loadInputSchema' | 'loadOutputSchema'; data: any } | { command: 'loadDataMap'; data: any };
+type SendingMessageTypes = { command: 'loadInputSchema' | 'loadOutputSchema'; data: any } | { command: 'loadDataMap'; data: any };
+type ReceivingMessageTypes = { command: 'readSelectedSchemaFile'; data: { path: string; type: 'input' | 'output' } };
 
 export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
@@ -37,7 +38,7 @@ export default class DataMapperPanel {
     this.currentPanel = new DataMapperPanel(panel, context.extensionPath);
   }
 
-  public sendMsgToWebview(msg: MessageType) {
+  public sendMsgToWebview(msg: SendingMessageTypes) {
     this._panel.webview.postMessage(msg);
   }
 
@@ -82,8 +83,17 @@ export default class DataMapperPanel {
     this._panel.webview.html = html.replace(matchLinks, toUri);
   }
 
-  // TODO: figure out what messages we expect to receive from DM app
-  private _handleWebviewMsg(msg: MessageEvent<MessageType>) {
-    console.log(msg);
+  private _handleWebviewMsg(msg: ReceivingMessageTypes) {
+    switch (msg.command) {
+      case 'readSelectedSchemaFile':
+        fs.readFile(msg.data.path, 'utf-8').then((text: string) => {
+          if (msg.data.type === 'input') {
+            DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadInputSchema', data: JSON.parse(text) });
+          } else {
+            DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadOutputSchema', data: JSON.parse(text) });
+          }
+        });
+        break;
+    }
   }
 }

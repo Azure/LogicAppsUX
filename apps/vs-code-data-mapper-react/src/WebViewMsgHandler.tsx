@@ -5,8 +5,7 @@ import React, { createContext, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 
-// TODO: Figure out contract (of messages) between VSCode and DM app
-type MessageType = { command: 'loadInputSchema' | 'loadOutputSchema'; data: Schema } | { command: 'loadDataMap'; data: DataMap };
+type ReceivingMessageTypes = { command: 'loadInputSchema' | 'loadOutputSchema'; data: Schema } | { command: 'loadDataMap'; data: DataMap };
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = createContext(vscode);
@@ -16,7 +15,7 @@ export const WebViewMsgHandler: React.FC = ({ children }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   // Handle (JSON) messages FROM VS Code
-  window.addEventListener('message', (event: MessageEvent<MessageType>) => {
+  window.addEventListener('message', (event: MessageEvent<ReceivingMessageTypes>) => {
     const msg = event.data;
 
     switch (msg.command) {
@@ -43,7 +42,6 @@ export const WebViewMsgHandler: React.FC = ({ children }) => {
     [dispatch]
   );*/
 
-  // TODO: abstract/combine what you can from these
   const changeInputSchemaCB = useCallback(
     (newSchema: Schema) => {
       dispatch(schemaDataLoaderSlice.actions.changeInputSchema(newSchema));
