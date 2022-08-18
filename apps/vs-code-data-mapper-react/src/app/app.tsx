@@ -12,10 +12,14 @@ export const App = (): JSX.Element => {
     console.log('App called to save Data Map');
   };
 
+  const setSelectedSchemaFile = () => {
+    console.log('App called to read selected schema file');
+  };
+
   return (
     <DataMapperDesignerProvider locale="en-US" options={{}}>
       <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={availableSchemas}>
-        <DataMapperDesigner saveStateCall={saveStateCall} />
+        <DataMapperDesigner saveStateCall={saveStateCall} setSelectedSchemaFile={setSelectedSchemaFile} />
       </DataMapDataProvider>
     </DataMapperDesignerProvider>
   );
