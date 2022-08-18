@@ -100,6 +100,15 @@ export const PanelRoot = (): JSX.Element => {
   }, [dispatch, selectedNode, nodeMetaData, isMonitoringView]);
 
   useEffect(() => {
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.PARAMETERS,
+        visible: isMonitoringView || operationInfo?.type !== 'Scope',
+      })
+    );
+  }, [dispatch, isMonitoringView, operationInfo]);
+
+  useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
   }, [collapsed]);
 
@@ -179,8 +188,8 @@ export const PanelRoot = (): JSX.Element => {
   };
 
   const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
-    dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
     showCommentBox = !showCommentBox;
+    dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
   };
 
   // TODO: 12798945? onClick for delete when node store gets built

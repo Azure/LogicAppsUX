@@ -45,7 +45,7 @@ export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
   );
 }
 
-// Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
+// Monaco should be at least 3 rows high (19*3 px) but no more than 40 rows high (19*40 px).
 function getEditorStyle(input = ''): string {
-  return Math.min(Math.max(input?.split('\n').length * 20, 57), 380) + 'px';
+  return Math.min(Math.max(input?.split('\n').length * 20, 57), 760) + 'px';
 }

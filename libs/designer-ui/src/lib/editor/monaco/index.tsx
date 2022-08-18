@@ -230,6 +230,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
             keepCurrentModel={true}
             className={className}
             options={{
+              readOnly: readOnly,
               contextmenu: contextMenu,
               folding: folding,
               minimap: { enabled: minimapEnabled },
