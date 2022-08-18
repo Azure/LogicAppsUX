@@ -70,10 +70,10 @@ export function TokenPicker({
 
   const handleSelectKey = (item?: PivotItem) => {
     if (item?.props?.itemKey) {
+      setSearchQuery('');
       setSelectedKey(item.props.itemKey as TokenPickerMode);
       if (expression.value) {
         setIsEditing(true);
-        expressionEditorRef.current?.focus();
       } else {
         setIsEditing(false);
       }
