@@ -6,29 +6,37 @@ export const TokenPickerNoDynamicContent = () => {
   const intl = useIntl();
 
   const intlText = {
-    TOKEN_PICKER_NO_DYNAMIC_CONTENT_HEADER: intl.formatMessage({
+    TOKEN_PICKER_TOKEN_PICKER_NO_DYNAMIC_CONTENT_HEADER: intl.formatMessage({
       defaultMessage: 'No dynamic content available',
       description: 'Header for no dynamic content available card section',
     }),
-    TOKEN_PICKER_NO_DYNAMIC_CONTENT_TEXT: intl.formatMessage({
+    TOKEN_PICKER_TOKEN_PICKER_NO_DYNAMIC_CONTENT_TEXT: intl.formatMessage({
       defaultMessage: 'There is no content available',
       description: 'No dynamic content available description',
     }),
-    TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_HEADER: intl.formatMessage({
+    TOKEN_PICKER_TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_HEADER: intl.formatMessage({
       defaultMessage: 'Including dynamic content',
       description: 'Header for including dynamic content section',
     }),
-    TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_TEXT1: intl.formatMessage({
+    TOKEN_PICKER_TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_TEXT1: intl.formatMessage({
       defaultMessage: 'If available, dynamic content is automatically generated from the connectors and actions you choose for your flow.',
       description: 'Section 1 of text for including dynamic content section',
     }),
-    TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_TEXT2: intl.formatMessage({
+    TOKEN_PICKER_TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_TEXT2: intl.formatMessage({
       defaultMessage: 'Dynamic content may also be added from other sources.',
       description: 'Section 2 of text for including dynamic content section',
     }),
-    TOKEN_PICKER_DYNAMIC_CONTENT_LINK_TEXT: intl.formatMessage({
+    TOKEN_PICKER_TOKEN_PICKER_DYNAMIC_CONTENT_LINK_TEXT: intl.formatMessage({
       defaultMessage: 'Learn more about dynamic content.',
       description: 'Text for dynamic content link',
+    }),
+    TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_LEARN_MORE_URL: intl.formatMessage({
+      defaultMessage: 'https://aka.ms/logicapps-dynamiccontent',
+      description: 'URL for dynamic content learn more link',
+    }),
+    TOKEN_PICKER_EMPTY_DYNAMIC_CONTENT_ICON_ALT_TEXT: intl.formatMessage({
+      defaultMessage: 'Empty add dynamic content button',
+      description: 'Alt text for empty dynamic content icon',
     }),
     TOKEN_PICKER_EMPTY_DYNAMIC_CONTENT_ICON_ALT_TEXT: intl.formatMessage({
       defaultMessage: 'Empty add dynamic content button',
@@ -39,7 +47,7 @@ export const TokenPickerNoDynamicContent = () => {
   return (
     <div className="msla-token-picker-no-content">
       <div className="msla-token-picker-no-content-header">
-        <span>{intlText.TOKEN_PICKER_NO_DYNAMIC_CONTENT_HEADER}</span>
+        <span>{intlText.TOKEN_PICKER_TOKEN_PICKER_NO_DYNAMIC_CONTENT_HEADER}</span>
       </div>
       <div>
         <img
@@ -47,18 +55,18 @@ export const TokenPickerNoDynamicContent = () => {
           height="13"
           alt={intlText.TOKEN_PICKER_EMPTY_DYNAMIC_CONTENT_ICON_ALT_TEXT}
         />
-        <span>{intlText.TOKEN_PICKER_NO_DYNAMIC_CONTENT_TEXT}</span>
+        <span>{intlText.TOKEN_PICKER_TOKEN_PICKER_NO_DYNAMIC_CONTENT_TEXT}</span>
       </div>
       <hr />
       <div className="msla-token-picker-no-content-header">
-        <span>{intlText.TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_HEADER}</span>
+        <span>{intlText.TOKEN_PICKER_TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_HEADER}</span>
       </div>
       <div>
         <div>
-          <span>{intlText.TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_TEXT1}</span>
+          <span>{intlText.TOKEN_PICKER_TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_TEXT1}</span>
         </div>
         <br />
-        <span>{intlText.TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_TEXT2}</span>
+        <span>{intlText.TOKEN_PICKER_TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_TEXT2}</span>
         <br />
         <Link href={constants.TOKEN_PICKER_INCLUDING_DYNAMIC_CONTENT_LEARN_MORE_URL} target="_blank" rel="noopener">
           {intlText.TOKEN_PICKER_DYNAMIC_CONTENT_LINK_TEXT}

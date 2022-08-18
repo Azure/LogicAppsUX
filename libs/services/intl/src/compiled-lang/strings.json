@@ -471,6 +471,12 @@
       "value": "Identifier"
     }
   ],
+  "34+scu": [
+    {
+      "type": 0,
+      "value": "https://aka.ms/logicapps-dynamiccontent"
+    }
+  ],
   "3BZnxY": [
     {
       "type": 0,
