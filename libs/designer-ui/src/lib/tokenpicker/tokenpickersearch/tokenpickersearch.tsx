@@ -1,3 +1,4 @@
+/* eslint-disable */
 import constants from '../../constants';
 import type { Token } from '../../editor';
 import { TokenType, ValueSegmentType } from '../../editor';
@@ -46,6 +47,7 @@ interface TokenPickerSearchProps {
   expressionEditorBlur: (e: ExpressionEditorEvent) => void;
   setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
   setSelectedKey: Dispatch<SetStateAction<TokenPickerMode>>;
+  isDynamicContentAvailable: boolean;
 }
 
 export const TokenPickerSearch = ({
@@ -60,6 +62,7 @@ export const TokenPickerSearch = ({
   expressionEditorBlur,
   setExpression,
   setSelectedKey,
+  isDynamicContentAvailable,
 }: TokenPickerSearchProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
@@ -124,19 +127,21 @@ export const TokenPickerSearch = ({
   return (
     <>
       {selectedKey === TokenPickerMode.TOKEN && !isEditing ? (
-        <div className="msla-token-picker-search">
-          <Icon className="msla-token-picker-search-icon" iconName="Search" styles={iconStyles} />
-          <TextField
-            styles={textFieldStyles}
-            componentRef={(c) => (searchBoxRef.current = c)}
-            maxLength={32}
-            placeholder={tokenPickerPlaceHolderText}
-            type="search"
-            value={searchQuery}
-            onChange={setSearchQuery}
-            autoComplete="off"
-          />
-        </div>
+        isDynamicContentAvailable && (
+          <div className="msla-token-picker-search">
+            <Icon className="msla-token-picker-search-icon" iconName="Search" styles={iconStyles} />
+            <TextField
+              styles={textFieldStyles}
+              componentRef={(c) => (searchBoxRef.current = c)}
+              maxLength={32}
+              placeholder={tokenPickerPlaceHolderText}
+              type="search"
+              value={searchQuery}
+              onChange={setSearchQuery}
+              autoComplete="off"
+            />
+          </div>
+        )
       ) : (
         <div className="msla-token-picker-expression">
           <img src={isInverted ? FxTextBoxIconBlack : FxTextBoxIcon} role="presentation" alt="" height={32} width={32} />

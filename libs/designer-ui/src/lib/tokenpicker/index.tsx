@@ -71,6 +71,16 @@ export function TokenPicker({
     setExpression(e);
   };
 
+  const isDynamicContentAvailable = (tokenGroup: TokenGroup[]): boolean => {
+    let result = false;
+    tokenGroup.forEach((tg) => {
+      if (tg.tokens.length > 0) {
+        result = true;
+      }
+    });
+    return result;
+  };
+
   return (
     <Callout
       role="dialog"
@@ -106,6 +116,7 @@ export function TokenPicker({
             updatingExpression={initialExpression !== ''}
             isEditing={isEditing}
             setIsEditing={setIsEditing}
+            isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
           />
 
           <TokenPickerSection
@@ -117,6 +128,7 @@ export function TokenPicker({
             expression={expression}
             editMode={initialExpression !== '' || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
             setExpression={setExpression}
+            isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
           />
         </div>
       </div>
