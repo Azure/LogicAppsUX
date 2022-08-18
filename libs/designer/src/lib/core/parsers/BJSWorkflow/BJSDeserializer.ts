@@ -98,7 +98,6 @@ const buildGraphFromActions = (
 
     if (isScopeAction(action)) {
       const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(graphId, actionName, actionName, action);
-
       node.children = scopeNodes;
       node.edges = scopeEdges;
       allActions = { ...allActions, ...scopeActions };
@@ -115,7 +114,6 @@ const buildGraphFromActions = (
 
     nodes.push(node);
   }
-
   return [nodes, edges, allActions, nodesMetadata];
 };
 
@@ -262,7 +260,6 @@ const processScopeActions = (
   } else {
     applyActions(actionName, action.actions);
   }
-
   return [nodes, edges, allActions, nodesMetadata];
 };
 
@@ -275,7 +272,6 @@ const processNestedActions = (
   const [children, edges, scopeActions, scopeNodesMetadata] = !isNullOrUndefined(actions)
     ? buildGraphFromActions(actions, graphId, parentNodeId)
     : [[], [], {}, {}];
-
   return [
     {
       id: graphId,
