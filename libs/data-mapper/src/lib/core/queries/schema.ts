@@ -5,3 +5,9 @@ export const getSchemaList = () => {
   const response = service.getSchemas();
   return response;
 };
+
+export const getSelectedSchema = (fileName: string) => {
+  const service = SchemaSelectionServiceInstance();
+  const response = service.getSchemaFile(fileName);
+  return response;
+};

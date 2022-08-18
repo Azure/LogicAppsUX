@@ -4,7 +4,7 @@ import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/ut
 
 export interface ISchemaSelectionService {
   getSchemas(): Promise<any>;
-  getSchemaFile(subscriptionId: string, resourceGroupName: string, logicAppResource: string, schemaName: string): Promise<any>;
+  getSchemaFile(schemaName: string): Promise<any>;
 }
 
 export interface SchemaInfoProperties {

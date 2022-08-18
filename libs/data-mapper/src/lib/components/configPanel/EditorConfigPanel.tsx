@@ -1,4 +1,4 @@
-import { getSchemaList } from '../../core';
+import { getSchemaList, getSelectedSchema } from '../../core';
 import {
   closeAllWarning,
   openChangeInputWarning,
@@ -98,6 +98,20 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     dispatch(closeSchemaChangePanel());
     setErrorMessage('');
   }, [dispatch, setErrorMessage]);
+
+  // const getSelectedInputSchema = () => {
+
+  // }
+
+  useQuery(
+    [selectedInputSchema?.text],
+    () => {
+      return getSelectedSchema(selectedInputSchema?.text ?? '');
+    },
+    {
+      enabled: selectedInputSchema !== undefined,
+    }
+  );
 
   const editInputSchema = useCallback(() => {
     const selectedInputSchema = downloadedSchema;
