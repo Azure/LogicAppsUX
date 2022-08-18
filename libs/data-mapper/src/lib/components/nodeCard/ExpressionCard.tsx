@@ -1,6 +1,6 @@
 import { NodeCard } from './NodeCard';
 import { Icon } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles, shorthands } from '@fluentui/react-components';
+import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 
 export interface ExpressionCardProps {
@@ -11,14 +11,14 @@ export interface ExpressionCardProps {
 
 const useStyles = makeStyles({
   root: {
-    width: '24px',
-    minWidth: '24px',
-    height: '24px',
+    ...shorthands.borderRadius(tokens.borderRadiusCircular),
     backgroundColor: '#8764b8',
-    color: 'white',
+    color: tokens.colorNeutralForegroundInverted,
+    fontSize: '20px',
+    height: '32px',
     textAlign: 'center',
-    lineHeight: '24px',
-    ...shorthands.borderRadius('100px'),
+    width: '32px',
+    minWidth: '32px',
 
     '&:enabled': {
       '&:hover': {

@@ -1,7 +1,7 @@
 import { SchemaTypes } from '../../models';
 import { NodeCard } from './NodeCard';
 import { Icon, Text } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { createFocusOutlineStyle, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 
@@ -20,13 +20,13 @@ export interface SchemaCardWrapperProps {
 
 const useStyles = makeStyles({
   root: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: '200px',
-    height: '44px',
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
     backgroundColor: tokens.colorNeutralBackground1,
+    display: 'block',
+    flexDirection: 'row',
+    height: '44px',
     opacity: 1,
-    ...shorthands.borderRadius('5px'),
+    width: '200px',
 
     '&:enabled': {
       '&:hover': {
@@ -34,30 +34,31 @@ const useStyles = makeStyles({
       },
     },
   },
-
   cardIcon: {
-    backgroundColor: '#ebf3fc',
-    color: '#0f6cbd',
-    fontSize: '20px',
+    backgroundColor: tokens.colorBrandBackground2,
+    borderStartStartRadius: tokens.borderRadiusMedium,
+    borderEndStartRadius: tokens.borderRadiusMedium,
+    color: tokens.colorBrandForeground1,
+    fontSize: '24px',
     lineHeight: '44px',
-    width: '44px',
     textAlign: 'center',
-    borderStartStartRadius: '5px',
-    borderEndStartRadius: '5px',
+    flexGrow: '0',
+    flexShrink: '0',
+    flexBasis: '44px',
   },
   cardText: {
-    fontStyle: 'normal',
-    fontWeight: 600,
-    fontSize: '14px',
+    ...typographyStyles.body1Strong,
     alignSelf: 'center',
+    color: tokens.colorNeutralForeground1,
     paddingLeft: '8px',
     paddingRight: '8px',
     textAlign: 'center',
   },
   cardChevron: {
-    width: '20px',
-    height: '18px',
-    paddingLeft: '12px',
+    color: tokens.colorNeutralForeground3,
+    display: 'flex',
+    fontSize: '16px',
+    paddingRight: '8px',
   },
 
   focusIndicator: createFocusOutlineStyle({
@@ -102,7 +103,11 @@ export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ l
         <Text className={classes.cardText} block={true} nowrap={true}>
           {label}
         </Text>
-        <div className={classes.cardChevron}>{schemaType === SchemaTypes.Output && isLeaf && <Icon iconName="ChevronRightMed" />}</div>
+        {schemaType === SchemaTypes.Output && !isLeaf && (
+          <div className={classes.cardChevron}>
+            <Icon iconName="ChevronRightMed" />
+          </div>
+        )}
       </NodeCard>
     </div>
   );
