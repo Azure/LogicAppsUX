@@ -1,6 +1,7 @@
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
 import { TokenPickerMode } from '../tokenpickerpivot';
+import { TokenPickerNoDynamicContent } from './tokenpickernodynamiccontent';
 import { TokenPickerNoMatches } from './tokenpickernomatches';
 import { TokenPickerOptions } from './tokenpickeroption';
 import type { editor } from 'monaco-editor';
@@ -16,6 +17,7 @@ interface TokenPickerSectionProps {
   expression: ExpressionEditorEvent;
   editMode: boolean;
   setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
+  isDynamicContentAvailable: boolean;
 }
 export const TokenPickerSection = ({
   selectedKey,
@@ -26,6 +28,7 @@ export const TokenPickerSection = ({
   expression,
   editMode,
   setExpression,
+  isDynamicContentAvailable,
 }: TokenPickerSectionProps): JSX.Element => {
   const [tokenLength, setTokenLength] = useState(new Array<number>(tokenGroup.length));
   const [noItems, setNoItems] = useState(false);
@@ -36,27 +39,33 @@ export const TokenPickerSection = ({
 
   return (
     <div className="msla-token-picker-sections">
-      {searchQuery ? <TokenPickerNoMatches noItems={noItems} /> : null}
-      {(selectedKey === TokenPickerMode.TOKEN ? tokenGroup : expressionGroup).map((section, i) => {
-        if (section.tokens.length > 0) {
-          return (
-            <div key={`token-picker-section-${i}`} className={'msla-token-picker-section'}>
-              <TokenPickerOptions
-                selectedKey={selectedKey}
-                section={section}
-                searchQuery={searchQuery}
-                index={i}
-                setTokenLength={setTokenLength}
-                editMode={editMode}
-                expressionEditorRef={expressionEditorRef}
-                expression={expression}
-                setExpression={setExpression}
-              />
-            </div>
-          );
-        }
-        return null;
-      })}
+      {isDynamicContentAvailable || selectedKey === TokenPickerMode.EXPRESSION ? (
+        <>
+          {searchQuery ? <TokenPickerNoMatches noItems={noItems} /> : null}
+          {(selectedKey === TokenPickerMode.TOKEN ? tokenGroup : expressionGroup).map((section, i) => {
+            if (section.tokens.length > 0) {
+              return (
+                <div key={`token-picker-section-${i}`} className={'msla-token-picker-section'}>
+                  <TokenPickerOptions
+                    selectedKey={selectedKey}
+                    section={section}
+                    searchQuery={searchQuery}
+                    index={i}
+                    setTokenLength={setTokenLength}
+                    editMode={editMode}
+                    expressionEditorRef={expressionEditorRef}
+                    expression={expression}
+                    setExpression={setExpression}
+                  />
+                </div>
+              );
+            }
+            return null;
+          })}
+        </>
+      ) : (
+        <TokenPickerNoDynamicContent />
+      )}
     </div>
   );
 };

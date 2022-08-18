@@ -47,6 +47,7 @@ interface TokenPickerSearchProps {
   setSearchQuery: (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string) => void;
   expressionEditorBlur: (e: ExpressionEditorEvent) => void;
   resetTokenPicker: () => void;
+  isDynamicContentAvailable: boolean;
 }
 
 export const TokenPickerSearch = ({
@@ -59,6 +60,7 @@ export const TokenPickerSearch = ({
   setSearchQuery,
   expressionEditorBlur,
   resetTokenPicker,
+  isDynamicContentAvailable,
 }: TokenPickerSearchProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
@@ -135,19 +137,21 @@ export const TokenPickerSearch = ({
   return (
     <>
       {selectedKey === TokenPickerMode.TOKEN && !isEditing ? (
-        <div className="msla-token-picker-search">
-          <Icon className="msla-token-picker-search-icon" iconName="Search" styles={iconStyles} />
-          <TextField
-            styles={textFieldStyles}
-            componentRef={(c) => (searchBoxRef.current = c)}
-            maxLength={32}
-            placeholder={tokenPickerPlaceHolderText}
-            type="search"
-            value={searchQuery}
-            onChange={setSearchQuery}
-            autoComplete="off"
-          />
-        </div>
+        isDynamicContentAvailable && (
+          <div className="msla-token-picker-search">
+            <Icon className="msla-token-picker-search-icon" iconName="Search" styles={iconStyles} />
+            <TextField
+              styles={textFieldStyles}
+              componentRef={(c) => (searchBoxRef.current = c)}
+              maxLength={32}
+              placeholder={tokenPickerPlaceHolderText}
+              type="search"
+              value={searchQuery}
+              onChange={setSearchQuery}
+              autoComplete="off"
+            />
+          </div>
+        )
       ) : (
         <div className="msla-token-picker-expression">
           <img src={isInverted ? FxTextBoxIconBlack : FxTextBoxIcon} role="presentation" alt="" height={32} width={32} />
