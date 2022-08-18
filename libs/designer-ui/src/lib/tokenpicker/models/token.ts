@@ -9,6 +9,7 @@ export interface Token {
   name?: string;
   type: string;
   isAdvanced?: boolean;
+  value?: string;
   outputInfo: {
     type: TokenType; // Should only support FX, OUTPUTS, VARIABLE, PARAMETER
     required?: boolean;

@@ -44,6 +44,7 @@ export interface MonacoProps extends MonacoOptions {
   onOptionsChanged?(e: editor.IModelOptionsChangedEvent): void;
   onScrollChanged?(e: IScrollEvent): void;
   onEditorRef?(editor: editor.IStandaloneCodeEditor | undefined): void;
+  onMouseDown?(e: editor.IEditorMouseEvent): void;
 }
 
 export interface MonacoOptions {
@@ -93,6 +94,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       onOptionsChanged,
       onScrollChanged,
       onEditorRef,
+      onMouseDown,
       ...options
     },
     ref
@@ -183,6 +185,10 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       onScrollChanged?.(e);
     };
 
+    const handleMouseDown = (e: editor.IEditorMouseEvent): void => {
+      onMouseDown?.(e);
+    };
+
     const handleEditorMounted = (editor: editor.IStandaloneCodeEditor) => {
       currentRef.current = editor;
 
@@ -213,6 +219,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       editor.onDidFocusEditorWidget(handleDidFocusEditorWidget);
       editor.onDidLayoutChange(handleDidLayoutChange);
       editor.onDidScrollChange(handleDidScrollChange);
+      editor.onMouseDown(handleMouseDown);
       onEditorLoaded?.();
     };
 
@@ -220,6 +227,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       <div className="msla-monaco-container">
         {canRender ? (
           <Editor
+            keepCurrentModel={true}
             className={className}
             options={{
               contextmenu: contextMenu,

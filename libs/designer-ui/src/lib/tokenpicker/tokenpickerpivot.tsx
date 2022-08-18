@@ -17,7 +17,6 @@ const pivotStyles: Partial<IPivotStyles> = {
 };
 
 export enum TokenPickerMode {
-  EXPRESSION_TOKEN = 'expression_token',
   TOKEN = 'token',
   EXPRESSION = 'expression',
 }

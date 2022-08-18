@@ -81,6 +81,7 @@ export interface Token {
   title: string;
   tokenType: TokenType;
   type?: string;
+  value?: string;
 }
 
 export enum TokenType {

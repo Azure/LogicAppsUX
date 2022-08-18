@@ -26,6 +26,7 @@ export interface OutputInfo {
   required?: boolean;
   source?: string;
   title: string;
+  value?: string;
 }
 
 export interface NodeInputs {
