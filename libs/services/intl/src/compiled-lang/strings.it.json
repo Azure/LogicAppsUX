@@ -348,7 +348,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Altre informazioni"
     }
   ],
   "1ejxkP": [
@@ -459,6 +459,12 @@
       "value": "Sì"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Empty add dynamic content button"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Separatore."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "There is no content available"
     }
   ],
   "3PgHCT": [
@@ -1051,6 +1063,12 @@
       "value": "Obbligatorio. Indice della parte da recuperare."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "No dynamic content available"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1497,6 +1515,12 @@
       "value": "(UTC+12:00) Figi"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "If available, dynamic content is automatically generated from the connectors and actions you choose for your flow."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1774,7 +1798,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Vedi altre"
     }
   ],
   "LoGUT3": [
@@ -2853,6 +2877,12 @@
       "value": "Questa operazione è già stata eliminata."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Learn more about dynamic content."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3019,6 +3049,12 @@
       "value": "pannello"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamic content may also be added from other sources."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3034,7 +3070,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Visualizza documentazione"
     }
   ],
   "cT2MlP": [
@@ -3228,7 +3264,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Predefinito"
     }
   ],
   "egLI8P": [
@@ -4727,6 +4763,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Matrice di valori in cui trovare il valore minimo o il primo valore di un set."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Including dynamic content"
     }
   ],
   "wHYQyg": [

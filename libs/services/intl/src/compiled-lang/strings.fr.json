@@ -348,7 +348,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "En savoir plus"
     }
   ],
   "1ejxkP": [
@@ -459,6 +459,12 @@
       "value": "Actif"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Empty add dynamic content button"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Séparateur."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "There is no content available"
     }
   ],
   "3PgHCT": [
@@ -1051,6 +1063,12 @@
       "value": "Obligatoire. Index de la partie à récupérer."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "No dynamic content available"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1497,6 +1515,12 @@
       "value": "(UTC+12:00) Fidji"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "If available, dynamic content is automatically generated from the connectors and actions you choose for your flow."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1518,7 +1542,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Retour au navigateur"
     }
   ],
   "IngtMG": [
@@ -1774,7 +1798,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Voir plus"
     }
   ],
   "LoGUT3": [
@@ -2430,7 +2454,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Regrouper par connecteur"
     }
   ],
   "U3iWVd": [
@@ -2845,6 +2869,12 @@
       "value": "Cette opération a déjà été supprimée."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Learn more about dynamic content."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3011,6 +3041,12 @@
       "value": "volet"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamic content may also be added from other sources."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3026,7 +3062,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Afficher la Documentation"
     }
   ],
   "cT2MlP": [
@@ -3220,7 +3256,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Intégré"
     }
   ],
   "egLI8P": [
@@ -3376,7 +3412,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Résultats de la recherche pour : "
     },
     {
       "type": 1,
@@ -4026,7 +4062,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Parcourir les opérations"
     }
   ],
   "oRvVIW": [
@@ -4436,7 +4472,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Revenir à la recherche"
     }
   ],
   "tImHz/": [
@@ -4727,6 +4763,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Soit un tableau de valeurs dans lequel rechercher la valeur minimale soit la première valeur d'un ensemble."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Including dynamic content"
     }
   ],
   "wHYQyg": [
