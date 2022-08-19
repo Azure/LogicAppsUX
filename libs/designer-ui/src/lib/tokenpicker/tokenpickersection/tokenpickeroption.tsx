@@ -46,19 +46,23 @@ export const TokenPickerOptions = ({
       const fuse = new Fuse(section.tokens, { keys: ['description', 'title'], threshold: 0.2 });
       const tokens = fuse.search(query).map((token) => token.item);
       setFilteredTokens(tokens);
-      setTokenLength((prevTokens) => {
-        const newTokens = prevTokens;
-        newTokens[index] = tokens.length;
-        return newTokens;
-      });
+      if (selectedKey === TokenPickerMode.TOKEN) {
+        setTokenLength((prevTokens) => {
+          const newTokens = prevTokens;
+          newTokens[index] = tokens.length;
+          return newTokens;
+        });
+      }
     } else {
-      setTokenLength((prevTokens) => {
-        const newTokens = prevTokens;
-        newTokens[index] = section.tokens.length;
-        return newTokens;
-      });
+      if (selectedKey === TokenPickerMode.TOKEN) {
+        setTokenLength((prevTokens) => {
+          const newTokens = prevTokens;
+          newTokens[index] = section.tokens.length;
+          return newTokens;
+        });
+      }
     }
-  }, [index, searchQuery, section.tokens, setTokenLength]);
+  }, [index, searchQuery, section.tokens, selectedKey, setTokenLength]);
 
   const buttonTextMore = intl.formatMessage({
     defaultMessage: 'See More',
@@ -87,7 +91,7 @@ export const TokenPickerOptions = ({
   };
 
   const handleExpressionTokenMode = (token: OutputToken) => {
-    const expression = token.description ?? '';
+    const expression = token.value ?? '';
     insertExpressionText(expression, 0);
   };
   const handleExpressionTokenModeToken = (token: OutputToken) => {
@@ -120,14 +124,14 @@ export const TokenPickerOptions = ({
   const handleCreateToken = (token: OutputToken) => {
     editor.dispatchCommand(INSERT_TOKEN_NODE, {
       brandColor: token.brandColor,
-      description: token.description ?? token.key,
+      description: token.value,
       title: token.title,
       icon: token.icon ?? 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
       data: {
         id: guid(),
         type: ValueSegmentType.TOKEN,
         value: token.title,
-        token: { ...token, tokenType: token.outputInfo.type, description: token.description ?? '' },
+        token: { ...token, tokenType: token.outputInfo.type, description: token.value ?? '' },
       },
     });
   };

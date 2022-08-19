@@ -1,6 +1,5 @@
 .msla-token-picker-container {
   max-height: 550px;
-  min-height: 400px;
   width: 400px;
 }
 
@@ -152,6 +151,38 @@
         }
       }
     }
+  }
+}
+
+.msla-token-picker-no-content {
+  font-family: @font-family;
+  padding: 12px;
+  color: #212121;
+
+  a:visited,
+  a:link,
+  a:hover,
+  a:active {
+    text-decoration: underline;
+  }
+
+  div {
+    margin: 0.25em 0;
+    white-space: pre-wrap;
+
+    &.msla-token-picker-no-content-header {
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+  }
+
+  hr {
+    color: #cac8c7;
+    margin-top: 12px;
+  }
+
+  img {
+    margin-right: 12px;
   }
 }
 
