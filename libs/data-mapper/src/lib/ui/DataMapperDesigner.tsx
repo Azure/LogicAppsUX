@@ -87,6 +87,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onSubmitInput = (inputSchema: Schema) => {
+    // danielle this can be moved to child components
     const extendedSchema = convertSchemaToSchemaExtended(inputSchema);
     dispatch(setInitialInputSchema(extendedSchema));
     dispatch(setInitialDataMap());

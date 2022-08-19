@@ -39,7 +39,7 @@ export class SchemaSelectionService implements ISchemaSelectionService {
   };
 
   private getSchemaFileUri = (xmlName: string) => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/hostruntime/admin/vfs/Artifacts/Schemas${xmlName}?api-version=2018-11-01&relativepath=1`;
+    return `${this.options.baseUrl}${this.options.resourceUrl}/hostruntime/admin/vfs/Artifacts/Schemas/${xmlName}?api-version=2018-11-01&relativepath=1`;
   };
 
   async getSchemas(): Promise<any> {
@@ -65,9 +65,8 @@ export class SchemaSelectionService implements ISchemaSelectionService {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
-    const schemaFileResponse: any = await response.json();
-    const { value: schemaFile } = schemaFileResponse;
+    const schemaFileResponse: string = await response.text();
 
-    return { schemaFile };
+    return schemaFileResponse;
   }
 }

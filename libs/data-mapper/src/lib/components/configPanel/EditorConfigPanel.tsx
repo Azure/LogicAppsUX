@@ -14,7 +14,6 @@ import { ChangeSchemaView } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
-import axios from 'axios';
 import type { FunctionComponent } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -26,8 +25,6 @@ export interface EditorConfigPanelProps {
   onSubmitInputSchema: (schema: Schema) => void;
   onSubmitOutputSchema: (schema: Schema) => void;
 }
-
-const authToken = 'bearer ...';
 
 export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   initialSetup,
@@ -47,7 +44,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
 
-  const [downloadedSchema, setDownloadedSchema] = useState();
+  const [downloadedSchema, _setDownloadedSchema] = useState();
 
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -99,24 +96,32 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     setErrorMessage('');
   }, [dispatch, setErrorMessage]);
 
-  // const getSelectedInputSchema = () => {
+  const addSchema = () => {
+    schemaType === SchemaTypes.Input
+      ? curDataMapOperation
+        ? dispatch(openChangeInputWarning())
+        : editInputSchema()
+      : curDataMapOperation
+      ? dispatch(openChangeOutputWarning())
+      : editOutputSchema();
+  };
 
-  // }
-
-  useQuery(
+  const schemaFile = useQuery(
     [selectedInputSchema?.text],
     () => {
       return getSelectedSchema(selectedInputSchema?.text ?? '');
     },
     {
       enabled: selectedInputSchema !== undefined,
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 5,
     }
   );
+  console.log(schemaFile.data?.toString());
 
   const editInputSchema = useCallback(() => {
+    // danielle editInputSchema can be combined with editOutputSchema
     const selectedInputSchema = downloadedSchema;
-
-    console.log('in editInputSchema ', selectedInputSchema);
 
     setErrorMessage('');
     if (selectedInputSchema) {
@@ -166,34 +171,13 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
         {isChangeSchemaPanelOpen && (
           <PrimaryButton
             className="panel-button-left"
-            onClick={async () => {
-              const newDownloadedSchema = await axios.get(
-                'https://management.azure.com/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}/hostruntime/admin/vfs/Artifacts/Schemas/{SchemaName}?api-version=2018-11-01&relativepath=1',
-                {
-                  headers: {
-                    Authorization: authToken,
-                  },
-                }
-              );
-
-              //  const schemaInJson = new XMLParser().parseFromString(newDownloadedSchema.data);
-              const schemaInJson = newDownloadedSchema.data; //TODO: parse it like above
-
-              setDownloadedSchema(schemaInJson.data);
-
+            onClick={addSchema}
+            // danielle refactor below to be more clear
+            disabled={
               schemaType === SchemaTypes.Input
-                ? curDataMapOperation
-                  ? dispatch(openChangeInputWarning())
-                  : editInputSchema()
-                : curDataMapOperation
-                ? dispatch(openChangeOutputWarning())
-                : editOutputSchema();
-            }}
-            // disabled={ danielle to do
-            //   schemaType === SchemaTypes.Input
-            //     ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation?.dataMap?.srcSchemaName
-            //     : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation?.dataMap?.dstSchemaName
-            // }
+                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation?.dataMap?.srcSchemaName
+                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation?.dataMap?.dstSchemaName
+            }
           >
             {addMessage}
           </PrimaryButton>
@@ -258,21 +242,9 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     ]
   );
 
-  // const getSchemaList = async () => {
-  //   const { data } = await axios.get(
-  //     'https://management.azure.com/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}/hostruntime/admin/vfs/Artifacts/Schemas/?api-version=2018-11-01&relativepath=1',
-  //     {
-  //       headers: {
-  //         Authorization: authToken,
-  //       },
-  //     }
-  //   );
-  //   return data;
-  // };
-
   const schemaListQuery = useQuery(['schemaList'], () => getSchemaList(), {
-    // staleTime: 1000 * 60 * 5,
-    // cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 5,
   });
 
   const schemaList = schemaListQuery.data;
