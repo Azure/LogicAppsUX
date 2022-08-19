@@ -21,14 +21,15 @@ export const addNodeToWorkflow = (
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
-  // Add Node Data
-  nodesMetadata[payload.id] = { graphId: payload.discoveryIds.graphId };
-  const workflowNode: WorkflowNode = createNodeWithDefaultSize(payload.id);
-  addWorkflowNode(workflowNode, workflowGraph);
-
   // Adjust edges
   const { id: newNodeId } = payload;
   const { parentId, childId } = payload.discoveryIds;
+
+  // Add Node Data
+  const workflowNode: WorkflowNode = createNodeWithDefaultSize(newNodeId);
+  addWorkflowNode(workflowNode, workflowGraph);
+  nodesMetadata[newNodeId] = { graphId: payload.discoveryIds.graphId };
+  state.operations[newNodeId] = { type: payload.operation.type };
 
   if (parentId && childId) {
     // 1 parent and 1 child
@@ -117,4 +118,8 @@ const reassignNodeRunAfter = (state: WorkflowState | undefined, nodeId: string, 
     runAfter[newTargetId] = data;
     delete runAfter?.[oldTargetId];
   }
+
+  (state.operations[newTargetId] as LogicAppsV2.ActionDefinition).runAfter = {
+    [newTargetId]: ['Succeeded'],
+  };
 };

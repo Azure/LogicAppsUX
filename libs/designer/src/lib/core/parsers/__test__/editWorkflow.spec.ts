@@ -1,6 +1,6 @@
 import { createNodeWithDefaultSize, addNodeToWorkflow } from '../addNodeToWorkflow';
 import type { WorkflowNode } from '../models/workflowNode';
-import { mockGraph } from './mocks/workflowMock';
+import { initialState, mockGraph } from './mocks/workflowMock';
 
 describe('edit workflow', () => {
   let graph: WorkflowNode;
@@ -28,7 +28,8 @@ describe('edit workflow', () => {
         },
       },
       graph,
-      {} as any
+      {} as any,
+      initialState
     );
 
     expect(graph?.edges?.find((edge) => edge.source === parentId && edge.target === nodeToAdd.id)).toBeDefined();
@@ -51,7 +52,8 @@ describe('edit workflow', () => {
         },
       },
       graph,
-      {} as any
+      {} as any,
+      initialState
     );
 
     expect(graph?.edges?.find((edge) => edge.source === parentId && edge.target === nodeToAdd.id)).toBeDefined();
