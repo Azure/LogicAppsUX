@@ -1,5 +1,6 @@
 import { useLayout } from '../core/graphlayout';
 import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
+import { useAllOperations, useAllConnectors } from '../core/queries/browse';
 import { buildEdgeIdsBySource, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { RootState } from '../core/store';
 import Controls from './Controls';
@@ -57,6 +58,9 @@ export const Designer = () => {
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
+
+  useAllOperations();
+  useAllConnectors();
 
   return (
     <DndProvider backend={HTML5Backend}>

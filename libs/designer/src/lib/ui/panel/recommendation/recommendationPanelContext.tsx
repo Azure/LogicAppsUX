@@ -1,14 +1,13 @@
+import { useAllOperations } from '../../../core/queries/browse';
 import { useSelectedOperationGroupId } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { BrowseView } from './browseView';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
-import { SearchService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
@@ -21,17 +20,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   const selectedOperationGroupId: string = useSelectedOperationGroupId();
 
-  const allOperations = useQuery(
-    ['allOperations'],
-    () => {
-      const searchService = SearchService();
-      return searchService.preloadOperations();
-    },
-    {
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 5, // Danielle this is temporary, will move to config
-    }
-  );
+  const allOperations = useAllOperations();
 
   useEffect(() => {
     if (allOperations.data && selectedOperationGroupId) {

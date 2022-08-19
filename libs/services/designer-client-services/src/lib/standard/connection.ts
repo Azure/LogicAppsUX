@@ -108,7 +108,7 @@ const functionsLocation = 'functionConnections';
 export class StandardConnectionService implements IConnectionService {
   private _connections: Record<string, Connection> = {};
   private _subscriptionResourceGroupWebUrl = '';
-  private isStandalone = false;
+  private isStandalone = true;
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
     const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;
