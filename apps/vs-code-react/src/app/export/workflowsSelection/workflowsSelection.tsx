@@ -104,9 +104,10 @@ export const WorkflowsSelection: React.FC = () => {
     console.log('charlie22', selectedWorkflows);
     const onItemsChange = () => {
       console.log('charlie3', selectedWorkflows);
-      const actualSelection = selectedWorkflows.length ? selectedWorkflows : [...allItemsSelected.current.filter((item) => item.selected)];
-      if (selection && selection.getItems().length > 0 && actualSelection.length > 0) {
-        actualSelection.forEach((workflow: WorkflowsList) => {
+      const selectedItems = [...allItemsSelected.current.filter((item) => item.selected)];
+      const currentSelection = !selectedItems.length && selectedWorkflows.length ? selectedWorkflows : selectedItems;
+      if (selection && selection.getItems().length > 0 && currentSelection.length > 0) {
+        currentSelection.forEach((workflow: WorkflowsList) => {
           selection.setKeySelected(workflow.key, true, true);
         });
       }
@@ -213,6 +214,10 @@ export const WorkflowsSelection: React.FC = () => {
   }, [resourceGroups, isWorkflowsLoading, allWorkflows, searchString]);
 
   const deselectWorkflow = (itemKey: string) => {
+    const deselectedItem = allItemsSelected.current.find((workflow) => workflow.key === itemKey);
+    if (deselectedItem) {
+      deselectedItem.selected = false;
+    }
     const newSelection = [...selectedWorkflows.filter((item) => item.key !== itemKey)];
     dispatch(
       updateSelectedWorkFlows({
