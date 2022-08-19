@@ -108,7 +108,7 @@ const functionsLocation = 'functionConnections';
 export class StandardConnectionService implements IConnectionService {
   private _connections: Record<string, Connection> = {};
   private _subscriptionResourceGroupWebUrl = '';
-  private isStandalone = true;
+  private isStandalone = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
     const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;

@@ -2,7 +2,7 @@ import { ConnectorSummaryCard } from '../../connectorsummarycard';
 import { getConnectorCategoryString } from '../../utils';
 import { List } from '@fluentui/react';
 import type { Connector } from '@microsoft-logic-apps/utils';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 export type BrowseGridProps = {
   onConnectorSelected: (connectorId: string) => void;
@@ -12,11 +12,12 @@ export type BrowseGridProps = {
 export const BrowseGrid = (props: BrowseGridProps) => {
   const ref = useRef(null);
   const [forceSingleCol, setForceSingleCol] = useState(true);
-  console.log(forceSingleCol, (ref.current as any)?.clientWidth);
 
-  window.onresize = () => {
+  const checkCol = useCallback(() => {
     setForceSingleCol((ref.current as any)?.clientWidth < 560);
-  };
+  }, []);
+  window.onresize = checkCol;
+  useLayoutEffect(checkCol, [checkCol]);
 
   const onRenderCell = useCallback(
     (connector?: Connector, _index?: number) => {
