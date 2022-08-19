@@ -1,5 +1,6 @@
 import constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
+import type { RootState } from '../../../core';
 import { getConnectionMetadata } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
 import { addConnectionReference, changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
@@ -12,7 +13,7 @@ import type { ConnectionParameterSet, ConnectionParameterSetValues, ConnectionTy
 import { CreateConnection, getIdLeaf } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const CreateConnectionTab = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const CreateConnectionTab = () => {
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
+  const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -69,7 +71,7 @@ const CreateConnectionTab = () => {
   }, [dispatch]);
 
   // By the time you get to this component, there should always be a connector associated
-  if (connector === undefined) return <p></p>;
+  if (connector?.properties === undefined) return <p></p>;
 
   return (
     <CreateConnection
@@ -79,6 +81,7 @@ const CreateConnectionTab = () => {
       createConnectionCallback={createConnectionCallback}
       isLoading={isLoading}
       cancelCallback={cancelCallback}
+      hideCancelButton={!hasExistingConnection}
     />
   );
 };

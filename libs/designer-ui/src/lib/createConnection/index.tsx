@@ -23,13 +23,21 @@ export interface CreateConnectionProps {
     parameterValues?: Record<string, any>
   ) => void;
   cancelCallback?: () => void;
+  hideCancelButton?: boolean;
 }
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
 
 export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
-  const { connectorDisplayName, connectionParameters, connectionParameterSets, isLoading, createConnectionCallback, cancelCallback } =
-    props;
+  const {
+    connectorDisplayName,
+    connectionParameters,
+    connectionParameterSets,
+    isLoading,
+    createConnectionCallback,
+    cancelCallback,
+    hideCancelButton = false,
+  } = props;
 
   const intl = useIntl();
 
@@ -242,7 +250,9 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             ariaLabel={createButtonAria}
             onClick={submitCallback}
           />
-          <DefaultButton disabled={isLoading} text={cancelButtonText} ariaLabel={cancelButtonAria} onClick={cancelCallback} />
+          {!hideCancelButton ? (
+            <DefaultButton disabled={isLoading} text={cancelButtonText} ariaLabel={cancelButtonAria} onClick={cancelCallback} />
+          ) : null}
         </div>
       </div>
     );

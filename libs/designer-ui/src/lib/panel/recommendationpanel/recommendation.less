@@ -40,7 +40,25 @@
   gap: 8px;
 }
 
+// These classes are strange but it's so that we get two columns on our FluentUI list
+
 .msla-result-list {
+  position: relative;
   margin: 0px -24px;
-  padding: 0px 24px;
+  padding: 0px 24px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.mlsa-browse-list-tile-wrapper {
+  padding-bottom: 80px;
+  display: contents;
+  width: 100%;
+}
+
+.msla-browse-list-tile {
+  position: relative;
+  float: left;
+  padding: 4px;
+  box-sizing: border-box;
 }

@@ -54,7 +54,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
         {searchTerm || selectedGroupId ? (
           <Link onClick={navigateBack} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Icon iconName="Back" />
-            {searchTerm ? returnToSearchText : returnToBrowseText}
+            {!selectedGroupId || !searchTerm ? returnToBrowseText : returnToSearchText}
           </Link>
         ) : (
           <Text variant="xLarge">{browseNavText}</Text>
