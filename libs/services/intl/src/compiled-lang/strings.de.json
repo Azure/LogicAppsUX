@@ -1871,6 +1871,16 @@
       "value": "(Optional) Der Name der bereichsbezogenen Aktion, in der die Eingaben und Ausgaben der Aktionen der obersten Ebene in diesem Bereich verwendet werden sollen."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1995,6 +2005,12 @@
     {
       "type": 0,
       "value": "Verbindungsname"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3263,6 +3279,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [

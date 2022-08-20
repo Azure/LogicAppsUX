@@ -1811,6 +1811,16 @@
       "value": "선택 사항. 해당 범위 내 최상위 작업의 입력 및 출력을 원하는 범위 작업의 이름입니다."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1935,6 +1945,12 @@
     {
       "type": 0,
       "value": "연결 이름"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3180,6 +3196,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 원하는 값의 변수 이름입니다."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [

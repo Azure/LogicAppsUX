@@ -1811,6 +1811,16 @@
       "value": "Opsional. Nama tindakan tercakup tempat Anda menginginkan input dan output dari tindakan tingkat atas dalam cakupan tersebut."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1935,6 +1945,12 @@
     {
       "type": 0,
       "value": "Nama Koneksi"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3184,6 +3200,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [

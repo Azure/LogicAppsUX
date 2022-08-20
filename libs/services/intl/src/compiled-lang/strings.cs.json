@@ -1971,6 +1971,16 @@
       "value": "Nepovinné. Název akce s určeným rozsahem, u níž požadujete vstupy a výstupy z akcí na nejvyšší úrovni v rámci daného rozsahu."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2095,6 +2105,12 @@
     {
       "type": 0,
       "value": "Název připojení"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3377,6 +3393,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název proměnné, jejíž hodnotu chcete získat."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [

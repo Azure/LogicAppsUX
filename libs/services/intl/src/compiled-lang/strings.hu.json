@@ -1871,6 +1871,16 @@
       "value": "Nem kötelező. Annak a hatóköri műveletnek a neve, ahol az adott hatókör legfelső szintű műveleteinek bemeneteit és kimeneteit szeretné használni."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1995,6 +2005,12 @@
     {
       "type": 0,
       "value": "Kapcsolat neve"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3263,6 +3279,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [

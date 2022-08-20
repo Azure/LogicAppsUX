@@ -1871,6 +1871,16 @@
       "value": "Optioneel. De naam van de actie met bereik waarvoor u de invoer en uitvoer van de acties op het hoogste niveau binnen dat bereik wilt."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1995,6 +2005,12 @@
     {
       "type": 0,
       "value": "Verbindingsnaam"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3259,6 +3275,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de variabele met de gewenste waarde."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [
