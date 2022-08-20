@@ -1855,6 +1855,16 @@
       "value": "Facultatif. Nom de l'action délimitée dans l'étendue de laquelle vous voulez voir les entrées et les sorties des actions de niveau supérieur."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1979,6 +1989,12 @@
     {
       "type": 0,
       "value": "Nom de la connexion"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3239,6 +3255,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la variable dont vous voulez la valeur."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [

@@ -1975,6 +1975,16 @@
       "value": "Opcjonalnie. Nazwa akcji o określonym zakresie, w którym mają być umieszczane dane wejściowe i wyjściowe akcji najwyższego poziomu."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -2099,6 +2109,12 @@
     {
       "type": 0,
       "value": "Nazwa połączenia"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3381,6 +3397,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa zmiennej z żądanymi wartościami."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [

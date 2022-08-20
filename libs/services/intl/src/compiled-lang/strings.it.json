@@ -1542,7 +1542,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Tornare all'esplorazione"
     }
   ],
   "IngtMG": [
@@ -1798,7 +1798,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "Vedi altre"
+      "value": "Vedi altro"
     }
   ],
   "LoGUT3": [
@@ -1853,6 +1853,16 @@
     {
       "type": 0,
       "value": "Facoltativo. Nome dell'azione con ambito che dovrà contenere gli input e gli output delle azioni di primo livello all'interno di tale ambito."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1979,6 +1989,12 @@
     {
       "type": 0,
       "value": "Nome connessione"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -2462,7 +2478,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Raggruppa per connettore"
     }
   ],
   "U3iWVd": [
@@ -3249,6 +3265,12 @@
       "value": "Obbligatorio. Nome della variabile di cui si desidera ottenere il valore."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3420,7 +3442,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Risultati della ricerca per: "
     },
     {
       "type": 1,
@@ -4062,7 +4084,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Esplorare le operazioni"
     }
   ],
   "oRvVIW": [
@@ -4472,7 +4494,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Tornare alla ricerca"
     }
   ],
   "tImHz/": [

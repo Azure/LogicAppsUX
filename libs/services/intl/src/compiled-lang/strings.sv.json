@@ -1550,7 +1550,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Gå tillbaka för att bläddra"
     }
   ],
   "IngtMG": [
@@ -1871,6 +1871,16 @@
       "value": "Valfritt. Namnet på den omfångsdefinierade åtgärd där du vill ha indata och utdata från åtgärderna på toppnivå i det omfånget."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1995,6 +2005,12 @@
     {
       "type": 0,
       "value": "Anslutningens namn"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -2474,7 +2490,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Gruppera efter koppling"
     }
   ],
   "U3iWVd": [
@@ -3261,6 +3277,12 @@
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3432,7 +3454,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Sökresultat för: "
     },
     {
       "type": 1,
@@ -4090,7 +4112,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Bläddra bland åtgärder"
     }
   ],
   "oRvVIW": [
@@ -4500,7 +4522,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Gå tillbaka till sökningen"
     }
   ],
   "tImHz/": [

@@ -1855,6 +1855,16 @@
       "value": "İsteğe bağlı. Bu kapsamdaki en üst düzey eylemlerden giriş ve çıkışları istediğiniz kapsamlı eylemin adı."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1979,6 +1989,12 @@
     {
       "type": 0,
       "value": "Bağlantı Adı"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3235,6 +3251,12 @@
     {
       "type": 0,
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [

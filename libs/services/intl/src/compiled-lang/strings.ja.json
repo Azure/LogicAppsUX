@@ -1811,6 +1811,16 @@
       "value": "省略可能。スコープ アクションの名前です。トップレベルのアクションからの入力と出力がこのスコープに含まれます。"
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1935,6 +1945,12 @@
     {
       "type": 0,
       "value": "接続名"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3180,6 +3196,12 @@
     {
       "type": 0,
       "value": "必須。値を求める対象の変数の名前。"
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [

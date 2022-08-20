@@ -1855,6 +1855,16 @@
       "value": "Opcional. O nome da ação com escopo em cujo escopo você deseja que estejam as entradas e saídas das ações de nível superior."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1979,6 +1989,12 @@
     {
       "type": 0,
       "value": "Nome da Conexão"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -3239,6 +3255,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O nome da variável cujo valor você deseja."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [
