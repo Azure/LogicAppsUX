@@ -451,7 +451,7 @@
   "2wJZkB": [
     {
       "type": 0,
-      "value": "Empty add dynamic content button"
+      "value": "空の [動的コンテンツの追加] ボタン"
     }
   ],
   "2xhbE1": [
@@ -487,7 +487,7 @@
   "3O0i4j": [
     {
       "type": 0,
-      "value": "There is no content available"
+      "value": "使用可能なコンテンツがありません"
     }
   ],
   "3PgHCT": [
@@ -1044,7 +1044,7 @@
   "B59BCg": [
     {
       "type": 0,
-      "value": "No dynamic content available"
+      "value": "使用可能な動的なコンテンツがありません"
     }
   ],
   "BAgRzO": [
@@ -1485,7 +1485,7 @@
   "IQyOth": [
     {
       "type": 0,
-      "value": "If available, dynamic content is automatically generated from the connectors and actions you choose for your flow."
+      "value": "使用可能な場合は、フローに対して選択したコネクタとアクションから動的コンテンツが自動的に生成されます。"
     }
   ],
   "IUE/lQ": [
@@ -2833,7 +2833,7 @@
   "ZkjTbp": [
     {
       "type": 0,
-      "value": "Learn more about dynamic content."
+      "value": "動的コンテンツの詳細情報。"
     }
   ],
   "ZnGRMP": [
@@ -3005,7 +3005,7 @@
   "c8UPLp": [
     {
       "type": 0,
-      "value": "Dynamic content may also be added from other sources."
+      "value": "動的コンテンツは、他のソースからも追加できます。"
     }
   ],
   "cCYmTK": [
@@ -4697,7 +4697,7 @@
   "wGYmui": [
     {
       "type": 0,
-      "value": "Including dynamic content"
+      "value": "動的なコンテンツを含む"
     }
   ],
   "wHYQyg": [

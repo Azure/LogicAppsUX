@@ -451,7 +451,7 @@
   "2wJZkB": [
     {
       "type": 0,
-      "value": "Empty add dynamic content button"
+      "value": "빈 동적 콘텐츠 추가 단추"
     }
   ],
   "2xhbE1": [
@@ -487,7 +487,7 @@
   "3O0i4j": [
     {
       "type": 0,
-      "value": "There is no content available"
+      "value": "사용할 수 있는 콘텐츠가 없음"
     }
   ],
   "3PgHCT": [
@@ -1044,7 +1044,7 @@
   "B59BCg": [
     {
       "type": 0,
-      "value": "No dynamic content available"
+      "value": "사용할 수 있는 동적 콘텐츠가 없음"
     }
   ],
   "BAgRzO": [
@@ -1485,7 +1485,7 @@
   "IQyOth": [
     {
       "type": 0,
-      "value": "If available, dynamic content is automatically generated from the connectors and actions you choose for your flow."
+      "value": "사용 가능한 경우 동적 콘텐츠는 흐름에 대해 선택한 커넥터 및 작업에서 자동으로 생성됩니다."
     }
   ],
   "IUE/lQ": [
@@ -2833,7 +2833,7 @@
   "ZkjTbp": [
     {
       "type": 0,
-      "value": "Learn more about dynamic content."
+      "value": "동적 콘텐츠에 대해 자세히 알아보세요."
     }
   ],
   "ZnGRMP": [
@@ -3005,7 +3005,7 @@
   "c8UPLp": [
     {
       "type": 0,
-      "value": "Dynamic content may also be added from other sources."
+      "value": "동적 콘텐츠는 다른 원본에서도 추가할 수 있습니다."
     }
   ],
   "cCYmTK": [
@@ -4697,7 +4697,7 @@
   "wGYmui": [
     {
       "type": 0,
-      "value": "Including dynamic content"
+      "value": "동적 콘텐츠 포함"
     }
   ],
   "wHYQyg": [

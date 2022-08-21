@@ -455,7 +455,7 @@
   "2wJZkB": [
     {
       "type": 0,
-      "value": "Empty add dynamic content button"
+      "value": "“添加动态内容”按钮为空"
     }
   ],
   "2xhbE1": [
@@ -491,7 +491,7 @@
   "3O0i4j": [
     {
       "type": 0,
-      "value": "There is no content available"
+      "value": "没有可用的内容"
     }
   ],
   "3PgHCT": [
@@ -1048,7 +1048,7 @@
   "B59BCg": [
     {
       "type": 0,
-      "value": "No dynamic content available"
+      "value": "没有可用的动态内容"
     }
   ],
   "BAgRzO": [
@@ -1489,7 +1489,7 @@
   "IQyOth": [
     {
       "type": 0,
-      "value": "If available, dynamic content is automatically generated from the connectors and actions you choose for your flow."
+      "value": "如果可用，将从你为流选择的连接器和操作中自动生成动态内容。"
     }
   ],
   "IUE/lQ": [
@@ -2841,7 +2841,7 @@
   "ZkjTbp": [
     {
       "type": 0,
-      "value": "Learn more about dynamic content."
+      "value": "详细了解动态内容。"
     }
   ],
   "ZnGRMP": [
@@ -3017,7 +3017,7 @@
   "c8UPLp": [
     {
       "type": 0,
-      "value": "Dynamic content may also be added from other sources."
+      "value": "也可以从其他源添加动态内容。"
     }
   ],
   "cCYmTK": [
@@ -4745,7 +4745,7 @@
   "wGYmui": [
     {
       "type": 0,
-      "value": "Including dynamic content"
+      "value": "包括动态内容"
     }
   ],
   "wHYQyg": [
