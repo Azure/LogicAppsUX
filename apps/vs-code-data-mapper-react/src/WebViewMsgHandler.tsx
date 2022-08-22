@@ -29,7 +29,7 @@ export const WebViewMsgHandler: React.FC = ({ children }) => {
         // TODO
         break;
       default:
-        console.log(msg); // TESTING
+        console.error(`Unexpected message received: ${msg}`);
     }
   });
 

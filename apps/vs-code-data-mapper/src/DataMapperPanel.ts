@@ -3,11 +3,6 @@ import { join } from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 import type { WebviewPanel, Disposable, ExtensionContext } from 'vscode';
 
-// TODO: compiler errors if using this
-//import type { Schema, DataMap } from '@microsoft/logic-apps-data-mapper';
-
-// NOTE: Same as WebViewMsgHandler in ""-react src - TODO: find way to tie in together
-// TODO: should be Schema and DataMap for data's type respectively
 type SendingMessageTypes = { command: 'loadInputSchema' | 'loadOutputSchema'; data: any } | { command: 'loadDataMap'; data: any };
 type ReceivingMessageTypes = { command: 'readSelectedSchemaFile'; data: { path: string; type: 'input' | 'output' } };
 
@@ -46,9 +41,10 @@ export default class DataMapperPanel {
 
   private constructor(panel: WebviewPanel, extPath: string) {
     this._panel = panel;
-    DataMapperPanel.contextSubscriptionsRef.push(panel);
+    this._extensionPath = extPath;
+    DataMapperPanel.contextSubscriptionsRef?.push(panel);
 
-    this._setWebviewHtml(extPath);
+    this._setWebviewHtml();
 
     // Handle messages from the webview (Data Mapper component)
     this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperPanel.contextSubscriptionsRef);
@@ -62,20 +58,20 @@ export default class DataMapperPanel {
     );
   }
 
-  private async _setWebviewHtml(extensionPath: string) {
+  private async _setWebviewHtml() {
     // Get webview content, converting links to VS Code URIs
-    const indexPath = join(extensionPath, 'webview/index.html');
+    const indexPath = join(this._extensionPath, 'webview/index.html');
     const html = await fs.readFile(indexPath, 'utf-8');
     // 1. Get all links prefixed by href or src
     const matchLinks = /(href|src)="([^"]*)"/g;
     // 2. Transform the result of the regex into a vscode's URI format
-    const toUri = (_, prefix: 'href' | 'src', link: string) => {
+    const toUri = (_: unknown, prefix: 'href' | 'src', link: string) => {
       // For HTML elements
       if (link === '#') {
         return `${prefix}="${link}"`;
       }
       // For scripts & links
-      const path = join(extensionPath, 'webview', link);
+      const path = join(this._extensionPath, 'webview', link);
       const uri = Uri.file(path);
       return `${prefix}="${this._panel.webview.asWebviewUri(uri)}"`;
     };
@@ -88,9 +84,9 @@ export default class DataMapperPanel {
       case 'readSelectedSchemaFile':
         fs.readFile(msg.data.path, 'utf-8').then((text: string) => {
           if (msg.data.type === 'input') {
-            DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadInputSchema', data: JSON.parse(text) });
+            DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadInputSchema', data: JSON.parse(text) });
           } else {
-            DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadOutputSchema', data: JSON.parse(text) });
+            DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadOutputSchema', data: JSON.parse(text) });
           }
         });
         break;
