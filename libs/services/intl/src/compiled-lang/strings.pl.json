@@ -500,7 +500,7 @@
   "2wJZkB": [
     {
       "type": 0,
-      "value": "Empty add dynamic content button"
+      "value": "Pusty przycisk Dodaj zawartość dynamiczną"
     }
   ],
   "2xhbE1": [
@@ -1608,7 +1608,7 @@
   "IQyOth": [
     {
       "type": 0,
-      "value": "If available, dynamic content is automatically generated from the connectors and actions you choose for your flow."
+      "value": "Jeśli jest dostępna, zawartość dynamiczna jest generowana automatycznie na podstawie łączników i akcji wybranych dla przepływu."
     }
   ],
   "IUE/lQ": [
@@ -1978,11 +1978,11 @@
   "M9Zj10": [
     {
       "type": 0,
-      "value": "No results found for: "
+      "value": "Nie znaleziono wyników dla: "
     },
     {
       "type": 1,
-      "value": "searchTerm"
+      "value": "searchText"
     }
   ],
   "M9mzP6": [
@@ -2114,7 +2114,7 @@
   "ORVfYZ": [
     {
       "type": 0,
-      "value": "Loading operations..."
+      "value": "Trwa ładowanie operacji..."
     }
   ],
   "OSHNZ2": [
@@ -3202,7 +3202,7 @@
   "c8UPLp": [
     {
       "type": 0,
-      "value": "Dynamic content may also be added from other sources."
+      "value": "Zawartość dynamiczną można również dodać z innych źródeł."
     }
   ],
   "cCYmTK": [
@@ -3402,7 +3402,7 @@
   "eRvGw3": [
     {
       "type": 0,
-      "value": "Loading connectors..."
+      "value": "Trwa ładowanie łączników..."
     }
   ],
   "eRvRWs": [

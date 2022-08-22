@@ -462,7 +462,7 @@
   "2wJZkB": [
     {
       "type": 0,
-      "value": "Empty add dynamic content button"
+      "value": "Leere Schaltfläche „Dynamischen Inhalt hinzufügen“"
     }
   ],
   "2xhbE1": [
@@ -1526,7 +1526,7 @@
   "IQyOth": [
     {
       "type": 0,
-      "value": "If available, dynamic content is automatically generated from the connectors and actions you choose for your flow."
+      "value": "Falls verfügbar, werden dynamische Inhalte automatisch von den Connectors und Aktionen generiert, die Sie für Ihren Flow auswählen."
     }
   ],
   "IUE/lQ": [
@@ -3084,7 +3084,7 @@
   "c8UPLp": [
     {
       "type": 0,
-      "value": "Dynamic content may also be added from other sources."
+      "value": "Dynamische Inhalte können auch aus anderen Quellen hinzugefügt werden."
     }
   ],
   "cCYmTK": [

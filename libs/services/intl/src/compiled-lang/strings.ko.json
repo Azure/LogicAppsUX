@@ -1813,12 +1813,12 @@
   ],
   "M9Zj10": [
     {
-      "type": 0,
-      "value": "No results found for: "
-    },
-    {
       "type": 1,
       "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": "에 대해 찾은 결과가 없음"
     }
   ],
   "M9mzP6": [
@@ -1950,7 +1950,7 @@
   "ORVfYZ": [
     {
       "type": 0,
-      "value": "Loading operations..."
+      "value": "작업을 로드하는 중..."
     }
   ],
   "OSHNZ2": [
@@ -3201,7 +3201,7 @@
   "eRvGw3": [
     {
       "type": 0,
-      "value": "Loading connectors..."
+      "value": "커넥터 로드 중..."
     }
   ],
   "eRvRWs": [

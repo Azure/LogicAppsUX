@@ -1814,7 +1814,7 @@
   "M9Zj10": [
     {
       "type": 0,
-      "value": "No results found for: "
+      "value": "結果が見つかりませんでした: "
     },
     {
       "type": 1,
@@ -1950,7 +1950,7 @@
   "ORVfYZ": [
     {
       "type": 0,
-      "value": "Loading operations..."
+      "value": "操作を読み込んでいます..."
     }
   ],
   "OSHNZ2": [
@@ -3201,7 +3201,7 @@
   "eRvGw3": [
     {
       "type": 0,
-      "value": "Loading connectors..."
+      "value": "コネクタを読み込んでいます..."
     }
   ],
   "eRvRWs": [

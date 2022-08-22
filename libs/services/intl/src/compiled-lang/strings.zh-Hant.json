@@ -1814,7 +1814,7 @@
   "M9Zj10": [
     {
       "type": 0,
-      "value": "No results found for: "
+      "value": "找不到結果: "
     },
     {
       "type": 1,
@@ -1950,7 +1950,7 @@
   "ORVfYZ": [
     {
       "type": 0,
-      "value": "Loading operations..."
+      "value": "正在載入作業..."
     }
   ],
   "OSHNZ2": [
@@ -3209,7 +3209,7 @@
   "eRvGw3": [
     {
       "type": 0,
-      "value": "Loading connectors..."
+      "value": "正在載入連接器..."
     }
   ],
   "eRvRWs": [
