@@ -48,6 +48,7 @@ export const dataMapSlice = createSlice({
       const currentState = state.curDataMapOperation;
       if (currentState.inputSchema && currentState.outputSchema) {
         const newInitialState: DataMapOperationState = {
+          ...currentState,
           dataMap: {
             srcSchemaName: currentState.inputSchema.name,
             dstSchemaName: currentState.outputSchema.name,
