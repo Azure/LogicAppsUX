@@ -1858,7 +1858,7 @@
   "M9Zj10": [
     {
       "type": 0,
-      "value": "No results found for: "
+      "value": "Non è stato trovato alcun risultato per "
     },
     {
       "type": 1,
@@ -1994,7 +1994,7 @@
   "ORVfYZ": [
     {
       "type": 0,
-      "value": "Loading operations..."
+      "value": "Caricamento delle operazioni in corso.."
     }
   ],
   "OSHNZ2": [
@@ -3268,7 +3268,7 @@
   "eRvGw3": [
     {
       "type": 0,
-      "value": "Loading connectors..."
+      "value": "Caricamento dei connettori in corso..."
     }
   ],
   "eRvRWs": [

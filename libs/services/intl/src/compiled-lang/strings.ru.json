@@ -1962,7 +1962,7 @@
   "M9Zj10": [
     {
       "type": 0,
-      "value": "No results found for: "
+      "value": "Не найдены результаты по запросу "
     },
     {
       "type": 1,
@@ -2098,7 +2098,7 @@
   "ORVfYZ": [
     {
       "type": 0,
-      "value": "Loading operations..."
+      "value": "Загрузка операций..."
     }
   ],
   "OSHNZ2": [
@@ -3386,7 +3386,7 @@
   "eRvGw3": [
     {
       "type": 0,
-      "value": "Loading connectors..."
+      "value": "Загрузка соединителей..."
     }
   ],
   "eRvRWs": [
