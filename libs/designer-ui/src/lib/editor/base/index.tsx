@@ -1,3 +1,4 @@
+import { Toolbar } from '../../html/plugins/toolbar';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
@@ -63,6 +64,7 @@ export interface BasePlugins {
   history?: boolean;
   tokens?: boolean;
   treeView?: boolean;
+  toolBar?: boolean;
   validation?: ValidationProps;
 }
 
@@ -108,7 +110,7 @@ export const BaseEditor = ({
       }),
   };
 
-  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, validation } = BasePlugins;
+  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, validation, toolBar } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
     defaultMessage: 'Editor Input',
@@ -145,6 +147,7 @@ export const BaseEditor = ({
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className={className ?? 'msla-editor-container'} id={editorId}>
+        {toolBar ? <Toolbar /> : null}
         <RichTextPlugin
           contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
           placeholder={<span className="editor-placeholder"> {placeholder} </span>}

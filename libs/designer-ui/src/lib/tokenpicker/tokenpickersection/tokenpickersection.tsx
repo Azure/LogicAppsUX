@@ -33,8 +33,6 @@ export const TokenPickerSection = ({
   const [tokenLength, setTokenLength] = useState(new Array<number>(tokenGroup.length));
   const [noItems, setNoItems] = useState(false);
 
-  console.log(tokenGroup);
-
   useEffect(() => {
     setNoItems(tokenLength.reduce((sum, a) => sum + a, 0) === 0);
   }, [searchQuery, tokenLength]);
