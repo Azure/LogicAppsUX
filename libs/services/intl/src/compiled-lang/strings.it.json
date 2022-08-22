@@ -348,7 +348,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Altre informazioni"
     }
   ],
   "1ejxkP": [
@@ -459,6 +459,12 @@
       "value": "Sì"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Pulsante Aggiungi contenuto dinamico vuoto"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Separatore."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Non è disponibile alcun contenuto"
     }
   ],
   "3PgHCT": [
@@ -1051,6 +1063,12 @@
       "value": "Obbligatorio. Indice della parte da recuperare."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Non è disponibile alcun contenuto dinamico"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1497,6 +1515,12 @@
       "value": "(UTC+12:00) Figi"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Se disponibile, il contenuto dinamico viene generato automaticamente dai connettori e dalle azioni scelti per il flusso."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1518,7 +1542,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Tornare all'esplorazione"
     }
   ],
   "IngtMG": [
@@ -1774,7 +1798,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Vedi altro"
     }
   ],
   "LoGUT3": [
@@ -1829,6 +1853,16 @@
     {
       "type": 0,
       "value": "Facoltativo. Nome dell'azione con ambito che dovrà contenere gli input e gli output delle azioni di primo livello all'interno di tale ambito."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Non è stato trovato alcun risultato per "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1955,6 +1989,12 @@
     {
       "type": 0,
       "value": "Nome connessione"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Caricamento delle operazioni in corso.."
     }
   ],
   "OSHNZ2": [
@@ -2438,7 +2478,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Raggruppa per connettore"
     }
   ],
   "U3iWVd": [
@@ -2853,6 +2893,12 @@
       "value": "Questa operazione è già stata eliminata."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Altre informazioni sul contenuto dinamico."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3019,6 +3065,12 @@
       "value": "pannello"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "È possibile aggiungere contenuto dinamico anche da altre origini."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3034,7 +3086,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Visualizza documentazione"
     }
   ],
   "cT2MlP": [
@@ -3213,6 +3265,12 @@
       "value": "Obbligatorio. Nome della variabile di cui si desidera ottenere il valore."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Caricamento dei connettori in corso..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3228,7 +3286,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Predefinito"
     }
   ],
   "egLI8P": [
@@ -3384,7 +3442,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Risultati della ricerca per: "
     },
     {
       "type": 1,
@@ -4026,7 +4084,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Esplorare le operazioni"
     }
   ],
   "oRvVIW": [
@@ -4436,7 +4494,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Tornare alla ricerca"
     }
   ],
   "tImHz/": [
@@ -4727,6 +4785,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Matrice di valori in cui trovare il valore minimo o il primo valore di un set."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Inclusione di contenuto dinamico"
     }
   ],
   "wHYQyg": [

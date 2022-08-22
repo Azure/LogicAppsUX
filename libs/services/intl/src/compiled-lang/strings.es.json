@@ -348,7 +348,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Obtener más información"
     }
   ],
   "1ejxkP": [
@@ -459,6 +459,12 @@
       "value": "Activado"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Botón Agregar contenido dinámico vacío"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Obligatorio. El separador."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "No hay contenido disponible."
     }
   ],
   "3PgHCT": [
@@ -1051,6 +1063,12 @@
       "value": "Obligatorio. El índice del elemento que se recuperará."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "No hay contenido dinámico disponible."
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1497,6 +1515,12 @@
       "value": "(UTC+12:00) Fiyi"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Si está disponible, el contenido dinámico se genera automáticamente a partir de los conectores y las acciones que elija para el flujo."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1518,7 +1542,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Volver para examinar"
     }
   ],
   "IngtMG": [
@@ -1774,7 +1798,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Ver más"
     }
   ],
   "LoGUT3": [
@@ -1829,6 +1853,16 @@
     {
       "type": 0,
       "value": "Opcional. Nombre de la acción con ámbito donde desea que se muestren las entradas y salidas de las acciones de nivel superior dentro de ese ámbito."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No se encontraron resultados para: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1955,6 +1989,12 @@
     {
       "type": 0,
       "value": "Nombre de conexión"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Cargando operaciones..."
     }
   ],
   "OSHNZ2": [
@@ -2430,7 +2470,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Agrupar por conector"
     }
   ],
   "U3iWVd": [
@@ -2845,6 +2885,12 @@
       "value": "Ya se eliminó la operación."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Más información acerca del contenido dinámico"
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3011,6 +3057,12 @@
       "value": "panel"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "También se puede agregar contenido dinámico desde otros orígenes."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3026,7 +3078,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Ver documentación"
     }
   ],
   "cT2MlP": [
@@ -3205,6 +3257,12 @@
       "value": "Obligatorio. El nombre de la variable de la que quiere el valor."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Cargando conectores..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3220,7 +3278,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Integrado"
     }
   ],
   "egLI8P": [
@@ -3376,7 +3434,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Resultados de la búsqueda para: "
     },
     {
       "type": 1,
@@ -4034,7 +4092,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Operaciones de exploración"
     }
   ],
   "oRvVIW": [
@@ -4444,7 +4502,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Volver a la búsqueda"
     }
   ],
   "tImHz/": [
@@ -4735,6 +4793,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Una matriz de valores de la que encontrar el valor mínimo o el primer valor de un conjunto."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Incluyendo contenido dinámico"
     }
   ],
   "wHYQyg": [

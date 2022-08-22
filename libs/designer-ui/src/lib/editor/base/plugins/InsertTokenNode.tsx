@@ -23,7 +23,6 @@ export default function InsertTokenNode(): null {
           const tokenNode = $createTokenNode(payload);
           selection.insertNodes([tokenNode]);
         }
-
         return true;
       },
       COMMAND_PRIORITY_EDITOR

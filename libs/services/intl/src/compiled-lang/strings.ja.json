@@ -337,7 +337,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "詳細情報"
     }
   ],
   "1ejxkP": [
@@ -448,6 +448,12 @@
       "value": "オン"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "空の [動的コンテンツの追加] ボタン"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -476,6 +482,12 @@
     {
       "type": 0,
       "value": "必須。区切り記号。"
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "使用可能なコンテンツがありません"
     }
   ],
   "3PgHCT": [
@@ -1029,6 +1041,12 @@
       "value": "必須。取得するパートのインデックス。"
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "使用可能な動的なコンテンツがありません"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1464,6 +1482,12 @@
       "value": "(UTC+12:00) フィジー"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "使用可能な場合は、フローに対して選択したコネクタとアクションから動的コンテンツが自動的に生成されます。"
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1485,7 +1509,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "参照に戻る"
     }
   ],
   "IngtMG": [
@@ -1730,7 +1754,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "さらに表示"
     }
   ],
   "LoGUT3": [
@@ -1785,6 +1809,16 @@
     {
       "type": 0,
       "value": "省略可能。スコープ アクションの名前です。トップレベルのアクションからの入力と出力がこのスコープに含まれます。"
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "結果が見つかりませんでした: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1911,6 +1945,12 @@
     {
       "type": 0,
       "value": "接続名"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "操作を読み込んでいます..."
     }
   ],
   "OSHNZ2": [
@@ -2375,7 +2415,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "コネクタでグループ化"
     }
   ],
   "U3iWVd": [
@@ -2790,6 +2830,12 @@
       "value": "この操作は既に削除されています。"
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "動的コンテンツの詳細情報。"
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -2956,6 +3002,12 @@
       "value": "パネル"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "動的コンテンツは、他のソースからも追加できます。"
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -2971,7 +3023,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "ドキュメントの表示"
     }
   ],
   "cT2MlP": [
@@ -3146,6 +3198,12 @@
       "value": "必須。値を求める対象の変数の名前。"
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "コネクタを読み込んでいます..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3161,7 +3219,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "組み込み"
     }
   ],
   "egLI8P": [
@@ -3316,12 +3374,12 @@
   ],
   "gabXSS": [
     {
-      "type": 0,
-      "value": "Search results for: "
-    },
-    {
       "type": 1,
       "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": " の検索結果"
     }
   ],
   "gg0j4S": [
@@ -3948,7 +4006,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "操作の参照"
     }
   ],
   "oRvVIW": [
@@ -4347,7 +4405,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "検索に戻る"
     }
   ],
   "tImHz/": [
@@ -4634,6 +4692,12 @@
     {
       "type": 0,
       "value": "必須。最小値を検索する値のアレイ、またはセットの最初の値。"
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "動的なコンテンツを含む"
     }
   ],
   "wHYQyg": [

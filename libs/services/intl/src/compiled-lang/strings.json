@@ -459,6 +459,12 @@
       "value": "On"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Empty add dynamic content button"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Required. The separator."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "There is no content available"
     }
   ],
   "3PgHCT": [
@@ -1045,6 +1057,12 @@
       "value": "Required. The index of the part to retrieve."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "No dynamic content available"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1491,6 +1509,12 @@
       "value": "(UTC+12:00) Fiji"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "If available, dynamic content is automatically generated from the connectors and actions you choose for your flow."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1819,6 +1843,16 @@
       "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1943,6 +1977,12 @@
     {
       "type": 0,
       "value": "Connection Name"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -2843,6 +2883,12 @@
       "value": "This operation has already been deleted."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Learn more about dynamic content."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3001,6 +3047,12 @@
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamic content may also be added from other sources."
     }
   ],
   "cCYmTK": [
@@ -3195,6 +3247,12 @@
     {
       "type": 0,
       "value": "Required. The name of the variable whose value you want."
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [
@@ -4717,6 +4775,12 @@
     {
       "type": 0,
       "value": "Required. Either an array of values to find the minimum value, or the first value of a set."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Including dynamic content"
     }
   ],
   "wHYQyg": [

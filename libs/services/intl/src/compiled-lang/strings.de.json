@@ -348,7 +348,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Weitere Informationen"
     }
   ],
   "1ejxkP": [
@@ -459,6 +459,12 @@
       "value": "Ein"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Leere Schaltfläche „Dynamischen Inhalt hinzufügen“"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Erforderlich. die Trennlinie."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Es ist kein Inhalt verfügbar."
     }
   ],
   "3PgHCT": [
@@ -1051,6 +1063,12 @@
       "value": "Erforderlich. Der Index des abzurufenden Teils."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Kein dynamischer Inhalt verfügbar"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1505,6 +1523,12 @@
       "value": "(UTC+12:00) Fidschi"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Falls verfügbar, werden dynamische Inhalte automatisch von den Connectors und Aktionen generiert, die Sie für Ihren Flow auswählen."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1526,7 +1550,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Zurück zum Browsen"
     }
   ],
   "IngtMG": [
@@ -1790,7 +1814,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Mehr anzeigen"
     }
   ],
   "LoGUT3": [
@@ -1845,6 +1869,16 @@
     {
       "type": 0,
       "value": "(Optional) Der Name der bereichsbezogenen Aktion, in der die Eingaben und Ausgaben der Aktionen der obersten Ebene in diesem Bereich verwendet werden sollen."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1971,6 +2005,12 @@
     {
       "type": 0,
       "value": "Verbindungsname"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -2450,7 +2490,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Nach Connector gruppieren"
     }
   ],
   "U3iWVd": [
@@ -2865,6 +2905,12 @@
       "value": "Dieser Vorgang wurde bereits gelöscht."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Erfahren Sie mehr über dynamische Inhalte."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3035,6 +3081,12 @@
       "value": "Bereich"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamische Inhalte können auch aus anderen Quellen hinzugefügt werden."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3050,7 +3102,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Dokumentation anzeigen"
     }
   ],
   "cT2MlP": [
@@ -3229,6 +3281,12 @@
       "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3244,7 +3302,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Integriert"
     }
   ],
   "egLI8P": [
@@ -3400,7 +3458,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Suchergebnisse für: "
     },
     {
       "type": 1,
@@ -4058,7 +4116,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Browsenvorgänge"
     }
   ],
   "oRvVIW": [
@@ -4468,7 +4526,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Zurück zur Suche"
     }
   ],
   "tImHz/": [
@@ -4759,6 +4817,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Entweder ein Array von Werten zum Auffinden des niedrigsten Werts oder der erste Wert aus einem Satz."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Einschließlich dynamischer Inhalte"
     }
   ],
   "wHYQyg": [

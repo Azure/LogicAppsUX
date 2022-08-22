@@ -348,7 +348,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "További információ"
     }
   ],
   "1ejxkP": [
@@ -459,6 +459,12 @@
       "value": "Bekapcsolva"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Üres dinamikus tartalom hozzáadása gomb"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Az elválasztó. Kötelező megadni."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Nincs elérhető tartalom"
     }
   ],
   "3PgHCT": [
@@ -1051,6 +1063,12 @@
       "value": "Kötelező megadni. A beolvasandó rész indexe."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Nincs elérhető dinamikus tartalom"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1505,6 +1523,12 @@
       "value": "(UTC+12:00) Fidzsi"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Ha elérhető, a rendszer automatikusan létrehozza a dinamikus tartalmat a folyamathoz kijelölt összekötőkből és műveletekből."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1526,7 +1550,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Visszatérés a tallózáshoz"
     }
   ],
   "IngtMG": [
@@ -1790,7 +1814,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Továbbiak megjelenítése"
     }
   ],
   "LoGUT3": [
@@ -1845,6 +1869,16 @@
     {
       "type": 0,
       "value": "Nem kötelező. Annak a hatóköri műveletnek a neve, ahol az adott hatókör legfelső szintű műveleteinek bemeneteit és kimeneteit szeretné használni."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1971,6 +2005,12 @@
     {
       "type": 0,
       "value": "Kapcsolat neve"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -2450,7 +2490,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Csoportosítás összekötő szerint"
     }
   ],
   "U3iWVd": [
@@ -2865,6 +2905,12 @@
       "value": "Ezt a műveletet már törölték."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "További információ a dinamikus tartalmakról."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3035,6 +3081,12 @@
       "value": "panel"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Más forrásokból is hozzáadható dinamikus tartalom."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3050,7 +3102,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Dokumentáció megtekintése"
     }
   ],
   "cT2MlP": [
@@ -3229,6 +3281,12 @@
       "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3244,7 +3302,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Beépített"
     }
   ],
   "egLI8P": [
@@ -3400,7 +3458,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Keresési eredmények a következőhöz: "
     },
     {
       "type": 1,
@@ -4062,7 +4120,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Műveletek tallózása"
     }
   ],
   "oRvVIW": [
@@ -4472,7 +4530,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Vissza a kereséshez"
     }
   ],
   "tImHz/": [
@@ -4763,6 +4821,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Egy értéktömb, melyben meg kell keresni a minimális értéket, vagy pedig egy halmaz első értéke."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Dinamikus tartalom felvétele"
     }
   ],
   "wHYQyg": [

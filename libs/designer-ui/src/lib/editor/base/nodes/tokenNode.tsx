@@ -1,4 +1,5 @@
 import { InputToken } from '../../../token/inputToken';
+import type { updateTokenProps } from '../../../tokenpicker/plugins/UpdateTokenNode';
 import type { ValueSegment } from '../../models/parameter';
 import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
@@ -66,6 +67,13 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
 
   convertToSegment(): ValueSegment {
     return this.__data;
+  }
+
+  updateContent(props: updateTokenProps, data: ValueSegment): void {
+    const writable = this.getWritable();
+    writable.__description = props.updatedDescription;
+    writable.__title = props.updatedTitle;
+    writable.__data = data;
   }
 
   constructor(icon: string, title: string, data: ValueSegment, description?: string, brandColor?: string, key?: string) {
