@@ -1,6 +1,6 @@
-import type { SchemaNodeExtended } from './models/Schema';
-import { SchemaTypes } from './models/Schema';
-import type { Node as ReactFlowNode } from 'react-flow-renderer';
+import type { SchemaNodeExtended } from '../models/Schema';
+import { SchemaTypes } from '../models/Schema';
+import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import { Position } from 'react-flow-renderer';
 
 const inputX = 100;
@@ -81,4 +81,16 @@ export const convertToReactFlowParentAndChildNodes = (
   });
 
   return reactFlowNodes;
+};
+
+export const convertToReactFlowEdges = (connections: { [key: string]: string }): ReactFlowEdge[] => {
+  return Object.keys(connections).map((connectionKey) => {
+    const connection = connections[connectionKey];
+    return {
+      id: `${connection}-to-${connectionKey}`,
+      source: connection,
+      target: connectionKey,
+      type: 'smoothstep',
+    };
+  });
 };

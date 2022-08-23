@@ -1,8 +1,8 @@
-import { convertToReactFlowParentAndChildNodes } from '../../ReactFlow.Util';
 import { openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
 import { SchemaTypes } from '../../models/';
+import { convertToReactFlowParentAndChildNodes } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
 import { useMemo } from 'react';

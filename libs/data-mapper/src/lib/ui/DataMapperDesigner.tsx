@@ -1,5 +1,4 @@
 import { checkerboardBackgroundImage } from '../Constants';
-import { convertToReactFlowNodes } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
@@ -14,6 +13,7 @@ import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import {
+  makeConnection,
   redoDataMapOperation,
   saveDataMap,
   setCurrentOutputNode,
@@ -26,7 +26,9 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema, SchemaNodeExtended } from '../models';
-import { convertSchemaToSchemaExtended, SchemaTypes } from '../models';
+import { SchemaTypes } from '../models';
+import { convertToReactFlowEdges, convertToReactFlowNodes } from '../utils/ReactFlow.Util';
+import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -46,7 +48,7 @@ import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
+import type { Connection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -71,6 +73,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
     dispatch(toggleInputNode(selectedNode));
+  };
+
+  const onConnect = (connection: Connection) => {
+    if (connection.target && connection.source) {
+      dispatch(makeConnection({ outputNodeKey: connection.target, value: connection.source }));
+    }
   };
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
@@ -232,6 +240,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        onConnect={onConnect}
         onNodeDoubleClick={onNodeDoubleClick}
         defaultZoom={2}
         nodesDraggable={false}
@@ -316,9 +325,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 };
 
 export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
-  const reactFlowEdges: ReactFlowEdge[] = [];
   const inputSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const outputSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const reactFlowNodes = useMemo(() => {
     if (outputSchemaNode) {
@@ -327,6 +336,10 @@ export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
       return [];
     }
   }, [inputSchemaNodes, outputSchemaNode]);
+
+  const reactFlowEdges = useMemo(() => {
+    return convertToReactFlowEdges(connections);
+  }, [connections]);
 
   return [reactFlowNodes, reactFlowEdges];
 };

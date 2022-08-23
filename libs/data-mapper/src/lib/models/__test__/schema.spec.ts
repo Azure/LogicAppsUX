@@ -1,5 +1,5 @@
+import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { Schema } from '../Schema';
-import { convertSchemaToSchemaExtended } from '../Schema';
 import { noChildrenMockSchema, simpleMockSchema } from '../__mocks__';
 
 describe('models/Schema', () => {

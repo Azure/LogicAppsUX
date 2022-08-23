@@ -7,5 +7,5 @@ ns0:CustomerOrders:
     $@OrderNumber: /ns0:Orders/WebOrders/OrderNumber
     $@OrderValue: /ns0:Orders/WebOrders/OrderValue
     ShippingAddress:
-      Line1: concat(/ns0:Orders/WebOrders/CustomerName , ‘ ’, /ns0:Orders/WebOrders/Address/Addr1)
+      Line1: concat(/ns0:Orders/WebOrders/CustomerName , ' ', /ns0:Orders/WebOrders/Address/Addr1)
       Line2: /ns0:Orders/WebOrders/Address/Addr2`;
