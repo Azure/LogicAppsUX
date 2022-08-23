@@ -618,9 +618,7 @@ exports[`lib/overview renders 1`] = `
                             <span
                               className="ms-DetailsHeader-cellName cellName-187"
                               id="header26-contextMenu-name"
-                            >
-                              
-                            </span>
+                            />
                           </span>
                         </span>
                       </div>
@@ -1301,9 +1299,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                             <span
                               className="ms-DetailsHeader-cellName cellName-187"
                               id="header55-contextMenu-name"
-                            >
-                              
-                            </span>
+                            />
                           </span>
                         </span>
                       </div>
@@ -2015,9 +2011,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                             <span
                               className="ms-DetailsHeader-cellName cellName-187"
                               id="header115-contextMenu-name"
-                            >
-                              
-                            </span>
+                            />
                           </span>
                         </span>
                       </div>
@@ -2489,7 +2483,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                   aria-busy={true}
                   aria-colcount={5}
                   aria-readonly="true"
-                  aria-rowcount={-1}
+                  aria-rowcount={0}
                   role="grid"
                 >
                   <div
@@ -2711,9 +2705,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                             <span
                               className="ms-DetailsHeader-cellName cellName-187"
                               id="header144-contextMenu-name"
-                            >
-                              
-                            </span>
+                            />
                           </span>
                         </span>
                       </div>
@@ -5472,9 +5464,7 @@ exports[`lib/overview renders an error message 1`] = `
                             <span
                               className="ms-DetailsHeader-cellName cellName-187"
                               id="header85-contextMenu-name"
-                            >
-                              
-                            </span>
+                            />
                           </span>
                         </span>
                       </div>

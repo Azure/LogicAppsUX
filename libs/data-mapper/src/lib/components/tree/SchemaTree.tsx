@@ -60,6 +60,7 @@ const convertToFastTreeItem = (
 export interface SchemaNodeTreeItemContentProps {
   nodeType: SchemaNodeDataType;
   filled: boolean;
+  children?: React.ReactNode;
 }
 
 const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, filled, children }) => {
