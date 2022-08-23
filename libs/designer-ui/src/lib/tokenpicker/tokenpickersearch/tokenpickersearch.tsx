@@ -110,6 +110,7 @@ export const TokenPickerSearch = ({
         description: token.description ?? token.key,
         title: token.title,
         icon: token.icon ?? FxIcon,
+        value: token.value,
         data: {
           id: guid(),
           type: ValueSegmentType.TOKEN,
