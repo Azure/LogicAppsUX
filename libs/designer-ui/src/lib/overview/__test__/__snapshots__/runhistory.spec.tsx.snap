@@ -241,9 +241,7 @@ exports[`lib/overview/runhistory renders 1`] = `
                 <span
                   className="ms-DetailsHeader-cellName cellName-136"
                   id="header1-contextMenu-name"
-                >
-                  
-                </span>
+                />
               </span>
             </span>
           </div>
@@ -319,7 +317,7 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
       aria-busy={true}
       aria-colcount={5}
       aria-readonly="true"
-      aria-rowcount={-1}
+      aria-rowcount={0}
       role="grid"
     >
       <div
@@ -541,9 +539,7 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
                 <span
                   className="ms-DetailsHeader-cellName cellName-136"
                   id="header5-contextMenu-name"
-                >
-                  
-                </span>
+                />
               </span>
             </span>
           </div>
@@ -2919,9 +2915,7 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                 <span
                   className="ms-DetailsHeader-cellName cellName-136"
                   id="header9-contextMenu-name"
-                >
-                  
-                </span>
+                />
               </span>
             </span>
           </div>
