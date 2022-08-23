@@ -39,6 +39,7 @@ export interface IConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<Connection>;
+  createAndAuthorizeOAuthConnection(connectionId: string, connectorId: string): Promise<Connection>;
 }
 
 let service: IConnectionService;

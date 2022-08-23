@@ -11,6 +11,12 @@
       "value": "(UTC+08:00) Kuala Lumpur, Singapore"
     }
   ],
+  "+ZeXhA": [
+    {
+      "type": 0,
+      "value": "Failed with error: {errorMessage}. Please sign in again."
+    }
+  ],
   "+dlOgj": [
     {
       "type": 0,
@@ -481,6 +487,12 @@
     {
       "type": 0,
       "value": "Add dynamic content"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Terms of Service"
     }
   ],
   "3FoqCK": [
@@ -1201,6 +1213,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Signing in..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1235,6 +1253,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Sign in to create a connection to "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "Eqgm4v": [
@@ -3943,6 +3975,12 @@
       "value": "Required. The string to convert to lower casing. If a character in the string does not have a lowercase equivalent, the character is included unchanged in the returned string."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Sign in to connector"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4907,6 +4945,12 @@
     {
       "type": 0,
       "value": "Value"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Sign in"
     }
   ],
   "y3AZQB": [

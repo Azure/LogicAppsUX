@@ -7,7 +7,15 @@ import type { RootState } from '../../store';
 import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { ConnectionParameter, Connector, OperationManifest } from '@microsoft-logic-apps/utils';
-import { ConnectionParameterTypes, hasProperty, equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
+import {
+  getConnectorName,
+  isManagedConnector,
+  isSharedManagedConnector,
+  ConnectionParameterTypes,
+  hasProperty,
+  equals,
+  ConnectionReferenceKeyFormat,
+} from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
@@ -125,8 +133,21 @@ export function needsConnection(connector: Connector | undefined): boolean {
   );
 }
 
-export function needsAuth(connector: Connector): boolean {
+export function needsAuth(connector?: Connector): boolean {
+  if (!connector) return false;
   return getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]).length > 0;
+}
+
+export function isFirstPartyConnector(connector: Connector): boolean {
+  const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]);
+
+  return (
+    !!oauthParameters &&
+    oauthParameters.length > 0 &&
+    !!oauthParameters[0].oAuthSettings &&
+    !!oauthParameters[0].oAuthSettings.properties &&
+    equals(oauthParameters[0].oAuthSettings.properties.IsFirstParty, 'true')
+  );
 }
 
 export function getConnectionParametersWithType(connector: Connector, connectionParameterType: string): ConnectionParameter[] {
@@ -226,6 +247,31 @@ export function needsConfigConnection(connector: Connector): boolean {
       });
   }
 
+  return false;
+}
+
+export const SupportedServiceNames: Record<string, string> = {
+  AS2: 'as2',
+  AZUREBLOB: 'azureblob',
+  AZURECOMMUNICATIONSERVICESSMS: 'azurecommunicationservicessms',
+  AZUREFILE: 'azurefile',
+  AZUREQUEUES: 'azurequeues',
+  AZURETABLES: 'azuretables',
+  DOCUMENTDB: 'documentdb',
+  EDIFACT: 'edifact',
+  EVENTHUBS: 'eventhubs',
+  IOTHUB: 'iothub',
+  SERVICEBUS: 'servicebus',
+  SQL: 'sql',
+  X12: 'x12',
+  XSLTRANSFORM: 'xsltransform',
+};
+
+export function isAssistedConnection(connector: Connector): boolean {
+  if (isSharedManagedConnector(connector.id) || isManagedConnector(connector.id)) {
+    const connectorName = getConnectorName(connector.id);
+    return Object.keys(SupportedServiceNames).some((serviceKey) => equals(connectorName, SupportedServiceNames[serviceKey]));
+  }
   return false;
 }
 

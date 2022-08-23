@@ -7,6 +7,8 @@ export const isBuiltInConnector = (connectorId: string) => {
   return equals(fields[0], 'connectionProviders');
 };
 
+export const getConnectorName = (connectorId: string): string => connectorId?.split('/').at(-1) ?? '';
+
 export const isCustomConnector = (connectorId: string) => {
   // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Web/customApis/{connector}
   const fields = connectorId.split('/');
@@ -21,7 +23,7 @@ export const isCustomConnector = (connectorId: string) => {
   return true;
 };
 
-export const isIsManagedConnector = (connectorId: string) => {
+export const isManagedConnector = (connectorId: string) => {
   // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Logic/integrationServiceEnvironments/{ise}/managedApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 11) return false;

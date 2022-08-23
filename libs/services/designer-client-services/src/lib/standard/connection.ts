@@ -390,6 +390,19 @@ export class StandardConnectionService implements IConnectionService {
     return connection;
   }
 
+  async tryCreateFirstPartyConnection(
+    _nodeId: string,
+    _connectorId: string,
+    _connectionInfo?: ConnectionCreationInfo,
+    _connectionId?: string
+  ): Promise<Connection> {
+    throw new Error('Not implemented yet');
+  }
+
+  async createAndAuthorizeOAuthConnection(_connectionId: string, _connectorId: string): Promise<Connection> {
+    throw new Error('Not implemented yet');
+  }
+
   private getConnectionsConfiguration(
     connectionName: string,
     connectionInfo: ConnectionCreationInfo,
