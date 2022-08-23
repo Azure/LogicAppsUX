@@ -3,7 +3,7 @@ import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedIse, updateSelectedSubscripton } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
-import { SearchableDropdown } from '../components/searchableDropdown';
+import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getDropdownPlaceholder, parseIseData, parseSubscriptionsData } from './helper';
 import { Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';

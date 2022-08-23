@@ -1,5 +1,5 @@
-import type { ConnectorSummaryCardProps } from '../connectorsummarycard';
-import { ConnectorSummaryCard } from '../connectorsummarycard';
+import type { ConnectorSummaryCardProps } from '..';
+import { ConnectorSummaryCard } from '..';
 import { ConnectorsMock } from '@microsoft-logic-apps/utils';
 import ShallowRenderer from 'react-test-renderer/shallow';
 

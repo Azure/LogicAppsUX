@@ -7,9 +7,10 @@ import { changeConnectionMapping } from '../../state/connection/connectionSlice'
 import type { AddNodeOperationPayload } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { IdsForDiscovery } from '../../state/panel/panelInterfaces';
-import { switchToOperationPanel } from '../../state/panel/panelSlice';
+import { switchToOperationPanel, isolateTab } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
+import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode } from '../../state/workflow/workflowSlice';
 import type { RootState } from '../../store';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
@@ -21,49 +22,56 @@ import { OperationManifestService } from '@microsoft-logic-apps/designer-client-
 import type { DiscoveryOperation, DiscoveryResultTypes, OperationInfo } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const addOperation = (
-  operation: DiscoveryOperation<DiscoveryResultTypes> | undefined,
-  discoveryIds: IdsForDiscovery,
-  selectedNode: string,
-  dispatch: Dispatch,
-  rootState: RootState
-) => {
-  if (!operation) return; // Just an optional catch, should never happen
-
-  const addPayload: AddNodePayload = {
-    operation,
-    id: selectedNode,
-    parentId: discoveryIds.parentId ?? '',
-    childId: discoveryIds.childId ?? '',
-    graphId: discoveryIds.graphId,
-  };
-  const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
-  const operationId = operation.id;
-  const operationType = operation.properties.operationType ?? '';
-  const operationKind = operation.properties.operationKind ?? '';
-  dispatch(addNode(addPayload));
-  const operationPayload: AddNodeOperationPayload = {
-    id: selectedNode,
-    type: operationType,
-    connectorId,
-    operationId,
-  };
-  dispatch(initializeOperationInfo(operationPayload));
-
-  initializeOperationDetails(selectedNode, { connectorId, operationId }, operationType, operationKind, rootState, dispatch);
-
-  getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
-  dispatch(switchToOperationPanel(selectedNode));
-  return;
+type AddOperationPayload = {
+  operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
+  discoveryIds: IdsForDiscovery;
+  nodeId: string;
 };
+export const addOperation = createAsyncThunk(
+  'addOperation',
+  async ({ operation, discoveryIds, nodeId: id }: AddOperationPayload, { dispatch, getState }) => {
+    if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+    let count = 1;
+    let nodeId = id;
+    while ((getState() as RootState).workflow.operations[nodeId]) {
+      nodeId = `${id}_${count}`;
+      count++;
+    }
+
+    const addPayload: AddNodePayload = {
+      operation,
+      id: nodeId,
+      discoveryIds,
+    };
+    const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
+    const operationId = operation.id;
+    const operationType = operation.properties.operationType ?? '';
+    const operationKind = operation.properties.operationKind ?? '';
+    dispatch(addNode(addPayload));
+    const operationPayload: AddNodeOperationPayload = {
+      id: nodeId,
+      type: operationType,
+      connectorId,
+      operationId,
+    };
+    setDefaultConnectionForNode(nodeId, connectorId, dispatch);
+    dispatch(initializeOperationInfo(operationPayload));
+    const newWorkflowState = (getState() as RootState).workflow;
+    initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
+
+    getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
+    return;
+  }
+);
 
 export const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: OperationInfo,
   operationType: string,
   operationKind: string,
-  rootState: RootState,
+  workflowState: WorkflowState,
   dispatch: Dispatch
 ): Promise<void> => {
   const operationManifestService = OperationManifestService();
@@ -80,7 +88,13 @@ export const initializeOperationDetails = async (
 
     // TODO(Danielle) - Please comment out the below part when state has updated graph and nodesMetadata.
     // We need the graph and nodesMetadata updated with the newly added node for token dependencies to be calculated.
-    // addTokensAndVariables(nodeId, operationType, { id: nodeId, nodeInputs, nodeOutputs, settings, manifest }, rootState, dispatch);
+    addTokensAndVariables(
+      nodeId,
+      operationType,
+      { id: nodeId, nodeInputs, nodeOutputs, settings, manifest, nodeDependencies },
+      workflowState,
+      dispatch
+    );
   } else {
     // TODO - swagger case here
   }
@@ -90,19 +104,20 @@ export const setDefaultConnectionForNode = async (nodeId: string, connectorId: s
   const connections = await getConnectionsForConnector(connectorId);
   if (connections.length !== 0) {
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id }));
+  } else {
+    dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
+  dispatch(switchToOperationPanel(nodeId));
 };
 
 export const addTokensAndVariables = (
   nodeId: string,
   operationType: string,
   nodeData: NodeDataWithManifest,
-  rootState: RootState,
+  workflowState: WorkflowState,
   dispatch: Dispatch
 ): void => {
-  const {
-    workflow: { graph, nodesMetadata, operations },
-  } = rootState;
+  const { graph, nodesMetadata, operations } = workflowState;
   const { nodeInputs, nodeOutputs, settings, manifest } = nodeData;
   const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {
     [nodeId]: nodeId,

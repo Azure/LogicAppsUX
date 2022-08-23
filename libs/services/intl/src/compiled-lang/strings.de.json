@@ -345,6 +345,12 @@
       "value": "Codeansicht anzeigen"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Weitere Informationen"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -453,6 +459,12 @@
       "value": "Ein"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Leere Schaltfläche „Dynamischen Inhalt hinzufügen“"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -481,6 +493,12 @@
     {
       "type": 0,
       "value": "Erforderlich. die Trennlinie."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Es ist kein Inhalt verfügbar."
     }
   ],
   "3PgHCT": [
@@ -921,22 +939,10 @@
       "value": "Gibt ein Objekt mit einem zusätzlichen Eigenschaft-Wert-Paar zurück."
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Weitere Informationen."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "Bereich"
     }
   ],
   "9djnqI": [
@@ -1055,6 +1061,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Index des abzurufenden Teils."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Kein dynamischer Inhalt verfügbar"
     }
   ],
   "BAgRzO": [
@@ -1511,6 +1523,12 @@
       "value": "(UTC+12:00) Fidschi"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Falls verfügbar, werden dynamische Inhalte automatisch von den Connectors und Aktionen generiert, die Sie für Ihren Flow auswählen."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1527,6 +1545,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaisk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Zurück zum Browsen"
     }
   ],
   "IngtMG": [
@@ -1787,6 +1811,12 @@
       "value": "Neu hinzufügen"
     }
   ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Mehr anzeigen"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -1839,6 +1869,16 @@
     {
       "type": 0,
       "value": "(Optional) Der Name der bereichsbezogenen Aktion, in der die Eingaben und Ausgaben der Aktionen der obersten Ebene in diesem Bereich verwendet werden sollen."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Keine Ergebnisse gefunden für "
+    },
+    {
+      "type": 1,
+      "value": "searchText"
     }
   ],
   "M9mzP6": [
@@ -1965,6 +2005,12 @@
     {
       "type": 0,
       "value": "Verbindungsname"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Vorgänge werden geladen..."
     }
   ],
   "OSHNZ2": [
@@ -2441,6 +2487,12 @@
       "value": "(UTC-06:00) Zentralamerika"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Nach Connector gruppieren"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2853,6 +2905,12 @@
       "value": "Dieser Vorgang wurde bereits gelöscht."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Erfahren Sie mehr über dynamische Inhalte."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3023,6 +3081,12 @@
       "value": "Bereich"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamische Inhalte können auch aus anderen Quellen hinzugefügt werden."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3035,6 +3099,12 @@
       "value": "Erforderlich. Der Wert, dessen Index durchsucht werden soll."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Dokumentation anzeigen"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3045,16 +3115,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "Beschreibung für "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3109,12 +3169,6 @@
     {
       "type": 0,
       "value": "Weitere Informationen"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Auswählen"
     }
   ],
   "dOpdsP": [
@@ -3227,6 +3281,12 @@
       "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Connectors werden geladen..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3237,6 +3297,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zahl, durch die der Dividend zu teilen ist."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Integriert"
     }
   ],
   "egLI8P": [
@@ -3387,6 +3453,16 @@
     {
       "type": 0,
       "value": "Triggerbedingungen"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Suchergebnisse für: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3963,6 +4039,12 @@
       "value": "Erforderlich. Der Name der zu entfernenden Eigenschaft."
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -4029,6 +4111,12 @@
     {
       "type": 0,
       "value": "Inhaltsübertragung"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Browsenvorgänge"
     }
   ],
   "oRvVIW": [
@@ -4435,6 +4523,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexiko-Stadt, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Zurück zur Suche"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4477,12 +4571,6 @@
       "value": "(UTC+06:00) Nowosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Trigger"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4505,12 +4593,6 @@
     {
       "type": 0,
       "value": "Anzeigename"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Vorgänge"
     }
   ],
   "u/KSPz": [
@@ -4737,6 +4819,12 @@
       "value": "Erforderlich. Entweder ein Array von Werten zum Auffinden des niedrigsten Werts oder der erste Wert aus einem Satz."
     }
   ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Einschließlich dynamischer Inhalte"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
@@ -4879,16 +4967,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Hawaii"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "Logo für "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "yVh9kr": [

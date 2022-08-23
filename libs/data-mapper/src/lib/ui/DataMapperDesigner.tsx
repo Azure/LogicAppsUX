@@ -4,6 +4,7 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
+import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
@@ -52,9 +53,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapperDesignerProps {
   saveStateCall: () => void;
+  setSelectedSchemaFile?: (selectedSchemaFile: SchemaFile) => void;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall }) => {
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, setSelectedSchemaFile }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -96,6 +98,13 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     const extendedSchema = convertSchemaToSchemaExtended(outputSchema);
     dispatch(setInitialOutputSchema(extendedSchema));
     dispatch(setInitialDataMap());
+  };
+
+  const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
+    if (!setSelectedSchemaFile) return;
+    // Will cause DM to ping VS Code for schema file contents (to be added to availableSchemas)
+    // Then, DM implementation will handle loading the schema as either the initial input or output schema
+    setSelectedSchemaFile(schemaFile);
   };
 
   const onSaveClick = () => {
@@ -272,7 +281,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
-        <EditorConfigPanel initialSetup={true} onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
+        <EditorConfigPanel
+          initialSetup={true}
+          onSubmitInputSchema={onSubmitInput}
+          onSubmitOutputSchema={onSubmitOutput}
+          onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
+        />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>

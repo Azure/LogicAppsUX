@@ -345,6 +345,12 @@
       "value": "Visa kodvy"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Läs mer"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -453,6 +459,12 @@
       "value": "På"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Knappen Lägg till dynamiskt innehåll är tom"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -481,6 +493,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Avgränsaren."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Det finns inte något tillgängligt innehåll"
     }
   ],
   "3PgHCT": [
@@ -921,22 +939,10 @@
       "value": "Returnerar ett objekt med ett extra egenskapsvärdepar"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Läs mer."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -972,7 +978,7 @@
   "AHB418": [
     {
       "type": 0,
-      "value": "Filter Actions"
+      "value": "Filteråtgärder"
     }
   ],
   "AIL7WX": [
@@ -1055,6 +1061,12 @@
     {
       "type": 0,
       "value": "Krävs. Index för delen att hämta."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Det finns inget tillgängligt dynamiskt innehåll"
     }
   ],
   "BAgRzO": [
@@ -1511,6 +1523,12 @@
       "value": "(UTC+12:00) Fiji"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Om funktionen är tillgänglig så genereras dynamiskt innehåll automatiskt från de anslutningsappar och åtgärder som du väljer för ditt flöde."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1527,6 +1545,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Gå tillbaka för att bläddra"
     }
   ],
   "IngtMG": [
@@ -1787,6 +1811,12 @@
       "value": "Lägg till nytt"
     }
   ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Visa mer"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -1839,6 +1869,16 @@
     {
       "type": 0,
       "value": "Valfritt. Namnet på den omfångsdefinierade åtgärd där du vill ha indata och utdata från åtgärderna på toppnivå i det omfånget."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Inga resultat hittades för: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1965,6 +2005,12 @@
     {
       "type": 0,
       "value": "Anslutningens namn"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Läser in åtgärder..."
     }
   ],
   "OSHNZ2": [
@@ -2441,6 +2487,12 @@
       "value": "(UTC-06:00) Centralamerika"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Gruppera efter koppling"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2790,7 +2842,7 @@
   "YfwZJO": [
     {
       "type": 0,
-      "value": "Search Tips"
+      "value": "Söktips"
     }
   ],
   "YoQara": [
@@ -2851,6 +2903,12 @@
     {
       "type": 0,
       "value": "Den här åtgärden har redan tagits bort."
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Läs mer om dynamiskt innehåll."
     }
   ],
   "ZnGRMP": [
@@ -3019,6 +3077,12 @@
       "value": "panel"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamiskt innehåll kan också läggas till från andra källor."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3031,6 +3095,12 @@
       "value": "Obligatoriskt. Det värde det ska sökas efter i indexet."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Visa dokumentationen"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3041,16 +3111,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "description for "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3105,12 +3165,6 @@
     {
       "type": 0,
       "value": "Läs mer"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Välj"
     }
   ],
   "dOpdsP": [
@@ -3223,6 +3277,12 @@
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Läser in kopplingar..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3233,6 +3293,12 @@
     {
       "type": 0,
       "value": "Krävs. Talet att dela nämnaren med."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Fördefinierade"
     }
   ],
   "egLI8P": [
@@ -3383,6 +3449,16 @@
     {
       "type": 0,
       "value": "Utlösarvillkor"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Sökresultat för: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3959,6 +4035,12 @@
       "value": "Obligatoriskt. Namnet på den egenskap som ska tas bort."
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -4025,6 +4107,12 @@
     {
       "type": 0,
       "value": "Innehållsöverföring"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Bläddra bland åtgärder"
     }
   ],
   "oRvVIW": [
@@ -4431,6 +4519,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Gå tillbaka till sökningen"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4473,12 +4567,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Utlös"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4501,12 +4589,6 @@
     {
       "type": 0,
       "value": "Visningsnamn"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Åtgärder"
     }
   ],
   "u/KSPz": [
@@ -4733,6 +4815,12 @@
       "value": "Krävs. Antingen en matris med värden för att hitta minsta värdet, eller det första värdet i en uppsättning."
     }
   ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Inkludera dynamiskt innehåll"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
@@ -4877,16 +4965,6 @@
       "value": "(UTC-10:00) Hawaii"
     }
   ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logotyp för "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "yVh9kr": [
     {
       "type": 0,
@@ -4956,7 +5034,7 @@
   "zTKAc9": [
     {
       "type": 0,
-      "value": "Select Actions"
+      "value": "Välj åtgärder"
     }
   ],
   "zUgja+": [
