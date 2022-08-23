@@ -666,9 +666,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               </span>
               <span
                 className="token plain"
-              >
-                
-              </span>
+              />
             </div>
             <div
               className="token-line"
@@ -716,9 +714,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               </span>
               <span
                 className="token plain"
-              >
-                
-              </span>
+              />
             </div>
             <div
               className="token-line"
@@ -731,9 +727,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
             >
               <span
                 className="token plain"
-              >
-                
-              </span>
+              />
               <span
                 className="token punctuation"
                 style={
