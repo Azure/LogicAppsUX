@@ -55,7 +55,10 @@ export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor,
         title={tokenDelete}
         aria-label={tokenDelete}
         className="msla-button msla-token-delete"
-        onClick={handleTokenDeleteClicked}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleTokenDeleteClicked();
+        }}
         onMouseDown={(e) => {
           e.preventDefault();
         }}
