@@ -166,7 +166,6 @@ export function getOutputTokenSections(state: TokensState, nodeId: string): Toke
   const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
     let tokens = outputTokens[upstreamNodeId].tokens;
     tokens = tokens.map((token) => {
-      console.log({ ...token, value: getTokenExpressionValue({ ...token, tokenType: TokenType.OUTPUTS }) });
       return { ...token, value: getTokenExpressionValue({ ...token, tokenType: TokenType.OUTPUTS }) };
     });
 
