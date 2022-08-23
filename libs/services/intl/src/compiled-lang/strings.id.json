@@ -334,6 +334,12 @@
       "value": "Tampilkan tampilan kode"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Pelajari selengkapnya"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -442,6 +448,12 @@
       "value": "Aktif"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Tombol tambahkan konten dinamis kosong"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -470,6 +482,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Pemisah."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Konten tidak tersedia"
     }
   ],
   "3PgHCT": [
@@ -910,22 +928,10 @@
       "value": "Menghasilkan objek dengan pasangan nilai properti tambahan"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Pelajari selengkapnya."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -1033,6 +1039,12 @@
     {
       "type": 0,
       "value": "Wajib. Indeks bagian yang akan diambil."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Konten dinamis tidak tersedia"
     }
   ],
   "BAgRzO": [
@@ -1470,6 +1482,12 @@
       "value": "(UTC+12.00) Fiji"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Jika tersedia, konten dinamis secara otomatis dibuat dari konektor dan tindakan yang dipilih untuk alur Anda."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1486,6 +1504,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Kembali ke penelusuran"
     }
   ],
   "IngtMG": [
@@ -1727,6 +1751,12 @@
       "value": "Tambah baru"
     }
   ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Lihat lainnya"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -1779,6 +1809,16 @@
     {
       "type": 0,
       "value": "Opsional. Nama tindakan tercakup tempat Anda menginginkan input dan output dari tindakan tingkat atas dalam cakupan tersebut."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Tidak ada hasil yang ditemukan untuk: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1905,6 +1945,12 @@
     {
       "type": 0,
       "value": "Nama Koneksi"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Memuat operasi..."
     }
   ],
   "OSHNZ2": [
@@ -2366,6 +2412,12 @@
       "value": "(UTC-06:00) Amerika Tengah"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Kelompokkan berdasarkan Konektor"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2778,6 +2830,12 @@
       "value": "Operasi ini sudah dihapus."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Pelajari selengkapnya tentang konten dinamis."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -2944,6 +3002,12 @@
       "value": "panel"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Konten dinamis juga dapat ditambahkan dari sumber lain."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -2956,6 +3020,12 @@
       "value": "Harus diisi. Nilai untuk mencari indeks."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Lihat Dokumentasi"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -2966,16 +3036,6 @@
     {
       "type": 0,
       "value": "(UTC+02.00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "deskripsi untuk "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3030,12 +3090,6 @@
     {
       "type": 0,
       "value": "Pelajari selengkapnya"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Pilih"
     }
   ],
   "dOpdsP": [
@@ -3148,6 +3202,12 @@
       "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Memuat konektor..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3158,6 +3218,12 @@
     {
       "type": 0,
       "value": "Wajib. Nomor untuk membagi Dividend."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Bawaan"
     }
   ],
   "egLI8P": [
@@ -3308,6 +3374,16 @@
     {
       "type": 0,
       "value": "Kondisi Pemicu"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Hasil pencarian untuk: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3857,6 +3933,12 @@
       "value": "Diperlukan. Nama properti yang akan dihapus."
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -3923,6 +4005,12 @@
     {
       "type": 0,
       "value": "Transfer Konten"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Telusuri Operasi"
     }
   ],
   "oRvVIW": [
@@ -4318,6 +4406,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Kembali ke pencarian"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4360,12 +4454,6 @@
       "value": "(UTC+06.00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Pemicu"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4388,12 +4476,6 @@
     {
       "type": 0,
       "value": "Nama Tampilan"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operasi"
     }
   ],
   "u/KSPz": [
@@ -4620,6 +4702,12 @@
       "value": "Wajib. Array nilai untuk mencari nilai Minimal atau nilai pertama kumpulan."
     }
   ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Termasuk konten dinamis"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
@@ -4762,16 +4850,6 @@
     {
       "type": 0,
       "value": "(UTC-10.00) Hawaii"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo untuk "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "yVh9kr": [

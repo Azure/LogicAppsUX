@@ -2,21 +2,10 @@
 
 exports[`recommendation panel matches snapshot 1`] = `
 <StyledPanelBase
-  aria-label="panel"
-  closeButtonAriaLabel="close"
-  headerText="Operations"
+  hasCloseButton={false}
+  isLightDismiss={true}
   isOpen={true}
   onDismiss={[MockFunction]}
   type={3}
->
-  <div
-    style={
-      Object {
-        "margin": "0px -24px",
-        "overflow": "auto",
-        "padding": "0px 24px 16px",
-      }
-    }
-  />
-</StyledPanelBase>
+/>
 `;

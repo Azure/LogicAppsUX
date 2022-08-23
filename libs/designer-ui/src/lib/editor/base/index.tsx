@@ -21,6 +21,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import { useFunctionalState } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -90,7 +91,7 @@ export const BaseEditor = ({
   const labelId = useId('msla-tokenpicker-callout-label');
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
   const [showTokenPicker, setShowTokenPicker] = useState(true);
-  const [inTokenPicker, setInTokenPicker] = useState(false);
+  const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const initialConfig = {
     theme: EditorTheme,
     onError,
@@ -119,11 +120,10 @@ export const BaseEditor = ({
     onFocus?.();
   };
   const handleBlur = () => {
-    if (tokens && !inTokenPicker) {
-      setShowTokenPickerButton(false);
-    } else {
+    if (tokens && !getInTokenPicker()) {
       setInTokenPicker(false);
     }
+    setShowTokenPickerButton(false);
     onBlur?.();
   };
 
@@ -162,7 +162,7 @@ export const BaseEditor = ({
           />
         ) : null}
 
-        {(tokens && showTokenPickerButton) || inTokenPicker ? (
+        {(tokens && showTokenPickerButton) || getInTokenPicker() ? (
           <TokenPickerButton
             labelId={labelId}
             showTokenPicker={showTokenPicker}
@@ -171,11 +171,11 @@ export const BaseEditor = ({
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}
-        {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? GetTokenPicker(editorId, labelId, onClickTokenPicker) : null}
+        {(showTokenPickerButton && showTokenPicker) || getInTokenPicker() ? GetTokenPicker(editorId, labelId, onClickTokenPicker) : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
-        <InsertTokenNode />
-        <DeleteTokenNode />
+        {tokens ? <InsertTokenNode /> : null}
+        {tokens ? <DeleteTokenNode /> : null}
         {children}
       </div>
     </LexicalComposer>

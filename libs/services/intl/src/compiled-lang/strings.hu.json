@@ -345,6 +345,12 @@
       "value": "Kódnézet megjelenítése"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "További információ"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -453,6 +459,12 @@
       "value": "Bekapcsolva"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Üres dinamikus tartalom hozzáadása gomb"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -481,6 +493,12 @@
     {
       "type": 0,
       "value": "Az elválasztó. Kötelező megadni."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Nincs elérhető tartalom"
     }
   ],
   "3PgHCT": [
@@ -921,22 +939,10 @@
       "value": "Egy objektumot ad vissza, melyhez hozzá lett adva egy tulajdonság-érték pár"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "További információ."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -1055,6 +1061,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A beolvasandó rész indexe."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Nincs elérhető dinamikus tartalom"
     }
   ],
   "BAgRzO": [
@@ -1511,6 +1523,12 @@
       "value": "(UTC+12:00) Fidzsi"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Ha elérhető, a rendszer automatikusan létrehozza a dinamikus tartalmat a folyamathoz kijelölt összekötőkből és műveletekből."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1527,6 +1545,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altajszk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Visszatérés a tallózáshoz"
     }
   ],
   "IngtMG": [
@@ -1787,6 +1811,12 @@
       "value": "Új hozzáadása"
     }
   ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Továbbiak megjelenítése"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -1839,6 +1869,16 @@
     {
       "type": 0,
       "value": "Nem kötelező. Annak a hatóköri műveletnek a neve, ahol az adott hatókör legfelső szintű műveleteinek bemeneteit és kimeneteit szeretné használni."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Nincs találat a következőre: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1965,6 +2005,12 @@
     {
       "type": 0,
       "value": "Kapcsolat neve"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Műveletek betöltése..."
     }
   ],
   "OSHNZ2": [
@@ -2441,6 +2487,12 @@
       "value": "(UTC-06:00) Közép-Amerika"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Csoportosítás összekötő szerint"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2853,6 +2905,12 @@
       "value": "Ezt a műveletet már törölték."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "További információ a dinamikus tartalmakról."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3023,6 +3081,12 @@
       "value": "panel"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Más forrásokból is hozzáadható dinamikus tartalom."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3035,6 +3099,12 @@
       "value": "Kötelező megadni. Az érték, melynek meg kell keresni az indexét."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Dokumentáció megtekintése"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3045,20 +3115,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "a(z) "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " leírása"
     }
   ],
   "ci6ex1": [
@@ -3113,12 +3169,6 @@
     {
       "type": 0,
       "value": "További információ"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Kijelölés"
     }
   ],
   "dOpdsP": [
@@ -3231,6 +3281,12 @@
       "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Összekötők betöltése..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3241,6 +3297,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A szám, mellyel el kell osztani az osztandót."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Beépített"
     }
   ],
   "egLI8P": [
@@ -3391,6 +3453,16 @@
     {
       "type": 0,
       "value": "Aktiválási feltételek"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Keresési eredmények a következőhöz: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3971,6 +4043,12 @@
       "value": "Kötelező megadni. Az eltávolítandó tulajdonság neve."
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -4037,6 +4115,12 @@
     {
       "type": 0,
       "value": "Tartalomátvitel"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Műveletek tallózása"
     }
   ],
   "oRvVIW": [
@@ -4443,6 +4527,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexikóváros, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Vissza a kereséshez"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4485,12 +4575,6 @@
       "value": "(UTC+06:00) Novoszibirszk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Aktiválás"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4513,12 +4597,6 @@
     {
       "type": 0,
       "value": "Megjelenített név"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Műveletek"
     }
   ],
   "u/KSPz": [
@@ -4745,6 +4823,12 @@
       "value": "Kötelező megadni. Egy értéktömb, melyben meg kell keresni a minimális értéket, vagy pedig egy halmaz első értéke."
     }
   ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Dinamikus tartalom felvétele"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
@@ -4887,16 +4971,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Hawaii"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " emblémája"
     }
   ],
   "yVh9kr": [

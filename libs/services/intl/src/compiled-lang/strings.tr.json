@@ -345,6 +345,12 @@
       "value": "Kod görünümünü göster"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Daha fazla bilgi edinin"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -453,6 +459,12 @@
       "value": "Açık"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Dinamik içerik ekle düğmesi boş"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -481,6 +493,12 @@
     {
       "type": 0,
       "value": "Gerekli. Ayırıcı."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Kullanılabilir içerik yok"
     }
   ],
   "3PgHCT": [
@@ -921,22 +939,10 @@
       "value": "Ek özellik-değer çifti içeren bir nesneyi döndürür"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Daha fazla bilgi edinin."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -1055,6 +1061,12 @@
     {
       "type": 0,
       "value": "Gerekli. Alınacak bölümün dizini."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Kullanılabilir dinamik içerik yok"
     }
   ],
   "BAgRzO": [
@@ -1503,6 +1515,12 @@
       "value": "(UTC+12:00) Fiji"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Uygun olduğu durumlarda, dinamik içerik akışınız için seçtiğiniz bağlayıcı ve eylemlerden otomatik olarak oluşturulur."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1519,6 +1537,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Göz atmaya dön"
     }
   ],
   "IngtMG": [
@@ -1771,6 +1795,12 @@
       "value": "Yeni ekle"
     }
   ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Daha fazla göster"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -1823,6 +1853,16 @@
     {
       "type": 0,
       "value": "İsteğe bağlı. Bu kapsamdaki en üst düzey eylemlerden giriş ve çıkışları istediğiniz kapsamlı eylemin adı."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 1,
+      "value": "searchText"
+    },
+    {
+      "type": 0,
+      "value": " için sonuç bulunamadı"
     }
   ],
   "M9mzP6": [
@@ -1949,6 +1989,12 @@
     {
       "type": 0,
       "value": "Bağlantı Adı"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "İşlemler yükleniyor..."
     }
   ],
   "OSHNZ2": [
@@ -2421,6 +2467,12 @@
       "value": "(UTC-06:00) Orta Amerika"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Bağlayıcıya göre gruplandır"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2833,6 +2885,12 @@
       "value": "Bu işlem zaten silinmiş."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Dinamik içerikler hakkında daha fazla bilgi edinin."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -2999,6 +3057,12 @@
       "value": "panel"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dinamik içerik diğer kaynaklardan da eklenebilir."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3011,6 +3075,12 @@
       "value": "Gerekli. Dizini aranacak değer."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Belgeleri Görüntüle"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3021,16 +3091,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " açıklaması"
     }
   ],
   "ci6ex1": [
@@ -3085,12 +3145,6 @@
     {
       "type": 0,
       "value": "Daha fazla bilgi edinin"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Seç"
     }
   ],
   "dOpdsP": [
@@ -3199,6 +3253,12 @@
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Bağlayıcılar yükleniyor..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3209,6 +3269,12 @@
     {
       "type": 0,
       "value": "Gerekli. Bölünenin bölüneceği sayı."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Yerleşik"
     }
   ],
   "egLI8P": [
@@ -3359,6 +3425,16 @@
     {
       "type": 0,
       "value": "Tetikleyici Koşulları"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 1,
+      "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": " için arama sonuçları"
     }
   ],
   "gg0j4S": [
@@ -3919,6 +3995,12 @@
       "value": "Gerekli. Kaldırılacak özelliğin adı."
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -3985,6 +4067,12 @@
     {
       "type": 0,
       "value": "İçerik Aktarımı"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "İşlemlere Göz At"
     }
   ],
   "oRvVIW": [
@@ -4391,6 +4479,12 @@
       "value": "(UTC-06:00) Guadalahara, Mexico City, Monterey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Aramaya dön"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4433,12 +4527,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Tetikleyici"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4461,12 +4549,6 @@
     {
       "type": 0,
       "value": "Görünen Ad"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "İşlemler"
     }
   ],
   "u/KSPz": [
@@ -4689,6 +4771,12 @@
       "value": "Gerekli. En küçük değeri bulunacak değerler dizisi veya bir kümenin ilk değeri."
     }
   ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Dinamik içerik ekleme"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
@@ -4831,16 +4919,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Hawaii"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " logosu"
     }
   ],
   "yVh9kr": [

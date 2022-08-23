@@ -15,6 +15,10 @@ export const StateWrapper: React.FC = () => {
           navigate(`/${ProjectName.export}/instance-selection`, { replace: true });
           break;
         }
+        case ProjectName.review: {
+          navigate(`/${ProjectName.review}`, { replace: true });
+          break;
+        }
         case ProjectName.overview: {
           navigate(`/${ProjectName.overview}`, { replace: true });
           break;

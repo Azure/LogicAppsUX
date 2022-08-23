@@ -345,6 +345,12 @@
       "value": "Mostra visualizzazione codice"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Altre informazioni"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -453,6 +459,12 @@
       "value": "Sì"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Pulsante Aggiungi contenuto dinamico vuoto"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -481,6 +493,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Separatore."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Non è disponibile alcun contenuto"
     }
   ],
   "3PgHCT": [
@@ -921,22 +939,10 @@
       "value": "Restituisce un oggetto con una coppia proprietà-valore aggiuntiva"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Altre informazioni."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "pannello"
     }
   ],
   "9djnqI": [
@@ -1055,6 +1061,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Indice della parte da recuperare."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Non è disponibile alcun contenuto dinamico"
     }
   ],
   "BAgRzO": [
@@ -1503,6 +1515,12 @@
       "value": "(UTC+12:00) Figi"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Se disponibile, il contenuto dinamico viene generato automaticamente dai connettori e dalle azioni scelti per il flusso."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1519,6 +1537,12 @@
     {
       "type": 0,
       "value": "(UTC + 07.00) Barnaul, Gorno-Altaysk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Tornare all'esplorazione"
     }
   ],
   "IngtMG": [
@@ -1771,6 +1795,12 @@
       "value": "Aggiungi nuovo"
     }
   ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Vedi altro"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -1823,6 +1853,16 @@
     {
       "type": 0,
       "value": "Facoltativo. Nome dell'azione con ambito che dovrà contenere gli input e gli output delle azioni di primo livello all'interno di tale ambito."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Non è stato trovato alcun risultato per "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1949,6 +1989,12 @@
     {
       "type": 0,
       "value": "Nome connessione"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Caricamento delle operazioni in corso.."
     }
   ],
   "OSHNZ2": [
@@ -2429,6 +2475,12 @@
       "value": "(UTC-06:00) America centrale"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Raggruppa per connettore"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2841,6 +2893,12 @@
       "value": "Questa operazione è già stata eliminata."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Altre informazioni sul contenuto dinamico."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3007,6 +3065,12 @@
       "value": "pannello"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "È possibile aggiungere contenuto dinamico anche da altre origini."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3019,6 +3083,12 @@
       "value": "Obbligatorio. Valore di cui cercare l'indice."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Visualizza documentazione"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3029,16 +3099,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "descrizione di "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3093,12 +3153,6 @@
     {
       "type": 0,
       "value": "Altre informazioni"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Seleziona"
     }
   ],
   "dOpdsP": [
@@ -3211,6 +3265,12 @@
       "value": "Obbligatorio. Nome della variabile di cui si desidera ottenere il valore."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Caricamento dei connettori in corso..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3221,6 +3281,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero in base a cui dividere il dividendo."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Predefinito"
     }
   ],
   "egLI8P": [
@@ -3371,6 +3437,16 @@
     {
       "type": 0,
       "value": "Condizioni trigger"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Risultati della ricerca per: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -3931,6 +4007,12 @@
       "value": "Obbligatorio. Nome della proprietà da rimuovere."
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -3997,6 +4079,12 @@
     {
       "type": 0,
       "value": "Trasferimento di contenuto"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Esplorare le operazioni"
     }
   ],
   "oRvVIW": [
@@ -4403,6 +4491,12 @@
       "value": "(UTC-6.00) Guadalajara, Città del Messico, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Tornare alla ricerca"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4445,12 +4539,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Trigger"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4473,12 +4561,6 @@
     {
       "type": 0,
       "value": "Nome visualizzato"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operazioni"
     }
   ],
   "u/KSPz": [
@@ -4705,6 +4787,12 @@
       "value": "Obbligatorio. Matrice di valori in cui trovare il valore minimo o il primo valore di un set."
     }
   ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Inclusione di contenuto dinamico"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
@@ -4847,16 +4935,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Hawaii"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo per "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "yVh9kr": [

@@ -194,7 +194,7 @@ export const MockAzureOperation: DiscoveryOperation<SomeKindOfAzureOperationDisc
         description:
           "Azure Security Center is a unified infrastructure security management system that strengthens the security posture of your data centers, and provides advanced threat protection across your hybrid workloads in the cloud - whether they're in Azure or not - as well as on premises",
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1554/1.0.1554.2707/ascalert/icon.png',
-        brandColor: '#0072C6',
+        brandColor: '#95C515',
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/ascalert',
         type: 'Microsoft.Web/locations/managedApis',
       },
@@ -224,7 +224,7 @@ export const MockAzureOperation: DiscoveryOperation<SomeKindOfAzureOperationDisc
         description:
           "Azure Security Center is a unified infrastructure security management system that strengthens the security posture of your data centers, and provides advanced threat protection across your hybrid workloads in the cloud - whether they're in Azure or not - as well as on premises",
         iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1514/1.0.1514.2551/ascassessment/icon.png',
-        brandColor: '#0072C6',
+        brandColor: '#95C515',
 
         id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/ascassessment',
         type: 'Microsoft.Web/locations/managedApis',

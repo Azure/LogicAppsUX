@@ -379,6 +379,12 @@
       "value": "Zobrazit zobrazení kódu"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Další informace"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
       "value": "Zapnuto"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Prázdné tlačítko Přidat dynamický obsah"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -515,6 +527,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Oddělovač."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Není k dispozici žádný obsah."
     }
   ],
   "3PgHCT": [
@@ -955,22 +973,10 @@
       "value": "Vrátí objekt s jedním párem vlastnost-hodnota navíc."
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Přečtěte si další informace."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -1111,6 +1117,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Index části, která se má načíst."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Není k dispozici žádný dynamický obsah"
     }
   ],
   "BAgRzO": [
@@ -1589,6 +1601,12 @@
       "value": "(UTC+12:00) Fidži"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Dynamický obsah, když je k dispozici, se automaticky generuje z konektorů a akcí, které si zvolíte pro svůj tok."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1605,6 +1623,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnaul, Gorno-Altajsk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Zpět k procházení"
     }
   ],
   "IngtMG": [
@@ -1887,6 +1911,12 @@
       "value": "Přidat nový"
     }
   ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Zobrazit více"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -1939,6 +1969,20 @@
     {
       "type": 0,
       "value": "Nepovinné. Název akce s určeným rozsahem, u níž požadujete vstupy a výstupy z akcí na nejvyšší úrovni v rámci daného rozsahu."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Nenašly se žádné výsledky pro: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "M9mzP6": [
@@ -2065,6 +2109,12 @@
     {
       "type": 0,
       "value": "Název připojení"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Načítají se operace…"
     }
   ],
   "OSHNZ2": [
@@ -2559,6 +2609,12 @@
       "value": "(UTC-06:00) Střední Amerika"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Seskupit podle konektoru"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2971,6 +3027,12 @@
       "value": "Tato operace už byla odstraněna."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Další informace o dynamickém obsahu"
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3137,6 +3199,12 @@
       "value": "panel"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamický obsah se dá přidat i z jiných zdrojů."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3149,6 +3217,12 @@
       "value": "Vyžadováno. Hodnota, jejíž index se má hledat."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Zobrazit dokumentaci"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3159,16 +3233,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "popis pro "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3223,12 +3287,6 @@
     {
       "type": 0,
       "value": "Další informace"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Vybrat"
     }
   ],
   "dOpdsP": [
@@ -3341,6 +3399,12 @@
       "value": "Povinný parametr. Název proměnné, jejíž hodnotu chcete získat."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Načítají se konektory…"
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3351,6 +3415,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Číslo, kterým se má dělit dělenec."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Předdefinované"
     }
   ],
   "egLI8P": [
@@ -3501,6 +3571,16 @@
     {
       "type": 0,
       "value": "Podmínky aktivační události"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Výsledky hledání pro: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -4099,6 +4179,12 @@
       "value": "Povinné. Název vlastnosti, která se odebere"
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -4165,6 +4251,12 @@
     {
       "type": 0,
       "value": "Přenos obsahu"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Procházet operace"
     }
   ],
   "oRvVIW": [
@@ -4593,6 +4685,12 @@
       "value": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Zpět k hledání"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4635,12 +4733,6 @@
       "value": "(UTC+06:00) Novosibirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Trigger"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4663,12 +4755,6 @@
     {
       "type": 0,
       "value": "Zobrazovaný název"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operace"
     }
   ],
   "u/KSPz": [
@@ -4895,6 +4981,12 @@
       "value": "Povinný parametr. Pole hodnot, ve kterém se má najít minimální hodnota, nebo první hodnota sady."
     }
   ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Zahrnutí dynamického obsahu"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
@@ -5037,16 +5129,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Havajské ostrovy"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo pro "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "yVh9kr": [

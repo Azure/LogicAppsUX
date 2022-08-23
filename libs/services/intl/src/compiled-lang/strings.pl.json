@@ -383,6 +383,12 @@
       "value": "Pokaż widok kodu"
     }
   ],
+  "1ZDLZA": [
+    {
+      "type": 0,
+      "value": "Dowiedz się więcej"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -491,6 +497,12 @@
       "value": "Włączone"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Pusty przycisk Dodaj zawartość dynamiczną"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -519,6 +531,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Separator."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Brak dostępnej zawartości"
     }
   ],
   "3PgHCT": [
@@ -959,22 +977,10 @@
       "value": "Zwraca obiekt z parą dodatkowych wartości właściwości"
     }
   ],
-  "9RjyJ4": [
-    {
-      "type": 0,
-      "value": "Dowiedz się więcej."
-    }
-  ],
   "9SuA/E": [
     {
       "type": 0,
       "value": "12"
-    }
-  ],
-  "9b4xDa": [
-    {
-      "type": 0,
-      "value": "panel"
     }
   ],
   "9djnqI": [
@@ -1115,6 +1121,12 @@
     {
       "type": 0,
       "value": "Wymagane. Indeks części do pobrania."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Brak dostępnej zawartości dynamicznej"
     }
   ],
   "BAgRzO": [
@@ -1593,6 +1605,12 @@
       "value": "(UTC+12:00) Fidżi"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Jeśli jest dostępna, zawartość dynamiczna jest generowana automatycznie na podstawie łączników i akcji wybranych dla przepływu."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1609,6 +1627,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Barnauł, Gornoałtajsk"
+    }
+  ],
+  "IlY1Lj": [
+    {
+      "type": 0,
+      "value": "Powrót do przeglądania"
     }
   ],
   "IngtMG": [
@@ -1891,6 +1915,12 @@
       "value": "Dodaj nowe"
     }
   ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Zobacz więcej"
+    }
+  ],
   "LoGUT3": [
     {
       "type": 0,
@@ -1943,6 +1973,16 @@
     {
       "type": 0,
       "value": "Opcjonalnie. Nazwa akcji o określonym zakresie, w którym mają być umieszczane dane wejściowe i wyjściowe akcji najwyższego poziomu."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Nie znaleziono wyników dla: "
+    },
+    {
+      "type": 1,
+      "value": "searchText"
     }
   ],
   "M9mzP6": [
@@ -2069,6 +2109,12 @@
     {
       "type": 0,
       "value": "Nazwa połączenia"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Trwa ładowanie operacji..."
     }
   ],
   "OSHNZ2": [
@@ -2563,6 +2609,12 @@
       "value": "(UTC-06:00) Ameryka Środkowa"
     }
   ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Grupuj według łącznika"
+    }
+  ],
   "U3iWVd": [
     {
       "type": 0,
@@ -2975,6 +3027,12 @@
       "value": "Ta operacja została już usunięta."
     }
   ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Dowiedz się więcej o zawartości dynamicznej."
+    }
+  ],
   "ZnGRMP": [
     {
       "type": 0,
@@ -3141,6 +3199,12 @@
       "value": "panel"
     }
   ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Zawartość dynamiczną można również dodać z innych źródeł."
+    }
+  ],
   "cCYmTK": [
     {
       "type": 0,
@@ -3153,6 +3217,12 @@
       "value": "Parametr wymagany. Wartość, której indeks jest wyszukiwany."
     }
   ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Pokaż dokumentację"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -3163,16 +3233,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Trypolis"
-    }
-  ],
-  "cVSEzV": [
-    {
-      "type": 0,
-      "value": "opis łącznika "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "ci6ex1": [
@@ -3227,12 +3287,6 @@
     {
       "type": 0,
       "value": "Dowiedz się więcej"
-    }
-  ],
-  "dFInXP": [
-    {
-      "type": 0,
-      "value": "Wybierz"
     }
   ],
   "dOpdsP": [
@@ -3345,6 +3399,12 @@
       "value": "Wymagane. Nazwa zmiennej z żądanymi wartościami."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Trwa ładowanie łączników..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3355,6 +3415,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba, przez którą dzielona jest dzielna."
+    }
+  ],
+  "eX84FI": [
+    {
+      "type": 0,
+      "value": "Wbudowany"
     }
   ],
   "egLI8P": [
@@ -3505,6 +3571,16 @@
     {
       "type": 0,
       "value": "Warunki wyzwalacza"
+    }
+  ],
+  "gabXSS": [
+    {
+      "type": 0,
+      "value": "Wyniki wyszukiwania dla terminu: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "gg0j4S": [
@@ -4111,6 +4187,12 @@
       "value": "Wymagane. Nazwa właściwości do usunięcia."
     }
   ],
+  "nXwBF7": [
+    {
+      "type": 0,
+      "value": "Azure"
+    }
+  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -4177,6 +4259,12 @@
     {
       "type": 0,
       "value": "Transfer zawartości"
+    }
+  ],
+  "oM6q96": [
+    {
+      "type": 0,
+      "value": "Operacje przeglądania"
     }
   ],
   "oRvVIW": [
@@ -4605,6 +4693,12 @@
       "value": "(UTC-06:00) Guadalajara, Meksyk, Monterrey"
     }
   ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Powrót do wyszukiwania"
+    }
+  ],
   "tImHz/": [
     {
       "type": 1,
@@ -4647,12 +4741,6 @@
       "value": "(UTC+06:00) Nowosybirsk"
     }
   ],
-  "tVmUCd": [
-    {
-      "type": 0,
-      "value": "Wyzwalacz"
-    }
-  ],
   "tZj2Xn": [
     {
       "type": 0,
@@ -4675,12 +4763,6 @@
     {
       "type": 0,
       "value": "Nazwa wyświetlana"
-    }
-  ],
-  "tu8I7j": [
-    {
-      "type": 0,
-      "value": "Operacje"
     }
   ],
   "u/KSPz": [
@@ -4907,6 +4989,12 @@
       "value": "Wymagane. Tablica wartości służąca do odnalezienia wartości minimalnej lub pierwsza wartość zestawu."
     }
   ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Uwzględnianie zawartości dynamicznej"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
@@ -5049,16 +5137,6 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Hawaje"
-    }
-  ],
-  "yOkPGx": [
-    {
-      "type": 0,
-      "value": "logo dla łącznika "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "yVh9kr": [

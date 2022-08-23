@@ -18,8 +18,9 @@ jobs:
           node-version: 16
 
       - run: npm ci
+
       - name: 'Version Bump'
-        run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && npm run bump
+        run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && npm run bump && npm install
 
       - name: Push changes
         uses: ad-m/github-push-action@master
