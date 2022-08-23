@@ -12,6 +12,7 @@ import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
 import type { ValidationProps } from './plugins/Validation';
+import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
 import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
@@ -68,13 +69,6 @@ export interface BasePlugins {
   validation?: ValidationProps;
 }
 
-const defaultTheme = {
-  ltr: 'ltr',
-  rtl: 'rtl',
-  placeholder: 'editor-placeholder',
-  paragraph: 'editor-paragraph',
-};
-
 const onError = (error: Error) => {
   console.error(error);
 };
@@ -98,7 +92,7 @@ export const BaseEditor = ({
   const [showTokenPicker, setShowTokenPicker] = useState(true);
   const [inTokenPicker, setInTokenPicker] = useState(false);
   const initialConfig = {
-    theme: defaultTheme,
+    theme: EditorTheme,
     onError,
     readOnly: readonly,
     nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode, TokenNode],
