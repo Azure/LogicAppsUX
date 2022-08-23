@@ -3,9 +3,11 @@ import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initializ
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
+import type { OperationMetadataState } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { useOperationManifest } from '../../core/state/selectors/actionMetadataSelector';
 import { setExpandedSections } from '../../core/state/settingSlice';
+import type { ValidationError } from '../../core/state/settingSlice';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
@@ -20,9 +22,12 @@ import { Security } from './sections/security';
 import type { SecuritySectionProps } from './sections/security';
 import { Tracking } from './sections/tracking';
 import type { TrackingSectionProps } from './sections/tracking';
+import { ErrorBar } from './validation/errorbar';
+import { validate } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
+import { isNullOrUndefined, equals, isObject, guid } from '@microsoft-logic-apps/utils';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { equals, isObject } from '@microsoft-logic-apps/utils';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export type ToggleHandler = (checked: boolean) => void;
@@ -219,7 +224,12 @@ function GeneralSettings(): JSX.Element | null {
 
 function TrackingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
+  const [validationErrors, setValidationError] = useState({} as Record<string, ValidationError[]>);
+  let rootState: RootState;
+  const expandedSections = useSelector((state: RootState) => {
+      rootState = state;
+      return state.settings.expandedSections;
+    }),
     nodeId = useSelectedNodeId(),
     { trackedProperties, correlation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
 
@@ -255,18 +265,39 @@ function TrackingSettings(): JSX.Element | null {
         trackedPropertiesInput[key] = propertyValue;
       }
     }
+
     // TODO (14427339): Setting Validation
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
+    const {
+      operations: { settings },
+    } = rootState;
+    const proposedState: OperationMetadataState = {
+      ...rootState.operations,
+      settings: {
+        [nodeId]: {
+          ...settings[nodeId],
           trackedProperties: {
-            isSupported: !!trackedProperties?.isSupported,
+            isSupported: true,
             value: trackedPropertiesInput,
           },
         },
-      })
-    );
+      },
+    };
+    const validationResult = validate('operations', nodeId, proposedState);
+    if (isNullOrUndefined(validationResult)) {
+      dispatch(
+        updateNodeSettings({
+          id: nodeId,
+          settings: {
+            trackedProperties: {
+              isSupported: !!trackedProperties?.isSupported,
+              value: trackedPropertiesInput,
+            },
+          },
+        })
+      );
+    } else {
+      setValidationError(validationResult);
+    }
   };
 
   const onTrackedPropertiesStringValueChange = (newValue: string): void => {
@@ -305,7 +336,14 @@ function TrackingSettings(): JSX.Element | null {
   };
 
   if (trackedProperties?.isSupported || correlation?.isSupported) {
-    return <Tracking {...trackingProps} />;
+    return (
+      <>
+        <Tracking {...trackingProps} />
+        {(validationErrors[nodeId] ?? []).map((error) => {
+          return <ErrorBar key={guid()} message={error.message} />;
+        })}
+      </>
+    );
   } else return null;
 }
 
