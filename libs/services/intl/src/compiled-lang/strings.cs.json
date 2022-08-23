@@ -1974,11 +1974,15 @@
   "M9Zj10": [
     {
       "type": 0,
-      "value": "No results found for: "
+      "value": "Nenašly se žádné výsledky pro: "
     },
     {
       "type": 1,
       "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "M9mzP6": [
@@ -2110,7 +2114,7 @@
   "ORVfYZ": [
     {
       "type": 0,
-      "value": "Loading operations..."
+      "value": "Načítají se operace…"
     }
   ],
   "OSHNZ2": [
@@ -3398,7 +3402,7 @@
   "eRvGw3": [
     {
       "type": 0,
-      "value": "Loading connectors..."
+      "value": "Načítají se konektory…"
     }
   ],
   "eRvRWs": [

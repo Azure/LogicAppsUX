@@ -1857,12 +1857,12 @@
   ],
   "M9Zj10": [
     {
-      "type": 0,
-      "value": "No results found for: "
+      "type": 1,
+      "value": "searchText"
     },
     {
-      "type": 1,
-      "value": "searchTerm"
+      "type": 0,
+      "value": " için sonuç bulunamadı"
     }
   ],
   "M9mzP6": [
@@ -1994,7 +1994,7 @@
   "ORVfYZ": [
     {
       "type": 0,
-      "value": "Loading operations..."
+      "value": "İşlemler yükleniyor..."
     }
   ],
   "OSHNZ2": [
@@ -3256,7 +3256,7 @@
   "eRvGw3": [
     {
       "type": 0,
-      "value": "Loading connectors..."
+      "value": "Bağlayıcılar yükleniyor..."
     }
   ],
   "eRvRWs": [

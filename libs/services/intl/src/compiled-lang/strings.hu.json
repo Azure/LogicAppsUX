@@ -1874,7 +1874,7 @@
   "M9Zj10": [
     {
       "type": 0,
-      "value": "No results found for: "
+      "value": "Nincs találat a következőre: "
     },
     {
       "type": 1,
@@ -2010,7 +2010,7 @@
   "ORVfYZ": [
     {
       "type": 0,
-      "value": "Loading operations..."
+      "value": "Műveletek betöltése..."
     }
   ],
   "OSHNZ2": [
@@ -3284,7 +3284,7 @@
   "eRvGw3": [
     {
       "type": 0,
-      "value": "Loading connectors..."
+      "value": "Összekötők betöltése..."
     }
   ],
   "eRvRWs": [
