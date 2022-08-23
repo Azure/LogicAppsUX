@@ -66,7 +66,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const { panelItem } = props;
 
   const styles = useStyles();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(!!panelItem);
   const [tabToDisplay, setTabToDisplay] = useState(SELECTED_TAB.PROPERTIES);
 
   const getPanelItemName = (): string | undefined => {
@@ -130,7 +130,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   useEffect(() => {
     // Set tab to first one anytime this panel displays a new item
-    setTabToDisplay(0);
+    setTabToDisplay(SELECTED_TAB.PROPERTIES);
   }, [panelItem]);
 
   const TopBarContent = () => (
