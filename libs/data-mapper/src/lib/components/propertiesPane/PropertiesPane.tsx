@@ -9,6 +9,7 @@ import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, mergeClasses, shorthands, Text, tokens } from '@fluentui/react-components';
 import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export const enum PANEL_ITEM {
   INPUT_SCHEMA_NODE = 1, // Start from 1 to avoid returning true for null/undef check when 0
@@ -63,20 +64,56 @@ export interface PropertiesPaneProps {
 }
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
+  const intl = useIntl();
   const { panelItem } = props;
 
   const styles = useStyles();
   const [isExpanded, setIsExpanded] = useState(!!panelItem);
   const [tabToDisplay, setTabToDisplay] = useState(SELECTED_TAB.PROPERTIES);
 
+  const inputSchemaNodeLoc = intl.formatMessage({
+    defaultMessage: 'Input schema node',
+    description: 'Label for input schema node',
+  });
+
+  const outputSchemaNodeLoc = intl.formatMessage({
+    defaultMessage: 'Output schema node',
+    description: 'Label for output schema node',
+  });
+
+  const expressionLoc = intl.formatMessage({
+    defaultMessage: 'Expression',
+    description: 'Label for expression node',
+  });
+
+  const propertiesLoc = intl.formatMessage({
+    defaultMessage: 'Properties',
+    description: 'Label for properties tab',
+  });
+
+  const codeLoc = intl.formatMessage({
+    defaultMessage: 'Code',
+    description: 'Label for code tab',
+  });
+
+  const testLoc = intl.formatMessage({
+    defaultMessage: 'Test',
+    description: 'Label for test tab',
+  });
+
+  const selectElementLoc = intl.formatMessage({
+    defaultMessage: 'Select an element to start configuring',
+    description: 'Label for default message when no node selected',
+  });
+
   const getPanelItemName = (): string | undefined => {
     switch (panelItem) {
       case PANEL_ITEM.INPUT_SCHEMA_NODE:
-        return 'Input schema node';
+        return inputSchemaNodeLoc;
       case PANEL_ITEM.OUTPUT_SCHEMA_NODE:
-        return 'Output schema node';
+        return outputSchemaNodeLoc;
       case PANEL_ITEM.EXPRESSION:
-        return 'Expression';
+        return expressionLoc;
       default:
         console.error("Panel item hasn't been chosen.");
         return;
@@ -144,14 +181,14 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         onClick={() => setTabToDisplay(SELECTED_TAB.PROPERTIES)}
         className={getTabBtnStyles(SELECTED_TAB.PROPERTIES)}
       >
-        Properties
+        {propertiesLoc}
       </Button>
       <Button appearance="subtle" onClick={() => setTabToDisplay(SELECTED_TAB.CODE)} className={getTabBtnStyles(SELECTED_TAB.CODE)}>
-        Code
+        {codeLoc}
       </Button>
       {panelItem === PANEL_ITEM.OUTPUT_SCHEMA_NODE && (
         <Button appearance="subtle" onClick={() => setTabToDisplay(SELECTED_TAB.TEST)} className={getTabBtnStyles(SELECTED_TAB.TEST)}>
-          Test
+          {testLoc}
         </Button>
       )}
     </>
@@ -164,7 +201,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
           <TopBarContent />
         ) : (
           <Text as="h6" weight="medium" style={{ marginRight: 13 }} className={styles.noItemSelectedText}>
-            Select an element to start configuring
+            {selectElementLoc}
           </Text>
         )}
 
