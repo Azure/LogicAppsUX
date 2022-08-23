@@ -15,17 +15,14 @@ export enum ValidationErrorKeys {
 export interface ValidationError {
   key?: ValidationErrorKeys;
   message: string;
-  shouldRenderBelowConfigurationsSections?: boolean;
 }
 
 export interface SettingsState {
-  // settings: Settings;
   validationErrors: Record<string, ValidationError[]>;
   expandedSections: string[];
 }
 
 const initialState: SettingsState = {
-  // settings: {},
   validationErrors: {},
   expandedSections: [],
 };
