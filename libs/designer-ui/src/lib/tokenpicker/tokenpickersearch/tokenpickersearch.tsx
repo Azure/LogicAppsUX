@@ -1,4 +1,3 @@
-/* eslint-disable */
 import constants from '../../constants';
 import type { Token } from '../../editor';
 import { TokenType, ValueSegmentType } from '../../editor';

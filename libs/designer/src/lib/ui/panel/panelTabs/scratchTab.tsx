@@ -156,12 +156,7 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         />
-        <HTMLEditor
-          initialValue={[]}
-          placeholder="Specify the body of the mail"
-          GetTokenPicker={GetTokenPicker}
-          // BasePlugins={{ toolBar: true }}
-        />
+        <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} />
       </>
     );
   };
