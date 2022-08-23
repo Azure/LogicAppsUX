@@ -127,10 +127,11 @@ export const TokenPickerOptions = ({
       description: token.value,
       title: token.title,
       icon: token.icon ?? 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      value: token.value,
       data: {
         id: guid(),
         type: ValueSegmentType.TOKEN,
-        value: token.title,
+        value: token.value ?? '',
         token: { ...token, tokenType: token.outputInfo.type, description: token.value ?? '' },
       },
     });
