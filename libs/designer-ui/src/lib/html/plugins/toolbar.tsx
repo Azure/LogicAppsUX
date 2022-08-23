@@ -1,3 +1,4 @@
+import { isApple } from '../../helper';
 import { FontDropDown } from '../FontDropDown';
 import clockWiseArrow from './icons/arrow-clockwise.svg';
 import counterClockWiseArrow from './icons/arrow-counterclockwise.svg';
@@ -116,7 +117,7 @@ export function Toolbar() {
         onClick={() => {
           activeEditor.dispatchCommand(UNDO_COMMAND, undefined);
         }}
-        title={'Undo (Ctrl+Z)'}
+        title={isApple() ? 'Undo (⌘Z)' : 'Undo (Ctrl+Z)'}
         className="toolbar-item spaced"
         aria-label="Undo"
       >
@@ -127,7 +128,7 @@ export function Toolbar() {
         onClick={() => {
           activeEditor.dispatchCommand(REDO_COMMAND, undefined);
         }}
-        title={'Redo (Ctrl+Y)'}
+        title={isApple() ? 'Redo (⌘Y)' : 'Redo (Ctrl+Y)'}
         className="toolbar-item"
         aria-label="Redo"
       >
@@ -142,8 +143,8 @@ export function Toolbar() {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
         }}
         className={'toolbar-item spaced ' + (isBold ? 'active' : '')}
-        title={'Bold (Ctrl+B)'}
-        aria-label={`Format text as bold. Shortcut: 'Ctrl+B'`}
+        title={isApple() ? 'Bold (⌘B)' : 'Bold (Ctrl+B)'}
+        aria-label={`Format text as bold. Shortcut: ${isApple() ? '⌘B' : 'Ctrl+B'}`}
       >
         <img className={'format'} src={bold} alt={'bold icon'} />
       </button>
@@ -152,8 +153,8 @@ export function Toolbar() {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
         }}
         className={'toolbar-item spaced ' + (isItalic ? 'active' : '')}
-        title={'Italic (Ctrl+I)'}
-        aria-label={`Format text as italics. Shortcut: 'Ctrl+I'`}
+        title={isApple() ? 'Italic (⌘I)' : 'Italic (Ctrl+I)'}
+        aria-label={`Format text as italics. Shortcut: ${isApple() ? '⌘I' : 'Ctrl+I'}`}
       >
         <img className={'format'} src={italic} alt={'italic icon'} />
       </button>
@@ -162,8 +163,8 @@ export function Toolbar() {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
         }}
         className={'toolbar-item spaced ' + (isUnderline ? 'active' : '')}
-        title={'Underline (Ctrl+U)'}
-        aria-label={`Format text to underlined. Shortcut: '⌘U' : 'Ctrl+U'`}
+        title={isApple() ? 'Underline (⌘U)' : 'Underline (Ctrl+U)'}
+        aria-label={`Format text to underlined. Shortcut: ${isApple() ? '⌘U' : 'Ctrl+U'}`}
       >
         <img className={'format'} src={underline} alt={'underline icon'} />
       </button>
