@@ -34,51 +34,9 @@ export function Toolbar() {
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
-      //   const anchorNode = selection.anchor.getNode();
-      //   const element = anchorNode.getKey() === 'root' ? anchorNode : anchorNode.getTopLevelElementOrThrow();
-      //   const elementKey = element.getKey();
-      //   const elementDOM = activeEditor.getElementByKey(elementKey);
-
-      // Update text format
       setIsBold(selection.hasFormat('bold'));
       setIsItalic(selection.hasFormat('italic'));
       setIsUnderline(selection.hasFormat('underline'));
-      //   setIsStrikethrough(selection.hasFormat('strikethrough'));
-      //   setIsSubscript(selection.hasFormat('subscript'));
-      //   setIsSuperscript(selection.hasFormat('superscript'));
-      //   setIsCode(selection.hasFormat('code'));
-      //   setIsRTL($isParentElementRTL(selection));
-
-      // Update links
-      //   const node = getSelectedNode(selection);
-      //   const parent = node.getParent();
-      //   if ($isLinkNode(parent) || $isLinkNode(node)) {
-      //     setIsLink(true);
-      //   } else {
-      //     setIsLink(false);
-      //   }
-
-      //   if (elementDOM !== null) {
-      //     setSelectedElementKey(elementKey);
-      //     if ($isListNode(element)) {
-      //       const parentList = $getNearestNodeOfType<ListNode>(anchorNode, ListNode);
-      //       const type = parentList ? parentList.getListType() : element.getListType();
-      //       setBlockType(type);
-      //     } else {
-      //       const type = $isHeadingNode(element) ? element.getTag() : element.getType();
-      //       if (type in blockTypeToBlockName) {
-      //         setBlockType(type as keyof typeof blockTypeToBlockName);
-      //       }
-      //       if ($isCodeNode(element)) {
-      //         const language = element.getLanguage() as keyof typeof CODE_LANGUAGE_MAP;
-      //         setCodeLanguage(language ? CODE_LANGUAGE_MAP[language] || language : '');
-      //         return;
-      //       }
-      //     }
-      //   }
-      // Handle buttons
-      //   setFontColor($getSelectionStyleValueForProperty(selection, 'color', '#000'));
-      //   setBgColor($getSelectionStyleValueForProperty(selection, 'background-color', '#fff'));
       setFontFamily($getSelectionStyleValueForProperty(selection, 'font-family', 'Arial'));
       setFontSize($getSelectionStyleValueForProperty(selection, 'font-size', '12px'));
     }
