@@ -4,6 +4,7 @@ import { useDiscoveryIds } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import { guid } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
 import React, { useEffect, useState } from 'react';
@@ -64,7 +65,8 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const onOperationClick = (id: string) => {
     const operation = searchResults.map((result) => result.item).find((o: any) => o.id === id);
-    dispatch(addOperation({ operation, discoveryIds, nodeId: id }));
+    const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
+    dispatch(addOperation({ operation, discoveryIds, nodeId: newNodeId }));
   };
 
   const loadingText = intl.formatMessage({

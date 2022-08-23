@@ -31,8 +31,14 @@ type AddOperationPayload = {
 };
 export const addOperation = createAsyncThunk(
   'addOperation',
-  async ({ operation, discoveryIds, nodeId }: AddOperationPayload, { dispatch, getState }) => {
+  async ({ operation, discoveryIds, nodeId: id }: AddOperationPayload, { dispatch, getState }) => {
     if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+    let count = 1;
+    let nodeId = id;
+    while ((getState() as RootState).workflow.operations[nodeId]) {
+      nodeId = `${id}_${count}`;
+      count++;
+    }
 
     const addPayload: AddNodePayload = {
       operation,
