@@ -10,6 +10,6 @@ export const HTMLEditor = ({ placeholder, readonly, initialValue, GetTokenPicker
       BasePlugins={{ tokens: true, clearEditor: true, toolBar: true }}
       initialValue={initialValue}
       GetTokenPicker={GetTokenPicker}
-    ></BaseEditor>
+    />
   );
 };

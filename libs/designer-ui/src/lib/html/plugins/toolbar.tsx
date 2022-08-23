@@ -20,6 +20,21 @@ import {
 } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
 
+export enum blockTypeToBlockName {
+  bullet = 'Bulleted List',
+  check = 'Check List',
+  code = 'Code Block',
+  h1 = 'Heading 1',
+  h2 = 'Heading 2',
+  h3 = 'Heading 3',
+  h4 = 'Heading 4',
+  h5 = 'Heading 5',
+  h6 = 'Heading 6',
+  number = 'Numbered List',
+  paragraph = 'Normal',
+  quote = 'Quote',
+}
+
 export function Toolbar() {
   const [editor] = useLexicalComposerContext();
   const [activeEditor] = useState(editor);
@@ -30,6 +45,7 @@ export function Toolbar() {
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
+  // const [blockType, setBlockType] = useState<blockTypeToBlockName>(blockTypeToBlockName.paragraph);
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -92,6 +108,8 @@ export function Toolbar() {
       >
         <img className={'format'} src={clockWiseArrow} alt={'clockwise arrow'} />
       </button>
+      <Divider />
+
       <Divider />
       <FontDropDown hasStyle={'font-family'} value={fontFamily} editor={editor} />
       <FontDropDown hasStyle={'font-size'} value={fontSize} editor={editor} />
