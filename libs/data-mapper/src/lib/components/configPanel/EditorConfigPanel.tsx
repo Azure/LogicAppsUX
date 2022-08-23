@@ -10,6 +10,7 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
 import { ChangeSchemaView } from './ChangeSchemaView';
+import type { SchemaFile } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
@@ -22,12 +23,14 @@ export interface EditorConfigPanelProps {
   initialSetup: boolean;
   onSubmitInputSchema: (schema: Schema) => void;
   onSubmitOutputSchema: (schema: Schema) => void;
+  onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
 }
 
 export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   initialSetup,
   onSubmitInputSchema,
   onSubmitOutputSchema,
+  onSubmitSchemaFileSelection,
 }) => {
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
@@ -41,6 +44,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   );
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
+  const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
   const dispatch = useDispatch<AppDispatch>();
@@ -108,6 +112,14 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
       setErrorMessage(genericErrMsg);
     }
   }, [closeSchemaPanel, onSubmitOutputSchema, selectedOutputSchema, genericErrMsg]);
+
+  useEffect(() => {
+    if (selectedSchemaFile) {
+      onSubmitSchemaFileSelection(selectedSchemaFile);
+      setSelectedSchemaFile(undefined);
+      closeSchemaPanel();
+    }
+  }, [closeSchemaPanel, selectedSchemaFile, onSubmitSchemaFileSelection, genericErrMsg]);
 
   useEffect(() => {
     if (isChangeSchemaConfirmed) {
@@ -233,6 +245,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
               schemaType={schemaType}
               selectedSchema={schemaType === SchemaTypes.Input ? selectedInputSchema : selectedOutputSchema}
               setSelectedSchema={schemaType === SchemaTypes.Input ? setSelectedInputSchema : setSelectedOutputSchema}
+              setSelectedSchemaFile={setSelectedSchemaFile}
               errorMessage={errorMessage}
             />
           ) : (

@@ -16,18 +16,12 @@ const startCmd = async (context: ExtensionContext) => {
 
 const loadInputSchemaFileCmd = async (uri: Uri) => {
   const inputSchemaJson = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
-  window.showInformationMessage(JSON.stringify(inputSchemaJson));
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadInputSchema', data: inputSchemaJson });
-
-  window.showInformationMessage('Input schema has been loaded!'); // TESTING ITEM
 };
 
 const loadOutputSchemaFileCmd = async (uri: Uri) => {
   const outputSchemaJson = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
-  window.showInformationMessage(JSON.stringify(outputSchemaJson));
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadOutputSchema', data: outputSchemaJson });
-
-  window.showInformationMessage('Output schema has been loaded!'); // TESTING ITEM
 };
 
 const loadDataMapFileCmd = async (uri: Uri) => {
