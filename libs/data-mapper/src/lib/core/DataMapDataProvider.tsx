@@ -1,6 +1,6 @@
 import type { DataMap } from '../models/DataMap';
 import type { Schema } from '../models/Schema';
-import { convertSchemaToSchemaExtended } from '../models/Schema';
+import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { setInitialInputSchema, setInitialOutputSchema } from './state/DataMapSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
