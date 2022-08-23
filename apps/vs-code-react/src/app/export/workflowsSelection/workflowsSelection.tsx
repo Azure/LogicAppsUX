@@ -101,9 +101,7 @@ export const WorkflowsSelection: React.FC = () => {
   }, [selectedWorkflows, renderWorkflows, allWorkflows]);
 
   const selection: Selection = useMemo(() => {
-    console.log('charlie22', selectedWorkflows);
     const onItemsChange = () => {
-      console.log('charlie3', selectedWorkflows);
       const selectedItems = [...allItemsSelected.current.filter((item) => item.selected)];
       const currentSelection = !selectedItems.length && selectedWorkflows.length ? selectedWorkflows : selectedItems;
       if (selection && selection.getItems().length > 0 && currentSelection.length > 0) {
@@ -114,7 +112,6 @@ export const WorkflowsSelection: React.FC = () => {
     };
 
     const onSelectionChanged = () => {
-      console.log('charlie4', selectedWorkflows);
       const currentSelection = selection.getSelection() as Array<WorkflowsList>;
       dispatch(
         updateSelectedWorkFlows({
@@ -214,16 +211,30 @@ export const WorkflowsSelection: React.FC = () => {
   }, [resourceGroups, isWorkflowsLoading, allWorkflows, searchString]);
 
   const deselectWorkflow = (itemKey: string) => {
-    const deselectedItem = allItemsSelected.current.find((workflow) => workflow.key === itemKey);
+    const copyRenderWorkflows = [...(renderWorkflows ?? [])];
+    const updatedRenderWorkflows = renderWorkflows?.map((workflow, index) => {
+      return { ...workflow, key: index.toString() };
+    }) as WorkflowsList[];
+    const copyAllItems = [...allItemsSelected.current];
+    const newSelection = [...selectedWorkflows.filter((item) => item.key !== itemKey)];
+
+    setRenderWorkflows(updatedRenderWorkflows);
+
+    const deselectedItem = copyAllItems.find((workflow) => workflow.key === itemKey);
     if (deselectedItem) {
       deselectedItem.selected = false;
     }
-    const newSelection = [...selectedWorkflows.filter((item) => item.key !== itemKey)];
+    allItemsSelected.current = copyAllItems;
     dispatch(
       updateSelectedWorkFlows({
         selectedWorkflows: newSelection,
       })
     );
+
+    setTimeout(() => {
+      selection.setItems(renderWorkflows as WorkflowsList[]);
+      setRenderWorkflows(copyRenderWorkflows);
+    }, 10);
   };
 
   return (
