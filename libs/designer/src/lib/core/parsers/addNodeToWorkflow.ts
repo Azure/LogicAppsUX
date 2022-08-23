@@ -103,8 +103,6 @@ const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, newTarge
 };
 
 const reassignAllNodeRunAfter = (state: WorkflowState | undefined, oldNodeId: string, newNodeId: string) => {
-  console.log(oldNodeId);
-  console.log(newNodeId);
   if (!state) return;
   const runAfter = (state.operations[oldNodeId] as LogicAppsV2.ActionDefinition).runAfter;
   state.operations[newNodeId] = { ...state.operations[newNodeId], runAfter };
