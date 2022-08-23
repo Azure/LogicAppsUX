@@ -290,7 +290,7 @@ const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ onS
   const intl = useIntl();
 
   const [stateStackInd, setStateStackInd] = useState(0);
-  const onStateStackChange = useCallback((stateStackInd) => setStateStackInd(stateStackInd), []);
+  const onStateStackChange = useCallback((stateStackInd: number) => setStateStackInd(stateStackInd), []);
 
   // This is a placeholder example - TODO: when save/discard is implemented, replace this (14681794)
   const exampleStateStack: DataMapState[] = [

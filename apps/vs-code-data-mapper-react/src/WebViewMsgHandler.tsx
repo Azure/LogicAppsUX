@@ -11,7 +11,7 @@ const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = createContext(vscode);
 
 // To post messages TO VS Code, vscode.postMessage()
-export const WebViewMsgHandler: React.FC = ({ children }) => {
+export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   // Handle (JSON) messages FROM VS Code

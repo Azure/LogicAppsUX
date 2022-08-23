@@ -9,6 +9,7 @@ export interface FloatingPanelProps {
   minHeight: string;
   maxHeight?: string;
   panelOrdering?: number;
+  children?: React.ReactNode;
 }
 
 export const FloatingPanel: React.FC<FloatingPanelProps> = ({ xPos, yPos, minHeight, maxHeight, width, panelOrdering, children }) => {

@@ -1,16 +1,19 @@
-import { StrictMode } from 'react';
-import * as ReactDOM from 'react-dom';
-import { initializeIcons } from '@fluentui/react';
 import '../../../libs/designer/src/lib/ui/styles.less';
-import { Provider } from 'react-redux';
-import { store } from './state/store';
 import { DesignerWrapper } from './app/Designer/designer';
+import { store } from './state/store';
+import { initializeIcons } from '@fluentui/react';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { Provider } from 'react-redux';
+
 initializeIcons();
-ReactDOM.render(
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+const container = document.getElementById('root')!;
+const root = createRoot(container);
+root.render(
   <StrictMode>
     <Provider store={store}>
       <DesignerWrapper />
     </Provider>
-  </StrictMode>,
-  document.getElementById('root')
+  </StrictMode>
 );
