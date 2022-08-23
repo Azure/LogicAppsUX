@@ -6,7 +6,7 @@ import { OutputSchemaNodeCodeTab } from './tabComponents/OutputSchemaNode/Output
 import { OutputSchemaNodePropertiesTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodePropertiesTab';
 import { OutputSchemaNodeTestTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeTestTab';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, makeStyles, mergeClasses, shorthands, Text, tokens } from '@fluentui/react-components';
+import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens } from '@fluentui/react-components';
 import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -17,7 +17,7 @@ export const enum PANE_ITEM {
   EXPRESSION,
 }
 
-enum SELECTED_TAB {
+enum TABS {
   PROPERTIES = 1,
   CODE,
   TEST,
@@ -33,22 +33,6 @@ const useStyles = makeStyles({
     marginLeft: '8px',
     marginRight: '8px',
     ...shorthands.borderRadius('medium'),
-  },
-  tabBtn: {
-    ...shorthands.border(0),
-    ...shorthands.borderBottom(0), // You'd think border: 0 would do this...but nope
-    ...shorthands.borderRadius(0),
-    marginLeft: '16px',
-    height: '30px',
-    fontSize: '14px',
-  },
-  selectedTabBtn: {
-    ...shorthands.borderBottom('2px', 'solid', tokens.colorBrandStroke1),
-    fontWeight: 'bold',
-    backgroundColor: 'initial',
-    ':hover': {
-      ...shorthands.borderBottom('2px', 'solid', tokens.colorBrandStroke1),
-    },
   },
   chevron: {
     ...shorthands.margin('15px'),
@@ -73,7 +57,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const styles = useStyles();
   const [isExpanded, setIsExpanded] = useState(!!paneItem);
-  const [tabToDisplay, setTabToDisplay] = useState(SELECTED_TAB.PROPERTIES);
+  const [tabToDisplay, setTabToDisplay] = useState(TABS.PROPERTIES);
 
   const inputSchemaNodeLoc = intl.formatMessage({
     defaultMessage: 'Input schema node',
@@ -110,7 +94,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     description: 'Label for default message when no node selected',
   });
 
-  const getpaneItemName = (): string | undefined => {
+  const getPaneItemName = (): string | undefined => {
     switch (paneItem) {
       case PANE_ITEM.INPUT_SCHEMA_NODE:
         return inputSchemaNodeLoc;
@@ -156,45 +140,31 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     }
 
     switch (tabToDisplay) {
-      case SELECTED_TAB.PROPERTIES:
+      case TABS.PROPERTIES:
         return getPropertiesTab(paneItem);
-      case SELECTED_TAB.CODE:
+      case TABS.CODE:
         return getCodeTab(paneItem);
-      case SELECTED_TAB.TEST:
+      case TABS.TEST:
         return getTestTab(); // Only retrieved if OutputSchemaNode
     }
   };
 
-  const getTabBtnStyles = (selTab: SELECTED_TAB) => {
-    return tabToDisplay === selTab ? mergeClasses(styles.tabBtn, styles.selectedTabBtn) : styles.tabBtn;
-  };
-
   useEffect(() => {
     // Set tab to first one anytime this panel displays a new item
-    setTabToDisplay(SELECTED_TAB.PROPERTIES);
+    setTabToDisplay(TABS.PROPERTIES);
   }, [paneItem]);
 
   const TopBarContent = () => (
     <>
       <Text as="h6" weight="medium" style={{ marginRight: 13 }}>
-        {getpaneItemName()}
+        {getPaneItemName()}
       </Text>
       <Divider vertical style={{ maxWidth: 24 }} />
-      <Button
-        appearance="subtle"
-        onClick={() => setTabToDisplay(SELECTED_TAB.PROPERTIES)}
-        className={getTabBtnStyles(SELECTED_TAB.PROPERTIES)}
-      >
-        {propertiesLoc}
-      </Button>
-      <Button appearance="subtle" onClick={() => setTabToDisplay(SELECTED_TAB.CODE)} className={getTabBtnStyles(SELECTED_TAB.CODE)}>
-        {codeLoc}
-      </Button>
-      {paneItem === PANE_ITEM.OUTPUT_SCHEMA_NODE && (
-        <Button appearance="subtle" onClick={() => setTabToDisplay(SELECTED_TAB.TEST)} className={getTabBtnStyles(SELECTED_TAB.TEST)}>
-          {testLoc}
-        </Button>
-      )}
+      <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => setTabToDisplay(data.value as TABS)} size="small">
+        <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
+        <Tab value={TABS.CODE}>{codeLoc}</Tab>
+        {paneItem === PANE_ITEM.OUTPUT_SCHEMA_NODE && <Tab value={TABS.TEST}>{testLoc}</Tab>}
+      </TabList>
     </>
   );
 
