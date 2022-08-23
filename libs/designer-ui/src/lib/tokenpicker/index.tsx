@@ -155,7 +155,7 @@ export function TokenPicker({
               editMode={updatingExpression !== null || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
               setExpression={setExpression}
               isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
-          />
+            />
           </div>
         </div>
       </Callout>
