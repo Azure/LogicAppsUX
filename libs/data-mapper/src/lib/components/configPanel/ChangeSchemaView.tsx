@@ -35,10 +35,8 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
   setSelectedSchema,
   errorMessage,
 }) => {
-  // const schemaFilesList = useSelector((state: RootState) => state.schema.availableSchemas);
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
 
-  // const dataMapDropdownOptions = schemaFilesList?.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
   const dataMapDropdownOptions = schemaList?.map((file: SchemaInfo) => ({ key: file.name, text: file.name, href: file.href }));
 
   const intl = useIntl();

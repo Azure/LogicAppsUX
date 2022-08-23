@@ -17,10 +17,6 @@ export interface SchemaInfoProperties {
   path: string;
 }
 
-// export interface SchemaInfos {
-//   value: Array<SchemaInfoProperties>;
-// }
-
 export enum ResourceType {
   schemaList = 'schemaList',
 }
