@@ -24,6 +24,9 @@ enum SELECTED_TAB {
 }
 
 const useStyles = makeStyles({
+  pane: {
+    height: '240px',
+  },
   topBar: {
     height: '40px',
     p: '4px',
@@ -52,7 +55,8 @@ const useStyles = makeStyles({
   },
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
-    height: '300px', // Arbitrary value for now
+    height: '192px',
+    ...shorthands.overflow('auto'),
   },
   noItemSelectedText: {
     color: tokens.colorNeutralForegroundDisabled,
@@ -195,7 +199,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   );
 
   return (
-    <div>
+    <div className={styles.pane}>
       <Stack horizontal verticalAlign="center" className={styles.topBar}>
         {paneItem ? (
           <TopBarContent />
