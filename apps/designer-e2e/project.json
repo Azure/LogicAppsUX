@@ -6,7 +6,7 @@
     "e2e": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/designer-e2e/cypress.json",
+        "cypressConfig": "apps/designer-e2e/cypress.config.ts",
         "devServerTarget": "designer:storybook"
       },
       "configurations": {
