@@ -89,7 +89,7 @@ export const TokenPickerSearch = ({
       icon: FxIcon,
       title: getExpressionTokenTitle(currExpression),
       description: expression.value,
-      key: getExpressionTokenTitle(currExpression),
+      key: guid(),
     };
 
     if (updatingExpression) {
@@ -100,7 +100,7 @@ export const TokenPickerSearch = ({
           id: guid(),
           type: ValueSegmentType.TOKEN,
           value: expression.value,
-          token: { ...token },
+          token,
         },
         nodeKey: updatingExpression as NodeKey,
       });
@@ -115,7 +115,7 @@ export const TokenPickerSearch = ({
           id: guid(),
           type: ValueSegmentType.TOKEN,
           value: expression.value,
-          token: { ...token },
+          token,
         },
       });
     }
