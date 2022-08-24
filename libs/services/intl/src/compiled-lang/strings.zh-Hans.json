@@ -554,12 +554,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "选择输入"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1624,12 +1618,6 @@
       "value": "必填。要将新属性添加到的对象。"
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "选择文件进行上传"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2616,6 +2604,12 @@
       "value": " 小时"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2700,12 +2694,6 @@
       "value": "请求"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "浏览"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2734,6 +2722,12 @@
     {
       "type": 0,
       "value": "详细信息"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3004,12 +2998,6 @@
     {
       "type": 0,
       "value": "返回一个对象，此对象的某个属性已设置为所提供的值"
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "选择输出"
     }
   ],
   "c6XbVI": [
@@ -4187,6 +4175,12 @@
     {
       "type": 0,
       "value": "将参数转换为字符串"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [

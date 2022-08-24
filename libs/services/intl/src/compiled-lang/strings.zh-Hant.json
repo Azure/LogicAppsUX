@@ -550,12 +550,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "選取輸入"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1620,12 +1614,6 @@
       "value": "必要。接收新增屬性的物件。"
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "選取要上傳的檔案"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2604,6 +2592,12 @@
       "value": " 小時"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2688,12 +2682,6 @@
       "value": "要求"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "瀏覽"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2722,6 +2710,12 @@
     {
       "type": 0,
       "value": "詳細資訊"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2992,12 +2986,6 @@
     {
       "type": 0,
       "value": "傳回屬性設為所提供之值的物件"
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "選取輸出"
     }
   ],
   "c6XbVI": [
@@ -4147,6 +4135,12 @@
     {
       "type": 0,
       "value": "將參數轉換為字串"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [

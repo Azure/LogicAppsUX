@@ -561,12 +561,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "giriş seçin"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1653,12 +1647,6 @@
       "value": "Gerekli. Yeni özelliğin ekleneceği nesne."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Karşıya yüklenecek bir dosya seçin"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2659,6 +2647,12 @@
       "value": " saat"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2743,12 +2737,6 @@
       "value": "İstek"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Göz at"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2777,6 +2765,12 @@
     {
       "type": 0,
       "value": "Daha Fazla Bilgi"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3043,12 +3037,6 @@
     {
       "type": 0,
       "value": "Bir özelliğin sağlanan değere ayarlandığı nesneyi döndürür"
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "çıkış seçin"
     }
   ],
   "c6XbVI": [
@@ -4205,6 +4193,12 @@
     {
       "type": 0,
       "value": "Parametreyi bir dizeye dönüştürür"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [

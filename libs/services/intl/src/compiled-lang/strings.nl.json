@@ -561,12 +561,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "invoer selecteren"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1661,12 +1655,6 @@
       "value": "Vereist. Het object waaraan een nieuwe eigenschap moet worden toegevoegd."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Een bestand selecteren dat moeten worden geüpload"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2679,6 +2667,12 @@
       "value": " uren"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2763,12 +2757,6 @@
       "value": "Aanvraag"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Bladeren"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2797,6 +2785,12 @@
     {
       "type": 0,
       "value": "Meer informatie"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3063,12 +3057,6 @@
     {
       "type": 0,
       "value": "Geeft als resultaat een object met een eigenschap ingesteld op de opgegeven waarde"
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "uitvoer selecteren"
     }
   ],
   "c6XbVI": [
@@ -4245,6 +4233,12 @@
     {
       "type": 0,
       "value": "De parameter naar een tekenreeks converteren"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [

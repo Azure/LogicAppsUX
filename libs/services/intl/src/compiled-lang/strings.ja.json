@@ -550,12 +550,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "入力の選択"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1620,12 +1614,6 @@
       "value": "必須。新しいプロパティを追加するオブジェクト。"
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "アップロードするファイルを選択します"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2604,6 +2592,12 @@
       "value": " 時間"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2688,12 +2682,6 @@
       "value": "要求"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "参照"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2722,6 +2710,12 @@
     {
       "type": 0,
       "value": "詳細情報"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2988,12 +2982,6 @@
     {
       "type": 0,
       "value": "指定された値に設定されたプロパティが含まれるオブジェクトを返します"
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "出力の選択"
     }
   ],
   "c6XbVI": [
@@ -4139,6 +4127,12 @@
     {
       "type": 0,
       "value": "パラメーターを文字列に変換します"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [

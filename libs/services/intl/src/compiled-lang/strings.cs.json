@@ -595,12 +595,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "vybrat vstup"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1739,12 +1733,6 @@
       "value": "Povinné. Objekt, do kterého se přidá nová vlastnost"
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Vyberte soubor, který se má nahrát."
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2801,6 +2789,12 @@
       "value": " h"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2885,12 +2879,6 @@
       "value": "Žádost"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Procházet"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2919,6 +2907,12 @@
     {
       "type": 0,
       "value": "Další informace"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3185,12 +3179,6 @@
     {
       "type": 0,
       "value": "Vrátí objekt, ve kterém se určitá vlastnost nastavila na poskytnutou hodnotu."
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "vybrat výstup"
     }
   ],
   "c6XbVI": [
@@ -4389,6 +4377,12 @@
     {
       "type": 0,
       "value": "Převede parametr na řetězec."
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [

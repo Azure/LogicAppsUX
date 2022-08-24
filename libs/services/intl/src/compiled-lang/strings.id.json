@@ -550,12 +550,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "pilih input"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1620,12 +1614,6 @@
       "value": "Diperlukan. Objek untuk ditambahi properti baru."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Pilih file yang akan diunggah"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2604,6 +2592,12 @@
       "value": " jam"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2688,12 +2682,6 @@
       "value": "Permintaan"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Telusuri"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2722,6 +2710,12 @@
     {
       "type": 0,
       "value": "Info Selengkapnya"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2988,12 +2982,6 @@
     {
       "type": 0,
       "value": "Menghasilkan objek dengan properti yang diatur ke nilai yang disediakan"
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "pilih output"
     }
   ],
   "c6XbVI": [
@@ -4143,6 +4131,12 @@
     {
       "type": 0,
       "value": "Konversikan parameter menjadi string"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [
