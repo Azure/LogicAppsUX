@@ -1,5 +1,6 @@
 import { AzureThemeDark, AzureThemeLight } from '@fluentui/azure-themes';
 import { ThemeProvider as FluentThemeProvider } from '@fluentui/react';
+import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
 const getTheme = (element: HTMLElement): 'light' | 'dark' => {
@@ -8,7 +9,7 @@ const getTheme = (element: HTMLElement): 'light' | 'dark' => {
   const theme = isInverted ? 'dark' : 'light';
   return theme;
 };
-export const ThemeProvider: React.FC = ({ children }) => {
+export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<'light' | 'dark'>(getTheme(document.body));
 
   const observer = useMemo(

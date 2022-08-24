@@ -40,7 +40,7 @@
           {
             "targetNodeKey": "Address",
             "targetValue": {
-              "value": "concat(/Address/AddressLine1 , ‘ ’, /Address/AddressLine2)"
+              "value": "concat(/Address/AddressLine1 , ' ', /Address/AddressLine2)"
             }
           }
         ]
