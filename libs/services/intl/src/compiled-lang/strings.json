@@ -369,6 +369,12 @@
       "value": "Required. The object to check if it is less than value being compared to."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Enter the value of the Authorization header"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -567,6 +573,12 @@
       "value": "(UTC+04:00) Yerevan"
     }
   ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Authentication"
+    }
+  ],
   "47kOXr": [
     {
       "type": 0,
@@ -655,6 +667,12 @@
     {
       "type": 0,
       "value": "Required. The XPath expression to evaluate."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Authority"
     }
   ],
   "5aa76N": [
@@ -807,6 +825,12 @@
       "value": "Required. The string that may contain the value."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -847,6 +871,12 @@
     {
       "type": 0,
       "value": "Required. The string to be URI encoded."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Enter secret as plain text or use a secure parameter"
     }
   ],
   "8Y5xpK": [
@@ -901,6 +931,12 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Value"
     }
   ],
   "949s+r": [
@@ -1005,6 +1041,18 @@
       "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Enter audience"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Username"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1099,6 +1147,12 @@
       "value": "Required. The string to decode the URL-unsafe characters from."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1165,6 +1219,12 @@
       "value": "Use sample payload to generate schema"
     }
   ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Enter client ID"
+    }
+  ],
   "DZZ3fj": [
     {
       "type": 0,
@@ -1229,6 +1289,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "Eqgm4v": [
@@ -1405,6 +1471,12 @@
     {
       "type": 0,
       "value": "Returns the query from a URI"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Enter authority"
     }
   ],
   "GLd3MU": [
@@ -1877,6 +1949,12 @@
       "value": "Required. The data URI to convert to binary representation."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1925,6 +2003,18 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Enter tenant"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1953,6 +2043,12 @@
     {
       "type": 0,
       "value": "Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Secret"
     }
   ],
   "OFKZzQ": [
@@ -2037,6 +2133,12 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
     }
   ],
   "P2A5dB": [
@@ -2231,6 +2333,12 @@
       "value": "h"
     }
   ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Enter audience"
+    }
+  ],
   "RX2Shm": [
     {
       "type": 0,
@@ -2291,6 +2399,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Old"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "SKXopi": [
@@ -2633,6 +2747,12 @@
       "value": "Replace existing schema."
     }
   ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -2763,6 +2883,12 @@
     {
       "type": 0,
       "value": "Required. The name of the action whose body outputs you want."
+    }
+  ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "Y0H9aX": [
@@ -2947,6 +3073,12 @@
     {
       "type": 0,
       "value": "Function"
+    }
+  ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
     }
   ],
   "ajAro8": [
@@ -3513,6 +3645,12 @@
       "value": "Duration"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -3787,6 +3925,12 @@
       "value": "Returns true if two values are equal"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Enter username"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -3941,6 +4085,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "mx2IMJ": [
@@ -4451,6 +4601,12 @@
       "value": "Returns true if either parameter is true"
     }
   ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Client ID"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
@@ -4679,6 +4835,12 @@
       "value": "Required. The value the string may end with."
     }
   ],
+  "vRRSp2": [
+    {
+      "type": 0,
+      "value": "Enter Pfxr"
+    }
+  ],
   "vSlNPe": [
     {
       "type": 0,
@@ -4689,6 +4851,12 @@
     {
       "type": 0,
       "value": "The expression is invalid."
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audience"
     }
   ],
   "vXwYXe": [
@@ -4853,6 +5021,12 @@
     {
       "type": 0,
       "value": "Returns a string representation of a URI encoded string"
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "xOAOHM": [
