@@ -17,10 +17,12 @@ export const useStylesForSharedState = makeStyles({
     paddingInline: '0px',
     paddingLeft: 'none',
     marginLeft: 'none',
-    justifyContent: 'left',
-    textAlign: 'left',
-    ...shorthands.margin('2px'),
     ...shorthands.border('0px'),
+    '&:disabled': {
+      opacity: 0.38,
+      shadow: tokens.shadow2,
+      cursor: 'not-allowed',
+    },
 
     '&:enabled': {
       '&:hover': {
@@ -42,13 +44,6 @@ export const useStylesForSharedState = makeStyles({
     cursor: 'pointer',
   },
 
-  disabled: {
-    backgroundColor: tokens.colorNeutralBackground1,
-    opacity: 0.38,
-    shadow: tokens.shadow2,
-    cursor: 'not-allowed',
-  },
-
   focusIndicator: {
     outlineWidth: '2px',
     outlineColor: tokens.colorStrokeFocus2,
@@ -65,7 +60,6 @@ export const useStylesForSharedState = makeStyles({
 export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClasses, disabled, children }) => {
   const intl = useIntl();
   const classes = useStylesForSharedState();
-  buttonStyles = { ...buttonStyles, ...(childClasses as IButtonStyles) };
   const mergedClasses = mergeClasses(classes.root, childClasses?.root);
   const mergedFocusIndicator = mergeClasses(classes.focusIndicator, childClasses?.focusIndicator);
 
@@ -76,12 +70,7 @@ export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClass
 
   return (
     <div className={mergedClasses}>
-      <button
-        aria-label={buttonAriaLabel}
-        className={`${mergedClasses} ${mergedFocusIndicator} ${disabled && classes.disabled}`}
-        onClick={onClick}
-        disabled={disabled}
-      >
+      <button aria-label={buttonAriaLabel} className={`${mergedClasses} ${mergedFocusIndicator}`} onClick={onClick} disabled={disabled}>
         {children}
       </button>
     </div>

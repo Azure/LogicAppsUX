@@ -23,7 +23,7 @@ export interface SchemaCardWrapperProps {
   displayHandle: boolean;
   isLeaf?: boolean;
   onClick?: () => void;
-  disabled?: boolean;
+  disabled: boolean;
 }
 
 const useStyles = makeStyles({
@@ -36,6 +36,13 @@ const useStyles = makeStyles({
     opacity: 1,
     width: '200px',
     textAlign: 'left',
+    ...shorthands.margin('2px'),
+
+    '&:disabled': {
+      '&:hover': {
+        backgroundColor: tokens.colorNeutralBackground1,
+      },
+    },
 
     '&:enabled': {
       '&:hover': {
@@ -115,7 +122,7 @@ export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ l
 
   return (
     <div>
-      <Button className={mergedClasses} disabled={disabled} onClick={onClick}>
+      <Button className={mergedClasses} disabled={!!disabled} onClick={onClick}>
         <Icon className={classes.cardIcon} iconName="Diamond" />
         <Text className={classes.cardText} block={true} nowrap={true}>
           {label}

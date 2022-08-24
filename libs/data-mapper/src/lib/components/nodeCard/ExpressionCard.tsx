@@ -1,12 +1,12 @@
-import { NodeCard } from './NodeCard';
+import { useStylesForSharedState } from './NodeCard';
 import { Icon } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { Button, createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 
 export interface ExpressionCardProps {
   iconName: string;
   onClick?: () => void;
-  disabled?: boolean;
+  disabled: boolean;
 }
 
 const useStyles = makeStyles({
@@ -20,6 +20,15 @@ const useStyles = makeStyles({
     width: '32px',
     minWidth: '32px',
     justifyContent: 'center',
+    ...shorthands.padding('0px'),
+    ...shorthands.margin('2px'),
+
+    '&:disabled': {
+      '&:hover': {
+        backgroundColor: '#8764b8',
+        color: tokens.colorNeutralForegroundInverted,
+      },
+    },
 
     '&:enabled': {
       '&:hover': {
@@ -41,12 +50,13 @@ const useStyles = makeStyles({
   }),
 });
 
-export const ExpressionCard: FunctionComponent<ExpressionCardProps> = ({ iconName, onClick }) => {
+export const ExpressionCard: FunctionComponent<ExpressionCardProps> = ({ iconName, onClick, disabled }) => {
   const classes = useStyles();
+  const mergedClasses = mergeClasses(useStylesForSharedState().root, classes.root);
 
   return (
-    <NodeCard onClick={onClick} childClasses={classes}>
+    <Button onClick={onClick} className={mergedClasses} disabled={!!disabled}>
       <Icon iconName={iconName} />
-    </NodeCard>
+    </Button>
   );
 };
