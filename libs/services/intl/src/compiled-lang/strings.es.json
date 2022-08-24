@@ -561,12 +561,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "seleccionar entrada"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1653,12 +1647,6 @@
       "value": "Obligatorio. Objeto al que se agregará una propiedad nueva."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Seleccione el archivo que se debe cargar."
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2659,6 +2647,12 @@
       "value": " horas"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2743,12 +2737,6 @@
       "value": "Solicitar"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Examinar"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2777,6 +2765,12 @@
     {
       "type": 0,
       "value": "Más información"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3043,12 +3037,6 @@
     {
       "type": 0,
       "value": "Devuelve un objeto con una propiedad establecida en el valor proporcionado."
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "seleccionar salida"
     }
   ],
   "c6XbVI": [
@@ -4225,6 +4213,12 @@
     {
       "type": 0,
       "value": "Convertir el parámetro en una cadena"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [
