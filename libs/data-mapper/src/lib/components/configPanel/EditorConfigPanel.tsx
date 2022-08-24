@@ -1,4 +1,5 @@
 import { getSchemaList, getSelectedSchema } from '../../core';
+import { setInitialDataMap, setInitialInputSchema, setInitialOutputSchema } from '../../core/state/DataMapSlice';
 import {
   closeAllWarning,
   openChangeInputWarning,
@@ -10,6 +11,7 @@ import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, 
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
+import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { ChangeSchemaView } from './ChangeSchemaView';
 import type { SchemaFile } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
@@ -23,17 +25,10 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface EditorConfigPanelProps {
   initialSetup: boolean;
-  onSubmitInputSchema: (schema: Schema) => void;
-  onSubmitOutputSchema: (schema: Schema) => void;
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
 }
 
-export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
-  initialSetup,
-  onSubmitInputSchema,
-  onSubmitOutputSchema,
-  onSubmitSchemaFileSelection,
-}) => {
+export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ initialSetup, onSubmitSchemaFileSelection }) => {
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
   const isChangeSchemaPanelOpen = useSelector((state: RootState) => state.panel.isChangeSchemaPanelOpen);
@@ -52,6 +47,21 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
+
+  const onSubmitSchema = useCallback(
+    (schema: Schema) => {
+      // danielle to test, and refactor dispatch calls
+      const extendedSchema = convertSchemaToSchemaExtended(schema);
+      if (schemaType === SchemaTypes.Input) {
+        dispatch(setInitialInputSchema(extendedSchema));
+      } else {
+        const extendedSchema = convertSchemaToSchemaExtended(schema);
+        dispatch(setInitialOutputSchema(extendedSchema));
+      }
+      dispatch(setInitialDataMap());
+    },
+    [dispatch, schemaType]
+  );
 
   const addMessage = intl.formatMessage({
     defaultMessage: 'Add',
@@ -108,39 +118,28 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     setErrorMessage('');
   }, [dispatch, setErrorMessage]);
 
-  const editInputSchema = useCallback(() => {
-    const selectedInputSchema = downloadedSchema.data as Schema;
+  const editSchema = useCallback(() => {
+    const selectedSchema = downloadedSchema.data as Schema;
 
     setErrorMessage('');
-    if (selectedInputSchema) {
-      onSubmitInputSchema(selectedInputSchema);
+    if (selectedSchema) {
+      onSubmitSchema(selectedSchema);
       closeSchemaPanel();
     } else {
       setErrorMessage(genericErrMsg);
     }
-  }, [closeSchemaPanel, onSubmitInputSchema, genericErrMsg, downloadedSchema]);
-
-  const editOutputSchema = useCallback(() => {
-    const selectedOutputSchema = downloadedSchema.data as Schema;
-    setErrorMessage('');
-    if (selectedOutputSchema) {
-      onSubmitOutputSchema(selectedOutputSchema);
-      closeSchemaPanel();
-    } else {
-      setErrorMessage(genericErrMsg);
-    }
-  }, [closeSchemaPanel, onSubmitOutputSchema, genericErrMsg, downloadedSchema]);
+  }, [closeSchemaPanel, onSubmitSchema, genericErrMsg, downloadedSchema]);
 
   const addSchema = useCallback(() => {
     // danielle to refactor, nested is so confusing
     schemaType === SchemaTypes.Input
       ? curDataMapOperation
         ? dispatch(openChangeInputWarning())
-        : editInputSchema()
+        : editSchema()
       : curDataMapOperation
       ? dispatch(openChangeOutputWarning())
-      : editOutputSchema();
-  }, [curDataMapOperation, schemaType, editOutputSchema, editInputSchema, dispatch]);
+      : editSchema();
+  }, [curDataMapOperation, schemaType, editSchema, dispatch]);
 
   useEffect(() => {
     if (selectedSchemaFile) {
@@ -153,24 +152,10 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   useEffect(() => {
     if (isChangeSchemaConfirmed) {
       dispatch(removeOkClicked());
-      if (schemaType === SchemaTypes.Input) {
-        editInputSchema();
-      } else {
-        editOutputSchema();
-      }
+      editSchema();
       dispatch(closeAllWarning());
     }
-  }, [
-    closeSchemaPanel,
-    dispatch,
-    editInputSchema,
-    editOutputSchema,
-    genericErrMsg,
-    isChangeSchemaConfirmed,
-    onSubmitInputSchema,
-    schemaType,
-    selectedInputSchema,
-  ]);
+  }, [closeSchemaPanel, dispatch, editSchema, genericErrMsg, isChangeSchemaConfirmed, onSubmitSchema, schemaType, selectedInputSchema]);
 
   const onRenderFooterContent = useCallback(() => {
     const isNewSchemaSelected =

@@ -18,18 +18,14 @@ import {
   saveDataMap,
   setCurrentlySelectedNode,
   setCurrentOutputNode,
-  setInitialDataMap,
-  setInitialInputSchema,
-  setInitialOutputSchema,
   toggleInputNode,
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
-import type { Schema, SchemaNodeExtended } from '../models';
+import type { SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
 import { convertToReactFlowEdges, convertToReactFlowNodes } from '../utils/ReactFlow.Util';
-import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -106,19 +102,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         dispatch(setCurrentOutputNode(newCurrentSchemaNode));
       }
     }
-  };
-
-  const onSubmitInput = (inputSchema: Schema) => {
-    // danielle this can be moved to child components
-    const extendedSchema = convertSchemaToSchemaExtended(inputSchema);
-    dispatch(setInitialInputSchema(extendedSchema));
-    dispatch(setInitialDataMap());
-  };
-
-  const onSubmitOutput = (outputSchema: Schema) => {
-    const extendedSchema = convertSchemaToSchemaExtended(outputSchema);
-    dispatch(setInitialOutputSchema(extendedSchema));
-    dispatch(setInitialDataMap());
   };
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
@@ -305,12 +288,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
-        <EditorConfigPanel
-          initialSetup={true}
-          onSubmitInputSchema={onSubmitInput}
-          onSubmitOutputSchema={onSubmitOutput}
-          onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
-        />
+        <EditorConfigPanel initialSetup={true} onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
