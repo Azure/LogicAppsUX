@@ -19,6 +19,7 @@ const useStyles = makeStyles({
     textAlign: 'center',
     width: '32px',
     minWidth: '32px',
+    justifyContent: 'center',
 
     '&:enabled': {
       '&:hover': {

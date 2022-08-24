@@ -1,7 +1,15 @@
 import { SchemaTypes } from '../../models';
-import { NodeCard } from './NodeCard';
+import { useStylesForSharedState } from './NodeCard';
 import { Icon, Text } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import {
+  Button,
+  createFocusOutlineStyle,
+  makeStyles,
+  mergeClasses,
+  shorthands,
+  tokens,
+  typographyStyles,
+} from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 import { Handle, Position } from 'react-flow-renderer';
 
@@ -27,8 +35,14 @@ const useStyles = makeStyles({
     height: '44px',
     opacity: 1,
     width: '200px',
+    textAlign: 'left',
 
     '&:enabled': {
+      '&:hover': {
+        backgroundColor: tokens.colorNeutralBackground1,
+      },
+    },
+    '&:active': {
       '&:hover': {
         backgroundColor: tokens.colorNeutralBackground1,
       },
@@ -36,6 +50,7 @@ const useStyles = makeStyles({
   },
   cardIcon: {
     backgroundColor: tokens.colorBrandBackground2,
+    width: '48px',
     borderStartStartRadius: tokens.borderRadiusMedium,
     borderEndStartRadius: tokens.borderRadiusMedium,
     color: tokens.colorBrandForeground1,
@@ -48,11 +63,12 @@ const useStyles = makeStyles({
   },
   cardText: {
     ...typographyStyles.body1Strong,
+    display: 'inline-block',
     alignSelf: 'center',
     color: tokens.colorNeutralForeground1,
     paddingLeft: '8px',
     paddingRight: '8px',
-    textAlign: 'center',
+    textAlign: 'left',
   },
   cardChevron: {
     color: tokens.colorNeutralForeground3,
@@ -95,10 +111,11 @@ export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ data }) => {
 
 export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ label, schemaType, isLeaf, onClick, disabled }) => {
   const classes = useStyles();
+  const mergedClasses = mergeClasses(useStylesForSharedState().root, classes.root);
 
   return (
     <div>
-      <NodeCard onClick={onClick} disabled={disabled} childClasses={classes}>
+      <Button className={mergedClasses} disabled={disabled} onClick={onClick}>
         <Icon className={classes.cardIcon} iconName="Diamond" />
         <Text className={classes.cardText} block={true} nowrap={true}>
           {label}
@@ -108,7 +125,7 @@ export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ l
             <Icon iconName="ChevronRightMed" />
           </div>
         )}
-      </NodeCard>
+      </Button>
     </div>
   );
 };

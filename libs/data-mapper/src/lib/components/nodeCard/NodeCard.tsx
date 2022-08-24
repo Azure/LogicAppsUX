@@ -1,5 +1,4 @@
-import { DefaultButton } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
+import { makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import type { FunctionComponent, ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -10,7 +9,7 @@ interface NodeCardProps {
   children?: ReactNode;
 }
 
-const useStyles = makeStyles({
+export const useStylesForSharedState = makeStyles({
   root: {
     opacity: 1,
     boxShadow: tokens.shadow4,
@@ -18,6 +17,9 @@ const useStyles = makeStyles({
     paddingInline: '0px',
     paddingLeft: 'none',
     marginLeft: 'none',
+    justifyContent: 'left',
+    textAlign: 'left',
+    ...shorthands.margin('2px'),
     ...shorthands.border('0px'),
 
     '&:enabled': {
@@ -29,7 +31,6 @@ const useStyles = makeStyles({
 
       '&:focus': {
         ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorCompoundBrandStroke),
-        outlineOffset: '-1px',
         cursor: 'pointer',
       },
     },
@@ -48,19 +49,23 @@ const useStyles = makeStyles({
     cursor: 'not-allowed',
   },
 
-  focusIndicator: createFocusOutlineStyle({
-    selector: 'focus-within',
-    style: {
-      outlineWidth: tokens.strokeWidthThick,
-      outlineColor: tokens.colorStrokeFocus2,
-      outlineOffset: '-1px',
-    },
-  }),
+  focusIndicator: {
+    outlineWidth: '2px',
+    outlineColor: tokens.colorStrokeFocus2,
+  },
+  //  createFocusOutlineStyle({
+  //   selector: 'focus-within',
+  //   style: {
+  //     outlineWidth: tokens.strokeWidthThick,
+  //     outlineColor: tokens.colorStrokeFocus2,
+  //   },
+  // }),
 });
 
 export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClasses, disabled, children }) => {
   const intl = useIntl();
-  const classes = useStyles();
+  const classes = useStylesForSharedState();
+  buttonStyles = { ...buttonStyles, ...(childClasses as IButtonStyles) };
   const mergedClasses = mergeClasses(classes.root, childClasses?.root);
   const mergedFocusIndicator = mergeClasses(classes.focusIndicator, childClasses?.focusIndicator);
 
@@ -71,15 +76,14 @@ export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClass
 
   return (
     <div className={mergedClasses}>
-      <DefaultButton
+      <button
         aria-label={buttonAriaLabel}
         className={`${mergedClasses} ${mergedFocusIndicator} ${disabled && classes.disabled}`}
-        toggle
         onClick={onClick}
         disabled={disabled}
       >
         {children}
-      </DefaultButton>
+      </button>
     </div>
   );
 };
