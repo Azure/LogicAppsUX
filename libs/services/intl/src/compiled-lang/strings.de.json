@@ -561,12 +561,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "Eingabe auswählen"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1661,12 +1655,6 @@
       "value": "Erforderlich. Das Objekt, dem eine neue Eigenschaft hinzugefügt werden soll."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Datei für Upload auswählen"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2679,6 +2667,12 @@
       "value": " Stunden"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2763,12 +2757,6 @@
       "value": "Anfordern"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Durchsuchen"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2797,6 +2785,12 @@
     {
       "type": 0,
       "value": "Weitere Informationen"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3067,12 +3061,6 @@
     {
       "type": 0,
       "value": "Gibt ein Objekt zurück, für das eine Eigenschaft auf den angegebenen Wert festgelegt wurde."
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "Ausgabe auswählen"
     }
   ],
   "c6XbVI": [
@@ -4249,6 +4237,12 @@
     {
       "type": 0,
       "value": "Parameter in Zeichenfolge konvertieren"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [
