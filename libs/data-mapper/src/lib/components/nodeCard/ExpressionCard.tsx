@@ -1,13 +1,8 @@
-import { useStylesForSharedState } from './NodeCard';
+import type { CardProps } from './NodeCard';
+import { getStylesForSharedState } from './NodeCard';
 import { Icon } from '@fluentui/react';
-import { Button, createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
+import { Badge, Button, createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
-
-export interface ExpressionCardProps {
-  iconName: string;
-  onClick?: () => void;
-  disabled: boolean;
-}
 
 const useStyles = makeStyles({
   root: {
@@ -19,9 +14,10 @@ const useStyles = makeStyles({
     textAlign: 'center',
     width: '32px',
     minWidth: '32px',
+    position: 'relative',
     justifyContent: 'center',
     ...shorthands.padding('0px'),
-    ...shorthands.margin('2px'),
+    ...shorthands.margin(tokens.strokeWidthThick),
 
     '&:disabled': {
       '&:hover': {
@@ -42,6 +38,13 @@ const useStyles = makeStyles({
     },
   },
 
+  badge: {
+    position: 'absolute',
+    top: '0px',
+    right: '0px',
+    zIndex: '1',
+  },
+
   focusIndicator: createFocusOutlineStyle({
     selector: 'focus-within',
     style: {
@@ -50,13 +53,16 @@ const useStyles = makeStyles({
   }),
 });
 
-export const ExpressionCard: FunctionComponent<ExpressionCardProps> = ({ iconName, onClick, disabled }) => {
+export const ExpressionCard: FunctionComponent<CardProps> = ({ iconName, onClick, disabled }) => {
   const classes = useStyles();
-  const mergedClasses = mergeClasses(useStylesForSharedState().root, classes.root);
+  const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   return (
-    <Button onClick={onClick} className={mergedClasses} disabled={!!disabled}>
-      <Icon iconName={iconName} />
-    </Button>
+    <div style={{ height: '32px', width: '32px', position: 'relative' }}>
+      <Badge size="extra-small" color="danger" className={classes.badge}></Badge>
+      <Button onClick={onClick} className={mergedClasses} disabled={!!disabled}>
+        <Icon iconName={iconName} />
+      </Button>
+    </div>
   );
 };

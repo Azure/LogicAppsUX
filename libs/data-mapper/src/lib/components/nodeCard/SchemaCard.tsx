@@ -1,5 +1,6 @@
 import { SchemaTypes } from '../../models';
-import { useStylesForSharedState } from './NodeCard';
+import type { CardProps } from './NodeCard';
+import { getStylesForSharedState } from './NodeCard';
 import { Icon, Text } from '@fluentui/react';
 import {
   Button,
@@ -17,14 +18,12 @@ export interface SchemaCardProps {
   data: SchemaCardWrapperProps;
 }
 
-export interface SchemaCardWrapperProps {
+export type SchemaCardWrapperProps = {
   label: string;
   schemaType: SchemaTypes;
   displayHandle: boolean;
   isLeaf?: boolean;
-  onClick?: () => void;
-  disabled: boolean;
-}
+} & CardProps;
 
 const useStyles = makeStyles({
   root: {
@@ -111,18 +110,22 @@ export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ data }) => {
         isLeaf={data?.isLeaf}
         onClick={data?.onClick}
         disabled={data?.disabled}
+        iconName={'12pointstar'}
+        error={true}
       />
     </div>
   );
 };
 
-export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ label, schemaType, isLeaf, onClick, disabled }) => {
+export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ label, schemaType, isLeaf, onClick, disabled, error }) => {
   const classes = useStyles();
-  const mergedClasses = mergeClasses(useStylesForSharedState().root, classes.root);
+  const sharedStyles = getStylesForSharedState();
+  const mergedClasses = mergeClasses(sharedStyles.root, classes.root);
+  const errorClass = mergeClasses(mergedClasses, sharedStyles.error);
 
   return (
     <div>
-      <Button className={mergedClasses} disabled={!!disabled} onClick={onClick}>
+      <Button className={error ? errorClass : mergedClasses} disabled={!!disabled} onClick={onClick}>
         <Icon className={classes.cardIcon} iconName="Diamond" />
         <Text className={classes.cardText} block={true} nowrap={true}>
           {label}

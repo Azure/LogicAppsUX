@@ -9,7 +9,14 @@ interface NodeCardProps {
   children?: ReactNode;
 }
 
-export const useStylesForSharedState = makeStyles({
+export interface CardProps {
+  iconName: string;
+  onClick?: () => void;
+  disabled: boolean;
+  error: boolean;
+}
+
+export const getStylesForSharedState = makeStyles({
   root: {
     opacity: 1,
     boxShadow: tokens.shadow4,
@@ -22,6 +29,10 @@ export const useStylesForSharedState = makeStyles({
       opacity: 0.38,
       shadow: tokens.shadow2,
       cursor: 'not-allowed',
+    },
+    '&badge': {
+      ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorPaletteRedBackground3),
+      cursor: 'pointer',
     },
 
     '&:enabled': {
@@ -40,7 +51,6 @@ export const useStylesForSharedState = makeStyles({
 
   error: {
     ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorPaletteRedBackground3),
-    outlineOffset: '-1px',
     cursor: 'pointer',
   },
 
@@ -59,9 +69,9 @@ export const useStylesForSharedState = makeStyles({
 
 export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClasses, disabled, children }) => {
   const intl = useIntl();
-  const classes = useStylesForSharedState();
-  const mergedClasses = mergeClasses(classes.root, childClasses?.root);
-  const mergedFocusIndicator = mergeClasses(classes.focusIndicator, childClasses?.focusIndicator);
+  const sharedStyles = getStylesForSharedState();
+  const mergedClasses = mergeClasses(sharedStyles.root, childClasses?.root);
+  const mergedFocusIndicator = mergeClasses(sharedStyles.focusIndicator, childClasses?.focusIndicator);
 
   const buttonAriaLabel = intl.formatMessage({
     defaultMessage: 'Button for managing toggle state',
