@@ -129,7 +129,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
-    setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode>) => {
+    setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         currentlySelectedNode: action.payload,

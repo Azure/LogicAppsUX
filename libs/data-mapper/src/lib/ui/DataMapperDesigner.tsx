@@ -77,6 +77,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     dispatch(toggleInputNode(selectedNode));
   };
 
+  const onPaneClick = (_event: ReactMouseEvent): void => {
+    // If user clicks on pane (empty canvas area), "deselect" node
+    dispatch(setCurrentlySelectedNode(undefined));
+  };
+
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
     const newCurrentlySelectedNode = { type: node.data.schemaType };
     dispatch(setCurrentlySelectedNode(newCurrentlySelectedNode));
@@ -248,6 +253,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         nodes={nodes}
         edges={edges}
         onConnect={onConnect}
+        onPaneClick={onPaneClick}
         onNodeClick={onNodeSingleClick}
         onNodeDoubleClick={onNodeDoubleClick}
         defaultZoom={2}
