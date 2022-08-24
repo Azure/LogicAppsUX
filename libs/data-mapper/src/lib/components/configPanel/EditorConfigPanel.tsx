@@ -46,13 +46,9 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   );
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
-
-  const [downloadedSchema, _setDownloadedSchema] = useState();
-
+  console.log(initialSetup);
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
-
-  // const data = useQuery(["schemas"], getSchemaList())
 
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
@@ -90,27 +86,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     description: 'aria label for close icon button that closes that panel on click',
   });
 
-  const hideEntirePanel = useCallback(() => {
-    dispatch(closeDefaultConfigPanel());
-    setErrorMessage('');
-  }, [dispatch, setErrorMessage]);
-
-  const closeSchemaPanel = useCallback(() => {
-    dispatch(closeSchemaChangePanel());
-    setErrorMessage('');
-  }, [dispatch, setErrorMessage]);
-
-  const addSchema = () => {
-    schemaType === SchemaTypes.Input
-      ? curDataMapOperation
-        ? dispatch(openChangeInputWarning())
-        : editInputSchema()
-      : curDataMapOperation
-      ? dispatch(openChangeOutputWarning())
-      : editOutputSchema();
-  };
-
-  const schemaFile = useQuery(
+  const downloadedSchema = useQuery(
     [selectedInputSchema?.text],
     () => {
       return getSelectedSchema(selectedInputSchema?.text ?? '');
@@ -121,11 +97,19 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
       cacheTime: 1000 * 60 * 5,
     }
   );
-  console.log(schemaFile.data?.toString());
+
+  const hideEntirePanel = useCallback(() => {
+    dispatch(closeDefaultConfigPanel());
+    setErrorMessage('');
+  }, [dispatch, setErrorMessage]);
+
+  const closeSchemaPanel = useCallback(() => {
+    dispatch(closeSchemaChangePanel());
+    setErrorMessage('');
+  }, [dispatch, setErrorMessage]);
 
   const editInputSchema = useCallback(() => {
-    // danielle editInputSchema can be combined with editOutputSchema
-    const selectedInputSchema = downloadedSchema;
+    const selectedInputSchema = downloadedSchema.data as Schema;
 
     setErrorMessage('');
     if (selectedInputSchema) {
@@ -134,10 +118,10 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     } else {
       setErrorMessage(genericErrMsg);
     }
-  }, [closeSchemaPanel, onSubmitInputSchema, selectedInputSchema, genericErrMsg]);
+  }, [closeSchemaPanel, onSubmitInputSchema, genericErrMsg, downloadedSchema]);
 
   const editOutputSchema = useCallback(() => {
-    const selectedOutputSchema = downloadedSchema;
+    const selectedOutputSchema = downloadedSchema.data as Schema;
     setErrorMessage('');
     if (selectedOutputSchema) {
       onSubmitOutputSchema(selectedOutputSchema);
@@ -145,7 +129,18 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     } else {
       setErrorMessage(genericErrMsg);
     }
-  }, [closeSchemaPanel, onSubmitOutputSchema, selectedOutputSchema, genericErrMsg]);
+  }, [closeSchemaPanel, onSubmitOutputSchema, genericErrMsg, downloadedSchema]);
+
+  const addSchema = useCallback(() => {
+    // danielle to refactor, nested is so confusing
+    schemaType === SchemaTypes.Input
+      ? curDataMapOperation
+        ? dispatch(openChangeInputWarning())
+        : editInputSchema()
+      : curDataMapOperation
+      ? dispatch(openChangeOutputWarning())
+      : editOutputSchema();
+  }, [curDataMapOperation, schemaType, editOutputSchema, editInputSchema, dispatch]);
 
   useEffect(() => {
     if (selectedSchemaFile) {
@@ -177,19 +172,19 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     selectedInputSchema,
   ]);
 
-  const onRenderFooterContent = useCallback(
-    () => (
+  const onRenderFooterContent = useCallback(() => {
+    const isNewSchemaSelected =
+      schemaType === SchemaTypes.Input
+        ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation.inputSchema?.name
+        : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation.outputSchema?.name;
+    return (
       <div>
         {isChangeSchemaPanelOpen && (
           <PrimaryButton
             className="panel-button-left"
             onClick={addSchema}
             // danielle refactor below to be more clear
-            disabled={
-              schemaType === SchemaTypes.Input
-                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation.inputSchema?.name
-                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation.outputSchema?.name
-            }
+            disabled={isNewSchemaSelected}
           >
             {addMessage}
           </PrimaryButton>
@@ -197,22 +192,18 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
 
         <DefaultButton onClick={hideEntirePanel}>{discardMessage}</DefaultButton>
       </div>
-    ),
-    [
-      initialSetup,
-      isChangeSchemaPanelOpen,
-      schemaType,
-      curDataMapOperation,
-      editInputSchema,
-      editOutputSchema,
-      selectedInputSchema,
-      selectedOutputSchema,
-      addMessage,
-      hideEntirePanel,
-      discardMessage,
-      dispatch,
-    ]
-  );
+    );
+  }, [
+    isChangeSchemaPanelOpen,
+    schemaType,
+    curDataMapOperation,
+    selectedInputSchema,
+    selectedOutputSchema,
+    addMessage,
+    hideEntirePanel,
+    discardMessage,
+    addSchema,
+  ]);
 
   const onInputSchemaClick = () => {
     dispatch(openInputSchemaPanel());

@@ -39,7 +39,7 @@ export class SchemaSelectionService implements ISchemaSelectionService {
   };
 
   private getSchemaFileUri = (xmlName: string) => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/hostruntime/admin/vfs/Artifacts/Schemas/${xmlName}?api-version=2018-11-01&relativepath=1`;
+    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree?api-version=2018-11-01`; // danielle to test
   };
 
   async getSchemas(): Promise<any> {

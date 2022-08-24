@@ -33,7 +33,6 @@ export interface ChangeSchemaViewProps {
 
 export interface SchemaInfo {
   name: string;
-  href: string;
 }
 
 const uploadSchemaOptions: IChoiceGroupOption[] = [
@@ -52,7 +51,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps & ChangeS
 }) => {
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
 
-  const dataMapDropdownOptions = schemaList?.map((file: SchemaInfo) => ({ key: file.name, text: file.name, href: file.href }));
+  const dataMapDropdownOptions = schemaList?.map((file: SchemaInfo) => ({ key: file.name, text: file.name }));
 
   const intl = useIntl();
   const schemaFileInputRef = useRef<HTMLInputElement>(null);
