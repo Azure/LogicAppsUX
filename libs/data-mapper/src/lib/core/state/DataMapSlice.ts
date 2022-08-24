@@ -1,4 +1,5 @@
 import type { SchemaExtended, SchemaNodeExtended, SelectedNode } from '../../models';
+import { SchemaTypes } from '../../models';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -37,16 +38,16 @@ export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    setInitialInputSchema: (state, action: PayloadAction<SchemaExtended>) => {
-      state.curDataMapOperation.inputSchema = action.payload;
-      state.pristineDataMap.inputSchema = action.payload;
-    },
-
-    setInitialOutputSchema: (state, action: PayloadAction<SchemaExtended>) => {
-      state.curDataMapOperation.outputSchema = action.payload;
-      state.curDataMapOperation.currentOutputNode = action.payload.schemaTreeRoot;
-      state.pristineDataMap.outputSchema = action.payload;
-      state.pristineDataMap.currentOutputNode = action.payload.schemaTreeRoot;
+    setInitialSchema: (state, action: PayloadAction<{ schema: SchemaExtended; schemaType: SchemaTypes.Input | SchemaTypes.Output }>) => {
+      if (action.payload.schemaType === SchemaTypes.Input) {
+        state.curDataMapOperation.inputSchema = action.payload.schema;
+        state.pristineDataMap.inputSchema = action.payload.schema;
+      } else {
+        state.curDataMapOperation.outputSchema = action.payload.schema;
+        state.curDataMapOperation.currentOutputNode = action.payload.schema.schemaTreeRoot;
+        state.pristineDataMap.outputSchema = action.payload.schema;
+        state.pristineDataMap.currentOutputNode = action.payload.schema.schemaTreeRoot;
+      }
     },
 
     setInitialDataMap: (state) => {
@@ -191,8 +192,7 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
-  setInitialInputSchema,
-  setInitialOutputSchema,
+  setInitialSchema,
   setInitialDataMap,
   changeInputSchema,
   changeOutputSchema,

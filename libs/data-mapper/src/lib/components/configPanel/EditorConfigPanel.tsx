@@ -1,12 +1,6 @@
 import { getSchemaList, getSelectedSchema } from '../../core';
-import { setInitialDataMap, setInitialInputSchema, setInitialOutputSchema } from '../../core/state/DataMapSlice';
-import {
-  closeAllWarning,
-  openChangeInputWarning,
-  openChangeOutputWarning,
-  removeOkClicked,
-  WarningModalState,
-} from '../../core/state/ModalSlice';
+import { setInitialDataMap, setInitialSchema } from '../../core/state/DataMapSlice';
+import { closeAllWarning, openChangeSchemaWarning, removeOkClicked, WarningModalState } from '../../core/state/ModalSlice';
 import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
@@ -50,15 +44,11 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ i
 
   const onSubmitSchema = useCallback(
     (schema: Schema) => {
-      // danielle to test, and refactor dispatch calls
-      const extendedSchema = convertSchemaToSchemaExtended(schema);
-      if (schemaType === SchemaTypes.Input) {
-        dispatch(setInitialInputSchema(extendedSchema));
-      } else {
+      if (schemaType) {
         const extendedSchema = convertSchemaToSchemaExtended(schema);
-        dispatch(setInitialOutputSchema(extendedSchema));
+        dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
+        dispatch(setInitialDataMap());
       }
-      dispatch(setInitialDataMap());
     },
     [dispatch, schemaType]
   );
@@ -131,14 +121,10 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ i
   }, [closeSchemaPanel, onSubmitSchema, genericErrMsg, downloadedSchema]);
 
   const addSchema = useCallback(() => {
-    // danielle to refactor, nested is so confusing
-    schemaType === SchemaTypes.Input
-      ? curDataMapOperation
-        ? dispatch(openChangeInputWarning())
-        : editSchema()
-      : curDataMapOperation
-      ? dispatch(openChangeOutputWarning())
-      : editSchema();
+    if (schemaType === undefined) {
+      return;
+    }
+    curDataMapOperation ? dispatch(openChangeSchemaWarning({ schemaType: schemaType })) : editSchema();
   }, [curDataMapOperation, schemaType, editSchema, dispatch]);
 
   useEffect(() => {
