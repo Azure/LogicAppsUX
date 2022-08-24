@@ -1,13 +1,4 @@
-import { makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
-import type { FunctionComponent, ReactNode } from 'react';
-import { useIntl } from 'react-intl';
-
-interface NodeCardProps {
-  onClick?: () => void;
-  disabled?: boolean;
-  childClasses?: any;
-  children?: ReactNode;
-}
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 export interface CardProps {
   iconName: string;
@@ -56,23 +47,3 @@ export const getStylesForSharedState = makeStyles({
     outlineColor: tokens.colorStrokeFocus2,
   },
 });
-
-export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClasses, disabled, children }) => {
-  const intl = useIntl();
-  const sharedStyles = getStylesForSharedState();
-  const mergedClasses = mergeClasses(sharedStyles.root, childClasses?.root);
-  const mergedFocusIndicator = mergeClasses(sharedStyles.focusIndicator, childClasses?.focusIndicator);
-
-  const buttonAriaLabel = intl.formatMessage({
-    defaultMessage: 'Button for managing toggle state',
-    description: 'This is a button for keeping toggle states that share the same border states',
-  });
-
-  return (
-    <div className={mergedClasses}>
-      <button aria-label={buttonAriaLabel} className={`${mergedClasses} ${mergedFocusIndicator}`} onClick={onClick} disabled={disabled}>
-        {children}
-      </button>
-    </div>
-  );
-};

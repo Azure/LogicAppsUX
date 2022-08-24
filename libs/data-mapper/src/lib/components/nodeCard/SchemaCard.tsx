@@ -13,10 +13,9 @@ import {
   typographyStyles,
 } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
-import { Handle, Position } from 'react-flow-renderer';
 
 export interface SchemaCardProps {
-  props: SchemaCardWrapperProps;
+  data: SchemaCardWrapperProps;
 }
 
 export type SchemaCardWrapperProps = {
@@ -38,16 +37,8 @@ const useStyles = makeStyles({
     textAlign: 'left',
     ...shorthands.margin('2px'),
 
-    '&:disabled': {
-      '&:hover': {
-        backgroundColor: tokens.colorNeutralBackground1,
-      },
-    },
-
-    '&:enabled': {
-      '&:hover': {
-        backgroundColor: tokens.colorNeutralBackground1,
-      },
+    '&:hover': {
+      backgroundColor: tokens.colorNeutralBackground1,
     },
     '&:active': {
       '&:hover': {
@@ -74,6 +65,7 @@ const useStyles = makeStyles({
     flexShrink: '0',
     flexBasis: '44px',
   },
+  container: { height: '48px', width: '204px', paddingTop: '2px', paddingRight: '2px', position: 'relative' },
   cardText: {
     ...typographyStyles.body1Strong,
     display: 'inline-block',
@@ -98,28 +90,18 @@ const useStyles = makeStyles({
   }),
 });
 
-const handleStyle = { color: 'red' };
-
-export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ props }) => {
+export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ data }) => {
   return (
     <div>
-      {/* TODO: remove handle and make a part of card clickable and drawable instead (14957766) */}
-      {props.displayHandle ? (
-        <Handle
-          type={props.schemaType === SchemaTypes.Input ? 'source' : 'target'}
-          position={props.schemaType === SchemaTypes.Input ? Position.Right : Position.Left}
-          style={handleStyle}
-        />
-      ) : null}
       <SchemaCardWrapper
-        label={props.label}
-        schemaType={props.schemaType}
-        displayHandle={props.displayHandle}
-        isLeaf={props?.isLeaf}
-        onClick={props?.onClick}
-        disabled={props?.disabled}
+        label={data.label}
+        schemaType={data.schemaType}
+        displayHandle={data.displayHandle}
+        isLeaf={data?.isLeaf}
+        onClick={data?.onClick}
+        disabled={data?.disabled}
         iconName={'12pointstar'}
-        error={true}
+        error={data.error}
       />
     </div>
   );
@@ -131,9 +113,8 @@ export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ l
   const mergedClasses = mergeClasses(sharedStyles.root, classes.root);
   const errorClass = mergeClasses(mergedClasses, sharedStyles.error);
   const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
-  // style={{height: "44px", width: "200px", paddingTop: '2px', paddingRight: "2px", position: "relative"}}
   return (
-    <div style={{ height: '48px', width: '204px', paddingTop: '2px', paddingRight: '2px', position: 'relative' }}>
+    <div className={classes.container}>
       {error && <Badge size="extra-small" color="danger" className={classes.badge}></Badge>}
       <Button className={error ? errorClass : mergedClasses} disabled={!!disabled} onClick={onClick}>
         <Icon className={classes.cardIcon} iconName="Diamond" />

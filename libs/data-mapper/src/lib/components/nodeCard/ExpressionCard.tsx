@@ -45,6 +45,12 @@ const useStyles = makeStyles({
     zIndex: '1',
   },
 
+  container: {
+    height: '32px',
+    width: '32px',
+    position: 'relative',
+  },
+
   focusIndicator: createFocusOutlineStyle({
     selector: 'focus-within',
     style: {
@@ -58,7 +64,7 @@ export const ExpressionCard: FunctionComponent<CardProps> = ({ iconName, onClick
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   return (
-    <div style={{ height: '32px', width: '32px', position: 'relative' }}>
+    <div className={classes.container}>
       {error && <Badge size="extra-small" color="danger" className={classes.badge}></Badge>}
       <Button onClick={onClick} className={mergedClasses} disabled={!!disabled}>
         <Icon iconName={iconName} />
