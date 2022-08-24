@@ -599,12 +599,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "wybierz dane wejściowe"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1743,12 +1737,6 @@
       "value": "Wymagane. Obiekt, do którego ma zostać dodana nowa właściwość."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Wybierz plik do przekazania"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2801,6 +2789,12 @@
       "value": " godz."
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2885,12 +2879,6 @@
       "value": "Żądanie"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Przeglądaj"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2919,6 +2907,12 @@
     {
       "type": 0,
       "value": "Więcej informacji"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3185,12 +3179,6 @@
     {
       "type": 0,
       "value": "Zwraca obiekt z właściwością ustawioną na podaną wartość"
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "wybierz wyjście"
     }
   ],
   "c6XbVI": [
@@ -4397,6 +4385,12 @@
     {
       "type": 0,
       "value": "Konwertuj parametr na ciąg"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [

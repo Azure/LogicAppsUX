@@ -160,8 +160,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
             }
             disabled={
               schemaType === SchemaTypes.Input
-                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation?.dataMap?.srcSchemaName
-                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation?.dataMap?.dstSchemaName
+                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation.inputSchema?.name
+                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation.outputSchema?.name
             }
           >
             {addMessage}
