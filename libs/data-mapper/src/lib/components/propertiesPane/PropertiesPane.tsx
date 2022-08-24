@@ -8,7 +8,7 @@ import { OutputSchemaNodeCodeTab } from './tabComponents/OutputSchemaNode/Output
 import { OutputSchemaNodePropertiesTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodePropertiesTab';
 import { OutputSchemaNodeTestTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeTestTab';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens } from '@fluentui/react-components';
+import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -28,6 +28,10 @@ const useStyles = makeStyles({
     marginRight: '8px',
     ...shorthands.borderRadius('medium'),
   },
+  title: {
+    marginRight: '13px',
+    ...typographyStyles.body1Strong,
+  },
   chevron: {
     ...shorthands.margin('15px'),
   },
@@ -39,6 +43,7 @@ const useStyles = makeStyles({
   noItemSelectedText: {
     color: tokens.colorNeutralForegroundDisabled,
     marginRight: '13px',
+    ...typographyStyles.body1Strong,
   },
 });
 
@@ -162,9 +167,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const TopBarContent = () => (
     <>
-      <Text as="h6" weight="medium" style={{ marginRight: 13 }}>
-        {getPaneItemName()}
-      </Text>
+      <Text className={styles.title}>{getPaneItemName()}</Text>
       <Divider vertical style={{ maxWidth: 24 }} />
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => setTabToDisplay(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
