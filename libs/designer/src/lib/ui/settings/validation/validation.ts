@@ -20,12 +20,19 @@ export const validate = <K extends keyof RootState>(
   }
 };
 
-const validateOperationSettings = (_settings: Settings): ValidationError[] => {
-  const errors: ValidationError[] = [];
-  // all setting validation logic based on settings goes here
-  errors.push({
+const validateOperationSettings = (settings: Settings): ValidationError[] => {
+  const { conditionExpressions /*paging, retryPolicy, singleInstance, splitOn, timeout*/ } = settings;
+  const validationErrors: ValidationError[] = [];
+
+  if (conditionExpressions?.value?.some((conditionExpression) => !conditionExpression)) {
+    validationErrors.push({
+      key: ValidationErrorKeys.TRIGGER_CONDITION_EMPTY,
+      message: 'trigger condition cannot be empty',
+    });
+  }
+  validationErrors.push({
     key: ValidationErrorKeys.PAGING_COUNT,
-    message: `Paging count invalid : dummy paging val`,
+    message: `test error message`,
   }); // forced push for testing
-  return errors;
+  return validationErrors;
 };

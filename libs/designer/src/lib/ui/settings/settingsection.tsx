@@ -1,9 +1,12 @@
 import type { HeaderClickHandler } from '.';
 import constants from '../../common/constants';
+import type { ValidationError } from '../../core/state/settingSlice';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
+import { ErrorBar } from './validation/errorbar';
 import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconStyles, IIconProps } from '@fluentui/react';
+import { guid } from '@microsoft-logic-apps/utils';
 import {
   isHighContrastBlack,
   MultiSelectSetting,
@@ -106,6 +109,7 @@ export interface SettingSectionProps {
   settings: Settings[];
   isReadOnly?: boolean;
   onHeaderClick?: HeaderClickHandler;
+  validationErrors?: ValidationError[];
 }
 
 export const SettingsSection: FC<SettingSectionProps> = ({
@@ -117,6 +121,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   isReadOnly,
   settings,
   onHeaderClick,
+  validationErrors,
 }) => {
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
@@ -138,6 +143,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   const internalSettings = (
     <>
       {expanded || !showHeading ? <Setting isReadOnly={isReadOnly} settings={settings} /> : null}
+      {expanded ? (validationErrors ?? []).map((error) => <ErrorBar key={guid()} message={error.message} />) : null}
       {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
     </>
   );
@@ -168,7 +174,14 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   );
 };
 
-const Setting = ({ settings, isReadOnly }: { settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
+const Setting = ({
+  settings,
+  isReadOnly,
+}: {
+  settings: Settings[];
+  isReadOnly?: boolean;
+  validationErrors?: ValidationError[];
+}): JSX.Element => {
   return (
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {

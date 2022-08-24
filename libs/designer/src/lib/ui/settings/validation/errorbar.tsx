@@ -12,15 +12,17 @@ const messageBarStyles: IMessageBarStyles = isHighContrastBlack()
 
 export const ErrorBar = ({ message }: MessageBarProps): JSX.Element => {
   return (
-    <MessageBar styles={messageBarStyles} messageBarType={MessageBarType.error}>
-      {message}
-    </MessageBar>
+    <div className="msla-setting-section-error-bar">
+      <MessageBar styles={messageBarStyles} messageBarType={MessageBarType.error}>
+        {message}
+      </MessageBar>
+    </div>
   );
 };
 
 export const WarningBar = ({ message }: MessageBarProps): JSX.Element => {
   return (
-    <MessageBar styles={messageBarStyles} messageBarType={MessageBarType.warning}>
+    <MessageBar styles={messageBarStyles} messageBarType={MessageBarType.warning} onDismiss={() => null}>
       {message}
     </MessageBar>
   );

@@ -13,7 +13,7 @@ export enum ValidationErrorKeys {
 }
 
 export interface ValidationError {
-  key?: ValidationErrorKeys;
+  key: ValidationErrorKeys;
   message: string;
 }
 
