@@ -105,6 +105,7 @@ export const WorkflowsSelection: React.FC = () => {
       const selectedItems = [...allItemsSelected.current.filter((item) => item.selected)];
       const currentSelection = !selectedItems.length && selectedWorkflows.length ? selectedWorkflows : selectedItems;
       if (selection && selection.getItems().length > 0 && currentSelection.length > 0) {
+        selection.setAllSelected(false);
         currentSelection.forEach((workflow: WorkflowsList) => {
           selection.setKeySelected(workflow.key, true, true);
         });
