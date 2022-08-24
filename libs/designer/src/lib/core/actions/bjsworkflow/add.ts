@@ -80,7 +80,7 @@ export const initializeOperationDetails = async (
     const manifest = await getOperationManifest(operationInfo);
 
     // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
-    const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest);
+    const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest, workflowState.operations[nodeId]);
     const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
     const nodeOutputs = getOutputParametersFromManifest(manifest, false /* isTrigger */, nodeInputs, settings.splitOn?.value?.value);
     const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);

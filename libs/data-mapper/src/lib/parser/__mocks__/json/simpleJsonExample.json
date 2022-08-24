@@ -37,7 +37,7 @@
               {
                 "targetNodeKey": "Line1",
                 "targetValue": {
-                  "value": "concat(/ns0:Orders/WebOrders/CustomerName , ‘ ’, /ns0:Orders/WebOrders/Address/Addr1)"
+                  "value": "concat(/ns0:Orders/WebOrders/CustomerName , ' ', /ns0:Orders/WebOrders/Address/Addr1)"
                 }
               },
               {

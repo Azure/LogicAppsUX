@@ -561,12 +561,6 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "seleziona input"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
@@ -1653,12 +1647,6 @@
       "value": "Obbligatorio. Oggetto a cui aggiungere una nuova proprietà."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Selezionare un file da caricare"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2667,6 +2655,12 @@
       "value": " ore"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2751,12 +2745,6 @@
       "value": "Richiesta"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Esplora"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2785,6 +2773,12 @@
     {
       "type": 0,
       "value": "Altre informazioni"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3051,12 +3045,6 @@
     {
       "type": 0,
       "value": "Restituisce un oggetto con una proprietà impostata sul valore specificato"
-    }
-  ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "seleziona output"
     }
   ],
   "c6XbVI": [
@@ -4217,6 +4205,12 @@
     {
       "type": 0,
       "value": "Converte il parametro in una stringa"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [

@@ -12,6 +12,7 @@ export * from './card/images/dynamicsvgs/trafficlightsvgs';
 export * from './checkbox';
 // export * from './colorizer';
 export * from './combobox';
+export * from './html';
 // export * from './conditioncontrol';
 // export * from './configItem';
 export * from './copyinputcontrol';

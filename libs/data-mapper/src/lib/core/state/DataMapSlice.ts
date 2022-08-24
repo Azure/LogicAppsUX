@@ -1,4 +1,4 @@
-import type { DataMap, SchemaExtended, SchemaNodeExtended } from '../../models';
+import type { SchemaExtended, SchemaNodeExtended, SelectedNode } from '../../models';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -6,20 +6,20 @@ export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
   isDirty: boolean;
-
   undoStack: DataMapOperationState[];
   redoStack: DataMapOperationState[];
 }
 
 export interface DataMapOperationState {
-  dataMap?: DataMap;
+  dataMapConnections: { [key: string]: string };
   inputSchema?: SchemaExtended;
   outputSchema?: SchemaExtended;
   currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
+  currentlySelectedNode?: SelectedNode;
 }
 
-const emptyPristineState: DataMapOperationState = { currentInputNodes: [] };
+const emptyPristineState: DataMapOperationState = { dataMapConnections: {}, currentInputNodes: [] };
 const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
@@ -27,6 +27,11 @@ const initialState: DataMapState = {
   undoStack: [],
   redoStack: [],
 };
+
+export interface ConnectionAction {
+  outputNodeKey: string;
+  value: string;
+}
 
 export const dataMapSlice = createSlice({
   name: 'dataMap',
@@ -49,11 +54,7 @@ export const dataMapSlice = createSlice({
       if (currentState.inputSchema && currentState.outputSchema) {
         const newInitialState: DataMapOperationState = {
           ...currentState,
-          dataMap: {
-            srcSchemaName: currentState.inputSchema.name,
-            dstSchemaName: currentState.outputSchema.name,
-            mappings: { targetNodeKey: currentState.outputSchema.schemaTreeRoot.key },
-          },
+          dataMapConnections: {},
           currentInputNodes: [],
           currentOutputNode: currentState.currentOutputNode || currentState.outputSchema.schemaTreeRoot,
         };
@@ -128,6 +129,26 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentlySelectedNode: action.payload,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
+    makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      newState.dataMapConnections[action.payload.outputNodeKey] = action.payload.value;
+
+      doDataMapOperation(state, newState);
+    },
+
     undoDataMapOperation: (state) => {
       const lastDataMap = state.undoStack.pop();
       if (lastDataMap && state.curDataMapOperation) {
@@ -178,6 +199,8 @@ export const {
   setCurrentInputNodes,
   toggleInputNode,
   setCurrentOutputNode,
+  setCurrentlySelectedNode,
+  makeConnection,
   undoDataMapOperation,
   redoDataMapOperation,
   saveDataMap,

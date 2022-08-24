@@ -1,5 +1,5 @@
-import { convertSchemaToSchemaExtended } from '../../models/Schema';
 import { simpleMockSchema } from '../../models/__mocks__';
+import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { SchemaTreeProps } from './SchemaTree';
 import { SchemaTree } from './SchemaTree';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
