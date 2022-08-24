@@ -98,8 +98,9 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
     if (samplePayload) {
       try {
         const jsonSchema = generateSchemaFromJsonString(samplePayload);
-        const stringifiedJsonSchema = JSON.stringify(jsonSchema, null, 4);
-        setCurrentValue(formatValue(stringifiedJsonSchema));
+        const stringifiedJsonSchema = formatValue(JSON.stringify(jsonSchema, null, 4));
+        setCurrentValue(stringifiedJsonSchema);
+        onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: stringifiedJsonSchema }] });
       } catch (ex) {
         const error = intl.formatMessage({
           defaultMessage: 'Unable to generate schema',
