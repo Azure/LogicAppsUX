@@ -38,6 +38,7 @@ const useStyles = makeStyles({
   },
   noItemSelectedText: {
     color: tokens.colorNeutralForegroundDisabled,
+    marginRight: '13px',
   },
 });
 
@@ -176,13 +177,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   return (
     <div className={styles.pane}>
       <Stack horizontal verticalAlign="center" className={styles.topBar}>
-        {currentNode ? (
-          <TopBarContent />
-        ) : (
-          <Text as="h6" weight="medium" style={{ marginRight: 13 }} className={styles.noItemSelectedText}>
-            {selectElementLoc}
-          </Text>
-        )}
+        {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <Button
           appearance="subtle"
