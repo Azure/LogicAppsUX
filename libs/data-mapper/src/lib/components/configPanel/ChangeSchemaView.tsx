@@ -138,7 +138,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
         <div>
           <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept=".json" hidden />
           <Stack horizontal>
-            <TextField value={selectedSchemaFile?.name} placeholder={uploadMessage} />
+            <TextField value={selectedSchemaFile?.name} placeholder={uploadMessage} readOnly />
             <PrimaryButton onClick={() => schemaFileInputRef.current?.click()} style={{ marginLeft: 8 }}>
               {browseLoc}
             </PrimaryButton>
