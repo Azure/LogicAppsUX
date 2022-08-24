@@ -4,6 +4,7 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import {
+  HTMLEditor,
   TokenPicker,
   TokenType,
   DictionaryEditor,
@@ -34,8 +35,7 @@ export const ScratchTab = () => {
         labelId={labelId}
         tokenGroup={testTokenGroup}
         expressionGroup={expressionGroup}
-        setInTokenPicker={onClick}
-        initialExpression={''}
+        tokenPickerFocused={onClick}
       />
     );
   };
@@ -156,6 +156,7 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         />
+        <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} />
       </>
     );
   };

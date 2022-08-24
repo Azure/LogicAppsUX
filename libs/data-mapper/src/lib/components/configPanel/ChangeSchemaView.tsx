@@ -1,8 +1,9 @@
 import { SchemaTypes } from '../../models/Schema';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
-import { ChoiceGroup, Dropdown, PrimaryButton, TextField } from '@fluentui/react';
+import { ChoiceGroup, Dropdown } from '@fluentui/react';
+import { Label } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export enum UploadSchemaTypes {
@@ -12,9 +13,21 @@ export enum UploadSchemaTypes {
 
 export interface ChangeSchemaView {
   schemaList: SchemaInfo[] | any;
+}
+export interface FileWithVsCodePath extends File {
+  path?: string;
+}
+export interface SchemaFile {
+  path: string;
+  type: SchemaTypes;
+}
+
+export interface ChangeSchemaViewProps {
   schemaType?: SchemaTypes;
   selectedSchema?: IDropdownOption;
+  selectedSchemaFile?: IDropdownOption;
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
+  setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
 }
 
@@ -24,15 +37,16 @@ export interface SchemaInfo {
 }
 
 const uploadSchemaOptions: IChoiceGroupOption[] = [
-  // { key: UploadSchemaTypes.UploadNew, text: 'Upload new' },  // TODO: enable this when funtionality will be developed (14772529)
+  { key: UploadSchemaTypes.UploadNew, text: 'Upload new' },
   { key: UploadSchemaTypes.SelectFrom, text: 'Select from existing' },
 ];
 
-export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
+export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps & ChangeSchemaView> = ({
   schemaList,
   schemaType,
   selectedSchema,
   setSelectedSchema,
+  setSelectedSchemaFile,
   errorMessage,
 }) => {
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
@@ -41,13 +55,9 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
 
   const intl = useIntl();
 
-  const browseMessage = intl.formatMessage({
-    defaultMessage: 'Browse',
-    description: 'This is a button text where clicking will lead to browsing to select a file to upload',
-  });
   const uploadMessage = intl.formatMessage({
-    defaultMessage: 'Select a file to upload',
-    description: 'This is shown as a placeholder text for selecting a file to upload',
+    defaultMessage: 'Select a schema file to load',
+    description: 'Placeholder for dropdown to load a schema file into memory',
   });
   const dropdownAriaLabel = intl.formatMessage({
     defaultMessage: 'Select the schema for dropdown',
@@ -64,7 +74,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
         description: 'label to inform to upload or select input schema to be used',
       });
       selectSchemaPlaceholderMessage = intl.formatMessage({
-        defaultMessage: 'select input',
+        defaultMessage: 'Select an input schema',
         description: 'placeholder for selecting the input schema dropdown',
       });
       break;
@@ -74,7 +84,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
         description: 'label to inform to upload or select output schema to be used',
       });
       selectSchemaPlaceholderMessage = intl.formatMessage({
-        defaultMessage: 'select output',
+        defaultMessage: 'Select an output schema',
         description: 'placeholder for selecting the output schema dropdown',
       });
       break;
@@ -95,6 +105,22 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
     }
   }, []);
 
+  const onSelectSchemaFile = (event: React.FormEvent<HTMLInputElement>) => {
+    if (!event?.currentTarget?.files) {
+      console.error('Files array is empty');
+      return;
+    }
+
+    const schemaFile = event.currentTarget.files[0] as FileWithVsCodePath;
+    if (!schemaFile.path) {
+      console.log('Path property is missing from file (should only occur in browser/standalone)');
+    } else if (!schemaType) {
+      console.error('Missing schemaType');
+    } else {
+      setSelectedSchemaFile({ path: schemaFile.path, type: schemaType });
+    }
+  };
+
   return (
     <div>
       <p className="inform-text">{uploadSelectLabelMessage}</p>
@@ -108,11 +134,11 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaView> = ({
       />
 
       {uploadType === UploadSchemaTypes.UploadNew && (
-        <div className="upload-new">
-          <TextField placeholder={uploadMessage} />
-          <PrimaryButton className="panel-button-right" aria-label={browseMessage}>
-            {browseMessage}
-          </PrimaryButton>
+        <div>
+          <Label>
+            {uploadMessage}
+            <input id="schema-file-upload" type="file" onInput={onSelectSchemaFile} accept=".json" />
+          </Label>
         </div>
       )}
 

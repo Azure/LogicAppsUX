@@ -6,7 +6,7 @@ import type { OutputInfo } from '../state/operation/operationMetadataSlice';
 import type { TokensState } from '../state/tokensSlice';
 import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
 import { getAllNodesInsideNode, getUpstreamNodeIds } from './graph';
-import { getRepetitionContext, shouldIncludeSelfForRepetitionReference } from './parameters/helper';
+import { getRepetitionContext, getTokenExpressionValue, shouldIncludeSelfForRepetitionReference } from './parameters/helper';
 import { hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
 import { getIntl } from '@microsoft-logic-apps/intl';
@@ -101,10 +101,7 @@ export function convertOutputsToTokens(
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
 
   return Object.keys(outputs).map((outputKey) => {
-    const { key, name, type, isAdvanced, required, format, source, isInsideArray, parentArray, itemSchema } = outputs[outputKey];
-    // TODO: temporary solution because description doesn't seem to be being passed
-    const splitKey = key.split('.$.');
-    const description = `${splitKey[0]}('${nodeId}')['${splitKey[1]}']`;
+    const { key, name, type, isAdvanced, required, format, source, isInsideArray, parentArray, itemSchema, value } = outputs[outputKey];
     return {
       key,
       brandColor,
@@ -112,7 +109,7 @@ export function convertOutputsToTokens(
       title: getTokenTitle(outputs[outputKey]),
       name,
       type,
-      description,
+      value,
       isAdvanced,
       outputInfo: {
         type: TokenType.OUTPUTS,
@@ -167,7 +164,10 @@ export function getOutputTokenSections(state: TokensState, nodeId: string): Toke
   };
 
   const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
-    const tokens = outputTokens[upstreamNodeId].tokens;
+    let tokens = outputTokens[upstreamNodeId].tokens;
+    tokens = tokens.map((token) => {
+      return { ...token, value: getTokenExpressionValue({ ...token, tokenType: TokenType.OUTPUTS }) };
+    });
 
     if (!tokens.length) {
       return undefined;

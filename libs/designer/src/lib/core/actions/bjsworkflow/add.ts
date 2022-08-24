@@ -31,8 +31,14 @@ type AddOperationPayload = {
 };
 export const addOperation = createAsyncThunk(
   'addOperation',
-  async ({ operation, discoveryIds, nodeId }: AddOperationPayload, { dispatch, getState }) => {
+  async ({ operation, discoveryIds, nodeId: id }: AddOperationPayload, { dispatch, getState }) => {
     if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+    let count = 1;
+    let nodeId = id;
+    while ((getState() as RootState).workflow.operations[nodeId]) {
+      nodeId = `${id}_${count}`;
+      count++;
+    }
 
     const addPayload: AddNodePayload = {
       operation,
@@ -73,7 +79,7 @@ export const initializeOperationDetails = async (
     const manifest = await getOperationManifest(operationInfo);
 
     // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
-    const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest);
+    const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest, workflowState.operations[nodeId]);
     const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
     const nodeOutputs = getOutputParametersFromManifest(manifest, false /* isTrigger */, nodeInputs, settings.splitOn?.value?.value);
     const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);

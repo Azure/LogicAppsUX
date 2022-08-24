@@ -382,7 +382,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Další informace"
     }
   ],
   "1ejxkP": [
@@ -493,6 +493,12 @@
       "value": "Zapnuto"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Prázdné tlačítko Přidat dynamický obsah"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -521,6 +527,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Oddělovač."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Není k dispozici žádný obsah."
     }
   ],
   "3PgHCT": [
@@ -581,12 +593,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "vybrat vstup"
     }
   ],
   "4/kJ8D": [
@@ -1107,6 +1113,12 @@
       "value": "Povinný parametr. Index části, která se má načíst."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Není k dispozici žádný dynamický obsah"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1583,6 +1595,12 @@
       "value": "(UTC+12:00) Fidži"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Dynamický obsah, když je k dispozici, se automaticky generuje z konektorů a akcí, které si zvolíte pro svůj tok."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1604,7 +1622,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Zpět k procházení"
     }
   ],
   "IngtMG": [
@@ -1713,12 +1731,6 @@
     {
       "type": 0,
       "value": "Povinné. Objekt, do kterého se přidá nová vlastnost"
-    }
-  ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Vyberte soubor, který se má nahrát."
     }
   ],
   "K90YEU": [
@@ -1890,7 +1902,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Zobrazit více"
     }
   ],
   "LoGUT3": [
@@ -1945,6 +1957,20 @@
     {
       "type": 0,
       "value": "Nepovinné. Název akce s určeným rozsahem, u níž požadujete vstupy a výstupy z akcí na nejvyšší úrovni v rámci daného rozsahu."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Nenašly se žádné výsledky pro: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "M9mzP6": [
@@ -2071,6 +2097,12 @@
     {
       "type": 0,
       "value": "Název připojení"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Načítají se operace…"
     }
   ],
   "OSHNZ2": [
@@ -2568,7 +2600,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Seskupit podle konektoru"
     }
   ],
   "U3iWVd": [
@@ -2757,6 +2789,12 @@
       "value": " h"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2841,12 +2879,6 @@
       "value": "Žádost"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Procházet"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2875,6 +2907,12 @@
     {
       "type": 0,
       "value": "Další informace"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2981,6 +3019,12 @@
     {
       "type": 0,
       "value": "Tato operace už byla odstraněna."
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Další informace o dynamickém obsahu"
     }
   ],
   "ZnGRMP": [
@@ -3137,16 +3181,16 @@
       "value": "Vrátí objekt, ve kterém se určitá vlastnost nastavila na poskytnutou hodnotu."
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "vybrat výstup"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamický obsah se dá přidat i z jiných zdrojů."
     }
   ],
   "cCYmTK": [
@@ -3164,7 +3208,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Zobrazit dokumentaci"
     }
   ],
   "cT2MlP": [
@@ -3343,6 +3387,12 @@
       "value": "Povinný parametr. Název proměnné, jejíž hodnotu chcete získat."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Načítají se konektory…"
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3358,7 +3408,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Předdefinované"
     }
   ],
   "egLI8P": [
@@ -3514,7 +3564,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Výsledky hledání pro: "
     },
     {
       "type": 1,
@@ -4194,7 +4244,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Procházet operace"
     }
   ],
   "oRvVIW": [
@@ -4327,6 +4377,12 @@
     {
       "type": 0,
       "value": "Převede parametr na řetězec."
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [
@@ -4626,7 +4682,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Zpět k hledání"
     }
   ],
   "tImHz/": [
@@ -4917,6 +4973,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Pole hodnot, ve kterém se má najít minimální hodnota, nebo první hodnota sady."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Zahrnutí dynamického obsahu"
     }
   ],
   "wHYQyg": [

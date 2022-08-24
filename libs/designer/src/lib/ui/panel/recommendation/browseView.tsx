@@ -1,28 +1,34 @@
+import { useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import { BrowseGrid } from '@microsoft/designer-ui';
 import React from 'react';
-import { useQuery } from 'react-query';
+import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
-
-const getBrowseResult = () => {
-  const connectionService = ConnectionService();
-  const connections = connectionService.getAllConnectors();
-  return connections;
-};
 
 export const BrowseView: React.FC = () => {
   const dispatch = useDispatch();
 
-  const browseResponse = useQuery(['browseResult'], () => getBrowseResult(), {
-    staleTime: 1000000,
-    cacheTime: 10000 * 60 * 5, // Danielle this is temporary, will move to config
-  });
-  const browseResults = browseResponse.data;
+  const intl = useIntl();
+
+  const allConnectors = useAllConnectors();
+  const connectors = allConnectors.data ?? [];
 
   const onConnectorCardSelected = (id: string): void => {
     dispatch(selectOperationGroupId(id));
   };
 
-  return <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={browseResults || []} />;
+  const loadingText = intl.formatMessage({
+    defaultMessage: 'Loading connectors...',
+    description: 'Message to show under the loading icon when loading connectors',
+  });
+
+  if (allConnectors.isLoading)
+    return (
+      <div className="msla-loading-container">
+        <Spinner size={SpinnerSize.large} label={loadingText} />
+      </div>
+    );
+
+  return <BrowseGrid onConnectorSelected={onConnectorCardSelected} connectorBrowse={connectors} />;
 };

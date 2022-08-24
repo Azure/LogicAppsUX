@@ -348,7 +348,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Daha fazla bilgi edinin"
     }
   ],
   "1ejxkP": [
@@ -459,6 +459,12 @@
       "value": "Açık"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Dinamik içerik ekle düğmesi boş"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Gerekli. Ayırıcı."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Kullanılabilir içerik yok"
     }
   ],
   "3PgHCT": [
@@ -547,12 +559,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "giriş seçin"
     }
   ],
   "4/kJ8D": [
@@ -1051,6 +1057,12 @@
       "value": "Gerekli. Alınacak bölümün dizini."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Kullanılabilir dinamik içerik yok"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1497,6 +1509,12 @@
       "value": "(UTC+12:00) Fiji"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Uygun olduğu durumlarda, dinamik içerik akışınız için seçtiğiniz bağlayıcı ve eylemlerden otomatik olarak oluşturulur."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1518,7 +1536,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Göz atmaya dön"
     }
   ],
   "IngtMG": [
@@ -1627,12 +1645,6 @@
     {
       "type": 0,
       "value": "Gerekli. Yeni özelliğin ekleneceği nesne."
-    }
-  ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Karşıya yüklenecek bir dosya seçin"
     }
   ],
   "K90YEU": [
@@ -1774,7 +1786,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Daha fazla göster"
     }
   ],
   "LoGUT3": [
@@ -1829,6 +1841,16 @@
     {
       "type": 0,
       "value": "İsteğe bağlı. Bu kapsamdaki en üst düzey eylemlerden giriş ve çıkışları istediğiniz kapsamlı eylemin adı."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 1,
+      "value": "searchText"
+    },
+    {
+      "type": 0,
+      "value": " için sonuç bulunamadı"
     }
   ],
   "M9mzP6": [
@@ -1955,6 +1977,12 @@
     {
       "type": 0,
       "value": "Bağlantı Adı"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "İşlemler yükleniyor..."
     }
   ],
   "OSHNZ2": [
@@ -2430,7 +2458,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Bağlayıcıya göre gruplandır"
     }
   ],
   "U3iWVd": [
@@ -2619,6 +2647,12 @@
       "value": " saat"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2703,12 +2737,6 @@
       "value": "İstek"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Göz at"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2737,6 +2765,12 @@
     {
       "type": 0,
       "value": "Daha Fazla Bilgi"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2843,6 +2877,12 @@
     {
       "type": 0,
       "value": "Bu işlem zaten silinmiş."
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Dinamik içerikler hakkında daha fazla bilgi edinin."
     }
   ],
   "ZnGRMP": [
@@ -2999,16 +3039,16 @@
       "value": "Bir özelliğin sağlanan değere ayarlandığı nesneyi döndürür"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "çıkış seçin"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dinamik içerik diğer kaynaklardan da eklenebilir."
     }
   ],
   "cCYmTK": [
@@ -3026,7 +3066,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Belgeleri Görüntüle"
     }
   ],
   "cT2MlP": [
@@ -3201,6 +3241,12 @@
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Bağlayıcılar yükleniyor..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3216,7 +3262,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Yerleşik"
     }
   ],
   "egLI8P": [
@@ -3371,12 +3417,12 @@
   ],
   "gabXSS": [
     {
-      "type": 0,
-      "value": "Search results for: "
-    },
-    {
       "type": 1,
       "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": " için arama sonuçları"
     }
   ],
   "gg0j4S": [
@@ -4014,7 +4060,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "İşlemlere Göz At"
     }
   ],
   "oRvVIW": [
@@ -4147,6 +4193,12 @@
     {
       "type": 0,
       "value": "Parametreyi bir dizeye dönüştürür"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [
@@ -4424,7 +4476,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Aramaya dön"
     }
   ],
   "tImHz/": [
@@ -4711,6 +4763,12 @@
     {
       "type": 0,
       "value": "Gerekli. En küçük değeri bulunacak değerler dizisi veya bir kümenin ilk değeri."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Dinamik içerik ekleme"
     }
   ],
   "wHYQyg": [

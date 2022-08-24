@@ -1,3 +1,4 @@
+import { Toolbar } from '../../html/plugins/toolbar';
 import type { ValueSegment } from '../models/parameter';
 import { TokenNode } from './nodes/tokenNode';
 import { AutoFocus } from './plugins/AutoFocus';
@@ -11,6 +12,7 @@ import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
 import type { ValidationProps } from './plugins/Validation';
+import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
 import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
@@ -19,6 +21,7 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
+import { useFunctionalState } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -63,15 +66,9 @@ export interface BasePlugins {
   history?: boolean;
   tokens?: boolean;
   treeView?: boolean;
+  toolBar?: boolean;
   validation?: ValidationProps;
 }
-
-const defaultTheme = {
-  ltr: 'ltr',
-  rtl: 'rtl',
-  placeholder: 'editor-placeholder',
-  paragraph: 'editor-paragraph',
-};
 
 const onError = (error: Error) => {
   console.error(error);
@@ -94,9 +91,9 @@ export const BaseEditor = ({
   const labelId = useId('msla-tokenpicker-callout-label');
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
   const [showTokenPicker, setShowTokenPicker] = useState(true);
-  const [inTokenPicker, setInTokenPicker] = useState(false);
+  const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const initialConfig = {
-    theme: defaultTheme,
+    theme: EditorTheme,
     onError,
     readOnly: readonly,
     nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode, TokenNode],
@@ -108,7 +105,7 @@ export const BaseEditor = ({
       }),
   };
 
-  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, validation } = BasePlugins;
+  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, validation, toolBar } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
     defaultMessage: 'Editor Input',
@@ -123,11 +120,10 @@ export const BaseEditor = ({
     onFocus?.();
   };
   const handleBlur = () => {
-    if (tokens && !inTokenPicker) {
-      setShowTokenPickerButton(false);
-    } else {
+    if (tokens && !getInTokenPicker()) {
       setInTokenPicker(false);
     }
+    setShowTokenPickerButton(false);
     onBlur?.();
   };
 
@@ -145,6 +141,7 @@ export const BaseEditor = ({
   return (
     <LexicalComposer initialConfig={initialConfig}>
       <div className={className ?? 'msla-editor-container'} id={editorId}>
+        {toolBar ? <Toolbar /> : null}
         <RichTextPlugin
           contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
           placeholder={<span className="editor-placeholder"> {placeholder} </span>}
@@ -165,7 +162,7 @@ export const BaseEditor = ({
           />
         ) : null}
 
-        {(tokens && showTokenPickerButton) || inTokenPicker ? (
+        {(tokens && showTokenPickerButton) || getInTokenPicker() ? (
           <TokenPickerButton
             labelId={labelId}
             showTokenPicker={showTokenPicker}
@@ -174,11 +171,11 @@ export const BaseEditor = ({
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}
-        {(showTokenPickerButton && showTokenPicker) || inTokenPicker ? GetTokenPicker(editorId, labelId, onClickTokenPicker) : null}
+        {(showTokenPickerButton && showTokenPicker) || getInTokenPicker() ? GetTokenPicker(editorId, labelId, onClickTokenPicker) : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
-        <InsertTokenNode />
-        <DeleteTokenNode />
+        {tokens ? <InsertTokenNode /> : null}
+        {tokens ? <DeleteTokenNode /> : null}
         {children}
       </div>
     </LexicalComposer>

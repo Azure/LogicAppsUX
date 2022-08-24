@@ -348,7 +348,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Obtener más información"
     }
   ],
   "1ejxkP": [
@@ -459,6 +459,12 @@
       "value": "Activado"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Botón Agregar contenido dinámico vacío"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Obligatorio. El separador."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "No hay contenido disponible."
     }
   ],
   "3PgHCT": [
@@ -547,12 +559,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "seleccionar entrada"
     }
   ],
   "4/kJ8D": [
@@ -1051,6 +1057,12 @@
       "value": "Obligatorio. El índice del elemento que se recuperará."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "No hay contenido dinámico disponible."
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1497,6 +1509,12 @@
       "value": "(UTC+12:00) Fiyi"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Si está disponible, el contenido dinámico se genera automáticamente a partir de los conectores y las acciones que elija para el flujo."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1518,7 +1536,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Volver para examinar"
     }
   ],
   "IngtMG": [
@@ -1627,12 +1645,6 @@
     {
       "type": 0,
       "value": "Obligatorio. Objeto al que se agregará una propiedad nueva."
-    }
-  ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Seleccione el archivo que se debe cargar."
     }
   ],
   "K90YEU": [
@@ -1774,7 +1786,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Ver más"
     }
   ],
   "LoGUT3": [
@@ -1829,6 +1841,16 @@
     {
       "type": 0,
       "value": "Opcional. Nombre de la acción con ámbito donde desea que se muestren las entradas y salidas de las acciones de nivel superior dentro de ese ámbito."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No se encontraron resultados para: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1955,6 +1977,12 @@
     {
       "type": 0,
       "value": "Nombre de conexión"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Cargando operaciones..."
     }
   ],
   "OSHNZ2": [
@@ -2430,7 +2458,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Agrupar por conector"
     }
   ],
   "U3iWVd": [
@@ -2619,6 +2647,12 @@
       "value": " horas"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2703,12 +2737,6 @@
       "value": "Solicitar"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Examinar"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2737,6 +2765,12 @@
     {
       "type": 0,
       "value": "Más información"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2843,6 +2877,12 @@
     {
       "type": 0,
       "value": "Ya se eliminó la operación."
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Más información acerca del contenido dinámico"
     }
   ],
   "ZnGRMP": [
@@ -2999,16 +3039,16 @@
       "value": "Devuelve un objeto con una propiedad establecida en el valor proporcionado."
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "seleccionar salida"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "También se puede agregar contenido dinámico desde otros orígenes."
     }
   ],
   "cCYmTK": [
@@ -3026,7 +3066,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Ver documentación"
     }
   ],
   "cT2MlP": [
@@ -3205,6 +3245,12 @@
       "value": "Obligatorio. El nombre de la variable de la que quiere el valor."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Cargando conectores..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3220,7 +3266,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Integrado"
     }
   ],
   "egLI8P": [
@@ -3376,7 +3422,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Resultados de la búsqueda para: "
     },
     {
       "type": 1,
@@ -4034,7 +4080,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Operaciones de exploración"
     }
   ],
   "oRvVIW": [
@@ -4167,6 +4213,12 @@
     {
       "type": 0,
       "value": "Convertir el parámetro en una cadena"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [
@@ -4444,7 +4496,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Volver a la búsqueda"
     }
   ],
   "tImHz/": [
@@ -4735,6 +4787,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Una matriz de valores de la que encontrar el valor mínimo o el primer valor de un conjunto."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Incluyendo contenido dinámico"
     }
   ],
   "wHYQyg": [

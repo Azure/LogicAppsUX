@@ -348,7 +348,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Läs mer"
     }
   ],
   "1ejxkP": [
@@ -459,6 +459,12 @@
       "value": "På"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Knappen Lägg till dynamiskt innehåll är tom"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Avgränsaren."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Det finns inte något tillgängligt innehåll"
     }
   ],
   "3PgHCT": [
@@ -547,12 +559,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "välj indata"
     }
   ],
   "4/kJ8D": [
@@ -1051,6 +1057,12 @@
       "value": "Krävs. Index för delen att hämta."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Det finns inget tillgängligt dynamiskt innehåll"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1505,6 +1517,12 @@
       "value": "(UTC+12:00) Fiji"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Om funktionen är tillgänglig så genereras dynamiskt innehåll automatiskt från de anslutningsappar och åtgärder som du väljer för ditt flöde."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1526,7 +1544,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Gå tillbaka för att bläddra"
     }
   ],
   "IngtMG": [
@@ -1635,12 +1653,6 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det objekt till vilket en ny egenskap ska läggas till."
-    }
-  ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Välj en fil att ladda upp"
     }
   ],
   "K90YEU": [
@@ -1790,7 +1802,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Visa mer"
     }
   ],
   "LoGUT3": [
@@ -1845,6 +1857,16 @@
     {
       "type": 0,
       "value": "Valfritt. Namnet på den omfångsdefinierade åtgärd där du vill ha indata och utdata från åtgärderna på toppnivå i det omfånget."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Inga resultat hittades för: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1971,6 +1993,12 @@
     {
       "type": 0,
       "value": "Anslutningens namn"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Läser in åtgärder..."
     }
   ],
   "OSHNZ2": [
@@ -2450,7 +2478,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Gruppera efter koppling"
     }
   ],
   "U3iWVd": [
@@ -2639,6 +2667,12 @@
       "value": " timmar"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2723,12 +2757,6 @@
       "value": "Förfrågan"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Bläddra"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2757,6 +2785,12 @@
     {
       "type": 0,
       "value": "Mer information"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2863,6 +2897,12 @@
     {
       "type": 0,
       "value": "Den här åtgärden har redan tagits bort."
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Läs mer om dynamiskt innehåll."
     }
   ],
   "ZnGRMP": [
@@ -3019,16 +3059,16 @@
       "value": "Returnerar ett objekt med en egenskap som är inställd på det angivna värdet"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "välj utdata"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamiskt innehåll kan också läggas till från andra källor."
     }
   ],
   "cCYmTK": [
@@ -3046,7 +3086,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Visa dokumentationen"
     }
   ],
   "cT2MlP": [
@@ -3225,6 +3265,12 @@
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Läser in kopplingar..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3240,7 +3286,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Fördefinierade"
     }
   ],
   "egLI8P": [
@@ -3396,7 +3442,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Sökresultat för: "
     },
     {
       "type": 1,
@@ -4054,7 +4100,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Bläddra bland åtgärder"
     }
   ],
   "oRvVIW": [
@@ -4187,6 +4233,12 @@
     {
       "type": 0,
       "value": "Konverterar parametern till en sträng"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [
@@ -4464,7 +4516,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Gå tillbaka till sökningen"
     }
   ],
   "tImHz/": [
@@ -4755,6 +4807,12 @@
     {
       "type": 0,
       "value": "Krävs. Antingen en matris med värden för att hitta minsta värdet, eller det första värdet i en uppsättning."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Inkludera dynamiskt innehåll"
     }
   ],
   "wHYQyg": [

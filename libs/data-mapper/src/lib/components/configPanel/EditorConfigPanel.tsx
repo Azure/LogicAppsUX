@@ -11,6 +11,7 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
 import { ChangeSchemaView } from './ChangeSchemaView';
+import type { SchemaFile } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
@@ -24,12 +25,14 @@ export interface EditorConfigPanelProps {
   initialSetup: boolean;
   onSubmitInputSchema: (schema: Schema) => void;
   onSubmitOutputSchema: (schema: Schema) => void;
+  onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
 }
 
 export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   initialSetup,
   onSubmitInputSchema,
   onSubmitOutputSchema,
+  onSubmitSchemaFileSelection,
 }) => {
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
@@ -46,6 +49,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
 
   const [downloadedSchema, _setDownloadedSchema] = useState();
 
+  const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
   // const data = useQuery(["schemas"], getSchemaList())
@@ -144,6 +148,14 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   }, [closeSchemaPanel, onSubmitOutputSchema, selectedOutputSchema, genericErrMsg]);
 
   useEffect(() => {
+    if (selectedSchemaFile) {
+      onSubmitSchemaFileSelection(selectedSchemaFile);
+      setSelectedSchemaFile(undefined);
+      closeSchemaPanel();
+    }
+  }, [closeSchemaPanel, selectedSchemaFile, onSubmitSchemaFileSelection, genericErrMsg]);
+
+  useEffect(() => {
     if (isChangeSchemaConfirmed) {
       dispatch(removeOkClicked());
       if (schemaType === SchemaTypes.Input) {
@@ -175,8 +187,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
             // danielle refactor below to be more clear
             disabled={
               schemaType === SchemaTypes.Input
-                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation?.dataMap?.srcSchemaName
-                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation?.dataMap?.dstSchemaName
+                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation.inputSchema?.name
+                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation.outputSchema?.name
             }
           >
             {addMessage}
@@ -268,6 +280,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
               schemaType={schemaType}
               selectedSchema={schemaType === SchemaTypes.Input ? selectedInputSchema : selectedOutputSchema}
               setSelectedSchema={schemaType === SchemaTypes.Input ? setSelectedInputSchema : setSelectedOutputSchema}
+              setSelectedSchemaFile={setSelectedSchemaFile}
               errorMessage={errorMessage}
             />
           ) : (

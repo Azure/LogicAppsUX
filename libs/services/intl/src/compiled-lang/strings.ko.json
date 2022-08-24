@@ -337,7 +337,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "자세한 정보"
     }
   ],
   "1ejxkP": [
@@ -448,6 +448,12 @@
       "value": "켜기"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "빈 동적 콘텐츠 추가 단추"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -476,6 +482,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 구분 기호입니다."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "사용할 수 있는 콘텐츠가 없음"
     }
   ],
   "3PgHCT": [
@@ -536,12 +548,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "입력 선택"
     }
   ],
   "4/kJ8D": [
@@ -1029,6 +1035,12 @@
       "value": "필수 사항으로, 검색할 부분의 인덱스입니다."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "사용할 수 있는 동적 콘텐츠가 없음"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1464,6 +1476,12 @@
       "value": "(UTC+12:00) 피지"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "사용 가능한 경우 동적 콘텐츠는 흐름에 대해 선택한 커넥터 및 작업에서 자동으로 생성됩니다."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1485,7 +1503,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "찾아보기로 돌아가기"
     }
   ],
   "IngtMG": [
@@ -1594,12 +1612,6 @@
     {
       "type": 0,
       "value": "필수 항목으로, 새 속성을 추가할 개체입니다."
-    }
-  ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "업로드할 파일 선택"
     }
   ],
   "K90YEU": [
@@ -1730,7 +1742,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "자세히 보기"
     }
   ],
   "LoGUT3": [
@@ -1785,6 +1797,16 @@
     {
       "type": 0,
       "value": "선택 사항. 해당 범위 내 최상위 작업의 입력 및 출력을 원하는 범위 작업의 이름입니다."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 1,
+      "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": "에 대해 찾은 결과가 없음"
     }
   ],
   "M9mzP6": [
@@ -1911,6 +1933,12 @@
     {
       "type": 0,
       "value": "연결 이름"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "작업을 로드하는 중..."
     }
   ],
   "OSHNZ2": [
@@ -2375,7 +2403,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "커넥터별로 그룹화"
     }
   ],
   "U3iWVd": [
@@ -2564,6 +2592,12 @@
       "value": "시간"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2648,12 +2682,6 @@
       "value": "요청"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "찾아보기"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2682,6 +2710,12 @@
     {
       "type": 0,
       "value": "추가 정보"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2788,6 +2822,12 @@
     {
       "type": 0,
       "value": "이 작업은 이미 삭제되었습니다."
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "동적 콘텐츠에 대해 자세히 알아보세요."
     }
   ],
   "ZnGRMP": [
@@ -2944,16 +2984,16 @@
       "value": "제공된 값으로 설정된 속성을 사용하여 개체 반환"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "출력 선택"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "패널"
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "동적 콘텐츠는 다른 원본에서도 추가할 수 있습니다."
     }
   ],
   "cCYmTK": [
@@ -2971,7 +3011,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "문서 보기"
     }
   ],
   "cT2MlP": [
@@ -3146,6 +3186,12 @@
       "value": "필수 사항으로, 원하는 값의 변수 이름입니다."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "커넥터 로드 중..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3161,7 +3207,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "기본 제공"
     }
   ],
   "egLI8P": [
@@ -3316,12 +3362,12 @@
   ],
   "gabXSS": [
     {
-      "type": 0,
-      "value": "Search results for: "
-    },
-    {
       "type": 1,
       "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": "에 대한 검색 결과"
     }
   ],
   "gg0j4S": [
@@ -3948,7 +3994,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "찾아보기 작업"
     }
   ],
   "oRvVIW": [
@@ -4081,6 +4127,12 @@
     {
       "type": 0,
       "value": "매개 변수를 문자열로 변환합니다."
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [
@@ -4347,7 +4399,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "검색으로 돌아가기"
     }
   ],
   "tImHz/": [
@@ -4634,6 +4686,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 최소값을 찾을 값의 배열 또는 집합의 첫 번째 값입니다."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "동적 콘텐츠 포함"
     }
   ],
   "wHYQyg": [

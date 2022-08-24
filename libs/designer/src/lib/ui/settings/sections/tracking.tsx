@@ -45,17 +45,17 @@ export const Tracking = ({
   const trackedPropertiesLabel = <SettingLabel labelText={trackedPropertiesTitle} isChild={false} />;
 
   const onTrackedPropertiesChangeCallback = useCallback(
-    (newVal) => onTrackedPropertiesDictionaryValueChanged(newVal as Record<string, string>),
+    (newVal: Record<string, string>) => onTrackedPropertiesDictionaryValueChanged(newVal),
     [onTrackedPropertiesDictionaryValueChanged]
   );
 
   const onTrackedPropertiesStringValueChanged = useCallback(
-    (newVal) => onTrackedPropertiesStringValueChange(newVal),
+    (newVal: string) => onTrackedPropertiesStringValueChange(newVal),
     [onTrackedPropertiesStringValueChange]
   );
 
   const onClientTrackingIdChangeCallback = useCallback(
-    (_, newVal) => onClientTrackingIdChange(newVal as string),
+    (_: unknown, newVal: string) => onClientTrackingIdChange(newVal),
     [onClientTrackingIdChange]
   );
 
@@ -74,8 +74,8 @@ export const Tracking = ({
         settingType: 'SettingTextField',
         settingProp: {
           readOnly,
-          value: correlation?.value?.clientTrackingId ?? '',
-          onValueChange: onClientTrackingIdChangeCallback,
+          value: (correlation?.value?.clientTrackingId ?? '') as any,
+          onValueChange: onClientTrackingIdChangeCallback as any,
           customLabel: () => clientTrackingIdLabel,
         },
         visible: correlation?.isSupported,
@@ -85,8 +85,8 @@ export const Tracking = ({
         settingProp: {
           readOnly,
           values: trackedProperties?.value,
-          onDictionaryChange: onTrackedPropertiesChangeCallback,
-          onTextFieldChange: onTrackedPropertiesStringValueChanged,
+          onDictionaryChange: onTrackedPropertiesChangeCallback as any,
+          onTextFieldChange: onTrackedPropertiesStringValueChanged as any,
           customLabel: () => trackedPropertiesLabel,
         },
         visible: trackedProperties?.isSupported,

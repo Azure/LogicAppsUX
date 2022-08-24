@@ -1,9 +1,10 @@
 {
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/designer/src",
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "./tools/executors/web:rollup",
+      "executor": "@nrwl/web:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/designer",

@@ -4,6 +4,7 @@ import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInt
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from './models/workflowNode';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import { RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
 
 export interface AddNodePayload {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
@@ -21,14 +22,15 @@ export const addNodeToWorkflow = (
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
-  // Add Node Data
-  nodesMetadata[payload.id] = { graphId: payload.discoveryIds.graphId };
-  const workflowNode: WorkflowNode = createNodeWithDefaultSize(payload.id);
-  addWorkflowNode(workflowNode, workflowGraph);
-
   // Adjust edges
   const { id: newNodeId } = payload;
   const { parentId, childId } = payload.discoveryIds;
+
+  // Add Node Data
+  const workflowNode: WorkflowNode = createNodeWithDefaultSize(newNodeId);
+  addWorkflowNode(workflowNode, workflowGraph);
+  nodesMetadata[newNodeId] = { graphId: payload.discoveryIds.graphId };
+  state.operations[newNodeId] = { type: payload.operation.type };
 
   if (parentId && childId) {
     // 1 parent and 1 child
@@ -41,6 +43,7 @@ export const addNodeToWorkflow = (
       // 1 parent, X children
       reassignEdgeSources(state, parentId, newNodeId, workflowGraph);
       addNewEdge(parentId, newNodeId, workflowGraph);
+      reassignNodeRunAfterLeafNode(state, parentId, newNodeId);
     }
     if (childId) {
       // 1 child, X parents
@@ -108,13 +111,18 @@ const reassignAllNodeRunAfter = (state: WorkflowState | undefined, oldNodeId: st
   };
 };
 
-const reassignNodeRunAfter = (state: WorkflowState | undefined, nodeId: string, oldTargetId: string, newTargetId: string) => {
+const reassignNodeRunAfter = (state: WorkflowState | undefined, childNodeId: string, parentNodeId: string, newNodeId: string) => {
   if (!state) return;
-  const runAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter;
-  if (!runAfter) return;
-  const data = runAfter?.[oldTargetId];
-  if (data) {
-    runAfter[newTargetId] = data;
-    delete runAfter?.[oldTargetId];
+  const childRunAfter = (state.operations[childNodeId] as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
+  if (childRunAfter[parentNodeId]) {
+    (state.operations[newNodeId] as LogicAppsV2.ActionDefinition).runAfter = { [parentNodeId]: childRunAfter[parentNodeId] };
+    delete childRunAfter[parentNodeId];
   }
+
+  childRunAfter[newNodeId] = [RUN_AFTER_STATUS.SUCCEEDED];
+};
+
+const reassignNodeRunAfterLeafNode = (state: WorkflowState | undefined, parentNodeId: string, newNodeId: string) => {
+  if (!state) return;
+  (state.operations[newNodeId] as LogicAppsV2.ActionDefinition).runAfter = { [parentNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
 };

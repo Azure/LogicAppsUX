@@ -337,7 +337,7 @@
   "1ZDLZA": [
     {
       "type": 0,
-      "value": "Learn more"
+      "value": "Pelajari selengkapnya"
     }
   ],
   "1ejxkP": [
@@ -448,6 +448,12 @@
       "value": "Aktif"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Tombol tambahkan konten dinamis kosong"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -476,6 +482,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Pemisah."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Konten tidak tersedia"
     }
   ],
   "3PgHCT": [
@@ -536,12 +548,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "pilih input"
     }
   ],
   "4/kJ8D": [
@@ -1029,6 +1035,12 @@
       "value": "Wajib. Indeks bagian yang akan diambil."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Konten dinamis tidak tersedia"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1464,6 +1476,12 @@
       "value": "(UTC+12.00) Fiji"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Jika tersedia, konten dinamis secara otomatis dibuat dari konektor dan tindakan yang dipilih untuk alur Anda."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1485,7 +1503,7 @@
   "IlY1Lj": [
     {
       "type": 0,
-      "value": "Return to browse"
+      "value": "Kembali ke penelusuran"
     }
   ],
   "IngtMG": [
@@ -1594,12 +1612,6 @@
     {
       "type": 0,
       "value": "Diperlukan. Objek untuk ditambahi properti baru."
-    }
-  ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Pilih file yang akan diunggah"
     }
   ],
   "K90YEU": [
@@ -1730,7 +1742,7 @@
   "LlYz9c": [
     {
       "type": 0,
-      "value": "See more"
+      "value": "Lihat lainnya"
     }
   ],
   "LoGUT3": [
@@ -1785,6 +1797,16 @@
     {
       "type": 0,
       "value": "Opsional. Nama tindakan tercakup tempat Anda menginginkan input dan output dari tindakan tingkat atas dalam cakupan tersebut."
+    }
+  ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "Tidak ada hasil yang ditemukan untuk: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
     }
   ],
   "M9mzP6": [
@@ -1911,6 +1933,12 @@
     {
       "type": 0,
       "value": "Nama Koneksi"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Memuat operasi..."
     }
   ],
   "OSHNZ2": [
@@ -2375,7 +2403,7 @@
   "U3guPp": [
     {
       "type": 0,
-      "value": "Group by Connector"
+      "value": "Kelompokkan berdasarkan Konektor"
     }
   ],
   "U3iWVd": [
@@ -2564,6 +2592,12 @@
       "value": " jam"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2648,12 +2682,6 @@
       "value": "Permintaan"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Telusuri"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2682,6 +2710,12 @@
     {
       "type": 0,
       "value": "Info Selengkapnya"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2788,6 +2822,12 @@
     {
       "type": 0,
       "value": "Operasi ini sudah dihapus."
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Pelajari selengkapnya tentang konten dinamis."
     }
   ],
   "ZnGRMP": [
@@ -2944,16 +2984,16 @@
       "value": "Menghasilkan objek dengan properti yang diatur ke nilai yang disediakan"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "pilih output"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Konten dinamis juga dapat ditambahkan dari sumber lain."
     }
   ],
   "cCYmTK": [
@@ -2971,7 +3011,7 @@
   "cK2A/V": [
     {
       "type": 0,
-      "value": "View Documentation"
+      "value": "Lihat Dokumentasi"
     }
   ],
   "cT2MlP": [
@@ -3150,6 +3190,12 @@
       "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
     }
   ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Memuat konektor..."
+    }
+  ],
   "eRvRWs": [
     {
       "type": 0,
@@ -3165,7 +3211,7 @@
   "eX84FI": [
     {
       "type": 0,
-      "value": "Built-in"
+      "value": "Bawaan"
     }
   ],
   "egLI8P": [
@@ -3321,7 +3367,7 @@
   "gabXSS": [
     {
       "type": 0,
-      "value": "Search results for: "
+      "value": "Hasil pencarian untuk: "
     },
     {
       "type": 1,
@@ -3952,7 +3998,7 @@
   "oM6q96": [
     {
       "type": 0,
-      "value": "Browse Operations"
+      "value": "Telusuri Operasi"
     }
   ],
   "oRvVIW": [
@@ -4085,6 +4131,12 @@
     {
       "type": 0,
       "value": "Konversikan parameter menjadi string"
+    }
+  ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
     }
   ],
   "q87X20": [
@@ -4351,7 +4403,7 @@
   "tH2pT1": [
     {
       "type": 0,
-      "value": "Return to search"
+      "value": "Kembali ke pencarian"
     }
   ],
   "tImHz/": [
@@ -4642,6 +4694,12 @@
     {
       "type": 0,
       "value": "Wajib. Array nilai untuk mencari nilai Minimal atau nilai pertama kumpulan."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Termasuk konten dinamis"
     }
   ],
   "wHYQyg": [

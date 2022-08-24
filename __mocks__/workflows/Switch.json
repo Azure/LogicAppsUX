@@ -55,12 +55,21 @@
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "triggers": {
-      "Recurrence": {
-        "recurrence": {
-          "frequency": "Day",
-          "interval": 1
+      "Http": {
+        "inputs": {
+          "body": "d",
+          "headers": {
+            "d": "d"
+          },
+          "method": "PUT",
+          "uri": "http://uri.com"
         },
-        "type": "Recurrence"
+        "recurrence": {
+          "frequency": "Hour",
+          "interval": 3,
+          "timeZone": "UTC-11"
+        },
+        "type": "Http"
       }
     }
   },

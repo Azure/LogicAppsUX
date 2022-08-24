@@ -459,6 +459,12 @@
       "value": "On"
     }
   ],
+  "2wJZkB": [
+    {
+      "type": 0,
+      "value": "Empty add dynamic content button"
+    }
+  ],
   "2xhbE1": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Required. The separator."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "There is no content available"
     }
   ],
   "3PgHCT": [
@@ -547,12 +559,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "select input"
     }
   ],
   "4/kJ8D": [
@@ -1051,6 +1057,12 @@
       "value": "Required. The index of the part to retrieve."
     }
   ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "No dynamic content available"
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1497,6 +1509,12 @@
       "value": "(UTC+12:00) Fiji"
     }
   ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "If available, dynamic content is automatically generated from the connectors and actions you choose for your flow."
+    }
+  ],
   "IUE/lQ": [
     {
       "type": 0,
@@ -1627,12 +1645,6 @@
     {
       "type": 0,
       "value": "Required. The object to add a new property to."
-    }
-  ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Select a file to upload"
     }
   ],
   "K90YEU": [
@@ -1831,6 +1843,16 @@
       "value": "Optional. The name of the scoped action where you want the inputs and outputs from the top-level actions inside that scope."
     }
   ],
+  "M9Zj10": [
+    {
+      "type": 0,
+      "value": "No results found for: "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
   "M9mzP6": [
     {
       "type": 0,
@@ -1903,6 +1925,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1955,6 +1983,12 @@
     {
       "type": 0,
       "value": "Connection Name"
+    }
+  ],
+  "ORVfYZ": [
+    {
+      "type": 0,
+      "value": "Loading operations..."
     }
   ],
   "OSHNZ2": [
@@ -2623,6 +2657,12 @@
       "value": " hours"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Select an output schema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2707,12 +2747,6 @@
       "value": "Request"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Browse"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2741,6 +2775,12 @@
     {
       "type": 0,
       "value": "More Info"
+    }
+  ],
+  "Y7Hskh": [
+    {
+      "type": 0,
+      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2847,6 +2887,12 @@
     {
       "type": 0,
       "value": "This operation has already been deleted."
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Learn more about dynamic content."
     }
   ],
   "ZnGRMP": [
@@ -3003,16 +3049,16 @@
       "value": "Returns an object with a property set to the provided value"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "select output"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
       "value": "panel"
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamic content may also be added from other sources."
     }
   ],
   "cCYmTK": [
@@ -3207,6 +3253,18 @@
     {
       "type": 0,
       "value": "Required. The name of the variable whose value you want."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Output schema node"
+    }
+  ],
+  "eRvGw3": [
+    {
+      "type": 0,
+      "value": "Loading connectors..."
     }
   ],
   "eRvRWs": [
@@ -3543,6 +3601,18 @@
     {
       "type": 0,
       "value": "Cancel"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4157,6 +4227,12 @@
       "value": "Convert the parameter to a string"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Select an input schema"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4405,6 +4481,12 @@
       "value": "New parameter"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Input schema node"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4511,6 +4593,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
+    }
+  ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Select an element to start configuring"
     }
   ],
   "uN4zFU": [
@@ -4725,6 +4813,12 @@
       "value": "Required. Either an array of values to find the minimum value, or the first value of a set."
     }
   ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Including dynamic content"
+    }
+  ],
   "wHYQyg": [
     {
       "type": 0,
@@ -4813,6 +4907,12 @@
     {
       "type": 0,
       "value": "Required. The name of the new or existing property."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

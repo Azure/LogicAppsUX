@@ -1,9 +1,9 @@
 import { checkerboardBackgroundImage } from '../Constants';
-import { convertToReactFlowNodes } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
+import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
@@ -13,8 +13,10 @@ import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import {
+  makeConnection,
   redoDataMapOperation,
   saveDataMap,
+  setCurrentlySelectedNode,
   setCurrentOutputNode,
   setInitialDataMap,
   setInitialInputSchema,
@@ -25,7 +27,9 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema, SchemaNodeExtended } from '../models';
-import { convertSchemaToSchemaExtended, SchemaTypes } from '../models';
+import { SchemaTypes } from '../models';
+import { convertToReactFlowEdges, convertToReactFlowNodes } from '../utils/ReactFlow.Util';
+import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -45,22 +49,24 @@ import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useMemo } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
+import type { Connection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapperDesignerProps {
   saveStateCall: () => void;
+  setSelectedSchemaFile?: (selectedSchemaFile: SchemaFile) => void;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall }) => {
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, setSelectedSchemaFile }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
   const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+  const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolbox, { toggle: toggleDisplayToolbox, setFalse: setDisplayToolboxFalse }] = useBoolean(false);
@@ -69,6 +75,22 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
     dispatch(toggleInputNode(selectedNode));
+  };
+
+  const onPaneClick = (_event: ReactMouseEvent): void => {
+    // If user clicks on pane (empty canvas area), "deselect" node
+    dispatch(setCurrentlySelectedNode(undefined));
+  };
+
+  const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
+    const newCurrentlySelectedNode = { type: node.data.schemaType };
+    dispatch(setCurrentlySelectedNode(newCurrentlySelectedNode));
+  };
+
+  const onConnect = (connection: Connection) => {
+    if (connection.target && connection.source) {
+      dispatch(makeConnection({ outputNodeKey: connection.target, value: connection.source }));
+    }
   };
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
@@ -97,6 +119,13 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     const extendedSchema = convertSchemaToSchemaExtended(outputSchema);
     dispatch(setInitialOutputSchema(extendedSchema));
     dispatch(setInitialDataMap());
+  };
+
+  const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
+    if (!setSelectedSchemaFile) return;
+    // Will cause DM to ping VS Code for schema file contents (to be added to availableSchemas)
+    // Then, DM implementation will handle loading the schema as either the initial input or output schema
+    setSelectedSchemaFile(schemaFile);
   };
 
   const onSaveClick = () => {
@@ -224,6 +253,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        onConnect={onConnect}
+        onPaneClick={onPaneClick}
+        onNodeClick={onNodeSingleClick}
         onNodeDoubleClick={onNodeDoubleClick}
         defaultZoom={2}
         nodesDraggable={false}
@@ -273,7 +305,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
-        <EditorConfigPanel initialSetup={true} onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
+        <EditorConfigPanel
+          initialSetup={true}
+          onSubmitInputSchema={onSubmitInput}
+          onSubmitOutputSchema={onSubmitOutput}
+          onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
+        />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
@@ -296,16 +333,16 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         ) : (
           <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
         )}
-        <PropertiesPane />
+        <PropertiesPane currentNode={currentlySelectedNode} />
       </div>
     </DndProvider>
   );
 };
 
 export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
-  const reactFlowEdges: ReactFlowEdge[] = [];
-  const inputSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation?.currentInputNodes);
-  const outputSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation?.currentOutputNode);
+  const inputSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
+  const outputSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const reactFlowNodes = useMemo(() => {
     if (outputSchemaNode) {
@@ -314,6 +351,10 @@ export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
       return [];
     }
   }, [inputSchemaNodes, outputSchemaNode]);
+
+  const reactFlowEdges = useMemo(() => {
+    return convertToReactFlowEdges(connections);
+  }, [connections]);
 
   return [reactFlowNodes, reactFlowEdges];
 };

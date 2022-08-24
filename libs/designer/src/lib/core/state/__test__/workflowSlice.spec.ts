@@ -10,6 +10,12 @@ describe('workflow slice reducers', () => {
       discoveryIds: {
         graphId: 'root',
       },
+      operation: {
+        id: 'test-id',
+        name: 'test-name',
+        properties: {} as any,
+        type: 'discovery',
+      },
     };
     const state = reducer(initialState, addNode(mockAddNode));
     expect(state.graph?.children).toEqual([
