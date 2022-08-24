@@ -24,15 +24,12 @@ export const getStylesForSharedState = makeStyles({
     paddingInline: '0px',
     paddingLeft: 'none',
     marginLeft: 'none',
+    position: 'relative',
     ...shorthands.border('0px'),
     '&:disabled': {
       opacity: 0.38,
       shadow: tokens.shadow2,
       cursor: 'not-allowed',
-    },
-    '&badge': {
-      ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorPaletteRedBackground3),
-      cursor: 'pointer',
     },
 
     '&:enabled': {
@@ -58,13 +55,6 @@ export const getStylesForSharedState = makeStyles({
     outlineWidth: '2px',
     outlineColor: tokens.colorStrokeFocus2,
   },
-  //  createFocusOutlineStyle({
-  //   selector: 'focus-within',
-  //   style: {
-  //     outlineWidth: tokens.strokeWidthThick,
-  //     outlineColor: tokens.colorStrokeFocus2,
-  //   },
-  // }),
 });
 
 export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClasses, disabled, children }) => {

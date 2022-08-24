@@ -40,8 +40,8 @@ const useStyles = makeStyles({
 
   badge: {
     position: 'absolute',
-    top: '0px',
-    right: '0px',
+    top: '1px',
+    right: '-2px',
     zIndex: '1',
   },
 
@@ -53,13 +53,13 @@ const useStyles = makeStyles({
   }),
 });
 
-export const ExpressionCard: FunctionComponent<CardProps> = ({ iconName, onClick, disabled }) => {
+export const ExpressionCard: FunctionComponent<CardProps> = ({ iconName, onClick, disabled, error }) => {
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   return (
     <div style={{ height: '32px', width: '32px', position: 'relative' }}>
-      <Badge size="extra-small" color="danger" className={classes.badge}></Badge>
+      {error && <Badge size="extra-small" color="danger" className={classes.badge}></Badge>}
       <Button onClick={onClick} className={mergedClasses} disabled={!!disabled}>
         <Icon iconName={iconName} />
       </Button>
