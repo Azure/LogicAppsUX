@@ -9,7 +9,11 @@ export default {
   title: 'Data Mapper/SchemaCard',
 } as ComponentMeta<typeof SchemaCardWrapper>;
 
-export const Standard: ComponentStory<typeof SchemaCardWrapper> = (args: SchemaCardWrapperProps) => <SchemaCardWrapper {...args} />;
+export const Standard: ComponentStory<typeof SchemaCardWrapper> = (args: SchemaCardWrapperProps) => (
+  <div style={{ padding: '10px' }}>
+    <SchemaCardWrapper {...args} />
+  </div>
+);
 Standard.args = {
   label: 'label',
   schemaType: SchemaTypes.Input,
