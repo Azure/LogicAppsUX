@@ -44,6 +44,6 @@ export const getStylesForSharedState = makeStyles({
 
   focusIndicator: {
     outlineWidth: '2px',
-    outlineColor: tokens.colorStrokeFocus2,
+    outlineColor: tokens.colorBrandStroke1,
   },
 });

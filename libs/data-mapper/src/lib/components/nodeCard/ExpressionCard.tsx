@@ -1,7 +1,7 @@
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
 import { Icon } from '@fluentui/react';
-import { Badge, Button, createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
+import { PresenceBadge, Button, createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 
 const useStyles = makeStyles({
@@ -65,7 +65,7 @@ export const ExpressionCard: FunctionComponent<CardProps> = ({ iconName, onClick
 
   return (
     <div className={classes.container}>
-      {error && <Badge size="extra-small" color="danger" className={classes.badge}></Badge>}
+      {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge}></PresenceBadge>}
       <Button onClick={onClick} className={mergedClasses} disabled={!!disabled}>
         <Icon iconName={iconName} />
       </Button>
