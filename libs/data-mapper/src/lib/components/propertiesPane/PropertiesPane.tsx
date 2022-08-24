@@ -141,7 +141,9 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   };
 
   const getSelectedContent = (): JSX.Element | null => {
-    if (!currentNode) return null;
+    if (!currentNode) {
+      return null;
+    }
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
