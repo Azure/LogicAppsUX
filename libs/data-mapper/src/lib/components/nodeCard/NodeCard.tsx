@@ -1,16 +1,13 @@
-import { DefaultButton } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
-import type { FunctionComponent, ReactNode } from 'react';
-import { useIntl } from 'react-intl';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
-interface NodeCardProps {
+export interface CardProps {
+  iconName: string;
   onClick?: () => void;
-  disabled?: boolean;
-  childClasses?: any;
-  children?: ReactNode;
+  disabled: boolean;
+  error: boolean;
 }
 
-const useStyles = makeStyles({
+export const getStylesForSharedState = makeStyles({
   root: {
     opacity: 1,
     boxShadow: tokens.shadow4,
@@ -18,7 +15,13 @@ const useStyles = makeStyles({
     paddingInline: '0px',
     paddingLeft: 'none',
     marginLeft: 'none',
+    position: 'relative',
     ...shorthands.border('0px'),
+    '&:disabled': {
+      opacity: 0.38,
+      shadow: tokens.shadow2,
+      cursor: 'not-allowed',
+    },
 
     '&:enabled': {
       '&:hover': {
@@ -29,7 +32,6 @@ const useStyles = makeStyles({
 
       '&:focus': {
         ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorCompoundBrandStroke),
-        outlineOffset: '-1px',
         cursor: 'pointer',
       },
     },
@@ -37,49 +39,11 @@ const useStyles = makeStyles({
 
   error: {
     ...shorthands.outline(tokens.strokeWidthThick, 'solid', tokens.colorPaletteRedBackground3),
-    outlineOffset: '-1px',
     cursor: 'pointer',
   },
 
-  disabled: {
-    backgroundColor: tokens.colorNeutralBackground1,
-    opacity: 0.38,
-    shadow: tokens.shadow2,
-    cursor: 'not-allowed',
+  focusIndicator: {
+    outlineWidth: '2px',
+    outlineColor: tokens.colorBrandStroke1,
   },
-
-  focusIndicator: createFocusOutlineStyle({
-    selector: 'focus-within',
-    style: {
-      outlineWidth: tokens.strokeWidthThick,
-      outlineColor: tokens.colorStrokeFocus2,
-      outlineOffset: '-1px',
-    },
-  }),
 });
-
-export const NodeCard: FunctionComponent<NodeCardProps> = ({ onClick, childClasses, disabled, children }) => {
-  const intl = useIntl();
-  const classes = useStyles();
-  const mergedClasses = mergeClasses(classes.root, childClasses?.root);
-  const mergedFocusIndicator = mergeClasses(classes.focusIndicator, childClasses?.focusIndicator);
-
-  const buttonAriaLabel = intl.formatMessage({
-    defaultMessage: 'Button for managing toggle state',
-    description: 'This is a button for keeping toggle states that share the same border states',
-  });
-
-  return (
-    <div className={mergedClasses}>
-      <DefaultButton
-        aria-label={buttonAriaLabel}
-        className={`${mergedClasses} ${mergedFocusIndicator} ${disabled && classes.disabled}`}
-        toggle
-        onClick={onClick}
-        disabled={disabled}
-      >
-        {children}
-      </DefaultButton>
-    </div>
-  );
-};
