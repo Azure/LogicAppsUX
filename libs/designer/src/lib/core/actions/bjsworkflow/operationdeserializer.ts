@@ -192,7 +192,7 @@ const initializeOutputTokensForOperations = (
     nodeTokens.tokens.push(...getBuiltInTokens(nodeManifest));
     nodeTokens.tokens.push(
       ...convertOutputsToTokens(
-        operationId,
+        isRootNodeInGraph(operationId, 'root', nodesMetadata) ? undefined : operationId,
         operations[operationId]?.type,
         nodeData?.nodeOutputs.outputs ?? {},
         nodeManifest,

@@ -280,6 +280,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
               schemaType={schemaType}
               selectedSchema={schemaType === SchemaTypes.Input ? selectedInputSchema : selectedOutputSchema}
               setSelectedSchema={schemaType === SchemaTypes.Input ? setSelectedInputSchema : setSelectedOutputSchema}
+              selectedSchemaFile={selectedSchemaFile}
               setSelectedSchemaFile={setSelectedSchemaFile}
               errorMessage={errorMessage}
             />

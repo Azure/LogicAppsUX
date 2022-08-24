@@ -1,13 +1,8 @@
-import { NodeCard } from './NodeCard';
+import type { CardProps } from './NodeCard';
+import { getStylesForSharedState } from './NodeCard';
 import { Icon } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { PresenceBadge, Button, createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
-
-export interface ExpressionCardProps {
-  iconName: string;
-  onClick?: () => void;
-  disabled?: boolean;
-}
 
 const useStyles = makeStyles({
   root: {
@@ -19,6 +14,17 @@ const useStyles = makeStyles({
     textAlign: 'center',
     width: '32px',
     minWidth: '32px',
+    position: 'relative',
+    justifyContent: 'center',
+    ...shorthands.padding('0px'),
+    ...shorthands.margin(tokens.strokeWidthThick),
+
+    '&:disabled': {
+      '&:hover': {
+        backgroundColor: '#8764b8',
+        color: tokens.colorNeutralForegroundInverted,
+      },
+    },
 
     '&:enabled': {
       '&:hover': {
@@ -32,6 +38,19 @@ const useStyles = makeStyles({
     },
   },
 
+  badge: {
+    position: 'absolute',
+    top: '1px',
+    right: '-2px',
+    zIndex: '1',
+  },
+
+  container: {
+    height: '32px',
+    width: '32px',
+    position: 'relative',
+  },
+
   focusIndicator: createFocusOutlineStyle({
     selector: 'focus-within',
     style: {
@@ -40,12 +59,16 @@ const useStyles = makeStyles({
   }),
 });
 
-export const ExpressionCard: FunctionComponent<ExpressionCardProps> = ({ iconName, onClick, disabled }) => {
+export const ExpressionCard: FunctionComponent<CardProps> = ({ iconName, onClick, disabled, error }) => {
   const classes = useStyles();
+  const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   return (
-    <NodeCard onClick={onClick} disabled={disabled} childClasses={classes}>
-      <Icon iconName={iconName} />
-    </NodeCard>
+    <div className={classes.container}>
+      {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge}></PresenceBadge>}
+      <Button onClick={onClick} className={mergedClasses} disabled={!!disabled}>
+        <Icon iconName={iconName} />
+      </Button>
+    </div>
   );
 };
