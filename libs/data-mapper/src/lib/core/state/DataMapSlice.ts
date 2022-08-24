@@ -1,4 +1,4 @@
-import type { SchemaExtended, SchemaNodeExtended } from '../../models';
+import type { SchemaExtended, SchemaNodeExtended, SelectedNode } from '../../models';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -16,6 +16,7 @@ export interface DataMapOperationState {
   outputSchema?: SchemaExtended;
   currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
+  currentlySelectedNode?: SelectedNode;
 }
 
 const emptyPristineState: DataMapOperationState = { dataMapConnections: {}, currentInputNodes: [] };
@@ -128,6 +129,15 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentlySelectedNode: action.payload,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -189,6 +199,7 @@ export const {
   setCurrentInputNodes,
   toggleInputNode,
   setCurrentOutputNode,
+  setCurrentlySelectedNode,
   makeConnection,
   undoDataMapOperation,
   redoDataMapOperation,
