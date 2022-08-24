@@ -19,6 +19,12 @@ export interface SchemaNode {
   children: SchemaNode[];
 }
 
+// TODO (nicolas): Extend this once we know what other properties
+// need to be known for properties pane
+export interface SelectedNode {
+  type: NodeType;
+}
+
 export enum SchemaType {
   NotSpecified = 'NotSpecified',
   XML = 'XML',
@@ -99,6 +105,12 @@ export interface PathItem {
 export enum SchemaTypes {
   Input = 'input',
   Output = 'output',
+}
+
+export enum NodeType {
+  Input = 'input',
+  Output = 'output',
+  Expression = 'expression',
 }
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {

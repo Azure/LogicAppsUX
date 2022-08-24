@@ -1,3 +1,5 @@
+import { NodeType } from '../../models';
+import type { SelectedNode } from '../../models';
 import { ExpressionCodeTab } from './tabComponents/Expression/ExpressionCodeTab';
 import { ExpressionPropertiesTab } from './tabComponents/Expression/ExpressionPropertiesTab';
 import { InputSchemaNodeCodeTab } from './tabComponents/InputSchemaNode/InputSchemaNodeCodeTab';
@@ -11,12 +13,6 @@ import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export const enum PANE_ITEM {
-  INPUT_SCHEMA_NODE = 1, // Start from 1 to avoid returning true for null/undef check when 0
-  OUTPUT_SCHEMA_NODE,
-  EXPRESSION,
-}
-
 enum TABS {
   PROPERTIES = 1,
   CODE,
@@ -24,9 +20,7 @@ enum TABS {
 }
 
 const useStyles = makeStyles({
-  pane: {
-    height: '240px',
-  },
+  pane: {},
   topBar: {
     height: '40px',
     p: '4px',
@@ -48,16 +42,16 @@ const useStyles = makeStyles({
 });
 
 export interface PropertiesPaneProps {
-  paneItem?: PANE_ITEM;
+  currentNode?: SelectedNode;
 }
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const intl = useIntl();
-  const { paneItem } = props;
+  const { currentNode } = props;
 
   const styles = useStyles();
-  const [isExpanded, setIsExpanded] = useState(!!paneItem);
-  const [tabToDisplay, setTabToDisplay] = useState(TABS.PROPERTIES);
+  const [isExpanded, setIsExpanded] = useState(!!currentNode);
+  const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
 
   const inputSchemaNodeLoc = intl.formatMessage({
     defaultMessage: 'Input schema node',
@@ -95,12 +89,12 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   });
 
   const getPaneItemName = (): string | undefined => {
-    switch (paneItem) {
-      case PANE_ITEM.INPUT_SCHEMA_NODE:
+    switch (currentNode?.type) {
+      case NodeType.Input:
         return inputSchemaNodeLoc;
-      case PANE_ITEM.OUTPUT_SCHEMA_NODE:
+      case NodeType.Output:
         return outputSchemaNodeLoc;
-      case PANE_ITEM.EXPRESSION:
+      case NodeType.Expression:
         return expressionLoc;
       default:
         console.error("Panel item hasn't been chosen.");
@@ -108,25 +102,31 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     }
   };
 
-  const getPropertiesTab = (paneItem: PANE_ITEM): JSX.Element => {
-    switch (paneItem) {
-      case PANE_ITEM.INPUT_SCHEMA_NODE:
+  const getPropertiesTab = (): JSX.Element | null => {
+    switch (currentNode?.type) {
+      case NodeType.Input:
         return <InputSchemaNodePropertiesTab />;
-      case PANE_ITEM.OUTPUT_SCHEMA_NODE:
+      case NodeType.Output:
         return <OutputSchemaNodePropertiesTab />;
-      case PANE_ITEM.EXPRESSION:
+      case NodeType.Expression:
         return <ExpressionPropertiesTab />;
+      default:
+        console.error('Tab not fetched - currentNode likely undefined');
+        return null;
     }
   };
 
-  const getCodeTab = (paneItem: PANE_ITEM): JSX.Element => {
-    switch (paneItem) {
-      case PANE_ITEM.INPUT_SCHEMA_NODE:
+  const getCodeTab = (): JSX.Element | null => {
+    switch (currentNode?.type) {
+      case NodeType.Input:
         return <InputSchemaNodeCodeTab />;
-      case PANE_ITEM.OUTPUT_SCHEMA_NODE:
+      case NodeType.Output:
         return <OutputSchemaNodeCodeTab />;
-      case PANE_ITEM.EXPRESSION:
+      case NodeType.Expression:
         return <ExpressionCodeTab />;
+      default:
+        console.error('Code tab not fetched - currentNode likely undefined');
+        return null;
     }
   };
 
@@ -135,24 +135,29 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   };
 
   const getSelectedContent = (): JSX.Element | null => {
-    if (!paneItem) {
-      return null;
-    }
+    if (!currentNode) return null;
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        return getPropertiesTab(paneItem);
+        return getPropertiesTab();
       case TABS.CODE:
-        return getCodeTab(paneItem);
+        return getCodeTab();
       case TABS.TEST:
         return getTestTab(); // Only retrieved if OutputSchemaNode
+      default:
+        console.error('tabToDisplay is undefined');
+        return null;
     }
   };
 
   useEffect(() => {
     // Set tab to first one anytime this panel displays a new item
-    setTabToDisplay(TABS.PROPERTIES);
-  }, [paneItem]);
+    if (currentNode) {
+      setTabToDisplay(TABS.PROPERTIES);
+    } else {
+      setTabToDisplay(undefined);
+    }
+  }, [currentNode]);
 
   const TopBarContent = () => (
     <>
@@ -163,7 +168,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => setTabToDisplay(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
         <Tab value={TABS.CODE}>{codeLoc}</Tab>
-        {paneItem === PANE_ITEM.OUTPUT_SCHEMA_NODE && <Tab value={TABS.TEST}>{testLoc}</Tab>}
+        {currentNode?.type === NodeType.Output && <Tab value={TABS.TEST}>{testLoc}</Tab>}
       </TabList>
     </>
   );
@@ -171,7 +176,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   return (
     <div className={styles.pane}>
       <Stack horizontal verticalAlign="center" className={styles.topBar}>
-        {paneItem ? (
+        {currentNode ? (
           <TopBarContent />
         ) : (
           <Text as="h6" weight="medium" style={{ marginRight: 13 }} className={styles.noItemSelectedText}>
@@ -182,11 +187,11 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         <Button
           appearance="subtle"
           size="medium"
-          icon={isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
+          icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
           onClick={() => setIsExpanded(!isExpanded)}
           className={styles.chevron}
           style={{ marginLeft: 'auto' }}
-          disabled={!paneItem}
+          disabled={!currentNode}
           title="Show/Hide"
           aria-label="Show/Hide"
         />

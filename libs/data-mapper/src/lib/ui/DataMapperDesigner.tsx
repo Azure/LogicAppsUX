@@ -16,6 +16,7 @@ import { WarningModal } from '../components/warningModal/WarningModal';
 import {
   redoDataMapOperation,
   saveDataMap,
+  setCurrentlySelectedNode,
   setCurrentOutputNode,
   setInitialDataMap,
   setInitialInputSchema,
@@ -63,6 +64,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+  const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolbox, { toggle: toggleDisplayToolbox, setFalse: setDisplayToolboxFalse }] = useBoolean(false);
@@ -71,6 +73,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
     dispatch(toggleInputNode(selectedNode));
+  };
+
+  const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
+    const newCurrentlySelectedNode = { type: node.data.schemaType };
+    dispatch(setCurrentlySelectedNode(newCurrentlySelectedNode));
   };
 
   const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
@@ -232,6 +239,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        onNodeClick={onNodeSingleClick}
         onNodeDoubleClick={onNodeDoubleClick}
         defaultZoom={2}
         nodesDraggable={false}
@@ -309,7 +317,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         ) : (
           <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
         )}
-        <PropertiesPane />
+        <PropertiesPane currentNode={currentlySelectedNode} />
       </div>
     </DndProvider>
   );
