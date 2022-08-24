@@ -29,7 +29,6 @@ const useStyles = makeStyles({
     ...shorthands.borderRadius('medium'),
   },
   title: {
-    marginRight: '13px',
     ...typographyStyles.body1Strong,
   },
   chevron: {
@@ -42,7 +41,6 @@ const useStyles = makeStyles({
   },
   noItemSelectedText: {
     color: tokens.colorNeutralForegroundDisabled,
-    marginRight: '13px',
     ...typographyStyles.body1Strong,
   },
 });
