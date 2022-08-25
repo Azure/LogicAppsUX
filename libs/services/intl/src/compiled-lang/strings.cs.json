@@ -439,6 +439,12 @@
       "value": "Globální vyhledávání"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -2045,6 +2051,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2909,12 +2921,6 @@
       "value": "Další informace"
     }
   ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3387,6 +3393,12 @@
       "value": "Povinný parametr. Název proměnné, jejíž hodnotu chcete získat."
     }
   ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Output schema node"
+    }
+  ],
   "eRvGw3": [
     {
       "type": 0,
@@ -3761,6 +3773,18 @@
     {
       "type": 0,
       "value": "Zrušit"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4655,6 +4679,18 @@
       "value": "Nový parametr"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Input schema node"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4763,6 +4799,12 @@
       "value": "(UTC+04:00) Abú Dhabi, Maskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Select an element to start configuring"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4863,12 +4905,6 @@
     {
       "type": 0,
       "value": "Vrátí poslední index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Tlačítko pro správu přepínacího stavu"
     }
   ],
   "vQcQkU": [
@@ -5069,6 +5105,12 @@
     {
       "type": 0,
       "value": "Povinné. Název nové nebo stávající vlastnosti"
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

@@ -405,6 +405,12 @@
       "value": "Globális keresés"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -1941,6 +1947,12 @@
       "value": "(UTC+03:00) Minszk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2787,12 +2799,6 @@
       "value": "További információ"
     }
   ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3269,6 +3275,12 @@
       "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
     }
   ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Output schema node"
+    }
+  ],
   "eRvGw3": [
     {
       "type": 0,
@@ -3625,6 +3637,18 @@
     {
       "type": 0,
       "value": "Mégse"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4497,6 +4521,18 @@
       "value": "Új paraméter"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Input schema node"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4605,6 +4641,12 @@
       "value": "(UTC+04:00) Abu-Dzabi, Maszkat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Select an element to start configuring"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4705,12 +4747,6 @@
     {
       "type": 0,
       "value": "Egy sztringbeli érték utolsó indexét adja vissza (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "A kapcsoló állapotának kezelésére szolgáló gomb"
     }
   ],
   "vQcQkU": [
@@ -4911,6 +4947,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az új vagy meglévő tulajdonság neve."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [
