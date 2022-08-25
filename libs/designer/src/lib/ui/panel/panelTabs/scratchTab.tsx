@@ -156,33 +156,6 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         />
-        <StringEditor
-          initialValue={[
-            testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
-            testTokenSegment,
-            testTokenSegment,
-          ]}
-          GetTokenPicker={GetTokenPicker}
-        />
-        <StringEditor
-          initialValue={[
-            testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
-            testTokenSegment,
-            testTokenSegment,
-          ]}
-          GetTokenPicker={GetTokenPicker}
-        />
-        <StringEditor
-          initialValue={[
-            testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
-            testTokenSegment,
-            testTokenSegment,
-          ]}
-          GetTokenPicker={GetTokenPicker}
-        />
         <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} />
       </>
     );
