@@ -4,9 +4,15 @@ import { StringEditor } from '../editor/string';
 import { Label } from '../label';
 import { AUTHENTICATION_PROPERTIES } from './util';
 import { useBoolean } from '@fluentui/react-hooks';
-import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
+import type { IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
 import { Dropdown } from '@fluentui/react/lib/Dropdown';
 import { useState } from 'react';
+
+const dropdownStyles: Partial<IDropdownStyles> = {
+  title: {
+    fontSize: '14px',
+  },
+};
 
 const authenticationDropdownOptions: IDropdownOption[] = [
   { key: 'NONE', text: 'None' },
@@ -91,7 +97,7 @@ export const AuthenticationEditor = ({ currentKey = 'NONE', GetTokenPicker }: Au
           <div className="msla-authentication-editor-label">
             <Label text={'Authentication Type'} isRequiredField={true} />
           </div>
-          <Dropdown options={authenticationDropdownOptions} selectedKey={option} onChange={handleKeyChange} />
+          <Dropdown options={authenticationDropdownOptions} selectedKey={option} onChange={handleKeyChange} styles={dropdownStyles} />
           {renderAuthentication()}
         </div>
       )}
