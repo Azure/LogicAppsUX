@@ -27,8 +27,8 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema, SchemaNodeExtended } from '../models';
-import { SchemaTypes } from '../models';
-import { convertToReactFlowEdges, convertToReactFlowNodes } from '../utils/ReactFlow.Util';
+import { NodeType, SchemaTypes } from '../models';
+import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
@@ -102,7 +102,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onNodeSingleClick = (node: ReactFlowNode): void => {
-    const newCurrentlySelectedNode = { type: node.data.schemaType };
+    const newCurrentlySelectedNode = { type: node.type === ReactFlowNodeType.SchemaNode ? node.data.schemaType : NodeType.Expression };
     dispatch(setCurrentlySelectedNode(newCurrentlySelectedNode));
   };
 
