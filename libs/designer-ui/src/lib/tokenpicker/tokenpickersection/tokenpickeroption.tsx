@@ -4,6 +4,7 @@ import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
 import { TokenPickerMode } from '../tokenpickerpivot';
+import { Icon } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -176,7 +177,12 @@ export const TokenPickerOptions = ({
                     key={`token-picker-option-${j}`}
                     onClick={() => handleTokenClicked(token)}
                   >
-                    <img src={token.icon} alt="" />
+                    <img src={token.icon} alt="token icon" />
+                    {token.outputInfo.isSecure ? (
+                      <div className="msla-token-picker-secure-token">
+                        <Icon iconName="LockSolid" />
+                      </div>
+                    ) : null}
                     <div className="msla-token-picker-section-option-text">
                       <div className="msla-token-picker-option-inner">
                         <div className="msla-token-picker-option-title">{token.title}</div>
