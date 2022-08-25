@@ -6,7 +6,7 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { Filters } from './filters';
-import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData, updateSelectedItems } from './helper';
+import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups, parseWorkflowData, updateSelectedItems } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
@@ -113,10 +113,11 @@ export const WorkflowsSelection: React.FC = () => {
     };
 
     const onSelectionChanged = () => {
-      const currentSelection = selection.getSelection() as Array<WorkflowsList>;
+      const currentSelection = selection.getSelection() as WorkflowsList[];
+      const selectedItems = getSelectedItems(allItemsSelected.current, currentSelection, renderWorkflows);
       dispatch(
         updateSelectedWorkFlows({
-          selectedWorkflows: currentSelection,
+          selectedWorkflows: selectedItems,
         })
       );
     };
@@ -125,7 +126,7 @@ export const WorkflowsSelection: React.FC = () => {
       onSelectionChanged: onSelectionChanged,
       onItemsChanged: onItemsChange,
     });
-  }, [dispatch, selectedWorkflows]);
+  }, [dispatch, selectedWorkflows, renderWorkflows]);
 
   const workflowsList = useMemo(() => {
     const emptyText = (

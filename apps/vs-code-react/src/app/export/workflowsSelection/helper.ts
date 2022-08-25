@@ -80,3 +80,30 @@ export const updateSelectedItems = (
 
   return copyItems;
 };
+
+export const getSelectedItems = (
+  allItemsSelected: SelectedWorkflowsList[],
+  currentSelection: WorkflowsList[],
+  renderWorkflows: WorkflowsList[] | null
+): WorkflowsList[] => {
+  const allItems = [...allItemsSelected];
+  console.log('charlieInside');
+  const updatedItems = allItems.map((workflow: SelectedWorkflowsList) => {
+    const updatedWorkflow = workflow;
+    const isWorkflowInSelection = !!currentSelection.find((item: WorkflowsList) => item.key === updatedWorkflow.key);
+    const isWorkflowInRender = !!renderWorkflows?.find((item: WorkflowsList) => item.key === updatedWorkflow.key);
+    if (updatedWorkflow.selected) {
+      if (isWorkflowInRender && !isWorkflowInSelection) {
+        updatedWorkflow.selected = false;
+      }
+    } else {
+      if (isWorkflowInSelection) {
+        updatedWorkflow.selected = true;
+      }
+    }
+    return updatedWorkflow;
+  });
+  console.log('charlieInside', allItems);
+
+  return updatedItems.filter((item) => item.selected);
+};
