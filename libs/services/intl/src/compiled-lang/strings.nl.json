@@ -405,6 +405,12 @@
       "value": "Algemene zoekopdracht"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -1941,6 +1947,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2787,12 +2799,6 @@
       "value": "Meer informatie"
     }
   ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3265,6 +3271,12 @@
       "value": "Vereist. De naam van de variabele met de gewenste waarde."
     }
   ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Output schema node"
+    }
+  ],
   "eRvGw3": [
     {
       "type": 0,
@@ -3621,6 +3633,18 @@
     {
       "type": 0,
       "value": "Annuleren"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4489,6 +4513,18 @@
       "value": "Nieuwe parameter"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Input schema node"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4597,6 +4633,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Select an element to start configuring"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4697,12 +4739,6 @@
     {
       "type": 0,
       "value": "De laatste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Knop voor het beheren van de wisselstatus"
     }
   ],
   "vQcQkU": [
@@ -4903,6 +4939,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de nieuwe of bestaande eigenschap."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

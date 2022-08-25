@@ -2,64 +2,109 @@
   "definition": {
     "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
     "actions": {
+      "For_each": {
+        "actions": {
+          "Set_variable": {
+            "inputs": {
+              "name": "stringvar",
+              "value": "fgfgfg"
+            },
+            "runAfter": {},
+            "type": "SetVariable"
+          }
+        },
+        "foreach": "@triggerBody()['array']",
+        "runAfter": {
+          "Parse_JSON": ["Succeeded"]
+        },
+        "type": "Foreach"
+      },
+      "Initialize_variable": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "stringvar",
+              "type": "string",
+              "value": "sdfsdf"
+            }
+          ]
+        },
+        "runAfter": {},
+        "type": "InitializeVariable"
+      },
+      "Join": {
+        "inputs": {
+          "from": "@triggerBody()",
+          "joinWith": "111"
+        },
+        "runAfter": {
+          "Parse_JSON": ["Succeeded"]
+        },
+        "type": "Join"
+      },
       "Parse_JSON": {
         "inputs": {
           "content": "@triggerBody()",
-
           "schema": {
             "properties": {
               "a": {
                 "type": "string"
               },
-
               "number": {
                 "type": "integer"
               }
             },
-
             "type": "object"
           }
         },
-
-        "runAfter": {},
-
+        "runAfter": {
+          "Initialize_variable": ["Succeeded"]
+        },
         "type": "ParseJson"
       },
-
       "Response": {
         "inputs": {
-          "body": "@triggerBody()",
-
+          "body": "@{triggerBody()?['string']}@{triggerOutputs()?['headers']}@{body('Parse_JSON')?['number']}",
           "statusCode": 200
         },
-
         "kind": "http",
-
         "runAfter": {
-          "Parse_JSON": ["Succeeded"]
+          "Join": ["Succeeded"]
         },
-
         "type": "Response"
       }
     },
     "contentVersion": "1.0.0.0",
     "outputs": {},
     "triggers": {
-      "Http": {
+      "manual": {
         "inputs": {
-          "body": "d",
-          "headers": {
-            "d": "d"
-          },
-          "method": "PUT",
-          "uri": "http://uri.com"
+          "schema": {
+            "type": "object",
+            "properties": {
+              "array": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "item1": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["item1"]
+                }
+              },
+              "string": {
+                "type": "string"
+              },
+              "number": {
+                "type": "integer"
+              }
+            }
+          }
         },
-        "recurrence": {
-          "frequency": "Hour",
-          "interval": 3,
-          "timeZone": "UTC-11"
-        },
-        "type": "Http"
+        "kind": "Http",
+        "type": "Request"
       }
     }
   },
