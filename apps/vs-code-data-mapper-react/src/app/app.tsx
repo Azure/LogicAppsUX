@@ -1,6 +1,11 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
 import type { RootState } from '../state/Store';
-import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
+import {
+  DataMapDataProvider,
+  DataMapperDesigner,
+  DataMapperDesignerProvider,
+  InitSchemaSelectionService,
+} from '@microsoft/logic-apps-data-mapper';
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -20,6 +25,8 @@ export const App = (): JSX.Element => {
   const saveStateCall = () => {
     console.log('App called to save Data Map');
   };
+
+  InitSchemaSelectionService({ baseUrl: 'baseUrl', resourceUrl: '', accessToken: '' });
 
   const setSelectedSchemaFile = (selectedSchemaFile: SchemaFile) => {
     vscode.postMessage({
