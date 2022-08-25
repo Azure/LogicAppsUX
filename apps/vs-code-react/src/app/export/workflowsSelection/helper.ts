@@ -84,13 +84,10 @@ export const updateSelectedItems = (
 export const getSelectedItems = (allItemsSelected: SelectedWorkflowsList[], currentSelection: WorkflowsList[]): WorkflowsList[] => {
   const allItems = [...allItemsSelected];
   const renderWorkflows = [...allItems.filter((item) => item.rendered)];
-  console.log('charlieInside');
   const updatedItems = allItems.map((workflow: SelectedWorkflowsList) => {
     const updatedWorkflow = workflow;
     const isWorkflowInSelection = !!currentSelection.find((item: WorkflowsList) => item.key === updatedWorkflow.key);
     const isWorkflowInRender = !!renderWorkflows.find((item: WorkflowsList) => item.key === updatedWorkflow.key);
-    console.log('charlieInside2', isWorkflowInSelection);
-    console.log('charlieInside2', isWorkflowInRender);
 
     if (updatedWorkflow.selected) {
       if (isWorkflowInRender && !isWorkflowInSelection) {
@@ -103,7 +100,6 @@ export const getSelectedItems = (allItemsSelected: SelectedWorkflowsList[], curr
     }
     return updatedWorkflow;
   });
-  console.log('charlieInside', updatedItems);
 
   return updatedItems.filter((item) => item.selected);
 };
