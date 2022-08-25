@@ -108,7 +108,7 @@ export const TokenPickerSearch = ({
     } else {
       editor.dispatchCommand(INSERT_TOKEN_NODE, {
         brandColor: token.brandColor,
-        description: token.description ?? token.key,
+        description: token.description,
         title: token.title,
         icon: token.icon ?? FxIcon,
         value: token.value,
