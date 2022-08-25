@@ -1,4 +1,5 @@
 import type { SchemaExtended, SchemaNodeExtended, SelectedNode } from '../../models';
+import type { Connection } from '../../models/Connection';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -11,7 +12,7 @@ export interface DataMapState {
 }
 
 export interface DataMapOperationState {
-  dataMapConnections: { [key: string]: string };
+  dataMapConnections: { [key: string]: Connection };
   inputSchema?: SchemaExtended;
   outputSchema?: SchemaExtended;
   currentInputNodes: SchemaNodeExtended[];
@@ -144,7 +145,14 @@ export const dataMapSlice = createSlice({
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      newState.dataMapConnections[action.payload.outputNodeKey] = action.payload.value;
+      const trimmedKey = action.payload.outputNodeKey.split('-', 2)[1];
+      const trimmedValue = action.payload.value.split('-', 2)[1];
+
+      newState.dataMapConnections[trimmedKey] = {
+        value: trimmedValue,
+        reactFlowSource: action.payload.value,
+        reactFlowDestination: action.payload.outputNodeKey,
+      };
 
       doDataMapOperation(state, newState);
     },
