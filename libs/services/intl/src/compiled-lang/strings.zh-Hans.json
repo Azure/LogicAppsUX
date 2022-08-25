@@ -398,6 +398,12 @@
       "value": "全局搜索"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -1889,6 +1895,12 @@
       "value": "(UTC+03:00)明斯克"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2724,12 +2736,6 @@
       "value": "详细信息"
     }
   ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
-    }
-  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3206,6 +3212,12 @@
       "value": "必需。需要获取其值的变量的名称。"
     }
   ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Output schema node"
+    }
+  ],
   "eRvGw3": [
     {
       "type": 0,
@@ -3547,6 +3559,18 @@
     {
       "type": 0,
       "value": "取消"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4420,6 +4444,18 @@
       "value": "新建参数"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Input schema node"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4528,6 +4564,12 @@
       "value": "(UTC+04:00)阿布扎比，马斯喀特"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Select an element to start configuring"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4628,12 +4670,6 @@
     {
       "type": 0,
       "value": "返回字符串内某值的最后一个索引(区分大小写，固定区域性)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "用于管理切换状态的按钮"
     }
   ],
   "vQcQkU": [
@@ -4834,6 +4870,12 @@
     {
       "type": 0,
       "value": "必填。新属性或现有属性的名称。"
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [
