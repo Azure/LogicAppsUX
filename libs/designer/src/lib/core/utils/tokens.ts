@@ -6,7 +6,7 @@ import type { OutputInfo } from '../state/operation/operationMetadataSlice';
 import type { TokensState } from '../state/tokensSlice';
 import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
 import { getAllNodesInsideNode, getUpstreamNodeIds } from './graph';
-import { getRepetitionContext, getTokenExpressionValue, shouldIncludeSelfForRepetitionReference } from './parameters/helper';
+import { getExpressionValueForOutputToken, getRepetitionContext, shouldIncludeSelfForRepetitionReference } from './parameters/helper';
 import { hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
 import { getIntl } from '@microsoft-logic-apps/intl';
@@ -84,7 +84,7 @@ export function getBuiltInTokens(manifest: OperationManifest): OutputToken[] {
 }
 
 export function convertOutputsToTokens(
-  nodeId: string,
+  nodeId: string | undefined,
   nodeType: string,
   outputs: Record<string, OutputInfo>,
   manifest: OperationManifest,
@@ -153,20 +153,23 @@ export function getExpressionTokenSections(): TokenGroup[] {
   });
 }
 
-export function getOutputTokenSections(state: TokensState, nodeId: string): TokenGroup[] {
+export function getOutputTokenSections(state: TokensState, nodeId: string, nodeType: string): TokenGroup[] {
   const { variables, outputTokens } = state;
   const nodeTokens = outputTokens[nodeId];
   if (!nodeTokens) return [];
   const variableTokenGroup = {
     id: 'variables',
     label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),
-    tokens: getVariableTokens(variables, nodeTokens),
+    tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
+      ...token,
+      value: getExpressionValueForOutputToken(token, nodeType),
+    })),
   };
 
   const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
     let tokens = outputTokens[upstreamNodeId].tokens;
     tokens = tokens.map((token) => {
-      return { ...token, value: getTokenExpressionValue({ ...token, tokenType: TokenType.OUTPUTS }) };
+      return { ...token, value: getExpressionValueForOutputToken(token, nodeType) };
     });
 
     if (!tokens.length) {

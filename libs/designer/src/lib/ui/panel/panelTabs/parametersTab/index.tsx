@@ -20,11 +20,12 @@ export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const tokenstate = useSelector((state: RootState) => state.tokens);
+  const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId].type);
   const readOnly = useReadOnly();
 
   const connectionName = useNodeConnectionName(selectedNodeId);
 
-  const tokenGroup = getOutputTokenSections(tokenstate, selectedNodeId);
+  const tokenGroup = getOutputTokenSections(tokenstate, selectedNodeId, nodeType);
 
   const expressionGroup = getExpressionTokenSections();
 
