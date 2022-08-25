@@ -80,3 +80,26 @@ export const updateSelectedItems = (
 
   return copyItems;
 };
+
+export const getSelectedItems = (allItemsSelected: SelectedWorkflowsList[], currentSelection: WorkflowsList[]): WorkflowsList[] => {
+  const allItems = [...allItemsSelected];
+  const renderWorkflows = [...allItems.filter((item) => item.rendered)];
+  const updatedItems = allItems.map((workflow: SelectedWorkflowsList) => {
+    const updatedWorkflow = workflow;
+    const isWorkflowInSelection = !!currentSelection.find((item: WorkflowsList) => item.key === updatedWorkflow.key);
+    const isWorkflowInRender = !!renderWorkflows.find((item: WorkflowsList) => item.key === updatedWorkflow.key);
+
+    if (updatedWorkflow.selected) {
+      if (isWorkflowInRender && !isWorkflowInSelection) {
+        updatedWorkflow.selected = false;
+      }
+    } else {
+      if (isWorkflowInSelection) {
+        updatedWorkflow.selected = true;
+      }
+    }
+    return updatedWorkflow;
+  });
+
+  return updatedItems.filter((item) => item.selected);
+};
