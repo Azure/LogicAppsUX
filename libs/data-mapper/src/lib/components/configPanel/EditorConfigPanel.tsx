@@ -1,4 +1,4 @@
-import { getSchemaList, getSelectedSchema } from '../../core';
+import { getSelectedSchema } from '../../core';
 import { setInitialDataMap, setInitialSchema } from '../../core/state/DataMapSlice';
 import { closeAllWarning, openChangeSchemaWarning, removeOkClicked, WarningModalState } from '../../core/state/ModalSlice';
 import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
@@ -216,13 +216,6 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ i
     ]
   );
 
-  const schemaListQuery = useQuery(['schemaList'], () => getSchemaList(), {
-    staleTime: 1000 * 60 * 5,
-    cacheTime: 1000 * 60 * 5,
-  });
-
-  const schemaList = schemaListQuery.data;
-
   return (
     <div>
       <Panel
@@ -238,7 +231,6 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ i
         <div>
           {isChangeSchemaPanelOpen ? (
             <ChangeSchemaView
-              schemaList={schemaList}
               schemaType={schemaType}
               selectedSchema={schemaType === SchemaTypes.Input ? selectedInputSchema : selectedOutputSchema}
               setSelectedSchema={schemaType === SchemaTypes.Input ? setSelectedInputSchema : setSelectedOutputSchema}

@@ -1,9 +1,11 @@
+import { getSchemaList } from '../../core';
 import { SchemaTypes } from '../../models';
 import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import React, { useCallback, useRef, useState } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
 
 export enum UploadSchemaTypes {
   UploadNew = 'upload-new',
@@ -40,8 +42,7 @@ const uploadSchemaOptions: IChoiceGroupOption[] = [
   { key: UploadSchemaTypes.SelectFrom, text: 'Select from existing' },
 ];
 
-export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps & ChangeSchemaView> = ({
-  schemaList,
+export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   schemaType,
   selectedSchema,
   selectedSchemaFile,
@@ -50,6 +51,13 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps & ChangeS
   errorMessage,
 }) => {
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
+  const schemaListQuery = useQuery(['schemaList'], () => getSchemaList(), {
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 5,
+    enabled: uploadType === UploadSchemaTypes.SelectFrom,
+  });
+
+  const schemaList = schemaListQuery.data;
 
   const dataMapDropdownOptions = schemaList?.map((file: SchemaInfo) => ({ key: file.name, text: file.name }));
 
