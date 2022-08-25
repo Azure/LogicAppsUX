@@ -86,7 +86,9 @@ export const WorkflowsSelection: React.FC = () => {
     setRenderWorkflows(workflowItems);
     setResourceGroups(resourceGroups);
     allWorkflows.current = workflowItems;
-    allItemsSelected.current = workflowItems as SelectedWorkflowsList[];
+    allItemsSelected.current = workflowItems.map((workflow) => {
+      return { ...workflow, selected: false, rendered: true };
+    });
   };
 
   const { isLoading: isWorkflowsLoading } = useQuery<any>([QueryKeys.workflowsData, { iseId: selectedIse }], loadWorkflows, {
@@ -114,7 +116,7 @@ export const WorkflowsSelection: React.FC = () => {
 
     const onSelectionChanged = () => {
       const currentSelection = selection.getSelection() as WorkflowsList[];
-      const selectedItems = getSelectedItems(allItemsSelected.current, currentSelection, renderWorkflows);
+      const selectedItems = getSelectedItems(allItemsSelected.current, currentSelection);
       dispatch(
         updateSelectedWorkFlows({
           selectedWorkflows: selectedItems,
@@ -126,7 +128,7 @@ export const WorkflowsSelection: React.FC = () => {
       onSelectionChanged: onSelectionChanged,
       onItemsChanged: onItemsChange,
     });
-  }, [dispatch, selectedWorkflows, renderWorkflows]);
+  }, [dispatch, selectedWorkflows]);
 
   const workflowsList = useMemo(() => {
     const emptyText = (
@@ -190,15 +192,25 @@ export const WorkflowsSelection: React.FC = () => {
 
   const filters = useMemo(() => {
     const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
-      setRenderWorkflows(filterWorkflows(allWorkflows.current, resourceGroups, newSearchString));
+      const filteredWorkflows = filterWorkflows(allWorkflows.current, resourceGroups, newSearchString);
+      allItemsSelected.current = allItemsSelected.current.map((workflow) => {
+        const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);
+        return { ...workflow, rendered: isWorkflowInRender };
+      });
+      setRenderWorkflows(filteredWorkflows);
       setSearchString(newSearchString);
     };
 
     const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
       const updatedResourceGroups = [...resourceGroups];
       updatedResourceGroups[index - 2].selected = !updatedResourceGroups[index - 2].selected;
+      const filteredWorkflows = filterWorkflows(allWorkflows.current, updatedResourceGroups, searchString);
+      allItemsSelected.current = allItemsSelected.current.map((workflow) => {
+        const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);
+        return { ...workflow, rendered: isWorkflowInRender };
+      });
 
-      setRenderWorkflows(filterWorkflows(allWorkflows.current, updatedResourceGroups, searchString));
+      setRenderWorkflows(filteredWorkflows);
       setResourceGroups(updatedResourceGroups);
     };
 
