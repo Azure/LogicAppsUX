@@ -100,11 +100,13 @@ export const WorkflowsSelection: React.FC = () => {
     allItemsSelected.current = updatedItems;
   }, [selectedWorkflows, renderWorkflows, allWorkflows]);
 
-  const selection = useMemo(() => {
+  const selection: Selection = useMemo(() => {
     const onItemsChange = () => {
-      const actualSelection = selectedWorkflows.length ? selectedWorkflows : [...allItemsSelected.current.filter((item) => item.selected)];
-      if (selection && selection.getItems().length > 0 && actualSelection.length > 0) {
-        actualSelection.forEach((workflow: WorkflowsList) => {
+      const selectedItems = [...allItemsSelected.current.filter((item) => item.selected)];
+      const currentSelection = !selectedItems.length && selectedWorkflows.length ? selectedWorkflows : selectedItems;
+      if (selection && selection.getItems().length > 0 && currentSelection.length > 0) {
+        selection.setAllSelected(false);
+        currentSelection.forEach((workflow: WorkflowsList) => {
           selection.setKeySelected(workflow.key, true, true);
         });
       }
@@ -209,6 +211,33 @@ export const WorkflowsSelection: React.FC = () => {
     );
   }, [resourceGroups, isWorkflowsLoading, allWorkflows, searchString]);
 
+  const deselectWorkflow = (itemKey: string) => {
+    const copyRenderWorkflows = [...(renderWorkflows ?? [])];
+    const updatedRenderWorkflows = renderWorkflows?.map((workflow, index) => {
+      return { ...workflow, key: index.toString() };
+    }) as WorkflowsList[];
+    const copyAllItems = [...allItemsSelected.current];
+    const newSelection = [...selectedWorkflows.filter((item) => item.key !== itemKey)];
+
+    setRenderWorkflows(updatedRenderWorkflows);
+
+    const deselectedItem = copyAllItems.find((workflow) => workflow.key === itemKey);
+    if (deselectedItem) {
+      deselectedItem.selected = false;
+    }
+    allItemsSelected.current = copyAllItems;
+    dispatch(
+      updateSelectedWorkFlows({
+        selectedWorkflows: newSelection,
+      })
+    );
+
+    setTimeout(() => {
+      selection.setItems(renderWorkflows as WorkflowsList[]);
+      setRenderWorkflows(copyRenderWorkflows);
+    }, 10);
+  };
+
   return (
     <div className="msla-export-workflows-panel">
       <div className="msla-export-workflows-panel-list">
@@ -227,6 +256,7 @@ export const WorkflowsSelection: React.FC = () => {
         isLoading={isWorkflowsLoading || renderWorkflows === null}
         allWorkflows={allWorkflows.current}
         renderWorkflows={renderWorkflows}
+        deselectWorkflow={deselectWorkflow}
       />
     </div>
   );

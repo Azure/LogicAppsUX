@@ -1,12 +1,13 @@
 import { DefaultButton } from '@fluentui/react';
 import { createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
-import type { FunctionComponent } from 'react';
+import type { FunctionComponent, ReactNode } from 'react';
 import { useIntl } from 'react-intl';
 
 interface NodeCardProps {
   onClick?: () => void;
   disabled?: boolean;
   childClasses?: any;
+  children?: ReactNode;
 }
 
 const useStyles = makeStyles({
