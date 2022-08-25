@@ -1,3 +1,4 @@
+import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import type { OperationMetadataState } from '../../../core/state/operation/operationMetadataSlice';
@@ -21,7 +22,7 @@ export const validate = <K extends keyof RootState>(
 };
 
 const validateOperationSettings = (settings: Settings): ValidationError[] => {
-  const { conditionExpressions /*paging, retryPolicy, singleInstance, splitOn, timeout*/ } = settings;
+  const { conditionExpressions, paging /*paging, retryPolicy, singleInstance, splitOn, timeout */ } = settings;
   const validationErrors: ValidationError[] = [];
 
   if (conditionExpressions?.value?.some((conditionExpression) => !conditionExpression)) {
@@ -30,9 +31,21 @@ const validateOperationSettings = (settings: Settings): ValidationError[] => {
       message: 'trigger condition cannot be empty',
     });
   }
-  validationErrors.push({
-    key: ValidationErrorKeys.PAGING_COUNT,
-    message: `test error message`,
-  }); // forced push for testing
-  return validationErrors;
+
+  if (paging?.value?.enabled) {
+    const { value } = paging.value;
+    if (isNaN(Number(value))) {
+      validationErrors.push({
+        key: ValidationErrorKeys.PAGING_COUNT,
+        message: 'paging count error message',
+      });
+    } else if (!value || value <= 0 || value > constants.MAX_PAGING_COUNT) {
+      validationErrors.push({
+        key: ValidationErrorKeys.PAGING_COUNT,
+        message: 'paging count max error message',
+      });
+    }
+  }
+
+  return [];
 };
