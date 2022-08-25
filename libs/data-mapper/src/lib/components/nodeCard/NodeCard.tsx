@@ -18,7 +18,6 @@ export const getStylesForSharedState = makeStyles({
     position: 'relative',
     ...shorthands.border('0px'),
     '&:disabled': {
-      opacity: 0.38,
       shadow: tokens.shadow2,
       cursor: 'not-allowed',
     },

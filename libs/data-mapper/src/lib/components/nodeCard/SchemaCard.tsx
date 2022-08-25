@@ -55,9 +55,6 @@ const useStyles = makeStyles({
     right: '-10px',
     zIndex: '1',
   },
-  badgeDisabled: {
-    opacity: '0.38',
-  },
   cardIcon: {
     backgroundColor: tokens.colorBrandBackground2,
     width: '48px',
@@ -86,6 +83,9 @@ const useStyles = makeStyles({
     fontSize: '16px',
 
     justifyContent: 'right',
+  },
+  disabled: {
+    opacity: 0.38,
   },
 
   focusIndicator: createFocusOutlineStyle({
@@ -121,17 +121,19 @@ const cardInputText = makeStyles({
 export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ label, schemaType, isLeaf, onClick, disabled, error }) => {
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
-  const mergedClasses = mergeClasses(sharedStyles.root, classes.root);
+  const mergedButtonClasses = mergeClasses(sharedStyles.root, classes.root);
+
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
-  const errorClass = mergeClasses(mergedClasses, sharedStyles.error);
-  const disabledError = mergeClasses(classes.badge, classes.badgeDisabled);
+
+  const errorClass = mergeClasses(mergedButtonClasses, sharedStyles.error);
+
   const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
 
   return (
-    <div className={classes.container}>
-      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={disabled ? disabledError : classes.badge}></Badge>}
-      <Button className={error ? errorClass : mergedClasses} disabled={!!disabled} onClick={onClick}>
+    <div className={disabled ? mergeClasses(classes.container, classes.disabled) : classes.container}>
+      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.badge}></Badge>}
+      <Button className={error ? errorClass : mergedButtonClasses} disabled={!!disabled} onClick={onClick}>
         <Icon className={classes.cardIcon} iconName="Diamond" />
         <Text className={schemaType === SchemaTypes.Output ? classes.cardText : mergedInputText} block={true} nowrap={true}>
           {label}
