@@ -211,31 +211,36 @@ export const WorkflowsSelection: React.FC = () => {
     );
   }, [resourceGroups, isWorkflowsLoading, allWorkflows, searchString]);
 
-  const deselectWorkflow = (itemKey: string) => {
+  const deselectItemKey = (itemKey: string) => {
+    return new Promise<void>((resolve) => {
+      const updatedRenderWorkflows = renderWorkflows?.map((workflow, index) => {
+        return { ...workflow, key: index.toString() };
+      }) as WorkflowsList[];
+      const copyAllItems = [...allItemsSelected.current];
+      const newSelection = [...selectedWorkflows.filter((item) => item.key !== itemKey)];
+
+      setRenderWorkflows(updatedRenderWorkflows);
+
+      const deselectedItem = copyAllItems.find((workflow) => workflow.key === itemKey);
+      if (deselectedItem) {
+        deselectedItem.selected = false;
+      }
+      allItemsSelected.current = copyAllItems;
+      dispatch(
+        updateSelectedWorkFlows({
+          selectedWorkflows: newSelection,
+        })
+      );
+
+      resolve();
+    });
+  };
+
+  const deselectWorkflow = async (itemKey: string) => {
     const copyRenderWorkflows = [...(renderWorkflows ?? [])];
-    const updatedRenderWorkflows = renderWorkflows?.map((workflow, index) => {
-      return { ...workflow, key: index.toString() };
-    }) as WorkflowsList[];
-    const copyAllItems = [...allItemsSelected.current];
-    const newSelection = [...selectedWorkflows.filter((item) => item.key !== itemKey)];
-
-    setRenderWorkflows(updatedRenderWorkflows);
-
-    const deselectedItem = copyAllItems.find((workflow) => workflow.key === itemKey);
-    if (deselectedItem) {
-      deselectedItem.selected = false;
-    }
-    allItemsSelected.current = copyAllItems;
-    dispatch(
-      updateSelectedWorkFlows({
-        selectedWorkflows: newSelection,
-      })
-    );
-
-    setTimeout(() => {
-      selection.setItems(renderWorkflows as WorkflowsList[]);
-      setRenderWorkflows(copyRenderWorkflows);
-    }, 10);
+    await deselectItemKey(itemKey);
+    selection.setItems(renderWorkflows as WorkflowsList[]);
+    setRenderWorkflows(copyRenderWorkflows);
   };
 
   return (
