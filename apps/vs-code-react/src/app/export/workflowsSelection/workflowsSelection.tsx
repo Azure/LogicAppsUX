@@ -117,6 +117,7 @@ export const WorkflowsSelection: React.FC = () => {
     const onSelectionChanged = () => {
       const currentSelection = selection.getSelection() as WorkflowsList[];
       const selectedItems = getSelectedItems(allItemsSelected.current, currentSelection);
+
       dispatch(
         updateSelectedWorkFlows({
           selectedWorkflows: selectedItems,
@@ -226,19 +227,14 @@ export const WorkflowsSelection: React.FC = () => {
 
   const deselectItemKey = (itemKey: string) => {
     return new Promise<void>((resolve) => {
-      const updatedRenderWorkflows = renderWorkflows?.map((workflow, index) => {
-        return { ...workflow, key: index.toString() };
-      }) as WorkflowsList[];
       const copyAllItems = [...allItemsSelected.current];
       const newSelection = [...selectedWorkflows.filter((item) => item.key !== itemKey)];
-
-      setRenderWorkflows(updatedRenderWorkflows);
-
       const deselectedItem = copyAllItems.find((workflow) => workflow.key === itemKey);
       if (deselectedItem) {
         deselectedItem.selected = false;
       }
       allItemsSelected.current = copyAllItems;
+
       dispatch(
         updateSelectedWorkFlows({
           selectedWorkflows: newSelection,
@@ -249,10 +245,22 @@ export const WorkflowsSelection: React.FC = () => {
     });
   };
 
+  const updateRenderWorflows = () => {
+    return new Promise<void>((resolve) => {
+      const updatedRenderWorkflows = renderWorkflows?.map((workflow, index) => {
+        return { ...workflow, key: index.toString() };
+      }) as WorkflowsList[];
+      setRenderWorkflows(updatedRenderWorkflows);
+
+      resolve();
+    });
+  };
+
   const deselectWorkflow = async (itemKey: string) => {
     const copyRenderWorkflows = [...(renderWorkflows ?? [])];
     await deselectItemKey(itemKey);
     selection.setItems(renderWorkflows as WorkflowsList[]);
+    await updateRenderWorflows();
     setRenderWorkflows(copyRenderWorkflows);
   };
 
