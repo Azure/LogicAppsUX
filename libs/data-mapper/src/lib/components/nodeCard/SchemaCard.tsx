@@ -14,6 +14,7 @@ import {
 } from '@fluentui/react-components';
 import { bundleIcon, Important12Filled, ChevronRight16Regular } from '@fluentui/react-icons';
 import type { FunctionComponent } from 'react';
+import { Handle, Position } from 'react-flow-renderer';
 
 export interface SchemaCardProps {
   data: SchemaCardWrapperProps;
@@ -118,7 +119,17 @@ const cardInputText = makeStyles({
   },
 });
 
-export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ label, schemaType, isLeaf, onClick, disabled, error }) => {
+const handleStyle = { color: 'red' };
+
+export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({
+  label,
+  schemaType,
+  isLeaf,
+  onClick,
+  disabled,
+  error,
+  displayHandle,
+}) => {
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
   const mergedClasses = mergeClasses(sharedStyles.root, classes.root);
@@ -130,6 +141,13 @@ export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ l
 
   return (
     <div className={classes.container}>
+      {displayHandle ? (
+        <Handle
+          type={schemaType === SchemaTypes.Input ? 'source' : 'target'}
+          position={schemaType === SchemaTypes.Input ? Position.Right : Position.Left}
+          style={handleStyle}
+        />
+      ) : null}
       {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={disabled ? disabledError : classes.badge}></Badge>}
       <Button className={error ? errorClass : mergedClasses} disabled={!!disabled} onClick={onClick}>
         <Icon className={classes.cardIcon} iconName="Diamond" />
