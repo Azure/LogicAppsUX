@@ -1,6 +1,6 @@
 import type { SchemaExtended, SchemaNodeExtended, SelectedNode } from '../../models';
 import { SchemaTypes } from '../../models';
-import type { Connection } from '../../models/Connection';
+import type { ConnectionDictionary } from '../../models/Connection';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -13,7 +13,7 @@ export interface DataMapState {
 }
 
 export interface DataMapOperationState {
-  dataMapConnections: { [key: string]: Connection };
+  dataMapConnections: ConnectionDictionary;
   inputSchema?: SchemaExtended;
   outputSchema?: SchemaExtended;
   currentInputNodes: SchemaNodeExtended[];
