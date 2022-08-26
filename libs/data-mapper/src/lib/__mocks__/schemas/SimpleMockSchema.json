@@ -19,17 +19,26 @@
         "children": [
           { "key": "/ns0:CBRInputRecord/Identity/UserID", "name": "UserID", "schemaNodeDataType": "String", "properties": "NotSpecified" },
           {
-            "key": "/ns0:CBRInputRecord/Identity/LastName",
-            "name": "LastName",
-            "schemaNodeDataType": "String",
-            "properties": "NotSpecified"
+            "key": "/ns0:CBRInputRecord/Identity/Name",
+            "name": "Name",
+            "schemaNodeDataType": "None",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:CBRInputRecord/Identity/Name/LastName",
+                "name": "LastName",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified"
+              },
+              {
+                "key": "/ns0:CBRInputRecord/Identity/Name/FirstName",
+                "name": "FirstName",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified"
+              }
+            ]
           },
-          {
-            "key": "/ns0:CBRInputRecord/Identity/FirstName",
-            "name": "FirstName",
-            "schemaNodeDataType": "String",
-            "properties": "NotSpecified"
-          },
+
           { "key": "/ns0:CBRInputRecord/Identity/Initial", "name": "Initial", "schemaNodeDataType": "String", "properties": "NotSpecified" }
         ]
       }
