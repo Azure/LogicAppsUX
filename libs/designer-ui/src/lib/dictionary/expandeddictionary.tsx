@@ -1,4 +1,5 @@
 import type { DictionaryEditorItemProps } from '.';
+import constants from '../constants';
 import { BaseEditor } from '../editor/base';
 import type { ButtonOffSet } from '../editor/base/plugins/TokenPickerButton';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
@@ -45,7 +46,13 @@ export const ExpandedDictionary = ({ items, GetTokenPicker, setItems }: Expanded
     const offset = editorRef.current?.offsetHeight;
     const height = containerRef.current?.offsetHeight;
     if (offset && height) {
-      setPickerOffset({ heightOffset: height - offset * index, widthOffset: type === ExpandedDictionaryEditorType.KEY ? -269 : -7 });
+      setPickerOffset({
+        heightOffset: height - offset * index,
+        widthOffset:
+          type === ExpandedDictionaryEditorType.KEY
+            ? constants.EXPANDED_DICTIONARY_WIDTH_OFFSET.KEY_OFFSET
+            : constants.EXPANDED_DICTIONARY_WIDTH_OFFSET.VALUE_OFFSET,
+      });
     }
   };
 
