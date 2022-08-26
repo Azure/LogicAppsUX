@@ -20,7 +20,7 @@ export default function TokenPickerHandler({ handleUpdateExpressionToken }: Toke
       (payload: string) => {
         const node = findChildNode($getRoot(), payload, TokenType.FX);
         if (node?.token?.tokenType === TokenType.FX) {
-          handleUpdateExpressionToken?.(node?.token?.description ?? '', payload);
+          handleUpdateExpressionToken?.(node?.token?.value ?? '', payload);
         }
         return true;
       },

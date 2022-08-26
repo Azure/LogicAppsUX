@@ -52,7 +52,7 @@ export const CollapsedEditor = ({
       BasePlugins={{
         tokens: true,
       }}
-      tokenPickerButtonProps={{ buttonClassName: `msla-${type}-editor-tokenpicker` }}
+      tokenPickerButtonProps={{ buttonClassName: `msla-editor-tokenpicker-button` }}
       placeholder={type === CollapsedEditorType.DICTIONARY ? 'Enter a Dictionary' : 'Enter an Array'}
       initialValue={collapsedValue && collapsedValue.length > 0 ? collapsedValue : (initialValue as ValueSegment[])}
       onBlur={onBlur}

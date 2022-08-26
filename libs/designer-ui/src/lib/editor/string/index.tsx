@@ -26,6 +26,7 @@ export const StringEditor = ({ placeholder, className, singleLine, initialValue,
       BasePlugins={{ tokens: true }}
       onBlur={handleBlur}
       GetTokenPicker={GetTokenPicker}
+      tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
     >
       {singleLine ? <SingleLine /> : null}
       <Change setValue={onValueChange} />

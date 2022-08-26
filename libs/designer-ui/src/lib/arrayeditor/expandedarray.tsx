@@ -82,7 +82,7 @@ export const ExpandedArray = ({
               className="msla-array-editor-container-expanded"
               initialValue={item.content ?? []}
               BasePlugins={{ tokens: true, clearEditor: true }}
-              tokenPickerButtonProps={{ buttonClassName: 'msla-expanded-array-editor-tokenpicker' }}
+              tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
               GetTokenPicker={GetTokenPicker}
             >
               <EditorChange item={item.content ?? []} items={items} setItems={setItems} index={index} />

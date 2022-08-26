@@ -1,6 +1,7 @@
 import type { DictionaryEditorItemProps } from '..';
 import type { ValueSegment } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
+import { ExpandedDictionaryEditorType } from '../expandeddictionary';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
@@ -9,7 +10,7 @@ interface SerializeExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
   initialItem: ValueSegment[];
   index: number;
-  type: 'key' | 'value';
+  type: ExpandedDictionaryEditorType;
   setItems: (items: DictionaryEditorItemProps[]) => void;
 }
 
@@ -20,7 +21,7 @@ export const SerializeExpandedDictionary = ({ items, initialItem, index, type, s
     const newValue = serializeEditorState(editorState);
     if (notEqual(initialItem, newValue)) {
       const newItems = JSON.parse(JSON.stringify(items));
-      if (type === 'key') {
+      if (type === ExpandedDictionaryEditorType.KEY) {
         newItems[index].key = newValue;
       } else {
         newItems[index].value = newValue;

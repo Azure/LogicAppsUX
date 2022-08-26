@@ -278,4 +278,9 @@ export default {
     MAX_COMMENT_LENGTH: 256,
     DEFAULT_ICON: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1550/1.0.1550.2686/azureblob/icon.png',
   },
+
+  EXPANDED_DICTIONARY_WIDTH_OFFSET: {
+    KEY_OFFSET: -269,
+    VALUE_OFFSET: -7,
+  },
 };

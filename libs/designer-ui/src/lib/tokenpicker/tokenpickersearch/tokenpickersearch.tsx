@@ -88,13 +88,14 @@ export const TokenPickerSearch = ({
       brandColor: constants.FX_COLOR,
       icon: FxIcon,
       title: getExpressionTokenTitle(currExpression),
-      description: expression.value,
+      description: '',
       key: guid(),
+      value: expression.value,
     };
 
     if (updatingExpression) {
       editor.dispatchCommand(UPDATE_TOKEN_NODE, {
-        updatedDescription: expression.value,
+        updatedValue: expression.value,
         updatedTitle: token.title,
         updatedData: {
           id: guid(),
@@ -107,7 +108,7 @@ export const TokenPickerSearch = ({
     } else {
       editor.dispatchCommand(INSERT_TOKEN_NODE, {
         brandColor: token.brandColor,
-        description: token.description ?? token.key,
+        description: token.description,
         title: token.title,
         icon: token.icon ?? FxIcon,
         value: token.value,

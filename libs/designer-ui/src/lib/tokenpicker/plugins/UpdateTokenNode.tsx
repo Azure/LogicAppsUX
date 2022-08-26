@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 
 export interface updateTokenProps {
   nodeKey: string;
-  updatedDescription: string;
+  updatedValue: string;
   updatedData: ValueSegment;
   updatedTitle: string;
 }

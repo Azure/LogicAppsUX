@@ -127,7 +127,7 @@ export const PanelContainer = ({
       hasCloseButton={false}
       type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
       customWidth={width}
-      styles={{ content: { padding: isCollapsed ? 0 : '1rem' } }}
+      styles={{ content: { padding: isCollapsed ? 0 : '1rem' }, main: { overflow: 'hidden' } }}
       layerProps={layerProps}
     >
       {!isCollapsed && (

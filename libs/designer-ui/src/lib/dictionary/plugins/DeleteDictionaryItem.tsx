@@ -1,5 +1,6 @@
 import type { DictionaryEditorItemProps } from '..';
 import { parseSegments } from '../../editor/base/utils/parsesegments';
+import { ExpandedDictionaryEditorType } from '../expandeddictionary';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $setSelection, CLEAR_EDITOR_COMMAND } from 'lexical';
 import { useEffect, useState } from 'react';
@@ -7,7 +8,7 @@ import { useEffect, useState } from 'react';
 interface DeleteDictionaryItemProps {
   items: DictionaryEditorItemProps[];
   index: number;
-  type: 'key' | 'value';
+  type: ExpandedDictionaryEditorType;
 }
 
 export const DeleteDictionaryItem = ({ items, index, type }: DeleteDictionaryItemProps) => {
@@ -17,7 +18,7 @@ export const DeleteDictionaryItem = ({ items, index, type }: DeleteDictionaryIte
     if (itemLength > items.length) {
       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
       editor.update(() => {
-        if (type === 'key') {
+        if (type === ExpandedDictionaryEditorType.KEY) {
           parseSegments(items[index].key, true);
         } else {
           parseSegments(items[index].value, true);

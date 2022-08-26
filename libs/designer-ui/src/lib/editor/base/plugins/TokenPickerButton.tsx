@@ -1,17 +1,28 @@
-import type { TokenPickerButtonProps } from '..';
 import { TokenNode } from '../nodes/tokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
+export interface ButtonOffSet {
+  heightOffset?: number;
+  widthOffset?: number;
+}
+
+export interface TokenPickerButtonProps {
+  buttonClassName?: string;
+  buttonOffset?: ButtonOffSet;
+  setShowTokenPicker?: () => void;
+}
+
 interface ButtonProps extends TokenPickerButtonProps {
   showTokenPicker: boolean;
   labelId: string;
 }
+
 export default function TokenPickerButton({
   showTokenPicker,
   buttonClassName,
-  buttonHeight,
+  buttonOffset,
   labelId,
   setShowTokenPicker,
 }: ButtonProps): JSX.Element {
@@ -50,7 +61,7 @@ export default function TokenPickerButton({
         handleClick();
       }}
       onMouseDown={(e) => e.preventDefault()}
-      style={{ top: `${buttonHeight}px` }}
+      style={{ top: `${buttonOffset?.heightOffset}px`, right: `${buttonOffset?.widthOffset}px` }}
     >
       <p className="msla-tokenpicker-button-text">{addContent}</p>
       {showTokenPicker ? (

@@ -8,6 +8,7 @@ import DeleteTokenNode from './plugins/DeleteTokenNode';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
+import type { TokenPickerButtonProps } from './plugins/TokenPickerButton';
 import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
 import { Validation } from './plugins/Validation';
@@ -38,13 +39,6 @@ export interface DictionaryCallbackProps {
   addItem: (index: number) => void;
   index: number;
 }
-
-export interface TokenPickerButtonProps {
-  buttonClassName?: string;
-  buttonHeight?: number;
-  setShowTokenPicker?: () => void;
-}
-
 export interface BaseEditorProps {
   className?: string;
   readonly?: boolean;
@@ -167,7 +161,7 @@ export const BaseEditor = ({
             labelId={labelId}
             showTokenPicker={showTokenPicker}
             buttonClassName={tokenPickerButtonProps?.buttonClassName}
-            buttonHeight={tokenPickerButtonProps?.buttonHeight}
+            buttonOffset={tokenPickerButtonProps?.buttonOffset}
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}

@@ -178,6 +178,7 @@ export const Combobox = ({
             initialValue={value}
             onBlur={handleBlur}
             GetTokenPicker={GetTokenPicker}
+            tokenPickerButtonProps={{ buttonClassName: 'msla-combobox-editor-tokenpicker' }}
           >
             <Change setValue={setValue} />
           </BaseEditor>
