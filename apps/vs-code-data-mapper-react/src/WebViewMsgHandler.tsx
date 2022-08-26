@@ -1,3 +1,4 @@
+import { dataMapDataLoaderSlice } from './state/DataMapDataLoader';
 import { schemaDataLoaderSlice } from './state/SchemaDataLoader';
 import type { AppDispatch } from './state/Store';
 import type { Schema, DataMap } from '@microsoft/logic-apps-data-mapper';
@@ -26,21 +27,12 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         changeOutputSchemaCB(msg.data);
         break;
       case 'loadDataMap':
-        // TODO
+        changeDataMapCB(msg.data);
         break;
       default:
         console.error(`Unexpected message received: ${msg}`);
     }
   });
-
-  /* TODO: Examine DataMap format, see what we currently read in, and copy that example file/structure here to use
-  const changeDataMapRscPathCB = useCallback(
-    (newDataMap: Schema) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeResourcePath(newValue ?? ''));
-      dispatch(loadDataMap());
-    },
-    [dispatch]
-  );*/
 
   const changeInputSchemaCB = useCallback(
     (newSchema: Schema) => {
@@ -52,6 +44,13 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
   const changeOutputSchemaCB = useCallback(
     (newSchema: Schema) => {
       dispatch(schemaDataLoaderSlice.actions.changeOutputSchema(newSchema));
+    },
+    [dispatch]
+  );
+
+  const changeDataMapCB = useCallback(
+    (newDataMap: DataMap) => {
+      dispatch(dataMapDataLoaderSlice.actions.changeDataMap(newDataMap));
     },
     [dispatch]
   );
