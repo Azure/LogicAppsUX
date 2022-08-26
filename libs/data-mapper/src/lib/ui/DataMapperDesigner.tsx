@@ -28,6 +28,7 @@ import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema, SchemaNodeExtended } from '../models';
 import { NodeType, SchemaTypes } from '../models';
+import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -45,12 +46,12 @@ import {
   ZoomOut20Filled,
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
-import { useMemo, useEffect, useRef } from 'react';
 import type { MouseEvent as ReactMouseEvent } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import type { Connection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
-import ReactFlow, { MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
+import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
+import ReactFlow, { ConnectionLineType, MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -67,6 +68,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+  const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
@@ -121,7 +123,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     }
   };
 
-  const onConnect = (connection: Connection) => {
+  const onConnect = (connection: ReactFlowConnection) => {
     if (connection.target && connection.source) {
       dispatch(makeConnection({ outputNodeKey: connection.target, value: connection.source }));
     }
@@ -146,6 +148,14 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     setSelectedSchemaFile(schemaFile);
   };
 
+  const dataMapDefinition = useMemo(() => {
+    if (inputSchema && outputSchema) {
+      return convertToMapDefinition(currentConnections, inputSchema, outputSchema);
+    }
+
+    return '';
+  }, [currentConnections, inputSchema, outputSchema]);
+
   const onSaveClick = () => {
     saveStateCall(); // TODO: do the next call only when this is successful
     dispatch(
@@ -154,6 +164,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         outputSchemaExtended: outputSchema,
       })
     );
+    console.log(dataMapDefinition);
   };
 
   const onUndoClick = () => {
@@ -282,6 +293,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         defaultZoom={2}
         nodesDraggable={false}
         fitView={false}
+        connectionLineType={ConnectionLineType.SmoothStep}
         proOptions={{
           account: 'paid-sponsor',
           hideAttribution: true,
