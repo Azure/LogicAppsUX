@@ -1,6 +1,8 @@
+// TODO Refactor this out when we start to do loading. This should exist next to the other MapDefinition converter in DataMap.Utils.ts
+// Currently this is unusable as we don't rely on the DataMap model to power the designer
+import { MapDefinitionProperties, MapNodeParams, YamlFormats } from '../constants/MapDefinitionConstants';
+import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
 import type { MapNode, ConditionalMapping, DataMap, LoopMapping } from '../models';
-import { InvalidFormatException, InvalidFormatExceptionCode } from './exceptions/invalidFormat';
-import { MapDefinitionProperties, MapNodeParams, YamlFormats } from './utils/constants';
 import yaml from 'js-yaml';
 
 export function mapDefinitionToJson(inputMapDefinition: string): DataMap {
@@ -73,8 +75,8 @@ function parseMappingsJsonToNode(targetNodeKey: string, targetNodeObject: string
 }
 
 export function parseLoopMapping(line: string): LoopMapping {
-  const formttedLine = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
-  const expressionSplittedOnComma = formttedLine?.split(',');
+  const formattedLine = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
+  const expressionSplittedOnComma = formattedLine?.split(',');
   return {
     loopSource: expressionSplittedOnComma?.[0]?.trim(),
     loopIndex: expressionSplittedOnComma?.[1]?.trim(),

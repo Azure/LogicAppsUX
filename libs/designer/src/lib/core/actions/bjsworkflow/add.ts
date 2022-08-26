@@ -13,6 +13,7 @@ import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode } from '../../state/workflow/workflowSlice';
 import type { RootState } from '../../store';
+import { isRootNodeInGraph } from '../../utils/graph';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations } from '../../utils/variables';
 import { getInputParametersFromManifest, getOutputParametersFromManifest, getParameterDependencies } from './initialize';
@@ -79,7 +80,7 @@ export const initializeOperationDetails = async (
     const manifest = await getOperationManifest(operationInfo);
 
     // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
-    const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest);
+    const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest, workflowState.operations[nodeId]);
     const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
     const nodeOutputs = getOutputParametersFromManifest(manifest, false /* isTrigger */, nodeInputs, settings.splitOn?.value?.value);
     const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);
@@ -132,7 +133,13 @@ export const addTokensAndVariables = (
 
   tokensAndVariables.outputTokens[nodeId].tokens.push(...getBuiltInTokens(manifest));
   tokensAndVariables.outputTokens[nodeId].tokens.push(
-    ...convertOutputsToTokens(nodeId, operationType, nodeOutputs.outputs ?? {}, manifest, settings)
+    ...convertOutputsToTokens(
+      isRootNodeInGraph(nodeId, 'root', nodesMetadata) ? undefined : nodeId,
+      operationType,
+      nodeOutputs.outputs ?? {},
+      manifest,
+      settings
+    )
   );
 
   if (equals(operationType, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {

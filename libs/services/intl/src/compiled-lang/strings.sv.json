@@ -405,6 +405,12 @@
       "value": "Global sökning"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -559,12 +565,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "välj indata"
     }
   ],
   "4/kJ8D": [
@@ -1661,12 +1661,6 @@
       "value": "Obligatoriskt. Det objekt till vilket en ny egenskap ska läggas till."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Välj en fil att ladda upp"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1951,6 +1945,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
     }
   ],
   "NvANon": [
@@ -2679,6 +2679,12 @@
       "value": " timmar"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Välj ett utdataschema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2761,12 +2767,6 @@
     {
       "type": 0,
       "value": "Förfrågan"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Bläddra"
     }
   ],
   "XqamWZ": [
@@ -3065,12 +3065,6 @@
       "value": "Returnerar ett objekt med en egenskap som är inställd på det angivna värdet"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "välj utdata"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3275,6 +3269,12 @@
     {
       "type": 0,
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Output schema node"
     }
   ],
   "eRvGw3": [
@@ -3629,6 +3629,18 @@
     {
       "type": 0,
       "value": "Avbryt"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4247,6 +4259,12 @@
       "value": "Konverterar parametern till en sträng"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Välj ett indataschema"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4495,6 +4513,18 @@
       "value": "Ny parameter"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Input schema node"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4603,6 +4633,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Select an element to start configuring"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4703,12 +4739,6 @@
     {
       "type": 0,
       "value": "Returnerar det sista indexet för ett värde i en sträng (skiftlägesokänslig, invariant kultur)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Knapp för att hantera växlingstillstånd"
     }
   ],
   "vQcQkU": [
@@ -4909,6 +4939,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den nya eller befintliga egenskapens namn."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

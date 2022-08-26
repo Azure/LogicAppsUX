@@ -405,6 +405,12 @@
       "value": "Globális keresés"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -559,12 +565,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "bemenet kiválasztása"
     }
   ],
   "4/kJ8D": [
@@ -1661,12 +1661,6 @@
       "value": "Kötelező megadni. Az objektum, melyhez hozzá kívánja adni az új tulajdonságot."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Válassza ki a feltöltendő fájlt"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1951,6 +1945,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Minszk"
+    }
+  ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
     }
   ],
   "NvANon": [
@@ -2679,6 +2679,12 @@
       "value": " óra"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Kimeneti séma kiválasztása"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2761,12 +2767,6 @@
     {
       "type": 0,
       "value": "Kérelem"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Tallózás"
     }
   ],
   "XqamWZ": [
@@ -3069,12 +3069,6 @@
       "value": "Egy objektumot ad vissza, melyben egy tulajdonság be lett állítva a megadott értékre"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "kimenet kiválasztása"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3279,6 +3273,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Output schema node"
     }
   ],
   "eRvGw3": [
@@ -3637,6 +3637,18 @@
     {
       "type": 0,
       "value": "Mégse"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4255,6 +4267,12 @@
       "value": "A paraméter átalakítása sztringgé."
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Bemeneti séma kiválasztása"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4503,6 +4521,18 @@
       "value": "Új paraméter"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Input schema node"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4611,6 +4641,12 @@
       "value": "(UTC+04:00) Abu-Dzabi, Maszkat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Select an element to start configuring"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4711,12 +4747,6 @@
     {
       "type": 0,
       "value": "Egy sztringbeli érték utolsó indexét adja vissza (kis- és nagybetű nincs megkülönböztetve, invariáns kulturális környezet)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "A kapcsoló állapotának kezelésére szolgáló gomb"
     }
   ],
   "vQcQkU": [
@@ -4917,6 +4947,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az új vagy meglévő tulajdonság neve."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

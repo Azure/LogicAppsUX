@@ -1,8 +1,8 @@
+import { simpleMockSchema } from '../../__mocks__';
 import { setInitialInputSchema, setInitialOutputSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended } from '../../models/Schema';
-import { convertSchemaToSchemaExtended } from '../../models/Schema';
-import { simpleMockSchema } from '../../models/__mocks__';
+import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { DefaultPanelViewProps } from './DefaultPanelView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';

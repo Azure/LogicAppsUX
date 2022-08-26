@@ -4,6 +4,7 @@ import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
 import { TokenPickerMode } from '../tokenpickerpivot';
+import { Icon } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -122,17 +123,35 @@ export const TokenPickerOptions = ({
   };
 
   const handleCreateToken = (token: OutputToken) => {
+    const { key, brandColor, icon, title, description, name, type, value, outputInfo } = token;
+    const { actionName, type: tokenType, required, format, source, isSecure, arrayDetails } = outputInfo;
     editor.dispatchCommand(INSERT_TOKEN_NODE, {
-      brandColor: token.brandColor,
-      description: token.value,
-      title: token.title,
-      icon: token.icon ?? 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
-      value: token.value,
+      brandColor,
+      description,
+      title,
+      icon: icon ?? 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+      value,
       data: {
         id: guid(),
         type: ValueSegmentType.TOKEN,
-        value: token.value ?? '',
-        token: { ...token, tokenType: token.outputInfo.type, description: token.value ?? '' },
+        value: value ?? '',
+        token: {
+          actionName,
+          tokenType,
+          brandColor,
+          icon,
+          description,
+          key,
+          name,
+          type,
+          value,
+          format,
+          required,
+          title,
+          source,
+          isSecure,
+          arrayDetails: arrayDetails ? { parentArrayName: arrayDetails.parentArray, itemSchema: arrayDetails.itemSchema } : undefined,
+        },
       },
     });
   };
@@ -158,7 +177,12 @@ export const TokenPickerOptions = ({
                     key={`token-picker-option-${j}`}
                     onClick={() => handleTokenClicked(token)}
                   >
-                    <img src={token.icon} alt="" />
+                    <img src={token.icon} alt="token icon" />
+                    {token.outputInfo.isSecure ? (
+                      <div className="msla-token-picker-secure-token">
+                        <Icon iconName="LockSolid" />
+                      </div>
+                    ) : null}
                     <div className="msla-token-picker-section-option-text">
                       <div className="msla-token-picker-option-inner">
                         <div className="msla-token-picker-option-title">{token.title}</div>

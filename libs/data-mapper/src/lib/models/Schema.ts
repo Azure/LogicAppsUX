@@ -19,6 +19,12 @@ export interface SchemaNode {
   children: SchemaNode[];
 }
 
+// TODO (nicolas): Extend this once we know what other properties
+// need to be known for properties pane
+export interface SelectedNode {
+  type: NodeType;
+}
+
 export enum SchemaType {
   NotSpecified = 'NotSpecified',
   XML = 'XML',
@@ -101,23 +107,8 @@ export enum SchemaTypes {
   Output = 'output',
 }
 
-export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
-  const extendedSchema: SchemaExtended = {
-    ...schema,
-    schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, []),
-  };
-
-  return extendedSchema;
-};
-
-const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPath: PathItem[]): SchemaNodeExtended => {
-  const pathToRoot: PathItem[] = [...parentPath, { key: schemaNode.key, name: schemaNode.name }];
-
-  const extendedSchemaNode: SchemaNodeExtended = {
-    ...schemaNode,
-    children: schemaNode.children ? schemaNode.children.map((child) => convertSchemaNodeToSchemaNodeExtended(child, pathToRoot)) : [],
-    pathToRoot: pathToRoot,
-  };
-
-  return extendedSchemaNode;
-};
+export enum NodeType {
+  Input = 'input',
+  Output = 'output',
+  Expression = 'expression',
+}

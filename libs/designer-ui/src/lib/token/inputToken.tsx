@@ -1,13 +1,14 @@
 import { getBrandColorRgbA } from '../card/utils';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
 import { CHANGE_TOKENPICKER_EXPRESSION } from '../tokenpicker/plugins/TokenPickerHandler';
+import { Icon } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { NodeKey } from 'lexical';
 import { useIntl } from 'react-intl';
 
 export interface InputTokenProps {
   brandColor?: string;
-  description?: string;
+  value?: string;
   disableFiltering?: boolean;
   icon: string;
   isAdvanced?: boolean;
@@ -19,7 +20,7 @@ export interface InputTokenProps {
 }
 
 export const DELETE = '\u00D7';
-export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor, icon, readOnly, title, nodeKey }) => {
+export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readOnly, title, nodeKey }) => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
 
@@ -64,13 +65,18 @@ export const InputToken: React.FC<InputTokenProps> = ({ description, brandColor,
         }}
       >
         {DELETE}
+        {isSecure ? (
+          <div className="msla-editor-input-secure-token">
+            <Icon iconName="LockSolid" />
+          </div>
+        ) : null}
       </button>
     );
   };
 
   return (
     <div className="msla-token msla-input-token" onClick={handleTokenClicked} style={tokenStyle}>
-      <div className="msla-token-title" title={description}>
+      <div className="msla-token-title" title={value}>
         {title}
       </div>
       {renderTokenDeleteButton()}

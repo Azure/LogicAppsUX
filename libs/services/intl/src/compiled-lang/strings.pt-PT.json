@@ -405,6 +405,12 @@
       "value": "Pesquisa global"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -559,12 +565,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "selecionar entrada"
     }
   ],
   "4/kJ8D": [
@@ -1661,12 +1661,6 @@
       "value": "Necessário. O objeto para o qual adicionar uma nova propriedade."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Selecione um ficheiro para carregar"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1951,6 +1945,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
     }
   ],
   "NvANon": [
@@ -2675,6 +2675,12 @@
       "value": " horas"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Selecione um esquema de saída"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2757,12 +2763,6 @@
     {
       "type": 0,
       "value": "Pedido"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Procurar"
     }
   ],
   "XqamWZ": [
@@ -3061,12 +3061,6 @@
       "value": "Devolve um objeto com uma propriedade definida para o valor fornecido"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "selecionar saída"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3271,6 +3265,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O nome da variável do valor que pretende."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Output schema node"
     }
   ],
   "eRvGw3": [
@@ -3629,6 +3629,18 @@
     {
       "type": 0,
       "value": "Cancelar"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4251,6 +4263,12 @@
       "value": "Converter o parâmetro para uma cadeia"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Selecione um esquema de entrada"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4499,6 +4517,18 @@
       "value": "Novo parâmetro"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Input schema node"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4607,6 +4637,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Mascate"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Select an element to start configuring"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4707,12 +4743,6 @@
     {
       "type": 0,
       "value": "Devolve o último índice de um valor numa cadeia (sensível a maiúsculas e minúsculas, cultura invariante)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Botão para gerir o estado de alternar"
     }
   ],
   "vQcQkU": [
@@ -4913,6 +4943,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da propriedade nova ou existente."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

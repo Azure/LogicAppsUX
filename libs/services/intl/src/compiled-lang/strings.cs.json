@@ -439,6 +439,12 @@
       "value": "Globální vyhledávání"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -593,12 +599,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "vybrat vstup"
     }
   ],
   "4/kJ8D": [
@@ -1739,12 +1739,6 @@
       "value": "Povinné. Objekt, do kterého se přidá nová vlastnost"
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Vyberte soubor, který se má nahrát."
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2055,6 +2049,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
     }
   ],
   "NvANon": [
@@ -2801,6 +2801,12 @@
       "value": " h"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Vyberte výstupní schéma."
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2883,12 +2889,6 @@
     {
       "type": 0,
       "value": "Žádost"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Procházet"
     }
   ],
   "XqamWZ": [
@@ -3187,12 +3187,6 @@
       "value": "Vrátí objekt, ve kterém se určitá vlastnost nastavila na poskytnutou hodnotu."
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "vybrat výstup"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3397,6 +3391,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název proměnné, jejíž hodnotu chcete získat."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Output schema node"
     }
   ],
   "eRvGw3": [
@@ -3773,6 +3773,18 @@
     {
       "type": 0,
       "value": "Zrušit"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4391,6 +4403,12 @@
       "value": "Převede parametr na řetězec."
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Vyberte vstupní schéma."
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4661,6 +4679,18 @@
       "value": "Nový parametr"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Input schema node"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4769,6 +4799,12 @@
       "value": "(UTC+04:00) Abú Dhabi, Maskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Select an element to start configuring"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4869,12 +4905,6 @@
     {
       "type": 0,
       "value": "Vrátí poslední index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Tlačítko pro správu přepínacího stavu"
     }
   ],
   "vQcQkU": [
@@ -5075,6 +5105,12 @@
     {
       "type": 0,
       "value": "Povinné. Název nové nebo stávající vlastnosti"
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

@@ -1,8 +1,8 @@
+import { simpleMockSchema } from '../../__mocks__';
 import { setCurrentOutputNode, setInitialOutputSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
-import { convertSchemaToSchemaExtended } from '../../models/Schema';
-import { simpleMockSchema } from '../../models/__mocks__';
+import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { EditorBreadcrumb } from './EditorBreadcrumb';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';

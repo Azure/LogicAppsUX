@@ -405,6 +405,12 @@
       "value": "Algemene zoekopdracht"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Select a file to upload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -559,12 +565,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "invoer selecteren"
     }
   ],
   "4/kJ8D": [
@@ -1661,12 +1661,6 @@
       "value": "Vereist. Het object waaraan een nieuwe eigenschap moet worden toegevoegd."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Een bestand selecteren dat moeten worden geüpload"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1951,6 +1945,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
     }
   ],
   "NvANon": [
@@ -2679,6 +2679,12 @@
       "value": " uren"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Een uitvoerschema selecteren"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2761,12 +2767,6 @@
     {
       "type": 0,
       "value": "Aanvraag"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Bladeren"
     }
   ],
   "XqamWZ": [
@@ -3065,12 +3065,6 @@
       "value": "Geeft als resultaat een object met een eigenschap ingesteld op de opgegeven waarde"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "uitvoer selecteren"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3275,6 +3269,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de variabele met de gewenste waarde."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Output schema node"
     }
   ],
   "eRvGw3": [
@@ -3633,6 +3633,18 @@
     {
       "type": 0,
       "value": "Annuleren"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properties"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4247,6 +4259,12 @@
       "value": "De parameter naar een tekenreeks converteren"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Een invoerschema selecteren"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4495,6 +4513,18 @@
       "value": "Nieuwe parameter"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Input schema node"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Browse"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4603,6 +4633,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Select an element to start configuring"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4703,12 +4739,6 @@
     {
       "type": 0,
       "value": "De laatste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Knop voor het beheren van de wisselstatus"
     }
   ],
   "vQcQkU": [
@@ -4909,6 +4939,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de nieuwe of bestaande eigenschap."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [
