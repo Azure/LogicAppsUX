@@ -43,6 +43,7 @@ const loadOutputSchemaFileCmd = async (uri: Uri) => {
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadOutputSchema', data: outputSchema });
 };
 
+// TODO: Likely automatically search for and load schema files if already specified in data map
 const loadDataMapFileCmd = async (uri: Uri) => {
   const dataMap = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: dataMap });
