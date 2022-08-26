@@ -2607,7 +2607,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "出力スキーマの選択"
     }
   ],
   "XCunbR": [
@@ -4156,7 +4156,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "入力スキーマの選択"
     }
   ],
   "q87X20": [
