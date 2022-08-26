@@ -12,6 +12,10 @@
         "title": "Open Data Mapper"
       },
       {
+        "command": "dataMapperExtension.createDataMapFile",
+        "title": "Create new data map"
+      },
+      {
         "command": "dataMapperExtension.loadInputSchemaFile",
         "title": "Load input schema"
       },
@@ -35,15 +39,18 @@
       "dataMapperExtension.dataMapperMenu": [
         {
           "command": "dataMapperExtension.loadInputSchemaFile",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "resourceExtname in dataMapperExtension.supportedSchemaFileExts"
         },
         {
           "command": "dataMapperExtension.loadOutputSchemaFile",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "resourceExtname in dataMapperExtension.supportedSchemaFileExts"
         },
         {
           "command": "dataMapperExtension.loadDataMapFile",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "resourceExtname in dataMapperExtension.supportedDataMapFileExts"
         }
       ]
     },
