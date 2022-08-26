@@ -2607,7 +2607,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "출력 스키마 선택"
     }
   ],
   "XCunbR": [
@@ -4156,7 +4156,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "입력 스키마 선택"
     }
   ],
   "q87X20": [
