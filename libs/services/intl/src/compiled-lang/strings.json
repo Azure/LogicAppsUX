@@ -441,6 +441,12 @@
       "value": "17"
     }
   ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "2b1yD3": [
     {
       "type": 0,
@@ -487,6 +493,12 @@
     {
       "type": 0,
       "value": "Identifier"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "3BZnxY": [
@@ -871,6 +883,12 @@
     {
       "type": 0,
       "value": "Cannot render designer due to multiple triggers in definition."
+    }
+  ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Please enable managed identity for the logic app."
     }
   ],
   "8U0KPg": [
@@ -2943,6 +2961,12 @@
       "value": "Enables an expression to derive its value from other JSON name and value pairs or the output of the runtime trigger"
     }
   ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
+    }
+  ],
   "YaFjJQ": [
     {
       "type": 0,
@@ -3221,6 +3245,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
     }
   ],
   "ci6ex1": [
@@ -4869,12 +4899,6 @@
     {
       "type": 0,
       "value": "Required. The value the string may end with."
-    }
-  ],
-  "vRRSp2": [
-    {
-      "type": 0,
-      "value": "Enter Pfxr"
     }
   ],
   "vSlNPe": [

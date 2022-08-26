@@ -1,6 +1,7 @@
 .msla-authentication-editor-container {
   border: 1px dashed @defaultBorderColor;
   display: flex;
+  padding-bottom: 10px;
 }
 
 .msla-authentication-editor-expanded-container {
@@ -8,7 +9,10 @@
   padding: 10px;
 }
 
-.msla-authentication-editor-basic-container {
+.msla-authentication-editor-basic-container,
+.msla-authentication-editor-certificate-container,
+.msla-authentication-editor-raw-container,
+.msla-authentication-editor-MSI-container {
   padding-bottom: 10px;
 }
 
@@ -25,4 +29,9 @@
 .msla-authentication-editor-expanded-item {
   display: flex;
   padding-bottom: 10px;
+}
+.msla-authentication-dropdown {
+  .ms-Dropdown {
+    height: 28px;
+  }
 }

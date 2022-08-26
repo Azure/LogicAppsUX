@@ -186,7 +186,7 @@ export const AUTHENTICATION_PROPERTIES = {
     isRequired: true,
     key: 'clientCertificatePfx',
     placeHolder: intl.formatMessage({
-      defaultMessage: 'Enter Pfxr',
+      defaultMessage: 'Enter Pfx',
       description: 'Client Certificate Pfx Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,

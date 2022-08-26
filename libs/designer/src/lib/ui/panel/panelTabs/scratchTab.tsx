@@ -43,7 +43,7 @@ export const ScratchTab = () => {
   const children = (): React.ReactNode => {
     return (
       <>
-        <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} />
+        <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} />
         <ArrayEditor
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
