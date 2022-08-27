@@ -408,7 +408,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Válassza ki a feltöltendő fájlt"
     }
   ],
   "2Cdt4p": [
@@ -1950,7 +1950,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Kifejezés"
     }
   ],
   "NvANon": [
@@ -3642,13 +3642,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Tulajdonságok"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Tesztelés"
     }
   ],
   "iq+tiv": [
@@ -4530,7 +4530,7 @@
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Tallózás"
     }
   ],
   "t+XCkg": [
@@ -4952,7 +4952,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kód"
     }
   ],
   "xYyPR8": [

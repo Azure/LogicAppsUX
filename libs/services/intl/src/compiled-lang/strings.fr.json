@@ -408,7 +408,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Sélectionner un fichier à charger"
     }
   ],
   "2Cdt4p": [
@@ -3254,7 +3254,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Nœud de schéma de sortie"
     }
   ],
   "eRvGw3": [
@@ -3610,7 +3610,7 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Propriétés"
     }
   ],
   "ifLn0+": [
@@ -4488,13 +4488,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Nœud de schéma d’entrée"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Parcourir"
     }
   ],
   "t+XCkg": [
@@ -4608,7 +4608,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Sélectionner un élément pour commencer la configuration"
     }
   ],
   "uN4zFU": [

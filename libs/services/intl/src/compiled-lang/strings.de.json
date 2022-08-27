@@ -408,7 +408,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Datei für Upload auswählen"
     }
   ],
   "2Cdt4p": [
@@ -1950,7 +1950,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Ausdruck"
     }
   ],
   "NvANon": [
@@ -3278,7 +3278,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Ausgabeschemaknoten"
     }
   ],
   "eRvGw3": [
@@ -3634,7 +3634,7 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Eigenschaften"
     }
   ],
   "ifLn0+": [
@@ -4520,13 +4520,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Eingabeschemaknoten"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Durchsuchen"
     }
   ],
   "t+XCkg": [
@@ -4640,7 +4640,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Wählen Sie ein Element aus, um mit der Konfiguration zu beginnen."
     }
   ],
   "uN4zFU": [

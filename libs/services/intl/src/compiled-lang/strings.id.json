@@ -397,7 +397,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Pilih file yang akan diunggah"
     }
   ],
   "2Cdt4p": [
@@ -1890,7 +1890,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Ekspresi"
     }
   ],
   "NvANon": [
@@ -3199,7 +3199,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Node skema output"
     }
   ],
   "eRvGw3": [
@@ -3536,13 +3536,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Properti"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Uji"
     }
   ],
   "iq+tiv": [
@@ -4403,13 +4403,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Node skema input"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Telusuri"
     }
   ],
   "t+XCkg": [
@@ -4523,7 +4523,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Pilih elemen untuk mulai mengonfigurasi"
     }
   ],
   "uN4zFU": [
@@ -4831,7 +4831,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kode"
     }
   ],
   "xYyPR8": [
