@@ -57,7 +57,7 @@ export const SettingsPanel = (): JSX.Element => {
 };
 
 function GeneralSettings(): JSX.Element | null {
-  const [validationErrors, setValidationErrors] = useState<Record<string, ValidationError[]>>({});
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const rootState: RootState = useSelector((state: RootState) => state);
   const dispatch = useDispatch();
   const nodeId = useSelectedNodeId();
@@ -78,7 +78,7 @@ function GeneralSettings(): JSX.Element | null {
   );
 
   useEffect(() => {
-    setValidationErrors(validate('operations', nodeId, operations) ?? {});
+    setValidationErrors(validate('operations', operations) ?? []);
   }, [nodeId, operations]);
 
   const onConcurrencyToggle = (checked: boolean): void => {
@@ -162,8 +162,8 @@ function GeneralSettings(): JSX.Element | null {
         },
       },
     };
-    const errors = validate('operations', nodeId, proposedState);
-    if (errors?.[nodeId].length) {
+    const errors = validate('operations', proposedState);
+    if (errors?.length) {
       setValidationErrors(errors);
     }
     dispatch(
@@ -235,7 +235,7 @@ function GeneralSettings(): JSX.Element | null {
     onClientTrackingIdChange,
     onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.GENERAL),
-    validationErrors: (validationErrors[nodeId] ?? []).filter(({ key }) => {
+    validationErrors: (validationErrors ?? []).filter(({ key }) => {
       return [
         ValidationErrorKeys.TRIGGER_CONDITION_EMPTY,
         ValidationErrorKeys.CHUNK_SIZE_INVALID,
@@ -251,7 +251,7 @@ function GeneralSettings(): JSX.Element | null {
 
 function TrackingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
-  const [validationErrors, setValidationError] = useState({} as Record<string, ValidationError[]>);
+  const [validationErrors, setValidationError] = useState<ValidationError[]>([]);
   let rootState: RootState;
   const expandedSections = useSelector((state: RootState) => {
       rootState = state;
@@ -309,7 +309,7 @@ function TrackingSettings(): JSX.Element | null {
         },
       },
     };
-    const validationResult = validate('operations', nodeId, proposedState);
+    const validationResult = validate('operations', proposedState);
     if (isNullOrUndefined(validationResult)) {
       dispatch(
         updateNodeSettings({
@@ -360,7 +360,7 @@ function TrackingSettings(): JSX.Element | null {
     onClientTrackingIdChange,
     onTrackedPropertiesDictionaryValueChanged,
     onTrackedPropertiesStringValueChange,
-    validationErrors: validationErrors[nodeId],
+    validationErrors,
   };
 
   if (trackedProperties?.isSupported || correlation?.isSupported) {
@@ -419,6 +419,7 @@ function DataHandlingSettings(): JSX.Element | null {
 }
 
 function NetworkingSettings(): JSX.Element | null {
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
     nodeId = useSelectedNodeId(),
@@ -432,7 +433,34 @@ function NetworkingSettings(): JSX.Element | null {
       uploadChunk,
       paging,
       downloadChunkSize,
-    } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
+      operations,
+    } = useSelector((state: RootState) => {
+      const { operations } = state;
+      const operationSettings = operations.settings[nodeId];
+      const {
+        asynchronous,
+        disableAsyncPattern,
+        suppressWorkflowHeaders,
+        suppressWorkflowHeadersOnResponse,
+        requestOptions,
+        retryPolicy,
+        uploadChunk,
+        paging,
+        downloadChunkSize,
+      } = operationSettings;
+      return {
+        asynchronous,
+        disableAsyncPattern,
+        suppressWorkflowHeaders,
+        suppressWorkflowHeadersOnResponse,
+        requestOptions,
+        retryPolicy,
+        uploadChunk,
+        paging,
+        downloadChunkSize,
+        operations,
+      };
+    });
 
   const onAsyncPatternToggle = (checked: boolean): void => {
     // TODO (14427339): Setting Validation
@@ -495,7 +523,25 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onPaginationValueChange = (newVal: string): void => {
-    // TODO (14427339): Setting Validation
+    const proposedState: OperationMetadataState = {
+      ...operations,
+      settings: {
+        [nodeId]: {
+          ...operations.settings[nodeId],
+          paging: {
+            isSupported: !!paging?.isSupported,
+            value: {
+              enabled: !!paging?.value?.enabled,
+              value: Number(newVal),
+            },
+          },
+        },
+      },
+    };
+    const validationResult = validate('operations', proposedState);
+    if (validationResult?.length) {
+      setValidationErrors(validationResult);
+    }
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -567,6 +613,9 @@ function NetworkingSettings(): JSX.Element | null {
     onRequestOptionsChange,
     onHeadersOnResponseToggle,
     onSuppressHeadersToggle,
+    validationErrors: validationErrors.filter(({ key }) => {
+      return [ValidationErrorKeys.PAGING_COUNT].includes(key);
+    }),
   };
   if (
     retryPolicy?.isSupported ||
