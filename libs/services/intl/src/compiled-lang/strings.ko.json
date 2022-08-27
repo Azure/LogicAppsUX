@@ -397,7 +397,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "업로드할 파일 선택"
     }
   ],
   "2Cdt4p": [
@@ -1890,7 +1890,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "기본"
     }
   ],
   "NvANon": [
@@ -3532,13 +3532,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "속성"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "테스트"
     }
   ],
   "iq+tiv": [
@@ -4405,7 +4405,7 @@
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "찾아보기"
     }
   ],
   "t+XCkg": [
@@ -4823,7 +4823,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "코드"
     }
   ],
   "xYyPR8": [

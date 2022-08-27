@@ -397,7 +397,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "アップロードするファイルを選択します"
     }
   ],
   "2Cdt4p": [
@@ -1890,7 +1890,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "式"
     }
   ],
   "NvANon": [
@@ -3195,7 +3195,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "出力スキーマ ノード"
     }
   ],
   "eRvGw3": [
@@ -3532,13 +3532,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "プロパティ"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "テスト"
     }
   ],
   "iq+tiv": [
@@ -4399,13 +4399,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "入力スキーマ ノード"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "参照"
     }
   ],
   "t+XCkg": [
@@ -4519,7 +4519,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "構成を開始する要素の選択"
     }
   ],
   "uN4zFU": [
@@ -4823,7 +4823,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "コード"
     }
   ],
   "xYyPR8": [

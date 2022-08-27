@@ -408,7 +408,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Välj en fil att ladda upp"
     }
   ],
   "2Cdt4p": [
@@ -1950,7 +1950,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Uttryck"
     }
   ],
   "NvANon": [
@@ -3274,7 +3274,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Utdataschemanod"
     }
   ],
   "eRvGw3": [
@@ -3634,7 +3634,7 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Egenskaper"
     }
   ],
   "ifLn0+": [
@@ -4516,13 +4516,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Indataschemanod"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Bläddra"
     }
   ],
   "t+XCkg": [
@@ -4636,7 +4636,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Välj ett element för att börja konfigurera"
     }
   ],
   "uN4zFU": [
@@ -4944,7 +4944,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kod"
     }
   ],
   "xYyPR8": [
