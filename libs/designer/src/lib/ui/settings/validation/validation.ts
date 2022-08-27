@@ -26,7 +26,7 @@ const validateOperationSettings = (settings: Settings): ValidationError[] => {
   if (conditionExpressions?.value?.some((conditionExpression) => !conditionExpression)) {
     validationErrors.push({
       key: ValidationErrorKeys.TRIGGER_CONDITION_EMPTY,
-      message: 'trigger condition cannot be empty', //import localized string?
+      message: 'Trigger condition cannot be empty', //import localized string?
     });
   }
 
