@@ -1890,7 +1890,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "기본"
+      "value": "식"
     }
   ],
   "NvANon": [
@@ -3195,7 +3195,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "출력 스키마 노드"
     }
   ],
   "eRvGw3": [
@@ -4399,7 +4399,7 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "입력 스키마 노드"
     }
   ],
   "syiNc+": [
@@ -4519,7 +4519,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "구성을 시작할 요소 선택"
     }
   ],
   "uN4zFU": [
