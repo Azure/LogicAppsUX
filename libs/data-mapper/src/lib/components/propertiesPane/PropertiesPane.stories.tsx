@@ -1,12 +1,12 @@
-import { NodeType } from '../../models';
+import { NodeType, type SelectedNode } from '../../models';
 import { PropertiesPane } from './PropertiesPane';
 import type { PropertiesPaneProps } from './PropertiesPane';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-const exInputNode = { type: NodeType.Input };
-const exOutputNode = { type: NodeType.Output };
-const exExpressionNode = { type: NodeType.Expression };
+const exInputNode: SelectedNode = { type: NodeType.Input, name: 'ExInputNode', path: '/path/to/ExInputNode' };
+const exOutputNode: SelectedNode = { type: NodeType.Output, name: 'ExOutputNode', path: '/path/to/ExOutputNode' };
+const exExpressionNode: SelectedNode = { type: NodeType.Expression, name: 'ExExpressionNode', path: '/path/to/ExExpressionNode' };
 
 const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exExpressionNode };
 

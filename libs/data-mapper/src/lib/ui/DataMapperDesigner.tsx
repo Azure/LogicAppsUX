@@ -23,7 +23,7 @@ import {
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
-import type { SchemaNodeExtended } from '../models';
+import type { SchemaNodeExtended, SelectedNode } from '../models';
 import { NodeType, SchemaTypes } from '../models';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
@@ -100,7 +100,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onNodeSingleClick = (node: ReactFlowNode): void => {
-    const newCurrentlySelectedNode = { type: node.type === ReactFlowNodeType.SchemaNode ? node.data.schemaType : NodeType.Expression };
+    const newCurrentlySelectedNode: SelectedNode = {
+      type: node.type === ReactFlowNodeType.SchemaNode ? node.data.schemaType : NodeType.Expression,
+      name: node.data.label,
+      path: node.id,
+    };
     dispatch(setCurrentlySelectedNode(newCurrentlySelectedNode));
   };
 
