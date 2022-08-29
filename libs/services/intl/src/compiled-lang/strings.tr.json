@@ -405,6 +405,12 @@
       "value": "Genel arama"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Karşıya yüklenecek bir dosya seçin"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -1925,6 +1931,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "İfade"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2650,7 +2662,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Çıkış şeması seçin"
     }
   ],
   "XCunbR": [
@@ -2765,12 +2777,6 @@
     {
       "type": 0,
       "value": "Daha Fazla Bilgi"
-    }
-  ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3241,6 +3247,12 @@
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
     }
   ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Çıkış şeması düğümü"
+    }
+  ],
   "eRvGw3": [
     {
       "type": 0,
@@ -3581,6 +3593,18 @@
     {
       "type": 0,
       "value": "İptal"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Özellikler"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4198,7 +4222,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Giriş şeması seçin"
     }
   ],
   "q87X20": [
@@ -4449,6 +4473,18 @@
       "value": "Yeni parametre"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Giriş şeması düğümü"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Göz at"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4557,6 +4593,12 @@
       "value": "(UTC+04:00) Abu Dabi, Muskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Yapılandırmaya başlamak için bir öğe seçin"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4657,12 +4699,6 @@
     {
       "type": 0,
       "value": "Bir dize içindeki bir değerin son dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Geçiş durumunu yönetmeye yarayan düğme"
     }
   ],
   "vQcQkU": [
@@ -4859,6 +4895,12 @@
     {
       "type": 0,
       "value": "Gerekli. Yeni veya mevcut özelliğin adı."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Kod"
     }
   ],
   "xYyPR8": [

@@ -405,6 +405,12 @@
       "value": "Globale Suche"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Datei für Upload auswählen"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -1941,6 +1947,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Ausdruck"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2670,7 +2682,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Ausgabeschema auswählen"
     }
   ],
   "XCunbR": [
@@ -2785,12 +2797,6 @@
     {
       "type": 0,
       "value": "Weitere Informationen"
-    }
-  ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3269,6 +3275,12 @@
       "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
     }
   ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Ausgabeschemaknoten"
+    }
+  ],
   "eRvGw3": [
     {
       "type": 0,
@@ -3617,6 +3629,18 @@
     {
       "type": 0,
       "value": "Abbrechen"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Eigenschaften"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4242,7 +4266,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Eingabeschema auswählen"
     }
   ],
   "q87X20": [
@@ -4493,6 +4517,18 @@
       "value": "Neuer Parameter"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Eingabeschemaknoten"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Durchsuchen"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4601,6 +4637,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Maskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Wählen Sie ein Element aus, um mit der Konfiguration zu beginnen."
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4701,12 +4743,6 @@
     {
       "type": 0,
       "value": "Gibt den letzten Index eines Werts innerhalb einer Zeichenfolge zurück (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Schaltfläche zum Verwalten des Umschaltzustands"
     }
   ],
   "vQcQkU": [
@@ -4907,6 +4943,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der neuen oder vorhandenen Eigenschaft."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

@@ -1,7 +1,8 @@
+import type { Connection } from '../models/Connection';
 import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
-import { Position } from 'react-flow-renderer';
+import { ConnectionLineType, Position } from 'react-flow-renderer';
 
 const inputX = 100;
 const rootOutputX = 500;
@@ -83,14 +84,14 @@ export const convertToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-export const convertToReactFlowEdges = (connections: { [key: string]: string }): ReactFlowEdge[] => {
+export const convertToReactFlowEdges = (connections: { [key: string]: Connection }): ReactFlowEdge[] => {
   return Object.keys(connections).map((connectionKey) => {
     const connection = connections[connectionKey];
     return {
-      id: `${connection}-to-${connectionKey}`,
-      source: connection,
-      target: connectionKey,
-      type: 'smoothstep',
+      id: `${connection.value}-to-${connectionKey}`,
+      source: connection.reactFlowSource,
+      target: connection.reactFlowDestination,
+      type: ConnectionLineType.SmoothStep,
     };
   });
 };

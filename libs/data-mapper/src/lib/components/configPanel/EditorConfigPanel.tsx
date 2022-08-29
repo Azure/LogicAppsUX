@@ -18,11 +18,11 @@ import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface EditorConfigPanelProps {
-  initialSetup: boolean;
+  _initialSetup: boolean;
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
 }
 
-export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ initialSetup, onSubmitSchemaFileSelection }) => {
+export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ _initialSetup, onSubmitSchemaFileSelection }) => {
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
   const isChangeSchemaPanelOpen = useSelector((state: RootState) => state.panel.isChangeSchemaPanelOpen);
@@ -35,7 +35,6 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ i
   );
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
-  console.log(initialSetup);
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 

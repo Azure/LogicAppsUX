@@ -398,6 +398,12 @@
       "value": "全局搜索"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "选择文件进行上传"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -1889,6 +1895,12 @@
       "value": "(UTC+03:00)明斯克"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "表达式"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2607,7 +2619,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "选择输出架构"
     }
   ],
   "XCunbR": [
@@ -2722,12 +2734,6 @@
     {
       "type": 0,
       "value": "详细信息"
-    }
-  ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3206,6 +3212,12 @@
       "value": "必需。需要获取其值的变量的名称。"
     }
   ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "输出架构节点"
+    }
+  ],
   "eRvGw3": [
     {
       "type": 0,
@@ -3547,6 +3559,18 @@
     {
       "type": 0,
       "value": "取消"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "属性"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "测试"
     }
   ],
   "iq+tiv": [
@@ -4180,7 +4204,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "选择输入架构"
     }
   ],
   "q87X20": [
@@ -4420,6 +4444,18 @@
       "value": "新建参数"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "输入架构节点"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "浏览"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4528,6 +4564,12 @@
       "value": "(UTC+04:00)阿布扎比，马斯喀特"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "选择要开始配置的元素"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4628,12 +4670,6 @@
     {
       "type": 0,
       "value": "返回字符串内某值的最后一个索引(区分大小写，固定区域性)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "用于管理切换状态的按钮"
     }
   ],
   "vQcQkU": [
@@ -4834,6 +4870,12 @@
     {
       "type": 0,
       "value": "必填。新属性或现有属性的名称。"
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "代码"
     }
   ],
   "xYyPR8": [

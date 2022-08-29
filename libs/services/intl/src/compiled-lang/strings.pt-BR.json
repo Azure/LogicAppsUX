@@ -405,6 +405,12 @@
       "value": "Pesquisa global"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Selecione um arquivo a ser carregado"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -1925,6 +1931,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expressão"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2650,7 +2662,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Selecionar um esquema de saída"
     }
   ],
   "XCunbR": [
@@ -2765,12 +2777,6 @@
     {
       "type": 0,
       "value": "Mais Informações"
-    }
-  ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3245,6 +3251,12 @@
       "value": "Obrigatório. O nome da variável cujo valor você deseja."
     }
   ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Nó de esquema de saída"
+    }
+  ],
   "eRvGw3": [
     {
       "type": 0,
@@ -3585,6 +3597,18 @@
     {
       "type": 0,
       "value": "Cancelar"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Propriedades"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Testar"
     }
   ],
   "iq+tiv": [
@@ -4202,7 +4226,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Selecionar um esquema de entrada"
     }
   ],
   "q87X20": [
@@ -4453,6 +4477,18 @@
       "value": "Novo parâmetro"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Nó do esquema de entrada"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Procurar"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4561,6 +4597,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Mascate"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Selecione um elemento para iniciar a configuração"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4661,12 +4703,6 @@
     {
       "type": 0,
       "value": "Retorna o último índice de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Botão para gerenciar o estado da alternância"
     }
   ],
   "vQcQkU": [
@@ -4867,6 +4903,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da propriedade nova ou existente."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Código"
     }
   ],
   "xYyPR8": [

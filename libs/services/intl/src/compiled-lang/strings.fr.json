@@ -405,6 +405,12 @@
       "value": "Recherche générale"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Sélectionner un fichier à charger"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -1925,6 +1931,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expression"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2650,7 +2662,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Sélectionner une option de sortie"
     }
   ],
   "XCunbR": [
@@ -2765,12 +2777,6 @@
     {
       "type": 0,
       "value": "Plus d'informations"
-    }
-  ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -3245,6 +3251,12 @@
       "value": "Obligatoire. Nom de la variable dont vous voulez la valeur."
     }
   ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Nœud de schéma de sortie"
+    }
+  ],
   "eRvGw3": [
     {
       "type": 0,
@@ -3593,6 +3605,18 @@
     {
       "type": 0,
       "value": "Annuler"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Propriétés"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4210,7 +4234,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Sélectionner un schéma d’entrée"
     }
   ],
   "q87X20": [
@@ -4461,6 +4485,18 @@
       "value": "Nouveau paramètre"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Nœud de schéma d’entrée"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Parcourir"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4569,6 +4605,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Sélectionner un élément pour commencer la configuration"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4669,12 +4711,6 @@
     {
       "type": 0,
       "value": "Retourne le dernier index d'une valeur au sein d'une chaîne (culture invariante qui ne respecte pas la casse)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Bouton permettant de gérer l’état du bouton bascule"
     }
   ],
   "vQcQkU": [
@@ -4875,6 +4911,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la propriété nouvelle ou existante."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [
