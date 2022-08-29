@@ -34,7 +34,8 @@ const useStyles = makeStyles({
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
     height: '192px',
-    ...shorthands.overflow('auto'),
+    maxHeight: '192px',
+    ...shorthands.overflow('hidden', 'auto'),
   },
   noItemSelectedText: {
     color: tokens.colorNeutralForegroundDisabled,
