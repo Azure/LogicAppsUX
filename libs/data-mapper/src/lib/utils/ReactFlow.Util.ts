@@ -1,4 +1,4 @@
-import type { Connection } from '../models/Connection';
+import type { ConnectionDictionary } from '../models/Connection';
 import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
@@ -16,12 +16,15 @@ export enum ReactFlowNodeType {
   ExpressionNode = 'expressionNode',
 }
 
+export const InputPrefix = 'input-';
+export const OutputPrefix = 'output-';
+
 export const convertToReactFlowNodes = (inputSchemaNodes: SchemaNodeExtended[], outputSchemaNode: SchemaNodeExtended): ReactFlowNode[] => {
   const reactFlowNodes: ReactFlowNode[] = [];
 
   inputSchemaNodes.forEach((inputNodes, index) => {
     reactFlowNodes.push({
-      id: `input-${inputNodes.key}`,
+      id: `${InputPrefix}${inputNodes.key}`,
       data: {
         label: inputNodes.name,
         schemaType: SchemaTypes.Input,
@@ -48,9 +51,10 @@ export const convertToReactFlowParentAndChildNodes = (
 ): ReactFlowNode[] => {
   const reactFlowNodes: ReactFlowNode[] = [];
   const rootX = schemaType === SchemaTypes.Input ? inputX : rootOutputX;
+  const idPrefix = schemaType === SchemaTypes.Input ? InputPrefix : OutputPrefix;
 
   reactFlowNodes.push({
-    id: `${schemaType}-${parentSchemaNode.key}`,
+    id: `${idPrefix}${parentSchemaNode.key}`,
     data: {
       label: parentSchemaNode.name,
       schemaType,
@@ -66,7 +70,7 @@ export const convertToReactFlowParentAndChildNodes = (
 
   parentSchemaNode.children?.forEach((childNode, index) => {
     reactFlowNodes.push({
-      id: `${schemaType}-${childNode.key}`,
+      id: `${idPrefix}${childNode.key}`,
       data: {
         label: childNode.name,
         schemaType,
@@ -84,7 +88,7 @@ export const convertToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-export const convertToReactFlowEdges = (connections: { [key: string]: Connection }): ReactFlowEdge[] => {
+export const convertToReactFlowEdges = (connections: ConnectionDictionary): ReactFlowEdge[] => {
   return Object.keys(connections).map((connectionKey) => {
     const connection = connections[connectionKey];
     return {
