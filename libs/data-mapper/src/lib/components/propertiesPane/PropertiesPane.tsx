@@ -1,12 +1,10 @@
 import { NodeType } from '../../models';
 import type { SelectedNode } from '../../models';
-import { ExpressionCodeTab } from './tabComponents/Expression/ExpressionCodeTab';
+import { CodeTab } from './tabComponents/CodeTab';
 import { ExpressionPropertiesTab } from './tabComponents/Expression/ExpressionPropertiesTab';
-import { InputSchemaNodeCodeTab } from './tabComponents/InputSchemaNode/InputSchemaNodeCodeTab';
 import { InputSchemaNodePropertiesTab } from './tabComponents/InputSchemaNode/InputSchemaNodePropertiesTab';
-import { OutputSchemaNodeCodeTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeCodeTab';
 import { OutputSchemaNodePropertiesTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodePropertiesTab';
-import { OutputSchemaNodeTestTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeTestTab';
+import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/react-icons';
@@ -121,21 +119,16 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   };
 
   const getCodeTab = (): JSX.Element | null => {
-    switch (currentNode?.type) {
-      case NodeType.Input:
-        return <InputSchemaNodeCodeTab />;
-      case NodeType.Output:
-        return <OutputSchemaNodeCodeTab />;
-      case NodeType.Expression:
-        return <ExpressionCodeTab />;
-      default:
-        console.error('Code tab not fetched - currentNode likely undefined');
-        return null;
+    if (!currentNode?.type) {
+      console.error('Code tab not fetched - currentNode likely undefined');
+      return null;
     }
+
+    return <CodeTab />;
   };
 
   const getTestTab = (): JSX.Element => {
-    return <OutputSchemaNodeTestTab />;
+    return <TestTab />;
   };
 
   const getSelectedContent = (): JSX.Element | null => {
