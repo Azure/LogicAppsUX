@@ -1,9 +1,8 @@
 import { NodeType } from '../../models';
 import type { SelectedNode } from '../../models';
 import { CodeTab } from './tabComponents/CodeTab';
-import { ExpressionPropertiesTab } from './tabComponents/Expression/ExpressionPropertiesTab';
-import { InputSchemaNodePropertiesTab } from './tabComponents/InputSchemaNode/InputSchemaNodePropertiesTab';
-import { OutputSchemaNodePropertiesTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodePropertiesTab';
+import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
+import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
 import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
@@ -104,20 +103,6 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     }
   };
 
-  const getPropertiesTab = (): JSX.Element | null => {
-    switch (currentNode?.type) {
-      case NodeType.Input:
-        return <InputSchemaNodePropertiesTab />;
-      case NodeType.Output:
-        return <OutputSchemaNodePropertiesTab />;
-      case NodeType.Expression:
-        return <ExpressionPropertiesTab />;
-      default:
-        console.error('Tab not fetched - currentNode likely undefined');
-        return null;
-    }
-  };
-
   const getSelectedTab = (): JSX.Element | null => {
     if (!currentNode) {
       console.error('currentNode is undefined');
@@ -126,7 +111,11 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        return getPropertiesTab();
+        if (currentNode.type === NodeType.Expression) {
+          return <ExpressionNodePropertiesTab currentNode={currentNode} />;
+        } else {
+          return <SchemaNodePropertiesTab currentNode={currentNode} />;
+        }
       case TABS.CODE:
         return <CodeTab />;
       case TABS.TEST:
