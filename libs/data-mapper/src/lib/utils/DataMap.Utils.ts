@@ -1,10 +1,14 @@
+/* eslint-disable no-param-reassign */
 import { MapDefinitionProperties, MapNodeParams, YamlFormats } from '../constants/MapDefinitionConstants';
-import type { Connection } from '../models/Connection';
+import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
+import type { ConnectionDictionary, LoopConnection } from '../models/Connection';
 import type { DataMap, MapNode } from '../models/DataMap';
 import type { SchemaExtended, SchemaNodeExtended } from '../models/Schema';
+import { InputPrefix, OutputPrefix } from '../utils/ReactFlow.Util';
+import yaml from 'js-yaml';
 
 export const convertToMapDefinition = (
-  connections: { [key: string]: Connection },
+  connections: ConnectionDictionary,
   inputSchema: SchemaExtended,
   outputSchema: SchemaExtended
 ): string => {
@@ -36,7 +40,7 @@ const nodeToMapDefinition = (node: MapNode, initIndent: string): string => {
 
   mapDefinition = `${mapDefinition}${indent}${node.targetNodeKey}:`;
 
-  if (node.children && node.children.length > 0) {
+  if (node.children && node.children.length > 0 && node.children.some((childNode) => keepNode(childNode))) {
     indent += YamlFormats.indentGap;
 
     mapDefinition = `${mapDefinition}${YamlFormats.newLine}`;
@@ -61,7 +65,7 @@ const nodeToMapDefinition = (node: MapNode, initIndent: string): string => {
   return mapDefinition;
 };
 
-const generateDataMap = (connections: { [key: string]: Connection }, inputSchemaName: string, outputSchema: SchemaExtended): DataMap => {
+const generateDataMap = (connections: ConnectionDictionary, inputSchemaName: string, outputSchema: SchemaExtended): DataMap => {
   const fullDataMap = {
     srcSchemaName: inputSchemaName,
     dstSchemaName: outputSchema.name,
@@ -71,11 +75,11 @@ const generateDataMap = (connections: { [key: string]: Connection }, inputSchema
   return fullDataMap;
 };
 
-const generateFullDataMapMapping = (connections: { [key: string]: Connection }, outputSchema: SchemaExtended): MapNode => {
+const generateFullDataMapMapping = (connections: ConnectionDictionary, outputSchema: SchemaExtended): MapNode => {
   return generateFullChildDataMapMapping(connections, outputSchema.schemaTreeRoot);
 };
 
-const generateFullChildDataMapMapping = (connections: { [key: string]: Connection }, node: SchemaNodeExtended): MapNode => {
+const generateFullChildDataMapMapping = (connections: ConnectionDictionary, node: SchemaNodeExtended): MapNode => {
   const connectionKeys = Object.keys(connections);
   const currentConnectionKey = connectionKeys.find((key) => key === node.key);
   const currentConnection = currentConnectionKey ? connections[currentConnectionKey] : undefined;
@@ -97,4 +101,103 @@ const keepNode = (node: MapNode): boolean => {
     !!node.loopSource ||
     !!node.targetValue
   );
+};
+
+export const convertFromMapDefinition = (mapDefinition: string): ConnectionDictionary => {
+  const connections: ConnectionDictionary = {};
+  const formattedMapDefinition = mapDefinition.replaceAll('\t', YamlFormats.indentGap);
+  const parsedYaml: any = yaml.load(formattedMapDefinition);
+  const parsedYamlKeys: string[] = Object.keys(parsedYaml);
+
+  if (parsedYamlKeys[0] !== MapDefinitionProperties.SourceSchema || parsedYamlKeys[1] !== MapDefinitionProperties.TargetSchema) {
+    throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME, InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
+  }
+
+  const targetNodeKey: string = parsedYamlKeys[2];
+
+  if (targetNodeKey) {
+    parseMappingsJsonToNode(targetNodeKey, parsedYaml[targetNodeKey], targetNodeKey, connections);
+  }
+
+  return connections;
+};
+
+const parseMappingsJsonToNode = (
+  targetNodeKey: string,
+  targetNodeObject: string | object | any,
+  connectionKey: string,
+  connections: ConnectionDictionary
+) => {
+  // Basic leaf node
+  if (typeof targetNodeObject === 'string') {
+    connections[connectionKey] = {
+      value: targetNodeObject,
+      loop: undefined,
+      condition: undefined,
+      // Needs to be addressed again once we have expressions properly coded out in the designer
+      reactFlowSource: `${InputPrefix}${targetNodeObject}`,
+      reactFlowDestination: `${OutputPrefix}${connectionKey}`,
+    };
+
+    return;
+  }
+
+  const startsWithFor = targetNodeKey.startsWith(MapNodeParams.For);
+  const startsWithIf = targetNodeKey.startsWith(MapNodeParams.If);
+
+  if (startsWithFor || startsWithIf) {
+    const childrenKeys = Object.keys(targetNodeObject);
+    if (childrenKeys.length !== 1) {
+      throw new InvalidFormatException(
+        InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM,
+        InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
+      );
+    }
+
+    const newConnectionKey = `${connectionKey}/${childrenKeys[0]}`;
+    parseMappingsJsonToNode(`${childrenKeys[0]}`, targetNodeObject[childrenKeys[0]], newConnectionKey, connections);
+
+    // TODO (#15388621) revisit this once we've got loops and conditionals enabled in the designer to double check all the logic
+    if (connections[newConnectionKey]) {
+      connections[newConnectionKey].loop = startsWithFor ? parseLoopMapping(targetNodeKey) : undefined;
+      connections[newConnectionKey].condition = startsWithIf ? parseConditionalMapping(targetNodeKey) : undefined;
+    }
+
+    return;
+  }
+
+  const targetValue = targetNodeObject?.[MapNodeParams.Value];
+
+  for (const childKey in targetNodeObject) {
+    if (childKey !== MapNodeParams.Value) {
+      parseMappingsJsonToNode(childKey, targetNodeObject[childKey], `${connectionKey}/${childKey}`, connections);
+    }
+  }
+
+  // TODO (#15388621) revisit this once we've got loops and conditionals enabled in the designer to double check all the logic
+  if (targetValue) {
+    connections[connectionKey] = {
+      value: targetValue,
+      loop: undefined,
+      condition: undefined,
+      reactFlowSource: `${InputPrefix}${targetValue}`,
+      reactFlowDestination: `${OutputPrefix}${connectionKey}`,
+    };
+  }
+};
+
+// Exported for testing purposes only
+export const parseLoopMapping = (line: string): LoopConnection => {
+  const formattedLine = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
+  const expressionSplitOnComma = formattedLine.split(',');
+
+  return {
+    loopSource: expressionSplitOnComma[0].trim(),
+    loopIndex: expressionSplitOnComma[1]?.trim(),
+  };
+};
+
+// Exported for testing purposes only
+export const parseConditionalMapping = (line: string): string => {
+  return line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
 };

@@ -18,19 +18,15 @@ import {
   saveDataMap,
   setCurrentlySelectedNode,
   setCurrentOutputNode,
-  setInitialDataMap,
-  setInitialInputSchema,
-  setInitialOutputSchema,
   toggleInputNode,
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
-import type { Schema, SchemaNodeExtended, SelectedNode } from '../models';
+import type { SchemaNodeExtended, SelectedNode } from '../models';
 import { NodeType, SchemaTypes } from '../models';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
-import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -115,7 +111,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const onNodeDoubleClick = (node: ReactFlowNode): void => {
     const curDataMapState = store.getState().dataMap.curDataMapOperation;
     if (node.data.schemaType === SchemaTypes.Output) {
-      const currentSchemaNode = curDataMapState.currentOutputNode;
+      const currentSchemaNode = curDataMapState?.currentOutputNode;
       if (currentSchemaNode) {
         const trimmedNodeId = node.id.substring(7);
         const newCurrentSchemaNode =
@@ -131,18 +127,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     if (connection.target && connection.source) {
       dispatch(makeConnection({ outputNodeKey: connection.target, value: connection.source }));
     }
-  };
-
-  const onSubmitInput = (inputSchema: Schema) => {
-    const extendedSchema = convertSchemaToSchemaExtended(inputSchema);
-    dispatch(setInitialInputSchema(extendedSchema));
-    dispatch(setInitialDataMap());
-  };
-
-  const onSubmitOutput = (outputSchema: Schema) => {
-    const extendedSchema = convertSchemaToSchemaExtended(outputSchema);
-    dispatch(setInitialOutputSchema(extendedSchema));
-    dispatch(setInitialDataMap());
   };
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
@@ -343,12 +327,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
-        <EditorConfigPanel
-          initialSetup={true}
-          onSubmitInputSchema={onSubmitInput}
-          onSubmitOutputSchema={onSubmitOutput}
-          onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
-        />
+        <EditorConfigPanel _initialSetup={true} onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
