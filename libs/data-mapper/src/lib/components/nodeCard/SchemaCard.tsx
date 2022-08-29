@@ -24,7 +24,7 @@ export type SchemaCardProps = {
   label: string;
   schemaType: SchemaTypes;
   displayHandle: boolean;
-  isLeaf?: boolean;
+  isLeaf: boolean;
   nodeDataType: SchemaNodeDataType;
 } & CardProps;
 
@@ -133,7 +133,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
 
   return (
     <div className={classes.container}>
-      {displayHandle ? (
+      {displayHandle && isLeaf ? (
         <Handle
           type={schemaType === SchemaTypes.Input ? 'source' : 'target'}
           position={schemaType === SchemaTypes.Input ? Position.Right : Position.Left}

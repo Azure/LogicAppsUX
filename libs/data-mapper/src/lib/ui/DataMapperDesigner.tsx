@@ -120,7 +120,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onNodeDoubleClick = (node: ReactFlowNode<SchemaCardProps>): void => {
-    if (node.data.schemaType === SchemaTypes.Output) {
+    if (node.data.schemaType === SchemaTypes.Output && !node.data.isLeaf) {
       const newCurrentSchemaNode = flattenedOutputSchema[node.id];
       if (currentOutputNode && newCurrentSchemaNode) {
         dispatch(setCurrentOutputNode(newCurrentSchemaNode));

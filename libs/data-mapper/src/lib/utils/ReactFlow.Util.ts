@@ -1,7 +1,7 @@
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { SchemaNodeExtended } from '../models/Schema';
-import { SchemaTypes } from '../models/Schema';
+import { SchemaNodeDataType, SchemaTypes } from '../models/Schema';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import { ConnectionLineType, Position } from 'react-flow-renderer';
 
@@ -33,6 +33,7 @@ export const convertToReactFlowNodes = (
         label: inputNode.name,
         schemaType: SchemaTypes.Input,
         displayHandle: true,
+        isLeaf: true,
         nodeDataType: inputNode.schemaNodeDataType,
         disabled: false,
         error: false,
@@ -66,6 +67,7 @@ export const convertToReactFlowParentAndChildNodes = (
       label: parentSchemaNode.name,
       schemaType,
       displayHandle: displayTargets,
+      isLeaf: false,
       nodeDataType: parentSchemaNode.schemaNodeDataType,
       disabled: false,
       error: false,
@@ -85,6 +87,7 @@ export const convertToReactFlowParentAndChildNodes = (
         label: childNode.name,
         schemaType,
         displayHandle: displayTargets,
+        isLeaf: childNode.schemaNodeDataType !== SchemaNodeDataType.ComplexType && childNode.schemaNodeDataType !== SchemaNodeDataType.None,
         nodeDataType: childNode.schemaNodeDataType,
         disabled: false,
         error: false,
