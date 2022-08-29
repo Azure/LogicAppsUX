@@ -24,7 +24,7 @@ export const DevToolbox: React.FC = () => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const changeDataMapResourcePathCB = useCallback(
+  const changeResourcePathCB = useCallback(
     (_: unknown, newValue?: string) => {
       dispatch(dataMapDataLoaderSlice.actions.changeResourcePath(newValue ?? ''));
       dispatch(loadDataMap());
@@ -32,18 +32,10 @@ export const DevToolbox: React.FC = () => {
     [dispatch]
   );
 
-  const changeInputSchemaResourcePathCB = useCallback(
+  const resetToUseARM = useCallback(
     (_: unknown, newValue?: string) => {
-      dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(newValue ?? ''));
-      dispatch(loadInputSchema());
-    },
-    [dispatch]
-  );
-
-  const changeOutputSchemaResourcePathCB = useCallback(
-    (_: unknown, newValue?: string) => {
-      dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath(newValue ?? ''));
-      dispatch(loadOutputSchema());
+      dispatch(dataMapDataLoaderSlice.actions.changeResourcePath(newValue ?? ''));
+      dispatch(loadDataMap());
     },
     [dispatch]
   );
@@ -110,17 +102,22 @@ export const DevToolbox: React.FC = () => {
       {loadingMethod === 'arm' ? (
         <>
           <div>
-            <TextField label="Data Map Resource ID" onChange={changeDataMapResourcePathCB} value={resourcePath ?? ''} />
+            <TextField
+              label="Resource Uri"
+              description="/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}"
+              onChange={changeResourcePathCB}
+              value={resourcePath ?? ''}
+            />
           </div>
           <div>
-            <TextField label="Input Schema Resource ID" onChange={changeInputSchemaResourcePathCB} value={resourcePath ?? ''} />
+            <TextField
+              label="ARM Token"
+              description="auth token: include 'bearer' when pasting"
+              onChange={changeArmTokenCB}
+              value={armToken ?? ''}
+            />
           </div>
-          <div>
-            <TextField label="Output Schema Resource ID" onChange={changeOutputSchemaResourcePathCB} value={resourcePath ?? ''} />
-          </div>
-          <div>
-            <TextField label="ARM Token" onChange={changeArmTokenCB} value={armToken ?? ''} />
-          </div>
+          <button onClick={resetToUseARM}>Set</button>
         </>
       ) : null}
       {loadingMethod === 'file' ? (

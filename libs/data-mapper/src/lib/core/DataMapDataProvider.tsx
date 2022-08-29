@@ -1,8 +1,9 @@
 import type { DataMap } from '../models/DataMap';
 import type { Schema } from '../models/Schema';
+import { SchemaTypes } from '../models/Schema';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
-import { setInitialInputSchema, setInitialOutputSchema } from './state/DataMapSlice';
+import { setInitialSchema } from './state/DataMapSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
 import React, { useContext, useEffect } from 'react';
@@ -21,13 +22,13 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ inputSchema, ou
 
   useEffect(() => {
     if (inputSchema) {
-      dispatch(setInitialInputSchema(convertSchemaToSchemaExtended(inputSchema)));
+      dispatch(setInitialSchema({ schema: convertSchemaToSchemaExtended(inputSchema), schemaType: SchemaTypes.Input }));
     }
   }, [dispatch, inputSchema]);
 
   useEffect(() => {
     if (outputSchema) {
-      dispatch(setInitialOutputSchema(convertSchemaToSchemaExtended(outputSchema)));
+      dispatch(setInitialSchema({ schema: convertSchemaToSchemaExtended(outputSchema), schemaType: SchemaTypes.Output }));
     }
   }, [dispatch, outputSchema]);
 

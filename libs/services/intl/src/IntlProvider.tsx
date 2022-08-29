@@ -3,6 +3,7 @@ import type { OnErrorFn } from '@formatjs/intl';
 import type { MessageFormatElement } from 'react-intl';
 import { IntlProvider as ReactIntlProvider } from 'react-intl';
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 const queryClient = new QueryClient();
 
@@ -89,6 +90,7 @@ const IntlProviderInner: React.FC<IntlProviderProps> = ({ locale, defaultLocale,
 export const IntlProvider: React.FC<IntlProviderProps> = (props) => {
   return (
     <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={false} />
       <IntlProviderInner {...props} />
     </QueryClientProvider>
   );

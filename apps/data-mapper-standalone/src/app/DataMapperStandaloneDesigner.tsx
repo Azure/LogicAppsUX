@@ -1,6 +1,11 @@
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
-import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
+import {
+  DataMapDataProvider,
+  DataMapperDesigner,
+  DataMapperDesignerProvider,
+  InitSchemaSelectionService,
+} from '@microsoft/logic-apps-data-mapper';
 import { useSelector } from 'react-redux';
 
 export const DataMapperStandaloneDesigner = () => {
@@ -8,6 +13,13 @@ export const DataMapperStandaloneDesigner = () => {
   const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
   const availableSchemas = useSelector((state: RootState) => state.schemaDataLoader.availableSchemas);
+
+  const schemaState = useSelector((state: RootState) => {
+    return state.dataMapDataLoader;
+  });
+
+  const baseUrl = 'https://management.azure.com';
+  InitSchemaSelectionService({ baseUrl: baseUrl, resourceUrl: schemaState.resourcePath, accessToken: schemaState.armToken });
 
   const saveStateCall = () => {
     new Promise((resolve) => setTimeout(resolve, 10));

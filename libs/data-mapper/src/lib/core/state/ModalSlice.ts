@@ -1,3 +1,5 @@
+import { SchemaTypes } from '../../models/Schema';
+import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export enum WarningModalState {
@@ -26,15 +28,18 @@ export const modalSlice = createSlice({
       state.isWarningModalOpen = true;
       state.warningModalType = WarningModalState.DiscardWarning;
     },
-    openChangeInputWarning: (state) => {
+    openChangeSchemaWarning: (state, action: PayloadAction<{ schemaType: SchemaTypes.Input | SchemaTypes.Output }>) => {
       state.isOkClicked = false;
       state.isWarningModalOpen = true;
-      state.warningModalType = WarningModalState.ChangeInputWarning;
+      if (action.payload.schemaType === SchemaTypes.Input) {
+        state.warningModalType = WarningModalState.ChangeInputWarning;
+      } else {
+        state.warningModalType = WarningModalState.ChangeOutputWarning;
+      }
     },
     openChangeOutputWarning: (state) => {
       state.isOkClicked = false;
       state.isWarningModalOpen = true;
-
       state.warningModalType = WarningModalState.ChangeOutputWarning;
     },
     closeAllWarning: (state) => {
@@ -51,7 +56,6 @@ export const modalSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { openDiscardWarning, openChangeInputWarning, openChangeOutputWarning, closeAllWarning, setOkClicked, removeOkClicked } =
-  modalSlice.actions;
+export const { openDiscardWarning, openChangeSchemaWarning, closeAllWarning, setOkClicked, removeOkClicked } = modalSlice.actions;
 
 export default modalSlice.reducer;
