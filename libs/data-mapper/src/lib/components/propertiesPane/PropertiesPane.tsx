@@ -17,13 +17,19 @@ enum TABS {
 }
 
 const useStyles = makeStyles({
-  pane: {},
+  pane: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: tokens.colorNeutralBackground1,
+    zIndex: 1000,
+    ...shorthands.borderRadius('medium', 'medium', 0, 0),
+  },
   topBar: {
     height: '40px',
     p: '4px',
     marginLeft: '8px',
     marginRight: '8px',
-    ...shorthands.borderRadius('medium'),
   },
   title: {
     ...typographyStyles.body1Strong,
