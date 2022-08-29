@@ -10,17 +10,37 @@ import {
   String16Filled,
   String16Regular,
 } from '../../images/DataType16Icons';
+import {
+  Any24Filled,
+  Any24Regular,
+  Binary24Filled,
+  Binary24Regular,
+  Decimal24Filled,
+  Decimal24Regular,
+  Integer24Filled,
+  Integer24Regular,
+  String24Filled,
+  String24Regular,
+} from '../../images/DataType24Icons';
 import { SchemaNodeDataType } from '../../models/Schema';
 import {
   AddSubtractCircle16Filled,
   AddSubtractCircle16Regular,
+  AddSubtractCircle24Filled,
+  AddSubtractCircle24Regular,
   bundleIcon,
   CalendarClock16Filled,
   CalendarClock16Regular,
+  CalendarClock24Filled,
+  CalendarClock24Regular,
   CircleOff16Filled,
   CircleOff16Regular,
+  CircleOffFilled,
+  CircleOffRegular,
   Cube16Filled,
   Cube16Regular,
+  Cube24Filled,
+  Cube24Regular,
 } from '@fluentui/react-icons';
 
 export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
@@ -100,6 +120,87 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
     default: {
       // TODO log when we fail to match a data type
       return bundleIcon(CircleOff16Filled, CircleOff16Regular); // Null
+    }
+  }
+};
+
+export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
+  switch (nodeType) {
+    /* Currently Unused
+    case SchemaNodeDataType.ComplexType: {
+      return bundleIcon(NumberSymbol24Filled, NumberSymbol24Regular); // Number
+    }
+    */
+    case SchemaNodeDataType.Int:
+    case SchemaNodeDataType.Integer:
+    case SchemaNodeDataType.Long:
+    case SchemaNodeDataType.NegativeInteger:
+    case SchemaNodeDataType.NonNegativeInteger:
+    case SchemaNodeDataType.NonPositiveInteger:
+    case SchemaNodeDataType.PositiveInteger:
+    case SchemaNodeDataType.Short:
+    case SchemaNodeDataType.UnsignedInt:
+    case SchemaNodeDataType.UnsignedLong:
+    case SchemaNodeDataType.UnsignedShort: {
+      return bundleIcon(Integer24Filled, Integer24Regular); // Integer
+    }
+    case SchemaNodeDataType.Decimal:
+    case SchemaNodeDataType.Double:
+    case SchemaNodeDataType.Float: {
+      return bundleIcon(Decimal24Filled, Decimal24Regular); // Decimal
+    }
+    case SchemaNodeDataType.Base64Binary:
+    case SchemaNodeDataType.Byte:
+    case SchemaNodeDataType.HexBinary:
+    case SchemaNodeDataType.UnsignedByte: {
+      return bundleIcon(Binary24Filled, Binary24Regular); // Binary
+    }
+    case SchemaNodeDataType.Boolean: {
+      return bundleIcon(AddSubtractCircle24Filled, AddSubtractCircle24Regular); // Boolean
+    }
+    case SchemaNodeDataType.AnyUri:
+    case SchemaNodeDataType.Id:
+    case SchemaNodeDataType.Idref:
+    case SchemaNodeDataType.Language:
+    case SchemaNodeDataType.Name:
+    case SchemaNodeDataType.NCName:
+    case SchemaNodeDataType.NmToken:
+    case SchemaNodeDataType.NormalizedString:
+    case SchemaNodeDataType.QName:
+    case SchemaNodeDataType.String:
+    case SchemaNodeDataType.Token: {
+      return bundleIcon(String24Filled, String24Regular); // String
+    }
+    case SchemaNodeDataType.Date:
+    case SchemaNodeDataType.DateTime:
+    case SchemaNodeDataType.Duration:
+    case SchemaNodeDataType.GDay:
+    case SchemaNodeDataType.GMonth:
+    case SchemaNodeDataType.GMonthDay:
+    case SchemaNodeDataType.GYear:
+    case SchemaNodeDataType.GYearMonth:
+    case SchemaNodeDataType.Time: {
+      return bundleIcon(CalendarClock24Filled, CalendarClock24Regular); // Date time
+    }
+    /* Currently Unused
+    case SchemaNodeDataType: {
+      return bundleIcon(Array24Filled, Array24Regular); // Array
+    }
+    */
+    case SchemaNodeDataType.ComplexType:
+    case SchemaNodeDataType.Entity:
+    case SchemaNodeDataType.None: {
+      return bundleIcon(Cube24Filled, Cube24Regular); // Object
+    }
+    case SchemaNodeDataType.AnyAtomicType:
+    case SchemaNodeDataType.Item:
+    case SchemaNodeDataType.Notation:
+    case SchemaNodeDataType.UntypedAtomic: {
+      return bundleIcon(Any24Filled, Any24Regular); // Any
+    }
+    default: {
+      // TODO log when we fail to match a data type
+      return bundleIcon(CircleOffFilled, CircleOffRegular); // Null
     }
   }
 };

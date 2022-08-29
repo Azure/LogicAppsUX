@@ -312,4 +312,9 @@ export default {
       CAPABILITIES: 'x-ms-capabilities',
     },
   },
+
+  EXPANDED_DICTIONARY_WIDTH_OFFSET: {
+    KEY_OFFSET: -269,
+    VALUE_OFFSET: -7,
+  },
 };

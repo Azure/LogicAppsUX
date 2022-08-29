@@ -27,8 +27,9 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { store } from '../core/state/Store';
 import type { Schema, SchemaNodeExtended } from '../models';
-import { SchemaTypes } from '../models';
-import { convertToReactFlowEdges, convertToReactFlowNodes } from '../utils/ReactFlow.Util';
+import { NodeType, SchemaTypes } from '../models';
+import { convertToMapDefinition } from '../utils/DataMap.Utils';
+import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
@@ -46,11 +47,11 @@ import {
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import type { Connection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
-import ReactFlow, { MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
+import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
+import ReactFlow, { ConnectionLineType, MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -62,10 +63,12 @@ export interface DataMapperDesignerProps {
 export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, setSelectedSchemaFile }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const clickTimerRef: { current: ReturnType<typeof setTimeout> | null } = useRef(null); // NOTE: ReturnType to support NodeJS & window Timeouts
 
   const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+  const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
@@ -77,23 +80,35 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     dispatch(toggleInputNode(selectedNode));
   };
 
+  const handleNodeClicks = (_event: ReactMouseEvent, node: ReactFlowNode) => {
+    if (clickTimerRef.current !== null) {
+      // Double click
+      onNodeDoubleClick(node);
+
+      clearTimeout(clickTimerRef.current);
+      clickTimerRef.current = null;
+    } else {
+      // Single click
+      clickTimerRef.current = setTimeout(() => {
+        onNodeSingleClick(node);
+
+        clearTimeout(clickTimerRef.current as unknown as number);
+        clickTimerRef.current = null;
+      }, 200); // ms to wait for potential second click
+    }
+  };
+
   const onPaneClick = (_event: ReactMouseEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
     dispatch(setCurrentlySelectedNode(undefined));
   };
 
-  const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
-    const newCurrentlySelectedNode = { type: node.data.schemaType };
+  const onNodeSingleClick = (node: ReactFlowNode): void => {
+    const newCurrentlySelectedNode = { type: node.type === ReactFlowNodeType.SchemaNode ? node.data.schemaType : NodeType.Expression };
     dispatch(setCurrentlySelectedNode(newCurrentlySelectedNode));
   };
 
-  const onConnect = (connection: Connection) => {
-    if (connection.target && connection.source) {
-      dispatch(makeConnection({ outputNodeKey: connection.target, value: connection.source }));
-    }
-  };
-
-  const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
+  const onNodeDoubleClick = (node: ReactFlowNode): void => {
     const curDataMapState = store.getState().dataMap.curDataMapOperation;
     if (node.data.schemaType === SchemaTypes.Output) {
       const currentSchemaNode = curDataMapState.currentOutputNode;
@@ -105,6 +120,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             : currentSchemaNode.children.find((schemaNode) => schemaNode.key === trimmedNodeId) || currentSchemaNode;
         dispatch(setCurrentOutputNode(newCurrentSchemaNode));
       }
+    }
+  };
+
+  const onConnect = (connection: ReactFlowConnection) => {
+    if (connection.target && connection.source) {
+      dispatch(makeConnection({ outputNodeKey: connection.target, value: connection.source }));
     }
   };
 
@@ -127,6 +148,14 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     setSelectedSchemaFile(schemaFile);
   };
 
+  const dataMapDefinition = useMemo(() => {
+    if (inputSchema && outputSchema) {
+      return convertToMapDefinition(currentConnections, inputSchema, outputSchema);
+    }
+
+    return '';
+  }, [currentConnections, inputSchema, outputSchema]);
+
   const onSaveClick = () => {
     saveStateCall(); // TODO: do the next call only when this is successful
     dispatch(
@@ -135,6 +164,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         outputSchemaExtended: outputSchema,
       })
     );
+    console.log(dataMapDefinition);
   };
 
   const onUndoClick = () => {
@@ -154,6 +184,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     defaultMessage: 'Function',
     description: 'Label to open the Function card',
   });
+
+  useEffect(() => {
+    return () => clearTimeout(clickTimerRef.current as unknown as number); // Make sure we clean up the timeout
+  }, []);
 
   const toolboxButtonContainerProps: ButtonContainerProps = {
     buttons: [
@@ -254,11 +288,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         edges={edges}
         onConnect={onConnect}
         onPaneClick={onPaneClick}
-        onNodeClick={onNodeSingleClick}
-        onNodeDoubleClick={onNodeDoubleClick}
+        onNodeClick={handleNodeClicks}
+        onNodeDoubleClick={handleNodeClicks}
         defaultZoom={2}
         nodesDraggable={false}
         fitView={false}
+        connectionLineType={ConnectionLineType.SmoothStep}
         proOptions={{
           account: 'paid-sponsor',
           hideAttribution: true,
