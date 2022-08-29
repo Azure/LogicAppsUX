@@ -90,7 +90,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     description: 'Label for default message when no node selected',
   });
 
-  const getPaneItemName = (): string | undefined => {
+  const getPaneTitle = (): string | undefined => {
     switch (currentNode?.type) {
       case NodeType.Input:
         return inputSchemaNodeLoc;
@@ -118,21 +118,9 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     }
   };
 
-  const getCodeTab = (): JSX.Element | null => {
-    if (!currentNode?.type) {
-      console.error('Code tab not fetched - currentNode likely undefined');
-      return null;
-    }
-
-    return <CodeTab />;
-  };
-
-  const getTestTab = (): JSX.Element => {
-    return <TestTab />;
-  };
-
-  const getSelectedContent = (): JSX.Element | null => {
+  const getSelectedTab = (): JSX.Element | null => {
     if (!currentNode) {
+      console.error('currentNode is undefined');
       return null;
     }
 
@@ -140,9 +128,9 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       case TABS.PROPERTIES:
         return getPropertiesTab();
       case TABS.CODE:
-        return getCodeTab();
+        return <CodeTab />;
       case TABS.TEST:
-        return getTestTab(); // Only retrieved if OutputSchemaNode
+        return <TestTab />;
       default:
         console.error('tabToDisplay is undefined');
         return null;
@@ -160,7 +148,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const TopBarContent = () => (
     <>
-      <Text className={styles.title}>{getPaneItemName()}</Text>
+      <Text className={styles.title}>{getPaneTitle()}</Text>
       <Divider vertical style={{ maxWidth: 24 }} />
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => setTabToDisplay(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
@@ -188,7 +176,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         />
       </Stack>
 
-      {isExpanded && <div className={styles.paneContent}>{getSelectedContent()}</div>}
+      {isExpanded && <div className={styles.paneContent}>{getSelectedTab()}</div>}
     </div>
   );
 };
