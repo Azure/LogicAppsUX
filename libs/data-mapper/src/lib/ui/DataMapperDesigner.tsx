@@ -323,7 +323,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
-        <EditorConfigPanel initialSetup={true} onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} />
+        <EditorConfigPanel _initialSetup={true} onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
