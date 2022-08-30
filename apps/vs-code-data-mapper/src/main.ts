@@ -5,12 +5,12 @@ import { commands } from 'vscode';
 export function activate(context: ExtensionContext) {
   // Set supported file extensions for context menu detection
   const supportedDataMapFileExts = ['.yml'];
-  commands.executeCommand('setContext', 'azureDataMapper.supportedDataMapFileExts', supportedDataMapFileExts);
+  context.globalState.update('azureDataMapper.supportedDataMapFileExts', supportedDataMapFileExts);
 
   const supportedSchemaFileExts = ['.xsd', '.json']; // JSON for TESTING expected returned values/schema-json from backend
-  commands.executeCommand('setContext', 'azureDataMapper.supportedSchemaFileExts', supportedSchemaFileExts);
+  context.globalState.update('azureDataMapper.supportedSchemaFileExts', supportedSchemaFileExts);
 
-  commands.executeCommand('setContext', 'azureDataMapper.supportedFileExts', [...supportedDataMapFileExts, ...supportedSchemaFileExts]);
+  context.globalState.update('azureDataMapper.supportedFileExts', [...supportedDataMapFileExts, ...supportedSchemaFileExts]);
 
   registerCommands(context);
 
