@@ -33,6 +33,8 @@ const createNewDataMapCmd = async () => {
       return;
     }
 
+    commands.executeCommand('azureDataMapper.openDataMapper'); // Doing it this way so we don't have to pass context everywhere
+
     const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, `${newDatamapName}.yml`);
     fs.writeFile(filePath, newDataMapTemplate, 'utf8');
 
@@ -43,17 +45,23 @@ const createNewDataMapCmd = async () => {
 };
 
 const loadInputSchemaFileCmd = async (uri: Uri) => {
+  commands.executeCommand('azureDataMapper.openDataMapper');
+
   const inputSchema = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadInputSchema', data: inputSchema });
 };
 
 const loadOutputSchemaFileCmd = async (uri: Uri) => {
+  commands.executeCommand('azureDataMapper.openDataMapper');
+
   const outputSchema = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadOutputSchema', data: outputSchema });
 };
 
 // TODO: Likely automatically search for and load schema files if already specified in data map
 const loadDataMapFileCmd = async (uri: Uri) => {
+  commands.executeCommand('azureDataMapper.openDataMapper');
+
   const dataMap = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: dataMap });
 

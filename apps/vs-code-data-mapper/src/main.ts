@@ -13,6 +13,4 @@ export function activate(context: ExtensionContext) {
   commands.executeCommand('setContext', 'azureDataMapper.supportedFileExts', [...supportedDataMapFileExts, ...supportedSchemaFileExts]);
 
   registerCommands(context);
-
-  commands.executeCommand('azureDataMapper.openDataMapper');
 }
