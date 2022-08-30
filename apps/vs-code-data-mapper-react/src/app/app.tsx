@@ -26,7 +26,7 @@ export const App = (): JSX.Element => {
     console.log('App called to save Data Map');
   };
 
-  InitSchemaSelectionService({ baseUrl: 'baseUrl', resourceUrl: '', accessToken: '' });
+  InitSchemaSelectionService({ baseUrl: 'localhost:7071', resourceUrl: '', accessToken: '' });
 
   const setSelectedSchemaFile = (selectedSchemaFile: SchemaFile) => {
     vscode.postMessage({
@@ -35,10 +35,20 @@ export const App = (): JSX.Element => {
     });
   };
 
+  const readLocalFileOptions = () => {
+    vscode.postMessage({
+      command: 'readLocalFileOptions',
+    });
+  };
+
   return (
     <DataMapperDesignerProvider locale="en-US" options={{}}>
       <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={availableSchemas}>
-        <DataMapperDesigner saveStateCall={saveStateCall} setSelectedSchemaFile={setSelectedSchemaFile} />
+        <DataMapperDesigner
+          saveStateCall={saveStateCall}
+          setSelectedSchemaFile={setSelectedSchemaFile}
+          readCurrentSchemaOptions={readLocalFileOptions}
+        />
       </DataMapDataProvider>
     </DataMapperDesignerProvider>
   );

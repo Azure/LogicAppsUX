@@ -6,7 +6,10 @@ import React, { createContext, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 
-type ReceivingMessageTypes = { command: 'loadInputSchema' | 'loadOutputSchema'; data: Schema } | { command: 'loadDataMap'; data: DataMap };
+type ReceivingMessageTypes =
+  | { command: 'loadInputSchema' | 'loadOutputSchema'; data: Schema }
+  | { command: 'loadDataMap'; data: DataMap }
+  | { command: 'showAvailableSchemas'; data: string[] }; // danielle this is duplicated in DataMapperPanel
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = createContext(vscode);
@@ -28,6 +31,9 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         break;
       case 'loadDataMap':
         changeDataMapCB(msg.data);
+        break;
+      case 'showAvailableSchemas':
+        showAvailableSchemas(msg.data);
         break;
       default:
         console.error(`Unexpected message received: ${msg}`);
@@ -51,6 +57,13 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
   const changeDataMapCB = useCallback(
     (newDataMap: DataMap) => {
       dispatch(dataMapDataLoaderSlice.actions.changeDataMap(newDataMap));
+    },
+    [dispatch]
+  );
+
+  const showAvailableSchemas = useCallback(
+    (files: string[]) => {
+      dispatch(schemaDataLoaderSlice.actions.changeSchemaList(files));
     },
     [dispatch]
   );

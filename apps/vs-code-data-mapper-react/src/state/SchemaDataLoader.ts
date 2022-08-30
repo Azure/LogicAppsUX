@@ -7,7 +7,7 @@ export interface SchemaLoadingState {
   loadingMethod: 'file' | 'arm';
   inputSchema?: Schema;
   outputSchema?: Schema;
-  availableSchemas?: Schema[];
+  availableSchemas?: string[];
 }
 
 const initialState: SchemaLoadingState = {
@@ -27,20 +27,23 @@ export const schemaDataLoaderSlice = createSlice({
     changeInputSchema: (state, action: PayloadAction<Schema>) => {
       state.inputSchema = action.payload;
 
-      if (!state.availableSchemas) {
-        state.availableSchemas = [action.payload];
-      } else if (!state.availableSchemas.some((availableSchema) => availableSchema.name === action.payload.name)) {
-        state.availableSchemas = [...state.availableSchemas, action.payload];
-      }
+      // if (!state.availableSchemas) {
+      //   state.availableSchemas = [action.payload];
+      // } else if (!state.availableSchemas.some((availableSchema) => availableSchema.name === action.payload.name)) {
+      //   state.availableSchemas = [...state.availableSchemas, action.payload];
+      // }
     },
     changeOutputSchema: (state, action: PayloadAction<Schema>) => {
       state.outputSchema = action.payload;
 
-      if (!state.availableSchemas) {
-        state.availableSchemas = [action.payload];
-      } else if (!state.availableSchemas.some((availableSchema) => availableSchema.name === action.payload.name)) {
-        state.availableSchemas = [...state.availableSchemas, action.payload];
-      }
+      // if (!state.availableSchemas) {
+      //   state.availableSchemas = [action.payload];
+      // } else if (!state.availableSchemas.some((availableSchema) => availableSchema.name === action.payload.name)) {
+      //   state.availableSchemas = [...state.availableSchemas, action.payload];
+      // }
+    },
+    changeSchemaList: (state, action: PayloadAction<string[]>) => {
+      state.availableSchemas = action.payload;
     },
   },
 });

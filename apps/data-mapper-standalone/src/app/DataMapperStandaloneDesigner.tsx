@@ -18,7 +18,7 @@ export const DataMapperStandaloneDesigner = () => {
     return state.dataMapDataLoader;
   });
 
-  const baseUrl = 'https://management.azure.com';
+  const baseUrl = 'http://localhost:7071';
   InitSchemaSelectionService({ baseUrl: baseUrl, resourceUrl: schemaState.resourcePath, accessToken: schemaState.armToken });
 
   const saveStateCall = () => {
