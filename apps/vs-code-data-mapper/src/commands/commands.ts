@@ -37,6 +37,8 @@ const createNewDataMapCmd = async () => {
     fs.writeFile(filePath, newDataMapTemplate, 'utf8');
 
     DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: newDataMapTemplate });
+
+    saveDataMapNameInExtState(newDatamapName);
   });
 };
 
@@ -54,4 +56,11 @@ const loadOutputSchemaFileCmd = async (uri: Uri) => {
 const loadDataMapFileCmd = async (uri: Uri) => {
   const dataMap = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: dataMap });
+
+  // Fun way to get filename - very heavily assumes path only has / and .yml
+  saveDataMapNameInExtState(uri.fsPath.split('/').pop().replace('.yml', ''));
+};
+
+const saveDataMapNameInExtState = (dataMapName: string) => {
+  DataMapperPanel.extensionContext?.workspaceState.update('azureDataMapper.currentDataMap', dataMapName);
 };

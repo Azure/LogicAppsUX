@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
-import type { WebviewPanel, Disposable, ExtensionContext } from 'vscode';
+import type { WebviewPanel, ExtensionContext } from 'vscode';
 
 type SendingMessageTypes =
   | { command: 'loadInputSchema' | 'loadOutputSchema'; data: any }
@@ -22,14 +22,12 @@ type ReceivingMessageTypes =
 export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
   public static readonly viewType = 'dataMapperWebview';
-  public static contextSubscriptionsRef: Disposable[] | undefined;
+  public static extensionContext: ExtensionContext | undefined;
 
   private readonly _panel: WebviewPanel;
   private readonly _extensionPath: string;
 
   public static createOrShow(context: ExtensionContext) {
-    DataMapperPanel.contextSubscriptionsRef = context.subscriptions;
-
     // If a panel has already been created, re-show it
     if (DataMapperPanel.currentPanel) {
       DataMapperPanel.currentPanel._panel.reveal(ViewColumn.Active);
@@ -55,19 +53,19 @@ export default class DataMapperPanel {
   private constructor(panel: WebviewPanel, extPath: string) {
     this._panel = panel;
     this._extensionPath = extPath;
-    DataMapperPanel.contextSubscriptionsRef?.push(panel);
+    DataMapperPanel.extensionContext?.subscriptions.push(panel);
 
     this._setWebviewHtml();
 
     // Handle messages from the webview (Data Mapper component)
-    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperPanel.contextSubscriptionsRef);
+    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperPanel.extensionContext?.subscriptions);
 
     this._panel.onDidDispose(
       () => {
         DataMapperPanel.currentPanel = undefined;
       },
       null,
-      DataMapperPanel.contextSubscriptionsRef
+      DataMapperPanel.extensionContext?.subscriptions
     );
   }
 
@@ -113,7 +111,8 @@ export default class DataMapperPanel {
         break;
       }
       case 'saveDataMapDefinition': {
-        const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, 'TestMapDefinitionOutput.yml');
+        const fileName = `${DataMapperPanel.extensionContext?.workspaceState.get('azureDataMapper.currentDataMap')}.yml`;
+        const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, fileName);
         fs.writeFile(filePath, msg.data, 'utf8');
       }
     }
