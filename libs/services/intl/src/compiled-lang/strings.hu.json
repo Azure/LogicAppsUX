@@ -2151,6 +2151,12 @@
       "value": "(UTC-04:00) Turks- és Caicos-szigetek"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2185,6 +2191,12 @@
     {
       "type": 0,
       "value": "A bemenet átalakítása JSON típusú értékké."
+    }
+  ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
     }
   ],
   "QQYzHC": [
@@ -2225,6 +2237,12 @@
       "value": "Kötelező megadni. A binárissá alakítandó érték."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2257,6 +2275,12 @@
     {
       "type": 0,
       "value": " ó"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -4863,6 +4887,12 @@
     {
       "type": 0,
       "value": "Túllépte az időkorlátot"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
     }
   ],
   "wQcEXt": [

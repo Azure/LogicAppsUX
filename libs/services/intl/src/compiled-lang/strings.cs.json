@@ -2255,6 +2255,12 @@
       "value": "(UTC-04:00) Turks a Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2291,6 +2297,12 @@
       "value": "Převede vstup na hodnotu typu JSON."
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2325,6 +2337,12 @@
       "value": "Povinný parametr. Hodnota, která se převádí do binárního formátu."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2357,6 +2375,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -5021,6 +5045,12 @@
     {
       "type": 0,
       "value": "Vypršel časový limit."
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
     }
   ],
   "wQcEXt": [

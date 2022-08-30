@@ -2151,6 +2151,12 @@
       "value": "(UTC-04:00) Turks- und Caicosinseln"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2185,6 +2191,12 @@
     {
       "type": 0,
       "value": "Eingabe in Wert vom Typ JSON konvertieren"
+    }
+  ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
     }
   ],
   "QQYzHC": [
@@ -2225,6 +2237,12 @@
       "value": "Erforderlich. Der Wert, der in einen Binärwert konvertiert wird."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2257,6 +2275,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -4859,6 +4883,12 @@
     {
       "type": 0,
       "value": "Timeout"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
     }
   ],
   "wQcEXt": [

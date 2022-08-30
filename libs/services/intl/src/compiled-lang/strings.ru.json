@@ -2239,6 +2239,12 @@
       "value": "(UTC –04:00) Теркс и Кайкос"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2275,6 +2281,12 @@
       "value": "Преобразует входные данные в значение типа JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2309,6 +2321,12 @@
       "value": "Требуется. Значение, которое преобразуется в двоичный файл."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2341,6 +2359,12 @@
     {
       "type": 0,
       "value": " ч"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -5017,6 +5041,12 @@
     {
       "type": 0,
       "value": "Время ожидания истекло"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
     }
   ],
   "wQcEXt": [

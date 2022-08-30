@@ -2135,6 +2135,12 @@
       "value": "(UTC-04:00) Turks ve Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2171,6 +2177,12 @@
       "value": "Girişi JSON türü değere dönüştürür"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -2205,6 +2217,12 @@
       "value": "Gerekli. İkiliye dönüştürülen değer."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2237,6 +2255,12 @@
     {
       "type": 0,
       "value": " sa"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -4811,6 +4835,12 @@
     {
       "type": 0,
       "value": "Zaman Aşımı Oluştu"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
     }
   ],
   "wQcEXt": [
