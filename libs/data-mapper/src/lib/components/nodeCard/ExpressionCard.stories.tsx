@@ -11,6 +11,8 @@ export default {
 export const Standard: ComponentStory<typeof ExpressionCard> = (args: CardProps) => <ExpressionCard {...args} />;
 Standard.args = {
   iconName: '12PointStar',
+  expressionName: 'Expression Name',
+  brandColor: 'purple',
   onClick: () => console.log('Expression card clicked'),
   disabled: false,
 };

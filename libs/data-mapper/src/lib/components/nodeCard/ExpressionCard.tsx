@@ -1,8 +1,27 @@
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
 import { Icon } from '@fluentui/react';
-import { PresenceBadge, Button, createFocusOutlineStyle, makeStyles, mergeClasses, shorthands, tokens } from '@fluentui/react-components';
+import {
+  PresenceBadge,
+  Button,
+  createFocusOutlineStyle,
+  makeStyles,
+  mergeClasses,
+  shorthands,
+  tokens,
+  Tooltip,
+  Text,
+} from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
+
+export interface ExpressionCardProps {
+  data: ExpressionCardWrapperProps;
+}
+
+export type ExpressionCardWrapperProps = {
+  expressionName: 'string';
+  brandColor: 'string';
+} & CardProps;
 
 const useStyles = makeStyles({
   root: {
@@ -57,18 +76,37 @@ const useStyles = makeStyles({
       outlineRadius: '100px',
     },
   }),
+
+  tooltipText: {
+    fontSize: '12px',
+    truncate: 'true',
+  },
 });
 
-export const ExpressionCard: FunctionComponent<CardProps> = ({ iconName, onClick, disabled, error }) => {
+export const ExpressionCard: FunctionComponent<ExpressionCardWrapperProps> = ({
+  iconName,
+  expressionName,
+  brandColor,
+  onClick,
+  disabled,
+  error,
+}) => {
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   return (
     <div className={classes.container}>
       {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge}></PresenceBadge>}
-      <Button onClick={onClick} className={mergedClasses} disabled={!!disabled}>
-        <Icon iconName={iconName} />
-      </Button>
+      <Tooltip
+        content={{
+          children: <Text className={classes.tooltipText}>{expressionName}</Text>,
+        }}
+        relationship="label"
+      >
+        <Button onClick={onClick} color={brandColor} className={mergedClasses} disabled={!!disabled}>
+          <Icon iconName={iconName} />
+        </Button>
+      </Tooltip>
     </div>
   );
 };
