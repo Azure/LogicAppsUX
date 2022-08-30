@@ -8,55 +8,70 @@
   "contributes": {
     "commands": [
       {
-        "command": "dataMapperExtension.start",
+        "command": "azureDataMapper.start",
         "title": "Open Data Mapper"
       },
       {
-        "command": "dataMapperExtension.createDataMapFile",
+        "command": "azureDataMapper.createNewDataMap",
         "title": "Create new data map"
       },
       {
-        "command": "dataMapperExtension.loadInputSchemaFile",
+        "command": "azureDataMapper.loadInputSchemaFile",
         "title": "Load input schema"
       },
       {
-        "command": "dataMapperExtension.loadOutputSchemaFile",
+        "command": "azureDataMapper.loadOutputSchemaFile",
         "title": "Load output schema"
       },
       {
-        "command": "dataMapperExtension.loadDataMapFile",
+        "command": "azureDataMapper.loadDataMapFile",
         "title": "Load data map"
       }
     ],
-    "menus": {
-      "explorer/context": [
+    "views": {
+      "azure": [
         {
-          "submenu": "dataMapperExtension.dataMapperMenu",
-          "group": "navigation",
-          "when": "resourceExtname in dataMapperExtension.supportedFileExts"
+          "id": "azDataMapper",
+          "name": "Data Mapper"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "azureDataMapper.createNewDataMap",
+          "when": "view == azDataMapper",
+          "group": "navigation@1"
         }
       ],
-      "dataMapperExtension.dataMapperMenu": [
+      "explorer/context": [
         {
-          "command": "dataMapperExtension.loadInputSchemaFile",
+          "submenu": "azureDataMapper.dataMapperMenu",
           "group": "navigation",
-          "when": "resourceExtname in dataMapperExtension.supportedSchemaFileExts"
+          "when": "resourceExtname in azureDataMapper.supportedFileExts"
+        }
+      ],
+      "azureDataMapper.dataMapperMenu": [
+        {
+          "command": "azureDataMapper.loadInputSchemaFile",
+          "group": "navigation",
+          "when": "resourceExtname in azureDataMapper.supportedSchemaFileExts"
         },
         {
-          "command": "dataMapperExtension.loadOutputSchemaFile",
+          "command": "azureDataMapper.loadOutputSchemaFile",
           "group": "navigation",
-          "when": "resourceExtname in dataMapperExtension.supportedSchemaFileExts"
+          "when": "resourceExtname in azureDataMapper.supportedSchemaFileExts"
         },
         {
-          "command": "dataMapperExtension.loadDataMapFile",
+          "command": "azureDataMapper.loadDataMapFile",
           "group": "navigation",
-          "when": "resourceExtname in dataMapperExtension.supportedDataMapFileExts"
+          "when": "resourceExtname in azureDataMapper.supportedDataMapFileExts"
         }
       ]
     },
     "submenus": [
       {
-        "id": "dataMapperExtension.dataMapperMenu",
+        "id": "azureDataMapper.dataMapperMenu",
         "label": "Data Mapper"
       }
     ]
@@ -65,7 +80,7 @@
     "ms-vscode.azure-account"
   ],
   "activationEvents": [
-    "onCommand:dataMapperExtension.start"
+    "onCommand:azureDataMapper.start"
   ],
   "galleryBanner": {
     "color": "#015cda",

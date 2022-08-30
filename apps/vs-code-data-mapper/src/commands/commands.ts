@@ -7,18 +7,18 @@ import path = require('path');
 import yaml = require('js-yaml');
 
 export const registerCommands = (context: ExtensionContext) => {
-  context.subscriptions.push(commands.registerCommand('dataMapperExtension.start', () => startCmd(context)));
-  context.subscriptions.push(commands.registerCommand('dataMapperExtension.createDataMapFile', createDataMapFileCmd));
-  context.subscriptions.push(commands.registerCommand('dataMapperExtension.loadInputSchemaFile', loadInputSchemaFileCmd));
-  context.subscriptions.push(commands.registerCommand('dataMapperExtension.loadOutputSchemaFile', loadOutputSchemaFileCmd));
-  context.subscriptions.push(commands.registerCommand('dataMapperExtension.loadDataMapFile', loadDataMapFileCmd));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.start', () => startCmd(context)));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.createNewDataMap', createNewDataMapCmd));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadInputSchemaFile', loadInputSchemaFileCmd));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadOutputSchemaFile', loadOutputSchemaFileCmd));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadDataMapFile', loadDataMapFileCmd));
 };
 
 const startCmd = async (context: ExtensionContext) => {
   DataMapperPanel.createOrShow(context);
 };
 
-const createDataMapFileCmd = async () => {
+const createNewDataMapCmd = async () => {
   const newDataMapTemplate = yaml.dump({
     srcSchemaName: 'sourceSchemaName',
     dstSchemaName: 'destinationSchemaName',
