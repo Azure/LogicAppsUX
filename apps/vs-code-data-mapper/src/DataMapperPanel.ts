@@ -2,9 +2,16 @@ import { promises as fs } from 'fs';
 import { join } from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 import type { WebviewPanel, Disposable, ExtensionContext } from 'vscode';
+import * as vscode from 'vscode';
 
-type SendingMessageTypes = { command: 'loadInputSchema' | 'loadOutputSchema'; data: any } | { command: 'loadDataMap'; data: any };
-type ReceivingMessageTypes = { command: 'readSelectedSchemaFile'; data: { path: string; type: 'input' | 'output' } };
+type SendingMessageTypes =
+  | { command: 'loadInputSchema' | 'loadOutputSchema'; data: any }
+  | { command: 'loadDataMap'; data: any }
+  | { command: 'showAvailableSchemas'; data: string[] };
+type ReceivingMessageTypes = {
+  command: 'readSelectedSchemaFile' | 'readLocalFileOptions';
+  data: { path: string; type: 'input' | 'output' };
+};
 
 export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
@@ -81,7 +88,7 @@ export default class DataMapperPanel {
 
   private _handleWebviewMsg(msg: ReceivingMessageTypes) {
     switch (msg.command) {
-      case 'readSelectedSchemaFile':
+      case 'readSelectedSchemaFile': {
         fs.readFile(msg.data.path, 'utf-8').then((text: string) => {
           if (msg.data.type === 'input') {
             DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadInputSchema', data: JSON.parse(text) });
@@ -90,6 +97,15 @@ export default class DataMapperPanel {
           }
         });
         break;
+      }
+      case 'readLocalFileOptions': {
+        const folderPath = vscode.workspace.workspaceFolders[0].uri.path; // danielle to find out how multi folder workspaces work
+        console.log(folderPath);
+        const schemasPath = '/Artifacts/Schemas';
+        fs.readdir(folderPath + schemasPath).then((result) => {
+          DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'showAvailableSchemas', data: result });
+        });
+      }
     }
   }
 }

@@ -13,7 +13,7 @@ export interface DataMapDataProviderProps {
   dataMap?: DataMap;
   inputSchema?: Schema;
   outputSchema?: Schema;
-  availableSchemas?: Schema[];
+  availableSchemas?: string[];
   children?: React.ReactNode;
 }
 

@@ -1,9 +1,8 @@
-import type { Schema } from '../../models/Schema';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface SchemaState {
-  availableSchemas: Schema[];
+  availableSchemas: string[];
 }
 
 export const initialSchemaState: SchemaState = {
@@ -14,7 +13,7 @@ export const schemaSlice = createSlice({
   name: 'schema',
   initialState: initialSchemaState,
   reducers: {
-    setAvailableSchemas: (state, action: PayloadAction<Schema[] | undefined>) => {
+    setAvailableSchemas: (state, action: PayloadAction<string[] | undefined>) => {
       if (action.payload) {
         state.availableSchemas = action.payload;
       } else {

@@ -3,7 +3,7 @@ import { SchemaSelectionService } from './SchemaSelectionService';
 import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
 
 export interface ISchemaSelectionService {
-  getSchemas(): Promise<any>;
+  getSchemas(): Promise<SchemaInfoProperties[]>;
   getSchemaFile(schemaName: string): Promise<any>;
 }
 
@@ -25,6 +25,10 @@ let service: ISchemaSelectionService;
 
 export const InitSchemaSelectionService = (options: SchemaSelectionServiceOptions) => {
   service = new SchemaSelectionService(options);
+};
+
+export const InitOtherSService = (newService: ISchemaSelectionService) => {
+  service = newService;
 };
 
 export const SchemaSelectionServiceInstance = (): ISchemaSelectionService => {

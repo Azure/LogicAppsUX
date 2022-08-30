@@ -55,9 +55,14 @@ import { useDispatch, useSelector } from 'react-redux';
 export interface DataMapperDesignerProps {
   saveStateCall: () => void;
   setSelectedSchemaFile?: (selectedSchemaFile: SchemaFile) => void;
+  readCurrentSchemaOptions?: () => void;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, setSelectedSchemaFile }) => {
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
+  saveStateCall,
+  setSelectedSchemaFile,
+  readCurrentSchemaOptions,
+}) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const clickTimerRef: { current: ReturnType<typeof setTimeout> | null } = useRef(null); // NOTE: ReturnType to support NodeJS & window Timeouts
@@ -318,13 +323,19 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
+  const placeholderFunc = () => {
+    return;
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
-        <EditorConfigPanel _initialSetup={true} onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} />
+        <EditorConfigPanel
+          onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
+          readCurrentSchemaOptions={readCurrentSchemaOptions ?? placeholderFunc}
+        />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
