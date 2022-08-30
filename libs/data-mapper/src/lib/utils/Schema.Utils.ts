@@ -1,4 +1,6 @@
-import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeExtended } from '../models/Schema';
+import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
+import { SchemaTypes } from '../models/Schema';
+import { InputPrefix, OutputPrefix } from './ReactFlow.Util';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
@@ -19,4 +21,25 @@ const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPat
   };
 
   return extendedSchemaNode;
+};
+
+export const flattenSchema = (schema: SchemaExtended, schemaType: SchemaTypes): SchemaNodeDictionary => {
+  const result: SchemaNodeDictionary = {};
+  const idPrefix = schemaType === SchemaTypes.Input ? InputPrefix : OutputPrefix;
+  const schemaNodeArray = flattenSchemaNode(schema.schemaTreeRoot);
+
+  schemaNodeArray.reduce((dict, node) => {
+    // eslint-disable-next-line no-param-reassign
+    dict[`${idPrefix}${node.key}`] = node;
+    return dict;
+  }, result);
+
+  return result;
+};
+
+const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[] => {
+  const childArray = schemaNode.children.flatMap((childNode) => flattenSchemaNode(childNode));
+  childArray.push(schemaNode);
+
+  return childArray;
 };

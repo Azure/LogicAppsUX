@@ -1,5 +1,5 @@
 import type { SchemaExtended, SchemaNodeDataType, SchemaNodeExtended } from '../../models';
-import { icon16ForSchemaNodeType } from './SchemaTree.Utils';
+import { icon16ForSchemaNodeType } from '../../utils/Icon.Utils';
 import { bundleIcon, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
 import { fluentTreeItem, fluentTreeView, provideFluentDesignSystem } from '@fluentui/web-components';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';

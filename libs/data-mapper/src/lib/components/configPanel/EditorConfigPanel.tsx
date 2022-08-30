@@ -5,9 +5,9 @@ import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, 
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
-import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
-import { ChangeSchemaView } from './ChangeSchemaView';
+import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './ChangeSchemaView';
+import { ChangeSchemaView } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
@@ -45,7 +45,9 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ _
     (schema: Schema) => {
       if (schemaType) {
         const extendedSchema = convertSchemaToSchemaExtended(schema);
-        dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
+        dispatch(
+          setInitialSchema({ schema: extendedSchema, schemaType: schemaType, flattenedSchema: flattenSchema(extendedSchema, schemaType) })
+        );
         dispatch(setInitialDataMap());
       }
     },

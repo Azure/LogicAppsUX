@@ -116,3 +116,5 @@ export enum NodeType {
   Output = 'output',
   Expression = 'expression',
 }
+
+export type SchemaNodeDictionary = { [key: string]: SchemaNodeExtended };
