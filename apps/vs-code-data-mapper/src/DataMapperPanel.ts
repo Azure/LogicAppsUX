@@ -25,7 +25,7 @@ export default class DataMapperPanel {
 
     const panel = window.createWebviewPanel(
       DataMapperPanel.viewType, // Key used to reference the panel
-      'LA Data Mapper', // Title display in the tab
+      'Data Mapper', // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
       { enableScripts: true }
     );
