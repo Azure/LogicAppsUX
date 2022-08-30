@@ -13,7 +13,8 @@
       },
       {
         "command": "azureDataMapper.createNewDataMap",
-        "title": "Create new data map"
+        "title": "Create new data map",
+        "icon": "$(add)"
       },
       {
         "command": "azureDataMapper.loadInputSchemaFile",
