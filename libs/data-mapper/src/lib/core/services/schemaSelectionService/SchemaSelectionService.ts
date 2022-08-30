@@ -47,8 +47,8 @@ export class SchemaSelectionService {
     return `${this.options.baseUrl}${this.options.resourceUrl}/hostruntime/admin/vfs/Artifacts/Schemas?api-version=2018-11-01&relativepath=1`;
   };
 
-  private getSchemaFileUri = (_xmlName: string) => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/CBRInputSchema/contents/schemaTree`; // danielle to test
+  private getSchemaFileUri = (xmlName: string) => {
+    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`; // danielle to test
   };
 
   async getSchemas(): Promise<SchemaInfoProperties[]> {
@@ -66,9 +66,8 @@ export class SchemaSelectionService {
   }
 
   async getSchemaFile(xmlName: string): Promise<any> {
-    const headers = this.getAccessTokenHeaders();
-    const schemaFileUri = this.getSchemaFileUri(xmlName);
-    const response = await fetch(schemaFileUri, { headers, method: 'GET' });
+    const schemaFileUri = this.getSchemaFileUri(xmlName.split('.')[0]);
+    const response = await fetch(schemaFileUri, { method: 'GET' });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);

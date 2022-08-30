@@ -332,7 +332,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
         <EditorConfigPanel
-          _initialSetup={true}
           onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
           readCurrentSchemaOptions={readCurrentSchemaOptions ?? blank}
         />

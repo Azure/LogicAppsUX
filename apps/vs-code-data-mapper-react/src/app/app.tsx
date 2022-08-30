@@ -26,7 +26,7 @@ export const App = (): JSX.Element => {
     console.log('App called to save Data Map');
   };
 
-  InitSchemaSelectionService({ baseUrl: 'localhost:7071', resourceUrl: '', accessToken: '' });
+  InitSchemaSelectionService({ baseUrl: 'http://localhost:7071', resourceUrl: '', accessToken: '' });
 
   const setSelectedSchemaFile = (selectedSchemaFile: SchemaFile) => {
     vscode.postMessage({
