@@ -27,6 +27,19 @@ export enum AuthenticationType {
   RAW = 'Raw',
   MSI = 'Managed Identity',
 }
+export interface BasicProps {
+  basicUsername?: ValueSegment[];
+  basicPassword?: ValueSegment[];
+}
+
+export interface ClientCertificateProps {
+  clientCertificatePfx?: ValueSegment[];
+  clientCertificatePassword?: ValueSegment[];
+}
+
+export interface RawProps {
+  rawValue?: ValueSegment[];
+}
 export interface MSIProps {
   MSIAudience?: ValueSegment[];
   MSIIdentity?: string;
@@ -38,35 +51,40 @@ export interface AuthenticationEditorOptions {
 }
 
 interface AuthenticationEditorProps extends BaseEditorProps {
-  currentKey?: string | number;
+  authType?: string | number;
   AuthenticationEditorOptions: AuthenticationEditorOptions;
+  basicProps?: BasicProps;
+  clientCertificateProps?: ClientCertificateProps;
+  rawProps?: RawProps;
   MSIProps?: MSIProps;
 }
 
 export const AuthenticationEditor = ({
-  currentKey = AuthenticationType.NONE,
+  authType = AuthenticationType.NONE,
   AuthenticationEditorOptions,
-  MSIProps,
+  basicProps = {},
+  clientCertificateProps = {},
+  rawProps = {},
+  MSIProps = {},
   GetTokenPicker,
 }: AuthenticationEditorProps): JSX.Element => {
   const [codeView, toggleCodeView] = useBoolean(false);
-  const [option, setOption] = useState<string | number>(currentKey);
+  const [option, setOption] = useState<string | number>(authType);
 
   const renderAuthentication = () => {
-    const currProps = MSIProps ?? {};
     switch (option) {
       case AuthenticationType.BASIC:
-        return <BasicAuthentication GetTokenPicker={GetTokenPicker} />;
+        return <BasicAuthentication GetTokenPicker={GetTokenPicker} basicProps={basicProps} />;
       case AuthenticationType.CERTIFICATE:
-        return <CertificateAuthentication GetTokenPicker={GetTokenPicker} />;
+        return <CertificateAuthentication GetTokenPicker={GetTokenPicker} clientCertificateProps={clientCertificateProps} />;
       case AuthenticationType.RAW:
-        return <RawAuthentication GetTokenPicker={GetTokenPicker} />;
+        return <RawAuthentication GetTokenPicker={GetTokenPicker} rawProps={rawProps} />;
       case AuthenticationType.MSI:
         return (
           <MSIAuthentication
             GetTokenPicker={GetTokenPicker}
             identity={AuthenticationEditorOptions.identity}
-            MSIProps={currProps}
+            MSIProps={MSIProps}
             onManagedIdentityChange={onManagedIdentityDropdownChange}
           />
         );

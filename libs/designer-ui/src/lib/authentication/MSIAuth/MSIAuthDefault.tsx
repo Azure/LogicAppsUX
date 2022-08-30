@@ -30,7 +30,7 @@ export const MSIAuthenticationDefault = ({
     description: 'System-assigned managed identity dropdown option text',
   });
 
-  const { MSIIdentity } = MSIProps;
+  const { MSIIdentity, MSIAudience = [] } = MSIProps;
 
   const managedIdentityOption: IDropdownOption[] = MSIIdentity
     ? [{ key: MSIIdentity, text: getIdentityDisplayName(MSIIdentity) }]
@@ -53,7 +53,7 @@ export const MSIAuthenticationDefault = ({
         />
         <div className="msla-authentication-editor-expanded-editor-container">
           <StringEditor
-            initialValue={[]}
+            initialValue={MSIAudience}
             GetTokenPicker={GetTokenPicker}
             placeholder={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE.placeHolder}
             BasePlugins={{ tokens: true }}

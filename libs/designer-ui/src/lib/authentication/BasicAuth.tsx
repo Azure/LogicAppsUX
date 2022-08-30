@@ -1,12 +1,15 @@
+import type { BasicProps } from '.';
 import { StringEditor } from '../editor/string';
 import { Label } from '../label';
 import { AUTHENTICATION_PROPERTIES } from './util';
 
 interface BasicAuthenticationProps {
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  basicProps: BasicProps;
 }
 
-export const BasicAuthentication = ({ GetTokenPicker }: BasicAuthenticationProps): JSX.Element => {
+export const BasicAuthentication = ({ basicProps, GetTokenPicker }: BasicAuthenticationProps): JSX.Element => {
+  const { basicUsername = [], basicPassword = [] } = basicProps;
   return (
     <div className="msla-authentication-editor-basic-container">
       <div className="msla-authentication-editor-expanded-item">
@@ -17,7 +20,7 @@ export const BasicAuthentication = ({ GetTokenPicker }: BasicAuthenticationProps
         />
         <div className="msla-authentication-editor-expanded-editor-container">
           <StringEditor
-            initialValue={[]}
+            initialValue={basicUsername}
             GetTokenPicker={GetTokenPicker}
             placeholder={AUTHENTICATION_PROPERTIES.BASIC_USERNAME.placeHolder}
             BasePlugins={{ tokens: true }}
@@ -34,7 +37,7 @@ export const BasicAuthentication = ({ GetTokenPicker }: BasicAuthenticationProps
         />
         <div className="msla-authentication-editor-expanded-editor-container">
           <StringEditor
-            initialValue={[]}
+            initialValue={basicPassword}
             GetTokenPicker={GetTokenPicker}
             placeholder={AUTHENTICATION_PROPERTIES.BASIC_PASSWORD.placeHolder}
             BasePlugins={{ tokens: true }}

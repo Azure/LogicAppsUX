@@ -34,6 +34,7 @@ export const MSIAuthentication = ({ identity, MSIProps, GetTokenPicker, onManage
     description: 'error message for unspported identity',
   });
   const selectedManagedIdentityKey = MSIProps.MSIIdentity;
+  const { MSIAudience = [] } = MSIProps;
   if (identity?.type) {
     const userAssignedIdentities = containsUserAssignedIdentities(identity) ? getUserAssignedIdentities(identity) : undefined;
     if (
@@ -95,7 +96,7 @@ export const MSIAuthentication = ({ identity, MSIProps, GetTokenPicker, onManage
             />
             <div className="msla-authentication-editor-expanded-editor-container">
               <StringEditor
-                initialValue={[]}
+                initialValue={MSIAudience}
                 GetTokenPicker={GetTokenPicker}
                 placeholder={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE.placeHolder}
                 BasePlugins={{ tokens: true }}
