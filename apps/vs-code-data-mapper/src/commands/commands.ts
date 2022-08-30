@@ -20,10 +20,10 @@ const openDataMapperCmd = (context: ExtensionContext) => {
 
 const createNewDataMapCmd = async () => {
   const newDataMapTemplate = yaml.dump({
-    srcSchemaName: 'sourceSchemaName',
-    dstSchemaName: 'destinationSchemaName',
+    srcSchemaName: '',
+    dstSchemaName: '',
     mappings: {
-      targetNodeKey: 'targetNodeKey',
+      targetNodeKey: '',
     },
   });
 
