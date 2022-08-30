@@ -18,12 +18,13 @@ import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface EditorConfigPanelProps {
-  _initialSetup: boolean;
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
+  readCurrentSchemaOptions: () => void;
 }
 
-export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ _initialSetup, onSubmitSchemaFileSelection }) => {
+export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ onSubmitSchemaFileSelection, readCurrentSchemaOptions }) => {
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
+  const isDirty = useSelector((state: RootState) => state.dataMap.isDirty);
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
   const isChangeSchemaPanelOpen = useSelector((state: RootState) => state.panel.isChangeSchemaPanelOpen);
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
@@ -125,8 +126,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ _
     if (schemaType === undefined) {
       return;
     }
-    curDataMapOperation ? dispatch(openChangeSchemaWarning({ schemaType: schemaType })) : editSchema();
-  }, [curDataMapOperation, schemaType, editSchema, dispatch]);
+    isDirty ? dispatch(openChangeSchemaWarning({ schemaType: schemaType })) : editSchema();
+  }, [isDirty, schemaType, editSchema, dispatch]);
 
   useEffect(() => {
     if (selectedSchemaFile) {
@@ -143,6 +144,10 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ _
       dispatch(closeAllWarning());
     }
   }, [closeSchemaPanel, dispatch, editSchema, genericErrMsg, isChangeSchemaConfirmed, onSubmitSchema, schemaType, selectedInputSchema]);
+
+  useEffect(() => {
+    readCurrentSchemaOptions();
+  }, [readCurrentSchemaOptions]);
 
   const onRenderFooterContent = useCallback(() => {
     const isNewSchemaSelected =
