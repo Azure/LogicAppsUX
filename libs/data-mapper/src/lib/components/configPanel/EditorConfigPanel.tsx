@@ -145,8 +145,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
 
   useEffect(() => {
     readCurrentSchemaOptions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [readCurrentSchemaOptions]);
 
   const onRenderFooterContent = useCallback(() => {
     const isNewSchemaSelected =

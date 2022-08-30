@@ -99,7 +99,6 @@ export default class DataMapperPanel {
         break;
       }
       case 'readLocalFileOptions': {
-        // danielle add constants for these
         const folderPath = vscode.workspace.workspaceFolders[0].uri.path; // danielle to find out how multi folder workspaces work
         console.log(folderPath);
         const schemasPath = '/Artifacts/Schemas';

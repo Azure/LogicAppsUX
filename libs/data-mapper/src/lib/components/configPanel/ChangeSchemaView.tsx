@@ -51,13 +51,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   errorMessage,
 }) => {
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
-  // const schemaListQuery = useQuery(['schemaList'], () => getSchemaList(), {
-  //   staleTime: 1000 * 60 * 5,
-  //   cacheTime: 1000 * 60 * 5,
-  //   enabled: uploadType === UploadSchemaTypes.SelectFrom,
-  // });
 
-  // const schemaList = schemaListQuery.data;
   const schemaList = useSelector((state: RootState) => {
     return state.schema.availableSchemas;
   });
@@ -166,7 +160,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
           aria-label={dropdownAriaLabel}
           selectedKey={selectedSchema ? selectedSchema.key : undefined}
           placeholder={selectSchemaPlaceholderMessage}
-          options={dataMapDropdownOptions ?? [{ key: 'key', text: 'value' }]}
+          options={dataMapDropdownOptions ?? []}
           onChange={onSelectedItemChange}
           errorMessage={errorMessage}
         />
