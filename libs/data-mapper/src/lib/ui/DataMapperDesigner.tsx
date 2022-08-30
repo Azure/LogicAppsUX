@@ -326,7 +326,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
   };
 
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
-  const blank = () => {
+  const placeholderFunc = () => {
     return;
   };
 
@@ -337,7 +337,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
         <WarningModal />
         <EditorConfigPanel
           onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
-          readCurrentSchemaOptions={readCurrentSchemaOptions ?? blank}
+          readCurrentSchemaOptions={readCurrentSchemaOptions ?? placeholderFunc}
         />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (

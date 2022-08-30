@@ -15,11 +15,5 @@
     "**/*.stories.tsx",
     "jest.config.ts"
   ],
-  "include": [
-    "**/*.js",
-    "**/*.jsx",
-    "**/*.ts",
-    "**/*.tsx",
-    "../../apps/vs-code-data-mapper-react/src/Services/LocalSchemaSelectionService.ts"
-  ]
+  "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

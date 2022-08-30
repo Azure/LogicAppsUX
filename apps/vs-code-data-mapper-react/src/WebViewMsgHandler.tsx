@@ -9,7 +9,7 @@ import type { WebviewApi } from 'vscode-webview';
 type ReceivingMessageTypes =
   | { command: 'loadInputSchema' | 'loadOutputSchema'; data: Schema }
   | { command: 'loadDataMap'; data: DataMap }
-  | { command: 'showAvailableSchemas'; data: string[] }; // danielle this is duplicated in DataMapperPanel
+  | { command: 'showAvailableSchemas'; data: string[] };
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = createContext(vscode);
