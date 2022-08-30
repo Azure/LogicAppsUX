@@ -28,7 +28,7 @@ const createNewDataMapCmd = async () => {
   });
 
   // TODO: Data map name validation
-  window.showInputBox({ prompt: 'Data Map name: ' }).then((newDatamapName) => {
+  window.showInputBox({ prompt: 'Data Map name: ', title: 'Data Map name' }).then((newDatamapName) => {
     if (!newDatamapName) {
       return;
     }
