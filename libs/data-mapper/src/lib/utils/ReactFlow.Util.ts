@@ -1,6 +1,7 @@
+import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { SchemaNodeExtended } from '../models/Schema';
-import { SchemaTypes } from '../models/Schema';
+import { SchemaNodeDataType, SchemaTypes } from '../models/Schema';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import { ConnectionLineType, Position } from 'react-flow-renderer';
 
@@ -19,16 +20,23 @@ export enum ReactFlowNodeType {
 export const InputPrefix = 'input-';
 export const OutputPrefix = 'output-';
 
-export const convertToReactFlowNodes = (inputSchemaNodes: SchemaNodeExtended[], outputSchemaNode: SchemaNodeExtended): ReactFlowNode[] => {
-  const reactFlowNodes: ReactFlowNode[] = [];
+export const convertToReactFlowNodes = (
+  inputSchemaNodes: SchemaNodeExtended[],
+  outputSchemaNode: SchemaNodeExtended
+): ReactFlowNode<SchemaCardProps>[] => {
+  const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
 
-  inputSchemaNodes.forEach((inputNodes, index) => {
+  inputSchemaNodes.forEach((inputNode, index) => {
     reactFlowNodes.push({
-      id: `${InputPrefix}${inputNodes.key}`,
+      id: `${InputPrefix}${inputNode.key}`,
       data: {
-        label: inputNodes.name,
+        label: inputNode.name,
         schemaType: SchemaTypes.Input,
         displayHandle: true,
+        isLeaf: true,
+        nodeDataType: inputNode.schemaNodeDataType,
+        disabled: false,
+        error: false,
       },
       type: ReactFlowNodeType.SchemaNode,
       sourcePosition: Position.Right,
@@ -48,8 +56,8 @@ export const convertToReactFlowParentAndChildNodes = (
   parentSchemaNode: SchemaNodeExtended,
   schemaType: SchemaTypes,
   displayTargets: boolean
-): ReactFlowNode[] => {
-  const reactFlowNodes: ReactFlowNode[] = [];
+): ReactFlowNode<SchemaCardProps>[] => {
+  const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
   const rootX = schemaType === SchemaTypes.Input ? inputX : rootOutputX;
   const idPrefix = schemaType === SchemaTypes.Input ? InputPrefix : OutputPrefix;
 
@@ -59,6 +67,10 @@ export const convertToReactFlowParentAndChildNodes = (
       label: parentSchemaNode.name,
       schemaType,
       displayHandle: displayTargets,
+      isLeaf: false,
+      nodeDataType: parentSchemaNode.schemaNodeDataType,
+      disabled: false,
+      error: false,
     },
     type: ReactFlowNodeType.SchemaNode,
     targetPosition: !displayTargets ? undefined : SchemaTypes.Input ? Position.Right : Position.Left,
@@ -75,6 +87,10 @@ export const convertToReactFlowParentAndChildNodes = (
         label: childNode.name,
         schemaType,
         displayHandle: displayTargets,
+        isLeaf: childNode.schemaNodeDataType !== SchemaNodeDataType.ComplexType && childNode.schemaNodeDataType !== SchemaNodeDataType.None,
+        nodeDataType: childNode.schemaNodeDataType,
+        disabled: false,
+        error: false,
       },
       type: ReactFlowNodeType.SchemaNode,
       targetPosition: !displayTargets ? undefined : SchemaTypes.Input ? Position.Right : Position.Left,

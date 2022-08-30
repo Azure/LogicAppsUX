@@ -13,14 +13,16 @@ import {
   Text,
 } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
+import type { NodeProps } from 'react-flow-renderer';
 
 export interface ExpressionCardProps {
   data: ExpressionCardWrapperProps;
 }
 
 export type ExpressionCardWrapperProps = {
-  expressionName: 'string';
-  brandColor: 'string';
+  expressionName: string;
+  brandColor: string;
+  onClick: () => void;
 } & CardProps;
 
 const useStyles = makeStyles({
@@ -83,14 +85,8 @@ const useStyles = makeStyles({
   },
 });
 
-export const ExpressionCard: FunctionComponent<ExpressionCardWrapperProps> = ({
-  iconName,
-  expressionName,
-  brandColor,
-  onClick,
-  disabled,
-  error,
-}) => {
+export const ExpressionCard: FunctionComponent<NodeProps<ExpressionCardProps>> = (props: NodeProps<ExpressionCardProps>) => {
+  const { onClick, expressionName, brandColor, iconName, disabled, error } = props.data;
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 

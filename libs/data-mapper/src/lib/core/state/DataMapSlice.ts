@@ -1,4 +1,4 @@
-import type { SchemaExtended, SchemaNodeExtended, SelectedNode } from '../../models';
+import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended, SelectedNode } from '../../models';
 import { SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -15,13 +15,20 @@ export interface DataMapState {
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   inputSchema?: SchemaExtended;
+  flattenedInputSchema: SchemaNodeDictionary;
   outputSchema?: SchemaExtended;
+  flattenedOutputSchema: SchemaNodeDictionary;
   currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
   currentlySelectedNode?: SelectedNode;
 }
 
-const emptyPristineState: DataMapOperationState = { dataMapConnections: {}, currentInputNodes: [] };
+const emptyPristineState: DataMapOperationState = {
+  dataMapConnections: {},
+  currentInputNodes: [],
+  flattenedInputSchema: {},
+  flattenedOutputSchema: {},
+};
 const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
@@ -39,14 +46,25 @@ export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    setInitialSchema: (state, action: PayloadAction<{ schema: SchemaExtended; schemaType: SchemaTypes.Input | SchemaTypes.Output }>) => {
+    setInitialSchema: (
+      state,
+      action: PayloadAction<{
+        schema: SchemaExtended;
+        schemaType: SchemaTypes.Input | SchemaTypes.Output;
+        flattenedSchema: SchemaNodeDictionary;
+      }>
+    ) => {
       if (action.payload.schemaType === SchemaTypes.Input) {
         state.curDataMapOperation.inputSchema = action.payload.schema;
+        state.curDataMapOperation.flattenedInputSchema = action.payload.flattenedSchema;
         state.pristineDataMap.inputSchema = action.payload.schema;
+        state.pristineDataMap.flattenedInputSchema = action.payload.flattenedSchema;
       } else {
         state.curDataMapOperation.outputSchema = action.payload.schema;
+        state.curDataMapOperation.flattenedOutputSchema = action.payload.flattenedSchema;
         state.curDataMapOperation.currentOutputNode = action.payload.schema.schemaTreeRoot;
         state.pristineDataMap.outputSchema = action.payload.schema;
+        state.pristineDataMap.flattenedOutputSchema = action.payload.flattenedSchema;
         state.pristineDataMap.currentOutputNode = action.payload.schema.schemaTreeRoot;
       }
     },
