@@ -23,6 +23,7 @@ export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
   public static readonly viewType = 'dataMapperWebview';
   public static extensionContext: ExtensionContext | undefined;
+  public static currentDataMapName: string | undefined;
 
   private readonly _panel: WebviewPanel;
   private readonly _extensionPath: string;
@@ -111,7 +112,7 @@ export default class DataMapperPanel {
         break;
       }
       case 'saveDataMapDefinition': {
-        const fileName = `${DataMapperPanel.extensionContext?.workspaceState.get('azureDataMapper.currentDataMap')}.yml`;
+        const fileName = `${DataMapperPanel.currentDataMapName}.yml`;
         const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, fileName);
         fs.writeFile(filePath, msg.data, 'utf8');
       }
