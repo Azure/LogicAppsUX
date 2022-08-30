@@ -22,8 +22,8 @@ export const App = (): JSX.Element => {
   const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
   const availableSchemas = useSelector((state: RootState) => state.schemaDataLoader.availableSchemas);
 
-  const saveStateCall = () => {
-    console.log('App called to save Data Map');
+  const saveStateCall = (dataMapDefinition: string) => {
+    console.log(dataMapDefinition);
   };
 
   InitSchemaSelectionService({ baseUrl: 'http://localhost:7071', resourceUrl: '', accessToken: '' });
