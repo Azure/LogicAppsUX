@@ -1,3 +1,4 @@
+import { schemasPath, webviewTitle } from './extensionConfig';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
@@ -32,7 +33,7 @@ export default class DataMapperPanel {
 
     const panel = window.createWebviewPanel(
       DataMapperPanel.viewType, // Key used to reference the panel
-      'Data Mapper', // Title display in the tab
+      webviewTitle, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
       { enableScripts: true }
     );
@@ -101,7 +102,6 @@ export default class DataMapperPanel {
       case 'readLocalFileOptions': {
         const folderPath = vscode.workspace.workspaceFolders[0].uri.path; // danielle to find out how multi folder workspaces work
         console.log(folderPath);
-        const schemasPath = '/Artifacts/Schemas';
         fs.readdir(folderPath + schemasPath).then((result) => {
           DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'showAvailableSchemas', data: result });
         });

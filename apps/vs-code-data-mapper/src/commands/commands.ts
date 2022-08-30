@@ -1,4 +1,5 @@
 import DataMapperPanel from '../DataMapperPanel';
+import { dataMapDefinitionsPath } from '../extensionConfig';
 import { promises as fs } from 'fs';
 import { commands, window, workspace } from 'vscode';
 import type { ExtensionContext, Uri } from 'vscode';
@@ -33,7 +34,7 @@ const createNewDataMapCmd = async () => {
       return;
     }
 
-    const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, 'maps', `${newDatamapName}.yml`);
+    const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, `${newDatamapName}.yml`);
     fs.writeFile(filePath, newDataMapTemplate, 'utf8');
 
     DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: newDataMapTemplate });
