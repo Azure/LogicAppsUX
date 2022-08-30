@@ -8,10 +8,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "azureDataMapper.init",
-        "title": "Initialize Data Mapper extension"
-      },
-      {
         "command": "azureDataMapper.openDataMapper",
         "title": "Open Data Mapper"
       },
@@ -84,7 +80,6 @@
     "ms-vscode.azure-account"
   ],
   "activationEvents": [
-    "onCommand:azureDataMapper.init",
     "onCommand:azureDataMapper.openDataMapper",
     "workspaceContains:**/.xsd",
     "workspaceContains:**/.xslt",

@@ -1,3 +1,4 @@
+import DataMapperPanel from './DataMapperPanel';
 import { registerCommands } from './commands/commands';
 import type { ExtensionContext } from 'vscode';
 import { commands } from 'vscode';
@@ -13,4 +14,6 @@ export function activate(context: ExtensionContext) {
   commands.executeCommand('setContext', 'azureDataMapper.supportedFileExts', [...supportedDataMapFileExts, ...supportedSchemaFileExts]);
 
   registerCommands(context);
+
+  DataMapperPanel.createOrShow(context);
 }

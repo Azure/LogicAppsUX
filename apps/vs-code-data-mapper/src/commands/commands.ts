@@ -7,18 +7,11 @@ import path = require('path');
 import yaml = require('js-yaml');
 
 export const registerCommands = (context: ExtensionContext) => {
-  context.subscriptions.push(commands.registerCommand('azureDataMapper.init', () => initCmd(context)));
   context.subscriptions.push(commands.registerCommand('azureDataMapper.openDataMapper', () => openDataMapperCmd(context)));
   context.subscriptions.push(commands.registerCommand('azureDataMapper.createNewDataMap', createNewDataMapCmd));
   context.subscriptions.push(commands.registerCommand('azureDataMapper.loadInputSchemaFile', loadInputSchemaFileCmd));
   context.subscriptions.push(commands.registerCommand('azureDataMapper.loadOutputSchemaFile', loadOutputSchemaFileCmd));
   context.subscriptions.push(commands.registerCommand('azureDataMapper.loadDataMapFile', loadDataMapFileCmd));
-};
-
-const initCmd = async (context: ExtensionContext) => {
-  // NOTE: If ever need to init telemetry/etc, do it here
-
-  openDataMapperCmd(context);
 };
 
 const openDataMapperCmd = (context: ExtensionContext) => {
