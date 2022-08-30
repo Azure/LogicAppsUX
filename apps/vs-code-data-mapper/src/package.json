@@ -88,7 +88,8 @@
     "onCommand:azureDataMapper.openDataMapper",
     "workspaceContains:**/.xsd",
     "workspaceContains:**/.xslt",
-    "onView:azDataMapper"
+    "onView:azDataMapper",
+    "onDebugInitialConfigurations"
   ],
   "galleryBanner": {
     "color": "#015cda",
