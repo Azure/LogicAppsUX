@@ -1,5 +1,7 @@
 import constants from '../constants';
 import { getIntl } from '@microsoft-logic-apps/intl';
+import type { ManagedIdentity } from '@microsoft-logic-apps/utils';
+import { equals, ResourceIdentityType } from '@microsoft-logic-apps/utils';
 
 export interface AuthProperty {
   displayName: string;
@@ -247,3 +249,19 @@ export const AUTHENTICATION_PROPERTIES = {
     type: constants.SWAGGER.TYPE.STRING,
   },
 };
+
+/**
+ * Checks if the identity is valid and contains a user assigned identities.
+ * @param {ManagedIdentity} identity - The managed identity.
+ * @return {boolean} - If the managed identity contains a user assigned identity or not.
+ */
+export function containsUserAssignedIdentities(identity: ManagedIdentity): boolean {
+  return (
+    identity &&
+    !!identity.type &&
+    (equals(identity.type, ResourceIdentityType.USER_ASSIGNED) ||
+      equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) &&
+    !!identity.userAssignedIdentities &&
+    Object.keys(identity.userAssignedIdentities).length > 0
+  );
+}

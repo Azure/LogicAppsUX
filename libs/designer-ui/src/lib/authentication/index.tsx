@@ -4,7 +4,7 @@ import type { BaseEditorProps } from '../editor/base';
 import { Label } from '../label';
 import { BasicAuthentication } from './BasicAuth';
 import { CertificateAuthentication } from './CertificateAuth';
-import { MSIAuthentication } from './MSIAuth';
+import { MSIAuthentication } from './MSIAuth/MSIAuth';
 import { RawAuthentication } from './RawAuth';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
