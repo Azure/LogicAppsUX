@@ -443,6 +443,12 @@
       "value": "Wyszukiwanie globalne"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Wybierz plik do przekazania"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -597,12 +603,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "wybierz dane wejściowe"
     }
   ],
   "4/kJ8D": [
@@ -1743,12 +1743,6 @@
       "value": "Wymagane. Obiekt, do którego ma zostać dodana nowa właściwość."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Wybierz plik do przekazania"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2057,6 +2051,12 @@
       "value": "(UTC+03:00) Mińsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Wyrażenie"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2255,6 +2255,12 @@
       "value": "(UTC-04:00) Turks i Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2291,6 +2297,12 @@
       "value": "Konwertuj dane wejściowe na wartość typu JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2325,6 +2337,12 @@
       "value": "Wymagane. Wartość konwertowana na wartość binarną."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2357,6 +2375,12 @@
     {
       "type": 0,
       "value": " godz."
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -2801,6 +2825,12 @@
       "value": " godz."
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Wybierz schemat danych wyjściowych"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2883,12 +2913,6 @@
     {
       "type": 0,
       "value": "Żądanie"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Przeglądaj"
     }
   ],
   "XqamWZ": [
@@ -3187,12 +3211,6 @@
       "value": "Zwraca obiekt z właściwością ustawioną na podaną wartość"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "wybierz wyjście"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3397,6 +3415,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa zmiennej z żądanymi wartościami."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Węzeł schematu wyjściowego"
     }
   ],
   "eRvGw3": [
@@ -3777,6 +3801,18 @@
     {
       "type": 0,
       "value": "Anuluj"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Właściwości"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4399,6 +4435,12 @@
       "value": "Konwertuj parametr na ciąg"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Wybierz schemat danych wejściowych"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4669,6 +4711,18 @@
       "value": "Nowy parametr"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Węzeł schematu wejściowego"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Przeglądaj"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4777,6 +4831,12 @@
       "value": "(UTC+04:00) Abu Zabi, Maskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Wybierz element, aby rozpocząć konfigurowanie"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4877,12 +4937,6 @@
     {
       "type": 0,
       "value": "Zwraca ostatni indeks wartości w ciągu (bez uwzględniania wielkości liter, kultura niezmienna)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Przycisk do zarządzania stanem przełączania"
     }
   ],
   "vQcQkU": [
@@ -5001,6 +5055,12 @@
       "value": "Przekroczono limit czasu"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -5083,6 +5143,12 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa nowej lub istniejącej właściwości."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Kod"
     }
   ],
   "xYyPR8": [

@@ -405,6 +405,12 @@
       "value": "Algemene zoekopdracht"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Een bestand selecteren dat moeten worden geüpload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -559,12 +565,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "invoer selecteren"
     }
   ],
   "4/kJ8D": [
@@ -1661,12 +1661,6 @@
       "value": "Vereist. Het object waaraan een nieuwe eigenschap moet worden toegevoegd."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Een bestand selecteren dat moeten worden geüpload"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1953,6 +1947,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expressie"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2151,6 +2151,12 @@
       "value": "(UTC-04:00) Turks- en Caicoseilanden"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2185,6 +2191,12 @@
     {
       "type": 0,
       "value": "De invoer naar het waardetype JSON converteren"
+    }
+  ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
     }
   ],
   "QQYzHC": [
@@ -2225,6 +2237,12 @@
       "value": "Vereist. De waarde die wordt geconverteerd naar een binaire waarde."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2257,6 +2275,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -2679,6 +2703,12 @@
       "value": " uren"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Een uitvoerschema selecteren"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2761,12 +2791,6 @@
     {
       "type": 0,
       "value": "Aanvraag"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Bladeren"
     }
   ],
   "XqamWZ": [
@@ -3065,12 +3089,6 @@
       "value": "Geeft als resultaat een object met een eigenschap ingesteld op de opgegeven waarde"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "uitvoer selecteren"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3275,6 +3293,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de variabele met de gewenste waarde."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Uitvoerschemaknooppunt"
     }
   ],
   "eRvGw3": [
@@ -3633,6 +3657,18 @@
     {
       "type": 0,
       "value": "Annuleren"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Eigenschappen"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Testen"
     }
   ],
   "iq+tiv": [
@@ -4247,6 +4283,12 @@
       "value": "De parameter naar een tekenreeks converteren"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Een invoerschema selecteren"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4495,6 +4537,18 @@
       "value": "Nieuwe parameter"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Invoerschemaknooppunt"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Bladeren"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4603,6 +4657,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Selecteer een element om te beginnen met configureren"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4703,12 +4763,6 @@
     {
       "type": 0,
       "value": "De laatste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Knop voor het beheren van de wisselstatus"
     }
   ],
   "vQcQkU": [
@@ -4827,6 +4881,12 @@
       "value": "Time-out opgetreden"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4909,6 +4969,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de nieuwe of bestaande eigenschap."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

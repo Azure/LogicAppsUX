@@ -88,26 +88,27 @@ export const TokenPickerSearch = ({
       brandColor: constants.FX_COLOR,
       icon: FxIcon,
       title: getExpressionTokenTitle(currExpression),
-      description: expression.value,
-      key: getExpressionTokenTitle(currExpression),
+      description: '',
+      key: guid(),
+      value: expression.value,
     };
 
     if (updatingExpression) {
       editor.dispatchCommand(UPDATE_TOKEN_NODE, {
-        updatedDescription: expression.value,
+        updatedValue: expression.value,
         updatedTitle: token.title,
         updatedData: {
           id: guid(),
           type: ValueSegmentType.TOKEN,
           value: expression.value,
-          token: { ...token },
+          token,
         },
         nodeKey: updatingExpression as NodeKey,
       });
     } else {
       editor.dispatchCommand(INSERT_TOKEN_NODE, {
         brandColor: token.brandColor,
-        description: token.description ?? token.key,
+        description: token.description,
         title: token.title,
         icon: token.icon ?? FxIcon,
         value: token.value,
@@ -115,7 +116,7 @@ export const TokenPickerSearch = ({
           id: guid(),
           type: ValueSegmentType.TOKEN,
           value: expression.value,
-          token: { ...token },
+          token,
         },
       });
     }

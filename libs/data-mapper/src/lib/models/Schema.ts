@@ -19,6 +19,16 @@ export interface SchemaNode {
   children: SchemaNode[];
 }
 
+// TODO (nicolas): Extend this once we know what other properties
+// need to be known for properties pane
+// Extra Note: Will likely have to split into SchemaNode and ExpressionNode
+// types as properties are starting to appear quite different
+export interface SelectedNode {
+  type: NodeType;
+  name: string;
+  path: string;
+}
+
 export enum SchemaType {
   NotSpecified = 'NotSpecified',
   XML = 'XML',
@@ -100,3 +110,11 @@ export enum SchemaTypes {
   Input = 'input',
   Output = 'output',
 }
+
+export enum NodeType {
+  Input = 'input',
+  Output = 'output',
+  Expression = 'expression',
+}
+
+export type SchemaNodeDictionary = { [key: string]: SchemaNodeExtended };

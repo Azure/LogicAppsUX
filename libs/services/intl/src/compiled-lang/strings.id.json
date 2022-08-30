@@ -394,6 +394,12 @@
       "value": "Pencarian global"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Pilih file yang akan diunggah"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -548,12 +554,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "pilih input"
     }
   ],
   "4/kJ8D": [
@@ -1620,12 +1620,6 @@
       "value": "Diperlukan. Objek untuk ditambahi properti baru."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Pilih file yang akan diunggah"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1893,6 +1887,12 @@
       "value": "(UTC+03.00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Ekspresi"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2091,6 +2091,12 @@
       "value": "(UTC-04:00) Turks dan Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2127,6 +2133,12 @@
       "value": "Konversikan input menjadi nilai jenis JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2161,6 +2173,12 @@
       "value": "Wajib. Nilai yang dikonversi menjadi biner."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2193,6 +2211,12 @@
     {
       "type": 0,
       "value": "j"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -2604,6 +2628,12 @@
       "value": " jam"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Pilih skema output"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2686,12 +2716,6 @@
     {
       "type": 0,
       "value": "Permintaan"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Telusuri"
     }
   ],
   "XqamWZ": [
@@ -2990,12 +3014,6 @@
       "value": "Menghasilkan objek dengan properti yang diatur ke nilai yang disediakan"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "pilih output"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3200,6 +3218,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Node skema output"
     }
   ],
   "eRvGw3": [
@@ -3531,6 +3555,18 @@
     {
       "type": 0,
       "value": "Batalkan"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properti"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Uji"
     }
   ],
   "iq+tiv": [
@@ -4145,6 +4181,12 @@
       "value": "Konversikan parameter menjadi string"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Pilih skema input"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4382,6 +4424,18 @@
       "value": "Parameter baru"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Node skema input"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Telusuri"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4490,6 +4544,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Pilih elemen untuk mulai mengonfigurasi"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4590,12 +4650,6 @@
     {
       "type": 0,
       "value": "Menghasilkan indeks terakhir dari nilai dalam string (tidak peka huruf besar/kecil, kultur invarian)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Tombol untuk mengelola status hidupkan/matikan"
     }
   ],
   "vQcQkU": [
@@ -4714,6 +4768,12 @@
       "value": "Waktu Habis"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4796,6 +4856,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama properti baru atau yang sudah ada."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Kode"
     }
   ],
   "xYyPR8": [

@@ -1,187 +1,178 @@
-import { ExpressionCodeTab } from './tabComponents/Expression/ExpressionCodeTab';
-import { ExpressionPropertiesTab } from './tabComponents/Expression/ExpressionPropertiesTab';
-import { InputSchemaNodeCodeTab } from './tabComponents/InputSchemaNode/InputSchemaNodeCodeTab';
-import { InputSchemaNodePropertiesTab } from './tabComponents/InputSchemaNode/InputSchemaNodePropertiesTab';
-import { OutputSchemaNodeCodeTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeCodeTab';
-import { OutputSchemaNodePropertiesTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodePropertiesTab';
-import { OutputSchemaNodeTestTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeTestTab';
+import { NodeType } from '../../models';
+import type { SelectedNode } from '../../models';
+import { CodeTab } from './tabComponents/CodeTab';
+import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
+import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
+import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, makeStyles, mergeClasses, shorthands, Text, tokens } from '@fluentui/react-components';
+import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
-export const enum PANEL_ITEM {
-  INPUT_SCHEMA_NODE = 1, // Start from 1 to avoid returning true for null/undef check when 0
-  OUTPUT_SCHEMA_NODE,
-  EXPRESSION,
-}
-
-enum SELECTED_TAB {
+enum TABS {
   PROPERTIES = 1,
   CODE,
   TEST,
 }
 
 const useStyles = makeStyles({
+  pane: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: tokens.colorNeutralBackground1,
+    zIndex: 1000,
+    ...shorthands.borderRadius('medium', 'medium', 0, 0),
+  },
   topBar: {
     height: '40px',
     p: '4px',
     marginLeft: '8px',
     marginRight: '8px',
-    ...shorthands.borderRadius('medium'),
   },
-  tabBtn: {
-    ...shorthands.border(0),
-    ...shorthands.borderBottom(0), // You'd think border: 0 would do this...but nope
-    ...shorthands.borderRadius(0),
-    marginLeft: '16px',
-    height: '30px',
-    fontSize: '14px',
-  },
-  selectedTabBtn: {
-    ...shorthands.borderBottom('2px', 'solid', tokens.colorBrandStroke1),
-    fontWeight: 'bold',
-    backgroundColor: 'initial',
-    ':hover': {
-      ...shorthands.borderBottom('2px', 'solid', tokens.colorBrandStroke1),
-    },
+  title: {
+    ...typographyStyles.body1Strong,
   },
   chevron: {
     ...shorthands.margin('15px'),
   },
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
-    height: '300px', // Arbitrary value for now
+    height: '192px',
+    maxHeight: '192px',
+    ...shorthands.overflow('hidden', 'auto'),
   },
   noItemSelectedText: {
     color: tokens.colorNeutralForegroundDisabled,
+    ...typographyStyles.body1Strong,
   },
 });
 
 export interface PropertiesPaneProps {
-  panelItem?: PANEL_ITEM;
+  currentNode?: SelectedNode;
 }
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
-  const { panelItem } = props;
+  const intl = useIntl();
+  const { currentNode } = props;
 
   const styles = useStyles();
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [tabToDisplay, setTabToDisplay] = useState(SELECTED_TAB.PROPERTIES);
+  const [isExpanded, setIsExpanded] = useState(!!currentNode);
+  const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
 
-  const getPanelItemName = (): string | undefined => {
-    switch (panelItem) {
-      case PANEL_ITEM.INPUT_SCHEMA_NODE:
-        return 'Input schema node';
-      case PANEL_ITEM.OUTPUT_SCHEMA_NODE:
-        return 'Output schema node';
-      case PANEL_ITEM.EXPRESSION:
-        return 'Expression';
+  const inputSchemaNodeLoc = intl.formatMessage({
+    defaultMessage: 'Input schema node',
+    description: 'Label for input schema node',
+  });
+
+  const outputSchemaNodeLoc = intl.formatMessage({
+    defaultMessage: 'Output schema node',
+    description: 'Label for output schema node',
+  });
+
+  const expressionLoc = intl.formatMessage({
+    defaultMessage: 'Expression',
+    description: 'Label for expression node',
+  });
+
+  const propertiesLoc = intl.formatMessage({
+    defaultMessage: 'Properties',
+    description: 'Label for properties tab',
+  });
+
+  const codeLoc = intl.formatMessage({
+    defaultMessage: 'Code',
+    description: 'Label for code tab',
+  });
+
+  const testLoc = intl.formatMessage({
+    defaultMessage: 'Test',
+    description: 'Label for test tab',
+  });
+
+  const selectElementLoc = intl.formatMessage({
+    defaultMessage: 'Select an element to start configuring',
+    description: 'Label for default message when no node selected',
+  });
+
+  const getPaneTitle = (): string | undefined => {
+    switch (currentNode?.type) {
+      case NodeType.Input:
+        return inputSchemaNodeLoc;
+      case NodeType.Output:
+        return outputSchemaNodeLoc;
+      case NodeType.Expression:
+        return expressionLoc;
       default:
         console.error("Panel item hasn't been chosen.");
         return;
     }
   };
 
-  const getPropertiesTab = (panelItem: PANEL_ITEM): JSX.Element => {
-    switch (panelItem) {
-      case PANEL_ITEM.INPUT_SCHEMA_NODE:
-        return <InputSchemaNodePropertiesTab />;
-      case PANEL_ITEM.OUTPUT_SCHEMA_NODE:
-        return <OutputSchemaNodePropertiesTab />;
-      case PANEL_ITEM.EXPRESSION:
-        return <ExpressionPropertiesTab />;
-    }
-  };
-
-  const getCodeTab = (panelItem: PANEL_ITEM): JSX.Element => {
-    switch (panelItem) {
-      case PANEL_ITEM.INPUT_SCHEMA_NODE:
-        return <InputSchemaNodeCodeTab />;
-      case PANEL_ITEM.OUTPUT_SCHEMA_NODE:
-        return <OutputSchemaNodeCodeTab />;
-      case PANEL_ITEM.EXPRESSION:
-        return <ExpressionCodeTab />;
-    }
-  };
-
-  const getTestTab = (): JSX.Element => {
-    return <OutputSchemaNodeTestTab />;
-  };
-
-  const getSelectedContent = (): JSX.Element | null => {
-    if (!panelItem) {
+  const getSelectedTab = (): JSX.Element | null => {
+    if (!currentNode) {
+      console.error('currentNode is undefined');
       return null;
     }
 
     switch (tabToDisplay) {
-      case SELECTED_TAB.PROPERTIES:
-        return getPropertiesTab(panelItem);
-      case SELECTED_TAB.CODE:
-        return getCodeTab(panelItem);
-      case SELECTED_TAB.TEST:
-        return getTestTab(); // Only retrieved if OutputSchemaNode
+      case TABS.PROPERTIES:
+        if (currentNode.type === NodeType.Expression) {
+          return <ExpressionNodePropertiesTab currentNode={currentNode} />;
+        } else {
+          return <SchemaNodePropertiesTab currentNode={currentNode} />;
+        }
+      case TABS.CODE:
+        return <CodeTab />;
+      case TABS.TEST:
+        return <TestTab />;
+      default:
+        console.error('tabToDisplay is undefined');
+        return null;
     }
-  };
-
-  const getTabBtnStyles = (selTab: SELECTED_TAB) => {
-    return tabToDisplay === selTab ? mergeClasses(styles.tabBtn, styles.selectedTabBtn) : styles.tabBtn;
   };
 
   useEffect(() => {
     // Set tab to first one anytime this panel displays a new item
-    setTabToDisplay(0);
-  }, [panelItem]);
+    if (currentNode) {
+      setTabToDisplay(TABS.PROPERTIES);
+    } else {
+      setTabToDisplay(undefined);
+    }
+  }, [currentNode]);
 
   const TopBarContent = () => (
     <>
-      <Text as="h6" weight="medium" style={{ marginRight: 13 }}>
-        {getPanelItemName()}
-      </Text>
+      <Text className={styles.title}>{getPaneTitle()}</Text>
       <Divider vertical style={{ maxWidth: 24 }} />
-      <Button
-        appearance="subtle"
-        onClick={() => setTabToDisplay(SELECTED_TAB.PROPERTIES)}
-        className={getTabBtnStyles(SELECTED_TAB.PROPERTIES)}
-      >
-        Properties
-      </Button>
-      <Button appearance="subtle" onClick={() => setTabToDisplay(SELECTED_TAB.CODE)} className={getTabBtnStyles(SELECTED_TAB.CODE)}>
-        Code
-      </Button>
-      {panelItem === PANEL_ITEM.OUTPUT_SCHEMA_NODE && (
-        <Button appearance="subtle" onClick={() => setTabToDisplay(SELECTED_TAB.TEST)} className={getTabBtnStyles(SELECTED_TAB.TEST)}>
-          Test
-        </Button>
-      )}
+      <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => setTabToDisplay(data.value as TABS)} size="small">
+        <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
+        <Tab value={TABS.CODE}>{codeLoc}</Tab>
+        {currentNode?.type === NodeType.Output && <Tab value={TABS.TEST}>{testLoc}</Tab>}
+      </TabList>
     </>
   );
 
   return (
-    <div>
+    <div className={styles.pane}>
       <Stack horizontal verticalAlign="center" className={styles.topBar}>
-        {panelItem ? (
-          <TopBarContent />
-        ) : (
-          <Text as="h6" weight="medium" style={{ marginRight: 13 }} className={styles.noItemSelectedText}>
-            Select an element to start configuring
-          </Text>
-        )}
+        {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <Button
           appearance="subtle"
           size="medium"
-          icon={isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
+          icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
           onClick={() => setIsExpanded(!isExpanded)}
           className={styles.chevron}
           style={{ marginLeft: 'auto' }}
-          disabled={!panelItem}
+          disabled={!currentNode}
           title="Show/Hide"
           aria-label="Show/Hide"
         />
       </Stack>
 
-      {isExpanded && <div className={styles.paneContent}>{getSelectedContent()}</div>}
+      {isExpanded && <div className={styles.paneContent}>{getSelectedTab()}</div>}
     </div>
   );
 };

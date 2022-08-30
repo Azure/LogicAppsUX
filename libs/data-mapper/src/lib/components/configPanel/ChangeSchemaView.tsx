@@ -1,11 +1,9 @@
 import type { RootState } from '../../core/state/Store';
-import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
+import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
-import { ChoiceGroup, Dropdown } from '@fluentui/react';
-import { Label } from '@fluentui/react-components';
+import React, { useCallback, useRef, useState } from 'react';
 import type { FunctionComponent } from 'react';
-import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -14,10 +12,14 @@ export enum UploadSchemaTypes {
   SelectFrom = 'select-from',
 }
 
+export interface ChangeSchemaView {
+  schemaList: SchemaInfo[] | any;
+}
 export interface FileWithVsCodePath extends File {
   path?: string;
 }
 export interface SchemaFile {
+  name: string;
   path: string;
   type: SchemaTypes;
 }
@@ -25,10 +27,14 @@ export interface SchemaFile {
 export interface ChangeSchemaViewProps {
   schemaType?: SchemaTypes;
   selectedSchema?: IDropdownOption;
-  selectedSchemaFile?: IDropdownOption;
+  selectedSchemaFile?: SchemaFile;
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
+}
+
+export interface SchemaInfo {
+  name: string;
 }
 
 const uploadSchemaOptions: IChoiceGroupOption[] = [
@@ -39,24 +45,33 @@ const uploadSchemaOptions: IChoiceGroupOption[] = [
 export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   schemaType,
   selectedSchema,
+  selectedSchemaFile,
   setSelectedSchema,
   setSelectedSchemaFile,
   errorMessage,
 }) => {
-  const availableSchemasList = useSelector((state: RootState) => state.schema.availableSchemas);
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
 
-  const dataMapDropdownOptions = availableSchemasList?.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
+  const schemaList = useSelector((state: RootState) => {
+    return state.schema.availableSchemas;
+  });
+
+  const dataMapDropdownOptions = schemaList?.map((file: string) => ({ key: file, text: file } ?? []));
 
   const intl = useIntl();
+  const schemaFileInputRef = useRef<HTMLInputElement>(null);
 
   const uploadMessage = intl.formatMessage({
-    defaultMessage: 'Select a schema file to load',
-    description: 'Placeholder for dropdown to load a schema file into memory',
+    defaultMessage: 'Select a file to upload',
+    description: 'Placeholder for input to load a schema file',
   });
   const dropdownAriaLabel = intl.formatMessage({
     defaultMessage: 'Select the schema for dropdown',
     description: 'Dropdown for selecting or changing the input or output schema ',
+  });
+  const browseLoc = intl.formatMessage({
+    defaultMessage: 'Browse',
+    description: 'Browse for file',
   });
 
   let uploadSelectLabelMessage = '';
@@ -112,7 +127,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
     } else if (!schemaType) {
       console.error('Missing schemaType');
     } else {
-      setSelectedSchemaFile({ path: schemaFile.path, type: schemaType });
+      setSelectedSchemaFile({ name: schemaFile.name, path: schemaFile.path, type: schemaType });
     }
   };
 
@@ -130,10 +145,13 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
 
       {uploadType === UploadSchemaTypes.UploadNew && (
         <div>
-          <Label>
-            {uploadMessage}
-            <input id="schema-file-upload" type="file" onInput={onSelectSchemaFile} accept=".json" />
-          </Label>
+          <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept=".json" hidden />
+          <Stack horizontal>
+            <TextField value={selectedSchemaFile?.name} placeholder={uploadMessage} readOnly />
+            <PrimaryButton onClick={() => schemaFileInputRef.current?.click()} style={{ marginLeft: 8 }}>
+              {browseLoc}
+            </PrimaryButton>
+          </Stack>
         </div>
       )}
 

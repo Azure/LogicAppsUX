@@ -1,4 +1,6 @@
-import type { SchemaExtended, SchemaNodeExtended } from '../../models';
+import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended, SelectedNode } from '../../models';
+import { SchemaTypes } from '../../models';
+import type { ConnectionDictionary } from '../../models/Connection';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -11,14 +13,22 @@ export interface DataMapState {
 }
 
 export interface DataMapOperationState {
-  dataMapConnections: { [key: string]: string };
+  dataMapConnections: ConnectionDictionary;
   inputSchema?: SchemaExtended;
+  flattenedInputSchema: SchemaNodeDictionary;
   outputSchema?: SchemaExtended;
+  flattenedOutputSchema: SchemaNodeDictionary;
   currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
+  currentlySelectedNode?: SelectedNode;
 }
 
-const emptyPristineState: DataMapOperationState = { dataMapConnections: {}, currentInputNodes: [] };
+const emptyPristineState: DataMapOperationState = {
+  dataMapConnections: {},
+  currentInputNodes: [],
+  flattenedInputSchema: {},
+  flattenedOutputSchema: {},
+};
 const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
@@ -36,16 +46,27 @@ export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    setInitialInputSchema: (state, action: PayloadAction<SchemaExtended>) => {
-      state.curDataMapOperation.inputSchema = action.payload;
-      state.pristineDataMap.inputSchema = action.payload;
-    },
-
-    setInitialOutputSchema: (state, action: PayloadAction<SchemaExtended>) => {
-      state.curDataMapOperation.outputSchema = action.payload;
-      state.curDataMapOperation.currentOutputNode = action.payload.schemaTreeRoot;
-      state.pristineDataMap.outputSchema = action.payload;
-      state.pristineDataMap.currentOutputNode = action.payload.schemaTreeRoot;
+    setInitialSchema: (
+      state,
+      action: PayloadAction<{
+        schema: SchemaExtended;
+        schemaType: SchemaTypes.Input | SchemaTypes.Output;
+        flattenedSchema: SchemaNodeDictionary;
+      }>
+    ) => {
+      if (action.payload.schemaType === SchemaTypes.Input) {
+        state.curDataMapOperation.inputSchema = action.payload.schema;
+        state.curDataMapOperation.flattenedInputSchema = action.payload.flattenedSchema;
+        state.pristineDataMap.inputSchema = action.payload.schema;
+        state.pristineDataMap.flattenedInputSchema = action.payload.flattenedSchema;
+      } else {
+        state.curDataMapOperation.outputSchema = action.payload.schema;
+        state.curDataMapOperation.flattenedOutputSchema = action.payload.flattenedSchema;
+        state.curDataMapOperation.currentOutputNode = action.payload.schema.schemaTreeRoot;
+        state.pristineDataMap.outputSchema = action.payload.schema;
+        state.pristineDataMap.flattenedOutputSchema = action.payload.flattenedSchema;
+        state.pristineDataMap.currentOutputNode = action.payload.schema.schemaTreeRoot;
+      }
     },
 
     setInitialDataMap: (state) => {
@@ -128,13 +149,29 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentlySelectedNode: action.payload,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      newState.dataMapConnections[action.payload.outputNodeKey] = action.payload.value;
+      const trimmedKey = action.payload.outputNodeKey.split('-', 2)[1];
+      const trimmedValue = action.payload.value.split('-', 2)[1];
+
+      newState.dataMapConnections[trimmedKey] = {
+        value: trimmedValue,
+        reactFlowSource: action.payload.value,
+        reactFlowDestination: action.payload.outputNodeKey,
+      };
 
       doDataMapOperation(state, newState);
     },
@@ -181,14 +218,14 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
-  setInitialInputSchema,
-  setInitialOutputSchema,
+  setInitialSchema,
   setInitialDataMap,
   changeInputSchema,
   changeOutputSchema,
   setCurrentInputNodes,
   toggleInputNode,
   setCurrentOutputNode,
+  setCurrentlySelectedNode,
   makeConnection,
   undoDataMapOperation,
   redoDataMapOperation,

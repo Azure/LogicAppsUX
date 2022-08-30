@@ -149,6 +149,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
 
   return {
     type: operation.type,
+    ...optional('description', operationFromWorkflow.description),
     ...optional('kind', operation.kind),
     ...optional((manifest.properties.inputsLocation ?? ['inputs'])[0], inputs),
     ...childOperations,

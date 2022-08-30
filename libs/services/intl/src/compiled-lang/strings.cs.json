@@ -439,6 +439,12 @@
       "value": "Globální vyhledávání"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Vyberte soubor, který se má nahrát."
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -593,12 +599,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "vybrat vstup"
     }
   ],
   "4/kJ8D": [
@@ -1739,12 +1739,6 @@
       "value": "Povinné. Objekt, do kterého se přidá nová vlastnost"
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Vyberte soubor, který se má nahrát."
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -2057,6 +2051,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Výraz"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2255,6 +2255,12 @@
       "value": "(UTC-04:00) Turks a Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2291,6 +2297,12 @@
       "value": "Převede vstup na hodnotu typu JSON."
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2325,6 +2337,12 @@
       "value": "Povinný parametr. Hodnota, která se převádí do binárního formátu."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2357,6 +2375,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -2801,6 +2825,12 @@
       "value": " h"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Vyberte výstupní schéma."
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2883,12 +2913,6 @@
     {
       "type": 0,
       "value": "Žádost"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Procházet"
     }
   ],
   "XqamWZ": [
@@ -3187,12 +3211,6 @@
       "value": "Vrátí objekt, ve kterém se určitá vlastnost nastavila na poskytnutou hodnotu."
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "vybrat výstup"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3397,6 +3415,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název proměnné, jejíž hodnotu chcete získat."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Výstupní uzel schématu"
     }
   ],
   "eRvGw3": [
@@ -3773,6 +3797,18 @@
     {
       "type": 0,
       "value": "Zrušit"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Vlastnosti"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4391,6 +4427,12 @@
       "value": "Převede parametr na řetězec."
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Vyberte vstupní schéma."
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4661,6 +4703,18 @@
       "value": "Nový parametr"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Vstupní uzel schématu"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Procházet"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4769,6 +4823,12 @@
       "value": "(UTC+04:00) Abú Dhabi, Maskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Výběrem elementu spustíte konfiguraci"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4869,12 +4929,6 @@
     {
       "type": 0,
       "value": "Vrátí poslední index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Tlačítko pro správu přepínacího stavu"
     }
   ],
   "vQcQkU": [
@@ -4993,6 +5047,12 @@
       "value": "Vypršel časový limit."
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -5075,6 +5135,12 @@
     {
       "type": 0,
       "value": "Povinné. Název nové nebo stávající vlastnosti"
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Kód"
     }
   ],
   "xYyPR8": [

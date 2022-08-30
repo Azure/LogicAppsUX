@@ -1,6 +1,6 @@
 {
   "name": "microsoft-data-mapper-vscode-extension",
-  "version": "0.0.70",
+  "version": "0.0.72",
   "main": "main.js",
   "engines": {
     "vscode": "^1.64.0"
@@ -10,6 +10,10 @@
       {
         "command": "dataMapperExtension.start",
         "title": "Open Data Mapper"
+      },
+      {
+        "command": "dataMapperExtension.createDataMapFile",
+        "title": "Create new data map"
       },
       {
         "command": "dataMapperExtension.loadInputSchemaFile",
@@ -35,15 +39,18 @@
       "dataMapperExtension.dataMapperMenu": [
         {
           "command": "dataMapperExtension.loadInputSchemaFile",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "resourceExtname in dataMapperExtension.supportedSchemaFileExts"
         },
         {
           "command": "dataMapperExtension.loadOutputSchemaFile",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "resourceExtname in dataMapperExtension.supportedSchemaFileExts"
         },
         {
           "command": "dataMapperExtension.loadDataMapFile",
-          "group": "navigation"
+          "group": "navigation",
+          "when": "resourceExtname in dataMapperExtension.supportedDataMapFileExts"
         }
       ]
     },

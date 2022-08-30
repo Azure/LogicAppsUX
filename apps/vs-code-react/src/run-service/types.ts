@@ -178,6 +178,7 @@ export interface WorkflowsList {
 
 export interface SelectedWorkflowsList extends WorkflowsList {
   selected: boolean;
+  rendered: boolean;
 }
 
 export interface OutletContext {

@@ -16,5 +16,6 @@
     "vs-code-designer": "apps/vs-code-designer",
     "vs-code-designer-react": "apps/vs-code-designer-react",
     "vs-code-react": "apps/vs-code-react"
-  }
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

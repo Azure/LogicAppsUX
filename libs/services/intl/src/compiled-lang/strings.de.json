@@ -405,6 +405,12 @@
       "value": "Globale Suche"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Datei für Upload auswählen"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -559,12 +565,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "Eingabe auswählen"
     }
   ],
   "4/kJ8D": [
@@ -1661,12 +1661,6 @@
       "value": "Erforderlich. Das Objekt, dem eine neue Eigenschaft hinzugefügt werden soll."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Datei für Upload auswählen"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1953,6 +1947,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Ausdruck"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2151,6 +2151,12 @@
       "value": "(UTC-04:00) Turks- und Caicosinseln"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2185,6 +2191,12 @@
     {
       "type": 0,
       "value": "Eingabe in Wert vom Typ JSON konvertieren"
+    }
+  ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
     }
   ],
   "QQYzHC": [
@@ -2225,6 +2237,12 @@
       "value": "Erforderlich. Der Wert, der in einen Binärwert konvertiert wird."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2257,6 +2275,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -2679,6 +2703,12 @@
       "value": " Stunden"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Ausgabeschema auswählen"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2761,12 +2791,6 @@
     {
       "type": 0,
       "value": "Anfordern"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Durchsuchen"
     }
   ],
   "XqamWZ": [
@@ -3069,12 +3093,6 @@
       "value": "Gibt ein Objekt zurück, für das eine Eigenschaft auf den angegebenen Wert festgelegt wurde."
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "Ausgabe auswählen"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3279,6 +3297,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Ausgabeschemaknoten"
     }
   ],
   "eRvGw3": [
@@ -3629,6 +3653,18 @@
     {
       "type": 0,
       "value": "Abbrechen"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Eigenschaften"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4251,6 +4287,12 @@
       "value": "Parameter in Zeichenfolge konvertieren"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Eingabeschema auswählen"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4499,6 +4541,18 @@
       "value": "Neuer Parameter"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Eingabeschemaknoten"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Durchsuchen"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4607,6 +4661,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Maskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Wählen Sie ein Element aus, um mit der Konfiguration zu beginnen."
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4707,12 +4767,6 @@
     {
       "type": 0,
       "value": "Gibt den letzten Index eines Werts innerhalb einer Zeichenfolge zurück (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Schaltfläche zum Verwalten des Umschaltzustands"
     }
   ],
   "vQcQkU": [
@@ -4831,6 +4885,12 @@
       "value": "Timeout"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4913,6 +4973,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der neuen oder vorhandenen Eigenschaft."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

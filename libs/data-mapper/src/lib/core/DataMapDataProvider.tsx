@@ -1,8 +1,9 @@
 import type { DataMap } from '../models/DataMap';
 import type { Schema } from '../models/Schema';
-import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
+import { SchemaTypes } from '../models/Schema';
+import { convertSchemaToSchemaExtended, flattenSchema } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
-import { setInitialInputSchema, setInitialOutputSchema } from './state/DataMapSlice';
+import { setInitialSchema } from './state/DataMapSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
 import React, { useContext, useEffect } from 'react';
@@ -12,7 +13,7 @@ export interface DataMapDataProviderProps {
   dataMap?: DataMap;
   inputSchema?: Schema;
   outputSchema?: Schema;
-  availableSchemas?: Schema[];
+  availableSchemas?: string[];
   children?: React.ReactNode;
 }
 
@@ -21,13 +22,27 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ inputSchema, ou
 
   useEffect(() => {
     if (inputSchema) {
-      dispatch(setInitialInputSchema(convertSchemaToSchemaExtended(inputSchema)));
+      const extendedSchema = convertSchemaToSchemaExtended(inputSchema);
+      dispatch(
+        setInitialSchema({
+          schema: convertSchemaToSchemaExtended(inputSchema),
+          schemaType: SchemaTypes.Input,
+          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Input),
+        })
+      );
     }
   }, [dispatch, inputSchema]);
 
   useEffect(() => {
     if (outputSchema) {
-      dispatch(setInitialOutputSchema(convertSchemaToSchemaExtended(outputSchema)));
+      const extendedSchema = convertSchemaToSchemaExtended(outputSchema);
+      dispatch(
+        setInitialSchema({
+          schema: extendedSchema,
+          schemaType: SchemaTypes.Output,
+          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Output),
+        })
+      );
     }
   }, [dispatch, outputSchema]);
 

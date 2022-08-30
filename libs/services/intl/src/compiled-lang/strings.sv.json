@@ -405,6 +405,12 @@
       "value": "Global sökning"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Välj en fil att ladda upp"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -559,12 +565,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "välj indata"
     }
   ],
   "4/kJ8D": [
@@ -1661,12 +1661,6 @@
       "value": "Obligatoriskt. Det objekt till vilket en ny egenskap ska läggas till."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Välj en fil att ladda upp"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1953,6 +1947,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Uttryck"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2151,6 +2151,12 @@
       "value": "(UTC-04:00) Turks- och Caicosöarna"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2185,6 +2191,12 @@
     {
       "type": 0,
       "value": "Konverterar indata till ett värde av JSON-typ"
+    }
+  ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
     }
   ],
   "QQYzHC": [
@@ -2225,6 +2237,12 @@
       "value": "Krävs. Värdet som konverteras till binärt."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2257,6 +2275,12 @@
     {
       "type": 0,
       "value": "tim"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -2679,6 +2703,12 @@
       "value": " timmar"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Välj ett utdataschema"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2761,12 +2791,6 @@
     {
       "type": 0,
       "value": "Förfrågan"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Bläddra"
     }
   ],
   "XqamWZ": [
@@ -3065,12 +3089,6 @@
       "value": "Returnerar ett objekt med en egenskap som är inställd på det angivna värdet"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "välj utdata"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3275,6 +3293,12 @@
     {
       "type": 0,
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Utdataschemanod"
     }
   ],
   "eRvGw3": [
@@ -3629,6 +3653,18 @@
     {
       "type": 0,
       "value": "Avbryt"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Egenskaper"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4247,6 +4283,12 @@
       "value": "Konverterar parametern till en sträng"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Välj ett indataschema"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4495,6 +4537,18 @@
       "value": "Ny parameter"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Indataschemanod"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Bläddra"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4603,6 +4657,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Välj ett element för att börja konfigurera"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4703,12 +4763,6 @@
     {
       "type": 0,
       "value": "Returnerar det sista indexet för ett värde i en sträng (skiftlägesokänslig, invariant kultur)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Knapp för att hantera växlingstillstånd"
     }
   ],
   "vQcQkU": [
@@ -4827,6 +4881,12 @@
       "value": "Tidsgränsen överskreds"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4909,6 +4969,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den nya eller befintliga egenskapens namn."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Kod"
     }
   ],
   "xYyPR8": [

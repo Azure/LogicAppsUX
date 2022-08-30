@@ -405,6 +405,12 @@
       "value": "Genel arama"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Karşıya yüklenecek bir dosya seçin"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -559,12 +565,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "giriş seçin"
     }
   ],
   "4/kJ8D": [
@@ -1653,12 +1653,6 @@
       "value": "Gerekli. Yeni özelliğin ekleneceği nesne."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Karşıya yüklenecek bir dosya seçin"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1937,6 +1931,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "İfade"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2135,6 +2135,12 @@
       "value": "(UTC-04:00) Turks ve Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2171,6 +2177,12 @@
       "value": "Girişi JSON türü değere dönüştürür"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -2205,6 +2217,12 @@
       "value": "Gerekli. İkiliye dönüştürülen değer."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2237,6 +2255,12 @@
     {
       "type": 0,
       "value": " sa"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -2659,6 +2683,12 @@
       "value": " saat"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Çıkış şeması seçin"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2741,12 +2771,6 @@
     {
       "type": 0,
       "value": "İstek"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Göz at"
     }
   ],
   "XqamWZ": [
@@ -3045,12 +3069,6 @@
       "value": "Bir özelliğin sağlanan değere ayarlandığı nesneyi döndürür"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "çıkış seçin"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3251,6 +3269,12 @@
     {
       "type": 0,
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Çıkış şeması düğümü"
     }
   ],
   "eRvGw3": [
@@ -3593,6 +3617,18 @@
     {
       "type": 0,
       "value": "İptal"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Özellikler"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4207,6 +4243,12 @@
       "value": "Parametreyi bir dizeye dönüştürür"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Giriş şeması seçin"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4455,6 +4497,18 @@
       "value": "Yeni parametre"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Giriş şeması düğümü"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Göz at"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4563,6 +4617,12 @@
       "value": "(UTC+04:00) Abu Dabi, Muskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Yapılandırmaya başlamak için bir öğe seçin"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4663,12 +4723,6 @@
     {
       "type": 0,
       "value": "Bir dize içindeki bir değerin son dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Geçiş durumunu yönetmeye yarayan düğme"
     }
   ],
   "vQcQkU": [
@@ -4783,6 +4837,12 @@
       "value": "Zaman Aşımı Oluştu"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4865,6 +4925,12 @@
     {
       "type": 0,
       "value": "Gerekli. Yeni veya mevcut özelliğin adı."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Kod"
     }
   ],
   "xYyPR8": [

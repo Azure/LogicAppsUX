@@ -299,6 +299,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -403,6 +414,12 @@
     {
       "type": 0,
       "value": "Pesquisa global"
+    }
+  ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Selecione um arquivo a ser carregado"
     }
   ],
   "2Cdt4p": [
@@ -559,12 +576,6 @@
     {
       "type": 0,
       "value": "3"
-    }
-  ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "selecionar entrada"
     }
   ],
   "4/kJ8D": [
@@ -1029,6 +1040,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1337,6 +1359,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1653,12 +1686,6 @@
       "value": "Necessário. O objeto ao qual uma nova propriedade será adicionada."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Selecione um arquivo a ser carregado"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1680,6 +1707,17 @@
             {
               "type": 0,
               "value": "0 Casos"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
             }
           ]
         },
@@ -1937,6 +1975,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expressão"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2135,6 +2179,12 @@
       "value": "(UTC-04:00) Ilhas Turcas e Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2171,6 +2221,12 @@
       "value": "Converter a entrada em um valor do tipo JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2203,6 +2259,12 @@
     {
       "type": 0,
       "value": "Necessário. O valor que é convertido em binário."
+    }
+  ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
     }
   ],
   "QknZQ1": [
@@ -2239,6 +2301,12 @@
       "value": "h"
     }
   ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "RX2Shm": [
     {
       "type": 0,
@@ -2255,6 +2323,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -2659,6 +2738,12 @@
       "value": " horas"
     }
   ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Selecionar um esquema de saída"
+    }
+  ],
   "XCunbR": [
     {
       "type": 0,
@@ -2741,12 +2826,6 @@
     {
       "type": 0,
       "value": "Solicitação"
-    }
-  ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Procurar"
     }
   ],
   "XqamWZ": [
@@ -3045,12 +3124,6 @@
       "value": "Retorna um objeto com uma propriedade definida com o valor fornecido"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "selecionar saída"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3255,6 +3328,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O nome da variável cujo valor você deseja."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Nó de esquema de saída"
     }
   ],
   "eRvGw3": [
@@ -3475,6 +3554,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3597,6 +3687,18 @@
     {
       "type": 0,
       "value": "Cancelar"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Propriedades"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Testar"
     }
   ],
   "iq+tiv": [
@@ -4211,6 +4313,12 @@
       "value": "Converter o parâmetro em uma cadeia de caracteres"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Selecionar um esquema de entrada"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4263,6 +4371,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -4459,6 +4578,18 @@
       "value": "Novo parâmetro"
     }
   ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Nó do esquema de entrada"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Procurar"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -4567,6 +4698,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Mascate"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Selecione um elemento para iniciar a configuração"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4667,12 +4804,6 @@
     {
       "type": 0,
       "value": "Retorna o último índice de um valor em uma cadeia de caracteres (não diferencia maiúsculas de minúsculas, cultura invariável)"
-    }
-  ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Botão para gerenciar o estado da alternância"
     }
   ],
   "vQcQkU": [
@@ -4791,6 +4922,12 @@
       "value": "Tempo Limite Expirado"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4873,6 +5010,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da propriedade nova ou existente."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Código"
     }
   ],
   "xYyPR8": [
