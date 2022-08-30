@@ -1,18 +1,23 @@
-import { schemasPath, webviewTitle } from './extensionConfig';
+import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionConfig';
 import { promises as fs } from 'fs';
 import { join } from 'path';
-import { Uri, ViewColumn, window } from 'vscode';
+import * as path from 'path';
+import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, Disposable, ExtensionContext } from 'vscode';
-import * as vscode from 'vscode';
 
 type SendingMessageTypes =
   | { command: 'loadInputSchema' | 'loadOutputSchema'; data: any }
   | { command: 'loadDataMap'; data: any }
   | { command: 'showAvailableSchemas'; data: string[] };
-type ReceivingMessageTypes = {
-  command: 'readSelectedSchemaFile' | 'readLocalFileOptions';
-  data: { path: string; type: 'input' | 'output' };
-};
+type ReceivingMessageTypes =
+  | {
+      command: 'readSelectedSchemaFile' | 'readLocalFileOptions';
+      data: { path: string; type: 'input' | 'output' };
+    }
+  | {
+      command: 'saveDataMapDefinition';
+      data: string;
+    };
 
 export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
@@ -100,11 +105,16 @@ export default class DataMapperPanel {
         break;
       }
       case 'readLocalFileOptions': {
-        const folderPath = vscode.workspace.workspaceFolders[0].uri.path; // danielle to find out how multi folder workspaces work
+        const folderPath = workspace.workspaceFolders[0].uri.path; // danielle to find out how multi folder workspaces work
         console.log(folderPath);
         fs.readdir(folderPath + schemasPath).then((result) => {
           DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'showAvailableSchemas', data: result });
         });
+        break;
+      }
+      case 'saveDataMapDefinition': {
+        const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, 'TestMapDefinitionOutput.yml');
+        fs.writeFile(filePath, msg.data, 'utf8');
       }
     }
   }

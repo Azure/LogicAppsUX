@@ -22,11 +22,11 @@ export const App = (): JSX.Element => {
   const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
   const availableSchemas = useSelector((state: RootState) => state.schemaDataLoader.availableSchemas);
 
-  const saveStateCall = (dataMapDefinition: string) => {
-    console.log(dataMapDefinition);
-  };
-
   InitSchemaSelectionService({ baseUrl: 'http://localhost:7071', resourceUrl: '', accessToken: '' });
+
+  const saveStateCall = (dataMapDefinition: string) => {
+    saveDataMapDefinition(dataMapDefinition);
+  };
 
   const setSelectedSchemaFile = (selectedSchemaFile: SchemaFile) => {
     vscode.postMessage({
@@ -38,6 +38,13 @@ export const App = (): JSX.Element => {
   const readLocalFileOptions = () => {
     vscode.postMessage({
       command: 'readLocalFileOptions',
+    });
+  };
+
+  const saveDataMapDefinition = (dataMapDefinition: string) => {
+    vscode.postMessage({
+      command: 'saveDataMapDefinition',
+      data: dataMapDefinition,
     });
   };
 

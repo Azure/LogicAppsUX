@@ -1,11 +1,10 @@
 import DataMapperPanel from '../DataMapperPanel';
 import { dataMapDefinitionsPath } from '../extensionConfig';
 import { promises as fs } from 'fs';
+import * as yaml from 'js-yaml';
+import * as path from 'path';
 import { commands, window, workspace } from 'vscode';
 import type { ExtensionContext, Uri } from 'vscode';
-
-import path = require('path');
-import yaml = require('js-yaml');
 
 export const registerCommands = (context: ExtensionContext) => {
   context.subscriptions.push(commands.registerCommand('azureDataMapper.openDataMapper', () => openDataMapperCmd(context)));
