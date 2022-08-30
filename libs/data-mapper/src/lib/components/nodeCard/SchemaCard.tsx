@@ -97,40 +97,6 @@ const useStyles = makeStyles({
   }),
 });
 
-// export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ data }) => {
-//   return (
-//     <div>
-//       <SchemaCardWrapper
-//         label={data.label}
-//         schemaType={data.schemaType}
-//         displayHandle={data.displayHandle}
-//         isLeaf={data?.isLeaf}
-//         onClick={data?.onClick}
-//         disabled={data?.disabled}
-//         iconName={'12pointstar'}
-//         error={data.error}
-//       />
-//     </div>
-//   );
-// };
-
-// export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ label, schemaType, isLeaf, onClick, disabled, error }) => {
-//   const classes = useStyles();
-//   const sharedStyles = getStylesForSharedState();
-//   const mergedButtonClasses = mergeClasses(sharedStyles.root, classes.root);
-
-//   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
-
-//   const errorClass = mergeClasses(mergedButtonClasses, sharedStyles.error);
-
-//   const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
-//   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
-
-//   return (
-//     <div className={disabled ? mergeClasses(classes.container, classes.disabled) : classes.container}>
-//       {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.badge}></Badge>}
-//       <Button className={error ? errorClass : mergedButtonClasses} disabled={!!disabled} onClick={onClick}>
-//         <Icon className={classes.cardIcon} iconName="Diamond" />
 const cardInputText = makeStyles({
   cardText: {
     width: '136px',
