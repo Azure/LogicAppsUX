@@ -299,6 +299,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1029,6 +1040,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1337,6 +1359,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1682,6 +1715,17 @@
             {
               "type": 0,
               "value": "0 Casos"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
             }
           ]
         },
@@ -2151,6 +2195,12 @@
       "value": "(UTC-04:00) Ilhas Turcas e Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2187,6 +2237,12 @@
       "value": "Converter a entrada num valor de tipo JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2219,6 +2275,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O valor que é convertido num binário."
+    }
+  ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
     }
   ],
   "QknZQ1": [
@@ -2255,6 +2317,12 @@
       "value": "h"
     }
   ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "RX2Shm": [
     {
       "type": 0,
@@ -2271,6 +2339,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3499,6 +3578,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -4321,6 +4411,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -4859,6 +4960,12 @@
     {
       "type": 0,
       "value": "Tempo Limite Excedido"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
     }
   ],
   "wQcEXt": [

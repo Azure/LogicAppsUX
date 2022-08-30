@@ -2091,6 +2091,12 @@
       "value": "(UTC-04:00) 土克斯及開科斯群島"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2127,6 +2133,12 @@
       "value": "將輸入轉換為 JSON 類型值"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -2161,6 +2173,12 @@
       "value": "必要。轉換成二進位的值。"
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2193,6 +2211,12 @@
     {
       "type": 0,
       "value": " 小時"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -4746,6 +4770,12 @@
     {
       "type": 0,
       "value": "逾時"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
     }
   ],
   "wQcEXt": [
