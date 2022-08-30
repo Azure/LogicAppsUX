@@ -1,8 +1,8 @@
 import { useLayout } from '../core/graphlayout';
 import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
 import { useAllOperations, useAllConnectors } from '../core/queries/browse';
-import { buildEdgeIdsBySource, updateNodeSizes } from '../core/state/workflow/workflowSlice';
-import type { RootState } from '../core/store';
+import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
+import type { AppDispatch, RootState } from '../core/store';
 import Controls from './Controls';
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
@@ -11,14 +11,13 @@ import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
 import { ButtonEdge } from './connections/edge';
-// import { OnlyEdge } from './connections/onlyEdge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
 import { useThrottledEffect } from '@microsoft-logic-apps/utils';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
+import ReactFlow, { ReactFlowProvider, useNodes, useReactFlow, useStore } from 'react-flow-renderer';
 import type { NodeChange } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -44,10 +43,45 @@ const edgeTypes = {
   // ONLY_EDGE: undefined,
   HIDDEN_EDGE: HiddenEdge,
 };
+export const CanvasFinder = () => {
+  const focusNode = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
+  const [nodes] = useLayout();
+  const { setCenter, getZoom } = useReactFlow();
+  const { height } = useStore();
+  const [firstLoad, setFirstLoad] = useState(true);
+  const nodeData = useNodes().find((x) => x.id === focusNode);
+  const dispatch = useDispatch<AppDispatch>();
+  const handleTransform = useCallback(() => {
+    if (!focusNode) {
+      return;
+    }
+    const node = nodes.find((x) => x.id === focusNode);
+    if ((!node?.position?.x && !node?.position?.y) || !nodeData?.width) {
+      return;
+    }
+    if (firstLoad) {
+      setCenter((node.position?.x ?? 0) + nodeData.width / 2, height / 2 - 50, { zoom: 1 });
+      setFirstLoad(false);
+    } else {
+      setCenter((node.position?.x ?? 0) + nodeData.width, node.position?.y ?? 0, {
+        zoom: getZoom(),
+      });
+    }
+    dispatch(clearFocusNode());
+  }, [dispatch, firstLoad, focusNode, getZoom, height, nodeData?.width, nodes, setCenter]);
+
+  useEffect(() => {
+    handleTransform();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes, focusNode]);
+  return null;
+};
 
 export const Designer = () => {
   const [nodes, edges] = useLayout();
   const dispatch = useDispatch();
+  useAllOperations();
+  useAllConnectors();
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -58,10 +92,6 @@ export const Designer = () => {
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
-
-  useAllOperations();
-  useAllConnectors();
-
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="msla-designer-canvas msla-panel-mode">
@@ -88,6 +118,7 @@ export const Designer = () => {
             <Minimap />
             <Controls />
           </div>
+          <CanvasFinder />
         </ReactFlowProvider>
       </div>
     </DndProvider>
