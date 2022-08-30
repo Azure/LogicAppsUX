@@ -1,6 +1,6 @@
 import DataMapperPanel from '../DataMapperPanel';
 import { promises as fs } from 'fs';
-import { commands, workspace } from 'vscode';
+import { commands, window, workspace } from 'vscode';
 import type { ExtensionContext, Uri } from 'vscode';
 
 import path = require('path');
@@ -27,10 +27,17 @@ const createNewDataMapCmd = async () => {
     },
   });
 
-  const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, 'maps', 'NewDataMap.yml');
-  fs.writeFile(filePath, newDataMapTemplate, 'utf8');
+  // TODO: Data map name validation
+  window.showInputBox({ prompt: 'Data Map name: ' }).then((newDatamapName) => {
+    if (!newDatamapName) {
+      return;
+    }
 
-  DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: newDataMapTemplate });
+    const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, 'maps', `${newDatamapName}.yml`);
+    fs.writeFile(filePath, newDataMapTemplate, 'utf8');
+
+    DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: newDataMapTemplate });
+  });
 };
 
 const loadInputSchemaFileCmd = async (uri: Uri) => {
