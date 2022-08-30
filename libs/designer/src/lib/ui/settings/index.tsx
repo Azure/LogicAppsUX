@@ -2,32 +2,26 @@ import constants from '../../common/constants';
 import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initialize';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
-import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
-import type { OperationMetadataState } from '../../core/state/operation/operationMetadataSlice';
+import { updateNodeSettings, type OperationMetadataState } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { useOperationManifest } from '../../core/state/selectors/actionMetadataSelector';
-import { setExpandedSections, ValidationErrorKeys } from '../../core/state/settingSlice';
-import type { ValidationError } from '../../core/state/settingSlice';
+import { setExpandedSections, ValidationErrorKeys, type ValidationError } from '../../core/state/settingSlice';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
-import { DataHandling } from './sections/datahandling';
-import type { DataHandlingSectionProps } from './sections/datahandling';
-import { General } from './sections/general';
-import type { GeneralSectionProps } from './sections/general';
-import { Networking } from './sections/networking';
-import type { NetworkingSectionProps } from './sections/networking';
+import { DataHandling, type DataHandlingSectionProps } from './sections/datahandling';
+import { General, type GeneralSectionProps } from './sections/general';
+import { Networking, type NetworkingSectionProps } from './sections/networking';
 import { RunAfter } from './sections/runafter';
-import { Security } from './sections/security';
-import type { SecuritySectionProps } from './sections/security';
-import { Tracking } from './sections/tracking';
-import type { TrackingSectionProps } from './sections/tracking';
-import { validate } from './validation/validation';
+import { Security, type SecuritySectionProps } from './sections/security';
+import { Tracking, type TrackingSectionProps } from './sections/tracking';
+import { useValidate } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { isNullOrUndefined, equals, isObject } from '@microsoft-logic-apps/utils';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { useEffect, useState } from 'react';
+import { isNullOrUndefined, equals, isObject, type OperationManifest } from '@microsoft-logic-apps/utils';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+
+// import { useDebouncedEffect } from '@react-hookz/web';
 
 export type ToggleHandler = (checked: boolean) => void;
 export type TextChangeHandler = (newVal: string) => void;
@@ -57,6 +51,7 @@ export const SettingsPanel = (): JSX.Element => {
 };
 
 function GeneralSettings(): JSX.Element | null {
+  const validate = useValidate();
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const rootState: RootState = useSelector((state: RootState) => state);
   const dispatch = useDispatch();
@@ -79,7 +74,7 @@ function GeneralSettings(): JSX.Element | null {
 
   useEffect(() => {
     setValidationErrors(validate('operations', operations) ?? []);
-  }, [nodeId, operations]);
+  }, [operations, nodeId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onConcurrencyToggle = (checked: boolean): void => {
     dispatch(
@@ -251,6 +246,7 @@ function GeneralSettings(): JSX.Element | null {
 
 function TrackingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
+  const validate = useValidate();
   const [validationErrors, setValidationError] = useState<ValidationError[]>([]);
   let rootState: RootState;
   const expandedSections = useSelector((state: RootState) => {
@@ -421,6 +417,7 @@ function DataHandlingSettings(): JSX.Element | null {
 function NetworkingSettings(): JSX.Element | null {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const dispatch = useDispatch();
+  const validate = useValidate();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
     nodeId = useSelectedNodeId(),
     {
