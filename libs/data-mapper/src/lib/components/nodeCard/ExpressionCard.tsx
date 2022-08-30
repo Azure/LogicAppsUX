@@ -15,13 +15,10 @@ import {
 import type { FunctionComponent } from 'react';
 import type { NodeProps } from 'react-flow-renderer';
 
-export interface ExpressionCardProps {
-  data: ExpressionCardWrapperProps;
-}
-
-export type ExpressionCardWrapperProps = {
+export type ExpressionCardProps = {
   expressionName: string;
   brandColor: string;
+  iconName: string;
   onClick: () => void;
 } & CardProps;
 
