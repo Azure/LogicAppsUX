@@ -184,7 +184,6 @@ export const workflowSlice = createSlice({
       state.graph = action.payload.graph;
       state.operations = action.payload.actionData;
       state.nodesMetadata = action.payload.nodesMetadata;
-      console.log(action.payload.actionData);
       state.focusedCanvasNodeId = Object.entries(action?.payload?.actionData ?? {}).find(
         ([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter
       )?.[0];
