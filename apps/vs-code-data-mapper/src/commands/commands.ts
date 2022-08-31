@@ -61,27 +61,28 @@ const loadOutputSchemaFileCmd = async (uri: Uri) => {
 const loadDataMapFileCmd = async (uri: Uri) => {
   commands.executeCommand('azureDataMapper.openDataMapper');
 
-  const dataMap = yaml.load(await fs.readFile(uri.fsPath, 'utf-8')) as { srcSchemaName: string; dstSchemaName: string; mappings: any };
-  DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: dataMap });
+  const dataMap = yaml.load(await fs.readFile(uri.fsPath, 'utf-8')) as { $sourceSchema: string; $targetSchema: string; [key: string]: any };
 
   // Attempt to load schema files if specified
   const schemasFolder = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath);
-  const srcSchemaPath = path.join(schemasFolder, dataMap.srcSchemaName);
-  const dstSchemaPath = path.join(schemasFolder, dataMap.dstSchemaName);
+  const srcSchemaPath = path.join(schemasFolder, dataMap.$sourceSchema);
+  const dstSchemaPath = path.join(schemasFolder, dataMap.$targetSchema);
 
-  if (dataMap.srcSchemaName && fileExists(srcSchemaPath)) {
+  if (fileExists(srcSchemaPath)) {
     DataMapperPanel.currentPanel.sendMsgToWebview({
       command: 'loadInputSchema',
-      data: JSON.parse(await fs.readFile(srcSchemaPath, 'utf-8')),
+      data: JSON.parse(await fs.readFile(srcSchemaPath, 'utf-8')), // TODO: translate from .xsd when hooked up to backend
     });
   }
 
-  if (dataMap.dstSchemaName && fileExists(dstSchemaPath)) {
+  if (fileExists(dstSchemaPath)) {
     DataMapperPanel.currentPanel.sendMsgToWebview({
       command: 'loadOutputSchema',
-      data: JSON.parse(await fs.readFile(dstSchemaPath, 'utf-8')),
+      data: JSON.parse(await fs.readFile(dstSchemaPath, 'utf-8')), // TODO: translate from .xsd when hooked up to backend
     });
   }
+
+  DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: dataMap });
 
   // Fun way to get filename - very heavily assumes file is only .yml
   DataMapperPanel.currentDataMapName = uri.fsPath.split('\\').pop().split('/').pop().replace('.yml', '');
