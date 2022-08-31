@@ -6,7 +6,7 @@ import React from 'react';
 
 export default {
   component: ButtonContainer,
-  title: 'Data Mapper/ButtonContainer',
+  title: 'Data Mapper/Button Groups/Button Container',
 } as ComponentMeta<typeof ButtonContainer>;
 
 export const Standard: ComponentStory<typeof ButtonContainer> = (args: ButtonContainerProps) => <ButtonContainer {...args} />;
