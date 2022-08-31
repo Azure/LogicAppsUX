@@ -101,7 +101,7 @@ export default class DataMapperPanel {
           }
 
           // Check if in workspace/Artifacts/Schemas, and if not, create it
-          const schemaFileName = msg.data.path.split('\\').pop().split('/').pop(); // Ex: inpSchema.xsd
+          const schemaFileName = path.basename(msg.data.path); // Ex: inpSchema.xsd
           const expectedSchemaPath = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath, schemaFileName);
 
           if (!fileExists(expectedSchemaPath)) {

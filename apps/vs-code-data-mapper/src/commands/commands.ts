@@ -84,6 +84,5 @@ const loadDataMapFileCmd = async (uri: Uri) => {
 
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: dataMap });
 
-  // Fun way to get filename - very heavily assumes file is only .yml
-  DataMapperPanel.currentDataMapName = uri.fsPath.split('\\').pop().split('/').pop().replace('.yml', '');
+  DataMapperPanel.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
 };
