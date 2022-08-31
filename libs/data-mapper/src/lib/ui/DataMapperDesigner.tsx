@@ -2,6 +2,8 @@ import { checkerboardBackgroundImage } from '../Constants';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
+import type { ButtonPivotProps } from '../components/buttonPivot/ButtonPivot';
+import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
@@ -28,6 +30,7 @@ import { NodeType, SchemaTypes } from '../models';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import './ReactFlowStyleOverrides.css';
+import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -44,7 +47,7 @@ import {
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
@@ -76,8 +79,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
-  const [displayToolbox, { toggle: toggleDisplayToolbox, setFalse: setDisplayToolboxFalse }] = useBoolean(false);
-  const [displayExpressions, { toggle: toggleDisplayExpressions, setFalse: setDisplayExpressionsFalse }] = useBoolean(false);
+  const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
   const [nodes, edges] = useLayout();
 
   const dataMapDefinition = useMemo((): string => {
@@ -113,6 +115,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
   const onPaneClick = (_event: ReactMouseEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
     dispatch(setCurrentlySelectedNode(undefined));
+    setDisplayToolboxItem(undefined);
   };
 
   const onNodeSingleClick = (node: ReactFlowNode): void => {
@@ -179,37 +182,39 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
     return () => clearTimeout(clickTimerRef.current as unknown as number); // Make sure we clean up the timeout
   }, []);
 
-  const toolboxButtonContainerProps: ButtonContainerProps = {
+  const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
+    if (data.value === displayToolboxItem) {
+      setDisplayToolboxItem(undefined);
+    } else {
+      setDisplayToolboxItem(data.value as string);
+    }
+  };
+
+  const toolboxButtonPivotProps: ButtonPivotProps = {
     buttons: [
       {
         tooltip: toolboxLoc,
         regularIcon: CubeTree20Regular,
         filledIcon: CubeTree20Filled,
-        filled: displayToolbox,
-        onClick: () => {
-          setDisplayExpressionsFalse();
-          toggleDisplayToolbox();
-        },
+        value: 'inputSchemaTreePanel',
       },
       {
         tooltip: functionLoc,
         regularIcon: MathFormula20Regular,
         filledIcon: MathFormula20Filled,
-        filled: displayExpressions,
-        onClick: () => {
-          setDisplayToolboxFalse();
-          toggleDisplayExpressions();
-        },
+        value: 'expressionsPanel',
       },
     ],
     horizontal: true,
     xPos: '16px',
     yPos: '16px',
+    selectedValue: displayToolboxItem,
+    onTabSelect: onTabSelect,
   };
 
   const toolboxPanelProps: FloatingPanelProps = {
     xPos: '16px',
-    yPos: '56px',
+    yPos: '76px',
     width: '250px',
     minHeight: '300px',
     maxHeight: '450px',
@@ -339,8 +344,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
-            <ButtonContainer {...toolboxButtonContainerProps} />
-            {displayToolbox ? (
+            <ButtonPivot {...toolboxButtonPivotProps} />
+            {displayToolboxItem === 'inputSchemaTreePanel' && (
               <FloatingPanel {...toolboxPanelProps}>
                 <SchemaTree
                   schema={inputSchema}
@@ -348,7 +353,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
                   onLeafNodeClick={onToolboxLeafItemClick}
                 />
               </FloatingPanel>
-            ) : null}
+            )}
+            {displayToolboxItem === 'expressionsPanel' && (
+              <FloatingPanel {...toolboxPanelProps}>
+                <span>Test</span>
+              </FloatingPanel>
+            )}
             <div className="msla-designer-canvas msla-panel-mode">
               <ReactFlowProvider>
                 <ReactFlowWrapper />
