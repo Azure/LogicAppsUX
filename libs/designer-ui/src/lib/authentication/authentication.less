@@ -1,279 +1,38 @@
-@import (reference) '../card/parameters/parameters.less';
-@import (reference) '../themes.less';
-
-.msla-input-parameter-item-deletable {
-  .msla-authentication-editor {
-    .msla-authentication-default-view-mode {
-      .msla-authentication-default-view-mode-text-editor {
-        width: calc(@card-max-width - 205px);
-        margin-left: -8px;
-      }
-
-      .msla-authentication-property-group {
-        .msla-authentication-property {
-          .msla-authentication-dropdown {
-            width: calc(@card-max-width - 183px);
-            margin-left: -7px;
-          }
-        }
-      }
-    }
-
-    .msla-authentication-code-view-mode {
-      .msla-authentication-code-view-mode-property {
-        width: calc(@card-max-width - 46px);
-
-        .msla-authentication-code-view-mode-text-editor {
-          width: calc(@card-max-width - 69px);
-        }
-      }
-    }
-  }
-}
-
-.msla-input-parameter-item-deletable {
+.msla-authentication-editor-container {
+  border: 1px dashed @defaultBorderColor;
   display: flex;
+  padding-bottom: 10px;
 }
 
-.msla-authentication-editor {
+.msla-authentication-editor-expanded-container {
+  width: 100%;
+  padding: 10px;
+}
+
+.msla-authentication-editor-basic-container,
+.msla-authentication-editor-certificate-container,
+.msla-authentication-editor-raw-container,
+.msla-authentication-editor-MSI-container,
+.msla-authentication-editor-OAuth-container {
+  padding-bottom: 10px;
+}
+
+.msla-authentication-editor-expanded-editor-container {
+  width: 85%;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.msla-authentication-editor-expanded-item-label {
+  margin-top: 20px;
+}
+
+.msla-authentication-editor-expanded-item {
   display: flex;
-
-  .msla-authentication-mode-toggle {
-    align-self: flex-start;
-    display: inline-block;
-    margin-left: -25px;
-
-    &:disabled {
-      opacity: 0.5;
-      cursor: default;
-    }
-
-    .msla-authentication-mode-toggle-icon {
-      height: 14px;
-      width: 14px;
-    }
-  }
-
-  .msla-authentication-default-view-mode {
-    display: flex;
-
-    .msla-authentication-label-and-property-group {
-      flex-direction: column;
-    }
-
-    .msla-authentication-default-view-mode-text-editor {
-      border: 1px solid @defaultBorderColor;
-      display: inline-block;
-      width: calc(@card-max-width - 185px);
-      margin-left: -9px;
-    }
-
-    .msla-authentication-property-group {
-      padding: 5px 5px;
-      border: 1px dashed @defaultBorderColor;
-      margin-top: 6px;
-
-      .msla-authentication-property {
-        display: flex;
-        flex-direction: row;
-        margin: 0 0 3px 0;
-
-        .msla-token-recommendation-v2 {
-          padding: 0;
-        }
-
-        .msla-input-parameter-error.msla-label {
-          display: block;
-          margin-left: -9px;
-        }
-
-        .msla-authentication-dropdown {
-          width: calc(@card-max-width - 163px);
-          margin-left: -8px;
-        }
-
-        .msla-input-parameter {
-          width: inherit;
-          flex-wrap: inherit;
-
-          .msla-input-parameter-content-wrapper {
-            flex: 1 1 auto;
-            width: inherit;
-          }
-        }
-      }
-    }
-  }
-
-  .msla-authentication-code-view-mode {
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 0;
-
-    .msla-token-recommendation-v2 {
-      padding: 0;
-    }
-
-    .msla-authentication-code-view-mode-property {
-      width: calc(@card-max-width - 27px);
-
-      .msla-input-parameter {
-        width: inherit;
-      }
-
-      .msla-authentication-code-view-mode-text-editor {
-        border: 1px solid @defaultBorderColor;
-        display: inline-block;
-        margin-top: 5px;
-        width: calc(@card-max-width - 50px);
-      }
-    }
-  }
-
-  .msla-input-parameter-label {
-    margin: 0 2px 0 0;
-  }
-
-  .msla-authentication-text-editor-label {
-    color: @parameter-label-color;
-    margin: 0 2px 0 0;
-    display: inline-block;
-    width: @parameter-label-width;
-    vertical-align: top;
-    padding-top: 5.5px;
-    max-height: (@parameter-inputbox-height + 2px);
-
-    &.msla-schema-label {
-      width: 100%;
-      padding-bottom: 6px;
-    }
-
-    .msla-label {
-      max-height: 2.5em;
-      width: @parameter-label-width;
-    }
-  }
+  padding-bottom: 10px;
 }
-
-@media only screen and (max-width: @designer-desktop-max-width) {
-  .msla-input-parameter-item-deletable {
-    .msla-authentication-editor {
-      .msla-authentication-code-view-mode-property {
-        width: calc(600px - 30px);
-
-        .msla-authentication-code-view-mode-text-editor {
-          width: calc(600px - 53px);
-        }
-      }
-
-      .msla-authentication-default-view-mode {
-        .msla-authentication-default-view-mode-text-editor {
-          width: calc(600px - 82px);
-          margin-left: 0;
-        }
-
-        .msla-authentication-property-group {
-          .msla-authentication-property {
-            display: block;
-
-            .msla-authentication-dropdown {
-              width: calc(600px - 60px);
-              margin-left: 0;
-            }
-
-            .msla-input-parameter {
-              flex-wrap: wrap;
-            }
-
-            .msla-input-parameter-content-wrapper {
-              width: inherit;
-            }
-          }
-        }
-      }
-
-      .msla-input-parameter-item.msla-input-parameter-item-deletable {
-        .msla-input-parameter-item-delete-button {
-          align-self: flex-start;
-          margin-top: 0px;
-        }
-      }
-    }
-  }
-
-  .msla-authentication-editor {
-    .msla-authentication-code-view-mode-property {
-      width: calc(600px - 30px);
-
-      .msla-authentication-code-view-mode-text-editor {
-        width: calc(600px - 53px);
-      }
-    }
-
-    .msla-authentication-default-view-mode {
-      .msla-authentication-default-view-mode-text-editor {
-        width: calc(600px - 63px);
-        margin-left: 0;
-      }
-
-      .msla-authentication-property-group {
-        .msla-authentication-property {
-          display: block;
-
-          .msla-authentication-dropdown {
-            width: calc(600px - 40px);
-            margin-left: 0;
-          }
-
-          .msla-input-parameter {
-            flex-wrap: wrap;
-          }
-
-          .msla-input-parameter-content-wrapper {
-            width: inherit;
-          }
-        }
-      }
-    }
-
-    .msla-input-parameter-item.msla-input-parameter-item-deletable {
-      .msla-input-parameter-item-delete-button {
-        align-self: flex-start;
-        margin-top: 0px;
-      }
-    }
-  }
-}
-
-body.dark {
-  .msla-authentication-editor {
-    .msla-authentication-default-view-mode {
-      .msla-authentication-default-view-mode-text-editor {
-        border: 1px solid @ms-color-neutralSecondary;
-        color: @ms-color-neutralSecondary;
-      }
-
-      .msla-authentication-property-group {
-        border: 1px dashed @ms-color-neutralSecondary;
-        .msla-authentication-property {
-          .msla-authentication-dropdown {
-            color: @ms-color-neutralSecondary;
-          }
-        }
-      }
-    }
-
-    .msla-authentication-code-view-mode {
-      .msla-authentication-code-view-mode-property {
-        .msla-authentication-code-view-mode-text-editor {
-          border: 1px solid @ms-color-neutralSecondary;
-          color: @ms-color-neutralSecondary;
-        }
-      }
-    }
-
-    .msla-authentication-text-editor-label {
-      color: @ms-color-neutralSecondary;
-    }
+.msla-authentication-dropdown {
+  .ms-Dropdown {
+    height: 28px;
   }
 }

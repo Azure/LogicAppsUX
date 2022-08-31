@@ -15,6 +15,7 @@ import {
   ArrayEditor,
   Scratch,
   StringEditor,
+  AuthenticationEditor,
   outputToken,
   outputToken2,
 } from '@microsoft/designer-ui';
@@ -42,6 +43,7 @@ export const ScratchTab = () => {
   const children = (): React.ReactNode => {
     return (
       <>
+        <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} />
         <ArrayEditor
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
@@ -61,6 +63,7 @@ export const ScratchTab = () => {
           initialValue={[]}
           GetTokenPicker={GetTokenPicker}
         />
+
         <Combobox
           options={[
             { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },
@@ -75,6 +78,7 @@ export const ScratchTab = () => {
           GetTokenPicker={GetTokenPicker}
           // readOnly={true}
         />
+
         <SchemaEditor
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
