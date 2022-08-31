@@ -103,7 +103,7 @@ export default class DataMapperPanel {
         break;
       }
       case 'readLocalFileOptions': {
-        const folderPath = workspace.workspaceFolders[0].uri.fsPath; // danielle to find out how multi folder workspaces work
+        const folderPath = workspace.workspaceFolders[0].uri.fsPath; // [WI 15419837] Find out how multi folder workspaces work
         console.log(folderPath);
         fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
           DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'showAvailableSchemas', data: result });
