@@ -1,5 +1,5 @@
 import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionConfig';
-import { promises as fs } from 'fs';
+import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ExtensionContext } from 'vscode';
@@ -99,12 +99,19 @@ export default class DataMapperPanel {
           } else {
             DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadOutputSchema', data: JSON.parse(text) });
           }
+
+          // Check if in workspace/Artifacts/Schemas, and if not, create it
+          const schemaFileName = msg.data.path.split('\\').pop().split('/').pop(); // Ex: inpSchema.xsd
+          const expectedSchemaPath = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath, schemaFileName);
+
+          if (!fileExists(expectedSchemaPath)) {
+            fs.writeFile(expectedSchemaPath, text, 'utf-8');
+          }
         });
         break;
       }
       case 'readLocalFileOptions': {
         const folderPath = workspace.workspaceFolders[0].uri.fsPath; // [WI 15419837] Find out how multi folder workspaces work
-        console.log(folderPath);
         fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
           DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'showAvailableSchemas', data: result });
         });
