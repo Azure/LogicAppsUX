@@ -82,6 +82,7 @@
   ],
   "activationEvents": [
     "onCommand:azureDataMapper.openDataMapper",
+    "workspaceContains:host.json",
     "workspaceContains:**/.xsd",
     "workspaceContains:**/.xslt",
     "onView:azDataMapper",
