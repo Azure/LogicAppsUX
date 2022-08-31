@@ -397,7 +397,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Pilih file yang akan diunggah"
     }
   ],
   "2Cdt4p": [
@@ -1890,7 +1890,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Ekspresi"
     }
   ],
   "NvANon": [
@@ -2091,6 +2091,12 @@
       "value": "(UTC-04:00) Turks dan Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2127,6 +2133,12 @@
       "value": "Konversikan input menjadi nilai jenis JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2161,6 +2173,12 @@
       "value": "Wajib. Nilai yang dikonversi menjadi biner."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2193,6 +2211,12 @@
     {
       "type": 0,
       "value": "j"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -3199,7 +3223,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Node skema output"
     }
   ],
   "eRvGw3": [
@@ -3536,13 +3560,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Properti"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Uji"
     }
   ],
   "iq+tiv": [
@@ -4403,13 +4427,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Node skema input"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Telusuri"
     }
   ],
   "t+XCkg": [
@@ -4523,7 +4547,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Pilih elemen untuk mulai mengonfigurasi"
     }
   ],
   "uN4zFU": [
@@ -4744,6 +4768,12 @@
       "value": "Waktu Habis"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4831,7 +4861,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kode"
     }
   ],
   "xYyPR8": [

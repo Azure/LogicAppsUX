@@ -8,6 +8,7 @@ import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
+import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
@@ -18,19 +19,15 @@ import {
   saveDataMap,
   setCurrentlySelectedNode,
   setCurrentOutputNode,
-  setInitialDataMap,
-  setInitialInputSchema,
-  setInitialOutputSchema,
   toggleInputNode,
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { store } from '../core/state/Store';
-import type { Schema, SchemaNodeExtended } from '../models';
+import type { SchemaNodeExtended, SelectedNode } from '../models';
 import { NodeType, SchemaTypes } from '../models';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
-import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
+import './ReactFlowStyleOverrides.css';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -56,11 +53,16 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapperDesignerProps {
-  saveStateCall: () => void;
+  saveStateCall: (dataMapDefinition: string) => void;
   setSelectedSchemaFile?: (selectedSchemaFile: SchemaFile) => void;
+  readCurrentSchemaOptions?: () => void;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, setSelectedSchemaFile }) => {
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
+  saveStateCall,
+  setSelectedSchemaFile,
+  readCurrentSchemaOptions,
+}) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const clickTimerRef: { current: ReturnType<typeof setTimeout> | null } = useRef(null); // NOTE: ReturnType to support NodeJS & window Timeouts
@@ -68,13 +70,23 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+  const flattenedOutputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedOutputSchema);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
+  const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolbox, { toggle: toggleDisplayToolbox, setFalse: setDisplayToolboxFalse }] = useBoolean(false);
   const [displayExpressions, { toggle: toggleDisplayExpressions, setFalse: setDisplayExpressionsFalse }] = useBoolean(false);
   const [nodes, edges] = useLayout();
+
+  const dataMapDefinition = useMemo((): string => {
+    if (inputSchema && outputSchema) {
+      return convertToMapDefinition(currentConnections, inputSchema, outputSchema);
+    }
+
+    return '';
+  }, [currentConnections, inputSchema, outputSchema]);
 
   const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
     dispatch(toggleInputNode(selectedNode));
@@ -104,20 +116,18 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onNodeSingleClick = (node: ReactFlowNode): void => {
-    const newCurrentlySelectedNode = { type: node.type === ReactFlowNodeType.SchemaNode ? node.data.schemaType : NodeType.Expression };
+    const newCurrentlySelectedNode: SelectedNode = {
+      type: node.type === ReactFlowNodeType.SchemaNode ? node.data.schemaType : NodeType.Expression,
+      name: node.data.label,
+      path: node.id,
+    };
     dispatch(setCurrentlySelectedNode(newCurrentlySelectedNode));
   };
 
-  const onNodeDoubleClick = (node: ReactFlowNode): void => {
-    const curDataMapState = store.getState().dataMap.curDataMapOperation;
-    if (node.data.schemaType === SchemaTypes.Output) {
-      const currentSchemaNode = curDataMapState.currentOutputNode;
-      if (currentSchemaNode) {
-        const trimmedNodeId = node.id.substring(7);
-        const newCurrentSchemaNode =
-          currentSchemaNode.key === trimmedNodeId
-            ? currentSchemaNode
-            : currentSchemaNode.children.find((schemaNode) => schemaNode.key === trimmedNodeId) || currentSchemaNode;
+  const onNodeDoubleClick = (node: ReactFlowNode<SchemaCardProps>): void => {
+    if (node.data.schemaType === SchemaTypes.Output && !node.data.isLeaf) {
+      const newCurrentSchemaNode = flattenedOutputSchema[node.id];
+      if (currentOutputNode && newCurrentSchemaNode) {
         dispatch(setCurrentOutputNode(newCurrentSchemaNode));
       }
     }
@@ -129,18 +139,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     }
   };
 
-  const onSubmitInput = (inputSchema: Schema) => {
-    const extendedSchema = convertSchemaToSchemaExtended(inputSchema);
-    dispatch(setInitialInputSchema(extendedSchema));
-    dispatch(setInitialDataMap());
-  };
-
-  const onSubmitOutput = (outputSchema: Schema) => {
-    const extendedSchema = convertSchemaToSchemaExtended(outputSchema);
-    dispatch(setInitialOutputSchema(extendedSchema));
-    dispatch(setInitialDataMap());
-  };
-
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
     if (!setSelectedSchemaFile) return;
     // Will cause DM to ping VS Code for schema file contents (to be added to availableSchemas)
@@ -148,16 +146,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     setSelectedSchemaFile(schemaFile);
   };
 
-  const dataMapDefinition = useMemo(() => {
-    if (inputSchema && outputSchema) {
-      return convertToMapDefinition(currentConnections, inputSchema, outputSchema);
-    }
-
-    return '';
-  }, [currentConnections, inputSchema, outputSchema]);
-
   const onSaveClick = () => {
-    saveStateCall(); // TODO: do the next call only when this is successful
+    saveStateCall(dataMapDefinition); // TODO: do the next call only when this is successful
     dispatch(
       saveDataMap({
         inputSchemaExtended: inputSchema,
@@ -333,6 +323,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
+  const placeholderFunc = () => {
+    return;
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -340,10 +333,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
         <EditorConfigPanel
-          initialSetup={true}
-          onSubmitInputSchema={onSubmitInput}
-          onSubmitOutputSchema={onSubmitOutput}
           onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
+          readCurrentSchemaOptions={readCurrentSchemaOptions ?? placeholderFunc}
         />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (

@@ -1,38 +1,30 @@
-import {
-  closeAllWarning,
-  openChangeInputWarning,
-  openChangeOutputWarning,
-  removeOkClicked,
-  WarningModalState,
-} from '../../core/state/ModalSlice';
+import { getSelectedSchema } from '../../core';
+import { setInitialDataMap, setInitialSchema } from '../../core/state/DataMapSlice';
+import { closeAllWarning, openChangeSchemaWarning, removeOkClicked, WarningModalState } from '../../core/state/ModalSlice';
 import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
-import { ChangeSchemaView } from './ChangeSchemaView';
+import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './ChangeSchemaView';
+import { ChangeSchemaView } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
 import type { FunctionComponent } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface EditorConfigPanelProps {
-  initialSetup: boolean;
-  onSubmitInputSchema: (schema: Schema) => void;
-  onSubmitOutputSchema: (schema: Schema) => void;
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
+  readCurrentSchemaOptions: () => void;
 }
 
-export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
-  initialSetup,
-  onSubmitInputSchema,
-  onSubmitOutputSchema,
-  onSubmitSchemaFileSelection,
-}) => {
+export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ onSubmitSchemaFileSelection, readCurrentSchemaOptions }) => {
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
+  const isDirty = useSelector((state: RootState) => state.dataMap.isDirty);
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
   const isChangeSchemaPanelOpen = useSelector((state: RootState) => state.panel.isChangeSchemaPanelOpen);
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
@@ -49,6 +41,19 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
 
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
+
+  const onSubmitSchema = useCallback(
+    (schema: Schema) => {
+      if (schemaType) {
+        const extendedSchema = convertSchemaToSchemaExtended(schema);
+        dispatch(
+          setInitialSchema({ schema: extendedSchema, schemaType: schemaType, flattenedSchema: flattenSchema(extendedSchema, schemaType) })
+        );
+        dispatch(setInitialDataMap(undefined));
+      }
+    },
+    [dispatch, schemaType]
+  );
 
   const addMessage = intl.formatMessage({
     defaultMessage: 'Add',
@@ -83,6 +88,18 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     description: 'aria label for close icon button that closes that panel on click',
   });
 
+  const downloadedSchema = useQuery(
+    [selectedInputSchema?.text],
+    () => {
+      return getSelectedSchema(selectedInputSchema?.text ?? '');
+    },
+    {
+      enabled: selectedInputSchema !== undefined,
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 5,
+    }
+  );
+
   const hideEntirePanel = useCallback(() => {
     dispatch(closeDefaultConfigPanel());
     setErrorMessage('');
@@ -93,25 +110,24 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
     setErrorMessage('');
   }, [dispatch, setErrorMessage]);
 
-  const editInputSchema = useCallback(() => {
-    setErrorMessage('');
-    if (selectedInputSchema) {
-      onSubmitInputSchema(selectedInputSchema.data);
-      closeSchemaPanel();
-    } else {
-      setErrorMessage(genericErrMsg);
-    }
-  }, [closeSchemaPanel, onSubmitInputSchema, selectedInputSchema, genericErrMsg]);
+  const editSchema = useCallback(() => {
+    const selectedSchema = downloadedSchema.data as Schema;
 
-  const editOutputSchema = useCallback(() => {
     setErrorMessage('');
-    if (selectedOutputSchema) {
-      onSubmitOutputSchema(selectedOutputSchema.data);
+    if (selectedSchema) {
+      onSubmitSchema(selectedSchema);
       closeSchemaPanel();
     } else {
       setErrorMessage(genericErrMsg);
     }
-  }, [closeSchemaPanel, onSubmitOutputSchema, selectedOutputSchema, genericErrMsg]);
+  }, [closeSchemaPanel, onSubmitSchema, genericErrMsg, downloadedSchema]);
+
+  const addSchema = useCallback(() => {
+    if (schemaType === undefined) {
+      return;
+    }
+    isDirty ? dispatch(openChangeSchemaWarning({ schemaType: schemaType })) : editSchema();
+  }, [isDirty, schemaType, editSchema, dispatch]);
 
   useEffect(() => {
     if (selectedSchemaFile) {
@@ -124,45 +140,28 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
   useEffect(() => {
     if (isChangeSchemaConfirmed) {
       dispatch(removeOkClicked());
-      if (schemaType === SchemaTypes.Input) {
-        editInputSchema();
-      } else {
-        editOutputSchema();
-      }
+      editSchema();
       dispatch(closeAllWarning());
     }
-  }, [
-    closeSchemaPanel,
-    dispatch,
-    editInputSchema,
-    editOutputSchema,
-    genericErrMsg,
-    isChangeSchemaConfirmed,
-    onSubmitInputSchema,
-    schemaType,
-    selectedInputSchema,
-  ]);
+  }, [closeSchemaPanel, dispatch, editSchema, genericErrMsg, isChangeSchemaConfirmed, onSubmitSchema, schemaType, selectedInputSchema]);
 
-  const onRenderFooterContent = useCallback(
-    () => (
+  useEffect(() => {
+    readCurrentSchemaOptions();
+  }, [readCurrentSchemaOptions]);
+
+  const onRenderFooterContent = useCallback(() => {
+    const isNewSchemaSelected =
+      schemaType === SchemaTypes.Input
+        ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation.inputSchema?.name
+        : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation.outputSchema?.name;
+    return (
       <div>
         {isChangeSchemaPanelOpen && (
           <PrimaryButton
             className="panel-button-left"
-            onClick={
-              schemaType === SchemaTypes.Input
-                ? initialSetup
-                  ? editInputSchema
-                  : () => dispatch(openChangeInputWarning())
-                : initialSetup
-                ? editOutputSchema
-                : () => dispatch(openChangeOutputWarning())
-            }
-            disabled={
-              schemaType === SchemaTypes.Input
-                ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation.inputSchema?.name
-                : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation.outputSchema?.name
-            }
+            onClick={addSchema}
+            // danielle refactor below to be more clear
+            disabled={isNewSchemaSelected}
           >
             {addMessage}
           </PrimaryButton>
@@ -170,22 +169,18 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({
 
         <DefaultButton onClick={hideEntirePanel}>{discardMessage}</DefaultButton>
       </div>
-    ),
-    [
-      initialSetup,
-      isChangeSchemaPanelOpen,
-      schemaType,
-      curDataMapOperation,
-      editInputSchema,
-      editOutputSchema,
-      selectedInputSchema,
-      selectedOutputSchema,
-      addMessage,
-      hideEntirePanel,
-      discardMessage,
-      dispatch,
-    ]
-  );
+    );
+  }, [
+    isChangeSchemaPanelOpen,
+    schemaType,
+    curDataMapOperation,
+    selectedInputSchema,
+    selectedOutputSchema,
+    addMessage,
+    hideEntirePanel,
+    discardMessage,
+    addSchema,
+  ]);
 
   const onInputSchemaClick = () => {
     dispatch(openInputSchemaPanel());

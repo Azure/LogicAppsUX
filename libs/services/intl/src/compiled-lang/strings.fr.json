@@ -299,6 +299,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -408,7 +419,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Sélectionner un fichier à charger"
     }
   ],
   "2Cdt4p": [
@@ -1029,6 +1040,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1337,6 +1359,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1674,6 +1707,17 @@
             {
               "type": 0,
               "value": "0 Cas"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
             }
           ]
         },
@@ -2135,6 +2179,12 @@
       "value": "(UTC-04:00) Îles Turques-et-Caïques"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2171,6 +2221,12 @@
       "value": "Convertir l'entrée en valeur de type JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2203,6 +2259,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Valeur convertie en binaire."
+    }
+  ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
     }
   ],
   "QknZQ1": [
@@ -2239,6 +2301,12 @@
       "value": " h"
     }
   ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "RX2Shm": [
     {
       "type": 0,
@@ -2255,6 +2323,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3254,7 +3333,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Nœud de schéma de sortie"
     }
   ],
   "eRvGw3": [
@@ -3475,6 +3554,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3610,7 +3700,7 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Propriétés"
     }
   ],
   "ifLn0+": [
@@ -4289,6 +4379,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -4488,13 +4589,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Nœud de schéma d’entrée"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Parcourir"
     }
   ],
   "t+XCkg": [
@@ -4608,7 +4709,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Sélectionner un élément pour commencer la configuration"
     }
   ],
   "uN4zFU": [
@@ -4827,6 +4928,12 @@
     {
       "type": 0,
       "value": "Expiré"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
     }
   ],
   "wQcEXt": [

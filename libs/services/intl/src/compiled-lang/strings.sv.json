@@ -408,7 +408,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Välj en fil att ladda upp"
     }
   ],
   "2Cdt4p": [
@@ -1950,7 +1950,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Uttryck"
     }
   ],
   "NvANon": [
@@ -2151,6 +2151,12 @@
       "value": "(UTC-04:00) Turks- och Caicosöarna"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2185,6 +2191,12 @@
     {
       "type": 0,
       "value": "Konverterar indata till ett värde av JSON-typ"
+    }
+  ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
     }
   ],
   "QQYzHC": [
@@ -2225,6 +2237,12 @@
       "value": "Krävs. Värdet som konverteras till binärt."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2257,6 +2275,12 @@
     {
       "type": 0,
       "value": "tim"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -3274,7 +3298,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Utdataschemanod"
     }
   ],
   "eRvGw3": [
@@ -3634,7 +3658,7 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Egenskaper"
     }
   ],
   "ifLn0+": [
@@ -4516,13 +4540,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Indataschemanod"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Bläddra"
     }
   ],
   "t+XCkg": [
@@ -4636,7 +4660,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Välj ett element för att börja konfigurera"
     }
   ],
   "uN4zFU": [
@@ -4857,6 +4881,12 @@
       "value": "Tidsgränsen överskreds"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4944,7 +4974,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kod"
     }
   ],
   "xYyPR8": [

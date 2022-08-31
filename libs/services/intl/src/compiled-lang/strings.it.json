@@ -299,6 +299,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -408,7 +419,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Selezionare un file da caricare"
     }
   ],
   "2Cdt4p": [
@@ -1029,6 +1040,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1337,6 +1359,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1677,6 +1710,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1934,7 +1978,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Espressione"
     }
   ],
   "NvANon": [
@@ -2143,6 +2187,12 @@
       "value": "(UTC - 04.00) Turks e Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2179,6 +2229,12 @@
       "value": "Converte l'input in un valore di tipo JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2211,6 +2267,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore convertito in un valore binario."
+    }
+  ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
     }
   ],
   "QknZQ1": [
@@ -2247,6 +2309,12 @@
       "value": " h"
     }
   ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "RX2Shm": [
     {
       "type": 0,
@@ -2263,6 +2331,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3262,7 +3341,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Nodo schema di output"
     }
   ],
   "eRvGw3": [
@@ -3483,6 +3562,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3610,7 +3700,7 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Proprietà"
     }
   ],
   "ifLn0+": [
@@ -4289,6 +4379,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -4488,13 +4589,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Nodo schema di input"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Esplora"
     }
   ],
   "t+XCkg": [
@@ -4608,7 +4709,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Selezionare un elemento per avviare la configurazione"
     }
   ],
   "uN4zFU": [
@@ -4829,6 +4930,12 @@
       "value": "Timeout"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4916,7 +5023,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Codice"
     }
   ],
   "xYyPR8": [

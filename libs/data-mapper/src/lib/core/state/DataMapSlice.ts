@@ -1,7 +1,10 @@
-import type { SchemaExtended, SchemaNodeExtended, SelectedNode } from '../../models';
-import type { Connection } from '../../models/Connection';
+import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended, SelectedNode } from '../../models';
+import { SchemaTypes } from '../../models';
+import type { ConnectionDictionary } from '../../models/Connection';
+import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import * as yaml from 'js-yaml';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -12,15 +15,22 @@ export interface DataMapState {
 }
 
 export interface DataMapOperationState {
-  dataMapConnections: { [key: string]: Connection };
+  dataMapConnections: ConnectionDictionary;
   inputSchema?: SchemaExtended;
+  flattenedInputSchema: SchemaNodeDictionary;
   outputSchema?: SchemaExtended;
+  flattenedOutputSchema: SchemaNodeDictionary;
   currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
   currentlySelectedNode?: SelectedNode;
 }
 
-const emptyPristineState: DataMapOperationState = { dataMapConnections: {}, currentInputNodes: [] };
+const emptyPristineState: DataMapOperationState = {
+  dataMapConnections: {},
+  currentInputNodes: [],
+  flattenedInputSchema: {},
+  flattenedOutputSchema: {},
+};
 const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
@@ -38,21 +48,43 @@ export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    setInitialInputSchema: (state, action: PayloadAction<SchemaExtended>) => {
-      state.curDataMapOperation.inputSchema = action.payload;
-      state.pristineDataMap.inputSchema = action.payload;
+    setInitialSchema: (
+      state,
+      action: PayloadAction<{
+        schema: SchemaExtended;
+        schemaType: SchemaTypes.Input | SchemaTypes.Output;
+        flattenedSchema: SchemaNodeDictionary;
+      }>
+    ) => {
+      if (action.payload.schemaType === SchemaTypes.Input) {
+        state.curDataMapOperation.inputSchema = action.payload.schema;
+        state.curDataMapOperation.flattenedInputSchema = action.payload.flattenedSchema;
+        state.pristineDataMap.inputSchema = action.payload.schema;
+        state.pristineDataMap.flattenedInputSchema = action.payload.flattenedSchema;
+      } else {
+        state.curDataMapOperation.outputSchema = action.payload.schema;
+        state.curDataMapOperation.flattenedOutputSchema = action.payload.flattenedSchema;
+        state.curDataMapOperation.currentOutputNode = action.payload.schema.schemaTreeRoot;
+        state.pristineDataMap.outputSchema = action.payload.schema;
+        state.pristineDataMap.flattenedOutputSchema = action.payload.flattenedSchema;
+        state.pristineDataMap.currentOutputNode = action.payload.schema.schemaTreeRoot;
+      }
     },
 
-    setInitialOutputSchema: (state, action: PayloadAction<SchemaExtended>) => {
-      state.curDataMapOperation.outputSchema = action.payload;
-      state.curDataMapOperation.currentOutputNode = action.payload.schemaTreeRoot;
-      state.pristineDataMap.outputSchema = action.payload;
-      state.pristineDataMap.currentOutputNode = action.payload.schemaTreeRoot;
-    },
-
-    setInitialDataMap: (state) => {
+    // TODO: Figure out type we expect from loaded .yml data maps
+    setInitialDataMap: (state, action: PayloadAction<any | undefined>) => {
+      const incomingDataMap = action.payload;
       const currentState = state.curDataMapOperation;
-      if (currentState.inputSchema && currentState.outputSchema) {
+
+      if (incomingDataMap) {
+        const loadedInitialState: DataMapOperationState = {
+          ...currentState,
+          dataMapConnections: convertFromMapDefinition(yaml.dump(incomingDataMap)),
+        };
+
+        state.curDataMapOperation = loadedInitialState;
+        state.pristineDataMap = loadedInitialState;
+      } else if (currentState.inputSchema && currentState.outputSchema) {
         const newInitialState: DataMapOperationState = {
           ...currentState,
           dataMapConnections: {},
@@ -199,8 +231,7 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
-  setInitialInputSchema,
-  setInitialOutputSchema,
+  setInitialSchema,
   setInitialDataMap,
   changeInputSchema,
   changeOutputSchema,

@@ -430,7 +430,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Выберите файл для отправки"
     }
   ],
   "2Cdt4p": [
@@ -2038,7 +2038,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Выражение"
     }
   ],
   "NvANon": [
@@ -2239,6 +2239,12 @@
       "value": "(UTC –04:00) Теркс и Кайкос"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2275,6 +2281,12 @@
       "value": "Преобразует входные данные в значение типа JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2309,6 +2321,12 @@
       "value": "Требуется. Значение, которое преобразуется в двоичный файл."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2341,6 +2359,12 @@
     {
       "type": 0,
       "value": " ч"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -3380,7 +3404,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Узел выходной схемы"
     }
   ],
   "eRvGw3": [
@@ -3770,13 +3794,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Свойства"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Тест"
     }
   ],
   "iq+tiv": [
@@ -4678,13 +4702,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Узел входной схемы"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Обзор"
     }
   ],
   "t+XCkg": [
@@ -4798,7 +4822,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Выберите элемент для начала настройки"
     }
   ],
   "uN4zFU": [
@@ -5019,6 +5043,12 @@
       "value": "Время ожидания истекло"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -5106,7 +5136,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Код"
     }
   ],
   "xYyPR8": [

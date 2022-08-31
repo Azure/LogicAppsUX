@@ -299,6 +299,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -408,7 +419,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Seleccione el archivo que se debe cargar."
     }
   ],
   "2Cdt4p": [
@@ -1029,6 +1040,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1337,6 +1359,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1677,6 +1710,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1934,7 +1978,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Expresión"
     }
   ],
   "NvANon": [
@@ -2135,6 +2179,12 @@
       "value": "(UTC-04:00) Islas Turcas y Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2171,6 +2221,12 @@
       "value": "Convertir la entrada en un valor de tipo JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2203,6 +2259,12 @@
     {
       "type": 0,
       "value": "Obligatorio. El valor que se convierte a binario."
+    }
+  ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
     }
   ],
   "QknZQ1": [
@@ -2239,6 +2301,12 @@
       "value": "h"
     }
   ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "RX2Shm": [
     {
       "type": 0,
@@ -2255,6 +2323,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3475,6 +3554,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3610,13 +3700,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Propiedades"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Prueba"
     }
   ],
   "iq+tiv": [
@@ -4297,6 +4387,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -4502,7 +4603,7 @@
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Examinar"
     }
   ],
   "t+XCkg": [
@@ -4837,6 +4938,12 @@
       "value": "Tiempo de espera agotado"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4924,7 +5031,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Código"
     }
   ],
   "xYyPR8": [

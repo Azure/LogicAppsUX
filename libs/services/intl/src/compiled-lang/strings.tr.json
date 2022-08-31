@@ -408,7 +408,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Karşıya yüklenecek bir dosya seçin"
     }
   ],
   "2Cdt4p": [
@@ -1934,7 +1934,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "İfade"
     }
   ],
   "NvANon": [
@@ -2135,6 +2135,12 @@
       "value": "(UTC-04:00) Turks ve Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2171,6 +2177,12 @@
       "value": "Girişi JSON türü değere dönüştürür"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -2205,6 +2217,12 @@
       "value": "Gerekli. İkiliye dönüştürülen değer."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2237,6 +2255,12 @@
     {
       "type": 0,
       "value": " sa"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -3250,7 +3274,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Çıkış şeması düğümü"
     }
   ],
   "eRvGw3": [
@@ -3598,7 +3622,7 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Özellikler"
     }
   ],
   "ifLn0+": [
@@ -4476,13 +4500,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Giriş şeması düğümü"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Göz at"
     }
   ],
   "t+XCkg": [
@@ -4596,7 +4620,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Yapılandırmaya başlamak için bir öğe seçin"
     }
   ],
   "uN4zFU": [
@@ -4813,6 +4837,12 @@
       "value": "Zaman Aşımı Oluştu"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4900,7 +4930,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kod"
     }
   ],
   "xYyPR8": [

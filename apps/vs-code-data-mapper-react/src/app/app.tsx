@@ -1,7 +1,12 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
 import type { RootState } from '../state/Store';
-import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
-import { useContext } from 'react';
+import {
+  DataMapDataProvider,
+  DataMapperDesigner,
+  DataMapperDesignerProvider,
+  InitSchemaSelectionService,
+} from '@microsoft/logic-apps-data-mapper';
+import { useCallback, useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 interface SchemaFile {
@@ -17,8 +22,10 @@ export const App = (): JSX.Element => {
   const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
   const availableSchemas = useSelector((state: RootState) => state.schemaDataLoader.availableSchemas);
 
-  const saveStateCall = () => {
-    console.log('App called to save Data Map');
+  InitSchemaSelectionService({ baseUrl: 'http://localhost:7071', resourceUrl: '', accessToken: '' });
+
+  const saveStateCall = (dataMapDefinition: string) => {
+    saveDataMapDefinition(dataMapDefinition);
   };
 
   const setSelectedSchemaFile = (selectedSchemaFile: SchemaFile) => {
@@ -28,10 +35,27 @@ export const App = (): JSX.Element => {
     });
   };
 
+  const readLocalFileOptions = useCallback(() => {
+    vscode.postMessage({
+      command: 'readLocalFileOptions',
+    });
+  }, [vscode]);
+
+  const saveDataMapDefinition = (dataMapDefinition: string) => {
+    vscode.postMessage({
+      command: 'saveDataMapDefinition',
+      data: dataMapDefinition,
+    });
+  };
+
   return (
     <DataMapperDesignerProvider locale="en-US" options={{}}>
       <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={availableSchemas}>
-        <DataMapperDesigner saveStateCall={saveStateCall} setSelectedSchemaFile={setSelectedSchemaFile} />
+        <DataMapperDesigner
+          saveStateCall={saveStateCall}
+          setSelectedSchemaFile={setSelectedSchemaFile}
+          readCurrentSchemaOptions={readLocalFileOptions}
+        />
       </DataMapDataProvider>
     </DataMapperDesignerProvider>
   );

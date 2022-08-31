@@ -397,7 +397,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "업로드할 파일 선택"
     }
   ],
   "2Cdt4p": [
@@ -1890,7 +1890,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "식"
     }
   ],
   "NvANon": [
@@ -2091,6 +2091,12 @@
       "value": "(UTC-04:00) 터크스 케이커스"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2127,6 +2133,12 @@
       "value": "입력을 JSON 형식 값으로 변환합니다."
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -2161,6 +2173,12 @@
       "value": "필수 사항으로, 이진으로 변환되는 값입니다."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2193,6 +2211,12 @@
     {
       "type": 0,
       "value": "시간"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -3195,7 +3219,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "출력 스키마 노드"
     }
   ],
   "eRvGw3": [
@@ -3532,13 +3556,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "속성"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "테스트"
     }
   ],
   "iq+tiv": [
@@ -4399,13 +4423,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "입력 스키마 노드"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "찾아보기"
     }
   ],
   "t+XCkg": [
@@ -4519,7 +4543,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "구성을 시작할 요소 선택"
     }
   ],
   "uN4zFU": [
@@ -4736,6 +4760,12 @@
       "value": "시간 초과"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4823,7 +4853,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "코드"
     }
   ],
   "xYyPR8": [

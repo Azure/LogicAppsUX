@@ -397,7 +397,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "選取要上傳的檔案"
     }
   ],
   "2Cdt4p": [
@@ -1890,7 +1890,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "運算式"
     }
   ],
   "NvANon": [
@@ -2091,6 +2091,12 @@
       "value": "(UTC-04:00) 土克斯及開科斯群島"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2127,6 +2133,12 @@
       "value": "將輸入轉換為 JSON 類型值"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -2161,6 +2173,12 @@
       "value": "必要。轉換成二進位的值。"
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2193,6 +2211,12 @@
     {
       "type": 0,
       "value": " 小時"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -3203,7 +3227,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "輸出結構描述節點"
     }
   ],
   "eRvGw3": [
@@ -3540,13 +3564,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "屬性"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "測試"
     }
   ],
   "iq+tiv": [
@@ -4407,13 +4431,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "輸入結構描述節點"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "瀏覽"
     }
   ],
   "t+XCkg": [
@@ -4527,7 +4551,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "選取要開始設定的元素"
     }
   ],
   "uN4zFU": [
@@ -4748,6 +4772,12 @@
       "value": "逾時"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4835,7 +4865,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "程式碼"
     }
   ],
   "xYyPR8": [

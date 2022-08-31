@@ -1,5 +1,4 @@
 import type { RootState } from '../../core/state/Store';
-import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
 import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
@@ -13,6 +12,9 @@ export enum UploadSchemaTypes {
   SelectFrom = 'select-from',
 }
 
+export interface ChangeSchemaView {
+  schemaList: SchemaInfo[] | any;
+}
 export interface FileWithVsCodePath extends File {
   path?: string;
 }
@@ -31,6 +33,10 @@ export interface ChangeSchemaViewProps {
   errorMessage: string;
 }
 
+export interface SchemaInfo {
+  name: string;
+}
+
 const uploadSchemaOptions: IChoiceGroupOption[] = [
   { key: UploadSchemaTypes.UploadNew, text: 'Upload new' },
   { key: UploadSchemaTypes.SelectFrom, text: 'Select from existing' },
@@ -44,10 +50,13 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   setSelectedSchemaFile,
   errorMessage,
 }) => {
-  const availableSchemasList = useSelector((state: RootState) => state.schema.availableSchemas);
   const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
 
-  const dataMapDropdownOptions = availableSchemasList?.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
+  const schemaList = useSelector((state: RootState) => {
+    return state.schema.availableSchemas;
+  });
+
+  const dataMapDropdownOptions = schemaList?.map((file: string) => ({ key: file, text: file } ?? []));
 
   const intl = useIntl();
   const schemaFileInputRef = useRef<HTMLInputElement>(null);

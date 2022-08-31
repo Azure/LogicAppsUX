@@ -442,7 +442,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Vyberte soubor, který se má nahrát."
     }
   ],
   "2Cdt4p": [
@@ -2054,7 +2054,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Výraz"
     }
   ],
   "NvANon": [
@@ -2255,6 +2255,12 @@
       "value": "(UTC-04:00) Turks a Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2291,6 +2297,12 @@
       "value": "Převede vstup na hodnotu typu JSON."
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2325,6 +2337,12 @@
       "value": "Povinný parametr. Hodnota, která se převádí do binárního formátu."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2357,6 +2375,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -3396,7 +3420,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Výstupní uzel schématu"
     }
   ],
   "eRvGw3": [
@@ -3778,7 +3802,7 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Vlastnosti"
     }
   ],
   "ifLn0+": [
@@ -4682,13 +4706,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Vstupní uzel schématu"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Procházet"
     }
   ],
   "t+XCkg": [
@@ -4802,7 +4826,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Výběrem elementu spustíte konfiguraci"
     }
   ],
   "uN4zFU": [
@@ -5023,6 +5047,12 @@
       "value": "Vypršel časový limit."
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -5110,7 +5140,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Kód"
     }
   ],
   "xYyPR8": [

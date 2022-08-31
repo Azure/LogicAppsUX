@@ -1,22 +1,33 @@
+import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionConfig';
 import { promises as fs } from 'fs';
-import { join } from 'path';
-import { Uri, ViewColumn, window } from 'vscode';
-import type { WebviewPanel, Disposable, ExtensionContext } from 'vscode';
+import * as path from 'path';
+import { Uri, ViewColumn, window, workspace } from 'vscode';
+import type { WebviewPanel, ExtensionContext } from 'vscode';
 
-type SendingMessageTypes = { command: 'loadInputSchema' | 'loadOutputSchema'; data: any } | { command: 'loadDataMap'; data: any };
-type ReceivingMessageTypes = { command: 'readSelectedSchemaFile'; data: { path: string; type: 'input' | 'output' } };
+type SendingMessageTypes =
+  | { command: 'loadInputSchema' | 'loadOutputSchema'; data: any }
+  | { command: 'loadDataMap'; data: any }
+  | { command: 'showAvailableSchemas'; data: string[] };
+type ReceivingMessageTypes =
+  | {
+      command: 'readSelectedSchemaFile' | 'readLocalFileOptions';
+      data: { path: string; type: 'input' | 'output' };
+    }
+  | {
+      command: 'saveDataMapDefinition';
+      data: string;
+    };
 
 export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
   public static readonly viewType = 'dataMapperWebview';
-  public static contextSubscriptionsRef: Disposable[] | undefined;
+  public static extensionContext: ExtensionContext | undefined;
+  public static currentDataMapName: string | undefined;
 
   private readonly _panel: WebviewPanel;
   private readonly _extensionPath: string;
 
   public static createOrShow(context: ExtensionContext) {
-    DataMapperPanel.contextSubscriptionsRef = context.subscriptions;
-
     // If a panel has already been created, re-show it
     if (DataMapperPanel.currentPanel) {
       DataMapperPanel.currentPanel._panel.reveal(ViewColumn.Active);
@@ -25,7 +36,7 @@ export default class DataMapperPanel {
 
     const panel = window.createWebviewPanel(
       DataMapperPanel.viewType, // Key used to reference the panel
-      'LA Data Mapper', // Title display in the tab
+      webviewTitle, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
       { enableScripts: true }
     );
@@ -42,25 +53,25 @@ export default class DataMapperPanel {
   private constructor(panel: WebviewPanel, extPath: string) {
     this._panel = panel;
     this._extensionPath = extPath;
-    DataMapperPanel.contextSubscriptionsRef?.push(panel);
+    DataMapperPanel.extensionContext?.subscriptions.push(panel);
 
     this._setWebviewHtml();
 
     // Handle messages from the webview (Data Mapper component)
-    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperPanel.contextSubscriptionsRef);
+    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperPanel.extensionContext?.subscriptions);
 
     this._panel.onDidDispose(
       () => {
         DataMapperPanel.currentPanel = undefined;
       },
       null,
-      DataMapperPanel.contextSubscriptionsRef
+      DataMapperPanel.extensionContext?.subscriptions
     );
   }
 
   private async _setWebviewHtml() {
     // Get webview content, converting links to VS Code URIs
-    const indexPath = join(this._extensionPath, 'webview/index.html');
+    const indexPath = path.join(this._extensionPath, '/webview/index.html');
     const html = await fs.readFile(indexPath, 'utf-8');
     // 1. Get all links prefixed by href or src
     const matchLinks = /(href|src)="([^"]*)"/g;
@@ -71,8 +82,8 @@ export default class DataMapperPanel {
         return `${prefix}="${link}"`;
       }
       // For scripts & links
-      const path = join(this._extensionPath, 'webview', link);
-      const uri = Uri.file(path);
+      const pth = path.join(this._extensionPath, '/webview/', link);
+      const uri = Uri.file(pth);
       return `${prefix}="${this._panel.webview.asWebviewUri(uri)}"`;
     };
 
@@ -81,7 +92,7 @@ export default class DataMapperPanel {
 
   private _handleWebviewMsg(msg: ReceivingMessageTypes) {
     switch (msg.command) {
-      case 'readSelectedSchemaFile':
+      case 'readSelectedSchemaFile': {
         fs.readFile(msg.data.path, 'utf-8').then((text: string) => {
           if (msg.data.type === 'input') {
             DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadInputSchema', data: JSON.parse(text) });
@@ -90,6 +101,20 @@ export default class DataMapperPanel {
           }
         });
         break;
+      }
+      case 'readLocalFileOptions': {
+        const folderPath = workspace.workspaceFolders[0].uri.fsPath; // [WI 15419837] Find out how multi folder workspaces work
+        console.log(folderPath);
+        fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
+          DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'showAvailableSchemas', data: result });
+        });
+        break;
+      }
+      case 'saveDataMapDefinition': {
+        const fileName = `${DataMapperPanel.currentDataMapName}.yml`;
+        const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, fileName);
+        fs.writeFile(filePath, msg.data, 'utf8');
+      }
     }
   }
 }

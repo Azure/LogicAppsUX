@@ -408,7 +408,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Datei für Upload auswählen"
     }
   ],
   "2Cdt4p": [
@@ -1950,7 +1950,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Ausdruck"
     }
   ],
   "NvANon": [
@@ -2151,6 +2151,12 @@
       "value": "(UTC-04:00) Turks- und Caicosinseln"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2185,6 +2191,12 @@
     {
       "type": 0,
       "value": "Eingabe in Wert vom Typ JSON konvertieren"
+    }
+  ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
     }
   ],
   "QQYzHC": [
@@ -2225,6 +2237,12 @@
       "value": "Erforderlich. Der Wert, der in einen Binärwert konvertiert wird."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2257,6 +2275,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -3278,7 +3302,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Ausgabeschemaknoten"
     }
   ],
   "eRvGw3": [
@@ -3634,7 +3658,7 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Eigenschaften"
     }
   ],
   "ifLn0+": [
@@ -4520,13 +4544,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Eingabeschemaknoten"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Durchsuchen"
     }
   ],
   "t+XCkg": [
@@ -4640,7 +4664,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Wählen Sie ein Element aus, um mit der Konfiguration zu beginnen."
     }
   ],
   "uN4zFU": [
@@ -4859,6 +4883,12 @@
     {
       "type": 0,
       "value": "Timeout"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
     }
   ],
   "wQcEXt": [

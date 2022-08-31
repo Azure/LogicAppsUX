@@ -397,7 +397,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "アップロードするファイルを選択します"
     }
   ],
   "2Cdt4p": [
@@ -1890,7 +1890,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "式"
     }
   ],
   "NvANon": [
@@ -2091,6 +2091,12 @@
       "value": "(UTC-04:00) タークス・カイコス諸島"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2127,6 +2133,12 @@
       "value": "入力を JSON 型の値に変換します"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -2161,6 +2173,12 @@
       "value": "必須。バイナリに変換される値。"
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2193,6 +2211,12 @@
     {
       "type": 0,
       "value": " 時間"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
     }
   ],
   "RX2Shm": [
@@ -3195,7 +3219,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "出力スキーマ ノード"
     }
   ],
   "eRvGw3": [
@@ -3532,13 +3556,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "プロパティ"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "テスト"
     }
   ],
   "iq+tiv": [
@@ -4399,13 +4423,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "入力スキーマ ノード"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "参照"
     }
   ],
   "t+XCkg": [
@@ -4519,7 +4543,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "構成を開始する要素の選択"
     }
   ],
   "uN4zFU": [
@@ -4736,6 +4760,12 @@
       "value": "タイムアウト"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4823,7 +4853,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "コード"
     }
   ],
   "xYyPR8": [

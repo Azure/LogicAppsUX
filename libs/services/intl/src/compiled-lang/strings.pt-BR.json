@@ -299,6 +299,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " items matched."
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -408,7 +419,7 @@
   "2CXCOt": [
     {
       "type": 0,
-      "value": "Select a file to upload"
+      "value": "Selecione um arquivo a ser carregado"
     }
   ],
   "2Cdt4p": [
@@ -1029,6 +1040,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Actions"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1337,6 +1359,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hours"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1677,6 +1710,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Cases"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1934,7 +1978,7 @@
   "NlSWOG": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Expressão"
     }
   ],
   "NvANon": [
@@ -2135,6 +2179,12 @@
       "value": "(UTC-04:00) Ilhas Turcas e Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Do not generate if no value"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2171,6 +2221,12 @@
       "value": "Converter a entrada em um valor do tipo JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2203,6 +2259,12 @@
     {
       "type": 0,
       "value": "Necessário. O valor que é convertido em binário."
+    }
+  ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Data type"
     }
   ],
   "QknZQ1": [
@@ -2239,6 +2301,12 @@
       "value": "h"
     }
   ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
   "RX2Shm": [
     {
       "type": 0,
@@ -2255,6 +2323,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutes"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3254,7 +3333,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Nó de esquema de saída"
     }
   ],
   "eRvGw3": [
@@ -3475,6 +3554,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " seconds"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3602,13 +3692,13 @@
   "idQjOP": [
     {
       "type": 0,
-      "value": "Properties"
+      "value": "Propriedades"
     }
   ],
   "ifLn0+": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Testar"
     }
   ],
   "iq+tiv": [
@@ -4281,6 +4371,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " days"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -4480,13 +4581,13 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Nó do esquema de entrada"
     }
   ],
   "syiNc+": [
     {
       "type": 0,
-      "value": "Browse"
+      "value": "Procurar"
     }
   ],
   "t+XCkg": [
@@ -4600,7 +4701,7 @@
   "u9tr3k": [
     {
       "type": 0,
-      "value": "Select an element to start configuring"
+      "value": "Selecione um elemento para iniciar a configuração"
     }
   ],
   "uN4zFU": [
@@ -4821,6 +4922,12 @@
       "value": "Tempo Limite Expirado"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Full path"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4908,7 +5015,7 @@
   "xV4Koe": [
     {
       "type": 0,
-      "value": "Code"
+      "value": "Código"
     }
   ],
   "xYyPR8": [
