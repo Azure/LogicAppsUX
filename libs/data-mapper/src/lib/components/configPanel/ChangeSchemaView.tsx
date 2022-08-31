@@ -145,7 +145,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
 
       {uploadType === UploadSchemaTypes.UploadNew && (
         <div>
-          <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept=".json" hidden />
+          <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept=".xsd" hidden />
           <Stack horizontal>
             <TextField value={selectedSchemaFile?.name} placeholder={uploadMessage} readOnly />
             <PrimaryButton onClick={() => schemaFileInputRef.current?.click()} style={{ marginLeft: 8 }}>

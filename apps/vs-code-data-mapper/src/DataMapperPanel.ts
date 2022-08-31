@@ -113,7 +113,10 @@ export default class DataMapperPanel {
       case 'readLocalFileOptions': {
         const folderPath = workspace.workspaceFolders[0].uri.fsPath; // [WI 15419837] Find out how multi folder workspaces work
         fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
-          DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'showAvailableSchemas', data: result });
+          DataMapperPanel.currentPanel?.sendMsgToWebview({
+            command: 'showAvailableSchemas',
+            data: result.filter((file) => path.extname(file).toLowerCase() === '.xsd'),
+          });
         });
         break;
       }
