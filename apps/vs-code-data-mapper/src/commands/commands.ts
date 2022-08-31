@@ -1,6 +1,6 @@
 import DataMapperPanel from '../DataMapperPanel';
-import { dataMapDefinitionsPath } from '../extensionConfig';
-import { promises as fs } from 'fs';
+import { dataMapDefinitionsPath, schemasPath } from '../extensionConfig';
+import { promises as fs, existsSync as fileExists } from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { commands, window, workspace } from 'vscode';
@@ -58,13 +58,31 @@ const loadOutputSchemaFileCmd = async (uri: Uri) => {
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadOutputSchema', data: outputSchema });
 };
 
-// TODO: Likely automatically search for and load schema files if already specified in data map
 const loadDataMapFileCmd = async (uri: Uri) => {
   commands.executeCommand('azureDataMapper.openDataMapper');
 
-  const dataMap = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
+  const dataMap = yaml.load(await fs.readFile(uri.fsPath, 'utf-8')) as { srcSchemaName: string; dstSchemaName: string; mappings: any };
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: dataMap });
 
-  // Fun way to get filename - very heavily assumes path only has / and .yml
-  DataMapperPanel.currentDataMapName = uri.fsPath.split('/').pop().replace('.yml', '');
+  // Attempt to load schema files if specified
+  const schemasFolder = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath);
+  const srcSchemaPath = path.join(schemasFolder, dataMap.srcSchemaName);
+  const dstSchemaPath = path.join(schemasFolder, dataMap.dstSchemaName);
+
+  if (dataMap.srcSchemaName && fileExists(srcSchemaPath)) {
+    DataMapperPanel.currentPanel.sendMsgToWebview({
+      command: 'loadInputSchema',
+      data: JSON.parse(await fs.readFile(srcSchemaPath, 'utf-8')),
+    });
+  }
+
+  if (dataMap.dstSchemaName && fileExists(dstSchemaPath)) {
+    DataMapperPanel.currentPanel.sendMsgToWebview({
+      command: 'loadOutputSchema',
+      data: JSON.parse(await fs.readFile(dstSchemaPath, 'utf-8')),
+    });
+  }
+
+  // Fun way to get filename - very heavily assumes file is only .yml
+  DataMapperPanel.currentDataMapName = uri.fsPath.split('\\').pop().split('/').pop().replace('.yml', '');
 };

@@ -1,6 +1,5 @@
 import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionConfig';
 import { promises as fs } from 'fs';
-import { join } from 'path';
 import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ExtensionContext } from 'vscode';
@@ -72,7 +71,7 @@ export default class DataMapperPanel {
 
   private async _setWebviewHtml() {
     // Get webview content, converting links to VS Code URIs
-    const indexPath = join(this._extensionPath, 'webview/index.html');
+    const indexPath = path.join(this._extensionPath, '/webview/index.html');
     const html = await fs.readFile(indexPath, 'utf-8');
     // 1. Get all links prefixed by href or src
     const matchLinks = /(href|src)="([^"]*)"/g;
@@ -83,8 +82,8 @@ export default class DataMapperPanel {
         return `${prefix}="${link}"`;
       }
       // For scripts & links
-      const path = join(this._extensionPath, 'webview', link);
-      const uri = Uri.file(path);
+      const pth = path.join(this._extensionPath, '/webview/', link);
+      const uri = Uri.file(pth);
       return `${prefix}="${this._panel.webview.asWebviewUri(uri)}"`;
     };
 
@@ -104,9 +103,9 @@ export default class DataMapperPanel {
         break;
       }
       case 'readLocalFileOptions': {
-        const folderPath = workspace.workspaceFolders[0].uri.path; // danielle to find out how multi folder workspaces work
+        const folderPath = workspace.workspaceFolders[0].uri.fsPath; // danielle to find out how multi folder workspaces work
         console.log(folderPath);
-        fs.readdir(folderPath + schemasPath).then((result) => {
+        fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
           DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'showAvailableSchemas', data: result });
         });
         break;
