@@ -11,6 +11,6 @@ export const HTMLEditor = ({ placeholder, readonly, initialValue, GetTokenPicker
       initialValue={initialValue}
       GetTokenPicker={GetTokenPicker}
       tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
-    ></BaseEditor>
+    />
   );
 };
