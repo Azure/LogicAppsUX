@@ -1,4 +1,4 @@
-import { FluentProvider, teamsLightTheme, teamsDarkTheme, teamsHighContrastTheme } from '@fluentui/react-components';
+import { FluentProvider, webLightTheme, webDarkTheme, teamsHighContrastTheme } from '@fluentui/react-components';
 import { useState } from 'react';
 
 enum VsCodeThemeType {
@@ -20,9 +20,9 @@ export const VsCodeThemeHandler: React.FC<{ children: React.ReactNode }> = ({ ch
   const getCurrentTheme = () => {
     switch (vsCodeTheme) {
       case VsCodeThemeType.VsCodeLight:
-        return teamsLightTheme;
+        return webLightTheme;
       case VsCodeThemeType.VsCodeDark:
-        return teamsDarkTheme;
+        return webDarkTheme;
       case VsCodeThemeType.VsCodeHighContrast:
         return teamsHighContrastTheme;
     }
