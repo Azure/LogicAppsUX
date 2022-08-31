@@ -2,7 +2,6 @@ import { Label } from '../label';
 import { AUTHENTICATION_PROPERTIES } from './util';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { FontSizes, Dropdown } from '@fluentui/react';
-import { useIntl } from 'react-intl';
 
 const dropdownStyle: Partial<IDropdownStyles> = {
   caretDown: {
@@ -26,42 +25,37 @@ const dropdownStyle: Partial<IDropdownStyles> = {
 };
 
 interface AuthenticationDropdownProps {
-  errorMessage: string;
-  selectedManagedIdentityKey: string;
+  errorMessage?: string;
+  selectedKey: string;
+  dropdownPlaceholder?: string;
+  dropdownLabel: string;
   options: IDropdownOption[];
-  onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void;
+  onChange(event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void;
 }
 
 export const AuthenticationDropdown = ({
   errorMessage,
-  selectedManagedIdentityKey,
+  selectedKey,
+  dropdownPlaceholder,
+  dropdownLabel,
   options,
-  onManagedIdentityChange,
+  onChange,
 }: AuthenticationDropdownProps) => {
-  const intl = useIntl();
-  const MSIAuthLabel = intl.formatMessage({
-    defaultMessage: 'Managed identity',
-    description: 'Managed Identity Label',
-  });
-  const MSIAuthPlaceholder = intl.formatMessage({
-    defaultMessage: 'Please select an identity',
-    description: 'Placehodler text for dropdown',
-  });
   return (
     <div className="msla-authentication-property">
       <div className="msla-authentication-text-editor-label">
-        <Label isRequiredField={AUTHENTICATION_PROPERTIES.MSI_IDENTITY.isRequired} text={MSIAuthLabel} />
+        <Label isRequiredField={AUTHENTICATION_PROPERTIES.MSI_IDENTITY.isRequired} text={dropdownLabel} />
       </div>
       <div className="msla-input-sub-parameter-content">
         <Dropdown
-          selectedKey={selectedManagedIdentityKey}
-          placeholder={MSIAuthPlaceholder}
-          ariaLabel={MSIAuthLabel}
-          onChange={onManagedIdentityChange}
+          selectedKey={selectedKey}
+          placeholder={dropdownPlaceholder}
+          ariaLabel={dropdownLabel}
+          onChange={onChange}
           options={options}
           styles={dropdownStyle}
           className="msla-authentication-dropdown"
-          errorMessage={errorMessage ?? undefined}
+          errorMessage={errorMessage}
         />
       </div>
     </div>

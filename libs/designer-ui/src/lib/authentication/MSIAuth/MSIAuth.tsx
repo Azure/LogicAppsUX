@@ -1,7 +1,6 @@
 import type { MSIProps } from '..';
-import { StringEditor } from '../../editor/string';
-import { Label } from '../../label';
-import { AuthenticationDropdown } from '../AuthDropdown';
+import { AuthenticationDropdown } from '../AuthenticationDropdown';
+import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES, containsUserAssignedIdentities } from '../util';
 import { MSIAuthenticationDefault } from './MSIAuthDefault';
 import type { IDropdownOption } from '@fluentui/react';
@@ -11,16 +10,17 @@ import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface MSIAuthenticationProps {
-  MSIProps: MSIProps;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  msiProps: MSIProps;
   identity?: ManagedIdentity;
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
 }
 
-export const MSIAuthentication = ({ identity, MSIProps, GetTokenPicker, onManagedIdentityChange }: MSIAuthenticationProps): JSX.Element => {
+export const MSIAuthentication = ({ identity, msiProps, GetTokenPicker, onManagedIdentityChange }: MSIAuthenticationProps): JSX.Element => {
   const intl = useIntl();
   const [errorMessage, setErrorMessage] = useState('');
   const [managedIdentityDropdownOptions, setManagedIdentityDropdownOptions] = useState<IDropdownOption[]>([]);
+
   const invalidUserAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'The entered identity is not associated with this Logic App.',
     description: 'error message for invalid user',
@@ -33,8 +33,19 @@ export const MSIAuthentication = ({ identity, MSIProps, GetTokenPicker, onManage
     defaultMessage: 'User identity is not supported when Logic App has system assigned managed identity enabled.',
     description: 'error message for unspported identity',
   });
-  const selectedManagedIdentityKey = MSIProps.MSIIdentity;
-  const { MSIAudience = [] } = MSIProps;
+
+  const MSIAuthLabel = intl.formatMessage({
+    defaultMessage: 'Managed identity',
+    description: 'Managed Identity Label',
+  });
+  const MSIAuthPlaceholder = intl.formatMessage({
+    defaultMessage: 'Please select an identity',
+    description: 'Placehodler text for dropdown',
+  });
+
+  const selectedManagedIdentityKey = msiProps.MSIIdentity;
+  const { MSIAudience } = msiProps;
+
   if (identity?.type) {
     const userAssignedIdentities = containsUserAssignedIdentities(identity) ? getUserAssignedIdentities(identity) : undefined;
     if (
@@ -52,7 +63,6 @@ export const MSIAuthentication = ({ identity, MSIProps, GetTokenPicker, onManage
         setErrorMessage(invalidUserAssignedManagedIdentity);
       }
     }
-
     if (
       equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
       equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
@@ -82,32 +92,21 @@ export const MSIAuthentication = ({ identity, MSIProps, GetTokenPicker, onManage
       {identity?.type ? (
         <>
           <AuthenticationDropdown
+            dropdownLabel={MSIAuthLabel}
+            dropdownPlaceholder={MSIAuthPlaceholder}
             errorMessage={errorMessage}
-            selectedManagedIdentityKey={selectedManagedIdentityKey ?? ResourceIdentityType.SYSTEM_ASSIGNED}
+            selectedKey={selectedManagedIdentityKey ?? ResourceIdentityType.SYSTEM_ASSIGNED}
             options={managedIdentityDropdownOptions}
-            onManagedIdentityChange={onManagedIdentityChange}
+            onChange={onManagedIdentityChange}
           />
-
-          <div className="msla-authentication-editor-expanded-item">
-            <Label
-              className="msla-authentication-editor-expanded-item-label"
-              text={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE.displayName}
-              isRequiredField={true}
-            />
-            <div className="msla-authentication-editor-expanded-editor-container">
-              <StringEditor
-                initialValue={MSIAudience}
-                GetTokenPicker={GetTokenPicker}
-                placeholder={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE.placeHolder}
-                BasePlugins={{ tokens: true }}
-                singleLine={true}
-                tokenPickerButtonProps={{ buttonClassName: 'msla-authentication-editor-tokenpicker' }}
-              />
-            </div>
-          </div>
+          <AuthenticationProperty
+            initialValue={MSIAudience}
+            AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
+            GetTokenPicker={GetTokenPicker}
+          />
         </>
       ) : (
-        <MSIAuthenticationDefault MSIProps={MSIProps} GetTokenPicker={GetTokenPicker} onManagedIdentityChange={onManagedIdentityChange} />
+        <MSIAuthenticationDefault msiProps={msiProps} GetTokenPicker={GetTokenPicker} onManagedIdentityChange={onManagedIdentityChange} />
       )}
     </div>
   );

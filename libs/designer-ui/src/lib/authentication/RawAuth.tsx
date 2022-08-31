@@ -1,6 +1,5 @@
 import type { RawProps } from '.';
-import { StringEditor } from '../editor/string';
-import { Label } from '../label';
+import { AuthenticationProperty } from './AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from './util';
 
 interface RawAuthenticationProps {
@@ -9,26 +8,10 @@ interface RawAuthenticationProps {
 }
 
 export const RawAuthentication = ({ GetTokenPicker, rawProps }: RawAuthenticationProps): JSX.Element => {
-  const { rawValue = [] } = rawProps;
+  const { rawValue } = rawProps;
   return (
     <div className="msla-authentication-editor-raw-container">
-      <div className="msla-authentication-editor-expanded-item">
-        <Label
-          className="msla-authentication-editor-expanded-item-label"
-          text={AUTHENTICATION_PROPERTIES.RAW_VALUE.displayName}
-          isRequiredField={true}
-        />
-        <div className="msla-authentication-editor-expanded-editor-container">
-          <StringEditor
-            initialValue={rawValue}
-            GetTokenPicker={GetTokenPicker}
-            placeholder={AUTHENTICATION_PROPERTIES.RAW_VALUE.placeHolder}
-            BasePlugins={{ tokens: true }}
-            singleLine={true}
-            tokenPickerButtonProps={{ buttonClassName: 'msla-authentication-editor-tokenpicker' }}
-          />
-        </div>
-      </div>
+      <AuthenticationProperty initialValue={rawValue} AuthProperty={AUTHENTICATION_PROPERTIES.RAW_VALUE} GetTokenPicker={GetTokenPicker} />
     </div>
   );
 };

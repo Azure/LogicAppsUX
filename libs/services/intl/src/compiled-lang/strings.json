@@ -1231,6 +1231,12 @@
       "value": "Connection required"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Credential Type"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -2721,6 +2727,12 @@
     {
       "type": 0,
       "value": "Run History"
+    }
+  ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificate"
     }
   ],
   "VptXzY": [
@@ -4569,6 +4581,12 @@
     {
       "type": 0,
       "value": "Card Title"
+    }
+  ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Secret"
     }
   ],
   "rDt4Iu": [

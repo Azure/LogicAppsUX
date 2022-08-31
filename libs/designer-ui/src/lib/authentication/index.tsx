@@ -2,6 +2,7 @@ import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import { Label } from '../label';
+import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
 import { BasicAuthentication } from './BasicAuth';
 import { CertificateAuthentication } from './CertificateAuth';
 import { MSIAuthentication } from './MSIAuth/MSIAuth';
@@ -45,6 +46,16 @@ export interface MSIProps {
   MSIIdentity?: string;
 }
 
+export interface OAuthProps {
+  OAuthTenant?: ValueSegment[];
+  OAuthAudience?: ValueSegment[];
+  OAuthAuthority?: ValueSegment[];
+  OAuthClientId?: ValueSegment[];
+  OAuthType?: string;
+  OAuthTypeSecret?: ValueSegment[];
+  OAuthTypeCertificatePfx?: ValueSegment[];
+  OAuthTypeCertificatePassword?: ValueSegment[];
+}
 export interface AuthenticationEditorOptions {
   supportedAuthTypes?: AuthenticationType[];
   identity?: ManagedIdentity;
@@ -56,7 +67,8 @@ interface AuthenticationEditorProps extends BaseEditorProps {
   basicProps?: BasicProps;
   clientCertificateProps?: ClientCertificateProps;
   rawProps?: RawProps;
-  MSIProps?: MSIProps;
+  msiProps?: MSIProps;
+  aadOAuthProps?: OAuthProps;
 }
 
 export const AuthenticationEditor = ({
@@ -65,7 +77,8 @@ export const AuthenticationEditor = ({
   basicProps = {},
   clientCertificateProps = {},
   rawProps = {},
-  MSIProps = {},
+  msiProps = {},
+  aadOAuthProps = {},
   GetTokenPicker,
 }: AuthenticationEditorProps): JSX.Element => {
   const [codeView, toggleCodeView] = useBoolean(false);
@@ -84,8 +97,16 @@ export const AuthenticationEditor = ({
           <MSIAuthentication
             GetTokenPicker={GetTokenPicker}
             identity={AuthenticationEditorOptions.identity}
-            MSIProps={MSIProps}
+            msiProps={msiProps}
             onManagedIdentityChange={onManagedIdentityDropdownChange}
+          />
+        );
+      case AuthenticationType.OAUTH:
+        return (
+          <ActiveDirectoryAuthentication
+            GetTokenPicker={GetTokenPicker}
+            OauthProps={aadOAuthProps}
+            onOauthAuthenticationTypeChange={onAuthenticationTypeDropdownChange}
           />
         );
       case AuthenticationType.NONE:
@@ -99,6 +120,12 @@ export const AuthenticationEditor = ({
   };
 
   const onManagedIdentityDropdownChange = (_event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
+    // TODO: serialize data
+    console.log(item);
+  };
+
+  const onAuthenticationTypeDropdownChange = (_event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
+    // TODO: serialize data
     console.log(item);
   };
 
