@@ -44,7 +44,7 @@
     "@fluentui/react-hooks": "8.6.7",
     "@fluentui/style-utilities": "8.7.7",
     "@fluentui/theme": "2.6.12",
-    "@fluentui/web-components": "2.5.4",
+    "@fluentui/web-components": "^2.5.4",
     "@microsoft/fast-components": "^2.30.6",
     "@microsoft/fast-element": "^1.10.5",
     "@microsoft/fast-foundation": "^2.46.12",

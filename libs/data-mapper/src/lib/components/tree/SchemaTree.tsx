@@ -1,13 +1,55 @@
 import type { SchemaExtended, SchemaNodeDataType, SchemaNodeExtended } from '../../models';
 import { icon16ForSchemaNodeType } from '../../utils/Icon.Utils';
+import { tokens } from '@fluentui/react-components';
 import { bundleIcon, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
-import { fluentTreeItem, fluentTreeView, provideFluentDesignSystem } from '@fluentui/web-components';
+import {
+  fluentTreeItem,
+  fluentTreeView,
+  neutralFillStealthRest,
+  provideFluentDesignSystem,
+  treeItemStyles,
+} from '@fluentui/web-components';
+import { css } from '@microsoft/fast-element';
+import type { FoundationElementDefinition, OverrideFoundationElementDefinition, TreeItemOptions } from '@microsoft/fast-foundation';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
 import React, { useMemo } from 'react';
 
+// const css2 = `
+// :host {
+//   border-radius: ${tokens.borderRadiusMedium};
+// }
+// :host([selected])::after {
+//   visibility: hidden;
+// }
+// `;
+
+const overrides: OverrideFoundationElementDefinition<FoundationElementDefinition> = {
+  styles: (ctx, def) => {
+    const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
+    console.log(baseStyles);
+    const mergedStyles = css`
+      ${baseStyles}
+      .positioning-region {
+        border-radius: ${tokens.borderRadiusMedium};
+        color: orange;
+      }
+      :host {
+        border-radius: ${tokens.borderRadiusMedium};
+      }
+      :host([selected])::after {
+        visibility: hidden;
+      }
+      :host(:not([disabled])[selected]) .positioning-region {
+        background: ${neutralFillStealthRest};
+      }
+    `;
+    return mergedStyles; //css`${baseStyles.behaviors}`
+  },
+};
+
 const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
 export const FastTreeView = wrap(fluentTreeView());
-export const FastTreeItem = wrap(fluentTreeItem());
+export const FastTreeItem = wrap(fluentTreeItem(overrides));
 
 export interface SchemaTreeProps {
   schema: SchemaExtended;
