@@ -71,29 +71,39 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    // TODO: Figure out type we expect from loaded .yml data maps
+    // TODO: See if possible to set a better type for PayloadAction below (dataMapDefinition obj)
     setInitialDataMap: (state, action: PayloadAction<any | undefined>) => {
       const incomingDataMap = action.payload;
       const currentState = state.curDataMapOperation;
 
-      if (incomingDataMap) {
-        const loadedInitialState: DataMapOperationState = {
-          ...currentState,
-          dataMapConnections: convertFromMapDefinition(yaml.dump(incomingDataMap)),
-        };
+      if (currentState.inputSchema && currentState.outputSchema) {
+        let newState = {} as DataMapOperationState;
 
-        state.curDataMapOperation = loadedInitialState;
-        state.pristineDataMap = loadedInitialState;
-      } else if (currentState.inputSchema && currentState.outputSchema) {
-        const newInitialState: DataMapOperationState = {
-          ...currentState,
-          dataMapConnections: {},
-          currentInputNodes: [],
-          currentOutputNode: currentState.currentOutputNode || currentState.outputSchema.schemaTreeRoot,
-        };
+        if (incomingDataMap) {
+          const loadedConnections = convertFromMapDefinition(yaml.dump(incomingDataMap));
+          const topLevelInputNodes: SchemaNodeExtended[] = [];
 
-        state.curDataMapOperation = newInitialState;
-        state.pristineDataMap = newInitialState;
+          Object.entries(loadedConnections).forEach(([_key, con]) => {
+            // TODO: Only push input nodes at TOP-LEVEL of output
+            topLevelInputNodes.push(currentState.flattenedInputSchema[con.reactFlowSource]);
+          });
+
+          newState = {
+            ...currentState,
+            currentInputNodes: topLevelInputNodes,
+            dataMapConnections: loadedConnections,
+          };
+        } else {
+          newState = {
+            ...currentState,
+            dataMapConnections: {},
+            currentInputNodes: [],
+            currentOutputNode: currentState.outputSchema.schemaTreeRoot,
+          };
+        }
+
+        state.curDataMapOperation = newState;
+        state.pristineDataMap = newState;
       }
     },
 
