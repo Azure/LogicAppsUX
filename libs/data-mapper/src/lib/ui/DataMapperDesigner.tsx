@@ -53,7 +53,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapperDesignerProps {
-  saveStateCall: () => void;
+  saveStateCall: (dataMapDefinition: string) => void;
   setSelectedSchemaFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
 }
@@ -147,7 +147,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
   };
 
   const onSaveClick = () => {
-    saveStateCall(); // TODO: do the next call only when this is successful
+    saveStateCall(dataMapDefinition); // TODO: do the next call only when this is successful
     dispatch(
       saveDataMap({
         inputSchemaExtended: inputSchema,
