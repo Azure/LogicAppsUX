@@ -1,8 +1,10 @@
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended, SelectedNode } from '../../models';
 import { SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
+import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import * as yaml from 'js-yaml';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -69,9 +71,20 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    setInitialDataMap: (state) => {
+    // TODO: Figure out type we expect from loaded .yml data maps
+    setInitialDataMap: (state, action: PayloadAction<any | undefined>) => {
+      const incomingDataMap = action.payload;
       const currentState = state.curDataMapOperation;
-      if (currentState.inputSchema && currentState.outputSchema) {
+
+      if (incomingDataMap) {
+        const loadedInitialState: DataMapOperationState = {
+          ...currentState,
+          dataMapConnections: convertFromMapDefinition(yaml.dump(incomingDataMap)),
+        };
+
+        state.curDataMapOperation = loadedInitialState;
+        state.pristineDataMap = loadedInitialState;
+      } else if (currentState.inputSchema && currentState.outputSchema) {
         const newInitialState: DataMapOperationState = {
           ...currentState,
           dataMapConnections: {},

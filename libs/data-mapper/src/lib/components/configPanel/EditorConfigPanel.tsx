@@ -49,7 +49,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
         dispatch(
           setInitialSchema({ schema: extendedSchema, schemaType: schemaType, flattenedSchema: flattenSchema(extendedSchema, schemaType) })
         );
-        dispatch(setInitialDataMap());
+        dispatch(setInitialDataMap(undefined));
       }
     },
     [dispatch, schemaType]

@@ -1,50 +1,89 @@
 import DataMapperPanel from '../DataMapperPanel';
-import { promises as fs } from 'fs';
-import { commands, workspace } from 'vscode';
+import { dataMapDefinitionsPath, schemasPath } from '../extensionConfig';
+import { promises as fs, existsSync as fileExists } from 'fs';
+import * as yaml from 'js-yaml';
+import * as path from 'path';
+import { commands, window, workspace } from 'vscode';
 import type { ExtensionContext, Uri } from 'vscode';
 
-import path = require('path');
-import yaml = require('js-yaml');
-
 export const registerCommands = (context: ExtensionContext) => {
-  context.subscriptions.push(commands.registerCommand('dataMapperExtension.start', () => startCmd(context)));
-  context.subscriptions.push(commands.registerCommand('dataMapperExtension.createDataMapFile', createDataMapFileCmd));
-  context.subscriptions.push(commands.registerCommand('dataMapperExtension.loadInputSchemaFile', loadInputSchemaFileCmd));
-  context.subscriptions.push(commands.registerCommand('dataMapperExtension.loadOutputSchemaFile', loadOutputSchemaFileCmd));
-  context.subscriptions.push(commands.registerCommand('dataMapperExtension.loadDataMapFile', loadDataMapFileCmd));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.openDataMapper', () => openDataMapperCmd(context)));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.createNewDataMap', createNewDataMapCmd));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadInputSchemaFile', loadInputSchemaFileCmd));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadOutputSchemaFile', loadOutputSchemaFileCmd));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadDataMapFile', loadDataMapFileCmd));
 };
 
-const startCmd = async (context: ExtensionContext) => {
+const openDataMapperCmd = (context: ExtensionContext) => {
   DataMapperPanel.createOrShow(context);
 };
 
-const createDataMapFileCmd = async () => {
+const createNewDataMapCmd = async () => {
   const newDataMapTemplate = yaml.dump({
-    srcSchemaName: 'sourceSchemaName',
-    dstSchemaName: 'destinationSchemaName',
+    srcSchemaName: '',
+    dstSchemaName: '',
     mappings: {
-      targetNodeKey: 'targetNodeKey',
+      targetNodeKey: '',
     },
   });
 
-  const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, 'maps', 'NewDataMap.yml');
-  fs.writeFile(filePath, newDataMapTemplate, 'utf8');
+  // TODO: Data map name validation
+  window.showInputBox({ prompt: 'Data Map name: ', title: 'Data Map name' }).then((newDatamapName) => {
+    if (!newDatamapName) {
+      return;
+    }
 
-  DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: newDataMapTemplate });
+    commands.executeCommand('azureDataMapper.openDataMapper'); // Doing it this way so we don't have to pass context everywhere
+
+    const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, `${newDatamapName}.yml`);
+    fs.writeFile(filePath, newDataMapTemplate, 'utf8');
+
+    DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: newDataMapTemplate });
+
+    DataMapperPanel.currentDataMapName = newDatamapName;
+  });
 };
 
 const loadInputSchemaFileCmd = async (uri: Uri) => {
+  commands.executeCommand('azureDataMapper.openDataMapper');
+
   const inputSchema = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadInputSchema', data: inputSchema });
 };
 
 const loadOutputSchemaFileCmd = async (uri: Uri) => {
+  commands.executeCommand('azureDataMapper.openDataMapper');
+
   const outputSchema = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadOutputSchema', data: outputSchema });
 };
 
-// TODO: Likely automatically search for and load schema files if already specified in data map
 const loadDataMapFileCmd = async (uri: Uri) => {
-  const dataMap = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
+  commands.executeCommand('azureDataMapper.openDataMapper');
+
+  const dataMap = yaml.load(await fs.readFile(uri.fsPath, 'utf-8')) as { $sourceSchema: string; $targetSchema: string; [key: string]: any };
+
+  // Attempt to load schema files if specified
+  const schemasFolder = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath);
+  const srcSchemaPath = path.join(schemasFolder, dataMap.$sourceSchema);
+  const dstSchemaPath = path.join(schemasFolder, dataMap.$targetSchema);
+
+  if (fileExists(srcSchemaPath)) {
+    DataMapperPanel.currentPanel.sendMsgToWebview({
+      command: 'loadInputSchema',
+      data: JSON.parse(await fs.readFile(srcSchemaPath, 'utf-8')), // TODO: translate from .xsd when hooked up to backend
+    });
+  }
+
+  if (fileExists(dstSchemaPath)) {
+    DataMapperPanel.currentPanel.sendMsgToWebview({
+      command: 'loadOutputSchema',
+      data: JSON.parse(await fs.readFile(dstSchemaPath, 'utf-8')), // TODO: translate from .xsd when hooked up to backend
+    });
+  }
+
   DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: dataMap });
+
+  // Fun way to get filename - very heavily assumes file is only .yml
+  DataMapperPanel.currentDataMapName = uri.fsPath.split('\\').pop().split('/').pop().replace('.yml', '');
 };
