@@ -6,7 +6,7 @@ import {
   DataMapperDesignerProvider,
   InitSchemaSelectionService,
 } from '@microsoft/logic-apps-data-mapper';
-import { useContext } from 'react';
+import { useCallback, useContext } from 'react';
 import { useSelector } from 'react-redux';
 
 interface SchemaFile {
@@ -35,11 +35,11 @@ export const App = (): JSX.Element => {
     });
   };
 
-  const readLocalFileOptions = () => {
+  const readLocalFileOptions = useCallback(() => {
     vscode.postMessage({
       command: 'readLocalFileOptions',
     });
-  };
+  }, [vscode]);
 
   const saveDataMapDefinition = (dataMapDefinition: string) => {
     vscode.postMessage({
