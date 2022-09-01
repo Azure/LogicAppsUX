@@ -29,6 +29,7 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaNodeExtended, SelectedNode } from '../models';
 import { NodeType, SchemaTypes } from '../models';
+import type { ConnectionDictionary } from '../models/Connection';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
@@ -70,16 +71,33 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const clickTimerRef: { current: ReturnType<typeof setTimeout> | null } = useRef(null); // NOTE: ReturnType to support NodeJS & window Timeouts
 
   const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
+  const flattenedInputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedInputSchema);
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
   const flattenedOutputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedOutputSchema);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
-  const [nodes, edges] = useLayout();
+
+  const connectedInputNodes = useMemo(() => {
+    if (currentOutputNode) {
+      const outputFilteredConnections = currentOutputNode.children.flatMap((childNode) =>
+        !connections[childNode.key] ? [] : connections[childNode.key]
+      );
+
+      return outputFilteredConnections.map((connection) => {
+        return flattenedInputSchema[connection.reactFlowSource];
+      });
+    } else {
+      return [];
+    }
+  }, [flattenedInputSchema, currentOutputNode, connections]);
+
+  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, currentOutputNode, connections);
 
   const dataMapDefinition = useMemo((): string => {
     if (inputSchema && outputSchema) {
@@ -360,7 +378,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             <ButtonPivot {...toolboxButtonPivotProps} />
             {displayToolboxItem === 'inputSchemaTreePanel' && (
               <FloatingPanel {...toolboxPanelProps}>
-                <SchemaTree schema={inputSchema} currentlySelectedNodes={currentlySelectedInputNodes} onNodeClick={onToolboxItemClick} />
+                <SchemaTree
+                  schema={inputSchema}
+                  currentlySelectedNodes={currentlySelectedInputNodes}
+                  visibleConnectedNodes={connectedInputNodes}
+                  onNodeClick={onToolboxItemClick}
+                />
               </FloatingPanel>
             )}
             {displayToolboxItem === 'expressionsPanel' && (
@@ -383,35 +406,21 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   );
 };
 
-export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
-  const inputSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
-  const flattenedInputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedInputSchema);
-  const outputSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
-  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-
-  const connectedInputNodes = useMemo(() => {
-    if (outputSchemaNode) {
-      const outputFilteredConnections = outputSchemaNode.children.flatMap((childNode) =>
-        !connections[childNode.key] ? [] : connections[childNode.key]
-      );
-
-      return outputFilteredConnections.map((connection) => {
-        return flattenedInputSchema[connection.reactFlowSource];
-      });
-    } else {
-      return [];
-    }
-  }, [flattenedInputSchema, outputSchemaNode, connections]);
-
+export const useLayout = (
+  allInputSchemaNodes: SchemaNodeExtended[],
+  connectedInputNodes: SchemaNodeExtended[],
+  currentOutputNode: SchemaNodeExtended | undefined,
+  connections: ConnectionDictionary
+): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
-    if (outputSchemaNode) {
-      return convertToReactFlowNodes(inputSchemaNodes, connectedInputNodes, outputSchemaNode);
+    if (currentOutputNode) {
+      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, currentOutputNode);
     } else {
       return [];
     }
     // Explicitly ignoring connectedInputNodes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputSchemaNodes, outputSchemaNode]);
+  }, [allInputSchemaNodes, currentOutputNode]);
 
   const reactFlowEdges = useMemo(() => {
     return convertToReactFlowEdges(connections);

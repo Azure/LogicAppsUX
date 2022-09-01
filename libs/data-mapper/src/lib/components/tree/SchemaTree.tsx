@@ -13,13 +13,20 @@ export const FastTreeItem = wrap(fluentTreeItem());
 export interface SchemaTreeProps {
   schema: SchemaExtended;
   currentlySelectedNodes: SchemaNodeExtended[];
+  visibleConnectedNodes: SchemaNodeExtended[];
   onNodeClick: (schemaNode: SchemaNodeExtended) => void;
 }
 
-export const SchemaTree: React.FC<SchemaTreeProps> = ({ schema, currentlySelectedNodes, onNodeClick }: SchemaTreeProps) => {
+export const SchemaTree: React.FC<SchemaTreeProps> = ({
+  schema,
+  currentlySelectedNodes,
+  visibleConnectedNodes,
+  onNodeClick,
+}: SchemaTreeProps) => {
   const treeItems = useMemo<JSX.Element[]>(() => {
-    return convertToFastTreeItem(schema.schemaTreeRoot, currentlySelectedNodes, onNodeClick);
-  }, [schema, currentlySelectedNodes, onNodeClick]);
+    const completeSelectedNodeList = [...currentlySelectedNodes, ...visibleConnectedNodes];
+    return convertToFastTreeItem(schema.schemaTreeRoot, completeSelectedNodeList, onNodeClick);
+  }, [schema, currentlySelectedNodes, visibleConnectedNodes, onNodeClick]);
 
   return <FastTreeView>{treeItems}</FastTreeView>;
 };
