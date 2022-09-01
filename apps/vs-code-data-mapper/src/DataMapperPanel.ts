@@ -8,7 +8,7 @@ type SchemaType = 'input' | 'output';
 
 type SendingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: SchemaType } }
-  | { command: 'loadDataMap'; data: any }
+  | { command: 'loadDataMap' | 'loadNewDataMap'; data: any }
   | { command: 'showAvailableSchemas'; data: string[] };
 type ReceivingMessageTypes =
   | {

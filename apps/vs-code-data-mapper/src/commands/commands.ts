@@ -36,12 +36,13 @@ const createNewDataMapCmd = async () => {
     const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, `${newDatamapName}.yml`);
     fs.writeFile(filePath, newDataMapTemplate, 'utf8');
 
-    DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadDataMap', data: newDataMapTemplate });
+    DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadNewDataMap', data: newDataMapTemplate });
 
     DataMapperPanel.currentDataMapName = newDatamapName;
   });
 };
 
+// NOTE: Input/Output schemas are both expected to be defined, and their files present
 const loadDataMapFileCmd = async (uri: Uri) => {
   commands.executeCommand('azureDataMapper.openDataMapper');
 
@@ -52,21 +53,18 @@ const loadDataMapFileCmd = async (uri: Uri) => {
   const srcSchemaPath = path.join(schemasFolder, dataMap.$sourceSchema);
   const dstSchemaPath = path.join(schemasFolder, dataMap.$targetSchema);
 
-  if (fileExists(srcSchemaPath)) {
-    DataMapperPanel.currentPanel?.sendMsgToWebview({
-      command: 'fetchSchema',
-      data: { fileName: path.basename(srcSchemaPath), type: 'input' },
-    });
+  if (!fileExists(srcSchemaPath) || !fileExists(dstSchemaPath)) {
+    console.error('At least one of the schema files was not found in the Schemas folder!');
   }
 
-  if (fileExists(dstSchemaPath)) {
-    DataMapperPanel.currentPanel.sendMsgToWebview({
-      command: 'fetchSchema',
-      data: { fileName: path.basename(dstSchemaPath), type: 'output' },
-    });
-  }
-
-  DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: dataMap });
+  DataMapperPanel.currentPanel.sendMsgToWebview({
+    command: 'loadDataMap',
+    data: {
+      dataMap: dataMap,
+      inputSchemaFileName: path.basename(srcSchemaPath),
+      outputSchemaFileName: path.basename(dstSchemaPath),
+    },
+  });
 
   DataMapperPanel.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
 };

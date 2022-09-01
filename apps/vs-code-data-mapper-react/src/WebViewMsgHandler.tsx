@@ -9,7 +9,8 @@ import type { WebviewApi } from 'vscode-webview';
 
 type ReceivingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: 'input' | 'output' } }
-  | { command: 'loadDataMap'; data: DataMap }
+  | { command: 'loadNewDataMap'; data: DataMap }
+  | { command: 'loadDataMap'; data: { dataMap: DataMap; inputSchemaFileName: string; outputSchemaFileName: string } }
   | { command: 'showAvailableSchemas'; data: string[] };
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
@@ -33,8 +34,17 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
           }
         });
         break;
-      case 'loadDataMap':
+      case 'loadNewDataMap':
         changeDataMapCB(msg.data);
+        break;
+      case 'loadDataMap':
+        getSelectedSchema(msg.data.outputSchemaFileName).then((schema) => {
+          changeOutputSchemaCB(schema as Schema);
+        });
+        getSelectedSchema(msg.data.inputSchemaFileName).then((schema) => {
+          changeInputSchemaCB(schema as Schema);
+        });
+        changeDataMapCB(msg.data.dataMap);
         break;
       case 'showAvailableSchemas':
         showAvailableSchemas(msg.data);
