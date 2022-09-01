@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-app-vscode-extension",
-  "version": "0.0.73",
+  "version": "0.0.74",
   "main": "main.js",
   "engines": {
     "vscode": "^1.64.0"
