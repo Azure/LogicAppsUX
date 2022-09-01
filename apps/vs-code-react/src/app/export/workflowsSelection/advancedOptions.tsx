@@ -1,11 +1,21 @@
 import { AdvancedOptionsTypes } from '../../../run-service';
+import type { AppDispatch, RootState } from '../../../state/store';
+import { updateSelectedAdvanceOptions } from '../../../state/vscodeSlice';
+import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { SearchableDropdown } from '../../components/searchableDropdown';
+import { getAdvanceOptionsSelection } from './helper';
 import { Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const AdvancedOptions: React.FC<any> = () => {
+  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const { exportData } = vscodeState as InitializedVscodeState;
+  const { selectedAdvanceOptions } = exportData;
+
   const intl = useIntl();
+  const dispatch: AppDispatch = useDispatch();
 
   const intlText = {
     ADVANCED_OPTIONS: intl.formatMessage({
@@ -42,11 +52,12 @@ export const AdvancedOptions: React.FC<any> = () => {
 
   const onChangeOptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption) {
-      if (selectedOption.key === AdvancedOptionsTypes.off) {
-        console.log('off');
-      } else {
-        console.log('else');
-      }
+      const optionsSelection = getAdvanceOptionsSelection(selectedOption, selectedAdvanceOptions);
+      dispatch(
+        updateSelectedAdvanceOptions({
+          selectedAdvanceOptions: optionsSelection,
+        })
+      );
     }
   };
 
@@ -63,7 +74,7 @@ export const AdvancedOptions: React.FC<any> = () => {
         placeholder={AdvancedOptionsTypes.off}
         options={advancedOptions}
         onChange={onChangeOptions}
-        selectedKey={null}
+        selectedKey={selectedAdvanceOptions.length ? selectedAdvanceOptions : null}
         multiSelect
       />
     </div>

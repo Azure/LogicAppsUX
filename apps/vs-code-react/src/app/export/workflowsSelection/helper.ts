@@ -1,4 +1,5 @@
-import type { WorkflowsList, WorkflowProperties, SelectedWorkflowsList } from '../../../run-service/types';
+import { AdvancedOptionsTypes } from '../../../run-service';
+import type { WorkflowsList, WorkflowProperties, SelectedWorkflowsList } from '../../../run-service';
 import type { IDropdownOption } from '@fluentui/react';
 
 export const parseWorkflowData = (workflowsData: { workflows: Array<WorkflowProperties> }): Array<WorkflowsList> => {
@@ -102,4 +103,14 @@ export const getSelectedItems = (allItemsSelected: SelectedWorkflowsList[], curr
   });
 
   return updatedItems.filter((item) => item.selected);
+};
+
+export const getAdvanceOptionsSelection = (selectedOption: IDropdownOption, _selectedAdvanceOptions: string[]): string[] => {
+  if (selectedOption.key === AdvancedOptionsTypes.off) {
+    console.log('off');
+  } else {
+    console.log('off');
+  }
+
+  return [];
 };

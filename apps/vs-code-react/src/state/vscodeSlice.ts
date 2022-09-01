@@ -75,6 +75,7 @@ export const vscodeSlice = createSlice({
           resourceGroup: undefined,
           resourceGroupLocation: undefined,
         },
+        selectedAdvanceOptions: [],
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
@@ -124,6 +125,10 @@ export const vscodeSlice = createSlice({
         initializedState.statuses = [];
       }
     },
+    updateSelectedAdvanceOptions: (state: VscodeState, action: PayloadAction<{ selectedAdvanceOptions: Array<string> }>) => {
+      const { selectedAdvanceOptions } = action.payload;
+      (state as InitializedVscodeState).exportData.selectedAdvanceOptions = selectedAdvanceOptions;
+    },
   },
 });
 
@@ -140,6 +145,7 @@ export const {
   updateManagedConnections,
   addStatus,
   setFinalStatus,
+  updateSelectedAdvanceOptions,
 } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;

@@ -218,6 +218,7 @@ export type ExportData = {
   targetDirectory: ITargetDirectory;
   packageUrl: string;
   managedConnections: ManagedConnections;
+  selectedAdvanceOptions: Array<string>;
 };
 
 export enum ResourceType {
@@ -385,7 +386,7 @@ export interface INamingValidation {
 }
 
 export enum AdvancedOptionsTypes {
-  off = 'off',
-  cloneConnections = 'cloneConnections',
-  generateInfrastructureTemplates = 'generateInfrastructureTemplates',
+  off = 'Off',
+  cloneConnections = 'CloneConnections',
+  generateInfrastructureTemplates = 'GenerateInfrastructureTemplates',
 }
