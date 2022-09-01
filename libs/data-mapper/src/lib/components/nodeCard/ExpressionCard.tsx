@@ -75,11 +75,6 @@ const useStyles = makeStyles({
       outlineRadius: '100px',
     },
   }),
-
-  tooltipText: {
-    fontSize: '12px',
-    truncate: 'true',
-  },
 });
 
 export const ExpressionCard: FunctionComponent<NodeProps<ExpressionCardProps>> = (props: NodeProps<ExpressionCardProps>) => {
@@ -92,7 +87,7 @@ export const ExpressionCard: FunctionComponent<NodeProps<ExpressionCardProps>> =
       {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge}></PresenceBadge>}
       <Tooltip
         content={{
-          children: <Text className={classes.tooltipText}>{expressionName}</Text>,
+          children: <Text size={200}>{expressionName}</Text>,
         }}
         relationship="label"
       >
