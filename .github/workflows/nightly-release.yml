@@ -66,15 +66,12 @@ jobs:
           path: |
             dist/apps/vs-code-data-mapper/*.vsix
 
-      - name: Generate Github Release for VSIX
-        uses: 'marvinpinto/action-automatic-releases@latest'
+      - uses: ncipollo/release-action@v1
         with:
-          repo_token: '${{ secrets.AUTOMATION_PAT }}'
-          prerelease: false
-          automatic_release_tag: '${{ steps.previoustag.outputs.tag }}'
-          files: |
-            LICENSE.md
-            dist/apps/vs-code-data-mapper/*.vsix
+          artifacts: "LICENSE.md,dist/apps/vs-code-data-mapper/*.vsix"
+          generateReleaseNotes: true
+          tag: '${{ steps.previoustag.outputs.tag }}'
+          token: ${{ secrets.AUTOMATION_PAT }}
 
   publish:
     needs: bump-version
