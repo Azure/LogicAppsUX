@@ -16,8 +16,10 @@ import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import {
+  addInputNodes,
   makeConnection,
   redoDataMapOperation,
+  removeInputNodes,
   saveDataMap,
   setCurrentlySelectedNode,
   setCurrentOutputNode,
@@ -29,6 +31,7 @@ import type { SchemaNodeExtended, SelectedNode } from '../models';
 import { NodeType, SchemaTypes } from '../models';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
+import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
 import './ReactFlowStyleOverrides.css';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -86,8 +89,22 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     return '';
   }, [currentConnections, inputSchema, outputSchema]);
 
-  const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
-    dispatch(toggleInputNode(selectedNode));
+  const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
+    if (isLeafNode(selectedNode)) {
+      if (!hasAConnection(selectedNode, currentConnections)) {
+        dispatch(toggleInputNode(selectedNode));
+      }
+    } else {
+      if (allChildNodesSelected(selectedNode, currentlySelectedInputNodes)) {
+        // TODO reconfirm this works for loops and conditionals
+        const nodesToRemove = selectedNode.children.filter((childNodes) =>
+          Object.values(currentConnections).some((currentConnection) => childNodes.key !== currentConnection.value)
+        );
+        dispatch(removeInputNodes(nodesToRemove));
+      } else {
+        dispatch(addInputNodes(selectedNode.children));
+      }
+    }
   };
 
   const handleNodeClicks = (_event: ReactMouseEvent, node: ReactFlowNode) => {
@@ -127,7 +144,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     if (node.data.schemaType === SchemaTypes.Output && !node.data.isLeaf) {
       const newCurrentSchemaNode = flattenedOutputSchema[node.id];
       if (currentOutputNode && newCurrentSchemaNode) {
-        dispatch(setCurrentOutputNode(newCurrentSchemaNode));
+        dispatch(setCurrentOutputNode({ schemaNode: newCurrentSchemaNode, resetSelectedInputNodes: true }));
       }
     }
   };
@@ -343,11 +360,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             <ButtonPivot {...toolboxButtonPivotProps} />
             {displayToolboxItem === 'inputSchemaTreePanel' && (
               <FloatingPanel {...toolboxPanelProps}>
-                <SchemaTree
-                  schema={inputSchema}
-                  currentlySelectedNodes={currentlySelectedInputNodes}
-                  onLeafNodeClick={onToolboxLeafItemClick}
-                />
+                <SchemaTree schema={inputSchema} currentlySelectedNodes={currentlySelectedInputNodes} onNodeClick={onToolboxItemClick} />
               </FloatingPanel>
             )}
             {displayToolboxItem === 'expressionsPanel' && (
@@ -372,15 +385,32 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
 export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
   const inputSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
+  const flattenedInputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedInputSchema);
   const outputSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
-  const reactFlowNodes = useMemo(() => {
+  const connectedInputNodes = useMemo(() => {
     if (outputSchemaNode) {
-      return convertToReactFlowNodes(Array.from(inputSchemaNodes), outputSchemaNode);
+      const outputFilteredConnections = outputSchemaNode.children.flatMap((childNode) =>
+        !connections[childNode.key] ? [] : connections[childNode.key]
+      );
+
+      return outputFilteredConnections.map((connection) => {
+        return flattenedInputSchema[connection.reactFlowSource];
+      });
     } else {
       return [];
     }
+  }, [flattenedInputSchema, outputSchemaNode, connections]);
+
+  const reactFlowNodes = useMemo(() => {
+    if (outputSchemaNode) {
+      return convertToReactFlowNodes(inputSchemaNodes, connectedInputNodes, outputSchemaNode);
+    } else {
+      return [];
+    }
+    // Explicitly ignoring connectedInputNodes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputSchemaNodes, outputSchemaNode]);
 
   const reactFlowEdges = useMemo(() => {

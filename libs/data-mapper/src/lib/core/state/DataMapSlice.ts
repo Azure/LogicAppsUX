@@ -144,6 +144,37 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    addInputNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
+      const nodes = [...state.curDataMapOperation.currentInputNodes];
+      action.payload.forEach((payloadNode) => {
+        const existingNode = state.curDataMapOperation.currentInputNodes.find((currentNode) => currentNode.key === payloadNode.key);
+        if (!existingNode) {
+          nodes.push(payloadNode);
+        }
+      });
+
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentInputNodes: nodes,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
+    removeInputNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
+      let nodes = [...state.curDataMapOperation.currentInputNodes];
+      nodes = state.curDataMapOperation.currentInputNodes.filter((currentNode) =>
+        action.payload.every((payloadNode) => payloadNode.key !== currentNode.key)
+      );
+
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentInputNodes: nodes,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
     toggleInputNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
       let nodes = [...state.curDataMapOperation.currentInputNodes];
       const existingNode = state.curDataMapOperation.currentInputNodes.find((currentNode) => currentNode.key === action.payload.key);
@@ -161,10 +192,11 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
-    setCurrentOutputNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
+    setCurrentOutputNode: (state, action: PayloadAction<{ schemaNode: SchemaNodeExtended; resetSelectedInputNodes: boolean }>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentOutputNode: action.payload,
+        currentOutputNode: action.payload.schemaNode,
+        currentInputNodes: action.payload.resetSelectedInputNodes ? [] : state.curDataMapOperation.currentInputNodes,
       };
 
       doDataMapOperation(state, newState);
@@ -244,6 +276,8 @@ export const {
   changeInputSchema,
   changeOutputSchema,
   setCurrentInputNodes,
+  addInputNodes,
+  removeInputNodes,
   toggleInputNode,
   setCurrentOutputNode,
   setCurrentlySelectedNode,
