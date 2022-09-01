@@ -20,9 +20,9 @@ export const DataMapperStandaloneDesigner = () => {
   const baseUrl = 'http://localhost:7071';
   InitSchemaSelectionService({ baseUrl: baseUrl, resourceUrl: schemaState.resourcePath, accessToken: schemaState.armToken });
 
-  const saveStateCall = () => {
+  const saveStateCall = (dataMapDefinition: string) => {
     new Promise((resolve) => setTimeout(resolve, 10));
-    // console.log();
+    console.log(dataMapDefinition);
   };
 
   return (

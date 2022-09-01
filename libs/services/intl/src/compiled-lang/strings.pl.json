@@ -407,6 +407,12 @@
       "value": "Parametr wymagany. Obiekt na potrzeby sprawdzania, czy jest on mniejszy niż wartość, z którą jest porównywany."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Enter the value of the Authorization header"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -473,6 +479,12 @@
       "value": "17"
     }
   ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "2b1yD3": [
     {
       "type": 0,
@@ -519,6 +531,12 @@
     {
       "type": 0,
       "value": "Identyfikator"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "3BZnxY": [
@@ -569,6 +587,12 @@
       "value": "(UTC+09:00) Czyta"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "The entered identity is not associated with this Logic App."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -609,6 +633,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Erywań"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "47kOXr": [
@@ -699,6 +729,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Wyrażenie XPath do wyznaczenia wartości."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Authority"
     }
   ],
   "5aa76N": [
@@ -851,6 +887,12 @@
       "value": "Parametr wymagany. Ciąg, który może zawierać wartość."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -887,10 +929,22 @@
       "value": "Nie można renderować projektanta z powodu wielu wyzwalaczy w definicji."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Please enable managed identity for the logic app."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Wymagane. Ciąg do zakodowania jako identyfikator URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Enter secret as plain text or use a secure parameter"
     }
   ],
   "8Y5xpK": [
@@ -945,6 +999,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Ajmak kobdoski"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
     }
   ],
   "949s+r": [
@@ -1047,6 +1113,18 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangun)"
+    }
+  ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Enter audience"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Username"
     }
   ],
   "ArTh0/": [
@@ -1165,6 +1243,12 @@
       "value": "Wymagane. Ciąg, w którym zostaną zdekodowane znaki niebezpieczne w adresie URL."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1207,6 +1291,12 @@
       "value": "Wymagane połączenie"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Credential Type"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1229,6 +1319,12 @@
     {
       "type": 0,
       "value": "Użyj przykładowego ładunku do wygenerowania schematu"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Enter client ID"
     }
   ],
   "DZZ3fj": [
@@ -1295,6 +1391,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "Eqgm4v": [
@@ -1501,6 +1603,12 @@
     {
       "type": 0,
       "value": "Zwraca zapytanie z identyfikatora URI"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Enter authority"
     }
   ],
   "GLd3MU": [
@@ -2003,6 +2111,12 @@
       "value": "Wymagane. Identyfikator URI danych do przekonwertowania na reprezentację binarną."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -2057,6 +2171,18 @@
       "value": "Wyrażenie"
     }
   ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Enter tenant"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2085,6 +2211,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg zawierający nazwę źródłowej strefy czasowej. Szczegółowe informacje można znaleźć na stronie https://msdn.microsoft.com/pl-pl/library/gg154758.aspx."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Secret"
     }
   ],
   "OFKZzQ": [
@@ -2169,6 +2301,12 @@
     {
       "type": 0,
       "value": "Wybierz tożsamość zarządzaną"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
     }
   ],
   "P2A5dB": [
@@ -2300,7 +2438,7 @@
   "QGuYOg": [
     {
       "type": 0,
-      "value": "Nullable"
+      "value": "Dopuszczające wartość null"
     }
   ],
   "QQYzHC": [
@@ -2340,7 +2478,7 @@
   "QePi+D": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Typ danych"
     }
   ],
   "QknZQ1": [
@@ -2380,7 +2518,13 @@
   "RFjYpH": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nazwa"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Enter audience"
     }
   ],
   "RX2Shm": [
@@ -2465,6 +2609,12 @@
     {
       "type": 0,
       "value": "(GMT+12:00) Pietropawłowsk Kamczacki — stare"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "SKXopi": [
@@ -2741,6 +2891,12 @@
       "value": "Historia uruchamiania"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificate"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2805,6 +2961,12 @@
     {
       "type": 0,
       "value": "Zamień istniejący schemat."
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
     }
   ],
   "X8JjjT": [
@@ -2939,6 +3101,12 @@
       "value": "Wymagane. Nazwa akcji z żądanymi danymi wyjściowymi treści."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -2977,6 +3145,12 @@
     {
       "type": 0,
       "value": "Umożliwia wyprowadzanie wartości wyrażenia z innych par nazw i wartości JSON lub danych wyjściowych wyzwalacza czasu wykonywania"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
     }
   ],
   "YaFjJQ": [
@@ -3117,6 +3291,12 @@
       "value": "Funkcja"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3251,6 +3431,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Trypolis"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
     }
   ],
   "ci6ex1": [
@@ -3725,6 +3911,18 @@
       "value": "Czas trwania"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -4019,6 +4217,12 @@
       "value": "Zwraca wartość true, jeśli dwie wartości są równe"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Enter username"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -4173,6 +4377,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "mx2IMJ": [
@@ -4603,6 +4813,12 @@
       "value": "Tytuł karty"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Secret"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4703,6 +4919,12 @@
     {
       "type": 0,
       "value": "Zwraca wartość true, jeśli jeden z parametrów ma wartość true"
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Client ID"
     }
   ],
   "ss5JPH": [
@@ -4957,6 +5179,12 @@
       "value": "Wyrażenie jest nieprawidłowe."
     }
   ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -5058,7 +5286,7 @@
   "wPlTDB": [
     {
       "type": 0,
-      "value": "Full path"
+      "value": "Pełna ścieżka"
     }
   ],
   "wQcEXt": [
@@ -5125,6 +5353,12 @@
     {
       "type": 0,
       "value": "Zwraca ciągową reprezentację ciągu zakodowanego jako identyfikator URI"
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "xOAOHM": [
