@@ -56,3 +56,11 @@ jobs:
           #name: data_mapper.vsix
           path: |
             dist/apps/vs-code-data-mapper/*.vsix
+
+      - name: Generate Github Release for VSIX
+        uses: 'marvinpinto/action-automatic-releases@latest'
+        with:
+          repo_token: '${{ secrets.AUTOMATION_PAT }}'
+          automatic_release_tag: 'latest-vsix'
+          files: |
+            dist/apps/vs-code-data-mapper/*.vsix
