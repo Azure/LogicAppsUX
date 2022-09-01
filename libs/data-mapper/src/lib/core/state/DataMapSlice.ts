@@ -77,7 +77,12 @@ export const dataMapSlice = createSlice({
       const currentState = state.curDataMapOperation;
 
       if (currentState.inputSchema && currentState.outputSchema) {
-        let newState = {} as DataMapOperationState;
+        let newState: DataMapOperationState = {
+          ...currentState,
+          dataMapConnections: {},
+          currentInputNodes: [],
+          currentOutputNode: currentState.outputSchema.schemaTreeRoot,
+        };
 
         if (incomingDataMap) {
           const loadedConnections = convertFromMapDefinition(yaml.dump(incomingDataMap));
@@ -92,13 +97,6 @@ export const dataMapSlice = createSlice({
             ...currentState,
             currentInputNodes: topLevelInputNodes,
             dataMapConnections: loadedConnections,
-          };
-        } else {
-          newState = {
-            ...currentState,
-            dataMapConnections: {},
-            currentInputNodes: [],
-            currentOutputNode: currentState.outputSchema.schemaTreeRoot,
           };
         }
 
