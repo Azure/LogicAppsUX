@@ -13,6 +13,9 @@ export const Standard: ComponentStory<typeof ExpressionCard> = (args: NodeProps<
 Standard.args = {
   data: {
     onClick: () => console.log('Expression card clicked'),
+    iconName: '12PointStar',
+    expressionName: 'Expression Name',
+    brandColor: 'purple',
     displayHandle: false,
     disabled: false,
     error: false,
