@@ -4,7 +4,7 @@ import { InvalidFormatException, InvalidFormatExceptionCode } from '../exception
 import type { ConnectionDictionary, LoopConnection } from '../models/Connection';
 import type { DataMap, MapNode } from '../models/DataMap';
 import type { SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { InputPrefix, OutputPrefix } from '../utils/ReactFlow.Util';
+import { inputPrefix, outputPrefix } from '../utils/ReactFlow.Util';
 import yaml from 'js-yaml';
 
 export const convertToMapDefinition = (
@@ -135,8 +135,8 @@ const parseMappingsJsonToNode = (
       loop: undefined,
       condition: undefined,
       // Needs to be addressed again once we have expressions properly coded out in the designer
-      reactFlowSource: `${InputPrefix}${targetNodeObject}`,
-      reactFlowDestination: `${OutputPrefix}${connectionKey}`,
+      reactFlowSource: `${inputPrefix}${targetNodeObject}`,
+      reactFlowDestination: `${outputPrefix}${connectionKey}`,
     };
 
     return;
@@ -180,8 +180,8 @@ const parseMappingsJsonToNode = (
       value: targetValue,
       loop: undefined,
       condition: undefined,
-      reactFlowSource: `${InputPrefix}${targetValue}`,
-      reactFlowDestination: `${OutputPrefix}${connectionKey}`,
+      reactFlowSource: `${inputPrefix}${targetValue}`,
+      reactFlowDestination: `${outputPrefix}${connectionKey}`,
     };
   }
 };

@@ -1,6 +1,7 @@
+import type { ConnectionDictionary } from '../models/Connection';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
-import { SchemaTypes } from '../models/Schema';
-import { InputPrefix, OutputPrefix } from './ReactFlow.Util';
+import { SchemaNodeDataType, SchemaTypes } from '../models/Schema';
+import { inputPrefix, outputPrefix } from './ReactFlow.Util';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
@@ -25,7 +26,7 @@ const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPat
 
 export const flattenSchema = (schema: SchemaExtended, schemaType: SchemaTypes): SchemaNodeDictionary => {
   const result: SchemaNodeDictionary = {};
-  const idPrefix = schemaType === SchemaTypes.Input ? InputPrefix : OutputPrefix;
+  const idPrefix = schemaType === SchemaTypes.Input ? inputPrefix : outputPrefix;
   const schemaNodeArray = flattenSchemaNode(schema.schemaTreeRoot);
 
   schemaNodeArray.reduce((dict, node) => {
@@ -42,4 +43,18 @@ const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[]
   childArray.push(schemaNode);
 
   return childArray;
+};
+
+export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean =>
+  schemaNode.schemaNodeDataType !== SchemaNodeDataType.ComplexType && schemaNode.schemaNodeDataType !== SchemaNodeDataType.None;
+
+export const allChildNodesSelected = (schemaNode: SchemaNodeExtended, selectedNodes: SchemaNodeExtended[]): boolean =>
+  schemaNode.children.every((childNode) => selectedNodes.some((selectedNode) => selectedNode.key === childNode.key));
+
+export const hasAConnection = (schemaNode: SchemaNodeExtended, connections: ConnectionDictionary): boolean => {
+  return Object.values(connections).some(
+    (connection) =>
+      connection.reactFlowSource === `${inputPrefix}${schemaNode.key}` ||
+      connection.reactFlowDestination === `${outputPrefix}${schemaNode.key}`
+  );
 };

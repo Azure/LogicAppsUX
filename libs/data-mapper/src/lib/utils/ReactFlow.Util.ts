@@ -1,7 +1,8 @@
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { SchemaNodeExtended } from '../models/Schema';
-import { SchemaNodeDataType, SchemaTypes } from '../models/Schema';
+import { SchemaTypes } from '../models/Schema';
+import { isLeafNode } from './Schema.Utils';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import { ConnectionLineType, Position } from 'react-flow-renderer';
 
@@ -17,18 +18,19 @@ export enum ReactFlowNodeType {
   ExpressionNode = 'expressionNode',
 }
 
-export const InputPrefix = 'input-';
-export const OutputPrefix = 'output-';
+export const inputPrefix = 'input-';
+export const outputPrefix = 'output-';
 
 export const convertToReactFlowNodes = (
-  inputSchemaNodes: SchemaNodeExtended[],
+  currentlySelectedInputNodes: SchemaNodeExtended[],
+  connectedInputNodes: SchemaNodeExtended[],
   outputSchemaNode: SchemaNodeExtended
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
 
-  inputSchemaNodes.forEach((inputNode, index) => {
+  connectedInputNodes.forEach((inputNode) => {
     reactFlowNodes.push({
-      id: `${InputPrefix}${inputNode.key}`,
+      id: `${inputPrefix}${inputNode.key}`,
       data: {
         label: inputNode.name,
         schemaType: SchemaTypes.Input,
@@ -42,9 +44,33 @@ export const convertToReactFlowNodes = (
       sourcePosition: Position.Right,
       position: {
         x: inputX,
-        y: rootY + rootYOffset * index,
+        y: rootY + rootYOffset * reactFlowNodes.length,
       },
     });
+  });
+
+  currentlySelectedInputNodes.forEach((inputNode) => {
+    const nodeId = `${inputPrefix}${inputNode.key}`;
+    if (!reactFlowNodes.some((reactFlowNode) => reactFlowNode.id === nodeId)) {
+      reactFlowNodes.push({
+        id: nodeId,
+        data: {
+          label: inputNode.name,
+          schemaType: SchemaTypes.Input,
+          displayHandle: true,
+          isLeaf: true,
+          nodeDataType: inputNode.schemaNodeDataType,
+          disabled: false,
+          error: false,
+        },
+        type: ReactFlowNodeType.SchemaNode,
+        sourcePosition: Position.Right,
+        position: {
+          x: inputX,
+          y: rootY + rootYOffset * reactFlowNodes.length,
+        },
+      });
+    }
   });
 
   reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(outputSchemaNode, SchemaTypes.Output, true));
@@ -59,7 +85,7 @@ export const convertToReactFlowParentAndChildNodes = (
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
   const rootX = schemaType === SchemaTypes.Input ? inputX : rootOutputX;
-  const idPrefix = schemaType === SchemaTypes.Input ? InputPrefix : OutputPrefix;
+  const idPrefix = schemaType === SchemaTypes.Input ? inputPrefix : outputPrefix;
 
   reactFlowNodes.push({
     id: `${idPrefix}${parentSchemaNode.key}`,
@@ -80,14 +106,14 @@ export const convertToReactFlowParentAndChildNodes = (
     },
   });
 
-  parentSchemaNode.children?.forEach((childNode, index) => {
+  parentSchemaNode.children?.forEach((childNode) => {
     reactFlowNodes.push({
       id: `${idPrefix}${childNode.key}`,
       data: {
         label: childNode.name,
         schemaType,
         displayHandle: displayTargets,
-        isLeaf: childNode.schemaNodeDataType !== SchemaNodeDataType.ComplexType && childNode.schemaNodeDataType !== SchemaNodeDataType.None,
+        isLeaf: isLeafNode(childNode),
         nodeDataType: childNode.schemaNodeDataType,
         disabled: false,
         error: false,
@@ -96,7 +122,7 @@ export const convertToReactFlowParentAndChildNodes = (
       targetPosition: !displayTargets ? undefined : SchemaTypes.Input ? Position.Right : Position.Left,
       position: {
         x: rootX + childXOffSet,
-        y: rootY + rootYOffset * (index + 1),
+        y: rootY + rootYOffset * reactFlowNodes.length,
       },
     });
   });
