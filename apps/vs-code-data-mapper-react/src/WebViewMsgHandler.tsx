@@ -37,13 +37,13 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         changeDataMapCB(msg.data);
         break;
       case 'loadDataMap':
-        getSelectedSchema(msg.data.outputSchemaFileName).then((schema) => {
-          changeOutputSchemaCB(schema as Schema);
+        getSelectedSchema(msg.data.outputSchemaFileName).then((outputSchema) => {
+          getSelectedSchema(msg.data.inputSchemaFileName).then((inputSchema) => {
+            setSchemasBeforeSettingDataMap(inputSchema, outputSchema).then(() => {
+              changeDataMapCB(msg.data.dataMap);
+            });
+          });
         });
-        getSelectedSchema(msg.data.inputSchemaFileName).then((schema) => {
-          changeInputSchemaCB(schema as Schema);
-        });
-        changeDataMapCB(msg.data.dataMap);
         break;
       case 'showAvailableSchemas':
         showAvailableSchemas(msg.data);
@@ -80,6 +80,13 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
     },
     [dispatch]
   );
+
+  const setSchemasBeforeSettingDataMap = (newInputSchema: Schema, newOutputSchema: Schema) => {
+    changeInputSchemaCB(newInputSchema);
+    changeOutputSchemaCB(newOutputSchema);
+
+    return Promise.resolve();
+  };
 
   return <VSCodeContext.Provider value={vscode}>{children}</VSCodeContext.Provider>;
 };
