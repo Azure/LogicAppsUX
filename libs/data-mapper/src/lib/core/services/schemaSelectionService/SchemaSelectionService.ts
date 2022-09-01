@@ -7,7 +7,7 @@ export interface SchemaSelectionServiceOptions {
 }
 
 export class SchemaSelectionService {
-  // danielle add back when questions answered
+  // TODO (danielle): add back when questions answered
   private options: SchemaSelectionServiceOptions;
 
   constructor(options: SchemaSelectionServiceOptions) {
@@ -48,7 +48,7 @@ export class SchemaSelectionService {
   };
 
   private getSchemaFileUri = (xmlName: string) => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`; // danielle to test
+    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`; // TODO (danielle): to test
   };
 
   async getSchemas(): Promise<SchemaInfoProperties[]> {

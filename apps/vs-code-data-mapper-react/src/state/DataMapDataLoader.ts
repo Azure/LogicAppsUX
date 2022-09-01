@@ -1,4 +1,4 @@
-import type { DataMap } from '@microsoft/logic-apps-data-mapper';
+import type { DataMap, Schema } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -6,6 +6,9 @@ export interface DataMapLoadingState {
   armToken?: string;
   loadingMethod: 'file' | 'arm';
   dataMap?: DataMap;
+  inputSchema?: Schema;
+  outputSchema?: Schema;
+  schemaFileList?: string[];
 }
 
 const initialState: DataMapLoadingState = {
@@ -24,6 +27,15 @@ export const dataMapDataLoaderSlice = createSlice({
     },
     changeDataMap: (state, action: PayloadAction<DataMap>) => {
       state.dataMap = action.payload;
+    },
+    changeInputSchema: (state, action: PayloadAction<Schema>) => {
+      state.inputSchema = action.payload;
+    },
+    changeOutputSchema: (state, action: PayloadAction<Schema>) => {
+      state.outputSchema = action.payload;
+    },
+    changeSchemaList: (state, action: PayloadAction<string[]>) => {
+      state.schemaFileList = action.payload;
     },
   },
 });

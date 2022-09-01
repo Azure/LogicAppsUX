@@ -7,7 +7,7 @@ import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './ChangeSchemaView';
-import { ChangeSchemaView } from './ChangeSchemaView';
+import { ChangeSchemaView, UploadSchemaTypes } from './ChangeSchemaView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
@@ -22,7 +22,7 @@ export interface EditorConfigPanelProps {
   readCurrentSchemaOptions: () => void;
 }
 
-export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ onSubmitSchemaFileSelection, readCurrentSchemaOptions }) => {
+export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelection }) => {
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const isDirty = useSelector((state: RootState) => state.dataMap.isDirty);
   const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
@@ -34,6 +34,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
         state.modal.warningModalType === WarningModalState.ChangeOutputWarning) &&
       state.modal.isOkClicked
   );
+  const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
@@ -126,16 +127,34 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
     if (schemaType === undefined) {
       return;
     }
-    isDirty ? dispatch(openChangeSchemaWarning({ schemaType: schemaType })) : editSchema();
-  }, [isDirty, schemaType, editSchema, dispatch]);
 
-  useEffect(() => {
-    if (selectedSchemaFile) {
-      onSubmitSchemaFileSelection(selectedSchemaFile);
-      setSelectedSchemaFile(undefined);
-      closeSchemaPanel();
+    if (uploadType === UploadSchemaTypes.SelectFrom) {
+      isDirty ? dispatch(openChangeSchemaWarning({ schemaType: schemaType })) : editSchema();
+    } else if (uploadType === UploadSchemaTypes.UploadNew) {
+      if (isDirty) {
+        dispatch(openChangeSchemaWarning({ schemaType: schemaType }));
+      } else {
+        setErrorMessage('');
+        if (selectedSchemaFile) {
+          onSubmitSchemaFileSelection(selectedSchemaFile);
+          setSelectedSchemaFile(undefined);
+          closeSchemaPanel();
+        } else {
+          setErrorMessage(genericErrMsg);
+        }
+      }
     }
-  }, [closeSchemaPanel, selectedSchemaFile, onSubmitSchemaFileSelection, genericErrMsg]);
+  }, [
+    isDirty,
+    schemaType,
+    editSchema,
+    dispatch,
+    closeSchemaPanel,
+    genericErrMsg,
+    selectedSchemaFile,
+    uploadType,
+    onSubmitSchemaFileSelection,
+  ]);
 
   useEffect(() => {
     if (isChangeSchemaConfirmed) {
@@ -150,18 +169,26 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
   }, [readCurrentSchemaOptions]);
 
   const onRenderFooterContent = useCallback(() => {
-    const isNewSchemaSelected =
-      schemaType === SchemaTypes.Input
-        ? !selectedInputSchema || selectedInputSchema.key === curDataMapOperation.inputSchema?.name
-        : !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation.outputSchema?.name;
+    let isNoNewSchemaSelected = true;
+
+    if (uploadType === UploadSchemaTypes.SelectFrom) {
+      if (schemaType === SchemaTypes.Input) {
+        isNoNewSchemaSelected = !selectedInputSchema || selectedInputSchema.key === curDataMapOperation.inputSchema?.name;
+      } else {
+        isNoNewSchemaSelected = !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation.outputSchema?.name;
+      }
+    } else {
+      isNoNewSchemaSelected = !selectedSchemaFile;
+    }
+
     return (
       <div>
         {isChangeSchemaPanelOpen && (
           <PrimaryButton
             className="panel-button-left"
             onClick={addSchema}
-            // danielle refactor below to be more clear
-            disabled={isNewSchemaSelected}
+            // TODO (danielle): Refactor below to be more clear
+            disabled={isNoNewSchemaSelected}
           >
             {addMessage}
           </PrimaryButton>
@@ -180,6 +207,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
     hideEntirePanel,
     discardMessage,
     addSchema,
+    selectedSchemaFile,
+    uploadType,
   ]);
 
   const onInputSchemaClick = () => {
@@ -243,6 +272,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ o
               selectedSchemaFile={selectedSchemaFile}
               setSelectedSchemaFile={setSelectedSchemaFile}
               errorMessage={errorMessage}
+              uploadType={uploadType}
+              setUploadType={setUploadType}
             />
           ) : (
             <DefaultPanelView onInputSchemaClick={onInputSchemaClick} onOutputSchemaClick={onOutputSchemaClick} />

@@ -71,29 +71,37 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    // TODO: Figure out type we expect from loaded .yml data maps
+    // TODO: See if possible to set a better type for PayloadAction below (dataMapDefinition obj)
     setInitialDataMap: (state, action: PayloadAction<any | undefined>) => {
       const incomingDataMap = action.payload;
       const currentState = state.curDataMapOperation;
 
-      if (incomingDataMap) {
-        const loadedInitialState: DataMapOperationState = {
-          ...currentState,
-          dataMapConnections: convertFromMapDefinition(yaml.dump(incomingDataMap)),
-        };
-
-        state.curDataMapOperation = loadedInitialState;
-        state.pristineDataMap = loadedInitialState;
-      } else if (currentState.inputSchema && currentState.outputSchema) {
-        const newInitialState: DataMapOperationState = {
+      if (currentState.inputSchema && currentState.outputSchema) {
+        let newState: DataMapOperationState = {
           ...currentState,
           dataMapConnections: {},
           currentInputNodes: [],
-          currentOutputNode: currentState.currentOutputNode || currentState.outputSchema.schemaTreeRoot,
+          currentOutputNode: currentState.outputSchema.schemaTreeRoot,
         };
 
-        state.curDataMapOperation = newInitialState;
-        state.pristineDataMap = newInitialState;
+        if (incomingDataMap) {
+          const loadedConnections = convertFromMapDefinition(yaml.dump(incomingDataMap));
+          const topLevelInputNodes: SchemaNodeExtended[] = [];
+
+          Object.entries(loadedConnections).forEach(([_key, con]) => {
+            // TODO: Only push input nodes at TOP-LEVEL of output
+            topLevelInputNodes.push(currentState.flattenedInputSchema[con.reactFlowSource]);
+          });
+
+          newState = {
+            ...currentState,
+            currentInputNodes: topLevelInputNodes,
+            dataMapConnections: loadedConnections,
+          };
+        }
+
+        state.curDataMapOperation = newState;
+        state.pristineDataMap = newState;
       }
     },
 
