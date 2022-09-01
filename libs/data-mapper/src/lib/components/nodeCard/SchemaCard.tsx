@@ -83,7 +83,7 @@ const useStyles = makeStyles({
     color: tokens.colorNeutralForeground3,
     display: 'flex',
     fontSize: '16px',
-
+    flexBasis: '48px',
     justifyContent: 'right',
   },
   disabled: {
