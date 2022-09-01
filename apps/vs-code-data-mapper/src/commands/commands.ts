@@ -43,6 +43,7 @@ const createNewDataMapCmd = async () => {
 };
 
 // NOTE: Input/Output schemas are both expected to be defined, and their files present
+// TODO (WI #15434984): Handle schema files not being found
 const loadDataMapFileCmd = async (uri: Uri) => {
   commands.executeCommand('azureDataMapper.openDataMapper');
 
