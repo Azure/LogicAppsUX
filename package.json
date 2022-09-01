@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-apps",
-  "version": "0.0.74",
+  "version": "0.0.75",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
