@@ -358,6 +358,12 @@
       "value": "必要。要檢查其是否小於比較值的物件。"
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Enter the value of the Authorization header"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -424,6 +430,12 @@
       "value": "17"
     }
   ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "2b1yD3": [
     {
       "type": 0,
@@ -470,6 +482,12 @@
     {
       "type": 0,
       "value": "識別碼"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "3BZnxY": [
@@ -520,6 +538,12 @@
       "value": "(UTC+09:00) 赤塔"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "The entered identity is not associated with this Logic App."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -560,6 +584,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) 葉里溫"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "47kOXr": [
@@ -650,6 +680,12 @@
     {
       "type": 0,
       "value": "必要。要評估的 XPath 運算式。"
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Authority"
     }
   ],
   "5aa76N": [
@@ -802,6 +838,12 @@
       "value": "必要。包含值的字串。"
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -838,10 +880,22 @@
       "value": "因為定義中有多個觸發程序，所以無法轉譯設計工具。"
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Please enable managed identity for the logic app."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "必要。要執行 URI 編碼的字串。"
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Enter secret as plain text or use a secure parameter"
     }
   ],
   "8Y5xpK": [
@@ -896,6 +950,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) 科布多城"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
     }
   ],
   "949s+r": [
@@ -1000,6 +1066,18 @@
       "value": "(UTC+06:30) 仰光"
     }
   ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Enter audience"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Username"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1083,6 +1161,12 @@
       "value": "必要。從 URL Unsafe 字元解碼而來的的字串。"
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1125,6 +1209,12 @@
       "value": "需要連線"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Credential Type"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1147,6 +1237,12 @@
     {
       "type": 0,
       "value": "請使用範例承載產生結構描述"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Enter client ID"
     }
   ],
   "DZZ3fj": [
@@ -1213,6 +1309,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "Eqgm4v": [
@@ -1378,6 +1480,12 @@
     {
       "type": 0,
       "value": "傳回 URI 的查詢"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Enter authority"
     }
   ],
   "GLd3MU": [
@@ -1839,6 +1947,12 @@
       "value": "必要。要轉換成二進位表示法的資料 URI。"
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1893,6 +2007,18 @@
       "value": "運算式"
     }
   ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Enter tenant"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1921,6 +2047,12 @@
     {
       "type": 0,
       "value": "必要。包含來源時區之時區名稱的字串。如需詳細資料，請參閱 https://msdn.microsoft.com/en-us/library/gg154758.aspx。"
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Secret"
     }
   ],
   "OFKZzQ": [
@@ -2005,6 +2137,12 @@
     {
       "type": 0,
       "value": "選取受控身分識別"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
     }
   ],
   "P2A5dB": [
@@ -2094,7 +2232,7 @@
   "PtqSHp": [
     {
       "type": 0,
-      "value": "Do not generate if no value"
+      "value": "若沒有值，則不要產生"
     }
   ],
   "Pvm0xB": [
@@ -2136,7 +2274,7 @@
   "QGuYOg": [
     {
       "type": 0,
-      "value": "Nullable"
+      "value": "可為 Null"
     }
   ],
   "QQYzHC": [
@@ -2176,7 +2314,7 @@
   "QePi+D": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "資料類型"
     }
   ],
   "QknZQ1": [
@@ -2216,7 +2354,13 @@
   "RFjYpH": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "名稱"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Enter audience"
     }
   ],
   "RX2Shm": [
@@ -2268,6 +2412,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) 彼得保羅夫斯克-堪察加斯克 - 已過時"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "SKXopi": [
@@ -2544,6 +2694,12 @@
       "value": "執行歷程記錄"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificate"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2608,6 +2764,12 @@
     {
       "type": 0,
       "value": "取代現有結構描述。"
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
     }
   ],
   "X8JjjT": [
@@ -2742,6 +2904,12 @@
       "value": "必要。您需要之本文輸出所屬動作的名稱。"
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -2780,6 +2948,12 @@
     {
       "type": 0,
       "value": "啟用運算式，從其他 JSON 名稱與成對的值或是執行階段觸發程序的輸出，衍生其值"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
     }
   ],
   "YaFjJQ": [
@@ -2920,6 +3094,12 @@
       "value": "函數"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3058,6 +3238,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 的黎波里"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
     }
   ],
   "ci6ex1": [
@@ -3483,6 +3669,18 @@
       "value": "持續時間"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -3769,6 +3967,12 @@
       "value": "若兩個值相等，則傳回 True"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Enter username"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -3923,6 +4127,12 @@
     {
       "type": 0,
       "value": "確定"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "mx2IMJ": [
@@ -4320,6 +4530,12 @@
       "value": "卡片標題"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Secret"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4420,6 +4636,12 @@
     {
       "type": 0,
       "value": "若任一參數為 True，則傳回 True"
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Client ID"
     }
   ],
   "ss5JPH": [
@@ -4674,6 +4896,12 @@
       "value": "運算式無效。"
     }
   ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4775,7 +5003,7 @@
   "wPlTDB": [
     {
       "type": 0,
-      "value": "Full path"
+      "value": "完整路徑"
     }
   ],
   "wQcEXt": [
@@ -4842,6 +5070,12 @@
     {
       "type": 0,
       "value": "傳回 URI 編碼字串的字串表示法"
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "xOAOHM": [
