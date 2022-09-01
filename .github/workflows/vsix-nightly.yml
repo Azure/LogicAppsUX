@@ -50,6 +50,12 @@ jobs:
       - run: npx nx build vs-code-data-mapper
       - run: npm run vscode:data-mapper:pack
 
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
+        with:
+          fallback: 0.0.0
+
       - name: Archive VSIX
         uses: actions/upload-artifact@v3
         with:
@@ -61,6 +67,7 @@ jobs:
         uses: 'marvinpinto/action-automatic-releases@latest'
         with:
           repo_token: '${{ secrets.AUTOMATION_PAT }}'
-          automatic_release_tag: 'latest-vsix'
+          prerelease: false
+          automatic_release_tag: '${{ steps.previoustag.outputs.tag }}'
           files: |
             dist/apps/vs-code-data-mapper/*.vsix
