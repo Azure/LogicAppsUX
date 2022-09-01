@@ -383,3 +383,9 @@ export interface INamingValidation {
   validationError: string;
   validName: boolean;
 }
+
+export enum AdvancedOptionsTypes {
+  off = 'off',
+  cloneConnections = 'cloneConnections',
+  generateInfrastructureTemplates = 'generateInfrastructureTemplates',
+}
