@@ -13,9 +13,9 @@ export const App = (): JSX.Element => {
   const vscode = useContext(VSCodeContext);
 
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
-  const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
-  const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
-  const schemaFileList = useSelector((state: RootState) => state.schemaDataLoader.schemaFileList);
+  const inputSchema = useSelector((state: RootState) => state.dataMapDataLoader.inputSchema);
+  const outputSchema = useSelector((state: RootState) => state.dataMapDataLoader.outputSchema);
+  const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
 
   const saveStateCall = (dataMapDefinition: string) => {
     saveDataMapDefinition(dataMapDefinition);

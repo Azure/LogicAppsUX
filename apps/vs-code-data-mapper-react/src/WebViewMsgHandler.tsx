@@ -1,5 +1,4 @@
 import { dataMapDataLoaderSlice } from './state/DataMapDataLoader';
-import { schemaDataLoaderSlice } from './state/SchemaDataLoader';
 import type { AppDispatch } from './state/Store';
 import type { Schema, DataMap } from '@microsoft/logic-apps-data-mapper';
 import { getSelectedSchema } from '@microsoft/logic-apps-data-mapper';
@@ -56,14 +55,14 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const changeInputSchemaCB = useCallback(
     (newSchema: Schema) => {
-      dispatch(schemaDataLoaderSlice.actions.changeInputSchema(newSchema));
+      dispatch(dataMapDataLoaderSlice.actions.changeInputSchema(newSchema));
     },
     [dispatch]
   );
 
   const changeOutputSchemaCB = useCallback(
     (newSchema: Schema) => {
-      dispatch(schemaDataLoaderSlice.actions.changeOutputSchema(newSchema));
+      dispatch(dataMapDataLoaderSlice.actions.changeOutputSchema(newSchema));
     },
     [dispatch]
   );
@@ -77,7 +76,7 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const showAvailableSchemas = useCallback(
     (files: string[]) => {
-      dispatch(schemaDataLoaderSlice.actions.changeSchemaList(files));
+      dispatch(dataMapDataLoaderSlice.actions.changeSchemaList(files));
     },
     [dispatch]
   );
