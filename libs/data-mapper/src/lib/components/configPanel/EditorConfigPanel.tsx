@@ -187,7 +187,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
           <PrimaryButton
             className="panel-button-left"
             onClick={addSchema}
-            // danielle refactor below to be more clear
+            // TODO (danielle): Refactor below to be more clear
             disabled={isNoNewSchemaSelected}
           >
             {addMessage}
