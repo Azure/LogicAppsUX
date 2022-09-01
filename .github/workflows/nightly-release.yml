@@ -47,8 +47,9 @@ jobs:
           node-version: 16
 
       - run: npm ci
+
       - name: 'Local Version Bump'
-          run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && npm run bump
+        run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && npm run bump
 
       - run: npx nx build vs-code-data-mapper
       - run: npm run vscode:data-mapper:pack
