@@ -9,8 +9,6 @@ import type { ExtensionContext, Uri } from 'vscode';
 export const registerCommands = (context: ExtensionContext) => {
   context.subscriptions.push(commands.registerCommand('azureDataMapper.openDataMapper', () => openDataMapperCmd(context)));
   context.subscriptions.push(commands.registerCommand('azureDataMapper.createNewDataMap', createNewDataMapCmd));
-  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadInputSchemaFile', loadInputSchemaFileCmd));
-  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadOutputSchemaFile', loadOutputSchemaFileCmd));
   context.subscriptions.push(commands.registerCommand('azureDataMapper.loadDataMapFile', loadDataMapFileCmd));
 };
 
@@ -28,7 +26,7 @@ const createNewDataMapCmd = async () => {
   });
 
   // TODO: Data map name validation
-  window.showInputBox({ prompt: 'Data Map name: ', title: 'Data Map name' }).then((newDatamapName) => {
+  window.showInputBox({ prompt: 'Data Map name: ' }).then((newDatamapName) => {
     if (!newDatamapName) {
       return;
     }
@@ -38,24 +36,10 @@ const createNewDataMapCmd = async () => {
     const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, `${newDatamapName}.yml`);
     fs.writeFile(filePath, newDataMapTemplate, 'utf8');
 
-    DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadDataMap', data: newDataMapTemplate });
+    DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadDataMap', data: newDataMapTemplate });
 
     DataMapperPanel.currentDataMapName = newDatamapName;
   });
-};
-
-const loadInputSchemaFileCmd = async (uri: Uri) => {
-  commands.executeCommand('azureDataMapper.openDataMapper');
-
-  const inputSchema = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
-  DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadInputSchema', data: inputSchema });
-};
-
-const loadOutputSchemaFileCmd = async (uri: Uri) => {
-  commands.executeCommand('azureDataMapper.openDataMapper');
-
-  const outputSchema = JSON.parse(await fs.readFile(uri.fsPath, 'utf-8'));
-  DataMapperPanel.currentPanel.sendMsgToWebview({ command: 'loadOutputSchema', data: outputSchema });
 };
 
 const loadDataMapFileCmd = async (uri: Uri) => {
@@ -69,16 +53,16 @@ const loadDataMapFileCmd = async (uri: Uri) => {
   const dstSchemaPath = path.join(schemasFolder, dataMap.$targetSchema);
 
   if (fileExists(srcSchemaPath)) {
-    DataMapperPanel.currentPanel.sendMsgToWebview({
-      command: 'loadInputSchema',
-      data: JSON.parse(await fs.readFile(srcSchemaPath, 'utf-8')), // TODO: translate from .xsd when hooked up to backend
+    DataMapperPanel.currentPanel?.sendMsgToWebview({
+      command: 'fetchSchema',
+      data: { fileName: path.basename(srcSchemaPath), type: 'input' },
     });
   }
 
   if (fileExists(dstSchemaPath)) {
     DataMapperPanel.currentPanel.sendMsgToWebview({
-      command: 'loadOutputSchema',
-      data: JSON.parse(await fs.readFile(dstSchemaPath, 'utf-8')), // TODO: translate from .xsd when hooked up to backend
+      command: 'fetchSchema',
+      data: { fileName: path.basename(dstSchemaPath), type: 'output' },
     });
   }
 

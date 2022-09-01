@@ -4,14 +4,16 @@ import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ExtensionContext } from 'vscode';
 
+type SchemaType = 'input' | 'output';
+
 type SendingMessageTypes =
-  | { command: 'loadInputSchema' | 'loadOutputSchema'; data: any }
+  | { command: 'fetchSchema'; data: { fileName: string; type: SchemaType } }
   | { command: 'loadDataMap'; data: any }
   | { command: 'showAvailableSchemas'; data: string[] };
 type ReceivingMessageTypes =
   | {
-      command: 'readSelectedSchemaFile' | 'readLocalFileOptions';
-      data: { path: string; type: 'input' | 'output' };
+      command: 'addSchemaFromFile' | 'readLocalFileOptions';
+      data: { path: string; type: SchemaType };
     }
   | {
       command: 'saveDataMapDefinition';
@@ -92,22 +94,8 @@ export default class DataMapperPanel {
 
   private _handleWebviewMsg(msg: ReceivingMessageTypes) {
     switch (msg.command) {
-      case 'readSelectedSchemaFile': {
-        fs.readFile(msg.data.path, 'utf-8').then((text: string) => {
-          if (msg.data.type === 'input') {
-            DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadInputSchema', data: JSON.parse(text) });
-          } else {
-            DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadOutputSchema', data: JSON.parse(text) });
-          }
-
-          // Check if in workspace/Artifacts/Schemas, and if not, create it
-          const schemaFileName = path.basename(msg.data.path); // Ex: inpSchema.xsd
-          const expectedSchemaPath = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath, schemaFileName);
-
-          if (!fileExists(expectedSchemaPath)) {
-            fs.writeFile(expectedSchemaPath, text, 'utf-8');
-          }
-        });
+      case 'addSchemaFromFile': {
+        DataMapperPanel.currentPanel.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
       }
       case 'readLocalFileOptions': {
@@ -126,5 +114,22 @@ export default class DataMapperPanel {
         fs.writeFile(filePath, msg.data, 'utf8');
       }
     }
+  }
+
+  public addSchemaFromFile(filePath: string, schemaType: 'input' | 'output') {
+    // NOTE: .xsd files are utf-16 encoded
+    fs.readFile(filePath, 'utf16le').then((text: string) => {
+      // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call
+      const schemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
+      const expectedSchemaPath = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath, schemaFileName);
+
+      if (!fileExists(expectedSchemaPath)) {
+        fs.writeFile(expectedSchemaPath, text, 'utf16le').then(() => {
+          DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
+        });
+      } else {
+        DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
+      }
+    });
   }
 }

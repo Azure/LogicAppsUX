@@ -17,14 +17,6 @@
         "icon": "$(add)"
       },
       {
-        "command": "azureDataMapper.loadInputSchemaFile",
-        "title": "Load input schema"
-      },
-      {
-        "command": "azureDataMapper.loadOutputSchemaFile",
-        "title": "Load output schema"
-      },
-      {
         "command": "azureDataMapper.loadDataMapFile",
         "title": "Load data map"
       }
@@ -53,16 +45,6 @@
         }
       ],
       "azureDataMapper.dataMapperMenu": [
-        {
-          "command": "azureDataMapper.loadInputSchemaFile",
-          "group": "navigation",
-          "when": "resourceExtname in azureDataMapper.supportedSchemaFileExts"
-        },
-        {
-          "command": "azureDataMapper.loadOutputSchemaFile",
-          "group": "navigation",
-          "when": "resourceExtname in azureDataMapper.supportedSchemaFileExts"
-        },
         {
           "command": "azureDataMapper.loadDataMapFile",
           "group": "navigation",

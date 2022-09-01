@@ -1,11 +1,6 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
 import type { RootState } from '../state/Store';
-import {
-  DataMapDataProvider,
-  DataMapperDesigner,
-  DataMapperDesignerProvider,
-  InitSchemaSelectionService,
-} from '@microsoft/logic-apps-data-mapper';
+import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
 import { useCallback, useContext } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -20,18 +15,16 @@ export const App = (): JSX.Element => {
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
   const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
-  const availableSchemas = useSelector((state: RootState) => state.schemaDataLoader.availableSchemas);
-
-  InitSchemaSelectionService({ baseUrl: 'http://localhost:7071', resourceUrl: '', accessToken: '' });
+  const schemaFileList = useSelector((state: RootState) => state.schemaDataLoader.schemaFileList);
 
   const saveStateCall = (dataMapDefinition: string) => {
     saveDataMapDefinition(dataMapDefinition);
   };
 
-  const setSelectedSchemaFile = (selectedSchemaFile: SchemaFile) => {
+  const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
     vscode.postMessage({
-      command: 'readSelectedSchemaFile',
-      data: selectedSchemaFile,
+      command: 'addSchemaFromFile',
+      data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type },
     });
   };
 
@@ -50,10 +43,10 @@ export const App = (): JSX.Element => {
 
   return (
     <DataMapperDesignerProvider locale="en-US" options={{}}>
-      <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={availableSchemas}>
+      <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={schemaFileList}>
         <DataMapperDesigner
           saveStateCall={saveStateCall}
-          setSelectedSchemaFile={setSelectedSchemaFile}
+          addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalFileOptions}
         />
       </DataMapDataProvider>

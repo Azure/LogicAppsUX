@@ -2,12 +2,13 @@ import { dataMapDataLoaderSlice } from './state/DataMapDataLoader';
 import { schemaDataLoaderSlice } from './state/SchemaDataLoader';
 import type { AppDispatch } from './state/Store';
 import type { Schema, DataMap } from '@microsoft/logic-apps-data-mapper';
+import { getSelectedSchema } from '@microsoft/logic-apps-data-mapper';
 import React, { createContext, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 
 type ReceivingMessageTypes =
-  | { command: 'loadInputSchema' | 'loadOutputSchema'; data: Schema }
+  | { command: 'fetchSchema'; data: { fileName: string; type: 'input' | 'output' } }
   | { command: 'loadDataMap'; data: DataMap }
   | { command: 'showAvailableSchemas'; data: string[] };
 
@@ -23,11 +24,14 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
     const msg = event.data;
 
     switch (msg.command) {
-      case 'loadInputSchema':
-        changeInputSchemaCB(msg.data);
-        break;
-      case 'loadOutputSchema':
-        changeOutputSchemaCB(msg.data);
+      case 'fetchSchema':
+        getSelectedSchema(msg.data.fileName).then((schema) => {
+          if (msg.data.type === 'input') {
+            changeInputSchemaCB(schema as Schema);
+          } else {
+            changeOutputSchemaCB(schema as Schema);
+          }
+        });
         break;
       case 'loadDataMap':
         changeDataMapCB(msg.data);

@@ -7,7 +7,7 @@ export interface SchemaLoadingState {
   loadingMethod: 'file' | 'arm';
   inputSchema?: Schema;
   outputSchema?: Schema;
-  availableSchemas?: string[];
+  schemaFileList?: string[];
 }
 
 const initialState: SchemaLoadingState = {
@@ -31,7 +31,7 @@ export const schemaDataLoaderSlice = createSlice({
       state.outputSchema = action.payload;
     },
     changeSchemaList: (state, action: PayloadAction<string[]>) => {
-      state.availableSchemas = action.payload;
+      state.schemaFileList = action.payload;
     },
   },
 });
