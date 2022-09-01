@@ -37,11 +37,9 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         changeDataMapCB(msg.data);
         break;
       case 'loadDataMap':
-        getSelectedSchema(msg.data.outputSchemaFileName).then((outputSchema) => {
-          getSelectedSchema(msg.data.inputSchemaFileName).then((inputSchema) => {
-            setSchemasBeforeSettingDataMap(inputSchema, outputSchema).then(() => {
-              changeDataMapCB(msg.data.dataMap);
-            });
+        Promise.all([getSelectedSchema(msg.data.inputSchemaFileName), getSelectedSchema(msg.data.outputSchemaFileName)]).then((values) => {
+          setSchemasBeforeSettingDataMap(values[0], values[1]).then(() => {
+            changeDataMapCB(msg.data.dataMap);
           });
         });
         break;
