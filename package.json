@@ -26,7 +26,8 @@
     "build:parsers": "nx run parsers:build",
     "build:utils": "nx run utils:build",
     "bump": "standard-version --no-verify",
-    "vscode:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package",
+    "vscode:designer:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package",
+    "vscode:data-mapper:pack": "cd ./dist/apps/vs-code-data-mapper && npm install && vsce package",
     "fixLineEndings": "prettier --write \"**/*.json\""
   },
   "engines": {
