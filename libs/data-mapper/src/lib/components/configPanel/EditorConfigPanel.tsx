@@ -34,7 +34,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
         state.modal.warningModalType === WarningModalState.ChangeOutputWarning) &&
       state.modal.isOkClicked
   );
-  const [uploadType, setUploadType] = useState(UploadSchemaTypes.SelectFrom);
+  const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
   const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
   const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
