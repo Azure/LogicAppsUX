@@ -391,6 +391,12 @@
       "value": "Обязательное поле. Объект, который нужно сравнить со значением на отношение \"меньше\"."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Enter the value of the Authorization header"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -457,6 +463,12 @@
       "value": "17"
     }
   ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "2b1yD3": [
     {
       "type": 0,
@@ -503,6 +515,12 @@
     {
       "type": 0,
       "value": "Идентификатор"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "3BZnxY": [
@@ -553,6 +571,12 @@
       "value": "(UTC+09:00) Чита"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "The entered identity is not associated with this Logic App."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -593,6 +617,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Ереван"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "47kOXr": [
@@ -683,6 +713,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Выражение XPath для вычисления."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Authority"
     }
   ],
   "5aa76N": [
@@ -835,6 +871,12 @@
       "value": "Обязательное поле. Строка, которая может содержать значение."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -871,10 +913,22 @@
       "value": "Не удается отобразить конструктор из-за наличия нескольких триггеров в определении."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Please enable managed identity for the logic app."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Требуется. Строка, которая будет закодирована с помощью URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Enter secret as plain text or use a secure parameter"
     }
   ],
   "8Y5xpK": [
@@ -929,6 +983,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Ховд"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
     }
   ],
   "949s+r": [
@@ -1031,6 +1097,18 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Янгон (Рангун)"
+    }
+  ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Enter audience"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Username"
     }
   ],
   "ArTh0/": [
@@ -1149,6 +1227,12 @@
       "value": "Требуется. Строка, из которой декодируются небезопасные символы URL-адресов."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1191,6 +1275,12 @@
       "value": "Требуется подключение"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Credential Type"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1213,6 +1303,12 @@
     {
       "type": 0,
       "value": "Использовать пример полезной нагрузки, чтобы создать схему"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Enter client ID"
     }
   ],
   "DZZ3fj": [
@@ -1279,6 +1375,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "Eqgm4v": [
@@ -1485,6 +1587,12 @@
     {
       "type": 0,
       "value": "Возвращает запрос из URI"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Enter authority"
     }
   ],
   "GLd3MU": [
@@ -1987,6 +2095,12 @@
       "value": "Требуется. URI данных, который преобразуется в двоичное представление."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -2041,6 +2155,18 @@
       "value": "Выражение"
     }
   ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Enter tenant"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2069,6 +2195,12 @@
     {
       "type": 0,
       "value": "Обязательно. Строка, содержащая название исходного часового пояса. Дополнительные сведения: https://msdn.microsoft.com/ru-ru/library/gg154758.aspx."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Secret"
     }
   ],
   "OFKZzQ": [
@@ -2153,6 +2285,12 @@
     {
       "type": 0,
       "value": "Выберите управляемое удостоверение"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
     }
   ],
   "P2A5dB": [
@@ -2242,7 +2380,7 @@
   "PtqSHp": [
     {
       "type": 0,
-      "value": "Do not generate if no value"
+      "value": "Не создавать, если значение отсутствует"
     }
   ],
   "Pvm0xB": [
@@ -2284,7 +2422,7 @@
   "QGuYOg": [
     {
       "type": 0,
-      "value": "Nullable"
+      "value": "Допускает значение NULL"
     }
   ],
   "QQYzHC": [
@@ -2324,7 +2462,7 @@
   "QePi+D": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Тип данных"
     }
   ],
   "QknZQ1": [
@@ -2364,7 +2502,13 @@
   "RFjYpH": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Имя"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Enter audience"
     }
   ],
   "RX2Shm": [
@@ -2449,6 +2593,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Петропавловск-Камчатский (устаревшее)"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "SKXopi": [
@@ -2725,6 +2875,12 @@
       "value": "Журнал запусков"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificate"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2789,6 +2945,12 @@
     {
       "type": 0,
       "value": "Заменить существующую схему."
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
     }
   ],
   "X8JjjT": [
@@ -2923,6 +3085,12 @@
       "value": "Требуется. Имя действия, выходные данные текста которого нужны."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -2961,6 +3129,12 @@
     {
       "type": 0,
       "value": "Позволяет выражению наследовать свое значение из другого имени JSON и пары значений или выходных данных триггера времени выполнения"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
     }
   ],
   "YaFjJQ": [
@@ -3101,6 +3275,12 @@
       "value": "Функция"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3235,6 +3415,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Триполи"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
     }
   ],
   "ci6ex1": [
@@ -3713,6 +3899,18 @@
       "value": "Продолжительность"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -4007,6 +4205,12 @@
       "value": "Возвращает значение true, если два значения равны"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Enter username"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -4161,6 +4365,12 @@
     {
       "type": 0,
       "value": "ОК"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "mx2IMJ": [
@@ -4591,6 +4801,12 @@
       "value": "Заголовок карточки"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Secret"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4691,6 +4907,12 @@
     {
       "type": 0,
       "value": "Возвращает значение true, если любой параметр имеет значение true"
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Client ID"
     }
   ],
   "ss5JPH": [
@@ -4945,6 +5167,12 @@
       "value": "Недопустимое выражение."
     }
   ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -5046,7 +5274,7 @@
   "wPlTDB": [
     {
       "type": 0,
-      "value": "Full path"
+      "value": "Полный путь"
     }
   ],
   "wQcEXt": [
@@ -5113,6 +5341,12 @@
     {
       "type": 0,
       "value": "Возвращает строковое представление сроки в кодировке URI"
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "xOAOHM": [

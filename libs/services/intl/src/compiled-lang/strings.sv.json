@@ -369,6 +369,12 @@
       "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är mindre än det värde det jämförs med."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Enter the value of the Authorization header"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -435,6 +441,12 @@
       "value": "17"
     }
   ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "2b1yD3": [
     {
       "type": 0,
@@ -481,6 +493,12 @@
     {
       "type": 0,
       "value": "Identifierare"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "3BZnxY": [
@@ -531,6 +549,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "The entered identity is not associated with this Logic App."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -571,6 +595,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Jerevan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "47kOXr": [
@@ -661,6 +691,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det XPath-uttryck som ska utvärderas."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Authority"
     }
   ],
   "5aa76N": [
@@ -813,6 +849,12 @@
       "value": "Obligatoriskt. Strängen kan innehålla värdet."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -849,10 +891,22 @@
       "value": "Det går inte att återge designern pga flera utlösare i definitionen."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Please enable managed identity for the logic app."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Krävs. Strängen som ska URI-kodas."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Enter secret as plain text or use a secure parameter"
     }
   ],
   "8Y5xpK": [
@@ -907,6 +961,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
     }
   ],
   "949s+r": [
@@ -1011,6 +1077,18 @@
       "value": "(UTC+06:30) Yangon"
     }
   ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Enter audience"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Username"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1105,6 +1183,12 @@
       "value": "Krävs. Strängen att avkoda de URL-osäkra tecknen från."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1147,6 +1231,12 @@
       "value": "Anslutning krävs"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Credential Type"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1169,6 +1259,12 @@
     {
       "type": 0,
       "value": "Generera schemat genom att använda en exempelnyttolast"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Enter client ID"
     }
   ],
   "DZZ3fj": [
@@ -1235,6 +1331,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "Eqgm4v": [
@@ -1419,6 +1521,12 @@
     {
       "type": 0,
       "value": "Returnerar frågan från en URI"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Enter authority"
     }
   ],
   "GLd3MU": [
@@ -1899,6 +2007,12 @@
       "value": "Krävs. Data-URI att konvertera till binär representation."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1953,6 +2067,18 @@
       "value": "Uttryck"
     }
   ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Enter tenant"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1981,6 +2107,12 @@
     {
       "type": 0,
       "value": "Krävs. En sträng som innehåller tidszonnamnet för källtidszonen. Se https://msdn.microsoft.com/sv-se/library/gg154758.aspx för information."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Secret"
     }
   ],
   "OFKZzQ": [
@@ -2065,6 +2197,12 @@
     {
       "type": 0,
       "value": "Välj en hanterad identitet"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
     }
   ],
   "P2A5dB": [
@@ -2154,7 +2292,7 @@
   "PtqSHp": [
     {
       "type": 0,
-      "value": "Do not generate if no value"
+      "value": "Generera inte om inget värde"
     }
   ],
   "Pvm0xB": [
@@ -2196,7 +2334,7 @@
   "QGuYOg": [
     {
       "type": 0,
-      "value": "Nullable"
+      "value": "Kan ha värdet null"
     }
   ],
   "QQYzHC": [
@@ -2240,7 +2378,7 @@
   "QePi+D": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Datatyp"
     }
   ],
   "QknZQ1": [
@@ -2280,7 +2418,13 @@
   "RFjYpH": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Namn"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Enter audience"
     }
   ],
   "RX2Shm": [
@@ -2343,6 +2487,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamtjatskij - gammal"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "SKXopi": [
@@ -2619,6 +2769,12 @@
       "value": "Körningshistorik"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificate"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2683,6 +2839,12 @@
     {
       "type": 0,
       "value": "Ersätt befintligt schema."
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
     }
   ],
   "X8JjjT": [
@@ -2817,6 +2979,12 @@
       "value": "Krävs. Namnet på åtgärden vars brödtextutdata du vill ha."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -2855,6 +3023,12 @@
     {
       "type": 0,
       "value": "Aktiverar ett uttryck som hämtar sitt värde från ett annat JSON-namn och värdepar eller utdata från körningsutlösaren"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
     }
   ],
   "YaFjJQ": [
@@ -2995,6 +3169,12 @@
       "value": "Funktion"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3129,6 +3309,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
     }
   ],
   "ci6ex1": [
@@ -3577,6 +3763,18 @@
       "value": "Varaktighet"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -3867,6 +4065,12 @@
       "value": "Returnerar sant om två värden är lika stora"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Enter username"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -4021,6 +4225,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "mx2IMJ": [
@@ -4429,6 +4639,12 @@
       "value": "Kortrubrik"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Secret"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4529,6 +4745,12 @@
     {
       "type": 0,
       "value": "Returnerar sant om endera av parametrarna är sann"
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Client ID"
     }
   ],
   "ss5JPH": [
@@ -4783,6 +5005,12 @@
       "value": "Uttrycket är ogiltigt."
     }
   ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4884,7 +5112,7 @@
   "wPlTDB": [
     {
       "type": 0,
-      "value": "Full path"
+      "value": "Fullständig sökväg"
     }
   ],
   "wQcEXt": [
@@ -4951,6 +5179,12 @@
     {
       "type": 0,
       "value": "Returnerar en strängrepresentation av en URI-kodad sträng"
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "xOAOHM": [

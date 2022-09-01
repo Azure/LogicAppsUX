@@ -403,6 +403,12 @@
       "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není menší než porovnávaná hodnota."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Enter the value of the Authorization header"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -469,6 +475,12 @@
       "value": "17"
     }
   ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "2b1yD3": [
     {
       "type": 0,
@@ -515,6 +527,12 @@
     {
       "type": 0,
       "value": "Identifikátor"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "3BZnxY": [
@@ -565,6 +583,12 @@
       "value": "(UTC+09:00) Čita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "The entered identity is not associated with this Logic App."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -605,6 +629,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Jerevan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "47kOXr": [
@@ -695,6 +725,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Výraz jazyka XPath, který se má vyhodnotit."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Authority"
     }
   ],
   "5aa76N": [
@@ -847,6 +883,12 @@
       "value": "Vyžadováno. Řetězec, který může obsahovat hodnotu."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -883,10 +925,22 @@
       "value": "Návrhář se nedá vykreslit, protože v definici je více než jeden trigger."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Please enable managed identity for the logic app."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec, který se má kódovat jako identifikátor URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Enter secret as plain text or use a secure parameter"
     }
   ],
   "8Y5xpK": [
@@ -941,6 +995,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Chovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
     }
   ],
   "949s+r": [
@@ -1043,6 +1109,18 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangún)"
+    }
+  ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Enter audience"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Username"
     }
   ],
   "ArTh0/": [
@@ -1161,6 +1239,12 @@
       "value": "Povinný parametr. Řetězec, ze kterého se mají dekódovat znaky, které nejsou pro adresu URL bezpečné."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1203,6 +1287,12 @@
       "value": "Připojení je povinné"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Credential Type"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1225,6 +1315,12 @@
     {
       "type": 0,
       "value": "K vygenerování schématu použijte ukázkovou datovou část."
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Enter client ID"
     }
   ],
   "DZZ3fj": [
@@ -1291,6 +1387,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "Eqgm4v": [
@@ -1497,6 +1599,12 @@
     {
       "type": 0,
       "value": "Vrátí dotaz z identifikátoru URI."
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Enter authority"
     }
   ],
   "GLd3MU": [
@@ -2003,6 +2111,12 @@
       "value": "Povinný parametr. Identifikátor URI dat, který se má převést do binárního formátu."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -2057,6 +2171,18 @@
       "value": "Výraz"
     }
   ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Enter tenant"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2085,6 +2211,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec, který obsahuje název zdrojového časového pásma. Podrobnosti najdete tady: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Secret"
     }
   ],
   "OFKZzQ": [
@@ -2169,6 +2301,12 @@
     {
       "type": 0,
       "value": "Vyberte spravovanou identitu"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
     }
   ],
   "P2A5dB": [
@@ -2340,7 +2478,7 @@
   "QePi+D": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Datový typ"
     }
   ],
   "QknZQ1": [
@@ -2380,7 +2518,13 @@
   "RFjYpH": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Název"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Enter audience"
     }
   ],
   "RX2Shm": [
@@ -2465,6 +2609,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamčatskij – starý čas"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "SKXopi": [
@@ -2741,6 +2891,12 @@
       "value": "Historie spuštění"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificate"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2805,6 +2961,12 @@
     {
       "type": 0,
       "value": "Nahraďte existující schéma."
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
     }
   ],
   "X8JjjT": [
@@ -2939,6 +3101,12 @@
       "value": "Povinný parametr. Název akce, jejíž textové výstupy požadujete."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -2977,6 +3145,12 @@
     {
       "type": 0,
       "value": "Umožní výrazu odvodit svoji hodnotu z jiných párů názvu a hodnoty JSON nebo výstupu triggeru modulu runtime."
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
     }
   ],
   "YaFjJQ": [
@@ -3117,6 +3291,12 @@
       "value": "Funkce"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3251,6 +3431,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
     }
   ],
   "ci6ex1": [
@@ -3721,6 +3907,18 @@
       "value": "Doba trvání"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -4011,6 +4209,12 @@
       "value": "Vrátí true, pokud se dvě hodnoty rovnají."
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Enter username"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -4165,6 +4369,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "mx2IMJ": [
@@ -4595,6 +4805,12 @@
       "value": "Název karty"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Secret"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4695,6 +4911,12 @@
     {
       "type": 0,
       "value": "Vrátí true, pokud je kterýkoli z parametrů true."
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Client ID"
     }
   ],
   "ss5JPH": [
@@ -4949,6 +5171,12 @@
       "value": "Výraz je neplatný."
     }
   ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -5050,7 +5278,7 @@
   "wPlTDB": [
     {
       "type": 0,
-      "value": "Full path"
+      "value": "Úplná cesta"
     }
   ],
   "wQcEXt": [
@@ -5117,6 +5345,12 @@
     {
       "type": 0,
       "value": "Vrátí řetězcovou reprezentaci řetězce zakódovaného jako identifikátor URI."
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "xOAOHM": [

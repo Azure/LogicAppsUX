@@ -306,7 +306,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " itens com correspondência."
             }
           ]
         },
@@ -380,6 +380,12 @@
       "value": "Obrigatório. O objeto a verificar se é inferior ao valor com que está a ser comparado."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Enter the value of the Authorization header"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -446,6 +452,12 @@
       "value": "17"
     }
   ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "2b1yD3": [
     {
       "type": 0,
@@ -492,6 +504,12 @@
     {
       "type": 0,
       "value": "Identificador"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "3BZnxY": [
@@ -542,6 +560,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "The entered identity is not associated with this Logic App."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -582,6 +606,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Erevan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Authentication"
     }
   ],
   "47kOXr": [
@@ -672,6 +702,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A expressão XPath a avaliar."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Authority"
     }
   ],
   "5aa76N": [
@@ -824,6 +860,12 @@
       "value": "Obrigatório. A cadeia que poderá conter o valor."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -860,10 +902,22 @@
       "value": "Não é possível compor o estruturador devido a vários acionadores na definição."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Please enable managed identity for the logic app."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Obrigatório. A cadeia a ser codificada por URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Enter secret as plain text or use a secure parameter"
     }
   ],
   "8Y5xpK": [
@@ -918,6 +972,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Hovd­"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
     }
   ],
   "949s+r": [
@@ -1022,6 +1088,18 @@
       "value": "(UTC+06:30) Yangon (Rangum)"
     }
   ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Enter audience"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Username"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1047,7 +1125,7 @@
             },
             {
               "type": 0,
-              "value": " Actions"
+              "value": " Ações"
             }
           ]
         },
@@ -1127,6 +1205,12 @@
       "value": "Obrigatório. A cadeia a partir da qual se descodificam carateres não seguros de URL."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1169,6 +1253,12 @@
       "value": "Ligação necessária"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Credential Type"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1191,6 +1281,12 @@
     {
       "type": 0,
       "value": "Utilizar o payload de exemplo para gerar esquema"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Enter client ID"
     }
   ],
   "DZZ3fj": [
@@ -1257,6 +1353,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "Eqgm4v": [
@@ -1366,7 +1468,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " horas"
             }
           ]
         },
@@ -1452,6 +1554,12 @@
     {
       "type": 0,
       "value": "Devolve a consulta de um URI"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Enter authority"
     }
   ],
   "GLd3MU": [
@@ -1725,7 +1833,7 @@
             },
             {
               "type": 0,
-              "value": " Cases"
+              "value": " Casos"
             }
           ]
         },
@@ -1943,6 +2051,12 @@
       "value": "Obrigatório. O URI de dados a converter em representação binária."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Managed identity"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1997,6 +2111,18 @@
       "value": "Expressão"
     }
   ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Enter tenant"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2025,6 +2151,12 @@
     {
       "type": 0,
       "value": "Obrigatório. Uma cadeia que contém o nome do fuso horário de origem. Veja https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Secret"
     }
   ],
   "OFKZzQ": [
@@ -2109,6 +2241,12 @@
     {
       "type": 0,
       "value": "Selecionar uma identidade gerida"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
     }
   ],
   "P2A5dB": [
@@ -2198,7 +2336,7 @@
   "PtqSHp": [
     {
       "type": 0,
-      "value": "Do not generate if no value"
+      "value": "Não gerar se não existir valor"
     }
   ],
   "Pvm0xB": [
@@ -2240,7 +2378,7 @@
   "QGuYOg": [
     {
       "type": 0,
-      "value": "Nullable"
+      "value": "Pode ser nulo"
     }
   ],
   "QQYzHC": [
@@ -2280,7 +2418,7 @@
   "QePi+D": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Tipo de dados"
     }
   ],
   "QknZQ1": [
@@ -2320,7 +2458,13 @@
   "RFjYpH": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nome"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Enter audience"
     }
   ],
   "RX2Shm": [
@@ -2346,7 +2490,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " minutos"
             }
           ]
         },
@@ -2394,6 +2538,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Antigo"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "SKXopi": [
@@ -2670,6 +2820,12 @@
       "value": "Histórico de Execuções"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificate"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2734,6 +2890,12 @@
     {
       "type": 0,
       "value": "Substituir esquema existente."
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
     }
   ],
   "X8JjjT": [
@@ -2868,6 +3030,12 @@
       "value": "Obrigatório. O nome da ação cujas saídas do corpo quer."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -2906,6 +3074,12 @@
     {
       "type": 0,
       "value": "Permite que uma expressão derive o respetivo valor de outro nome JSON e pares de valor ou o resultado do acionador de runtime"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
     }
   ],
   "YaFjJQ": [
@@ -3046,6 +3220,12 @@
       "value": "Função"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Enter Pfx"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3180,6 +3360,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Trípoli"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Please select an identity"
     }
   ],
   "ci6ex1": [
@@ -3585,7 +3771,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " segundos"
             }
           ]
         },
@@ -3641,6 +3827,18 @@
     {
       "type": 0,
       "value": "Duração"
+    }
+  ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "System-assigned managed identity"
     }
   ],
   "i/b3Ko": [
@@ -3937,6 +4135,12 @@
       "value": "Devolve verdadeiro se dois valores forem iguais"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Enter username"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -4091,6 +4295,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "mx2IMJ": [
@@ -4418,7 +4628,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " dias"
             }
           ]
         },
@@ -4508,6 +4718,12 @@
     {
       "type": 0,
       "value": "Título do Cartão"
+    }
+  ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Secret"
     }
   ],
   "rDt4Iu": [
@@ -4610,6 +4826,12 @@
     {
       "type": 0,
       "value": "Devolve verdadeiro se qualquer um destes parâmetros for verdadeiro"
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Client ID"
     }
   ],
   "ss5JPH": [
@@ -4864,6 +5086,12 @@
       "value": "A expressão é inválida."
     }
   ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audience"
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4965,7 +5193,7 @@
   "wPlTDB": [
     {
       "type": 0,
-      "value": "Full path"
+      "value": "Caminho completo"
     }
   ],
   "wQcEXt": [
@@ -5032,6 +5260,12 @@
     {
       "type": 0,
       "value": "Devolve uma representação de cadeia de uma cadeia codificada de URI"
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Enter password as plain text or use a secure parameter"
     }
   ],
   "xOAOHM": [
