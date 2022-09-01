@@ -3183,6 +3183,9 @@
       <Item ItemId=";PtqSHp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Do not generate if no value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nicht generieren, wenn kein Wert vorhanden ist]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3244,7 +3247,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Nullable]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[NULL zulassen]]></Val>
+            <Val><![CDATA[Nullwerte zulassend]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
