@@ -6,6 +6,7 @@ import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getAdvanceOptionsSelection } from './helper';
 import { Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -49,20 +50,19 @@ export const AdvancedOptions: React.FC<any> = () => {
     { key: AdvancedOptionsTypes.generateInfrastructureTemplates, text: intlText.GENERATE_INFRAESTRUCTURE, selected: false },
   ];
 
-  const onChangeOptions = (
-    _event: React.FormEvent<HTMLDivElement>,
-    selectedOption?: IDropdownOption<any> | undefined,
-    index?: number | undefined
-  ) => {
-    if (selectedOption && index) {
-      const optionsSelection = getAdvanceOptionsSelection(selectedAdvanceOptions, index);
-      dispatch(
-        updateSelectedAdvanceOptions({
-          selectedAdvanceOptions: optionsSelection,
-        })
-      );
-    }
-  };
+  const onChangeOptions = useCallback(
+    (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption<any> | undefined) => {
+      if (selectedOption) {
+        const optionsSelection = getAdvanceOptionsSelection(selectedAdvanceOptions, selectedOption);
+        dispatch(
+          updateSelectedAdvanceOptions({
+            selectedAdvanceOptions: optionsSelection,
+          })
+        );
+      }
+    },
+    [selectedAdvanceOptions, dispatch]
+  );
 
   return (
     <div className="msla-export-workflows-advanced-options">

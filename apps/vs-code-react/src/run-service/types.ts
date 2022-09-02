@@ -1,5 +1,4 @@
 import type { InitializePayload, Status } from '../state/vscodeSlice';
-import type { IDropdownOption } from '@fluentui/react';
 import type { ExtensionCommand } from '@microsoft-logic-apps/utils';
 
 export interface IRunService {
@@ -219,7 +218,7 @@ export type ExportData = {
   targetDirectory: ITargetDirectory;
   packageUrl: string;
   managedConnections: ManagedConnections;
-  selectedAdvanceOptions: Array<IDropdownOption>;
+  selectedAdvanceOptions: Array<AdvancedOptionsTypes>;
 };
 
 export enum ResourceType {
