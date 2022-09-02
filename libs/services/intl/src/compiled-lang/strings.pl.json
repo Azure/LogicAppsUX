@@ -2396,7 +2396,7 @@
   "PtqSHp": [
     {
       "type": 0,
-      "value": "Do not generate if no value"
+      "value": "Nie generuj, jeśli brak wartości"
     }
   ],
   "Pvm0xB": [
@@ -2438,7 +2438,7 @@
   "QGuYOg": [
     {
       "type": 0,
-      "value": "Dopuszczające wartość null"
+      "value": "Możliwa wartość null"
     }
   ],
   "QQYzHC": [
