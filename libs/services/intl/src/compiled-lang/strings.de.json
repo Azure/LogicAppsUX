@@ -2292,7 +2292,7 @@
   "PtqSHp": [
     {
       "type": 0,
-      "value": "Do not generate if no value"
+      "value": "Nicht generieren, wenn kein Wert vorhanden ist"
     }
   ],
   "Pvm0xB": [
@@ -2334,7 +2334,7 @@
   "QGuYOg": [
     {
       "type": 0,
-      "value": "NULL zulassen"
+      "value": "Nullwerte zulassend"
     }
   ],
   "QQYzHC": [
