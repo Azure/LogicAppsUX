@@ -39,20 +39,23 @@ export const AdvancedOptions: React.FC<any> = () => {
       description: 'Clone connections text',
     }),
     GENERATE_INFRAESTRUCTURE: intl.formatMessage({
-      defaultMessage: 'GenerateInfrastructureTemplates',
-      description: 'GenerateInfrastructureTemplates',
+      defaultMessage: 'Generate infrastructure templates',
+      description: 'Generate infrastructure templates',
     }),
   };
 
   const advancedOptions: IDropdownOption[] = [
-    { key: AdvancedOptionsTypes.off, text: intlText.OFF },
-    { key: AdvancedOptionsTypes.cloneConnections, text: intlText.CLONE_CONNECTIONS },
-    { key: AdvancedOptionsTypes.generateInfrastructureTemplates, text: intlText.GENERATE_INFRAESTRUCTURE },
+    { key: AdvancedOptionsTypes.cloneConnections, text: intlText.CLONE_CONNECTIONS, selected: false },
+    { key: AdvancedOptionsTypes.generateInfrastructureTemplates, text: intlText.GENERATE_INFRAESTRUCTURE, selected: false },
   ];
 
-  const onChangeOptions = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
-    if (selectedOption) {
-      const optionsSelection = getAdvanceOptionsSelection(selectedOption, selectedAdvanceOptions);
+  const onChangeOptions = (
+    _event: React.FormEvent<HTMLDivElement>,
+    selectedOption?: IDropdownOption<any> | undefined,
+    index?: number | undefined
+  ) => {
+    if (selectedOption && index) {
+      const optionsSelection = getAdvanceOptionsSelection(selectedAdvanceOptions, index);
       dispatch(
         updateSelectedAdvanceOptions({
           selectedAdvanceOptions: optionsSelection,
@@ -74,7 +77,6 @@ export const AdvancedOptions: React.FC<any> = () => {
         placeholder={AdvancedOptionsTypes.off}
         options={advancedOptions}
         onChange={onChangeOptions}
-        selectedKey={selectedAdvanceOptions.length ? selectedAdvanceOptions : null}
         multiSelect
       />
     </div>
