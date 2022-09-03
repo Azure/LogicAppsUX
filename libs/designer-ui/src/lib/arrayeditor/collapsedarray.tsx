@@ -64,8 +64,6 @@ export const CollapsedArray = ({
           onBlur={onBlur}
           GetTokenPicker={GetTokenPicker}
         >
-          {/* <SerializeArray isValid={isValid} setItems={setItems} /> */}
-
           <CollapsedArrayValidation
             errorMessage={errorMessage}
             className={'msla-collapsed-editor-validation'}
