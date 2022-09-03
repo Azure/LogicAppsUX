@@ -8,6 +8,7 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
+
   if ($isParagraphNode(rootChild)) {
     paragraph = rootChild;
   } else {
