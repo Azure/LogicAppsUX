@@ -1627,7 +1627,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter audience]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Zielgruppe eingeben]]></Val>
+            <Val><![CDATA[Benutzergruppe eingeben]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3076,7 +3076,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter tenant]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Mandanten eingeben]]></Val>
+            <Val><![CDATA[Mandant eingeben]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3571,7 +3571,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter audience]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Zielgruppe eingeben]]></Val>
+            <Val><![CDATA[Benutzergruppe eingeben]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
