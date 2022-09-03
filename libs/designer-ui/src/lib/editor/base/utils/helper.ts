@@ -29,7 +29,25 @@ export const showCollapsedValidation = (collapsedValue: ValueSegment[]): boolean
   );
 };
 
-export const initializeValidation = (initialValue?: ValueSegment[]): boolean => {
+export const initializeArrayValidation = (initialValue?: ValueSegment[]): boolean => {
+  const editorString = initialValue?.map((segment) => segment.value).join('');
+  return !editorString || isValidArray(editorString);
+};
+
+export const isValidArray = (s: string): boolean => {
+  return s.startsWith('[') && s.endsWith(']') && validateArrayStrings(s);
+};
+
+export const validateArrayStrings = (s: string): boolean => {
+  try {
+    JSON.parse(s);
+  } catch (e) {
+    return false;
+  }
+  return true;
+};
+
+export const initializeDictionaryValidation = (initialValue?: ValueSegment[]): boolean => {
   const editorString = initialValue?.map((segment) => segment.value).join('');
   return !editorString || isValidDictionary(editorString);
 };

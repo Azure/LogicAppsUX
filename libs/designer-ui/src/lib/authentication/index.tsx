@@ -5,6 +5,7 @@ import { Label } from '../label';
 import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
 import { BasicAuthentication } from './BasicAuth';
 import { CertificateAuthentication } from './CertificateAuth';
+import { CollapsedAuthentication } from './CollapsedAuthentication';
 import { MSIAuthentication } from './MSIAuth/MSIAuth';
 import { RawAuthentication } from './RawAuth';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -81,7 +82,7 @@ export const AuthenticationEditor = ({
   aadOAuthProps = {},
   GetTokenPicker,
 }: AuthenticationEditorProps): JSX.Element => {
-  const [codeView, toggleCodeView] = useBoolean(false);
+  const [codeView, { toggle: toggleCodeView }] = useBoolean(false);
   const [option, setOption] = useState<string | number>(authType);
 
   const renderAuthentication = () => {
@@ -139,7 +140,15 @@ export const AuthenticationEditor = ({
   return (
     <div className="msla-authentication-editor-container">
       {codeView ? (
-        <div />
+        <CollapsedAuthentication
+          GetTokenPicker={GetTokenPicker}
+          authType={option}
+          basicProps={basicProps}
+          clientCertificateProps={clientCertificateProps}
+          rawProps={rawProps}
+          msiProps={msiProps}
+          aadOAuthProps={aadOAuthProps}
+        />
       ) : (
         <div className="msla-authentication-editor-expanded-container">
           <div className="msla-authentication-editor-label">
@@ -157,7 +166,7 @@ export const AuthenticationEditor = ({
         </div>
       )}
       <div className="msla-authentication-default-view-mode">
-        <EditorCollapseToggle collapsed={codeView} toggleCollapsed={toggleCodeView.toggle} />
+        <EditorCollapseToggle collapsed={codeView} toggleCollapsed={toggleCodeView} />
       </div>
     </div>
   );

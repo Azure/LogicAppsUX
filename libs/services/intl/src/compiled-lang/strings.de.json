@@ -372,7 +372,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "Geben Sie den Wert des Autorisierungsheaders ein."
     }
   ],
   "1uGBLP": [
@@ -444,7 +444,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Verwaltete Identität"
     }
   ],
   "2b1yD3": [
@@ -498,7 +498,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Systemseitig zugewiesene verwaltete Identität"
     }
   ],
   "3BZnxY": [
@@ -552,7 +552,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "Die eingegebene Identität ist dieser Logik-App nicht zugeordnet."
     }
   ],
   "3jlz+B": [
@@ -600,7 +600,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Authentifizierung"
     }
   ],
   "47kOXr": [
@@ -696,7 +696,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "Autorität"
     }
   ],
   "5aa76N": [
@@ -852,7 +852,7 @@
   "84D91Y": [
     {
       "type": 0,
-      "value": "Pfx"
+      "value": "PFX"
     }
   ],
   "8CWFEh": [
@@ -894,7 +894,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "Aktivieren Sie die verwaltete Identität für die Logik-App."
     }
   ],
   "8U0KPg": [
@@ -906,7 +906,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "Geben Sie das Geheimnis in Nur-Text-Form oder als sicheren Parameter ein."
     }
   ],
   "8Y5xpK": [
@@ -966,13 +966,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Wert"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "Die Benutzeridentität wird nicht unterstützt, wenn für die Logik-App die systemseitig zugewiesene verwaltete Identität aktiviert ist."
     }
   ],
   "949s+r": [
@@ -1080,13 +1080,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Zielgruppe eingeben"
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "Benutzername"
     }
   ],
   "ArTh0/": [
@@ -1186,7 +1186,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
     }
   ],
   "BSHFiw": [
@@ -1234,7 +1234,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "Typ der Anmeldeinformationen"
     }
   ],
   "Cy9qeQ": [
@@ -1264,7 +1264,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "Client-ID eingeben"
     }
   ],
   "DZZ3fj": [
@@ -1336,7 +1336,7 @@
   "EjXdAm": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Kennwort"
     }
   ],
   "Eqgm4v": [
@@ -1526,7 +1526,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "Autorität eingeben"
     }
   ],
   "GLd3MU": [
@@ -2010,7 +2010,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Verwaltete Identität"
     }
   ],
   "MTR4Vg": [
@@ -2070,13 +2070,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "Mandanten eingeben"
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Wählen Sie eine Identität aus."
     }
   ],
   "NvANon": [
@@ -2112,7 +2112,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Geheimnis"
     }
   ],
   "OFKZzQ": [
@@ -2202,7 +2202,7 @@
   "P+mWgV": [
     {
       "type": 0,
-      "value": "Pfx"
+      "value": "PFX"
     }
   ],
   "P2A5dB": [
@@ -2424,7 +2424,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Zielgruppe eingeben"
     }
   ],
   "RX2Shm": [
@@ -2492,7 +2492,7 @@
   "SCCE6s": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Kennwort"
     }
   ],
   "SKXopi": [
@@ -2772,7 +2772,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "Zertifikat"
     }
   ],
   "VptXzY": [
@@ -2844,7 +2844,7 @@
   "X4gDhV": [
     {
       "type": 0,
-      "value": "Tenant"
+      "value": "Mandant"
     }
   ],
   "X8JjjT": [
@@ -2982,7 +2982,7 @@
   "Y/bcmG": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Kennwort"
     }
   ],
   "Y0H9aX": [
@@ -3028,7 +3028,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "PFX eingeben"
     }
   ],
   "YaFjJQ": [
@@ -3172,7 +3172,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "PFX eingeben"
     }
   ],
   "ajAro8": [
@@ -3318,7 +3318,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Wählen Sie eine Identität aus."
     }
   ],
   "ci6ex1": [
@@ -3766,13 +3766,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Benutzergruppe"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Systemseitig zugewiesene verwaltete Identität"
     }
   ],
   "i/b3Ko": [
@@ -4072,7 +4072,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Benutzernamen eingeben"
     }
   ],
   "kneb9/": [
@@ -4234,7 +4234,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
     }
   ],
   "mx2IMJ": [
@@ -4646,7 +4646,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Geheimnis"
     }
   ],
   "rDt4Iu": [
@@ -4754,7 +4754,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "Client-ID"
     }
   ],
   "ss5JPH": [
@@ -5012,7 +5012,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Benutzergruppe"
     }
   ],
   "vXwYXe": [
@@ -5188,7 +5188,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
     }
   ],
   "xOAOHM": [

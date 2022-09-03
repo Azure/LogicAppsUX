@@ -6,14 +6,13 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
 import { CLEAR_EDITOR_COMMAND } from 'lexical';
-import type { Dispatch, SetStateAction } from 'react';
 import { useState, useEffect } from 'react';
 
 interface updateStateProps {
   item: ValueSegment[];
   items: ArrayEditorItemProps[];
   index: number;
-  setItems: Dispatch<SetStateAction<ArrayEditorItemProps[]>>;
+  setItems: (newItems: ArrayEditorItemProps[]) => void;
 }
 
 export const EditorChange = ({ item, items, index, setItems }: updateStateProps) => {
