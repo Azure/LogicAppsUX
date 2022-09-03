@@ -361,7 +361,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "輸入授權標頭的值"
     }
   ],
   "1uGBLP": [
@@ -433,7 +433,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "受控識別"
     }
   ],
   "2b1yD3": [
@@ -487,7 +487,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "系統指派的受控識別"
     }
   ],
   "3BZnxY": [
@@ -541,7 +541,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "輸入的身分識別未與此邏輯應用程式建立關聯。"
     }
   ],
   "3jlz+B": [
@@ -589,7 +589,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "驗證"
     }
   ],
   "47kOXr": [
@@ -685,7 +685,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "授權"
     }
   ],
   "5aa76N": [
@@ -883,7 +883,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "請為邏輯應用程式啟用受控識別。"
     }
   ],
   "8U0KPg": [
@@ -895,7 +895,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "以純文字形式輸入祕密或使用安全參數"
     }
   ],
   "8Y5xpK": [
@@ -955,13 +955,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "值"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "當邏輯應用程式已啟用系統指派的受控識別時，不支援使用者識別。"
     }
   ],
   "949s+r": [
@@ -1069,13 +1069,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "輸入對象"
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "使用者名稱"
     }
   ],
   "ArTh0/": [
@@ -1164,7 +1164,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "以純文字形式輸入密碼或使用安全參數"
     }
   ],
   "BSHFiw": [
@@ -1212,7 +1212,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "認證類型"
     }
   ],
   "Cy9qeQ": [
@@ -1242,7 +1242,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "輸入用戶端識別碼"
     }
   ],
   "DZZ3fj": [
@@ -1314,7 +1314,7 @@
   "EjXdAm": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "密碼"
     }
   ],
   "Eqgm4v": [
@@ -1485,7 +1485,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "輸入授權單位"
     }
   ],
   "GLd3MU": [
@@ -1950,7 +1950,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "受控識別"
     }
   ],
   "MTR4Vg": [
@@ -2010,13 +2010,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "輸入租用戶"
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "請選取身分識別"
     }
   ],
   "NvANon": [
@@ -2052,7 +2052,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "祕密"
     }
   ],
   "OFKZzQ": [
@@ -2360,7 +2360,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "輸入對象"
     }
   ],
   "RX2Shm": [
@@ -2417,7 +2417,7 @@
   "SCCE6s": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "密碼"
     }
   ],
   "SKXopi": [
@@ -2697,7 +2697,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "憑證"
     }
   ],
   "VptXzY": [
@@ -2769,7 +2769,7 @@
   "X4gDhV": [
     {
       "type": 0,
-      "value": "Tenant"
+      "value": "租用戶"
     }
   ],
   "X8JjjT": [
@@ -2907,7 +2907,7 @@
   "Y/bcmG": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "密碼"
     }
   ],
   "Y0H9aX": [
@@ -2953,7 +2953,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "請輸入 PfX"
     }
   ],
   "YaFjJQ": [
@@ -3097,7 +3097,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "請輸入 PfX"
     }
   ],
   "ajAro8": [
@@ -3243,7 +3243,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "請選取身分識別"
     }
   ],
   "ci6ex1": [
@@ -3672,13 +3672,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "對象"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "系統指派的受控識別"
     }
   ],
   "i/b3Ko": [
@@ -3970,7 +3970,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "輸入使用者名稱"
     }
   ],
   "kneb9/": [
@@ -4132,7 +4132,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "以純文字形式輸入密碼或使用安全參數"
     }
   ],
   "mx2IMJ": [
@@ -4533,7 +4533,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "祕密"
     }
   ],
   "rDt4Iu": [
@@ -4641,7 +4641,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "用戶端識別碼"
     }
   ],
   "ss5JPH": [
@@ -4899,7 +4899,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "對象"
     }
   ],
   "vXwYXe": [
@@ -5075,7 +5075,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "以純文字形式輸入密碼或使用安全參數"
     }
   ],
   "xOAOHM": [

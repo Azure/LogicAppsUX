@@ -1,9 +1,11 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
+import { initializeArrayValidation } from '../editor/base/utils/helper';
 import type { LabelProps } from '../label';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedArray } from './expandedarray';
+import { parseInitialValue } from './util/serializecollapsedarray';
 import { useState } from 'react';
 
 export interface ArrayEditorItemProps {
@@ -17,41 +19,58 @@ export interface ArrayEditorProps extends BaseEditorProps {
   initialItems?: ArrayEditorItemProps[];
   labelProps: LabelProps;
   readOnly?: boolean;
-  addArrayLabel?: boolean;
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   canDeleteLastItem = true,
   disableToggle = false,
+  initialValue,
   initialItems = [],
   labelProps,
-  addArrayLabel,
   readOnly = false,
   GetTokenPicker,
+  onChange,
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState(initialItems);
-  const [isValid, setIsValid] = useState(true);
+  const [isValid, setIsValid] = useState<boolean>(initializeArrayValidation(initialValue));
+  const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
+  };
+
+  const updateItems = (newItems: ArrayEditorItemProps[]) => {
+    setItems(newItems);
+    const objectValue = parseInitialValue(newItems);
+    setCollapsedValue(objectValue);
+
+    if (!collapsed) {
+      onChange?.({ value: objectValue, viewModel: { items: newItems } });
+    }
+  };
+
+  const handleBlur = (): void => {
+    onChange?.({ value: collapsedValue, viewModel: { items: isValid ? items : undefined } });
   };
 
   return (
     <div className="msla-array-editor-container">
       {collapsed || !initialItems ? (
         <CollapsedArray
-          labelProps={addArrayLabel ? labelProps : undefined}
-          items={items}
+          labelProps={labelProps}
           isValid={isValid}
-          setItems={setItems}
+          collapsedValue={collapsedValue}
+          setItems={updateItems}
           setIsValid={setIsValid}
           GetTokenPicker={GetTokenPicker}
+          onBlur={handleBlur}
+          setCollapsedValue={setCollapsedValue}
         />
       ) : (
         <ExpandedArray
           items={items}
-          setItems={setItems}
+          setItems={updateItems}
           labelProps={labelProps}
           readOnly={readOnly}
           canDeleteLastItem={canDeleteLastItem}

@@ -1,5 +1,4 @@
 import { ValueSegmentType } from '../models/parameter';
-import { CollapsedEditorType } from '../shared/collapsedEditor';
 // Tokens commented out until Tokens enabled in storybook
 // import { testTokenSegment } from '../shared/testtokensegment';
 import type { BaseEditorProps } from './';
@@ -27,7 +26,6 @@ plugins.args = {
   initialValue: [
     { id: guid(), type: ValueSegmentType.LITERAL, value: 'test\ntest' },
     { id: guid(), type: ValueSegmentType.LITERAL, value: 'test\ntest' },
-    // testTokenSegment,
   ],
 };
 
@@ -36,21 +34,4 @@ token.args = {
   className: 'msla-editor-container',
   placeholder: 'Play around with tokenizing',
   BasePlugins: { tokens: true },
-};
-
-export const validation = Template.bind({});
-validation.args = {
-  className: 'msla-editor-container',
-  placeholder: 'Please enter a valid Array',
-  BasePlugins: {
-    validation: {
-      type: CollapsedEditorType.COLLAPSED_ARRAY,
-      errorMessage: 'Please enter a valid array - (storybook will always be invalid)',
-      isValid: false,
-    },
-  },
-  initialValue: [
-    { id: guid(), type: ValueSegmentType.LITERAL, value: 'test\ntest' },
-    { id: guid(), type: ValueSegmentType.LITERAL, value: 'test\ntest' },
-  ],
 };
