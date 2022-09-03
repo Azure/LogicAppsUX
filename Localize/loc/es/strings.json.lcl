@@ -1288,7 +1288,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Pfx]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Archivo .pfx]]></Val>
+            <Val><![CDATA[Archivo PFX]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3268,7 +3268,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Pfx]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Archivo .pfx]]></Val>
+            <Val><![CDATA[Archivo PFX]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
