@@ -306,7 +306,7 @@
             },
             {
               "type": 0,
-              "value": " items matched."
+              "value": " elementos coincidentes."
             }
           ]
         },
@@ -380,6 +380,12 @@
       "value": "Obligatorio. El objeto que se comprobará si es menor que el valor con el que se está comparando."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Escribir el valor del encabezado de autorización"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -446,6 +452,12 @@
       "value": "17"
     }
   ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Identidad administrada"
+    }
+  ],
   "2b1yD3": [
     {
       "type": 0,
@@ -492,6 +504,12 @@
     {
       "type": 0,
       "value": "Identificador"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Identidad administrada asignada por el sistema"
     }
   ],
   "3BZnxY": [
@@ -542,6 +560,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "La identidad especificada no está asociada con esta aplicación lógica."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -582,6 +606,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Ereván"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Autenticación"
     }
   ],
   "47kOXr": [
@@ -672,6 +702,12 @@
     {
       "type": 0,
       "value": "Obligatorio. La expresión XPath que se evaluará."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Autoridad"
     }
   ],
   "5aa76N": [
@@ -824,6 +860,12 @@
       "value": "Obligatorio. La cadena que debería contener el valor."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Archivo .pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -860,10 +902,22 @@
       "value": "No se puede representar el diseñador porque existen varios desencadenadores en la definición."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Habilite la identidad administrada para la aplicación lógica."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Obligatorio. La cadena que deberá codificarse en URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Escribir el secreto como texto sin formato o usar un parámetro seguro"
     }
   ],
   "8Y5xpK": [
@@ -918,6 +972,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Valor"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "No se admite la identidad del usuario si la aplicación lógica tiene habilitada la identidad administrada asignada por el sistema."
     }
   ],
   "949s+r": [
@@ -1022,6 +1088,18 @@
       "value": "(UTC+06:30) Yangón (Rangún)"
     }
   ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Especifique la audiencia"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Nombre de usuario"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1047,7 +1125,7 @@
             },
             {
               "type": 0,
-              "value": " Actions"
+              "value": " acciones"
             }
           ]
         },
@@ -1127,6 +1205,12 @@
       "value": "Obligatorio. La cadena desde la cual se decodificarán los caracteres de dirección URL no seguros."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Escribir la contraseña como texto sin formato o usar un parámetro seguro"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1169,6 +1253,12 @@
       "value": "Conexión obligatoria"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Tipo de credenciales"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1191,6 +1281,12 @@
     {
       "type": 0,
       "value": "Usar una carga de ejemplo para generar el esquema"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Escriba el id. de cliente"
     }
   ],
   "DZZ3fj": [
@@ -1257,6 +1353,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Contraseña"
     }
   ],
   "Eqgm4v": [
@@ -1366,7 +1468,7 @@
             },
             {
               "type": 0,
-              "value": " hours"
+              "value": " horas"
             }
           ]
         },
@@ -1444,6 +1546,12 @@
     {
       "type": 0,
       "value": "Devuelve la consulta de un URI."
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Especificar autoridad"
     }
   ],
   "GLd3MU": [
@@ -1717,7 +1825,7 @@
             },
             {
               "type": 0,
-              "value": " Cases"
+              "value": " casos"
             }
           ]
         },
@@ -1927,6 +2035,12 @@
       "value": "Obligatorio. El URI de datos que se convertirá a una representación binaria."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Identidad administrada"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1981,6 +2095,18 @@
       "value": "Expresión"
     }
   ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Especificar el inquilino"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Seleccione una identidad"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2009,6 +2135,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Cadena que contiene el nombre de la zona horaria de origen. Para obtener más detalles, vea https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Secreto"
     }
   ],
   "OFKZzQ": [
@@ -2093,6 +2225,12 @@
     {
       "type": 0,
       "value": "Seleccionar una identidad administrada"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Archivo .pfx"
     }
   ],
   "P2A5dB": [
@@ -2182,7 +2320,7 @@
   "PtqSHp": [
     {
       "type": 0,
-      "value": "Do not generate if no value"
+      "value": "No generar si no hay ningún valor"
     }
   ],
   "Pvm0xB": [
@@ -2224,7 +2362,7 @@
   "QGuYOg": [
     {
       "type": 0,
-      "value": "Nullable"
+      "value": "Acepta valores NULL"
     }
   ],
   "QQYzHC": [
@@ -2264,7 +2402,7 @@
   "QePi+D": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Tipo de datos"
     }
   ],
   "QknZQ1": [
@@ -2304,7 +2442,13 @@
   "RFjYpH": [
     {
       "type": 0,
-      "value": "Name"
+      "value": "Nombre"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Especifique la audiencia"
     }
   ],
   "RX2Shm": [
@@ -2330,7 +2474,7 @@
             },
             {
               "type": 0,
-              "value": " minutes"
+              "value": " minutos"
             }
           ]
         },
@@ -2378,6 +2522,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropávlovsk-Kamchatski - Antiguo"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Contraseña"
     }
   ],
   "SKXopi": [
@@ -2654,6 +2804,12 @@
       "value": "Historial de ejecución"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificado"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2718,6 +2874,12 @@
     {
       "type": 0,
       "value": "Reemplazar el esquema existente."
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Inquilino"
     }
   ],
   "X8JjjT": [
@@ -2852,6 +3014,12 @@
       "value": "Necesario. Nombre de la acción cuyo cuerpo contiene las salidas que desea."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Contraseña"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -2890,6 +3058,12 @@
     {
       "type": 0,
       "value": "Permite que una expresión derive su valor de otros pares de nombre y valor JSON o la salida del desencadenador en tiempo de ejecución."
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Especificar el archivo PFX"
     }
   ],
   "YaFjJQ": [
@@ -3030,6 +3204,12 @@
       "value": "Función"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Especificar el archivo PFX"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3164,6 +3344,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Trípoli"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Seleccione una identidad"
     }
   ],
   "ci6ex1": [
@@ -3561,7 +3747,7 @@
             },
             {
               "type": 0,
-              "value": " seconds"
+              "value": " segundos"
             }
           ]
         },
@@ -3617,6 +3803,18 @@
     {
       "type": 0,
       "value": "Duración"
+    }
+  ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audiencia"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Identidad administrada asignada por el sistema"
     }
   ],
   "i/b3Ko": [
@@ -3913,6 +4111,12 @@
       "value": "Devuelve true si dos valores son iguales."
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Escribir el nombre de usuario"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -4067,6 +4271,12 @@
     {
       "type": 0,
       "value": "Aceptar"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Escribir la contraseña como texto sin formato o usar un parámetro seguro"
     }
   ],
   "mx2IMJ": [
@@ -4394,7 +4604,7 @@
             },
             {
               "type": 0,
-              "value": " days"
+              "value": " días"
             }
           ]
         },
@@ -4484,6 +4694,12 @@
     {
       "type": 0,
       "value": "Título de la tarjeta"
+    }
+  ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Secreto"
     }
   ],
   "rDt4Iu": [
@@ -4586,6 +4802,12 @@
     {
       "type": 0,
       "value": "Devuelve true si alguno de los parámetros es verdadero."
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Id. de cliente"
     }
   ],
   "ss5JPH": [
@@ -4840,6 +5062,12 @@
       "value": "La expresión no es válida."
     }
   ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audiencia"
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4941,7 +5169,7 @@
   "wPlTDB": [
     {
       "type": 0,
-      "value": "Full path"
+      "value": "Ruta de acceso completa"
     }
   ],
   "wQcEXt": [
@@ -5008,6 +5236,12 @@
     {
       "type": 0,
       "value": "Devuelve una representación de cadena de una cadena codificada de URI."
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Escribir la contraseña como texto sin formato o usar un parámetro seguro"
     }
   ],
   "xOAOHM": [

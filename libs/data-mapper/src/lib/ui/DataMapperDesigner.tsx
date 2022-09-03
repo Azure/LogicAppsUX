@@ -2,6 +2,8 @@ import { checkerboardBackgroundImage } from '../Constants';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
+import type { ButtonPivotProps } from '../components/buttonPivot/ButtonPivot';
+import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
@@ -14,8 +16,10 @@ import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import {
+  addInputNodes,
   makeConnection,
   redoDataMapOperation,
+  removeInputNodes,
   saveDataMap,
   setCurrentlySelectedNode,
   setCurrentOutputNode,
@@ -25,9 +29,12 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaNodeExtended, SelectedNode } from '../models';
 import { NodeType, SchemaTypes } from '../models';
+import type { ConnectionDictionary } from '../models/Connection';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
+import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
 import './ReactFlowStyleOverrides.css';
+import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -44,7 +51,7 @@ import {
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
@@ -54,31 +61,43 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapperDesignerProps {
   saveStateCall: (dataMapDefinition: string) => void;
-  setSelectedSchemaFile?: (selectedSchemaFile: SchemaFile) => void;
+  addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
-  saveStateCall,
-  setSelectedSchemaFile,
-  readCurrentSchemaOptions,
-}) => {
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const clickTimerRef: { current: ReturnType<typeof setTimeout> | null } = useRef(null); // NOTE: ReturnType to support NodeJS & window Timeouts
 
   const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
+  const flattenedInputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedInputSchema);
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
   const flattenedOutputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedOutputSchema);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
-  const [displayToolbox, { toggle: toggleDisplayToolbox, setFalse: setDisplayToolboxFalse }] = useBoolean(false);
-  const [displayExpressions, { toggle: toggleDisplayExpressions, setFalse: setDisplayExpressionsFalse }] = useBoolean(false);
-  const [nodes, edges] = useLayout();
+  const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
+
+  const connectedInputNodes = useMemo(() => {
+    if (currentOutputNode) {
+      const outputFilteredConnections = currentOutputNode.children.flatMap((childNode) =>
+        !connections[childNode.key] ? [] : connections[childNode.key]
+      );
+
+      return outputFilteredConnections.map((connection) => {
+        return flattenedInputSchema[connection.reactFlowSource];
+      });
+    } else {
+      return [];
+    }
+  }, [flattenedInputSchema, currentOutputNode, connections]);
+
+  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, currentOutputNode, connections);
 
   const dataMapDefinition = useMemo((): string => {
     if (inputSchema && outputSchema) {
@@ -88,8 +107,22 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
     return '';
   }, [currentConnections, inputSchema, outputSchema]);
 
-  const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
-    dispatch(toggleInputNode(selectedNode));
+  const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
+    if (isLeafNode(selectedNode)) {
+      if (!hasAConnection(selectedNode, currentConnections)) {
+        dispatch(toggleInputNode(selectedNode));
+      }
+    } else {
+      if (allChildNodesSelected(selectedNode, currentlySelectedInputNodes)) {
+        // TODO reconfirm this works for loops and conditionals
+        const nodesToRemove = selectedNode.children.filter((childNodes) =>
+          Object.values(currentConnections).some((currentConnection) => childNodes.key !== currentConnection.value)
+        );
+        dispatch(removeInputNodes(nodesToRemove));
+      } else {
+        dispatch(addInputNodes(selectedNode.children));
+      }
+    }
   };
 
   const handleNodeClicks = (_event: ReactMouseEvent, node: ReactFlowNode) => {
@@ -113,6 +146,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
   const onPaneClick = (_event: ReactMouseEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
     dispatch(setCurrentlySelectedNode(undefined));
+    setDisplayToolboxItem(undefined);
   };
 
   const onNodeSingleClick = (node: ReactFlowNode): void => {
@@ -128,7 +162,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
     if (node.data.schemaType === SchemaTypes.Output && !node.data.isLeaf) {
       const newCurrentSchemaNode = flattenedOutputSchema[node.id];
       if (currentOutputNode && newCurrentSchemaNode) {
-        dispatch(setCurrentOutputNode(newCurrentSchemaNode));
+        dispatch(setCurrentOutputNode({ schemaNode: newCurrentSchemaNode, resetSelectedInputNodes: true }));
       }
     }
   };
@@ -140,10 +174,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
   };
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
-    if (!setSelectedSchemaFile) return;
-    // Will cause DM to ping VS Code for schema file contents (to be added to availableSchemas)
-    // Then, DM implementation will handle loading the schema as either the initial input or output schema
-    setSelectedSchemaFile(schemaFile);
+    if (addSchemaFromFile) {
+      // Will cause DM to ping VS Code to check schema file is in appropriate folder, then we will make getSchema API call
+      addSchemaFromFile(schemaFile);
+    }
   };
 
   const onSaveClick = () => {
@@ -179,37 +213,39 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
     return () => clearTimeout(clickTimerRef.current as unknown as number); // Make sure we clean up the timeout
   }, []);
 
-  const toolboxButtonContainerProps: ButtonContainerProps = {
+  const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
+    if (data.value === displayToolboxItem) {
+      setDisplayToolboxItem(undefined);
+    } else {
+      setDisplayToolboxItem(data.value as string);
+    }
+  };
+
+  const toolboxButtonPivotProps: ButtonPivotProps = {
     buttons: [
       {
         tooltip: toolboxLoc,
         regularIcon: CubeTree20Regular,
         filledIcon: CubeTree20Filled,
-        filled: displayToolbox,
-        onClick: () => {
-          setDisplayExpressionsFalse();
-          toggleDisplayToolbox();
-        },
+        value: 'inputSchemaTreePanel',
       },
       {
         tooltip: functionLoc,
         regularIcon: MathFormula20Regular,
         filledIcon: MathFormula20Filled,
-        filled: displayExpressions,
-        onClick: () => {
-          setDisplayToolboxFalse();
-          toggleDisplayExpressions();
-        },
+        value: 'expressionsPanel',
       },
     ],
     horizontal: true,
     xPos: '16px',
     yPos: '16px',
+    selectedValue: displayToolboxItem,
+    onTabSelect: onTabSelect,
   };
 
   const toolboxPanelProps: FloatingPanelProps = {
     xPos: '16px',
-    yPos: '56px',
+    yPos: '76px',
     width: '250px',
     minHeight: '300px',
     maxHeight: '450px',
@@ -339,16 +375,22 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
-            <ButtonContainer {...toolboxButtonContainerProps} />
-            {displayToolbox ? (
+            <ButtonPivot {...toolboxButtonPivotProps} />
+            {displayToolboxItem === 'inputSchemaTreePanel' && (
               <FloatingPanel {...toolboxPanelProps}>
                 <SchemaTree
                   schema={inputSchema}
                   currentlySelectedNodes={currentlySelectedInputNodes}
-                  onLeafNodeClick={onToolboxLeafItemClick}
+                  visibleConnectedNodes={connectedInputNodes}
+                  onNodeClick={onToolboxItemClick}
                 />
               </FloatingPanel>
-            ) : null}
+            )}
+            {displayToolboxItem === 'expressionsPanel' && (
+              <FloatingPanel {...toolboxPanelProps}>
+                <span>Test</span>
+              </FloatingPanel>
+            )}
             <div className="msla-designer-canvas msla-panel-mode">
               <ReactFlowProvider>
                 <ReactFlowWrapper />
@@ -364,18 +406,21 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
   );
 };
 
-export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
-  const inputSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
-  const outputSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
-  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-
+export const useLayout = (
+  allInputSchemaNodes: SchemaNodeExtended[],
+  connectedInputNodes: SchemaNodeExtended[],
+  currentOutputNode: SchemaNodeExtended | undefined,
+  connections: ConnectionDictionary
+): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
-    if (outputSchemaNode) {
-      return convertToReactFlowNodes(Array.from(inputSchemaNodes), outputSchemaNode);
+    if (currentOutputNode) {
+      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, currentOutputNode);
     } else {
       return [];
     }
-  }, [inputSchemaNodes, outputSchemaNode]);
+    // Explicitly ignoring connectedInputNodes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allInputSchemaNodes, currentOutputNode]);
 
   const reactFlowEdges = useMemo(() => {
     return convertToReactFlowEdges(connections);

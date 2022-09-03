@@ -369,6 +369,12 @@
       "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner als der Vergleichswert ist."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Geben Sie den Wert des Autorisierungsheaders ein."
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -435,6 +441,12 @@
       "value": "17"
     }
   ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität"
+    }
+  ],
   "2b1yD3": [
     {
       "type": 0,
@@ -481,6 +493,12 @@
     {
       "type": 0,
       "value": "Bezeichner"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Systemseitig zugewiesene verwaltete Identität"
     }
   ],
   "3BZnxY": [
@@ -531,6 +549,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "Die eingegebene Identität ist dieser Logik-App nicht zugeordnet."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -571,6 +595,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Eriwan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Authentifizierung"
     }
   ],
   "47kOXr": [
@@ -661,6 +691,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der XPath-Ausdruck, der ausgewertet werden soll."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Autorität"
     }
   ],
   "5aa76N": [
@@ -813,6 +849,12 @@
       "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "PFX"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -849,10 +891,22 @@
       "value": "Der Designer kann aufgrund mehrerer Trigger in der Definition nicht gerendert werden."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Aktivieren Sie die verwaltete Identität für die Logik-App."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Erforderlich. Die als URI zu codierende Zeichenfolge."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Geheimnis in Nur-Text-Form oder als sicheren Parameter ein."
     }
   ],
   "8Y5xpK": [
@@ -907,6 +961,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Wert"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "Die Benutzeridentität wird nicht unterstützt, wenn für die Logik-App die systemseitig zugewiesene verwaltete Identität aktiviert ist."
     }
   ],
   "949s+r": [
@@ -1011,6 +1077,18 @@
       "value": "(UTC+06:30) Yangon (Rangun)"
     }
   ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Zielgruppe eingeben"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Benutzername"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1105,6 +1183,12 @@
       "value": "Erforderlich. Die Zeichenfolge, aus der die URL-unsicheren Zeichen decodiert werden sollen."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1147,6 +1231,12 @@
       "value": "Verbindung erforderlich"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Typ der Anmeldeinformationen"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1169,6 +1259,12 @@
     {
       "type": 0,
       "value": "Beispielnutzdaten zum Generieren eines Schemas verwenden"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Client-ID eingeben"
     }
   ],
   "DZZ3fj": [
@@ -1235,6 +1331,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Kennwort"
     }
   ],
   "Eqgm4v": [
@@ -1419,6 +1521,12 @@
     {
       "type": 0,
       "value": "Gibt die Abfrage aus einem URI zurück."
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Autorität eingeben"
     }
   ],
   "GLd3MU": [
@@ -1899,6 +2007,12 @@
       "value": "Erforderlich. Der Daten-URI, der in die Binärdarstellung konvertiert werden soll."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1953,6 +2067,18 @@
       "value": "Ausdruck"
     }
   ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Mandanten eingeben"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine Identität aus."
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1981,6 +2107,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Quellzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Geheimnis"
     }
   ],
   "OFKZzQ": [
@@ -2065,6 +2197,12 @@
     {
       "type": 0,
       "value": "Verwaltete Identität auswählen"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "PFX"
     }
   ],
   "P2A5dB": [
@@ -2154,7 +2292,7 @@
   "PtqSHp": [
     {
       "type": 0,
-      "value": "Do not generate if no value"
+      "value": "Nicht generieren, wenn kein Wert vorhanden ist"
     }
   ],
   "Pvm0xB": [
@@ -2196,7 +2334,7 @@
   "QGuYOg": [
     {
       "type": 0,
-      "value": "Nullable"
+      "value": "Nullwerte zulassend"
     }
   ],
   "QQYzHC": [
@@ -2240,7 +2378,7 @@
   "QePi+D": [
     {
       "type": 0,
-      "value": "Data type"
+      "value": "Datentyp"
     }
   ],
   "QknZQ1": [
@@ -2281,6 +2419,12 @@
     {
       "type": 0,
       "value": "Name"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Zielgruppe eingeben"
     }
   ],
   "RX2Shm": [
@@ -2343,6 +2487,12 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropawlowsk-Kamtschatski – alt"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Kennwort"
     }
   ],
   "SKXopi": [
@@ -2619,6 +2769,12 @@
       "value": "Ausführungsverlauf"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Zertifikat"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2683,6 +2839,12 @@
     {
       "type": 0,
       "value": "Vorhandenes Schema ersetzen."
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Mandant"
     }
   ],
   "X8JjjT": [
@@ -2817,6 +2979,12 @@
       "value": "Erforderlich. Der Name der Aktion, deren Textausgaben Sie erhalten möchten."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Kennwort"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -2855,6 +3023,12 @@
     {
       "type": 0,
       "value": "Ermöglicht einem Ausdruck das Ableiten seines Werts aus anderen JSON-Name/Wert-Paaren oder aus der Ausgabe des Laufzeittriggers."
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "PFX eingeben"
     }
   ],
   "YaFjJQ": [
@@ -2995,6 +3169,12 @@
       "value": "Funktion"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "PFX eingeben"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3133,6 +3313,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine Identität aus."
     }
   ],
   "ci6ex1": [
@@ -3577,6 +3763,18 @@
       "value": "Dauer"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Benutzergruppe"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Systemseitig zugewiesene verwaltete Identität"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -3871,6 +4069,12 @@
       "value": "Gibt TRUE zurück, wenn zwei Werte gleich sind."
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Benutzernamen eingeben"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -4025,6 +4229,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
     }
   ],
   "mx2IMJ": [
@@ -4433,6 +4643,12 @@
       "value": "Kartentitel"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Geheimnis"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4533,6 +4749,12 @@
     {
       "type": 0,
       "value": "Gibt TRUE zurück, wenn einer der Parameter TRUE ist."
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Client-ID"
     }
   ],
   "ss5JPH": [
@@ -4787,6 +5009,12 @@
       "value": "Der Ausdruck ist ungültig."
     }
   ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Benutzergruppe"
+    }
+  ],
   "vXwYXe": [
     {
       "type": 0,
@@ -4888,7 +5116,7 @@
   "wPlTDB": [
     {
       "type": 0,
-      "value": "Full path"
+      "value": "Vollständiger Pfad"
     }
   ],
   "wQcEXt": [
@@ -4955,6 +5183,12 @@
     {
       "type": 0,
       "value": "Gibt eine Zeichenfolgendarstellung einer URI-codierten Zeichenfolge zurück."
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
     }
   ],
   "xOAOHM": [
