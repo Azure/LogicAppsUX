@@ -1051,7 +1051,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Authority]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Behörighet]]></Val>
+            <Val><![CDATA[Utfärdare]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2281,7 +2281,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter authority]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ange auktoritet]]></Val>
+            <Val><![CDATA[Ange utfärdare]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3076,7 +3076,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Enter tenant]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ange klient]]></Val>
+            <Val><![CDATA[Ange klientorganisation]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6892,7 +6892,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Client ID]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Klient-ID]]></Val>
+            <Val><![CDATA[Klient-id]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
