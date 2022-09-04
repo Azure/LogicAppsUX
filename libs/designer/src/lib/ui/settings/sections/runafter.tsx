@@ -6,7 +6,6 @@ import { addEdgeFromRunAfter, removeEdgeFromRunAfter, updateRunAfter } from '../
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
-import { labelCase } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -48,7 +47,6 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, 
         id: id,
         isDeleteVisible: true,
         readOnly: readOnly,
-        title: labelCase(id),
         statuses: value,
         onStatusChange: (status, checked) => {
           handleStatusChange(id, status, checked);

@@ -18,8 +18,8 @@ import {
   showDefaultTabs,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
-import { useNodeDescription, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
-import { setNodeDescription } from '../../core/state/workflow/workflowSlice';
+import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
+import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
@@ -45,6 +45,7 @@ export const PanelRoot = (): JSX.Element => {
 
   const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
+  const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
   const isDiscovery = useIsDiscovery();
 
   const [width, setWidth] = useState(PanelSize.Auto);
@@ -192,6 +193,10 @@ export const PanelRoot = (): JSX.Element => {
     dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
   };
 
+  const onTitleChange = (newId: string) => {
+    dispatch(replaceId({ originalId: selectedNode, newId }));
+  };
+
   // TODO: 12798945? onClick for delete when node store gets built
   const handleDelete = (): void => {
     // TODO: 12798935 Analytics (event logging)
@@ -224,7 +229,8 @@ export const PanelRoot = (): JSX.Element => {
       onCommentChange={(value) => {
         dispatch(setNodeDescription({ nodeId: selectedNode, description: value }));
       }}
-      title={selectedNode}
+      title={selectedNodeDisplayName}
+      onTitleChange={onTitleChange}
     />
   );
 };

@@ -18,6 +18,7 @@ export const initialWorkflowState: WorkflowState = {
   nodesMetadata: {},
   collapsedGraphIds: {},
   edgeIdsBySource: {},
+  idReplacements: {},
 };
 
 export const workflowSlice = createSlice({
@@ -177,6 +178,10 @@ export const workflowSlice = createSlice({
       }
       childOperation.runAfter[action.payload.parentOperation] = action.payload.statuses;
     },
+    replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
+      const { originalId, newId } = action.payload;
+      state.idReplacements[originalId] = newId.replaceAll(' ', '_');
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -206,6 +211,7 @@ export const {
   removeEdgeFromRunAfter,
   clearFocusNode,
   setFocusNode,
+  replaceId,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

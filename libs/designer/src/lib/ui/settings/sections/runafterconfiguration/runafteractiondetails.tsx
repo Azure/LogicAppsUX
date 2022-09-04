@@ -1,5 +1,6 @@
 import constants from '../../../../common/constants';
 import { useOperationInfo, useIconUri } from '../../../../core/state/selectors/actionMetadataSelector';
+import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -29,7 +30,6 @@ export interface RunAfterActionDetailsProps {
   isDeleteVisible: boolean;
   readOnly: boolean;
   statuses: string[];
-  title: string;
   visible?: boolean;
   onDelete?(): void;
   onRenderLabel?(props: LabelProps): JSX.Element | null;
@@ -58,7 +58,6 @@ export const RunAfterActionDetails = ({
   isDeleteVisible,
   readOnly,
   statuses,
-  title,
   id,
   onDelete,
   onStatusChange,
@@ -89,6 +88,7 @@ export const RunAfterActionDetails = ({
     return onRenderLabel?.(props) ?? <Label {...props} />;
   };
 
+  const title = useNodeDisplayName(id);
   const icon = useIcon(id) ?? '';
   return (
     <>

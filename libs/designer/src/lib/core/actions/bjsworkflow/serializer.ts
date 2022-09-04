@@ -64,6 +64,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
 };
 
 const getActions = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Actions> => {
+  const idReplacements = rootState.workflow.idReplacements;
   const rootGraph = rootState.workflow.graph as WorkflowNode;
   const actionsInRootGraph = rootGraph.children?.filter(
     (child) => !isRootNode(child.id, rootState.workflow.nodesMetadata)
@@ -76,10 +77,11 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
 
   return (await Promise.all(promises)).reduce(
     (actions: LogicAppsV2.Actions, action: LogicAppsV2.ActionDefinition | null, index: number) => {
+      const originalid = actionsInRootGraph[index].id;
       if (!isNullOrEmpty(action)) {
         return {
           ...actions,
-          [actionsInRootGraph[index].id]: action as LogicAppsV2.ActionDefinition,
+          [idReplacements[originalid] ?? originalid]: action as LogicAppsV2.ActionDefinition,
         };
       }
 
@@ -92,9 +94,13 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
 const getTrigger = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Triggers> => {
   const rootGraph = rootState.workflow.graph as WorkflowNode;
   const rootNode = rootGraph.children?.find((child) => isRootNode(child.id, rootState.workflow.nodesMetadata)) as WorkflowNode;
-
+  const rootNodeid = rootNode.id;
+  const idReplacements = rootState.workflow.idReplacements;
   return rootNode
-    ? { [rootNode.id]: ((await serializeOperation(rootState, rootNode.id, options)) ?? {}) as LogicAppsV2.TriggerDefinition }
+    ? {
+        [idReplacements[rootNodeid] ?? rootNodeid]: ((await serializeOperation(rootState, rootNode.id, options)) ??
+          {}) as LogicAppsV2.TriggerDefinition,
+      }
     : {};
 };
 
@@ -122,6 +128,7 @@ export const serializeOperation = async (
 };
 
 const serializeManifestBasedOperation = async (rootState: RootState, operationId: string): Promise<LogicAppsV2.OperationDefinition> => {
+  const idReplacements = rootState.workflow.idReplacements;
   const operation = rootState.operations.operationInfo[operationId];
   const manifest = await getOperationManifest(operation);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
@@ -130,7 +137,9 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const hostInfo = serializeHost(operationId, manifest, rootState);
   const inputs = hostInfo !== undefined ? { ...inputPathValue, ...hostInfo } : inputPathValue;
   const operationFromWorkflow = rootState.workflow.operations[operationId];
-  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata) ? undefined : getRunAfter(operationFromWorkflow);
+  const runAfter = isRootNode(operationId, rootState.workflow.nodesMetadata)
+    ? undefined
+    : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
     isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata) &&
     manifest.properties.recurrence &&
@@ -636,6 +645,14 @@ const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | undefined
 
 //#endregion
 
-const getRunAfter = (operation: LogicAppsV2.ActionDefinition): LogicAppsV2.RunAfter => {
-  return operation.runAfter ?? {};
+const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Record<string, string>): LogicAppsV2.RunAfter => {
+  if (!operation.runAfter) {
+    return {};
+  }
+  return Object.entries(operation.runAfter).reduce((acc: LogicAppsV2.RunAfter, [key, value]) => {
+    return {
+      ...acc,
+      [idReplacements[key] ?? key]: value,
+    };
+  }, {});
 };

@@ -9,9 +9,8 @@ import {
   useNodeConnectionName,
   useOperationInfo,
 } from '../../core/state/selectors/actionMetadataSelector';
-import { useIsLeafNode, useNodeDescription, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
+import { useIsLeafNode, useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
-import { labelCase } from '@microsoft-logic-apps/utils';
 import { Card } from '@microsoft/designer-ui';
 import { memo, useCallback, useMemo } from 'react';
 import { useDrag } from 'react-dnd';
@@ -19,7 +18,7 @@ import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 
-const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
+const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
@@ -74,7 +73,7 @@ const DefaultNode = ({ data, targetPosition = Position.Top, sourcePosition = Pos
     [brandColor, nodeComment]
   );
 
-  const label = labelCase(data.label);
+  const label = useNodeDisplayName(id);
   return (
     <>
       <div>

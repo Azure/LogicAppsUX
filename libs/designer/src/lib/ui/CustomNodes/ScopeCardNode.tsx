@@ -2,11 +2,16 @@ import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
 import { useBrandColor, useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
-import { useActionMetadata, useIsGraphCollapsed, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
+import {
+  useActionMetadata,
+  useIsGraphCollapsed,
+  useIsLeafNode,
+  useNodeDisplayName,
+  useNodeMetadata,
+} from '../../core/state/workflow/workflowSelectors';
 import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
-import { labelCase } from '@microsoft-logic-apps/utils';
 import { ScopeCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
@@ -54,6 +59,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const iconUri = useIconUri(operationInfo);
   const isLeaf = useIsLeafNode(id);
 
+  const label = useNodeDisplayName(scopeId);
   const nodeClick = useCallback(() => dispatch(changePanelNode(scopeId)), [dispatch, scopeId]);
 
   const graphCollapsed = useIsGraphCollapsed(scopeId);
@@ -64,8 +70,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   if (!node) {
     return null;
   }
-
-  const label = labelCase(scopeId);
 
   const normalizedType = node.type.toLowerCase();
   const actionCount = metadata?.actionCount ?? 0;
