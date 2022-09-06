@@ -27,6 +27,7 @@ export interface CreateConnectionProps {
   authClickCallback?: () => void;
   hideCancelButton?: boolean;
   needsAuth?: boolean;
+  errorMessage?: string;
 }
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
@@ -42,6 +43,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     authClickCallback,
     hideCancelButton = false,
     needsAuth = false,
+    errorMessage,
   } = props;
 
   const intl = useIntl();
@@ -153,6 +155,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
         authClickCallback={authClickCallback}
         cancelCallback={cancelCallback}
         hideCancelButton={hideCancelButton}
+        errorMessage={errorMessage}
       />
     );
 

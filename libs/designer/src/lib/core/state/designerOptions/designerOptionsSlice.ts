@@ -6,6 +6,7 @@ import {
   InitConnectionService,
   InitOperationManifestService,
   InitSearchService,
+  InitOAuthService,
 } from '@microsoft-logic-apps/designer-client-services';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -18,7 +19,7 @@ const initialState: DesignerOptionsState = {
 
 export const initializeServices = createAsyncThunk(
   'initializeDesignerServices',
-  async ({ connectionService, operationManifestService, searchService, loggerService }: ServiceOptions) => {
+  async ({ connectionService, operationManifestService, searchService, oAuthService, loggerService }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
       loggerServices.push(loggerService);
@@ -29,6 +30,7 @@ export const initializeServices = createAsyncThunk(
     InitConnectionService(connectionService);
     InitOperationManifestService(operationManifestService);
     InitSearchService(searchService);
+    InitOAuthService(oAuthService);
     InitLoggerService(loggerServices);
     return true;
   }

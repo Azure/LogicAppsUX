@@ -14,8 +14,18 @@ import {
 } from '../../utils/parameters/helper';
 import { convertOutputsToTokens, getBuiltInTokens } from '../../utils/tokens';
 import type { Settings } from './settings';
-import type { IConnectionService, IOperationManifestService, ISearchService } from '@microsoft-logic-apps/designer-client-services';
-import { InitConnectionService, InitOperationManifestService, InitSearchService } from '@microsoft-logic-apps/designer-client-services';
+import type {
+  IConnectionService,
+  IOperationManifestService,
+  ISearchService,
+  IOAuthService,
+} from '@microsoft-logic-apps/designer-client-services';
+import {
+  InitConnectionService,
+  InitOperationManifestService,
+  InitSearchService,
+  InitOAuthService,
+} from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
@@ -27,12 +37,14 @@ export interface ServiceOptions {
   connectionService: IConnectionService;
   operationManifestService: IOperationManifestService;
   searchService: ISearchService;
+  oAuthService: IOAuthService;
 }
 
-export const InitializeServices = ({ connectionService, operationManifestService, searchService }: ServiceOptions) => {
+export const InitializeServices = ({ connectionService, operationManifestService, searchService, oAuthService }: ServiceOptions) => {
   InitConnectionService(connectionService);
   InitOperationManifestService(operationManifestService);
   InitSearchService(searchService);
+  InitOAuthService(oAuthService);
 };
 
 export const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition?: any): NodeInputs => {

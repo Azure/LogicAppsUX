@@ -2,9 +2,12 @@
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
-import type { ConnectionCreationInfo, ConnectionParametersMetadata, IConnectionService } from '../connection';
-import type { IHttpClient, QueryParameters } from '../httpClient';
+import { throwWhenNotOk } from '../common/exceptions/service';
+import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService } from '../connection';
+import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
+import type { IOAuthPopup } from '../oAuth';
+import { OAuthService } from '../oAuth';
 import { azureFunctionConnectorId } from './operationmanifest';
 import type {
   Connection,
@@ -88,6 +91,16 @@ interface ContinuationTokenResponse<T> {
 }
 
 export type getAccessTokenType = () => Promise<string>;
+
+export interface ConsentLink {
+  link: string;
+  displayName?: string;
+  status?: string;
+}
+
+export interface LogicAppConsentResponse {
+  value: ConsentLink[];
+}
 
 interface ConnectionsData {
   managedApiConnections?: any;
@@ -358,14 +371,6 @@ export class StandardConnectionService implements IConnectionService {
     return connection;
   }
 
-  private async createConnectionInApiHub(
-    _connectionName: string,
-    _connectorId: string,
-    _connectionInfo: ConnectionCreationInfo
-  ): Promise<Connection> {
-    throw new Error('Not implemented for Azure connections yet');
-  }
-
   private async createConnectionInLocal(
     connectionName: string,
     connectorId: string,
@@ -390,17 +395,44 @@ export class StandardConnectionService implements IConnectionService {
     return connection;
   }
 
-  async tryCreateFirstPartyConnection(
-    _nodeId: string,
-    _connectorId: string,
-    _connectionInfo?: ConnectionCreationInfo,
-    _connectionId?: string
-  ): Promise<Connection> {
-    throw new Error('Not implemented yet');
+  getRedirectUrlFromConnection(_connection: Connection): string {
+    // TODO: Get redirect url from connection parameters
+    // const url = getAuthRedirect(connection as any);
+    // if (url) {
+    //   console.log(`Redirect url for connection ${connection.id} is ${url}`);
+    //   return url;
+    // }
+    return 'https://ema.hosting.portal.azure.net/ema/Content/2.20815.1.1/Html/authredirect.html?pid=1&trustedAuthority=https://portal.azure.com';
   }
 
-  async createAndAuthorizeOAuthConnection(_connectionId: string, _connectorId: string): Promise<Connection> {
-    throw new Error('Not implemented yet');
+  async createAndAuthorizeOAuthConnection(
+    connectionId: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo
+  ): Promise<CreateConnectionResult> {
+    const connection = await this.createConnectionInApiHub(connectionId, connectorId, connectionInfo);
+    const redirectUrl = this.getRedirectUrlFromConnection(connection);
+    const oAuthService = OAuthService();
+    let oAuthPopupInstance: IOAuthPopup | undefined;
+
+    try {
+      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId, redirectUrl);
+      oAuthPopupInstance = oAuthService.openLoginPopup({ consentUrl, redirectUrl });
+
+      const loginResponse = await oAuthPopupInstance.loginPromise;
+      if (loginResponse.error) {
+        throw new Error(atob(loginResponse.error));
+      } else if (loginResponse.code) {
+        await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
+      }
+
+      const connection = this.createConnection(connectionId, connectorId, connectionInfo) as any;
+      return { connection };
+    } catch (error: any) {
+      console.error('Failed to Authorize.', error, error?.message);
+      await this.deleteConnection(connectionId);
+      return { errorMessage: 'Failed to Authorize.' };
+    }
   }
 
   private getConnectionsConfiguration(
@@ -494,6 +526,123 @@ export class StandardConnectionService implements IConnectionService {
     } catch {
       return [];
     }
+  }
+
+  private async createConnectionInApiHub(
+    connectionName: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo
+  ): Promise<Connection> {
+    const { httpClient } = this.options;
+
+    // const { workflowAppDetails } = this.options;
+
+    // // NOTE(sopai): Block connection creation if identity does not exist on Logic App.
+    // if (workflowAppDetails && !isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
+    //     throw new ConnectionServiceException(ConnectionServiceErrorCode.PUT_CONNECTION_FAILED, Resources.NO_MANAGED_IDENTITY_CONFIGURED_BLOCK_CONNECTION_CREATION);
+    // }
+
+    // TODO: Support external parameter values
+    const request = this.getRequestForCreateConnection(connectorId, connectionName, connectionInfo);
+
+    const connection = await httpClient.put<any, Connection>(request);
+    if (!connection) {
+      // TODO: Log error, creation failed
+    }
+
+    try {
+      await this.createConnectionAclIfNeeded(connection);
+    } catch {
+      // NOTE(sopai): Delete the connection created in this method if Acl creation failed.
+      // const error = new Error('Acl creation failed for connection. Trying to delete connection.');
+      // TODO: Log error
+      await this.deleteConnection(connection.id);
+    }
+
+    return connection;
+  }
+
+  private getConnectionRequestPath(connectionName: string): string {
+    const {
+      apiHubServiceDetails: { subscriptionId, resourceGroup },
+    } = this.options;
+    return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
+  }
+
+  private getRequestForCreateConnection(
+    connectorId: string,
+    connectionName: string,
+    connectionInfo: ConnectionCreationInfo
+  ): HttpRequestOptions<any> {
+    const parameterValues = connectionInfo?.connectionParameters;
+    const parameterValueSet: Record<string, any> = connectionInfo?.connectionParametersSet?.values ?? {};
+    const displayName = connectionInfo?.displayName;
+    const {
+      apiHubServiceDetails: { location, apiVersion },
+    } = this.options;
+
+    return {
+      uri: this.getConnectionRequestPath(connectionName),
+      queryParameters: { 'api-version': apiVersion },
+      content: {
+        properties: {
+          api: {
+            id: connectorId,
+          },
+          parameterValues,
+          parameterValueSet,
+          displayName,
+        },
+        kind: 'V2',
+        location,
+      },
+    };
+  }
+
+  async deleteConnection(connectionId: string): Promise<void> {
+    if (isArmResourceId(connectionId)) {
+      const {
+        httpClient,
+        apiHubServiceDetails: { apiVersion },
+      } = this.options;
+      const request = {
+        uri: connectionId,
+        queryParameters: { 'api-version': apiVersion },
+      };
+      const response = await httpClient.delete<any>(request);
+      throwWhenNotOk(response);
+      delete this._connections[connectionId];
+    }
+  }
+
+  async createConnectionAclIfNeeded(_connection: Connection): Promise<void> {
+    // const { workflowAppDetails } = this.options;
+    // if (!workflowAppDetails) {
+    //     return;
+    // }
+    // if (!isArmResourceId(connection.id)) {
+    //     return;
+    // }
+    // const tenantId = await Promise.resolve(this.options.tenantId);
+    // if (!isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
+    //     throw new ConnectionServiceException(ConnectionServiceErrorCode.PUT_CONNECTION_ACL_FAILED, Resources.NO_MANAGED_IDENTITY_CONFIGURED_ERROR);
+    // }
+    // const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
+    // const { identity, appName } = workflowAppDetails;
+    // const identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity, tenantId);
+    // try {
+    //     if (
+    //         !connectionAcls.some(acl => {
+    //             const { identity: principalIdentity } = acl.properties.principal;
+    //             return principalIdentity.objectId === identityDetailsForApiHubAuth.principalId && principalIdentity.tenantId === tenantId;
+    //         })
+    //     ) {
+    //         await this._createAccessPolicyInConnection(connection.id, appName, identityDetailsForApiHubAuth, connection.location);
+    //     }
+    // } catch {
+    //     const error = new Error('Acl creation failed for connection.');
+    //     this._analytics.logError(ConnectionServiceErrorCode.PUT_CONNECTION_ACL_FAILED, error);
+    // }
   }
 }
 

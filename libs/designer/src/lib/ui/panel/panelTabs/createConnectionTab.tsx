@@ -2,6 +2,7 @@ import constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
 import type { RootState } from '../../../core';
 import { getConnectionMetadata, needsAuth } from '../../../core/actions/bjsworkflow/connections';
+import { getConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
 import { addConnectionReference, changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
@@ -10,6 +11,7 @@ import { useOperationInfo, useOperationManifest } from '../../../core/state/sele
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
+import { getUniqueConnectionName } from '@microsoft-logic-apps/utils';
 import { CreateConnection, getIdLeaf } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useCallback, useMemo, useState } from 'react';
@@ -26,6 +28,8 @@ const CreateConnectionTab = () => {
   const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const applyNewConnection = useCallback(
     (newConnection: Connection, newName: string) => {
@@ -75,21 +79,36 @@ const CreateConnectionTab = () => {
 
   const needsAuthentication = useMemo(() => needsAuth(connector), [connector]);
   const authClickCallback = useCallback(async () => {
-    setIsLoading(true);
+    if (!connector?.id) return;
 
-    const newName = '// TODO: add name';
+    setIsLoading(true);
+    setErrorMessage(undefined);
+
+    const existingNames = (await getConnectionsForConnector(connector.id)).map((c) => c.name);
+    const newName = getUniqueConnectionName(connector.id, existingNames);
+    const connectionInfo: ConnectionCreationInfo = {
+      displayName: newName,
+      connectionParametersSet: undefined,
+      connectionParameters: undefined,
+    };
 
     try {
-      const connection = await ConnectionService().createAndAuthorizeOAuthConnection(newName, connector?.id ?? '');
-
-      applyNewConnection(connection, newName);
-
-      dispatch(showDefaultTabs());
-      setIsLoading(false);
+      const { connection, errorMessage: e } = await ConnectionService().createAndAuthorizeOAuthConnection(
+        newName,
+        connector?.id ?? '',
+        connectionInfo
+      );
+      if (connection) {
+        applyNewConnection(connection, newName);
+        dispatch(showDefaultTabs());
+      } else if (e) {
+        setErrorMessage(e);
+      }
     } catch (error) {
       // TODO: handle error
-      setIsLoading(false);
+      console.log(error);
     }
+    setIsLoading(false);
   }, [applyNewConnection, connector?.id, dispatch]);
 
   const cancelCallback = useCallback(() => {
@@ -110,6 +129,7 @@ const CreateConnectionTab = () => {
       hideCancelButton={!hasExistingConnection}
       needsAuth={needsAuthentication}
       authClickCallback={authClickCallback}
+      errorMessage={errorMessage}
     />
   );
 };

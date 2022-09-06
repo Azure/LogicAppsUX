@@ -25,5 +25,7 @@ export interface QueryParameters {
 export interface IHttpClient {
   dispose(): void;
   get<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType>;
-  post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType>;
+  post<BodyType, ReturnType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType>;
+  put<BodyType, ReturnType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType>;
+  delete<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType>;
 }

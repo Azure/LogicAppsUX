@@ -8,11 +8,11 @@ import type { IOperationManifestService } from '@microsoft-logic-apps/designer-c
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { ConnectionParameter, Connector, OperationManifest } from '@microsoft-logic-apps/utils';
 import {
+  isHiddenConnectionParameter,
   getConnectorName,
   isManagedConnector,
   isSharedManagedConnector,
   ConnectionParameterTypes,
-  hasProperty,
   equals,
   ConnectionReferenceKeyFormat,
 } from '@microsoft-logic-apps/utils';
@@ -138,6 +138,13 @@ export function needsAuth(connector?: Connector): boolean {
   return getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]).length > 0;
 }
 
+export function getAuthRedirect(connector?: Connector): string | undefined {
+  if (!connector) return undefined;
+  const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]);
+  if (authParameters?.[0]) return authParameters?.[0].oAuthSettings?.redirectUrl;
+  return undefined;
+}
+
 export function isFirstPartyConnector(connector: Connector): boolean {
   const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]);
 
@@ -175,42 +182,6 @@ function _getConnectionParameterSetParametersUsingType(connector: Connector, par
     }
   }
   return {};
-}
-
-export function isHiddenConnectionParameter(
-  connectionParameters: Record<string, ConnectionParameter>,
-  connectionParameterKey: string
-): boolean {
-  return (
-    !(
-      _isServicePrinicipalConnectionParameter(connectionParameterKey) &&
-      _connectorContainsAllServicePrinicipalConnectionParameters(connectionParameters)
-    ) && _isConnectionParameterHidden(connectionParameters[connectionParameterKey])
-  );
-}
-
-function _isServicePrinicipalConnectionParameter(connectionParameterKey: string): boolean {
-  return (
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_ID) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_SECRET) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_RESOURCE_URI) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
-  );
-}
-
-function _connectorContainsAllServicePrinicipalConnectionParameters(connectionParameters: Record<string, ConnectionParameter>): boolean {
-  return (
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_ID) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_SECRET) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_RESOURCE_URI) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
-  );
-}
-
-function _isConnectionParameterHidden(connectionParameter: ConnectionParameter): boolean {
-  return connectionParameter?.uiDefinition?.constraints?.hidden === 'true';
 }
 
 export function hasPrerequisiteConnection(connector: Connector): boolean {
