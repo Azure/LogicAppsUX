@@ -2420,6 +2420,12 @@
       "value": "암호"
     }
   ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "사전 입력"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -4065,6 +4071,12 @@
     {
       "type": 0,
       "value": "이름"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "배열 입력"
     }
   ],
   "mCzkXX": [

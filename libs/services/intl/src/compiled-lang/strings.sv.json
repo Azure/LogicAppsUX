@@ -696,7 +696,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Behörighet"
+      "value": "Utfärdare"
     }
   ],
   "5aa76N": [
@@ -1526,7 +1526,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Ange auktoritet"
+      "value": "Ange utfärdare"
     }
   ],
   "GLd3MU": [
@@ -2070,7 +2070,7 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Ange klient"
+      "value": "Ange klientorganisation"
     }
   ],
   "NoXs0l": [
@@ -2493,6 +2493,12 @@
     {
       "type": 0,
       "value": "Lösenord"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Ange en ordlista"
     }
   ],
   "SKXopi": [
@@ -4173,6 +4179,12 @@
       "value": "Namn"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Ange en matris"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4750,7 +4762,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Klient-ID"
+      "value": "Klient-id"
     }
   ],
   "ss5JPH": [

@@ -2495,6 +2495,12 @@
       "value": "Jelszó"
     }
   ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy tulajdonságtárat"
+    }
+  ],
   "SKXopi": [
     {
       "type": 0,
@@ -4181,6 +4187,12 @@
       "value": "Név"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy tömböt"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4758,7 +4770,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Ügyfél-azonosító"
+      "value": "Ügyfélazonosító"
     }
   ],
   "ss5JPH": [
