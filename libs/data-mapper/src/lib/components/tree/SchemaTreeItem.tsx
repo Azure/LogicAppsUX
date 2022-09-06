@@ -2,7 +2,6 @@ import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
 import { icon16ForSchemaNodeType } from '../../utils/Icon.Utils';
 import { Caption1, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronRight16Regular, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
-import { mergeStyles } from '@fluentui/style-utilities';
 import { fluentTreeItem, provideFluentDesignSystem, treeItemStyles } from '@fluentui/web-components';
 import { css } from '@microsoft/fast-element';
 import type { OverrideFoundationElementDefinition, TreeItemOptions } from '@microsoft/fast-foundation';
@@ -31,11 +30,6 @@ const useStyles = makeStyles({
   },
 });
 
-// eslint-disable-next-line react/display-name
-// const ref = React.forwardRef((_props, ref) => {
-//     return <div ref={ref}><ChevronIcon></ChevronIcon></div>
-// })
-
 export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps> = ({
   childNode,
   currentlySelectedNodes,
@@ -45,7 +39,6 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
   const [isHover, setIsHover] = useState(false);
   const one = 0;
   const iconString = renderToString(<ChevronRight16Regular filled={one.toString() as unknown as undefined} className={styles.icon} />); // danielle need to find another way
-  //const ref = createRef();
   const overrides: OverrideFoundationElementDefinition<TreeItemOptions> = {
     expandCollapseGlyph: iconString,
     baseName: 'tree-item',
@@ -136,25 +129,10 @@ export interface SchemaNodeTreeItemContentProps {
   children?: React.ReactNode;
 }
 
-const useContentStyles = makeStyles({
-  typeIcon: {
-    verticalAlign: 'middle',
-  },
-  filledTypeIcon: {
-    color: tokens.colorBrandForeground1,
-  },
-  restTypeIcon: {
-    color: tokens.colorNeutralForeground3,
-  },
-});
-
 const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, isSelected, children }) => {
-  const styles = useContentStyles();
-  const filledIconStyle = mergeStyles(styles.typeIcon, styles.filledTypeIcon);
-  const restIconStyle = mergeStyles(styles.typeIcon, styles.restTypeIcon);
   const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
-  const filledIcon = <CheckmarkCircle16Filled fill={'blue'} className={filledIconStyle} />;
-  const restIcon = <Circle16Regular fill={tokens.colorNeutralForeground3} className={restIconStyle} />;
+  const filledIcon = <CheckmarkCircle16Filled primaryFill={tokens.colorBrandForeground1} />;
+  const restIcon = <Circle16Regular primaryFill={tokens.colorNeutralForeground3} />;
 
   return (
     <>
