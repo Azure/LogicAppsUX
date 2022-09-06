@@ -1,15 +1,15 @@
 import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
 import { icon16ForSchemaNodeType } from '../../utils/Icon.Utils';
-import { Caption1, makeStyles, tokens } from '@fluentui/react-components';
-import { bundleIcon, ChevronRight16Regular, ChevronRight16Filled, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
+import { Caption1, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { ChevronRight16Regular, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
+import { mergeStyles } from '@fluentui/style-utilities';
 import { fluentTreeItem, provideFluentDesignSystem, treeItemStyles } from '@fluentui/web-components';
 import { css } from '@microsoft/fast-element';
 import type { OverrideFoundationElementDefinition, TreeItemOptions } from '@microsoft/fast-foundation';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
-import React from 'react';
+import React, { useState } from 'react';
 import { renderToString } from 'react-dom/server';
 
-const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
 const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
 
 export type SchemaFastTreeItemProps = {
@@ -20,23 +20,37 @@ export type SchemaFastTreeItemProps = {
 
 const useStyles = makeStyles({
   icon: {
+    color: tokens.colorPaletteCranberryBorderActive,
+    backgroundColor: tokens.colorPaletteRedBackground2,
     '&:hover': {
       backgroundColor: 'inherit',
     },
-    color: tokens.colorPaletteCranberryBorderActive,
-    backgroundColor: tokens.colorPaletteRedBackground2,
+  },
+  hoverText: {
+    ...typographyStyles.caption1Strong,
   },
 });
 
-const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps> = ({ childNode, currentlySelectedNodes, onLeafNodeClick }) => {
-  const iconStyles = useStyles();
-  const iconString = renderToString(<ChevronIcon filled={true} className={iconStyles.icon} />);
+// eslint-disable-next-line react/display-name
+// const ref = React.forwardRef((_props, ref) => {
+//     return <div ref={ref}><ChevronIcon></ChevronIcon></div>
+// })
+
+export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps> = ({
+  childNode,
+  currentlySelectedNodes,
+  onLeafNodeClick,
+}) => {
+  const styles = useStyles();
+  const [isHover, setIsHover] = useState(false);
+  const one = 0;
+  const iconString = renderToString(<ChevronRight16Regular filled={one.toString() as unknown as undefined} className={styles.icon} />); // danielle need to find another way
+  //const ref = createRef();
   const overrides: OverrideFoundationElementDefinition<TreeItemOptions> = {
     expandCollapseGlyph: iconString,
     baseName: 'tree-item',
     styles: (ctx, def) => {
       const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
-      console.log(baseStyles);
       const mergedStyles = css`
         ${baseStyles}
         .positioning-region {
@@ -64,12 +78,18 @@ const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps> = ({ 
   };
   const FastTreeItem = wrap(fluentTreeItem(overrides)); // danielle pass as props?
   const isNodeSelected = !!currentlySelectedNodes.find((currentlySelectedNode) => currentlySelectedNode.key === childNode.key);
-  const nameText = <Caption1>{childNode.name}</Caption1>;
+  const onMouseEnter = () => {
+    setIsHover(true);
+  };
+  const onMouseLeave = () => {
+    setIsHover(false);
+  };
+  const nameText = isHover ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>;
   if (childNode.schemaNodeDataType === 'ComplexType' || childNode.schemaNodeDataType === 'None') {
     return (
       // TODO onclick for object level adding
-      <FastTreeItem key={childNode.key}>
-        <TreeItemContent nodeType={childNode.schemaNodeDataType} filled={isNodeSelected}>
+      <FastTreeItem key={childNode.key} onMouseLeave={() => onMouseLeave()} onMouseEnter={() => onMouseEnter()}>
+        <TreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected}>
           {nameText}
         </TreeItemContent>
         {convertToFastTreeItem(childNode, currentlySelectedNodes, onLeafNodeClick)}
@@ -82,8 +102,10 @@ const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps> = ({ 
         onClick={() => {
           onLeafNodeClick(childNode);
         }}
+        onMouseLeave={() => onMouseLeave()}
+        onMouseEnter={() => onMouseEnter()}
       >
-        <TreeItemContent nodeType={childNode.schemaNodeDataType} filled={isNodeSelected}>
+        <TreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected}>
           {nameText}
         </TreeItemContent>
       </FastTreeItem>
@@ -110,22 +132,38 @@ export const convertToFastTreeItem = (
 
 export interface SchemaNodeTreeItemContentProps {
   nodeType: SchemaNodeDataType;
-  filled: boolean;
+  isSelected: boolean;
   children?: React.ReactNode;
 }
 
-const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, filled, children }) => {
+const useContentStyles = makeStyles({
+  typeIcon: {
+    verticalAlign: 'middle',
+  },
+  filledTypeIcon: {
+    color: tokens.colorBrandForeground1,
+  },
+  restTypeIcon: {
+    color: tokens.colorNeutralForeground3,
+  },
+});
+
+const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, isSelected, children }) => {
+  const styles = useContentStyles();
+  const filledIconStyle = mergeStyles(styles.typeIcon, styles.filledTypeIcon);
+  const restIconStyle = mergeStyles(styles.typeIcon, styles.restTypeIcon);
   const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
-  const BundledAddIcon = bundleIcon(CheckmarkCircle16Filled, Circle16Regular);
+  const filledIcon = <CheckmarkCircle16Filled fill={'blue'} className={filledIconStyle} />;
+  const restIcon = <Circle16Regular fill={tokens.colorNeutralForeground3} className={restIconStyle} />;
 
   return (
     <>
       <span style={{ display: 'flex', marginRight: '4px' }} slot="start">
-        <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={filled} />
+        <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={isSelected} />
       </span>
       <span style={{ marginRight: '8px', width: '100%' }}>{children}</span>
       <span style={{ display: 'flex', marginRight: '4px' }} slot="end">
-        <BundledAddIcon style={{ verticalAlign: 'middle' }} filled={filled} />
+        {isSelected ? filledIcon : restIcon}
       </span>
     </>
   );
