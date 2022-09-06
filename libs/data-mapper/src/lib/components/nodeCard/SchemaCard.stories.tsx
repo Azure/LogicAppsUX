@@ -24,6 +24,7 @@ Standard.args = {
     schemaType: SchemaTypes.Input,
     displayHandle: false,
     isLeaf: false,
+    isChild: false,
     nodeDataType: SchemaNodeDataType.String,
     onClick: () => console.log('Schema card clicked'),
     disabled: false,
