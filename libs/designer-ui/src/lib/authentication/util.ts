@@ -1,7 +1,12 @@
+import type { AuthProps } from '.';
+import { AuthenticationType } from '.';
 import constants from '../constants';
+import { convertItemsToSegments } from '../dictionary/util/deserializecollapseddictionary';
+import type { ValueSegment } from '../editor';
+import { ValueSegmentType } from '../editor';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { ManagedIdentity } from '@microsoft-logic-apps/utils';
-import { equals, ResourceIdentityType } from '@microsoft-logic-apps/utils';
+import { guid, equals, ResourceIdentityType } from '@microsoft-logic-apps/utils';
 
 export interface AuthProperty {
   displayName: string;
@@ -12,6 +17,11 @@ export interface AuthProperty {
   type: string;
   format?: string;
 }
+interface CollapsedAuthEditorItems {
+  key: ValueSegment[];
+  value: ValueSegment[];
+}
+
 const intl = getIntl();
 
 export const AUTHENTICATION_PROPERTIES = {
@@ -264,4 +274,41 @@ export function containsUserAssignedIdentities(identity: ManagedIdentity): boole
     !!identity.userAssignedIdentities &&
     Object.keys(identity.userAssignedIdentities).length > 0
   );
+}
+
+/**
+ * Converts AuthEditor Props into ValueSegment Array for the Collpased Authentication Editor.
+ * @param {AuthenticationType} authType - The Authority Type.
+ * @param {AuthProps} items - Authority Props.
+ * @return {ValueSegment[]} - Collapsed ValueSegment Array.
+ */
+export function parseAuthEditor(authType: AuthenticationType, items: AuthProps): ValueSegment[] {
+  let currProps;
+  switch (authType) {
+    case AuthenticationType.BASIC:
+      currProps = items.basicProps;
+      break;
+    case AuthenticationType.CERTIFICATE:
+      currProps = items.clientCertificateProps;
+      break;
+    case AuthenticationType.RAW:
+      currProps = items.rawProps;
+      break;
+    case AuthenticationType.MSI:
+      currProps = items.msiProps;
+      break;
+    case AuthenticationType.OAUTH:
+      currProps = items.aadOAuthProps;
+      break;
+  }
+  // TODO: Will need to discuss with Priti what's the best way of converting specificProps to CollapsedValue
+  console.log(currProps);
+  const currentItems: CollapsedAuthEditorItems[] = [
+    {
+      key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: AUTHENTICATION_PROPERTIES.TYPE.name }],
+      value: [{ type: ValueSegmentType.LITERAL, id: guid(), value: authType }],
+    },
+  ];
+
+  return convertItemsToSegments(currentItems);
 }

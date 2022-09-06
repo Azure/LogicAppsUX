@@ -1,4 +1,5 @@
-import type { MSIProps } from '..';
+import type { AuthProps, MSIProps } from '..';
+import type { ChangeState } from '../../editor/base';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES, containsUserAssignedIdentities } from '../util';
@@ -6,6 +7,7 @@ import { MSIAuthenticationDefault } from './MSIAuthDefault';
 import type { IDropdownOption } from '@fluentui/react';
 import type { ManagedIdentity } from '@microsoft-logic-apps/utils';
 import { ResourceIdentityType, equals } from '@microsoft-logic-apps/utils';
+import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -14,12 +16,26 @@ interface MSIAuthenticationProps {
   identity?: ManagedIdentity;
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
+  setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
-export const MSIAuthentication = ({ identity, msiProps, GetTokenPicker, onManagedIdentityChange }: MSIAuthenticationProps): JSX.Element => {
+export const MSIAuthentication = ({
+  identity,
+  msiProps,
+  GetTokenPicker,
+  onManagedIdentityChange,
+  setCurrentProps,
+}: MSIAuthenticationProps): JSX.Element => {
   const intl = useIntl();
   const [errorMessage, setErrorMessage] = useState('');
   const [managedIdentityDropdownOptions, setManagedIdentityDropdownOptions] = useState<IDropdownOption[]>([]);
+
+  const updateMsiAudience = (newState: ChangeState) => {
+    setCurrentProps((prevState: AuthProps) => ({
+      ...prevState,
+      msiProps: { ...prevState.msiProps, MSIAudience: newState.value },
+    }));
+  };
 
   const invalidUserAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'The entered identity is not associated with this Logic App.',
@@ -103,10 +119,16 @@ export const MSIAuthentication = ({ identity, msiProps, GetTokenPicker, onManage
             initialValue={MSIAudience}
             AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
             GetTokenPicker={GetTokenPicker}
+            onBlur={updateMsiAudience}
           />
         </>
       ) : (
-        <MSIAuthenticationDefault msiProps={msiProps} GetTokenPicker={GetTokenPicker} onManagedIdentityChange={onManagedIdentityChange} />
+        <MSIAuthenticationDefault
+          msiProps={msiProps}
+          GetTokenPicker={GetTokenPicker}
+          onManagedIdentityChange={onManagedIdentityChange}
+          onBlur={updateMsiAudience}
+        />
       )}
     </div>
   );

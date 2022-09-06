@@ -1,11 +1,10 @@
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType, EditorCollapseToggle } from '../editor';
+import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import { initializeDictionaryValidation } from '../editor/base/utils/helper';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
-import { isEmpty } from './util/helper';
-import { guid } from '@microsoft-logic-apps/utils';
+import { convertItemsToSegments } from './util/deserializecollapseddictionary';
 import { useState } from 'react';
 
 export interface DictionaryEditorItemProps {
@@ -74,26 +73,4 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       </div>
     </div>
   );
-};
-
-const convertItemsToSegments = (items: DictionaryEditorItemProps[]): ValueSegment[] => {
-  const itemsToConvert = items.filter((item) => {
-    return !isEmpty(item);
-  });
-
-  if (itemsToConvert.length === 0) {
-    return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
-  }
-  const parsedItems: ValueSegment[] = [];
-  parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '{\n  "' });
-
-  for (let index = 0; index < itemsToConvert.length; index++) {
-    const { key, value } = itemsToConvert[index];
-    parsedItems.push(...key);
-    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '" : "' });
-    parsedItems.push(...value);
-    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < itemsToConvert.length - 1 ? '",\n  "' : '"\n}' });
-  }
-
-  return parsedItems;
 };

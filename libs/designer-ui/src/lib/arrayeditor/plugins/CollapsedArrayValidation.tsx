@@ -58,27 +58,3 @@ export const CollapsedArrayValidation = ({
     </div>
   );
 };
-
-// const isValidArray = (s: string): boolean => {
-//   console.log(s);
-//   return s.startsWith('[') && s.endsWith(']') && validateArrayStrings(s.slice(1, s.length - 1));
-// };
-
-// const validateArrayStrings = (s: string): boolean => {
-//   const splitStrings = s.split(',');
-//   for (let i = 0; i < splitStrings.length; i++) {
-//     const currentString = splitStrings[i].trim();
-//     if (currentString === 'null') {
-//       continue;
-//     }
-//     if (
-//       !currentString.startsWith('"') ||
-//       !currentString.endsWith('"') ||
-//       currentString.length < 2 ||
-//       currentString.substring(1, currentString.length - 1).includes('"')
-//     ) {
-//       return false;
-//     }
-//   }
-//   return true;
-// };

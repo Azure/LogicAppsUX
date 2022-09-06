@@ -19,7 +19,7 @@ const dropdownStyle: Partial<IDropdownStyles> = {
     lineHeight: '26px',
   },
   root: {
-    marginBottom: '30px',
+    marginBottom: '20px',
     height: '28px',
   },
 };
@@ -28,7 +28,7 @@ interface AuthenticationDropdownProps {
   errorMessage?: string;
   selectedKey: string;
   dropdownPlaceholder?: string;
-  dropdownLabel: string;
+  dropdownLabel?: string;
   options: IDropdownOption[];
   onChange(event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void;
 }
@@ -43,19 +43,21 @@ export const AuthenticationDropdown = ({
 }: AuthenticationDropdownProps) => {
   return (
     <div className="msla-authentication-property">
-      <div className="msla-authentication-text-editor-label">
-        <Label isRequiredField={AUTHENTICATION_PROPERTIES.MSI_IDENTITY.isRequired} text={dropdownLabel} />
-      </div>
+      {dropdownLabel ? (
+        <div className="msla-authentication-text-editor-label">
+          <Label isRequiredField={AUTHENTICATION_PROPERTIES.MSI_IDENTITY.isRequired} text={dropdownLabel} />
+        </div>
+      ) : null}
       <div className="msla-input-sub-parameter-content">
         <Dropdown
+          styles={dropdownStyle}
           selectedKey={selectedKey}
           placeholder={dropdownPlaceholder}
           ariaLabel={dropdownLabel}
-          onChange={onChange}
           options={options}
-          styles={dropdownStyle}
           className="msla-authentication-dropdown"
           errorMessage={errorMessage}
+          onChange={onChange}
         />
       </div>
     </div>
