@@ -372,7 +372,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "Ange värdet för auktoriseringsrubriken"
     }
   ],
   "1uGBLP": [
@@ -444,7 +444,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Hanterad identitet"
     }
   ],
   "2b1yD3": [
@@ -498,7 +498,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Systemtilldelad hanterad identitet"
     }
   ],
   "3BZnxY": [
@@ -552,7 +552,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "Den angivna identiteten är inte associerad med denna Logic-app."
     }
   ],
   "3jlz+B": [
@@ -600,7 +600,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Autentisering"
     }
   ],
   "47kOXr": [
@@ -696,7 +696,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "Utfärdare"
     }
   ],
   "5aa76N": [
@@ -894,7 +894,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "Aktivera hanterad identitet för logikappen."
     }
   ],
   "8U0KPg": [
@@ -906,7 +906,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "Ange hemlighet som oformaterad text eller använd en säker parameter"
     }
   ],
   "8Y5xpK": [
@@ -966,13 +966,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Värde"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "Användaridentiteten stöds inte när Logic-appen har en systemtilldelad hanterad identitet aktiverad."
     }
   ],
   "949s+r": [
@@ -1080,13 +1080,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Ange målgrupp"
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "Användarnamn"
     }
   ],
   "ArTh0/": [
@@ -1186,7 +1186,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
     }
   ],
   "BSHFiw": [
@@ -1234,7 +1234,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "Autentiseringstyp"
     }
   ],
   "Cy9qeQ": [
@@ -1264,7 +1264,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "Ange klient-ID"
     }
   ],
   "DZZ3fj": [
@@ -1336,7 +1336,7 @@
   "EjXdAm": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Lösenord"
     }
   ],
   "Eqgm4v": [
@@ -1526,7 +1526,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "Ange utfärdare"
     }
   ],
   "GLd3MU": [
@@ -2010,7 +2010,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Hanterad identitet"
     }
   ],
   "MTR4Vg": [
@@ -2070,13 +2070,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "Ange klientorganisation"
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Välj en identitet"
     }
   ],
   "NvANon": [
@@ -2112,7 +2112,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Hemlighet"
     }
   ],
   "OFKZzQ": [
@@ -2424,7 +2424,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Ange målgrupp"
     }
   ],
   "RX2Shm": [
@@ -2492,7 +2492,13 @@
   "SCCE6s": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Lösenord"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Ange en ordlista"
     }
   ],
   "SKXopi": [
@@ -2772,7 +2778,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "Certifikat"
     }
   ],
   "VptXzY": [
@@ -2844,7 +2850,7 @@
   "X4gDhV": [
     {
       "type": 0,
-      "value": "Tenant"
+      "value": "Klientorganisation"
     }
   ],
   "X8JjjT": [
@@ -2982,7 +2988,7 @@
   "Y/bcmG": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Lösenord"
     }
   ],
   "Y0H9aX": [
@@ -3028,7 +3034,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Ange PFX"
     }
   ],
   "YaFjJQ": [
@@ -3172,7 +3178,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Ange PFX"
     }
   ],
   "ajAro8": [
@@ -3314,7 +3320,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Välj en identitet"
     }
   ],
   "ci6ex1": [
@@ -3766,13 +3772,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Målgrupp"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Systemtilldelad hanterad identitet"
     }
   ],
   "i/b3Ko": [
@@ -4068,7 +4074,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Ange användarnamn"
     }
   ],
   "kneb9/": [
@@ -4173,6 +4179,12 @@
       "value": "Namn"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Ange en matris"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4230,7 +4242,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
     }
   ],
   "mx2IMJ": [
@@ -4642,7 +4654,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Hemlighet"
     }
   ],
   "rDt4Iu": [
@@ -4750,7 +4762,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "Klient-id"
     }
   ],
   "ss5JPH": [
@@ -5008,7 +5020,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Målgrupp"
     }
   ],
   "vXwYXe": [
@@ -5184,7 +5196,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
     }
   ],
   "xOAOHM": [

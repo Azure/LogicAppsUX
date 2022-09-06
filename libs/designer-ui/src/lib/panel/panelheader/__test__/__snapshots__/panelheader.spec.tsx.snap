@@ -92,7 +92,6 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
               onFocus={[Function]}
               onInput={[Function]}
               onKeyDown={[Function]}
-              onKeyUp={[Function]}
               type="text"
               value=""
             />
@@ -200,7 +199,6 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
               onFocus={[Function]}
               onInput={[Function]}
               onKeyDown={[Function]}
-              onKeyUp={[Function]}
               type="text"
               value=""
             />

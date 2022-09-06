@@ -16,8 +16,10 @@ import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import {
+  addInputNodes,
   makeConnection,
   redoDataMapOperation,
+  removeInputNodes,
   saveDataMap,
   setCurrentlySelectedNode,
   setCurrentOutputNode,
@@ -27,8 +29,10 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaNodeExtended, SelectedNode } from '../models';
 import { NodeType, SchemaTypes } from '../models';
+import type { ConnectionDictionary } from '../models/Connection';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
+import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
 import './ReactFlowStyleOverrides.css';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -57,30 +61,43 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapperDesignerProps {
   saveStateCall: (dataMapDefinition: string) => void;
-  setSelectedSchemaFile?: (selectedSchemaFile: SchemaFile) => void;
+  addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
-  saveStateCall,
-  setSelectedSchemaFile,
-  readCurrentSchemaOptions,
-}) => {
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const clickTimerRef: { current: ReturnType<typeof setTimeout> | null } = useRef(null); // NOTE: ReturnType to support NodeJS & window Timeouts
 
   const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
+  const flattenedInputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedInputSchema);
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
   const flattenedOutputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedOutputSchema);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
-  const [nodes, edges] = useLayout();
+
+  const connectedInputNodes = useMemo(() => {
+    if (currentOutputNode) {
+      const outputFilteredConnections = currentOutputNode.children.flatMap((childNode) =>
+        !connections[childNode.key] ? [] : connections[childNode.key]
+      );
+
+      return outputFilteredConnections.map((connection) => {
+        return flattenedInputSchema[connection.reactFlowSource];
+      });
+    } else {
+      return [];
+    }
+  }, [flattenedInputSchema, currentOutputNode, connections]);
+
+  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, currentOutputNode, connections);
 
   const dataMapDefinition = useMemo((): string => {
     if (inputSchema && outputSchema) {
@@ -90,8 +107,22 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
     return '';
   }, [currentConnections, inputSchema, outputSchema]);
 
-  const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
-    dispatch(toggleInputNode(selectedNode));
+  const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
+    if (isLeafNode(selectedNode)) {
+      if (!hasAConnection(selectedNode, currentConnections)) {
+        dispatch(toggleInputNode(selectedNode));
+      }
+    } else {
+      if (allChildNodesSelected(selectedNode, currentlySelectedInputNodes)) {
+        // TODO reconfirm this works for loops and conditionals
+        const nodesToRemove = selectedNode.children.filter((childNodes) =>
+          Object.values(currentConnections).some((currentConnection) => childNodes.key !== currentConnection.value)
+        );
+        dispatch(removeInputNodes(nodesToRemove));
+      } else {
+        dispatch(addInputNodes(selectedNode.children));
+      }
+    }
   };
 
   const handleNodeClicks = (_event: ReactMouseEvent, node: ReactFlowNode) => {
@@ -131,7 +162,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
     if (node.data.schemaType === SchemaTypes.Output && !node.data.isLeaf) {
       const newCurrentSchemaNode = flattenedOutputSchema[node.id];
       if (currentOutputNode && newCurrentSchemaNode) {
-        dispatch(setCurrentOutputNode(newCurrentSchemaNode));
+        dispatch(setCurrentOutputNode({ schemaNode: newCurrentSchemaNode, resetSelectedInputNodes: true }));
       }
     }
   };
@@ -143,10 +174,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
   };
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
-    if (!setSelectedSchemaFile) return;
-    // Will cause DM to ping VS Code for schema file contents (to be added to availableSchemas)
-    // Then, DM implementation will handle loading the schema as either the initial input or output schema
-    setSelectedSchemaFile(schemaFile);
+    if (addSchemaFromFile) {
+      // Will cause DM to ping VS Code to check schema file is in appropriate folder, then we will make getSchema API call
+      addSchemaFromFile(schemaFile);
+    }
   };
 
   const onSaveClick = () => {
@@ -350,7 +381,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
                 <SchemaTree
                   schema={inputSchema}
                   currentlySelectedNodes={currentlySelectedInputNodes}
-                  onLeafNodeClick={onToolboxLeafItemClick}
+                  visibleConnectedNodes={connectedInputNodes}
+                  onNodeClick={onToolboxItemClick}
                 />
               </FloatingPanel>
             )}
@@ -374,18 +406,21 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({
   );
 };
 
-export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
-  const inputSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
-  const outputSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
-  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-
+export const useLayout = (
+  allInputSchemaNodes: SchemaNodeExtended[],
+  connectedInputNodes: SchemaNodeExtended[],
+  currentOutputNode: SchemaNodeExtended | undefined,
+  connections: ConnectionDictionary
+): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
-    if (outputSchemaNode) {
-      return convertToReactFlowNodes(Array.from(inputSchemaNodes), outputSchemaNode);
+    if (currentOutputNode) {
+      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, currentOutputNode);
     } else {
       return [];
     }
-  }, [inputSchemaNodes, outputSchemaNode]);
+    // Explicitly ignoring connectedInputNodes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allInputSchemaNodes, currentOutputNode]);
 
   const reactFlowEdges = useMemo(() => {
     return convertToReactFlowEdges(connections);

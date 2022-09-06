@@ -21,10 +21,10 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ dataMap, inputS
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (dataMap) {
+    if (inputSchema && outputSchema && dataMap) {
       dispatch(setInitialDataMap(dataMap));
     }
-  }, [dispatch, dataMap]);
+  }, [dispatch, dataMap, inputSchema, outputSchema]);
 
   useEffect(() => {
     if (inputSchema) {
