@@ -2,7 +2,7 @@ import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionCo
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
-import type { WebviewPanel, ExtensionContext } from 'vscode';
+import type { WebviewPanel, ExtensionContext, OutputChannel } from 'vscode';
 
 type SchemaType = 'input' | 'output';
 
@@ -22,6 +22,7 @@ type ReceivingMessageTypes =
 
 export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
+  public static outputChannel: OutputChannel | undefined;
   public static readonly viewType = 'dataMapperWebview';
   public static extensionContext: ExtensionContext | undefined;
   public static currentDataMapName: string | undefined;
@@ -134,5 +135,10 @@ export default class DataMapperPanel {
         DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
       }
     });
+  }
+
+  public static log(text: string) {
+    DataMapperPanel.outputChannel.appendLine(text);
+    DataMapperPanel.outputChannel.show();
   }
 }
