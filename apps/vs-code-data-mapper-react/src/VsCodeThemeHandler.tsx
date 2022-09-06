@@ -18,7 +18,7 @@ export const VsCodeThemeHandler: React.FC<{ children: React.ReactNode }> = ({ ch
   // Monitor document.body for VS Code theme changes
   new MutationObserver(() => {
     setVsCodeTheme(vscodeTheme());
-  }).observe(document.body);
+  }).observe(document.body, { attributes: true });
 
   const getCurrentTheme = () => {
     switch (vsCodeTheme) {
