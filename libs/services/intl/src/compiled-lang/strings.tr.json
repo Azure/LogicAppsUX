@@ -369,6 +369,12 @@
       "value": "Gerekli. Karşılaştırılan değerden küçük olup olmadığı denetlenecek nesne."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Yetkilendirme üst bilgisinin değerini girin"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -405,6 +411,12 @@
       "value": "Genel arama"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Karşıya yüklenecek bir dosya seçin"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -427,6 +439,12 @@
     {
       "type": 0,
       "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Yönetilen kimlik"
     }
   ],
   "2b1yD3": [
@@ -477,6 +495,12 @@
       "value": "Tanımlayıcı"
     }
   ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Sistem tarafından atanan yönetilen kimlik"
+    }
+  ],
   "3BZnxY": [
     {
       "type": 0,
@@ -525,6 +549,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "Girilen kimlik bu Logic App ile ilişkili değil."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -565,6 +595,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Erivan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Kimlik Doğrulaması"
     }
   ],
   "47kOXr": [
@@ -655,6 +691,12 @@
     {
       "type": 0,
       "value": "Gerekli. Değerlendirilecek XPath ifadesi."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Yetkili"
     }
   ],
   "5aa76N": [
@@ -807,6 +849,12 @@
       "value": "Gerekli. Değeri içeriyor olabilecek dize."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -843,10 +891,22 @@
       "value": "Tanımda birden çok tetikleyici olması nedeniyle tasarımcı işlenemiyor."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Lütfen mantıksal uygulama için yönetilen kimliği etkinleştirin."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Gerekli. URI ile kodlanacak dize."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Gizli diziyi düz metin olarak girin veya güvenli bir parametre kullanın"
     }
   ],
   "8Y5xpK": [
@@ -901,6 +961,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Değer"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "Logic App'te sistem tarafından atanan yönetilen kimlik etkinleştirildiğinde kullanıcı kimliği desteklenmez."
     }
   ],
   "949s+r": [
@@ -1005,6 +1077,18 @@
       "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Hedef kitleyi girin"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Kullanıcı adı"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1099,6 +1183,12 @@
       "value": "Gerekli. URL güvenli olmayan karakterlerin kodunun çözülmesi için kullanılacak dize."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1141,6 +1231,12 @@
       "value": "Bağlantı gerekli"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Kimlik Bilgisi Türü"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1163,6 +1259,12 @@
     {
       "type": 0,
       "value": "Şema oluşturmak için örnek yük kullanma"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "İstemci kimliğini girin"
     }
   ],
   "DZZ3fj": [
@@ -1229,6 +1331,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Parola"
     }
   ],
   "Eqgm4v": [
@@ -1405,6 +1513,12 @@
     {
       "type": 0,
       "value": "Bir URI'den sorguyu döndürür"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Yetki girin"
     }
   ],
   "GLd3MU": [
@@ -1877,6 +1991,12 @@
       "value": "Gerekli. İkili gösterime dönüştürülecek veri URI'si."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Yönetilen kimlik"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1925,6 +2045,24 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "İfade"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Kiracı girin"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Lütfen kimlik seçin"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1953,6 +2091,12 @@
     {
       "type": 0,
       "value": "Zorunlu. Kaynak saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Gizli dizi"
     }
   ],
   "OFKZzQ": [
@@ -2039,6 +2183,12 @@
       "value": "Yönetilen kimlik seçin"
     }
   ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "P2A5dB": [
     {
       "type": 0,
@@ -2123,6 +2273,12 @@
       "value": "(UTC-04:00) Turks ve Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Değer yoksa oluşturma"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2159,6 +2315,12 @@
       "value": "Girişi JSON türü değere dönüştürür"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Null atanabilir"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 1,
@@ -2193,6 +2355,12 @@
       "value": "Gerekli. İkiliye dönüştürülen değer."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Veri türü"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2225,6 +2393,18 @@
     {
       "type": 0,
       "value": " sa"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Ad"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Hedef kitleyi girin"
     }
   ],
   "RX2Shm": [
@@ -2287,6 +2467,18 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Eski"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Parola"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Sözlük Girin"
     }
   ],
   "SKXopi": [
@@ -2563,6 +2755,12 @@
       "value": "Çalıştırma Geçmişi"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Sertifika"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2629,6 +2827,12 @@
       "value": "Mevcut şemayı değiştir."
     }
   ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Kiracı"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -2650,7 +2854,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Çıkış şeması seçin"
     }
   ],
   "XCunbR": [
@@ -2761,16 +2965,16 @@
       "value": "Gerekli. Gövde çıkışlarını istediğiniz eylemin adı."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Parola"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Daha Fazla Bilgi"
-    }
-  ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2805,6 +3009,12 @@
     {
       "type": 0,
       "value": "Bir ifadenin, değerini diğer JSON ad ve değer çiftlerinden veya çalışma zamanı tetikleyicisinin çıkışından alabilmesine olanak sağlar"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "PFX girin"
     }
   ],
   "YaFjJQ": [
@@ -2945,6 +3155,12 @@
       "value": "İşlev"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "PFX girin"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3079,6 +3295,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Lütfen kimlik seçin"
     }
   ],
   "ci6ex1": [
@@ -3239,6 +3461,12 @@
     {
       "type": 0,
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Çıkış şeması düğümü"
     }
   ],
   "eRvGw3": [
@@ -3505,6 +3733,18 @@
       "value": "Süre"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Hedef kitle"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Sistem tarafından atanan yönetilen kimlik"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -3581,6 +3821,18 @@
     {
       "type": 0,
       "value": "İptal"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Özellikler"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -3779,6 +4031,12 @@
       "value": "İki değer eşitse true döndürür"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Kullanıcı adını girin"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -3881,6 +4139,12 @@
       "value": "Ad"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Dizi Girin"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -3933,6 +4197,12 @@
     {
       "type": 0,
       "value": "Tamam"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
     }
   ],
   "mx2IMJ": [
@@ -4198,7 +4468,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Giriş şeması seçin"
     }
   ],
   "q87X20": [
@@ -4341,6 +4611,12 @@
       "value": "Kart Başlığı"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Gizli dizi"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4443,10 +4719,28 @@
       "value": "Herhangi bir parametre true ise true döndürür"
     }
   ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "İstemci kimliği"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Yeni parametre"
+    }
+  ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Giriş şeması düğümü"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Göz at"
     }
   ],
   "t+XCkg": [
@@ -4557,6 +4851,12 @@
       "value": "(UTC+04:00) Abu Dabi, Muskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Yapılandırmaya başlamak için bir öğe seçin"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4659,12 +4959,6 @@
       "value": "Bir dize içindeki bir değerin son dizinini döndürür (büyük-küçük harf duyarsız, sabit kültür)"
     }
   ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Geçiş durumunu yönetmeye yarayan düğme"
-    }
-  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4681,6 +4975,12 @@
     {
       "type": 0,
       "value": "İfade geçersiz."
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Hedef kitle"
     }
   ],
   "vXwYXe": [
@@ -4777,6 +5077,12 @@
       "value": "Zaman Aşımı Oluştu"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Tam yol"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4843,6 +5149,12 @@
       "value": "URI ile kodlanmış bir dizenin dize gösterimini döndürür"
     }
   ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
+    }
+  ],
   "xOAOHM": [
     {
       "type": 0,
@@ -4859,6 +5171,12 @@
     {
       "type": 0,
       "value": "Gerekli. Yeni veya mevcut özelliğin adı."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Kod"
     }
   ],
   "xYyPR8": [

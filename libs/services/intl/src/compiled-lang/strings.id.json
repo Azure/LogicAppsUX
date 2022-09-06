@@ -358,6 +358,12 @@
       "value": "Harus diisi. Objek untuk diperiksa kurang dari nilai yang dibandingkan."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Masukkan nilai header Otorisasi"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -394,6 +400,12 @@
       "value": "Pencarian global"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Pilih file yang akan diunggah"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -416,6 +428,12 @@
     {
       "type": 0,
       "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Identitas terkelola"
     }
   ],
   "2b1yD3": [
@@ -466,6 +484,12 @@
       "value": "Pengidentifikasi"
     }
   ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Identitas terkelola yang ditetapkan sistem"
+    }
+  ],
   "3BZnxY": [
     {
       "type": 0,
@@ -514,6 +538,12 @@
       "value": "(UTC+09.00) Chita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "Identitas yang dimasukkan tidak terkait dengan Aplikasi Logika ini."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -554,6 +584,12 @@
     {
       "type": 0,
       "value": "(UTC+04.00) Yerevan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Autentikasi"
     }
   ],
   "47kOXr": [
@@ -644,6 +680,12 @@
     {
       "type": 0,
       "value": "Harus diisi. Ekspresi Xpath untuk dievaluasi."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Otoritas"
     }
   ],
   "5aa76N": [
@@ -796,6 +838,12 @@
       "value": "Harus diisi. String yang dapat berisi nilai."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -832,10 +880,22 @@
       "value": "Tidak dapat merender perancang karena terdapat beberapa pemicu dalam definisi."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Harap aktifkan identitas yang dikelola untuk aplikasi logika."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Wajib. String dengan pengodean URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Masukkan kunci rahasia sebagai teks biasa atau gunakan parameter yang aman"
     }
   ],
   "8Y5xpK": [
@@ -890,6 +950,18 @@
     {
       "type": 0,
       "value": "(UTC+07.00) Hovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Nilai"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "Identitas pengguna tidak didukung bila Aplikasi Logika mengaktifkan identitas terkelola yang ditetapkan sistem."
     }
   ],
   "949s+r": [
@@ -994,6 +1066,18 @@
       "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Masukkan audiens"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Nama pengguna"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1077,6 +1161,12 @@
       "value": "Wajib. String untuk mengodekan karakter URL yang dapat berubah."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1119,6 +1209,12 @@
       "value": "Koneksi diperlukan"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Tipe Kredensial"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1141,6 +1237,12 @@
     {
       "type": 0,
       "value": "Gunakan payload contoh untuk membuat skema"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Masukkan ID klien"
     }
   ],
   "DZZ3fj": [
@@ -1207,6 +1309,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Kata Sandi"
     }
   ],
   "Eqgm4v": [
@@ -1372,6 +1480,12 @@
     {
       "type": 0,
       "value": "Menghasilkan permintaan dari URI"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Masukkan otoritas"
     }
   ],
   "GLd3MU": [
@@ -1833,6 +1947,12 @@
       "value": "Wajib. URI data yang dikonversi menjadi representasi biner."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Identitas terkelola"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1881,6 +2001,24 @@
       "value": "(UTC+03.00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Ekspresi"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Masukkan penyewa"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Silakan pilih identitas"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1909,6 +2047,12 @@
     {
       "type": 0,
       "value": "Wajib. String berisi nama zona waktu dari zona waktu tujuan. Lihat https://msdn.microsoft.com/en-us/library/gg154758.aspx untuk rinciannya."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Rahasia"
     }
   ],
   "OFKZzQ": [
@@ -1995,6 +2139,12 @@
       "value": "Tetapkan identitas terkelola"
     }
   ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "P2A5dB": [
     {
       "type": 0,
@@ -2079,6 +2229,12 @@
       "value": "(UTC-04:00) Turks dan Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Jangan buat jika tidak ada nilai"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2115,6 +2271,12 @@
       "value": "Konversikan input menjadi nilai jenis JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Dapat diubah ke null"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2149,6 +2311,12 @@
       "value": "Wajib. Nilai yang dikonversi menjadi biner."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Jenis data"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2181,6 +2349,18 @@
     {
       "type": 0,
       "value": "j"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Nama"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Masukkan audiens"
     }
   ],
   "RX2Shm": [
@@ -2232,6 +2412,18 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Lama"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Kata Sandi"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Masukkan Kamus"
     }
   ],
   "SKXopi": [
@@ -2508,6 +2700,12 @@
       "value": "Riwayat Eksekusi"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Sertifikat"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2574,6 +2772,12 @@
       "value": "Ganti skema yang ada."
     }
   ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Penyewa"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -2595,7 +2799,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Pilih skema output"
     }
   ],
   "XCunbR": [
@@ -2706,16 +2910,16 @@
       "value": "Wajib. Nama tindakan yang tubuh output isinya Anda inginkan."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Kata Sandi"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Info Selengkapnya"
-    }
-  ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2750,6 +2954,12 @@
     {
       "type": 0,
       "value": "Memungkinkan ekspresi untuk memperoleh nilai dari nama JSON lain dan nilai pasangan atau output pemicu runtime"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Masukkan Pfx"
     }
   ],
   "YaFjJQ": [
@@ -2890,6 +3100,12 @@
       "value": "Fungsi"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Masukkan Pfx"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3024,6 +3240,12 @@
     {
       "type": 0,
       "value": "(UTC+02.00) Tripoli"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Silakan pilih identitas"
     }
   ],
   "ci6ex1": [
@@ -3188,6 +3410,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Node skema output"
     }
   ],
   "eRvGw3": [
@@ -3443,6 +3671,18 @@
       "value": "Durasi"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audiens"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Identitas terkelola yang ditetapkan sistem"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -3519,6 +3759,18 @@
     {
       "type": 0,
       "value": "Batalkan"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Properti"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Uji"
     }
   ],
   "iq+tiv": [
@@ -3717,6 +3969,12 @@
       "value": "Menampilkan true jika kedua nilai sama"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Masukkan nama pengguna"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -3819,6 +4077,12 @@
       "value": "Nama"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Masukkan Array"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -3871,6 +4135,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
     }
   ],
   "mx2IMJ": [
@@ -4136,7 +4406,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Pilih skema input"
     }
   ],
   "q87X20": [
@@ -4268,6 +4538,12 @@
       "value": "Judul Kartu"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Rahasia"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4370,10 +4646,28 @@
       "value": "Menampilkan true jika salah satu parameter benar"
     }
   ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "ID Klien"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Parameter baru"
+    }
+  ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Node skema input"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Telusuri"
     }
   ],
   "t+XCkg": [
@@ -4484,6 +4778,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Pilih elemen untuk mulai mengonfigurasi"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4586,12 +4886,6 @@
       "value": "Menghasilkan indeks terakhir dari nilai dalam string (tidak peka huruf besar/kecil, kultur invarian)"
     }
   ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Tombol untuk mengelola status hidupkan/matikan"
-    }
-  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4608,6 +4902,12 @@
     {
       "type": 0,
       "value": "Ekspresi tidak valid."
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audiens"
     }
   ],
   "vXwYXe": [
@@ -4708,6 +5008,12 @@
       "value": "Waktu Habis"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Jalur lengkap"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4774,6 +5080,12 @@
       "value": "Menampilkan representasi string dari string dengan pengodean URI"
     }
   ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
+    }
+  ],
   "xOAOHM": [
     {
       "type": 0,
@@ -4790,6 +5102,12 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama properti baru atau yang sudah ada."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Kode"
     }
   ],
   "xYyPR8": [

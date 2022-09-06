@@ -1,55 +1,61 @@
 {
   "name": "microsoft-data-mapper-vscode-extension",
-  "version": "0.0.72",
+  "version": "0.0.90",
   "main": "main.js",
+  "repository": "https://github.com/Azure/logic_apps_designer",
   "engines": {
     "vscode": "^1.64.0"
   },
   "contributes": {
     "commands": [
       {
-        "command": "dataMapperExtension.start",
+        "command": "azureDataMapper.openDataMapper",
         "title": "Open Data Mapper"
       },
       {
-        "command": "dataMapperExtension.loadInputSchemaFile",
-        "title": "Load input schema"
+        "command": "azureDataMapper.createNewDataMap",
+        "title": "Create new data map",
+        "icon": "$(add)"
       },
       {
-        "command": "dataMapperExtension.loadOutputSchemaFile",
-        "title": "Load output schema"
-      },
-      {
-        "command": "dataMapperExtension.loadDataMapFile",
+        "command": "azureDataMapper.loadDataMapFile",
         "title": "Load data map"
       }
     ],
-    "menus": {
-      "explorer/context": [
+    "views": {
+      "azure": [
         {
-          "submenu": "dataMapperExtension.dataMapperMenu",
-          "group": "navigation",
-          "when": "resourceExtname in dataMapperExtension.supportedFileExts"
+          "id": "azDataMapper",
+          "name": "Data Mapper"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "azureDataMapper.createNewDataMap",
+          "when": "view == azDataMapper",
+          "group": "navigation@1"
         }
       ],
-      "dataMapperExtension.dataMapperMenu": [
+      "explorer/context": [
         {
-          "command": "dataMapperExtension.loadInputSchemaFile",
-          "group": "navigation"
-        },
+          "submenu": "azureDataMapper.dataMapperMenu",
+          "group": "navigation",
+          "when": "resourceExtname in azureDataMapper.supportedFileExts"
+        }
+      ],
+      "azureDataMapper.dataMapperMenu": [
         {
-          "command": "dataMapperExtension.loadOutputSchemaFile",
-          "group": "navigation"
-        },
-        {
-          "command": "dataMapperExtension.loadDataMapFile",
-          "group": "navigation"
+          "command": "azureDataMapper.loadDataMapFile",
+          "group": "navigation",
+          "when": "resourceExtname in azureDataMapper.supportedDataMapFileExts"
         }
       ]
     },
     "submenus": [
       {
-        "id": "dataMapperExtension.dataMapperMenu",
+        "id": "azureDataMapper.dataMapperMenu",
         "label": "Data Mapper"
       }
     ]
@@ -58,7 +64,12 @@
     "ms-vscode.azure-account"
   ],
   "activationEvents": [
-    "onCommand:dataMapperExtension.start"
+    "onCommand:azureDataMapper.openDataMapper",
+    "workspaceContains:host.json",
+    "workspaceContains:**/.xsd",
+    "workspaceContains:**/.xslt",
+    "onView:azDataMapper",
+    "onDebugInitialConfigurations"
   ],
   "galleryBanner": {
     "color": "#015cda",

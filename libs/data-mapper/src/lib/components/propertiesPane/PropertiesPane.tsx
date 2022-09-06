@@ -1,12 +1,9 @@
 import { NodeType } from '../../models';
 import type { SelectedNode } from '../../models';
-import { ExpressionCodeTab } from './tabComponents/Expression/ExpressionCodeTab';
-import { ExpressionPropertiesTab } from './tabComponents/Expression/ExpressionPropertiesTab';
-import { InputSchemaNodeCodeTab } from './tabComponents/InputSchemaNode/InputSchemaNodeCodeTab';
-import { InputSchemaNodePropertiesTab } from './tabComponents/InputSchemaNode/InputSchemaNodePropertiesTab';
-import { OutputSchemaNodeCodeTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeCodeTab';
-import { OutputSchemaNodePropertiesTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodePropertiesTab';
-import { OutputSchemaNodeTestTab } from './tabComponents/OutputSchemaNode/OutputSchemaNodeTestTab';
+import { CodeTab } from './tabComponents/CodeTab';
+import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
+import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
+import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/react-icons';
@@ -20,13 +17,19 @@ enum TABS {
 }
 
 const useStyles = makeStyles({
-  pane: {},
+  pane: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+    backgroundColor: tokens.colorNeutralBackground1,
+    zIndex: 1000,
+    ...shorthands.borderRadius('medium', 'medium', 0, 0),
+  },
   topBar: {
     height: '40px',
     p: '4px',
     marginLeft: '8px',
     marginRight: '8px',
-    ...shorthands.borderRadius('medium'),
   },
   title: {
     ...typographyStyles.body1Strong,
@@ -37,7 +40,8 @@ const useStyles = makeStyles({
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
     height: '192px',
-    ...shorthands.overflow('auto'),
+    maxHeight: '192px',
+    ...shorthands.overflow('hidden', 'auto'),
   },
   noItemSelectedText: {
     color: tokens.colorNeutralForegroundDisabled,
@@ -92,7 +96,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     description: 'Label for default message when no node selected',
   });
 
-  const getPaneItemName = (): string | undefined => {
+  const getPaneTitle = (): string | undefined => {
     switch (currentNode?.type) {
       case NodeType.Input:
         return inputSchemaNodeLoc;
@@ -106,50 +110,23 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     }
   };
 
-  const getPropertiesTab = (): JSX.Element | null => {
-    switch (currentNode?.type) {
-      case NodeType.Input:
-        return <InputSchemaNodePropertiesTab />;
-      case NodeType.Output:
-        return <OutputSchemaNodePropertiesTab />;
-      case NodeType.Expression:
-        return <ExpressionPropertiesTab />;
-      default:
-        console.error('Tab not fetched - currentNode likely undefined');
-        return null;
-    }
-  };
-
-  const getCodeTab = (): JSX.Element | null => {
-    switch (currentNode?.type) {
-      case NodeType.Input:
-        return <InputSchemaNodeCodeTab />;
-      case NodeType.Output:
-        return <OutputSchemaNodeCodeTab />;
-      case NodeType.Expression:
-        return <ExpressionCodeTab />;
-      default:
-        console.error('Code tab not fetched - currentNode likely undefined');
-        return null;
-    }
-  };
-
-  const getTestTab = (): JSX.Element => {
-    return <OutputSchemaNodeTestTab />;
-  };
-
-  const getSelectedContent = (): JSX.Element | null => {
+  const getSelectedTab = (): JSX.Element | null => {
     if (!currentNode) {
+      console.error('currentNode is undefined');
       return null;
     }
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        return getPropertiesTab();
+        if (currentNode.type === NodeType.Expression) {
+          return <ExpressionNodePropertiesTab currentNode={currentNode} />;
+        } else {
+          return <SchemaNodePropertiesTab currentNode={currentNode} />;
+        }
       case TABS.CODE:
-        return getCodeTab();
+        return <CodeTab />;
       case TABS.TEST:
-        return getTestTab(); // Only retrieved if OutputSchemaNode
+        return <TestTab />;
       default:
         console.error('tabToDisplay is undefined');
         return null;
@@ -167,7 +144,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const TopBarContent = () => (
     <>
-      <Text className={styles.title}>{getPaneItemName()}</Text>
+      <Text className={styles.title}>{getPaneTitle()}</Text>
       <Divider vertical style={{ maxWidth: 24 }} />
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => setTabToDisplay(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
@@ -195,7 +172,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         />
       </Stack>
 
-      {isExpanded && <div className={styles.paneContent}>{getSelectedContent()}</div>}
+      {isExpanded && <div className={styles.paneContent}>{getSelectedTab()}</div>}
     </div>
   );
 };

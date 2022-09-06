@@ -10,7 +10,11 @@
         "outputPath": "dist/apps/vs-code-data-mapper",
         "main": "apps/vs-code-data-mapper/src/main.ts",
         "tsConfig": "apps/vs-code-data-mapper/tsconfig.app.json",
-        "assets": ["apps/vs-code-data-mapper/src/assets", "apps/vs-code-data-mapper/src/package.json"],
+        "assets": [
+          "apps/vs-code-data-mapper/src/assets",
+          "apps/vs-code-data-mapper/src/package.json",
+          "apps/vs-code-data-mapper/src/LICENSE.md"
+        ],
         "externalDependencies": ["vscode", "commonjs"]
       },
       "configurations": {

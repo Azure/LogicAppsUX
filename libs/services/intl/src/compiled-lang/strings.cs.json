@@ -403,6 +403,12 @@
       "value": "Vyžadováno. Objekt, u kterého se má zkontrolovat, zda není menší než porovnávaná hodnota."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Zadejte hodnotu autorizační hlavičky."
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -439,6 +445,12 @@
       "value": "Globální vyhledávání"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Vyberte soubor, který se má nahrát."
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -461,6 +473,12 @@
     {
       "type": 0,
       "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Spravovaná identita"
     }
   ],
   "2b1yD3": [
@@ -511,6 +529,12 @@
       "value": "Identifikátor"
     }
   ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Spravovaná identita přiřazená systémem"
+    }
+  ],
   "3BZnxY": [
     {
       "type": 0,
@@ -559,6 +583,12 @@
       "value": "(UTC+09:00) Čita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "Zadaná identita není přidružená k této aplikaci logiky."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -599,6 +629,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Jerevan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Ověřování"
     }
   ],
   "47kOXr": [
@@ -689,6 +725,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Výraz jazyka XPath, který se má vyhodnotit."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Autorita"
     }
   ],
   "5aa76N": [
@@ -841,6 +883,12 @@
       "value": "Vyžadováno. Řetězec, který může obsahovat hodnotu."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -877,10 +925,22 @@
       "value": "Návrhář se nedá vykreslit, protože v definici je více než jeden trigger."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Povolte prosím pro aplikaci logiky spravovanou identitu."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec, který se má kódovat jako identifikátor URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Zadejte tajný kód jako prostý text nebo použijte zabezpečený parametr."
     }
   ],
   "8Y5xpK": [
@@ -935,6 +995,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Chovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Hodnota"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "Když má aplikace logiky povolenou spravovanou identitu přiřazenou systémem, identita uživatele se nepodporuje."
     }
   ],
   "949s+r": [
@@ -1037,6 +1109,18 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangún)"
+    }
+  ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Zadejte cílovou skupinu."
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Uživatelské jméno"
     }
   ],
   "ArTh0/": [
@@ -1155,6 +1239,12 @@
       "value": "Povinný parametr. Řetězec, ze kterého se mají dekódovat znaky, které nejsou pro adresu URL bezpečné."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1197,6 +1287,12 @@
       "value": "Připojení je povinné"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Typ přihlašovacích údajů"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1219,6 +1315,12 @@
     {
       "type": 0,
       "value": "K vygenerování schématu použijte ukázkovou datovou část."
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Zadejte ID klienta."
     }
   ],
   "DZZ3fj": [
@@ -1285,6 +1387,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Heslo"
     }
   ],
   "Eqgm4v": [
@@ -1491,6 +1599,12 @@
     {
       "type": 0,
       "value": "Vrátí dotaz z identifikátoru URI."
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Zadejte autoritu."
     }
   ],
   "GLd3MU": [
@@ -1997,6 +2111,12 @@
       "value": "Povinný parametr. Identifikátor URI dat, který se má převést do binárního formátu."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Spravovaná identita"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -2045,6 +2165,24 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Výraz"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Zadejte tenanta."
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Vyberte prosím identitu."
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2073,6 +2211,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Řetězec, který obsahuje název zdrojového časového pásma. Podrobnosti najdete tady: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Tajný kód"
     }
   ],
   "OFKZzQ": [
@@ -2159,6 +2303,12 @@
       "value": "Vyberte spravovanou identitu"
     }
   ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "P2A5dB": [
     {
       "type": 0,
@@ -2243,6 +2393,12 @@
       "value": "(UTC-04:00) Turks a Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Negenerovat, pokud žádná hodnota"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2279,6 +2435,12 @@
       "value": "Převede vstup na hodnotu typu JSON."
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Nullable"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2313,6 +2475,12 @@
       "value": "Povinný parametr. Hodnota, která se převádí do binárního formátu."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Datový typ"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2345,6 +2513,18 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Název"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Zadejte cílovou skupinu."
     }
   ],
   "RX2Shm": [
@@ -2429,6 +2609,18 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamčatskij – starý čas"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Heslo"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Zadejte slovník."
     }
   ],
   "SKXopi": [
@@ -2705,6 +2897,12 @@
       "value": "Historie spuštění"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certifikát"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2771,6 +2969,12 @@
       "value": "Nahraďte existující schéma."
     }
   ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -2792,7 +2996,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Vyberte výstupní schéma."
     }
   ],
   "XCunbR": [
@@ -2903,16 +3107,16 @@
       "value": "Povinný parametr. Název akce, jejíž textové výstupy požadujete."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Heslo"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Další informace"
-    }
-  ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2947,6 +3151,12 @@
     {
       "type": 0,
       "value": "Umožní výrazu odvodit svoji hodnotu z jiných párů názvu a hodnoty JSON nebo výstupu triggeru modulu runtime."
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Zadejte PFX."
     }
   ],
   "YaFjJQ": [
@@ -3087,6 +3297,12 @@
       "value": "Funkce"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Zadejte PFX."
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3221,6 +3437,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripolis"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Vyberte prosím identitu."
     }
   ],
   "ci6ex1": [
@@ -3385,6 +3607,12 @@
     {
       "type": 0,
       "value": "Povinný parametr. Název proměnné, jejíž hodnotu chcete získat."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Výstupní uzel schématu"
     }
   ],
   "eRvGw3": [
@@ -3685,6 +3913,18 @@
       "value": "Doba trvání"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Cílová skupina"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Spravovaná identita přiřazená systémem"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -3761,6 +4001,18 @@
     {
       "type": 0,
       "value": "Zrušit"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Vlastnosti"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -3963,6 +4215,12 @@
       "value": "Vrátí true, pokud se dvě hodnoty rovnají."
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Zadejte uživatelské jméno."
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -4065,6 +4323,12 @@
       "value": "Název"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Zadejte pole."
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4117,6 +4381,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
     }
   ],
   "mx2IMJ": [
@@ -4382,7 +4652,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Vyberte vstupní schéma."
     }
   ],
   "q87X20": [
@@ -4547,6 +4817,12 @@
       "value": "Název karty"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Tajný kód"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4649,10 +4925,28 @@
       "value": "Vrátí true, pokud je kterýkoli z parametrů true."
     }
   ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "ID klienta"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Nový parametr"
+    }
+  ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Vstupní uzel schématu"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Procházet"
     }
   ],
   "t+XCkg": [
@@ -4763,6 +5057,12 @@
       "value": "(UTC+04:00) Abú Dhabi, Maskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Výběrem elementu spustíte konfiguraci"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4865,12 +5165,6 @@
       "value": "Vrátí poslední index určité hodnoty v řetězci (nerozlišuje velikost písmen, invariantní jazyková verze)."
     }
   ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Tlačítko pro správu přepínacího stavu"
-    }
-  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4887,6 +5181,12 @@
     {
       "type": 0,
       "value": "Výraz je neplatný."
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Cílová skupina"
     }
   ],
   "vXwYXe": [
@@ -4987,6 +5287,12 @@
       "value": "Vypršel časový limit."
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Úplná cesta"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -5053,6 +5359,12 @@
       "value": "Vrátí řetězcovou reprezentaci řetězce zakódovaného jako identifikátor URI."
     }
   ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
+    }
+  ],
   "xOAOHM": [
     {
       "type": 0,
@@ -5069,6 +5381,12 @@
     {
       "type": 0,
       "value": "Povinné. Název nové nebo stávající vlastnosti"
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Kód"
     }
   ],
   "xYyPR8": [

@@ -16,6 +16,9 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
       "content": Object {
         "padding": "1rem",
       },
+      "main": Object {
+        "overflow": "hidden",
+      },
     }
   }
   type={7}

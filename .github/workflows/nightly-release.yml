@@ -1,0 +1,113 @@
+name: Test Runner
+
+on:
+  repository_dispatch:
+    types: [release]
+#   schedule:
+#     - cron: '0 7 * * *' # run at 7 AM UTC
+
+jobs:
+  bump-version:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - run: npm ci
+
+      - name: 'Version Bump'
+        run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && npm run bump && npm install
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.AUTOMATION_PAT }}
+          branch: ${{ github.ref }}
+
+  build:
+    runs-on: ubuntu-latest
+    needs: bump-version
+
+    steps:
+      # checkout the repo
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js version 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - run: npm ci
+
+      - name: 'Local Version Bump'
+        run: npm run bump -- --skip.commit --skip.tag
+
+      - run: npx nx build vs-code-data-mapper
+      - run: npx nx build vs-code-data-mapper-react
+      - run: npm run vscode:data-mapper:pack
+
+      - name: 'Get Previous tag'
+        id: previoustag
+        uses: 'WyriHaximus/github-action-get-previous-tag@v1'
+        with:
+          fallback: 0.0.0
+
+      - name: Archive VSIX
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            dist/apps/vs-code-data-mapper/*.vsix
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: 'LICENSE.md,dist/apps/vs-code-data-mapper/*.vsix'
+          generateReleaseNotes: true
+          tag: '${{ steps.previoustag.outputs.tag }}'
+          token: ${{ secrets.AUTOMATION_PAT }}
+
+  publish:
+    needs: bump-version
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        lib:
+          [
+            { dist: './dist/libs/data-mapper', package: 'data-mapper' },
+            { dist: './dist/libs/designer', package: 'designer' },
+            { dist: './dist/libs/utils', package: 'utils' },
+            { dist: './dist/libs/designer-ui', package: 'designer-ui' },
+            { dist: './dist/libs/services/designer-client-services', package: 'services-designer-client-services' },
+            { dist: './dist/libs/parsers', package: 'parsers' },
+            { dist: './dist/libs/services/intl', package: 'services-intl' },
+          ]
+    steps:
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+        with:
+          token: ${{ secrets.AUTOMATION_PAT }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - run: npm ci
+      - name: 'Local Version Bump'
+        run: npm run bump -- --skip.commit --skip.tag
+      - run: npm ci
+      - run: npx nx build ${{ matrix.lib.package }}
+      - name: Use .npmrc
+        uses: bduff9/use-npmrc@v1.1
+        with:
+          dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
+          working-directory: ${{ matrix.lib.dist }}
+      - run: cd ${{ matrix.lib.dist }} && npm publish

@@ -1,7 +1,8 @@
-import { setCurrentOutputNode, setInitialOutputSchema } from '../../core/state/DataMapSlice';
+import { simpleMockSchema } from '../../__mocks__';
+import { setCurrentOutputNode, setInitialSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
-import { simpleMockSchema } from '../../models/__mocks__';
+import { SchemaTypes } from '../../models/Schema';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { EditorBreadcrumb } from './EditorBreadcrumb';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -14,7 +15,7 @@ interface MockStoreData {
 }
 
 const MockStore = ({ mockState, children }) => {
-  store.dispatch(setInitialOutputSchema(mockState.schema));
+  store.dispatch(setInitialSchema({ schema: mockState.schema, schemaType: SchemaTypes.Output, flattenedSchema: {} }));
   store.dispatch(setCurrentOutputNode(mockState.currentNode));
 
   return <Provider store={store}>{children}</Provider>;

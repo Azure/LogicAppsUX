@@ -18,7 +18,9 @@ export interface WorkflowState {
   workflowSpec?: SpecTypes;
   graph: WorkflowNode | null;
   operations: Operations;
+  focusedCanvasNodeId?: string;
   nodesMetadata: NodesMetadata;
   collapsedGraphIds: Record<string, boolean>;
   edgeIdsBySource: Record<string, string[]>;
+  idReplacements: Record<string, string>;
 }

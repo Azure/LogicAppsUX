@@ -1,11 +1,15 @@
+import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
+import { childOutputNodeCardIndent } from '../constants/NodeConstants';
+import type { ConnectionDictionary } from '../models/Connection';
 import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
+import { isLeafNode } from './Schema.Utils';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
-import { Position } from 'react-flow-renderer';
+import { ConnectionLineType, Position } from 'react-flow-renderer';
 
 const inputX = 100;
 const rootOutputX = 500;
-const childXOffSet = 30;
+const childXOffSet = childOutputNodeCardIndent;
 
 const rootY = 30;
 const rootYOffset = 60;
@@ -15,24 +19,61 @@ export enum ReactFlowNodeType {
   ExpressionNode = 'expressionNode',
 }
 
-export const convertToReactFlowNodes = (inputSchemaNodes: SchemaNodeExtended[], outputSchemaNode: SchemaNodeExtended): ReactFlowNode[] => {
-  const reactFlowNodes: ReactFlowNode[] = [];
+export const inputPrefix = 'input-';
+export const outputPrefix = 'output-';
 
-  inputSchemaNodes.forEach((inputNodes, index) => {
+export const convertToReactFlowNodes = (
+  currentlySelectedInputNodes: SchemaNodeExtended[],
+  connectedInputNodes: SchemaNodeExtended[],
+  outputSchemaNode: SchemaNodeExtended
+): ReactFlowNode<SchemaCardProps>[] => {
+  const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
+
+  connectedInputNodes.forEach((inputNode) => {
     reactFlowNodes.push({
-      id: `input-${inputNodes.key}`,
+      id: `${inputPrefix}${inputNode.key}`,
       data: {
-        label: inputNodes.name,
+        label: inputNode.name,
         schemaType: SchemaTypes.Input,
         displayHandle: true,
+        isLeaf: true,
+        isChild: false,
+        nodeDataType: inputNode.schemaNodeDataType,
+        disabled: false,
+        error: false,
       },
       type: ReactFlowNodeType.SchemaNode,
       sourcePosition: Position.Right,
       position: {
         x: inputX,
-        y: rootY + rootYOffset * index,
+        y: rootY + rootYOffset * reactFlowNodes.length,
       },
     });
+  });
+
+  currentlySelectedInputNodes.forEach((inputNode) => {
+    const nodeId = `${inputPrefix}${inputNode.key}`;
+    if (!reactFlowNodes.some((reactFlowNode) => reactFlowNode.id === nodeId)) {
+      reactFlowNodes.push({
+        id: nodeId,
+        data: {
+          label: inputNode.name,
+          schemaType: SchemaTypes.Input,
+          displayHandle: true,
+          isLeaf: true,
+          isChild: false,
+          nodeDataType: inputNode.schemaNodeDataType,
+          disabled: false,
+          error: false,
+        },
+        type: ReactFlowNodeType.SchemaNode,
+        sourcePosition: Position.Right,
+        position: {
+          x: inputX,
+          y: rootY + rootYOffset * reactFlowNodes.length,
+        },
+      });
+    }
   });
 
   reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(outputSchemaNode, SchemaTypes.Output, true));
@@ -44,16 +85,22 @@ export const convertToReactFlowParentAndChildNodes = (
   parentSchemaNode: SchemaNodeExtended,
   schemaType: SchemaTypes,
   displayTargets: boolean
-): ReactFlowNode[] => {
-  const reactFlowNodes: ReactFlowNode[] = [];
+): ReactFlowNode<SchemaCardProps>[] => {
+  const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
   const rootX = schemaType === SchemaTypes.Input ? inputX : rootOutputX;
+  const idPrefix = schemaType === SchemaTypes.Input ? inputPrefix : outputPrefix;
 
   reactFlowNodes.push({
-    id: `${schemaType}-${parentSchemaNode.key}`,
+    id: `${idPrefix}${parentSchemaNode.key}`,
     data: {
       label: parentSchemaNode.name,
       schemaType,
       displayHandle: displayTargets,
+      isLeaf: false,
+      isChild: false,
+      nodeDataType: parentSchemaNode.schemaNodeDataType,
+      disabled: false,
+      error: false,
     },
     type: ReactFlowNodeType.SchemaNode,
     targetPosition: !displayTargets ? undefined : SchemaTypes.Input ? Position.Right : Position.Left,
@@ -63,19 +110,24 @@ export const convertToReactFlowParentAndChildNodes = (
     },
   });
 
-  parentSchemaNode.children?.forEach((childNode, index) => {
+  parentSchemaNode.children?.forEach((childNode) => {
     reactFlowNodes.push({
-      id: `${schemaType}-${childNode.key}`,
+      id: `${idPrefix}${childNode.key}`,
       data: {
         label: childNode.name,
         schemaType,
         displayHandle: displayTargets,
+        isLeaf: isLeafNode(childNode),
+        isChild: true,
+        nodeDataType: childNode.schemaNodeDataType,
+        disabled: false,
+        error: false,
       },
       type: ReactFlowNodeType.SchemaNode,
       targetPosition: !displayTargets ? undefined : SchemaTypes.Input ? Position.Right : Position.Left,
       position: {
         x: rootX + childXOffSet,
-        y: rootY + rootYOffset * (index + 1),
+        y: rootY + rootYOffset * reactFlowNodes.length,
       },
     });
   });
@@ -83,14 +135,14 @@ export const convertToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-export const convertToReactFlowEdges = (connections: { [key: string]: string }): ReactFlowEdge[] => {
+export const convertToReactFlowEdges = (connections: ConnectionDictionary): ReactFlowEdge[] => {
   return Object.keys(connections).map((connectionKey) => {
     const connection = connections[connectionKey];
     return {
-      id: `${connection}-to-${connectionKey}`,
-      source: connection,
-      target: connectionKey,
-      type: 'smoothstep',
+      id: `${connection.value}-to-${connectionKey}`,
+      source: connection.reactFlowSource,
+      target: connection.reactFlowDestination,
+      type: ConnectionLineType.SmoothStep,
     };
   });
 };

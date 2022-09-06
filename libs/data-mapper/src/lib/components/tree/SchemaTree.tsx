@@ -1,5 +1,6 @@
 import type { SchemaExtended, SchemaNodeDataType, SchemaNodeExtended } from '../../models';
-import { icon16ForSchemaNodeType } from './SchemaTree.Utils';
+import { icon16ForSchemaNodeType } from '../../utils/Icon.Utils';
+import { allChildNodesSelected, isLeafNode } from '../../utils/Schema.Utils';
 import { bundleIcon, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
 import { fluentTreeItem, fluentTreeView, provideFluentDesignSystem } from '@fluentui/web-components';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
@@ -12,13 +13,20 @@ export const FastTreeItem = wrap(fluentTreeItem());
 export interface SchemaTreeProps {
   schema: SchemaExtended;
   currentlySelectedNodes: SchemaNodeExtended[];
-  onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
+  visibleConnectedNodes: SchemaNodeExtended[];
+  onNodeClick: (schemaNode: SchemaNodeExtended) => void;
 }
 
-export const SchemaTree: React.FC<SchemaTreeProps> = ({ schema, currentlySelectedNodes, onLeafNodeClick }: SchemaTreeProps) => {
+export const SchemaTree: React.FC<SchemaTreeProps> = ({
+  schema,
+  currentlySelectedNodes,
+  visibleConnectedNodes,
+  onNodeClick,
+}: SchemaTreeProps) => {
   const treeItems = useMemo<JSX.Element[]>(() => {
-    return convertToFastTreeItem(schema.schemaTreeRoot, currentlySelectedNodes, onLeafNodeClick);
-  }, [schema, currentlySelectedNodes, onLeafNodeClick]);
+    const completeSelectedNodeList = [...currentlySelectedNodes, ...visibleConnectedNodes];
+    return convertToFastTreeItem(schema.schemaTreeRoot, completeSelectedNodeList, onNodeClick);
+  }, [schema, currentlySelectedNodes, visibleConnectedNodes, onNodeClick]);
 
   return <FastTreeView>{treeItems}</FastTreeView>;
 };
@@ -26,26 +34,33 @@ export const SchemaTree: React.FC<SchemaTreeProps> = ({ schema, currentlySelecte
 const convertToFastTreeItem = (
   node: SchemaNodeExtended,
   currentlySelectedNodes: SchemaNodeExtended[],
-  onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void
+  onNodeClick: (schemaNode: SchemaNodeExtended) => void
 ) => {
   return node.children.map((childNode) => {
-    const isNodeSelected = !!currentlySelectedNodes.find((currentlySelectedNode) => currentlySelectedNode.key === childNode.key);
-    if (childNode.schemaNodeDataType === 'ComplexType' || childNode.schemaNodeDataType === 'None') {
+    if (!isLeafNode(childNode)) {
+      const isNodeSelected = allChildNodesSelected(childNode, currentlySelectedNodes);
+
       return (
-        // TODO onclick for object level adding
-        <FastTreeItem key={childNode.key}>
+        <FastTreeItem
+          key={childNode.key}
+          /* TODO resolve issue where clicking a nested onClick will call the parent onClick as well
+          onClick={() => {
+            onNodeClick(childNode);
+          }}*/
+        >
           <TreeItemContent nodeType={childNode.schemaNodeDataType} filled={isNodeSelected}>
             {childNode.name}
           </TreeItemContent>
-          {convertToFastTreeItem(childNode, currentlySelectedNodes, onLeafNodeClick)}
+          {convertToFastTreeItem(childNode, currentlySelectedNodes, onNodeClick)}
         </FastTreeItem>
       );
     } else {
+      const isNodeSelected = currentlySelectedNodes.some((currentlySelectedNode) => currentlySelectedNode.key === childNode.key);
       return (
         <FastTreeItem
           key={childNode.key}
           onClick={() => {
-            onLeafNodeClick(childNode);
+            onNodeClick(childNode);
           }}
         >
           <TreeItemContent nodeType={childNode.schemaNodeDataType} filled={isNodeSelected}>

@@ -18,6 +18,7 @@ export const initialWorkflowState: WorkflowState = {
   nodesMetadata: {},
   collapsedGraphIds: {},
   edgeIdsBySource: {},
+  idReplacements: {},
 };
 
 export const workflowSlice = createSlice({
@@ -47,6 +48,12 @@ export const workflowSlice = createSlice({
       }
 
       addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
+    },
+    setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
+      state.focusedCanvasNodeId = action.payload;
+    },
+    clearFocusNode: (state: WorkflowState) => {
+      state.focusedCanvasNodeId = undefined;
     },
     updateNodeSizes: (state: WorkflowState, action: PayloadAction<NodeChange[]>) => {
       const dimensionChanges = action.payload.filter((x) => x.type === 'dimensions');
@@ -171,6 +178,10 @@ export const workflowSlice = createSlice({
       }
       childOperation.runAfter[action.payload.parentOperation] = action.payload.statuses;
     },
+    replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
+      const { originalId, newId } = action.payload;
+      state.idReplacements[originalId] = newId.replaceAll(' ', '_');
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -178,6 +189,9 @@ export const workflowSlice = createSlice({
       state.graph = action.payload.graph;
       state.operations = action.payload.actionData;
       state.nodesMetadata = action.payload.nodesMetadata;
+      state.focusedCanvasNodeId = Object.entries(action?.payload?.actionData ?? {}).find(
+        ([, value]) => !(value as LogicAppsV2.ActionDefinition).runAfter
+      )?.[0];
     });
   },
 });
@@ -195,6 +209,9 @@ export const {
   updateRunAfter,
   addEdgeFromRunAfter,
   removeEdgeFromRunAfter,
+  clearFocusNode,
+  setFocusNode,
+  replaceId,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;
