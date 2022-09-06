@@ -4,6 +4,7 @@ import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
 import { updateNodeSettings, type OperationMetadataState } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { setTabError } from '../../core/state/panel/panelSlice';
 import { useOperationManifest } from '../../core/state/selectors/actionMetadataSelector';
 import { setExpandedSections, ValidationErrorKeys, type ValidationError } from '../../core/state/settingSlice';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
@@ -20,8 +21,6 @@ import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined, equals, isObject, type OperationManifest } from '@microsoft-logic-apps/utils';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-// import { useDebouncedEffect } from '@react-hookz/web';
 
 export type ToggleHandler = (checked: boolean) => void;
 export type TextChangeHandler = (newVal: string) => void;
@@ -73,8 +72,14 @@ function GeneralSettings(): JSX.Element | null {
   );
 
   useEffect(() => {
-    setValidationErrors(validate('operations', operations) ?? []);
+    setValidationErrors(validate('operations', operations, nodeId) ?? []);
+    dispatch(setTabError({ tabName: 'Settings', hasErrors: (validate('operations', operations, nodeId) ?? []).length > 0, nodeId }));
   }, [operations, nodeId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // useUnmount(() => {
+  //   console.log('unmount run');
+  //   return dispatch(setTabError({tabName: 'Settings', hasErrors: validationErrors.length > 0}));
+  // });
 
   const onConcurrencyToggle = (checked: boolean): void => {
     dispatch(
@@ -157,7 +162,7 @@ function GeneralSettings(): JSX.Element | null {
         },
       },
     };
-    const errors = validate('operations', proposedState);
+    const errors = validate('operations', proposedState, nodeId);
     if (errors?.length) {
       setValidationErrors(errors);
     }
@@ -305,7 +310,7 @@ function TrackingSettings(): JSX.Element | null {
         },
       },
     };
-    const validationResult = validate('operations', proposedState);
+    const validationResult = validate('operations', proposedState, nodeId);
     if (isNullOrUndefined(validationResult)) {
       dispatch(
         updateNodeSettings({
@@ -535,7 +540,7 @@ function NetworkingSettings(): JSX.Element | null {
         },
       },
     };
-    const validationResult = validate('operations', proposedState);
+    const validationResult = validate('operations', proposedState, nodeId);
     if (validationResult?.length) {
       setValidationErrors(validationResult);
     }

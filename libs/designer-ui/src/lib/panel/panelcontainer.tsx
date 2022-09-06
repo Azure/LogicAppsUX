@@ -28,6 +28,7 @@ export type PanelContainerProps = {
   showCommentBox: boolean;
   readOnlyMode?: boolean;
   tabs: Record<string, PanelTab>;
+  nodeId: string;
   title?: string;
   layerProps?: ILayerProps;
   onDismissButtonClicked?(): void;
@@ -52,6 +53,7 @@ export const PanelContainer = ({
   showCommentBox,
   readOnlyMode,
   tabs,
+  nodeId,
   title,
   width,
   layerProps,
@@ -142,6 +144,7 @@ export const PanelContainer = ({
                 selectedTab={selectedTab}
                 onTabChange={onTabChange}
                 trackEvent={trackEvent}
+                nodeId={nodeId}
               />
               <PanelContent tabs={tabs} selectedTab={selectedTab} />
             </div>

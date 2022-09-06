@@ -20,13 +20,15 @@ export const useValidate = () => {
     defaultMessage: 'Paging Count exceeds maximum value',
     description: 'error message for max-exceeding paging count',
   });
-  const validate = <K extends keyof RootState>(validationType: K, proposedState: RootState[K]): ValidationError[] | null => {
+  const validate = <K extends keyof RootState>(
+    validationType: K,
+    proposedState: RootState[K],
+    nodeId: string
+  ): ValidationError[] | null => {
     switch (validationType) {
       case 'operations': {
         const proposedOperationMetadataState = proposedState as OperationMetadataState;
-        const errors = validateOperationSettings(
-          proposedOperationMetadataState.settings[Object.keys(proposedOperationMetadataState.settings)[0]]
-        );
+        const errors = validateOperationSettings(proposedOperationMetadataState.settings[nodeId]);
         return errors.length ? errors : null;
       }
       default:
