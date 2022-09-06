@@ -1,6 +1,6 @@
 {
   "name": "microsoft-data-mapper-vscode-extension",
-  "version": "0.0.79",
+  "version": "0.0.90",
   "main": "main.js",
   "repository": "https://github.com/Azure/logic_apps_designer",
   "engines": {
@@ -16,14 +16,6 @@
         "command": "azureDataMapper.createNewDataMap",
         "title": "Create new data map",
         "icon": "$(add)"
-      },
-      {
-        "command": "azureDataMapper.loadInputSchemaFile",
-        "title": "Load input schema"
-      },
-      {
-        "command": "azureDataMapper.loadOutputSchemaFile",
-        "title": "Load output schema"
       },
       {
         "command": "azureDataMapper.loadDataMapFile",
@@ -54,16 +46,6 @@
         }
       ],
       "azureDataMapper.dataMapperMenu": [
-        {
-          "command": "azureDataMapper.loadInputSchemaFile",
-          "group": "navigation",
-          "when": "resourceExtname in azureDataMapper.supportedSchemaFileExts"
-        },
-        {
-          "command": "azureDataMapper.loadOutputSchemaFile",
-          "group": "navigation",
-          "when": "resourceExtname in azureDataMapper.supportedSchemaFileExts"
-        },
         {
           "command": "azureDataMapper.loadDataMapFile",
           "group": "navigation",
