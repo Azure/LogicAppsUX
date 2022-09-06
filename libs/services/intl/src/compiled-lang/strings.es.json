@@ -863,7 +863,7 @@
   "84D91Y": [
     {
       "type": 0,
-      "value": "Archivo .pfx"
+      "value": "Archivo PFX"
     }
   ],
   "8CWFEh": [
@@ -2230,7 +2230,7 @@
   "P+mWgV": [
     {
       "type": 0,
-      "value": "Archivo .pfx"
+      "value": "Archivo PFX"
     }
   ],
   "P2A5dB": [
@@ -2528,6 +2528,12 @@
     {
       "type": 0,
       "value": "Contraseña"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Enter a Dictionary"
     }
   ],
   "SKXopi": [
@@ -4217,6 +4223,12 @@
     {
       "type": 0,
       "value": "Nombre"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Enter an Array"
     }
   ],
   "mCzkXX": [

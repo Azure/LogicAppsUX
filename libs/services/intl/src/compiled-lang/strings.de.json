@@ -1080,7 +1080,7 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Zielgruppe eingeben"
+      "value": "Benutzergruppe eingeben"
     }
   ],
   "AnX5yC": [
@@ -2070,7 +2070,7 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Mandanten eingeben"
+      "value": "Mandant eingeben"
     }
   ],
   "NoXs0l": [
@@ -2424,7 +2424,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Zielgruppe eingeben"
+      "value": "Benutzergruppe eingeben"
     }
   ],
   "RX2Shm": [
@@ -2493,6 +2493,12 @@
     {
       "type": 0,
       "value": "Kennwort"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Wörterbuch eingeben"
     }
   ],
   "SKXopi": [
@@ -4175,6 +4181,12 @@
     {
       "type": 0,
       "value": "Name"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Array eingeben"
     }
   ],
   "mCzkXX": [
