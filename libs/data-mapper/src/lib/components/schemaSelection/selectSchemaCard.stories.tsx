@@ -6,7 +6,7 @@ import React from 'react';
 
 export default {
   component: SelectSchemaCard,
-  title: 'Data Mapper/SelectSchemaCard',
+  title: 'Data Mapper Components/Misc/Select Schema card',
 } as ComponentMeta<typeof SelectSchemaCard>;
 
 export const Standard: ComponentStory<typeof SelectSchemaCard> = (args: SelectSchemaCardProps) => <SelectSchemaCard {...args} />;

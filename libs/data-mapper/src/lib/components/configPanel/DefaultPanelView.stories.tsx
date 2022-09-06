@@ -23,21 +23,21 @@ const MockStore = ({ mockState, children }) => {
 
 export default {
   component: DefaultPanelView,
-  title: 'Data Mapper/DefaultPanelView',
+  title: 'Data Mapper Components/Panel',
 } as ComponentMeta<typeof DefaultPanelView>;
 
 const Template: ComponentStory<typeof DefaultPanelView> = (args: DefaultPanelViewProps) => {
   return <DefaultPanelView {...args} />;
 };
 
-export const Standard = Template.bind({});
+export const Default = Template.bind({});
 
-Standard.args = {
+Default.args = {
   onInputSchemaClick: () => console.log('Input schema button clicked'),
   onOutputSchemaClick: () => console.log('Output schema button clicked'),
 };
 
-Standard.decorators = [
+Default.decorators = [
   (story) => {
     const schema: Schema = JSON.parse(JSON.stringify(simpleMockSchema));
     const extendedSchema = convertSchemaToSchemaExtended(schema);

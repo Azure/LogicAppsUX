@@ -12,7 +12,7 @@ const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exExpr
 
 export default {
   component: PropertiesPane,
-  title: 'Data Mapper/PropertiesPane',
+  title: 'Data Mapper Components/Pane',
   argTypes: {
     currentNode: {
       defaultValue: nodeOptions[0],
@@ -31,7 +31,7 @@ export default {
   },
 } as ComponentMeta<typeof PropertiesPane>;
 
-export const Standard: ComponentStory<typeof PropertiesPane> = (args: PropertiesPaneProps) => <PropertiesPane {...args} />;
-Standard.args = {
+export const PropertiesPanes: ComponentStory<typeof PropertiesPane> = (args: PropertiesPaneProps) => <PropertiesPane {...args} />;
+PropertiesPanes.args = {
   currentNode: undefined,
 };

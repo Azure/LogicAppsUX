@@ -23,7 +23,7 @@ const MockStore = ({ mockState, children }) => {
 
 export default {
   component: EditorBreadcrumb,
-  title: 'Data Mapper/Breadcrumb',
+  title: 'Data Mapper Components/Breadcrumb',
 } as ComponentMeta<typeof EditorBreadcrumb>;
 
 const Template: ComponentStory<typeof EditorBreadcrumb> = () => {

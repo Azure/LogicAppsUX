@@ -8,17 +8,17 @@ import { ReactFlowProvider } from 'react-flow-renderer';
 
 export default {
   component: SchemaCard,
-  title: 'Data Mapper/SchemaCard',
+  title: 'Data Mapper Components/Node card',
 } as ComponentMeta<typeof SchemaCard>;
 
-export const Standard: ComponentStory<typeof SchemaCard> = (args: NodeProps<SchemaCardProps>) => (
+export const Schema: ComponentStory<typeof SchemaCard> = (args: NodeProps<SchemaCardProps>) => (
   <div style={{ padding: '10px' }}>
     <ReactFlowProvider>
       <SchemaCard {...args} />
     </ReactFlowProvider>
   </div>
 );
-Standard.args = {
+Schema.args = {
   data: {
     label: 'label',
     schemaType: SchemaTypes.Input,

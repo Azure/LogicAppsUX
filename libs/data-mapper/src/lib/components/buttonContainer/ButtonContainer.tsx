@@ -25,8 +25,14 @@ export const ButtonContainer: React.FC<ButtonContainerProps> = ({ buttons, horiz
     // TODO (refortie) - Theme buttons on hover
     return (
       <StackItem key={index}>
-        <Tooltip content={buttonProps.tooltip} relationship="label">
-          <Button style={{ border: '0px', borderRadius: '0px' }} icon={<BundledIcon filled={buttonProps.filled} />} {...buttonProps} />
+        <Tooltip content={buttonProps.tooltip} relationship="label" appearance="inverted">
+          <Button
+            appearance="subtle"
+            size="medium"
+            style={{ border: '0px', borderRadius: '0px' }}
+            icon={<BundledIcon filled={buttonProps.filled} />}
+            {...buttonProps}
+          />
         </Tooltip>
       </StackItem>
     );

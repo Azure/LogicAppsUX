@@ -6,11 +6,11 @@ import type { NodeProps } from 'react-flow-renderer';
 
 export default {
   component: ExpressionCard,
-  title: 'Data Mapper/ExpressionCard',
+  title: 'Data Mapper Components/Node card',
 } as ComponentMeta<typeof ExpressionCard>;
 
-export const Standard: ComponentStory<typeof ExpressionCard> = (args: NodeProps<ExpressionCardProps>) => <ExpressionCard {...args} />;
-Standard.args = {
+export const Expression: ComponentStory<typeof ExpressionCard> = (args: NodeProps<ExpressionCardProps>) => <ExpressionCard {...args} />;
+Expression.args = {
   data: {
     onClick: () => console.log('Expression card clicked'),
     iconName: '12PointStar',

@@ -7,7 +7,7 @@ import React from 'react';
 
 export default {
   component: MapOverview,
-  title: 'Data Mapper/MapOverview',
+  title: 'Data Mapper Layout/Mapping canvas',
 } as ComponentMeta<typeof MapOverview>;
 
 const schema: SchemaExtended = {
@@ -48,8 +48,8 @@ const schema: SchemaExtended = {
   },
 };
 
-export const Standard: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
-Standard.args = {
+export const Overview: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
+Overview.args = {
   inputSchema: schema,
   outputSchema: schema,
 };

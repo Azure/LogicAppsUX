@@ -12,14 +12,14 @@ const MockStore = ({ children }) => {
 
 export default {
   component: WarningModal,
-  title: 'Data Mapper/WarningModal',
+  title: 'Data Mapper Components/Notifications/Warning modal',
 } as ComponentMeta<typeof WarningModal>;
 
 const Template: ComponentStory<typeof WarningModal> = () => <WarningModal />;
 
-export const Standard = Template.bind({});
+export const DiscardChange = Template.bind({});
 
-Standard.decorators = [
+DiscardChange.decorators = [
   (story) => {
     return <MockStore>{story()}</MockStore>;
   },

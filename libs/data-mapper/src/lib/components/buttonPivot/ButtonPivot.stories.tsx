@@ -13,11 +13,11 @@ import React, { useState } from 'react';
 
 export default {
   component: ButtonPivot,
-  title: 'Data Mapper/Button Groups/Button Pivot',
+  title: 'Data Mapper Components/Floaties',
 } as ComponentMeta<typeof ButtonPivot>;
 
-export const Simple: ComponentStory<typeof ButtonPivot> = (args: ButtonPivotProps) => <ButtonPivot {...args} />;
-Simple.args = {
+export const SimpleMappingToolbox: ComponentStory<typeof ButtonPivot> = (args: ButtonPivotProps) => <ButtonPivot {...args} />;
+SimpleMappingToolbox.args = {
   buttons: [
     {
       tooltip: 'Toolbox',
@@ -37,7 +37,7 @@ Simple.args = {
   yPos: '16px',
 };
 
-export const MappingToolbox: ComponentStory<typeof ButtonPivot> = (args: ButtonPivotProps) => {
+export const CompositeMappingToolbox: ComponentStory<typeof ButtonPivot> = (args: ButtonPivotProps) => {
   const [showToolboxPane, setShowToolboxPane] = useState<string | undefined>();
 
   const schema: Schema = JSON.parse(JSON.stringify(simpleMockSchema));
@@ -79,7 +79,7 @@ export const MappingToolbox: ComponentStory<typeof ButtonPivot> = (args: ButtonP
     </>
   );
 };
-MappingToolbox.args = {
+CompositeMappingToolbox.args = {
   buttons: [
     {
       tooltip: 'Toolbox',

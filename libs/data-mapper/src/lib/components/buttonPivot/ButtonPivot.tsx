@@ -34,7 +34,7 @@ export const ButtonPivot: React.FC<ButtonPivotProps> = ({
     // TODO (refortie) - Theme buttons on hover
     return (
       <Tooltip key={index} content={buttonProps.tooltip} appearance="inverted" positioning="above-start" relationship="label">
-        <Tab icon={<BundledIcon />} {...buttonProps} />
+        <Tab style={{ border: '0px', borderRadius: tokens.borderRadiusNone }} icon={<BundledIcon />} {...buttonProps} />
       </Tooltip>
     );
   });
@@ -62,7 +62,7 @@ export const ButtonPivot: React.FC<ButtonPivotProps> = ({
         vertical={!horizontal}
         style={tabListStyle}
         appearance="subtle"
-        size="medium"
+        size="small"
         onTabSelect={onTabSelect}
         selectedValue={selectedValue}
       >

@@ -11,7 +11,7 @@ const MockStore = ({ children }) => {
 
 export default {
   component: EditorCommandBar,
-  title: 'Data Mapper/EditorCommandBar',
+  title: 'Data Mapper Components/Command Bar',
 } as ComponentMeta<typeof EditorCommandBar>;
 
 const Template: ComponentStory<typeof EditorCommandBar> = (args: EditorCommandBarProps) => <EditorCommandBar {...args} />;
@@ -22,8 +22,8 @@ Template.args = {
   onRedoClick: () => console.log('Redo button clicked'),
 };
 
-export const Standard = Template.bind({});
-Standard.decorators = [
+export const Editor = Template.bind({});
+Editor.decorators = [
   (story) => {
     return <MockStore>{story()}</MockStore>;
   },

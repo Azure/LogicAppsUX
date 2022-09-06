@@ -21,22 +21,22 @@ const MockStore = ({ mockState, children }) => {
 
 export default {
   component: ChangeSchemaView,
-  title: 'Data Mapper/ChangeSchemaView',
+  title: 'Data Mapper Components/Panel',
 } as ComponentMeta<typeof ChangeSchemaView>;
 
 const Template: ComponentStory<typeof ChangeSchemaView> = (args: ChangeSchemaViewProps) => {
   return <ChangeSchemaView {...args} />;
 };
 
-export const Standard = Template.bind({});
+export const SchemaUpload = Template.bind({});
 
-Standard.args = {
+SchemaUpload.args = {
   schemaType: SchemaTypes.Input,
   setSelectedSchema: () => console.log('Selected new schema'),
   errorMessage: '',
 };
 
-Standard.decorators = [
+SchemaUpload.decorators = [
   (story) => {
     const availableSchemas = [JSON.parse(JSON.stringify(simpleMockSchema)), JSON.parse(JSON.stringify(noChildrenMockSchema))];
 

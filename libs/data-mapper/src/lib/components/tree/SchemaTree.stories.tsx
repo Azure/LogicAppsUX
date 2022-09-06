@@ -7,13 +7,13 @@ import React from 'react';
 
 export default {
   component: SchemaTree,
-  title: 'Data Mapper/SchemaTree',
+  title: 'Data Mapper Components/ Tree',
 } as ComponentMeta<typeof SchemaTree>;
 
 const mockSchema = convertSchemaToSchemaExtended(JSON.parse(JSON.stringify(simpleMockSchema)));
 
-export const Standard: ComponentStory<typeof SchemaTree> = (args: SchemaTreeProps) => <SchemaTree {...args} />;
-Standard.args = {
+export const SchemaTrees: ComponentStory<typeof SchemaTree> = (args: SchemaTreeProps) => <SchemaTree {...args} />;
+SchemaTrees.args = {
   schema: mockSchema,
   currentlySelectedNodes: [],
 };
