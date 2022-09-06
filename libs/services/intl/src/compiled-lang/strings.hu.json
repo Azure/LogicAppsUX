@@ -372,7 +372,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "Adja meg az engedélyeztetési fejléc értékét"
     }
   ],
   "1uGBLP": [
@@ -444,7 +444,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Felügyelt identitás"
     }
   ],
   "2b1yD3": [
@@ -498,7 +498,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Rendszer által hozzárendelt felügyelt identitás"
     }
   ],
   "3BZnxY": [
@@ -552,7 +552,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "A megadott identitás nincs hozzárendelve a logikai alkalmazáshoz."
     }
   ],
   "3jlz+B": [
@@ -600,7 +600,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Hitelesítés"
     }
   ],
   "47kOXr": [
@@ -696,7 +696,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "Szolgáltató"
     }
   ],
   "5aa76N": [
@@ -894,7 +894,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "Engedélyezze a felügyelt identitás használatát a logikai alkalmazásban."
     }
   ],
   "8U0KPg": [
@@ -906,7 +906,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "Adja meg a titkos kulcsot egyszerű szövegként, vagy használjon biztonságos paramétert"
     }
   ],
   "8Y5xpK": [
@@ -966,13 +966,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Érték"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "A felhasználói identitás nem támogatott, ha a logikai alkalmazásban engedélyezve van a rendszer által hozzárendelt felügyelt identitás."
     }
   ],
   "949s+r": [
@@ -1080,13 +1080,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Adja meg a célközönséget"
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "Felhasználónév"
     }
   ],
   "ArTh0/": [
@@ -1186,7 +1186,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
     }
   ],
   "BSHFiw": [
@@ -1234,7 +1234,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "Hitelesítő adatok típusa"
     }
   ],
   "Cy9qeQ": [
@@ -1264,7 +1264,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "Adja meg az ügyfélazonosítót"
     }
   ],
   "DZZ3fj": [
@@ -1336,7 +1336,7 @@
   "EjXdAm": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Jelszó"
     }
   ],
   "Eqgm4v": [
@@ -1526,7 +1526,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "Adja meg a hitelesítésszolgáltatót"
     }
   ],
   "GLd3MU": [
@@ -2010,7 +2010,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Felügyelt identitás"
     }
   ],
   "MTR4Vg": [
@@ -2070,13 +2070,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "Adja meg a bérlőt"
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Válasszon identitást"
     }
   ],
   "NvANon": [
@@ -2112,7 +2112,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Titkos kód"
     }
   ],
   "OFKZzQ": [
@@ -2424,7 +2424,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Adja meg a célközönséget"
     }
   ],
   "RX2Shm": [
@@ -2492,7 +2492,13 @@
   "SCCE6s": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Jelszó"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy tulajdonságtárat"
     }
   ],
   "SKXopi": [
@@ -2772,7 +2778,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "Tanúsítvány"
     }
   ],
   "VptXzY": [
@@ -2844,7 +2850,7 @@
   "X4gDhV": [
     {
       "type": 0,
-      "value": "Tenant"
+      "value": "Bérlő"
     }
   ],
   "X8JjjT": [
@@ -2982,7 +2988,7 @@
   "Y/bcmG": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Jelszó"
     }
   ],
   "Y0H9aX": [
@@ -3028,7 +3034,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Adja meg a PFX-fájlt"
     }
   ],
   "YaFjJQ": [
@@ -3172,7 +3178,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Adja meg a PFX-fájlt"
     }
   ],
   "ajAro8": [
@@ -3318,7 +3324,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Válasszon identitást"
     }
   ],
   "ci6ex1": [
@@ -3774,13 +3780,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Célközönség"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Rendszer által hozzárendelt felügyelt identitás"
     }
   ],
   "i/b3Ko": [
@@ -4076,7 +4082,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Adja meg a felhasználónevet"
     }
   ],
   "kneb9/": [
@@ -4181,6 +4187,12 @@
       "value": "Név"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy tömböt"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4238,7 +4250,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
     }
   ],
   "mx2IMJ": [
@@ -4650,7 +4662,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Titkos kód"
     }
   ],
   "rDt4Iu": [
@@ -4758,7 +4770,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "Ügyfélazonosító"
     }
   ],
   "ss5JPH": [
@@ -5016,7 +5028,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Célközönség"
     }
   ],
   "vXwYXe": [
@@ -5192,7 +5204,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
     }
   ],
   "xOAOHM": [

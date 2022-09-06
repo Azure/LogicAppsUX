@@ -406,7 +406,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "Zadejte hodnotu autorizační hlavičky."
     }
   ],
   "1uGBLP": [
@@ -478,7 +478,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Spravovaná identita"
     }
   ],
   "2b1yD3": [
@@ -532,7 +532,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Spravovaná identita přiřazená systémem"
     }
   ],
   "3BZnxY": [
@@ -586,7 +586,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "Zadaná identita není přidružená k této aplikaci logiky."
     }
   ],
   "3jlz+B": [
@@ -634,7 +634,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Ověřování"
     }
   ],
   "47kOXr": [
@@ -730,7 +730,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "Autorita"
     }
   ],
   "5aa76N": [
@@ -928,7 +928,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "Povolte prosím pro aplikaci logiky spravovanou identitu."
     }
   ],
   "8U0KPg": [
@@ -940,7 +940,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "Zadejte tajný kód jako prostý text nebo použijte zabezpečený parametr."
     }
   ],
   "8Y5xpK": [
@@ -1000,13 +1000,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Hodnota"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "Když má aplikace logiky povolenou spravovanou identitu přiřazenou systémem, identita uživatele se nepodporuje."
     }
   ],
   "949s+r": [
@@ -1114,13 +1114,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Zadejte cílovou skupinu."
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "Uživatelské jméno"
     }
   ],
   "ArTh0/": [
@@ -1242,7 +1242,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
     }
   ],
   "BSHFiw": [
@@ -1290,7 +1290,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "Typ přihlašovacích údajů"
     }
   ],
   "Cy9qeQ": [
@@ -1320,7 +1320,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "Zadejte ID klienta."
     }
   ],
   "DZZ3fj": [
@@ -1392,7 +1392,7 @@
   "EjXdAm": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Heslo"
     }
   ],
   "Eqgm4v": [
@@ -1604,7 +1604,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "Zadejte autoritu."
     }
   ],
   "GLd3MU": [
@@ -2114,7 +2114,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Spravovaná identita"
     }
   ],
   "MTR4Vg": [
@@ -2174,13 +2174,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "Zadejte tenanta."
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Vyberte prosím identitu."
     }
   ],
   "NvANon": [
@@ -2216,7 +2216,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Tajný kód"
     }
   ],
   "OFKZzQ": [
@@ -2524,7 +2524,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Zadejte cílovou skupinu."
     }
   ],
   "RX2Shm": [
@@ -2614,7 +2614,13 @@
   "SCCE6s": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Heslo"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Zadejte slovník."
     }
   ],
   "SKXopi": [
@@ -2894,7 +2900,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "Certifikát"
     }
   ],
   "VptXzY": [
@@ -3104,7 +3110,7 @@
   "Y/bcmG": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Heslo"
     }
   ],
   "Y0H9aX": [
@@ -3150,7 +3156,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Zadejte PFX."
     }
   ],
   "YaFjJQ": [
@@ -3294,7 +3300,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Zadejte PFX."
     }
   ],
   "ajAro8": [
@@ -3436,7 +3442,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Vyberte prosím identitu."
     }
   ],
   "ci6ex1": [
@@ -3910,13 +3916,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Cílová skupina"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Spravovaná identita přiřazená systémem"
     }
   ],
   "i/b3Ko": [
@@ -4212,7 +4218,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Zadejte uživatelské jméno."
     }
   ],
   "kneb9/": [
@@ -4317,6 +4323,12 @@
       "value": "Název"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Zadejte pole."
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4374,7 +4386,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
     }
   ],
   "mx2IMJ": [
@@ -4808,7 +4820,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Tajný kód"
     }
   ],
   "rDt4Iu": [
@@ -4916,7 +4928,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "ID klienta"
     }
   ],
   "ss5JPH": [
@@ -5174,7 +5186,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Cílová skupina"
     }
   ],
   "vXwYXe": [
@@ -5350,7 +5362,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
     }
   ],
   "xOAOHM": [

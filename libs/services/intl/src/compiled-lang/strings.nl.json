@@ -372,7 +372,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "De waarde van de autorisatie-header invoeren"
     }
   ],
   "1uGBLP": [
@@ -444,7 +444,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Beheerde identiteit"
     }
   ],
   "2b1yD3": [
@@ -498,7 +498,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Door het systeem toegewezen beheerde identiteit"
     }
   ],
   "3BZnxY": [
@@ -552,7 +552,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "De ingevoerde identiteit is niet gekoppeld aan deze logische app."
     }
   ],
   "3jlz+B": [
@@ -600,7 +600,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Verificatie"
     }
   ],
   "47kOXr": [
@@ -696,7 +696,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "Instantie"
     }
   ],
   "5aa76N": [
@@ -894,7 +894,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "Schakel de beheerde identiteit voor de logische app in."
     }
   ],
   "8U0KPg": [
@@ -906,7 +906,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "Geheim invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
     }
   ],
   "8Y5xpK": [
@@ -966,13 +966,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Waarde"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "De gebruikersidentiteit wordt niet ondersteund wanneer een door het systeem toegewezen beheerde identiteit voor de logische app is ingeschakeld."
     }
   ],
   "949s+r": [
@@ -1080,13 +1080,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Doelgroep invoeren"
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "Gebruikersnaam"
     }
   ],
   "ArTh0/": [
@@ -1186,7 +1186,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
     }
   ],
   "BSHFiw": [
@@ -1234,7 +1234,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "Referentietype"
     }
   ],
   "Cy9qeQ": [
@@ -1264,7 +1264,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "Client-id invoeren"
     }
   ],
   "DZZ3fj": [
@@ -1336,7 +1336,7 @@
   "EjXdAm": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Wachtwoord"
     }
   ],
   "Eqgm4v": [
@@ -1526,7 +1526,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "Autoriteit invoeren"
     }
   ],
   "GLd3MU": [
@@ -2010,7 +2010,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Beheerde identiteit"
     }
   ],
   "MTR4Vg": [
@@ -2070,13 +2070,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "Tenant invoeren"
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Selecteer een identiteit"
     }
   ],
   "NvANon": [
@@ -2112,7 +2112,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Geheim"
     }
   ],
   "OFKZzQ": [
@@ -2424,7 +2424,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Doelgroep invoeren"
     }
   ],
   "RX2Shm": [
@@ -2492,7 +2492,13 @@
   "SCCE6s": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Wachtwoord"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Enter a Dictionary"
     }
   ],
   "SKXopi": [
@@ -2772,7 +2778,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "Certificaat"
     }
   ],
   "VptXzY": [
@@ -2982,7 +2988,7 @@
   "Y/bcmG": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Wachtwoord"
     }
   ],
   "Y0H9aX": [
@@ -3028,7 +3034,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "PFX invoeren"
     }
   ],
   "YaFjJQ": [
@@ -3172,7 +3178,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "PFX invoeren"
     }
   ],
   "ajAro8": [
@@ -3314,7 +3320,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Selecteer een identiteit"
     }
   ],
   "ci6ex1": [
@@ -3770,13 +3776,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Doelgroep"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Door het systeem toegewezen beheerde identiteit"
     }
   ],
   "i/b3Ko": [
@@ -4068,7 +4074,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Gebruikersnaam opgeven"
     }
   ],
   "kneb9/": [
@@ -4173,6 +4179,12 @@
       "value": "Naam"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Enter an Array"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4230,7 +4242,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
     }
   ],
   "mx2IMJ": [
@@ -4642,7 +4654,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Geheim"
     }
   ],
   "rDt4Iu": [
@@ -4750,7 +4762,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "Client-id"
     }
   ],
   "ss5JPH": [
@@ -5008,7 +5020,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Doelgroep"
     }
   ],
   "vXwYXe": [
@@ -5184,7 +5196,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
     }
   ],
   "xOAOHM": [

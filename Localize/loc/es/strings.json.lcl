@@ -1288,7 +1288,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Pfx]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Archivo .pfx]]></Val>
+            <Val><![CDATA[Archivo PFX]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3268,7 +3268,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Pfx]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Archivo .pfx]]></Val>
+            <Val><![CDATA[Archivo PFX]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3689,6 +3689,15 @@
           <Val><![CDATA[Password]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Contraseña]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";SGxmEY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a Dictionary]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Introducir un diccionario]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6050,6 +6059,15 @@
           <Val><![CDATA[Name]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Nombre]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";mAuMD+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter an Array]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Introducir una matriz]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

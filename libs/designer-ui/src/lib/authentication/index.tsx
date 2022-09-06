@@ -1,24 +1,20 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import { Label } from '../label';
 import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
+import { AuthenticationDropdown } from './AuthenticationDropdown';
 import { BasicAuthentication } from './BasicAuth';
 import { CertificateAuthentication } from './CertificateAuth';
+import { CollapsedAuthentication } from './CollapsedAuthentication';
 import { MSIAuthentication } from './MSIAuth/MSIAuth';
 import { RawAuthentication } from './RawAuth';
+import { parseAuthEditor } from './util';
 import { useBoolean } from '@fluentui/react-hooks';
-import type { IDropdownOption, IDropdownStyles } from '@fluentui/react/lib/Dropdown';
-import { Dropdown } from '@fluentui/react/lib/Dropdown';
+import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import type { ManagedIdentity } from '@microsoft-logic-apps/utils';
 import { AssertionErrorCode, AssertionException, format } from '@microsoft-logic-apps/utils';
-import { useState } from 'react';
-
-const dropdownStyles: Partial<IDropdownStyles> = {
-  title: {
-    fontSize: '14px',
-  },
-};
+import { useCallback, useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export enum AuthenticationType {
   NONE = 'None',
@@ -61,9 +57,7 @@ export interface AuthenticationEditorOptions {
   identity?: ManagedIdentity;
 }
 
-interface AuthenticationEditorProps extends BaseEditorProps {
-  authType?: string | number;
-  AuthenticationEditorOptions: AuthenticationEditorOptions;
+export interface AuthProps {
   basicProps?: BasicProps;
   clientCertificateProps?: ClientCertificateProps;
   rawProps?: RawProps;
@@ -71,43 +65,61 @@ interface AuthenticationEditorProps extends BaseEditorProps {
   aadOAuthProps?: OAuthProps;
 }
 
+interface AuthenticationEditorProps extends BaseEditorProps {
+  authType?: string | number;
+  AuthenticationEditorOptions: AuthenticationEditorOptions;
+  authProps: AuthProps;
+}
+
 export const AuthenticationEditor = ({
   authType = AuthenticationType.NONE,
   AuthenticationEditorOptions,
-  basicProps = {},
-  clientCertificateProps = {},
-  rawProps = {},
-  msiProps = {},
-  aadOAuthProps = {},
+  authProps,
+  initialValue,
   GetTokenPicker,
 }: AuthenticationEditorProps): JSX.Element => {
-  const [codeView, toggleCodeView] = useBoolean(false);
+  const intl = useIntl();
+  const [codeView, { toggle: toggleCodeView }] = useBoolean(false);
   const [option, setOption] = useState<string | number>(authType);
+  const [collapsedValue, setCollapsedValue] = useState(initialValue);
+  const [currentProps, setCurrentProps] = useState<AuthProps>(authProps);
+  const { basicProps = {}, clientCertificateProps = {}, rawProps = {}, msiProps = {}, aadOAuthProps = {} } = currentProps;
+
+  const updateCollapsedValue = useCallback(() => {
+    setCollapsedValue(parseAuthEditor(option as AuthenticationType, currentProps));
+  }, [currentProps, option]);
+
+  useEffect(() => {
+    updateCollapsedValue();
+  }, [option, updateCollapsedValue]);
 
   const renderAuthentication = () => {
     switch (option) {
       case AuthenticationType.BASIC:
-        return <BasicAuthentication GetTokenPicker={GetTokenPicker} basicProps={basicProps} />;
+        return <BasicAuthentication basicProps={basicProps} GetTokenPicker={GetTokenPicker} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.CERTIFICATE:
-        return <CertificateAuthentication GetTokenPicker={GetTokenPicker} clientCertificateProps={clientCertificateProps} />;
+        return (
+          <CertificateAuthentication
+            clientCertificateProps={clientCertificateProps}
+            GetTokenPicker={GetTokenPicker}
+            setCurrentProps={setCurrentProps}
+          />
+        );
       case AuthenticationType.RAW:
-        return <RawAuthentication GetTokenPicker={GetTokenPicker} rawProps={rawProps} />;
+        return <RawAuthentication rawProps={rawProps} GetTokenPicker={GetTokenPicker} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.MSI:
         return (
           <MSIAuthentication
-            GetTokenPicker={GetTokenPicker}
             identity={AuthenticationEditorOptions.identity}
             msiProps={msiProps}
             onManagedIdentityChange={onManagedIdentityDropdownChange}
+            GetTokenPicker={GetTokenPicker}
+            setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.OAUTH:
         return (
-          <ActiveDirectoryAuthentication
-            GetTokenPicker={GetTokenPicker}
-            OauthProps={aadOAuthProps}
-            onOauthAuthenticationTypeChange={onAuthenticationTypeDropdownChange}
-          />
+          <ActiveDirectoryAuthentication OauthProps={aadOAuthProps} GetTokenPicker={GetTokenPicker} setCurrentProps={setCurrentProps} />
         );
       case AuthenticationType.NONE:
         return null;
@@ -120,13 +132,9 @@ export const AuthenticationEditor = ({
   };
 
   const onManagedIdentityDropdownChange = (_event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
-    // TODO: serialize data
-    console.log(item);
-  };
-
-  const onAuthenticationTypeDropdownChange = (_event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
-    // TODO: serialize data
-    console.log(item);
+    setCurrentProps((prevState: AuthProps) => ({
+      msiProps: { ...prevState.msiProps, MSIIdentity: item.key as string },
+    }));
   };
 
   const handleKeyChange = (_event?: React.FormEvent<HTMLDivElement>, item?: IDropdownOption) => {
@@ -136,28 +144,35 @@ export const AuthenticationEditor = ({
     }
   };
 
+  const authenticationTypeLabel = intl.formatMessage({
+    defaultMessage: 'Authentication Type',
+    description: 'Label for Authentication Type dropdown',
+  });
+
   return (
     <div className="msla-authentication-editor-container">
       {codeView ? (
-        <div />
+        <CollapsedAuthentication
+          collapsedValue={collapsedValue}
+          errorMessage=""
+          setCollapsedValue={setCollapsedValue}
+          GetTokenPicker={GetTokenPicker}
+        />
       ) : (
         <div className="msla-authentication-editor-expanded-container">
-          <div className="msla-authentication-editor-label">
-            <Label text={'Authentication Type'} isRequiredField={true} />
-          </div>
-          <Dropdown
+          <AuthenticationDropdown
+            dropdownLabel={authenticationTypeLabel}
+            selectedKey={option as string}
             options={Object.values(AuthenticationType).map((type) => {
               return { key: type, text: type };
             })}
-            selectedKey={option}
             onChange={handleKeyChange}
-            styles={dropdownStyles}
           />
           {renderAuthentication()}
         </div>
       )}
       <div className="msla-authentication-default-view-mode">
-        <EditorCollapseToggle collapsed={codeView} toggleCollapsed={toggleCodeView.toggle} />
+        <EditorCollapseToggle collapsed={codeView} toggleCollapsed={toggleCodeView} />
       </div>
     </div>
   );

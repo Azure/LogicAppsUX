@@ -372,7 +372,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "Yetkilendirme üst bilgisinin değerini girin"
     }
   ],
   "1uGBLP": [
@@ -444,7 +444,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Yönetilen kimlik"
     }
   ],
   "2b1yD3": [
@@ -498,7 +498,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Sistem tarafından atanan yönetilen kimlik"
     }
   ],
   "3BZnxY": [
@@ -552,7 +552,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "Girilen kimlik bu Logic App ile ilişkili değil."
     }
   ],
   "3jlz+B": [
@@ -600,7 +600,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Kimlik Doğrulaması"
     }
   ],
   "47kOXr": [
@@ -696,7 +696,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "Yetkili"
     }
   ],
   "5aa76N": [
@@ -894,7 +894,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "Lütfen mantıksal uygulama için yönetilen kimliği etkinleştirin."
     }
   ],
   "8U0KPg": [
@@ -906,7 +906,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "Gizli diziyi düz metin olarak girin veya güvenli bir parametre kullanın"
     }
   ],
   "8Y5xpK": [
@@ -966,13 +966,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Değer"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "Logic App'te sistem tarafından atanan yönetilen kimlik etkinleştirildiğinde kullanıcı kimliği desteklenmez."
     }
   ],
   "949s+r": [
@@ -1080,13 +1080,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Hedef kitleyi girin"
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "Kullanıcı adı"
     }
   ],
   "ArTh0/": [
@@ -1186,7 +1186,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
     }
   ],
   "BSHFiw": [
@@ -1234,7 +1234,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "Kimlik Bilgisi Türü"
     }
   ],
   "Cy9qeQ": [
@@ -1264,7 +1264,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "İstemci kimliğini girin"
     }
   ],
   "DZZ3fj": [
@@ -1336,7 +1336,7 @@
   "EjXdAm": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Parola"
     }
   ],
   "Eqgm4v": [
@@ -1518,7 +1518,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "Yetki girin"
     }
   ],
   "GLd3MU": [
@@ -1994,7 +1994,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Yönetilen kimlik"
     }
   ],
   "MTR4Vg": [
@@ -2054,13 +2054,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "Kiracı girin"
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Lütfen kimlik seçin"
     }
   ],
   "NvANon": [
@@ -2096,7 +2096,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Gizli dizi"
     }
   ],
   "OFKZzQ": [
@@ -2404,7 +2404,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Hedef kitleyi girin"
     }
   ],
   "RX2Shm": [
@@ -2472,7 +2472,13 @@
   "SCCE6s": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Parola"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Sözlük Girin"
     }
   ],
   "SKXopi": [
@@ -2752,7 +2758,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "Sertifika"
     }
   ],
   "VptXzY": [
@@ -2824,7 +2830,7 @@
   "X4gDhV": [
     {
       "type": 0,
-      "value": "Tenant"
+      "value": "Kiracı"
     }
   ],
   "X8JjjT": [
@@ -2962,7 +2968,7 @@
   "Y/bcmG": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Parola"
     }
   ],
   "Y0H9aX": [
@@ -3008,7 +3014,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "PFX girin"
     }
   ],
   "YaFjJQ": [
@@ -3152,7 +3158,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "PFX girin"
     }
   ],
   "ajAro8": [
@@ -3294,7 +3300,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Lütfen kimlik seçin"
     }
   ],
   "ci6ex1": [
@@ -3730,13 +3736,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Hedef kitle"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Sistem tarafından atanan yönetilen kimlik"
     }
   ],
   "i/b3Ko": [
@@ -4028,7 +4034,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Kullanıcı adını girin"
     }
   ],
   "kneb9/": [
@@ -4133,6 +4139,12 @@
       "value": "Ad"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Dizi Girin"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4190,7 +4202,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
     }
   ],
   "mx2IMJ": [
@@ -4602,7 +4614,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Gizli dizi"
     }
   ],
   "rDt4Iu": [
@@ -4710,7 +4722,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "İstemci kimliği"
     }
   ],
   "ss5JPH": [
@@ -4968,7 +4980,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Hedef kitle"
     }
   ],
   "vXwYXe": [
@@ -5140,7 +5152,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
     }
   ],
   "xOAOHM": [

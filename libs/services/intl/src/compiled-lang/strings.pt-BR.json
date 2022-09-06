@@ -383,7 +383,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "Inserir o valor do cabeçalho de autorização"
     }
   ],
   "1uGBLP": [
@@ -455,7 +455,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Identidade gerenciada"
     }
   ],
   "2b1yD3": [
@@ -509,7 +509,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Identidade gerenciada atribuída pelo sistema"
     }
   ],
   "3BZnxY": [
@@ -563,7 +563,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "A identidade inserida não está associada a este Aplicativo Lógico."
     }
   ],
   "3jlz+B": [
@@ -611,7 +611,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Autenticação"
     }
   ],
   "47kOXr": [
@@ -707,7 +707,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "Autoridade"
     }
   ],
   "5aa76N": [
@@ -905,7 +905,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "Habilite a identidade gerenciada para o aplicativo lógico."
     }
   ],
   "8U0KPg": [
@@ -917,7 +917,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "Inserir o segredo como texto sem formatação ou usar um parâmetro seguro"
     }
   ],
   "8Y5xpK": [
@@ -977,13 +977,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Valor"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "Não há suporte para a identidade pelo usuário quando o Aplicativo Lógico tem a identidade gerenciada atribuída pelo sistema habilitada."
     }
   ],
   "949s+r": [
@@ -1091,13 +1091,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Inserir público-alvo"
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "Nome de usuário"
     }
   ],
   "ArTh0/": [
@@ -1208,7 +1208,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Insira a senha como texto sem formatação ou use um parâmetro seguro"
     }
   ],
   "BSHFiw": [
@@ -1256,7 +1256,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "Tipo de Credencial"
     }
   ],
   "Cy9qeQ": [
@@ -1286,7 +1286,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "Inserir a ID do cliente"
     }
   ],
   "DZZ3fj": [
@@ -1358,7 +1358,7 @@
   "EjXdAm": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Senha"
     }
   ],
   "Eqgm4v": [
@@ -1551,7 +1551,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "Inserir autoridade"
     }
   ],
   "GLd3MU": [
@@ -2038,7 +2038,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Identidade gerenciada"
     }
   ],
   "MTR4Vg": [
@@ -2098,13 +2098,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "Inserir o locatário"
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Selecione uma identidade"
     }
   ],
   "NvANon": [
@@ -2140,7 +2140,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Segredo"
     }
   ],
   "OFKZzQ": [
@@ -2448,7 +2448,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Inserir público-alvo"
     }
   ],
   "RX2Shm": [
@@ -2527,7 +2527,13 @@
   "SCCE6s": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Senha"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Inserir um Dicionário"
     }
   ],
   "SKXopi": [
@@ -2807,7 +2813,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "Certificado"
     }
   ],
   "VptXzY": [
@@ -2879,7 +2885,7 @@
   "X4gDhV": [
     {
       "type": 0,
-      "value": "Tenant"
+      "value": "Locatário"
     }
   ],
   "X8JjjT": [
@@ -3017,7 +3023,7 @@
   "Y/bcmG": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Senha"
     }
   ],
   "Y0H9aX": [
@@ -3063,7 +3069,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Inserir Pfx"
     }
   ],
   "YaFjJQ": [
@@ -3207,7 +3213,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Inserir Pfx"
     }
   ],
   "ajAro8": [
@@ -3349,7 +3355,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Selecione uma identidade"
     }
   ],
   "ci6ex1": [
@@ -3800,13 +3806,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Audiência"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Identidade gerenciada atribuída pelo sistema"
     }
   ],
   "i/b3Ko": [
@@ -4098,7 +4104,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Inserir o nome de usuário"
     }
   ],
   "kneb9/": [
@@ -4203,6 +4209,12 @@
       "value": "Nome"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Inserir uma Matriz"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4260,7 +4272,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Insira a senha como texto sem formatação ou use um parâmetro seguro"
     }
   ],
   "mx2IMJ": [
@@ -4683,7 +4695,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Segredo"
     }
   ],
   "rDt4Iu": [
@@ -4791,7 +4803,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "ID do Cliente"
     }
   ],
   "ss5JPH": [
@@ -5049,7 +5061,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Audiência"
     }
   ],
   "vXwYXe": [
@@ -5225,7 +5237,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Insira a senha como texto sem formatação ou use um parâmetro seguro"
     }
   ],
   "xOAOHM": [

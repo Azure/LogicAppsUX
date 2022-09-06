@@ -42,6 +42,7 @@ export interface PanelHeaderProps {
   onDismissButtonClicked?(): void;
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
+  onTitleChange: (newValue: string) => void;
 }
 export enum PanelHeaderControlType {
   DISMISS_BUTTON,
@@ -101,6 +102,7 @@ export const PanelHeader = ({
   onDismissButtonClicked,
   onRenderWarningMessage,
   toggleCollapse,
+  onTitleChange,
 }: PanelHeaderProps): JSX.Element => {
   const intl = useIntl();
 
@@ -208,7 +210,8 @@ export const PanelHeader = ({
                   titleId={titleId}
                   readOnlyMode={readOnlyMode}
                   renameTitleDisabled={renameTitleDisabled}
-                  savedTitle={title}
+                  titleValue={title}
+                  onChange={onTitleChange}
                 />
               </div>
             ) : null}

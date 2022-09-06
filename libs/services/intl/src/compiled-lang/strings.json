@@ -1041,6 +1041,12 @@
       "value": "Returns true if both parameters are true"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -2477,6 +2483,12 @@
     {
       "type": 0,
       "value": "Password"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Enter a Dictionary"
     }
   ],
   "SKXopi": [
@@ -4139,6 +4151,12 @@
     {
       "type": 0,
       "value": "Name"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Enter an Array"
     }
   ],
   "mCzkXX": [
