@@ -55,7 +55,7 @@ const loadDataMapFileCmd = async (uri: Uri) => {
   const dstSchemaPath = path.join(schemasFolder, dataMap.$targetSchema);
 
   if (!fileExists(srcSchemaPath) || !fileExists(dstSchemaPath)) {
-    console.error('At least one of the schema files was not found in the Schemas folder!');
+    DataMapperPanel.log('At least one of the schema files was not found in the Schemas folder!');
   }
 
   DataMapperPanel.currentPanel.sendMsgToWebview({

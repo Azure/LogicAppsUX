@@ -2,7 +2,7 @@ import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionCo
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
-import type { WebviewPanel, ExtensionContext } from 'vscode';
+import type { WebviewPanel, ExtensionContext, OutputChannel } from 'vscode';
 
 type SchemaType = 'input' | 'output';
 
@@ -22,6 +22,7 @@ type ReceivingMessageTypes =
 
 export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
+  public static outputChannel: OutputChannel | undefined;
   public static readonly viewType = 'dataMapperWebview';
   public static extensionContext: ExtensionContext | undefined;
   public static currentDataMapName: string | undefined;
@@ -40,7 +41,12 @@ export default class DataMapperPanel {
       DataMapperPanel.viewType, // Key used to reference the panel
       webviewTitle, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
-      { enableScripts: true }
+      {
+        enableScripts: true,
+        // NOTE: Keeps webview content state even when placed in background (same as browsers)
+        // - not as performant as vscode's get/setState, but likely not a concern at all for MVP
+        retainContextWhenHidden: true,
+      }
     );
 
     this.currentPanel = new DataMapperPanel(panel, context.extensionPath);
@@ -49,8 +55,6 @@ export default class DataMapperPanel {
   public sendMsgToWebview(msg: SendingMessageTypes) {
     this._panel.webview.postMessage(msg);
   }
-
-  // TODO: revive()
 
   private constructor(panel: WebviewPanel, extPath: string) {
     this._panel = panel;
@@ -131,5 +135,10 @@ export default class DataMapperPanel {
         DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
       }
     });
+  }
+
+  public static log(text: string) {
+    DataMapperPanel.outputChannel.appendLine(text);
+    DataMapperPanel.outputChannel.show();
   }
 }

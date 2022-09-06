@@ -1,7 +1,8 @@
+import DataMapperPanel from './DataMapperPanel';
 import { registerCommands } from './commands/commands';
-import { supportedDataMapFileExts, supportedSchemaFileExts } from './extensionConfig';
+import { outputChannelTitle, supportedDataMapFileExts, supportedSchemaFileExts } from './extensionConfig';
 import type { ExtensionContext } from 'vscode';
-import { commands } from 'vscode';
+import { window, commands } from 'vscode';
 
 export function activate(context: ExtensionContext) {
   // Set supported file extensions for context menu detection
@@ -9,5 +10,9 @@ export function activate(context: ExtensionContext) {
   commands.executeCommand('setContext', 'azureDataMapper.supportedSchemaFileExts', supportedSchemaFileExts);
   commands.executeCommand('setContext', 'azureDataMapper.supportedFileExts', [...supportedDataMapFileExts, ...supportedSchemaFileExts]);
 
+  DataMapperPanel.outputChannel = window.createOutputChannel(outputChannelTitle);
+
   registerCommands(context);
+
+  DataMapperPanel.log('Data Mapper is loaded and commands are registered');
 }
