@@ -3,8 +3,8 @@ name: Test Runner
 on:
   repository_dispatch:
     types: [release]
-  schedule:
-    - cron: '0 7 * * *' # run at 7 AM UTC
+#   schedule:
+#     - cron: '0 7 * * *' # run at 7 AM UTC
 
 jobs:
   bump-version:
