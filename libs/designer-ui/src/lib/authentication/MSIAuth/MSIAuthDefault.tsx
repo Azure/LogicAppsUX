@@ -1,4 +1,5 @@
 import type { MSIProps } from '..';
+import type { ChangeHandler } from '../../editor/base';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
@@ -10,12 +11,14 @@ interface MSIAuthenticationDefaultProps {
   msiProps: MSIProps;
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
+  onBlur: ChangeHandler;
 }
 
 export const MSIAuthenticationDefault = ({
   msiProps,
   GetTokenPicker,
   onManagedIdentityChange,
+  onBlur,
 }: MSIAuthenticationDefaultProps): JSX.Element => {
   const intl = useIntl();
 
@@ -58,6 +61,7 @@ export const MSIAuthenticationDefault = ({
         initialValue={MSIAudience}
         AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
         GetTokenPicker={GetTokenPicker}
+        onBlur={onBlur}
       />
     </>
   );

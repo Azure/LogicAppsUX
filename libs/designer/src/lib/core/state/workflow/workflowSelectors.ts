@@ -3,10 +3,19 @@ import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '../../parsers/models/w
 import type { RootState } from '../../store';
 import { createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowState } from './workflowInterfaces';
+import { labelCase } from '@microsoft-logic-apps/utils';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
+
+export const useNodeDisplayName = (id?: string) => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return id && state.idReplacements[id] ? labelCase(state.idReplacements[id]) : labelCase(id ?? '');
+    })
+  );
+};
 
 export const useNodeMetadata = (id?: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.nodesMetadata[id] : undefined)));

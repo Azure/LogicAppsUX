@@ -14,6 +14,9 @@ Standard.args = {
   data: {
     iconName: 'Diamond',
     onClick: () => console.log('Expression card clicked'),
+    iconName: '12PointStar',
+    expressionName: 'Expression Name',
+    brandColor: 'purple',
     displayHandle: false,
     disabled: false,
     error: false,

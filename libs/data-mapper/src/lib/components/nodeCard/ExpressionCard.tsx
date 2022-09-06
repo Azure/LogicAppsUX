@@ -1,12 +1,25 @@
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
 import { Icon } from '@fluentui/react';
-import { Button, createFocusOutlineStyle, makeStyles, mergeClasses, PresenceBadge, shorthands, tokens } from '@fluentui/react-components';
+import {
+  PresenceBadge,
+  Button,
+  createFocusOutlineStyle,
+  makeStyles,
+  mergeClasses,
+  shorthands,
+  tokens,
+  Tooltip,
+  Text,
+} from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 import type { NodeProps } from 'react-flow-renderer';
 
 export type ExpressionCardProps = {
-  //expressionDataType: ExpressionNodeDataType; TODO Once we have the manifest to implement the types
+  expressionName: string;
+  brandColor: string;
+  iconName: string;
+  onClick: () => void;
 } & CardProps;
 
 const useStyles = makeStyles({
@@ -65,16 +78,23 @@ const useStyles = makeStyles({
 });
 
 export const ExpressionCard: FunctionComponent<NodeProps<ExpressionCardProps>> = (props: NodeProps<ExpressionCardProps>) => {
-  const { onClick, disabled, error, iconName } = props.data;
+  const { onClick, expressionName, brandColor, iconName, disabled, error } = props.data;
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   return (
     <div className={classes.container}>
       {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge}></PresenceBadge>}
-      <Button onClick={onClick} className={mergedClasses} disabled={!!disabled}>
-        <Icon iconName={iconName} />
-      </Button>
+      <Tooltip
+        content={{
+          children: <Text size={200}>{expressionName}</Text>,
+        }}
+        relationship="label"
+      >
+        <Button onClick={onClick} color={brandColor} className={mergedClasses} disabled={!!disabled}>
+          <Icon iconName={iconName} />
+        </Button>
+      </Tooltip>
     </div>
   );
 };

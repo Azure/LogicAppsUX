@@ -383,7 +383,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "Immettere il valore dell'intestazione dell'autorizzazione"
     }
   ],
   "1uGBLP": [
@@ -455,7 +455,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Identità gestita"
     }
   ],
   "2b1yD3": [
@@ -509,7 +509,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Identità gestita assegnata dal sistema"
     }
   ],
   "3BZnxY": [
@@ -563,7 +563,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "L'identità specificata non è associata a questa app per la logica."
     }
   ],
   "3jlz+B": [
@@ -611,7 +611,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Autenticazione"
     }
   ],
   "47kOXr": [
@@ -707,7 +707,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "Autorità"
     }
   ],
   "5aa76N": [
@@ -863,7 +863,7 @@
   "84D91Y": [
     {
       "type": 0,
-      "value": "Pfx"
+      "value": "PFX"
     }
   ],
   "8CWFEh": [
@@ -905,7 +905,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "Abilitare l'identità gestita per l'app per la logica."
     }
   ],
   "8U0KPg": [
@@ -917,7 +917,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "Immettere il segreto come testo normale o usare un parametro protetto"
     }
   ],
   "8Y5xpK": [
@@ -977,13 +977,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Valore"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "L'identità utente non è supportata quando per l'app per la logica è abilitata l'identità gestita assegnata dal sistema."
     }
   ],
   "949s+r": [
@@ -1091,13 +1091,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Immetti destinatari"
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "Nome utente"
     }
   ],
   "ArTh0/": [
@@ -1208,7 +1208,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Immettere la password come testo normale o usare un parametro protetto"
     }
   ],
   "BSHFiw": [
@@ -1256,7 +1256,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "Tipo di credenziali"
     }
   ],
   "Cy9qeQ": [
@@ -1286,7 +1286,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "Immetti ID client"
     }
   ],
   "DZZ3fj": [
@@ -1551,7 +1551,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "Immetti autorità"
     }
   ],
   "GLd3MU": [
@@ -2038,7 +2038,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Identità gestita"
     }
   ],
   "MTR4Vg": [
@@ -2098,13 +2098,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "Immetti tenant"
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Selezionare un'identità"
     }
   ],
   "NvANon": [
@@ -2140,7 +2140,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Segreto"
     }
   ],
   "OFKZzQ": [
@@ -2238,7 +2238,7 @@
   "P+mWgV": [
     {
       "type": 0,
-      "value": "Pfx"
+      "value": "PFX"
     }
   ],
   "P2A5dB": [
@@ -2456,7 +2456,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Immetti destinatari"
     }
   ],
   "RX2Shm": [
@@ -2536,6 +2536,12 @@
     {
       "type": 0,
       "value": "Password"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Immettere un dizionario"
     }
   ],
   "SKXopi": [
@@ -2815,7 +2821,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "Certificato"
     }
   ],
   "VptXzY": [
@@ -3071,7 +3077,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Immetti file PFX"
     }
   ],
   "YaFjJQ": [
@@ -3215,7 +3221,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Immetti file PFX"
     }
   ],
   "ajAro8": [
@@ -3357,7 +3363,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Selezionare un'identità"
     }
   ],
   "ci6ex1": [
@@ -3808,13 +3814,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Destinatari"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Identità gestita assegnata dal sistema"
     }
   ],
   "i/b3Ko": [
@@ -4106,7 +4112,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Immetti nome utente"
     }
   ],
   "kneb9/": [
@@ -4211,6 +4217,12 @@
       "value": "Nome"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Immettere una matrice"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4268,7 +4280,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Immettere la password come testo normale o usare un parametro protetto"
     }
   ],
   "mx2IMJ": [
@@ -4691,7 +4703,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Segreto"
     }
   ],
   "rDt4Iu": [
@@ -4799,7 +4811,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "ID client"
     }
   ],
   "ss5JPH": [
@@ -5057,7 +5069,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Destinatari"
     }
   ],
   "vXwYXe": [
@@ -5233,7 +5245,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Immettere la password come testo normale o usare un parametro protetto"
     }
   ],
   "xOAOHM": [

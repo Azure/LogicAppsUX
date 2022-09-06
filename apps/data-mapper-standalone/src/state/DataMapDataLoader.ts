@@ -15,6 +15,7 @@ const initialState: DataMapLoadingState = {
   resourcePath: '',
 };
 
+// TODO (Not immediately urgent 8/31): Come through and update these data map/schema formats
 export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
 
