@@ -40,7 +40,12 @@ export default class DataMapperPanel {
       DataMapperPanel.viewType, // Key used to reference the panel
       webviewTitle, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
-      { enableScripts: true }
+      {
+        enableScripts: true,
+        // NOTE: Keeps webview content state even when placed in background (same as browsers)
+        // - not as performant as vscode's get/setState, but likely not a concern at all for MVP
+        retainContextWhenHidden: true,
+      }
     );
 
     this.currentPanel = new DataMapperPanel(panel, context.extensionPath);
@@ -49,8 +54,6 @@ export default class DataMapperPanel {
   public sendMsgToWebview(msg: SendingMessageTypes) {
     this._panel.webview.postMessage(msg);
   }
-
-  // TODO: revive()
 
   private constructor(panel: WebviewPanel, extPath: string) {
     this._panel = panel;
