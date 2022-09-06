@@ -74,12 +74,7 @@ function GeneralSettings(): JSX.Element | null {
   useEffect(() => {
     setValidationErrors(validate('operations', operations, nodeId) ?? []);
     dispatch(setTabError({ tabName: 'Settings', hasErrors: (validate('operations', operations, nodeId) ?? []).length > 0, nodeId }));
-  }, [operations, nodeId]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // useUnmount(() => {
-  //   console.log('unmount run');
-  //   return dispatch(setTabError({tabName: 'Settings', hasErrors: validationErrors.length > 0}));
-  // });
+  }, [operations, nodeId, dispatch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onConcurrencyToggle = (checked: boolean): void => {
     dispatch(
