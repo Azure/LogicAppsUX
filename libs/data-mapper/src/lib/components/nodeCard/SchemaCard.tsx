@@ -1,3 +1,4 @@
+import { childOutputNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeDataType } from '../../models';
 import { SchemaTypes } from '../../models';
@@ -25,6 +26,7 @@ export type SchemaCardProps = {
   schemaType: SchemaTypes;
   displayHandle: boolean;
   isLeaf: boolean;
+  isChild: boolean;
   nodeDataType: SchemaNodeDataType;
 } & CardProps;
 
@@ -36,6 +38,7 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     height: '48px',
     opacity: 1,
+    width: `${nodeCardWidth}px`,
     alignItems: 'center',
     justifyContent: 'left',
     ...shorthands.gap('8px'),
@@ -88,6 +91,9 @@ const useStyles = makeStyles({
   disabled: {
     opacity: 0.38,
   },
+  outputChildCard: {
+    width: `${childOutputNodeCardWidth}px`,
+  },
 
   focusIndicator: createFocusOutlineStyle({
     style: {
@@ -119,18 +125,21 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 };
 
 export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
-  const { label, schemaType, isLeaf, onClick, disabled, error, displayHandle, nodeDataType } = props.data;
-
+  const { label, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, nodeDataType } = props.data;
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
-  const mergedButtonClasses = mergeClasses(sharedStyles.root, classes.root);
+  const mergedClasses = mergeClasses(sharedStyles.root, classes.root);
+  const mergedChildOutputClasses = mergeClasses(sharedStyles.root, classes.root, classes.outputChildCard);
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
+  const mergedButtonClasses = mergeClasses(sharedStyles.root, classes.root);
   const errorClass = mergeClasses(mergedButtonClasses, sharedStyles.error);
 
   const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const BundledTypeIcon = icon24ForSchemaNodeType(nodeDataType);
+
+  const isOutputChildNode = schemaType === SchemaTypes.Output && isChild;
 
   return (
     <div className={disabled ? mergeClasses(classes.container, classes.disabled) : classes.container}>
@@ -142,8 +151,12 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
           isValidConnection={isValidConnection}
         />
       ) : null}
-      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.badge}></Badge>}
-      <Button className={error ? errorClass : mergedButtonClasses} disabled={!!disabled} onClick={onClick}>
+      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.badge}></Badge>}{' '}
+      <Button
+        className={error ? errorClass : isOutputChildNode ? mergedChildOutputClasses : mergedClasses}
+        disabled={!!disabled}
+        onClick={onClick}
+      >
         <span className={classes.cardIcon}>
           <BundledTypeIcon />
         </span>

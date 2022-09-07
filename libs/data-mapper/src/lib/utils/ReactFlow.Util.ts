@@ -1,4 +1,5 @@
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
+import { childOutputNodeCardIndent } from '../constants/NodeConstants';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
@@ -8,7 +9,7 @@ import { ConnectionLineType, Position } from 'react-flow-renderer';
 
 const inputX = 100;
 const rootOutputX = 500;
-const childXOffSet = 30;
+const childXOffSet = childOutputNodeCardIndent;
 
 const rootY = 30;
 const rootYOffset = 60;
@@ -36,6 +37,7 @@ export const convertToReactFlowNodes = (
         schemaType: SchemaTypes.Input,
         displayHandle: true,
         isLeaf: true,
+        isChild: false,
         nodeDataType: inputNode.schemaNodeDataType,
         disabled: false,
         error: false,
@@ -60,6 +62,7 @@ export const convertToReactFlowNodes = (
           schemaType: SchemaTypes.Input,
           displayHandle: true,
           isLeaf: true,
+          isChild: false,
           nodeDataType: inputNode.schemaNodeDataType,
           disabled: false,
           error: false,
@@ -96,6 +99,7 @@ export const convertToReactFlowParentAndChildNodes = (
       schemaType,
       displayHandle: displayTargets,
       isLeaf: false,
+      isChild: false,
       nodeDataType: parentSchemaNode.schemaNodeDataType,
       disabled: false,
       error: false,
@@ -117,6 +121,7 @@ export const convertToReactFlowParentAndChildNodes = (
         schemaType,
         displayHandle: displayTargets,
         isLeaf: isLeafNode(childNode),
+        isChild: true,
         nodeDataType: childNode.schemaNodeDataType,
         disabled: false,
         error: false,
