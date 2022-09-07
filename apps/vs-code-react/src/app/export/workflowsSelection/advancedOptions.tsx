@@ -77,6 +77,7 @@ export const AdvancedOptions: React.FC = () => {
         placeholder={AdvancedOptionsTypes.off}
         options={advancedOptions}
         onChange={onChangeOptions}
+        selectedKeys={selectedAdvanceOptions}
         multiSelect
       />
     </div>
