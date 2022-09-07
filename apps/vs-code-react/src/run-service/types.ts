@@ -398,6 +398,6 @@ export interface INamingValidation {
 
 export enum AdvancedOptionsTypes {
   off = 'Off',
-  cloneConnections = 'CloneConnections',
-  generateInfrastructureTemplates = 'GenerateInfrastructureTemplates',
+  cloneConnections = 'cloneConnections',
+  generateInfrastructureTemplates = 'generateInfrastructureTemplates',
 }
