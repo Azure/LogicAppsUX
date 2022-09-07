@@ -1,4 +1,5 @@
 import DataMapperExt from './DataMapperExt';
+import { startBackendRuntime, stopBackendRuntime } from './FxWorkflowRuntime';
 import { registerCommands } from './commands/commands';
 import { outputChannelTitle, supportedDataMapFileExts, supportedSchemaFileExts } from './extensionConfig';
 import type { ExtensionContext } from 'vscode';
@@ -15,4 +16,10 @@ export function activate(context: ExtensionContext) {
   registerCommands(context);
 
   DataMapperExt.log('Data Mapper is loaded and commands are registered');
+
+  startBackendRuntime(DataMapperExt.getWorkspaceFolder());
+}
+
+export function deactivate() {
+  stopBackendRuntime();
 }

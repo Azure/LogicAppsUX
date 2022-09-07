@@ -1,4 +1,5 @@
 import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionConfig';
+import type { ChildProcess } from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
@@ -26,6 +27,7 @@ export default class DataMapperExt {
   public static readonly viewType = 'dataMapperWebview';
   public static extensionContext: ExtensionContext | undefined;
   public static currentDataMapName: string | undefined;
+  public static backendRuntimeChildProcess: ChildProcess | undefined;
 
   private readonly _panel: WebviewPanel;
   private readonly _extensionPath: string;
@@ -103,7 +105,7 @@ export default class DataMapperExt {
         break;
       }
       case 'readLocalFileOptions': {
-        const folderPath = workspace.workspaceFolders[0].uri.fsPath; // [WI 15419837] Find out how multi folder workspaces work
+        const folderPath = DataMapperExt.getWorkspaceFolder(); // [WI 15419837] Find out how multi folder workspaces work
         fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
           DataMapperExt.currentPanel?.sendMsgToWebview({
             command: 'showAvailableSchemas',
@@ -114,7 +116,7 @@ export default class DataMapperExt {
       }
       case 'saveDataMapDefinition': {
         const fileName = `${DataMapperExt.currentDataMapName}.yml`;
-        const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, fileName);
+        const filePath = path.join(DataMapperExt.getWorkspaceFolder(), dataMapDefinitionsPath, fileName);
         fs.writeFile(filePath, msg.data, 'utf8');
       }
     }
@@ -125,7 +127,7 @@ export default class DataMapperExt {
     fs.readFile(filePath, 'utf16le').then((text: string) => {
       // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call
       const schemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
-      const expectedSchemaPath = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath, schemaFileName);
+      const expectedSchemaPath = path.join(DataMapperExt.getWorkspaceFolder(), schemasPath, schemaFileName);
 
       if (!fileExists(expectedSchemaPath)) {
         fs.writeFile(expectedSchemaPath, text, 'utf16le').then(() => {
@@ -140,5 +142,9 @@ export default class DataMapperExt {
   public static log(text: string) {
     DataMapperExt.outputChannel.appendLine(text);
     DataMapperExt.outputChannel.show();
+  }
+
+  public static getWorkspaceFolder() {
+    return workspace.workspaceFolders[0].uri.fsPath;
   }
 }
