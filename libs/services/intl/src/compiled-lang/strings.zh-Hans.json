@@ -1034,6 +1034,12 @@
       "value": "如果两个参数均为 true，则返回 true"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
