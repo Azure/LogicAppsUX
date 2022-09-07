@@ -1,4 +1,5 @@
-import { NodeType, type SelectedNode } from '../../models';
+import type { SelectedNode } from '../../models';
+import { NodeType } from '../../models';
 import { PropertiesPane } from './PropertiesPane';
 import type { PropertiesPaneProps } from './PropertiesPane';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
