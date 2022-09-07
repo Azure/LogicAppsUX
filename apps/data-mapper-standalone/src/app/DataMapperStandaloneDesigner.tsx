@@ -4,6 +4,7 @@ import {
   DataMapDataProvider,
   DataMapperDesigner,
   DataMapperDesignerProvider,
+  defaultSchemaSelectionServiceOptions,
   InitSchemaSelectionService,
 } from '@microsoft/logic-apps-data-mapper';
 import { useSelector } from 'react-redux';
@@ -17,8 +18,11 @@ export const DataMapperStandaloneDesigner = () => {
     return state.dataMapDataLoader;
   });
 
-  const baseUrl = 'http://localhost:7071';
-  InitSchemaSelectionService({ baseUrl: baseUrl, resourceUrl: schemaState.resourcePath, accessToken: schemaState.armToken });
+  InitSchemaSelectionService({
+    baseUrl: defaultSchemaSelectionServiceOptions.baseUrl,
+    resourceUrl: schemaState.resourcePath,
+    accessToken: schemaState.armToken,
+  });
 
   const saveStateCall = (dataMapDefinition: string) => {
     new Promise((resolve) => setTimeout(resolve, 10));
