@@ -12,7 +12,6 @@ export default {
 export const Standard: ComponentStory<typeof ExpressionCard> = (args: NodeProps<ExpressionCardProps>) => <ExpressionCard {...args} />;
 Standard.args = {
   data: {
-    iconName: 'Diamond',
     onClick: () => console.log('Expression card clicked'),
     iconName: '12PointStar',
     expressionName: 'Expression Name',

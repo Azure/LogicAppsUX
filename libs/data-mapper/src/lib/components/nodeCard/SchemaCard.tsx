@@ -36,7 +36,6 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     height: '48px',
     opacity: 1,
-    width: '200px',
     alignItems: 'center',
     justifyContent: 'left',
     ...shorthands.gap('8px'),

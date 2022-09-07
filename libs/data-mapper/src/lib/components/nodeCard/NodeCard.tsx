@@ -1,7 +1,6 @@
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 
 export interface CardProps {
-  iconName: string;
   onClick?: () => void;
   displayHandle: boolean;
   disabled: boolean;
