@@ -13,7 +13,18 @@ export interface IApiService {
   getWorkflows(subscriptionId: string, iseId: string): Promise<any>;
   getSubscriptions(): Promise<any>;
   getIse(selectedSubscription: string): Promise<any>;
-  validateWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string): Promise<any>;
+  validateWorkflows(
+    selectedWorkflows: Array<WorkflowsList>,
+    selectedSubscription: string,
+    selectedLocation: string,
+    selectedAdvanceOptions: AdvancedOptionsTypes[]
+  ): Promise<any>;
+  exportWorkflows(
+    selectedWorkflows: Array<WorkflowsList>,
+    selectedSubscription: string,
+    selectedLocation: string,
+    selectedAdvanceOptions: AdvancedOptionsTypes[]
+  ): Promise<any>;
 }
 
 export interface ArmResources<T> {

@@ -104,10 +104,16 @@ export class ApiService implements IApiService {
     return { ise };
   }
 
-  async validateWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string) {
+  async validateWorkflows(
+    selectedWorkflows: Array<WorkflowsList>,
+    selectedSubscription: string,
+    selectedLocation: string,
+    selectedAdvanceOptions: AdvancedOptionsTypes[]
+  ) {
     const headers = this.getAccessTokenHeaders();
     const validationUri = getExportUri(selectedSubscription, selectedLocation, true);
-    const validationPayload = getValidationPayload(selectedWorkflows);
+    const workflowExportOptions = selectedAdvanceOptions.join(',');
+    const validationPayload = getValidationPayload(selectedWorkflows, workflowExportOptions);
     const response = await fetch(validationUri, { headers, method: 'POST', body: JSON.stringify(validationPayload) });
 
     if (!response.ok) {
