@@ -8,10 +8,9 @@ import DeleteTokenNode from './plugins/DeleteTokenNode';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
+import type { TokenPickerButtonProps } from './plugins/TokenPickerButton';
 import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
-import { Validation } from './plugins/Validation';
-import type { ValidationProps } from './plugins/Validation';
 import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
 import { useId } from '@fluentui/react-hooks';
@@ -38,13 +37,6 @@ export interface DictionaryCallbackProps {
   addItem: (index: number) => void;
   index: number;
 }
-
-export interface TokenPickerButtonProps {
-  buttonClassName?: string;
-  buttonHeight?: number;
-  setShowTokenPicker?: () => void;
-}
-
 export interface BaseEditorProps {
   className?: string;
   readonly?: boolean;
@@ -67,7 +59,6 @@ export interface BasePlugins {
   tokens?: boolean;
   treeView?: boolean;
   toolBar?: boolean;
-  validation?: ValidationProps;
 }
 
 const onError = (error: Error) => {
@@ -105,7 +96,7 @@ export const BaseEditor = ({
       }),
   };
 
-  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, validation, toolBar } = BasePlugins;
+  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, toolBar } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
     defaultMessage: 'Editor Input',
@@ -151,23 +142,13 @@ export const BaseEditor = ({
         {history ? <History /> : null}
         {autoLink ? <AutoLink /> : null}
         {clearEditor ? <ClearEditor showButton={false} /> : null}
-        {validation ? (
-          <Validation
-            type={validation.type}
-            errorMessage={validation.errorMessage}
-            tokensEnabled={tokens}
-            className={validation.className}
-            isValid={validation.isValid}
-            setIsValid={validation.setIsValid}
-          />
-        ) : null}
 
         {(tokens && showTokenPickerButton) || getInTokenPicker() ? (
           <TokenPickerButton
             labelId={labelId}
             showTokenPicker={showTokenPicker}
             buttonClassName={tokenPickerButtonProps?.buttonClassName}
-            buttonHeight={tokenPickerButtonProps?.buttonHeight}
+            buttonOffset={tokenPickerButtonProps?.buttonOffset}
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}

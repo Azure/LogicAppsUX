@@ -1,7 +1,11 @@
+import { childOutputNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
+import { store } from '../../core/state/Store';
+import type { SchemaNodeDataType } from '../../models';
 import { SchemaTypes } from '../../models';
+import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
-import { Icon, Text } from '@fluentui/react';
+import { Text } from '@fluentui/react';
 import {
   Badge,
   Button,
@@ -12,18 +16,18 @@ import {
   tokens,
   typographyStyles,
 } from '@fluentui/react-components';
-import { bundleIcon, Important12Filled, ChevronRight16Regular } from '@fluentui/react-icons';
+import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
 import type { FunctionComponent } from 'react';
+import type { Connection as ReactFlowConnection, NodeProps } from 'react-flow-renderer';
+import { Handle, Position } from 'react-flow-renderer';
 
-export interface SchemaCardProps {
-  data: SchemaCardWrapperProps;
-}
-
-export type SchemaCardWrapperProps = {
+export type SchemaCardProps = {
   label: string;
   schemaType: SchemaTypes;
   displayHandle: boolean;
-  isLeaf?: boolean;
+  isLeaf: boolean;
+  isChild: boolean;
+  nodeDataType: SchemaNodeDataType;
 } & CardProps;
 
 const useStyles = makeStyles({
@@ -34,7 +38,7 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     height: '48px',
     opacity: 1,
-    width: '200px',
+    width: `${nodeCardWidth}px`,
     alignItems: 'center',
     justifyContent: 'left',
     ...shorthands.gap('8px'),
@@ -54,9 +58,6 @@ const useStyles = makeStyles({
     top: '-7px',
     right: '-10px',
     zIndex: '1',
-  },
-  badgeDisabled: {
-    opacity: '0.38',
   },
   cardIcon: {
     backgroundColor: tokens.colorBrandBackground2,
@@ -84,8 +85,14 @@ const useStyles = makeStyles({
     color: tokens.colorNeutralForeground3,
     display: 'flex',
     fontSize: '16px',
-
+    flexBasis: '48px',
     justifyContent: 'right',
+  },
+  disabled: {
+    opacity: 0.38,
+  },
+  outputChildCard: {
+    width: `${childOutputNodeCardWidth}px`,
   },
 
   focusIndicator: createFocusOutlineStyle({
@@ -95,44 +102,64 @@ const useStyles = makeStyles({
   }),
 });
 
-export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ data }) => {
-  return (
-    <div>
-      <SchemaCardWrapper
-        label={data.label}
-        schemaType={data.schemaType}
-        displayHandle={data.displayHandle}
-        isLeaf={data?.isLeaf}
-        onClick={data?.onClick}
-        disabled={data?.disabled}
-        iconName={'12pointstar'}
-        error={data.error}
-      />
-    </div>
-  );
-};
-
 const cardInputText = makeStyles({
   cardText: {
     width: '136px',
   },
 });
 
-export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ label, schemaType, isLeaf, onClick, disabled, error }) => {
+const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
+
+const isValidConnection = (connection: ReactFlowConnection): boolean => {
+  const flattenedInputSchema = store.getState().dataMap.curDataMapOperation.flattenedInputSchema;
+  const flattenedOutputSchema = store.getState().dataMap.curDataMapOperation.flattenedOutputSchema;
+
+  if (connection.source && connection.target && flattenedInputSchema && flattenedOutputSchema) {
+    const inputNode = flattenedInputSchema[connection.source];
+    const outputNode = flattenedOutputSchema[connection.target];
+
+    return inputNode.schemaNodeDataType === outputNode.schemaNodeDataType;
+  }
+
+  return false;
+};
+
+export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
+  const { label, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, nodeDataType } = props.data;
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
   const mergedClasses = mergeClasses(sharedStyles.root, classes.root);
+  const mergedChildOutputClasses = mergeClasses(sharedStyles.root, classes.root, classes.outputChildCard);
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
-  const errorClass = mergeClasses(mergedClasses, sharedStyles.error);
-  const disabledError = mergeClasses(classes.badge, classes.badgeDisabled);
+  const mergedButtonClasses = mergeClasses(sharedStyles.root, classes.root);
+  const errorClass = mergeClasses(mergedButtonClasses, sharedStyles.error);
+
   const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
+
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
+  const BundledTypeIcon = icon24ForSchemaNodeType(nodeDataType);
+
+  const isOutputChildNode = schemaType === SchemaTypes.Output && isChild;
 
   return (
-    <div className={classes.container}>
-      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={disabled ? disabledError : classes.badge}></Badge>}
-      <Button className={error ? errorClass : mergedClasses} disabled={!!disabled} onClick={onClick}>
-        <Icon className={classes.cardIcon} iconName="Diamond" />
+    <div className={disabled ? mergeClasses(classes.container, classes.disabled) : classes.container}>
+      {displayHandle && isLeaf ? (
+        <Handle
+          type={schemaType === SchemaTypes.Input ? 'source' : 'target'}
+          position={schemaType === SchemaTypes.Input ? Position.Right : Position.Left}
+          style={handleStyle}
+          isValidConnection={isValidConnection}
+        />
+      ) : null}
+      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.badge}></Badge>}{' '}
+      <Button
+        className={error ? errorClass : isOutputChildNode ? mergedChildOutputClasses : mergedClasses}
+        disabled={!!disabled}
+        onClick={onClick}
+      >
+        <span className={classes.cardIcon}>
+          <BundledTypeIcon />
+        </span>
         <Text className={schemaType === SchemaTypes.Output ? classes.cardText : mergedInputText} block={true} nowrap={true}>
           {label}
         </Text>

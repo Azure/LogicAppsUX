@@ -299,6 +299,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " elementi corrispondenti."
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -369,6 +380,12 @@
       "value": "Obbligatorio. Oggetto da controllare per verificare se è minore del valore con cui è confrontato."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Immettere il valore dell'intestazione dell'autorizzazione"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -405,6 +422,12 @@
       "value": "Ricerca globale"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Selezionare un file da caricare"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -427,6 +450,12 @@
     {
       "type": 0,
       "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Identità gestita"
     }
   ],
   "2b1yD3": [
@@ -477,6 +506,12 @@
       "value": "Identificatore"
     }
   ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Identità gestita assegnata dal sistema"
+    }
+  ],
   "3BZnxY": [
     {
       "type": 0,
@@ -525,6 +560,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "L'identità specificata non è associata a questa app per la logica."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -565,6 +606,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Erevan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Autenticazione"
     }
   ],
   "47kOXr": [
@@ -655,6 +702,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Espressione XPath da valutare."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Autorità"
     }
   ],
   "5aa76N": [
@@ -807,6 +860,12 @@
       "value": "Obbligatorio. Stringa che può contenere il valore."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "PFX"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -843,10 +902,22 @@
       "value": "Non è possibile eseguire il rendering dell'area di progettazione a causa della presenza di più trigger nella definizione."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Abilitare l'identità gestita per l'app per la logica."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Obbligatorio. Stringa da codificare in URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Immettere il segreto come testo normale o usare un parametro protetto"
     }
   ],
   "8Y5xpK": [
@@ -901,6 +972,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Valore"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "L'identità utente non è supportata quando per l'app per la logica è abilitata l'identità gestita assegnata dal sistema."
     }
   ],
   "949s+r": [
@@ -969,6 +1052,12 @@
       "value": "Restituisce true se entrambi i parametri sono true"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1005,6 +1094,18 @@
       "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Immetti destinatari"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Nome utente"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1020,6 +1121,17 @@
             {
               "type": 0,
               "value": "0 azioni"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " azioni"
             }
           ]
         },
@@ -1099,6 +1211,12 @@
       "value": "Obbligatorio. Stringa da cui decodificare caratteri non sicuri per gli URL."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Immettere la password come testo normale o usare un parametro protetto"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1141,6 +1259,12 @@
       "value": "Connessione richiesta"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Tipo di credenziali"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1163,6 +1287,12 @@
     {
       "type": 0,
       "value": "Usare il payload di esempio per generare lo schema"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Immetti ID client"
     }
   ],
   "DZZ3fj": [
@@ -1229,6 +1359,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Password"
     }
   ],
   "Eqgm4v": [
@@ -1331,6 +1467,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ore"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1405,6 +1552,12 @@
     {
       "type": 0,
       "value": "Restituisce la query da un URI"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Immetti autorità"
     }
   ],
   "GLd3MU": [
@@ -1671,6 +1824,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " casi"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1877,6 +2041,12 @@
       "value": "Obbligatorio. URI di dati da convertire nella rappresentazione binaria."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Identità gestita"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1925,6 +2095,24 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Espressione"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Immetti tenant"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Selezionare un'identità"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1953,6 +2141,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa contenente il nome del fuso orario del fuso orario di origine. Per informazioni dettagliate, vedere https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Segreto"
     }
   ],
   "OFKZzQ": [
@@ -2047,6 +2241,12 @@
       "value": "Selezionare un'identità gestita"
     }
   ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "PFX"
+    }
+  ],
   "P2A5dB": [
     {
       "type": 0,
@@ -2131,6 +2331,12 @@
       "value": "(UTC - 04.00) Turks e Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Non generare se non viene specificato alcun valore"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2167,6 +2373,12 @@
       "value": "Converte l'input in un valore di tipo JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Ammette valori Null"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2199,6 +2411,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore convertito in un valore binario."
+    }
+  ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Tipo di dati"
     }
   ],
   "QknZQ1": [
@@ -2235,6 +2453,18 @@
       "value": " h"
     }
   ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Nome"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Immetti destinatari"
+    }
+  ],
   "RX2Shm": [
     {
       "type": 0,
@@ -2251,6 +2481,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minuti"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -2295,6 +2536,18 @@
     {
       "type": 0,
       "value": "(UTC + 12.00 h) Petropavlovsk-Kamčatskij - Vecchio"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Immettere un dizionario"
     }
   ],
   "SKXopi": [
@@ -2571,6 +2824,12 @@
       "value": "Cronologia esecuzioni"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificato"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2637,6 +2896,12 @@
       "value": "Sostituisci lo schema esistente."
     }
   ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -2658,7 +2923,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Selezionare uno schema di output"
     }
   ],
   "XCunbR": [
@@ -2769,16 +3034,16 @@
       "value": "Obbligatorio. Nome dell'azione di cui si desidera ottenere gli output del corpo."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Altre informazioni"
-    }
-  ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2813,6 +3078,12 @@
     {
       "type": 0,
       "value": "Consente a un'espressione di derivare il proprio valore da altre coppie nome-valore JSON o dall'output del trigger di runtime"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Immetti file PFX"
     }
   ],
   "YaFjJQ": [
@@ -2953,6 +3224,12 @@
       "value": "Funzione"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Immetti file PFX"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3087,6 +3364,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Selezionare un'identità"
     }
   ],
   "ci6ex1": [
@@ -3251,6 +3534,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome della variabile di cui si desidera ottenere il valore."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Nodo schema di output"
     }
   ],
   "eRvGw3": [
@@ -3471,6 +3760,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " secondi"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3515,6 +3815,18 @@
     {
       "type": 0,
       "value": "Durata"
+    }
+  ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Destinatari"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Identità gestita assegnata dal sistema"
     }
   ],
   "i/b3Ko": [
@@ -3593,6 +3905,18 @@
     {
       "type": 0,
       "value": "Annulla"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Proprietà"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -3791,6 +4115,12 @@
       "value": "Restituisce true se due valori sono uguali"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Immetti nome utente"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -3893,6 +4223,12 @@
       "value": "Nome"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Immettere una matrice"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -3945,6 +4281,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Immettere la password come testo normale o usare un parametro protetto"
     }
   ],
   "mx2IMJ": [
@@ -4210,7 +4552,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Selezionare uno schema di input"
     }
   ],
   "q87X20": [
@@ -4265,6 +4607,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " giorni"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -4351,6 +4704,12 @@
     {
       "type": 0,
       "value": "Titolo scheda"
+    }
+  ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Segreto"
     }
   ],
   "rDt4Iu": [
@@ -4455,10 +4814,28 @@
       "value": "Restituisce true se uno dei parametri è true"
     }
   ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "ID client"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Nuovo parametro"
+    }
+  ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Nodo schema di input"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Esplora"
     }
   ],
   "t+XCkg": [
@@ -4569,6 +4946,12 @@
       "value": "(UTC+4.00) Abu Dhabi, Muscat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Selezionare un elemento per avviare la configurazione"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4671,12 +5054,6 @@
       "value": "Restituisce l'ultimo indice di un valore all'interno di una stringa (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
     }
   ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Pulsante per la gestione dello stato di attivazione/disattivazione"
-    }
-  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4693,6 +5070,12 @@
     {
       "type": 0,
       "value": "Espressione non valida."
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Destinatari"
     }
   ],
   "vXwYXe": [
@@ -4793,6 +5176,12 @@
       "value": "Timeout"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Percorso completo"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4859,6 +5248,12 @@
       "value": "Restituisce una rappresentazione stringa di una stringa con codifica URI"
     }
   ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Immettere la password come testo normale o usare un parametro protetto"
+    }
+  ],
   "xOAOHM": [
     {
       "type": 0,
@@ -4875,6 +5270,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome della proprietà nuova o esistente."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Codice"
     }
   ],
   "xYyPR8": [

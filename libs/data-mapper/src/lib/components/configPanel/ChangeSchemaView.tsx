@@ -1,9 +1,8 @@
 import type { RootState } from '../../core/state/Store';
-import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
 import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -13,6 +12,9 @@ export enum UploadSchemaTypes {
   SelectFrom = 'select-from',
 }
 
+export interface ChangeSchemaView {
+  schemaList: SchemaInfo[] | any;
+}
 export interface FileWithVsCodePath extends File {
   path?: string;
 }
@@ -29,6 +31,12 @@ export interface ChangeSchemaViewProps {
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
+  uploadType: UploadSchemaTypes;
+  setUploadType: (newUploadType: UploadSchemaTypes) => void;
+}
+
+export interface SchemaInfo {
+  name: string;
 }
 
 const uploadSchemaOptions: IChoiceGroupOption[] = [
@@ -43,11 +51,14 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   setSelectedSchema,
   setSelectedSchemaFile,
   errorMessage,
+  uploadType,
+  setUploadType,
 }) => {
-  const availableSchemasList = useSelector((state: RootState) => state.schema.availableSchemas);
-  const [uploadType, setUploadType] = useState<string>(UploadSchemaTypes.SelectFrom);
+  const schemaList = useSelector((state: RootState) => {
+    return state.schema.availableSchemas;
+  });
 
-  const dataMapDropdownOptions = availableSchemasList?.map((file: Schema) => ({ key: file.name, text: file.name, data: file }));
+  const dataMapDropdownOptions = schemaList?.map((file: string) => ({ key: file, text: file } ?? []));
 
   const intl = useIntl();
   const schemaFileInputRef = useRef<HTMLInputElement>(null);
@@ -100,11 +111,14 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
     [setSelectedSchema]
   );
 
-  const onUploadTypeChange = useCallback((_: unknown, option?: IChoiceGroupOption): void => {
-    if (option) {
-      setUploadType(option.key);
-    }
-  }, []);
+  const onUploadTypeChange = useCallback(
+    (_: unknown, option?: IChoiceGroupOption): void => {
+      if (option) {
+        setUploadType(option.key as UploadSchemaTypes);
+      }
+    },
+    [setUploadType]
+  );
 
   const onSelectSchemaFile = (event: React.FormEvent<HTMLInputElement>) => {
     if (!event?.currentTarget?.files) {
@@ -136,7 +150,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
 
       {uploadType === UploadSchemaTypes.UploadNew && (
         <div>
-          <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept=".json" hidden />
+          <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept=".xsd" hidden />
           <Stack horizontal>
             <TextField value={selectedSchemaFile?.name} placeholder={uploadMessage} readOnly />
             <PrimaryButton onClick={() => schemaFileInputRef.current?.click()} style={{ marginLeft: 8 }}>

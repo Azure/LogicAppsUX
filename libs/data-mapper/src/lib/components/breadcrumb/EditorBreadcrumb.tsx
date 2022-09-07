@@ -74,7 +74,7 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
     text: schema.name,
     // TODO (14748905): Click root to view map overview, not top node
     onClick: () => {
-      dispatch(setCurrentOutputNode(schema.schemaTreeRoot));
+      dispatch(setCurrentOutputNode({ schemaNode: schema.schemaTreeRoot, resetSelectedInputNodes: true }));
     },
   };
 
@@ -87,7 +87,7 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
         text: pathItem.name,
         onClick: () => {
           const destinationNode = findChildNode(schema.schemaTreeRoot, [...currentNode.pathToRoot]);
-          dispatch(setCurrentOutputNode(destinationNode));
+          dispatch(setCurrentOutputNode({ schemaNode: destinationNode, resetSelectedInputNodes: true }));
         },
       });
     });

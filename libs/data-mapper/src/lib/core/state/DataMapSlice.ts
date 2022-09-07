@@ -1,6 +1,10 @@
-import type { SchemaExtended, SchemaNodeExtended, SelectedNode } from '../../models';
+import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended, SelectedNode } from '../../models';
+import { SchemaTypes } from '../../models';
+import type { ConnectionDictionary } from '../../models/Connection';
+import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import * as yaml from 'js-yaml';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -11,15 +15,22 @@ export interface DataMapState {
 }
 
 export interface DataMapOperationState {
-  dataMapConnections: { [key: string]: string };
+  dataMapConnections: ConnectionDictionary;
   inputSchema?: SchemaExtended;
+  flattenedInputSchema: SchemaNodeDictionary;
   outputSchema?: SchemaExtended;
+  flattenedOutputSchema: SchemaNodeDictionary;
   currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
   currentlySelectedNode?: SelectedNode;
 }
 
-const emptyPristineState: DataMapOperationState = { dataMapConnections: {}, currentInputNodes: [] };
+const emptyPristineState: DataMapOperationState = {
+  dataMapConnections: {},
+  currentInputNodes: [],
+  flattenedInputSchema: {},
+  flattenedOutputSchema: {},
+};
 const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
@@ -37,30 +48,60 @@ export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    setInitialInputSchema: (state, action: PayloadAction<SchemaExtended>) => {
-      state.curDataMapOperation.inputSchema = action.payload;
-      state.pristineDataMap.inputSchema = action.payload;
+    setInitialSchema: (
+      state,
+      action: PayloadAction<{
+        schema: SchemaExtended;
+        schemaType: SchemaTypes.Input | SchemaTypes.Output;
+        flattenedSchema: SchemaNodeDictionary;
+      }>
+    ) => {
+      if (action.payload.schemaType === SchemaTypes.Input) {
+        state.curDataMapOperation.inputSchema = action.payload.schema;
+        state.curDataMapOperation.flattenedInputSchema = action.payload.flattenedSchema;
+        state.pristineDataMap.inputSchema = action.payload.schema;
+        state.pristineDataMap.flattenedInputSchema = action.payload.flattenedSchema;
+      } else {
+        state.curDataMapOperation.outputSchema = action.payload.schema;
+        state.curDataMapOperation.flattenedOutputSchema = action.payload.flattenedSchema;
+        state.curDataMapOperation.currentOutputNode = action.payload.schema.schemaTreeRoot;
+        state.pristineDataMap.outputSchema = action.payload.schema;
+        state.pristineDataMap.flattenedOutputSchema = action.payload.flattenedSchema;
+        state.pristineDataMap.currentOutputNode = action.payload.schema.schemaTreeRoot;
+      }
     },
 
-    setInitialOutputSchema: (state, action: PayloadAction<SchemaExtended>) => {
-      state.curDataMapOperation.outputSchema = action.payload;
-      state.curDataMapOperation.currentOutputNode = action.payload.schemaTreeRoot;
-      state.pristineDataMap.outputSchema = action.payload;
-      state.pristineDataMap.currentOutputNode = action.payload.schemaTreeRoot;
-    },
-
-    setInitialDataMap: (state) => {
+    // TODO: See if possible to set a better type for PayloadAction below (dataMapDefinition obj)
+    setInitialDataMap: (state, action: PayloadAction<any | undefined>) => {
+      const incomingDataMap = action.payload;
       const currentState = state.curDataMapOperation;
+
       if (currentState.inputSchema && currentState.outputSchema) {
-        const newInitialState: DataMapOperationState = {
+        let newState: DataMapOperationState = {
           ...currentState,
           dataMapConnections: {},
           currentInputNodes: [],
-          currentOutputNode: currentState.currentOutputNode || currentState.outputSchema.schemaTreeRoot,
+          currentOutputNode: currentState.outputSchema.schemaTreeRoot,
         };
 
-        state.curDataMapOperation = newInitialState;
-        state.pristineDataMap = newInitialState;
+        if (incomingDataMap) {
+          const loadedConnections = convertFromMapDefinition(yaml.dump(incomingDataMap));
+          const topLevelInputNodes: SchemaNodeExtended[] = [];
+
+          Object.entries(loadedConnections).forEach(([_key, con]) => {
+            // TODO: Only push input nodes at TOP-LEVEL of output
+            topLevelInputNodes.push(currentState.flattenedInputSchema[con.reactFlowSource]);
+          });
+
+          newState = {
+            ...currentState,
+            currentInputNodes: topLevelInputNodes,
+            dataMapConnections: loadedConnections,
+          };
+        }
+
+        state.curDataMapOperation = newState;
+        state.pristineDataMap = newState;
       }
     },
 
@@ -103,6 +144,37 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    addInputNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
+      const nodes = [...state.curDataMapOperation.currentInputNodes];
+      action.payload.forEach((payloadNode) => {
+        const existingNode = state.curDataMapOperation.currentInputNodes.find((currentNode) => currentNode.key === payloadNode.key);
+        if (!existingNode) {
+          nodes.push(payloadNode);
+        }
+      });
+
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentInputNodes: nodes,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
+    removeInputNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
+      let nodes = [...state.curDataMapOperation.currentInputNodes];
+      nodes = state.curDataMapOperation.currentInputNodes.filter((currentNode) =>
+        action.payload.every((payloadNode) => payloadNode.key !== currentNode.key)
+      );
+
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentInputNodes: nodes,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
     toggleInputNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
       let nodes = [...state.curDataMapOperation.currentInputNodes];
       const existingNode = state.curDataMapOperation.currentInputNodes.find((currentNode) => currentNode.key === action.payload.key);
@@ -120,10 +192,11 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
-    setCurrentOutputNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
+    setCurrentOutputNode: (state, action: PayloadAction<{ schemaNode: SchemaNodeExtended; resetSelectedInputNodes: boolean }>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentOutputNode: action.payload,
+        currentOutputNode: action.payload.schemaNode,
+        currentInputNodes: action.payload.resetSelectedInputNodes ? [] : state.curDataMapOperation.currentInputNodes,
       };
 
       doDataMapOperation(state, newState);
@@ -144,7 +217,14 @@ export const dataMapSlice = createSlice({
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      newState.dataMapConnections[action.payload.outputNodeKey] = action.payload.value;
+      const trimmedKey = action.payload.outputNodeKey.split('-', 2)[1];
+      const trimmedValue = action.payload.value.split('-', 2)[1];
+
+      newState.dataMapConnections[trimmedKey] = {
+        value: trimmedValue,
+        reactFlowSource: action.payload.value,
+        reactFlowDestination: action.payload.outputNodeKey,
+      };
 
       doDataMapOperation(state, newState);
     },
@@ -191,12 +271,13 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
-  setInitialInputSchema,
-  setInitialOutputSchema,
+  setInitialSchema,
   setInitialDataMap,
   changeInputSchema,
   changeOutputSchema,
   setCurrentInputNodes,
+  addInputNodes,
+  removeInputNodes,
   toggleInputNode,
   setCurrentOutputNode,
   setCurrentlySelectedNode,

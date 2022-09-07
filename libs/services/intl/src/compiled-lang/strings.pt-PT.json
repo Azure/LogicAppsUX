@@ -299,6 +299,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " itens com correspondência."
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -369,6 +380,12 @@
       "value": "Obrigatório. O objeto a verificar se é inferior ao valor com que está a ser comparado."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Introduzir o valor do cabeçalho de Autorização"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -405,6 +422,12 @@
       "value": "Pesquisa global"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Selecione um ficheiro para carregar"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -427,6 +450,12 @@
     {
       "type": 0,
       "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Identidade gerida"
     }
   ],
   "2b1yD3": [
@@ -477,6 +506,12 @@
       "value": "Identificador"
     }
   ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Identidade gerida atribuída pelo sistema"
+    }
+  ],
   "3BZnxY": [
     {
       "type": 0,
@@ -525,6 +560,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "A identidade introduzida não está associada a esta Aplicação Lógica."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -565,6 +606,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Erevan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Autenticação"
     }
   ],
   "47kOXr": [
@@ -655,6 +702,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A expressão XPath a avaliar."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Autoridade"
     }
   ],
   "5aa76N": [
@@ -807,6 +860,12 @@
       "value": "Obrigatório. A cadeia que poderá conter o valor."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -843,10 +902,22 @@
       "value": "Não é possível compor o estruturador devido a vários acionadores na definição."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Ative a identidade gerida para a aplicação lógica."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Obrigatório. A cadeia a ser codificada por URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Introduzir segredo como texto simples ou utilizar um parâmetro seguro"
     }
   ],
   "8Y5xpK": [
@@ -901,6 +972,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Hovd­"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Valor"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "A identidade do utilizador não é suportada quando a Aplicação Lógica tem a identidade gerida atribuída ao sistema ativada."
     }
   ],
   "949s+r": [
@@ -969,6 +1052,12 @@
       "value": "Devolve verdadeiro se ambos os parâmetros forem verdadeiros"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1005,6 +1094,18 @@
       "value": "(UTC+06:30) Yangon (Rangum)"
     }
   ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Introduzir audiência"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Nome de utilizador"
+    }
+  ],
   "ArTh0/": [
     {
       "type": 0,
@@ -1020,6 +1121,17 @@
             {
               "type": 0,
               "value": "0 Ações"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Ações"
             }
           ]
         },
@@ -1099,6 +1211,12 @@
       "value": "Obrigatório. A cadeia a partir da qual se descodificam carateres não seguros de URL."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1141,6 +1259,12 @@
       "value": "Ligação necessária"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Tipo de Credencial"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1163,6 +1287,12 @@
     {
       "type": 0,
       "value": "Utilizar o payload de exemplo para gerar esquema"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Introduzir ID de cliente"
     }
   ],
   "DZZ3fj": [
@@ -1229,6 +1359,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Palavra-passe"
     }
   ],
   "Eqgm4v": [
@@ -1331,6 +1467,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " horas"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1413,6 +1560,12 @@
     {
       "type": 0,
       "value": "Devolve a consulta de um URI"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Introduzir autoridade"
     }
   ],
   "GLd3MU": [
@@ -1679,6 +1832,17 @@
             }
           ]
         },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Casos"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -1893,6 +2057,12 @@
       "value": "Obrigatório. O URI de dados a converter em representação binária."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Identidade gerida"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1941,6 +2111,24 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expressão"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Introduzir inquilino"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Selecione uma identidade"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1969,6 +2157,12 @@
     {
       "type": 0,
       "value": "Obrigatório. Uma cadeia que contém o nome do fuso horário de origem. Veja https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Segredo"
     }
   ],
   "OFKZzQ": [
@@ -2055,6 +2249,12 @@
       "value": "Selecionar uma identidade gerida"
     }
   ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "P2A5dB": [
     {
       "type": 0,
@@ -2139,6 +2339,12 @@
       "value": "(UTC-04:00) Ilhas Turcas e Caicos"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Não gerar se não existir valor"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2175,6 +2381,12 @@
       "value": "Converter a entrada num valor de tipo JSON"
     }
   ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Pode ser nulo"
+    }
+  ],
   "QQYzHC": [
     {
       "type": 0,
@@ -2207,6 +2419,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O valor que é convertido num binário."
+    }
+  ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Tipo de dados"
     }
   ],
   "QknZQ1": [
@@ -2243,6 +2461,18 @@
       "value": "h"
     }
   ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Nome"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Introduzir audiência"
+    }
+  ],
   "RX2Shm": [
     {
       "type": 0,
@@ -2259,6 +2489,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutos"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -2303,6 +2544,18 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Antigo"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Palavra-passe"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Introduza um Dicionário"
     }
   ],
   "SKXopi": [
@@ -2579,6 +2832,12 @@
       "value": "Histórico de Execuções"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificado"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2645,6 +2904,12 @@
       "value": "Substituir esquema existente."
     }
   ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Inquilino"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -2666,7 +2931,7 @@
   "XBPhr0": [
     {
       "type": 0,
-      "value": "Select an output schema"
+      "value": "Selecione um esquema de saída"
     }
   ],
   "XCunbR": [
@@ -2777,16 +3042,16 @@
       "value": "Obrigatório. O nome da ação cujas saídas do corpo quer."
     }
   ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Palavra-passe"
+    }
+  ],
   "Y0H9aX": [
     {
       "type": 0,
       "value": "Mais Informações"
-    }
-  ],
-  "Y7Hskh": [
-    {
-      "type": 0,
-      "value": "Select a schema file to load"
     }
   ],
   "Y9kBz5": [
@@ -2821,6 +3086,12 @@
     {
       "type": 0,
       "value": "Permite que uma expressão derive o respetivo valor de outro nome JSON e pares de valor ou o resultado do acionador de runtime"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Introduzir Pfx"
     }
   ],
   "YaFjJQ": [
@@ -2961,6 +3232,12 @@
       "value": "Função"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Introduzir Pfx"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3095,6 +3372,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Trípoli"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Selecione uma identidade"
     }
   ],
   "ci6ex1": [
@@ -3259,6 +3542,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O nome da variável do valor que pretende."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Nó de esquema de saída"
     }
   ],
   "eRvGw3": [
@@ -3487,6 +3776,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " segundos"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -3539,6 +3839,18 @@
     {
       "type": 0,
       "value": "Duração"
+    }
+  ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audiência"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Identidade gerida atribuída pelo sistema"
     }
   ],
   "i/b3Ko": [
@@ -3617,6 +3929,18 @@
     {
       "type": 0,
       "value": "Cancelar"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Propriedades"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Testar"
     }
   ],
   "iq+tiv": [
@@ -3823,6 +4147,12 @@
       "value": "Devolve verdadeiro se dois valores forem iguais"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Introduzir nome de utilizador"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -3925,6 +4255,12 @@
       "value": "Nome"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Introduza uma Matriz"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -3977,6 +4313,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
     }
   ],
   "mx2IMJ": [
@@ -4242,7 +4584,7 @@
   "q5SkF5": [
     {
       "type": 0,
-      "value": "Select an input schema"
+      "value": "Selecione um esquema de entrada"
     }
   ],
   "q87X20": [
@@ -4297,6 +4639,17 @@
     {
       "offset": 0,
       "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " dias"
+            }
+          ]
+        },
         "one": {
           "value": [
             {
@@ -4383,6 +4736,12 @@
     {
       "type": 0,
       "value": "Título do Cartão"
+    }
+  ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Segredo"
     }
   ],
   "rDt4Iu": [
@@ -4487,10 +4846,28 @@
       "value": "Devolve verdadeiro se qualquer um destes parâmetros for verdadeiro"
     }
   ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "ID de Cliente"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Novo parâmetro"
+    }
+  ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Nó de esquema de entrada"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Procurar"
     }
   ],
   "t+XCkg": [
@@ -4601,6 +4978,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Mascate"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Selecione um elemento para começar a configurar"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4703,12 +5086,6 @@
       "value": "Devolve o último índice de um valor numa cadeia (sensível a maiúsculas e minúsculas, cultura invariante)"
     }
   ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Botão para gerir o estado de alternar"
-    }
-  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4725,6 +5102,12 @@
     {
       "type": 0,
       "value": "A expressão é inválida."
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audiência"
     }
   ],
   "vXwYXe": [
@@ -4825,6 +5208,12 @@
       "value": "Tempo Limite Excedido"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Caminho completo"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4891,6 +5280,12 @@
       "value": "Devolve uma representação de cadeia de uma cadeia codificada de URI"
     }
   ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
+    }
+  ],
   "xOAOHM": [
     {
       "type": 0,
@@ -4907,6 +5302,12 @@
     {
       "type": 0,
       "value": "Necessário. O nome da propriedade nova ou existente."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Código"
     }
   ],
   "xYyPR8": [

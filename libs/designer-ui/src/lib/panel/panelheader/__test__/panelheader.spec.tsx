@@ -20,9 +20,13 @@ describe('lib/panel/panelHeader/main', () => {
       panelScope: PanelScope.CardLevel,
       includeTitle: true,
       toggleCollapse: jest.fn(),
+      onTitleChange: jest.fn(),
+      commentChange: jest.fn(),
     };
     minimalWithHeader = {
       isCollapsed: false,
+      onTitleChange: jest.fn(),
+      commentChange: jest.fn(),
       panelHeaderMenu: [
         {
           disabled: false,
@@ -108,7 +112,7 @@ describe('lib/panel/panelHeader/main', () => {
     expect(title.props.titleId).toBe(props.titleId);
     expect(title.props.readOnlyMode).toBe(props.readOnlyMode);
     expect(title.props.renameTitleDisabled).toBe(props.renameTitleDisabled);
-    expect(title.props.savedTitle).toBe(props.title);
+    expect(title.props.titleValue).toBe(props.title);
 
     expect(panelControls.props.className).toBe('msla-panel-header-controls');
 
