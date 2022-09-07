@@ -37,8 +37,7 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
 }) => {
   const styles = useStyles();
   const [isHover, setIsHover] = useState(false);
-  const one = 0;
-  const iconString = renderToString(<ChevronRight16Regular filled={one.toString() as unknown as undefined} className={styles.icon} />); // danielle need to find another way
+  const iconString = renderToString(<ChevronRight16Regular className={styles.icon} />);
   const fastTreeItemStyles = `
   .positioning-region {
     border-radius: ${tokens.borderRadiusMedium};
@@ -56,36 +55,22 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
   :host([selected])::after {
     visibility: hidden;
   }
+  :host(.nested) .expand-collapse-button:hover {
+    background: inherit;
+  }
 `;
-  // const overrides: OverrideFoundationElementDefinition<TreeItemOptions> = {
-  //   expandCollapseGlyph: iconString,
-  //   baseName: 'tree-item',
-  //   styles: (ctx, def) => {
-  //     const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
-  //     const fastStyles = css`${baseStyles} ${fastTreeItemStyles}`;
-  //     return fastStyles;
-  //   },
-  // };
-  const overridesHover: OverrideFoundationElementDefinition<TreeItemOptions> = {
+  const overrides: OverrideFoundationElementDefinition<TreeItemOptions> = {
     expandCollapseGlyph: iconString,
     baseName: 'tree-item',
-    prefix: 'selected',
     styles: (ctx, def) => {
       const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
       const fastStyles = css`
         ${baseStyles} ${fastTreeItemStyles}
-      .positioning-region {
-          background: ${tokens.colorBrandBackground2};
-        }
-        :host(:not([disabled])) .positioning-region:hover {
-          background: ${tokens.colorBrandBackground2};
-        }
       `;
       return fastStyles;
     },
   };
-  //const FastTreeItem = wrap(fluentTreeItem(overrides)); // danielle pass as props?
-  const FastSelected = wrap(fluentTreeItem(overridesHover));
+  const FastTreeItem = wrap(fluentTreeItem(overrides));
   const isNodeSelected = !!currentlySelectedNodes.find((currentlySelectedNode) => currentlySelectedNode.key === childNode.key);
   const onMouseEnter = () => {
     setIsHover(true);
@@ -94,11 +79,9 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
     setIsHover(false);
   };
   const nameText = isHover ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>;
-  //const TreeItem = isNodeSelected ? FastSelected : FastTreeItem;
   if (childNode.schemaNodeDataType === 'ComplexType' || childNode.schemaNodeDataType === 'None') {
     return (
-      // TODO onclick for object level adding
-      <FastSelected
+      <FastTreeItem
         key={childNode.key}
         onMouseLeave={() => onMouseLeave()}
         onMouseEnter={() => onMouseEnter()}
@@ -108,11 +91,11 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
           {nameText}
         </TreeItemContent>
         {convertToFastTreeItem(childNode, currentlySelectedNodes, onLeafNodeClick)}
-      </FastSelected>
+      </FastTreeItem>
     );
   } else {
     return (
-      <FastSelected
+      <FastTreeItem
         key={childNode.key}
         onClick={() => {
           onLeafNodeClick(childNode);
@@ -123,7 +106,7 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
         <TreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected}>
           {nameText}
         </TreeItemContent>
-      </FastSelected>
+      </FastTreeItem>
     );
   }
 };
