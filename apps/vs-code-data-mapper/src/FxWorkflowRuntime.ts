@@ -88,7 +88,6 @@ async function isBackendRuntimeUp(url: string): Promise<boolean> {
     await fetch(url);
     return Promise.resolve(true);
   } catch (ex) {
-    DataMapperExt.log(`Failed to reach backend runtime: ${ex}`);
     return Promise.resolve(false);
   }
 }
@@ -99,6 +98,7 @@ function startBackendRuntimeProcess(workingDirectory: string | undefined, comman
     cwd: workingDirectory || os.tmpdir(),
     shell: true,
   };
+
   DataMapperExt.backendRuntimeChildProcess = cp.spawn(command, args, options);
 
   DataMapperExt.log(`Running command: "${command} ${formattedArgs}"...`);
@@ -112,6 +112,7 @@ function startBackendRuntimeProcess(workingDirectory: string | undefined, comman
   });
 }
 
+// Note: Per node, child processes may not be killed - if this is an issue in the future, a workaround is needed
 export function stopBackendRuntime(): void {
   if (DataMapperExt.backendRuntimeChildProcess === null || DataMapperExt.backendRuntimeChildProcess === undefined) {
     return;
