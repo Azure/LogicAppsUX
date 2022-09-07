@@ -59,9 +59,6 @@ const useStyles = makeStyles({
     right: '-10px',
     zIndex: '1',
   },
-  badgeDisabled: {
-    opacity: '0.38',
-  },
   cardIcon: {
     backgroundColor: tokens.colorBrandBackground2,
     width: '48px',
@@ -75,7 +72,7 @@ const useStyles = makeStyles({
     flexShrink: '0',
     flexBasis: '44px',
   },
-  container: { height: '48px', isolation: 'isolate', position: 'relative' },
+  container: { height: '48px', width: '200px', isolation: 'isolate', position: 'relative' },
   cardText: {
     ...typographyStyles.body1Strong,
     display: 'inline-block',
@@ -88,8 +85,11 @@ const useStyles = makeStyles({
     color: tokens.colorNeutralForeground3,
     display: 'flex',
     fontSize: '16px',
-
+    flexBasis: '48px',
     justifyContent: 'right',
+  },
+  disabled: {
+    opacity: 0.38,
   },
   outputChildCard: {
     width: `${childOutputNodeCardWidth}px`,
@@ -131,16 +131,18 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
   const mergedClasses = mergeClasses(sharedStyles.root, classes.root);
   const mergedChildOutputClasses = mergeClasses(sharedStyles.root, classes.root, classes.outputChildCard);
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
-  const errorClass = mergeClasses(mergedClasses, sharedStyles.error);
-  const disabledError = mergeClasses(classes.badge, classes.badgeDisabled);
+  const mergedButtonClasses = mergeClasses(sharedStyles.root, classes.root);
+  const errorClass = mergeClasses(mergedButtonClasses, sharedStyles.error);
+
   const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
+
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const BundledTypeIcon = icon24ForSchemaNodeType(nodeDataType);
 
   const isOutputChildNode = schemaType === SchemaTypes.Output && isChild;
 
   return (
-    <div className={classes.container}>
+    <div className={disabled ? mergeClasses(classes.container, classes.disabled) : classes.container}>
       {displayHandle && isLeaf ? (
         <Handle
           type={schemaType === SchemaTypes.Input ? 'source' : 'target'}
@@ -149,7 +151,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
           isValidConnection={isValidConnection}
         />
       ) : null}
-      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={disabled ? disabledError : classes.badge}></Badge>}
+      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.badge}></Badge>}{' '}
       <Button
         className={error ? errorClass : isOutputChildNode ? mergedChildOutputClasses : mergedClasses}
         disabled={!!disabled}
