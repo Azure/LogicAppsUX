@@ -1052,6 +1052,12 @@
       "value": "Devolve verdadeiro se ambos os parâmetros forem verdadeiros"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -2544,6 +2550,12 @@
     {
       "type": 0,
       "value": "Palavra-passe"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Introduza um Dicionário"
     }
   ],
   "SKXopi": [
@@ -4241,6 +4253,12 @@
     {
       "type": 0,
       "value": "Nome"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Introduza uma Matriz"
     }
   ],
   "mCzkXX": [

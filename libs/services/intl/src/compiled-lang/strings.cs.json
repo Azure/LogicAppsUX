@@ -1075,6 +1075,12 @@
       "value": "Vrátí true, pokud jsou oba parametry true."
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -2615,6 +2621,12 @@
     {
       "type": 0,
       "value": "Heslo"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Zadejte slovník."
     }
   ],
   "SKXopi": [
@@ -4315,6 +4327,12 @@
     {
       "type": 0,
       "value": "Název"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Zadejte pole."
     }
   ],
   "mCzkXX": [

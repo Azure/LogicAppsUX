@@ -863,7 +863,7 @@
   "84D91Y": [
     {
       "type": 0,
-      "value": "Archivo .pfx"
+      "value": "Archivo PFX"
     }
   ],
   "8CWFEh": [
@@ -1050,6 +1050,12 @@
     {
       "type": 0,
       "value": "Devuelve true si ambos parámetros son verdaderos."
+    }
+  ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
     }
   ],
   "AHB418": [
@@ -2230,7 +2236,7 @@
   "P+mWgV": [
     {
       "type": 0,
-      "value": "Archivo .pfx"
+      "value": "Archivo PFX"
     }
   ],
   "P2A5dB": [
@@ -2528,6 +2534,12 @@
     {
       "type": 0,
       "value": "Contraseña"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Introducir un diccionario"
     }
   ],
   "SKXopi": [
@@ -4217,6 +4229,12 @@
     {
       "type": 0,
       "value": "Nombre"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Introducir una matriz"
     }
   ],
   "mCzkXX": [

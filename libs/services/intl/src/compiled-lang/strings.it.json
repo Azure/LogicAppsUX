@@ -1052,6 +1052,12 @@
       "value": "Restituisce true se entrambi i parametri sono true"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -2536,6 +2542,12 @@
     {
       "type": 0,
       "value": "Password"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Immettere un dizionario"
     }
   ],
   "SKXopi": [
@@ -4209,6 +4221,12 @@
     {
       "type": 0,
       "value": "Nome"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Immettere una matrice"
     }
   ],
   "mCzkXX": [

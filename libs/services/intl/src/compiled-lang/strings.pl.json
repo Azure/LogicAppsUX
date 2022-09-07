@@ -890,7 +890,7 @@
   "84D91Y": [
     {
       "type": 0,
-      "value": "Plik pfx"
+      "value": "Certyfikat PFX"
     }
   ],
   "8CWFEh": [
@@ -1077,6 +1077,12 @@
     {
       "type": 0,
       "value": "Zwraca wartość true, jeśli oba parametry mają wartość true"
+    }
+  ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
     }
   ],
   "AHB418": [
@@ -2306,7 +2312,7 @@
   "P+mWgV": [
     {
       "type": 0,
-      "value": "Plik pfx"
+      "value": "Certyfikat PFX"
     }
   ],
   "P2A5dB": [
@@ -2615,6 +2621,12 @@
     {
       "type": 0,
       "value": "Hasło"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Wprowadź słownik"
     }
   ],
   "SKXopi": [
@@ -4323,6 +4335,12 @@
     {
       "type": 0,
       "value": "Nazwa"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Wprowadź tablicę"
     }
   ],
   "mCzkXX": [

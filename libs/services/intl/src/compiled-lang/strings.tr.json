@@ -1041,6 +1041,12 @@
       "value": "İki parametre de true ise true döndürür"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -2473,6 +2479,12 @@
     {
       "type": 0,
       "value": "Parola"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Sözlük Girin"
     }
   ],
   "SKXopi": [
@@ -4131,6 +4143,12 @@
     {
       "type": 0,
       "value": "Ad"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Dizi Girin"
     }
   ],
   "mCzkXX": [

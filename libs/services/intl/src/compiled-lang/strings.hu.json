@@ -1041,6 +1041,12 @@
       "value": "Igaz értéket ad vissza, ha mindkét paraméter igaz."
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -2493,6 +2499,12 @@
     {
       "type": 0,
       "value": "Jelszó"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy tulajdonságtárat"
     }
   ],
   "SKXopi": [
@@ -4181,6 +4193,12 @@
       "value": "Név"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Adjon meg egy tömböt"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4758,7 +4776,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Ügyfél-azonosító"
+      "value": "Ügyfélazonosító"
     }
   ],
   "ss5JPH": [

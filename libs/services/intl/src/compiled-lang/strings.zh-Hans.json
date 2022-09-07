@@ -1034,6 +1034,12 @@
       "value": "如果两个参数均为 true，则返回 true"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -2426,6 +2432,12 @@
     {
       "type": 0,
       "value": "密码"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "输入字典"
     }
   ],
   "SKXopi": [
@@ -4105,6 +4117,12 @@
     {
       "type": 0,
       "value": "名称"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "输入数组"
     }
   ],
   "mCzkXX": [

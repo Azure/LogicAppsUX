@@ -1030,6 +1030,12 @@
       "value": "両方のパラメーターが true の場合は true を返します"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -2418,6 +2424,12 @@
     {
       "type": 0,
       "value": "パスワード"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "辞書を入力してください"
     }
   ],
   "SKXopi": [
@@ -4065,6 +4077,12 @@
     {
       "type": 0,
       "value": "名前"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "配列を入力してください"
     }
   ],
   "mCzkXX": [
