@@ -1,8 +1,8 @@
-import type { iconProps } from './IconModel';
+import type { IconProps } from './IconModel';
 import { wrapIcon } from '@fluentui/react-icons';
 import React from 'react';
 
-const Any24RegularIcon = (props: iconProps) => {
+const Any24RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -22,7 +22,7 @@ const Any24RegularIcon = (props: iconProps) => {
 
 export const Any24Regular = wrapIcon(Any24RegularIcon, 'Any24Regular');
 
-const Any24FilledIcon = (props: iconProps) => {
+const Any24FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -42,7 +42,7 @@ const Any24FilledIcon = (props: iconProps) => {
 
 export const Any24Filled = wrapIcon(Any24FilledIcon, 'Any24Filled');
 
-const Array24RegularIcon = (props: iconProps) => {
+const Array24RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -62,7 +62,7 @@ const Array24RegularIcon = (props: iconProps) => {
 
 export const Array24Regular = wrapIcon(Array24RegularIcon, 'Array24Regular');
 
-const Array24FilledIcon = (props: iconProps) => {
+const Array24FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -82,7 +82,7 @@ const Array24FilledIcon = (props: iconProps) => {
 
 export const Array24Filled = wrapIcon(Array24FilledIcon, 'Array24Filled');
 
-const Binary24RegularIcon = (props: iconProps) => {
+const Binary24RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -102,7 +102,7 @@ const Binary24RegularIcon = (props: iconProps) => {
 
 export const Binary24Regular = wrapIcon(Binary24RegularIcon, 'Binary24Regular');
 
-const Binary24FilledIcon = (props: iconProps) => {
+const Binary24FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -122,7 +122,7 @@ const Binary24FilledIcon = (props: iconProps) => {
 
 export const Binary24Filled = wrapIcon(Binary24FilledIcon, 'Binary24Filled');
 
-const Decimal24RegularIcon = (props: iconProps) => {
+const Decimal24RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -142,7 +142,7 @@ const Decimal24RegularIcon = (props: iconProps) => {
 
 export const Decimal24Regular = wrapIcon(Decimal24RegularIcon, 'Decimal24Regular');
 
-const Decimal24FilledIcon = (props: iconProps) => {
+const Decimal24FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -162,7 +162,7 @@ const Decimal24FilledIcon = (props: iconProps) => {
 
 export const Decimal24Filled = wrapIcon(Decimal24FilledIcon, 'Decimal24Filled');
 
-const Integer24RegularIcon = (props: iconProps) => {
+const Integer24RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -182,7 +182,7 @@ const Integer24RegularIcon = (props: iconProps) => {
 
 export const Integer24Regular = wrapIcon(Integer24RegularIcon, 'Integer24Regular');
 
-const Integer24FilledIcon = (props: iconProps) => {
+const Integer24FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -202,7 +202,7 @@ const Integer24FilledIcon = (props: iconProps) => {
 
 export const Integer24Filled = wrapIcon(Integer24FilledIcon, 'Integer24Filled');
 
-const String24RegularIcon = (props: iconProps) => {
+const String24RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -222,7 +222,7 @@ const String24RegularIcon = (props: iconProps) => {
 
 export const String24Regular = wrapIcon(String24RegularIcon, 'String24Regular');
 
-const String24FilledIcon = (props: iconProps) => {
+const String24FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',

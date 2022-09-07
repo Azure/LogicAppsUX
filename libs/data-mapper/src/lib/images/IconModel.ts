@@ -1,4 +1,4 @@
-export interface iconProps extends React.SVGAttributes<SVGElement> {
+export interface IconProps extends React.SVGAttributes<SVGElement> {
   primaryFill?: string;
   className?: string;
   filled?: boolean;
