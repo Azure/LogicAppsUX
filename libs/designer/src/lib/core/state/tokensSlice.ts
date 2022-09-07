@@ -28,6 +28,11 @@ export interface InitializeTokensAndVariablesPayload {
   variables: Record<string, VariableDeclaration[]>;
 }
 
+interface AddDynamicTokensPayload {
+  nodeId: string;
+  tokens: Token[];
+}
+
 export const tokensSlice = createSlice({
   name: 'tokens',
   initialState,
@@ -42,10 +47,16 @@ export const tokensSlice = createSlice({
         state.outputTokens[id].tokens = tokens;
       }
     },
+    addDynamicTokens: (state, action: PayloadAction<AddDynamicTokensPayload>) => {
+      const { nodeId, tokens } = action.payload;
+      if (state.outputTokens[nodeId]) {
+        state.outputTokens[nodeId].tokens = [...state.outputTokens[nodeId].tokens, ...tokens];
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeTokensAndVariables, updateTokens } = tokensSlice.actions;
+export const { initializeTokensAndVariables, addDynamicTokens, updateTokens } = tokensSlice.actions;
 
 export default tokensSlice.reducer;

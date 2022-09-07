@@ -525,6 +525,20 @@
       "value": "Upload or select an output schema to be used for your map."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
