@@ -313,7 +313,7 @@ export class SchemaProcessor {
         dynamicValues,
         dynamicSchema: getParameterDynamicSchema(schema),
         editor: dynamicValues ? 'combobox' : schema[SwaggerConstants.ExtensionProperties.Editor],
-        editorOptions: dynamicValues ? [] : schema[SwaggerConstants.ExtensionProperties.EditorOptions],
+        editorOptions: dynamicValues ? { options: [] } : schema[SwaggerConstants.ExtensionProperties.EditorOptions],
         format: schema.format,
         isInsideArray: this.options.parentProperty && this.options.parentProperty.isArray,
         isNested: this.options.isNested,
@@ -459,7 +459,7 @@ export class SchemaProcessor {
     const dynamicallyAdded = schema[SwaggerConstants.ExtensionProperties.DynamicallyAdded];
     const dynamicValues = getParameterDynamicValues(schema);
     const editor = dynamicValues ? 'combobox' : schema[SwaggerConstants.ExtensionProperties.Editor];
-    const editorOptions = dynamicValues ? [] : schema[SwaggerConstants.ExtensionProperties.EditorOptions];
+    const editorOptions = dynamicValues ? { options: [] } : schema[SwaggerConstants.ExtensionProperties.EditorOptions];
     const encode = schema[SwaggerConstants.ExtensionProperties.Encode];
     const $enum = getEnum(schema, $required);
     const format = schema.format;

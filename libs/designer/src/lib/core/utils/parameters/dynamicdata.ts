@@ -21,6 +21,7 @@ import {
   WildIndexSegment,
 } from '@microsoft-logic-apps/parsers';
 import type {
+  OperationInfo,
   OperationManifest
 } from '@microsoft-logic-apps/utils';
 import {
@@ -44,32 +45,23 @@ import {
 import type { DependencyInfo, NodeInputs } from '../../state/operation/operationMetadataSlice';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type { ListDynamicValue } from '@microsoft-logic-apps/designer-client-services';
+import { getDynamicSchemaProperties, getListDynamicValues } from '../../queries/connector';
 
-export interface ListDynamicValue {
-  value: any;
-  displayName: string;
-  description?: string;
-  disabled?: boolean;
-}
-
-export async function getDynamicValues(dependencyInfo: DependencyInfo, nodeInputs: NodeInputs): Promise<ListDynamicValue[]> {
-  const { definition } = dependencyInfo;
+export async function getDynamicValues(dependencyInfo: DependencyInfo, nodeInputs: NodeInputs, connectionId: string, operationInfo: OperationInfo): Promise<ListDynamicValue[]> {
+  const { definition, parameter } = dependencyInfo;
   if (isDynamicListExtension(definition)) {
-    const { parameters } = definition.extension;
+    const { dynamicState, parameters } = definition.extension;
     const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs);
 
-    // TODO - Call the service to get the dynamic values;
-    console.log(operationParameters);
-    const dynamicValues: ListDynamicValue[] = [{ displayName: 'Item 1', value: '1' }, { displayName: 'Item 2', value: '2' }];
-
-    return dynamicValues;
+    return getListDynamicValues(connectionId, operationInfo.connectorId, operationInfo.operationId, parameter?.alias, operationParameters, dynamicState);
   } else {
     // TODO - Add for swagger based dynamic calls
     return [];
   }
 }
 
-export async function getDynamicSchema(dependencyInfo: DependencyInfo, nodeInputs: NodeInputs): Promise<OpenAPIV2.SchemaObject> {
+export async function getDynamicSchema(dependencyInfo: DependencyInfo, nodeInputs: NodeInputs, connectionId: string, operationInfo: OperationInfo): Promise<OpenAPIV2.SchemaObject> {
   const { parameter, definition } = dependencyInfo;
   const emptySchema = {
     [ExtensionProperties.Alias]: parameter?.alias,
@@ -78,26 +70,10 @@ export async function getDynamicSchema(dependencyInfo: DependencyInfo, nodeInput
   };
   try {
     if (isDynamicPropertiesExtension(definition)) {
-      const operationParameters = getParametersForDynamicInvoke(definition.extension.parameters, nodeInputs);
+      const { dynamicState, parameters } = definition.extension;
+      const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs);
 
-      // TODO - Call the service to get the dynamic schema;
-      console.log(operationParameters);
-      const dynamicSchema = {
-        type: 'object',
-        properties: {
-          stringProperty: { title: 'String Property', description: 'Dynamic parameter of type string', type: 'string' },
-          numberProperty: { title: 'Number Property', description: 'Dynamic parameter of type number', type: 'number' },
-          objectProperty: {
-            type: 'object',
-            title: 'Nested Object',
-            properties: { booleanNested: { type: 'boolean', title: 'Nested Boolean' }},
-            required: []
-          }
-        },
-        required: [ 'numberProperty' ]
-      };
-
-      return dynamicSchema;
+      return getDynamicSchemaProperties(connectionId, operationInfo.connectorId, operationInfo.operationId, parameter?.alias, operationParameters, dynamicState);
     } else {
       // TODO - Add for swagger based dynamic calls
       return emptySchema;

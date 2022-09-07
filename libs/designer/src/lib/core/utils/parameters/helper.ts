@@ -1125,7 +1125,7 @@ async function loadDynamicContentForInputsInNode(
     const info = inputDependencies[inputKey];
     if (isDynamicDataReadyToLoad(info) && info.dependencyType === 'ApiSchema') {
       dispatch(clearDynamicInputs(nodeId));
-      const inputSchema = await getDynamicSchema(info, allInputs);
+      const inputSchema = await getDynamicSchema(info, allInputs, connectionId, operationInfo);
       const manifest = await getOperationManifest(operationInfo);
       const allInputParameters = getAllInputParameters(allInputs);
       const allInputKeys = allInputParameters.map((param) => param.parameterKey);
@@ -1177,7 +1177,7 @@ export async function loadDynamicValuesForParameter(
       }));
 
       try {
-        const dynamicValues = await getDynamicValues(dependencyInfo, nodeInputs);
+        const dynamicValues = await getDynamicValues(dependencyInfo, nodeInputs, connectionId, operationInfo);
 
         dispatch(updateNodeParameters({
           nodeId,

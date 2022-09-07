@@ -289,7 +289,7 @@ export const loadDynamicOutputsInNode = async (
         updateOutputsAndTokens(nodeId, operationInfo.type, dispatch, manifest, isTrigger, nodeInputs, settings);
       } else {
         dispatch(clearDynamicOutputs(nodeId));
-        const outputSchema = await getDynamicSchema(info, nodeInputs);
+        const outputSchema = await getDynamicSchema(info, nodeInputs, connectionId, operationInfo);
         const schemaOutputs = getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter);
         const hasSplitOn = settings.splitOn?.value?.enabled;
 
