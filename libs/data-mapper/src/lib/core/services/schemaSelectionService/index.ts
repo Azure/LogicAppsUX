@@ -17,7 +17,7 @@ export interface SchemaInfoProperties {
   path: string;
 }
 
-export const defaultOptions = {
+export const defaultSchemaSelectionServiceOptions = {
   baseUrl: 'http://localhost:7071',
   resourceUrl: '',
   accessToken: '',

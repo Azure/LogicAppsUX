@@ -58,22 +58,29 @@ The extension activates/initializes automatically upon viewing the Azure Tools e
 Data Mapper UX relies on its backend for the following:
 
 - Schema translation (getSchemaTree - translates any supported schema format to JSON)
+  - Ex: http://localhost:7071/runtime/webhooks/workflow/api/management/schemas/CBRInputSchema/contents/schemaTree?api-version=2019-10-01-edge-preview
 - .XSLT generation (formats a data map with all of its nodes/expressions/connections into a common .xslt format)
 - Testing connections (ensuring that any connections, including expressions, produce the expected output)
 
-### Set-up (31 AUG 2022)
+### Set-up (7 SEPT 2022)
 
-1. Install VS Code extensions: Azure Tools, Azure Logic Apps (Standard), Azurite, .NET Watch Attach
-2. Download and install Azure Functions Core Tools v3 (https://github.com/Azure/azure-functions-core-tools or npm i -g azure-functions-core-tools@3 --unsafe-perm true)
-3. Make sure you have .NET Core SDK 3.1 installed
-4. In Azure Tools extension tab under Logic Apps (Standard), click the 'Create New Project' icon, and choose where you want the project folder
-5. Make sure that ./Artifacts/Schemas exists in the newly created project folder, and add an .xsd template schema for testing (ask Reid/Danielle)
-6. With that folder still open in your VS Code workspace, go back to Logic Apps (Standard) and click 'Create New Workflow' -> Stateless -> Enter
-7. Configure the following: local.settings.json - under values, add "AzureWebJobsStorage": "UseDevelopmentStorage=true" |||| .vscode/settings.json - make sure azureLogicAppsStandard.projectRuntime is '~3'
-8. Start Azurite ('Azurite: Start' in the command palette)
-9. **Windows:** In the VS Code title bar, click Run -> Run Without Debugging - this will generate the necessary path/files for the next step  
-   **Mac:** Run `func host start` in your terminal
-10. Ask Reid/Danielle for the backend runtime .zip, download it, go to C:/Users/yourUsername/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows,
-    back up the current version, then replace it with the files just downloaded (renaming it to the same version as the one you replaced)
-11. Repeat step 9 (Run -> Run Without Debugging), and you should now be able to hit the below endpoint(s)
-12. To hit the (get)schemaTree endpoint: http://localhost:7071/runtime/webhooks/workflow/api/management/schemas/CBRInputSchema/contents/schemaTree?api-version=2019-10-01-edge-preview
+#### Prerequisites
+
+- .NET Core SDK 3.1
+- Azure Functions Core Tools v3 (https://github.com/Azure/azure-functions-core-tools or `npm i -g azure-functions-core-tools@3 --unsafe-perm true`)
+- VS Code Extensions: Azure Tools, Azure Logic Apps (Standard)
+
+- Logic Apps workflow (folder - w/ schemas) - see steps to create below:
+
+1. In Azure Tools extension tab under Logic Apps (Standard), click the 'Create New Project' icon, and choose where you want the project folder
+2. Make sure that ./Artifacts/Schemas exists in the newly created project folder, and add an .xsd template schema for testing (ask Reid/Danielle)
+3. With that folder still open in your VS Code workspace, go back to Logic Apps (Standard) and click 'Create New Workflow' -> Stateless -> Enter
+
+#### Running dev-build backend runtime
+
+The backend runtime will now start and configure any necessary settings as the extension loads, so all you have to do (for dev) is:
+
+1. Run `func host start` in your terminal so we can generate the necessary paths/folder for the next step (you should only have to do this step the very first time)
+2. Ask Reid/Danielle for the backend runtime .zip, download it, go to yourRootUsernameFolder/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows,
+   back up the current version, then replace it with the files just downloaded (renaming it to the same version as the one you replaced)
+3. You can now run Data Mapper with its latest backend runtime!

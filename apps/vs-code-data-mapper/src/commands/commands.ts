@@ -1,4 +1,4 @@
-import DataMapperPanel from '../DataMapperPanel';
+import DataMapperExt from '../DataMapperExt';
 import { dataMapDefinitionsPath, schemasPath } from '../extensionConfig';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as yaml from 'js-yaml';
@@ -13,7 +13,7 @@ export const registerCommands = (context: ExtensionContext) => {
 };
 
 const openDataMapperCmd = (context: ExtensionContext) => {
-  DataMapperPanel.createOrShow(context);
+  DataMapperExt.createOrShow(context);
 };
 
 const createNewDataMapCmd = async () => {
@@ -36,9 +36,9 @@ const createNewDataMapCmd = async () => {
     const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, `${newDatamapName}.yml`);
     fs.writeFile(filePath, newDataMapTemplate, 'utf8');
 
-    DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadNewDataMap', data: newDataMapTemplate });
+    DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'loadNewDataMap', data: newDataMapTemplate });
 
-    DataMapperPanel.currentDataMapName = newDatamapName;
+    DataMapperExt.currentDataMapName = newDatamapName;
   });
 };
 
@@ -55,10 +55,10 @@ const loadDataMapFileCmd = async (uri: Uri) => {
   const dstSchemaPath = path.join(schemasFolder, dataMap.$targetSchema);
 
   if (!fileExists(srcSchemaPath) || !fileExists(dstSchemaPath)) {
-    DataMapperPanel.log('At least one of the schema files was not found in the Schemas folder!');
+    DataMapperExt.log('At least one of the schema files was not found in the Schemas folder!');
   }
 
-  DataMapperPanel.currentPanel.sendMsgToWebview({
+  DataMapperExt.currentPanel.sendMsgToWebview({
     command: 'loadDataMap',
     data: {
       dataMap: dataMap,
@@ -67,5 +67,5 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     },
   });
 
-  DataMapperPanel.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
+  DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
 };
