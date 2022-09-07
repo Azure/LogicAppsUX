@@ -1,4 +1,4 @@
-import DataMapperPanel from './DataMapperPanel';
+import DataMapperExt from './DataMapperExt';
 import { registerCommands } from './commands/commands';
 import { outputChannelTitle, supportedDataMapFileExts, supportedSchemaFileExts } from './extensionConfig';
 import type { ExtensionContext } from 'vscode';
@@ -10,9 +10,9 @@ export function activate(context: ExtensionContext) {
   commands.executeCommand('setContext', 'azureDataMapper.supportedSchemaFileExts', supportedSchemaFileExts);
   commands.executeCommand('setContext', 'azureDataMapper.supportedFileExts', [...supportedDataMapFileExts, ...supportedSchemaFileExts]);
 
-  DataMapperPanel.outputChannel = window.createOutputChannel(outputChannelTitle);
+  DataMapperExt.outputChannel = window.createOutputChannel(outputChannelTitle);
 
   registerCommands(context);
 
-  DataMapperPanel.log('Data Mapper is loaded and commands are registered');
+  DataMapperExt.log('Data Mapper is loaded and commands are registered');
 }

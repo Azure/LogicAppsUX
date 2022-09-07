@@ -20,8 +20,8 @@ type ReceivingMessageTypes =
       data: string;
     };
 
-export default class DataMapperPanel {
-  public static currentPanel: DataMapperPanel | undefined;
+export default class DataMapperExt {
+  public static currentPanel: DataMapperExt | undefined;
   public static outputChannel: OutputChannel | undefined;
   public static readonly viewType = 'dataMapperWebview';
   public static extensionContext: ExtensionContext | undefined;
@@ -32,13 +32,13 @@ export default class DataMapperPanel {
 
   public static createOrShow(context: ExtensionContext) {
     // If a panel has already been created, re-show it
-    if (DataMapperPanel.currentPanel) {
-      DataMapperPanel.currentPanel._panel.reveal(ViewColumn.Active);
+    if (DataMapperExt.currentPanel) {
+      DataMapperExt.currentPanel._panel.reveal(ViewColumn.Active);
       return;
     }
 
     const panel = window.createWebviewPanel(
-      DataMapperPanel.viewType, // Key used to reference the panel
+      DataMapperExt.viewType, // Key used to reference the panel
       webviewTitle, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
       {
@@ -49,7 +49,7 @@ export default class DataMapperPanel {
       }
     );
 
-    this.currentPanel = new DataMapperPanel(panel, context.extensionPath);
+    this.currentPanel = new DataMapperExt(panel, context.extensionPath);
   }
 
   public sendMsgToWebview(msg: SendingMessageTypes) {
@@ -59,19 +59,19 @@ export default class DataMapperPanel {
   private constructor(panel: WebviewPanel, extPath: string) {
     this._panel = panel;
     this._extensionPath = extPath;
-    DataMapperPanel.extensionContext?.subscriptions.push(panel);
+    DataMapperExt.extensionContext?.subscriptions.push(panel);
 
     this._setWebviewHtml();
 
     // Handle messages from the webview (Data Mapper component)
-    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperPanel.extensionContext?.subscriptions);
+    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.extensionContext?.subscriptions);
 
     this._panel.onDidDispose(
       () => {
-        DataMapperPanel.currentPanel = undefined;
+        DataMapperExt.currentPanel = undefined;
       },
       null,
-      DataMapperPanel.extensionContext?.subscriptions
+      DataMapperExt.extensionContext?.subscriptions
     );
   }
 
@@ -99,13 +99,13 @@ export default class DataMapperPanel {
   private _handleWebviewMsg(msg: ReceivingMessageTypes) {
     switch (msg.command) {
       case 'addSchemaFromFile': {
-        DataMapperPanel.currentPanel.addSchemaFromFile(msg.data.path, msg.data.type);
+        DataMapperExt.currentPanel.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
       }
       case 'readLocalFileOptions': {
         const folderPath = workspace.workspaceFolders[0].uri.fsPath; // [WI 15419837] Find out how multi folder workspaces work
         fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
-          DataMapperPanel.currentPanel?.sendMsgToWebview({
+          DataMapperExt.currentPanel?.sendMsgToWebview({
             command: 'showAvailableSchemas',
             data: result.filter((file) => path.extname(file).toLowerCase() === '.xsd'),
           });
@@ -113,7 +113,7 @@ export default class DataMapperPanel {
         break;
       }
       case 'saveDataMapDefinition': {
-        const fileName = `${DataMapperPanel.currentDataMapName}.yml`;
+        const fileName = `${DataMapperExt.currentDataMapName}.yml`;
         const filePath = path.join(workspace.workspaceFolders[0].uri.fsPath, dataMapDefinitionsPath, fileName);
         fs.writeFile(filePath, msg.data, 'utf8');
       }
@@ -129,16 +129,16 @@ export default class DataMapperPanel {
 
       if (!fileExists(expectedSchemaPath)) {
         fs.writeFile(expectedSchemaPath, text, 'utf16le').then(() => {
-          DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
+          DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
         });
       } else {
-        DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
+        DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
       }
     });
   }
 
   public static log(text: string) {
-    DataMapperPanel.outputChannel.appendLine(text);
-    DataMapperPanel.outputChannel.show();
+    DataMapperExt.outputChannel.appendLine(text);
+    DataMapperExt.outputChannel.show();
   }
 }
