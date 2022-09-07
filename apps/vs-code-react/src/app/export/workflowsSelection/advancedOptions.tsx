@@ -10,7 +10,7 @@ import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const AdvancedOptions: React.FC<any> = () => {
+export const AdvancedOptions: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { exportData } = vscodeState as InitializedVscodeState;
   const { selectedAdvanceOptions } = exportData;
