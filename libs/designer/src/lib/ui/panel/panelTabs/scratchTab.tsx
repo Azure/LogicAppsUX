@@ -43,7 +43,8 @@ export const ScratchTab = () => {
   const children = (): React.ReactNode => {
     return (
       <>
-        <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} />
+        <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} authProps={{}} />
+
         <ArrayEditor
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
@@ -60,7 +61,17 @@ export const ScratchTab = () => {
               content: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' }],
             },
           ]}
-          initialValue={[]}
+          initialValue={[
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
+            testTokenSegment,
+            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n  "' },
+            testTokenSegment,
+            testTokenSegment,
+            { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
+          ]}
           GetTokenPicker={GetTokenPicker}
         />
 

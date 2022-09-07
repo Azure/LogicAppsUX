@@ -1,17 +1,19 @@
 import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionConfig';
-import { promises as fs } from 'fs';
+import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
-import type { WebviewPanel, ExtensionContext } from 'vscode';
+import type { WebviewPanel, ExtensionContext, OutputChannel } from 'vscode';
+
+type SchemaType = 'input' | 'output';
 
 type SendingMessageTypes =
-  | { command: 'loadInputSchema' | 'loadOutputSchema'; data: any }
-  | { command: 'loadDataMap'; data: any }
+  | { command: 'fetchSchema'; data: { fileName: string; type: SchemaType } }
+  | { command: 'loadDataMap' | 'loadNewDataMap'; data: any }
   | { command: 'showAvailableSchemas'; data: string[] };
 type ReceivingMessageTypes =
   | {
-      command: 'readSelectedSchemaFile' | 'readLocalFileOptions';
-      data: { path: string; type: 'input' | 'output' };
+      command: 'addSchemaFromFile' | 'readLocalFileOptions';
+      data: { path: string; type: SchemaType };
     }
   | {
       command: 'saveDataMapDefinition';
@@ -20,6 +22,7 @@ type ReceivingMessageTypes =
 
 export default class DataMapperPanel {
   public static currentPanel: DataMapperPanel | undefined;
+  public static outputChannel: OutputChannel | undefined;
   public static readonly viewType = 'dataMapperWebview';
   public static extensionContext: ExtensionContext | undefined;
   public static currentDataMapName: string | undefined;
@@ -38,7 +41,12 @@ export default class DataMapperPanel {
       DataMapperPanel.viewType, // Key used to reference the panel
       webviewTitle, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
-      { enableScripts: true }
+      {
+        enableScripts: true,
+        // NOTE: Keeps webview content state even when placed in background (same as browsers)
+        // - not as performant as vscode's get/setState, but likely not a concern at all for MVP
+        retainContextWhenHidden: true,
+      }
     );
 
     this.currentPanel = new DataMapperPanel(panel, context.extensionPath);
@@ -47,8 +55,6 @@ export default class DataMapperPanel {
   public sendMsgToWebview(msg: SendingMessageTypes) {
     this._panel.webview.postMessage(msg);
   }
-
-  // TODO: revive()
 
   private constructor(panel: WebviewPanel, extPath: string) {
     this._panel = panel;
@@ -92,21 +98,17 @@ export default class DataMapperPanel {
 
   private _handleWebviewMsg(msg: ReceivingMessageTypes) {
     switch (msg.command) {
-      case 'readSelectedSchemaFile': {
-        fs.readFile(msg.data.path, 'utf-8').then((text: string) => {
-          if (msg.data.type === 'input') {
-            DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadInputSchema', data: JSON.parse(text) });
-          } else {
-            DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'loadOutputSchema', data: JSON.parse(text) });
-          }
-        });
+      case 'addSchemaFromFile': {
+        DataMapperPanel.currentPanel.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
       }
       case 'readLocalFileOptions': {
         const folderPath = workspace.workspaceFolders[0].uri.fsPath; // [WI 15419837] Find out how multi folder workspaces work
-        console.log(folderPath);
         fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
-          DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'showAvailableSchemas', data: result });
+          DataMapperPanel.currentPanel?.sendMsgToWebview({
+            command: 'showAvailableSchemas',
+            data: result.filter((file) => path.extname(file).toLowerCase() === '.xsd'),
+          });
         });
         break;
       }
@@ -116,5 +118,27 @@ export default class DataMapperPanel {
         fs.writeFile(filePath, msg.data, 'utf8');
       }
     }
+  }
+
+  public addSchemaFromFile(filePath: string, schemaType: 'input' | 'output') {
+    // NOTE: .xsd files are utf-16 encoded
+    fs.readFile(filePath, 'utf16le').then((text: string) => {
+      // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call
+      const schemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
+      const expectedSchemaPath = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath, schemaFileName);
+
+      if (!fileExists(expectedSchemaPath)) {
+        fs.writeFile(expectedSchemaPath, text, 'utf16le').then(() => {
+          DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
+        });
+      } else {
+        DataMapperPanel.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
+      }
+    });
+  }
+
+  public static log(text: string) {
+    DataMapperPanel.outputChannel.appendLine(text);
+    DataMapperPanel.outputChannel.show();
   }
 }

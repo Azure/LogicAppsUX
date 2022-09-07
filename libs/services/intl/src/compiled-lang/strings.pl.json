@@ -410,7 +410,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "Wprowadź wartość nagłówka autoryzacji"
     }
   ],
   "1uGBLP": [
@@ -482,7 +482,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Tożsamość zarządzana"
     }
   ],
   "2b1yD3": [
@@ -536,7 +536,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Tożsamość zarządzana przypisana przez system"
     }
   ],
   "3BZnxY": [
@@ -590,7 +590,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "Wprowadzona tożsamość nie jest skojarzona z tą aplikacją logiki."
     }
   ],
   "3jlz+B": [
@@ -638,7 +638,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "Uwierzytelnianie"
     }
   ],
   "47kOXr": [
@@ -734,7 +734,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "Urząd"
     }
   ],
   "5aa76N": [
@@ -890,7 +890,7 @@
   "84D91Y": [
     {
       "type": 0,
-      "value": "Pfx"
+      "value": "Certyfikat PFX"
     }
   ],
   "8CWFEh": [
@@ -932,7 +932,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "Włącz tożsamość zarządzaną dla aplikacji logiki."
     }
   ],
   "8U0KPg": [
@@ -944,7 +944,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "Wprowadź klucz tajny w postaci zwykłego tekstu lub użyj parametru secure"
     }
   ],
   "8Y5xpK": [
@@ -1004,13 +1004,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "Wartość"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "Tożsamość użytkownika nie jest obsługiwana, gdy aplikacja logiki ma włączoną tożsamość zarządzaną przypisaną przez system."
     }
   ],
   "949s+r": [
@@ -1079,6 +1079,12 @@
       "value": "Zwraca wartość true, jeśli oba parametry mają wartość true"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1118,13 +1124,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Wprowadź odbiorców"
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "Nazwa użytkownika"
     }
   ],
   "ArTh0/": [
@@ -1246,7 +1252,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Wprowadź hasło w postaci zwykłego tekstu lub użyj parametru secure"
     }
   ],
   "BSHFiw": [
@@ -1294,7 +1300,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "Typ poświadczeń"
     }
   ],
   "Cy9qeQ": [
@@ -1324,7 +1330,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "Wprowadź identyfikator klienta"
     }
   ],
   "DZZ3fj": [
@@ -1396,7 +1402,7 @@
   "EjXdAm": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Hasło"
     }
   ],
   "Eqgm4v": [
@@ -1608,7 +1614,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "Wprowadź urząd"
     }
   ],
   "GLd3MU": [
@@ -2114,7 +2120,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "Tożsamość zarządzana"
     }
   ],
   "MTR4Vg": [
@@ -2174,13 +2180,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "Wprowadź dzierżawę"
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Wybierz tożsamość"
     }
   ],
   "NvANon": [
@@ -2216,7 +2222,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Wpis tajny"
     }
   ],
   "OFKZzQ": [
@@ -2306,7 +2312,7 @@
   "P+mWgV": [
     {
       "type": 0,
-      "value": "Pfx"
+      "value": "Certyfikat PFX"
     }
   ],
   "P2A5dB": [
@@ -2396,7 +2402,7 @@
   "PtqSHp": [
     {
       "type": 0,
-      "value": "Do not generate if no value"
+      "value": "Nie generuj, jeśli brak wartości"
     }
   ],
   "Pvm0xB": [
@@ -2438,7 +2444,7 @@
   "QGuYOg": [
     {
       "type": 0,
-      "value": "Dopuszczające wartość null"
+      "value": "Możliwa wartość null"
     }
   ],
   "QQYzHC": [
@@ -2524,7 +2530,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "Wprowadź odbiorców"
     }
   ],
   "RX2Shm": [
@@ -2614,7 +2620,13 @@
   "SCCE6s": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Hasło"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Wprowadź słownik"
     }
   ],
   "SKXopi": [
@@ -2894,7 +2906,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "Certyfikat"
     }
   ],
   "VptXzY": [
@@ -2966,7 +2978,7 @@
   "X4gDhV": [
     {
       "type": 0,
-      "value": "Tenant"
+      "value": "Dzierżawa"
     }
   ],
   "X8JjjT": [
@@ -3104,7 +3116,7 @@
   "Y/bcmG": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "Hasło"
     }
   ],
   "Y0H9aX": [
@@ -3150,7 +3162,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Wprowadź certyfikat PFX"
     }
   ],
   "YaFjJQ": [
@@ -3294,7 +3306,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "Wprowadź certyfikat PFX"
     }
   ],
   "ajAro8": [
@@ -3436,7 +3448,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "Wybierz tożsamość"
     }
   ],
   "ci6ex1": [
@@ -3914,13 +3926,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Odbiorcy"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "Tożsamość zarządzana przypisana przez system"
     }
   ],
   "i/b3Ko": [
@@ -4220,7 +4232,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "Wprowadź nazwę użytkownika"
     }
   ],
   "kneb9/": [
@@ -4325,6 +4337,12 @@
       "value": "Nazwa"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Wprowadź tablicę"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4382,7 +4400,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Wprowadź hasło w postaci zwykłego tekstu lub użyj parametru secure"
     }
   ],
   "mx2IMJ": [
@@ -4816,7 +4834,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "Wpis tajny"
     }
   ],
   "rDt4Iu": [
@@ -4924,7 +4942,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "Identyfikator klienta"
     }
   ],
   "ss5JPH": [
@@ -5182,7 +5200,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "Odbiorcy"
     }
   ],
   "vXwYXe": [
@@ -5358,7 +5376,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "Wprowadź hasło w postaci zwykłego tekstu lub użyj parametru secure"
     }
   ],
   "xOAOHM": [

@@ -361,7 +361,7 @@
   "1nvvw1": [
     {
       "type": 0,
-      "value": "Enter the value of the Authorization header"
+      "value": "Authorization ヘッダーの値を入力"
     }
   ],
   "1uGBLP": [
@@ -433,7 +433,7 @@
   "2TMGk7": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "マネージド ID"
     }
   ],
   "2b1yD3": [
@@ -487,7 +487,7 @@
   "36RiST": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "システム割り当てマネージド ID"
     }
   ],
   "3BZnxY": [
@@ -541,7 +541,7 @@
   "3ewBbk": [
     {
       "type": 0,
-      "value": "The entered identity is not associated with this Logic App."
+      "value": "入力された ID は、このロジック アプリに関連付けられていません。"
     }
   ],
   "3jlz+B": [
@@ -589,7 +589,7 @@
   "45ubha": [
     {
       "type": 0,
-      "value": "Authentication"
+      "value": "認証"
     }
   ],
   "47kOXr": [
@@ -685,7 +685,7 @@
   "5SAQOb": [
     {
       "type": 0,
-      "value": "Authority"
+      "value": "権限"
     }
   ],
   "5aa76N": [
@@ -841,7 +841,7 @@
   "84D91Y": [
     {
       "type": 0,
-      "value": "Pfx"
+      "value": "PFX"
     }
   ],
   "8CWFEh": [
@@ -883,7 +883,7 @@
   "8ND+Yc": [
     {
       "type": 0,
-      "value": "Please enable managed identity for the logic app."
+      "value": "ロジック アプリのマネージド ID を有効にしてください。"
     }
   ],
   "8U0KPg": [
@@ -895,7 +895,7 @@
   "8UfIAk": [
     {
       "type": 0,
-      "value": "Enter secret as plain text or use a secure parameter"
+      "value": "シークレットをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
     }
   ],
   "8Y5xpK": [
@@ -955,13 +955,13 @@
   "90Q7Pw": [
     {
       "type": 0,
-      "value": "Value"
+      "value": "値"
     }
   ],
   "93svjx": [
     {
       "type": 0,
-      "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+      "value": "ユーザー ID は、ロジック アプリでシステム割り当てマネージド ID が有効になっている場合はサポートされません。"
     }
   ],
   "949s+r": [
@@ -1030,6 +1030,12 @@
       "value": "両方のパラメーターが true の場合は true を返します"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1069,13 +1075,13 @@
   "Amz9+m": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "対象ユーザーを入力してください"
     }
   ],
   "AnX5yC": [
     {
       "type": 0,
-      "value": "Username"
+      "value": "ユーザー名"
     }
   ],
   "ArTh0/": [
@@ -1164,7 +1170,7 @@
   "BQSRV0": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "パスワードをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
     }
   ],
   "BSHFiw": [
@@ -1212,7 +1218,7 @@
   "CsPY74": [
     {
       "type": 0,
-      "value": "Credential Type"
+      "value": "資格情報の種類"
     }
   ],
   "Cy9qeQ": [
@@ -1242,7 +1248,7 @@
   "DWsh56": [
     {
       "type": 0,
-      "value": "Enter client ID"
+      "value": "クライアント ID を入力してください"
     }
   ],
   "DZZ3fj": [
@@ -1314,7 +1320,7 @@
   "EjXdAm": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "パスワード"
     }
   ],
   "Eqgm4v": [
@@ -1485,7 +1491,7 @@
   "GDUGlm": [
     {
       "type": 0,
-      "value": "Enter authority"
+      "value": "権限を入力してください"
     }
   ],
   "GLd3MU": [
@@ -1950,7 +1956,7 @@
   "MLCQzX": [
     {
       "type": 0,
-      "value": "Managed identity"
+      "value": "マネージド ID"
     }
   ],
   "MTR4Vg": [
@@ -2010,13 +2016,13 @@
   "No6CS+": [
     {
       "type": 0,
-      "value": "Enter tenant"
+      "value": "テナントを入力してください"
     }
   ],
   "NoXs0l": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "ID を選択してください"
     }
   ],
   "NvANon": [
@@ -2052,7 +2058,7 @@
   "OEEuUu": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "シークレット"
     }
   ],
   "OFKZzQ": [
@@ -2142,7 +2148,7 @@
   "P+mWgV": [
     {
       "type": 0,
-      "value": "Pfx"
+      "value": "PFX"
     }
   ],
   "P2A5dB": [
@@ -2360,7 +2366,7 @@
   "RPSKbr": [
     {
       "type": 0,
-      "value": "Enter audience"
+      "value": "対象ユーザーを入力してください"
     }
   ],
   "RX2Shm": [
@@ -2417,7 +2423,13 @@
   "SCCE6s": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "パスワード"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "辞書を入力してください"
     }
   ],
   "SKXopi": [
@@ -2697,7 +2709,7 @@
   "VlvlX1": [
     {
       "type": 0,
-      "value": "Certificate"
+      "value": "証明書"
     }
   ],
   "VptXzY": [
@@ -2769,7 +2781,7 @@
   "X4gDhV": [
     {
       "type": 0,
-      "value": "Tenant"
+      "value": "テナント"
     }
   ],
   "X8JjjT": [
@@ -2907,7 +2919,7 @@
   "Y/bcmG": [
     {
       "type": 0,
-      "value": "Password"
+      "value": "パスワード"
     }
   ],
   "Y0H9aX": [
@@ -2953,7 +2965,7 @@
   "YOUfNf": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "PFX を入力"
     }
   ],
   "YaFjJQ": [
@@ -3097,7 +3109,7 @@
   "ahsVI/": [
     {
       "type": 0,
-      "value": "Enter Pfx"
+      "value": "PFX を入力"
     }
   ],
   "ajAro8": [
@@ -3239,7 +3251,7 @@
   "cgq/+y": [
     {
       "type": 0,
-      "value": "Please select an identity"
+      "value": "ID を選択してください"
     }
   ],
   "ci6ex1": [
@@ -3664,13 +3676,13 @@
   "hvbclb": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "対象ユーザー"
     }
   ],
   "i/SguY": [
     {
       "type": 0,
-      "value": "System-assigned managed identity"
+      "value": "システム割り当てマネージド ID"
     }
   ],
   "i/b3Ko": [
@@ -3962,7 +3974,7 @@
   "klpJg1": [
     {
       "type": 0,
-      "value": "Enter username"
+      "value": "ユーザー名を入力してください"
     }
   ],
   "kneb9/": [
@@ -4067,6 +4079,12 @@
       "value": "名前"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "配列を入力してください"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -4124,7 +4142,7 @@
   "mvrlkP": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "パスワードをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
     }
   ],
   "mx2IMJ": [
@@ -4525,7 +4543,7 @@
   "rDDPpJ": [
     {
       "type": 0,
-      "value": "Secret"
+      "value": "シークレット"
     }
   ],
   "rDt4Iu": [
@@ -4633,7 +4651,7 @@
   "srpZD2": [
     {
       "type": 0,
-      "value": "Client ID"
+      "value": "クライアント ID"
     }
   ],
   "ss5JPH": [
@@ -4891,7 +4909,7 @@
   "vX9WYS": [
     {
       "type": 0,
-      "value": "Audience"
+      "value": "対象ユーザー"
     }
   ],
   "vXwYXe": [
@@ -5063,7 +5081,7 @@
   "xN3GEX": [
     {
       "type": 0,
-      "value": "Enter password as plain text or use a secure parameter"
+      "value": "パスワードをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
     }
   ],
   "xOAOHM": [

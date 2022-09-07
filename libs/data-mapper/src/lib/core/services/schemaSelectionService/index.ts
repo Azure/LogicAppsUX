@@ -17,6 +17,12 @@ export interface SchemaInfoProperties {
   path: string;
 }
 
+export const defaultOptions = {
+  baseUrl: 'http://localhost:7071',
+  resourceUrl: '',
+  accessToken: '',
+};
+
 export enum ResourceType {
   schemaList = 'schemaList',
 }
