@@ -1,6 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeHandler } from '../editor/base';
+import type { ChangeHandler, CallbackHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Change } from '../editor/base/plugins/Change';
 import { Label } from '../label';
@@ -65,6 +65,7 @@ export interface ComboboxProps {
   required?: boolean;
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onChange?: ChangeHandler;
+  onMenuOpen?: CallbackHandler;
 }
 
 export const Combobox = ({
@@ -77,6 +78,7 @@ export const Combobox = ({
   readOnly,
   GetTokenPicker,
   onChange,
+  onMenuOpen
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
@@ -101,6 +103,8 @@ export const Combobox = ({
     comboBoxRef.current?.focus(true);
     comboBoxRef.current?.dismissMenu();
   }, []);
+
+  const handleMenuOpen = (): void => { onMenuOpen?.(); }
 
   const updateOptions = (value?: string): void => {
     if (value !== undefined) {
@@ -202,6 +206,7 @@ export const Combobox = ({
           onRenderOption={onRenderOption}
           styles={comboboxStyles}
           onItemClick={(_, o) => handleOptionSelect(o)}
+          onMenuOpen={handleMenuOpen}
         />
       )}
     </div>

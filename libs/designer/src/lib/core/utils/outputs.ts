@@ -5,7 +5,7 @@ import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokensSlice';
-import { getDynamicOutputsFromSchema } from './parameters/dynamicdata';
+import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dynamicdata';
 import { getAllInputParameters, getTokenExpressionValue, isDynamicDataReadyToLoad } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
 import { getIntl } from '@microsoft-logic-apps/intl';
@@ -275,6 +275,7 @@ export const loadDynamicOutputsInNode = async (
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
+  connectionId: string,
   outputDependencies: Record<string, DependencyInfo>,
   nodeInputs: NodeInputs,
   settings: Settings,
@@ -288,8 +289,7 @@ export const loadDynamicOutputsInNode = async (
         updateOutputsAndTokens(nodeId, operationInfo.type, dispatch, manifest, isTrigger, nodeInputs, settings);
       } else {
         dispatch(clearDynamicOutputs(nodeId));
-        // Add code to get the dynamic output schema
-        const outputSchema = {};
+        const outputSchema = await getDynamicSchema(info, nodeInputs);
         const schemaOutputs = getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter);
         const hasSplitOn = settings.splitOn?.value?.enabled;
 

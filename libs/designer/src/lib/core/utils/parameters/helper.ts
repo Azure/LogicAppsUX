@@ -17,7 +17,7 @@ import { initializeArrayViewModel } from '../editors/array';
 import { loadDynamicOutputsInNode } from '../outputs';
 import { hasSecureOutputs } from '../setting';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
-import { getDynamicInputsFromSchema } from './dynamicdata';
+import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues } from './dynamicdata';
 import {
   createLiteralValueSegment,
   isExpressionToken,
@@ -60,7 +60,7 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft-logic-apps/parsers';
-import type { OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
+import type { Exception, OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
 import {
   isUndefinedOrEmptyString,
   aggregate,
@@ -160,6 +160,7 @@ export function createParameterInfo(
   const parameterInfo: ParameterInfo = {
     alternativeKey: parameter.alternativeKey,
     id: guid(),
+    dynamicData: parameter.dynamicValues ? { status: DynamicCallStatus.NOTSTARTED } : undefined,
     editor: editor.type,
     editorOptions: editor.options,
     editorViewModel: editor.viewModel,
@@ -996,6 +997,7 @@ export async function updateParameterAndDependencies(
   properties: Partial<ParameterInfo>,
   isTrigger: boolean,
   operationInfo: NodeOperation,
+  connectionId: string,
   nodeInputs: NodeInputs,
   dependencies: NodeDependencies,
   settings: Settings,
@@ -1046,6 +1048,7 @@ export async function updateParameterAndDependencies(
         nodeId,
         isTrigger,
         operationInfo,
+        connectionId,
         dependenciesToUpdate,
         updateNodeInputsWithParameter(nodeInputs, parameterId, groupId, properties),
         settings,
@@ -1095,17 +1098,18 @@ async function loadDynamicData(
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
+  connectionId: string,
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
   settings: Settings,
   dispatch: Dispatch
 ): Promise<void> {
   if (Object.keys(dependencies.outputs).length) {
-    loadDynamicOutputsInNode(nodeId, isTrigger, operationInfo, dependencies.outputs, nodeInputs, settings, dispatch);
+    loadDynamicOutputsInNode(nodeId, isTrigger, operationInfo, connectionId, dependencies.outputs, nodeInputs, settings, dispatch);
   }
 
   if (Object.keys(dependencies.inputs).length) {
-    loadDynamicContentForInputsInNode(nodeId, dependencies.inputs, operationInfo, nodeInputs, dispatch);
+    loadDynamicContentForInputsInNode(nodeId, dependencies.inputs, operationInfo, connectionId, nodeInputs, dispatch);
   }
 }
 
@@ -1113,6 +1117,7 @@ async function loadDynamicContentForInputsInNode(
   nodeId: string,
   inputDependencies: Record<string, DependencyInfo>,
   operationInfo: OperationInfo,
+  connectionId: string,
   allInputs: NodeInputs,
   dispatch: Dispatch
 ): Promise<void> {
@@ -1120,7 +1125,7 @@ async function loadDynamicContentForInputsInNode(
     const info = inputDependencies[inputKey];
     if (isDynamicDataReadyToLoad(info) && info.dependencyType === 'ApiSchema') {
       dispatch(clearDynamicInputs(nodeId));
-      const inputSchema = {};
+      const inputSchema = await getDynamicSchema(info, allInputs);
       const manifest = await getOperationManifest(operationInfo);
       const allInputParameters = getAllInputParameters(allInputs);
       const allInputKeys = allInputParameters.map((param) => param.parameterKey);
@@ -1145,6 +1150,8 @@ export async function loadDynamicValuesForParameter(
   nodeId: string,
   groupId: string,
   parameterId: string,
+  operationInfo: NodeOperation,
+  connectionId: string,
   nodeInputs: NodeInputs,
   dependencies: NodeDependencies,
   dispatch: Dispatch
@@ -1158,24 +1165,21 @@ export async function loadDynamicValuesForParameter(
   const dependencyInfo = dependencies.inputs[parameter.parameterKey];
   if (dependencyInfo) {
     if (isDynamicDataReadyToLoad(dependencyInfo)) {
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              parameterId,
-              groupId,
-              propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } },
-            },
-          ],
-        })
-      );
+      dispatch(updateNodeParameters({
+        nodeId,
+        parameters: [
+          {
+            parameterId,
+            groupId,
+            propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } },
+          },
+        ],
+      }));
 
-      // Make api call to get dynamic values
-      const dynamicValues: any[] = [];
+      try {
+        const dynamicValues = await getDynamicValues(dependencyInfo, nodeInputs);
 
-      dispatch(
-        updateNodeParameters({
+        dispatch(updateNodeParameters({
           nodeId,
           parameters: [
             {
@@ -1184,37 +1188,47 @@ export async function loadDynamicValuesForParameter(
               propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } },
             },
           ],
-        })
-      );
+        }));
+      } catch (error) {
+        dispatch(updateNodeParameters({
+          nodeId,
+          parameters: [{
+            parameterId,
+            groupId,
+            propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: error as Exception }}
+          }]
+        }));
+      }
     } else {
       const intl = getIntl();
       const invalidParameterNames = Object.keys(dependencyInfo.dependentParameters)
         .filter((key) => !dependencyInfo.dependentParameters[key].isValid)
         .map((id) => groupParameters.find((param) => param.id === id)?.parameterName);
 
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              parameterId,
-              groupId,
-              propertiesToUpdate: {
-                dynamicData: {
-                  error: intl.formatMessage(
+      dispatch(updateNodeParameters({
+        nodeId,
+        parameters: [
+          {
+            parameterId,
+            groupId,
+            propertiesToUpdate: {
+              dynamicData: {
+                error: {
+                  name: 'DynamicListFailed',
+                  message: intl.formatMessage(
                     {
                       defaultMessage: 'Required parameters {parameters} not set or invalid',
                       description: 'Error message to show when required parameters are not set or invalid',
                     },
                     { parameters: `${invalidParameterNames.join(' , ')}` }
-                  ),
-                  status: DynamicCallStatus.FAILED,
+                  )
                 },
+                status: DynamicCallStatus.FAILED,
               },
             },
-          ],
-        })
-      );
+          },
+        ],
+      }));
     }
   }
 }

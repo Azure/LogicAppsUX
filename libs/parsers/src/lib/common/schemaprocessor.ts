@@ -304,13 +304,16 @@ export class SchemaProcessor {
 
     if (this.options.includeParentObject && !isReadOnlyInputParameter) {
       const name = this._getName() as string;
+      const dynamicValues = getParameterDynamicValues(schema);
 
       schemaProperties.push({
         alias: schema[SwaggerConstants.ExtensionProperties.Alias],
         default: schema.default,
         description: schema.description,
-        dynamicValues: getParameterDynamicValues(schema),
+        dynamicValues,
         dynamicSchema: getParameterDynamicSchema(schema),
+        editor: dynamicValues ? 'combobox' : schema[SwaggerConstants.ExtensionProperties.Editor],
+        editorOptions: dynamicValues ? [] : schema[SwaggerConstants.ExtensionProperties.EditorOptions],
         format: schema.format,
         isInsideArray: this.options.parentProperty && this.options.parentProperty.isArray,
         isNested: this.options.isNested,
@@ -454,8 +457,9 @@ export class SchemaProcessor {
     const contentHint = schema[SwaggerConstants.ExtensionProperties.ContentHint];
     const description = schema.description;
     const dynamicallyAdded = schema[SwaggerConstants.ExtensionProperties.DynamicallyAdded];
-    const editor = schema[SwaggerConstants.ExtensionProperties.Editor];
-    const editorOptions = schema[SwaggerConstants.ExtensionProperties.EditorOptions];
+    const dynamicValues = getParameterDynamicValues(schema);
+    const editor = dynamicValues ? 'combobox' : schema[SwaggerConstants.ExtensionProperties.Editor];
+    const editorOptions = dynamicValues ? [] : schema[SwaggerConstants.ExtensionProperties.EditorOptions];
     const encode = schema[SwaggerConstants.ExtensionProperties.Encode];
     const $enum = getEnum(schema, $required);
     const format = schema.format;

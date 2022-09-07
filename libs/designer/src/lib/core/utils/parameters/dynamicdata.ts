@@ -1,13 +1,16 @@
 import Constants from '../../../common/constants';
-import { loadParameterValuesFromDefault, tryConvertStringToExpression } from './helper';
+import { getJSONValueFromString, getParameterFromName, loadParameterValuesFromDefault, parameterValueToString, tryConvertStringToExpression } from './helper';
 import type {
+  DynamicParameters,
   InputParameter,
   OutputParameter,
   OutputParameters,
   ResolvedParameter,
-  SchemaProcessorOptions,
-} from '@microsoft-logic-apps/parsers';
+  SchemaProcessorOptions} from '@microsoft-logic-apps/parsers';
 import {
+  ExtensionProperties,
+  isDynamicPropertiesExtension,
+  isDynamicListExtension,
   decodePropertySegment,
   encodePropertySegment,
   toInputParameter,
@@ -17,8 +20,17 @@ import {
   SchemaProcessor,
   WildIndexSegment,
 } from '@microsoft-logic-apps/parsers';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
+import type {
+  OperationManifest
+} from '@microsoft-logic-apps/utils';
 import {
+  UnsupportedExceptionCode,
+  UnsupportedExceptionName,
+  ValidationExceptionName,
+  AssertionErrorCode,
+  AssertionException,
+  ValidationErrorCode,
+  ValidationException ,
   clone,
   equals,
   getObjectPropertyValue,
@@ -29,6 +41,78 @@ import {
   copy,
   unmap,
 } from '@microsoft-logic-apps/utils';
+import type { DependencyInfo, NodeInputs } from '../../state/operation/operationMetadataSlice';
+import { getIntl } from '@microsoft-logic-apps/intl';
+import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+
+export interface ListDynamicValue {
+  value: any;
+  displayName: string;
+  description?: string;
+  disabled?: boolean;
+}
+
+export async function getDynamicValues(dependencyInfo: DependencyInfo, nodeInputs: NodeInputs): Promise<ListDynamicValue[]> {
+  const { definition } = dependencyInfo;
+  if (isDynamicListExtension(definition)) {
+    const { parameters } = definition.extension;
+    const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs);
+
+    // TODO - Call the service to get the dynamic values;
+    console.log(operationParameters);
+    const dynamicValues: ListDynamicValue[] = [{ displayName: 'Item 1', value: '1' }, { displayName: 'Item 2', value: '2' }];
+
+    return dynamicValues;
+  } else {
+    // TODO - Add for swagger based dynamic calls
+    return [];
+  }
+}
+
+export async function getDynamicSchema(dependencyInfo: DependencyInfo, nodeInputs: NodeInputs): Promise<OpenAPIV2.SchemaObject> {
+  const { parameter, definition } = dependencyInfo;
+  const emptySchema = {
+    [ExtensionProperties.Alias]: parameter?.alias,
+    title: parameter?.title,
+    description: parameter?.description
+  };
+  try {
+    if (isDynamicPropertiesExtension(definition)) {
+      const operationParameters = getParametersForDynamicInvoke(definition.extension.parameters, nodeInputs);
+
+      // TODO - Call the service to get the dynamic schema;
+      console.log(operationParameters);
+      const dynamicSchema = {
+        type: 'object',
+        properties: {
+          stringProperty: { title: 'String Property', description: 'Dynamic parameter of type string', type: 'string' },
+          numberProperty: { title: 'Number Property', description: 'Dynamic parameter of type number', type: 'number' },
+          objectProperty: {
+            type: 'object',
+            title: 'Nested Object',
+            properties: { booleanNested: { type: 'boolean', title: 'Nested Boolean' }},
+            required: []
+          }
+        },
+        required: [ 'numberProperty' ]
+      };
+
+      return dynamicSchema;
+    } else {
+      // TODO - Add for swagger based dynamic calls
+      return emptySchema;
+    }
+  } catch (error: any) {
+      if (
+          (error.name === UnsupportedExceptionName && error.code === UnsupportedExceptionCode.RUNTIME_EXPRESSION) ||
+          (error.name === ValidationExceptionName && error.code === ValidationErrorCode.INVALID_VALUE_SEGMENT_TYPE)
+      ) {
+          return emptySchema;
+      }
+
+      throw error;
+  }
+}
 
 export function getDynamicOutputsFromSchema(schema: OpenAPIV2.SchemaObject, dynamicParameter: OutputParameter): OutputParameters {
   const { key, name, parentArray, required, source } = dynamicParameter;
@@ -126,6 +210,44 @@ export function getDynamicInputsFromSchema(
   }
 
   return result;
+}
+
+function getParametersForDynamicInvoke(referenceParameters: DynamicParameters, nodeInputs: NodeInputs): Record<string, any> {
+  const intl = getIntl();
+  const operationParameters: Record<string, any> = {};
+
+  for (const [parameterName, parameter] of Object.entries(referenceParameters)) {
+
+      // TODO(trbaratc): <2337657> Verify nested dependency parameters work once dynamic values available on api.
+      const referencedParameter = getParameterFromName(nodeInputs, parameter.parameterReference);
+
+      if (!referencedParameter) {
+          throw new AssertionException(
+              AssertionErrorCode.INVALID_PARAMETER_DEPENDENCY,
+              intl.formatMessage({
+                defaultMessage: 'Parameter "{parameterName}" cannot be found for this operation',
+                description: 'Error message to show in dropdown when dependent parameter is not found'
+              }, { parameterName: parameter.parameterReference })
+          );
+      }
+
+      // Stamp with @parameters and @appsetting values here for some parameters
+
+      // Parameter tokens are supported.
+      if (referencedParameter.value.some(segment => segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER)) {
+          throw new ValidationException(
+              ValidationErrorCode.INVALID_VALUE_SEGMENT_TYPE,
+              intl.formatMessage({
+                defaultMessage: 'Value contains function expressions which cannot be resolved. Only constant values supported',
+                description: 'Error message to show in dropdown when dependent parameter value cannot be resolved'
+              })
+          );
+      }
+
+      operationParameters[parameterName] = getJSONValueFromString(parameterValueToString(referencedParameter, true /* isDefinitionValue */), referencedParameter.type);
+  }
+
+  return operationParameters;
 }
 
 function loadUnknownManifestBasedParameters(
