@@ -1041,6 +1041,12 @@
       "value": "Returnerar sant om båda parametrarna är sanna"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,

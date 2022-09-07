@@ -1030,6 +1030,12 @@
       "value": "若兩個參數皆為 True，則傳回 True"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,

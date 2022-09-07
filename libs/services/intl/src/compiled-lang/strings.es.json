@@ -1052,6 +1052,12 @@
       "value": "Devuelve true si ambos parámetros son verdaderos."
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -2533,7 +2539,7 @@
   "SGxmEY": [
     {
       "type": 0,
-      "value": "Enter a Dictionary"
+      "value": "Introducir un diccionario"
     }
   ],
   "SKXopi": [
@@ -4228,7 +4234,7 @@
   "mAuMD+": [
     {
       "type": 0,
-      "value": "Enter an Array"
+      "value": "Introducir una matriz"
     }
   ],
   "mCzkXX": [

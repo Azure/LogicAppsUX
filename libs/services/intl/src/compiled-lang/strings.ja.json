@@ -1030,6 +1030,12 @@
       "value": "両方のパラメーターが true の場合は true を返します"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,

@@ -1075,6 +1075,12 @@
       "value": "Vrátí true, pokud jsou oba parametry true."
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,

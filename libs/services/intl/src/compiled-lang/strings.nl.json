@@ -1041,6 +1041,12 @@
       "value": "Indien beide parameters waar zijn, wordt Waar geretourneerd"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -2498,7 +2504,7 @@
   "SGxmEY": [
     {
       "type": 0,
-      "value": "Enter a Dictionary"
+      "value": "Een woordenlijst invoeren"
     }
   ],
   "SKXopi": [
@@ -4182,7 +4188,7 @@
   "mAuMD+": [
     {
       "type": 0,
-      "value": "Enter an Array"
+      "value": "Een matrix invoeren"
     }
   ],
   "mCzkXX": [
