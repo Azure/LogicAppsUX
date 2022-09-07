@@ -1,6 +1,7 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
+import type { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
 import { AuthenticationDropdown } from './AuthenticationDropdown';
 import { BasicAuthentication } from './BasicAuth';
@@ -47,7 +48,7 @@ export interface OAuthProps {
   OAuthAudience?: ValueSegment[];
   OAuthAuthority?: ValueSegment[];
   OAuthClientId?: ValueSegment[];
-  OAuthType?: string;
+  OAuthType?: AuthenticationOAuthType;
   OAuthTypeSecret?: ValueSegment[];
   OAuthTypeCertificatePfx?: ValueSegment[];
   OAuthTypeCertificatePassword?: ValueSegment[];
@@ -133,7 +134,7 @@ export const AuthenticationEditor = ({
 
   const onManagedIdentityDropdownChange = (_event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void => {
     setCurrentProps((prevState: AuthProps) => ({
-      msiProps: { ...prevState.msiProps, MSIIdentity: item.key as string },
+      msiProps: { ...prevState.msiProps, MSIIdentity: item.text as string },
     }));
   };
 

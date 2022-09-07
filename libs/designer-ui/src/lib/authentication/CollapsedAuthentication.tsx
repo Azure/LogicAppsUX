@@ -17,7 +17,12 @@ export const CollapsedAuthentication = ({
 }: CollapsedAuthenticationProps): JSX.Element => {
   return (
     <div className="msla-authentication-editor-collapsed-container">
-      <BaseEditor initialValue={collapsedValue} GetTokenPicker={GetTokenPicker} BasePlugins={{ tokens: true }}>
+      <BaseEditor
+        initialValue={collapsedValue}
+        GetTokenPicker={GetTokenPicker}
+        BasePlugins={{ tokens: true }}
+        tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
+      >
         <CollapsedAuthenticationValidation
           className={'msla-collapsed-editor-validation'}
           errorMessage={errorMessage}

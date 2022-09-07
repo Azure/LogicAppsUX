@@ -4,6 +4,7 @@ import constants from '../constants';
 import { convertItemsToSegments } from '../dictionary/util/deserializecollapseddictionary';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
+import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { ManagedIdentity } from '@microsoft-logic-apps/utils';
 import { guid, equals, ResourceIdentityType } from '@microsoft-logic-apps/utils';
@@ -283,32 +284,51 @@ export function containsUserAssignedIdentities(identity: ManagedIdentity): boole
  * @return {ValueSegment[]} - Collapsed ValueSegment Array.
  */
 export function parseAuthEditor(authType: AuthenticationType, items: AuthProps): ValueSegment[] {
-  let currProps;
+  const values: CollapsedAuthEditorItems[] = [];
   switch (authType) {
     case AuthenticationType.BASIC:
-      currProps = items.basicProps;
+      updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_USERNAME, items.basicProps?.basicUsername);
+      updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_PASSWORD, items.basicProps?.basicPassword);
       break;
     case AuthenticationType.CERTIFICATE:
-      currProps = items.clientCertificateProps;
+      updateValues(values, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, items.clientCertificateProps?.clientCertificatePfx);
+      updateValues(values, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD, items.clientCertificateProps?.clientCertificatePassword);
       break;
     case AuthenticationType.RAW:
-      currProps = items.rawProps;
+      updateValues(values, AUTHENTICATION_PROPERTIES.RAW_VALUE, items.rawProps?.rawValue);
       break;
     case AuthenticationType.MSI:
-      currProps = items.msiProps;
+      updateValues(values, AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, items.msiProps?.MSIAudience);
       break;
     case AuthenticationType.OAUTH:
-      currProps = items.aadOAuthProps;
+      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY, items.aadOAuthProps?.OAuthAuthority);
+      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT, items.aadOAuthProps?.OAuthTenant);
+      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE, items.aadOAuthProps?.OAuthAudience);
+      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_CLIENT_ID, items.aadOAuthProps?.OAuthClientId);
+      if (items.aadOAuthProps?.OAuthType === AuthenticationOAuthType.CERTIFICATE) {
+        updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PFX, items.aadOAuthProps?.OAuthTypeCertificatePfx);
+        updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD, items.aadOAuthProps?.OAuthTypeCertificatePassword);
+      } else {
+        updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET, items.aadOAuthProps?.OAuthTypeSecret);
+      }
       break;
   }
-  // TODO: Will need to discuss with Priti what's the best way of converting specificProps to CollapsedValue
-  console.log(currProps);
   const currentItems: CollapsedAuthEditorItems[] = [
     {
       key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: AUTHENTICATION_PROPERTIES.TYPE.name }],
       value: [{ type: ValueSegmentType.LITERAL, id: guid(), value: authType }],
     },
+    ...values,
   ];
 
   return convertItemsToSegments(currentItems);
 }
+
+const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty, val?: ValueSegment[]) => {
+  if (property.isRequired || (val && val.length > 0)) {
+    values.push({
+      key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: property.name }],
+      value: val ?? [{ type: ValueSegmentType.LITERAL, id: guid(), value: '' }],
+    });
+  }
+};
