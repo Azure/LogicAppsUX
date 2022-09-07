@@ -21,7 +21,7 @@ describe('lib/panel/panelHeader/main', () => {
       includeTitle: true,
       toggleCollapse: jest.fn(),
       onTitleChange: jest.fn(),
-      commentChange: jest.fn()
+      commentChange: jest.fn(),
     };
     minimalWithHeader = {
       isCollapsed: false,
