@@ -173,8 +173,10 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     // Set tab to first one anytime this panel displays a new item
     if (currentNode) {
       setTabToDisplay(TABS.PROPERTIES);
+      setIsExpanded(true);
     } else {
       setTabToDisplay(undefined);
+      setIsExpanded(false);
     }
   }, [currentNode]);
 
