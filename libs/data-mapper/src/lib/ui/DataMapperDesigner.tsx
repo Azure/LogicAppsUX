@@ -1,31 +1,40 @@
-import { checkerboardBackgroundImage } from '../Constants';
-import { convertToReactFlowNodes } from '../ReactFlow.Util';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
+import type { ButtonPivotProps } from '../components/buttonPivot/ButtonPivot';
+import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
+import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
+import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
+import { checkerboardBackgroundImage } from '../constants/ReactFlowConstants';
 import {
+  addInputNodes,
+  makeConnection,
   redoDataMapOperation,
+  removeInputNodes,
   saveDataMap,
+  setCurrentlySelectedNode,
   setCurrentOutputNode,
-  setInitialDataMap,
-  setInitialInputSchema,
-  setInitialOutputSchema,
   toggleInputNode,
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { store } from '../core/state/Store';
-import type { Schema, SchemaNodeExtended } from '../models';
-import { convertSchemaToSchemaExtended, SchemaTypes } from '../models';
+import type { SchemaNodeExtended, SelectedNode } from '../models';
+import { NodeType, SchemaTypes } from '../models';
+import type { ConnectionDictionary } from '../models/Connection';
+import { convertToMapDefinition } from '../utils/DataMap.Utils';
+import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
+import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
+import './ReactFlowStyleOverrides.css';
+import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -42,70 +51,144 @@ import {
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
-import ReactFlow, { MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
+import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
+import ReactFlow, { ConnectionLineType, MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapperDesignerProps {
-  saveStateCall: () => void;
+  saveStateCall: (dataMapDefinition: string) => void;
+  addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
+  readCurrentSchemaOptions?: () => void;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall }) => {
+export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const clickTimerRef: { current: ReturnType<typeof setTimeout> | null } = useRef(null); // NOTE: ReturnType to support NodeJS & window Timeouts
 
   const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
+  const flattenedInputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedInputSchema);
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+  const flattenedOutputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedOutputSchema);
+  const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
+  const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
-  const [displayToolbox, { toggle: toggleDisplayToolbox, setFalse: setDisplayToolboxFalse }] = useBoolean(false);
-  const [displayExpressions, { toggle: toggleDisplayExpressions, setFalse: setDisplayExpressionsFalse }] = useBoolean(false);
-  const [nodes, edges] = useLayout();
+  const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
 
-  const onToolboxLeafItemClick = (selectedNode: SchemaNodeExtended) => {
-    dispatch(toggleInputNode(selectedNode));
-  };
+  const connectedInputNodes = useMemo(() => {
+    if (currentOutputNode) {
+      const outputFilteredConnections = currentOutputNode.children.flatMap((childNode) =>
+        !connections[childNode.key] ? [] : connections[childNode.key]
+      );
 
-  const onNodeDoubleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
-    const curDataMapState = store.getState().dataMap.curDataMapOperation;
-    if (node.data.schemaType === SchemaTypes.Output) {
-      const currentSchemaNode = curDataMapState.currentOutputNode;
-      if (currentSchemaNode) {
-        const trimmedNodeId = node.id.substring(7);
-        const newCurrentSchemaNode =
-          currentSchemaNode.key === trimmedNodeId
-            ? currentSchemaNode
-            : currentSchemaNode.children.find((schemaNode) => schemaNode.key === trimmedNodeId) || currentSchemaNode;
-        dispatch(setCurrentOutputNode(newCurrentSchemaNode));
+      return outputFilteredConnections.map((connection) => {
+        return flattenedInputSchema[connection.reactFlowSource];
+      });
+    } else {
+      return [];
+    }
+  }, [flattenedInputSchema, currentOutputNode, connections]);
+
+  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, currentOutputNode, connections);
+
+  const dataMapDefinition = useMemo((): string => {
+    if (inputSchema && outputSchema) {
+      return convertToMapDefinition(currentConnections, inputSchema, outputSchema);
+    }
+
+    return '';
+  }, [currentConnections, inputSchema, outputSchema]);
+
+  const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
+    if (isLeafNode(selectedNode)) {
+      if (!hasAConnection(selectedNode, currentConnections)) {
+        dispatch(toggleInputNode(selectedNode));
+      }
+    } else {
+      if (allChildNodesSelected(selectedNode, currentlySelectedInputNodes)) {
+        // TODO reconfirm this works for loops and conditionals
+        const nodesToRemove = selectedNode.children.filter((childNodes) =>
+          Object.values(currentConnections).some((currentConnection) => childNodes.key !== currentConnection.value)
+        );
+        dispatch(removeInputNodes(nodesToRemove));
+      } else {
+        dispatch(addInputNodes(selectedNode.children));
       }
     }
   };
 
-  const onSubmitInput = (inputSchema: Schema) => {
-    const extendedSchema = convertSchemaToSchemaExtended(inputSchema);
-    dispatch(setInitialInputSchema(extendedSchema));
-    dispatch(setInitialDataMap());
+  const handleNodeClicks = (_event: ReactMouseEvent, node: ReactFlowNode) => {
+    if (clickTimerRef.current !== null) {
+      // Double click
+      onNodeDoubleClick(node);
+
+      clearTimeout(clickTimerRef.current);
+      clickTimerRef.current = null;
+    } else {
+      // Single click
+      clickTimerRef.current = setTimeout(() => {
+        onNodeSingleClick(node);
+
+        clearTimeout(clickTimerRef.current as unknown as number);
+        clickTimerRef.current = null;
+      }, 200); // ms to wait for potential second click
+    }
   };
 
-  const onSubmitOutput = (outputSchema: Schema) => {
-    const extendedSchema = convertSchemaToSchemaExtended(outputSchema);
-    dispatch(setInitialOutputSchema(extendedSchema));
-    dispatch(setInitialDataMap());
+  const onPaneClick = (_event: ReactMouseEvent): void => {
+    // If user clicks on pane (empty canvas area), "deselect" node
+    dispatch(setCurrentlySelectedNode(undefined));
+    setDisplayToolboxItem(undefined);
+  };
+
+  const onNodeSingleClick = (node: ReactFlowNode): void => {
+    const newCurrentlySelectedNode: SelectedNode = {
+      type: node.type === ReactFlowNodeType.SchemaNode ? node.data.schemaType : NodeType.Expression,
+      name: node.data.label,
+      path: node.id,
+    };
+    dispatch(setCurrentlySelectedNode(newCurrentlySelectedNode));
+  };
+
+  const onNodeDoubleClick = (node: ReactFlowNode<SchemaCardProps>): void => {
+    if (node.data.schemaType === SchemaTypes.Output && !node.data.isLeaf) {
+      const newCurrentSchemaNode = flattenedOutputSchema[node.id];
+      if (currentOutputNode && newCurrentSchemaNode) {
+        dispatch(setCurrentOutputNode({ schemaNode: newCurrentSchemaNode, resetSelectedInputNodes: true }));
+      }
+    }
+  };
+
+  const onConnect = (connection: ReactFlowConnection) => {
+    if (connection.target && connection.source) {
+      dispatch(makeConnection({ outputNodeKey: connection.target, value: connection.source }));
+    }
+  };
+
+  const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
+    if (addSchemaFromFile) {
+      // Will cause DM to ping VS Code to check schema file is in appropriate folder, then we will make getSchema API call
+      addSchemaFromFile(schemaFile);
+    }
   };
 
   const onSaveClick = () => {
-    saveStateCall(); // TODO: do the next call only when this is successful
+    saveStateCall(dataMapDefinition); // TODO: do the next call only when this is successful
     dispatch(
       saveDataMap({
         inputSchemaExtended: inputSchema,
         outputSchemaExtended: outputSchema,
       })
     );
+    console.log(dataMapDefinition);
   };
 
   const onUndoClick = () => {
@@ -126,37 +209,43 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     description: 'Label to open the Function card',
   });
 
-  const toolboxButtonContainerProps: ButtonContainerProps = {
+  useEffect(() => {
+    return () => clearTimeout(clickTimerRef.current as unknown as number); // Make sure we clean up the timeout
+  }, []);
+
+  const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
+    if (data.value === displayToolboxItem) {
+      setDisplayToolboxItem(undefined);
+    } else {
+      setDisplayToolboxItem(data.value as string);
+    }
+  };
+
+  const toolboxButtonPivotProps: ButtonPivotProps = {
     buttons: [
       {
         tooltip: toolboxLoc,
         regularIcon: CubeTree20Regular,
         filledIcon: CubeTree20Filled,
-        filled: displayToolbox,
-        onClick: () => {
-          setDisplayExpressionsFalse();
-          toggleDisplayToolbox();
-        },
+        value: 'inputSchemaTreePanel',
       },
       {
         tooltip: functionLoc,
         regularIcon: MathFormula20Regular,
         filledIcon: MathFormula20Filled,
-        filled: displayExpressions,
-        onClick: () => {
-          setDisplayToolboxFalse();
-          toggleDisplayExpressions();
-        },
+        value: 'expressionsPanel',
       },
     ],
     horizontal: true,
     xPos: '16px',
     yPos: '16px',
+    selectedValue: displayToolboxItem,
+    onTabSelect: onTabSelect,
   };
 
   const toolboxPanelProps: FloatingPanelProps = {
     xPos: '16px',
-    yPos: '56px',
+    yPos: '76px',
     width: '250px',
     minHeight: '300px',
     maxHeight: '450px',
@@ -223,10 +312,14 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        onNodeDoubleClick={onNodeDoubleClick}
+        onConnect={onConnect}
+        onPaneClick={onPaneClick}
+        onNodeClick={handleNodeClicks}
+        onNodeDoubleClick={handleNodeClicks}
         defaultZoom={2}
         nodesDraggable={false}
         fitView={false}
+        connectionLineType={ConnectionLineType.SmoothStep}
         proOptions={{
           account: 'paid-sponsor',
           hideAttribution: true,
@@ -266,26 +359,38 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
+  const placeholderFunc = () => {
+    return;
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="data-mapper-shell">
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
-        <EditorConfigPanel initialSetup={true} onSubmitInputSchema={onSubmitInput} onSubmitOutputSchema={onSubmitOutput} />
+        <EditorConfigPanel
+          onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
+          readCurrentSchemaOptions={readCurrentSchemaOptions ?? placeholderFunc}
+        />
         <EditorBreadcrumb />
         {inputSchema && outputSchema ? (
           <>
-            <ButtonContainer {...toolboxButtonContainerProps} />
-            {displayToolbox ? (
+            <ButtonPivot {...toolboxButtonPivotProps} />
+            {displayToolboxItem === 'inputSchemaTreePanel' && (
               <FloatingPanel {...toolboxPanelProps}>
                 <SchemaTree
                   schema={inputSchema}
                   currentlySelectedNodes={currentlySelectedInputNodes}
-                  onLeafNodeClick={onToolboxLeafItemClick}
+                  visibleConnectedNodes={connectedInputNodes}
+                  onNodeClick={onToolboxItemClick}
                 />
               </FloatingPanel>
-            ) : null}
+            )}
+            {displayToolboxItem === 'expressionsPanel' && (
+              <FloatingPanel {...toolboxPanelProps}>
+                <span>Test</span>
+              </FloatingPanel>
+            )}
             <div className="msla-designer-canvas msla-panel-mode">
               <ReactFlowProvider>
                 <ReactFlowWrapper />
@@ -295,24 +400,31 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         ) : (
           <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
         )}
-        <PropertiesPane />
+        <PropertiesPane currentNode={currentlySelectedNode} />
       </div>
     </DndProvider>
   );
 };
 
-export const useLayout = (): [ReactFlowNode[], ReactFlowEdge[]] => {
-  const reactFlowEdges: ReactFlowEdge[] = [];
-  const inputSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
-  const outputSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
-
+export const useLayout = (
+  allInputSchemaNodes: SchemaNodeExtended[],
+  connectedInputNodes: SchemaNodeExtended[],
+  currentOutputNode: SchemaNodeExtended | undefined,
+  connections: ConnectionDictionary
+): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
-    if (outputSchemaNode) {
-      return convertToReactFlowNodes(Array.from(inputSchemaNodes), outputSchemaNode);
+    if (currentOutputNode) {
+      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, currentOutputNode);
     } else {
       return [];
     }
-  }, [inputSchemaNodes, outputSchemaNode]);
+    // Explicitly ignoring connectedInputNodes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allInputSchemaNodes, currentOutputNode]);
+
+  const reactFlowEdges = useMemo(() => {
+    return convertToReactFlowEdges(connections);
+  }, [connections]);
 
   return [reactFlowNodes, reactFlowEdges];
 };

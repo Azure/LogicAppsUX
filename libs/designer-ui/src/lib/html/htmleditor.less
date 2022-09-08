@@ -1,0 +1,257 @@
+.toolbar {
+  display: flex;
+  margin-bottom: 1px;
+  background: #fff;
+  padding: 4px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  vertical-align: middle;
+  overflow: auto;
+  height: 36px;
+}
+.toolbar button.toolbar-item {
+  border: 0;
+  display: flex;
+  background: none;
+  border-radius: 10px;
+  padding: 8px;
+  cursor: pointer;
+  vertical-align: middle;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+}
+.toolbar button.toolbar-item:disabled {
+  cursor: not-allowed;
+}
+.toolbar button.toolbar-item.spaced {
+  margin-right: 2px;
+}
+
+.toolbar button.toolbar-item img.format {
+  background-size: contain;
+  display: inline-block;
+  height: 18px;
+  width: 18px;
+  vertical-align: -0.25em;
+  display: flex;
+  opacity: 0.6;
+}
+
+.toolbar button.toolbar-item:disabled img.format {
+  opacity: 0.2;
+}
+
+.toolbar button.toolbar-item.active {
+  background-color: rgba(223, 232, 250, 0.3);
+}
+
+.toolbar button.toolbar-item.active img {
+  opacity: 1;
+}
+
+.toolbar .toolbar-item:hover:not([disabled]) {
+  background-color: #eee;
+}
+
+.toolbar .toolbar-item.font-family .text {
+  display: block;
+  max-width: 40px;
+}
+
+.toolbar .code-language {
+  width: 150px;
+}
+
+.toolbar .toolbar-item .text {
+  display: flex;
+  line-height: 20px;
+  vertical-align: middle;
+  font-size: 14px;
+  color: #777;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  height: 20px;
+  text-align: left;
+  padding-right: 10px;
+}
+
+.toolbar .toolbar-item .icon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  user-select: none;
+  margin-right: 8px;
+  line-height: 16px;
+  background-size: contain;
+}
+
+.toolbar img.chevron-down {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  user-select: none;
+}
+
+.toolbar img.chevron-down.inside {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  margin-left: -25px;
+  margin-top: 11px;
+  margin-right: 10px;
+  pointer-events: none;
+}
+
+.toolbar .divider {
+  width: 1px;
+  background-color: #eee;
+  margin: 0 4px;
+}
+
+.dropdown {
+  z-index: 1000001;
+  display: block;
+  position: fixed;
+  box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+  min-height: 40px;
+  background-color: #fff;
+}
+
+.dropdown .item {
+  margin: 0 8px 0 8px;
+  padding: 8px;
+  color: #050505;
+  cursor: pointer;
+  line-height: 16px;
+  font-size: 15px;
+  display: flex;
+  align-content: center;
+  flex-direction: row;
+  flex-shrink: 0;
+  justify-content: space-between;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 0;
+  max-width: 250px;
+  min-width: 100px;
+}
+
+.dropdown .item.fontsize-item,
+.dropdown .item.fontsize-item .text {
+  min-width: unset;
+}
+
+.dropdown .item .active {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  background-size: contain;
+}
+
+.dropdown .item:first-child {
+  margin-top: 8px;
+}
+
+.dropdown .item:last-child {
+  margin-bottom: 8px;
+}
+
+.dropdown .item:hover {
+  background-color: #eee;
+}
+
+.dropdown .item .text {
+  display: flex;
+  line-height: 20px;
+  flex-grow: 1;
+  min-width: 150px;
+}
+
+.dropdown .item .icon {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  user-select: none;
+  margin-right: 12px;
+  line-height: 16px;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.dropdown .divider {
+  width: auto;
+  background-color: #eee;
+  margin: 4px 8px;
+  height: 1px;
+}
+
+img.chevron-down {
+  background-color: transparent;
+  background-size: contain;
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+}
+
+@media screen and (max-width: 1100px) {
+  .dropdown-button-text {
+    display: none !important;
+  }
+  .font-size .dropdown-button-text {
+    display: flex !important;
+  }
+  .code-language .dropdown-button-text {
+    display: flex !important;
+  }
+}
+
+button.item.dropdown-item-active {
+  background-color: rgba(223, 232, 250, 0.3);
+}
+
+button.item.dropdown-item-active img {
+  opacity: 1;
+}
+
+.msla-html-editor {
+  width: 100%;
+  margin: 20px auto 0px auto;
+  border-radius: 2px;
+  position: relative;
+  padding-bottom: 15px;
+  .editor-input {
+    outline: none;
+    margin: 1px;
+    resize: none;
+    font-size: 15px;
+    tab-size: 1;
+    caret-color: #444;
+    padding-inline-start: 13px;
+    p {
+      margin-block-end: 0px;
+      margin-block-start: 0px;
+    }
+  }
+  .editor-placeholder {
+    color: #696969;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    margin-top: -20px;
+    margin-left: 15px;
+    font-size: 15px;
+    user-select: none;
+    display: inline-block;
+    pointer-events: none;
+  }
+}
+
+.msla-toolbar-divider {
+  width: 1px;
+  background-color: #eee;
+  margin: 0 4px;
+}

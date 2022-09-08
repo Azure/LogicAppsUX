@@ -1,8 +1,9 @@
-import type { SchemaExtended } from '../../models';
-import { SchemaNodeProperties, SchemaType } from '../../models';
+import type { SchemaExtended } from '../../models/Schema';
+import { SchemaNodeDataType, SchemaNodeProperties, SchemaType } from '../../models/Schema';
 import type { MapOverviewProps } from './MapOverview';
 import { MapOverview } from './MapOverview';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 
 export default {
   component: MapOverview,
@@ -20,7 +21,7 @@ const schema: SchemaExtended = {
     pathToRoot: [],
     namespacePrefix: '',
     namespaceUri: '',
-    schemaNodeDataType: '',
+    schemaNodeDataType: SchemaNodeDataType.ComplexType,
     properties: SchemaNodeProperties.NotSpecified,
     children: [
       {
@@ -29,7 +30,7 @@ const schema: SchemaExtended = {
         pathToRoot: [],
         namespacePrefix: '',
         namespaceUri: '',
-        schemaNodeDataType: '',
+        schemaNodeDataType: SchemaNodeDataType.String,
         properties: SchemaNodeProperties.NotSpecified,
         children: [],
       },
@@ -39,7 +40,7 @@ const schema: SchemaExtended = {
         pathToRoot: [],
         namespacePrefix: '',
         namespaceUri: '',
-        schemaNodeDataType: '',
+        schemaNodeDataType: SchemaNodeDataType.Integer,
         properties: SchemaNodeProperties.NotSpecified,
         children: [],
       },

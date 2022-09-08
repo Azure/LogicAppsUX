@@ -369,6 +369,12 @@
       "value": "Vereist. Het object dat moet worden gecontroleerd als dit kleiner is dan de vergelijkingswaarde."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "De waarde van de autorisatie-header invoeren"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -405,6 +411,12 @@
       "value": "Algemene zoekopdracht"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Een bestand selecteren dat moeten worden geüpload"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -427,6 +439,12 @@
     {
       "type": 0,
       "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Beheerde identiteit"
     }
   ],
   "2b1yD3": [
@@ -477,6 +495,12 @@
       "value": "Id"
     }
   ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Door het systeem toegewezen beheerde identiteit"
+    }
+  ],
   "3BZnxY": [
     {
       "type": 0,
@@ -525,6 +549,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "De ingevoerde identiteit is niet gekoppeld aan deze logische app."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -561,16 +591,16 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "invoer selecteren"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
       "value": "(UTC+04:00) Jerevan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Verificatie"
     }
   ],
   "47kOXr": [
@@ -661,6 +691,12 @@
     {
       "type": 0,
       "value": "Vereist. De XPath-expressie die moet worden geëvalueerd."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Instantie"
     }
   ],
   "5aa76N": [
@@ -813,6 +849,12 @@
       "value": "Vereist. De tekenreeks die de waarde mag bevatten."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -849,10 +891,22 @@
       "value": "Kan de designer niet weergeven vanwege meerdere triggers in de definitie."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Schakel de beheerde identiteit voor de logische app in."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die van URI-codering moeten worden voorzien."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Geheim invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
     }
   ],
   "8Y5xpK": [
@@ -907,6 +961,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Waarde"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "De gebruikersidentiteit wordt niet ondersteund wanneer een door het systeem toegewezen beheerde identiteit voor de logische app is ingeschakeld."
     }
   ],
   "949s+r": [
@@ -975,6 +1041,12 @@
       "value": "Indien beide parameters waar zijn, wordt Waar geretourneerd"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1009,6 +1081,18 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Doelgroep invoeren"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Gebruikersnaam"
     }
   ],
   "ArTh0/": [
@@ -1105,6 +1189,12 @@
       "value": "Vereist. De tekenreeks waaruit de onveilige tekens voor URL's moeten worden gedecodeerd."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1147,6 +1237,12 @@
       "value": "Een verbinding is vereist"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Referentietype"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1169,6 +1265,12 @@
     {
       "type": 0,
       "value": "Voorbeeldnettolading gebruiken om een schema te genereren"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Client-id invoeren"
     }
   ],
   "DZZ3fj": [
@@ -1235,6 +1337,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Wachtwoord"
     }
   ],
   "Eqgm4v": [
@@ -1419,6 +1527,12 @@
     {
       "type": 0,
       "value": "Hiermee worden de query van een URI geretourneerd"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Autoriteit invoeren"
     }
   ],
   "GLd3MU": [
@@ -1661,12 +1775,6 @@
       "value": "Vereist. Het object waaraan een nieuwe eigenschap moet worden toegevoegd."
     }
   ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Een bestand selecteren dat moeten worden geüpload"
-    }
-  ],
   "K90YEU": [
     {
       "type": 0,
@@ -1905,6 +2013,12 @@
       "value": "Vereist. De gegevens-URI die moet worden geconverteerd naar een binaire indeling."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Beheerde identiteit"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1953,6 +2067,24 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Expressie"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Tenant invoeren"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Selecteer een identiteit"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1981,6 +2113,12 @@
     {
       "type": 0,
       "value": "Vereist. Een tekenreeks die de tijdzonenaam van de brontijdzone bevat. Zie https://msdn.microsoft.com/en-us/library/gg154758.aspx voor meer informatie."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Geheim"
     }
   ],
   "OFKZzQ": [
@@ -2067,6 +2205,12 @@
       "value": "Een beheerde identiteit selecteren"
     }
   ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "P2A5dB": [
     {
       "type": 0,
@@ -2151,6 +2295,12 @@
       "value": "(UTC-04:00) Turks- en Caicoseilanden"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Niet genereren als er geen waarde is"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2185,6 +2335,12 @@
     {
       "type": 0,
       "value": "De invoer naar het waardetype JSON converteren"
+    }
+  ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Mag null zijn"
     }
   ],
   "QQYzHC": [
@@ -2225,6 +2381,12 @@
       "value": "Vereist. De waarde die wordt geconverteerd naar een binaire waarde."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Gegevenstype"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2257,6 +2419,18 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Naam"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Doelgroep invoeren"
     }
   ],
   "RX2Shm": [
@@ -2319,6 +2493,18 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamtsjatski - verouderd"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Wachtwoord"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Een woordenlijst invoeren"
     }
   ],
   "SKXopi": [
@@ -2595,6 +2781,12 @@
       "value": "Uitvoeringsgeschiedenis"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificaat"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2661,6 +2853,12 @@
       "value": "Vervang het bestaande schema."
     }
   ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -2677,6 +2875,12 @@
     {
       "type": 0,
       "value": " uren"
+    }
+  ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Een uitvoerschema selecteren"
     }
   ],
   "XCunbR": [
@@ -2763,12 +2967,6 @@
       "value": "Aanvraag"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Bladeren"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2791,6 +2989,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de actie met de gewenste hoofdtekstuitvoer."
+    }
+  ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Wachtwoord"
     }
   ],
   "Y0H9aX": [
@@ -2831,6 +3035,12 @@
     {
       "type": 0,
       "value": "Er wordt een expressie geactiveerd voor het genereren van een waarde op basis van andere paren van JSON-namen en -waarden of de uitvoer van de runtime-trigger"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "PFX invoeren"
     }
   ],
   "YaFjJQ": [
@@ -2971,6 +3181,12 @@
       "value": "Functie"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "PFX invoeren"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3065,12 +3281,6 @@
       "value": "Geeft als resultaat een object met een eigenschap ingesteld op de opgegeven waarde"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "uitvoer selecteren"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3111,6 +3321,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Selecteer een identiteit"
     }
   ],
   "ci6ex1": [
@@ -3275,6 +3491,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de variabele met de gewenste waarde."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Uitvoerschemaknooppunt"
     }
   ],
   "eRvGw3": [
@@ -3557,6 +3779,18 @@
       "value": "Duur"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Doelgroep"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Door het systeem toegewezen beheerde identiteit"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -3633,6 +3867,18 @@
     {
       "type": 0,
       "value": "Annuleren"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Eigenschappen"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Testen"
     }
   ],
   "iq+tiv": [
@@ -3831,6 +4077,12 @@
       "value": "Indien twee waarden gelijk zijn, wordt Waar geretourneerd"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Gebruikersnaam opgeven"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -3933,6 +4185,12 @@
       "value": "Naam"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Een matrix invoeren"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -3985,6 +4243,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
     }
   ],
   "mx2IMJ": [
@@ -4247,6 +4511,12 @@
       "value": "De parameter naar een tekenreeks converteren"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Een invoerschema selecteren"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4387,6 +4657,12 @@
       "value": "Kaarttitel"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Geheim"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4489,10 +4765,28 @@
       "value": "Indien een van beide parameters waar is, wordt Waar geretourneerd"
     }
   ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Client-id"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Nieuwe parameter"
+    }
+  ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Invoerschemaknooppunt"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Bladeren"
     }
   ],
   "t+XCkg": [
@@ -4603,6 +4897,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muscat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Selecteer een element om te beginnen met configureren"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4705,12 +5005,6 @@
       "value": "De laatste index van een waarde van een tekenreeks wordt geretourneerd (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
     }
   ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Knop voor het beheren van de wisselstatus"
-    }
-  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4727,6 +5021,12 @@
     {
       "type": 0,
       "value": "De expressie is ongeldig."
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Doelgroep"
     }
   ],
   "vXwYXe": [
@@ -4827,6 +5127,12 @@
       "value": "Time-out opgetreden"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Volledig pad"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4893,6 +5199,12 @@
       "value": "Er wordt een weergave van een tekenreeks met URI-codering geretourneerd"
     }
   ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
+    }
+  ],
   "xOAOHM": [
     {
       "type": 0,
@@ -4909,6 +5221,12 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de nieuwe of bestaande eigenschap."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
     }
   ],
   "xYyPR8": [

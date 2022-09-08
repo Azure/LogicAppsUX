@@ -233,7 +233,7 @@ export const updateOutputsAndTokens = (
 
   const tokens = [
     ...getBuiltInTokens(manifest),
-    ...convertOutputsToTokens(nodeId, operationType, nodeOutputs.outputs ?? {}, manifest, settings),
+    ...convertOutputsToTokens(isTrigger ? undefined : nodeId, operationType, nodeOutputs.outputs ?? {}, manifest, settings),
   ];
   dispatch(updateTokens({ id: nodeId, tokens }));
 };

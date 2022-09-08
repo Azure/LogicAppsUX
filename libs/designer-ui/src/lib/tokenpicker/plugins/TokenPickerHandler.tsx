@@ -18,12 +18,14 @@ export default function TokenPickerHandler({ handleUpdateExpressionToken }: Toke
     return editor.registerCommand<string>(
       CHANGE_TOKENPICKER_EXPRESSION,
       (payload: string) => {
-        handleUpdateExpressionToken?.(findChildNode($getRoot(), payload, TokenType.FX)?.token?.description ?? '', payload);
+        const node = findChildNode($getRoot(), payload, TokenType.FX);
+        if (node?.token?.tokenType === TokenType.FX) {
+          handleUpdateExpressionToken?.(node?.token?.value ?? '', payload);
+        }
         return true;
       },
       COMMAND_PRIORITY_EDITOR
     );
   }, [editor, handleUpdateExpressionToken]);
-
   return null;
 }

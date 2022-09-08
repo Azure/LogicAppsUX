@@ -1,64 +1,98 @@
+import { childOutputNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
+import { store } from '../../core/state/Store';
+import type { SchemaNodeDataType } from '../../models';
 import { SchemaTypes } from '../../models';
-import { NodeCard } from './NodeCard';
-import { Icon, Text } from '@fluentui/react';
-import { createFocusOutlineStyle, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
+import type { CardProps } from './NodeCard';
+import { getStylesForSharedState } from './NodeCard';
+import { Text } from '@fluentui/react';
+import {
+  Badge,
+  Button,
+  createFocusOutlineStyle,
+  makeStyles,
+  mergeClasses,
+  shorthands,
+  tokens,
+  typographyStyles,
+} from '@fluentui/react-components';
+import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
 import type { FunctionComponent } from 'react';
+import type { Connection as ReactFlowConnection, NodeProps } from 'react-flow-renderer';
 import { Handle, Position } from 'react-flow-renderer';
 
-export interface SchemaCardProps {
-  data: SchemaCardWrapperProps;
-}
-
-export interface SchemaCardWrapperProps {
+export type SchemaCardProps = {
   label: string;
   schemaType: SchemaTypes;
   displayHandle: boolean;
-  isLeaf?: boolean;
-  onClick?: () => void;
-  disabled?: boolean;
-}
+  isLeaf: boolean;
+  isChild: boolean;
+  nodeDataType: SchemaNodeDataType;
+} & CardProps;
 
 const useStyles = makeStyles({
   root: {
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     backgroundColor: tokens.colorNeutralBackground1,
-    display: 'block',
+    display: 'flex',
     flexDirection: 'row',
-    height: '44px',
+    height: '48px',
     opacity: 1,
-    width: '200px',
+    width: `${nodeCardWidth}px`,
+    alignItems: 'center',
+    justifyContent: 'left',
+    ...shorthands.gap('8px'),
+    ...shorthands.margin('2px'),
 
-    '&:enabled': {
+    '&:hover': {
+      backgroundColor: tokens.colorNeutralBackground1,
+    },
+    '&:active': {
       '&:hover': {
         backgroundColor: tokens.colorNeutralBackground1,
       },
     },
   },
+  badge: {
+    position: 'absolute',
+    top: '-7px',
+    right: '-10px',
+    zIndex: '1',
+  },
   cardIcon: {
     backgroundColor: tokens.colorBrandBackground2,
+    width: '48px',
     borderStartStartRadius: tokens.borderRadiusMedium,
     borderEndStartRadius: tokens.borderRadiusMedium,
     color: tokens.colorBrandForeground1,
     fontSize: '24px',
-    lineHeight: '44px',
+    lineHeight: '48px',
     textAlign: 'center',
     flexGrow: '0',
     flexShrink: '0',
     flexBasis: '44px',
   },
+  container: { height: '48px', width: '200px', isolation: 'isolate', position: 'relative' },
   cardText: {
     ...typographyStyles.body1Strong,
+    display: 'inline-block',
     alignSelf: 'center',
     color: tokens.colorNeutralForeground1,
-    paddingLeft: '8px',
-    paddingRight: '8px',
-    textAlign: 'center',
+    textAlign: 'left',
+    width: '112px',
   },
   cardChevron: {
     color: tokens.colorNeutralForeground3,
     display: 'flex',
     fontSize: '16px',
-    paddingRight: '8px',
+    flexBasis: '48px',
+    justifyContent: 'right',
+  },
+  disabled: {
+    opacity: 0.38,
+  },
+  outputChildCard: {
+    width: `${childOutputNodeCardWidth}px`,
   },
 
   focusIndicator: createFocusOutlineStyle({
@@ -68,47 +102,73 @@ const useStyles = makeStyles({
   }),
 });
 
-const handleStyle = { color: 'red' };
+const cardInputText = makeStyles({
+  cardText: {
+    width: '136px',
+  },
+});
 
-export const SchemaCard: FunctionComponent<SchemaCardProps> = ({ data }) => {
-  return (
-    <div>
-      {/* TODO: remove handle and make a part of card clickable and drawable instead (14957766) */}
-      {data.displayHandle ? (
-        <Handle
-          type={data.schemaType === SchemaTypes.Input ? 'source' : 'target'}
-          position={data.schemaType === SchemaTypes.Input ? Position.Right : Position.Left}
-          style={handleStyle}
-        />
-      ) : null}
-      <SchemaCardWrapper
-        label={data.label}
-        schemaType={data.schemaType}
-        displayHandle={data.displayHandle}
-        isLeaf={data?.isLeaf}
-        onClick={data?.onClick}
-        disabled={data?.disabled}
-      />
-    </div>
-  );
+const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
+
+const isValidConnection = (connection: ReactFlowConnection): boolean => {
+  const flattenedInputSchema = store.getState().dataMap.curDataMapOperation.flattenedInputSchema;
+  const flattenedOutputSchema = store.getState().dataMap.curDataMapOperation.flattenedOutputSchema;
+
+  if (connection.source && connection.target && flattenedInputSchema && flattenedOutputSchema) {
+    const inputNode = flattenedInputSchema[connection.source];
+    const outputNode = flattenedOutputSchema[connection.target];
+
+    return inputNode.schemaNodeDataType === outputNode.schemaNodeDataType;
+  }
+
+  return false;
 };
 
-export const SchemaCardWrapper: FunctionComponent<SchemaCardWrapperProps> = ({ label, schemaType, isLeaf, onClick, disabled }) => {
+export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
+  const { label, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, nodeDataType } = props.data;
   const classes = useStyles();
+  const sharedStyles = getStylesForSharedState();
+  const mergedClasses = mergeClasses(sharedStyles.root, classes.root);
+  const mergedChildOutputClasses = mergeClasses(sharedStyles.root, classes.root, classes.outputChildCard);
+  const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
+  const mergedButtonClasses = mergeClasses(sharedStyles.root, classes.root);
+  const errorClass = mergeClasses(mergedButtonClasses, sharedStyles.error);
+
+  const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
+
+  const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
+  const BundledTypeIcon = icon24ForSchemaNodeType(nodeDataType);
+
+  const isOutputChildNode = schemaType === SchemaTypes.Output && isChild;
 
   return (
-    <div>
-      <NodeCard onClick={onClick} disabled={disabled} childClasses={classes}>
-        <Icon className={classes.cardIcon} iconName="Diamond" />
-        <Text className={classes.cardText} block={true} nowrap={true}>
+    <div className={disabled ? mergeClasses(classes.container, classes.disabled) : classes.container}>
+      {displayHandle && isLeaf ? (
+        <Handle
+          type={schemaType === SchemaTypes.Input ? 'source' : 'target'}
+          position={schemaType === SchemaTypes.Input ? Position.Right : Position.Left}
+          style={handleStyle}
+          isValidConnection={isValidConnection}
+        />
+      ) : null}
+      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.badge}></Badge>}{' '}
+      <Button
+        className={error ? errorClass : isOutputChildNode ? mergedChildOutputClasses : mergedClasses}
+        disabled={!!disabled}
+        onClick={onClick}
+      >
+        <span className={classes.cardIcon}>
+          <BundledTypeIcon />
+        </span>
+        <Text className={schemaType === SchemaTypes.Output ? classes.cardText : mergedInputText} block={true} nowrap={true}>
           {label}
         </Text>
-        {schemaType === SchemaTypes.Output && !isLeaf && (
+        {showOutputChevron && (
           <div className={classes.cardChevron}>
-            <Icon iconName="ChevronRightMed" />
+            <ChevronRight16Regular />
           </div>
         )}
-      </NodeCard>
+      </Button>
     </div>
   );
 };

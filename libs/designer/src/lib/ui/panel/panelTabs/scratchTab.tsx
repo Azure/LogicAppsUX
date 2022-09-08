@@ -4,6 +4,7 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import {
+  HTMLEditor,
   TokenPicker,
   TokenType,
   DictionaryEditor,
@@ -14,6 +15,7 @@ import {
   ArrayEditor,
   Scratch,
   StringEditor,
+  AuthenticationEditor,
   outputToken,
   outputToken2,
 } from '@microsoft/designer-ui';
@@ -41,6 +43,8 @@ export const ScratchTab = () => {
   const children = (): React.ReactNode => {
     return (
       <>
+        <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} authProps={{}} />
+
         <ArrayEditor
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
@@ -57,9 +61,20 @@ export const ScratchTab = () => {
               content: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' }],
             },
           ]}
-          initialValue={[]}
+          initialValue={[
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
+            testTokenSegment,
+            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n  "' },
+            testTokenSegment,
+            testTokenSegment,
+            { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
+          ]}
           GetTokenPicker={GetTokenPicker}
         />
+
         <Combobox
           options={[
             { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },
@@ -74,6 +89,7 @@ export const ScratchTab = () => {
           GetTokenPicker={GetTokenPicker}
           // readOnly={true}
         />
+
         <SchemaEditor
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
@@ -155,6 +171,7 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         />
+        <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} />
       </>
     );
   };

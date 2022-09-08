@@ -71,7 +71,7 @@ import {
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft-logic-apps/utils';
-import type { DictionaryEditorItemProps, ParameterInfo, Token, ValueSegment } from '@microsoft/designer-ui';
+import type { DictionaryEditorItemProps, OutputToken, ParameterInfo, Token as SegmentToken, ValueSegment } from '@microsoft/designer-ui';
 import { ValueSegmentType, TokenType } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -330,11 +330,98 @@ export function getAllInputParameters(nodeInputs: NodeInputs): ParameterInfo[] {
 export function ensureExpressionValue(valueSegment: ValueSegment): void {
   if (isTokenValueSegment(valueSegment)) {
     // eslint-disable-next-line no-param-reassign
-    valueSegment.value = getTokenExpressionValue(valueSegment.token as Token, valueSegment.value);
+    valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, valueSegment.value);
   }
 }
 
-export function getTokenExpressionValue(token: Token, currentValue?: string): string {
+export function getExpressionValueForOutputToken(token: OutputToken, nodeType: string): string | undefined {
+  const {
+    key,
+    name,
+    outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments },
+  } = token;
+  let method: string;
+  switch (tokenType) {
+    case TokenType.PARAMETER:
+    case TokenType.VARIABLE:
+      return getTokenValueFromToken(tokenType, functionArguments as string[]);
+
+    case TokenType.ITERATIONINDEX:
+      return `iterationIndexes(${convertToStringLiteral(actionName as string)})`;
+
+    case TokenType.ITEM:
+      if (nodeType.toLowerCase() === Constants.NODE.TYPE.FOREACH && key === Constants.FOREACH_CURRENT_ITEM_KEY) {
+        return `items(${convertToStringLiteral(actionName as string)})`;
+      } else {
+        let propertyPath: string;
+        if (
+          !name ||
+          equals(name, OutputKeys.Queries) ||
+          equals(name, OutputKeys.Headers) ||
+          equals(name, OutputKeys.Body) ||
+          endsWith(name, OutputKeys.Item) ||
+          equals(name, OutputKeys.Outputs) ||
+          equals(name, OutputKeys.StatusCode) ||
+          equals(name, OutputKeys.Name) ||
+          equals(name, OutputKeys.Properties) ||
+          equals(name, OutputKeys.PathParameters)
+        ) {
+          propertyPath = '';
+        } else {
+          propertyPath = convertPathToBracketsFormat(name, !required);
+        }
+        return `items(${convertToStringLiteral(actionName as string)})${propertyPath}`;
+      }
+
+    default:
+      method = arrayDetails
+        ? Constants.ITEM
+        : actionName
+        ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
+        : Constants.TRIGGER_OUTPUTS_OUTPUT;
+
+      return _generateExpressionFromKey(method, key, actionName, !!arrayDetails);
+  }
+}
+
+// NOTE: For example, if tokenKey is outputs.$.foo.[*].bar, which means
+// the root outputs is an object, and the object has a property foo which is an array.
+// Every item in the array has a bar property, and the expression would something like item()?['bar'].
+function _generateExpressionFromKey(method: string, tokenKey: string, actionName: string | undefined, isInsideArray: boolean): string {
+  const segments = parseEx(tokenKey);
+  segments.shift();
+  segments.shift();
+  const result = [];
+  // NOTE: Use @body for tokens that come from the body path like outputs.$.Body.weather
+  let rootMethod = method;
+  if (!isInsideArray && segments[0]?.value?.toString()?.toLowerCase() === OutputSource.Body) {
+    segments.shift();
+    rootMethod = actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : `triggerBody()`;
+  }
+
+  while (segments.length) {
+    const segment = segments.pop() as Segment;
+    if (segment.type === SegmentType.Index) {
+      break;
+    } else {
+      const propertyName = segment.value as string;
+      result.push(`?[${convertToStringLiteral(propertyName)}]`);
+    }
+  }
+
+  result.push(rootMethod);
+  return result.reverse().join('');
+}
+
+function getTokenValueFromToken(tokenType: TokenType, functionArguments: string[]): string | undefined {
+  return tokenType === TokenType.PARAMETER
+    ? `parameters(${convertToStringLiteral(functionArguments[0])})`
+    : tokenType === TokenType.VARIABLE
+    ? `variables(${convertToStringLiteral(functionArguments[0])})`
+    : undefined;
+}
+
+export function getTokenExpressionValue(token: SegmentToken, currentValue?: string): string {
   const { name } = token;
 
   if (isExpressionToken(token) || isParameterToken(token) || isVariableToken(token) || isIterationIndexToken(token)) {
@@ -361,8 +448,8 @@ export function getTokenExpressionValue(token: Token, currentValue?: string): st
   return currentValue as string;
 }
 
-function getNonOpenApiTokenExpressionValue(token: Token): string {
-  const { actionName, name, source, required, key } = token;
+function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
+  const { actionName, name, source, required, key, arrayDetails } = token;
   const optional = !isNullOrUndefined(required) && !required;
   let propertyPath: string;
 
@@ -385,9 +472,9 @@ function getNonOpenApiTokenExpressionValue(token: Token): string {
 
   // NOTE(tonytang): If the token is inside array, instead of serialize to the wrong definition, we serialize to item() for now.
   // TODO(tonytang): Need to have a full story for showing/hiding tokens that represent item().
-  if (token.arrayDetails) {
-    if (token.arrayDetails.loopSource) {
-      return `@items(${convertToStringLiteral(token.arrayDetails.loopSource)})${propertyPath}`;
+  if (arrayDetails) {
+    if (arrayDetails.loopSource) {
+      return `@items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
     } else {
       return `${Constants.ITEM}${propertyPath}`;
     }
@@ -1006,7 +1093,7 @@ export function updateTokenMetadata(
   operations: Actions,
   parameterType?: string
 ): ValueSegment {
-  const token = valueSegment.token as Token;
+  const token = valueSegment.token as SegmentToken;
 
   switch (token?.tokenType) {
     case TokenType.PARAMETER:
@@ -1029,7 +1116,7 @@ export function updateTokenMetadata(
       break;
   }
 
-  const { name, actionName, arrayDetails } = valueSegment.token as Token;
+  const { name, actionName, arrayDetails } = valueSegment.token as SegmentToken;
   const tokenNodeId = actionName ? getPropertyValue(actionNodes, actionName) : triggerNodeId;
 
   if (arrayDetails?.loopSource) {
@@ -1040,7 +1127,7 @@ export function updateTokenMetadata(
   const tokenNodeOperation = operations[tokenNodeId];
   const nodeType = tokenNodeOperation?.type;
   const isSecure = tokenNodeData ? hasSecureOutputs(nodeType, tokenNodeData.settings ?? {}) : false;
-  const nodeOutputInfo = getOutputByTokenInfo(unmap(tokenNodeData?.nodeOutputs.outputs), valueSegment.token as Token, parameterType);
+  const nodeOutputInfo = getOutputByTokenInfo(unmap(tokenNodeData?.nodeOutputs.outputs), valueSegment.token as SegmentToken, parameterType);
 
   const brandColor =
     token.tokenType === TokenType.ITEM
@@ -1118,7 +1205,11 @@ export function getExpressionTokenTitle(expression: Expression): string {
   }
 }
 
-function getOutputByTokenInfo(nodeOutputs: OutputInfo[], tokenInfo: Token, type = Constants.SWAGGER.TYPE.ANY): OutputInfo | undefined {
+function getOutputByTokenInfo(
+  nodeOutputs: OutputInfo[],
+  tokenInfo: SegmentToken,
+  type = Constants.SWAGGER.TYPE.ANY
+): OutputInfo | undefined {
   const { name, arrayDetails } = tokenInfo;
 
   if (!name) {

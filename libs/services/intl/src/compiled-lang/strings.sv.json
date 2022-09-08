@@ -369,6 +369,12 @@
       "value": "Obligatoriskt. Det objekt som ska kontrolleras för att se om det är mindre än det värde det jämförs med."
     }
   ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Ange värdet för auktoriseringsrubriken"
+    }
+  ],
   "1uGBLP": [
     {
       "type": 0,
@@ -405,6 +411,12 @@
       "value": "Global sökning"
     }
   ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Välj en fil att ladda upp"
+    }
+  ],
   "2Cdt4p": [
     {
       "type": 0,
@@ -427,6 +439,12 @@
     {
       "type": 0,
       "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Hanterad identitet"
     }
   ],
   "2b1yD3": [
@@ -462,7 +480,7 @@
   "2wJZkB": [
     {
       "type": 0,
-      "value": "Empty add dynamic content button"
+      "value": "Knappen Lägg till dynamiskt innehåll är tom"
     }
   ],
   "2xhbE1": [
@@ -475,6 +493,12 @@
     {
       "type": 0,
       "value": "Identifierare"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Systemtilldelad hanterad identitet"
     }
   ],
   "3BZnxY": [
@@ -525,6 +549,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "Den angivna identiteten är inte associerad med denna Logic-app."
+    }
+  ],
   "3jlz+B": [
     {
       "type": 0,
@@ -561,16 +591,16 @@
       "value": "3"
     }
   ],
-  "3wagjT": [
-    {
-      "type": 0,
-      "value": "välj indata"
-    }
-  ],
   "4/kJ8D": [
     {
       "type": 0,
       "value": "(UTC+04:00) Jerevan"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Autentisering"
     }
   ],
   "47kOXr": [
@@ -661,6 +691,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det XPath-uttryck som ska utvärderas."
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Utfärdare"
     }
   ],
   "5aa76N": [
@@ -813,6 +849,12 @@
       "value": "Obligatoriskt. Strängen kan innehålla värdet."
     }
   ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -849,10 +891,22 @@
       "value": "Det går inte att återge designern pga flera utlösare i definitionen."
     }
   ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Aktivera hanterad identitet för logikappen."
+    }
+  ],
   "8U0KPg": [
     {
       "type": 0,
       "value": "Krävs. Strängen som ska URI-kodas."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Ange hemlighet som oformaterad text eller använd en säker parameter"
     }
   ],
   "8Y5xpK": [
@@ -907,6 +961,18 @@
     {
       "type": 0,
       "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Värde"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "Användaridentiteten stöds inte när Logic-appen har en systemtilldelad hanterad identitet aktiverad."
     }
   ],
   "949s+r": [
@@ -975,6 +1041,12 @@
       "value": "Returnerar sant om båda parametrarna är sanna"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentication Type"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1009,6 +1081,18 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon"
+    }
+  ],
+  "Amz9+m": [
+    {
+      "type": 0,
+      "value": "Ange målgrupp"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Användarnamn"
     }
   ],
   "ArTh0/": [
@@ -1105,6 +1189,12 @@
       "value": "Krävs. Strängen att avkoda de URL-osäkra tecknen från."
     }
   ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
+    }
+  ],
   "BSHFiw": [
     {
       "type": 0,
@@ -1147,6 +1237,12 @@
       "value": "Anslutning krävs"
     }
   ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Autentiseringstyp"
+    }
+  ],
   "Cy9qeQ": [
     {
       "type": 0,
@@ -1169,6 +1265,12 @@
     {
       "type": 0,
       "value": "Generera schemat genom att använda en exempelnyttolast"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Ange klient-ID"
     }
   ],
   "DZZ3fj": [
@@ -1235,6 +1337,12 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Lösenord"
     }
   ],
   "Eqgm4v": [
@@ -1421,6 +1529,12 @@
       "value": "Returnerar frågan från en URI"
     }
   ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Ange utfärdare"
+    }
+  ],
   "GLd3MU": [
     {
       "type": 0,
@@ -1526,7 +1640,7 @@
   "IQyOth": [
     {
       "type": 0,
-      "value": "If available, dynamic content is automatically generated from the connectors and actions you choose for your flow."
+      "value": "Om funktionen är tillgänglig så genereras dynamiskt innehåll automatiskt från de anslutningsappar och åtgärder som du väljer för ditt flöde."
     }
   ],
   "IUE/lQ": [
@@ -1659,12 +1773,6 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Det objekt till vilket en ny egenskap ska läggas till."
-    }
-  ],
-  "K5FFic": [
-    {
-      "type": 0,
-      "value": "Välj en fil att ladda upp"
     }
   ],
   "K90YEU": [
@@ -1905,6 +2013,12 @@
       "value": "Krävs. Data-URI att konvertera till binär representation."
     }
   ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Hanterad identitet"
+    }
+  ],
   "MTR4Vg": [
     {
       "type": 0,
@@ -1953,6 +2067,24 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NlSWOG": [
+    {
+      "type": 0,
+      "value": "Uttryck"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Ange klientorganisation"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Välj en identitet"
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -1981,6 +2113,12 @@
     {
       "type": 0,
       "value": "Krävs. En sträng som innehåller tidszonnamnet för källtidszonen. Se https://msdn.microsoft.com/sv-se/library/gg154758.aspx för information."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Hemlighet"
     }
   ],
   "OFKZzQ": [
@@ -2067,6 +2205,12 @@
       "value": "Välj en hanterad identitet"
     }
   ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
   "P2A5dB": [
     {
       "type": 0,
@@ -2151,6 +2295,12 @@
       "value": "(UTC-04:00) Turks- och Caicosöarna"
     }
   ],
+  "PtqSHp": [
+    {
+      "type": 0,
+      "value": "Generera inte om inget värde"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2185,6 +2335,12 @@
     {
       "type": 0,
       "value": "Konverterar indata till ett värde av JSON-typ"
+    }
+  ],
+  "QGuYOg": [
+    {
+      "type": 0,
+      "value": "Kan ha värdet null"
     }
   ],
   "QQYzHC": [
@@ -2225,6 +2381,12 @@
       "value": "Krävs. Värdet som konverteras till binärt."
     }
   ],
+  "QePi+D": [
+    {
+      "type": 0,
+      "value": "Datatyp"
+    }
+  ],
   "QknZQ1": [
     {
       "type": 0,
@@ -2257,6 +2419,18 @@
     {
       "type": 0,
       "value": "tim"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Namn"
+    }
+  ],
+  "RPSKbr": [
+    {
+      "type": 0,
+      "value": "Ange målgrupp"
     }
   ],
   "RX2Shm": [
@@ -2319,6 +2493,18 @@
     {
       "type": 0,
       "value": "(UTC+12:00) Petropavlovsk-Kamtjatskij - gammal"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Lösenord"
+    }
+  ],
+  "SGxmEY": [
+    {
+      "type": 0,
+      "value": "Ange en ordlista"
     }
   ],
   "SKXopi": [
@@ -2595,6 +2781,12 @@
       "value": "Körningshistorik"
     }
   ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certifikat"
+    }
+  ],
   "VptXzY": [
     {
       "type": 0,
@@ -2661,6 +2853,12 @@
       "value": "Ersätt befintligt schema."
     }
   ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Klientorganisation"
+    }
+  ],
   "X8JjjT": [
     {
       "type": 1,
@@ -2677,6 +2875,12 @@
     {
       "type": 0,
       "value": " timmar"
+    }
+  ],
+  "XBPhr0": [
+    {
+      "type": 0,
+      "value": "Välj ett utdataschema"
     }
   ],
   "XCunbR": [
@@ -2763,12 +2967,6 @@
       "value": "Förfrågan"
     }
   ],
-  "XoICyH": [
-    {
-      "type": 0,
-      "value": "Bläddra"
-    }
-  ],
   "XqamWZ": [
     {
       "type": 0,
@@ -2791,6 +2989,12 @@
     {
       "type": 0,
       "value": "Krävs. Namnet på åtgärden vars brödtextutdata du vill ha."
+    }
+  ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Lösenord"
     }
   ],
   "Y0H9aX": [
@@ -2831,6 +3035,12 @@
     {
       "type": 0,
       "value": "Aktiverar ett uttryck som hämtar sitt värde från ett annat JSON-namn och värdepar eller utdata från körningsutlösaren"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Ange PFX"
     }
   ],
   "YaFjJQ": [
@@ -2971,6 +3181,12 @@
       "value": "Funktion"
     }
   ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Ange PFX"
+    }
+  ],
   "ajAro8": [
     {
       "type": 0,
@@ -3065,12 +3281,6 @@
       "value": "Returnerar ett objekt med en egenskap som är inställd på det angivna värdet"
     }
   ],
-  "c5/wGq": [
-    {
-      "type": 0,
-      "value": "välj utdata"
-    }
-  ],
   "c6XbVI": [
     {
       "type": 0,
@@ -3080,7 +3290,7 @@
   "c8UPLp": [
     {
       "type": 0,
-      "value": "Dynamic content may also be added from other sources."
+      "value": "Dynamiskt innehåll kan också läggas till från andra källor."
     }
   ],
   "cCYmTK": [
@@ -3111,6 +3321,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Välj en identitet"
     }
   ],
   "ci6ex1": [
@@ -3275,6 +3491,12 @@
     {
       "type": 0,
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
+    }
+  ],
+  "eIlosa": [
+    {
+      "type": 0,
+      "value": "Utdataschemanod"
     }
   ],
   "eRvGw3": [
@@ -3553,6 +3775,18 @@
       "value": "Varaktighet"
     }
   ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Målgrupp"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Systemtilldelad hanterad identitet"
+    }
+  ],
   "i/b3Ko": [
     {
       "type": 0,
@@ -3629,6 +3863,18 @@
     {
       "type": 0,
       "value": "Avbryt"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Egenskaper"
+    }
+  ],
+  "ifLn0+": [
+    {
+      "type": 0,
+      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -3831,6 +4077,12 @@
       "value": "Returnerar sant om två värden är lika stora"
     }
   ],
+  "klpJg1": [
+    {
+      "type": 0,
+      "value": "Ange användarnamn"
+    }
+  ],
   "kneb9/": [
     {
       "type": 0,
@@ -3933,6 +4185,12 @@
       "value": "Namn"
     }
   ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Ange en matris"
+    }
+  ],
   "mCzkXX": [
     {
       "type": 0,
@@ -3985,6 +4243,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
     }
   ],
   "mx2IMJ": [
@@ -4247,6 +4511,12 @@
       "value": "Konverterar parametern till en sträng"
     }
   ],
+  "q5SkF5": [
+    {
+      "type": 0,
+      "value": "Välj ett indataschema"
+    }
+  ],
   "q87X20": [
     {
       "type": 0,
@@ -4387,6 +4657,12 @@
       "value": "Kortrubrik"
     }
   ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Hemlighet"
+    }
+  ],
   "rDt4Iu": [
     {
       "type": 0,
@@ -4489,10 +4765,28 @@
       "value": "Returnerar sant om endera av parametrarna är sann"
     }
   ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Klient-id"
+    }
+  ],
   "ss5JPH": [
     {
       "type": 0,
       "value": "Ny parameter"
+    }
+  ],
+  "surdl/": [
+    {
+      "type": 0,
+      "value": "Indataschemanod"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Bläddra"
     }
   ],
   "t+XCkg": [
@@ -4603,6 +4897,12 @@
       "value": "(UTC+04:00) Abu Dhabi, Muskat"
     }
   ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Välj ett element för att börja konfigurera"
+    }
+  ],
   "uN4zFU": [
     {
       "type": 0,
@@ -4705,12 +5005,6 @@
       "value": "Returnerar det sista indexet för ett värde i en sträng (skiftlägesokänslig, invariant kultur)"
     }
   ],
-  "vLXCIR": [
-    {
-      "type": 0,
-      "value": "Knapp för att hantera växlingstillstånd"
-    }
-  ],
   "vQcQkU": [
     {
       "type": 0,
@@ -4727,6 +5021,12 @@
     {
       "type": 0,
       "value": "Uttrycket är ogiltigt."
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Målgrupp"
     }
   ],
   "vXwYXe": [
@@ -4827,6 +5127,12 @@
       "value": "Tidsgränsen överskreds"
     }
   ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Fullständig sökväg"
+    }
+  ],
   "wQcEXt": [
     {
       "type": 0,
@@ -4893,6 +5199,12 @@
       "value": "Returnerar en strängrepresentation av en URI-kodad sträng"
     }
   ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
+    }
+  ],
   "xOAOHM": [
     {
       "type": 0,
@@ -4909,6 +5221,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den nya eller befintliga egenskapens namn."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Kod"
     }
   ],
   "xYyPR8": [

@@ -36,6 +36,7 @@ export type PanelContainerProps = {
   toggleCollapse: () => void;
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
+  onTitleChange: (newValue: string) => void;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -61,6 +62,7 @@ export const PanelContainer = ({
   trackEvent,
   renderHeader,
   onCommentChange,
+  onTitleChange,
 }: PanelContainerProps) => {
   const intl = useIntl();
   const onTabChange = (itemKey: string): void => {
@@ -88,6 +90,7 @@ export const PanelContainer = ({
           comment={comment}
           commentChange={onCommentChange}
           toggleCollapse={toggleCollapse}
+          onTitleChange={onTitleChange}
         />
       );
     },
@@ -127,7 +130,7 @@ export const PanelContainer = ({
       hasCloseButton={false}
       type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
       customWidth={width}
-      styles={{ content: { padding: isCollapsed ? 0 : '1rem' } }}
+      styles={{ content: { padding: isCollapsed ? 0 : '1rem' }, main: { overflow: 'hidden' } }}
       layerProps={layerProps}
     >
       {!isCollapsed && (

@@ -6,7 +6,7 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { Filters } from './filters';
-import { filterWorkflows, getListColumns, parseResourceGroups, parseWorkflowData, updateSelectedItems } from './helper';
+import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups, parseWorkflowData, updateSelectedItems } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
@@ -86,7 +86,9 @@ export const WorkflowsSelection: React.FC = () => {
     setRenderWorkflows(workflowItems);
     setResourceGroups(resourceGroups);
     allWorkflows.current = workflowItems;
-    allItemsSelected.current = workflowItems as SelectedWorkflowsList[];
+    allItemsSelected.current = workflowItems.map((workflow) => {
+      return { ...workflow, selected: false, rendered: true };
+    });
   };
 
   const { isLoading: isWorkflowsLoading } = useQuery<any>([QueryKeys.workflowsData, { iseId: selectedIse }], loadWorkflows, {
@@ -100,21 +102,25 @@ export const WorkflowsSelection: React.FC = () => {
     allItemsSelected.current = updatedItems;
   }, [selectedWorkflows, renderWorkflows, allWorkflows]);
 
-  const selection = useMemo(() => {
+  const selection: Selection = useMemo(() => {
     const onItemsChange = () => {
-      const actualSelection = selectedWorkflows.length ? selectedWorkflows : [...allItemsSelected.current.filter((item) => item.selected)];
-      if (selection && selection.getItems().length > 0 && actualSelection.length > 0) {
-        actualSelection.forEach((workflow: WorkflowsList) => {
+      const selectedItems = [...allItemsSelected.current.filter((item) => item.selected)];
+      const currentSelection = !selectedItems.length && selectedWorkflows.length ? selectedWorkflows : selectedItems;
+      if (selection && selection.getItems().length > 0 && currentSelection.length > 0) {
+        selection.setAllSelected(false);
+        currentSelection.forEach((workflow: WorkflowsList) => {
           selection.setKeySelected(workflow.key, true, true);
         });
       }
     };
 
     const onSelectionChanged = () => {
-      const currentSelection = selection.getSelection() as Array<WorkflowsList>;
+      const currentSelection = selection.getSelection() as WorkflowsList[];
+      const selectedItems = getSelectedItems(allItemsSelected.current, currentSelection);
+
       dispatch(
         updateSelectedWorkFlows({
-          selectedWorkflows: currentSelection,
+          selectedWorkflows: selectedItems,
         })
       );
     };
@@ -187,15 +193,25 @@ export const WorkflowsSelection: React.FC = () => {
 
   const filters = useMemo(() => {
     const onChangeSearch = (_event: React.FormEvent<HTMLDivElement>, newSearchString: string) => {
-      setRenderWorkflows(filterWorkflows(allWorkflows.current, resourceGroups, newSearchString));
+      const filteredWorkflows = filterWorkflows(allWorkflows.current, resourceGroups, newSearchString);
+      allItemsSelected.current = allItemsSelected.current.map((workflow) => {
+        const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);
+        return { ...workflow, rendered: isWorkflowInRender };
+      });
+      setRenderWorkflows(filteredWorkflows);
       setSearchString(newSearchString);
     };
 
     const onChangeResourceGroup = (_event: React.FormEvent<HTMLDivElement>, _selectedOption: IDropdownOption, index: number) => {
       const updatedResourceGroups = [...resourceGroups];
       updatedResourceGroups[index - 2].selected = !updatedResourceGroups[index - 2].selected;
+      const filteredWorkflows = filterWorkflows(allWorkflows.current, updatedResourceGroups, searchString);
+      allItemsSelected.current = allItemsSelected.current.map((workflow) => {
+        const isWorkflowInRender = !!filteredWorkflows.find((item: WorkflowsList) => item.key === workflow.key);
+        return { ...workflow, rendered: isWorkflowInRender };
+      });
 
-      setRenderWorkflows(filterWorkflows(allWorkflows.current, updatedResourceGroups, searchString));
+      setRenderWorkflows(filteredWorkflows);
       setResourceGroups(updatedResourceGroups);
     };
 
@@ -208,6 +224,45 @@ export const WorkflowsSelection: React.FC = () => {
       />
     );
   }, [resourceGroups, isWorkflowsLoading, allWorkflows, searchString]);
+
+  const deselectItemKey = (itemKey: string) => {
+    return new Promise<void>((resolve) => {
+      const copyAllItems = [...allItemsSelected.current];
+      const newSelection = [...selectedWorkflows.filter((item) => item.key !== itemKey)];
+      const deselectedItem = copyAllItems.find((workflow) => workflow.key === itemKey);
+      if (deselectedItem) {
+        deselectedItem.selected = false;
+      }
+      allItemsSelected.current = copyAllItems;
+
+      dispatch(
+        updateSelectedWorkFlows({
+          selectedWorkflows: newSelection,
+        })
+      );
+
+      resolve();
+    });
+  };
+
+  const updateRenderWorflows = () => {
+    return new Promise<void>((resolve) => {
+      const updatedRenderWorkflows = renderWorkflows?.map((workflow, index) => {
+        return { ...workflow, key: index.toString() };
+      }) as WorkflowsList[];
+      setRenderWorkflows(updatedRenderWorkflows);
+
+      resolve();
+    });
+  };
+
+  const deselectWorkflow = async (itemKey: string) => {
+    const copyRenderWorkflows = [...(renderWorkflows ?? [])];
+    await deselectItemKey(itemKey);
+    selection.setItems(renderWorkflows as WorkflowsList[]);
+    await updateRenderWorflows();
+    setRenderWorkflows(copyRenderWorkflows);
+  };
 
   return (
     <div className="msla-export-workflows-panel">
@@ -227,6 +282,7 @@ export const WorkflowsSelection: React.FC = () => {
         isLoading={isWorkflowsLoading || renderWorkflows === null}
         allWorkflows={allWorkflows.current}
         renderWorkflows={renderWorkflows}
+        deselectWorkflow={deselectWorkflow}
       />
     </div>
   );
