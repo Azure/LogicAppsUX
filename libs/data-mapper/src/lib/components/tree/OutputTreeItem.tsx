@@ -1,5 +1,5 @@
 import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
-import { SharedTreeItemContent } from './SchemaTreeItem';
+import { expandButtonStyle, SharedTreeItemContent } from './SchemaTreeItem';
 import { Caption1, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronRight16Regular, CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular } from '@fluentui/react-icons';
 import { fluentTreeItem, provideFluentDesignSystem, treeItemStyles } from '@fluentui/web-components';
@@ -63,7 +63,7 @@ export const SchemaFastTreeItem: React.FunctionComponent<OutputSchemaFastTreeIte
     styles: (ctx, def) => {
       const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
       const fastStyles = css`
-        ${baseStyles} ${fastTreeItemStyles} ${positionRegionStyling}
+        ${baseStyles} ${fastTreeItemStyles} ${positionRegionStyling} ${expandButtonStyle}
       `;
       return fastStyles;
     },

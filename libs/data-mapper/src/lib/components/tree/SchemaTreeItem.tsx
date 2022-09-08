@@ -30,6 +30,11 @@ const useStyles = makeStyles({
   },
 });
 
+export const expandButtonStyle = `
+  :host(.nested) .expand-collapse-button:hover {
+    background: inherit;
+  }`;
+
 export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps> = ({
   childNode,
   currentlySelectedNodes,
@@ -66,6 +71,7 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
       const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
       const fastStyles = css`
         ${baseStyles} ${fastTreeItemStyles}
+        ${expandButtonStyle}
       `;
       return fastStyles;
     },
