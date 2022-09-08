@@ -33,7 +33,7 @@ export const InitDataMapperApiService = (options: DataMapperApiServiceOptions) =
   service = new DataMapperApiService(options);
 };
 
-export const InitOtherSService = (newService: IDataMapperApiService) => {
+export const InitOtherDMService = (newService: IDataMapperApiService) => {
   service = newService;
 };
 
