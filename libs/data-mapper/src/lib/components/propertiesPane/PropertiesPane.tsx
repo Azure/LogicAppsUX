@@ -115,6 +115,11 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     // TODO: Hook this up once Reid gets to handling removing nodes
   };
 
+  const onSelectTab = (tab: TABS) => {
+    setTabToDisplay(tab);
+    setIsExpanded(true);
+  };
+
   const getPaneTitle = (): string | undefined => {
     switch (currentNode?.type) {
       case NodeType.Input:
@@ -152,6 +157,18 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     }
   };
 
+  const TopBarContent = () => (
+    <>
+      <Text className={styles.title}>{getPaneTitle()}</Text>
+      <Divider vertical style={{ maxWidth: 24 }} />
+      <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
+        <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
+        <Tab value={TABS.CODE}>{codeLoc}</Tab>
+        {currentNode?.type === NodeType.Output && <Tab value={TABS.TEST}>{testLoc}</Tab>}
+      </TabList>
+    </>
+  );
+
   useEffect(() => {
     // Set tab to first one anytime this panel displays a new item
     if (currentNode) {
@@ -160,18 +177,6 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       setTabToDisplay(undefined);
     }
   }, [currentNode]);
-
-  const TopBarContent = () => (
-    <>
-      <Text className={styles.title}>{getPaneTitle()}</Text>
-      <Divider vertical style={{ maxWidth: 24 }} />
-      <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => setTabToDisplay(data.value as TABS)} size="small">
-        <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
-        <Tab value={TABS.CODE}>{codeLoc}</Tab>
-        {currentNode?.type === NodeType.Output && <Tab value={TABS.TEST}>{testLoc}</Tab>}
-      </TabList>
-    </>
-  );
 
   return (
     <div className={styles.pane}>
