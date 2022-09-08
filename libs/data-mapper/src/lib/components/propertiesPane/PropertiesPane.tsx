@@ -38,6 +38,7 @@ const useStyles = makeStyles({
     ...shorthands.margin('15px'),
   },
   paneContent: {
+    ...shorthands.padding('8px', '24px', '24px', '24px'),
     ...shorthands.overflow('hidden', 'auto'),
   },
   noItemSelectedText: {
