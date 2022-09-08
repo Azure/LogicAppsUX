@@ -60,7 +60,8 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const styles = useStyles();
   const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
-  const [initialDragYPos, setInitialDragYPos] = useState(0);
+  const [initialDragYPos, setInitialDragYPos] = useState<number | undefined>(undefined);
+  const [initialDragHeight, setInitialDragHeight] = useState<number | undefined>(undefined);
 
   const inputSchemaNodeLoc = intl.formatMessage({
     defaultMessage: 'Input schema node',
@@ -123,11 +124,19 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const onStartDrag = (e: React.DragEvent) => {
     setInitialDragYPos(e.clientY);
+    setInitialDragHeight(contentHeight);
   };
 
-  const onDragEnd = (e: React.DragEvent) => {
+  const onDrag = (e: React.DragEvent) => {
+    // Have to check for clientY being 0 as it messes everything up when drag ends for some unknown reason
+    if (!initialDragHeight || !initialDragYPos || e.clientY === 0) {
+      return;
+    }
+
+    const deltaY = e.clientY - initialDragYPos; // Going up == negative
+
     // Clamp height between 0 and the full canvas height
-    const newPaneContentHeight = Math.min(baseCanvasHeight, Math.max(0, contentHeight - (e.clientY - initialDragYPos)));
+    const newPaneContentHeight = Math.min(baseCanvasHeight, Math.max(0, initialDragHeight - deltaY));
 
     // Snap properties pane to full height if expanded >=80%
     if (newPaneContentHeight >= 0.8 * baseCanvasHeight) {
@@ -139,9 +148,15 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     if (newPaneContentHeight <= 25) {
       setIsExpanded(false);
       setContentHeight(basePropPaneContentHeight);
+      return;
     }
 
     setContentHeight(newPaneContentHeight);
+  };
+
+  const onDragEnd = () => {
+    setInitialDragHeight(undefined);
+    setInitialDragYPos(undefined);
   };
 
   const getPaneTitle = (): string | undefined => {
@@ -210,6 +225,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         style={{ height: 4, cursor: isExpanded ? 'row-resize' : 'auto' }}
         draggable={isExpanded ? 'true' : 'false'}
         onDragStart={onStartDrag}
+        onDrag={onDrag}
         onDragEnd={onDragEnd}
       />
       <Stack horizontal verticalAlign="center" className={styles.topBar}>
