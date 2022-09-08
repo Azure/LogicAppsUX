@@ -1,6 +1,6 @@
 import { NodeType } from '../../models';
 import type { SelectedNode } from '../../models';
-import { baseCanvasHeight } from '../../ui';
+import { baseCanvasHeight, basePropPaneContentHeight } from '../../ui';
 import { CodeTab } from './tabComponents/CodeTab';
 import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
@@ -17,6 +17,8 @@ enum TABS {
   TEST,
 }
 
+const topBarHeight = 40;
+
 const useStyles = makeStyles({
   pane: {
     width: '100%',
@@ -24,8 +26,7 @@ const useStyles = makeStyles({
     ...shorthands.borderRadius('medium', 'medium', 0, 0),
   },
   topBar: {
-    height: '40px',
-    maxHeight: '40px',
+    height: `${topBarHeight}px`,
     p: '4px',
     marginLeft: '8px',
     marginRight: '8px',
@@ -37,7 +38,6 @@ const useStyles = makeStyles({
     ...shorthands.margin('15px'),
   },
   paneContent: {
-    ...shorthands.padding('8px', '24px', '24px', '24px'),
     ...shorthands.overflow('hidden', 'auto'),
   },
   noItemSelectedText: {
@@ -131,8 +131,14 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     // Snap properties pane to full height if expanded >=80%
     if (newPaneContentHeight >= 0.8 * baseCanvasHeight) {
-      setContentHeight(baseCanvasHeight); // TODO: may have to subtract top bar height from this
+      setContentHeight(baseCanvasHeight);
       return;
+    }
+
+    // Automatically collapse pane if resized below a certain amount, and reset expanded height
+    if (newPaneContentHeight <= 25) {
+      setIsExpanded(false);
+      setContentHeight(basePropPaneContentHeight);
     }
 
     setContentHeight(newPaneContentHeight);

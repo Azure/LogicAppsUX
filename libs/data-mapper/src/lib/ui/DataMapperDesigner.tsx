@@ -60,7 +60,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const baseCanvasHeight = 600; // Pixels
-const basePropPaneContentHeight = 192;
+export const basePropPaneContentHeight = 192;
 
 export interface DataMapperDesignerProps {
   saveStateCall: (dataMapDefinition: string) => void;
