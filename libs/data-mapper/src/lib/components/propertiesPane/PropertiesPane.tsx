@@ -7,7 +7,7 @@ import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular, Delete20Regular } from '@fluentui/react-icons';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 enum TABS {
@@ -18,15 +18,13 @@ enum TABS {
 
 const useStyles = makeStyles({
   pane: {
-    position: 'absolute',
-    bottom: 0,
     width: '100%',
     backgroundColor: tokens.colorNeutralBackground1,
-    zIndex: 1000,
     ...shorthands.borderRadius('medium', 'medium', 0, 0),
   },
   topBar: {
     height: '40px',
+    maxHeight: '40px',
     p: '4px',
     marginLeft: '8px',
     marginRight: '8px',
@@ -39,8 +37,6 @@ const useStyles = makeStyles({
   },
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
-    height: '192px',
-    maxHeight: '192px',
     ...shorthands.overflow('hidden', 'auto'),
   },
   noItemSelectedText: {
@@ -51,15 +47,19 @@ const useStyles = makeStyles({
 
 export interface PropertiesPaneProps {
   currentNode?: SelectedNode;
+  isExpanded: boolean;
+  setIsExpanded: (isExpanded: boolean) => void;
+  contentHeight: number;
+  setContentHeight: (newHeight: number) => void;
 }
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const intl = useIntl();
-  const { currentNode } = props;
+  const { currentNode, isExpanded, setIsExpanded, contentHeight, setContentHeight } = props;
 
   const styles = useStyles();
-  const [isExpanded, setIsExpanded] = useState(!!currentNode);
   const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
+  const [initialDragYPos, setInitialDragYPos] = useState(0);
 
   const inputSchemaNodeLoc = intl.formatMessage({
     defaultMessage: 'Input schema node',
@@ -120,6 +120,14 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     setIsExpanded(true);
   };
 
+  const onStartDrag = (e: React.DragEvent) => {
+    setInitialDragYPos(e.clientY);
+  };
+
+  const onDragPane = (e: React.DragEvent) => {
+    setContentHeight(initialDragYPos - e.clientY);
+  };
+
   const getPaneTitle = (): string | undefined => {
     switch (currentNode?.type) {
       case NodeType.Input:
@@ -178,10 +186,16 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       setTabToDisplay(undefined);
       setIsExpanded(false);
     }
-  }, [currentNode]);
+  }, [currentNode, setIsExpanded]);
 
   return (
     <div className={styles.pane}>
+      <div
+        style={{ height: 4, cursor: isExpanded ? 'row-resize' : 'auto' }}
+        draggable={isExpanded ? 'true' : 'false'}
+        onDragStart={onStartDrag}
+        onDrag={onDragPane}
+      />
       <Stack horizontal verticalAlign="center" className={styles.topBar}>
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
@@ -209,7 +223,11 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         </div>
       </Stack>
 
-      {isExpanded && <div className={styles.paneContent}>{getSelectedTab()}</div>}
+      {isExpanded && (
+        <div className={styles.paneContent} style={{ height: contentHeight }}>
+          {getSelectedTab()}
+        </div>
+      )}
     </div>
   );
 };
