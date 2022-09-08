@@ -1,24 +1,26 @@
+import type { ExpressionGroupBranding } from '../../constants/ExpressionConstants';
+import { iconUriForIconImageName } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
-import { Icon } from '@fluentui/react';
 import {
-  PresenceBadge,
   Button,
   createFocusOutlineStyle,
+  Image,
   makeStyles,
   mergeClasses,
+  PresenceBadge,
   shorthands,
+  Text,
   tokens,
   Tooltip,
-  Text,
 } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
 import type { NodeProps } from 'react-flow-renderer';
 
 export type ExpressionCardProps = {
   expressionName: string;
-  brandColor: string;
-  iconName: string;
+  iconFileName?: string;
+  expressionBranding: ExpressionGroupBranding;
   onClick: () => void;
 } & CardProps;
 
@@ -78,7 +80,7 @@ const useStyles = makeStyles({
 });
 
 export const ExpressionCard: FunctionComponent<NodeProps<ExpressionCardProps>> = (props: NodeProps<ExpressionCardProps>) => {
-  const { onClick, expressionName, brandColor, iconName, disabled, error } = props.data;
+  const { onClick, expressionName, disabled, error, expressionBranding, iconFileName } = props.data;
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
@@ -91,8 +93,13 @@ export const ExpressionCard: FunctionComponent<NodeProps<ExpressionCardProps>> =
         }}
         relationship="label"
       >
-        <Button onClick={onClick} color={brandColor} className={mergedClasses} disabled={!!disabled}>
-          <Icon iconName={iconName} />
+        {/* TODO light vs dark theming on expression branding */}
+        <Button onClick={onClick} color={expressionBranding.colorLight} className={mergedClasses} disabled={!!disabled}>
+          {iconFileName ? (
+            <Image src={iconUriForIconImageName(iconFileName)} height={20} width={20} alt={expressionName} />
+          ) : (
+            <>{expressionBranding.icon}</>
+          )}
         </Button>
       </Tooltip>
     </div>

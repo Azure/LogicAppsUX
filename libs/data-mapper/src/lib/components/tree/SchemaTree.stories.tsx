@@ -16,4 +16,6 @@ export const Standard: ComponentStory<typeof SchemaTree> = (args: SchemaTreeProp
 Standard.args = {
   schema: mockSchema,
   currentlySelectedNodes: [],
+  visibleConnectedNodes: [],
+  onNodeClick: (_schemaNode) => console.log('Clicked'),
 };

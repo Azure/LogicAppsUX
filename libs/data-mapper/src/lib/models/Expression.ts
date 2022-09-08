@@ -11,8 +11,7 @@ export interface Expression {
 
   // Made up
   expressionCategory: ExpressionCategory;
-  iconSpecification: string;
-  iconSource: ExpressionIconSource;
+  iconFileName?: string;
   outputType: SchemaNodeDataType; // Maybe make this type generic
   detailedDescription: string;
   tooltip: string;
@@ -25,12 +24,4 @@ export enum ExpressionCategory {
   Math = 'math',
   String = 'string',
   Utility = 'utility',
-}
-
-export enum ExpressionIconSource {
-  MDL2 = 'mdl2',
-  Fluent = 'fluent',
-  Windows = 'windows',
-  Custom = 'custom',
-  None = 'none',
 }

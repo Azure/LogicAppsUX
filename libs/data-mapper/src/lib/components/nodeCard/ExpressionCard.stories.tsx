@@ -1,3 +1,4 @@
+import { logicalBranding } from '../../constants/ExpressionConstants';
 import type { ExpressionCardProps } from './ExpressionCard';
 import { ExpressionCard } from './ExpressionCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -9,13 +10,30 @@ export default {
   title: 'Data Mapper/ExpressionCard',
 } as ComponentMeta<typeof ExpressionCard>;
 
-export const Standard: ComponentStory<typeof ExpressionCard> = (args: NodeProps<ExpressionCardProps>) => <ExpressionCard {...args} />;
-Standard.args = {
+export const WithIcon: ComponentStory<typeof ExpressionCard> = (args: NodeProps<ExpressionCardProps>) => <ExpressionCard {...args} />;
+WithIcon.args = {
   data: {
-    onClick: () => console.log('Expression card clicked'),
-    iconName: '12PointStar',
+    onClick: () => {
+      console.log('Expression card clicked');
+    },
     expressionName: 'Expression Name',
-    brandColor: 'purple',
+    iconFileName: 'ChartYAngel.svg',
+    expressionBranding: logicalBranding,
+    displayHandle: false,
+    disabled: false,
+    error: false,
+  },
+};
+
+export const WithoutIcon: ComponentStory<typeof ExpressionCard> = (args: NodeProps<ExpressionCardProps>) => <ExpressionCard {...args} />;
+WithoutIcon.args = {
+  data: {
+    onClick: () => {
+      console.log('Expression card clicked');
+    },
+    expressionName: 'Expression Name',
+    iconFileName: '',
+    expressionBranding: logicalBranding,
     displayHandle: false,
     disabled: false,
     error: false,
