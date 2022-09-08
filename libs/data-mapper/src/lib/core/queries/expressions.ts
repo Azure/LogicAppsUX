@@ -1,5 +1,5 @@
 import { expressionMock } from '../../__mocks__/expressions';
-import type { Expression } from '../../models/expression';
+import type { Expression } from '../../models/Expression';
 
 // import { SchemaSelectionServiceInstance } from '../services';
 

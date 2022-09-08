@@ -1,6 +1,7 @@
 import { getExpressions } from '../../core/queries/expressions';
-import type { Expression } from '../../models/expression';
-import { ExpressionCategory } from '../../models/expression';
+import type { Expression } from '../../models/Expression';
+import { ExpressionCategory } from '../../models/Expression';
+import { iconUriForIconImageName } from '../../utils/Icon.Utils';
 import type {
   IGroup,
   IGroupedListStyleProps,
@@ -10,7 +11,7 @@ import type {
   IStyleFunctionOrObject,
 } from '@fluentui/react';
 import { mergeStyles, GroupedList, SearchBox } from '@fluentui/react';
-import { Body1, Button, Caption1, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import { Body1, Button, Caption1, makeStyles, shorthands, tokens, typographyStyles, Image } from '@fluentui/react-components';
 import { InfoDot } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -89,6 +90,9 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
             backgroundColor: 'inherit',
           },
         },
+        '.ms-List-page': {
+          height: 'fit-content',
+        },
       },
     };
 
@@ -105,7 +109,9 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
     return (
       // danielle to reuse search box
       <>
-        <Body1 className={style2.header}></Body1>
+        <Body1 style={{ height: '30px' }} className={style2.header}>
+          Expression
+        </Body1>
         <SearchBox styles={searchBoxStyles} placeholder="Search"></SearchBox>
         <GroupedList
           groups={groups}
@@ -134,12 +140,9 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression }) =
   };
 
   return (
-    <Button
-      onMouseEnter={() => setIsHover(!isHover)}
-      onMouseLeave={() => setIsHover(!isHover)}
-      className={mergedButton}
-      key={expression.name}
-    >
+    // danielle to add back alt text alt={expression.name}
+    <Button onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)} className={mergedButton} key={expression.name}>
+      {expression.iconFileName && <Image src={iconUriForIconImageName(expression.iconFileName)} height={20} width={20} />}
       <Caption1 className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
         {expression.name}{' '}
       </Caption1>

@@ -1,5 +1,5 @@
 import type { SchemaInfoProperties } from '.';
-import type { Expression } from '../../../models/expression';
+import type { Expression } from '../../../models/Expression';
 
 export interface SchemaSelectionServiceOptions {
   baseUrl: string;
@@ -8,7 +8,6 @@ export interface SchemaSelectionServiceOptions {
 }
 
 export class SchemaSelectionService {
-  // TODO (danielle): add back when questions answered
   private options: SchemaSelectionServiceOptions;
 
   constructor(options: SchemaSelectionServiceOptions) {

@@ -1,4 +1,4 @@
-import type { Expression } from '../../../models/expression';
+import type { Expression } from '../../../models/Expression';
 import type { SchemaSelectionServiceOptions } from './SchemaSelectionService';
 import { SchemaSelectionService } from './SchemaSelectionService';
 import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
