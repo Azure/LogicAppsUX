@@ -1,13 +1,39 @@
 import { getExpressions } from '../../core/queries/expressions';
 import type { Expression } from '../../models/expression';
 import { ExpressionCategory } from '../../models/expression';
-import type { IGroup } from '@fluentui/react';
-import { GroupedList } from '@fluentui/react';
+import type {
+  IGroup,
+  IGroupedListStyleProps,
+  IGroupedListStyles, // IGroupHeaderProps,
+  // IGroupRenderProps,
+  // IRenderFunction,
+  IStyleFunctionOrObject,
+} from '@fluentui/react';
+import { mergeStyles, GroupedList } from '@fluentui/react';
+import { Button, Caption1, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { InfoDot } from '@microsoft/designer-ui';
+import { useState } from 'react';
 import { useQuery } from 'react-query';
 
 export interface ExpressionListProps {
   sample: string;
 }
+
+const cardStyles = makeStyles({
+  button: {
+    width: '240px',
+    height: '40px',
+    backgroundColor: tokens.colorNeutralBackground1,
+    display: 'flex',
+    ...shorthands.border('0px'),
+  },
+  buttonHover: {
+    backgroundColor: tokens.colorNeutralBackground1Hover,
+  },
+  text: {
+    width: '150px',
+  },
+});
 
 export const ExpressionList: React.FC<ExpressionListProps> = () => {
   const expressionListData = useQuery<Expression[]>(['expressions'], () => getExpressions());
@@ -27,10 +53,81 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
       startInd += numInGroup;
       return group;
     });
-    const cell = (expression: Expression) => <div key={expression.name}>{expression.name}</div>;
 
-    return <GroupedList groups={groups} items={sortedExpressionsByCategory} onRenderCell={(depth, item) => cell(item)}></GroupedList>;
+    const cell = (expression: Expression) => {
+      return <ExpressionListCell expression={expression}></ExpressionListCell>;
+    };
+
+    // const onRenderHeader: IRenderFunction<IGroupHeaderProps> = ({ ...props } ) => {
+    //   console.log(props.groupedListId)
+    //   return <div>{props.groupedListId}</div>
+    // }
+
+    // const groupedListProps: IGroupRenderProps = {
+    //   onRenderHeader,
+    // } groupProps={groupedListProps}
+
+    const styles: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
+      root: {
+        '.ms-GroupHeader': {
+          height: '28px',
+          width: '240px',
+          display: 'flex',
+          'div:first-child': {
+            height: '28px',
+          },
+        },
+        '.ms-GroupHeader-title': {
+          'span:nth-of-type(2)': {
+            display: 'none',
+          },
+        },
+        '.ms-GroupHeader-expand': {
+          height: '28px',
+          ':hover': {
+            backgroundColor: 'inherit',
+          },
+        },
+      },
+    };
+
+    return (
+      <GroupedList
+        groups={groups}
+        styles={styles}
+        items={sortedExpressionsByCategory}
+        onRenderCell={(depth, item) => cell(item)}
+        selectionMode={0}
+      ></GroupedList>
+    );
   }
 
   return <div>loading</div>;
+};
+
+interface ExpressionListCellProps {
+  expression: Expression;
+}
+const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression }) => {
+  const [isHover, setIsHover] = useState<boolean>(false);
+  const cardStyle = cardStyles();
+  const mergedButton = mergeStyles(cardStyle.button, cardStyle.buttonHover);
+  const infoDotProps = {
+    description: expression.detailedDescription,
+    style: { paddingRight: tokens.spacingHorizontalXS, paddingLeft: tokens.spacingHorizontalXS },
+  };
+
+  return (
+    <Button
+      onMouseEnter={() => setIsHover(!isHover)}
+      onMouseLeave={() => setIsHover(!isHover)}
+      className={mergedButton}
+      key={expression.name}
+    >
+      <Caption1 className={cardStyle.text}>{expression.name}</Caption1>
+      <span style={{ justifyContent: 'right' }}>
+        <InfoDot {...infoDotProps}></InfoDot>
+      </span>
+    </Button>
+  );
 };
