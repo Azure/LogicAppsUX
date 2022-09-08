@@ -6,7 +6,7 @@ import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab
 import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/react-icons';
+import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular, Delete20Regular } from '@fluentui/react-icons';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -96,6 +96,25 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     description: 'Label for default message when no node selected',
   });
 
+  const expandLoc = intl.formatMessage({
+    defaultMessage: 'Expand',
+    description: 'Label to expand',
+  });
+
+  const collapseLoc = intl.formatMessage({
+    defaultMessage: 'Collapse',
+    description: 'Label to collapse',
+  });
+
+  const removeLoc = intl.formatMessage({
+    defaultMessage: 'Remove',
+    description: 'Label to remove',
+  });
+
+  const removeCurrentNode = () => {
+    // TODO: Hook this up once Reid gets to handling removing nodes
+  };
+
   const getPaneTitle = (): string | undefined => {
     switch (currentNode?.type) {
       case NodeType.Input:
@@ -159,17 +178,28 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <Stack horizontal verticalAlign="center" className={styles.topBar}>
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
-        <Button
-          appearance="subtle"
-          size="medium"
-          icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={styles.chevron}
-          style={{ marginLeft: 'auto' }}
-          disabled={!currentNode}
-          title="Show/Hide"
-          aria-label="Show/Hide"
-        />
+        <div style={{ marginLeft: 'auto' }}>
+          {(currentNode?.type === NodeType.Input || currentNode?.type === NodeType.Expression) && (
+            <Button
+              appearance="subtle"
+              size="medium"
+              icon={<Delete20Regular />}
+              onClick={removeCurrentNode}
+              title={removeLoc}
+              aria-label={removeLoc}
+            />
+          )}
+          <Button
+            appearance="subtle"
+            size="medium"
+            icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
+            onClick={() => setIsExpanded(!isExpanded)}
+            className={styles.chevron}
+            disabled={!currentNode}
+            title={!isExpanded ? expandLoc : collapseLoc}
+            aria-label={!isExpanded ? expandLoc : collapseLoc}
+          />
+        </div>
       </Stack>
 
       {isExpanded && <div className={styles.paneContent}>{getSelectedTab()}</div>}
