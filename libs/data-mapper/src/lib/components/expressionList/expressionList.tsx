@@ -1,16 +1,9 @@
 import { getExpressions } from '../../core/queries/expressions';
 import type { Expression } from '../../models/expression';
 import { ExpressionCategory } from '../../models/expression';
-import type {
-  IGroup,
-  IGroupedListStyleProps,
-  IGroupedListStyles, // IGroupHeaderProps,
-  // IGroupRenderProps,
-  // IRenderFunction,
-  IStyleFunctionOrObject,
-} from '@fluentui/react';
+import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { mergeStyles, GroupedList } from '@fluentui/react';
-import { Button, Caption1, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { Button, Caption1, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import { InfoDot } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -58,15 +51,6 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
       return <ExpressionListCell expression={expression}></ExpressionListCell>;
     };
 
-    // const onRenderHeader: IRenderFunction<IGroupHeaderProps> = ({ ...props } ) => {
-    //   console.log(props.groupedListId)
-    //   return <div>{props.groupedListId}</div>
-    // }
-
-    // const groupedListProps: IGroupRenderProps = {
-    //   onRenderHeader,
-    // } groupProps={groupedListProps}
-
     const styles: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
       root: {
         '.ms-GroupHeader': {
@@ -76,14 +60,18 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
           'div:first-child': {
             height: '28px',
           },
+          borderRadius: tokens.borderRadiusMedium,
         },
         '.ms-GroupHeader-title': {
+          ...typographyStyles.caption1,
           'span:nth-of-type(2)': {
             display: 'none',
           },
         },
         '.ms-GroupHeader-expand': {
           height: '28px',
+          width: '16px',
+          paddingLeft: tokens.spacingHorizontalXS,
           ':hover': {
             backgroundColor: 'inherit',
           },
@@ -124,7 +112,9 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression }) =
       className={mergedButton}
       key={expression.name}
     >
-      <Caption1 className={cardStyle.text}>{expression.name}</Caption1>
+      <Caption1 className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
+        {expression.name}{' '}
+      </Caption1>
       <span style={{ justifyContent: 'right' }}>
         <InfoDot {...infoDotProps}></InfoDot>
       </span>
