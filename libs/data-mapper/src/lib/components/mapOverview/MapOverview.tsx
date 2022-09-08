@@ -40,7 +40,6 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSch
 
   const reactFlowStyle = {
     background: '#e0e0e0',
-    height: '600px',
   };
 
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
