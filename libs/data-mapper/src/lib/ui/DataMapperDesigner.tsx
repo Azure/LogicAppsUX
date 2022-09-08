@@ -59,7 +59,7 @@ import ReactFlow, { ConnectionLineType, MiniMap, ReactFlowProvider, useReactFlow
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-const baseCanvasHeight = 600; // Pixels
+export const baseCanvasHeight = 600; // Pixels
 const basePropPaneContentHeight = 192;
 
 export interface DataMapperDesignerProps {

@@ -1,5 +1,6 @@
 import { NodeType } from '../../models';
 import type { SelectedNode } from '../../models';
+import { baseCanvasHeight } from '../../ui';
 import { CodeTab } from './tabComponents/CodeTab';
 import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
@@ -124,8 +125,17 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     setInitialDragYPos(e.clientY);
   };
 
-  const onDragPane = (e: React.DragEvent) => {
-    setContentHeight(initialDragYPos - e.clientY);
+  const onDragEnd = (e: React.DragEvent) => {
+    // Clamp height between 0 and the full canvas height
+    const newPaneContentHeight = Math.min(baseCanvasHeight, Math.max(0, contentHeight - (e.clientY - initialDragYPos)));
+
+    // Snap properties pane to full height if expanded >=80%
+    if (newPaneContentHeight >= 0.8 * baseCanvasHeight) {
+      setContentHeight(baseCanvasHeight); // TODO: may have to subtract top bar height from this
+      return;
+    }
+
+    setContentHeight(newPaneContentHeight);
   };
 
   const getPaneTitle = (): string | undefined => {
@@ -194,7 +204,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         style={{ height: 4, cursor: isExpanded ? 'row-resize' : 'auto' }}
         draggable={isExpanded ? 'true' : 'false'}
         onDragStart={onStartDrag}
-        onDrag={onDragPane}
+        onDragEnd={onDragEnd}
       />
       <Stack horizontal verticalAlign="center" className={styles.topBar}>
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
