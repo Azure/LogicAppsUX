@@ -1,9 +1,16 @@
 import { getExpressions } from '../../core/queries/expressions';
 import type { Expression } from '../../models/expression';
 import { ExpressionCategory } from '../../models/expression';
-import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
-import { mergeStyles, GroupedList } from '@fluentui/react';
-import { Button, Caption1, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import type {
+  IGroup,
+  IGroupedListStyleProps,
+  IGroupedListStyles,
+  ISearchBoxStyleProps,
+  ISearchBoxStyles,
+  IStyleFunctionOrObject,
+} from '@fluentui/react';
+import { mergeStyles, GroupedList, SearchBox } from '@fluentui/react';
+import { Body1, Button, Caption1, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import { InfoDot } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -14,7 +21,7 @@ export interface ExpressionListProps {
 
 const cardStyles = makeStyles({
   button: {
-    width: '240px',
+    width: '100%',
     height: '40px',
     backgroundColor: tokens.colorNeutralBackground1,
     display: 'flex',
@@ -25,6 +32,12 @@ const cardStyles = makeStyles({
   },
   text: {
     width: '150px',
+  },
+});
+
+const titleStyle = makeStyles({
+  header: {
+    ...typographyStyles.body1Strong,
   },
 });
 
@@ -51,11 +64,11 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
       return <ExpressionListCell expression={expression}></ExpressionListCell>;
     };
 
-    const styles: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
+    const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
       root: {
         '.ms-GroupHeader': {
           height: '28px',
-          width: '240px',
+          width: '100%',
           display: 'flex',
           'div:first-child': {
             height: '28px',
@@ -79,14 +92,29 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
       },
     };
 
+    const style2 = titleStyle();
+
+    const searchBoxStyles: IStyleFunctionOrObject<ISearchBoxStyleProps, ISearchBoxStyles> = {
+      root: {
+        borderBottomColor: tokens.colorBrandForeground1,
+        borderBottomWidth: '2px',
+        borderRadius: tokens.borderRadiusMedium,
+      },
+    };
+
     return (
-      <GroupedList
-        groups={groups}
-        styles={styles}
-        items={sortedExpressionsByCategory}
-        onRenderCell={(depth, item) => cell(item)}
-        selectionMode={0}
-      ></GroupedList>
+      // danielle to reuse search box
+      <>
+        <Body1 className={style2.header}></Body1>
+        <SearchBox styles={searchBoxStyles} placeholder="Search"></SearchBox>
+        <GroupedList
+          groups={groups}
+          styles={headerStyle}
+          items={sortedExpressionsByCategory}
+          onRenderCell={(depth, item) => cell(item)}
+          selectionMode={0}
+        ></GroupedList>
+      </>
     );
   }
 

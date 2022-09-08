@@ -1,7 +1,11 @@
 import { expressionMock } from '../../__mocks__/expressions';
 import type { Expression } from '../../models/expression';
 
+// import { SchemaSelectionServiceInstance } from '../services';
+
 export const getExpressions = (): Promise<Expression[]> => {
-  // call API here
+  // const service = SchemaSelectionServiceInstance();
+  // const response = service.getExpressionsManifest();
+  // console.log(response);
   return Promise.resolve(expressionMock);
 };

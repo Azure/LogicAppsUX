@@ -1,3 +1,4 @@
+import type { Expression } from '../../../models/expression';
 import type { SchemaSelectionServiceOptions } from './SchemaSelectionService';
 import { SchemaSelectionService } from './SchemaSelectionService';
 import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
@@ -5,6 +6,7 @@ import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/ut
 export interface ISchemaSelectionService {
   getSchemas(): Promise<SchemaInfoProperties[]>;
   getSchemaFile(schemaName: string): Promise<any>;
+  getExpressionsManifest(): Promise<Expression[]>;
 }
 
 export interface SchemaInfoProperties {
