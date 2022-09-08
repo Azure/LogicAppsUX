@@ -1,16 +1,16 @@
 import type { SchemaInfoProperties } from '.';
 
-export interface SchemaSelectionServiceOptions {
+export interface DataMapperApiServiceOptions {
   baseUrl: string;
   accessToken?: string;
   resourceUrl?: string;
 }
 
-export class SchemaSelectionService {
+export class DataMapperApiService {
   // TODO (danielle): add back when questions answered
-  private options: SchemaSelectionServiceOptions;
+  private options: DataMapperApiServiceOptions;
 
-  constructor(options: SchemaSelectionServiceOptions) {
+  constructor(options: DataMapperApiServiceOptions) {
     this.options = options;
   }
 
