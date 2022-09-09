@@ -118,7 +118,9 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
     const inputNode = flattenedInputSchema[connection.source];
     const outputNode = flattenedOutputSchema[connection.target];
 
-    return inputNode.schemaNodeDataType === outputNode.schemaNodeDataType;
+    // If we have no outputNode that means it's an expression and just allow the connection for now
+    // TODO validate expression allowed input types
+    return !outputNode || inputNode.schemaNodeDataType === outputNode.schemaNodeDataType;
   }
 
   return false;

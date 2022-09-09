@@ -17,6 +17,8 @@ WithIcon.args = {
       console.log('Expression card clicked');
     },
     expressionName: 'Expression Name',
+    inputs: [],
+    numberOfInputs: 0,
     iconFileName: 'ChartYAngel.svg',
     expressionBranding: logicalBranding,
     displayHandle: false,
@@ -32,6 +34,8 @@ WithoutIcon.args = {
       console.log('Expression card clicked');
     },
     expressionName: 'Expression Name',
+    inputs: [],
+    numberOfInputs: 0,
     iconFileName: '',
     expressionBranding: logicalBranding,
     displayHandle: false,

@@ -9,6 +9,7 @@ import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
+import { ExpressionCard } from '../components/nodeCard/ExpressionCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
@@ -32,6 +33,7 @@ import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaNodeExtended, SelectedNode } from '../models';
 import { NodeType, SchemaTypes } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
+import type { Expression } from '../models/Expression';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
@@ -89,21 +91,26 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
   const [propPaneExpandedHeightPx, setPropPaneExpandedHeightPx] = useState(basePropertyPaneContentHeight);
 
+  // TODO update to support input nodes connected to an expression, connected to an output node
   const connectedInputNodes = useMemo(() => {
     if (currentOutputNode) {
       const outputFilteredConnections = currentOutputNode.children.flatMap((childNode) =>
         !connections[childNode.key] ? [] : connections[childNode.key]
       );
 
-      return outputFilteredConnections.map((connection) => {
-        return flattenedInputSchema[connection.reactFlowSource];
-      });
+      return outputFilteredConnections
+        .map((connection) => {
+          return flattenedInputSchema[connection.reactFlowSource];
+        })
+        .filter((connection) => connection !== undefined);
     } else {
       return [];
     }
   }, [flattenedInputSchema, currentOutputNode, connections]);
 
-  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, currentOutputNode, connections);
+  const allExpressionNodes: Expression[] = [];
+
+  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, allExpressionNodes, currentOutputNode, connections);
 
   const dataMapDefinition = useMemo((): string => {
     if (inputSchema && outputSchema) {
@@ -393,7 +400,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     );
   };
 
-  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
+  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard, expressionNode: ExpressionCard }), []);
   const placeholderFunc = () => {
     return;
   };
@@ -459,12 +466,13 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 export const useLayout = (
   allInputSchemaNodes: SchemaNodeExtended[],
   connectedInputNodes: SchemaNodeExtended[],
+  allExpressionNodes: Expression[],
   currentOutputNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
     if (currentOutputNode) {
-      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, currentOutputNode);
+      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, allExpressionNodes, currentOutputNode);
     } else {
       return [];
     }
