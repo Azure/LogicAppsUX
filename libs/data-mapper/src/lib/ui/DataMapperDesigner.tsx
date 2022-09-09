@@ -17,6 +17,8 @@ import { WarningModal } from '../components/warningModal/WarningModal';
 import { checkerboardBackgroundImage } from '../constants/ReactFlowConstants';
 import {
   addInputNodes,
+  changeConnection,
+  deleteConnection,
   makeConnection,
   redoDataMapOperation,
   removeInputNodes,
@@ -51,7 +53,7 @@ import {
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
@@ -82,6 +84,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+
+  const edgeUpdateSuccessful = useRef(true);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
@@ -177,6 +181,33 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       dispatch(makeConnection({ outputNodeKey: connection.target, value: connection.source }));
     }
   };
+
+  const onEdgeUpdateStart = useCallback(() => {
+    edgeUpdateSuccessful.current = false;
+  }, []);
+
+  const onEdgeUpdate = useCallback(
+    (oldEdge: ReactFlowEdge, newConnection: ReactFlowConnection) => {
+      edgeUpdateSuccessful.current = true;
+      if (newConnection.target && newConnection.source && oldEdge.target) {
+        dispatch(changeConnection({ outputNodeKey: newConnection.target, value: newConnection.source, oldConnectionKey: oldEdge.target }));
+      }
+    },
+    [dispatch]
+  );
+
+  const onEdgeUpdateEnd = useCallback(
+    (_: any, edge: ReactFlowEdge) => {
+      if (!edgeUpdateSuccessful.current) {
+        if (edge.target) {
+          dispatch(deleteConnection({ oldConnectionKey: edge.target }));
+        }
+      }
+
+      edgeUpdateSuccessful.current = true;
+    },
+    [dispatch]
+  );
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
     if (addSchemaFromFile) {
@@ -335,6 +366,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
         }}
         nodeTypes={nodeTypes}
+        onEdgeUpdate={onEdgeUpdate}
+        onEdgeUpdateStart={onEdgeUpdateStart}
+        onEdgeUpdateEnd={onEdgeUpdateEnd}
       >
         <ButtonContainer {...mapControlsButtonContainerProps} />
         {displayMiniMap ? (

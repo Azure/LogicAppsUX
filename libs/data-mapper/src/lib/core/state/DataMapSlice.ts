@@ -229,6 +229,39 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    changeConnection: (state, action: PayloadAction<ConnectionAction & { oldConnectionKey: string }>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      const trimmedOldConnectionKey = action.payload.oldConnectionKey.split('-', 2)[1];
+      delete newState.dataMapConnections[trimmedOldConnectionKey];
+
+      const trimmedKey = action.payload.outputNodeKey.split('-', 2)[1];
+      const trimmedValue = action.payload.value.split('-', 2)[1];
+
+      newState.dataMapConnections[trimmedKey] = {
+        value: trimmedValue,
+        reactFlowSource: action.payload.value,
+        reactFlowDestination: action.payload.outputNodeKey,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
+    deleteConnection: (state, action: PayloadAction<{ oldConnectionKey: string }>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      const trimmedOldConnectionKey = action.payload.oldConnectionKey.split('-', 2)[1];
+      delete newState.dataMapConnections[trimmedOldConnectionKey];
+
+      doDataMapOperation(state, newState);
+    },
+
     undoDataMapOperation: (state) => {
       const lastDataMap = state.undoStack.pop();
       if (lastDataMap && state.curDataMapOperation) {
@@ -282,6 +315,8 @@ export const {
   setCurrentOutputNode,
   setCurrentlySelectedNode,
   makeConnection,
+  changeConnection,
+  deleteConnection,
   undoDataMapOperation,
   redoDataMapOperation,
   saveDataMap,
