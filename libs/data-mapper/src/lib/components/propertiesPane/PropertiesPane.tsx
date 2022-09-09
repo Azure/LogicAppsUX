@@ -1,13 +1,14 @@
-import { NodeType } from '../../models';
+import { baseCanvasHeight, basePropertyPaneContentHeight } from '../../constants/ReactFlowConstants';
 import type { SelectedNode } from '../../models';
+import { NodeType } from '../../models';
 import { CodeTab } from './tabComponents/CodeTab';
 import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
 import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular } from '@fluentui/react-icons';
-import { useEffect, useState } from 'react';
+import { ChevronDoubleDown20Regular, ChevronDoubleUp20Regular, Delete20Regular } from '@fluentui/react-icons';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 enum TABS {
@@ -16,17 +17,16 @@ enum TABS {
   TEST,
 }
 
+const topBarHeight = 40;
+
 const useStyles = makeStyles({
   pane: {
-    position: 'absolute',
-    bottom: 0,
     width: '100%',
     backgroundColor: tokens.colorNeutralBackground1,
-    zIndex: 1000,
     ...shorthands.borderRadius('medium', 'medium', 0, 0),
   },
   topBar: {
-    height: '40px',
+    height: `${topBarHeight}px`,
     p: '4px',
     marginLeft: '8px',
     marginRight: '8px',
@@ -39,8 +39,6 @@ const useStyles = makeStyles({
   },
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
-    height: '192px',
-    maxHeight: '192px',
     ...shorthands.overflow('hidden', 'auto'),
   },
   noItemSelectedText: {
@@ -51,15 +49,20 @@ const useStyles = makeStyles({
 
 export interface PropertiesPaneProps {
   currentNode?: SelectedNode;
+  isExpanded: boolean;
+  setIsExpanded: (isExpanded: boolean) => void;
+  contentHeight: number;
+  setContentHeight: (newHeight: number) => void;
 }
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const intl = useIntl();
-  const { currentNode } = props;
+  const { currentNode, isExpanded, setIsExpanded, contentHeight, setContentHeight } = props;
 
   const styles = useStyles();
-  const [isExpanded, setIsExpanded] = useState(!!currentNode);
   const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
+  const [initialDragYPos, setInitialDragYPos] = useState<number | undefined>(undefined);
+  const [initialDragHeight, setInitialDragHeight] = useState<number | undefined>(undefined);
 
   const inputSchemaNodeLoc = intl.formatMessage({
     defaultMessage: 'Input schema node',
@@ -95,6 +98,67 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     defaultMessage: 'Select an element to start configuring',
     description: 'Label for default message when no node selected',
   });
+
+  const expandLoc = intl.formatMessage({
+    defaultMessage: 'Expand',
+    description: 'Label to expand',
+  });
+
+  const collapseLoc = intl.formatMessage({
+    defaultMessage: 'Collapse',
+    description: 'Label to collapse',
+  });
+
+  const removeLoc = intl.formatMessage({
+    defaultMessage: 'Remove',
+    description: 'Label to remove',
+  });
+
+  const removeCurrentNode = () => {
+    // TODO: Hook this up once Reid gets to handling removing nodes
+  };
+
+  const onSelectTab = (tab: TABS) => {
+    setTabToDisplay(tab);
+    setIsExpanded(true);
+  };
+
+  const onStartDrag = (e: React.DragEvent) => {
+    setInitialDragYPos(e.clientY);
+    setInitialDragHeight(contentHeight);
+  };
+
+  const onDrag = (e: React.DragEvent) => {
+    // Have to check for clientY being 0 as it messes everything up when drag ends for some unknown reason
+    if (!initialDragHeight || !initialDragYPos || e.clientY === 0) {
+      return;
+    }
+
+    const deltaY = e.clientY - initialDragYPos; // Going up == negative
+
+    // Clamp height between 0 and the full canvas height
+    const newPaneContentHeight = Math.min(baseCanvasHeight, Math.max(0, initialDragHeight - deltaY));
+
+    // Snap properties pane to full height if expanded >=80%
+    if (newPaneContentHeight >= 0.8 * baseCanvasHeight) {
+      setContentHeight(baseCanvasHeight);
+      return;
+    }
+
+    // Automatically collapse pane if resized below a certain amount, and reset expanded height
+    if (newPaneContentHeight <= 25) {
+      setIsExpanded(false);
+      setContentHeight(basePropertyPaneContentHeight);
+      return;
+    }
+
+    setContentHeight(newPaneContentHeight);
+  };
+
+  const onDragEnd = () => {
+    setInitialDragHeight(undefined);
+    setInitialDragYPos(undefined);
+  };
 
   const getPaneTitle = (): string | undefined => {
     switch (currentNode?.type) {
@@ -133,20 +197,11 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     }
   };
 
-  useEffect(() => {
-    // Set tab to first one anytime this panel displays a new item
-    if (currentNode) {
-      setTabToDisplay(TABS.PROPERTIES);
-    } else {
-      setTabToDisplay(undefined);
-    }
-  }, [currentNode]);
-
   const TopBarContent = () => (
     <>
       <Text className={styles.title}>{getPaneTitle()}</Text>
       <Divider vertical style={{ maxWidth: 24 }} />
-      <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => setTabToDisplay(data.value as TABS)} size="small">
+      <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
         <Tab value={TABS.CODE}>{codeLoc}</Tab>
         {currentNode?.type === NodeType.Output && <Tab value={TABS.TEST}>{testLoc}</Tab>}
@@ -154,25 +209,58 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     </>
   );
 
+  useEffect(() => {
+    // Set tab to first one anytime this panel displays a new item
+    if (currentNode) {
+      setTabToDisplay(TABS.PROPERTIES);
+      setIsExpanded(true);
+    } else {
+      setTabToDisplay(undefined);
+      setIsExpanded(false);
+    }
+  }, [currentNode, setIsExpanded]);
+
   return (
     <div className={styles.pane}>
+      <div
+        style={{ height: 4, cursor: isExpanded ? 'row-resize' : 'auto' }}
+        draggable={isExpanded ? 'true' : 'false'}
+        onDragStart={onStartDrag}
+        onDrag={onDrag}
+        onDragEnd={onDragEnd}
+      />
       <Stack horizontal verticalAlign="center" className={styles.topBar}>
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
-        <Button
-          appearance="subtle"
-          size="medium"
-          icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
-          onClick={() => setIsExpanded(!isExpanded)}
-          className={styles.chevron}
-          style={{ marginLeft: 'auto' }}
-          disabled={!currentNode}
-          title="Show/Hide"
-          aria-label="Show/Hide"
-        />
+        <div style={{ marginLeft: 'auto' }}>
+          {(currentNode?.type === NodeType.Input || currentNode?.type === NodeType.Expression) && (
+            <Button
+              appearance="subtle"
+              size="medium"
+              icon={<Delete20Regular />}
+              onClick={removeCurrentNode}
+              title={removeLoc}
+              aria-label={removeLoc}
+            />
+          )}
+          <Button
+            appearance="subtle"
+            size="medium"
+            icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
+            onClick={() => setIsExpanded(!isExpanded)}
+            className={styles.chevron}
+            disabled={!currentNode}
+            title={!isExpanded ? expandLoc : collapseLoc}
+            aria-label={!isExpanded ? expandLoc : collapseLoc}
+          />
+        </div>
       </Stack>
 
-      {isExpanded && <div className={styles.paneContent}>{getSelectedTab()}</div>}
+      {isExpanded && (
+        <div className={styles.paneContent} style={{ height: contentHeight }}>
+          {getSelectedTab()}
+        </div>
+      )}
     </div>
   );
 };
