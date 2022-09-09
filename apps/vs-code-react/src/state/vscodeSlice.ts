@@ -76,7 +76,7 @@ export const vscodeSlice = createSlice({
           resourceGroup: undefined,
           resourceGroupLocation: undefined,
         },
-        selectedAdvanceOptions: [AdvancedOptionsTypes.cloneConnections],
+        selectedAdvanceOptions: [AdvancedOptionsTypes.generateInfrastructureTemplates],
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
