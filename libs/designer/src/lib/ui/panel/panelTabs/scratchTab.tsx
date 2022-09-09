@@ -44,7 +44,6 @@ export const ScratchTab = () => {
     return (
       <>
         <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} authProps={{}} />
-
         <ArrayEditor
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[

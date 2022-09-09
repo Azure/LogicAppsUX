@@ -1,19 +1,27 @@
+import type { AuthProps } from '.';
 import type { ValueSegment } from '../editor';
 import { BaseEditor } from '../editor/base';
 import { CollapsedAuthenticationValidation } from './plugins/CollapsedAuthenticationValidation';
+import type { Dispatch, SetStateAction } from 'react';
 
 interface CollapsedAuthenticationProps {
   collapsedValue: ValueSegment[];
-  errorMessage: string;
+  isValid: boolean;
   setCollapsedValue: (value: ValueSegment[]) => void;
+  setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
+  setIsValid: (b: boolean) => void;
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  setOption: (s: string) => void;
 }
 
 export const CollapsedAuthentication = ({
   collapsedValue,
-  errorMessage,
+  isValid,
   setCollapsedValue,
+  setCurrentProps,
   GetTokenPicker,
+  setIsValid,
+  setOption,
 }: CollapsedAuthenticationProps): JSX.Element => {
   return (
     <div className="msla-authentication-editor-collapsed-container">
@@ -24,9 +32,13 @@ export const CollapsedAuthentication = ({
         tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
       >
         <CollapsedAuthenticationValidation
-          className={'msla-collapsed-editor-validation'}
-          errorMessage={errorMessage}
+          className={'msla-auth-editor-validation'}
+          collapsedValue={collapsedValue}
+          isValid={isValid}
           setCollapsedValue={setCollapsedValue}
+          setCurrentProps={setCurrentProps}
+          setIsValid={setIsValid}
+          setOption={setOption}
         />
       </BaseEditor>
     </div>

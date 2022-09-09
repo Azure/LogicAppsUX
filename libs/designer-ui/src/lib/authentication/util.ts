@@ -4,10 +4,14 @@ import constants from '../constants';
 import { convertItemsToSegments } from '../dictionary/util/deserializecollapseddictionary';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
+import { convertStringToSegments } from '../editor/base/utils/editorToSegement';
+import { getChildrenNodes } from '../editor/base/utils/helper';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { ManagedIdentity } from '@microsoft-logic-apps/utils';
 import { guid, equals, ResourceIdentityType } from '@microsoft-logic-apps/utils';
+import { $getRoot } from 'lexical';
+import type { LexicalEditor } from 'lexical';
 
 export interface AuthProperty {
   displayName: string;
@@ -261,6 +265,23 @@ export const AUTHENTICATION_PROPERTIES = {
   },
 };
 
+export const PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE: Record<string, AuthProperty[]> = {
+  Basic: [AUTHENTICATION_PROPERTIES.BASIC_USERNAME, AUTHENTICATION_PROPERTIES.BASIC_PASSWORD],
+  'Client Certificate': [AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD],
+  'Active Directory OAuth': [
+    AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT,
+    AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE,
+    AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY,
+    AUTHENTICATION_PROPERTIES.AAD_OAUTH_CLIENT_ID,
+    AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET,
+    AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PFX,
+    AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD,
+  ],
+  Raw: [AUTHENTICATION_PROPERTIES.RAW_VALUE],
+  'Managed Identity': [AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, AUTHENTICATION_PROPERTIES.MSI_IDENTITY],
+  None: [],
+};
+
 /**
  * Checks if the identity is valid and contains a user assigned identities.
  * @param {ManagedIdentity} identity - The managed identity.
@@ -332,3 +353,72 @@ const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty
     });
   }
 };
+
+export const serializeAuthentication = (
+  editor: LexicalEditor,
+  setCurrentProps: (items: AuthProps) => void,
+  setOption: (s: string) => void
+) => {
+  editor.getEditorState().read(() => {
+    const nodeMap = new Map<string, ValueSegment>();
+    const editorString = getChildrenNodes($getRoot(), nodeMap);
+    let jsonEditor;
+    try {
+      jsonEditor = JSON.parse(editorString);
+    } catch (e) {
+      console.log(e);
+    }
+    const returnItems: AuthProps = {};
+    setOption(jsonEditor['type'] as string);
+    switch (jsonEditor['type']) {
+      case AuthenticationType.BASIC:
+        returnItems.basicProps = {
+          basicUsername: convertStringToSegments(jsonEditor['username'], true, nodeMap),
+          basicPassword: convertStringToSegments(jsonEditor['password'], true, nodeMap),
+        };
+        break;
+      case AuthenticationType.CERTIFICATE:
+        returnItems.clientCertificateProps = {
+          clientCertificatePfx: convertStringToSegments(jsonEditor['pfx'], true, nodeMap),
+          clientCertificatePassword: convertStringToSegments(jsonEditor['password'], true, nodeMap),
+        };
+        break;
+      case AuthenticationType.RAW:
+        returnItems.rawProps = {
+          rawValue: convertStringToSegments(jsonEditor['value'], true, nodeMap),
+        };
+        break;
+      case AuthenticationType.MSI:
+        returnItems.msiProps = {
+          MSIAudience: convertStringToSegments(jsonEditor['audience'], true, nodeMap),
+        };
+        break;
+      case AuthenticationType.OAUTH:
+        returnItems.aadOAuthProps = {
+          OAuthTenant: convertStringToSegments(jsonEditor['tenant'], true, nodeMap),
+          OAuthAudience: convertStringToSegments(jsonEditor['audience'], true, nodeMap),
+          OAuthClientId: convertStringToSegments(jsonEditor['clientId'], true, nodeMap),
+        };
+        if (jsonEditor['authority']) {
+          returnItems.aadOAuthProps.OAuthAuthority = convertStringToSegments(jsonEditor['authority'], true, nodeMap);
+        }
+        if (jsonEditor['secret']) {
+          returnItems.aadOAuthProps.OAuthTypeSecret = convertStringToSegments(jsonEditor['secret'], true, nodeMap);
+        }
+        if (jsonEditor['pfx'] && jsonEditor['password']) {
+          returnItems.aadOAuthProps.OAuthTypeCertificatePfx = convertStringToSegments(jsonEditor['pfx'], true, nodeMap);
+          returnItems.aadOAuthProps.OAuthTypeCertificatePassword = convertStringToSegments(jsonEditor['password'], true, nodeMap);
+        }
+        break;
+    }
+    setCurrentProps(returnItems);
+  });
+};
+
+export function containsToken(value: string): boolean {
+  if (value.indexOf('$[') !== -1 && value.indexOf(']$') !== -1) {
+    return true;
+  } else {
+    return false;
+  }
+}

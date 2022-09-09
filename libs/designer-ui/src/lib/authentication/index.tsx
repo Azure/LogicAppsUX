@@ -1,6 +1,7 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
+import { initializeDictionaryValidation } from '../editor/base/utils/helper';
 import type { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { ActiveDirectoryAuthentication } from './AADOAuth/AADOAuth';
 import { AuthenticationDropdown } from './AuthenticationDropdown';
@@ -70,6 +71,7 @@ interface AuthenticationEditorProps extends BaseEditorProps {
   authType?: string | number;
   AuthenticationEditorOptions: AuthenticationEditorOptions;
   authProps: AuthProps;
+  readOnly?: boolean;
 }
 
 export const AuthenticationEditor = ({
@@ -78,12 +80,14 @@ export const AuthenticationEditor = ({
   authProps,
   initialValue,
   GetTokenPicker,
+  readOnly = false,
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
   const [codeView, { toggle: toggleCodeView }] = useBoolean(false);
   const [option, setOption] = useState<string | number>(authType);
   const [collapsedValue, setCollapsedValue] = useState(initialValue);
   const [currentProps, setCurrentProps] = useState<AuthProps>(authProps);
+  const [isValid, setIsValid] = useState(initializeDictionaryValidation(initialValue));
   const { basicProps = {}, clientCertificateProps = {}, rawProps = {}, msiProps = {}, aadOAuthProps = {} } = currentProps;
 
   const updateCollapsedValue = useCallback(() => {
@@ -155,9 +159,12 @@ export const AuthenticationEditor = ({
       {codeView ? (
         <CollapsedAuthentication
           collapsedValue={collapsedValue}
-          errorMessage=""
+          isValid={isValid}
           setCollapsedValue={setCollapsedValue}
           GetTokenPicker={GetTokenPicker}
+          setIsValid={setIsValid}
+          setCurrentProps={setCurrentProps}
+          setOption={setOption}
         />
       ) : (
         <div className="msla-authentication-editor-expanded-container">
@@ -173,7 +180,7 @@ export const AuthenticationEditor = ({
         </div>
       )}
       <div className="msla-authentication-default-view-mode">
-        <EditorCollapseToggle collapsed={codeView} toggleCollapsed={toggleCodeView} />
+        <EditorCollapseToggle collapsed={codeView} toggleCollapsed={toggleCodeView} disabled={!isValid || readOnly} />
       </div>
     </div>
   );
