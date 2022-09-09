@@ -1055,7 +1055,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Type d'authentification"
     }
   ],
   "AHB418": [
@@ -1995,6 +1995,12 @@
       "value": "(UTC+11:00) Îles Salomon, Nouvelle Calédonie"
     }
   ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -2772,6 +2778,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Montagnes Rocheuses (É.-U. et Canada)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "VKAk5g": [
@@ -4469,6 +4481,12 @@
     {
       "type": 0,
       "value": "Entrer une clé"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "pIczsS": [

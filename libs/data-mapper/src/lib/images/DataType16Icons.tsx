@@ -1,8 +1,8 @@
-import type { iconProps } from './IconModel';
+import type { IconProps } from './IconModel';
 import { wrapIcon } from '@fluentui/react-icons';
 import React from 'react';
 
-const Any16RegularIcon = (props: iconProps) => {
+const Any16RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -34,7 +34,7 @@ const Any16RegularIcon = (props: iconProps) => {
 
 export const Any16Regular = wrapIcon(Any16RegularIcon, 'Any16Regular');
 
-const Any16FilledIcon = (props: iconProps) => {
+const Any16FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -64,7 +64,7 @@ const Any16FilledIcon = (props: iconProps) => {
 
 export const Any16Filled = wrapIcon(Any16FilledIcon, 'Any16Filled');
 
-const Array16RegularIcon = (props: iconProps) => {
+const Array16RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -102,7 +102,7 @@ const Array16RegularIcon = (props: iconProps) => {
 
 export const Array16Regular = wrapIcon(Array16RegularIcon, 'Array16Regular');
 
-const Array16FilledIcon = (props: iconProps) => {
+const Array16FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -140,7 +140,7 @@ const Array16FilledIcon = (props: iconProps) => {
 
 export const Array16Filled = wrapIcon(Array16FilledIcon, 'Array16Filled');
 
-const Binary16RegularIcon = (props: iconProps) => {
+const Binary16RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -166,7 +166,7 @@ const Binary16RegularIcon = (props: iconProps) => {
 
 export const Binary16Regular = wrapIcon(Binary16RegularIcon, 'Binary16Regular');
 
-const Binary16FilledIcon = (props: iconProps) => {
+const Binary16FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -192,7 +192,7 @@ const Binary16FilledIcon = (props: iconProps) => {
 
 export const Binary16Filled = wrapIcon(Binary16FilledIcon, 'Binary16Filled');
 
-const Decimal16RegularIcon = (props: iconProps) => {
+const Decimal16RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -222,7 +222,7 @@ const Decimal16RegularIcon = (props: iconProps) => {
 
 export const Decimal16Regular = wrapIcon(Decimal16RegularIcon, 'Decimal16Regular');
 
-const Decimal16FilledIcon = (props: iconProps) => {
+const Decimal16FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -252,7 +252,7 @@ const Decimal16FilledIcon = (props: iconProps) => {
 
 export const Decimal16Filled = wrapIcon(Decimal16FilledIcon, 'Decimal16Filled');
 
-const Integer16RegularIcon = (props: iconProps) => {
+const Integer16RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -282,7 +282,7 @@ const Integer16RegularIcon = (props: iconProps) => {
 
 export const Integer16Regular = wrapIcon(Integer16RegularIcon, 'Integer16Regular');
 
-const Integer16FilledIcon = (props: iconProps) => {
+const Integer16FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -312,7 +312,7 @@ const Integer16FilledIcon = (props: iconProps) => {
 
 export const Integer16Filled = wrapIcon(Integer16FilledIcon, 'Integer16Filled');
 
-const String16RegularIcon = (props: iconProps) => {
+const String16RegularIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
@@ -344,7 +344,7 @@ const String16RegularIcon = (props: iconProps) => {
 
 export const String16Regular = wrapIcon(String16RegularIcon, 'String16Regular');
 
-const String16FilledIcon = (props: iconProps) => {
+const String16FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(
     'svg',
