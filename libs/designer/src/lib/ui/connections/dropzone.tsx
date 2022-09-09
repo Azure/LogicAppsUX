@@ -37,22 +37,17 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
 
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
-    dispatch(
-      expandDiscoveryPanel({
-        nodeId: newId,
-        discoveryIds: {
-          graphId,
-          childId,
-          parentId,
-        },
-      })
-    );
+    const discoveryIds = { graphId, childId, parentId };
+    console.log('ADD', discoveryIds);
+    dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds }));
   }, [dispatch, graphId, childId, parentId]);
 
   const addParallelBranch = useCallback(() => {
-    // TODO: Implement parallel branching
-    alert('Add parallel branch');
-  }, []);
+    const newId = guid();
+    const discoveryIds = { graphId, childId: undefined, parentId };
+    console.log('BRANCH', discoveryIds);
+    dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds }));
+  }, [dispatch, graphId, parentId]);
 
   const [{ isOver, canDrop }, drop] = useDrop(() => ({
     // The type (or types) to accept - strings or symbols

@@ -30,6 +30,7 @@ type AddOperationPayload = {
   discoveryIds: IdsForDiscovery;
   nodeId: string;
 };
+
 export const addOperation = createAsyncThunk(
   'addOperation',
   async ({ operation, discoveryIds, nodeId: id }: AddOperationPayload, { dispatch, getState }) => {
@@ -64,7 +65,6 @@ export const addOperation = createAsyncThunk(
 
     getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
     dispatch(setFocusNode(nodeId));
-    return;
   }
 );
 

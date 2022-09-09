@@ -1,6 +1,8 @@
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
+import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
+import { deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { WORKFLOW_EDGE_TYPES, isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
@@ -48,6 +50,23 @@ export const workflowSlice = createSlice({
       }
 
       addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
+    },
+    deleteNode: (state: WorkflowState, action: PayloadAction<DeleteNodePayload>) => {
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'Action Node Deleted',
+        args: [action.payload],
+      });
+      if (!state.graph) {
+        return; // log exception
+      }
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.graphId);
+      if (!graph) {
+        throw new Error('graph not set');
+      }
+
+      deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
     },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.focusedCanvasNodeId = action.payload;
@@ -200,6 +219,7 @@ export const workflowSlice = createSlice({
 export const {
   initWorkflowSpec,
   addNode,
+  deleteNode,
   updateNodeSizes,
   setNodeDescription,
   setCollapsedGraphIds,

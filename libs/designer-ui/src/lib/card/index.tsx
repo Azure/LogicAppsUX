@@ -116,6 +116,8 @@ export const Card: React.FC<CardProps> = ({
     }
   };
 
+  //     dispatch(deleteOperation({ operation, discoveryIds, nodeId }));
+
   const cardIcon = isLoading ? (
     <Spinner className="msla-card-header-spinner" size={SpinnerSize.small} />
   ) : icon ? (
