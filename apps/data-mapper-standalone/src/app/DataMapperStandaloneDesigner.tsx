@@ -4,8 +4,8 @@ import {
   DataMapDataProvider,
   DataMapperDesigner,
   DataMapperDesignerProvider,
-  defaultSchemaSelectionServiceOptions,
-  InitSchemaSelectionService,
+  defaultDataMapperApiServiceOptions,
+  InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
 import { useSelector } from 'react-redux';
 
@@ -18,8 +18,8 @@ export const DataMapperStandaloneDesigner = () => {
     return state.dataMapDataLoader;
   });
 
-  InitSchemaSelectionService({
-    baseUrl: defaultSchemaSelectionServiceOptions.baseUrl,
+  InitDataMapperApiService({
+    baseUrl: defaultDataMapperApiServiceOptions.baseUrl,
     resourceUrl: schemaState.resourcePath,
     accessToken: schemaState.armToken,
   });
