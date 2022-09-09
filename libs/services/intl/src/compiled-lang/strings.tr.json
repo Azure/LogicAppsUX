@@ -1044,7 +1044,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Kimlik Doğrulama Türü"
     }
   ],
   "AHB418": [
@@ -1951,6 +1951,12 @@
       "value": "(UTC+11:00) Solomon Adl., Yeni Kaledonya"
     }
   ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -2717,6 +2723,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Dağ Saati (ABD ve Kanada)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "VKAk5g": [
@@ -4391,6 +4403,12 @@
     {
       "type": 0,
       "value": "Anahtar girin"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "pIczsS": [

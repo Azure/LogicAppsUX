@@ -1037,7 +1037,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "身份验证类型"
     }
   ],
   "AHB418": [
@@ -1911,6 +1911,12 @@
       "value": "(UTC+11:00)所罗门群岛，新喀里多尼亚"
     }
   ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -2670,6 +2676,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00)山地时间(美国和加拿大)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "VKAk5g": [
@@ -4373,6 +4385,12 @@
     {
       "type": 0,
       "value": "输入密钥"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "pIczsS": [
