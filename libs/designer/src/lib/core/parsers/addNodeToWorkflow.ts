@@ -2,7 +2,6 @@
 import type { IdsForDiscovery } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
-import { WORKFLOW_NODE_TYPES } from './models/workflowNode';
 import {
   reassignNodeRunAfter,
   reassignEdgeSources,
@@ -12,6 +11,7 @@ import {
   removeEdge,
 } from './restructuringHelpers';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 
 export interface AddNodePayload {
   operation: DiscoveryOperation<DiscoveryResultTypes>;

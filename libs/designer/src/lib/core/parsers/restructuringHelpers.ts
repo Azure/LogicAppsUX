@@ -1,8 +1,7 @@
 /* eslint-disable no-param-reassign */
 import type { WorkflowState } from '../state/workflow/workflowInterfaces';
-import { WORKFLOW_EDGE_TYPES } from './models/workflowNode';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
-import { RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
+import { RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
 
 export const addNewEdge = (parent: string, child: string, graph: WorkflowNode) => {
   const workflowEdge: WorkflowEdge = {

@@ -13,9 +13,10 @@ import {
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useIsLeafNode, useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
+import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption } from '@microsoft/designer-ui';
-import { Card, MenuItemType } from '@microsoft/designer-ui';
-import { memo, useCallback, useMemo } from 'react';
+import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
@@ -80,6 +81,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const label = useNodeDisplayName(id);
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const handleDeleteClick = () => setShowDeleteModal(true);
   const handleDelete = () => dispatch(deleteOperation({ nodeId: id }));
 
   const getDeleteMenuItem = () => {
@@ -102,7 +105,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       iconName: 'Delete',
       title: deleteDescription,
       type: MenuItemType.Advanced,
-      onClick: handleDelete,
+      onClick: handleDeleteClick,
     };
   };
 
@@ -138,6 +141,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           <DropZone graphId={metadata?.graphId ?? ''} parentId={id} />
         </div>
       ) : null}
+      <DeleteNodeModal
+        nodeId={id}
+        // nodeIcon={iconUriResult.result}
+        // brandColor={brandColor}
+        nodeType={WORKFLOW_NODE_TYPES.OPERATION_NODE}
+        isOpen={showDeleteModal}
+        onDismiss={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+      />
     </>
   );
 };

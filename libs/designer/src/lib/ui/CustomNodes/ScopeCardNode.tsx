@@ -15,9 +15,10 @@ import {
 import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
+import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption } from '@microsoft/designer-ui';
-import { MenuItemType, ScopeCard } from '@microsoft/designer-ui';
-import { memo, useCallback } from 'react';
+import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
+import { memo, useCallback, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
@@ -71,6 +72,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     dispatch(toggleCollapsedGraphId(scopeId));
   }, [dispatch, scopeId]);
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const handleDeleteClick = () => setShowDeleteModal(true);
+  const handleDelete = () => dispatch(deleteGraphNode({ graphId: scopeId ?? '', graphNode }));
+
   if (!node) {
     return null;
   }
@@ -99,8 +104,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
 
-  const handleDelete = () => dispatch(deleteGraphNode({ graphId: scopeId ?? '', graphNode }));
-
   const getDeleteMenuItem = () => {
     const deleteDescription = intl.formatMessage({
       defaultMessage: 'Delete',
@@ -115,7 +118,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       iconName: 'Delete',
       title: deleteDescription,
       type: MenuItemType.Advanced,
-      onClick: handleDelete,
+      onClick: handleDeleteClick,
     };
   };
 
@@ -157,6 +160,15 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             <p className="no-actions-text">No Actions</p>
           )
         ) : null}
+        <DeleteNodeModal
+          nodeId={id}
+          // nodeIcon={iconUriResult.result}
+          // brandColor={brandColor}
+          nodeType={WORKFLOW_NODE_TYPES.GRAPH_NODE}
+          isOpen={showDeleteModal}
+          onDismiss={() => setShowDeleteModal(false)}
+          onConfirm={handleDelete}
+        />
       </>
     );
   } else {

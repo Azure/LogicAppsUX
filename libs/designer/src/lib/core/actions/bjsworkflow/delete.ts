@@ -1,10 +1,10 @@
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
 import { removeNodeConnectionData } from '../../state/connection/connectionSlice';
 import { deinitializeNodes, deinitializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokensSlice';
 import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
+import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
