@@ -1055,7 +1055,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Tipo di autenticazione"
     }
   ],
   "AHB418": [
@@ -1995,6 +1995,12 @@
       "value": "(UTC+11:00) Is. Salomone, Nuova Caledonia"
     }
   ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -2780,6 +2786,12 @@
     {
       "type": 0,
       "value": "(UTC-7.00) Fuso occidentale (USA e Canada)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "VKAk5g": [
@@ -4469,6 +4481,12 @@
     {
       "type": 0,
       "value": "Immetti la chiave"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "pIczsS": [

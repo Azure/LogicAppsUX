@@ -1044,7 +1044,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Authentifizierungstyp"
     }
   ],
   "AHB418": [
@@ -1967,6 +1967,12 @@
       "value": "(UTC+11:00) Salomonen, Neukaledonien"
     }
   ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -2737,6 +2743,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Mountain Time (USA und Kanada)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "VKAk5g": [
@@ -4435,6 +4447,12 @@
     {
       "type": 0,
       "value": "Schlüssel eingeben"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "pIczsS": [
