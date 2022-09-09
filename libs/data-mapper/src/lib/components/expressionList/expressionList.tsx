@@ -2,16 +2,10 @@ import { getExpressions } from '../../core/queries/expressions';
 import type { Expression } from '../../models/Expression';
 import { ExpressionCategory } from '../../models/Expression';
 import { iconUriForIconImageName } from '../../utils/Icon.Utils';
-import type {
-  IGroup,
-  IGroupedListStyleProps,
-  IGroupedListStyles,
-  ISearchBoxStyleProps,
-  ISearchBoxStyles,
-  IStyleFunctionOrObject,
-} from '@fluentui/react';
-import { mergeStyles, GroupedList, SearchBox } from '@fluentui/react';
-import { Body1, Button, Caption1, makeStyles, shorthands, tokens, typographyStyles, Image } from '@fluentui/react-components';
+import { TreeHeader } from '../tree/treeHeader';
+import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
+import { GroupedList } from '@fluentui/react';
+import { Button, Caption1, makeStyles, shorthands, tokens, typographyStyles, Image, mergeClasses } from '@fluentui/react-components';
 import { InfoDot } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
@@ -29,16 +23,10 @@ const cardStyles = makeStyles({
     ...shorthands.border('0px'),
   },
   buttonHover: {
-    backgroundColor: tokens.colorNeutralBackground1Hover,
+    backgroundColor: 'blue', //tokens.colorNeutralBackground1Hover,
   },
   text: {
     width: '150px',
-  },
-});
-
-const titleStyle = makeStyles({
-  header: {
-    ...typographyStyles.body1Strong,
   },
 });
 
@@ -91,35 +79,24 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
           },
         },
         '.ms-List-page': {
-          height: 'fit-content',
+          height: 'fit-content !important',
         },
-      },
-    };
-
-    const style2 = titleStyle();
-
-    const searchBoxStyles: IStyleFunctionOrObject<ISearchBoxStyleProps, ISearchBoxStyles> = {
-      root: {
-        borderBottomColor: tokens.colorBrandForeground1,
-        borderBottomWidth: '2px',
-        borderRadius: tokens.borderRadiusMedium,
       },
     };
 
     return (
       // danielle to reuse search box
       <>
-        <Body1 style={{ height: '30px' }} className={style2.header}>
-          Expression
-        </Body1>
-        <SearchBox styles={searchBoxStyles} placeholder="Search"></SearchBox>
-        <GroupedList
-          groups={groups}
-          styles={headerStyle}
-          items={sortedExpressionsByCategory}
-          onRenderCell={(depth, item) => cell(item)}
-          selectionMode={0}
-        ></GroupedList>
+        <TreeHeader title="Expression"></TreeHeader>
+        <div>
+          <GroupedList
+            groups={groups}
+            styles={headerStyle}
+            items={sortedExpressionsByCategory}
+            onRenderCell={(depth, item) => cell(item)}
+            selectionMode={0}
+          ></GroupedList>
+        </div>
       </>
     );
   }
@@ -133,7 +110,7 @@ interface ExpressionListCellProps {
 const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression }) => {
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
-  const mergedButton = mergeStyles(cardStyle.button, cardStyle.buttonHover);
+  const buttonHovered = mergeClasses(cardStyle.button, cardStyle.buttonHover);
   const infoDotProps = {
     description: expression.detailedDescription,
     style: { paddingRight: tokens.spacingHorizontalXS, paddingLeft: tokens.spacingHorizontalXS },
@@ -141,10 +118,15 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression }) =
 
   return (
     // danielle to add back alt text alt={expression.name}
-    <Button onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)} className={mergedButton} key={expression.name}>
+    <Button
+      onMouseEnter={() => setIsHover(true)}
+      onMouseLeave={() => setIsHover(false)}
+      className={isHover ? buttonHovered : cardStyle.button}
+      key={expression.name}
+    >
       {expression.iconFileName && <Image src={iconUriForIconImageName(expression.iconFileName)} height={20} width={20} />}
       <Caption1 className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
-        {expression.name}{' '}
+        {expression.name}
       </Caption1>
       <span style={{ justifyContent: 'right' }}>
         <InfoDot {...infoDotProps}></InfoDot>
