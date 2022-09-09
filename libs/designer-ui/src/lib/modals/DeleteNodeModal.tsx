@@ -3,7 +3,7 @@ import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
 import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
-interface DeleteNodeModalProps {
+export interface DeleteNodeModalProps {
   nodeId: string;
   nodeType: WorkflowNodeType;
   isOpen: boolean;
