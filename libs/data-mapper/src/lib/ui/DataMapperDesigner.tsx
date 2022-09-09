@@ -1,4 +1,3 @@
-import { checkerboardBackgroundImage } from '../Constants';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
@@ -15,6 +14,7 @@ import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
+import { checkerboardBackgroundImage } from '../constants/ReactFlowConstants';
 import {
   addInputNodes,
   makeConnection,
@@ -59,6 +59,9 @@ import ReactFlow, { ConnectionLineType, MiniMap, ReactFlowProvider, useReactFlow
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
+export const baseCanvasHeight = 600; // Pixels
+export const basePropPaneContentHeight = 192;
+
 export interface DataMapperDesignerProps {
   saveStateCall: (dataMapDefinition: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
@@ -82,6 +85,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
+  const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
+  const [propPaneExpandedHeightPx, setPropPaneExpandedHeightPx] = useState(basePropPaneContentHeight);
 
   const connectedInputNodes = useMemo(() => {
     if (currentOutputNode) {
@@ -328,7 +333,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           backgroundImage: checkerboardBackgroundImage,
           backgroundSize: '20px 20px',
           backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-          height: '600px',
         }}
         nodeTypes={nodeTypes}
       >
@@ -373,34 +377,49 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           readCurrentSchemaOptions={readCurrentSchemaOptions ?? placeholderFunc}
         />
         <EditorBreadcrumb />
-        {inputSchema && outputSchema ? (
-          <>
-            <ButtonPivot {...toolboxButtonPivotProps} />
-            {displayToolboxItem === 'inputSchemaTreePanel' && (
-              <FloatingPanel {...toolboxPanelProps}>
-                <SchemaTree
-                  schema={inputSchema}
-                  currentlySelectedNodes={currentlySelectedInputNodes}
-                  visibleConnectedNodes={connectedInputNodes}
-                  onNodeClick={onToolboxItemClick}
-                />
-              </FloatingPanel>
+        <div id="center-view">
+          <div
+            style={{
+              maxHeight: baseCanvasHeight,
+              height: isPropPaneExpanded ? baseCanvasHeight - propPaneExpandedHeightPx : baseCanvasHeight,
+            }}
+          >
+            {inputSchema && outputSchema ? (
+              <>
+                <ButtonPivot {...toolboxButtonPivotProps} />
+                {displayToolboxItem === 'inputSchemaTreePanel' && (
+                  <FloatingPanel {...toolboxPanelProps}>
+                    <SchemaTree
+                      schema={inputSchema}
+                      currentlySelectedNodes={currentlySelectedInputNodes}
+                      visibleConnectedNodes={connectedInputNodes}
+                      onNodeClick={onToolboxItemClick}
+                    />
+                  </FloatingPanel>
+                )}
+                {displayToolboxItem === 'expressionsPanel' && (
+                  <FloatingPanel {...toolboxPanelProps}>
+                    <span>Test</span>
+                  </FloatingPanel>
+                )}
+                <div className="msla-designer-canvas msla-panel-mode">
+                  <ReactFlowProvider>
+                    <ReactFlowWrapper />
+                  </ReactFlowProvider>
+                </div>
+              </>
+            ) : (
+              <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
             )}
-            {displayToolboxItem === 'expressionsPanel' && (
-              <FloatingPanel {...toolboxPanelProps}>
-                <span>Test</span>
-              </FloatingPanel>
-            )}
-            <div className="msla-designer-canvas msla-panel-mode">
-              <ReactFlowProvider>
-                <ReactFlowWrapper />
-              </ReactFlowProvider>
-            </div>
-          </>
-        ) : (
-          <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
-        )}
-        <PropertiesPane currentNode={currentlySelectedNode} />
+          </div>
+          <PropertiesPane
+            currentNode={currentlySelectedNode}
+            isExpanded={isPropPaneExpanded}
+            setIsExpanded={setIsPropPaneExpanded}
+            contentHeight={propPaneExpandedHeightPx}
+            setContentHeight={setPropPaneExpandedHeightPx}
+          />
+        </div>
       </div>
     </DndProvider>
   );

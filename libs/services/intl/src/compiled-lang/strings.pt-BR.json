@@ -1055,7 +1055,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Tipo de Autenticação"
     }
   ],
   "AHB418": [
@@ -1995,6 +1995,12 @@
       "value": "(UTC+11:00) Ilhas Salomão, Nova Caledônia"
     }
   ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Remove"
+    }
+  ],
   "M6U2LE": [
     {
       "type": 0,
@@ -2772,6 +2778,12 @@
     {
       "type": 0,
       "value": "(UTC-07:00) Hora das Montanhas (EUA e Canadá)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expand"
     }
   ],
   "VKAk5g": [
@@ -4461,6 +4473,12 @@
     {
       "type": 0,
       "value": "Inserir chave"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "pIczsS": [

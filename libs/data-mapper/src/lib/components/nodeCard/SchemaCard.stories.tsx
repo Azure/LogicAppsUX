@@ -20,7 +20,6 @@ export const Standard: ComponentStory<typeof SchemaCard> = (args: NodeProps<Sche
 );
 Standard.args = {
   data: {
-    iconName: 'Diamond',
     label: 'label',
     schemaType: SchemaTypes.Input,
     displayHandle: false,
