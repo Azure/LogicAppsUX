@@ -1,13 +1,13 @@
-import { NodeType } from '../../models';
+import { baseCanvasHeight, basePropertyPaneContentHeight } from '../../constants/ReactFlowConstants';
 import type { SelectedNode } from '../../models';
-import { baseCanvasHeight, basePropPaneContentHeight } from '../../ui';
+import { NodeType } from '../../models';
 import { CodeTab } from './tabComponents/CodeTab';
 import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
 import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { ChevronDoubleUp20Regular, ChevronDoubleDown20Regular, Delete20Regular } from '@fluentui/react-icons';
+import { ChevronDoubleDown20Regular, ChevronDoubleUp20Regular, Delete20Regular } from '@fluentui/react-icons';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -148,7 +148,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     // Automatically collapse pane if resized below a certain amount, and reset expanded height
     if (newPaneContentHeight <= 25) {
       setIsExpanded(false);
-      setContentHeight(basePropPaneContentHeight);
+      setContentHeight(basePropertyPaneContentHeight);
       return;
     }
 

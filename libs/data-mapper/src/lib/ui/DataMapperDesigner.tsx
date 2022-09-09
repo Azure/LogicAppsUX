@@ -14,7 +14,7 @@ import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
-import { checkerboardBackgroundImage } from '../constants/ReactFlowConstants';
+import { baseCanvasHeight, basePropertyPaneContentHeight, checkerboardBackgroundImage } from '../constants/ReactFlowConstants';
 import {
   addInputNodes,
   changeConnection,
@@ -61,9 +61,6 @@ import ReactFlow, { ConnectionLineType, MiniMap, ReactFlowProvider, useReactFlow
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export const baseCanvasHeight = 600; // Pixels
-export const basePropPaneContentHeight = 192;
-
 export interface DataMapperDesignerProps {
   saveStateCall: (dataMapDefinition: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
@@ -90,7 +87,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
-  const [propPaneExpandedHeightPx, setPropPaneExpandedHeightPx] = useState(basePropPaneContentHeight);
+  const [propPaneExpandedHeightPx, setPropPaneExpandedHeightPx] = useState(basePropertyPaneContentHeight);
 
   const connectedInputNodes = useMemo(() => {
     if (currentOutputNode) {
