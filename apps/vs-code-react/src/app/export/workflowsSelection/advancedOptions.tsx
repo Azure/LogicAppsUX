@@ -36,7 +36,7 @@ export const AdvancedOptions: React.FC = () => {
       description: 'Off text',
     }),
     CLONE_CONNECTIONS: intl.formatMessage({
-      defaultMessage: 'Clone connections',
+      defaultMessage: 'Clone connections credentials',
       description: 'Clone connections text',
     }),
     GENERATE_INFRAESTRUCTURE: intl.formatMessage({

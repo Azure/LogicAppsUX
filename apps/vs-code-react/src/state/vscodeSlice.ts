@@ -1,12 +1,5 @@
-import type {
-  AdvancedOptionsTypes,
-  ExportData,
-  ITargetDirectory,
-  IValidationData,
-  ManagedConnections,
-  ProjectName,
-  WorkflowsList,
-} from '../run-service';
+import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, ProjectName, WorkflowsList } from '../run-service';
+import { AdvancedOptionsTypes } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -83,7 +76,7 @@ export const vscodeSlice = createSlice({
           resourceGroup: undefined,
           resourceGroupLocation: undefined,
         },
-        selectedAdvanceOptions: [],
+        selectedAdvanceOptions: [AdvancedOptionsTypes.cloneConnections],
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
