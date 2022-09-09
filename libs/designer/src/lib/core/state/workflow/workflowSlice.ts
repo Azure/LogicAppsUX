@@ -35,38 +35,35 @@ export const workflowSlice = createSlice({
       state.operations[nodeId].description = description;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.discoveryIds.graphId);
+      if (!graph) throw new Error('graph not set');
+
+      addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
         message: 'New Action Node Added',
         args: [action.payload],
       });
+    },
+    deleteNode: (state: WorkflowState, action: PayloadAction<DeleteNodePayload>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const graph = getWorkflowNodeFromGraphState(state, action.payload.discoveryIds.graphId);
-      if (!graph) {
-        throw new Error('graph not set');
-      }
+      const graphId = state.nodesMetadata[action.payload.nodeId].graphId;
+      const graph = getWorkflowNodeFromGraphState(state, graphId);
+      if (!graph) throw new Error('graph not set');
 
-      addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
-    },
-    deleteNode: (state: WorkflowState, action: PayloadAction<DeleteNodePayload>) => {
+      deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
         message: 'Action Node Deleted',
         args: [action.payload],
       });
-      if (!state.graph) {
-        return; // log exception
-      }
-      const graph = getWorkflowNodeFromGraphState(state, action.payload.graphId);
-      if (!graph) {
-        throw new Error('graph not set');
-      }
-
-      deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
     },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.focusedCanvasNodeId = action.payload;

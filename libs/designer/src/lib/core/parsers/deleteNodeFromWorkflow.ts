@@ -5,7 +5,6 @@ import { removeEdge, reassignEdgeSources, reassignEdgeTargets } from './restruct
 
 export interface DeleteNodePayload {
   nodeId: string;
-  graphId: string;
 }
 
 export const deleteNodeFromWorkflow = (
@@ -16,8 +15,10 @@ export const deleteNodeFromWorkflow = (
 ) => {
   const { nodeId } = payload;
 
-  const currentRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition).runAfter;
-  console.log('RunAfter', currentRunAfter);
+  console.log('Delete Node From Workflow:', nodeId, workflowGraph.id);
+  if (!workflowGraph.id) throw new Error('Workflow graph is missing an id');
+
+  const currentRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter;
   const multipleParents = Object.keys(currentRunAfter ?? {}).length > 1;
 
   // Nodes with multiple parents AND children are not allowed to be deleted

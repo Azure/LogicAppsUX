@@ -80,7 +80,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const label = useNodeDisplayName(id);
 
-  const handleDelete = () => dispatch(deleteOperation({ nodeId: id, graphId: metadata?.graphId ?? '' }));
+  const handleDelete = () => dispatch(deleteOperation({ nodeId: id }));
 
   const getDeleteMenuItem = () => {
     const deleteDescription = intl.formatMessage({

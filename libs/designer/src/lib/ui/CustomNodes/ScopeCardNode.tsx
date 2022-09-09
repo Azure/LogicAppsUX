@@ -1,3 +1,5 @@
+import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
+import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
@@ -8,11 +10,13 @@ import {
   useIsLeafNode,
   useNodeDisplayName,
   useNodeMetadata,
+  useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
 import { DropZone } from '../connections/dropzone';
-import { ScopeCard } from '@microsoft/designer-ui';
+import type { MenuItemOption } from '@microsoft/designer-ui';
+import { MenuItemType, ScopeCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
@@ -51,7 +55,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [readOnly]
   );
 
-  // const graph = useWorkflowNode(scopeId) as WorkflowNode;
+  const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const selected = useIsNodeSelected(scopeId);
   const metadata = useNodeMetadata(scopeId);
   const operationInfo = useOperationInfo(scopeId);
@@ -95,6 +99,28 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
 
+  const handleDelete = () => dispatch(deleteGraphNode({ graphId: scopeId ?? '', graphNode }));
+
+  const getDeleteMenuItem = () => {
+    const deleteDescription = intl.formatMessage({
+      defaultMessage: 'Delete',
+      description: 'Delete text',
+    });
+    const canDelete = true;
+
+    return {
+      key: deleteDescription,
+      disabled: readOnly || !canDelete,
+      disabledReason: '',
+      iconName: 'Delete',
+      title: deleteDescription,
+      type: MenuItemType.Advanced,
+      onClick: handleDelete,
+    };
+  };
+
+  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
+
   const implementedGraphTypes = ['if', 'switch', 'foreach', 'scope', 'until'];
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
@@ -117,6 +143,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             readOnly={readOnly}
             onClick={nodeClick}
             selected={selected}
+            contextMenuOptions={contextMenuOptions}
           />
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
         </div>
