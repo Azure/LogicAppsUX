@@ -362,52 +362,52 @@ export const serializeAuthentication = (
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
-    let jsonEditor;
+    let jsonEditor = Object.create(null);
     try {
       jsonEditor = JSON.parse(editorString);
     } catch (e) {
       console.log(e);
     }
     const returnItems: AuthProps = {};
-    setOption(jsonEditor['type'] as string);
-    switch (jsonEditor['type']) {
+    setOption(jsonEditor.type as string);
+    switch (jsonEditor.type) {
       case AuthenticationType.BASIC:
         returnItems.basicProps = {
-          basicUsername: convertStringToSegments(jsonEditor['username'], true, nodeMap),
-          basicPassword: convertStringToSegments(jsonEditor['password'], true, nodeMap),
+          basicUsername: convertStringToSegments(jsonEditor.username, true, nodeMap),
+          basicPassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
         };
         break;
       case AuthenticationType.CERTIFICATE:
         returnItems.clientCertificateProps = {
-          clientCertificatePfx: convertStringToSegments(jsonEditor['pfx'], true, nodeMap),
-          clientCertificatePassword: convertStringToSegments(jsonEditor['password'], true, nodeMap),
+          clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, true, nodeMap),
+          clientCertificatePassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
         };
         break;
       case AuthenticationType.RAW:
         returnItems.rawProps = {
-          rawValue: convertStringToSegments(jsonEditor['value'], true, nodeMap),
+          rawValue: convertStringToSegments(jsonEditor.value, true, nodeMap),
         };
         break;
       case AuthenticationType.MSI:
         returnItems.msiProps = {
-          MSIAudience: convertStringToSegments(jsonEditor['audience'], true, nodeMap),
+          MSIAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
         };
         break;
       case AuthenticationType.OAUTH:
         returnItems.aadOAuthProps = {
-          OAuthTenant: convertStringToSegments(jsonEditor['tenant'], true, nodeMap),
-          OAuthAudience: convertStringToSegments(jsonEditor['audience'], true, nodeMap),
-          OAuthClientId: convertStringToSegments(jsonEditor['clientId'], true, nodeMap),
+          OAuthTenant: convertStringToSegments(jsonEditor.tenant, true, nodeMap),
+          OAuthAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
+          OAuthClientId: convertStringToSegments(jsonEditor.clientId, true, nodeMap),
         };
-        if (jsonEditor['authority']) {
-          returnItems.aadOAuthProps.OAuthAuthority = convertStringToSegments(jsonEditor['authority'], true, nodeMap);
+        if (jsonEditor.authority) {
+          returnItems.aadOAuthProps.OAuthAuthority = convertStringToSegments(jsonEditor.authority, true, nodeMap);
         }
-        if (jsonEditor['secret']) {
-          returnItems.aadOAuthProps.OAuthTypeSecret = convertStringToSegments(jsonEditor['secret'], true, nodeMap);
+        if (jsonEditor.secret) {
+          returnItems.aadOAuthProps.OAuthTypeSecret = convertStringToSegments(jsonEditor.secret, true, nodeMap);
         }
-        if (jsonEditor['pfx'] && jsonEditor['password']) {
-          returnItems.aadOAuthProps.OAuthTypeCertificatePfx = convertStringToSegments(jsonEditor['pfx'], true, nodeMap);
-          returnItems.aadOAuthProps.OAuthTypeCertificatePassword = convertStringToSegments(jsonEditor['password'], true, nodeMap);
+        if (jsonEditor.pfx && jsonEditor.password) {
+          returnItems.aadOAuthProps.OAuthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, true, nodeMap);
+          returnItems.aadOAuthProps.OAuthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
         }
         break;
     }
