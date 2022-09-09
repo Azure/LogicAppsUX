@@ -4,17 +4,15 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import {
-  HTMLEditor,
-  TokenPicker,
-  TokenType,
-  DictionaryEditor,
-  testTokenSegment,
-  SchemaEditor,
-  Combobox,
-  ValueSegmentType,
-  ArrayEditor,
-  Scratch,
-  StringEditor,
+  // HTMLEditor,
+  TokenPicker, // TokenType,
+  // DictionaryEditor,
+  // testTokenSegment,
+  // SchemaEditor,
+  // Combobox,
+  // ValueSegmentType,
+  // ArrayEditor,
+  Scratch, // StringEditor,
   AuthenticationEditor,
   outputToken,
   outputToken2,
@@ -44,8 +42,7 @@ export const ScratchTab = () => {
     return (
       <>
         <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} authProps={{}} />
-
-        <ArrayEditor
+        {/* <ArrayEditor
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
             {
@@ -171,7 +168,7 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         />
-        <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} />
+        <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} /> */}
       </>
     );
   };

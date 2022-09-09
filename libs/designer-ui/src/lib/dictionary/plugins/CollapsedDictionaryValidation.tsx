@@ -47,7 +47,7 @@ export const CollapsedDictionaryValidation = ({
         if (newValiditity) {
           serializeDictionary(editor, setItems);
         } else {
-          setCollapsedValue(serializeEditorState(editor.getEditorState()));
+          setCollapsedValue(serializeEditorState(editorState));
         }
       }
     });

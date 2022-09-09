@@ -78,7 +78,7 @@ export const ActiveDirectoryAuthentication = ({
       setOauthType(newKey);
       setCurrentProps((prevState: AuthProps) => ({
         ...prevState,
-        aadOAuthProps: { ...prevState.aadOAuthProps, OAuthType: item.key as string },
+        aadOAuthProps: { ...prevState.aadOAuthProps, OAuthType: item.key as AuthenticationOAuthType },
       }));
     }
   };
