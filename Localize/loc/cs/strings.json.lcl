@@ -2952,6 +2952,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";M4H0gh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Remove]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Odebrat]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";M6U2LE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save.]]></Val>
@@ -4064,6 +4073,15 @@
           <Val><![CDATA[(UTC-07:00) Mountain Time (US & Canada)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC-07:00) Horská oblast USA a Kanady]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";VI5Sa8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Expand]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Rozbalit]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6449,6 +6467,15 @@
           <Val><![CDATA[Enter key]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Zadejte kód.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";pH2uak" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Collapse]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sbalit]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
