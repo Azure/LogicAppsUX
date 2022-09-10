@@ -6,10 +6,15 @@ export interface DMTooltipProps {
 }
 
 const tooltipStyles = makeStyles({
-  icon: {
+  button: {
     ...shorthands.border('0px'),
     height: '16px',
     width: '16px',
+    backgroundColor: 'inherit',
+    ...shorthands.padding('0px'),
+    ':hover': {
+      backgroundColor: 'inherit',
+    },
   },
 });
 
@@ -18,7 +23,7 @@ export const DMTooltip: React.FC<DMTooltipProps> = (props) => {
   const Icon = bundleIcon(Info16Filled, Info16Regular);
   return (
     <Tooltip relationship="description" content={props.text}>
-      <Button icon={<Icon />} className={tooltipStyle.icon}></Button>
+      <Button icon={<Icon />} className={tooltipStyle.button}></Button>
     </Tooltip>
   );
 };

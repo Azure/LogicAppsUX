@@ -10,6 +10,8 @@ interface TreeHeaderProps {
 const titleStyle = makeStyles({
   header: {
     ...typographyStyles.body1Strong,
+    paddingBottom: '10px',
+    display: 'block',
   },
 });
 
@@ -20,14 +22,13 @@ export const TreeHeader: React.FC<TreeHeaderProps> = (props) => {
       borderBottomColor: tokens.colorBrandForeground1,
       borderBottomWidth: '2px',
       borderRadius: tokens.borderRadiusMedium,
+      marginBottom: '6px',
     },
   };
 
   return (
     <span>
-      <Body1 style={{ height: '30px' }} className={style2.header}>
-        {props.title}
-      </Body1>
+      <Body1 className={style2.header}>{props.title}</Body1>
       <SearchBox styles={searchBoxStyles} placeholder="Search"></SearchBox>
     </span>
   );
