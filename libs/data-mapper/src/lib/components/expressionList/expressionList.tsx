@@ -7,6 +7,7 @@ import { TreeHeader } from '../tree/treeHeader';
 import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { GroupedList } from '@fluentui/react';
 import { Button, Caption1, makeStyles, shorthands, tokens, typographyStyles, Image, mergeClasses } from '@fluentui/react-components';
+import Fuse from 'fuse.js';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 
@@ -35,11 +36,35 @@ const buttonHoverStyles = makeStyles({
 
 export const ExpressionList: React.FC<ExpressionListProps> = () => {
   const expressionListData = useQuery<Expression[]>(['expressions'], () => getExpressions());
+  const [searchTerm, setSearchTerm] = useState<string>('');
   let groups: IGroup[] = [];
   if (expressionListData.data) {
-    const sortedExpressionsByCategory = expressionListData.data.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
+    const categoriesSet = new Set<string>(); // danielle to refactor
+    let dataCopy = expressionListData.data;
+    if (searchTerm) {
+      const options: Fuse.IFuseOptions<Expression> = {
+        includeScore: true,
+        minMatchCharLength: 2,
+        includeMatches: true,
+        threshold: 0.3,
+        keys: [
+          {
+            name: 'name',
+          },
+        ],
+      };
+      const fuse = new Fuse(expressionListData.data, options);
+      const results = fuse.search(searchTerm);
+      dataCopy = results.map((fuse) => fuse.item);
+      dataCopy.forEach((expression) => categoriesSet.add(expression.expressionCategory));
+      // calculate order of categories
+    } else {
+      dataCopy = expressionListData.data;
+      Object.values(ExpressionCategory).forEach((category) => categoriesSet.add(category));
+    }
+    const sortedExpressionsByCategory = dataCopy.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
     let startInd = 0;
-    groups = Object.values(ExpressionCategory).map((value): IGroup => {
+    groups = Array.from(categoriesSet.values()).map((value): IGroup => {
       let numInGroup = 0;
       sortedExpressionsByCategory.forEach((expression) => {
         if (expression.expressionCategory === value) {
@@ -87,9 +112,9 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
     };
 
     return (
-      // danielle to reuse search box
       <>
-        <TreeHeader title="Expression"></TreeHeader>
+        <Caption1>{searchTerm}</Caption1>
+        <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Expression"></TreeHeader>
         <div>
           <GroupedList
             onShouldVirtualize={() => false}

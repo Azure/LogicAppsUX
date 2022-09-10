@@ -28,7 +28,7 @@ export const SchemaTree: React.FC<SchemaTreeProps> = ({
 
   return (
     <>
-      <TreeHeader title="Input Schema"></TreeHeader>
+      <TreeHeader onSearch={(term) => console.log(term)} onClear={() => 'return'} title="Input Schema"></TreeHeader>
       <FastTreeView>{treeItems}</FastTreeView>
     </>
   );

@@ -5,6 +5,8 @@ import React from 'react';
 
 interface TreeHeaderProps {
   title: string;
+  onSearch: (searchTerm: string) => void;
+  onClear: () => void;
 }
 
 const titleStyle = makeStyles({
@@ -29,7 +31,7 @@ export const TreeHeader: React.FC<TreeHeaderProps> = (props) => {
   return (
     <span>
       <Body1 className={style2.header}>{props.title}</Body1>
-      <SearchBox styles={searchBoxStyles} placeholder="Search"></SearchBox>
+      <SearchBox onSearch={props.onSearch} onClear={props.onClear} styles={searchBoxStyles} placeholder="Search"></SearchBox>
     </span>
   );
 };
