@@ -2,11 +2,11 @@ import { getExpressions } from '../../core/queries/expressions';
 import type { Expression } from '../../models/Expression';
 import { ExpressionCategory } from '../../models/Expression';
 import { iconUriForIconImageName } from '../../utils/Icon.Utils';
+import { DMTooltip } from '../tooltip/tooltip';
 import { TreeHeader } from '../tree/treeHeader';
 import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { GroupedList } from '@fluentui/react';
 import { Button, Caption1, makeStyles, shorthands, tokens, typographyStyles, Image, mergeClasses } from '@fluentui/react-components';
-import { InfoDot } from '@microsoft/designer-ui';
 import { useState } from 'react';
 import { useQuery } from 'react-query';
 
@@ -22,11 +22,14 @@ const cardStyles = makeStyles({
     display: 'flex',
     ...shorthands.border('0px'),
   },
-  buttonHover: {
-    backgroundColor: 'blue', //tokens.colorNeutralBackground1Hover,
-  },
   text: {
     width: '150px',
+  },
+});
+
+const buttonHoverStyles = makeStyles({
+  button: {
+    backgroundColor: tokens.colorNeutralBackground1Hover,
   },
 });
 
@@ -35,7 +38,6 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
   let groups: IGroup[] = [];
   if (expressionListData.data) {
     const sortedExpressionsByCategory = expressionListData.data.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
-    console.log(sortedExpressionsByCategory);
     let startInd = 0;
     groups = Object.values(ExpressionCategory).map((value): IGroup => {
       let numInGroup = 0;
@@ -90,6 +92,7 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
         <TreeHeader title="Expression"></TreeHeader>
         <div>
           <GroupedList
+            onShouldVirtualize={() => false}
             groups={groups}
             styles={headerStyle}
             items={sortedExpressionsByCategory}
@@ -110,26 +113,22 @@ interface ExpressionListCellProps {
 const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression }) => {
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
-  const buttonHovered = mergeClasses(cardStyle.button, cardStyle.buttonHover);
-  const infoDotProps = {
-    description: expression.detailedDescription,
-    style: { paddingRight: tokens.spacingHorizontalXS, paddingLeft: tokens.spacingHorizontalXS },
-  };
+  const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
 
   return (
-    // danielle to add back alt text alt={expression.name}
     <Button
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      className={isHover ? buttonHovered : cardStyle.button}
       key={expression.name}
+      alt-text={expression.name}
+      className={isHover ? buttonHovered : cardStyle.button}
     >
       {expression.iconFileName && <Image src={iconUriForIconImageName(expression.iconFileName)} height={20} width={20} />}
       <Caption1 className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
         {expression.name}
       </Caption1>
       <span style={{ justifyContent: 'right' }}>
-        <InfoDot {...infoDotProps}></InfoDot>
+        <DMTooltip text={expression.detailedDescription}></DMTooltip>
       </span>
     </Button>
   );
