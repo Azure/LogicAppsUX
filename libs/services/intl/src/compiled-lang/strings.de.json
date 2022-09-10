@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Invalid properties {0} for authentication type {1}."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -855,6 +861,12 @@
       "value": "PFX"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Invalid property {0} for authentication type {1}."
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1081,6 +1093,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangun)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Type of {0} is {1}."
     }
   ],
   "Amz9+m": [
@@ -1625,6 +1643,12 @@
       "value": "Wählen Sie eine Karte aus, um den Inhalt anzuzeigen."
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamic content not supported as properties in authentication."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -1919,6 +1943,12 @@
       "value": "Neu hinzufügen"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1959,6 +1989,12 @@
     {
       "type": 0,
       "value": "Kommentar hinzufügen"
+    }
+  ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning { or ending }"
     }
   ],
   "M48CGd": [
@@ -2137,6 +2173,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville-Insel"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2737,6 +2779,12 @@
     {
       "type": 0,
       "value": "Weniger anzeigen"
+    }
+  ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "VE3cxq": [
@@ -3847,6 +3895,12 @@
       "value": "Erforderlich. Der zu analysierende URI."
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Unsupported authentication type {0}."
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -4111,6 +4165,12 @@
       "value": "Erforderlich. Dieser Wert ist die nächste ganze Zahl nach der höchsten ganzen Zahl, die zurückgegeben werden konnte."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Missing authentication type property: 'type'."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4235,6 +4295,12 @@
     {
       "type": 0,
       "value": "URL codiert die Eingabezeichenfolge."
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
     }
   ],
   "mZCHKf": [
