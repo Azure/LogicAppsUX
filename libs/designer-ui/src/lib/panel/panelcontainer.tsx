@@ -97,7 +97,6 @@ export const PanelContainer = ({
     [
       cardIcon,
       isCollapsed,
-      isLoading,
       panelLocation,
       showCommentBox,
       noNodeSelected,
@@ -107,9 +106,11 @@ export const PanelContainer = ({
       panelHeaderControlType,
       readOnlyMode,
       title,
+      isLoading,
       comment,
       onCommentChange,
       toggleCollapse,
+      onTitleChange,
     ]
   );
 
