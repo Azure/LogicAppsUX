@@ -97,7 +97,7 @@ export const DevToolbox: React.FC = () => {
   return (
     <div style={{ width: '400px', marginBottom: '20px' }}>
       <div style={{ paddingBottom: '10px' }}>
-        <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} />
+        <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} disabled />
       </div>
       {loadingMethod === 'arm' ? (
         <>
