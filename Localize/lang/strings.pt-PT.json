@@ -307,7 +307,7 @@
   "LvpxiA": "Gateway",
   "Lwe7tQ": "(UTC+00:00) Dublin, Edimburgo, Lisboa, Londres",
   "M0HMjE": "Adicionar comentário",
-  "M3lzNo": "Formado json inválido. Início \"{\" ou fim \"}\" em falta",
+  "M3lzNo": "Formado json inválido. Início '{' ou fim '}' em falta",
   "M48CGd": "(UTC+11:00) Ilhas Salomão, Nova Caledónia",
   "M4H0gh": "Remover",
   "M6U2LE": "Os parâmetros serão guardados quando o fluxo de trabalho for guardado. Pode editá-lo aqui antes de o guardar ou na página de parâmetros após guardar.",

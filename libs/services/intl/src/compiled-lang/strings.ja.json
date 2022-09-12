@@ -8,7 +8,7 @@
   "+20fdv": [
     {
       "type": 0,
-      "value": "Invalid properties {0} for authentication type {1}."
+      "value": "認証の種類 {1} のプロパティ {0} が無効です。"
     }
   ],
   "+W9fkq": [
@@ -853,7 +853,7 @@
   "89FJnl": [
     {
       "type": 0,
-      "value": "Invalid property {0} for authentication type {1}."
+      "value": "認証の種類 {1} のプロパティ {0} が無効です。"
     }
   ],
   "8CWFEh": [
@@ -1087,7 +1087,7 @@
   "AgrMqq": [
     {
       "type": 0,
-      "value": "Type of {0} is {1}."
+      "value": "{0} の型は {1} です。"
     }
   ],
   "Amz9+m": [
@@ -1605,7 +1605,7 @@
   "HzS2gJ": [
     {
       "type": 0,
-      "value": "Dynamic content not supported as properties in authentication."
+      "value": "動的コンテンツは認証のプロパティとしてサポートされていません。"
     }
   ],
   "IA+Ogm": [
@@ -1934,7 +1934,7 @@
   "M3lzNo": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning { or ending }"
+      "value": "JSON 形式が無効です。先頭の { または末尾の } がありません"
     }
   ],
   "M48CGd": [
@@ -2709,7 +2709,7 @@
   "V0le5X": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "VE3cxq": [
@@ -3796,7 +3796,7 @@
   "iRARwF": [
     {
       "type": 0,
-      "value": "Unsupported authentication type {0}."
+      "value": "サポートされていない認証の種類 {0} です。"
     }
   ],
   "iRe/g7": [
@@ -4058,7 +4058,7 @@
   "kuFK3E": [
     {
       "type": 0,
-      "value": "Missing authentication type property: 'type'."
+      "value": "認証の種類のプロパティ 'type' がありません。"
     }
   ],
   "l36V56": [
@@ -4190,7 +4190,7 @@
   "mYQFtf": [
     {
       "type": 0,
-      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
+      "value": "認証の種類 'ActiveDirectoryOAuth' に必要なプロパティ 'secret' または 'pfx' および 'password' がありません。"
     }
   ],
   "mZCHKf": [
