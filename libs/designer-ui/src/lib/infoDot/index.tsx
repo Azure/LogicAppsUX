@@ -2,7 +2,6 @@ import InformationImage from './info.svg';
 import { Text, TooltipHost } from '@fluentui/react';
 
 export const InfoDot = (props: any) => {
-  // danielle add typing
   const { alt = '', title, description, style } = props;
 
   const tooltipProps = {
