@@ -6,13 +6,14 @@ import { DMTooltip } from '../tooltip/tooltip';
 import { TreeHeader } from '../tree/treeHeader';
 import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { GroupedList } from '@fluentui/react';
-import { Button, Caption1, makeStyles, shorthands, tokens, typographyStyles, Image, mergeClasses } from '@fluentui/react-components';
+import { Button, Caption1, Image, makeStyles, mergeClasses, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import Fuse from 'fuse.js';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 export interface ExpressionListProps {
   sample: string;
+  onExpressionClick: (expression: Expression) => void;
 }
 
 const cardStyles = makeStyles({
@@ -34,11 +35,12 @@ const buttonHoverStyles = makeStyles({
   },
 });
 
-export const ExpressionList: React.FC<ExpressionListProps> = () => {
+export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionListProps) => {
   const expressionListData = useQuery<Expression[]>(['expressions'], () => getExpressions());
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortedExpressionsByCategory, setSortedExpressionsByCategory] = useState<Expression[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
+
   useEffect(() => {
     if (expressionListData.data) {
       const categoriesArray: string[] = [];
@@ -84,8 +86,8 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
     }
   }, [expressionListData.data, searchTerm]);
 
-  const cell = (expression: Expression) => {
-    return <ExpressionListCell expression={expression}></ExpressionListCell>;
+  const cell = (expression: Expression, onExpressionClick: (expression: Expression) => void) => {
+    return <ExpressionListCell expression={expression} onExpressionClick={onExpressionClick}></ExpressionListCell>;
   };
 
   const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
@@ -128,20 +130,20 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
           groups={groups}
           styles={headerStyle}
           items={sortedExpressionsByCategory}
-          onRenderCell={(depth, item) => cell(item)}
+          onRenderCell={(depth, item) => cell(item, props.onExpressionClick)}
           selectionMode={0}
         ></GroupedList>
       </div>
     </>
   );
-
-  return <div>loading</div>;
 };
 
 interface ExpressionListCellProps {
   expression: Expression;
+  onExpressionClick: (expression: Expression) => void;
 }
-export const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression }) => {
+
+const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onExpressionClick }) => {
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
   const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
@@ -153,6 +155,9 @@ export const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expressi
       key={expression.name}
       alt-text={expression.name}
       className={isHover ? buttonHovered : cardStyle.button}
+      onClick={() => {
+        onExpressionClick(expression);
+      }}
     >
       {expression.iconFileName && <Image src={iconUriForIconImageName(expression.iconFileName)} height={20} width={20} />}
       <Caption1 className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>

@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import type { AppDispatch } from '../../core';
+import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
@@ -11,18 +13,22 @@ import {
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useIsLeafNode, useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
-import { Card } from '@microsoft/designer-ui';
-import { memo, useCallback, useMemo } from 'react';
+import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
+import type { MenuItemOption } from '@microsoft/designer-ui';
+import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { Handle, Position } from 'react-flow-renderer';
 import type { NodeProps } from 'react-flow-renderer';
+import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
+  const intl = useIntl();
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
@@ -74,6 +80,37 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   );
 
   const label = useNodeDisplayName(id);
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const handleDeleteClick = () => setShowDeleteModal(true);
+  const handleDelete = () => dispatch(deleteOperation({ nodeId: id }));
+
+  const getDeleteMenuItem = () => {
+    const deleteDescription = intl.formatMessage({
+      defaultMessage: 'Delete',
+      description: 'Delete text',
+    });
+    const isTrigger = metadata?.graphId === 'root' && metadata?.isRoot;
+    const canDelete = !isTrigger;
+
+    const disableTriggerDeleteText = intl.formatMessage({
+      defaultMessage: 'Triggers cannot be deleted.',
+      description: 'Text to explain that triggers cannot be deleted',
+    });
+
+    return {
+      key: deleteDescription,
+      disabled: readOnly || !canDelete,
+      disabledReason: disableTriggerDeleteText,
+      iconName: 'Delete',
+      title: deleteDescription,
+      type: MenuItemType.Advanced,
+      onClick: handleDeleteClick,
+    };
+  };
+
+  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
+
   return (
     <>
       <div>
@@ -95,6 +132,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           readOnly={readOnly}
           onClick={nodeClick}
           selected={selected}
+          contextMenuOptions={contextMenuOptions}
         />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
@@ -103,6 +141,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           <DropZone graphId={metadata?.graphId ?? ''} parentId={id} />
         </div>
       ) : null}
+      <DeleteNodeModal
+        nodeId={id}
+        // nodeIcon={iconUriResult.result}
+        // brandColor={brandColor}
+        nodeType={WORKFLOW_NODE_TYPES.OPERATION_NODE}
+        isOpen={showDeleteModal}
+        onDismiss={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+      />
     </>
   );
 };

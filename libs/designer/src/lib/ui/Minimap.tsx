@@ -1,5 +1,5 @@
-import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
 import { useShowMinimap } from '../core/state/designerView/designerViewSelectors';
+import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
 import { MiniMap } from 'react-flow-renderer';
 
 const Minimap = () => {
