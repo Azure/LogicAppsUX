@@ -157,17 +157,18 @@ export enum ProjectName {
   review = 'review',
 }
 
-export interface WorkflowProperties {
+export interface Workflow {
   id: string;
   name: string;
-  type: string;
   location: string;
-  tags: Record<string, string>;
-  properties: Record<string, any>;
+  subscriptionId: string;
+  resourceGroup: string;
 }
 
-export interface Workflows {
-  value: Array<WorkflowProperties>;
+export interface GraphApiOptions {
+  selectedSubscription?: string;
+  selectedIse?: string;
+  skipToken?: string;
 }
 
 export interface WorkflowsList {

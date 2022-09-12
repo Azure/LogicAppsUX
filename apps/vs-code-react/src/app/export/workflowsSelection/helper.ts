@@ -1,16 +1,14 @@
-import type { WorkflowsList, WorkflowProperties, SelectedWorkflowsList } from '../../../run-service/types';
+import type { WorkflowsList, SelectedWorkflowsList, Workflow } from '../../../run-service';
 import type { IDropdownOption } from '@fluentui/react';
 
-export const parseWorkflowData = (workflowsData: { workflows: Array<WorkflowProperties> }): Array<WorkflowsList> => {
-  const { workflows } = workflowsData;
-
-  return workflows.map((workflow: WorkflowProperties) => {
-    const { name, id } = workflow;
+export const parseWorkflowData = (workflows: Workflow[]): Array<WorkflowsList> => {
+  return workflows.map((workflow: Workflow) => {
+    const { name, id, resourceGroup } = workflow;
 
     return {
       key: id,
       name,
-      resourceGroup: getResourceGroup(id),
+      resourceGroup,
     };
   });
 };
@@ -47,12 +45,6 @@ export const filterWorkflows = (workflowItems: Array<WorkflowsList>, resourceGro
   }
 
   return renderWorkflows;
-};
-
-export const getResourceGroup = (workflowID: string): string => {
-  const separators = workflowID.split('/');
-  const resourceGroupLocation = 4;
-  return separators[resourceGroupLocation];
 };
 
 export const getListColumns = (nameTitle: string, resourceGroupTitle: string) => {
