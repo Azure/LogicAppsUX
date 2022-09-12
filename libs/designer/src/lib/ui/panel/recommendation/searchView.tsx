@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
-import { useDiscoveryIds } from '../../../core/state/panel/panelSelectors';
+import { useDiscoveryIds, useIsParallelBranch } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
@@ -27,6 +27,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const discoveryIds = useDiscoveryIds();
+  const isParallelBranch = useIsParallelBranch();
 
   const [searchResults, setSearchResults] = useState<SearchResults>([]);
 
@@ -66,7 +67,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
   const onOperationClick = (id: string) => {
     const operation = searchResults.map((result) => result.item).find((o: any) => o.id === id);
     const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
-    dispatch(addOperation({ operation, discoveryIds, nodeId: newNodeId }));
+    dispatch(addOperation({ operation, discoveryIds, nodeId: newNodeId, isParallelBranch }));
   };
 
   const loadingText = intl.formatMessage({

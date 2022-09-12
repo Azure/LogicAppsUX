@@ -8,7 +8,23 @@
   "+20fdv": [
     {
       "type": 0,
-      "value": "Invalid properties {0} for authentication type {1}."
+      "value": "Propriedades \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" inválidas para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "+W9fkq": [
@@ -875,7 +891,23 @@
   "89FJnl": [
     {
       "type": 0,
-      "value": "Invalid property {0} for authentication type {1}."
+      "value": "Propriedade \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" inválida para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "8CWFEh": [
@@ -1109,7 +1141,23 @@
   "AgrMqq": [
     {
       "type": 0,
-      "value": "Type of {0} is {1}."
+      "value": "O tipo de \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" é \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "Amz9+m": [
@@ -1679,7 +1727,7 @@
   "HzS2gJ": [
     {
       "type": 0,
-      "value": "Dynamic content not supported as properties in authentication."
+      "value": "O conteúdo dinâmico não é suportado como propriedades na autenticação."
     }
   ],
   "IA+Ogm": [
@@ -1990,7 +2038,23 @@
   "Li6x/B": [
     {
       "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
+      "value": "Propriedades \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" obrigatórias em falta para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "LlYz9c": [
@@ -2038,7 +2102,7 @@
   "M3lzNo": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning { or ending }"
+      "value": "Formado json inválido. Início { ou fim } em falta"
     }
   ],
   "M48CGd": [
@@ -2222,7 +2286,23 @@
   "OH94j3": [
     {
       "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
+      "value": "Propriedade \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" obrigatória em falta para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "OH9xlX": [
@@ -2835,7 +2915,7 @@
   "V0le5X": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Introduza um JSON válido."
     }
   ],
   "VE3cxq": [
@@ -3964,7 +4044,15 @@
   "iRARwF": [
     {
       "type": 0,
-      "value": "Unsupported authentication type {0}."
+      "value": "Tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" não suportado."
     }
   ],
   "iRe/g7": [
@@ -4234,7 +4322,7 @@
   "kuFK3E": [
     {
       "type": 0,
-      "value": "Missing authentication type property: 'type'."
+      "value": "Propriedade do tipo de autenticação em falta: \"type\"."
     }
   ],
   "l36V56": [
@@ -4366,7 +4454,7 @@
   "mYQFtf": [
     {
       "type": 0,
-      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
+      "value": "As propriedades obrigatórias \"secret\" ou \"pfx\" e \"password\" estão em falta para o tipo de autenticação \"ActiveDirectoryOAuth\"."
     }
   ],
   "mZCHKf": [

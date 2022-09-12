@@ -33,3 +33,5 @@ export enum ExpressionCategory {
   String = 'string',
   Utility = 'utility',
 }
+
+export type ExpressionDictionary = { [key: string]: Expression };

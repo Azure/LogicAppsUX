@@ -3,3 +3,4 @@ export const checkerboardBackgroundImage =
 
 export const baseCanvasHeight = 600; // Pixels
 export const basePropertyPaneContentHeight = 192;
+export const defaultCanvasZoom = 1.25;
