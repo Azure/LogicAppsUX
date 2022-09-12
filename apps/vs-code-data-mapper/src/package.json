@@ -30,6 +30,12 @@
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "azDataMapper",
+        "contents": "[Create new data map](command:azureDataMapper.createNewDataMap)"
+      }
+    ],
     "menus": {
       "view/title": [
         {
