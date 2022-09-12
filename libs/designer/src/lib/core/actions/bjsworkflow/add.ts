@@ -16,6 +16,7 @@ import type { RootState } from '../../store';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations } from '../../utils/variables';
+import { isConnectionRequiredForOperation } from './connections';
 import { getInputParametersFromManifest, getOutputParametersFromManifest, getParameterDependencies } from './initialize';
 import type { NodeDataWithManifest } from './operationdeserializer';
 import { getOperationSettings } from './settings';
@@ -57,7 +58,7 @@ export const addOperation = createAsyncThunk(
       connectorId,
       operationId,
     };
-    setDefaultConnectionForNode(nodeId, connectorId, dispatch);
+
     dispatch(initializeOperationInfo(operationPayload));
     const newWorkflowState = (getState() as RootState).workflow;
     initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
@@ -79,6 +80,12 @@ export const initializeOperationDetails = async (
   const operationManifestService = OperationManifestService();
   if (operationManifestService.isSupported(operationType)) {
     const manifest = await getOperationManifest(operationInfo);
+
+    if (isConnectionRequiredForOperation(manifest)) {
+      setDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
+    } else {
+      dispatch(switchToOperationPanel(nodeId));
+    }
 
     // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
     const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest, workflowState.operations[nodeId]);
@@ -104,6 +111,7 @@ export const initializeOperationDetails = async (
     );
   } else {
     // TODO - swagger case here
+    setDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
   }
 };
 

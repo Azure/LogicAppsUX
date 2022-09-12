@@ -821,6 +821,20 @@
       "value": "(UTC+10:30) Lord Howe Island"
     }
   ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
+    }
+  ],
   "7QymrD": [
     {
       "type": 0,
@@ -879,6 +893,16 @@
     {
       "type": 0,
       "value": "Invalid property {0} for authentication type {1}."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1629,6 +1653,12 @@
     {
       "type": 0,
       "value": "Required. The key name of the form data value to return."
+    }
+  ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
     }
   ],
   "HQ8/tk": [
@@ -4631,6 +4661,12 @@
       "value": "Required"
     }
   ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -5335,6 +5371,12 @@
     {
       "type": 0,
       "value": "Required. The string to escape URL-unsafe characters from."
+    }
+  ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
     }
   ],
   "yBrsFJ": [
