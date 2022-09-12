@@ -40,9 +40,8 @@ export const addNodeToWorkflow = (
 
   // Update metadata
   const isRoot = parentId?.split('-#')[0] === graphId;
-  console.log('isNewGraphRoot', parentId?.split('-#')[0], graphId, isRoot);
   const parentNodeId = graphId !== 'root' ? graphId : undefined;
-  nodesMetadata[newNodeId] = { graphId, parentNodeId, ...(isRoot && {isRoot}) };
+  nodesMetadata[newNodeId] = { graphId, parentNodeId, ...(isRoot && { isRoot }) };
 
   state.operations[newNodeId] = { type: payload.operation.type };
 
@@ -70,9 +69,7 @@ export const addNodeToWorkflow = (
     addNewEdge(newNodeId, childId, workflowGraph);
   }
 
-
   if (isRoot) resetIsRootNode(newNodeId, workflowGraph, nodesMetadata);
-
 };
 
 export const addWorkflowNode = (node: WorkflowNode, graph: WorkflowNode): void => {

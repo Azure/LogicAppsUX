@@ -31,39 +31,38 @@ type AddOperationPayload = {
   isParallelBranch?: boolean;
 };
 
-export const addOperation = createAsyncThunk(
-  'addOperation',
-  async (payload: AddOperationPayload, { dispatch, getState }) => {
-    const { operation, nodeId: id } = payload;
-    if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
-    let count = 1;
-    let nodeId = id;
-    while ((getState() as RootState).workflow.operations[nodeId]) {
-      nodeId = `${id}_${count}`;
-      count++;
-    }
-
-    const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
-    const operationId = operation.id;
-    const operationType = operation.properties.operationType ?? '';
-    const operationKind = operation.properties.operationKind ?? '';
-    dispatch(addNode(payload as any));
-    const operationPayload: AddNodeOperationPayload = {
-      id: nodeId,
-      type: operationType,
-      connectorId,
-      operationId,
-    };
-    setDefaultConnectionForNode(nodeId, connectorId, dispatch);
-    dispatch(initializeOperationInfo(operationPayload));
-    const newWorkflowState = (getState() as RootState).workflow;
-    initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
-
-    getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
-    dispatch(setFocusNode(nodeId));
-    return;
+export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
+  const { operation, nodeId: actionId } = payload;
+  if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+  let count = 1;
+  let nodeId = actionId;
+  while ((getState() as RootState).workflow.operations[nodeId]) {
+    nodeId = `${actionId}_${count}`;
+    count++;
   }
-);
+
+  const newPayload = { ...payload, nodeId };
+
+  const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
+  const operationId = operation.id;
+  const operationType = operation.properties.operationType ?? '';
+  const operationKind = operation.properties.operationKind ?? '';
+  dispatch(addNode(newPayload as any));
+  const operationPayload: AddNodeOperationPayload = {
+    id: nodeId,
+    type: operationType,
+    connectorId,
+    operationId,
+  };
+  setDefaultConnectionForNode(nodeId, connectorId, dispatch);
+  dispatch(initializeOperationInfo(operationPayload));
+  const newWorkflowState = (getState() as RootState).workflow;
+  initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
+
+  getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
+  dispatch(setFocusNode(nodeId));
+  return;
+});
 
 export const initializeOperationDetails = async (
   nodeId: string,
@@ -116,6 +115,7 @@ export const addTokensAndVariables = (
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): void => {
+  console.log('addTokensAndVariables', nodeId, operationType, nodeData, workflowState);
   const { graph, nodesMetadata, operations } = workflowState;
   const { nodeInputs, nodeOutputs, settings, manifest } = nodeData;
   const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {
