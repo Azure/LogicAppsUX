@@ -8,7 +8,23 @@
   "+20fdv": [
     {
       "type": 0,
-      "value": "Invalid properties {0} for authentication type {1}."
+      "value": "Недопустимые свойства \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" для типа проверки подлинности \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "+W9fkq": [
@@ -886,7 +902,23 @@
   "89FJnl": [
     {
       "type": 0,
-      "value": "Invalid property {0} for authentication type {1}."
+      "value": "Недопустимое свойство \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" для типа проверки подлинности \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "8CWFEh": [
@@ -1120,7 +1152,23 @@
   "AgrMqq": [
     {
       "type": 0,
-      "value": "Type of {0} is {1}."
+      "value": "\""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" имеет тип \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "Amz9+m": [
@@ -1712,7 +1760,7 @@
   "HzS2gJ": [
     {
       "type": 0,
-      "value": "Dynamic content not supported as properties in authentication."
+      "value": "Динамическое содержимое не поддерживается в качестве свойств при проверке подлинности."
     }
   ],
   "IA+Ogm": [
@@ -2034,7 +2082,23 @@
   "Li6x/B": [
     {
       "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
+      "value": "Отсутствуют обязательные свойства \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" для типа проверки подлинности \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "LlYz9c": [
@@ -2082,7 +2146,7 @@
   "M3lzNo": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning { or ending }"
+      "value": "Недопустимый формат JSON. Отсутствует открывающая или закрывающая фигурная скобка"
     }
   ],
   "M48CGd": [
@@ -2266,7 +2330,23 @@
   "OH94j3": [
     {
       "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
+      "value": "Отсутствует обязательное свойство \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" для типа проверки подлинности \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "OH9xlX": [
@@ -2890,7 +2970,7 @@
   "V0le5X": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Введите допустимый объект JSON."
     }
   ],
   "VE3cxq": [
@@ -4034,7 +4114,15 @@
   "iRARwF": [
     {
       "type": 0,
-      "value": "Unsupported authentication type {0}."
+      "value": "Неподдерживаемый тип проверки подлинности \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "iRe/g7": [
@@ -4304,7 +4392,7 @@
   "kuFK3E": [
     {
       "type": 0,
-      "value": "Missing authentication type property: 'type'."
+      "value": "Отсутствует свойство типа проверки подлинности \"type\"."
     }
   ],
   "l36V56": [
@@ -4436,7 +4524,7 @@
   "mYQFtf": [
     {
       "type": 0,
-      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
+      "value": "Отсутствуют обязательные свойства \"secret\" или \"pfx\" и \"password\" для типа проверки подлинности \"ActiveDirectoryOAuth\"."
     }
   ],
   "mZCHKf": [

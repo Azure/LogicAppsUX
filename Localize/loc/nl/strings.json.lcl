@@ -2965,7 +2965,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Invalid json format. Missing beginning '{' or ending '}']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ongeldige JSON-indeling. Het teken { aan het begin of het teken } aan het eind ontbreekt]]></Val>
+            <Val><![CDATA[Ongeldige JSON-indeling. Het teken '{' aan het begin of het teken '}' aan het eind ontbreekt]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

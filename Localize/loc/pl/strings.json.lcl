@@ -2989,7 +2989,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Invalid json format. Missing beginning '{' or ending '}']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nieprawidłowy format JSON. Brak początkowego znaku „{” lub końcowego znaku „}”.]]></Val>
+            <Val><![CDATA[Nieprawidłowy format JSON. Brak początkowego znaku '{' lub końcowego znaku '}'.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
