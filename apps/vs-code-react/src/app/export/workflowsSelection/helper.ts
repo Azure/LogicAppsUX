@@ -77,7 +77,7 @@ export const getSelectedItems = (allItemsSelected: SelectedWorkflowsList[], curr
   const allItems = [...allItemsSelected];
   const renderWorkflows = [...allItems.filter((item) => item.rendered)];
   const updatedItems = allItems.map((workflow: SelectedWorkflowsList) => {
-    const updatedWorkflow = workflow;
+    const updatedWorkflow = { ...workflow };
     const isWorkflowInSelection = !!currentSelection.find((item: WorkflowsList) => item.key === updatedWorkflow.key);
     const isWorkflowInRender = !!renderWorkflows.find((item: WorkflowsList) => item.key === updatedWorkflow.key);
 
