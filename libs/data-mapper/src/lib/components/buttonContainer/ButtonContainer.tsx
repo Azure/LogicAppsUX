@@ -6,6 +6,9 @@ import type { IconType } from 'react-icons/lib';
 export interface ButtonContainerProps {
   buttons: ButtonContainerButtonProps[];
   horizontal: boolean;
+  xPos: string;
+  yPos: string;
+  anchorToBottom?: boolean;
 }
 
 export interface ButtonContainerButtonProps {
@@ -16,7 +19,13 @@ export interface ButtonContainerButtonProps {
   onClick: () => void;
 }
 
-export const ButtonContainer: React.FC<ButtonContainerProps> = ({ buttons, horizontal }: ButtonContainerProps) => {
+export const ButtonContainer: React.FC<ButtonContainerProps> = ({
+  buttons,
+  horizontal,
+  xPos,
+  yPos,
+  anchorToBottom,
+}: ButtonContainerProps) => {
   const stackItems = buttons.map((buttonProps, index) => {
     const BundledIcon = bundleIcon(buttonProps.filledIcon, buttonProps.regularIcon);
 
@@ -35,9 +44,14 @@ export const ButtonContainer: React.FC<ButtonContainerProps> = ({ buttons, horiz
     zIndex: 5,
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12)',
     borderRadius: '4px',
-    bottom: '16px',
-    left: '16px',
+    left: xPos,
   };
+
+  if (anchorToBottom) {
+    stackStyle.bottom = yPos;
+  } else {
+    stackStyle.top = yPos;
+  }
 
   return (
     <Stack horizontal={horizontal} style={stackStyle}>
