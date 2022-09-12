@@ -9,6 +9,8 @@ import {
 } from '@microsoft/logic-apps-data-mapper';
 import { useSelector } from 'react-redux';
 
+const workflowSchemaFilenames = ['Source.xsd', 'Target.xsd'];
+
 export const DataMapperStandaloneDesigner = () => {
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
   const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
@@ -25,7 +27,6 @@ export const DataMapperStandaloneDesigner = () => {
   });
 
   const saveStateCall = (dataMapDefinition: string) => {
-    new Promise((resolve) => setTimeout(resolve, 10));
     console.log(dataMapDefinition);
   };
 
@@ -33,7 +34,12 @@ export const DataMapperStandaloneDesigner = () => {
     <>
       <DevToolbox />
       <DataMapperDesignerProvider locale="en-US" options={{}}>
-        <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={[]}>
+        <DataMapDataProvider
+          dataMap={dataMap}
+          inputSchema={inputSchema}
+          outputSchema={outputSchema}
+          availableSchemas={workflowSchemaFilenames}
+        >
           <DataMapperDesigner saveStateCall={saveStateCall} />
         </DataMapDataProvider>
       </DataMapperDesignerProvider>
