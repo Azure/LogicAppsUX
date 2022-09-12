@@ -11,6 +11,8 @@ export const useIsDiscovery = () => useSelector(createSelector(getPanelState, (s
 
 export const useDiscoveryIds = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.discoveryIds));
 
+export const useIsParallelBranch = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.isParallelBranch));
+
 export const useSelectedOperationGroupId = () =>
   useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedOperationGroupId));
 
