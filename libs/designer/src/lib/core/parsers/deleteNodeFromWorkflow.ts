@@ -21,6 +21,12 @@ export const deleteNodeFromWorkflow = (
   const currentRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter;
   const multipleParents = Object.keys(currentRunAfter ?? {}).length > 1;
 
+  const isRoot = nodesMetadata[nodeId]?.isRoot;
+  if (isRoot) {
+    const childIds = (workflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).map((edge) => edge.target);
+    childIds.forEach((childId) => (nodesMetadata[childId].isRoot = true));
+  }
+
   // Nodes with multiple parents AND children are not allowed to be deleted
 
   // Adjust edges
