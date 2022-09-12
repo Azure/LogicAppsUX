@@ -70,6 +70,8 @@ export const addNodeToWorkflow = (
   }
 
   if (isRoot) resetIsRootNode(newNodeId, workflowGraph, nodesMetadata);
+
+  nodesMetadata[workflowGraph.id].actionCount = nodesMetadata[graphId].actionCount ?? 0 + 1;
 };
 
 export const addWorkflowNode = (node: WorkflowNode, graph: WorkflowNode): void => {

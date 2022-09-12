@@ -25,9 +25,10 @@ export const deleteOperation = createAsyncThunk('deleteOperation', async (delete
 
   dispatch(deleteNode(deletePayload));
   deleteOperationDetails(nodeId, dispatch);
+  return;
 });
 
-export const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch): Promise<void> => {
+const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch): Promise<void> => {
   dispatch(removeNodeConnectionData({ nodeId }));
   dispatch(deinitializeNodes([nodeId]));
   dispatch(deinitializeTokensAndVariables({ id: nodeId }));
@@ -55,4 +56,5 @@ export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayl
   };
 
   recursiveGraphDelete(graphNode);
+  return;
 });

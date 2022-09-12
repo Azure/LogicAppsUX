@@ -47,17 +47,19 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
     dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds, isParallelBranch: true }));
   }, [dispatch, graphId, parentId]);
 
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
-    // The type (or types) to accept - strings or symbols
-    accept: 'BOX',
-    drop: () => ({ child: childId, parent: parentId }), // danielle check this, graph id
-    canDrop: (item) => (item as any).id !== childId,
-    // Props to collect
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
+  const [{ isOver, canDrop }, drop] = useDrop(
+    () => ({
+      accept: 'BOX',
+      drop: () => ({ graphId, parentId, childId }),
+      canDrop: (item: any) => item.id !== childId && item.id !== parentId && item.id !== graphId,
+      // TODO: Riley - prevent from dropping into nested children
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
     }),
-  }));
+    [graphId, parentId, childId]
+  );
 
   const tooltipText = intl.formatMessage({
     defaultMessage: 'Insert a new step',

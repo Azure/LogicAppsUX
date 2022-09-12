@@ -44,6 +44,8 @@ export const deleteNodeFromWorkflow = (
   deleteWorkflowNode(nodeId, workflowGraph);
   delete nodesMetadata[nodeId];
   delete state.operations[nodeId];
+
+  nodesMetadata[workflowGraph.id].actionCount = (nodesMetadata[workflowGraph.id].actionCount ?? 0) + 1;
 };
 
 export const deleteWorkflowNode = (nodeId: string, graph: WorkflowNode): void => {
