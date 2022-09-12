@@ -98,7 +98,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
                 <ActionButton iconProps={{ imageProps: { src: AddNodeIcon } }} onClick={openAddNodePanel}>
                   {newActionText}
                 </ActionButton>
-                {childId ? (
+                {childId && parentId ? (
                   <ActionButton iconProps={{ imageProps: { src: AddBranchIcon } }} onClick={addParallelBranch}>
                     {newBranchText}
                   </ActionButton>
