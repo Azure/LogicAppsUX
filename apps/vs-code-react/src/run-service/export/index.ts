@@ -78,6 +78,7 @@ export class ApiService implements IApiService {
     const totalWorkflowsList: Workflow[] = [];
     let skipToken = '';
 
+    /* eslint-disable-next-line no-constant-condition */
     while (true) {
       const payload = this.getPayload(ResourceType.workflows, { selectedSubscription: subscriptionId, selectedIse: iseId, skipToken });
       const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
