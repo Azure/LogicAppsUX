@@ -16,7 +16,12 @@ import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
-import { baseCanvasHeight, basePropertyPaneContentHeight, checkerboardBackgroundImage } from '../constants/ReactFlowConstants';
+import {
+  baseCanvasHeight,
+  basePropertyPaneContentHeight,
+  checkerboardBackgroundImage,
+  defaultCanvasZoom,
+} from '../constants/ReactFlowConstants';
 import {
   addInputNodes,
   changeConnection,
@@ -59,8 +64,8 @@ import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ConnectionLineType, MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
+import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -87,6 +92,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const edgeUpdateSuccessful = useRef(true);
 
+  const [canvasViewport, setCanvasViewport] = useState<Viewport>({ x: 0, y: 0, zoom: defaultCanvasZoom });
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
@@ -357,7 +363,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         onPaneClick={onPaneClick}
         onNodeClick={handleNodeClicks}
         onNodeDoubleClick={handleNodeClicks}
-        defaultZoom={1.25}
+        defaultPosition={[canvasViewport.x, canvasViewport.y]}
+        defaultZoom={canvasViewport.zoom}
         nodesDraggable={false}
         fitView={false}
         connectionLineType={ConnectionLineType.SmoothStep}
@@ -374,6 +381,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         onEdgeUpdate={onEdgeUpdate}
         onEdgeUpdateStart={onEdgeUpdateStart}
         onEdgeUpdateEnd={onEdgeUpdateEnd}
+        onMoveEnd={(_, viewport) => {
+          setCanvasViewport(viewport);
+        }}
       >
         <ButtonContainer {...mapControlsButtonContainerProps} />
         {displayMiniMap ? (
