@@ -77,9 +77,9 @@ export class ApiService implements IApiService {
     const headers = this.getAccessTokenHeaders();
     const totalWorkflowsList: Workflow[] = [];
     let skipToken = '';
+    let isMissingWorkflows = true;
 
-    /* eslint-disable-next-line no-constant-condition */
-    while (true) {
+    while (isMissingWorkflows) {
       const payload = this.getPayload(ResourceType.workflows, { selectedSubscription: subscriptionId, selectedIse: iseId, skipToken });
       const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
@@ -94,7 +94,7 @@ export class ApiService implements IApiService {
       if (workflowsResponse['$skipToken']) {
         skipToken = workflowsResponse['$skipToken'];
       } else {
-        break;
+        isMissingWorkflows = false;
       }
     }
 
