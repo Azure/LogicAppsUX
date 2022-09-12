@@ -1,14 +1,9 @@
+import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import type { IconProps } from '../images/IconModel';
 import { SchemaNodeDataType } from '../models';
 import type { Expression } from '../models/Expression';
 import { ExpressionCategory } from '../models/Expression';
-import {
-  AddSubtractCircle20Filled,
-  CalendarClock20Regular,
-  Cube20Regular,
-  MathSymbols20Regular,
-  Wrench20Regular,
-} from '@fluentui/react-icons';
+import { AddSubtractCircle20Filled, CalendarClock20Regular, Cube20Regular, MathSymbols20Regular } from '@fluentui/react-icons';
 
 export interface ExpressionGroupBranding {
   colorLight: string;
@@ -19,7 +14,7 @@ export interface ExpressionGroupBranding {
 export const collectionBranding: ExpressionGroupBranding = {
   colorLight: '#ae8c00',
   colorDark: '#c9a618',
-  icon: <Cube20Regular />,
+  icon: <Collection20Regular />,
 };
 
 export const dateTimeBranding: ExpressionGroupBranding = {
@@ -49,7 +44,7 @@ export const stringBranding: ExpressionGroupBranding = {
 export const utilityBranding: ExpressionGroupBranding = {
   colorLight: '#8764b8',
   colorDark: '#a083c9',
-  icon: <Wrench20Regular />,
+  icon: <StringCategory20Regular />,
 };
 
 export const TempExpressionManifest: Expression[] = [

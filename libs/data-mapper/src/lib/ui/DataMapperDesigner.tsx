@@ -23,6 +23,7 @@ import {
   defaultCanvasZoom,
 } from '../constants/ReactFlowConstants';
 import {
+  addExpressionNode,
   addInputNodes,
   changeConnection,
   deleteConnection,
@@ -39,7 +40,7 @@ import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaNodeExtended, SelectedNode } from '../models';
 import { NodeType, SchemaTypes } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import type { Expression } from '../models/Expression';
+import type { Expression, ExpressionDictionary } from '../models/Expression';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
@@ -89,6 +90,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const allExpressionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentExpressionNodes);
 
   const edgeUpdateSuccessful = useRef(true);
 
@@ -115,8 +117,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     }
   }, [flattenedInputSchema, currentOutputNode, connections]);
 
-  const allExpressionNodes: Expression[] = [];
-
   const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, allExpressionNodes, currentOutputNode, connections);
 
   const dataMapDefinition = useMemo((): string => {
@@ -126,6 +126,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
     return '';
   }, [currentConnections, inputSchema, outputSchema]);
+
+  const onExpressionItemClick = (selectedExpression: Expression) => {
+    dispatch(addExpressionNode(selectedExpression));
+  };
 
   const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
     if (isLeafNode(selectedNode)) {
@@ -448,7 +452,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                 )}
                 {displayToolboxItem === 'expressionsPanel' && (
                   <FloatingPanel {...toolboxPanelProps}>
-                    <ExpressionList sample="sample"></ExpressionList>
+                    <ExpressionList sample="sample" onExpressionClick={onExpressionItemClick}></ExpressionList>
                   </FloatingPanel>
                 )}
                 <div className="msla-designer-canvas msla-panel-mode">
@@ -477,7 +481,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 export const useLayout = (
   allInputSchemaNodes: SchemaNodeExtended[],
   connectedInputNodes: SchemaNodeExtended[],
-  allExpressionNodes: Expression[],
+  allExpressionNodes: ExpressionDictionary,
   currentOutputNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
@@ -489,7 +493,7 @@ export const useLayout = (
     }
     // Explicitly ignoring connectedInputNodes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allInputSchemaNodes, currentOutputNode]);
+  }, [allInputSchemaNodes, currentOutputNode, allExpressionNodes]);
 
   const reactFlowEdges = useMemo(() => {
     return convertToReactFlowEdges(connections);
