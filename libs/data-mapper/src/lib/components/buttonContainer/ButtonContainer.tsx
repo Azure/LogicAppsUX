@@ -4,8 +4,6 @@ import { bundleIcon } from '@fluentui/react-icons';
 import type { IconType } from 'react-icons/lib';
 
 export interface ButtonContainerProps {
-  xPos: string;
-  yPos: string;
   buttons: ButtonContainerButtonProps[];
   horizontal: boolean;
 }
@@ -18,7 +16,7 @@ export interface ButtonContainerButtonProps {
   onClick: () => void;
 }
 
-export const ButtonContainer: React.FC<ButtonContainerProps> = ({ buttons, horizontal, xPos, yPos }: ButtonContainerProps) => {
+export const ButtonContainer: React.FC<ButtonContainerProps> = ({ buttons, horizontal }: ButtonContainerProps) => {
   const stackItems = buttons.map((buttonProps, index) => {
     const BundledIcon = bundleIcon(buttonProps.filledIcon, buttonProps.regularIcon);
 
@@ -34,19 +32,16 @@ export const ButtonContainer: React.FC<ButtonContainerProps> = ({ buttons, horiz
 
   const stackStyle: React.CSSProperties = {
     position: 'absolute',
-    zIndex: 10,
+    zIndex: 5,
     boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.14), 0px 0px 2px rgba(0, 0, 0, 0.12)',
     borderRadius: '4px',
-    top: yPos,
-    left: xPos,
+    bottom: '16px',
+    left: '16px',
   };
 
   return (
-    // Placeholder div so that we can move the stack locally to the spot it's been inserted
-    <div style={{ position: 'relative', width: 0, height: 0 }}>
-      <Stack horizontal={horizontal} style={stackStyle}>
-        {stackItems}
-      </Stack>
-    </div>
+    <Stack horizontal={horizontal} style={stackStyle}>
+      {stackItems}
+    </Stack>
   );
 };

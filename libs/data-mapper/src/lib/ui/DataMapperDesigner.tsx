@@ -351,8 +351,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         },
       ],
       horizontal: true,
-      xPos: '16px',
-      yPos: '556px',
     };
 
     return (
