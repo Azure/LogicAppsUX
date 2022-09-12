@@ -5,6 +5,12 @@
       "value": "確定"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Invalid properties {0} for authentication type {1}."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -844,6 +850,12 @@
       "value": "Pfx"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Invalid property {0} for authentication type {1}."
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1030,6 +1042,12 @@
       "value": "若兩個參數皆為 True，則傳回 True"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "驗證類型"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1064,6 +1082,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) 仰光"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Type of {0} is {1}."
     }
   ],
   "Amz9+m": [
@@ -1578,6 +1602,12 @@
       "value": "請選取卡片以查看內容"
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamic content not supported as properties in authentication."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -1853,6 +1883,12 @@
       "value": "新增"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1895,10 +1931,22 @@
       "value": "新增註解"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning { or ending }"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) 索羅門群島，新喀里多尼亞群島"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "移除"
     }
   ],
   "M6U2LE": [
@@ -2065,6 +2113,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) 布干維爾島"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2652,10 +2706,22 @@
       "value": "顯示較少內容"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) 山區時間 (美國及加拿大)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "展開"
     }
   ],
   "VKAk5g": [
@@ -3735,6 +3801,12 @@
       "value": "必要。用於剖析的 URI。"
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Unsupported authentication type {0}."
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -3991,6 +4063,12 @@
       "value": "必要。此值是接續在可傳回之最高整數後的整數。"
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Missing authentication type property: 'type'."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4115,6 +4193,12 @@
     {
       "type": 0,
       "value": "編碼輸入字串的 URL"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
     }
   ],
   "mZCHKf": [
@@ -4327,6 +4411,12 @@
     {
       "type": 0,
       "value": "輸入金鑰"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "摺疊"
     }
   ],
   "pIczsS": [

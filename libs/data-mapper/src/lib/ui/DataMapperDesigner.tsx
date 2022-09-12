@@ -1,4 +1,3 @@
-import { checkerboardBackgroundImage } from '../Constants';
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
@@ -10,13 +9,17 @@ import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
+import { ExpressionCard } from '../components/nodeCard/ExpressionCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
+import { baseCanvasHeight, basePropertyPaneContentHeight, checkerboardBackgroundImage } from '../constants/ReactFlowConstants';
 import {
   addInputNodes,
+  changeConnection,
+  deleteConnection,
   makeConnection,
   redoDataMapOperation,
   removeInputNodes,
@@ -30,6 +33,7 @@ import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaNodeExtended, SelectedNode } from '../models';
 import { NodeType, SchemaTypes } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
+import type { Expression } from '../models/Expression';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
@@ -51,7 +55,7 @@ import {
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
@@ -80,24 +84,33 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
+  const edgeUpdateSuccessful = useRef(true);
+
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
+  const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
+  const [propPaneExpandedHeightPx, setPropPaneExpandedHeightPx] = useState(basePropertyPaneContentHeight);
 
+  // TODO update to support input nodes connected to an expression, connected to an output node
   const connectedInputNodes = useMemo(() => {
     if (currentOutputNode) {
       const outputFilteredConnections = currentOutputNode.children.flatMap((childNode) =>
         !connections[childNode.key] ? [] : connections[childNode.key]
       );
 
-      return outputFilteredConnections.map((connection) => {
-        return flattenedInputSchema[connection.reactFlowSource];
-      });
+      return outputFilteredConnections
+        .map((connection) => {
+          return flattenedInputSchema[connection.reactFlowSource];
+        })
+        .filter((connection) => connection !== undefined);
     } else {
       return [];
     }
   }, [flattenedInputSchema, currentOutputNode, connections]);
 
-  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, currentOutputNode, connections);
+  const allExpressionNodes: Expression[] = [];
+
+  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, allExpressionNodes, currentOutputNode, connections);
 
   const dataMapDefinition = useMemo((): string => {
     if (inputSchema && outputSchema) {
@@ -172,6 +185,33 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       dispatch(makeConnection({ outputNodeKey: connection.target, value: connection.source }));
     }
   };
+
+  const onEdgeUpdateStart = useCallback(() => {
+    edgeUpdateSuccessful.current = false;
+  }, []);
+
+  const onEdgeUpdate = useCallback(
+    (oldEdge: ReactFlowEdge, newConnection: ReactFlowConnection) => {
+      edgeUpdateSuccessful.current = true;
+      if (newConnection.target && newConnection.source && oldEdge.target) {
+        dispatch(changeConnection({ outputNodeKey: newConnection.target, value: newConnection.source, oldConnectionKey: oldEdge.target }));
+      }
+    },
+    [dispatch]
+  );
+
+  const onEdgeUpdateEnd = useCallback(
+    (_: any, edge: ReactFlowEdge) => {
+      if (!edgeUpdateSuccessful.current) {
+        if (edge.target) {
+          dispatch(deleteConnection({ oldConnectionKey: edge.target }));
+        }
+      }
+
+      edgeUpdateSuccessful.current = true;
+    },
+    [dispatch]
+  );
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
     if (addSchemaFromFile) {
@@ -328,9 +368,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           backgroundImage: checkerboardBackgroundImage,
           backgroundSize: '20px 20px',
           backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
-          height: '600px',
         }}
         nodeTypes={nodeTypes}
+        onEdgeUpdate={onEdgeUpdate}
+        onEdgeUpdateStart={onEdgeUpdateStart}
+        onEdgeUpdateEnd={onEdgeUpdateEnd}
       >
         <ButtonContainer {...mapControlsButtonContainerProps} />
         {displayMiniMap ? (
@@ -358,7 +400,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     );
   };
 
-  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
+  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard, expressionNode: ExpressionCard }), []);
   const placeholderFunc = () => {
     return;
   };
@@ -373,34 +415,49 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           readCurrentSchemaOptions={readCurrentSchemaOptions ?? placeholderFunc}
         />
         <EditorBreadcrumb />
-        {inputSchema && outputSchema ? (
-          <>
-            <ButtonPivot {...toolboxButtonPivotProps} />
-            {displayToolboxItem === 'inputSchemaTreePanel' && (
-              <FloatingPanel {...toolboxPanelProps}>
-                <SchemaTree
-                  schema={inputSchema}
-                  currentlySelectedNodes={currentlySelectedInputNodes}
-                  visibleConnectedNodes={connectedInputNodes}
-                  onNodeClick={onToolboxItemClick}
-                />
-              </FloatingPanel>
+        <div id="center-view">
+          <div
+            style={{
+              maxHeight: baseCanvasHeight,
+              height: isPropPaneExpanded ? baseCanvasHeight - propPaneExpandedHeightPx : baseCanvasHeight,
+            }}
+          >
+            {inputSchema && outputSchema ? (
+              <>
+                <ButtonPivot {...toolboxButtonPivotProps} />
+                {displayToolboxItem === 'inputSchemaTreePanel' && (
+                  <FloatingPanel {...toolboxPanelProps}>
+                    <SchemaTree
+                      schema={inputSchema}
+                      currentlySelectedNodes={currentlySelectedInputNodes}
+                      visibleConnectedNodes={connectedInputNodes}
+                      onNodeClick={onToolboxItemClick}
+                    />
+                  </FloatingPanel>
+                )}
+                {displayToolboxItem === 'expressionsPanel' && (
+                  <FloatingPanel {...toolboxPanelProps}>
+                    <span>Test</span>
+                  </FloatingPanel>
+                )}
+                <div className="msla-designer-canvas msla-panel-mode">
+                  <ReactFlowProvider>
+                    <ReactFlowWrapper />
+                  </ReactFlowProvider>
+                </div>
+              </>
+            ) : (
+              <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
             )}
-            {displayToolboxItem === 'expressionsPanel' && (
-              <FloatingPanel {...toolboxPanelProps}>
-                <span>Test</span>
-              </FloatingPanel>
-            )}
-            <div className="msla-designer-canvas msla-panel-mode">
-              <ReactFlowProvider>
-                <ReactFlowWrapper />
-              </ReactFlowProvider>
-            </div>
-          </>
-        ) : (
-          <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
-        )}
-        <PropertiesPane currentNode={currentlySelectedNode} />
+          </div>
+          <PropertiesPane
+            currentNode={currentlySelectedNode}
+            isExpanded={isPropPaneExpanded}
+            setIsExpanded={setIsPropPaneExpanded}
+            contentHeight={propPaneExpandedHeightPx}
+            setContentHeight={setPropPaneExpandedHeightPx}
+          />
+        </div>
       </div>
     </DndProvider>
   );
@@ -409,12 +466,13 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 export const useLayout = (
   allInputSchemaNodes: SchemaNodeExtended[],
   connectedInputNodes: SchemaNodeExtended[],
+  allExpressionNodes: Expression[],
   currentOutputNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
     if (currentOutputNode) {
-      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, currentOutputNode);
+      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, allExpressionNodes, currentOutputNode);
     } else {
       return [];
     }

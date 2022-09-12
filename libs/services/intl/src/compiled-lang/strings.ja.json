@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Invalid properties {0} for authentication type {1}."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -844,6 +850,12 @@
       "value": "PFX"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Invalid property {0} for authentication type {1}."
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1030,6 +1042,12 @@
       "value": "両方のパラメーターが true の場合は true を返します"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "認証の種類"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1064,6 +1082,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) ヤンゴン (ラングーン)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Type of {0} is {1}."
     }
   ],
   "Amz9+m": [
@@ -1578,6 +1602,12 @@
       "value": "コンテンツを表示するには、カードを選択してください"
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamic content not supported as properties in authentication."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -1853,6 +1883,12 @@
       "value": "新規追加"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1895,10 +1931,22 @@
       "value": "コメントの追加"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning { or ending }"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) ソロモン諸島、ニューカレドニア"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "削除"
     }
   ],
   "M6U2LE": [
@@ -2065,6 +2113,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) ブーゲンビル島"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2652,10 +2706,22 @@
       "value": "表示数を少なくする"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) 山地標準時 (米国およびカナダ)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "展開"
     }
   ],
   "VKAk5g": [
@@ -3727,6 +3793,12 @@
       "value": "必須。解析対象の URI。"
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Unsupported authentication type {0}."
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -3983,6 +4055,12 @@
       "value": "必須。この値は、返される可能性のある最も大きい整数の次の整数です。"
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Missing authentication type property: 'type'."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4107,6 +4185,12 @@
     {
       "type": 0,
       "value": "URL で入力文字列をエンコードします"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
     }
   ],
   "mZCHKf": [
@@ -4319,6 +4403,12 @@
     {
       "type": 0,
       "value": "キーの入力"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "折りたたむ"
     }
   ],
   "pIczsS": [

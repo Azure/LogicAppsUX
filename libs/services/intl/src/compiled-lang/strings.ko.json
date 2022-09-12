@@ -5,6 +5,12 @@
       "value": "확인"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Invalid properties {0} for authentication type {1}."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -844,6 +850,12 @@
       "value": "PFX"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Invalid property {0} for authentication type {1}."
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1030,6 +1042,12 @@
       "value": "두 매개 변수가 모두 true인 경우 true를 반환합니다."
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "인증 유형"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1064,6 +1082,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) 양곤"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Type of {0} is {1}."
     }
   ],
   "Amz9+m": [
@@ -1578,6 +1602,12 @@
       "value": "콘텐츠를 볼 카드를 선택하세요."
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamic content not supported as properties in authentication."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -1853,6 +1883,12 @@
       "value": "새로 추가"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1895,10 +1931,22 @@
       "value": "주석 추가"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning { or ending }"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) 솔로몬 제도, 뉴칼레도니아"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "제거"
     }
   ],
   "M6U2LE": [
@@ -2065,6 +2113,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) 부건빌 섬"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2652,10 +2706,22 @@
       "value": "간단히 보기"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) 산지 표준시(미국과 캐나다)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "확장"
     }
   ],
   "VKAk5g": [
@@ -3727,6 +3793,12 @@
       "value": "필수 항목으로, 구문 분석할 URI입니다."
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Unsupported authentication type {0}."
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -3983,6 +4055,12 @@
       "value": "필수 사항으로, 이 값은 반환할 수 있는 가장 큰 정수 다음의 정수입니다."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Missing authentication type property: 'type'."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4107,6 +4185,12 @@
     {
       "type": 0,
       "value": "URL로 입력 문자열을 인코딩합니다."
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
     }
   ],
   "mZCHKf": [
@@ -4319,6 +4403,12 @@
     {
       "type": 0,
       "value": "키 입력"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "축소"
     }
   ],
   "pIczsS": [

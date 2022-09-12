@@ -1,3 +1,4 @@
+import { baseCanvasHeight } from '../../constants/ReactFlowConstants';
 import { openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
@@ -40,13 +41,12 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSch
 
   const reactFlowStyle = {
     background: '#e0e0e0',
-    height: '600px',
   };
 
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
 
   const layeredReactFlow = (
-    <div className="msla-designer-canvas msla-panel-mode">
+    <div className="msla-designer-canvas msla-panel-mode" style={{ height: baseCanvasHeight }}>
       <ReactFlowProvider>
         <ReactFlow
           nodes={reactFlowNodes}
