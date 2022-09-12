@@ -307,7 +307,7 @@
   "LvpxiA": "Gateway",
   "Lwe7tQ": "(UTC+00:00) Dublin, Edinburgh, Lissabon, London",
   "M0HMjE": "Lägg till en kommentar",
-  "M3lzNo": "Ogiltigt JSON-format. Inledande \"{\" eller avslutande \"}\" saknas",
+  "M3lzNo": "Ogiltigt JSON-format. Inledande '{' eller avslutande '}' saknas",
   "M48CGd": "(UTC+11:00) Salomonöarna, Nya Kaledonien",
   "M4H0gh": "Ta bort",
   "M6U2LE": "Parametrarna sparas när arbetsflödet sparas. Du kan redigera det här innan du sparar eller redigera det på parametersidan när du har sparat.",

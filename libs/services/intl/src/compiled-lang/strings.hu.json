@@ -8,7 +8,23 @@
   "+20fdv": [
     {
       "type": 0,
-      "value": "Invalid properties {0} for authentication type {1}."
+      "value": "Érvénytelen "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " tulajdonságok a következő hitelesítési típushoz: "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "+W9fkq": [
@@ -864,7 +880,23 @@
   "89FJnl": [
     {
       "type": 0,
-      "value": "Invalid property {0} for authentication type {1}."
+      "value": "Érvénytelen "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " tulajdonság a következő hitelesítési típushoz: "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "8CWFEh": [
@@ -1098,7 +1130,23 @@
   "AgrMqq": [
     {
       "type": 0,
-      "value": "Type of {0} is {1}."
+      "value": "A(z) "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " típusa "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "Amz9+m": [
@@ -1646,7 +1694,7 @@
   "HzS2gJ": [
     {
       "type": 0,
-      "value": "Dynamic content not supported as properties in authentication."
+      "value": "A dinamikus tartalom hitelesítési tulajdonságokként való használata nem támogatott."
     }
   ],
   "IA+Ogm": [
@@ -1994,7 +2042,7 @@
   "M3lzNo": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning { or ending }"
+      "value": "Érvénytelen JSON-formátum. Hiányzik a kezdő { vagy a záró } karakter."
     }
   ],
   "M48CGd": [
@@ -2784,7 +2832,7 @@
   "V0le5X": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "VE3cxq": [
@@ -3906,7 +3954,15 @@
   "iRARwF": [
     {
       "type": 0,
-      "value": "Unsupported authentication type {0}."
+      "value": "Nem támogatott hitelesítési típus: "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "iRe/g7": [
@@ -4172,7 +4228,7 @@
   "kuFK3E": [
     {
       "type": 0,
-      "value": "Missing authentication type property: 'type'."
+      "value": "Hiányzik a hitelesítés típusa tulajdonság: típus."
     }
   ],
   "l36V56": [
@@ -4304,7 +4360,7 @@
   "mYQFtf": [
     {
       "type": 0,
-      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
+      "value": "Hiányzik a szükséges secret vagy pfx és password tulajdonság a következő hitelesítési típushoz: ActiveDirectoryOAuth."
     }
   ],
   "mZCHKf": [

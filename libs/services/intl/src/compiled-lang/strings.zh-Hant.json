@@ -8,7 +8,7 @@
   "+20fdv": [
     {
       "type": 0,
-      "value": "Invalid properties {0} for authentication type {1}."
+      "value": "驗證類型 {1} 的屬性 {0} 無效。"
     }
   ],
   "+W9fkq": [
@@ -853,7 +853,7 @@
   "89FJnl": [
     {
       "type": 0,
-      "value": "Invalid property {0} for authentication type {1}."
+      "value": "驗證類型 {1} 的屬性 {0} 無效。"
     }
   ],
   "8CWFEh": [
@@ -1087,7 +1087,7 @@
   "AgrMqq": [
     {
       "type": 0,
-      "value": "Type of {0} is {1}."
+      "value": "{0} 的類型為 {1}。"
     }
   ],
   "Amz9+m": [
@@ -1605,7 +1605,7 @@
   "HzS2gJ": [
     {
       "type": 0,
-      "value": "Dynamic content not supported as properties in authentication."
+      "value": "不支援在驗證中的屬性使用動態內容。"
     }
   ],
   "IA+Ogm": [
@@ -1886,7 +1886,7 @@
   "Li6x/B": [
     {
       "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
+      "value": "驗證類型 {0} 遺漏必要屬性 {1}"
     }
   ],
   "LlYz9c": [
@@ -1934,7 +1934,7 @@
   "M3lzNo": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning { or ending }"
+      "value": "JSON 格式無效。遺漏開頭 { 或結尾 }"
     }
   ],
   "M48CGd": [
@@ -2118,7 +2118,7 @@
   "OH94j3": [
     {
       "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
+      "value": "驗證類型 {0} 遺漏必要屬性 {1}"
     }
   ],
   "OH9xlX": [
@@ -2709,7 +2709,7 @@
   "V0le5X": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "請輸入有效的 JSON。"
     }
   ],
   "VE3cxq": [
@@ -3804,7 +3804,7 @@
   "iRARwF": [
     {
       "type": 0,
-      "value": "Unsupported authentication type {0}."
+      "value": "不支援驗證類型 {0}。"
     }
   ],
   "iRe/g7": [
@@ -4066,7 +4066,7 @@
   "kuFK3E": [
     {
       "type": 0,
-      "value": "Missing authentication type property: 'type'."
+      "value": "遺漏驗證類型屬性: 'type'。"
     }
   ],
   "l36V56": [
@@ -4198,7 +4198,7 @@
   "mYQFtf": [
     {
       "type": 0,
-      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
+      "value": "驗證類型 'ActiveDirectoryOAuth' 遺漏必要屬性 'secret' 或 'pfx' 以及 'password'。"
     }
   ],
   "mZCHKf": [
