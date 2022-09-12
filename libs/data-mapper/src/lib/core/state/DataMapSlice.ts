@@ -1,7 +1,9 @@
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended, SelectedNode } from '../../models';
 import { SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
+import type { Expression, ExpressionDictionary } from '../../models/Expression';
 import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import * as yaml from 'js-yaml';
@@ -22,12 +24,14 @@ export interface DataMapOperationState {
   flattenedOutputSchema: SchemaNodeDictionary;
   currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
+  currentExpressionNodes: ExpressionDictionary;
   currentlySelectedNode?: SelectedNode;
 }
 
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
   currentInputNodes: [],
+  currentExpressionNodes: {},
   flattenedInputSchema: {},
   flattenedOutputSchema: {},
 };
@@ -211,6 +215,31 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    addExpressionNode: (state, action: PayloadAction<Expression>) => {
+      const expression = action.payload;
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentExpressionNodes: { ...state.curDataMapOperation.currentExpressionNodes },
+      };
+
+      newState.currentExpressionNodes[`${expression.name}-${guid()}`] = expression;
+
+      doDataMapOperation(state, newState);
+    },
+
+    removeExpressionNode: (state, action: PayloadAction<string>) => {
+      const expressionKey = action.payload;
+
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentExpressionNodes: { ...state.curDataMapOperation.currentExpressionNodes },
+      };
+
+      delete newState.dataMapConnections[expressionKey];
+
+      doDataMapOperation(state, newState);
+    },
+
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -314,6 +343,8 @@ export const {
   toggleInputNode,
   setCurrentOutputNode,
   setCurrentlySelectedNode,
+  addExpressionNode,
+  removeExpressionNode,
   makeConnection,
   changeConnection,
   deleteConnection,
