@@ -1,15 +1,13 @@
 import { StatusPill } from '../monitoring';
-import { isDeleteKey, isEnterKey, isSpaceKey } from '../utils/keyboardUtils';
 import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
 import { ErrorBanner } from './errorbanner';
+import { useCardContextMenu, useCardKeyboardInteraction } from './hooks';
 import { Gripper } from './images/dynamicsvgs/gripper';
 import type { CommentBoxProps, MenuItemOption } from './types';
 import { getCardStyle } from './utils';
 import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
 import { Spinner, SpinnerSize, css } from '@fluentui/react';
-import { equals } from '@microsoft-logic-apps/utils';
-import { useState } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 
 export interface CardProps {
@@ -74,47 +72,13 @@ export const Card: React.FC<CardProps> = ({
   title,
   onClick,
 }) => {
-  const [showContextMenu, setShowContextMenu] = useState(false);
-  const [contextMenuLocation, setContextMenuLocation] = useState({
-    x: 0,
-    y: 0,
-  });
-
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
     e.stopPropagation();
     onClick?.();
   };
 
-  const handleContextMenu: React.MouseEventHandler = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setShowContextMenu(true);
-    setContextMenuLocation({ x: e.clientX, y: e.clientY });
-  };
-
-  // Prevent Enter and space bar keypresses from scrolling the page down when used to select a card.
-  const handleKeyDown: React.KeyboardEventHandler<HTMLElement> = (e) => {
-    if (isEnterKey(e) || isSpaceKey(e)) {
-      e.preventDefault();
-      e.stopPropagation();
-    }
-  };
-
-  const handleKeyUp: React.KeyboardEventHandler<HTMLElement> = (e) => {
-    if (isEnterKey(e) || isSpaceKey(e)) {
-      e.preventDefault();
-      e.stopPropagation();
-      onClick?.();
-    } else if (isDeleteKey(e)) {
-      e.preventDefault();
-      e.stopPropagation();
-      for (const contextMenuOption of contextMenuOptions) {
-        if (equals(contextMenuOption.key, 'delete') && !contextMenuOption.disabled) {
-          contextMenuOption.onClick?.(e);
-        }
-      }
-    }
-  };
+  const keyboardInteraction = useCardKeyboardInteraction(onClick, contextMenuOptions);
+  const contextMenu = useCardContextMenu();
 
   const cardIcon = isLoading ? (
     <Spinner className="msla-card-header-spinner" size={SpinnerSize.small} />
@@ -140,10 +104,10 @@ export const Card: React.FC<CardProps> = ({
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
         onClick={handleClick}
-        onContextMenu={handleContextMenu}
-        onKeyDown={handleKeyDown}
+        onContextMenu={contextMenu.handle}
+        onKeyDown={keyboardInteraction.keyDown}
         tabIndex={0}
-        onKeyUp={handleKeyUp}
+        onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
         <div className={css('msla-selection-box', selected && 'selected')} />
@@ -167,11 +131,11 @@ export const Card: React.FC<CardProps> = ({
         </div>
         {contextMenuOptions?.length > 0 ? (
           <CardContextMenu
-            contextMenuLocation={contextMenuLocation}
+            contextMenuLocation={contextMenu.location}
             contextMenuOptions={contextMenuOptions}
-            showContextMenu={showContextMenu}
+            showContextMenu={contextMenu.isShowing}
             title={title}
-            onSetShowContextMenu={setShowContextMenu}
+            onSetShowContextMenu={contextMenu.setIsShowing}
           />
         ) : null}
       </div>

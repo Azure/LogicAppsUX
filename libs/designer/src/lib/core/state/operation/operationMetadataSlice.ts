@@ -156,11 +156,30 @@ export const operationMetadataSlice = createSlice({
         state.outputParameters[id] = nodeOutputs;
       }
     },
+    deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
+      const { id } = action.payload;
+      delete state.operationInfo[id];
+    },
+    deinitializeNodes: (state, action: PayloadAction<string[]>) => {
+      for (const id of action.payload) {
+        delete state.inputParameters[id];
+        delete state.outputParameters[id];
+        delete state.dependencies[id];
+        delete state.settings[id];
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeNodes, initializeOperationInfo, updateNodeParameter, updateNodeSettings, updateOutputs } =
-  operationMetadataSlice.actions;
+export const {
+  initializeNodes,
+  initializeOperationInfo,
+  updateNodeParameter,
+  updateNodeSettings,
+  updateOutputs,
+  deinitializeOperationInfo,
+  deinitializeNodes,
+} = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

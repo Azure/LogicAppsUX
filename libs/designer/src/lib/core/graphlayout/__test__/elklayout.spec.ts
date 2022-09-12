@@ -1,7 +1,8 @@
-import type { WorkflowEdgeType, WorkflowNode } from '../../parsers/models/workflowNode';
-import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { createWorkflowNode, createWorkflowEdge, createElkNode, createElkEdge } from '../../utils/graph';
 import { exportForTesting } from '../elklayout';
+import type { WorkflowEdgeType } from '@microsoft-logic-apps/utils';
+import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
 import type { ElkNode } from 'elkjs/lib/elk-api';
 import type { Edge, Node } from 'react-flow-renderer';
 

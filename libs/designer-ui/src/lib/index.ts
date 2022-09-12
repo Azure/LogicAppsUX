@@ -40,6 +40,7 @@ export * from './infoDot';
 // export * from './inputcontrol';
 // export * from './itemspicker';
 export * from './label';
+export * from './modals';
 // export * from './modaldialog';
 export * from './monitoring';
 export * from './monitoring/statuspill/images';

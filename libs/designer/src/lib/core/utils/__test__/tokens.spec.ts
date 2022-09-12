@@ -1,6 +1,6 @@
-import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
 import { createWorkflowEdge, createWorkflowNode } from '../graph';
 import { getTokenNodeIds } from '../tokens';
+import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 
 describe('Token Picker Utilities', () => {
   const graph = {

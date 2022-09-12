@@ -1,6 +1,6 @@
-import type { WorkflowState } from '../../../state/workflow/workflowSlice';
-import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '../../models/workflowNode';
+import type { WorkflowState } from '../../../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from '../../models/workflowNode';
+import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
 
 export const initialState: WorkflowState = {
   graph: {
@@ -11,7 +11,9 @@ export const initialState: WorkflowState = {
   },
   operations: {},
   nodesMetadata: {},
-  collapsedGraphIds: [],
+  collapsedGraphIds: {},
+  edgeIdsBySource: {},
+  idReplacements: {},
 };
 
 const createMockNode = (id: string) => ({

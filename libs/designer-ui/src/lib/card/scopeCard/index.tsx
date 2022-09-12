@@ -1,5 +1,7 @@
 import { StatusPill } from '../../monitoring';
 import NodeCollapseToggle from '../../nodeCollapseToggle';
+import { CardContextMenu } from '../cardcontextmenu';
+import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
 import { css, Icon, Spinner, SpinnerSize, TooltipHost } from '@fluentui/react';
@@ -25,10 +27,15 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   onClick,
   handleCollapse,
   selected,
+  contextMenuOptions = [],
 }) => {
+  const contextMenu = useCardContextMenu();
+
   const handleClick: React.MouseEventHandler<HTMLElement> = () => {
     onClick?.();
   };
+
+  const keyboardInteraction = useCardKeyboardInteraction(onClick, contextMenuOptions);
 
   const badges = [
     ...(commentBox && commentBox.comment
@@ -46,7 +53,15 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div aria-describedby={describedBy} className={'msla-content-fit'} aria-label={title}>
-        <div ref={drag} className="msla-scope-v2--header msla-scope-card-wrapper" draggable={draggable} style={colorVars}>
+        <div
+          ref={drag}
+          className="msla-scope-v2--header msla-scope-card-wrapper"
+          draggable={draggable}
+          style={colorVars}
+          onContextMenu={contextMenu.handle}
+          onKeyDown={keyboardInteraction.keyDown}
+          onKeyUp={keyboardInteraction.keyUp}
+        >
           {isMonitoringView ? <StatusPill id={`${title}-status`} status={'Succeeded'} duration={'0s'} /> : null}
           <div className="msla-scope-card-content">
             <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} />
@@ -71,6 +86,15 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
               ))}
             </div>
           </div>
+          {contextMenuOptions?.length > 0 ? (
+            <CardContextMenu
+              contextMenuLocation={contextMenu.location}
+              contextMenuOptions={contextMenuOptions}
+              showContextMenu={contextMenu.isShowing}
+              title={title}
+              onSetShowContextMenu={contextMenu.setIsShowing}
+            />
+          ) : null}
         </div>
       </div>
     </div>

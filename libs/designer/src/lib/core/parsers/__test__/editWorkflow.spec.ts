@@ -20,7 +20,7 @@ describe('edit workflow', () => {
     addNodeToWorkflow(
       {
         operation: {} as any,
-        id: 'post_in_teams',
+        nodeId: 'post_in_teams',
         discoveryIds: {
           graphId: graph.id,
           parentId: parentId,
@@ -44,7 +44,7 @@ describe('edit workflow', () => {
     addNodeToWorkflow(
       {
         operation: {} as any,
-        id: 'post_in_teams',
+        nodeId: 'post_in_teams',
         discoveryIds: {
           graphId: graph.id,
           parentId: parentId,

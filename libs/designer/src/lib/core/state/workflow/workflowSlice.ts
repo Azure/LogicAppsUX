@@ -1,12 +1,14 @@
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
+import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
+import { deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { WORKFLOW_EDGE_TYPES, isWorkflowNode } from '../../parsers/models/workflowNode';
+import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
-import { equals, RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
+import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
@@ -33,21 +35,35 @@ export const workflowSlice = createSlice({
       state.operations[nodeId].description = description;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.discoveryIds.graphId);
+      if (!graph) throw new Error('graph not set');
+
+      addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
         message: 'New Action Node Added',
         args: [action.payload],
       });
+    },
+    deleteNode: (state: WorkflowState, action: PayloadAction<DeleteNodePayload>) => {
       if (!state.graph) {
         return; // log exception
       }
-      const graph = getWorkflowNodeFromGraphState(state, action.payload.discoveryIds.graphId);
-      if (!graph) {
-        throw new Error('graph not set');
-      }
+      const graphId = state.nodesMetadata[action.payload.nodeId].graphId;
+      const graph = getWorkflowNodeFromGraphState(state, graphId);
+      if (!graph) throw new Error('graph not set');
 
-      addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
+      deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Workflow Slice',
+        message: 'Action Node Deleted',
+        args: [action.payload],
+      });
     },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.focusedCanvasNodeId = action.payload;
@@ -200,6 +216,7 @@ export const workflowSlice = createSlice({
 export const {
   initWorkflowSpec,
   addNode,
+  deleteNode,
   updateNodeSizes,
   setNodeDescription,
   setCollapsedGraphIds,

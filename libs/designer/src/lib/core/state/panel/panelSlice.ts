@@ -11,6 +11,7 @@ const initialState: PanelState = {
     graphId: 'root',
   },
   isDiscovery: false,
+  isParallelBranch: false,
   registeredTabs: {},
   selectedTabName: undefined,
   selectedOperationGroupId: '',
@@ -38,11 +39,12 @@ export const panelSlice = createSlice({
       state.selectedNode = action.payload;
       state.isDiscovery = false;
     },
-    expandDiscoveryPanel: (state, action: PayloadAction<{ discoveryIds: IdsForDiscovery; nodeId: string }>) => {
+    expandDiscoveryPanel: (state, action: PayloadAction<{ discoveryIds: IdsForDiscovery; nodeId: string; isParallelBranch?: boolean }>) => {
       state.collapsed = false;
       state.isDiscovery = true;
       state.discoveryIds = action.payload.discoveryIds;
       state.selectedNode = action.payload.nodeId;
+      state.isParallelBranch = action.payload?.isParallelBranch ?? false;
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.selectedOperationGroupId = action.payload;

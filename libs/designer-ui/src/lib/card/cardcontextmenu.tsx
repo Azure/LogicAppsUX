@@ -1,4 +1,5 @@
 import type { CardProps } from './index';
+import type { MenuItemOption } from './types';
 import type { ICalloutProps, IContextualMenuItem, Target } from '@fluentui/react';
 import { ContextualMenu, DirectionalHint } from '@fluentui/react';
 import { useIntl } from 'react-intl';
@@ -29,7 +30,7 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({
   }
 
   const getMenuItems = (): IContextualMenuItem[] => {
-    return contextMenuOptions.map((item) => ({
+    return contextMenuOptions.map((item: MenuItemOption) => ({
       key: item.key,
       disabled: item.disabled,
       iconOnly: true,

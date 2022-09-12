@@ -4,6 +4,7 @@ export interface PanelState {
   collapsed: boolean;
   selectedNode: string;
   isDiscovery: boolean;
+  isParallelBranch: boolean;
   discoveryIds: IdsForDiscovery;
   registeredTabs: Record<string, PanelTab>;
   selectedTabName: string | undefined;

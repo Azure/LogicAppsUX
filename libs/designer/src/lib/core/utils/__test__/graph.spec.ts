@@ -1,5 +1,5 @@
-import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
 import { createWorkflowEdge, createWorkflowNode, isRootNode, getAllNodesInsideNode, getUpstreamNodeIds, isRootNodeInGraph } from '../graph';
+import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 
 describe('Graph Utilities', () => {
   const graph = {

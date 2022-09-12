@@ -3,10 +3,16 @@ import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
-import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '../models/workflowNode';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
-import { SUBGRAPH_TYPES, equals, isNullOrEmpty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
+import {
+  WORKFLOW_NODE_TYPES,
+  WORKFLOW_EDGE_TYPES,
+  SUBGRAPH_TYPES,
+  equals,
+  isNullOrEmpty,
+  isNullOrUndefined,
+} from '@microsoft-logic-apps/utils';
 import { title } from 'process';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
