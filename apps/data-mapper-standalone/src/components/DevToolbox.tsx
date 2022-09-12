@@ -2,7 +2,7 @@ import { dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader'
 import { loadInputSchema, loadOutputSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
-import { Checkbox, Dropdown, TextField } from '@fluentui/react';
+import { Checkbox, Dropdown, TextField, MessageBar } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -131,6 +131,9 @@ export const DevToolbox: React.FC = () => {
       ) : null}
       {loadingMethod === 'file' ? (
         <div>
+          <MessageBar>
+            The below dropdowns load mock objects (equivalent to what we expect from a data map definition or GET schemaTree)
+          </MessageBar>
           <Dropdown
             label="Data Map"
             selectedKey={resourcePath}
