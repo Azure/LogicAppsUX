@@ -5,6 +5,12 @@
       "value": "Aceptar"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Invalid properties {0} for authentication type {1}."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -866,6 +872,12 @@
       "value": "Archivo PFX"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Invalid property {0} for authentication type {1}."
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1055,7 +1067,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Tipo de autenticación"
     }
   ],
   "AHB418": [
@@ -1092,6 +1104,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangón (Rangún)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Type of {0} is {1}."
     }
   ],
   "Amz9+m": [
@@ -1650,6 +1668,12 @@
       "value": "Seleccione una tarjeta para ver el contenido."
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamic content not supported as properties in authentication."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -1947,6 +1971,12 @@
       "value": "Agregar nuevo"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1989,10 +2019,22 @@
       "value": "Agregar un comentario"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning { or ending }"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) Islas Salomón, Nueva Caledonia"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Quitar"
     }
   ],
   "M6U2LE": [
@@ -2159,6 +2201,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Isla Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2768,10 +2816,22 @@
       "value": "Mostrar menos"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) Hora de las Montañas Rocosas (EE. UU. y Canadá)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expandir"
     }
   ],
   "VKAk5g": [
@@ -3877,6 +3937,12 @@
       "value": "Obligatorio. URI que se analizará."
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Unsupported authentication type {0}."
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -4141,6 +4207,12 @@
       "value": "Obligatorio. Este valor es el entero siguiente al entero más alto que se pudo devolver."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Missing authentication type property: 'type'."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4265,6 +4337,12 @@
     {
       "type": 0,
       "value": "La dirección URL codifica la cadena de entrada."
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
     }
   ],
   "mZCHKf": [
@@ -4477,6 +4555,12 @@
     {
       "type": 0,
       "value": "Escribir clave"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Contraer"
     }
   ],
   "pIczsS": [
