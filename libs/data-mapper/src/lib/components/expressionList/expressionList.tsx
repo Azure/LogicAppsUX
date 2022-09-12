@@ -40,9 +40,7 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
   const [sortedExpressionsByCategory, setSortedExpressionsByCategory] = useState<Expression[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
   useEffect(() => {
-    console.log(':search called');
     if (expressionListData.data) {
-      // danielle to refactor
       const categoriesArray: string[] = [];
       let dataCopy = expressionListData.data;
       if (searchTerm) {
