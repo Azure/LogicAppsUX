@@ -1,5 +1,4 @@
 import Constants from '../../../common/constants';
-import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -29,11 +28,13 @@ type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
   discoveryIds: IdsForDiscovery;
   nodeId: string;
+  isParallelBranch?: boolean;
 };
 
 export const addOperation = createAsyncThunk(
   'addOperation',
-  async ({ operation, discoveryIds, nodeId: id }: AddOperationPayload, { dispatch, getState }) => {
+  async (payload: AddOperationPayload, { dispatch, getState }) => {
+    const { operation, nodeId: id } = payload;
     if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     let count = 1;
     let nodeId = id;
@@ -42,16 +43,11 @@ export const addOperation = createAsyncThunk(
       count++;
     }
 
-    const addPayload: AddNodePayload = {
-      operation,
-      id: nodeId,
-      discoveryIds,
-    };
     const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
     const operationId = operation.id;
     const operationType = operation.properties.operationType ?? '';
     const operationKind = operation.properties.operationKind ?? '';
-    dispatch(addNode(addPayload));
+    dispatch(addNode(payload as any));
     const operationPayload: AddNodeOperationPayload = {
       id: nodeId,
       type: operationType,
@@ -65,6 +61,7 @@ export const addOperation = createAsyncThunk(
 
     getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
     dispatch(setFocusNode(nodeId));
+    return;
   }
 );
 

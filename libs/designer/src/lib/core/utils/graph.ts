@@ -93,6 +93,7 @@ export const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode
 };
 
 export const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: NodesMetadata): WorkflowNode | undefined => {
+  if (!nodesMetadata[nodeId]) return undefined;
   return getNode(nodesMetadata[nodeId].graphId, node);
 };
 

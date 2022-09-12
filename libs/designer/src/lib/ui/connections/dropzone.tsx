@@ -44,7 +44,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
   const addParallelBranch = useCallback(() => {
     const newId = guid();
     const discoveryIds = { graphId, childId: undefined, parentId };
-    dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds }));
+    dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds, isParallelBranch: true }));
   }, [dispatch, graphId, parentId]);
 
   const [{ isOver, canDrop }, drop] = useDrop(() => ({

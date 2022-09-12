@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import type { WorkflowState } from '../state/workflow/workflowInterfaces';
+import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
 
@@ -65,7 +65,13 @@ export const reassignNodeRunAfter = (state: WorkflowState | undefined, childNode
   childRunAfter[newNodeId] = [RUN_AFTER_STATUS.SUCCEEDED];
 };
 
-export const reassignNodeRunAfterLeafNode = (state: WorkflowState | undefined, parentNodeId: string, newNodeId: string) => {
+export const assignNodeRunAfterLeafNode = (state: WorkflowState | undefined, parentNodeId: string, newNodeId: string) => {
   if (!state) return;
   (state.operations[newNodeId] as LogicAppsV2.ActionDefinition).runAfter = { [parentNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
+};
+
+export const resetIsRootNode = (sourceId: string, graph: WorkflowNode, metadata: NodesMetadata) => {
+  graph.edges?.forEach((edge) => {
+    if (edge.source === sourceId) delete metadata[edge.target].isRoot;
+  });
 };
