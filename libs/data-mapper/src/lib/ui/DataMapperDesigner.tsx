@@ -6,6 +6,7 @@ import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
+import { ExpressionList } from '../components/expressionList/expressionList';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
@@ -437,7 +438,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                 )}
                 {displayToolboxItem === 'expressionsPanel' && (
                   <FloatingPanel {...toolboxPanelProps}>
-                    <span>Test</span>
+                    <ExpressionList sample="sample"></ExpressionList>
                   </FloatingPanel>
                 )}
                 <div className="msla-designer-canvas msla-panel-mode">
