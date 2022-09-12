@@ -5,6 +5,24 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Neplatné vlastnosti "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -889,6 +907,24 @@
       "value": "Pfx"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Neplatná vlastnost "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1075,6 +1111,12 @@
       "value": "Vrátí true, pokud jsou oba parametry true."
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Typ ověřování"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1109,6 +1151,28 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangún)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Typ "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " je "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "Amz9+m": [
@@ -1697,6 +1761,12 @@
       "value": "Pokud si chcete zobrazit obsah, vyberte prosím kartu."
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Při ověřování se využití dynamického obsahu jako vlastností nepodporuje."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2013,6 +2083,12 @@
       "value": "Přidat nový"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -2055,10 +2131,22 @@
       "value": "Přidat komentář"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Neplatný formát JSON. Chybí počáteční { nebo koncový znak }."
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) Šalamounovy ostrovy, Nová Kaledonie"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Odebrat"
     }
   ],
   "M6U2LE": [
@@ -2229,6 +2317,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2849,10 +2943,22 @@
       "value": "Zobrazit méně"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Zadejte platný kód JSON."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) Horská oblast USA a Kanady"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Rozbalit"
     }
   ],
   "VKAk5g": [
@@ -3973,6 +4079,16 @@
       "value": "Povinné. Identifikátor URI, který se bude parsovat."
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Nepodporovaný typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -4233,6 +4349,12 @@
       "value": "Povinný parametr. Tato hodnota představuje další celé číslo po nejvyšším celém číslu, které se mohlo vrátit."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Chybí vlastnost typu ověřování: type"
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4357,6 +4479,12 @@
     {
       "type": 0,
       "value": "Zakóduje vstupní řetězec jako adresu URL."
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Chybí požadované vlastnosti secret nebo pfx a password pro typ ověřování ActiveDirectoryOAuth."
     }
   ],
   "mZCHKf": [
@@ -4569,6 +4697,12 @@
     {
       "type": 0,
       "value": "Zadejte kód."
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Sbalit"
     }
   ],
   "pIczsS": [

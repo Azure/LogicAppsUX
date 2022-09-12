@@ -5,6 +5,28 @@
       "value": "确定"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”的属性“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”无效。"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -848,6 +870,28 @@
       "value": "Pfx"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”的属性“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”无效。"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1034,6 +1078,12 @@
       "value": "如果两个参数均为 true，则返回 true"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "身份验证类型"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1068,6 +1118,28 @@
     {
       "type": 0,
       "value": "(UTC+06:30)仰光"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”的类型为“"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”。"
     }
   ],
   "Amz9+m": [
@@ -1582,6 +1654,12 @@
       "value": "请选择卡片以查看内容"
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "不支持将动态内容作为身份验证中的属性。"
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -1857,6 +1935,12 @@
       "value": "新增"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1899,10 +1983,22 @@
       "value": "添加评论"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "json 格式无效。缺少开头的 { 或结尾的 }"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00)所罗门群岛，新喀里多尼亚"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "删除"
     }
   ],
   "M6U2LE": [
@@ -2073,6 +2169,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) 布干维尔岛"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2660,10 +2762,22 @@
       "value": "显示更少"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON。"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00)山地时间(美国和加拿大)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "展开"
     }
   ],
   "VKAk5g": [
@@ -3759,6 +3873,20 @@
       "value": "必填。要分析的 URI。"
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "不支持的身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”。"
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -4023,6 +4151,12 @@
       "value": "必需。此值为可返回的最大整数之后的下一个整数。"
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "缺少身份验证类型属性: \"type\"。"
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4147,6 +4281,12 @@
     {
       "type": 0,
       "value": "URL 对输入字符串进行编码"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "身份验证类型 \"ActiveDirectoryOAuth\" 缺少必需的属性 \"secret\" 或 \"pfx\" 和 \"password\"。"
     }
   ],
   "mZCHKf": [
@@ -4367,6 +4507,12 @@
     {
       "type": 0,
       "value": "输入密钥"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "折叠"
     }
   ],
   "pIczsS": [

@@ -5,6 +5,28 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Ungültige Eigenschaften \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" für Authentifizierungstyp \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -855,6 +877,28 @@
       "value": "PFX"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Ungültige Eigenschaft \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" für Authentifizierungstyp \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1041,6 +1085,12 @@
       "value": "Gibt TRUE zurück, wenn beide Parameter TRUE sind."
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentifizierungstyp"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1075,6 +1125,28 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangun)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Der Typ von \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" lautet \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "Amz9+m": [
@@ -1619,6 +1691,12 @@
       "value": "Wählen Sie eine Karte aus, um den Inhalt anzuzeigen."
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamische Inhalte werden als Eigenschaften in der Authentifizierung nicht unterstützt."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -1913,6 +1991,12 @@
       "value": "Neu hinzufügen"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1955,10 +2039,22 @@
       "value": "Kommentar hinzufügen"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Ungültiges JSON-Format. Öffnende Klammer { oder schließende Klammer } fehlt."
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) Salomonen, Neukaledonien"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Entfernen"
     }
   ],
   "M6U2LE": [
@@ -2125,6 +2221,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville-Insel"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2727,10 +2829,22 @@
       "value": "Weniger anzeigen"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) Mountain Time (USA und Kanada)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Erweitern"
     }
   ],
   "VKAk5g": [
@@ -3829,6 +3943,20 @@
       "value": "Erforderlich. Der zu analysierende URI."
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Nicht unterstützter Authentifizierungstyp \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -4093,6 +4221,12 @@
       "value": "Erforderlich. Dieser Wert ist die nächste ganze Zahl nach der höchsten ganzen Zahl, die zurückgegeben werden konnte."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Fehlende Authentifizierungstypeigenschaft: \"type\"."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4217,6 +4351,12 @@
     {
       "type": 0,
       "value": "URL codiert die Eingabezeichenfolge."
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Die erforderlichen Eigenschaften \"secret\" oder \"pfx\" und \"password\" für den Authentifizierungstyp \"ActiveDirectoryOAuth\" fehlen."
     }
   ],
   "mZCHKf": [
@@ -4429,6 +4569,12 @@
     {
       "type": 0,
       "value": "Schlüssel eingeben"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Reduzieren"
     }
   ],
   "pIczsS": [

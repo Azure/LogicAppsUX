@@ -5,6 +5,28 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Propriedades \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" inválidas para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -866,6 +888,28 @@
       "value": "Pfx"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Propriedade \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" inválida para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1052,6 +1096,12 @@
       "value": "Devolve verdadeiro se ambos os parâmetros forem verdadeiros"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Tipo de Autenticação"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1086,6 +1136,28 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangum)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "O tipo de \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" é \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "Amz9+m": [
@@ -1652,6 +1724,12 @@
       "value": "Selecione um cartão para ver o conteúdo"
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "O conteúdo dinâmico não é suportado como propriedades na autenticação."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -1957,6 +2035,28 @@
       "value": "Adicionar novo"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Propriedades \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" obrigatórias em falta para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1999,10 +2099,22 @@
       "value": "Adicionar comentário"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Formado json inválido. Início { ou fim } em falta"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) Ilhas Salomão, Nova Caledónia"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Remover"
     }
   ],
   "M6U2LE": [
@@ -2169,6 +2281,28 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Ilha de Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Propriedade \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" obrigatória em falta para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "OH9xlX": [
@@ -2549,7 +2683,7 @@
   "SGxmEY": [
     {
       "type": 0,
-      "value": "Enter a Dictionary"
+      "value": "Introduza um Dicionário"
     }
   ],
   "SKXopi": [
@@ -2778,10 +2912,22 @@
       "value": "Mostrar menos"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Introduza um JSON válido."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) Hora das Regiões Montanhosas (E.U.A. e Canadá)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expandir"
     }
   ],
   "VKAk5g": [
@@ -3895,6 +4041,20 @@
       "value": "Necessário. O URI a analisar."
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" não suportado."
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -4159,6 +4319,12 @@
       "value": "Obrigatório. Este valor é o número inteiro seguinte depois do maior número inteiro que foi possível devolver."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Propriedade do tipo de autenticação em falta: \"type\"."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4252,7 +4418,7 @@
   "mAuMD+": [
     {
       "type": 0,
-      "value": "Enter an Array"
+      "value": "Introduza uma Matriz"
     }
   ],
   "mCzkXX": [
@@ -4283,6 +4449,12 @@
     {
       "type": 0,
       "value": "URL codifica a cadeia de entrada"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "As propriedades obrigatórias \"secret\" ou \"pfx\" e \"password\" estão em falta para o tipo de autenticação \"ActiveDirectoryOAuth\"."
     }
   ],
   "mZCHKf": [
@@ -4495,6 +4667,12 @@
     {
       "type": 0,
       "value": "Introduzir chave"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Fechar"
     }
   ],
   "pIczsS": [

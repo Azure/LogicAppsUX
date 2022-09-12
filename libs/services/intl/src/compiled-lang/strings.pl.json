@@ -5,6 +5,28 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowe właściwości „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "” dla typu uwierzytelniania „"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -893,6 +915,28 @@
       "value": "Certyfikat PFX"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowa właściwość „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "” dla typu uwierzytelniania „"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”."
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1079,6 +1123,12 @@
       "value": "Zwraca wartość true, jeśli oba parametry mają wartość true"
     }
   ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Typ uwierzytelniania"
+    }
+  ],
   "AHB418": [
     {
       "type": 0,
@@ -1113,6 +1163,28 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangun)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Typem elementu „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "” jest „"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "Amz9+m": [
@@ -1701,6 +1773,12 @@
       "value": "Wybierz kartę, aby zobaczyć zawartość"
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Zawartość dynamiczna nie jest obsługiwana jako właściwości w uwierzytelnianiu."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -2017,6 +2095,12 @@
       "value": "Dodaj nowe"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -2059,10 +2143,22 @@
       "value": "Dodaj komentarz"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowy format JSON. Brak początkowego znaku { lub końcowego znaku }."
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) Wyspy Salomona, Nowa Kaledonia"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Usuń"
     }
   ],
   "M6U2LE": [
@@ -2229,6 +2325,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Wyspa Bougainville’a"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2849,10 +2951,22 @@
       "value": "Pokaż mniej"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy kod JSON."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) Stany Zjednoczone i Kanada (czas górski)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Rozwiń"
     }
   ],
   "VKAk5g": [
@@ -3977,6 +4091,20 @@
       "value": "Wymagane. Identyfikator URI do analizy."
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Nieobsługiwany typ uwierzytelniania „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”."
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -4241,6 +4369,12 @@
       "value": "Wymagane. Ta wartość jest następną liczbą całkowitą po największej liczbie całkowitej możliwej do zwrócenia."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Brak właściwości typu uwierzytelniania: „type”."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4365,6 +4499,12 @@
     {
       "type": 0,
       "value": "Adres URL koduje ciąg wejściowy"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Brak wymaganych właściwości „secret” lub „pfx” i „password” dla typu uwierzytelniania „ActiveDirectoryOAuth”."
     }
   ],
   "mZCHKf": [
@@ -4577,6 +4717,12 @@
     {
       "type": 0,
       "value": "Wprowadź klucz"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Zwiń"
     }
   ],
   "pIczsS": [
