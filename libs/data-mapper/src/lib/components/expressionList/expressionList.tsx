@@ -8,7 +8,7 @@ import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunction
 import { GroupedList } from '@fluentui/react';
 import { Button, Caption1, makeStyles, shorthands, tokens, typographyStyles, Image, mergeClasses } from '@fluentui/react-components';
 import Fuse from 'fuse.js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 export interface ExpressionListProps {
@@ -37,99 +37,105 @@ const buttonHoverStyles = makeStyles({
 export const ExpressionList: React.FC<ExpressionListProps> = () => {
   const expressionListData = useQuery<Expression[]>(['expressions'], () => getExpressions());
   const [searchTerm, setSearchTerm] = useState<string>('');
-  let groups: IGroup[] = [];
-  if (expressionListData.data) {
-    const categoriesArray: string[] = [];
-    let dataCopy = expressionListData.data;
-    if (searchTerm) {
-      const options: Fuse.IFuseOptions<Expression> = {
-        includeScore: true,
-        minMatchCharLength: 2,
-        includeMatches: true,
-        threshold: 0.4,
-        keys: [
-          {
-            name: 'name',
-          },
-        ],
-      };
-      const fuse = new Fuse(expressionListData.data, options);
-      const results = fuse.search(searchTerm);
-      dataCopy = results.map((fuse) => fuse.item);
-      dataCopy.forEach((expression) => {
-        if (!categoriesArray.find((category) => category == expression.expressionCategory))
-          categoriesArray.push(expression.expressionCategory);
+  const [sortedExpressionsByCategory, setSortedExpressionsByCategory] = useState<Expression[]>([]);
+  const [groups, setGroups] = useState<IGroup[]>([]);
+  useEffect(() => {
+    console.log(':search called');
+    if (expressionListData.data) {
+      // danielle to refactor
+      const categoriesArray: string[] = [];
+      let dataCopy = expressionListData.data;
+      if (searchTerm) {
+        const options: Fuse.IFuseOptions<Expression> = {
+          includeScore: true,
+          minMatchCharLength: 2,
+          includeMatches: true,
+          threshold: 0.4,
+          keys: [
+            {
+              name: 'name',
+            },
+          ],
+        };
+        const fuse = new Fuse(expressionListData.data, options);
+        const results = fuse.search(searchTerm);
+        dataCopy = results.map((fuse) => fuse.item);
+        dataCopy.forEach((expression) => {
+          if (!categoriesArray.find((category) => category === expression.expressionCategory))
+            categoriesArray.push(expression.expressionCategory);
+        });
+      } else {
+        dataCopy = expressionListData.data;
+        Object.values(ExpressionCategory).forEach((category) => categoriesArray.push(category));
+      }
+      const newSortedExpressions = dataCopy.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
+      setSortedExpressionsByCategory(newSortedExpressions);
+      let startInd = 0;
+      const newGroups = categoriesArray.map((value): IGroup => {
+        let numInGroup = 0;
+        newSortedExpressions.forEach((expression) => {
+          if (expression.expressionCategory === value) {
+            numInGroup++;
+          }
+        });
+        const group: IGroup = { key: value, startIndex: startInd, name: value, count: numInGroup, data: expressionListData.data[0] };
+        startInd += numInGroup;
+        return group;
       });
-      // calculate order of categories
-    } else {
-      dataCopy = expressionListData.data;
-      Object.values(ExpressionCategory).forEach((category) => categoriesArray.push(category));
+      setGroups(newGroups);
     }
-    const sortedExpressionsByCategory = dataCopy.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
-    let startInd = 0;
-    groups = categoriesArray.map((value): IGroup => {
-      let numInGroup = 0;
-      sortedExpressionsByCategory.forEach((expression) => {
-        if (expression.expressionCategory === value) {
-          numInGroup++;
-        }
-      });
-      const group: IGroup = { key: value, startIndex: startInd, name: value, count: numInGroup, data: expressionListData.data[0] };
-      startInd += numInGroup;
-      return group;
-    });
+  }, [expressionListData.data, searchTerm]);
 
-    const cell = (expression: Expression) => {
-      return <ExpressionListCell expression={expression}></ExpressionListCell>;
-    };
+  const cell = (expression: Expression) => {
+    return <ExpressionListCell expression={expression}></ExpressionListCell>;
+  };
 
-    const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
-      root: {
-        '.ms-GroupHeader': {
+  const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
+    root: {
+      '.ms-GroupHeader': {
+        height: '28px',
+        width: '100%',
+        display: 'flex',
+        'div:first-child': {
           height: '28px',
-          width: '100%',
-          display: 'flex',
-          'div:first-child': {
-            height: '28px',
-          },
-          borderRadius: tokens.borderRadiusMedium,
         },
-        '.ms-GroupHeader-title': {
-          ...typographyStyles.caption1,
-          'span:nth-of-type(2)': {
-            display: 'none',
-          },
-        },
-        '.ms-GroupHeader-expand': {
-          height: '28px',
-          width: '16px',
-          paddingLeft: tokens.spacingHorizontalXS,
-          ':hover': {
-            backgroundColor: 'inherit',
-          },
-        },
-        '.ms-List-page': {
-          height: 'fit-content !important',
+        borderRadius: tokens.borderRadiusMedium,
+      },
+      '.ms-GroupHeader-title': {
+        ...typographyStyles.caption1,
+        'span:nth-of-type(2)': {
+          display: 'none',
         },
       },
-    };
+      '.ms-GroupHeader-expand': {
+        height: '28px',
+        width: '16px',
+        paddingLeft: tokens.spacingHorizontalXS,
+        ':hover': {
+          backgroundColor: 'inherit',
+        },
+      },
+      '.ms-List-page': {
+        height: 'fit-content !important',
+      },
+    },
+  };
 
-    return (
-      <>
-        <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Expression"></TreeHeader>
-        <div>
-          <GroupedList
-            onShouldVirtualize={() => false}
-            groups={groups}
-            styles={headerStyle}
-            items={sortedExpressionsByCategory}
-            onRenderCell={(depth, item) => cell(item)}
-            selectionMode={0}
-          ></GroupedList>
-        </div>
-      </>
-    );
-  }
+  return (
+    <>
+      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Expression"></TreeHeader>
+      <div>
+        <GroupedList
+          onShouldVirtualize={() => false}
+          groups={groups}
+          styles={headerStyle}
+          items={sortedExpressionsByCategory}
+          onRenderCell={(depth, item) => cell(item)}
+          selectionMode={0}
+        ></GroupedList>
+      </div>
+    </>
+  );
 
   return <div>loading</div>;
 };

@@ -4,6 +4,8 @@ import { ExpressionCategory } from '../models/Expression';
 
 export const expressionMock: Expression[] = [
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Maximum',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -18,6 +20,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Minimum',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -32,6 +36,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Average',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -46,6 +52,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Count',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -60,6 +68,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Sum',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -74,6 +84,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Join',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -88,6 +100,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'CurrentDate',
     numberOfInputs: 0,
     type: 'TransformationFunction',
@@ -102,6 +116,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'CurrentDateTime',
     numberOfInputs: 0,
     type: 'TransformationFunction',
@@ -116,6 +132,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'CurrentTime',
     numberOfInputs: 0,
     type: 'TransformationFunction',
@@ -130,6 +148,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'AddDays',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -144,6 +164,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsNull',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -158,6 +180,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsNil',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -172,6 +196,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsNumber',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -186,6 +212,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsString',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -200,6 +228,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsDate',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -214,6 +244,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsEqual',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -228,6 +260,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsNotEqual',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -242,6 +276,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsGreater',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -256,6 +292,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsGreaterOrEqual',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -270,6 +308,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsLess',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -284,6 +324,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IsLessOrEqual',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -298,6 +340,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Exists',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -312,6 +356,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Not',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -326,6 +372,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'And',
     numberOfInputs: -1,
     type: 'TransformationFunction',
@@ -340,6 +388,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Or',
     numberOfInputs: -1,
     type: 'TransformationFunction',
@@ -354,6 +404,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Absolute',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -368,6 +420,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Round',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -382,6 +436,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Floor',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -396,6 +452,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Ceiling',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -410,6 +468,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'SquareRoot',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -424,6 +484,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Exponential',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -438,6 +500,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'ExponentialBase10',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -452,6 +516,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Log',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -466,6 +532,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'LogBase10',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -480,6 +548,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Sine',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -494,6 +564,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Cosine',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -508,6 +580,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Tangent',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -522,6 +596,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'ArcTangent',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -536,6 +612,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Power',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -550,6 +628,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Add',
     numberOfInputs: -1,
     type: 'TransformationFunction',
@@ -564,6 +644,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Subtract',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -578,6 +660,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Multiply',
     numberOfInputs: -1,
     type: 'TransformationFunction',
@@ -592,6 +676,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Divide',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -606,6 +692,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Mod',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -620,6 +708,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Idiv',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -634,6 +724,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Concat',
     numberOfInputs: -1,
     type: 'TransformationFunction',
@@ -648,6 +740,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'ToLower',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -662,6 +756,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'ToUpper',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -676,6 +772,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'StringLength',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -690,6 +788,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Contains',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -704,6 +804,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'SubString',
     numberOfInputs: 3,
     type: 'TransformationFunction',
@@ -718,6 +820,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'SubStringBefore',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -732,6 +836,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'SubStringAfter',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -746,6 +852,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'StartsWith',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -760,6 +868,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'EndsWith',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -774,6 +884,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Replace',
     numberOfInputs: 3,
     type: 'TransformationFunction',
@@ -788,6 +900,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Trim',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -802,6 +916,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'TrimLeft',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -816,6 +932,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'TrimRight',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -830,6 +948,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'StringToCodepoints',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -844,6 +964,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'CodepointsToString',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -858,6 +980,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Error',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -872,6 +996,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'MassCopy',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -886,6 +1012,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'IfElse',
     numberOfInputs: 3,
     type: 'TransformationFunction',
@@ -900,6 +1028,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'ToDate',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -914,6 +1044,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'ToNumber',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -928,6 +1060,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'ToString',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -942,6 +1076,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'ToInt',
     numberOfInputs: 1,
     type: 'TransformationFunction',
@@ -956,6 +1092,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'FormatNumber',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -970,6 +1108,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'FormatDateTime',
     numberOfInputs: 2,
     type: 'TransformationFunction',
@@ -984,6 +1124,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'ForEach',
     numberOfInputs: 1,
     type: 'TransformationControlFunction',
@@ -997,6 +1139,8 @@ export const expressionMock: Expression[] = [
     tooltip: 'Detailed description for the tooltip',
   },
   {
+    inputs: [],
+    allowCustom: false,
     name: 'Condition',
     numberOfInputs: 1,
     type: 'TransformationControlFunction',
