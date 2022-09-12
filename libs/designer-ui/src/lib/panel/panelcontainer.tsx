@@ -110,6 +110,7 @@ export const PanelContainer = ({
       comment,
       onCommentChange,
       toggleCollapse,
+      onTitleChange,
     ]
   );
 

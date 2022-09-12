@@ -10,7 +10,8 @@ import { useOperationInfo, useOperationManifest } from '../../../core/state/sele
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
-import { CreateConnection, getIdLeaf } from '@microsoft/designer-ui';
+import { getIdLeaf } from '@microsoft-logic-apps/utils';
+import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
