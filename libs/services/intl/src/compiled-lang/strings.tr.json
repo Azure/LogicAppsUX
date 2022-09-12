@@ -8,7 +8,7 @@
   "+20fdv": [
     {
       "type": 0,
-      "value": "Invalid properties {0} for authentication type {1}."
+      "value": "{1} kimlik doğrulama türü için geçersiz özellikler: {0}."
     }
   ],
   "+W9fkq": [
@@ -864,7 +864,7 @@
   "89FJnl": [
     {
       "type": 0,
-      "value": "Invalid property {0} for authentication type {1}."
+      "value": "{1} kimlik doğrulama türü için geçersiz özellik: {0}."
     }
   ],
   "8CWFEh": [
@@ -1098,7 +1098,7 @@
   "AgrMqq": [
     {
       "type": 0,
-      "value": "Type of {0} is {1}."
+      "value": "{0} türü {1}."
     }
   ],
   "Amz9+m": [
@@ -1638,7 +1638,7 @@
   "HzS2gJ": [
     {
       "type": 0,
-      "value": "Dynamic content not supported as properties in authentication."
+      "value": "Dinamik içerik, kimlik doğrulamasında özellik olarak desteklenmiyor."
     }
   ],
   "IA+Ogm": [
@@ -1978,7 +1978,7 @@
   "M3lzNo": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning { or ending }"
+      "value": "Geçersiz json Biçimi. Başlangıç { işareti veya bitiş } işareti eksik"
     }
   ],
   "M48CGd": [
@@ -2764,7 +2764,7 @@
   "V0le5X": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Geçerli bir JSON girin."
     }
   ],
   "VE3cxq": [
@@ -3862,7 +3862,7 @@
   "iRARwF": [
     {
       "type": 0,
-      "value": "Unsupported authentication type {0}."
+      "value": "Desteklenmeyen kimlik doğrulama türü: {0}."
     }
   ],
   "iRe/g7": [
@@ -4124,7 +4124,7 @@
   "kuFK3E": [
     {
       "type": 0,
-      "value": "Missing authentication type property: 'type'."
+      "value": "Kimlik doğrulama türü özelliği eksik: 'Type'."
     }
   ],
   "l36V56": [
@@ -4256,7 +4256,7 @@
   "mYQFtf": [
     {
       "type": 0,
-      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
+      "value": "'ActiveDirectoryOAuth' kimlik doğrulama türü için gerekli 'secret' veya 'PFX' ve 'password' özellikleri eksik."
     }
   ],
   "mZCHKf": [
