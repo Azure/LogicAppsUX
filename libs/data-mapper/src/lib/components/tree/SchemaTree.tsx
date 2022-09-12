@@ -1,5 +1,6 @@
 import type { SchemaExtended, SchemaNodeExtended } from '../../models';
 import { convertToFastTreeItem } from './SchemaTreeItem';
+import { TreeHeader } from './treeHeader';
 import { fluentTreeView, provideFluentDesignSystem } from '@fluentui/web-components';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
 import React, { useMemo } from 'react';
@@ -25,5 +26,10 @@ export const SchemaTree: React.FC<SchemaTreeProps> = ({
     return convertToFastTreeItem(schema.schemaTreeRoot, completeSelectedNodeList, onNodeClick);
   }, [schema, currentlySelectedNodes, visibleConnectedNodes, onNodeClick]);
 
-  return <FastTreeView>{treeItems}</FastTreeView>;
+  return (
+    <>
+      <TreeHeader onSearch={(term) => console.log(term)} onClear={() => 'return'} title="Input Schema"></TreeHeader>
+      <FastTreeView>{treeItems}</FastTreeView>
+    </>
+  );
 };
