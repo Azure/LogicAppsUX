@@ -1,4 +1,5 @@
-import type { WorkflowsList, WorkflowProperties, SelectedWorkflowsList, AdvancedOptionsTypes } from '../../../run-service';
+import { AdvancedOptionsTypes } from '../../../run-service';
+import type { WorkflowsList, WorkflowProperties, SelectedWorkflowsList } from '../../../run-service';
 import type { IDropdownOption } from '@fluentui/react';
 
 export const parseWorkflowData = (workflowsData: { workflows: Array<WorkflowProperties> }): Array<WorkflowsList> => {
@@ -104,11 +105,20 @@ export const getSelectedItems = (allItemsSelected: SelectedWorkflowsList[], curr
   return updatedItems.filter((item) => item.selected);
 };
 
+export const hasInfrastructureTemplates = (selectedAdvanceOptions: AdvancedOptionsTypes[]) => {
+  return selectedAdvanceOptions.find((advanceOption) => advanceOption === AdvancedOptionsTypes.generateInfrastructureTemplates);
+};
+
 export const getAdvanceOptionsSelection = (
   selectedAdvanceOptions: AdvancedOptionsTypes[],
   selectedOption: IDropdownOption
 ): AdvancedOptionsTypes[] => {
   const updatedOptions = [...selectedAdvanceOptions];
+
+  if (!!hasInfrastructureTemplates(updatedOptions) && selectedOption.key === AdvancedOptionsTypes.generateInfrastructureTemplates) {
+    return [];
+  }
+
   const index = updatedOptions.indexOf(selectedOption.key as AdvancedOptionsTypes);
   if (index !== -1) {
     updatedOptions.splice(index, 1);
@@ -116,4 +126,8 @@ export const getAdvanceOptionsSelection = (
     updatedOptions.push(selectedOption.key as AdvancedOptionsTypes);
   }
   return updatedOptions;
+};
+
+export const isCloneConnectionsAvailable = (selectedAdvanceOptions: AdvancedOptionsTypes[]): boolean => {
+  return !hasInfrastructureTemplates(selectedAdvanceOptions);
 };

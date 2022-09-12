@@ -3,7 +3,7 @@ import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedAdvanceOptions } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { SearchableDropdown } from '../../components/searchableDropdown';
-import { getAdvanceOptionsSelection } from './helper';
+import { getAdvanceOptionsSelection, isCloneConnectionsAvailable } from './helper';
 import { Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -46,8 +46,13 @@ export const AdvancedOptions: React.FC = () => {
   };
 
   const advancedOptions: IDropdownOption[] = [
-    { key: AdvancedOptionsTypes.cloneConnections, text: intlText.CLONE_CONNECTIONS, selected: false },
     { key: AdvancedOptionsTypes.generateInfrastructureTemplates, text: intlText.GENERATE_INFRAESTRUCTURE, selected: false },
+    {
+      key: AdvancedOptionsTypes.cloneConnections,
+      text: intlText.CLONE_CONNECTIONS,
+      selected: false,
+      disabled: isCloneConnectionsAvailable(selectedAdvanceOptions),
+    },
   ];
 
   const onChangeOptions = useCallback(
