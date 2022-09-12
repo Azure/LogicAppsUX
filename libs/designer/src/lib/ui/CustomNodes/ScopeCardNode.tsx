@@ -51,7 +51,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
           childId: string;
         }>();
         if (item && dropResult) {
-          console.log(`You dropped ${scopeId} between ${dropResult.parentId} and  ${dropResult.childId}!`);
+          // console.log(`You dropped ${scopeId} between ${dropResult.parentId} and  ${dropResult.childId}!`);
           dispatch(
             moveOperation({
               nodeId: scopeId,

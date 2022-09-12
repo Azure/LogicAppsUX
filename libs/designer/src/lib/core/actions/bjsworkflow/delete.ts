@@ -36,14 +36,12 @@ const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch): Promi
 };
 
 export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayload: DeleteGraphPayload, { dispatch }) => {
-  const { graphId, graphNode } = deletePayload;
+  const { graphNode } = deletePayload;
 
   dispatch(clearFocusNode());
   dispatch(clearPanel());
 
   // DELETE GRAPH
-  console.log('delete graph', graphId);
-
   const recursiveGraphDelete = (graph: WorkflowNode) => {
     graph.children?.forEach((child) => {
       if (child.type === WORKFLOW_NODE_TYPES.GRAPH_NODE) {

@@ -68,10 +68,9 @@ export const moveNodeInWorkflow = (
   // Delete WorkflowNode
   oldWorkflowGraph.children = (oldWorkflowGraph?.children ?? []).filter((child: WorkflowNode) => child.id !== nodeId);
 
+  // Decrease action count of graph
   if (nodesMetadata?.[oldWorkflowGraph.id]) {
-    console.log('old action count', oldWorkflowGraph.id, nodesMetadata[oldWorkflowGraph.id].actionCount);
-    nodesMetadata[oldWorkflowGraph.id].actionCount = (nodesMetadata[oldWorkflowGraph.id].actionCount ?? 0) - 1;
-    console.log('new action count', oldWorkflowGraph.id, nodesMetadata[oldWorkflowGraph.id].actionCount);
+    nodesMetadata[oldWorkflowGraph.id].actionCount = (nodesMetadata[oldWorkflowGraph.id].actionCount ?? 1) - 1;
   }
 
   /////////////////////////////////////////////////////////
@@ -109,8 +108,10 @@ export const moveNodeInWorkflow = (
 
   if (isNewRoot) resetIsRootNode(nodeId, newWorkflowGraph, nodesMetadata);
 
-  if (nodesMetadata?.[newWorkflowGraph.id])
+  // Increase action count of graph
+  if (nodesMetadata?.[newWorkflowGraph.id]) {
     nodesMetadata[newWorkflowGraph.id].actionCount = (nodesMetadata[newWorkflowGraph.id].actionCount ?? 0) + 1;
+  }
 };
 
 export const addWorkflowNode = (node: WorkflowNode, graph: WorkflowNode): void => {

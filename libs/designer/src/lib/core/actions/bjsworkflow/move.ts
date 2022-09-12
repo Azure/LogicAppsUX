@@ -4,8 +4,6 @@ import { clearFocusNode, moveNode } from '../../state/workflow/workflowSlice';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 export const moveOperation = createAsyncThunk('moveOperation', async (movePayload: MoveNodePayload, { dispatch }) => {
-  console.log('moveOperation', movePayload);
-
   dispatch(clearFocusNode());
   dispatch(clearPanel());
 

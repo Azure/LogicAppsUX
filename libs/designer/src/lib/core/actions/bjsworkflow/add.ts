@@ -115,7 +115,6 @@ export const addTokensAndVariables = (
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): void => {
-  console.log('addTokensAndVariables', nodeId, operationType, nodeData, workflowState);
   const { graph, nodesMetadata, operations } = workflowState;
   const { nodeInputs, nodeOutputs, settings, manifest } = nodeData;
   const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {
