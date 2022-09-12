@@ -1,5 +1,6 @@
-import { Button, makeStyles, shorthands, Tooltip } from '@fluentui/react-components';
-import { bundleIcon, Info16Regular, Info16Filled } from '@fluentui/react-icons';
+import { makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
+import { Info16Regular, Info16Filled } from '@fluentui/react-icons';
+import { useState } from 'react';
 
 export interface DMTooltipProps {
   text: string;
@@ -20,10 +21,14 @@ const tooltipStyles = makeStyles({
 
 export const DMTooltip: React.FC<DMTooltipProps> = (props) => {
   const tooltipStyle = tooltipStyles();
-  const Icon = bundleIcon(Info16Filled, Info16Regular);
+  const [isHover, setIsHover] = useState<boolean>(false);
+  const iconFill = { primaryFill: tokens.colorNeutralForeground3 };
+
   return (
-    <Tooltip relationship="description" content={props.text}>
-      <Button icon={<Icon />} className={tooltipStyle.button}></Button>
+    <Tooltip relationship="description" content={props.text} withArrow={true}>
+      <div className={tooltipStyle.button} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+        {isHover ? <Info16Filled {...iconFill} /> : <Info16Regular {...iconFill} />}
+      </div>
     </Tooltip>
   );
 };

@@ -141,7 +141,7 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
 interface ExpressionListCellProps {
   expression: Expression;
 }
-const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression }) => {
+export const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression }) => {
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
   const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
