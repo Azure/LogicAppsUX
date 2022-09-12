@@ -4,6 +4,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 export interface DataMapLoadingState {
+  theme: string;
   armToken?: string;
   resourcePath?: string;
   loadingMethod: 'file' | 'arm';
@@ -11,6 +12,7 @@ export interface DataMapLoadingState {
 }
 
 const initialState: DataMapLoadingState = {
+  theme: 'Light',
   loadingMethod: 'file',
   resourcePath: '',
 };
@@ -36,6 +38,9 @@ export const dataMapDataLoaderSlice = createSlice({
   name: 'dataMapDataLoader',
   initialState,
   reducers: {
+    changeTheme: (state, action: PayloadAction<string>) => {
+      state.theme = action.payload;
+    },
     changeArmToken: (state, action: PayloadAction<string>) => {
       state.armToken = action.payload;
     },
