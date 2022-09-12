@@ -6,7 +6,7 @@ import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 describe('workflow slice reducers', () => {
   it('should add initial node to the workflow', () => {
     const mockAddNode: AddNodePayload = {
-      id: '123',
+      nodeId: '123',
       discoveryIds: {
         graphId: 'root',
       },
