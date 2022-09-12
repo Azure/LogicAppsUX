@@ -27,7 +27,6 @@ export const ScratchTab = () => {
   const expressionGroup = getExpressionTokenSections();
 
   const GetTokenPicker = (editorId: string, labelId: string, onClick?: (b: boolean) => void): JSX.Element => {
-    // check to see if there's a custom Token Picker
     return (
       <TokenPicker
         editorId={editorId}
@@ -43,7 +42,10 @@ export const ScratchTab = () => {
       <>
         <DropdownEditor
           multiSelect={true}
-          initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
+          initialValue={[
+            { id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' },
+            { id: '0', type: ValueSegmentType.LITERAL, value: 'GET' },
+          ]}
           GetTokenPicker={GetTokenPicker}
           options={[
             { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },

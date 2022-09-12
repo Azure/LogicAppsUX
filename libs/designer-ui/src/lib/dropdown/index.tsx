@@ -19,6 +19,9 @@ const dropdownStyles: Partial<IDropdownStyles> = {
     fontSize: '14px',
     lineHeight: '30px',
   },
+  caretDownWrapper: {
+    paddingTop: '4px',
+  },
 };
 
 interface DropdownEditorProps extends BaseEditorProps {
