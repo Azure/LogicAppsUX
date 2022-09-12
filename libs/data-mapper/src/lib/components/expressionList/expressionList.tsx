@@ -39,14 +39,14 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   let groups: IGroup[] = [];
   if (expressionListData.data) {
-    const categoriesSet = new Set<string>(); // danielle to refactor
+    const categoriesArray: string[] = [];
     let dataCopy = expressionListData.data;
     if (searchTerm) {
       const options: Fuse.IFuseOptions<Expression> = {
         includeScore: true,
         minMatchCharLength: 2,
         includeMatches: true,
-        threshold: 0.3,
+        threshold: 0.4,
         keys: [
           {
             name: 'name',
@@ -56,15 +56,18 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
       const fuse = new Fuse(expressionListData.data, options);
       const results = fuse.search(searchTerm);
       dataCopy = results.map((fuse) => fuse.item);
-      dataCopy.forEach((expression) => categoriesSet.add(expression.expressionCategory));
+      dataCopy.forEach((expression) => {
+        if (!categoriesArray.find((category) => category == expression.expressionCategory))
+          categoriesArray.push(expression.expressionCategory);
+      });
       // calculate order of categories
     } else {
       dataCopy = expressionListData.data;
-      Object.values(ExpressionCategory).forEach((category) => categoriesSet.add(category));
+      Object.values(ExpressionCategory).forEach((category) => categoriesArray.push(category));
     }
     const sortedExpressionsByCategory = dataCopy.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
     let startInd = 0;
-    groups = Array.from(categoriesSet.values()).map((value): IGroup => {
+    groups = categoriesArray.map((value): IGroup => {
       let numInGroup = 0;
       sortedExpressionsByCategory.forEach((expression) => {
         if (expression.expressionCategory === value) {
@@ -113,7 +116,6 @@ export const ExpressionList: React.FC<ExpressionListProps> = () => {
 
     return (
       <>
-        <Caption1>{searchTerm}</Caption1>
         <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Expression"></TreeHeader>
         <div>
           <GroupedList
