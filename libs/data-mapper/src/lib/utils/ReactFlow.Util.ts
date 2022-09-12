@@ -11,8 +11,8 @@ import { isLeafNode } from './Schema.Utils';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import { ConnectionLineType, Position } from 'react-flow-renderer';
 
-const inputX = 100;
-const rootOutputX = 500;
+const inputX = 400;
+const rootOutputX = 1100;
 const childXOffSet = childOutputNodeCardIndent;
 const rightOfInputs = inputX + nodeCardWidth;
 const expressionX = (rootOutputX - rightOfInputs) / 2 + rightOfInputs;
