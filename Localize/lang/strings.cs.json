@@ -307,7 +307,7 @@
   "LvpxiA": "Brána",
   "Lwe7tQ": "(UTC+00:00) Dublin, Edinburgh, Lisabon, Londýn",
   "M0HMjE": "Přidat komentář",
-  "M3lzNo": "Neplatný formát JSON. Chybí počáteční { nebo koncový znak }.",
+  "M3lzNo": "Neplatný formát JSON. Chybí počáteční '{' nebo koncový znak '}'.",
   "M48CGd": "(UTC+11:00) Šalamounovy ostrovy, Nová Kaledonie",
   "M4H0gh": "Odebrat",
   "M6U2LE": "Parametry budou uloženy při uložení pracovního postupu. Tady je můžete před uložením upravit, případně je můžete po uložení upravit na stránce parametrů.",

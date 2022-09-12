@@ -307,7 +307,7 @@
   "LvpxiA": "Puerta de enlace",
   "Lwe7tQ": "(UTC+00:00) Dublín, Edimburgo, Lisboa, Londres",
   "M0HMjE": "Agregar un comentario",
-  "M3lzNo": "Formato JSON no válido. Falta el signo \"{\" del principio o el signo \"}\" del final",
+  "M3lzNo": "Formato JSON no válido. Falta el signo '{' del principio o el signo '}' del final",
   "M48CGd": "(UTC+11:00) Islas Salomón, Nueva Caledonia",
   "M4H0gh": "Quitar",
   "M6U2LE": "Los parámetros se guardarán cuando se guarde el flujo de trabajo. Puede editarlo aquí antes de guardar o editarlo en la página de parámetros después de guardar.",

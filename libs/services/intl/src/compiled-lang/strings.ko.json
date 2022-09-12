@@ -8,7 +8,7 @@
   "+20fdv": [
     {
       "type": 0,
-      "value": "Invalid properties {0} for authentication type {1}."
+      "value": "인증 유형 {1}에 대한 속성 {0}이(가) 잘못되었습니다."
     }
   ],
   "+W9fkq": [
@@ -853,7 +853,7 @@
   "89FJnl": [
     {
       "type": 0,
-      "value": "Invalid property {0} for authentication type {1}."
+      "value": "인증 유형 {1}에 대한 속성 {0}이(가) 잘못되었습니다"
     }
   ],
   "8CWFEh": [
@@ -1087,7 +1087,7 @@
   "AgrMqq": [
     {
       "type": 0,
-      "value": "Type of {0} is {1}."
+      "value": "{0}의 형식은 {1}입니다."
     }
   ],
   "Amz9+m": [
@@ -1605,7 +1605,7 @@
   "HzS2gJ": [
     {
       "type": 0,
-      "value": "Dynamic content not supported as properties in authentication."
+      "value": "동적 콘텐츠는 인증의 속성으로 지원되지 않습니다."
     }
   ],
   "IA+Ogm": [
@@ -1886,7 +1886,7 @@
   "Li6x/B": [
     {
       "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
+      "value": "인증 유형 {1}에 필요한 속성 {0}이(가) 없습니다"
     }
   ],
   "LlYz9c": [
@@ -1934,7 +1934,7 @@
   "M3lzNo": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning { or ending }"
+      "value": "잘못된 json 형식입니다. 처음의 { 또는 마지막의 }가 없습니다."
     }
   ],
   "M48CGd": [
@@ -2118,7 +2118,7 @@
   "OH94j3": [
     {
       "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
+      "value": "인증 유형 {0}에 필요한 속성 {1}이(가) 없습니다"
     }
   ],
   "OH9xlX": [
@@ -2709,7 +2709,7 @@
   "V0le5X": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "VE3cxq": [
@@ -3796,7 +3796,7 @@
   "iRARwF": [
     {
       "type": 0,
-      "value": "Unsupported authentication type {0}."
+      "value": "지원되지 않는 인증 유형 {0}입니다."
     }
   ],
   "iRe/g7": [
@@ -4058,7 +4058,7 @@
   "kuFK3E": [
     {
       "type": 0,
-      "value": "Missing authentication type property: 'type'."
+      "value": "인증 유형 속성 'type'이 없습니다."
     }
   ],
   "l36V56": [
@@ -4190,7 +4190,7 @@
   "mYQFtf": [
     {
       "type": 0,
-      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
+      "value": "인증 유형 'ActiveDirectoryOAuth'에 필요한 'secret' 또는 'pfx' 및 'password' 속성이 없습니다."
     }
   ],
   "mZCHKf": [

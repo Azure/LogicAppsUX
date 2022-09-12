@@ -8,7 +8,23 @@
   "+20fdv": [
     {
       "type": 0,
-      "value": "Invalid properties {0} for authentication type {1}."
+      "value": "身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”的属性“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”无效。"
     }
   ],
   "+W9fkq": [
@@ -857,7 +873,23 @@
   "89FJnl": [
     {
       "type": 0,
-      "value": "Invalid property {0} for authentication type {1}."
+      "value": "身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”的属性“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”无效。"
     }
   ],
   "8CWFEh": [
@@ -1091,7 +1123,23 @@
   "AgrMqq": [
     {
       "type": 0,
-      "value": "Type of {0} is {1}."
+      "value": "“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”的类型为“"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”。"
     }
   ],
   "Amz9+m": [
@@ -1609,7 +1657,7 @@
   "HzS2gJ": [
     {
       "type": 0,
-      "value": "Dynamic content not supported as properties in authentication."
+      "value": "不支持将动态内容作为身份验证中的属性。"
     }
   ],
   "IA+Ogm": [
@@ -1938,7 +1986,7 @@
   "M3lzNo": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning { or ending }"
+      "value": "json 格式无效。缺少开头的 { 或结尾的 }"
     }
   ],
   "M48CGd": [
@@ -1950,7 +1998,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "移除"
+      "value": "删除"
     }
   ],
   "M6U2LE": [
@@ -2717,7 +2765,7 @@
   "V0le5X": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "输入有效的 JSON。"
     }
   ],
   "VE3cxq": [
@@ -3828,7 +3876,15 @@
   "iRARwF": [
     {
       "type": 0,
-      "value": "Unsupported authentication type {0}."
+      "value": "不支持的身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”。"
     }
   ],
   "iRe/g7": [
@@ -4098,7 +4154,7 @@
   "kuFK3E": [
     {
       "type": 0,
-      "value": "Missing authentication type property: 'type'."
+      "value": "缺少身份验证类型属性: \"type\"。"
     }
   ],
   "l36V56": [
@@ -4230,7 +4286,7 @@
   "mYQFtf": [
     {
       "type": 0,
-      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
+      "value": "身份验证类型 \"ActiveDirectoryOAuth\" 缺少必需的属性 \"secret\" 或 \"pfx\" 和 \"password\"。"
     }
   ],
   "mZCHKf": [
