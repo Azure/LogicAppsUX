@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Properti {0} tidak valid untuk jenis autentikasi {1}."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -844,6 +850,12 @@
       "value": "Pfx"
     }
   ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Properti {0} tidak valid untuk jenis autentikasi {1}."
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -1070,6 +1082,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Jenis {0} adalah {1}."
     }
   ],
   "Amz9+m": [
@@ -1584,6 +1602,12 @@
       "value": "Pilih kartu untuk melihat konten"
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Konten dinamis tidak didukung sebagai properti dalam autentikasi."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -1859,6 +1883,12 @@
       "value": "Tambah baru"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1901,6 +1931,12 @@
       "value": "Tambahkan komentar"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Format json tidak valid. Awal { atau akhiran } tidak ada"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -1910,7 +1946,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Hapus"
     }
   ],
   "M6U2LE": [
@@ -2077,6 +2113,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Pulau Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2664,6 +2706,12 @@
       "value": "Tampilkan lebih sedikit"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Masukkan JSON yang valid."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -2673,7 +2721,7 @@
   "VI5Sa8": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Luaskan"
     }
   ],
   "VKAk5g": [
@@ -3749,6 +3797,12 @@
       "value": "Diperlukan. URI untuk mengurai."
     }
   ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Tipe autentikasi yang tidak didukung {0}."
+    }
+  ],
   "iRe/g7": [
     {
       "type": 0,
@@ -4005,6 +4059,12 @@
       "value": "Wajib. Nilai ini adalah bilangan bulat berikutnya setelah bilangan bulat tertinggi yang dapat ditampilkan."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Tidak ada properti tipe autentikasi: 'type'."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4129,6 +4189,12 @@
     {
       "type": 0,
       "value": "Url mengkodekan string input"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Tidak ada properti 'secret' atau 'pfx' dan 'password' yang diperlukan untuk tipe autentikasi 'ActiveDirectoryOAuth'."
     }
   ],
   "mZCHKf": [
@@ -4346,7 +4412,7 @@
   "pH2uak": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Ciutkan"
     }
   ],
   "pIczsS": [

@@ -22,7 +22,7 @@ export const collectionBranding: ExpressionGroupBranding = {
   icon: <Cube20Regular />,
 };
 
-export const datetimeBranding: ExpressionGroupBranding = {
+export const dateTimeBranding: ExpressionGroupBranding = {
   colorLight: '#4f6bed',
   colorDark: '#93a4f4',
   icon: <CalendarClock20Regular />,
@@ -61,6 +61,8 @@ export const TempExpressionManifest: Expression[] = [
     xsltExpression: 'current-date()',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [],
+    allowCustom: false,
     expressionCategory: ExpressionCategory.DateTime,
     iconFileName: 'CalendarDate20Regular.svg',
     outputType: SchemaNodeDataType.DateTime,
@@ -76,6 +78,8 @@ export const TempExpressionManifest: Expression[] = [
     xsltExpression: 'current-dateTime()',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [],
+    allowCustom: false,
     expressionCategory: ExpressionCategory.DateTime,
     iconFileName: '',
     outputType: SchemaNodeDataType.DateTime,
@@ -91,6 +95,8 @@ export const TempExpressionManifest: Expression[] = [
     xsltExpression: 'current-time()',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [],
+    allowCustom: false,
     expressionCategory: ExpressionCategory.DateTime,
     iconFileName: 'Clock20Regular.svg',
     outputType: SchemaNodeDataType.DateTime,
@@ -106,6 +112,13 @@ export const TempExpressionManifest: Expression[] = [
     xsltExpression: 'concat({0})',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [
+      {
+        inputName: 'Input',
+        acceptableInputTypes: [SchemaNodeDataType.AnyAtomicType],
+      },
+    ],
+    allowCustom: true,
     expressionCategory: ExpressionCategory.String,
     iconFileName: 'TextNumberFormat20Regular.svg',
     outputType: SchemaNodeDataType.String,
@@ -120,6 +133,13 @@ export const TempExpressionManifest: Expression[] = [
     xsltExpression: 'lower-case({0})',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [
+      {
+        inputName: 'Input String',
+        acceptableInputTypes: [SchemaNodeDataType.String],
+      },
+    ],
+    allowCustom: true,
     expressionCategory: ExpressionCategory.String,
     iconFileName: 'TextCaseUppercase20Regular.svg',
     outputType: SchemaNodeDataType.String,
@@ -134,6 +154,13 @@ export const TempExpressionManifest: Expression[] = [
     userExpression: '$if',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [
+      {
+        inputName: 'Condition',
+        acceptableInputTypes: [SchemaNodeDataType.AnyAtomicType],
+      },
+    ],
+    allowCustom: false,
     expressionCategory: ExpressionCategory.Utility,
     iconFileName: '',
     outputType: SchemaNodeDataType.String,

@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Invalid properties {0} for authentication type {1}."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -771,6 +777,12 @@
       "value": "Required. The name of the action with a multipart response."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -853,6 +865,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Invalid property {0} for authentication type {1}."
     }
   ],
   "8CWFEh": [
@@ -1083,6 +1101,12 @@
       "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Type of {0} is {1}."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1259,6 +1283,12 @@
     {
       "type": 0,
       "value": "Required. The string from which to remove leading and trailing whitespace."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1617,6 +1647,12 @@
       "value": "Please select a card to see the content"
     }
   ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamic content not supported as properties in authentication."
+    }
+  ],
   "IA+Ogm": [
     {
       "type": 0,
@@ -1861,6 +1897,12 @@
       "value": "There are no results for your search"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1903,6 +1945,12 @@
       "value": "Add new"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Missing required properties {0} for authentication type {1}"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1943,6 +1991,12 @@
     {
       "type": 0,
       "value": "Add a comment"
+    }
+  ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning { or ending }"
     }
   ],
   "M48CGd": [
@@ -2099,6 +2153,12 @@
       "value": "Edit Parameter"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2121,6 +2181,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville Island"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Missing required property {0} for authentication type {1}"
     }
   ],
   "OH9xlX": [
@@ -2411,6 +2477,12 @@
       "value": "h"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2687,6 +2759,12 @@
       "value": "To reference a parameter, use the dynamic content list."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2721,6 +2799,12 @@
     {
       "type": 0,
       "value": "Show less"
+    }
+  ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "VE3cxq": [
@@ -3807,6 +3891,20 @@
       "value": "Dynamic content"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3817,6 +3915,12 @@
     {
       "type": 0,
       "value": "Required. The URI to parse."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Unsupported authentication type {0}."
     }
   ],
   "iRe/g7": [
@@ -4075,6 +4179,12 @@
       "value": "Required. This value is the next integer after the highest integer that could be returned."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Missing authentication type property: 'type'."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4199,6 +4309,12 @@
     {
       "type": 0,
       "value": "Url encodes the input string"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'."
     }
   ],
   "mZCHKf": [
@@ -4865,6 +4981,12 @@
       "value": "(UTC+10:00) Hobart"
     }
   ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "tsmuoF": [
     {
       "type": 0,
@@ -5315,6 +5437,12 @@
     {
       "type": 0,
       "value": "Enter default value for parameter."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

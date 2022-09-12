@@ -1,6 +1,5 @@
-import { convertActionIDToTitleCase } from '../../../common/utilities/Utils';
 import { Text, TooltipHost, useTheme } from '@fluentui/react';
-import { RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
+import { idDisplayCase, RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
 import { EmptyTrafficLightDot, Failed, Skipped, Succeeded, TimedOut, TrafficLightDot } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -35,7 +34,7 @@ export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorP
       description: 'Text to show which node the target node is run after',
     },
     {
-      sourceNodeId: <strong>{convertActionIDToTitleCase(sourceNodeId)}</strong>,
+      sourceNodeId: <strong>{idDisplayCase(sourceNodeId)}</strong>,
     }
   );
 

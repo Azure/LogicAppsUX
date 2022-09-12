@@ -1,16 +1,17 @@
 import type { SchemaInfoProperties } from '.';
+import type { Expression } from '../../../models/Expression';
 
-export interface SchemaSelectionServiceOptions {
+export interface DataMapperApiServiceOptions {
   baseUrl: string;
   accessToken?: string;
   resourceUrl?: string;
 }
 
-export class SchemaSelectionService {
+export class DataMapperApiService {
   // TODO (danielle): add back when questions answered
-  private options: SchemaSelectionServiceOptions;
+  private options: DataMapperApiServiceOptions;
 
-  constructor(options: SchemaSelectionServiceOptions) {
+  constructor(options: DataMapperApiServiceOptions) {
     this.options = options;
   }
 
@@ -51,6 +52,24 @@ export class SchemaSelectionService {
     return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`; // TODO (danielle): to test
   };
 
+  private getExpressionsManifestUri = () => {
+    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/transformations/getManifest?api-version=2019-10-01-edge-preview`;
+  };
+
+  async getExpressionsManifest(): Promise<Expression[]> {
+    const uri = this.getExpressionsManifestUri();
+    const response = await fetch(uri, { method: 'GET' });
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+    const expressions: Expression[] = await response.json();
+    return expressions;
+  }
+
+  private getGenerateXsltUri = () => {
+    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/maps/generateXslt`;
+  };
+
   async getSchemas(): Promise<SchemaInfoProperties[]> {
     const headers = this.getHeaders();
     const schemaInfosUri = this.getSchemasUri();
@@ -76,5 +95,22 @@ export class SchemaSelectionService {
     const schemaFileResponse: string = await response.json();
 
     return schemaFileResponse;
+  }
+
+  async generateDataMapXslt(dataMapDefinition: string): Promise<any> {
+    const response = await fetch(this.getGenerateXsltUri(), {
+      method: 'POST',
+      body: JSON.stringify({
+        MapContent: dataMapDefinition,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const dataMapXsltResponse = await response.json();
+
+    return dataMapXsltResponse;
   }
 }

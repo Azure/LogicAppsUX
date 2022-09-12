@@ -10,11 +10,19 @@ export interface Expression {
   isXsltOperatorExpression: boolean;
 
   // Made up
+  inputs: ExpressionInput[];
+  outputType: SchemaNodeDataType;
+  allowCustom: boolean;
+
   expressionCategory: ExpressionCategory;
   iconFileName?: string;
-  outputType: SchemaNodeDataType; // Maybe make this type generic
   detailedDescription: string;
   tooltip: string;
+}
+
+export interface ExpressionInput {
+  inputName: string;
+  acceptableInputTypes: SchemaNodeDataType[];
 }
 
 export enum ExpressionCategory {
