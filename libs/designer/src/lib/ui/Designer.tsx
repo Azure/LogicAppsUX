@@ -1,5 +1,4 @@
 import { useLayout } from '../core/graphlayout';
-import type { WorkflowNodeType } from '../core/parsers/models/workflowNode';
 import { useAllOperations, useAllConnectors } from '../core/queries/browse';
 import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
@@ -13,6 +12,7 @@ import Minimap from './Minimap';
 import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
+import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
 import { useThrottledEffect } from '@microsoft-logic-apps/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';

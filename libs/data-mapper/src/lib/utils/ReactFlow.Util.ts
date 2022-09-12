@@ -3,7 +3,7 @@ import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childOutputNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
 import type { ConnectionDictionary } from '../models/Connection';
-import type { Expression } from '../models/Expression';
+import type { ExpressionDictionary } from '../models/Expression';
 import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
 import { getExpressionBrandingForCategory } from './Expression.Utils';
@@ -11,8 +11,8 @@ import { isLeafNode } from './Schema.Utils';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import { ConnectionLineType, Position } from 'react-flow-renderer';
 
-const inputX = 100;
-const rootOutputX = 500;
+const inputX = 400;
+const rootOutputX = 1100;
 const childXOffSet = childOutputNodeCardIndent;
 const rightOfInputs = inputX + nodeCardWidth;
 const expressionX = (rootOutputX - rightOfInputs) / 2 + rightOfInputs;
@@ -32,7 +32,7 @@ export const expressionPrefix = 'ex-';
 export const convertToReactFlowNodes = (
   currentlySelectedInputNodes: SchemaNodeExtended[],
   connectedInputNodes: SchemaNodeExtended[],
-  allExpressionNodes: Expression[],
+  allExpressionNodes: ExpressionDictionary,
   outputSchemaNode: SchemaNodeExtended
 ): ReactFlowNode<CardProps>[] => {
   const reactFlowNodes: ReactFlowNode<CardProps>[] = [];
@@ -160,12 +160,14 @@ export const convertToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-const convertExpressionsToReactFlowParentAndChildNodes = (allExpressionNodes: Expression[]): ReactFlowNode<ExpressionCardProps>[] => {
+const convertExpressionsToReactFlowParentAndChildNodes = (
+  allExpressionNodes: ExpressionDictionary
+): ReactFlowNode<ExpressionCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<ExpressionCardProps>[] = [];
 
-  allExpressionNodes.forEach((expressionNode) => {
+  Object.entries(allExpressionNodes).forEach(([expressionKey, expressionNode]) => {
     reactFlowNodes.push({
-      id: `${expressionPrefix}${expressionNode.name}-${reactFlowNodes.length}`,
+      id: expressionKey,
       data: {
         expressionName: expressionNode.name,
         displayHandle: true,

@@ -41,6 +41,11 @@ export const tokensSlice = createSlice({
       state.outputTokens = { ...state.outputTokens, ...action.payload.outputTokens };
       state.variables = { ...state.variables, ...action.payload.variables };
     },
+    deinitializeTokensAndVariables: (state, action: PayloadAction<{ id: string }>) => {
+      const { id } = action.payload;
+      // delete state.outputTokens[id]; // TODO: This causes lots of errors as tokens are not null-safe
+      delete state.variables[id];
+    },
     updateTokens: (state, action: PayloadAction<{ id: string; tokens: Token[] }>) => {
       const { id, tokens } = action.payload;
       if (state.outputTokens[id]) {
@@ -57,6 +62,6 @@ export const tokensSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeTokensAndVariables, addDynamicTokens, updateTokens } = tokensSlice.actions;
+export const { initializeTokensAndVariables, deinitializeTokensAndVariables, addDynamicTokens, updateTokens } = tokensSlice.actions;
 
 export default tokensSlice.reducer;

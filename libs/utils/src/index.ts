@@ -10,14 +10,7 @@ export * from './lib/helpers/functions';
 export * from './lib/helpers/guid';
 export * from './lib/helpers/stringFunctions';
 export * from './lib/helpers/hooks';
-export * from './lib/models/armresource';
-export * from './lib/models/connector';
-export * from './lib/models/connection';
-export * from './lib/models/operationmanifest';
-export * from './lib/models/operation';
-export * from './lib/models/extensioncommand';
-export * from './lib/models/operationDiscoveryResults';
-export * from './lib/models/managedidentity';
+export * from './lib/models';
 
 export * from './lib/mocks/connectors';
 export * from './lib/mocks/connections';

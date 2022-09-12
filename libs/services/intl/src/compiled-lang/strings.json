@@ -791,6 +791,12 @@
       "value": "Required. The name of the action with a multipart response."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -1315,6 +1321,12 @@
     {
       "type": 0,
       "value": "Required. The string from which to remove leading and trailing whitespace."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1929,6 +1941,12 @@
       "value": "There are no results for your search"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -2177,6 +2195,12 @@
     {
       "type": 0,
       "value": "Edit Parameter"
+    }
+  ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "OD8igU": [
@@ -2497,6 +2521,12 @@
       "value": "h"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2771,6 +2801,12 @@
     {
       "type": 0,
       "value": "To reference a parameter, use the dynamic content list."
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
     }
   ],
   "UHCVNK": [
@@ -3899,6 +3935,20 @@
       "value": "Dynamic content"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4981,6 +5031,12 @@
       "value": "(UTC+10:00) Hobart"
     }
   ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
+    }
+  ],
   "tsmuoF": [
     {
       "type": 0,
@@ -5437,6 +5493,12 @@
     {
       "type": 0,
       "value": "Enter default value for parameter."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

@@ -214,6 +214,18 @@ export const operationMetadataSlice = createSlice({
         state.outputParameters[id] = nodeOutputs;
       }
     },
+    deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
+      const { id } = action.payload;
+      delete state.operationInfo[id];
+    },
+    deinitializeNodes: (state, action: PayloadAction<string[]>) => {
+      for (const id of action.payload) {
+        delete state.inputParameters[id];
+        delete state.outputParameters[id];
+        delete state.dependencies[id];
+        delete state.settings[id];
+      }
+    },
   },
 });
 
@@ -221,13 +233,15 @@ export const operationMetadataSlice = createSlice({
 export const {
   initializeNodes,
   initializeOperationInfo,
+  updateNodeParameters,
   addDynamicInputs,
   addDynamicOutputs,
   clearDynamicInputs,
   clearDynamicOutputs,
-  updateNodeParameters,
   updateNodeSettings,
   updateOutputs,
+  deinitializeOperationInfo,
+  deinitializeNodes,
 } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;
