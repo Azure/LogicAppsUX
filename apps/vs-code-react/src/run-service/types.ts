@@ -13,7 +13,18 @@ export interface IApiService {
   getWorkflows(subscriptionId: string, iseId: string): Promise<any>;
   getSubscriptions(): Promise<any>;
   getIse(selectedSubscription: string): Promise<any>;
-  validateWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string): Promise<any>;
+  validateWorkflows(
+    selectedWorkflows: Array<WorkflowsList>,
+    selectedSubscription: string,
+    selectedLocation: string,
+    selectedAdvanceOptions: AdvancedOptionsTypes[]
+  ): Promise<any>;
+  exportWorkflows(
+    selectedWorkflows: Array<WorkflowsList>,
+    selectedSubscription: string,
+    selectedLocation: string,
+    selectedAdvanceOptions: AdvancedOptionsTypes[]
+  ): Promise<any>;
 }
 
 export interface ArmResources<T> {
@@ -219,6 +230,7 @@ export type ExportData = {
   targetDirectory: ITargetDirectory;
   packageUrl: string;
   managedConnections: ManagedConnections;
+  selectedAdvanceOptions: Array<AdvancedOptionsTypes>;
 };
 
 export enum ResourceType {
@@ -383,4 +395,10 @@ export interface INamingRules {
 export interface INamingValidation {
   validationError: string;
   validName: boolean;
+}
+
+export enum AdvancedOptionsTypes {
+  off = 'Off',
+  cloneConnections = 'cloneConnections',
+  generateInfrastructureTemplates = 'generateInfrastructureTemplates',
 }
