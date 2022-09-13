@@ -1,6 +1,6 @@
 import { ResourceType } from '../types';
-import type { IApiService, Workflows, AdvancedOptionsTypes, WorkflowsList, ISummaryData } from '../types';
-import { getValidationPayload, getExportUri, getWorkflowsUri } from './helper';
+import type { IApiService, WorkflowsList, ISummaryData, Workflow, GraphApiOptions, AdvancedOptionsTypes } from '../types';
+import { getValidationPayload, getExportUri } from './helper';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
@@ -29,7 +29,7 @@ export class ApiService implements IApiService {
     });
   };
 
-  private getPayload = (resourceType: string, properties?: any) => {
+  private getPayload = (resourceType: string, properties?: GraphApiOptions) => {
     switch (resourceType) {
       case ResourceType.subscriptions: {
         return {
@@ -38,7 +38,7 @@ export class ApiService implements IApiService {
         };
       }
       case ResourceType.ise: {
-        const selectedSubscription = properties.selectedSubscription;
+        const selectedSubscription = properties?.selectedSubscription;
         return {
           query:
             "resources|where type =~ 'Microsoft.Logic/integrationServiceEnvironments'\r\n | extend iseName=name | project id, iseName, location, subscriptionId, resourceGroup\r\n|sort by (tolower(tostring(iseName))) asc",
@@ -46,11 +46,25 @@ export class ApiService implements IApiService {
         };
       }
       case ResourceType.resourcegroups: {
-        const selectedSubscription = properties.selectedSubscription;
+        const selectedSubscription = properties?.selectedSubscription;
         return {
           query:
             "(resourcecontainers|where type in~ ('microsoft.resources/subscriptions/resourcegroups'))|where type =~ 'microsoft.resources/subscriptions/resourcegroups'\r\n| project id,name,location,subscriptionId,resourceGroup\r\n|project name,id,location,subscriptionId,resourceGroup|sort by (tolower(tostring(name))) asc",
           subscriptions: [selectedSubscription],
+        };
+      }
+      case ResourceType.workflows: {
+        const selectedSubscription = properties?.selectedSubscription;
+        const selectedIse = properties?.selectedIse;
+        const skipToken = properties?.skipToken ?? '';
+
+        return {
+          query: `resources |where type =~ 'Microsoft.Logic/workflows' and properties != '' and properties.integrationServiceEnvironment != '' and properties.integrationServiceEnvironment.id == '${selectedIse}' |project id,name, location,subscriptionId,resourceGroup|sort by (tolower(tostring(name))) asc`,
+          subscriptions: [selectedSubscription],
+          options: {
+            $top: 1000,
+            $skipToken: skipToken,
+          },
         };
       }
       default: {
@@ -59,19 +73,32 @@ export class ApiService implements IApiService {
     }
   };
 
-  async getWorkflows(subscriptionId: string, iseId: string): Promise<any> {
+  async getWorkflows(subscriptionId: string, iseId: string): Promise<Workflow[]> {
     const headers = this.getAccessTokenHeaders();
-    const workflowsUri = getWorkflowsUri(subscriptionId, iseId);
-    const response = await fetch(workflowsUri, { headers, method: 'GET' });
+    const totalWorkflowsList: Workflow[] = [];
+    let skipToken = '';
+    let isMissingWorkflows = true;
 
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+    while (isMissingWorkflows) {
+      const payload = this.getPayload(ResourceType.workflows, { selectedSubscription: subscriptionId, selectedIse: iseId, skipToken });
+      const response = await fetch(graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+
+      if (!response.ok) {
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
+
+      const workflowsResponse = await response.json();
+
+      totalWorkflowsList.push(...workflowsResponse.data);
+
+      if (workflowsResponse['$skipToken']) {
+        skipToken = workflowsResponse['$skipToken'];
+      } else {
+        isMissingWorkflows = false;
+      }
     }
 
-    const workflowsResponse: Workflows = await response.json();
-    const { value: workflows } = workflowsResponse;
-
-    return { workflows };
+    return totalWorkflowsList;
   }
 
   async getSubscriptions(): Promise<any> {
