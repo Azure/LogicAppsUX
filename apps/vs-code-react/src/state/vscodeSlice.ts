@@ -1,4 +1,5 @@
 import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, ProjectName, WorkflowsList } from '../run-service';
+import { AdvancedOptionsTypes } from '../run-service';
 import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -75,6 +76,7 @@ export const vscodeSlice = createSlice({
           resourceGroup: undefined,
           resourceGroupLocation: undefined,
         },
+        selectedAdvanceOptions: [AdvancedOptionsTypes.generateInfrastructureTemplates],
       };
     },
     updateAccessToken: (state: VscodeState, action: PayloadAction<string | undefined>) => {
@@ -124,6 +126,10 @@ export const vscodeSlice = createSlice({
         initializedState.statuses = [];
       }
     },
+    updateSelectedAdvanceOptions: (state: VscodeState, action: PayloadAction<{ selectedAdvanceOptions: Array<AdvancedOptionsTypes> }>) => {
+      const { selectedAdvanceOptions } = action.payload;
+      (state as InitializedVscodeState).exportData.selectedAdvanceOptions = selectedAdvanceOptions;
+    },
   },
 });
 
@@ -140,6 +146,7 @@ export const {
   updateManagedConnections,
   addStatus,
   setFinalStatus,
+  updateSelectedAdvanceOptions,
 } = vscodeSlice.actions;
 
 export default vscodeSlice.reducer;

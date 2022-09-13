@@ -5,6 +5,7 @@ import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service/
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
+import { AdvancedOptions } from './advancedOptions';
 import { Filters } from './filters';
 import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups, parseWorkflowData, updateSelectedItems } from './helper';
 import { SelectedList } from './selectedList';
@@ -245,7 +246,7 @@ export const WorkflowsSelection: React.FC = () => {
     });
   };
 
-  const updateRenderWorflows = () => {
+  const updateRenderWorkflows = () => {
     return new Promise<void>((resolve) => {
       const updatedRenderWorkflows = renderWorkflows?.map((workflow, index) => {
         return { ...workflow, key: index.toString() };
@@ -260,30 +261,33 @@ export const WorkflowsSelection: React.FC = () => {
     const copyRenderWorkflows = [...(renderWorkflows ?? [])];
     await deselectItemKey(itemKey);
     selection.setItems(renderWorkflows as WorkflowsList[]);
-    await updateRenderWorflows();
+    await updateRenderWorkflows();
     setRenderWorkflows(copyRenderWorkflows);
   };
 
   return (
-    <div className="msla-export-workflows-panel">
-      <div className="msla-export-workflows-panel-list">
-        <Text variant="xLarge" block>
-          {intlText.SELECT_TITLE}
-        </Text>
-        <Text variant="large" block>
-          {intlText.SELECT_DESCRIPTION}
-        </Text>
-        {limitInfo}
-        {filters}
-        {workflowsList}
+    <div className="msla-export-workflows">
+      <div className="msla-export-workflows-panel">
+        <div className="msla-export-workflows-panel-list">
+          <Text variant="xLarge" block>
+            {intlText.SELECT_TITLE}
+          </Text>
+          <Text variant="large" block>
+            {intlText.SELECT_DESCRIPTION}
+          </Text>
+          {limitInfo}
+          {filters}
+          {workflowsList}
+        </div>
+        <Separator vertical className="msla-export-workflows-panel-divider" />
+        <SelectedList
+          isLoading={isWorkflowsLoading || renderWorkflows === null}
+          allWorkflows={allWorkflows.current}
+          renderWorkflows={renderWorkflows}
+          deselectWorkflow={deselectWorkflow}
+        />
       </div>
-      <Separator vertical className="msla-export-workflows-panel-divider" />
-      <SelectedList
-        isLoading={isWorkflowsLoading || renderWorkflows === null}
-        allWorkflows={allWorkflows.current}
-        renderWorkflows={renderWorkflows}
-        deselectWorkflow={deselectWorkflow}
-      />
+      <AdvancedOptions />
     </div>
   );
 };

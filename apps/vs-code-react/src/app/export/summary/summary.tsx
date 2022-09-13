@@ -20,7 +20,7 @@ export const Summary: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
-  const { selectedWorkflows, location, selectedSubscription, targetDirectory, packageUrl } = exportData;
+  const { selectedWorkflows, location, selectedSubscription, targetDirectory, packageUrl, selectedAdvanceOptions } = exportData;
 
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
@@ -66,7 +66,7 @@ export const Summary: React.FC = () => {
   }, [accessToken, baseUrl]);
 
   const exportWorkflows = () => {
-    return apiService.exportWorkflows(selectedWorkflows, selectedSubscription, location);
+    return apiService.exportWorkflows(selectedWorkflows, selectedSubscription, location, selectedAdvanceOptions);
   };
 
   const onSummarySuccess = (summaryData: ISummaryData) => {

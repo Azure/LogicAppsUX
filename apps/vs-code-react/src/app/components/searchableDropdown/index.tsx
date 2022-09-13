@@ -43,7 +43,7 @@ export const SearchableDropdown: React.FC<ISearchableDropdownProps> = (props) =>
 
   const getOptions = (options: IDropdownOption[]) => {
     const filterOptions = options.map((option) =>
-      !option.disabled && option.text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 ? option : { ...option, hidden: true }
+      option.text.toLowerCase().indexOf(searchText.toLowerCase()) > -1 ? option : { ...option, hidden: true }
     );
 
     return [
