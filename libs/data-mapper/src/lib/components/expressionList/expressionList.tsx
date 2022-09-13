@@ -1,6 +1,7 @@
 import { getExpressions } from '../../core/queries/expressions';
 import type { Expression } from '../../models/Expression';
 import { ExpressionCategory } from '../../models/Expression';
+import { getExpressionBrandingForCategory } from '../../utils/Expression.Utils';
 import { getIconForExpression } from '../../utils/Icon.Utils';
 import { DMTooltip } from '../tooltip/tooltip';
 import { TreeHeader } from '../tree/treeHeader';
@@ -148,6 +149,7 @@ const cardStyles = makeStyles({
     width: '180px',
     paddingLeft: '4px',
     paddingRight: '4px',
+    ...shorthands.overflow('hidden'),
   },
 });
 
@@ -155,6 +157,7 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
   const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
+  const brand = getExpressionBrandingForCategory(expression.expressionCategory);
   console.log(expression.matchIndices);
   const notBoldSection1 = expression.name.slice(0, expression.matchIndices?.at(0)?.indices[0][0]);
   const boldSection = expression.name.slice(
@@ -163,6 +166,15 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
   );
   const notBoldSection2 = expression.name.slice((expression.matchIndices?.at(0)?.indices[0][1] ?? 1) + 1, expression.name.length + 1);
   console.log(`${notBoldSection1} + ${boldSection}`);
+  const text = expression.matchIndices ? (
+    <div>
+      {notBoldSection1}
+      <b>{boldSection}</b>
+      {notBoldSection2}
+    </div>
+  ) : (
+    expression.name
+  );
 
   return (
     <Button
@@ -175,11 +187,14 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
         onExpressionClick(expression);
       }}
     >
-      {getIconForExpression(expression)}
-      <Caption1 className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
-        {notBoldSection1}
-        <b>{boldSection}</b>
-        {notBoldSection2}
+      <span style={{ backgroundColor: brand.colorLight, height: '28px', width: '28px', borderRadius: '14px' }}>
+        <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1 }}>
+          {' '}
+          {getIconForExpression(expression.name, expression.iconFileName, brand)}
+        </div>
+      </span>
+      <Caption1 truncate block className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
+        {text}
       </Caption1>
       <span style={{ justifyContent: 'right' }}>
         <DMTooltip text={expression.detailedDescription}></DMTooltip>

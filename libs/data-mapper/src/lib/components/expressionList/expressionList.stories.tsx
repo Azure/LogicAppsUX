@@ -14,7 +14,7 @@ const toolboxPanelProps: FloatingPanelProps = {
   xPos: '16px',
   yPos: '76px',
   width: '250px',
-  minHeight: '300px',
+  minHeight: '450px',
   maxHeight: '450px',
 };
 
