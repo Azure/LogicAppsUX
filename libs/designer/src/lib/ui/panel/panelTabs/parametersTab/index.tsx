@@ -9,6 +9,7 @@ import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import { loadDynamicValuesForParameter, updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
 import type { TokenGroup } from '../../../../core/utils/tokens';
 import { getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
+import { getAllVariables } from '../../../../core/utils/variables';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
@@ -70,6 +71,7 @@ const ParameterSection = ({
     connectionId,
     dependencies,
     settings: nodeSettings,
+    variables,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
@@ -78,6 +80,7 @@ const ParameterSection = ({
       connectionId: getConnectionId(state.connections, nodeId),
       dependencies: state.operations.dependencies[nodeId],
       settings: state.operations.settings[nodeId],
+      variables: getAllVariables(state.tokens.variables),
     };
   });
 
@@ -100,11 +103,12 @@ const ParameterSection = ({
         connectionId,
         nodeInputs,
         dependencies,
+        variables,
         nodeSettings,
         dispatch
       );
     },
-    [nodeId, group.id, isTrigger, operationInfo, connectionId, nodeInputs, dependencies, nodeSettings, dispatch]
+    [nodeId, group.id, isTrigger, operationInfo, connectionId, nodeInputs, dependencies, variables, nodeSettings, dispatch]
   );
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {

@@ -1,12 +1,24 @@
 import Constants from '../../../common/constants';
-import { getJSONValueFromString, getParameterFromName, loadParameterValuesFromDefault, parameterValueToString, tryConvertStringToExpression } from './helper';
+import { getDynamicSchemaProperties, getListDynamicValues } from '../../queries/connector';
+import type { DependencyInfo, NodeInputs } from '../../state/operation/operationMetadataSlice';
+import type { VariableDeclaration } from '../../state/tokensSlice';
+import {
+  getJSONValueFromString,
+  getParameterFromName,
+  loadParameterValuesFromDefault,
+  parameterValueToString,
+  tryConvertStringToExpression,
+} from './helper';
+import type { ListDynamicValue } from '@microsoft-logic-apps/designer-client-services';
+import { getIntl } from '@microsoft-logic-apps/intl';
 import type {
   DynamicParameters,
   InputParameter,
   OutputParameter,
   OutputParameters,
   ResolvedParameter,
-  SchemaProcessorOptions} from '@microsoft-logic-apps/parsers';
+  SchemaProcessorOptions,
+} from '@microsoft-logic-apps/parsers';
 import {
   ExtensionProperties,
   isDynamicPropertiesExtension,
@@ -20,10 +32,7 @@ import {
   SchemaProcessor,
   WildIndexSegment,
 } from '@microsoft-logic-apps/parsers';
-import type {
-  OperationInfo,
-  OperationManifest
-} from '@microsoft-logic-apps/utils';
+import type { OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
 import {
   UnsupportedExceptionCode,
   UnsupportedExceptionName,
@@ -31,7 +40,7 @@ import {
   AssertionErrorCode,
   AssertionException,
   ValidationErrorCode,
-  ValidationException ,
+  ValidationException,
   clone,
   equals,
   getObjectPropertyValue,
@@ -42,51 +51,87 @@ import {
   copy,
   unmap,
 } from '@microsoft-logic-apps/utils';
-import type { DependencyInfo, NodeInputs } from '../../state/operation/operationMetadataSlice';
-import { getIntl } from '@microsoft-logic-apps/intl';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import type { ListDynamicValue } from '@microsoft-logic-apps/designer-client-services';
-import { getDynamicSchemaProperties, getListDynamicValues } from '../../queries/connector';
 
-export async function getDynamicValues(dependencyInfo: DependencyInfo, nodeInputs: NodeInputs, connectionId: string, operationInfo: OperationInfo): Promise<ListDynamicValue[]> {
+export async function getDynamicValues(
+  dependencyInfo: DependencyInfo,
+  nodeInputs: NodeInputs,
+  connectionId: string,
+  operationInfo: OperationInfo
+): Promise<ListDynamicValue[]> {
   const { definition, parameter } = dependencyInfo;
   if (isDynamicListExtension(definition)) {
     const { dynamicState, parameters } = definition.extension;
     const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs);
 
-    return getListDynamicValues(connectionId, operationInfo.connectorId, operationInfo.operationId, parameter?.alias, operationParameters, dynamicState);
+    return getListDynamicValues(
+      connectionId,
+      operationInfo.connectorId,
+      operationInfo.operationId,
+      parameter?.alias,
+      operationParameters,
+      dynamicState
+    );
   } else {
     // TODO - Add for swagger based dynamic calls
     return [];
   }
 }
 
-export async function getDynamicSchema(dependencyInfo: DependencyInfo, nodeInputs: NodeInputs, connectionId: string, operationInfo: OperationInfo): Promise<OpenAPIV2.SchemaObject> {
+export async function getDynamicSchema(
+  dependencyInfo: DependencyInfo,
+  nodeInputs: NodeInputs,
+  connectionId: string,
+  operationInfo: OperationInfo,
+  variables: VariableDeclaration[] = []
+): Promise<OpenAPIV2.SchemaObject> {
   const { parameter, definition } = dependencyInfo;
   const emptySchema = {
     [ExtensionProperties.Alias]: parameter?.alias,
     title: parameter?.title,
-    description: parameter?.description
+    description: parameter?.description,
   };
   try {
     if (isDynamicPropertiesExtension(definition)) {
       const { dynamicState, parameters } = definition.extension;
       const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs);
+      let schema: OpenAPIV2.SchemaObject;
 
-      return getDynamicSchemaProperties(connectionId, operationInfo.connectorId, operationInfo.operationId, parameter?.alias, operationParameters, dynamicState);
+      switch (dynamicState.builtInOperation) {
+        case 'getVariableSchema':
+          schema = { type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase()) };
+          break;
+        case 'getVariable':
+          // eslint-disable-next-line no-case-declarations
+          const variable = variables.find((variable) => variable.name === operationParameters['name']);
+          schema = variable ? { type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()) } : {};
+          break;
+        default:
+          schema = await getDynamicSchemaProperties(
+            connectionId,
+            operationInfo.connectorId,
+            operationInfo.operationId,
+            parameter?.alias,
+            operationParameters,
+            dynamicState
+          );
+          break;
+      }
+
+      return schema ? { ...emptySchema, ...schema } : schema;
     } else {
       // TODO - Add for swagger based dynamic calls
       return emptySchema;
     }
   } catch (error: any) {
-      if (
-          (error.name === UnsupportedExceptionName && error.code === UnsupportedExceptionCode.RUNTIME_EXPRESSION) ||
-          (error.name === ValidationExceptionName && error.code === ValidationErrorCode.INVALID_VALUE_SEGMENT_TYPE)
-      ) {
-          return emptySchema;
-      }
+    if (
+      (error.name === UnsupportedExceptionName && error.code === UnsupportedExceptionCode.RUNTIME_EXPRESSION) ||
+      (error.name === ValidationExceptionName && error.code === ValidationErrorCode.INVALID_VALUE_SEGMENT_TYPE)
+    ) {
+      return emptySchema;
+    }
 
-      throw error;
+    throw error;
   }
 }
 
@@ -129,6 +174,7 @@ export function getDynamicInputsFromSchema(
   allInputKeys: string[],
   operationDefinition: any
 ): InputParameter[] {
+  // TODO: Need to handle it correctly for nested parameters.
   const isParameterNested = false;
   const processorOptions: SchemaProcessorOptions = {
     prefix: isParameterNested ? dynamicParameter.name : '',
@@ -193,34 +239,43 @@ function getParametersForDynamicInvoke(referenceParameters: DynamicParameters, n
   const operationParameters: Record<string, any> = {};
 
   for (const [parameterName, parameter] of Object.entries(referenceParameters)) {
+    // TODO(trbaratc): <2337657> Verify nested dependency parameters work once dynamic values available on api.
+    const referencedParameter = getParameterFromName(nodeInputs, parameter.parameterReference);
 
-      // TODO(trbaratc): <2337657> Verify nested dependency parameters work once dynamic values available on api.
-      const referencedParameter = getParameterFromName(nodeInputs, parameter.parameterReference);
+    if (!referencedParameter) {
+      throw new AssertionException(
+        AssertionErrorCode.INVALID_PARAMETER_DEPENDENCY,
+        intl.formatMessage(
+          {
+            defaultMessage: 'Parameter "{parameterName}" cannot be found for this operation',
+            description: 'Error message to show in dropdown when dependent parameter is not found',
+          },
+          { parameterName: parameter.parameterReference }
+        )
+      );
+    }
 
-      if (!referencedParameter) {
-          throw new AssertionException(
-              AssertionErrorCode.INVALID_PARAMETER_DEPENDENCY,
-              intl.formatMessage({
-                defaultMessage: 'Parameter "{parameterName}" cannot be found for this operation',
-                description: 'Error message to show in dropdown when dependent parameter is not found'
-              }, { parameterName: parameter.parameterReference })
-          );
-      }
+    // Stamp with @parameters and @appsetting values here for some parameters
 
-      // Stamp with @parameters and @appsetting values here for some parameters
+    // Parameter tokens are supported.
+    if (
+      referencedParameter.value.some(
+        (segment) => segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER
+      )
+    ) {
+      throw new ValidationException(
+        ValidationErrorCode.INVALID_VALUE_SEGMENT_TYPE,
+        intl.formatMessage({
+          defaultMessage: 'Value contains function expressions which cannot be resolved. Only constant values supported',
+          description: 'Error message to show in dropdown when dependent parameter value cannot be resolved',
+        })
+      );
+    }
 
-      // Parameter tokens are supported.
-      if (referencedParameter.value.some(segment => segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER)) {
-          throw new ValidationException(
-              ValidationErrorCode.INVALID_VALUE_SEGMENT_TYPE,
-              intl.formatMessage({
-                defaultMessage: 'Value contains function expressions which cannot be resolved. Only constant values supported',
-                description: 'Error message to show in dropdown when dependent parameter value cannot be resolved'
-              })
-          );
-      }
-
-      operationParameters[parameterName] = getJSONValueFromString(parameterValueToString(referencedParameter, true /* isDefinitionValue */), referencedParameter.type);
+    operationParameters[parameterName] = getJSONValueFromString(
+      parameterValueToString(referencedParameter, true /* isDefinitionValue */),
+      referencedParameter.type
+    );
   }
 
   return operationParameters;
@@ -311,4 +366,19 @@ function getObjectValue(key: string, currentObject: any): any {
   }
 
   return value;
+}
+
+function getSwaggerTypeFromVariableType(variableType: string): string | undefined {
+  switch (variableType) {
+    case 'float':
+      return 'number';
+    case 'integer':
+    case 'boolean':
+    case 'string':
+    case 'array':
+    case 'object':
+      return variableType;
+    default:
+      return undefined;
+  }
 }

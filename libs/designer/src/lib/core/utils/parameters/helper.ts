@@ -11,6 +11,7 @@ import type {
   UpdateParametersPayload,
 } from '../../state/operation/operationMetadataSlice';
 import { addDynamicInputs, clearDynamicInputs, updateNodeParameters } from '../../state/operation/operationMetadataSlice';
+import type { VariableDeclaration } from '../../state/tokensSlice';
 import type { Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../card';
 import { initializeArrayViewModel } from '../editors/array';
@@ -1000,6 +1001,7 @@ export async function updateParameterAndDependencies(
   connectionId: string,
   nodeInputs: NodeInputs,
   dependencies: NodeDependencies,
+  variables: VariableDeclaration[],
   settings: Settings,
   dispatch: Dispatch
 ): Promise<void> {
@@ -1052,6 +1054,7 @@ export async function updateParameterAndDependencies(
         dependenciesToUpdate,
         updateNodeInputsWithParameter(nodeInputs, parameterId, groupId, properties),
         settings,
+        variables,
         dispatch
       );
     }
@@ -1102,6 +1105,7 @@ async function loadDynamicData(
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
   settings: Settings,
+  variables: VariableDeclaration[],
   dispatch: Dispatch
 ): Promise<void> {
   if (Object.keys(dependencies.outputs).length) {
@@ -1109,7 +1113,7 @@ async function loadDynamicData(
   }
 
   if (Object.keys(dependencies.inputs).length) {
-    loadDynamicContentForInputsInNode(nodeId, dependencies.inputs, operationInfo, connectionId, nodeInputs, dispatch);
+    loadDynamicContentForInputsInNode(nodeId, dependencies.inputs, operationInfo, connectionId, nodeInputs, variables, dispatch);
   }
 }
 
@@ -1119,13 +1123,14 @@ async function loadDynamicContentForInputsInNode(
   operationInfo: OperationInfo,
   connectionId: string,
   allInputs: NodeInputs,
+  variables: VariableDeclaration[],
   dispatch: Dispatch
 ): Promise<void> {
   for (const inputKey of Object.keys(inputDependencies)) {
     const info = inputDependencies[inputKey];
     if (isDynamicDataReadyToLoad(info) && info.dependencyType === 'ApiSchema') {
       dispatch(clearDynamicInputs(nodeId));
-      const inputSchema = await getDynamicSchema(info, allInputs, connectionId, operationInfo);
+      const inputSchema = await getDynamicSchema(info, allInputs, connectionId, operationInfo, variables);
       const manifest = await getOperationManifest(operationInfo);
       const allInputParameters = getAllInputParameters(allInputs);
       const allInputKeys = allInputParameters.map((param) => param.parameterKey);
@@ -1165,39 +1170,47 @@ export async function loadDynamicValuesForParameter(
   const dependencyInfo = dependencies.inputs[parameter.parameterKey];
   if (dependencyInfo) {
     if (isDynamicDataReadyToLoad(dependencyInfo)) {
-      dispatch(updateNodeParameters({
-        nodeId,
-        parameters: [
-          {
-            parameterId,
-            groupId,
-            propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } },
-          },
-        ],
-      }));
-
-      try {
-        const dynamicValues = await getDynamicValues(dependencyInfo, nodeInputs, connectionId, operationInfo);
-
-        dispatch(updateNodeParameters({
+      dispatch(
+        updateNodeParameters({
           nodeId,
           parameters: [
             {
               parameterId,
               groupId,
-              propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } },
+              propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } },
             },
           ],
-        }));
+        })
+      );
+
+      try {
+        const dynamicValues = await getDynamicValues(dependencyInfo, nodeInputs, connectionId, operationInfo);
+
+        dispatch(
+          updateNodeParameters({
+            nodeId,
+            parameters: [
+              {
+                parameterId,
+                groupId,
+                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } },
+              },
+            ],
+          })
+        );
       } catch (error) {
-        dispatch(updateNodeParameters({
-          nodeId,
-          parameters: [{
-            parameterId,
-            groupId,
-            propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: error as Exception }}
-          }]
-        }));
+        dispatch(
+          updateNodeParameters({
+            nodeId,
+            parameters: [
+              {
+                parameterId,
+                groupId,
+                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: error as Exception } },
+              },
+            ],
+          })
+        );
       }
     } else {
       const intl = getIntl();
@@ -1205,30 +1218,32 @@ export async function loadDynamicValuesForParameter(
         .filter((key) => !dependencyInfo.dependentParameters[key].isValid)
         .map((id) => groupParameters.find((param) => param.id === id)?.parameterName);
 
-      dispatch(updateNodeParameters({
-        nodeId,
-        parameters: [
-          {
-            parameterId,
-            groupId,
-            propertiesToUpdate: {
-              dynamicData: {
-                error: {
-                  name: 'DynamicListFailed',
-                  message: intl.formatMessage(
-                    {
-                      defaultMessage: 'Required parameters {parameters} not set or invalid',
-                      description: 'Error message to show when required parameters are not set or invalid',
-                    },
-                    { parameters: `${invalidParameterNames.join(' , ')}` }
-                  )
+      dispatch(
+        updateNodeParameters({
+          nodeId,
+          parameters: [
+            {
+              parameterId,
+              groupId,
+              propertiesToUpdate: {
+                dynamicData: {
+                  error: {
+                    name: 'DynamicListFailed',
+                    message: intl.formatMessage(
+                      {
+                        defaultMessage: 'Required parameters {parameters} not set or invalid',
+                        description: 'Error message to show when required parameters are not set or invalid',
+                      },
+                      { parameters: `${invalidParameterNames.join(' , ')}` }
+                    ),
+                  },
+                  status: DynamicCallStatus.FAILED,
                 },
-                status: DynamicCallStatus.FAILED,
               },
             },
-          },
-        ],
-      }));
+          ],
+        })
+      );
     }
   }
 }
