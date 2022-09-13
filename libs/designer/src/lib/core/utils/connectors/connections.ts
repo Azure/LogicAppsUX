@@ -1,5 +1,5 @@
-import type { Connection, ConnectionStatus } from '@microsoft-logic-apps/utils';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
+import type { Connection, ConnectionStatus } from '@microsoft-logic-apps/utils';
 
 export function getConnectionErrors(connection: Connection): ConnectionStatus[] {
   if (connection && connection.properties && connection.properties.statuses) {
@@ -11,5 +11,5 @@ export function getConnectionErrors(connection: Connection): ConnectionStatus[] 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
   const { connectionsMapping, connectionReferences } = state;
   const reference = connectionReferences[connectionsMapping[nodeId]];
-  return reference ? reference.connection.id : 'Not Found';
+  return reference ? reference.connection.id : '';
 }

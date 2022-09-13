@@ -4,6 +4,7 @@ import type { ParameterGroup } from '../../../../core/state/operation/operationM
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeConnectionName } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../../core/store';
+import { getConnectionId } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import { loadDynamicValuesForParameter, updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
 import type { TokenGroup } from '../../../../core/utils/tokens';
@@ -15,7 +16,6 @@ import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getConnectionId } from '../../../../core/utils/connectors/connections';
 
 export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
@@ -44,7 +44,7 @@ export const ParametersTab = () => {
           />
         </div>
       ))}
-      {connectionName && <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />}
+      {connectionName?.result && <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />}
     </>
   );
 };

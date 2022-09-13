@@ -16,7 +16,7 @@ import type {
 import { IconButton, TooltipHost, SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { guid } from '@microsoft-logic-apps/utils';
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 enum Mode {
@@ -78,7 +78,7 @@ export const Combobox = ({
   readOnly,
   GetTokenPicker,
   onChange,
-  onMenuOpen
+  onMenuOpen,
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
@@ -86,8 +86,46 @@ export const Combobox = ({
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
   const [mode, setMode] = useState<Mode>(getMode(optionKey, initialValue));
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
-  const [comboboxOptions, setComboBoxOptions] = useState<IComboBoxOption[]>(getOptions(options));
+  const [searchValue, setSearchValue] = useState<string>('');
+  //const [comboboxOptions, setComboBoxOptions] = useState<IComboBoxOption[]>(getOptions(options));
   const [canAutoFocus, setCanAutoFocus] = useState(false);
+
+  const comboboxOptions = useMemo(() => {
+    if (searchValue) {
+      comboBoxRef.current?.focus(true);
+      const newOptions = options.filter((option) =>
+        new RegExp(searchValue.replace(/\\/g, '').toLowerCase()).test(option.value.toLowerCase())
+      );
+      if (newOptions.length === 0) {
+        const noValuesLabel = intl.formatMessage({
+          defaultMessage: 'No values matching your search',
+          description: 'Label for when no values match search value',
+        });
+        newOptions.push({ key: 'header', value: noValuesLabel, disabled: true, displayName: noValuesLabel });
+      }
+      newOptions.push({ key: 'divider', value: '-', displayName: '-' });
+      if (options.filter((option) => option.value === searchValue).length === 0 && searchValue !== '' && useOption) {
+        const customValueLabel = intl.formatMessage(
+          {
+            defaultMessage: 'Use "{value}" as a custom value',
+            description: 'Label for button to allow user to create custom value in combobox from current input',
+          },
+          { value: searchValue }
+        );
+        newOptions.push({
+          key: searchValue,
+          value: customValueLabel,
+          displayName: customValueLabel,
+          disabled: false,
+          type: 'customrender',
+        });
+      }
+
+      return getOptions(newOptions);
+    }
+
+    return getOptions(options);
+  }, [intl, options, searchValue, useOption]);
 
   useEffect(() => {
     onChange?.({
@@ -104,32 +142,12 @@ export const Combobox = ({
     comboBoxRef.current?.dismissMenu();
   }, []);
 
-  const handleMenuOpen = (): void => { onMenuOpen?.(); }
+  const handleMenuOpen = (): void => {
+    onMenuOpen?.();
+  };
 
   const updateOptions = (value?: string): void => {
-    if (value !== undefined) {
-      comboBoxRef.current?.focus(true);
-      const newOptions = options.filter((option) => new RegExp(value.replace(/\\/g, '').toLowerCase()).test(option.value.toLowerCase()));
-      if (newOptions.length === 0) {
-        const noValuesLabel = intl.formatMessage({
-          defaultMessage: 'No values matching your search',
-          description: 'Label for when no values match search value',
-        });
-        newOptions.push({ key: 'header', value: noValuesLabel, disabled: true, displayName: noValuesLabel });
-      }
-      newOptions.push({ key: 'divider', value: '-', displayName: '-' });
-      if (options.filter((option) => option.value === value).length === 0 && value !== '' && useOption) {
-        const customValueLabel = intl.formatMessage(
-          {
-            defaultMessage: 'Use "{value}" as a custom value',
-            description: 'Label for button to allow user to create custom value in combobox from current input',
-          },
-          { value: value }
-        );
-        newOptions.push({ key: value, value: customValueLabel, displayName: customValueLabel, disabled: false, type: 'customrender' });
-      }
-      setComboBoxOptions(getOptions(newOptions));
-    }
+    setSearchValue(value ?? '');
   };
 
   const onRenderOption = (item?: IComboBoxOption) => {
