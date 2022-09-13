@@ -22,10 +22,12 @@ const buttonHoverStyles = makeStyles({
   },
 });
 
+type ExpressionSearch = Expression & Partial<{ matchIndices: Fuse.FuseResultMatch[] }>;
+
 export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionListProps) => {
   const expressionListData = useQuery<Expression[]>(['expressions'], () => getExpressions());
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [sortedExpressionsByCategory, setSortedExpressionsByCategory] = useState<Expression[]>([]);
+  const [sortedExpressionsByCategory, setSortedExpressionsByCategory] = useState<ExpressionSearch[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
 
   useEffect(() => {
@@ -46,7 +48,9 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
         };
         const fuse = new Fuse(expressionListData.data, options);
         const results = fuse.search(searchTerm);
-        dataCopy = results.map((fuse) => fuse.item);
+        dataCopy = results.map((fuse) => {
+          return { ...fuse.item, matchIndices: fuse.matches };
+        });
         dataCopy.forEach((expression) => {
           if (!categoriesArray.find((category) => category === expression.expressionCategory))
             categoriesArray.push(expression.expressionCategory);
@@ -126,7 +130,7 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
 };
 
 interface ExpressionListCellProps {
-  expression: Expression;
+  expression: ExpressionSearch;
   onExpressionClick: (expression: Expression) => void;
 }
 
@@ -151,6 +155,14 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
   const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
+  console.log(expression.matchIndices);
+  const notBoldSection1 = expression.name.slice(0, expression.matchIndices?.at(0)?.indices[0][0]);
+  const boldSection = expression.name.slice(
+    expression.matchIndices?.at(0)?.indices[0][0],
+    (expression.matchIndices?.at(0)?.indices[0][1] ?? 1) + 1
+  );
+  const notBoldSection2 = expression.name.slice((expression.matchIndices?.at(0)?.indices[0][1] ?? 1) + 1, expression.name.length + 1);
+  console.log(`${notBoldSection1} + ${boldSection}`);
 
   return (
     <Button
@@ -165,7 +177,9 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
     >
       {getIconForExpression(expression)}
       <Caption1 className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
-        {expression.name}
+        {notBoldSection1}
+        <b>{boldSection}</b>
+        {notBoldSection2}
       </Caption1>
       <span style={{ justifyContent: 'right' }}>
         <DMTooltip text={expression.detailedDescription}></DMTooltip>
