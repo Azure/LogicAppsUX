@@ -1,6 +1,6 @@
 import { baseCanvasHeight, basePropertyPaneContentHeight } from '../../constants/ReactFlowConstants';
-import type { SelectedNode } from '../../models';
-import { NodeType } from '../../models';
+import { NodeType } from '../../models/SelectedNode';
+import type { SelectedNode } from '../../models/SelectedNode';
 import { CodeTab } from './tabComponents/CodeTab';
 import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
@@ -161,7 +161,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   };
 
   const getPaneTitle = (): string | undefined => {
-    switch (currentNode?.type) {
+    switch (currentNode?.nodeType) {
       case NodeType.Input:
         return inputSchemaNodeLoc;
       case NodeType.Output:
@@ -182,7 +182,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        if (currentNode.type === NodeType.Expression) {
+        if (currentNode.nodeType === NodeType.Expression) {
           return <ExpressionNodePropertiesTab currentNode={currentNode} />;
         } else {
           return <SchemaNodePropertiesTab currentNode={currentNode} />;
@@ -190,7 +190,11 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       case TABS.CODE:
         return <CodeTab />;
       case TABS.TEST:
-        return <TestTab />;
+        if (currentNode.nodeType === NodeType.Output) {
+          return <TestTab currentNode={currentNode} />;
+        } else {
+          return null;
+        }
       default:
         console.error('tabToDisplay is undefined');
         return null;
@@ -204,7 +208,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
         <Tab value={TABS.CODE}>{codeLoc}</Tab>
-        {currentNode?.type === NodeType.Output && <Tab value={TABS.TEST}>{testLoc}</Tab>}
+        {currentNode?.nodeType === NodeType.Output && <Tab value={TABS.TEST}>{testLoc}</Tab>}
       </TabList>
     </>
   );
@@ -233,7 +237,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
-          {(currentNode?.type === NodeType.Input || currentNode?.type === NodeType.Expression) && (
+          {(currentNode?.nodeType === NodeType.Input || currentNode?.nodeType === NodeType.Expression) && (
             <Button
               appearance="subtle"
               size="medium"

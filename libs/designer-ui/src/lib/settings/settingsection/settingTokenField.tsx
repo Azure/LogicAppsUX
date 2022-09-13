@@ -60,7 +60,7 @@ const TokenField = ({
       return (
         <Combobox
           placeholder={placeholder}
-          readOnly={readOnly}
+          readonly={readOnly}
           initialValue={value}
           options={options}
           useOption={true}

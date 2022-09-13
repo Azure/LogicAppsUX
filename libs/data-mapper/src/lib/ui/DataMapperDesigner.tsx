@@ -37,12 +37,14 @@ import {
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import type { SchemaNodeExtended, SelectedNode } from '../models';
-import { NodeType, SchemaTypes } from '../models';
+import { SchemaTypes } from '../models';
+import type { SchemaNodeExtended } from '../models';
+import { NodeType } from '../models/SelectedNode';
+import type { SelectedInputNode, SelectedOutputNode, SelectedExpressionNode } from '../models/SelectedNode';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { Expression, ExpressionDictionary } from '../models/Expression';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
-import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
+import { convertToReactFlowEdges, convertToReactFlowNodes, inputPrefix, outputPrefix, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
 import './ReactFlowStyleOverrides.css';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
@@ -174,12 +176,45 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onNodeSingleClick = (node: ReactFlowNode): void => {
-    const newCurrentlySelectedNode: SelectedNode = {
-      type: node.type === ReactFlowNodeType.SchemaNode ? node.data.schemaType : NodeType.Expression,
-      name: node.data.label,
-      path: node.id,
-    };
-    dispatch(setCurrentlySelectedNode(newCurrentlySelectedNode));
+    if (node.type === ReactFlowNodeType.SchemaNode) {
+      if (node.data.schemaType === SchemaTypes.Input) {
+        const selectedInputNode: SelectedInputNode = {
+          nodeType: NodeType.Input,
+          name: node.data.label,
+          path: node.id.replace(inputPrefix, ''),
+          dataType: node.data.nodeDataType,
+        };
+  
+        dispatch(setCurrentlySelectedNode(selectedInputNode));
+      }
+      else if (node.data.schemaType === SchemaTypes.Output) {
+        const selectedOutputNode: SelectedOutputNode = {
+          nodeType: NodeType.Output,
+          name: node.data.label,
+          path: node.id.replace(outputPrefix, ''),
+          dataType: node.data.nodeDataType,
+          defaultValue: '', // TODO: this property and below
+          doNotGenerateIfNoValue: true,
+          nullable: true,
+        };
+  
+        dispatch(setCurrentlySelectedNode(selectedOutputNode));
+      }
+    }
+    else if (node.type === ReactFlowNodeType.ExpressionNode) {
+      const selectedExpressionNode: SelectedExpressionNode = {
+        nodeType: NodeType.Expression,
+        name: node.data.expressionName,
+        inputs: node.data.inputs,
+        iconName: '', // TODO: this property and below
+        description: '',
+        codeEx: '',
+        definition: '',
+        outputId: ''
+      };
+
+      dispatch(setCurrentlySelectedNode(selectedExpressionNode));
+    }
   };
 
   const onNodeDoubleClick = (node: ReactFlowNode<SchemaCardProps>): void => {

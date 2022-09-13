@@ -1,9 +1,8 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeHandler, CallbackHandler } from '../editor/base';
+import type { BaseEditorProps, CallbackHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Change } from '../editor/base/plugins/Change';
-import { Label } from '../label';
 import type {
   IButtonStyles,
   IComboBox,
@@ -55,16 +54,9 @@ export interface ComboboxItem {
   type?: string;
 }
 
-export interface ComboboxProps {
+export interface ComboboxProps extends BaseEditorProps {
   options: ComboboxItem[];
-  initialValue: ValueSegment[];
-  placeholder?: string;
-  label?: string;
   useOption?: boolean;
-  readOnly?: boolean; // TODO - Need to have readOnly version
-  required?: boolean;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
-  onChange?: ChangeHandler;
   onMenuOpen?: CallbackHandler;
 }
 
@@ -72,10 +64,8 @@ export const Combobox = ({
   options,
   initialValue,
   placeholder,
-  label,
   useOption = true,
-  required,
-  readOnly,
+  readonly,
   GetTokenPicker,
   onChange,
   onMenuOpen,
@@ -189,11 +179,10 @@ export const Combobox = ({
 
   return (
     <div className="msla-combobox-container">
-      {label ? <Label className="msla-combobox-label" text={label} isRequiredField={required} /> : null}
       {mode === Mode.Custom ? (
         <div className="msla-combobox-editor-container">
           <BaseEditor
-            readonly={readOnly}
+            readonly={readonly}
             className="msla-combobox-editor"
             placeholder={placeholder}
             BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
@@ -210,7 +199,7 @@ export const Combobox = ({
         </div>
       ) : (
         <ComboBox
-          disabled={readOnly}
+          disabled={readonly}
           className="msla-combobox"
           selectedKey={selectedKey}
           componentRef={comboBoxRef}
