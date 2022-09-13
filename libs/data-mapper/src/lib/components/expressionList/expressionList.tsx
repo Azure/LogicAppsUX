@@ -23,12 +23,10 @@ const buttonHoverStyles = makeStyles({
   },
 });
 
-type ExpressionSearch = Expression & Partial<{ matchIndices: Fuse.FuseResultMatch[] }>;
-
 export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionListProps) => {
   const expressionListData = useQuery<Expression[]>(['expressions'], () => getExpressions());
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [sortedExpressionsByCategory, setSortedExpressionsByCategory] = useState<ExpressionSearch[]>([]);
+  const [sortedExpressionsByCategory, setSortedExpressionsByCategory] = useState<Expression[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
 
   useEffect(() => {
@@ -131,7 +129,7 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
 };
 
 interface ExpressionListCellProps {
-  expression: ExpressionSearch;
+  expression: Expression;
   onExpressionClick: (expression: Expression) => void;
 }
 
@@ -158,23 +156,6 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
   const cardStyle = cardStyles();
   const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
   const brand = getExpressionBrandingForCategory(expression.expressionCategory);
-  console.log(expression.matchIndices);
-  const notBoldSection1 = expression.name.slice(0, expression.matchIndices?.at(0)?.indices[0][0]);
-  const boldSection = expression.name.slice(
-    expression.matchIndices?.at(0)?.indices[0][0],
-    (expression.matchIndices?.at(0)?.indices[0][1] ?? 1) + 1
-  );
-  const notBoldSection2 = expression.name.slice((expression.matchIndices?.at(0)?.indices[0][1] ?? 1) + 1, expression.name.length + 1);
-  console.log(`${notBoldSection1} + ${boldSection}`);
-  const text = expression.matchIndices ? (
-    <div>
-      {notBoldSection1}
-      <b>{boldSection}</b>
-      {notBoldSection2}
-    </div>
-  ) : (
-    expression.name
-  );
 
   return (
     <Button
@@ -189,12 +170,11 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
     >
       <span style={{ backgroundColor: brand.colorLight, height: '28px', width: '28px', borderRadius: '14px' }}>
         <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1 }}>
-          {' '}
           {getIconForExpression(expression.name, expression.iconFileName, brand)}
         </div>
       </span>
       <Caption1 truncate block className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
-        {text}
+        {expression.name}
       </Caption1>
       <span style={{ justifyContent: 'right' }}>
         <DMTooltip text={expression.detailedDescription}></DMTooltip>
