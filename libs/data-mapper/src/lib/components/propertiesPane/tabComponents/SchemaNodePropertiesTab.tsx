@@ -1,5 +1,5 @@
 import { NodeType } from '../../../models';
-import type { SelectedNode } from '../../../models';
+import type { SelectedSchemaNode } from '../../../models';
 import { Checkbox, makeStyles, Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
@@ -14,7 +14,7 @@ const useStyles = makeStyles({
 });
 
 interface SchemaNodePropertiesTabProps {
-  currentNode: SelectedNode;
+  currentNode: SelectedSchemaNode;
 }
 
 export const SchemaNodePropertiesTab = (props: SchemaNodePropertiesTabProps): JSX.Element => {
@@ -76,7 +76,7 @@ export const SchemaNodePropertiesTab = (props: SchemaNodePropertiesTabProps): JS
     <div>
       <NodeInfo />
 
-      {currentNode.type === NodeType.Output && <AdditionalOutputNodeProperties />}
+      {currentNode.nodeType === NodeType.Output && <AdditionalOutputNodeProperties />}
     </div>
   );
 };

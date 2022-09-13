@@ -1,13 +1,35 @@
-import type { SelectedNode } from '../../models';
-import { NodeType } from '../../models';
+import { NodeType, SchemaNodeDataType } from '../../models';
+import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../../models';
 import { PropertiesPane } from './PropertiesPane';
 import type { PropertiesPaneProps } from './PropertiesPane';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-const exInputNode: SelectedNode = { type: NodeType.Input, name: 'ExInputNode', path: '/path/to/ExInputNode' };
-const exOutputNode: SelectedNode = { type: NodeType.Output, name: 'ExOutputNode', path: '/path/to/ExOutputNode' };
-const exExpressionNode: SelectedNode = { type: NodeType.Expression, name: 'ExExpressionNode', path: '/path/to/ExExpressionNode' };
+const exInputNode: SelectedInputNode = {
+  nodeType: NodeType.Input,
+  name: 'ExInputNode',
+  path: '/path/to/ExInputNode',
+  dataType: SchemaNodeDataType.String,
+};
+const exOutputNode: SelectedOutputNode = {
+  nodeType: NodeType.Output,
+  name: 'ExOutputNode',
+  path: '/path/to/ExOutputNode',
+  dataType: SchemaNodeDataType.Int,
+  defaultValue: 'Default value',
+  doNotGenerateIfNoValue: true,
+  nullable: true
+};
+const exExpressionNode: SelectedExpressionNode = {
+  nodeType: NodeType.Expression,
+  name: 'ExExpressionNode',
+  iconName: '',
+  description: '',
+  codeEx: '',
+  definition: '',
+  inputs: [],
+  outputId: ''
+};
 
 const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exExpressionNode };
 

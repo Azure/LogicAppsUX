@@ -1,11 +1,11 @@
-import type { SelectedNode } from '../../../models';
+import type { SelectedExpressionNode } from '../../../models';
 
 interface ExpressionNodePropertiesTabProps {
-  currentNode: SelectedNode;
+  currentNode: SelectedExpressionNode;
 }
 
 export const ExpressionNodePropertiesTab = (props: ExpressionNodePropertiesTabProps): JSX.Element => {
   const { currentNode } = props;
 
-  return <div>Expression node properties content (for node type {currentNode.type})</div>;
+  return <div>Expression node properties content (for node type {currentNode.nodeType})</div>;
 };
