@@ -2895,6 +2895,9 @@
       <Item ItemId=";Li6x/B" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Missing required properties '{0}' for authentication type '{1}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA['{1}' kimlik doğrulama türü için gerekli '{0}' özellikleri eksik]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3234,6 +3237,9 @@
       <Item ItemId=";OH94j3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Missing required property '{0}' for authentication type '{1}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA['{1}' kimlik doğrulama türü için gerekli '{0}' özelliği eksik]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

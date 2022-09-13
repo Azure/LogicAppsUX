@@ -2907,6 +2907,9 @@
       <Item ItemId=";Li6x/B" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Missing required properties '{0}' for authentication type '{1}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mancano le proprietà '{0}' obbligatorie per il tipo di autenticazione '{1}']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3246,6 +3249,9 @@
       <Item ItemId=";OH94j3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Missing required property '{0}' for authentication type '{1}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Manca la proprietà '{0}' obbligatoria per il tipo di autenticazione '{1}']]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

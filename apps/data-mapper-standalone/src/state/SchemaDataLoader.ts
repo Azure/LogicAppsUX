@@ -52,23 +52,6 @@ export const loadOutputSchema = createAsyncThunk('schema/loadOutputSchema', asyn
   return undefined;
 });
 
-export const loadAvailableSchemas = createAsyncThunk('schema/loadAvailableSchemas', async (_: void, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
-  const availableSchemaPaths = currentState.schemaDataLoader.availableResourcesPaths;
-
-  // TODO ARM loading
-  if (currentState.schemaDataLoader.loadingMethod === 'arm') {
-    return undefined;
-  } else {
-    if (availableSchemaPaths) {
-      const loadedSchemas = availableSchemaPaths.map(async (schemaPath) => loadSchemaFromMock(schemaPath));
-      return (await Promise.all(loadedSchemas)).filter((loadedSchema) => loadedSchema) as Schema[];
-    }
-  }
-
-  return undefined;
-});
-
 export const schemaDataLoaderSlice = createSlice({
   name: 'schema',
   initialState,
@@ -106,15 +89,6 @@ export const schemaDataLoaderSlice = createSlice({
     builder.addCase(loadOutputSchema.rejected, (state) => {
       // TODO change to null for error handling case
       state.outputSchema = undefined;
-    });
-
-    builder.addCase(loadAvailableSchemas.fulfilled, (state, action) => {
-      state.availableSchemas = action.payload;
-    });
-
-    builder.addCase(loadAvailableSchemas.rejected, (state) => {
-      // TODO change to null for error handling case
-      state.availableSchemas = undefined;
     });
   },
 });
