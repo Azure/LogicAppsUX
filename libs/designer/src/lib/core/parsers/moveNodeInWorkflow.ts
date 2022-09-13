@@ -83,9 +83,11 @@ export const moveNodeInWorkflow = (
 
   // Update metadata
   const newGraphId = newWorkflowGraph.id;
-  const isNewRoot = parentId?.split('-#')[0] === newGraphId;
+  const isRoot = parentId?.split('-#')[0] === newGraphId;
   const parentNodeId = newGraphId !== 'root' ? newGraphId : undefined;
-  nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, ...(isNewRoot && { isRoot: isNewRoot }) };
+
+  nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, isRoot };
+  if (nodesMetadata[nodeId].isRoot === false) delete nodesMetadata[nodeId].isRoot;
 
   // 1 parent and 1 child
   if (parentId && childId) {
@@ -106,7 +108,10 @@ export const moveNodeInWorkflow = (
     addNewEdge(nodeId, childId, newWorkflowGraph);
   }
 
-  if (isNewRoot) resetIsRootNode(nodeId, newWorkflowGraph, nodesMetadata);
+  if (isRoot) {
+    resetIsRootNode(state, nodeId, newWorkflowGraph, nodesMetadata);
+    (state.operations[nodeId] as LogicAppsV2.ActionDefinition).runAfter = {};
+  }
 
   // Increase action count of graph
   if (nodesMetadata?.[newWorkflowGraph.id]) {

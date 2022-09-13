@@ -69,7 +69,7 @@ export const addNodeToWorkflow = (
     addNewEdge(newNodeId, childId, workflowGraph);
   }
 
-  if (isRoot) resetIsRootNode(newNodeId, workflowGraph, nodesMetadata);
+  if (isRoot) resetIsRootNode(state, newNodeId, workflowGraph, nodesMetadata);
 
   // Increase action count of graph
   if (nodesMetadata[workflowGraph.id]) {

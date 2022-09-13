@@ -105,7 +105,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       defaultMessage: 'Delete',
       description: 'Delete text',
     });
-    const isTrigger = metadata?.graphId === 'root' && metadata?.isRoot;
 
     const disableTriggerDeleteText = intl.formatMessage({
       defaultMessage: 'Triggers cannot be deleted.',

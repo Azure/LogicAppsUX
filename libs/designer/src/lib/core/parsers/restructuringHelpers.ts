@@ -14,6 +14,16 @@ export const addNewEdge = (parent: string, child: string, graph: WorkflowNode) =
   graph?.edges.push(workflowEdge);
 };
 
+const setEdgeSource = (edge: WorkflowEdge, newSource: string) => {
+  edge.id = `${newSource}-${edge.target}`;
+  edge.source = newSource;
+};
+
+const setEdgeTarget = (edge: WorkflowEdge, newTarget: string) => {
+  edge.id = `${edge.source}-${newTarget}`;
+  edge.target = newTarget;
+};
+
 export const removeEdge = (sourceId: string, targetId: string, graph: WorkflowNode) => {
   graph.edges = graph.edges?.filter((edge) => !(edge.source === sourceId && edge.target === targetId));
 };
@@ -24,7 +34,7 @@ export const removeEdge = (sourceId: string, targetId: string, graph: WorkflowNo
 export const reassignEdgeSources = (state: WorkflowState, oldSourceId: string, newSourceId: string, graph: WorkflowNode) => {
   graph.edges = graph.edges?.map((edge) => {
     if (edge.source === oldSourceId) {
-      edge.source = newSourceId;
+      setEdgeSource(edge, newSourceId);
       if (state) reassignNodeRunAfter(state, edge.target, oldSourceId, newSourceId);
     }
     return edge;
@@ -38,7 +48,7 @@ export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, n
   reassignAllNodeRunAfter(state, oldTargetId, newTargetId);
   graph.edges = graph.edges?.map((edge) => {
     if (edge.target === oldTargetId) {
-      edge.target = newTargetId;
+      setEdgeTarget(edge, newTargetId);
       // Remove RunAfter settings
       const runAfter = (state.operations[edge.source] as LogicAppsV2.ActionDefinition).runAfter;
       delete runAfter?.[oldTargetId];
@@ -70,8 +80,12 @@ export const assignNodeRunAfterLeafNode = (state: WorkflowState | undefined, par
   (state.operations[newNodeId] as LogicAppsV2.ActionDefinition).runAfter = { [parentNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
 };
 
-export const resetIsRootNode = (sourceId: string, graph: WorkflowNode, metadata: NodesMetadata) => {
+export const resetIsRootNode = (state: WorkflowState, sourceId: string, graph: WorkflowNode, metadata: NodesMetadata) => {
   graph.edges?.forEach((edge) => {
-    if (edge.source === sourceId) delete metadata[edge.target].isRoot;
+    if (edge.source === sourceId)
+      if (metadata?.[edge.target]) {
+        delete metadata[edge.target].isRoot;
+        (state.operations[edge.target] as LogicAppsV2.ActionDefinition).runAfter = {};
+      }
   });
 };
