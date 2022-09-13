@@ -23,8 +23,11 @@ import {
   String24Filled,
   String24Regular,
 } from '../images/DataType24Icons';
+import type { Expression } from '../models/Expression';
 import { ExpressionCategory } from '../models/Expression';
 import { SchemaNodeDataType } from '../models/Schema';
+import { getExpressionBrandingForCategory } from './Expression.Utils';
+import { Image } from '@fluentui/react-components';
 import {
   AddSubtractCircle16Filled,
   AddSubtractCircle16Regular,
@@ -403,4 +406,12 @@ export const iconForExpressionCategory = (expressionCategory: ExpressionCategory
 export const iconUriForIconImageName = (iconImageName: string) => {
   // TODO Temp CDN, will need to be moved into a production location
   return `https://datamappericons.azureedge.net/icons/${iconImageName}`;
+};
+
+export const getIconForExpression = (expression: Expression) => {
+  return expression.iconFileName ? (
+    <Image src={iconUriForIconImageName(expression.iconFileName)} height={20} width={20} alt={expression.name} />
+  ) : (
+    <>{getExpressionBrandingForCategory(expression.expressionCategory).icon}</>
+  );
 };

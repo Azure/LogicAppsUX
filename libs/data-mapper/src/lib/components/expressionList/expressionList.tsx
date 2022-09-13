@@ -1,12 +1,12 @@
 import { getExpressions } from '../../core/queries/expressions';
 import type { Expression } from '../../models/Expression';
 import { ExpressionCategory } from '../../models/Expression';
-import { iconUriForIconImageName } from '../../utils/Icon.Utils';
+import { getIconForExpression } from '../../utils/Icon.Utils';
 import { DMTooltip } from '../tooltip/tooltip';
 import { TreeHeader } from '../tree/treeHeader';
 import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { GroupedList } from '@fluentui/react';
-import { Button, Caption1, Image, makeStyles, mergeClasses, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, Caption1, makeStyles, mergeClasses, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import Fuse from 'fuse.js';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -15,19 +15,6 @@ export interface ExpressionListProps {
   sample: string;
   onExpressionClick: (expression: Expression) => void;
 }
-
-const cardStyles = makeStyles({
-  button: {
-    width: '100%',
-    height: '40px',
-    backgroundColor: tokens.colorNeutralBackground1,
-    display: 'flex',
-    ...shorthands.border('0px'),
-  },
-  text: {
-    width: '150px',
-  },
-});
 
 const buttonHoverStyles = makeStyles({
   button: {
@@ -115,8 +102,8 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
           backgroundColor: 'inherit',
         },
       },
-      '.ms-List-page': {
-        height: 'fit-content !important',
+      '.ms-GroupedList-group': {
+        paddingBottom: '8px',
       },
     },
   };
@@ -143,6 +130,23 @@ interface ExpressionListCellProps {
   onExpressionClick: (expression: Expression) => void;
 }
 
+const cardStyles = makeStyles({
+  button: {
+    width: '100%',
+    height: '40px',
+    backgroundColor: tokens.colorNeutralBackground1,
+    display: 'flex',
+    justifyContent: 'left',
+    ...shorthands.border('0px'),
+    ...shorthands.padding('1px 4px 1px 4px'),
+  },
+  text: {
+    width: '180px',
+    paddingLeft: '4px',
+    paddingRight: '4px',
+  },
+});
+
 const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onExpressionClick }) => {
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
@@ -159,7 +163,7 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
         onExpressionClick(expression);
       }}
     >
-      {expression.iconFileName && <Image src={iconUriForIconImageName(expression.iconFileName)} height={20} width={20} />}
+      {getIconForExpression(expression)}
       <Caption1 className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
         {expression.name}
       </Caption1>
