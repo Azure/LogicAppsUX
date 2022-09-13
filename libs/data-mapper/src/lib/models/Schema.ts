@@ -1,3 +1,5 @@
+import type { ExpressionInput } from "./Expression";
+
 export interface Schema {
   name: string;
   type: SchemaType;
@@ -19,14 +21,34 @@ export interface SchemaNode {
   children: SchemaNode[];
 }
 
-// TODO (nicolas): Extend this once we know what other properties
-// need to be known for properties pane
-// Extra Note: Will likely have to split into SchemaNode and ExpressionNode
-// types as properties are starting to appear quite different
-export interface SelectedNode {
-  type: NodeType;
+export type SelectedNode = SelectedSchemaNode | SelectedExpressionNode;
+export type SelectedSchemaNode = SelectedInputNode | SelectedOutputNode;
+
+export interface SelectedInputNode {
+  nodeType: NodeType.Input;
   name: string;
   path: string;
+  dataType: SchemaNodeDataType;
+}
+
+export interface SelectedOutputNode extends Omit<SelectedInputNode, 'nodeType'> {
+  nodeType: NodeType.Output;
+  inputIds?: string[];
+  defaultValue: string;
+  doNotGenerateIfNoValue: boolean;
+  nullable: boolean;
+}
+
+// TODO: refine property specifics once fleshed out
+export interface SelectedExpressionNode {
+  nodeType: NodeType.Expression;
+  name: string;
+  iconName: string;
+  description: string;
+  codeEx: string;
+  definition: string;
+  inputs: ExpressionInput[];
+  outputId: string;
 }
 
 export enum SchemaType {

@@ -1,4 +1,9 @@
-// For Output nodes
-export const TestTab = () => {
-  return <div>TODO - Test Tab (output node only)</div>;
+import type { SelectedOutputNode } from "../../../models";
+
+interface TestTabProps {
+  currentNode: SelectedOutputNode;
+}
+
+export const TestTab = ({ currentNode }: TestTabProps) => {
+  return <div>TODO - Test Tab (output node only - {currentNode.name})</div>;
 };
