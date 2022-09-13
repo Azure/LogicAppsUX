@@ -1,4 +1,4 @@
-import type { SelectedExpressionNode } from '../../../models';
+import type { SelectedExpressionNode } from '../../../models/SelectedNode';
 
 interface ExpressionNodePropertiesTabProps {
   currentNode: SelectedExpressionNode;
