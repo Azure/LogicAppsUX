@@ -1,7 +1,7 @@
 import WarningIcon from '../../../resources/Caution.svg';
+import { QueryKeys } from '../../../run-service';
+import type { WorkflowsList, SelectedWorkflowsList, Workflow } from '../../../run-service';
 import { ApiService } from '../../../run-service/export/index';
-import { QueryKeys } from '../../../run-service/types';
-import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service/types';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
@@ -80,9 +80,9 @@ export const WorkflowsSelection: React.FC = () => {
     return apiService.getWorkflows(selectedSubscription, selectedIse);
   };
 
-  const onWorkflowsSuccess = (workflowsData: any) => {
-    const workflowItems: Array<WorkflowsList> = !workflowsData ? [] : parseWorkflowData(workflowsData);
-    const resourceGroups: IDropdownOption[] = !workflowsData ? [] : parseResourceGroups(workflowItems);
+  const onWorkflowsSuccess = (workflows: Workflow[]) => {
+    const workflowItems: Array<WorkflowsList> = !workflows ? [] : parseWorkflowData(workflows);
+    const resourceGroups: IDropdownOption[] = !workflows ? [] : parseResourceGroups(workflowItems);
 
     setRenderWorkflows(workflowItems);
     setResourceGroups(resourceGroups);
