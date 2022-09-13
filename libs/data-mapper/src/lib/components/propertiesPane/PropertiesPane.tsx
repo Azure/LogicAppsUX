@@ -190,7 +190,11 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       case TABS.CODE:
         return <CodeTab />;
       case TABS.TEST:
-        return <TestTab />;
+        if (currentNode.nodeType === NodeType.Output) {
+          return <TestTab currentNode={currentNode} />;
+        } else {
+          return null;
+        }
       default:
         console.error('tabToDisplay is undefined');
         return null;

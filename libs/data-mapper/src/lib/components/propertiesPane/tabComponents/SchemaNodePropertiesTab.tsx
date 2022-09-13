@@ -17,8 +17,7 @@ interface SchemaNodePropertiesTabProps {
   currentNode: SelectedSchemaNode;
 }
 
-export const SchemaNodePropertiesTab = (props: SchemaNodePropertiesTabProps): JSX.Element => {
-  const { currentNode } = props;
+export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
 

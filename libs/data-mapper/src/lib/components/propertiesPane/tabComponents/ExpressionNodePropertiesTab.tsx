@@ -4,8 +4,7 @@ interface ExpressionNodePropertiesTabProps {
   currentNode: SelectedExpressionNode;
 }
 
-export const ExpressionNodePropertiesTab = (props: ExpressionNodePropertiesTabProps): JSX.Element => {
-  const { currentNode } = props;
+export const ExpressionNodePropertiesTab = ({ currentNode }: ExpressionNodePropertiesTabProps): JSX.Element => {
 
   return <div>Expression node properties content (for node type {currentNode.nodeType})</div>;
 };
