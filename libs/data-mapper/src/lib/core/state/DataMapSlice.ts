@@ -1,5 +1,6 @@
-import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended, SelectedNode } from '../../models';
+import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaTypes } from '../../models';
+import type { SelectedNode } from '../../models/SelectedNode';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { Expression, ExpressionDictionary } from '../../models/Expression';
 import { convertFromMapDefinition } from '../../utils/DataMap.Utils';

@@ -1,9 +1,10 @@
-import { NodeType, SchemaNodeDataType } from '../../models';
-import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../../models';
+import React from 'react';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import { SchemaNodeDataType } from '../../models';
+import { NodeType } from '../../models/SelectedNode';
+import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
 import { PropertiesPane } from './PropertiesPane';
 import type { PropertiesPaneProps } from './PropertiesPane';
-import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
 
 const exInputNode: SelectedInputNode = {
   nodeType: NodeType.Input,

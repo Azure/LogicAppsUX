@@ -1,4 +1,4 @@
-import type { SelectedOutputNode } from "../../../models";
+import type { SelectedOutputNode } from '../../../models/SelectedNode';
 
 interface TestTabProps {
   currentNode: SelectedOutputNode;
