@@ -9,7 +9,7 @@ export const getExportUri = (selectedSubscription: string, location: string, isV
   return `https://management.azure.com/subscriptions/${selectedSubscription}/providers/Microsoft.Logic/locations/${location}/${exportStep}WorkflowExport?api-version=2022-09-01-preview`;
 };
 
-export const getValidationPayload = (selectedWorkflows: Array<WorkflowsList>) => {
+export const getValidationPayload = (selectedWorkflows: Array<WorkflowsList>, workflowExportOptions: string) => {
   const workflowsIds = selectedWorkflows.map((workflow: WorkflowsList) => {
     return { id: workflow.key };
   });
@@ -17,6 +17,7 @@ export const getValidationPayload = (selectedWorkflows: Array<WorkflowsList>) =>
   return {
     properties: {
       workflows: workflowsIds,
+      workflowExportOptions,
     },
   };
 };
