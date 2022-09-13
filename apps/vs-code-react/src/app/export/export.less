@@ -23,106 +23,116 @@
     }
   }
 
-  &-workflows-panel {
-    display: flex;
-    max-height: 75%;
+  &-workflows {
+    display: initial;
 
-    &-filters {
+    &-panel {
       display: flex;
-      margin-top: 15px;
+      max-height: 65%;
 
-      &-input {
-        width: 25%;
-        margin-right: 10px;
+      &-filters {
+        display: flex;
+        margin-top: 15px;
 
-        input::placeholder {
-          font-style: normal;
+        &-input {
+          width: 25%;
+          margin-right: 10px;
+
+          input::placeholder {
+            font-style: normal;
+          }
+        }
+
+        &-dropdown {
+          width: 350px;
+          max-width: 400px;
         }
       }
 
-      &-dropdown {
-        width: 350px;
-        max-width: 400px;
-      }
-    }
+      &-limit-selection {
+        margin-top: 10px;
 
-    &-limit-selection {
-      margin-top: 10px;
-
-      .ms-MessageBar-text {
-        display: inline-flex;
-        align-items: center;
-      }
-    }
-
-    &-list {
-      flex: 5 1 auto;
-      display: flex;
-      flex-direction: column;
-      max-width: 75%;
-
-      .loading {
-        .ms-DetailsHeader-cell {
-          pointer-events: none;
-        }
-      }
-
-      &-workflows {
-        overflow: auto;
-        margin: 15px 0;
-        flex: 1;
-
-        &-empty {
+        .ms-MessageBar-text {
           display: inline-flex;
-          justify-content: center;
-          width: 100%;
+          align-items: center;
         }
-      }
-    }
-
-    &-divider {
-      padding: 0 20px;
-
-      &::after {
-        width: 3px;
-      }
-    }
-
-    &-selected {
-      display: flex;
-      flex-direction: column;
-      max-width: 20%;
-      flex: 2 1 auto;
-
-      &-title {
-        padding: 0 0 16px 8px;
       }
 
       &-list {
+        flex: 5 1 auto;
         display: flex;
         flex-direction: column;
-        overflow: auto;
-        flex: 1;
+        max-width: 75%;
 
-        &-item {
-          display: inline-flex;
-          align-items: center;
-
-          &-text {
-            max-width: 45%;
-          }
-
-          &-subtext {
-            display: flex;
-            max-width: 45%;
-            padding-left: 6px;
-            margin: 5px;
+        .loading {
+          .ms-DetailsHeader-cell {
+            pointer-events: none;
           }
         }
 
-        &-shimmer {
-          margin: 10px;
+        &-workflows {
+          overflow: auto;
+          margin: 15px 0;
+          flex: 1;
+
+          &-empty {
+            display: inline-flex;
+            justify-content: center;
+            width: 100%;
+          }
         }
+      }
+
+      &-divider {
+        padding: 0 20px;
+
+        &::after {
+          width: 3px;
+        }
+      }
+
+      &-selected {
+        display: flex;
+        flex-direction: column;
+        max-width: 20%;
+        flex: 2 1 auto;
+
+        &-title {
+          padding: 0 0 16px 8px;
+        }
+
+        &-list {
+          display: flex;
+          flex-direction: column;
+          overflow: auto;
+          flex: 1;
+
+          &-item {
+            display: inline-flex;
+            align-items: center;
+
+            &-text {
+              max-width: 45%;
+            }
+
+            &-subtext {
+              display: flex;
+              max-width: 45%;
+              padding-left: 6px;
+              margin: 5px;
+            }
+          }
+
+          &-shimmer {
+            margin: 10px;
+          }
+        }
+      }
+    }
+
+    &-advanced-options {
+      &-title {
+        margin: 15px 0;
       }
     }
   }
