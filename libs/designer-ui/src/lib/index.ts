@@ -21,7 +21,7 @@ export * from './createConnection';
 export * from './dialogs';
 export * from './dictionary';
 export * from './documentationlinkitem';
-// export * from './dropdown';
+export * from './dropdown';
 export * from './editor/base';
 export * from './editor/models/parameter';
 export * from './editor/monaco';

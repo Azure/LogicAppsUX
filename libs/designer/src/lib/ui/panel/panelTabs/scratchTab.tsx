@@ -10,10 +10,10 @@ import {
   // testTokenSegment,
   // SchemaEditor,
   // Combobox,
-  // ValueSegmentType,
-  // ArrayEditor,
+  ValueSegmentType, // ArrayEditor,
   Scratch, // StringEditor,
-  AuthenticationEditor,
+  // AuthenticationEditor,
+  DropdownEditor,
   outputToken,
   outputToken2,
 } from '@microsoft/designer-ui';
@@ -27,7 +27,6 @@ export const ScratchTab = () => {
   const expressionGroup = getExpressionTokenSections();
 
   const GetTokenPicker = (editorId: string, labelId: string, onClick?: (b: boolean) => void): JSX.Element => {
-    // check to see if there's a custom Token Picker
     return (
       <TokenPicker
         editorId={editorId}
@@ -41,7 +40,22 @@ export const ScratchTab = () => {
   const children = (): React.ReactNode => {
     return (
       <>
-        <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} authProps={{}} />
+        <DropdownEditor
+          multiSelect={true}
+          initialValue={[
+            { id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' },
+            { id: '0', type: ValueSegmentType.LITERAL, value: 'GET' },
+          ]}
+          GetTokenPicker={GetTokenPicker}
+          options={[
+            { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },
+            { displayName: 'PUT', value: 'PUT', key: 'PUT', disabled: false },
+            { displayName: 'POST', value: 'POST', key: 'POST', disabled: false },
+            { displayName: 'PATCH', value: 'PATCH', key: 'PATCH', disabled: false },
+            { displayName: 'DELETE', value: 'DELETE', key: 'DELETE', disabled: false },
+          ]}
+        />
+        {/* <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} authProps={{}} /> */}
         {/* <ArrayEditor
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
@@ -81,10 +95,9 @@ export const ScratchTab = () => {
             { displayName: 'DELETE', value: 'DELETE', key: 'DELETE', disabled: false },
           ]}
           placeholder="Method is Required"
-          label="Method"
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
           GetTokenPicker={GetTokenPicker}
-          // readOnly={true}
+          // readonly={true}
         />
 
         <SchemaEditor
