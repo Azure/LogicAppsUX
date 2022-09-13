@@ -1,5 +1,5 @@
 import { ResourceType } from '../types';
-import type { IApiService, Workflows, WorkflowsList, ISummaryData } from '../types';
+import type { IApiService, Workflows, AdvancedOptionsTypes, WorkflowsList, ISummaryData } from '../types';
 import { getValidationPayload, getExportUri, getWorkflowsUri } from './helper';
 
 export interface ApiServiceOptions {
@@ -104,10 +104,16 @@ export class ApiService implements IApiService {
     return { ise };
   }
 
-  async validateWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string) {
+  async validateWorkflows(
+    selectedWorkflows: Array<WorkflowsList>,
+    selectedSubscription: string,
+    selectedLocation: string,
+    selectedAdvanceOptions: AdvancedOptionsTypes[]
+  ) {
     const headers = this.getAccessTokenHeaders();
     const validationUri = getExportUri(selectedSubscription, selectedLocation, true);
-    const validationPayload = getValidationPayload(selectedWorkflows);
+    const workflowExportOptions = selectedAdvanceOptions.join(',');
+    const validationPayload = getValidationPayload(selectedWorkflows, workflowExportOptions);
     const response = await fetch(validationUri, { headers, method: 'POST', body: JSON.stringify(validationPayload) });
 
     if (!response.ok) {
@@ -118,10 +124,16 @@ export class ApiService implements IApiService {
     return validationResponse;
   }
 
-  async exportWorkflows(selectedWorkflows: Array<WorkflowsList>, selectedSubscription: string, selectedLocation: string) {
+  async exportWorkflows(
+    selectedWorkflows: Array<WorkflowsList>,
+    selectedSubscription: string,
+    selectedLocation: string,
+    selectedAdvanceOptions: AdvancedOptionsTypes[]
+  ) {
     const headers = this.getAccessTokenHeaders();
     const exportUri = getExportUri(selectedSubscription, selectedLocation, false);
-    const exportPayload = getValidationPayload(selectedWorkflows);
+    const workflowExportOptions = selectedAdvanceOptions.join(',');
+    const exportPayload = getValidationPayload(selectedWorkflows, workflowExportOptions);
     const response = await fetch(exportUri, { headers, method: 'POST', body: JSON.stringify(exportPayload) });
 
     if (!response.ok) {
