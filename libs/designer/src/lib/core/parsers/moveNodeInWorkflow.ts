@@ -2,15 +2,7 @@
 import type { IdsForDiscovery } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
-import {
-  addNewEdge,
-  assignNodeRunAfterLeafNode,
-  reassignEdgeSources,
-  reassignEdgeTargets,
-  reassignNodeRunAfter,
-  removeEdge,
-  resetIsRootNode,
-} from './restructuringHelpers';
+import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';
 
 export interface MoveNodePayload {
   nodeId: string;
@@ -48,6 +40,7 @@ export const moveNodeInWorkflow = (
   /////////////////////////////////////////////////////////
   // Remove node from its current position in the graph
 
+  // Set correct isRoot props
   const isOldRoot = nodesMetadata[nodeId]?.isRoot;
   if (isOldRoot) {
     const childIds = (oldWorkflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).map((edge) => edge.target);
@@ -58,11 +51,11 @@ export const moveNodeInWorkflow = (
   if (multipleParents) {
     const childId = (oldWorkflowGraph.edges ?? []).find((edge) => edge.source === nodeId)?.target ?? '';
     reassignEdgeTargets(state, nodeId, childId, oldWorkflowGraph);
-    removeEdge(nodeId, childId, oldWorkflowGraph);
+    removeEdge(state, nodeId, childId, oldWorkflowGraph);
   } else {
     const parentId = (oldWorkflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
     reassignEdgeSources(state, nodeId, parentId, oldWorkflowGraph);
-    removeEdge(parentId, nodeId, oldWorkflowGraph);
+    removeEdge(state, parentId, nodeId, oldWorkflowGraph);
   }
 
   // Delete WorkflowNode
@@ -89,27 +82,19 @@ export const moveNodeInWorkflow = (
   nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, isRoot };
   if (nodesMetadata[nodeId].isRoot === false) delete nodesMetadata[nodeId].isRoot;
 
-  // 1 parent and 1 child
-  if (parentId && childId) {
-    removeEdge(parentId, childId, newWorkflowGraph);
-    addNewEdge(parentId, nodeId, newWorkflowGraph);
-    addNewEdge(nodeId, childId, newWorkflowGraph);
-    reassignNodeRunAfter(state, childId, parentId, nodeId);
-  }
   // 1 parent, X children
-  else if (parentId) {
+  if (parentId) {
     reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph);
-    addNewEdge(parentId, nodeId, newWorkflowGraph);
-    assignNodeRunAfterLeafNode(state, parentId, nodeId);
+    addNewEdge(state, parentId, nodeId, newWorkflowGraph);
   }
   // X parents, 1 child
   else if (childId) {
     reassignEdgeTargets(state, childId, nodeId, newWorkflowGraph);
-    addNewEdge(nodeId, childId, newWorkflowGraph);
+    addNewEdge(state, nodeId, childId, newWorkflowGraph);
   }
 
   if (isRoot) {
-    resetIsRootNode(state, nodeId, newWorkflowGraph, nodesMetadata);
+    applyIsRootNode(state, nodeId, newWorkflowGraph, nodesMetadata);
     (state.operations[nodeId] as LogicAppsV2.ActionDefinition).runAfter = {};
   }
 

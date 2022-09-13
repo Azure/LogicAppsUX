@@ -2,15 +2,7 @@
 import type { IdsForDiscovery } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
-import {
-  reassignNodeRunAfter,
-  reassignEdgeSources,
-  assignNodeRunAfterLeafNode,
-  reassignEdgeTargets,
-  addNewEdge,
-  removeEdge,
-  resetIsRootNode,
-} from './restructuringHelpers';
+import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode } from './restructuringHelpers';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 
@@ -47,29 +39,21 @@ export const addNodeToWorkflow = (
 
   // Parallel Branch creation, just add the singular node
   if (payload.isParallelBranch && parentId) {
-    addNewEdge(parentId, newNodeId, workflowGraph);
-    assignNodeRunAfterLeafNode(state, parentId, newNodeId);
+    addNewEdge(state, parentId, newNodeId, workflowGraph);
   }
-  // 1 parent and 1 child
-  else if (parentId && childId) {
-    removeEdge(parentId, childId, workflowGraph);
-    addNewEdge(parentId, newNodeId, workflowGraph);
-    addNewEdge(newNodeId, childId, workflowGraph);
-    reassignNodeRunAfter(state, childId, parentId, newNodeId);
-  }
+
   // 1 parent, X children
-  else if (parentId) {
+  if (parentId) {
     reassignEdgeSources(state, parentId, newNodeId, workflowGraph);
-    addNewEdge(parentId, newNodeId, workflowGraph);
-    assignNodeRunAfterLeafNode(state, parentId, newNodeId);
+    addNewEdge(state, parentId, newNodeId, workflowGraph);
   }
   // X parents, 1 child
   else if (childId) {
     reassignEdgeTargets(state, childId, newNodeId, workflowGraph);
-    addNewEdge(newNodeId, childId, workflowGraph);
+    addNewEdge(state, newNodeId, childId, workflowGraph);
   }
 
-  if (isRoot) resetIsRootNode(state, newNodeId, workflowGraph, nodesMetadata);
+  if (isRoot) applyIsRootNode(state, newNodeId, workflowGraph, nodesMetadata);
 
   // Increase action count of graph
   if (nodesMetadata[workflowGraph.id]) {

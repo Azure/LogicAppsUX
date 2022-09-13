@@ -31,11 +31,11 @@ export const deleteNodeFromWorkflow = (
   if (multipleParents) {
     const childId = (workflowGraph.edges ?? []).find((edge) => edge.source === nodeId)?.target ?? '';
     reassignEdgeTargets(state, nodeId, childId, workflowGraph);
-    removeEdge(nodeId, childId, workflowGraph);
+    removeEdge(state, nodeId, childId, workflowGraph);
   } else {
     const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
     reassignEdgeSources(state, nodeId, parentId, workflowGraph);
-    removeEdge(parentId, nodeId, workflowGraph);
+    removeEdge(state, parentId, nodeId, workflowGraph);
   }
 
   // Delete Node Data
