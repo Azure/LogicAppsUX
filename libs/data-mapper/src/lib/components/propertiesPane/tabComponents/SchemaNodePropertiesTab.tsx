@@ -1,5 +1,5 @@
-import { NodeType } from '../../../models';
-import type { SelectedSchemaNode } from '../../../models';
+import { NodeType } from '../../../models/SelectedNode';
+import type { SelectedSchemaNode } from '../../../models/SelectedNode';
 import { Checkbox, makeStyles, Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 

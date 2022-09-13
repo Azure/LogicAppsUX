@@ -37,8 +37,10 @@ import {
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { SchemaTypes, NodeType } from '../models';
-import type { SchemaNodeExtended, SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../models';
+import { SchemaTypes } from '../models';
+import type { SchemaNodeExtended } from '../models';
+import { NodeType } from '../models/SelectedNode';
+import type { SelectedInputNode, SelectedOutputNode, SelectedExpressionNode } from '../models/SelectedNode';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { Expression, ExpressionDictionary } from '../models/Expression';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';

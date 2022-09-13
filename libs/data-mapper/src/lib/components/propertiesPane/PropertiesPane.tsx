@@ -1,6 +1,6 @@
 import { baseCanvasHeight, basePropertyPaneContentHeight } from '../../constants/ReactFlowConstants';
-import { NodeType } from '../../models';
-import type { SelectedNode } from '../../models';
+import { NodeType } from '../../models/SelectedNode';
+import type { SelectedNode } from '../../models/SelectedNode';
 import { CodeTab } from './tabComponents/CodeTab';
 import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
