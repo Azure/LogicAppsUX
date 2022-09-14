@@ -260,7 +260,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         </div>
       </Stack>
 
-      {isExpanded && (
+      {currentNode && isExpanded && (
         <div className={styles.paneContent} style={{ height: contentHeight }}>
           {getSelectedTab()}
         </div>
