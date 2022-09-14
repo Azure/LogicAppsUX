@@ -3,6 +3,7 @@ import { getDynamicSchemaProperties, getListDynamicValues } from '../../queries/
 import type { DependencyInfo, NodeInputs } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokensSlice';
 import {
+  getInputsValueFromDefinitionForManifest,
   getJSONValueFromString,
   getParameterFromName,
   loadParameterValuesFromDefault,
@@ -43,7 +44,6 @@ import {
   ValidationException,
   clone,
   equals,
-  getObjectPropertyValue,
   getPropertyValue,
   isNullOrEmpty,
   isObject,
@@ -97,7 +97,7 @@ export async function getDynamicSchema(
       const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs);
       let schema: OpenAPIV2.SchemaObject;
 
-      switch (dynamicState.builtInOperation) {
+      switch (dynamicState?.extension?.builtInOperation) {
         case 'getVariableSchema':
           schema = { type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase()) };
           break;
@@ -172,7 +172,7 @@ export function getDynamicInputsFromSchema(
   dynamicParameter: InputParameter,
   manifest: OperationManifest,
   allInputKeys: string[],
-  operationDefinition: any
+  operationDefinition?: any
 ): InputParameter[] {
   // TODO: Need to handle it correctly for nested parameters.
   const isParameterNested = false;
@@ -201,7 +201,7 @@ export function getDynamicInputsFromSchema(
   }
 
   let result: InputParameter[] = [];
-  const stepInputs = getObjectPropertyValue(operationDefinition, manifest.properties.inputsLocation ?? ['inputs']);
+  const stepInputs = getInputsValueFromDefinitionForManifest(manifest.properties.inputsLocation ?? ['inputs'], operationDefinition);
   const stepInputsAreNonEmptyObject = !isNullOrEmpty(stepInputs) && isObject(stepInputs);
 
   // Mark all of the known inputs as seen.
@@ -216,7 +216,7 @@ export function getDynamicInputsFromSchema(
       clonedInputParameter.value = stepInputs;
     } else {
       // slice off the beginning of the key and directly search the input body.
-      const inputPath = inputParameter.key.replace(keyPrefix, '');
+      const inputPath = inputParameter.key.replace(`${keyPrefix}.`, '');
       clonedInputParameter.value = stepInputsAreNonEmptyObject ? getObjectValue(inputPath, stepInputs) : undefined;
     }
     result.push(clonedInputParameter);
