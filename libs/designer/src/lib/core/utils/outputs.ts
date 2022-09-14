@@ -284,11 +284,12 @@ export const loadDynamicOutputsInNode = async (
   const manifest = await getOperationManifest(operationInfo);
   for (const outputKey of Object.keys(outputDependencies)) {
     const info = outputDependencies[outputKey];
+    dispatch(clearDynamicOutputs(nodeId));
+
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
         updateOutputsAndTokens(nodeId, operationInfo.type, dispatch, manifest, isTrigger, nodeInputs, settings);
       } else {
-        dispatch(clearDynamicOutputs(nodeId));
         const outputSchema = await getDynamicSchema(info, nodeInputs, connectionId, operationInfo);
         const schemaOutputs = getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter);
         const hasSplitOn = settings.splitOn?.value?.enabled;
