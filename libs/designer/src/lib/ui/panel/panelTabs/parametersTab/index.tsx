@@ -18,7 +18,7 @@ import type { ChangeState, PanelTab, ParameterInfo } from '@microsoft/designer-u
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { equals } from '@microsoft-logic-apps/utils';
-import { VariableDeclaration } from 'libs/designer/src/lib/core/state/tokensSlice';
+import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
 
 export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
