@@ -1,7 +1,8 @@
 export type ConnectionDictionary = { [key: string]: Connection };
 
 export interface Connection {
-  value: string;
+  destination: string;
+  sourceValue: string;
   loop?: LoopConnection;
   condition?: string;
 
