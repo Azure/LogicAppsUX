@@ -176,6 +176,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onNodeSingleClick = (node: ReactFlowNode): void => {
+    console.log(node);
     if (node.type === ReactFlowNodeType.SchemaNode) {
       if (node.data.schemaType === SchemaTypes.Input) {
         const selectedInputNode: SelectedInputNode = {
@@ -195,6 +196,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           defaultValue: '', // TODO: this property and below
           doNotGenerateIfNoValue: true,
           nullable: true,
+          inputIds: [],
         };
 
         dispatch(setCurrentlySelectedNode(selectedOutputNode));
@@ -204,8 +206,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         nodeType: NodeType.Expression,
         name: node.data.expressionName,
         inputs: node.data.inputs,
-        iconName: '', // TODO: this property and below
-        description: '',
+        branding: node.data.expressionBranding, 
+        description: '', // TODO: this property and below
         codeEx: '',
         definition: '',
         outputId: '',
