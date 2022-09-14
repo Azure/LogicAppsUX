@@ -2992,7 +2992,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Invalid json format. Missing beginning '{' or ending '}']]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ungültiges JSON-Format. Öffnende Klammer "{" oder schließende Klammer "}" fehlt.]]></Val>
+            <Val><![CDATA[Ungültiges JSON-Format. Öffnende Klammer '{' oder schließende Klammer '}' fehlt.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
