@@ -130,7 +130,6 @@ const parseMappingsJsonToNode = (
 ) => {
   // Basic leaf node
   if (typeof targetNodeObject === 'string') {
-    // XXX
     connections[connectionKey] = {
       destination: connectionKey,
       sourceValue: targetNodeObject,
@@ -179,7 +178,6 @@ const parseMappingsJsonToNode = (
   // TODO (#15388621) revisit this once we've got loops and conditionals enabled in the designer to double check all the logic
   if (targetValue) {
     connections[connectionKey] = {
-      // XXX
       destination: connectionKey,
       sourceValue: targetValue,
       loop: undefined,
