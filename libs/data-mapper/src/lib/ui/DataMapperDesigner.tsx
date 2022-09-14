@@ -39,10 +39,10 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { SchemaTypes } from '../models';
 import type { SchemaNodeExtended } from '../models';
-import { NodeType } from '../models/SelectedNode';
-import type { SelectedInputNode, SelectedOutputNode, SelectedExpressionNode } from '../models/SelectedNode';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { Expression, ExpressionDictionary } from '../models/Expression';
+import { NodeType } from '../models/SelectedNode';
+import type { SelectedInputNode, SelectedOutputNode, SelectedExpressionNode } from '../models/SelectedNode';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, inputPrefix, outputPrefix, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
@@ -142,7 +142,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       if (allChildNodesSelected(selectedNode, currentlySelectedInputNodes)) {
         // TODO reconfirm this works for loops and conditionals
         const nodesToRemove = selectedNode.children.filter((childNodes) =>
-          Object.values(currentConnections).some((currentConnection) => childNodes.key !== currentConnection.value)
+          Object.values(currentConnections).some((currentConnection) => childNodes.key !== currentConnection.sourceValue)
         );
         dispatch(removeInputNodes(nodesToRemove));
       } else {
@@ -184,10 +184,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           path: node.id.replace(inputPrefix, ''),
           dataType: node.data.nodeDataType,
         };
-  
+
         dispatch(setCurrentlySelectedNode(selectedInputNode));
-      }
-      else if (node.data.schemaType === SchemaTypes.Output) {
+      } else if (node.data.schemaType === SchemaTypes.Output) {
         const selectedOutputNode: SelectedOutputNode = {
           nodeType: NodeType.Output,
           name: node.data.label,
@@ -197,11 +196,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           doNotGenerateIfNoValue: true,
           nullable: true,
         };
-  
+
         dispatch(setCurrentlySelectedNode(selectedOutputNode));
       }
-    }
-    else if (node.type === ReactFlowNodeType.ExpressionNode) {
+    } else if (node.type === ReactFlowNodeType.ExpressionNode) {
       const selectedExpressionNode: SelectedExpressionNode = {
         nodeType: NodeType.Expression,
         name: node.data.expressionName,
@@ -210,7 +208,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         description: '',
         codeEx: '',
         definition: '',
-        outputId: ''
+        outputId: '',
       };
 
       dispatch(setCurrentlySelectedNode(selectedExpressionNode));
@@ -240,7 +238,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     (oldEdge: ReactFlowEdge, newConnection: ReactFlowConnection) => {
       edgeUpdateSuccessful.current = true;
       if (newConnection.target && newConnection.source && oldEdge.target) {
-        dispatch(changeConnection({ outputNodeKey: newConnection.target, value: newConnection.source, oldConnectionKey: oldEdge.target }));
+        dispatch(changeConnection({ outputNodeKey: newConnection.target, value: newConnection.source, oldConnectionKey: oldEdge.id }));
       }
     },
     [dispatch]
@@ -250,7 +248,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     (_: any, edge: ReactFlowEdge) => {
       if (!edgeUpdateSuccessful.current) {
         if (edge.target) {
-          dispatch(deleteConnection({ oldConnectionKey: edge.target }));
+          dispatch(deleteConnection({ oldConnectionKey: edge.id }));
         }
       }
 
