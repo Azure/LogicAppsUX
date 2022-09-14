@@ -3,7 +3,7 @@ import type { Settings } from '../actions/bjsworkflow/settings';
 
 export function hasSecureOutputs(nodeType: string, allSettings: Settings | undefined): boolean {
   const { secureInputs, secureOutputs } = allSettings || {};
-  return isSecureOutputsLinkedToInputs(nodeType) ? !!secureInputs : !!secureOutputs;
+  return isSecureOutputsLinkedToInputs(nodeType) ? !!secureInputs?.value : !!secureOutputs?.value;
 }
 
 function isSecureOutputsLinkedToInputs(nodeType: string): boolean {

@@ -1,17 +1,15 @@
+import type { WorkflowsList, SelectedWorkflowsList, Workflow } from '../../../run-service';
 import { AdvancedOptionsTypes } from '../../../run-service';
-import type { WorkflowsList, WorkflowProperties, SelectedWorkflowsList } from '../../../run-service';
 import type { IDropdownOption } from '@fluentui/react';
 
-export const parseWorkflowData = (workflowsData: { workflows: Array<WorkflowProperties> }): Array<WorkflowsList> => {
-  const { workflows } = workflowsData;
-
-  return workflows.map((workflow: WorkflowProperties) => {
-    const { name, id } = workflow;
+export const parseWorkflowData = (workflows: Workflow[]): Array<WorkflowsList> => {
+  return workflows.map((workflow: Workflow) => {
+    const { name, id, resourceGroup } = workflow;
 
     return {
       key: id,
       name,
-      resourceGroup: getResourceGroup(id),
+      resourceGroup,
     };
   });
 };
@@ -50,12 +48,6 @@ export const filterWorkflows = (workflowItems: Array<WorkflowsList>, resourceGro
   return renderWorkflows;
 };
 
-export const getResourceGroup = (workflowID: string): string => {
-  const separators = workflowID.split('/');
-  const resourceGroupLocation = 4;
-  return separators[resourceGroupLocation];
-};
-
 export const getListColumns = (nameTitle: string, resourceGroupTitle: string) => {
   return [
     { key: 'name', name: nameTitle, fieldName: 'name', minWidth: 170, maxWidth: 250, isResizable: true },
@@ -86,7 +78,7 @@ export const getSelectedItems = (allItemsSelected: SelectedWorkflowsList[], curr
   const allItems = [...allItemsSelected];
   const renderWorkflows = [...allItems.filter((item) => item.rendered)];
   const updatedItems = allItems.map((workflow: SelectedWorkflowsList) => {
-    const updatedWorkflow = workflow;
+    const updatedWorkflow = { ...workflow };
     const isWorkflowInSelection = !!currentSelection.find((item: WorkflowsList) => item.key === updatedWorkflow.key);
     const isWorkflowInRender = !!renderWorkflows.find((item: WorkflowsList) => item.key === updatedWorkflow.key);
 

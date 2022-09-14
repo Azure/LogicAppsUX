@@ -60,6 +60,11 @@
         "runAfter": {
           "Initialize_variable": ["Succeeded"]
         },
+        "runtimeConfiguration": {
+          "secureData": {
+            "properties": ["inputs"]
+          }
+        },
         "type": "ParseJson"
       },
       "Response": {
