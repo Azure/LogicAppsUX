@@ -16,8 +16,8 @@ export const addNewEdge = (state: WorkflowState, source: string, target: string,
   if (!graph?.edges) graph.edges = [];
   graph?.edges.push(workflowEdge);
 
-  let targetRunAfter = (state.operations?.[target] as any)?.runAfter;
-  if (targetRunAfter) targetRunAfter = { [source]: [RUN_AFTER_STATUS.SUCCEEDED] };
+  const targetOp = (state.operations?.[target] as any);
+  if (targetOp) (state.operations?.[target] as any).runAfter = { [source]: [RUN_AFTER_STATUS.SUCCEEDED] };
 };
 
 export const removeEdge = (state: WorkflowState, sourceId: string, targetId: string, graph: WorkflowNode) => {
@@ -58,13 +58,13 @@ export const reassignEdgeSources = (state: WorkflowState, oldSourceId: string, n
 //   \|/   =>   \|/
 //               |
 export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, newTargetId: string, graph: WorkflowNode) => {
+  moveRunAfterTarget(state, oldTargetId, newTargetId);
   graph.edges = graph.edges?.map((edge) => {
     if (edge.target === oldTargetId) {
       setEdgeTarget(edge, newTargetId);
     }
     return edge;
   });
-  moveRunAfterTarget(state, oldTargetId, newTargetId);
 };
 
 const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {

@@ -43,7 +43,10 @@ export const moveNodeInWorkflow = (
   const isOldRoot = nodesMetadata[nodeId]?.isRoot;
   if (isOldRoot) {
     const childIds = (oldWorkflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).map((edge) => edge.target);
-    childIds.forEach((childId) => (nodesMetadata[childId].isRoot = true));
+    childIds.forEach((childId) => {
+      nodesMetadata[childId].isRoot = true;
+      delete (state.operations[childId] as any).runAfter;
+    });
   }
 
   // Adjust edges
