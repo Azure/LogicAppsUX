@@ -71,10 +71,16 @@ export const validateDictionaryStrings = (s: string): boolean => {
 
 export const isValidAuthentication = (s: string): string => {
   const intl = getIntl();
-  const errorMessage = intl.formatMessage({
-    defaultMessage: "Invalid json format. Missing beginning '{' or ending '}'",
-    description: 'Invalid JSON format',
-  });
+  const errorMessage = intl.formatMessage(
+    {
+      defaultMessage: 'Invalid json format. Missing beginning {openingBracket} or ending {closingBracket}.',
+      description: 'Invalid JSON format',
+    },
+    {
+      openingBracket: '{',
+      closingBracket: '}',
+    }
+  );
   if (!s.startsWith('{') || !s.endsWith('}')) {
     return errorMessage;
   }

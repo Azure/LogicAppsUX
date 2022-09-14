@@ -565,6 +565,20 @@
       "value": "Laden Sie ein Ausgabeschema hoch, das für Ihre Zuordnung verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -793,6 +807,12 @@
       "value": "Erforderlich. Der Name der Aktion mit einer mehrteiligen Antwort."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -821,6 +841,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord-Howe-Insel"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -897,6 +931,16 @@
     {
       "type": 0,
       "value": "\"."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1327,6 +1371,12 @@
       "value": "Erforderlich. Die Zeichenfolge, aus der führende und nachstehende Leerzeichen entfernt werden sollen."
     }
   ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
+    }
+  ],
   "DGMwU4": [
     {
       "type": 0,
@@ -1673,6 +1723,12 @@
       "value": "Erforderlich. Der Schlüsselname des zurückzugebenden Formulardatenwerts."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1941,6 +1997,12 @@
       "value": "Es gibt keine Ergebnisse für Ihre Suche."
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1994,7 +2056,23 @@
   "Li6x/B": [
     {
       "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
+      "value": "Die erforderlichen Eigenschaften „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "“ für den Authentifizierungstyp „"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "“ fehlen"
     }
   ],
   "LlYz9c": [
@@ -2199,6 +2277,12 @@
       "value": "Parameter bearbeiten"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2226,7 +2310,23 @@
   "OH94j3": [
     {
       "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
+      "value": "Die erforderliche Eigenschaft „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "“ für den Authentifizierungstyp „"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "“ fehlt"
     }
   ],
   "OH9xlX": [
@@ -2517,6 +2617,12 @@
       "value": "h"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2791,6 +2897,12 @@
     {
       "type": 0,
       "value": "Verwenden Sie die Liste dynamischer Inhalte, um auf einen Parameter zu verweisen."
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
     }
   ],
   "UHCVNK": [
@@ -3931,6 +4043,20 @@
       "value": "Dynamischer Inhalt"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4709,6 +4835,12 @@
       "value": "Erforderlich"
     }
   ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -5021,6 +5153,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5415,6 +5553,12 @@
       "value": "Erforderlich. Die Zeichenfolge, in der die URL-unsicheren Zeichen mit Escapezeichen versehen werden sollen."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5473,6 +5617,12 @@
     {
       "type": 0,
       "value": "Geben Sie einen Standardwert für den Parameter ein."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

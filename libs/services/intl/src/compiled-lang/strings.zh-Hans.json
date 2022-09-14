@@ -558,6 +558,20 @@
       "value": "上传或选择要用于地图的输出架构。"
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -786,6 +800,12 @@
       "value": "必需。包含多部件响应的操作的名称。"
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -814,6 +834,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) 豪勋爵岛"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -890,6 +924,16 @@
     {
       "type": 0,
       "value": "”无效。"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1309,6 +1353,12 @@
       "value": "必填。要从中移除前导空格和尾随空格的字符串。"
     }
   ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
+    }
+  ],
   "DGMwU4": [
     {
       "type": 0,
@@ -1636,6 +1686,12 @@
       "value": "必需。要返回的表单数据值的键名称。"
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1893,6 +1949,12 @@
       "value": "没有搜索到结果"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1938,7 +2000,23 @@
   "Li6x/B": [
     {
       "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
+      "value": "身份验证类型 \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\" 缺少必需的属性 \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "LlYz9c": [
@@ -2147,6 +2225,12 @@
       "value": "编辑参数"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2174,7 +2258,23 @@
   "OH94j3": [
     {
       "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
+      "value": "身份验证类型 \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\" 缺少必需的属性 \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "OH9xlX": [
@@ -2461,6 +2561,12 @@
       "value": " 小时"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2724,6 +2830,12 @@
     {
       "type": 0,
       "value": "若要引用参数，请使用动态内容列表。"
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
     }
   ],
   "UHCVNK": [
@@ -3861,6 +3973,20 @@
       "value": "动态内容"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4647,6 +4773,12 @@
       "value": "必需"
     }
   ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -4948,6 +5080,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00)霍巴特"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5342,6 +5480,12 @@
       "value": "必需。要从中转义 URL 不安全字符的字符串。"
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5400,6 +5544,12 @@
     {
       "type": 0,
       "value": "输入参数的默认值。"
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

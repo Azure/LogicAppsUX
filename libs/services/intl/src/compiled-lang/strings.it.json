@@ -560,6 +560,20 @@
       "value": "Caricare o selezionare uno schema di output da usare per la mappa."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -788,6 +802,12 @@
       "value": "Obbligatorio. Nome dell'azione con una risposta a più parti."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -816,6 +836,20 @@
     {
       "type": 0,
       "value": "(UTC + 10.30) Isola Lord Howe"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -876,6 +910,16 @@
     {
       "type": 0,
       "value": "La proprietà {0} non è valida per il tipo di autenticazione {1}."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1301,6 +1345,12 @@
       "value": "Obbligatorio. Stringa da cui rimuovere lo spazio vuoto iniziale e finale."
     }
   ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
+    }
+  ],
   "DGMwU4": [
     {
       "type": 0,
@@ -1650,6 +1700,12 @@
       "value": "Obbligatorio. Nome della chiave del valore dei dati del modulo da restituire."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1929,6 +1985,12 @@
       "value": "La ricerca non ha restituito risultati"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1974,7 +2036,7 @@
   "Li6x/B": [
     {
       "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
+      "value": "Mancano le proprietà {0} obbligatorie per il tipo di autenticazione {1}"
     }
   ],
   "LlYz9c": [
@@ -2179,6 +2241,12 @@
       "value": "Modifica parametro"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2206,7 +2274,7 @@
   "OH94j3": [
     {
       "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
+      "value": "Manca la proprietà {0} obbligatoria per il tipo di autenticazione {1}"
     }
   ],
   "OH9xlX": [
@@ -2501,6 +2569,12 @@
       "value": " h"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2786,6 +2860,12 @@
     {
       "type": 0,
       "value": "Per fare riferimento a un parametro, usare l'elenco contenuto dinamico."
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
     }
   ],
   "UHCVNK": [
@@ -3925,6 +4005,20 @@
       "value": "Contenuto dinamico"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4687,6 +4781,12 @@
       "value": "Obbligatorio"
     }
   ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -5010,6 +5110,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5404,6 +5510,12 @@
       "value": "Obbligatorio. Stringa in cui applicare la sequenza di escape per i caratteri non sicuri per gli URL."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5462,6 +5574,12 @@
     {
       "type": 0,
       "value": "Immettere il valore predefinito per il parametro."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

@@ -587,6 +587,20 @@
       "value": "Отправьте или выберите выходную схему, которая будет использоваться для вашего сопоставления."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -815,6 +829,12 @@
       "value": "Требуется. Имя действия с ответом в нескольких частях."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -843,6 +863,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Остров Лорд-Хау"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -919,6 +953,16 @@
     {
       "type": 0,
       "value": "\"."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1371,6 +1415,12 @@
       "value": "Требуется. Строка, из которой необходимо удалить пробел в начале и конце."
     }
   ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
+    }
+  ],
   "DGMwU4": [
     {
       "type": 0,
@@ -1739,6 +1789,12 @@
       "value": "Требуется. Имя ключа возвращаемого значения данных форм."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -2029,6 +2085,12 @@
       "value": "Нет результатов поиска"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -2301,6 +2363,12 @@
     {
       "type": 0,
       "value": "Изменить параметр"
+    }
+  ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "OD8igU": [
@@ -2633,6 +2701,12 @@
       "value": " ч"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2929,6 +3003,12 @@
     {
       "type": 0,
       "value": "Для ссылки на параметр используйте динамический список содержимого."
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
     }
   ],
   "UHCVNK": [
@@ -4099,6 +4179,20 @@
       "value": "Динамическое содержимое"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4877,6 +4971,12 @@
       "value": "Требуется"
     }
   ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -5211,6 +5311,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Хобарт"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5605,6 +5711,12 @@
       "value": "Требуется. Строка, из которой исключаются небезопасные символы URL-адресов."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5663,6 +5775,12 @@
     {
       "type": 0,
       "value": "Введите для параметра значение по умолчанию."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

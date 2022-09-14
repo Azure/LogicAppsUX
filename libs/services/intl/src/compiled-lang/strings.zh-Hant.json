@@ -538,6 +538,20 @@
       "value": "上傳或選取要用於對應的輸出結構描述。"
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -766,6 +780,12 @@
       "value": "必要。包含多組件回應之動作的名稱。"
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -794,6 +814,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) 羅豪島"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -854,6 +888,16 @@
     {
       "type": 0,
       "value": "驗證類型 {1} 的屬性 {0} 無效。"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1257,6 +1301,12 @@
       "value": "必要。將移除其開頭及結尾空白字元的字串。"
     }
   ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
+    }
+  ],
   "DGMwU4": [
     {
       "type": 0,
@@ -1584,6 +1634,12 @@
       "value": "必要。要傳回之表單資料值的索引鍵名稱。"
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1841,6 +1897,12 @@
       "value": "您的搜尋沒有相符的結果"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -2089,6 +2151,12 @@
     {
       "type": 0,
       "value": "編輯參數"
+    }
+  ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "OD8igU": [
@@ -2405,6 +2473,12 @@
       "value": " 小時"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2668,6 +2742,12 @@
     {
       "type": 0,
       "value": "若要參考參數，請使用動態內容清單。"
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
     }
   ],
   "UHCVNK": [
@@ -3789,6 +3869,20 @@
       "value": "動態內容"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4551,6 +4645,12 @@
       "value": "必要"
     }
   ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -4852,6 +4952,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) 霍巴特"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5246,6 +5352,12 @@
       "value": "必要。從逸出 URL Unsafe 字元的字串。"
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5304,6 +5416,12 @@
     {
       "type": 0,
       "value": "輸入參數的預設值。"
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [
