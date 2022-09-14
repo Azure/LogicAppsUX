@@ -3,7 +3,7 @@ import { Button, Divider, Image, Input, makeStyles, Text, tokens, typographyStyl
 import { useIntl } from 'react-intl';
 import type { SelectedExpressionNode } from '../../../models/SelectedNode';
 import { iconUriForIconImageName } from '../../../utils/Icon.Utils';
-import { DocumentText20Regular, Delete20Regular, Add20Regular } from '@fluentui/react-icons';
+import { Delete20Regular, Add20Regular } from '@fluentui/react-icons';
 
 const useStyles = makeStyles({
   inputOutputContentStyle: {
@@ -30,11 +30,6 @@ interface ExpressionNodePropertiesTabProps {
 export const ExpressionNodePropertiesTab = ({ currentNode }: ExpressionNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
-
-  const viewDefLoc = intl.formatMessage({
-    defaultMessage: 'View definition',
-    description: 'View definition of expression',
-  });
 
   const addFieldLoc = intl.formatMessage({
     defaultMessage: 'Add field',
@@ -66,7 +61,6 @@ export const ExpressionNodePropertiesTab = ({ currentNode }: ExpressionNodePrope
         
         <Text style={{ marginTop: '8px' }}>{currentNode.description}</Text>
         <Text style={{ marginTop: '8px' }}>{currentNode.codeEx}</Text>
-        <Button icon={<DocumentText20Regular />} style={{ marginTop: '8px' }}>{viewDefLoc}</Button>
       </div>
 
       <Stack horizontal className={styles.inputOutputContentStyle}>
