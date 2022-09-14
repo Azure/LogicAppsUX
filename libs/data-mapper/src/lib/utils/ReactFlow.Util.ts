@@ -190,10 +190,9 @@ const convertExpressionsToReactFlowParentAndChildNodes = (
 };
 
 export const convertToReactFlowEdges = (connections: ConnectionDictionary): ReactFlowEdge[] => {
-  return Object.keys(connections).map((connectionKey) => {
-    const connection = connections[connectionKey];
+  return Object.entries(connections).map(([connectionKey, connection]) => {
     return {
-      id: `${connection.value}-to-${connectionKey}`,
+      id: connectionKey,
       source: connection.reactFlowSource,
       target: connection.reactFlowDestination,
       type: ConnectionLineType.SmoothStep,
