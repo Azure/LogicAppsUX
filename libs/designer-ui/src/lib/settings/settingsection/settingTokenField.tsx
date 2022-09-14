@@ -9,6 +9,7 @@ import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 import React from 'react';
+import { DropdownEditor } from '../../dropdown';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -54,6 +55,18 @@ const TokenField = ({
   onComboboxMenuOpen
 }: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
+    case 'dropdown':
+      return (
+        <DropdownEditor
+          placeholder={placeholder}
+          readonly={readOnly}
+          initialValue={value}
+          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          GetTokenPicker={GetTokenPicker}
+          onChange={onValueChange}
+        />
+      );
+
     case 'combobox':
       // eslint-disable-next-line no-case-declarations
       const options = editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }));
