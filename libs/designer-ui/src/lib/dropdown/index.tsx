@@ -1,6 +1,5 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { BaseEditorProps } from '../editor/base';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
 import type { FormEvent } from 'react';
@@ -24,9 +23,11 @@ const dropdownStyles: Partial<IDropdownStyles> = {
   },
 };
 
-interface DropdownEditorProps extends BaseEditorProps {
+interface DropdownEditorProps {
   multiSelect?: boolean;
+  initialValue: ValueSegment[];
   options: DropdownItem[];
+  readonly?: boolean;
 }
 
 export interface DropdownItem {

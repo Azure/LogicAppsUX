@@ -9,6 +9,7 @@ import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { guid } from '@microsoft-logic-apps/utils';
 import Fuse from 'fuse.js';
+import type { LexicalEditor } from 'lexical';
 import type { editor } from 'monaco-editor';
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
@@ -37,7 +38,12 @@ export const TokenPickerOptions = ({
   setExpression,
 }: TokenPickerOptionsProps): JSX.Element => {
   const intl = useIntl();
-  const [editor] = useLexicalComposerContext();
+  let editor: LexicalEditor | null;
+  try {
+    [editor] = useLexicalComposerContext();
+  } catch {
+    editor = null;
+  }
   const [moreOptions, { toggle: toggleMoreOptions }] = useBoolean(true);
   const [filteredTokens, setFilteredTokens] = useState(section.tokens);
 
@@ -125,7 +131,7 @@ export const TokenPickerOptions = ({
   const handleCreateToken = (token: OutputToken) => {
     const { key, brandColor, icon, title, description, name, type, value, outputInfo } = token;
     const { actionName, type: tokenType, required, format, source, isSecure, arrayDetails } = outputInfo;
-    editor.dispatchCommand(INSERT_TOKEN_NODE, {
+    editor?.dispatchCommand(INSERT_TOKEN_NODE, {
       brandColor,
       description,
       title,

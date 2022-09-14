@@ -31,6 +31,7 @@ export interface TokenPickerProps {
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   initialMode?: TokenPickerMode;
+  noEditor?: boolean;
   tokenPickerFocused?: (b: boolean) => void;
   setShowTokenPickerButton?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
@@ -41,6 +42,7 @@ export function TokenPicker({
   tokenGroup,
   expressionGroup,
   initialMode,
+  noEditor = false,
   tokenPickerFocused,
   onSearchTextChanged,
 }: TokenPickerProps): JSX.Element {
@@ -159,8 +161,8 @@ export function TokenPicker({
           </div>
         </div>
       </Callout>
-      <TokenPickerHandler handleUpdateExpressionToken={handleUpdateExpressionToken} />
-      <UpdateTokenNode />
+      {noEditor ? null : <TokenPickerHandler handleUpdateExpressionToken={handleUpdateExpressionToken} />}
+      {noEditor ? null : <UpdateTokenNode />}
     </>
   );
 }

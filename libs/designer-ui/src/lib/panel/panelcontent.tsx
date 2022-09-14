@@ -13,5 +13,5 @@ export const PanelContent = ({ tabs, selectedTab }: PanelContentProps): JSX.Elem
     });
     return tab ? tab[1].content : null;
   }, [selectedTab, tabs]);
-  return <div className="msla-content">{tabContent}</div>;
+  return <div className="msla-panel-content-container">{tabContent}</div>;
 };

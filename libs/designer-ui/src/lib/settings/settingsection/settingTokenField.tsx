@@ -68,7 +68,15 @@ const TokenField = ({
       );
 
     case 'schema':
-      return <SchemaEditor placeholder={placeholder} disabled={readOnly} initialValue={value} onChange={onValueChange} />;
+      return (
+        <SchemaEditor
+          placeholder={placeholder}
+          readonly={readOnly}
+          initialValue={value}
+          onChange={onValueChange}
+          GetTokenPicker={GetTokenPicker}
+        />
+      );
 
     case 'dictionary':
       return (
