@@ -1,6 +1,7 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { Combobox } from '../../combobox';
 import { DictionaryEditor } from '../../dictionary';
+import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, ChangeHandler } from '../../editor/base';
 import { StringEditor } from '../../editor/string';
@@ -9,7 +10,6 @@ import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
 import React from 'react';
-import { DropdownEditor } from '../../dropdown';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -52,30 +52,31 @@ const TokenField = ({
   value,
   GetTokenPicker,
   onValueChange,
-  onComboboxMenuOpen
+  onComboboxMenuOpen,
 }: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
     case 'dropdown':
+      // eslint-disable-next-line no-case-declarations
+      const { options, multiSelect } = editorOptions;
       return (
         <DropdownEditor
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          multiSelect={!!multiSelect}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
       );
 
     case 'combobox':
-      // eslint-disable-next-line no-case-declarations
-      const options = editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }));
       return (
         <Combobox
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={options}
+          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}

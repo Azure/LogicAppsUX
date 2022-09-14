@@ -9,8 +9,16 @@ import { clearPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
+import type { RootState } from '../../store';
+import { getConnectionId } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { getAllInputParameters, getGroupAndParameterFromParameterKey, loadDynamicData, loadDynamicValuesForParameter, updateTokenMetadata } from '../../utils/parameters/helper';
+import {
+  getAllInputParameters,
+  getGroupAndParameterFromParameterKey,
+  loadDynamicData,
+  loadDynamicValuesForParameter,
+  updateTokenMetadata,
+} from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
@@ -20,8 +28,6 @@ import { LogEntryLevel, LoggerService, OperationManifestService } from '@microso
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import { getPropertyValue, map, aggregate, equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
-import type { RootState } from '../../store';
-import { getConnectionId } from '../../utils/connectors/connections';
 
 export interface NodeDataWithManifest extends NodeData {
   manifest: OperationManifest;
@@ -241,10 +247,15 @@ const initializeVariables = (operations: Operations, allNodesData: NodeDataWithM
 export const updateDynamicDataInNodes = async (
   connectionsPromise: Promise<void>,
   getState: () => RootState,
-  dispatch: Dispatch): Promise<void> => {
+  dispatch: Dispatch
+): Promise<void> => {
   await connectionsPromise;
   const rootState = getState();
-  const { workflow: { nodesMetadata, operations }, operations: { inputParameters, settings, dependencies, operationInfo }, tokens: { variables } } = rootState;
+  const {
+    workflow: { nodesMetadata, operations },
+    operations: { inputParameters, settings, dependencies, operationInfo },
+    tokens: { variables },
+  } = rootState;
   for (const [nodeId, operation] of Object.entries(operations)) {
     const nodeDependencies = dependencies[nodeId];
     const nodeInputs = inputParameters[nodeId];
@@ -252,24 +263,38 @@ export const updateDynamicDataInNodes = async (
     const connectionId = getConnectionId(rootState.connections, nodeId);
     const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
     const nodeOperationInfo = operationInfo[nodeId];
-    loadDynamicData(
-      nodeId,
-      isTrigger,
-      nodeOperationInfo,
-      connectionId,
-      nodeDependencies,
-      nodeInputs,
-      nodeSettings,
-      getAllVariables(variables),
-      dispatch,
-      operation);
 
-    for (const parameterKey of Object.keys(nodeDependencies.inputs)) {
-      const dependencyInfo = nodeDependencies.inputs[parameterKey];
-      if (dependencyInfo.dependencyType === 'ListValues') {
-        const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
-        if (details) {
-          loadDynamicValuesForParameter(nodeId, details.groupId, details.parameter.id, nodeOperationInfo, connectionId, nodeInputs, nodeDependencies, dispatch);
+    // TODO - The below if check should be removed once swagger based operations are correctly implemented
+    if (nodeOperationInfo) {
+      loadDynamicData(
+        nodeId,
+        isTrigger,
+        nodeOperationInfo,
+        connectionId,
+        nodeDependencies,
+        nodeInputs,
+        nodeSettings,
+        getAllVariables(variables),
+        dispatch,
+        operation
+      );
+
+      for (const parameterKey of Object.keys(nodeDependencies.inputs)) {
+        const dependencyInfo = nodeDependencies.inputs[parameterKey];
+        if (dependencyInfo.dependencyType === 'ListValues') {
+          const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
+          if (details) {
+            loadDynamicValuesForParameter(
+              nodeId,
+              details.groupId,
+              details.parameter.id,
+              nodeOperationInfo,
+              connectionId,
+              nodeInputs,
+              nodeDependencies,
+              dispatch
+            );
+          }
         }
       }
     }
