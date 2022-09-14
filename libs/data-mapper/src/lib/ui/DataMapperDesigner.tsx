@@ -169,7 +169,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     }
   };
 
-  const onPaneClick = (_event: ReactMouseEvent): void => {
+  const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
     dispatch(setCurrentlySelectedNode(undefined));
     setDisplayToolboxItem(undefined);
@@ -421,7 +421,14 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         onEdgeUpdate={onEdgeUpdate}
         onEdgeUpdateStart={onEdgeUpdateStart}
         onEdgeUpdateEnd={onEdgeUpdateEnd}
-        onMoveEnd={(_, viewport) => {
+        onMoveEnd={(event, viewport) => {
+          // NOTE/TODO: Bandaid-ish on React Flow state getting wiped on any re-render event
+          // Previously, setCanvasViewport would force re-render before onPaneClick could fire
+          // As side note/issue, visual selection of RF nodes also "erased" due to re-renders
+          if (event.type === 'mouseup') {
+            onPaneClick(event);
+          }
+
           setCanvasViewport(viewport);
         }}
       >
