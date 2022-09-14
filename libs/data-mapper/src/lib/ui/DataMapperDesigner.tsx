@@ -333,7 +333,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     xPos: '16px',
     yPos: '76px',
     width: '250px',
-    minHeight: '300px',
+    minHeight: '450px',
     maxHeight: '450px',
   };
 
