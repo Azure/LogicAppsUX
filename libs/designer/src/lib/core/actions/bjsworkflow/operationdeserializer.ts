@@ -81,8 +81,13 @@ const initializeOperationDetailsForManifest = async (
 
       const settings = getOperationSettings(isTrigger, operation.type, operation.kind, manifest, operation);
       const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
-      const nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs, settings.splitOn?.value?.value);
-      const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);
+      const { nodeOutputs, dynamicOutput } = getOutputParametersFromManifest(
+        manifest,
+        isTrigger,
+        nodeInputs,
+        settings.splitOn?.value?.value
+      );
+      const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs, dynamicOutput);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
       return [{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, manifest }, ...childGraphInputs];

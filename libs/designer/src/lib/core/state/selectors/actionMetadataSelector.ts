@@ -7,6 +7,7 @@ import type { OperationInfo } from '@microsoft-logic-apps/utils';
 import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
+import { getConnectionId } from '../../utils/connectors/connections';
 
 interface QueryResult {
   isLoading?: boolean;
@@ -24,12 +25,12 @@ export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
 };
 
 export const useNodeConnectionId = (nodeId: string): string =>
-  useSelector((state: RootState) => state.connections.connectionsMapping[nodeId]);
+  useSelector((state: RootState) => getConnectionId(state.connections, nodeId));
 
 export const useNodeConnectionName = (nodeId: string): QueryResult => {
   const { connectionId, connectorId } = useSelector((state: RootState) => {
     return nodeId
-      ? { connectionId: state.connections.connectionsMapping[nodeId], connectorId: state.operations.operationInfo[nodeId]?.connectorId }
+      ? { connectionId: getConnectionId(state.connections, nodeId), connectorId: state.operations.operationInfo[nodeId]?.connectorId }
       : { connectionId: '', connectorId: '' };
   });
 

@@ -4,14 +4,16 @@ import type { ParameterGroup } from '../../../../core/state/operation/operationM
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeConnectionName } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { RootState } from '../../../../core/store';
+import { getConnectionId } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
-import { updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
+import { loadDynamicValuesForParameter, updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
 import type { TokenGroup } from '../../../../core/utils/tokens';
 import { getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
+import { getAllVariables } from '../../../../core/utils/variables';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
-import { TokenPicker } from '@microsoft/designer-ui';
+import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -43,7 +45,7 @@ export const ParametersTab = () => {
           />
         </div>
       ))}
-      {connectionName && <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />}
+      {connectionName?.result && <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />}
     </>
   );
 };
@@ -66,15 +68,19 @@ const ParameterSection = ({
     isTrigger,
     nodeInputs,
     operationInfo,
+    connectionId,
     dependencies,
     settings: nodeSettings,
+    variables,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
       nodeInputs: state.operations.inputParameters[nodeId],
       operationInfo: state.operations.operationInfo[nodeId],
+      connectionId: getConnectionId(state.connections, nodeId),
       dependencies: state.operations.dependencies[nodeId],
       settings: state.operations.settings[nodeId],
+      variables: getAllVariables(state.tokens.variables),
     };
   });
 
@@ -94,14 +100,22 @@ const ParameterSection = ({
         propertiesToUpdate,
         isTrigger,
         operationInfo,
+        connectionId,
         nodeInputs,
         dependencies,
+        variables,
         nodeSettings,
         dispatch
       );
     },
-    [nodeId, group.id, isTrigger, operationInfo, nodeInputs, dependencies, nodeSettings, dispatch]
+    [nodeId, group.id, isTrigger, operationInfo, connectionId, nodeInputs, dependencies, variables, nodeSettings, dispatch]
   );
+
+  const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
+    if (parameter.dynamicData?.status === DynamicCallStatus.FAILED || parameter.dynamicData?.status === DynamicCallStatus.NOTSTARTED) {
+      loadDynamicValuesForParameter(nodeId, group.id, parameter.id, operationInfo, connectionId, nodeInputs, dependencies, dispatch);
+    }
+  };
 
   const GetTokenPicker = (
     editorId: string,
@@ -140,6 +154,7 @@ const ParameterSection = ({
           tokenEditor: true,
           GetTokenPicker: GetTokenPicker,
           onValueChange: (newState: ChangeState) => onValueChange(param.id, newState),
+          onComboboxMenuOpen: () => onComboboxMenuOpen(param),
         },
       };
     });

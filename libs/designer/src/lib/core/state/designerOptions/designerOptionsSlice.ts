@@ -4,6 +4,7 @@ import {
   InitLoggerService,
   DevLogger,
   InitConnectionService,
+  InitConnectorService,
   InitOperationManifestService,
   InitSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
@@ -18,7 +19,7 @@ const initialState: DesignerOptionsState = {
 
 export const initializeServices = createAsyncThunk(
   'initializeDesignerServices',
-  async ({ connectionService, operationManifestService, searchService, loggerService }: ServiceOptions) => {
+  async ({ connectionService, operationManifestService, searchService, connectorService, loggerService }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
       loggerServices.push(loggerService);
@@ -30,6 +31,11 @@ export const initializeServices = createAsyncThunk(
     InitOperationManifestService(operationManifestService);
     InitSearchService(searchService);
     InitLoggerService(loggerServices);
+
+    if (connectorService) {
+      InitConnectorService(connectorService);
+    }
+
     return true;
   }
 );
