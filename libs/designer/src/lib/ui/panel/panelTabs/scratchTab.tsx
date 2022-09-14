@@ -135,7 +135,6 @@ function createTable(rows, cols) {
         <SchemaEditor
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
-          GetTokenPicker={GetTokenPicker}
         />
         {/* 
         <DictionaryEditor
