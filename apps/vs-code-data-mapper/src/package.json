@@ -1,6 +1,6 @@
 {
   "name": "microsoft-data-mapper-vscode-extension",
-  "version": "0.0.99",
+  "version": "0.0.100",
   "main": "main.js",
   "repository": "https://github.com/Azure/logic_apps_designer",
   "engines": {
