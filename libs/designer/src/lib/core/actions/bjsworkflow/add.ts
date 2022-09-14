@@ -133,8 +133,13 @@ export const reinitializeOperationDetails = async (
       workflowState.operations[nodeId]
     );
     const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
-    const nodeOutputs = getOutputParametersFromManifest(manifest, false /* isTrigger */, nodeInputs, settings.splitOn?.value?.value);
-    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);
+    const { nodeOutputs, dynamicOutput } = getOutputParametersFromManifest(
+      manifest,
+      false /* isTrigger */,
+      nodeInputs,
+      settings.splitOn?.value?.value
+    );
+    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs, dynamicOutput);
 
     dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
 
