@@ -37,15 +37,15 @@ import {
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { SchemaTypes } from '../models';
 import type { SchemaNodeExtended } from '../models';
+import { SchemaTypes } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { Expression, ExpressionDictionary } from '../models/Expression';
+import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
-import type { SelectedInputNode, SelectedOutputNode, SelectedExpressionNode } from '../models/SelectedNode';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, inputPrefix, outputPrefix, ReactFlowNodeType } from '../utils/ReactFlow.Util';
-import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
+import { allChildNodesSelected, hasAConnectionAtCurrentOutputNode, isLeafNode } from '../utils/Schema.Utils';
 import './ReactFlowStyleOverrides.css';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -67,8 +67,8 @@ import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import ReactFlow, { ConnectionLineType, MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'react-flow-renderer';
+import ReactFlow, { ConnectionLineType, MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -105,9 +105,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   // TODO update to support input nodes connected to an expression, connected to an output node
   const connectedInputNodes = useMemo(() => {
     if (currentOutputNode) {
-      const outputFilteredConnections = currentOutputNode.children.flatMap((childNode) =>
-        !connections[childNode.key] ? [] : connections[childNode.key]
-      );
+      const connectionValues = Object.values(connections);
+      const outputFilteredConnections = currentOutputNode.children.flatMap((childNode) => {
+        const foundConnection = connectionValues.find((connection) => connection.destination === childNode.key);
+        return foundConnection ? [foundConnection] : [];
+      });
 
       return outputFilteredConnections
         .map((connection) => {
@@ -135,7 +137,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
     if (isLeafNode(selectedNode)) {
-      if (!hasAConnection(selectedNode, currentConnections)) {
+      if (currentOutputNode && !hasAConnectionAtCurrentOutputNode(selectedNode, currentOutputNode, currentConnections)) {
         dispatch(toggleInputNode(selectedNode));
       }
     } else {
@@ -206,7 +208,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         nodeType: NodeType.Expression,
         name: node.data.expressionName,
         inputs: node.data.inputs,
-        branding: node.data.expressionBranding, 
+        branding: node.data.expressionBranding,
         description: '', // TODO: this property and below
         codeEx: '',
         definition: '',
