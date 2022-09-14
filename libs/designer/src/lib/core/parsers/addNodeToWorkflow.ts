@@ -1,23 +1,15 @@
 /* eslint-disable no-param-reassign */
-import type { IdsForDiscovery } from '../state/panel/panelInterfaces';
+import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
-import {
-  reassignNodeRunAfter,
-  reassignEdgeSources,
-  assignNodeRunAfterLeafNode,
-  reassignEdgeTargets,
-  addNewEdge,
-  removeEdge,
-  resetIsRootNode,
-} from './restructuringHelpers';
+import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode } from './restructuringHelpers';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 
 export interface AddNodePayload {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
   nodeId: string;
-  discoveryIds: IdsForDiscovery;
+  relationshipIds: RelationshipIds;
   isParallelBranch?: boolean;
 }
 
@@ -32,11 +24,11 @@ export const addNodeToWorkflow = (
   state: WorkflowState
 ) => {
   const { nodeId: newNodeId } = payload;
-  const { graphId, parentId, childId } = payload.discoveryIds;
+  const { graphId, parentId, childId } = payload.relationshipIds;
 
   // Add Node Data
   const workflowNode: WorkflowNode = createNodeWithDefaultSize(newNodeId);
-  addWorkflowNode(workflowNode, workflowGraph);
+  workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
 
   // Update metadata
   const isRoot = parentId?.split('-#')[0] === graphId;
@@ -47,29 +39,25 @@ export const addNodeToWorkflow = (
 
   // Parallel Branch creation, just add the singular node
   if (payload.isParallelBranch && parentId) {
-    addNewEdge(parentId, newNodeId, workflowGraph);
-    assignNodeRunAfterLeafNode(state, parentId, newNodeId);
-  }
-  // 1 parent and 1 child
-  else if (parentId && childId) {
-    removeEdge(parentId, childId, workflowGraph);
-    addNewEdge(parentId, newNodeId, workflowGraph);
-    addNewEdge(newNodeId, childId, workflowGraph);
-    reassignNodeRunAfter(state, childId, parentId, newNodeId);
-  }
-  // 1 parent, X children
-  else if (parentId) {
-    reassignEdgeSources(state, parentId, newNodeId, workflowGraph);
-    addNewEdge(parentId, newNodeId, workflowGraph);
-    assignNodeRunAfterLeafNode(state, parentId, newNodeId);
+    addNewEdge(state, parentId, newNodeId, workflowGraph);
   }
   // X parents, 1 child
   else if (childId) {
     reassignEdgeTargets(state, childId, newNodeId, workflowGraph);
-    addNewEdge(newNodeId, childId, workflowGraph);
+    addNewEdge(state, newNodeId, childId, workflowGraph);
+  }
+  // 1 parent, X children
+  else if (parentId) {
+    reassignEdgeSources(state, parentId, newNodeId, workflowGraph);
+    addNewEdge(state, parentId, newNodeId, workflowGraph);
   }
 
-  if (isRoot) resetIsRootNode(newNodeId, workflowGraph, nodesMetadata);
+  if (isRoot) applyIsRootNode(state, newNodeId, workflowGraph, nodesMetadata);
+
+  // Increase action count of graph
+  if (nodesMetadata[workflowGraph.id]) {
+    nodesMetadata[workflowGraph.id].actionCount = nodesMetadata[graphId].actionCount ?? 0 + 1;
+  }
 };
 
 export const addWorkflowNode = (node: WorkflowNode, graph: WorkflowNode): void => {

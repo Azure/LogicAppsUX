@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { AppDispatch } from '../../core';
 import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
+import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
@@ -30,30 +31,43 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const dispatch = useDispatch<AppDispatch>();
 
+  const metadata = useNodeMetadata(id);
+  const operationInfo = useOperationInfo(id);
+  const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
+
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'BOX',
       end: (item, monitor) => {
-        const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
+        const dropResult = monitor.getDropResult<{
+          graphId: string;
+          parentId: string;
+          childId: string;
+        }>();
         if (item && dropResult) {
-          alert(`You dropped ${id} between ${dropResult.parent} and  ${dropResult.child}!`);
+          dispatch(
+            moveOperation({
+              nodeId: id,
+              oldGraphId: metadata?.graphId ?? 'root',
+              newGraphId: dropResult.graphId,
+              relationshipIds: dropResult,
+            })
+          );
         }
       },
       item: {
         id: id,
       },
-      canDrag: !readOnly,
+      canDrag: !readOnly && !isTrigger,
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
     }),
-    [readOnly]
+    [readOnly, metadata]
   );
 
   const selected = useIsNodeSelected(id);
-  const metadata = useNodeMetadata(id);
   const nodeComment = useNodeDescription(id);
-  const operationInfo = useOperationInfo(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
   const isLeaf = useIsLeafNode(id);
@@ -90,8 +104,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       defaultMessage: 'Delete',
       description: 'Delete text',
     });
-    const isTrigger = metadata?.graphId === 'root' && metadata?.isRoot;
-    const canDelete = !isTrigger;
 
     const disableTriggerDeleteText = intl.formatMessage({
       defaultMessage: 'Triggers cannot be deleted.',
@@ -100,7 +112,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
     return {
       key: deleteDescription,
-      disabled: readOnly || !canDelete,
+      disabled: readOnly || isTrigger,
       disabledReason: disableTriggerDeleteText,
       iconName: 'Delete',
       title: deleteDescription,
@@ -118,7 +130,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         <Card
           title={label}
           icon={iconUriResult.result}
-          draggable={!readOnly}
+          draggable={!readOnly && !isTrigger}
           brandColor={brandColor}
           id={id}
           connectionRequired={isConnectionRequired}

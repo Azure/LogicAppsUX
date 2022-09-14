@@ -37,27 +37,29 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
 
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
-    const discoveryIds = { graphId, childId, parentId };
-    dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds }));
+    const relationshipIds = { graphId, childId, parentId };
+    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
   }, [dispatch, graphId, childId, parentId]);
 
   const addParallelBranch = useCallback(() => {
     const newId = guid();
-    const discoveryIds = { graphId, childId: undefined, parentId };
-    dispatch(expandDiscoveryPanel({ nodeId: newId, discoveryIds, isParallelBranch: true }));
+    const relationshipIds = { graphId, childId: undefined, parentId };
+    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
   }, [dispatch, graphId, parentId]);
 
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
-    // The type (or types) to accept - strings or symbols
-    accept: 'BOX',
-    drop: () => ({ child: childId, parent: parentId }), // danielle check this, graph id
-    canDrop: (item) => (item as any).id !== childId,
-    // Props to collect
-    collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop(),
+  const [{ isOver, canDrop }, drop] = useDrop(
+    () => ({
+      accept: 'BOX',
+      drop: () => ({ graphId, parentId, childId }),
+      canDrop: (item: any) => item.id !== childId && item.id !== parentId && item.id !== graphId,
+      // TODO: Riley - prevent from dropping into nested children
+      collect: (monitor) => ({
+        isOver: monitor.isOver(),
+        canDrop: monitor.canDrop(),
+      }),
     }),
-  }));
+    [graphId, parentId, childId]
+  );
 
   const tooltipText = intl.formatMessage({
     defaultMessage: 'Insert a new step',

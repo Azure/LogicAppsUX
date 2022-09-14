@@ -5,13 +5,13 @@ export interface PanelState {
   selectedNode: string;
   isDiscovery: boolean;
   isParallelBranch: boolean;
-  discoveryIds: IdsForDiscovery;
+  relationshipIds: RelationshipIds;
   registeredTabs: Record<string, PanelTab>;
   selectedTabName: string | undefined;
   selectedOperationGroupId: string;
 }
 
-export interface IdsForDiscovery {
+export interface RelationshipIds {
   graphId: string;
   parentId?: string;
   childId?: string;

@@ -21,7 +21,7 @@ describe('edit workflow', () => {
       {
         operation: {} as any,
         nodeId: 'post_in_teams',
-        discoveryIds: {
+        relationshipIds: {
           graphId: graph.id,
           parentId: parentId,
           childId: childId,
@@ -45,7 +45,7 @@ describe('edit workflow', () => {
       {
         operation: {} as any,
         nodeId: 'post_in_teams',
-        discoveryIds: {
+        relationshipIds: {
           graphId: graph.id,
           parentId: parentId,
           childId: undefined,

@@ -1,4 +1,5 @@
 import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
+import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
@@ -36,13 +37,28 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
+  const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
+  const operationInfo = useOperationInfo(scopeId);
+  const metadata = useNodeMetadata(scopeId);
+
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'BOX',
       end: (item, monitor) => {
-        const dropResult = monitor.getDropResult<{ parent: string; child: string }>();
+        const dropResult = monitor.getDropResult<{
+          graphId: string;
+          parentId: string;
+          childId: string;
+        }>();
         if (item && dropResult) {
-          alert(`You dropped ${scopeId} between ${dropResult.parent} and  ${dropResult.child}!`);
+          dispatch(
+            moveOperation({
+              nodeId: scopeId,
+              oldGraphId: metadata?.graphId ?? 'root',
+              newGraphId: dropResult.graphId,
+              relationshipIds: dropResult,
+            })
+          );
         }
       },
       item: {
@@ -53,13 +69,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         isDragging: monitor.isDragging(),
       }),
     }),
-    [readOnly]
+    [readOnly, metadata]
   );
 
-  const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const selected = useIsNodeSelected(scopeId);
-  const metadata = useNodeMetadata(scopeId);
-  const operationInfo = useOperationInfo(scopeId);
   const brandColor = useBrandColor(operationInfo);
   const iconUri = useIconUri(operationInfo);
   const isLeaf = useIsLeafNode(id);

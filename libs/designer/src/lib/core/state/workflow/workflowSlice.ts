@@ -5,6 +5,8 @@ import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
+import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
+import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
@@ -38,7 +40,7 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const graph = getWorkflowNodeFromGraphState(state, action.payload.discoveryIds.graphId);
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
       if (!graph) throw new Error('graph not set');
 
       addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
@@ -48,6 +50,20 @@ export const workflowSlice = createSlice({
         message: 'New Action Node Added',
         args: [action.payload],
       });
+    },
+    moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
+      if (!state.graph) {
+        console.error('graph not set');
+        return; // log exception
+      }
+      const oldGraph = getWorkflowNodeFromGraphState(state, action.payload.oldGraphId);
+      if (!oldGraph) throw new Error('graph not set');
+      const newGraph = getWorkflowNodeFromGraphState(state, action.payload.newGraphId);
+      if (!newGraph) throw new Error('graph not set');
+      const currentNode = getWorkflowNodeFromGraphState(state, action.payload.nodeId);
+      if (!currentNode) throw new Error('node not set');
+
+      moveNodeInWorkflow(currentNode, oldGraph, newGraph, action.payload.relationshipIds, state.nodesMetadata, state);
     },
     deleteNode: (state: WorkflowState, action: PayloadAction<DeleteNodePayload>) => {
       if (!state.graph) {
@@ -216,6 +232,7 @@ export const workflowSlice = createSlice({
 export const {
   initWorkflowSpec,
   addNode,
+  moveNode,
   deleteNode,
   updateNodeSizes,
   setNodeDescription,

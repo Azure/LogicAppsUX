@@ -13,10 +13,8 @@ export const deleteNodeFromWorkflow = (
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
-  const { nodeId } = payload;
-
-  console.log('Delete Node From Workflow:', nodeId, workflowGraph.id);
   if (!workflowGraph.id) throw new Error('Workflow graph is missing an id');
+  const { nodeId } = payload;
 
   const currentRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter;
   const multipleParents = Object.keys(currentRunAfter ?? {}).length > 1;
@@ -33,17 +31,22 @@ export const deleteNodeFromWorkflow = (
   if (multipleParents) {
     const childId = (workflowGraph.edges ?? []).find((edge) => edge.source === nodeId)?.target ?? '';
     reassignEdgeTargets(state, nodeId, childId, workflowGraph);
-    removeEdge(nodeId, childId, workflowGraph);
+    removeEdge(state, nodeId, childId, workflowGraph);
   } else {
     const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
     reassignEdgeSources(state, nodeId, parentId, workflowGraph);
-    removeEdge(parentId, nodeId, workflowGraph);
+    removeEdge(state, parentId, nodeId, workflowGraph);
   }
 
   // Delete Node Data
   deleteWorkflowNode(nodeId, workflowGraph);
   delete nodesMetadata[nodeId];
   delete state.operations[nodeId];
+
+  // Decrease action count of graph
+  if (nodesMetadata[workflowGraph.id]) {
+    nodesMetadata[workflowGraph.id].actionCount = (nodesMetadata[workflowGraph.id].actionCount ?? 1) - 1;
+  }
 };
 
 export const deleteWorkflowNode = (nodeId: string, graph: WorkflowNode): void => {
