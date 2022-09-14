@@ -1,12 +1,13 @@
 import { getExpressions } from '../../core/queries/expressions';
 import type { Expression } from '../../models/Expression';
 import { ExpressionCategory } from '../../models/Expression';
-import { iconUriForIconImageName } from '../../utils/Icon.Utils';
+import { getExpressionBrandingForCategory } from '../../utils/Expression.Utils';
+import { getIconForExpression } from '../../utils/Icon.Utils';
 import { DMTooltip } from '../tooltip/tooltip';
 import { TreeHeader } from '../tree/treeHeader';
 import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { GroupedList } from '@fluentui/react';
-import { Button, Caption1, Image, makeStyles, mergeClasses, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, Caption1, makeStyles, mergeClasses, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import Fuse from 'fuse.js';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -15,19 +16,6 @@ export interface ExpressionListProps {
   sample: string;
   onExpressionClick: (expression: Expression) => void;
 }
-
-const cardStyles = makeStyles({
-  button: {
-    width: '100%',
-    height: '40px',
-    backgroundColor: tokens.colorNeutralBackground1,
-    display: 'flex',
-    ...shorthands.border('0px'),
-  },
-  text: {
-    width: '150px',
-  },
-});
 
 const buttonHoverStyles = makeStyles({
   button: {
@@ -43,7 +31,8 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
 
   useEffect(() => {
     if (expressionListData.data) {
-      const categoriesArray: string[] = [];
+      const categoriesArray: ExpressionCategory[] = [];
+      let newSortedExpressions: Expression[] = [];
       let dataCopy = expressionListData.data;
       if (searchTerm) {
         const options: Fuse.IFuseOptions<Expression> = {
@@ -59,16 +48,27 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
         };
         const fuse = new Fuse(expressionListData.data, options);
         const results = fuse.search(searchTerm);
-        dataCopy = results.map((fuse) => fuse.item);
+        dataCopy = results.map((fuse) => {
+          return { ...fuse.item, matchIndices: fuse.matches };
+        });
         dataCopy.forEach((expression) => {
           if (!categoriesArray.find((category) => category === expression.expressionCategory))
             categoriesArray.push(expression.expressionCategory);
         });
+        newSortedExpressions = dataCopy.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
       } else {
         dataCopy = expressionListData.data;
         Object.values(ExpressionCategory).forEach((category) => categoriesArray.push(category));
+        newSortedExpressions = dataCopy.sort((a, b) => {
+          const categorySort = a.expressionCategory.localeCompare(b.expressionCategory);
+          if (categorySort !== 0) {
+            return categorySort;
+          } else {
+            return a.name.localeCompare(b.name);
+          }
+        });
       }
-      const newSortedExpressions = dataCopy.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
+
       setSortedExpressionsByCategory(newSortedExpressions);
       let startInd = 0;
       const newGroups = categoriesArray.map((value): IGroup => {
@@ -78,7 +78,13 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
             numInGroup++;
           }
         });
-        const group: IGroup = { key: value, startIndex: startInd, name: value, count: numInGroup, data: expressionListData.data[0] };
+        const group: IGroup = {
+          key: value,
+          startIndex: startInd,
+          name: getExpressionBrandingForCategory(value).displayName,
+          count: numInGroup,
+          data: expressionListData.data[0],
+        };
         startInd += numInGroup;
         return group;
       });
@@ -115,8 +121,8 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
           backgroundColor: 'inherit',
         },
       },
-      '.ms-List-page': {
-        height: 'fit-content !important',
+      '.ms-GroupedList-group': {
+        paddingBottom: '8px',
       },
     },
   };
@@ -143,10 +149,29 @@ interface ExpressionListCellProps {
   onExpressionClick: (expression: Expression) => void;
 }
 
+const cardStyles = makeStyles({
+  button: {
+    width: '100%',
+    height: '40px',
+    backgroundColor: tokens.colorNeutralBackground1,
+    display: 'flex',
+    justifyContent: 'left',
+    ...shorthands.border('0px'),
+    ...shorthands.padding('1px 4px 1px 4px'),
+  },
+  text: {
+    width: '180px',
+    paddingLeft: '4px',
+    paddingRight: '4px',
+    ...shorthands.overflow('hidden'),
+  },
+});
+
 const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onExpressionClick }) => {
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
   const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
+  const brand = getExpressionBrandingForCategory(expression.expressionCategory);
 
   return (
     <Button
@@ -159,8 +184,19 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
         onExpressionClick(expression);
       }}
     >
-      {expression.iconFileName && <Image src={iconUriForIconImageName(expression.iconFileName)} height={20} width={20} />}
-      <Caption1 className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
+      <span
+        style={{
+          backgroundColor: brand.colorLight /* need to add this to theme task no. 15544832*/,
+          height: '28px',
+          width: '28px',
+          borderRadius: '14px',
+        }}
+      >
+        <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1 }}>
+          {getIconForExpression(expression.name, expression.iconFileName, brand)}
+        </div>
+      </span>
+      <Caption1 truncate block className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
         {expression.name}
       </Caption1>
       <span style={{ justifyContent: 'right' }}>

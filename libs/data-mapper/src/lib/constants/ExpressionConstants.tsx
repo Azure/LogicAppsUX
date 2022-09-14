@@ -6,42 +6,49 @@ import { ExpressionCategory } from '../models/Expression';
 import { AddSubtractCircle20Filled, CalendarClock20Regular, Cube20Regular, MathSymbols20Regular } from '@fluentui/react-icons';
 
 export interface ExpressionGroupBranding {
+  displayName: string;
   colorLight: string;
   colorDark: string;
   icon: IconProps;
 }
 
 export const collectionBranding: ExpressionGroupBranding = {
+  displayName: 'Collection',
   colorLight: '#ae8c00',
   colorDark: '#c9a618',
   icon: <Collection20Regular />,
 };
 
 export const dateTimeBranding: ExpressionGroupBranding = {
+  displayName: 'Date and time',
   colorLight: '#4f6bed',
   colorDark: '#93a4f4',
   icon: <CalendarClock20Regular />,
 };
 
 export const logicalBranding: ExpressionGroupBranding = {
+  displayName: 'Logical comparison',
   colorLight: '#038387',
   colorDark: '#4bb4b7',
   icon: <AddSubtractCircle20Filled />,
 };
 
 export const mathBranding: ExpressionGroupBranding = {
+  displayName: 'Math',
   colorLight: '#004e8c',
   colorDark: '#286ea8',
   icon: <MathSymbols20Regular />,
 };
 
 export const stringBranding: ExpressionGroupBranding = {
+  displayName: 'String',
   colorLight: '#e43ba6',
   colorDark: '#ef85cb',
   icon: <Cube20Regular />,
 };
 
 export const utilityBranding: ExpressionGroupBranding = {
+  displayName: 'Utility',
   colorLight: '#8764b8',
   colorDark: '#a083c9',
   icon: <StringCategory20Regular />,

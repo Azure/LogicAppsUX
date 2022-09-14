@@ -1,13 +1,12 @@
 import type { ExpressionGroupBranding } from '../../constants/ExpressionConstants';
 import { store } from '../../core/state/Store';
 import type { ExpressionInput } from '../../models/Expression';
-import { iconUriForIconImageName } from '../../utils/Icon.Utils';
+import { getIconForExpression } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
 import {
   Button,
   createFocusOutlineStyle,
-  Image,
   makeStyles,
   mergeClasses,
   PresenceBadge,
@@ -127,11 +126,7 @@ export const ExpressionCard: FunctionComponent<NodeProps<ExpressionCardProps>> =
       >
         {/* TODO light vs dark theming on expression branding */}
         <Button onClick={onClick} color={expressionBranding.colorLight} className={mergedClasses} disabled={!!disabled}>
-          {iconFileName ? (
-            <Image src={iconUriForIconImageName(iconFileName)} height={20} width={20} alt={expressionName} />
-          ) : (
-            <>{expressionBranding.icon}</>
-          )}
+          {getIconForExpression(expressionName, iconFileName, expressionBranding)}
         </Button>
       </Tooltip>
       {displayHandle ? <Handle type={'source'} position={Position.Right} style={handleStyle} /> : null}

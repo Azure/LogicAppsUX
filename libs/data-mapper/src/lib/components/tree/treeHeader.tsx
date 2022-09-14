@@ -21,8 +21,22 @@ export const TreeHeader: React.FC<TreeHeaderProps> = (props) => {
   const style2 = titleStyle();
   const searchBoxStyles: IStyleFunctionOrObject<ISearchBoxStyleProps, ISearchBoxStyles> = {
     root: {
-      borderBottomColor: tokens.colorBrandForeground1,
-      borderBottomWidth: '2px',
+      '.ms-SearchBox': {
+        borderColor: tokens.colorNeutralStroke1,
+        borderBottom: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStrokeAccessible}`,
+      },
+      '::after': {
+        borderRadius: tokens.borderRadiusMedium,
+        borderTop: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke1}`,
+        borderLeft: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke1}`,
+        borderRight: `${tokens.strokeWidthThin} solid ${tokens.colorNeutralStroke1}`,
+      },
+      ':hover': {
+        borderColor: tokens.colorNeutralStroke1Hover,
+        borderBottomColor: tokens.colorNeutralStrokeAccessible,
+      },
+      borderColor: tokens.colorNeutralStroke1,
+      borderBottomColor: tokens.colorNeutralStrokeAccessible,
       borderRadius: tokens.borderRadiusMedium,
       marginBottom: '6px',
     },
