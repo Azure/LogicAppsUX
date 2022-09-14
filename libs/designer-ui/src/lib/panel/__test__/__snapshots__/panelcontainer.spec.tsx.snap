@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
+<StyledPanelBase
+  aria-label="panel"
+  className="msla-panel-container"
+  customWidth="630px"
+  hasCloseButton={false}
+  headerClassName="msla-panel-header"
+  headerText="test title"
+  isBlocking={false}
+  isOpen={true}
+  onRenderHeader={[Function]}
+  styles={
+    Object {
+      "content": Object {
+        "padding": "1rem",
+      },
+      "main": Object {
+        "overflow": "hidden",
+      },
+      "scrollableContent": Object {
+        "height": "100%",
+      },
+    }
+  }
+  type={7}
+>
+  <React.Fragment>
+    <div
+      className="msla-panel-page"
+    >
+      <PanelPivot
+        isCollapsed={false}
+        onTabChange={[Function]}
+        tabs={Object {}}
+        trackEvent={[MockFunction]}
+      />
+      <PanelContent
+        tabs={Object {}}
+      />
+    </div>
+  </React.Fragment>
+</StyledPanelBase>
+`;
