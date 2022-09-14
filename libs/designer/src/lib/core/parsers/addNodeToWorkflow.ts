@@ -28,7 +28,7 @@ export const addNodeToWorkflow = (
 
   // Add Node Data
   const workflowNode: WorkflowNode = createNodeWithDefaultSize(newNodeId);
-  addWorkflowNode(workflowNode, workflowGraph);
+  workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
 
   // Update metadata
   const isRoot = parentId?.split('-#')[0] === graphId;
@@ -41,16 +41,15 @@ export const addNodeToWorkflow = (
   if (payload.isParallelBranch && parentId) {
     addNewEdge(state, parentId, newNodeId, workflowGraph);
   }
-
-  // 1 parent, X children
-  if (parentId) {
-    reassignEdgeSources(state, parentId, newNodeId, workflowGraph);
-    addNewEdge(state, parentId, newNodeId, workflowGraph);
-  }
   // X parents, 1 child
   else if (childId) {
     reassignEdgeTargets(state, childId, newNodeId, workflowGraph);
     addNewEdge(state, newNodeId, childId, workflowGraph);
+  }
+  // 1 parent, X children
+  else if (parentId) {
+    reassignEdgeSources(state, parentId, newNodeId, workflowGraph);
+    addNewEdge(state, parentId, newNodeId, workflowGraph);
   }
 
   if (isRoot) applyIsRootNode(state, newNodeId, workflowGraph, nodesMetadata);

@@ -34,7 +34,6 @@ export const moveNodeInWorkflow = (
   }
 
   let workflowNode: WorkflowNode | any = {};
-  // Object.assign(workflowNode, currentNode);
   workflowNode = currentNode;
 
   /////////////////////////////////////////////////////////
@@ -70,40 +69,36 @@ export const moveNodeInWorkflow = (
   // Add node to the new position in the graph
 
   // Add WorkflowNode copy
-  addWorkflowNode(workflowNode, newWorkflowGraph);
+  newWorkflowGraph.children = [...(newWorkflowGraph?.children ?? []), workflowNode];
 
   const { parentId, childId } = discoveryIds;
 
   // Update metadata
   const newGraphId = newWorkflowGraph.id;
-  const isRoot = parentId?.split('-#')[0] === newGraphId;
+  const isNewRoot = parentId?.includes('-#');
   const parentNodeId = newGraphId !== 'root' ? newGraphId : undefined;
 
-  nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, isRoot };
+  nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, isRoot: isNewRoot };
   if (nodesMetadata[nodeId].isRoot === false) delete nodesMetadata[nodeId].isRoot;
 
-  // 1 parent, X children
-  if (parentId) {
-    reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph);
-    addNewEdge(state, parentId, nodeId, newWorkflowGraph);
-  }
   // X parents, 1 child
-  else if (childId) {
+  if (childId) {
     reassignEdgeTargets(state, childId, nodeId, newWorkflowGraph);
     addNewEdge(state, nodeId, childId, newWorkflowGraph);
   }
+  // 1 parent, X children
+  else if (parentId) {
+    reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph);
+    addNewEdge(state, parentId, nodeId, newWorkflowGraph);
+  }
 
-  if (isRoot) {
+  if (isNewRoot) {
     applyIsRootNode(state, nodeId, newWorkflowGraph, nodesMetadata);
-    (state.operations[nodeId] as LogicAppsV2.ActionDefinition).runAfter = {};
+    if (state.operations[nodeId] as any) delete (state.operations[nodeId] as any).runAfter;
   }
 
   // Increase action count of graph
   if (nodesMetadata?.[newWorkflowGraph.id]) {
     nodesMetadata[newWorkflowGraph.id].actionCount = (nodesMetadata[newWorkflowGraph.id].actionCount ?? 0) + 1;
   }
-};
-
-export const addWorkflowNode = (node: WorkflowNode, graph: WorkflowNode): void => {
-  graph.children = [...(graph?.children ?? []), node];
 };
