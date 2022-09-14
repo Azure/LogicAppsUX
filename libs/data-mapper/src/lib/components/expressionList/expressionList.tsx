@@ -31,7 +31,8 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
 
   useEffect(() => {
     if (expressionListData.data) {
-      const categoriesArray: string[] = [];
+      const categoriesArray: ExpressionCategory[] = [];
+      let newSortedExpressions: Expression[] = [];
       let dataCopy = expressionListData.data;
       if (searchTerm) {
         const options: Fuse.IFuseOptions<Expression> = {
@@ -54,11 +55,20 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
           if (!categoriesArray.find((category) => category === expression.expressionCategory))
             categoriesArray.push(expression.expressionCategory);
         });
+        newSortedExpressions = dataCopy.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
       } else {
         dataCopy = expressionListData.data;
         Object.values(ExpressionCategory).forEach((category) => categoriesArray.push(category));
+        newSortedExpressions = dataCopy.sort((a, b) => {
+          const categorySort = a.expressionCategory.localeCompare(b.expressionCategory);
+          if (categorySort !== 0) {
+            return categorySort;
+          } else {
+            return a.name.localeCompare(b.name);
+          }
+          });
       }
-      const newSortedExpressions = dataCopy.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
+      
       setSortedExpressionsByCategory(newSortedExpressions);
       let startInd = 0;
       const newGroups = categoriesArray.map((value): IGroup => {
@@ -68,7 +78,7 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
             numInGroup++;
           }
         });
-        const group: IGroup = { key: value, startIndex: startInd, name: value, count: numInGroup, data: expressionListData.data[0] };
+        const group: IGroup = { key: value, startIndex: startInd, name: getExpressionBrandingForCategory(value).displayName, count: numInGroup, data: expressionListData.data[0] };
         startInd += numInGroup;
         return group;
       });
