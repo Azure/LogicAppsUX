@@ -66,9 +66,9 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
           } else {
             return a.name.localeCompare(b.name);
           }
-          });
+        });
       }
-      
+
       setSortedExpressionsByCategory(newSortedExpressions);
       let startInd = 0;
       const newGroups = categoriesArray.map((value): IGroup => {
@@ -78,7 +78,13 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
             numInGroup++;
           }
         });
-        const group: IGroup = { key: value, startIndex: startInd, name: getExpressionBrandingForCategory(value).displayName, count: numInGroup, data: expressionListData.data[0] };
+        const group: IGroup = {
+          key: value,
+          startIndex: startInd,
+          name: getExpressionBrandingForCategory(value).displayName,
+          count: numInGroup,
+          data: expressionListData.data[0],
+        };
         startInd += numInGroup;
         return group;
       });
@@ -178,7 +184,14 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
         onExpressionClick(expression);
       }}
     >
-      <span style={{ backgroundColor: brand.colorLight, height: '28px', width: '28px', borderRadius: '14px' }}>
+      <span
+        style={{
+          backgroundColor: brand.colorLight /* need to add this to theme task no. 15544832*/,
+          height: '28px',
+          width: '28px',
+          borderRadius: '14px',
+        }}
+      >
         <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1 }}>
           {getIconForExpression(expression.name, expression.iconFileName, brand)}
         </div>
