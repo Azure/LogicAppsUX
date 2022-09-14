@@ -40,7 +40,7 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const graph = getWorkflowNodeFromGraphState(state, action.payload.discoveryIds.graphId);
+      const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
       if (!graph) throw new Error('graph not set');
 
       addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
@@ -63,7 +63,7 @@ export const workflowSlice = createSlice({
       const currentNode = getWorkflowNodeFromGraphState(state, action.payload.nodeId);
       if (!currentNode) throw new Error('node not set');
 
-      moveNodeInWorkflow(currentNode, oldGraph, newGraph, action.payload.discoveryIds, state.nodesMetadata, state);
+      moveNodeInWorkflow(currentNode, oldGraph, newGraph, action.payload.relationshipIds, state.nodesMetadata, state);
     },
     deleteNode: (state: WorkflowState, action: PayloadAction<DeleteNodePayload>) => {
       if (!state.graph) {

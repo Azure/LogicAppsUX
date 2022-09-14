@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import type { IdsForDiscovery, PanelState } from './panelInterfaces';
+import type { RelationshipIds, PanelState } from './panelInterfaces';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -7,7 +7,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initialState: PanelState = {
   collapsed: true,
   selectedNode: '',
-  discoveryIds: {
+  relationshipIds: {
     graphId: 'root',
   },
   isDiscovery: false,
@@ -39,10 +39,10 @@ export const panelSlice = createSlice({
       state.selectedNode = action.payload;
       state.isDiscovery = false;
     },
-    expandDiscoveryPanel: (state, action: PayloadAction<{ discoveryIds: IdsForDiscovery; nodeId: string; isParallelBranch?: boolean }>) => {
+    expandDiscoveryPanel: (state, action: PayloadAction<{ relationshipIds: RelationshipIds; nodeId: string; isParallelBranch?: boolean }>) => {
       state.collapsed = false;
       state.isDiscovery = true;
-      state.discoveryIds = action.payload.discoveryIds;
+      state.relationshipIds = action.payload.relationshipIds;
       state.selectedNode = action.payload.nodeId;
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
     },

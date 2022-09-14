@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import type { IdsForDiscovery } from '../state/panel/panelInterfaces';
+import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
 import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode } from './restructuringHelpers';
@@ -9,7 +9,7 @@ import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 export interface AddNodePayload {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
   nodeId: string;
-  discoveryIds: IdsForDiscovery;
+  relationshipIds: RelationshipIds;
   isParallelBranch?: boolean;
 }
 
@@ -24,7 +24,7 @@ export const addNodeToWorkflow = (
   state: WorkflowState
 ) => {
   const { nodeId: newNodeId } = payload;
-  const { graphId, parentId, childId } = payload.discoveryIds;
+  const { graphId, parentId, childId } = payload.relationshipIds;
 
   // Add Node Data
   const workflowNode: WorkflowNode = createNodeWithDefaultSize(newNodeId);

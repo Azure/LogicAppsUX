@@ -50,7 +50,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
               nodeId: id,
               oldGraphId: metadata?.graphId ?? 'root',
               newGraphId: dropResult.graphId,
-              discoveryIds: dropResult,
+              relationshipIds: dropResult,
             })
           );
         }

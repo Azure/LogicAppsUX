@@ -56,7 +56,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
               nodeId: scopeId,
               oldGraphId: metadata?.graphId ?? 'root',
               newGraphId: dropResult.graphId,
-              discoveryIds: dropResult,
+              relationshipIds: dropResult,
             })
           );
         }

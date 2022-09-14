@@ -5,7 +5,7 @@ import { getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping } from '../../state/connection/connectionSlice';
 import type { AddNodeOperationPayload, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
-import type { IdsForDiscovery } from '../../state/panel/panelInterfaces';
+import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { switchToOperationPanel, isolateTab } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
@@ -27,7 +27,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
-  discoveryIds: IdsForDiscovery;
+  relationshipIds: RelationshipIds;
   nodeId: string;
   isParallelBranch?: boolean;
 };

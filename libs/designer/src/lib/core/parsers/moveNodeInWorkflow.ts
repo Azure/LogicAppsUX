@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import type { IdsForDiscovery } from '../state/panel/panelInterfaces';
+import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
 import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';
@@ -8,14 +8,14 @@ export interface MoveNodePayload {
   nodeId: string;
   oldGraphId: string;
   newGraphId: string;
-  discoveryIds: IdsForDiscovery;
+  relationshipIds: RelationshipIds;
 }
 
 export const moveNodeInWorkflow = (
   currentNode: WorkflowNode,
   oldWorkflowGraph: WorkflowNode,
   newWorkflowGraph: WorkflowNode,
-  discoveryIds: IdsForDiscovery,
+  relationshipIds: RelationshipIds,
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
@@ -71,7 +71,7 @@ export const moveNodeInWorkflow = (
   // Add WorkflowNode copy
   newWorkflowGraph.children = [...(newWorkflowGraph?.children ?? []), workflowNode];
 
-  const { parentId, childId } = discoveryIds;
+  const { parentId, childId } = relationshipIds;
 
   // Update metadata
   const newGraphId = newWorkflowGraph.id;
