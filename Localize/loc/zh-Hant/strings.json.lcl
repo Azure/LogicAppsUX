@@ -1173,6 +1173,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";6lLsi+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This step will be removed from the Logic App.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[將會從該邏輯應用程式移除此步驟。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";6oqk+A" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Previous]]></Val>
@@ -1919,6 +1928,15 @@
           <Val><![CDATA[Required. The string from which to remove leading and trailing whitespace.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[必要。將移除其開頭及結尾空白字元的字串。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DDIIAQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Node]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[節點]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2829,6 +2847,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";LBbhCu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Delete Workflow Graph]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[刪除工作流程圖]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";LCUU5q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Warning]]></Val>
@@ -3194,6 +3221,15 @@
           <Val><![CDATA[Edit Parameter]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[編輯參數]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";O9ZExg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OK]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[確定]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3639,6 +3675,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Qy0Kha" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Triggers cannot be deleted.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[無法刪除觸發。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";RFjYpH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Name]]></Val>
@@ -4043,6 +4088,15 @@
           <Val><![CDATA[To reference a parameter, use the dynamic content list.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[若要參考參數，請使用動態內容清單。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";UEryJE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Delete Workflow Action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[刪除工作流程動作]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5652,6 +5706,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";iHVVTl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Are you sure you want to delete {nodeId}?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[確定要刪除 {nodeId} 嗎?]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";iJOIca" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Next]]></Val>
@@ -7194,6 +7257,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ti5TEd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[取消]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";tsmuoF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Display Name]]></Val>
@@ -7856,6 +7928,15 @@
           <Val><![CDATA[Enter default value for parameter.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[輸入參數的預設值。]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";z9kH+0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This will also remove all child steps.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[這也會移除所有子步驟。]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
