@@ -3,7 +3,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping } from '../../state/connection/connectionSlice';
-import type { AddNodeOperationPayload } from '../../state/operation/operationMetadataSlice';
+import type { AddNodeOperationPayload, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { IdsForDiscovery } from '../../state/panel/panelInterfaces';
 import { switchToOperationPanel, isolateTab } from '../../state/panel/panelSlice';
@@ -59,6 +59,8 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   const newWorkflowState = (getState() as RootState).workflow;
   initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
 
+  // Update settings for children and parents
+
   getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
   dispatch(setFocusNode(nodeId));
   return;
@@ -68,7 +70,7 @@ export const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: OperationInfo,
   operationType: string,
-  operationKind: string,
+  operationKind: string | undefined,
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): Promise<void> => {
@@ -89,6 +91,43 @@ export const initializeOperationDetails = async (
     addTokensAndVariables(
       nodeId,
       operationType,
+      { id: nodeId, nodeInputs, nodeOutputs, settings, manifest, nodeDependencies },
+      workflowState,
+      dispatch
+    );
+  } else {
+    // TODO - swagger case here
+  }
+};
+
+// TODO: Riley - this is very similar to the init function, but we might want to alter it to not overwrite some data
+export const reinitializeOperationDetails = async (
+  nodeId: string,
+  operation: NodeOperation,
+  workflowState: WorkflowState,
+  dispatch: Dispatch
+): Promise<void> => {
+  const operationManifestService = OperationManifestService();
+  if (operationManifestService.isSupported(operation.type)) {
+    const manifest = await getOperationManifest(operation);
+
+    // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
+    const settings = getOperationSettings(
+      false /* isTrigger */,
+      operation.type,
+      operation.kind,
+      manifest,
+      workflowState.operations[nodeId]
+    );
+    const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
+    const nodeOutputs = getOutputParametersFromManifest(manifest, false /* isTrigger */, nodeInputs, settings.splitOn?.value?.value);
+    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);
+
+    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
+
+    addTokensAndVariables(
+      nodeId,
+      operation.type,
       { id: nodeId, nodeInputs, nodeOutputs, settings, manifest, nodeDependencies },
       workflowState,
       dispatch
