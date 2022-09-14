@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 export const Validation: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
-  const { selectedWorkflows, location, selectedSubscription } = exportData;
+  const { selectedWorkflows, location, selectedSubscription, selectedAdvanceOptions } = exportData;
 
   const dispatch: AppDispatch = useDispatch();
   const intl = useIntl();
@@ -40,7 +40,7 @@ export const Validation: React.FC = () => {
   }, [accessToken, baseUrl]);
 
   const validateWorkflows = () => {
-    return apiService.validateWorkflows(selectedWorkflows, selectedSubscription, location);
+    return apiService.validateWorkflows(selectedWorkflows, selectedSubscription, location, selectedAdvanceOptions);
   };
 
   const onValidationSuccess = (successData: { properties: IValidationData }) => {

@@ -2,7 +2,7 @@ import { ArrayEditor } from '../../arrayeditor';
 import { Combobox } from '../../combobox';
 import { DictionaryEditor } from '../../dictionary';
 import type { ValueSegment } from '../../editor';
-import type { ChangeHandler } from '../../editor/base';
+import type { CallbackHandler, ChangeHandler } from '../../editor/base';
 import { StringEditor } from '../../editor/string';
 import { SchemaEditor } from '../../schemaeditor';
 import type { TokenGroup } from '../../tokenpicker/models/token';
@@ -26,6 +26,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   expressionGroup?: TokenGroup[];
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   onValueChange?: ChangeHandler;
+  onComboboxMenuOpen?: CallbackHandler;
 }
 
 export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
@@ -50,6 +51,7 @@ const TokenField = ({
   value,
   GetTokenPicker,
   onValueChange,
+  onComboboxMenuOpen
 }: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
     case 'combobox':
@@ -58,12 +60,13 @@ const TokenField = ({
       return (
         <Combobox
           placeholder={placeholder}
-          readOnly={readOnly}
+          readonly={readOnly}
           initialValue={value}
           options={options}
           useOption={true}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
+          onMenuOpen={onComboboxMenuOpen}
         />
       );
 

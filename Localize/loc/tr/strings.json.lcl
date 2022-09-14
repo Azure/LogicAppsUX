@@ -18,6 +18,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";+20fdv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid properties '{0}' for authentication type '{1}'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA['{1}' kimlik doğrulama türü için geçersiz özellikler: '{0}'.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";+W9fkq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+08:00) Kuala Lumpur, Singapore]]></Val>
@@ -1164,6 +1173,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";6lLsi+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This step will be removed from the Logic App.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bu adım mantıksal uygulamadan kaldırılacak.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";6oqk+A" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Previous]]></Val>
@@ -1286,6 +1304,15 @@
           <Val><![CDATA[Pfx]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Pfx]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";89FJnl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid property '{0}' for authentication type '{1}'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA['{1}' kimlik doğrulama türü için geçersiz özellik: '{0}'.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1569,6 +1596,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ADM1Z8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Authentication Type]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kimlik Doğrulama Türü]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";AHB418" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Filter Actions]]></Val>
@@ -1619,6 +1655,15 @@
           <Val><![CDATA[(UTC+06:30) Yangon (Rangoon)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+06:30) Yangon (Rangoon)]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AgrMqq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Type of '{0}' is '{1}'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA['{0}' türü '{1}'.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1883,6 +1928,15 @@
           <Val><![CDATA[Required. The string from which to remove leading and trailing whitespace.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gerekli. Baştaki ve sondaki boşluğun kaldırılacağı dize.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DDIIAQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Node]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Düğüm]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2421,6 +2475,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";HzS2gJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Dynamic content not supported as properties in authentication.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dinamik içerik, kimlik doğrulamasında özellik olarak desteklenmiyor.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";IA+Ogm" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[22]]></Val>
@@ -2784,6 +2847,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";LBbhCu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Delete Workflow Graph]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";LCUU5q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Warning]]></Val>
@@ -2843,6 +2912,15 @@
           <Val><![CDATA[Add new]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Yeni ekle]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Li6x/B" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Missing required properties '{0}' for authentication type '{1}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA['{1}' kimlik doğrulama türü için gerekli '{0}' özellikleri eksik]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2910,11 +2988,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";M3lzNo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid json format. Missing beginning '{' or ending '}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geçersiz json Biçimi. Başlangıç '{' işareti veya bitiş '}' işareti eksik]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";M48CGd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+11:00) Solomon Is., New Caledonia]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+11:00) Solomon Adl., Yeni Kaledonya]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";M4H0gh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Remove]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kaldır]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3126,6 +3222,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";O9ZExg" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[OK]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tamam]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";OD8igU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. A string that contains the time zone name of the source time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details.]]></Val>
@@ -3158,6 +3263,15 @@
           <Val><![CDATA[(UTC+11:00) Bougainville Island]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+11:00) Bougainville Adası]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OH94j3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Missing required property '{0}' for authentication type '{1}']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA['{1}' kimlik doğrulama türü için gerekli '{0}' özelliği eksik]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3555,6 +3669,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{hours} sa]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Qy0Kha" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Triggers cannot be deleted.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3966,6 +4086,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";UEryJE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Delete Workflow Action]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";UHCVNK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Replaces a string with a given string]]></Val>
@@ -4020,11 +4146,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";V0le5X" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid JSON.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Geçerli bir JSON girin.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";VE3cxq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-07:00) Mountain Time (US & Canada)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC-07:00) Dağ Saati (ABD ve Kanada)]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";VI5Sa8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Expand]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Genişlet]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5553,6 +5697,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";iHVVTl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Are you sure you want to delete {nodeId}?]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";iJOIca" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Next]]></Val>
@@ -5567,6 +5717,15 @@
           <Val><![CDATA[Required. The URI to parse.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gerekli. Ayrıştırılacak URI.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";iRARwF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Unsupported authentication type '{0}'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Desteklenmeyen kimlik doğrulama türü: '{0}'.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5931,6 +6090,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";kuFK3E" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Missing authentication type property: 'type'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kimlik doğrulama türü özelliği eksik: 'Type'.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";l36V56" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[{hours} hours {minutes} minutes]]></Val>
@@ -6098,6 +6266,15 @@
           <Val><![CDATA[Url encodes the input string]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[URL, giriş dizesini kodlar]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";mYQFtf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA['ActiveDirectoryOAuth' kimlik doğrulama türü için gerekli 'secret' veya 'PFX' ve 'password' özellikleri eksik.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6404,6 +6581,15 @@
           <Val><![CDATA[Enter key]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Anahtar girin]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";pH2uak" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Collapse]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Daralt]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7055,6 +7241,15 @@
           <Val><![CDATA[(UTC+10:00) Hobart]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+10:00) Hobart]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";ti5TEd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Cancel]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[İptal]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7722,6 +7917,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Parametre için varsayılan değer girin.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";z9kH+0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This will also remove all child steps.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>

@@ -34,11 +34,22 @@ export const connectionSlice = createSlice({
       const { connectionId, connectionReference } = action.payload;
       state.connectionReferences[connectionId] = connectionReference;
     },
+    removeNodeConnectionData: (state, action: PayloadAction<{ nodeId: NodeId }>) => {
+      const { nodeId } = action.payload;
+      const connectionId = state.connectionsMapping[nodeId];
+      delete state.connectionsMapping[nodeId];
+      delete state.connectionReferences[connectionId];
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeConnectionReferences, initializeConnectionsMappings, changeConnectionMapping, addConnectionReference } =
-  connectionSlice.actions;
+export const {
+  initializeConnectionReferences,
+  initializeConnectionsMappings,
+  changeConnectionMapping,
+  addConnectionReference,
+  removeNodeConnectionData,
+} = connectionSlice.actions;
 
 export default connectionSlice.reducer;
