@@ -5,6 +5,24 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Neplatné vlastnosti "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -577,6 +595,20 @@
       "value": "Nahrajte nebo vyberte výstupní schéma, které se použije pro vaši mapu."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -805,6 +837,12 @@
       "value": "Povinný parametr. Název akce s odpovědí s více částmi."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -833,6 +871,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Ostrov Lorda Howa"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -887,6 +939,34 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Neplatná vlastnost "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1117,6 +1197,28 @@
       "value": "(UTC+06:30) Yangon (Rangún)"
     }
   ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Typ "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " je "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1315,6 +1417,12 @@
     {
       "type": 0,
       "value": "Povinné. Řetězec, z jehož začátku a konce se odeberou prázdné znaky."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1685,6 +1793,12 @@
       "value": "Povinný parametr. Název klíče datové hodnoty ve formuláři, která se má vrátit."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1701,6 +1815,12 @@
     {
       "type": 0,
       "value": "Pokud si chcete zobrazit obsah, vyberte prosím kartu."
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Při ověřování se využití dynamického obsahu jako vlastností nepodporuje."
     }
   ],
   "IA+Ogm": [
@@ -1969,6 +2089,12 @@
       "value": "Vaše hledání nemá žádné výsledky."
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -2019,6 +2145,28 @@
       "value": "Přidat nový"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Chybí požadované vlastnosti "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -2061,6 +2209,12 @@
       "value": "Přidat komentář"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Neplatný formát JSON. Chybí počáteční { nebo koncový znak }."
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -2070,7 +2224,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Odebrat"
     }
   ],
   "M6U2LE": [
@@ -2219,6 +2373,12 @@
       "value": "Upravit parametr"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2241,6 +2401,28 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Chybí požadovaná vlastnost "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "OH9xlX": [
@@ -2525,6 +2707,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
     }
   ],
   "RFjYpH": [
@@ -2825,6 +3013,12 @@
       "value": "Pokud chcete odkazovat na parametr, použijte seznam dynamického obsahu."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2861,6 +3055,12 @@
       "value": "Zobrazit méně"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Zadejte platný kód JSON."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -2870,7 +3070,7 @@
   "VI5Sa8": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Rozbalit"
     }
   ],
   "VKAk5g": [
@@ -3979,6 +4179,20 @@
       "value": "Dynamický obsah"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3989,6 +4203,16 @@
     {
       "type": 0,
       "value": "Povinné. Identifikátor URI, který se bude parsovat."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Nepodporovaný typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "0"
     }
   ],
   "iRe/g7": [
@@ -4251,6 +4475,12 @@
       "value": "Povinný parametr. Tato hodnota představuje další celé číslo po nejvyšším celém číslu, které se mohlo vrátit."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Chybí vlastnost typu ověřování: type"
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4375,6 +4605,12 @@
     {
       "type": 0,
       "value": "Zakóduje vstupní řetězec jako adresu URL."
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Chybí požadované vlastnosti secret nebo pfx a password pro typ ověřování ActiveDirectoryOAuth."
     }
   ],
   "mZCHKf": [
@@ -4592,7 +4828,7 @@
   "pH2uak": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Sbalit"
     }
   ],
   "pIczsS": [
@@ -4725,6 +4961,12 @@
     {
       "type": 0,
       "value": "Povinné"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -5061,6 +5303,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5455,6 +5703,12 @@
       "value": "Povinný parametr. Řetězec, ze kterého se mají vyjmout znaky, které nejsou pro adresu URL bezpečné."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5513,6 +5767,12 @@
     {
       "type": 0,
       "value": "Zadejte výchozí hodnotu parametru."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

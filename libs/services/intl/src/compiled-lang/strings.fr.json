@@ -5,6 +5,28 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Propriétés « "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " » non valides pour le type d’authentification « "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": " »."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -554,6 +576,20 @@
       "value": "Chargez ou sélectionnez un schéma de sortie à utiliser pour votre carte."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -782,6 +818,12 @@
       "value": "Obligatoire. Nom de l'action avec une réponse en plusieurs parties."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -810,6 +852,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Île Lord Howe"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -864,6 +920,38 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Propriété « "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " » non valide pour le type d’authentification « "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": " »."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1094,6 +1182,28 @@
       "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Le type de « "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " » est « "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": " »."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1281,6 +1391,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne de laquelle supprimer les espaces à gauche et à droite."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1632,6 +1748,12 @@
       "value": "Obligatoire. Nom de clé de la valeur de données de formulaire à retourner."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1648,6 +1770,12 @@
     {
       "type": 0,
       "value": "Sélectionnez une carte pour voir le contenu"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Contenu dynamique non pris en charge comme propriétés dans l'authentification."
     }
   ],
   "IA+Ogm": [
@@ -1905,6 +2033,12 @@
       "value": "Il n’y a aucun résultat de recherche."
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1945,6 +2079,28 @@
     {
       "type": 0,
       "value": "Ajouter"
+    }
+  ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Les propriétés obligatoires « "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " » sont manquantes pour le type d’authentification « "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": " »"
     }
   ],
   "LlYz9c": [
@@ -1989,6 +2145,12 @@
       "value": "Ajouter un commentaire"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Format de json non valide. { de début ou } de fin manquant"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -1998,7 +2160,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Supprimer"
     }
   ],
   "M6U2LE": [
@@ -2143,6 +2305,12 @@
       "value": "Modifier le paramètre"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2165,6 +2333,28 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Île Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "La propriété obligatoire « "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " » est manquante pour le type d’authentification « "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": " »."
     }
   ],
   "OH9xlX": [
@@ -2449,6 +2639,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
     }
   ],
   "RFjYpH": [
@@ -2738,6 +2934,12 @@
       "value": "Pour référencer un paramètre, utilisez la liste contenu dynamique."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2774,6 +2976,12 @@
       "value": "Afficher moins"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Entrez un JSON valide."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -2783,7 +2991,7 @@
   "VI5Sa8": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Développer"
     }
   ],
   "VKAk5g": [
@@ -3877,6 +4085,20 @@
       "value": "Contenu dynamique"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3887,6 +4109,20 @@
     {
       "type": 0,
       "value": "Obligatoire. URI à analyser."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Le type d’authentification « "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " » n’est pas pris en charge."
     }
   ],
   "iRe/g7": [
@@ -4145,6 +4381,12 @@
       "value": "Obligatoire. Cette valeur est l'entier suivant après l'entier le plus grand qui peut être retourné."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Propriété de type d’authentification manquante : « type »."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4269,6 +4511,12 @@
     {
       "type": 0,
       "value": "L'URL encode la chaîne d'entrée"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Les propriétés obligatoires « secret » ou « pfx » et « password » sont manquantes pour le type d’authentification « ActiveDirectoryOAuth »."
     }
   ],
   "mZCHKf": [
@@ -4486,7 +4734,7 @@
   "pH2uak": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Réduire"
     }
   ],
   "pIczsS": [
@@ -4619,6 +4867,12 @@
     {
       "type": 0,
       "value": "Obligatoire"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4944,6 +5198,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5338,6 +5598,12 @@
       "value": "Obligatoire. Chaîne où il faut ajouter un caractère d'échappement aux caractères d'URL non fiables."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5396,6 +5662,12 @@
     {
       "type": 0,
       "value": "Entrez une valeur par défaut pour le paramètre."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

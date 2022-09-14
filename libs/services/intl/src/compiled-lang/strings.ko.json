@@ -5,6 +5,12 @@
       "value": "확인"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "인증 유형 {1}에 대한 속성 {0}이(가) 잘못되었습니다."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -532,6 +538,20 @@
       "value": "맵에 사용할 출력 스키마를 업로드하거나 선택합니다."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -760,6 +780,12 @@
       "value": "필수 사항으로, 여러 부분으로 된 응답이 있는 작업의 이름입니다."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -788,6 +814,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) 로드하우 섬"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -842,6 +882,22 @@
     {
       "type": 0,
       "value": "PFX"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "인증 유형 {1}에 대한 속성 {0}이(가) 잘못되었습니다"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1072,6 +1128,12 @@
       "value": "(UTC+06:30) 양곤"
     }
   ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "{0}의 형식은 {1}입니다."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1237,6 +1299,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 선행 및 후행 공백을 제거하는 문자열입니다."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1566,6 +1634,12 @@
       "value": "필수 사항으로, 반환할 양식 데이터 값의 키 이름입니다."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1582,6 +1656,12 @@
     {
       "type": 0,
       "value": "콘텐츠를 볼 카드를 선택하세요."
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "동적 콘텐츠는 인증의 속성으로 지원되지 않습니다."
     }
   ],
   "IA+Ogm": [
@@ -1817,6 +1897,12 @@
       "value": "검색 결과가 없음"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1857,6 +1943,12 @@
     {
       "type": 0,
       "value": "새로 추가"
+    }
+  ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "인증 유형 {1}에 필요한 속성 {0}이(가) 없습니다"
     }
   ],
   "LlYz9c": [
@@ -1901,6 +1993,12 @@
       "value": "주석 추가"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "잘못된 json 형식입니다. 처음의 { 또는 마지막의 }가 없습니다."
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -1910,7 +2008,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "제거"
     }
   ],
   "M6U2LE": [
@@ -2055,6 +2153,12 @@
       "value": "매개 변수 편집"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2077,6 +2181,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) 부건빌 섬"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "인증 유형 {0}에 필요한 속성 {1}이(가) 없습니다"
     }
   ],
   "OH9xlX": [
@@ -2363,6 +2473,12 @@
       "value": "시간"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2628,6 +2744,12 @@
       "value": "매개 변수를 참조하려면 동적 콘텐츠 목록을 사용하세요."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2664,6 +2786,12 @@
       "value": "간단히 보기"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "올바른 JSON을 입력하세요."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -2673,7 +2801,7 @@
   "VI5Sa8": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "확장"
     }
   ],
   "VKAk5g": [
@@ -3733,6 +3861,20 @@
       "value": "동적 콘텐츠"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3743,6 +3885,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 구문 분석할 URI입니다."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "지원되지 않는 인증 유형 {0}입니다."
     }
   ],
   "iRe/g7": [
@@ -4001,6 +4149,12 @@
       "value": "필수 사항으로, 이 값은 반환할 수 있는 가장 큰 정수 다음의 정수입니다."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "인증 유형 속성 'type'이 없습니다."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4125,6 +4279,12 @@
     {
       "type": 0,
       "value": "URL로 입력 문자열을 인코딩합니다."
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "인증 유형 'ActiveDirectoryOAuth'에 필요한 'secret' 또는 'pfx' 및 'password' 속성이 없습니다."
     }
   ],
   "mZCHKf": [
@@ -4342,7 +4502,7 @@
   "pH2uak": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "축소"
     }
   ],
   "pIczsS": [
@@ -4475,6 +4635,12 @@
     {
       "type": 0,
       "value": "필수"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4778,6 +4944,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) 호바트"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5168,6 +5340,12 @@
       "value": "필수 사항으로, URL이 안전하지 않은 문자를 이스케이프할 문자열입니다."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5226,6 +5404,12 @@
     {
       "type": 0,
       "value": "매개 변수의 기본값을 입력하세요."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

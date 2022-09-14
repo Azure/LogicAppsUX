@@ -6,8 +6,9 @@ import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
 import type { Connection } from '@microsoft-logic-apps/utils';
+import { getIdLeaf } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
-import { getIdLeaf, SelectConnection } from '@microsoft/designer-ui';
+import { SelectConnection } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 

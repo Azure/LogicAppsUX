@@ -5,6 +5,28 @@
       "value": "确定"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”的属性“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”无效。"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -536,6 +558,20 @@
       "value": "上传或选择要用于地图的输出架构。"
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -764,6 +800,12 @@
       "value": "必需。包含多部件响应的操作的名称。"
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -792,6 +834,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) 豪勋爵岛"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -846,6 +902,38 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”的属性“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”无效。"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1076,6 +1164,28 @@
       "value": "(UTC+06:30)仰光"
     }
   ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”的类型为“"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”。"
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1241,6 +1351,12 @@
     {
       "type": 0,
       "value": "必填。要从中移除前导空格和尾随空格的字符串。"
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1570,6 +1686,12 @@
       "value": "必需。要返回的表单数据值的键名称。"
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1586,6 +1708,12 @@
     {
       "type": 0,
       "value": "请选择卡片以查看内容"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "不支持将动态内容作为身份验证中的属性。"
     }
   ],
   "IA+Ogm": [
@@ -1821,6 +1949,12 @@
       "value": "没有搜索到结果"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1861,6 +1995,28 @@
     {
       "type": 0,
       "value": "新增"
+    }
+  ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "身份验证类型 \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\" 缺少必需的属性 \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "LlYz9c": [
@@ -1905,6 +2061,12 @@
       "value": "添加评论"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "json 格式无效。缺少开头的 { 或结尾的 }"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -1914,7 +2076,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "删除"
     }
   ],
   "M6U2LE": [
@@ -2063,6 +2225,12 @@
       "value": "编辑参数"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2085,6 +2253,28 @@
     {
       "type": 0,
       "value": "(UTC+11:00) 布干维尔岛"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "身份验证类型 \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\" 缺少必需的属性 \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "OH9xlX": [
@@ -2371,6 +2561,12 @@
       "value": " 小时"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2636,6 +2832,12 @@
       "value": "若要引用参数，请使用动态内容列表。"
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2672,6 +2874,12 @@
       "value": "显示更少"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON。"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -2681,7 +2889,7 @@
   "VI5Sa8": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "展开"
     }
   ],
   "VKAk5g": [
@@ -3765,6 +3973,20 @@
       "value": "动态内容"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3775,6 +3997,20 @@
     {
       "type": 0,
       "value": "必填。要分析的 URI。"
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "不支持的身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”。"
     }
   ],
   "iRe/g7": [
@@ -4041,6 +4277,12 @@
       "value": "必需。此值为可返回的最大整数之后的下一个整数。"
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "缺少身份验证类型属性: \"type\"。"
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4165,6 +4407,12 @@
     {
       "type": 0,
       "value": "URL 对输入字符串进行编码"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "身份验证类型 \"ActiveDirectoryOAuth\" 缺少必需的属性 \"secret\" 或 \"pfx\" 和 \"password\"。"
     }
   ],
   "mZCHKf": [
@@ -4390,7 +4638,7 @@
   "pH2uak": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "折叠"
     }
   ],
   "pIczsS": [
@@ -4523,6 +4771,12 @@
     {
       "type": 0,
       "value": "必需"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4826,6 +5080,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00)霍巴特"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5220,6 +5480,12 @@
       "value": "必需。要从中转义 URL 不安全字符的字符串。"
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5278,6 +5544,12 @@
     {
       "type": 0,
       "value": "输入参数的默认值。"
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

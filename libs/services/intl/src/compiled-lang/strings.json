@@ -549,6 +549,20 @@
       "value": "Upload or select an output schema to be used for your map."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -565,6 +579,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Tehran"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -777,6 +813,12 @@
       "value": "Required. The name of the action with a multipart response."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -805,6 +847,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe Island"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -865,6 +921,16 @@
     {
       "type": 0,
       "value": "Invalid property {0} for authentication type {1}."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1279,6 +1345,12 @@
       "value": "Required. The string from which to remove leading and trailing whitespace."
     }
   ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
+    }
+  ],
   "DGMwU4": [
     {
       "type": 0,
@@ -1617,6 +1689,12 @@
       "value": "Required. The key name of the form data value to return."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1885,6 +1963,12 @@
       "value": "There are no results for your search"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1973,12 +2057,6 @@
     {
       "type": 0,
       "value": "Add a comment"
-    }
-  ],
-  "M3lzNo": [
-    {
-      "type": 0,
-      "value": "Invalid json format. Missing beginning { or ending }"
     }
   ],
   "M48CGd": [
@@ -2133,6 +2211,12 @@
     {
       "type": 0,
       "value": "Edit Parameter"
+    }
+  ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "OD8igU": [
@@ -2453,6 +2537,12 @@
       "value": "h"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2727,6 +2817,12 @@
     {
       "type": 0,
       "value": "To reference a parameter, use the dynamic content list."
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
     }
   ],
   "UHCVNK": [
@@ -3855,6 +3951,20 @@
       "value": "Dynamic content"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -4617,6 +4727,12 @@
       "value": "Required"
     }
   ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
+    }
+  ],
   "qUWBUX": [
     {
       "offset": 0,
@@ -4929,6 +5045,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5323,6 +5445,12 @@
       "value": "Required. The string to escape URL-unsafe characters from."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5381,6 +5509,12 @@
     {
       "type": 0,
       "value": "Enter default value for parameter."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

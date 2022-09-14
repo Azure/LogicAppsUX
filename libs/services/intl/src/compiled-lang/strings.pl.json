@@ -5,6 +5,28 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowe właściwości „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "” dla typu uwierzytelniania „"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -581,6 +603,20 @@
       "value": "Przekaż lub wybierz schemat danych wyjściowych, który ma być używany dla mapy."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -809,6 +845,12 @@
       "value": "Wymagane. Nazwa akcji z odpowiedzią wieloczęściową."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -837,6 +879,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -891,6 +947,38 @@
     {
       "type": 0,
       "value": "Certyfikat PFX"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowa właściwość „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "” dla typu uwierzytelniania „"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1121,6 +1209,28 @@
       "value": "(UTC+06:30) Yangon (Rangun)"
     }
   ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Typem elementu „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "” jest „"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1319,6 +1429,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg, z którego ma zostać usunięty odstęp wiodący i końcowy."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1689,6 +1805,12 @@
       "value": "Wymagane. Nazwa klucza zwracanej wartości danych formularza."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1705,6 +1827,12 @@
     {
       "type": 0,
       "value": "Wybierz kartę, aby zobaczyć zawartość"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Zawartość dynamiczna nie jest obsługiwana jako właściwości w uwierzytelnianiu."
     }
   ],
   "IA+Ogm": [
@@ -1973,6 +2101,12 @@
       "value": "Nie ma wyników dla Twojego wyszukiwania"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -2023,6 +2157,28 @@
       "value": "Dodaj nowe"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Brak wymaganych właściwości „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "” dla typu uwierzytelniania „"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”."
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -2065,6 +2221,12 @@
       "value": "Dodaj komentarz"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowy format JSON. Brak początkowego znaku { lub końcowego znaku }."
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -2074,7 +2236,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Usuń"
     }
   ],
   "M6U2LE": [
@@ -2219,6 +2381,12 @@
       "value": "Edytuj parametr"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2241,6 +2409,28 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Wyspa Bougainville’a"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Brak wymaganej właściwości „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "” dla typu uwierzytelniania „"
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "OH9xlX": [
@@ -2525,6 +2715,12 @@
     {
       "type": 0,
       "value": " godz."
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
     }
   ],
   "RFjYpH": [
@@ -2825,6 +3021,12 @@
       "value": "Aby odwołać się do parametru, użyj listy zawartości dynamicznej."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2861,6 +3063,12 @@
       "value": "Pokaż mniej"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy kod JSON."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -2870,7 +3078,7 @@
   "VI5Sa8": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Rozwiń"
     }
   ],
   "VKAk5g": [
@@ -3983,6 +4191,20 @@
       "value": "Zawartość dynamiczna"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3993,6 +4215,20 @@
     {
       "type": 0,
       "value": "Wymagane. Identyfikator URI do analizy."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Nieobsługiwany typ uwierzytelniania „"
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "iRe/g7": [
@@ -4259,6 +4495,12 @@
       "value": "Wymagane. Ta wartość jest następną liczbą całkowitą po największej liczbie całkowitej możliwej do zwrócenia."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Brak właściwości typu uwierzytelniania: „type”."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4383,6 +4625,12 @@
     {
       "type": 0,
       "value": "Adres URL koduje ciąg wejściowy"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Brak wymaganych właściwości „secret” lub „pfx” i „password” dla typu uwierzytelniania „ActiveDirectoryOAuth”."
     }
   ],
   "mZCHKf": [
@@ -4600,7 +4848,7 @@
   "pH2uak": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Zwiń"
     }
   ],
   "pIczsS": [
@@ -4733,6 +4981,12 @@
     {
       "type": 0,
       "value": "Wymagane"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -5069,6 +5323,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5463,6 +5723,12 @@
       "value": "Wymagane. Ciąg, w którym względem znaków niebezpiecznych w adresie URL zostaną użyte znaki ucieczki."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5521,6 +5787,12 @@
     {
       "type": 0,
       "value": "Wprowadź wartość domyślną dla parametru."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

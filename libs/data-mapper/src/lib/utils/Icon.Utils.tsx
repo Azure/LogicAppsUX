@@ -1,3 +1,4 @@
+import type { ExpressionGroupBranding } from '../constants/ExpressionConstants';
 import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import {
   Any16Filled,
@@ -25,6 +26,7 @@ import {
 } from '../images/DataType24Icons';
 import { ExpressionCategory } from '../models/Expression';
 import { SchemaNodeDataType } from '../models/Schema';
+import { Image } from '@fluentui/react-components';
 import {
   AddSubtractCircle16Filled,
   AddSubtractCircle16Regular,
@@ -403,4 +405,8 @@ export const iconForExpressionCategory = (expressionCategory: ExpressionCategory
 export const iconUriForIconImageName = (iconImageName: string) => {
   // TODO Temp CDN, will need to be moved into a production location
   return `https://datamappericons.azureedge.net/icons/${iconImageName}`;
+};
+
+export const getIconForExpression = (name: string, fileName: string | undefined, branding: ExpressionGroupBranding) => {
+  return fileName ? <Image src={iconUriForIconImageName(fileName)} height={20} width={20} alt={name} /> : <>{branding.icon}</>;
 };

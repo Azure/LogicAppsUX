@@ -5,6 +5,28 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Ogiltiga egenskaper "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " för autentiseringstypen "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -543,6 +565,20 @@
       "value": "Ladda upp eller välj ett utdataschema som ska användas för kartan."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -771,6 +807,12 @@
       "value": "Krävs. Namnet på åtgärden med ett svar i flera delar."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -799,6 +841,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howeön"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -853,6 +909,38 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Ogiltig egenskap "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " för autentiseringstypen "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1083,6 +1171,28 @@
       "value": "(UTC+06:30) Yangon"
     }
   ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Typen av "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " är "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1259,6 +1369,12 @@
     {
       "type": 0,
       "value": "Krävs. Den sträng som du vill ta bort inledande och efterföljande blanksteg från."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1607,6 +1723,12 @@
       "value": "Krävs. Nyckelnamnet för formulärdatavärdet att returnera."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1623,6 +1745,12 @@
     {
       "type": 0,
       "value": "Välj ett kort för att visa innehållet"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamiskt innehåll stöds inte som egenskaper i autentisering."
     }
   ],
   "IA+Ogm": [
@@ -1869,6 +1997,12 @@
       "value": " Det finns inte något resultat för din sökning"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1919,6 +2053,24 @@
       "value": "Lägg till nytt"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "De obligatoriska egenskaperna "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " saknas för autentiseringstypen "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1961,6 +2113,12 @@
       "value": "Lägg till en kommentar"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Ogiltigt JSON-format. Inledande { eller avslutande } saknas"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -1970,7 +2128,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Ta bort"
     }
   ],
   "M6U2LE": [
@@ -2115,6 +2273,12 @@
       "value": "Redigera parameter"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2137,6 +2301,24 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Den nödvändiga egenskapen "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " saknas för autentiseringstypen "
+    },
+    {
+      "type": 1,
+      "value": "1"
     }
   ],
   "OH9xlX": [
@@ -2427,6 +2609,12 @@
       "value": "tim"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2703,6 +2891,12 @@
       "value": "Använd listan med dynamiskt innehåll om du vill referera till en parameter."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2739,6 +2933,12 @@
       "value": "Visa mindre"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Ange en giltig JSON."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -2748,7 +2948,7 @@
   "VI5Sa8": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Expandera"
     }
   ],
   "VKAk5g": [
@@ -3835,6 +4035,20 @@
       "value": "Dynamiskt innehåll"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3845,6 +4059,20 @@
     {
       "type": 0,
       "value": "Krävs. Den URI som ska parsas."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Autentiseringstypen "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " stöds inte."
     }
   ],
   "iRe/g7": [
@@ -4107,6 +4335,12 @@
       "value": "Krävs. Det här värdet är nästa heltal efter det högsta heltalet som kunde returneras."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Autentiseringstypegenskapen saknas: typ."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4231,6 +4465,12 @@
     {
       "type": 0,
       "value": "URL:en kodar indatasträngen"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "De obligatoriska egenskaperna secret eller pfx och password för autentiseringstypen ActiveDirectoryOAuth saknas."
     }
   ],
   "mZCHKf": [
@@ -4448,7 +4688,7 @@
   "pH2uak": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Dölj"
     }
   ],
   "pIczsS": [
@@ -4581,6 +4821,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4895,6 +5141,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5289,6 +5541,12 @@
       "value": "Krävs. Strängen ta bort de URL-osäkra tecknen från."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5347,6 +5605,12 @@
     {
       "type": 0,
       "value": "Ange standardvärde för parameter."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

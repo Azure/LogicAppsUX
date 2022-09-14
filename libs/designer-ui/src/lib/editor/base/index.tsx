@@ -32,6 +32,7 @@ export interface ChangeState {
 }
 
 export type ChangeHandler = (newState: ChangeState) => void;
+export type CallbackHandler = () => void;
 
 export interface DictionaryCallbackProps {
   addItem: (index: number) => void;

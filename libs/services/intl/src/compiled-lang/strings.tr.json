@@ -5,6 +5,12 @@
       "value": "Tamam"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "{1} kimlik doğrulama türü için geçersiz özellikler: {0}."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -543,6 +549,20 @@
       "value": "Eşlemeniz için kullanılacak bir çıkış şeması yükleyin veya seçin."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -771,6 +791,12 @@
       "value": "Gerekli. Çok bölümlü bir yanıt içeren eylemin adı."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -799,6 +825,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe Adası"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -853,6 +893,22 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "{1} kimlik doğrulama türü için geçersiz özellik: {0}."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1083,6 +1139,12 @@
       "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "{0} türü {1}."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1259,6 +1321,12 @@
     {
       "type": 0,
       "value": "Gerekli. Baştaki ve sondaki boşluğun kaldırılacağı dize."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1599,6 +1667,12 @@
       "value": "Gerekli. Döndürülecek form verileri değerinin anahtar adı."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1615,6 +1689,12 @@
     {
       "type": 0,
       "value": "İçeriği görmek için lütfen bir kart seçin"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dinamik içerik, kimlik doğrulamasında özellik olarak desteklenmiyor."
     }
   ],
   "IA+Ogm": [
@@ -1861,6 +1941,12 @@
       "value": "Aramanız için sonuç yok"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1901,6 +1987,12 @@
     {
       "type": 0,
       "value": "Yeni ekle"
+    }
+  ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "{1} kimlik doğrulama türü için gerekli {0} özellikleri eksik"
     }
   ],
   "LlYz9c": [
@@ -1945,6 +2037,12 @@
       "value": "Yorum ekle"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Geçersiz json Biçimi. Başlangıç { işareti veya bitiş } işareti eksik"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -1954,7 +2052,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Kaldır"
     }
   ],
   "M6U2LE": [
@@ -2099,6 +2197,12 @@
       "value": "Parametreyi Düzenle"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2121,6 +2225,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville Adası"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "{1} kimlik doğrulama türü için gerekli {0} özelliği eksik"
     }
   ],
   "OH9xlX": [
@@ -2407,6 +2517,12 @@
       "value": " sa"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2683,6 +2799,12 @@
       "value": "Bir parametreye başvurmak için dinamik içerik listesini kullanın."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2719,6 +2841,12 @@
       "value": "Daha az göster"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Geçerli bir JSON girin."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -2728,7 +2856,7 @@
   "VI5Sa8": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Genişlet"
     }
   ],
   "VKAk5g": [
@@ -3799,6 +3927,20 @@
       "value": "Dinamik içerik"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3809,6 +3951,12 @@
     {
       "type": 0,
       "value": "Gerekli. Ayrıştırılacak URI."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Desteklenmeyen kimlik doğrulama türü: {0}."
     }
   ],
   "iRe/g7": [
@@ -4067,6 +4215,12 @@
       "value": "Gerekli. Bu değer, döndürülebilecek en yüksek tamsayıdan bir sonraki tamsayıdır."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Kimlik doğrulama türü özelliği eksik: 'Type'."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4191,6 +4345,12 @@
     {
       "type": 0,
       "value": "URL, giriş dizesini kodlar"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "'ActiveDirectoryOAuth' kimlik doğrulama türü için gerekli 'secret' veya 'PFX' ve 'password' özellikleri eksik."
     }
   ],
   "mZCHKf": [
@@ -4408,7 +4568,7 @@
   "pH2uak": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Daralt"
     }
   ],
   "pIczsS": [
@@ -4541,6 +4701,12 @@
     {
       "type": 0,
       "value": "Gerekli"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4855,6 +5021,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5245,6 +5417,12 @@
       "value": "Gerekli. URL güvenli olmayan karakterlerin kaçırılacağı dize."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5303,6 +5481,12 @@
     {
       "type": 0,
       "value": "Parametre için varsayılan değer girin."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

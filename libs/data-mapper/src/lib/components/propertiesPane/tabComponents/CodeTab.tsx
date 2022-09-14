@@ -5,9 +5,7 @@ interface CodeTabProps {
 }
 
 // For Input/Output/Expression nodes
-export const CodeTab = (props: CodeTabProps) => {
-  const { code } = props;
-
+export const CodeTab = ({ code }: CodeTabProps) => {
   return (
     <MonacoEditor
       language={EditorLanguage.templateExpressionLanguage}

@@ -5,6 +5,28 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Érvénytelen "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " tulajdonságok a következő hitelesítési típushoz: "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -543,6 +565,20 @@
       "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt kimeneti sémát."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -771,6 +807,12 @@
       "value": "Kötelező megadni. A többrészes választ adó művelet neve."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -799,6 +841,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe-sziget"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -853,6 +909,38 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Érvénytelen "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " tulajdonság a következő hitelesítési típushoz: "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1083,6 +1171,28 @@
       "value": "(UTC+06:30) Yangon (Rangun)"
     }
   ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "A(z) "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " típusa "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1259,6 +1369,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az a sztring, amelyből el kell távolítani a kezdő és záró szóközöket."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1607,6 +1723,12 @@
       "value": "Kötelező megadni. A visszaadandó űrlapadatérték kulcsneve."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1623,6 +1745,12 @@
     {
       "type": 0,
       "value": "Válasszon ki egy kártyát a tartalom megtekintéséhez"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "A dinamikus tartalom hitelesítési tulajdonságokként való használata nem támogatott."
     }
   ],
   "IA+Ogm": [
@@ -1869,6 +1997,12 @@
       "value": "A keresés nem adott eredményeket"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1919,6 +2053,28 @@
       "value": "Új hozzáadása"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "A(z) "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": " hitelesítési típushoz tartozó "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " kötelező tulajdonságok hiányoznak."
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1961,6 +2117,12 @@
       "value": "Hozzászólás hozzáadása"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Érvénytelen JSON-formátum. Hiányzik a kezdő { vagy a záró } karakter."
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -1970,7 +2132,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Eltávolítás"
     }
   ],
   "M6U2LE": [
@@ -2115,6 +2277,12 @@
       "value": "Paraméter szerkesztése"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2137,6 +2305,28 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville-sziget"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Hiányzik a(z) "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": " hitelesítési típus "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " kötelező tulajdonsága."
     }
   ],
   "OH9xlX": [
@@ -2427,6 +2617,12 @@
       "value": " ó"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2703,6 +2899,12 @@
       "value": "Egy paraméterre való hivatkozáshoz használja a dinamikus tartalomlistát."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2739,6 +2941,12 @@
       "value": "Részletek elrejtése"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Érvényes JSON-t adjon meg."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -2748,7 +2956,7 @@
   "VI5Sa8": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Kibontás"
     }
   ],
   "VKAk5g": [
@@ -3843,6 +4051,20 @@
       "value": "Dinamikus tartalom"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3853,6 +4075,20 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az elemezni kívánt URI."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Nem támogatott hitelesítési típus: "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "iRe/g7": [
@@ -4115,6 +4351,12 @@
       "value": "Kötelező megadni. Az érték a legnagyobb visszaadható egész szám utáni egész szám."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Hiányzik a hitelesítés típusa tulajdonság: típus."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4239,6 +4481,12 @@
     {
       "type": 0,
       "value": "A bemeneti sztringet URl-ként kódolja."
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Hiányzik a szükséges secret vagy pfx és password tulajdonság a következő hitelesítési típushoz: ActiveDirectoryOAuth."
     }
   ],
   "mZCHKf": [
@@ -4456,7 +4704,7 @@
   "pH2uak": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Összecsukás"
     }
   ],
   "pIczsS": [
@@ -4589,6 +4837,12 @@
     {
       "type": 0,
       "value": "Kötelező"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4903,6 +5157,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5297,6 +5557,12 @@
       "value": "Kötelező megadni. Az a sztring, amelynek URL-címekben nem biztonságos karaktereit fel kell oldani."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5355,6 +5621,12 @@
     {
       "type": 0,
       "value": "Adja meg a paraméter alapértelmezett értékét."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [

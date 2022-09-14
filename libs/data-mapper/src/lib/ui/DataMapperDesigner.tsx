@@ -6,6 +6,7 @@ import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
+import { ExpressionList } from '../components/expressionList/expressionList';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
@@ -15,8 +16,14 @@ import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { WarningModal } from '../components/warningModal/WarningModal';
-import { baseCanvasHeight, basePropertyPaneContentHeight, checkerboardBackgroundImage } from '../constants/ReactFlowConstants';
 import {
+  baseCanvasHeight,
+  basePropertyPaneContentHeight,
+  checkerboardBackgroundImage,
+  defaultCanvasZoom,
+} from '../constants/ReactFlowConstants';
+import {
+  addExpressionNode,
   addInputNodes,
   changeConnection,
   deleteConnection,
@@ -30,12 +37,14 @@ import {
   undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import type { SchemaNodeExtended, SelectedNode } from '../models';
-import { NodeType, SchemaTypes } from '../models';
+import { SchemaTypes } from '../models';
+import type { SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import type { Expression } from '../models/Expression';
+import type { Expression, ExpressionDictionary } from '../models/Expression';
+import { NodeType } from '../models/SelectedNode';
+import type { SelectedInputNode, SelectedOutputNode, SelectedExpressionNode } from '../models/SelectedNode';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
-import { convertToReactFlowEdges, convertToReactFlowNodes, ReactFlowNodeType } from '../utils/ReactFlow.Util';
+import { convertToReactFlowEdges, convertToReactFlowNodes, inputPrefix, outputPrefix, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnection, isLeafNode } from '../utils/Schema.Utils';
 import './ReactFlowStyleOverrides.css';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
@@ -58,8 +67,8 @@ import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ConnectionLineType, MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
+import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -83,9 +92,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const allExpressionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentExpressionNodes);
 
   const edgeUpdateSuccessful = useRef(true);
 
+  const [canvasViewport, setCanvasViewport] = useState<Viewport>({ x: 0, y: 0, zoom: defaultCanvasZoom });
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
@@ -108,8 +119,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     }
   }, [flattenedInputSchema, currentOutputNode, connections]);
 
-  const allExpressionNodes: Expression[] = [];
-
   const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, allExpressionNodes, currentOutputNode, connections);
 
   const dataMapDefinition = useMemo((): string => {
@@ -119,6 +128,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
     return '';
   }, [currentConnections, inputSchema, outputSchema]);
+
+  const onExpressionItemClick = (selectedExpression: Expression) => {
+    dispatch(addExpressionNode(selectedExpression));
+  };
 
   const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
     if (isLeafNode(selectedNode)) {
@@ -156,19 +169,50 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     }
   };
 
-  const onPaneClick = (_event: ReactMouseEvent): void => {
+  const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
     dispatch(setCurrentlySelectedNode(undefined));
     setDisplayToolboxItem(undefined);
   };
 
   const onNodeSingleClick = (node: ReactFlowNode): void => {
-    const newCurrentlySelectedNode: SelectedNode = {
-      type: node.type === ReactFlowNodeType.SchemaNode ? node.data.schemaType : NodeType.Expression,
-      name: node.data.label,
-      path: node.id,
-    };
-    dispatch(setCurrentlySelectedNode(newCurrentlySelectedNode));
+    if (node.type === ReactFlowNodeType.SchemaNode) {
+      if (node.data.schemaType === SchemaTypes.Input) {
+        const selectedInputNode: SelectedInputNode = {
+          nodeType: NodeType.Input,
+          name: node.data.label,
+          path: node.id.replace(inputPrefix, ''),
+          dataType: node.data.nodeDataType,
+        };
+
+        dispatch(setCurrentlySelectedNode(selectedInputNode));
+      } else if (node.data.schemaType === SchemaTypes.Output) {
+        const selectedOutputNode: SelectedOutputNode = {
+          nodeType: NodeType.Output,
+          name: node.data.label,
+          path: node.id.replace(outputPrefix, ''),
+          dataType: node.data.nodeDataType,
+          defaultValue: '', // TODO: this property and below
+          doNotGenerateIfNoValue: true,
+          nullable: true,
+        };
+
+        dispatch(setCurrentlySelectedNode(selectedOutputNode));
+      }
+    } else if (node.type === ReactFlowNodeType.ExpressionNode) {
+      const selectedExpressionNode: SelectedExpressionNode = {
+        nodeType: NodeType.Expression,
+        name: node.data.expressionName,
+        inputs: node.data.inputs,
+        iconName: '', // TODO: this property and below
+        description: '',
+        codeEx: '',
+        definition: '',
+        outputId: '',
+      };
+
+      dispatch(setCurrentlySelectedNode(selectedExpressionNode));
+    }
   };
 
   const onNodeDoubleClick = (node: ReactFlowNode<SchemaCardProps>): void => {
@@ -287,7 +331,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     xPos: '16px',
     yPos: '76px',
     width: '250px',
-    minHeight: '300px',
+    minHeight: '450px',
     maxHeight: '450px',
   };
 
@@ -345,7 +389,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       ],
       horizontal: true,
       xPos: '16px',
-      yPos: '556px',
+      yPos: '16px',
+      anchorToBottom: true,
     };
 
     return (
@@ -356,7 +401,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         onPaneClick={onPaneClick}
         onNodeClick={handleNodeClicks}
         onNodeDoubleClick={handleNodeClicks}
-        defaultZoom={2}
+        defaultPosition={[canvasViewport.x, canvasViewport.y]}
+        defaultZoom={canvasViewport.zoom}
         nodesDraggable={false}
         fitView={false}
         connectionLineType={ConnectionLineType.SmoothStep}
@@ -373,6 +419,16 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         onEdgeUpdate={onEdgeUpdate}
         onEdgeUpdateStart={onEdgeUpdateStart}
         onEdgeUpdateEnd={onEdgeUpdateEnd}
+        onMoveEnd={(event, viewport) => {
+          // NOTE/TODO: Bandaid-ish on React Flow state getting wiped on any re-render event
+          // Previously, setCanvasViewport would force re-render before onPaneClick could fire
+          // As side note/issue, visual selection of RF nodes also "erased" due to re-renders
+          if (event.type === 'mouseup') {
+            onPaneClick(event);
+          }
+
+          setCanvasViewport(viewport);
+        }}
       >
         <ButtonContainer {...mapControlsButtonContainerProps} />
         {displayMiniMap ? (
@@ -437,7 +493,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                 )}
                 {displayToolboxItem === 'expressionsPanel' && (
                   <FloatingPanel {...toolboxPanelProps}>
-                    <span>Test</span>
+                    <ExpressionList sample="sample" onExpressionClick={onExpressionItemClick}></ExpressionList>
                   </FloatingPanel>
                 )}
                 <div className="msla-designer-canvas msla-panel-mode">
@@ -466,7 +522,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 export const useLayout = (
   allInputSchemaNodes: SchemaNodeExtended[],
   connectedInputNodes: SchemaNodeExtended[],
-  allExpressionNodes: Expression[],
+  allExpressionNodes: ExpressionDictionary,
   currentOutputNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
@@ -478,7 +534,7 @@ export const useLayout = (
     }
     // Explicitly ignoring connectedInputNodes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allInputSchemaNodes, currentOutputNode]);
+  }, [allInputSchemaNodes, currentOutputNode, allExpressionNodes]);
 
   const reactFlowEdges = useMemo(() => {
     return convertToReactFlowEdges(connections);

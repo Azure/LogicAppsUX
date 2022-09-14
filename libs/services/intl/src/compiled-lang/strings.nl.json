@@ -5,6 +5,28 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Ongeldige eigenschappen "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " voor het verificatietype "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -543,6 +565,20 @@
       "value": "Upload of selecteer een uitvoerschema dat voor uw toewijzing moet worden gebruikt."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -771,6 +807,12 @@
       "value": "Vereist. De naam van de actie met een antwoord met meerdere onderdelen."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "This step will be removed from the Logic App."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -799,6 +841,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe Island"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -853,6 +909,38 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Ongeldige eigenschap "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " voor het verificatietype "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -1083,6 +1171,28 @@
       "value": "(UTC+06:30) Yangon (Rangoon)"
     }
   ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Het type van "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " is "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "Amz9+m": [
     {
       "type": 0,
@@ -1259,6 +1369,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks waaruit u voorloopspaties en volgspaties wilt verwijderen."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1607,6 +1723,12 @@
       "value": "Vereist. De sleutelnaam van de formuliergegevenswaarde die moeten worden geretourneerd."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1623,6 +1745,12 @@
     {
       "type": 0,
       "value": "Selecteer een kaart om de inhoud weer te geven"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamische inhoud wordt niet ondersteund voor eigenschappen bij de verificatie."
     }
   ],
   "IA+Ogm": [
@@ -1869,6 +1997,12 @@
       "value": "Er zijn geen resultaten voor uw zoekactie"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Graph"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1919,6 +2053,24 @@
       "value": "Nieuwe toevoegen"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "De vereiste eigenschappen "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " ontbreken voor het verificatietype "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1961,6 +2113,12 @@
       "value": "Opmerking toevoegen"
     }
   ],
+  "M3lzNo": [
+    {
+      "type": 0,
+      "value": "Ongeldige JSON-indeling. Het teken { aan het begin of het teken } aan het eind ontbreekt"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -1970,7 +2128,7 @@
   "M4H0gh": [
     {
       "type": 0,
-      "value": "Remove"
+      "value": "Verwijderen"
     }
   ],
   "M6U2LE": [
@@ -2115,6 +2273,12 @@
       "value": "Parameter bewerken"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2137,6 +2301,24 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "De vereiste eigenschap "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " ontbreekt voor het verificatietype "
+    },
+    {
+      "type": 1,
+      "value": "1"
     }
   ],
   "OH9xlX": [
@@ -2427,6 +2609,12 @@
       "value": "h"
     }
   ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers cannot be deleted."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2703,6 +2891,12 @@
       "value": "Gebruik de lijst met dynamische inhoud om te verwijzen naar een parameter."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Delete Workflow Action"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2739,6 +2933,12 @@
       "value": "Minder weergeven"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Voer een geldige JSON in."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -2748,7 +2948,7 @@
   "VI5Sa8": [
     {
       "type": 0,
-      "value": "Expand"
+      "value": "Uitvouwen"
     }
   ],
   "VKAk5g": [
@@ -3839,6 +4039,20 @@
       "value": "Dynamische inhoud"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Are you sure you want to delete "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3849,6 +4063,20 @@
     {
       "type": 0,
       "value": "Vereist. De URI die moet worden geparseerd."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Het verificatietype "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " wordt niet ondersteund."
     }
   ],
   "iRe/g7": [
@@ -4107,6 +4335,12 @@
       "value": "Vereist. Deze waarde is het volgende gehele getal na het hoogste gehele getal dat kan worden geretourneerd."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Ontbrekende verificatietype-eigenschap: type."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4231,6 +4465,12 @@
     {
       "type": 0,
       "value": "De invoertekensreeks wordt door URL gecodeerd"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "De vereiste eigenschappen secret of pfx en password ontbreken voor het verificatietype ActiveDirectoryOAuth."
     }
   ],
   "mZCHKf": [
@@ -4448,7 +4688,7 @@
   "pH2uak": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Samenvouwen"
     }
   ],
   "pIczsS": [
@@ -4581,6 +4821,12 @@
     {
       "type": 0,
       "value": "Vereist"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4895,6 +5141,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "tsmuoF": [
@@ -5289,6 +5541,12 @@
       "value": "Vereist. De tekenreeks waaruit de onveilige tekens voor URL's moeten worden voorzien van escaptekens."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5347,6 +5605,12 @@
     {
       "type": 0,
       "value": "Voer de standaardwaarde voor de parameter in."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "This will also remove all child steps."
     }
   ],
   "zBMVKg": [
