@@ -314,7 +314,7 @@
   "LvpxiA": "Átjáró",
   "Lwe7tQ": "(UTC+00:00) Dublin, Edinburgh, Lisszabon, London",
   "M0HMjE": "Hozzászólás hozzáadása",
-  "M3lzNo": "Érvénytelen JSON-formátum. Hiányzik a kezdő „{” vagy a záró „}” karakter.",
+  "M3lzNo": "Érvénytelen JSON-formátum. Hiányzik a kezdő '{' vagy a záró '}' karakter.",
   "M48CGd": "(UTC+11:00) Salamon-szigetek, Új-Kaledónia",
   "M4H0gh": "Eltávolítás",
   "M6U2LE": "A paraméterek a munkafolyamat mentésekor lesznek mentve. Mentés előtt itt szerkesztheti őket, illetve mentés után a paraméterlapon szerkesztheti őket.",

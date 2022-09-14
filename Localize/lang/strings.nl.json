@@ -314,7 +314,7 @@
   "LvpxiA": "Gateway",
   "Lwe7tQ": "(UTC+00:00) Dublin, Edinburgh, Lissabon, Londen",
   "M0HMjE": "Opmerking toevoegen",
-  "M3lzNo": "Ongeldige JSON-indeling. Het teken { aan het begin of het teken } aan het eind ontbreekt",
+  "M3lzNo": "Ongeldige JSON-indeling. Het teken '{' aan het begin of het teken '}' aan het eind ontbreekt",
   "M48CGd": "(UTC+11:00) Salomonseilanden, Nieuw-Caledonië",
   "M4H0gh": "Verwijderen",
   "M6U2LE": "De parameters worden opgeslagen wanneer de werkstroom wordt opgeslagen. U kunt deze hier bewerken voordat u deze opslaat of u kunt deze bewerken in de parameterpagina na het opslaan.",
