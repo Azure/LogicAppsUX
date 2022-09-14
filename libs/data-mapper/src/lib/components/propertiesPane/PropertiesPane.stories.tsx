@@ -5,6 +5,7 @@ import { NodeType } from '../../models/SelectedNode';
 import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
 import { PropertiesPane } from './PropertiesPane';
 import type { PropertiesPaneProps } from './PropertiesPane';
+import type { ExpressionGroupBranding } from '../../constants/ExpressionConstants';
 
 const exInputNode: SelectedInputNode = {
   nodeType: NodeType.Input,
@@ -25,7 +26,7 @@ const exOutputNode: SelectedOutputNode = {
 const exExpressionNode: SelectedExpressionNode = {
   nodeType: NodeType.Expression,
   name: 'ExExpressionNode',
-  iconName: '',
+  branding: {} as ExpressionGroupBranding,
   description: '',
   codeEx: '',
   definition: '',

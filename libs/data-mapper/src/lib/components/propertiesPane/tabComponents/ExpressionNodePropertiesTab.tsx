@@ -1,8 +1,8 @@
 import { Stack } from '@fluentui/react';
-import { Button, Divider, Image, Input, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, Divider, Input, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 import type { SelectedExpressionNode } from '../../../models/SelectedNode';
-import { iconUriForIconImageName } from '../../../utils/Icon.Utils';
+import { getIconForExpression } from '../../../utils/Icon.Utils';
 import { Delete20Regular, Add20Regular } from '@fluentui/react-icons';
 
 const useStyles = makeStyles({
@@ -55,7 +55,19 @@ export const ExpressionNodePropertiesTab = ({ currentNode }: ExpressionNodePrope
     <div style={{ height: '100%' }}>
       <div>
         <Stack horizontal verticalAlign='center'>
-          <Image src={iconUriForIconImageName(currentNode.iconName)} height={48} width={48} />
+          <span
+            style={{
+              backgroundColor: currentNode.branding.colorLight,
+              height: '28px',
+              width: '28px',
+              borderRadius: '14px',
+            }}
+          >
+            <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1, textAlign: 'center' }}>
+            {getIconForExpression(currentNode.name, undefined, currentNode.branding)}
+            </div>
+          </span>
+          
           <Text style={{ marginLeft: '8px' }}>{currentNode.name}</Text>
         </Stack>
         
