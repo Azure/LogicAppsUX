@@ -45,8 +45,6 @@ const edgeTypes = {
 };
 export const CanvasFinder = () => {
   const focusNode = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
-  // const [nodes] = useLayout();
-  // const node = nodes.find((n) => n.id === focusNode);
   const { setCenter, getZoom } = useReactFlow();
   const { height } = useStore();
   const [firstLoad, setFirstLoad] = useState(true);

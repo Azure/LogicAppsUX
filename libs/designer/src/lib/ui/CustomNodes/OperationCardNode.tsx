@@ -45,7 +45,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           childId: string;
         }>();
         if (item && dropResult) {
-          // console.log(`You dropped ${id} between ${dropResult.parentId} and  ${dropResult.childId}!`);
           dispatch(
             moveOperation({
               nodeId: id,
