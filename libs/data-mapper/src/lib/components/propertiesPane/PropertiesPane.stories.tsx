@@ -19,7 +19,8 @@ const exOutputNode: SelectedOutputNode = {
   dataType: SchemaNodeDataType.Int,
   defaultValue: 'Default value',
   doNotGenerateIfNoValue: true,
-  nullable: true
+  nullable: true,
+  inputIds: ['miscInputId']
 };
 const exExpressionNode: SelectedExpressionNode = {
   nodeType: NodeType.Expression,

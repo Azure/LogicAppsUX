@@ -196,6 +196,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           defaultValue: '', // TODO: this property and below
           doNotGenerateIfNoValue: true,
           nullable: true,
+          inputIds: [],
         };
   
         dispatch(setCurrentlySelectedNode(selectedOutputNode));

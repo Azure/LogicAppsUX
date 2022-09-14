@@ -19,7 +19,7 @@ export interface SelectedInputNode {
 
 export interface SelectedOutputNode extends Omit<SelectedInputNode, 'nodeType'> {
   nodeType: NodeType.Output;
-  inputIds?: string[];
+  inputIds: string[];
   defaultValue: string;
   doNotGenerateIfNoValue: boolean;
   nullable: boolean;
