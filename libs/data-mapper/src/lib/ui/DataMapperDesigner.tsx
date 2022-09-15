@@ -3,6 +3,7 @@ import type { ButtonContainerProps } from '../components/buttonContainer/ButtonC
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import type { ButtonPivotProps } from '../components/buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
+import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
@@ -101,6 +102,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
   const [propPaneExpandedHeightPx, setPropPaneExpandedHeightPx] = useState(basePropertyPaneContentHeight);
+  const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
 
   // TODO update to support input nodes connected to an expression, connected to an output node
   const connectedInputNodes = useMemo(() => {
@@ -474,7 +476,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
           readCurrentSchemaOptions={readCurrentSchemaOptions ?? placeholderFunc}
         />
-        <EditorBreadcrumb />
+        <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
         <div id="center-view">
           <div
             style={{
@@ -484,27 +486,31 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           >
             {inputSchema && outputSchema ? (
               <>
-                <ButtonPivot {...toolboxButtonPivotProps} />
-                {displayToolboxItem === 'inputSchemaTreePanel' && (
-                  <FloatingPanel {...toolboxPanelProps}>
-                    <SchemaTree
-                      schema={inputSchema}
-                      currentlySelectedNodes={currentlySelectedInputNodes}
-                      visibleConnectedNodes={connectedInputNodes}
-                      onNodeClick={onToolboxItemClick}
-                    />
-                  </FloatingPanel>
-                )}
-                {displayToolboxItem === 'expressionsPanel' && (
-                  <FloatingPanel {...toolboxPanelProps}>
-                    <ExpressionList sample="sample" onExpressionClick={onExpressionItemClick}></ExpressionList>
-                  </FloatingPanel>
-                )}
-                <div className="msla-designer-canvas msla-panel-mode">
-                  <ReactFlowProvider>
-                    <ReactFlowWrapper />
-                  </ReactFlowProvider>
+                <div>
+                  <ButtonPivot {...toolboxButtonPivotProps} />
+                  {displayToolboxItem === 'inputSchemaTreePanel' && (
+                    <FloatingPanel {...toolboxPanelProps}>
+                      <SchemaTree
+                        schema={inputSchema}
+                        currentlySelectedNodes={currentlySelectedInputNodes}
+                        visibleConnectedNodes={connectedInputNodes}
+                        onNodeClick={onToolboxItemClick}
+                      />
+                    </FloatingPanel>
+                  )}
+                  {displayToolboxItem === 'expressionsPanel' && (
+                    <FloatingPanel {...toolboxPanelProps}>
+                      <ExpressionList sample="sample" onExpressionClick={onExpressionItemClick}></ExpressionList>
+                    </FloatingPanel>
+                  )}
+                  <div className="msla-designer-canvas msla-panel-mode">
+                    <ReactFlowProvider>
+                      <ReactFlowWrapper />
+                    </ReactFlowProvider>
+                  </div>
                 </div>
+
+                <CodeView dataMapDefYaml={dataMapDefinition} isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
               </>
             ) : (
               <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
