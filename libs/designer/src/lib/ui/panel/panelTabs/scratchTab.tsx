@@ -4,6 +4,7 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
+  EditorLanguage,
   ValueSegmentType,
   CodeEditor, // HTMLEditor,
   TokenPicker, // TokenType,
@@ -76,6 +77,7 @@ function createTable(rows, cols) {
             },
           ]}
           GetTokenPicker={GetTokenPicker}
+          language={EditorLanguage.javascript}
         />
         {/* <DropdownEditor
           multiSelect={true}

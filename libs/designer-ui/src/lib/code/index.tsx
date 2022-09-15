@@ -2,13 +2,20 @@ import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import TokenPickerButton from '../editor/base/plugins/TokenPickerButton';
-import type { EditorContentChangedEventArgs } from '../editor/monaco';
-import { MonacoEditor as Editor, EditorLanguage } from '../editor/monaco';
+import type { EditorContentChangedEventArgs, EditorLanguage } from '../editor/monaco';
+import { MonacoEditor as Editor } from '../editor/monaco';
+import { buildInlineCodeTextFromToken } from './util';
 import { useId } from '@fluentui/react-hooks';
 import { useFunctionalState } from '@react-hookz/web';
-import { useState } from 'react';
+import type { editor, IRange } from 'monaco-editor';
+import { useRef, useState } from 'react';
 
-export function CodeEditor({ readonly = false, initialValue, onChange, onFocus, GetTokenPicker }: BaseEditorProps): JSX.Element {
+interface CodeEditorProps extends BaseEditorProps {
+  language: EditorLanguage;
+}
+
+export function CodeEditor({ readonly = false, initialValue, language, onChange, onFocus, GetTokenPicker }: CodeEditorProps): JSX.Element {
+  const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const editorId = useId('msla-tokenpicker-callout-location');
   const labelId = useId('msla-tokenpicker-callout-label');
   const [getCurrentValue, setCurrentValue] = useFunctionalState(getInitialValue(initialValue));
@@ -49,19 +56,31 @@ export function CodeEditor({ readonly = false, initialValue, onChange, onFocus, 
     setInTokenPicker(b);
   };
 
-  const tokenClicked = (token: ValueSegment) => {
-    console.log(token);
+  const tokenClicked = (valueSegment: ValueSegment) => {
+    if (codeEditorRef.current && valueSegment.token) {
+      const newText = buildInlineCodeTextFromToken(valueSegment.token, language);
+      codeEditorRef.current.executeEdits(null, [{ range: codeEditorRef.current.getSelection() as IRange, text: newText }]);
+      const currSelection = codeEditorRef.current.getSelection();
+      if (currSelection) {
+        setTimeout(() => {
+          const { lineNumber, column } = currSelection.getEndPosition();
+          codeEditorRef.current?.setSelection(currSelection.setStartPosition(lineNumber, column));
+          codeEditorRef.current?.focus();
+        }, 50);
+      }
+    }
   };
 
   return (
     <div className="msla-code-editor-body" id={editorId}>
       <Editor
+        ref={codeEditorRef}
         height={editorHeight}
         value={getCurrentValue()}
         fontSize={13}
         readOnly={readonly}
         lineNumbers="off"
-        language={EditorLanguage.javascript}
+        language={language}
         onContentChanged={handleContentChanged}
         onFocus={handleFocus}
         onBlur={handleBlur}
