@@ -48,6 +48,7 @@ import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import { convertToReactFlowEdges, convertToReactFlowNodes, inputPrefix, outputPrefix, ReactFlowNodeType } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnectionAtCurrentOutputNode, isLeafNode } from '../utils/Schema.Utils';
 import './ReactFlowStyleOverrides.css';
+import { Stack } from '@fluentui/react';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
@@ -485,8 +486,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             }}
           >
             {inputSchema && outputSchema ? (
-              <>
-                <div>
+              <Stack horizontal verticalAlign="center" style={{ height: '100%' }}>
+                <div style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%' }}>
                   <ButtonPivot {...toolboxButtonPivotProps} />
                   {displayToolboxItem === 'inputSchemaTreePanel' && (
                     <FloatingPanel {...toolboxPanelProps}>
@@ -511,7 +512,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                 </div>
 
                 <CodeView dataMapDefYaml={dataMapDefinition} isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
-              </>
+              </Stack>
             ) : (
               <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
             )}
