@@ -1,5 +1,9 @@
 import { equals } from './functions';
 
+export function isArmResourceId(resourceId: string): boolean {
+  return resourceId ? resourceId.startsWith('/subscriptions/') : false;
+}
+
 export const isBuiltInConnector = (connectorId: string) => {
   // NOTE(lakshmia): connectorId format: connectionProviders/{connector}
   const fields = connectorId.split('/');

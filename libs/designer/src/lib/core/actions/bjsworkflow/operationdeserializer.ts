@@ -1,7 +1,9 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
+import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { NodeData } from '../../state/operation/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
@@ -12,6 +14,7 @@ import type { NodesMetadata, Operations } from '../../state/workflow/workflowInt
 import type { RootState } from '../../store';
 import { getConnectionId } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
+import { initializeOperationDetailsForSwagger } from '../../utils/operation';
 import {
   getAllInputParameters,
   getGroupAndParameterFromParameterKey,
@@ -24,16 +27,23 @@ import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../..
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { getInputParametersFromManifest, getOutputParametersFromManifest, getParameterDependencies } from './initialize';
 import { getOperationSettings } from './settings';
+import type { ConnectorWithSwagger } from '@microsoft-logic-apps/designer-client-services';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { getPropertyValue, map, aggregate, equals } from '@microsoft-logic-apps/utils';
+import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface NodeDataWithManifest extends NodeData {
   manifest: OperationManifest;
 }
 
-export const initializeOperationMetadata = async (deserializedWorkflow: DeserializedWorkflow, dispatch: Dispatch): Promise<void> => {
+export const initializeOperationMetadata = async (
+  deserializedWorkflow: DeserializedWorkflow,
+  references: ConnectionReferences,
+  dispatch: Dispatch
+): Promise<void> => {
+  initializeConnectorsForReferences(references);
+
   const promises: Promise<NodeDataWithManifest[] | undefined>[] = [];
   const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
@@ -48,7 +58,7 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
     if (operationManifestService.isSupported(operation.type)) {
       promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, dispatch));
     } else {
-      // swagger case here
+      promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, dispatch) as any);
     }
   }
 
@@ -72,6 +82,24 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
       variables,
     })
   );
+};
+
+const initializeConnectorsForReferences = async (references: ConnectionReferences): Promise<ConnectorWithSwagger[]> => {
+  const connectorIds = uniqueArray(Object.keys(references || {}).map((key) => references[key].api.id));
+  const connectorPromises: Promise<ConnectorWithSwagger | undefined>[] = [];
+
+  for (const connectorId of connectorIds) {
+    if (isArmResourceId(connectorId)) {
+      connectorPromises.push(
+        getConnectorWithSwagger(connectorId).catch(() =>
+          // NOTE: Attempt to fetch all connectors even if some fail.
+          Promise.resolve(undefined)
+        )
+      );
+    }
+  }
+
+  return (await Promise.all(connectorPromises)).filter((result) => !!result) as ConnectorWithSwagger[];
 };
 
 const initializeOperationDetailsForManifest = async (

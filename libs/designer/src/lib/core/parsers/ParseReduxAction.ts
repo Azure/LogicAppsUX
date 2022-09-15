@@ -17,11 +17,17 @@ export const initializeGraphState = createAsyncThunk<DeserializedWorkflow, Workf
       throw new Error('Trying to import workflow without specifying the workflow type');
     }
     if (spec === 'BJS') {
-      const deserializedWorkflow = BJSDeserialize(workflowDefinition.definition);
-      thunkAPI.dispatch(initializeConnectionReferences(workflowDefinition.connectionReferences ?? {})); // danielle I think we need
-      const operationMetadataPromise = initializeOperationMetadata(deserializedWorkflow, thunkAPI.dispatch);
+      const { definition, connectionReferences } = workflowDefinition;
+      const deserializedWorkflow = BJSDeserialize(definition);
+      thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {})); // danielle I think we need
+      const operationMetadataPromise = initializeOperationMetadata(deserializedWorkflow, connectionReferences, thunkAPI.dispatch);
       const actionsAndTriggers = deserializedWorkflow.actionData;
-      const connectionsPromise = getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch, operationMetadataPromise);
+      const connectionsPromise = getConnectionsApiAndMapping(
+        actionsAndTriggers,
+        thunkAPI.getState,
+        thunkAPI.dispatch,
+        operationMetadataPromise
+      );
 
       updateDynamicDataInNodes(connectionsPromise, thunkAPI.getState, thunkAPI.dispatch);
       return deserializedWorkflow;
