@@ -9,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const themeOptions = ['Light', 'Dark'];
 
 export const mapFileOptions = ['SimpleCustomerOrder.json'];
-export const schemaFileOptions = ['SimpleCustomerOrderSchema.json', 'SimpleBuyerOrderSchema.json'];
+export const schemaFileOptions = ['SimpleInputOrderSchema.json', 'SimpleOutputOrderSchema.json'];
 
 export const DevToolbox: React.FC = () => {
   const { theme, resourcePath, armToken, loadingMethod } = useSelector((state: RootState) => {

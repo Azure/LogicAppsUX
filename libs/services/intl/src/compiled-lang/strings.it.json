@@ -592,6 +592,28 @@
       "value": "(UTC+03:30) Teheran"
     }
   ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -805,7 +827,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "Questo passaggio verrà rimosso dall'app per la logica."
     }
   ],
   "6oqk+A": [
@@ -1321,6 +1343,12 @@
       "value": "Connessione richiesta"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1348,7 +1376,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "Nodo"
     }
   ],
   "DGMwU4": [
@@ -1778,6 +1806,12 @@
       "value": "Selezionare uno schema di input"
     }
   ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -1988,7 +2022,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Elimina grafo flusso di lavoro"
     }
   ],
   "LCUU5q": [
@@ -2079,12 +2113,6 @@
     {
       "type": 0,
       "value": "Aggiungere un commento"
-    }
-  ],
-  "M3lzNo": [
-    {
-      "type": 0,
-      "value": "Il formato JSON non è valido. Manca l'elemento { iniziale o l'elemento } finale"
     }
   ],
   "M48CGd": [
@@ -2369,10 +2397,22 @@
       "value": "Obbligatorio. Valore corrispondene al numero di integer nella matrice."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Funzioni di raccolta"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -2572,7 +2612,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Non è possibile eliminare i trigger."
     }
   ],
   "RFjYpH": [
@@ -2865,7 +2905,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Elimina azione flusso di lavoro"
     }
   ],
   "UHCVNK": [
@@ -3434,6 +3474,12 @@
       "value": "(UTC-03:00) Brasilia"
     }
   ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -3796,6 +3842,12 @@
       "value": "(UTC - 03.00) Saint-Pierre e Miquelon"
     }
   ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -4008,7 +4060,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Eliminare "
     },
     {
       "type": 1,
@@ -4501,6 +4553,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Numero di unità di tempo dell'ora desiderata nel futuro."
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
     }
   ],
   "nTA155": [
@@ -5115,7 +5173,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Annulla"
     }
   ],
   "tsmuoF": [
@@ -5552,6 +5610,12 @@
       "value": "Funzioni di data e ora"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5579,7 +5643,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Verranno rimossi anche tutti i passaggi figlio."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [

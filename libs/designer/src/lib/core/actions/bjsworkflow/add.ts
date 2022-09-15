@@ -3,9 +3,9 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping } from '../../state/connection/connectionSlice';
-import type { AddNodeOperationPayload } from '../../state/operation/operationMetadataSlice';
+import type { AddNodeOperationPayload, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
-import type { IdsForDiscovery } from '../../state/panel/panelInterfaces';
+import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { switchToOperationPanel, isolateTab } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
@@ -27,7 +27,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
-  discoveryIds: IdsForDiscovery;
+  relationshipIds: RelationshipIds;
   nodeId: string;
   isParallelBranch?: boolean;
 };
@@ -60,6 +60,8 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   const newWorkflowState = (getState() as RootState).workflow;
   initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
 
+  // Update settings for children and parents
+
   getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
   dispatch(setFocusNode(nodeId));
   return;
@@ -69,7 +71,7 @@ export const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: OperationInfo,
   operationType: string,
-  operationKind: string,
+  operationKind: string | undefined,
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): Promise<void> => {
@@ -111,6 +113,48 @@ export const initializeOperationDetails = async (
   }
 };
 
+// TODO: Riley - this is very similar to the init function, but we might want to alter it to not overwrite some data
+export const reinitializeOperationDetails = async (
+  nodeId: string,
+  operation: NodeOperation,
+  workflowState: WorkflowState,
+  dispatch: Dispatch
+): Promise<void> => {
+  const operationManifestService = OperationManifestService();
+  if (operationManifestService.isSupported(operation.type)) {
+    const manifest = await getOperationManifest(operation);
+
+    // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
+    const settings = getOperationSettings(
+      false /* isTrigger */,
+      operation.type,
+      operation.kind,
+      manifest,
+      workflowState.operations[nodeId]
+    );
+    const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
+    const { nodeOutputs, dynamicOutput } = getOutputParametersFromManifest(
+      manifest,
+      false /* isTrigger */,
+      nodeInputs,
+      settings.splitOn?.value?.value
+    );
+    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs, dynamicOutput);
+
+    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
+
+    addTokensAndVariables(
+      nodeId,
+      operation.type,
+      { id: nodeId, nodeInputs, nodeOutputs, settings, manifest, nodeDependencies },
+      workflowState,
+      dispatch
+    );
+  } else {
+    // TODO - swagger case here
+  }
+};
+
 export const setDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
   const connections = await getConnectionsForConnector(connectorId);
   if (connections.length !== 0) {
@@ -128,7 +172,6 @@ export const addTokensAndVariables = (
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): void => {
-  console.log('addTokensAndVariables', nodeId, operationType, nodeData, workflowState);
   const { graph, nodesMetadata, operations } = workflowState;
   const { nodeInputs, nodeOutputs, settings, manifest } = nodeData;
   const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {

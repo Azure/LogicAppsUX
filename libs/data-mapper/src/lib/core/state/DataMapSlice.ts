@@ -247,11 +247,12 @@ export const dataMapSlice = createSlice({
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      const trimmedKey = action.payload.outputNodeKey.split('-', 2)[1];
-      const trimmedValue = action.payload.value.split('-', 2)[1];
+      const trimmedKey = action.payload.outputNodeKey.substring(action.payload.outputNodeKey.indexOf('-') + 1);
+      const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
 
-      newState.dataMapConnections[trimmedKey] = {
-        value: trimmedValue,
+      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
+        destination: trimmedKey,
+        sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,
         reactFlowDestination: action.payload.outputNodeKey,
       };
@@ -265,14 +266,15 @@ export const dataMapSlice = createSlice({
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      const trimmedOldConnectionKey = action.payload.oldConnectionKey.split('-', 2)[1];
+      const trimmedOldConnectionKey = action.payload.oldConnectionKey.substring(action.payload.oldConnectionKey.indexOf('-') + 1);
       delete newState.dataMapConnections[trimmedOldConnectionKey];
 
-      const trimmedKey = action.payload.outputNodeKey.split('-', 2)[1];
-      const trimmedValue = action.payload.value.split('-', 2)[1];
+      const trimmedKey = action.payload.outputNodeKey.substring(action.payload.outputNodeKey.indexOf('-') + 1);
+      const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
 
-      newState.dataMapConnections[trimmedKey] = {
-        value: trimmedValue,
+      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
+        destination: trimmedKey,
+        sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,
         reactFlowDestination: action.payload.outputNodeKey,
       };
@@ -286,7 +288,7 @@ export const dataMapSlice = createSlice({
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      const trimmedOldConnectionKey = action.payload.oldConnectionKey.split('-', 2)[1];
+      const trimmedOldConnectionKey = action.payload.oldConnectionKey.substring(action.payload.oldConnectionKey.indexOf('-') + 1);
       delete newState.dataMapConnections[trimmedOldConnectionKey];
 
       doDataMapOperation(state, newState);

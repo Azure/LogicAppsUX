@@ -1,6 +1,7 @@
 import { NodeType } from '../../../models/SelectedNode';
 import type { SelectedSchemaNode } from '../../../models/SelectedNode';
-import { Checkbox, makeStyles, Text } from '@fluentui/react-components';
+import { Stack } from '@fluentui/react';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Checkbox, Input, makeStyles, Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
 const useStyles = makeStyles({
@@ -10,6 +11,7 @@ const useStyles = makeStyles({
     rowGap: '16px',
     columnGap: '12px',
     gridTemplateColumns: 'auto auto auto auto auto auto',
+    alignItems: 'center',
   },
 });
 
@@ -46,6 +48,21 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Checkbox label for nullable',
   });
 
+  const inputLoc = intl.formatMessage({
+    defaultMessage: 'Input',
+    description: 'Input',
+  });
+
+  const advOptLoc = intl.formatMessage({
+    defaultMessage: 'Advanced options',
+    description: 'Advanced options',
+  });
+
+  const defValLoc = intl.formatMessage({
+    defaultMessage: 'Default value',
+    description: 'Default value',
+  });
+
   // Base info shared by input/output nodes
   const NodeInfo = () => {
     return (
@@ -57,16 +74,35 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
         <Text>{currentNode.path}</Text>
 
         <Text style={{ gridColumn: '1 / span 2' }}>{dataTypeLoc}</Text>
-        <Text>Unknown - TODO</Text>
+        <Text>{currentNode.dataType}</Text>
       </div>
     );
   };
 
   const AdditionalOutputNodeProperties = () => {
     return (
-      <div className={styles.nodeInfoGridContainer}>
-        <Checkbox label={noValueLabelLoc} defaultChecked style={{ gridColumn: '1 / span 6' }} />
-        <Checkbox label={nullableLabelLoc} defaultChecked style={{ gridColumn: '1 / span 6' }} />
+      <div>
+        <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
+          <Text style={{ gridColumn: '1 / span 2' }}>{inputLoc}</Text>
+          <Input placeholder="Temporary placeholder" />
+        </div>
+
+        <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px' }}>
+          <AccordionItem value="1">
+            <AccordionHeader>{advOptLoc}</AccordionHeader>
+            <AccordionPanel>
+              <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
+                <Text style={{ gridColumn: '1 / span 2' }}>{defValLoc}</Text>
+                <Input placeholder="Temporary placeholder" />
+              </div>
+
+              <Stack>
+                <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
+                <Checkbox label={nullableLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
+              </Stack>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
       </div>
     );
   };

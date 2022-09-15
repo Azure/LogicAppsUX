@@ -1,6 +1,7 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { Combobox } from '../../combobox';
 import { DictionaryEditor } from '../../dictionary';
+import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, ChangeHandler } from '../../editor/base';
 import { StringEditor } from '../../editor/string';
@@ -59,15 +60,28 @@ const TokenField = ({
   onComboboxMenuOpen,
 }: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
-    case 'combobox':
+    case 'dropdown':
       // eslint-disable-next-line no-case-declarations
-      const options = editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }));
+      const { options, multiSelect } = editorOptions;
+      return (
+        <DropdownEditor
+          placeholder={placeholder}
+          readonly={readOnly}
+          initialValue={value}
+          options={options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          multiSelect={!!multiSelect}
+          GetTokenPicker={GetTokenPicker}
+          onChange={onValueChange}
+        />
+      );
+
+    case 'combobox':
       return (
         <Combobox
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={options}
+          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}

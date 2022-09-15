@@ -7,7 +7,7 @@ describe('workflow slice reducers', () => {
   it('should add initial node to the workflow', () => {
     const mockAddNode: AddNodePayload = {
       nodeId: '123',
-      discoveryIds: {
+      relationshipIds: {
         graphId: 'root',
       },
       operation: {

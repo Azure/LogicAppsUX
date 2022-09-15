@@ -590,6 +590,28 @@
       "value": "(UTC+03:30)德黑兰"
     }
   ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -803,7 +825,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "将从逻辑应用中删除此步骤。"
     }
   ],
   "6oqk+A": [
@@ -1329,6 +1351,12 @@
       "value": "需要连接"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1356,7 +1384,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "节点"
     }
   ],
   "DGMwU4": [
@@ -1764,6 +1792,12 @@
       "value": "选择输入架构"
     }
   ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -2061,12 +2095,6 @@
       "value": "添加评论"
     }
   ],
-  "M3lzNo": [
-    {
-      "type": 0,
-      "value": "json 格式无效。缺少开头的 { 或结尾的 }"
-    }
-  ],
   "M48CGd": [
     {
       "type": 0,
@@ -2228,7 +2256,7 @@
   "O9ZExg": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "确定"
     }
   ],
   "OD8igU": [
@@ -2361,10 +2389,22 @@
       "value": "必需。此值为数组中的整数数目。"
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "集合函数"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -3412,6 +3452,12 @@
       "value": "(UTC-03:00)巴西利亚"
     }
   ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -3772,6 +3818,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 圣皮埃尔和密克隆"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
     }
   ],
   "gCXOd5": [
@@ -4487,6 +4539,12 @@
       "value": "必需。表示所需将来时间与当前时间相差的时间单位数。"
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -5085,7 +5143,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "tsmuoF": [
@@ -5522,6 +5580,12 @@
       "value": "日期和时间函数"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5550,6 +5614,12 @@
     {
       "type": 0,
       "value": "This will also remove all child steps."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [

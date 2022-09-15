@@ -1,3 +1,4 @@
+import type { ExpressionGroupBranding } from '../../constants/ExpressionConstants';
 import { SchemaNodeDataType } from '../../models';
 import { NodeType } from '../../models/SelectedNode';
 import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
@@ -20,11 +21,12 @@ const exOutputNode: SelectedOutputNode = {
   defaultValue: 'Default value',
   doNotGenerateIfNoValue: true,
   nullable: true,
+  inputIds: ['miscInputId'],
 };
 const exExpressionNode: SelectedExpressionNode = {
   nodeType: NodeType.Expression,
   name: 'ExExpressionNode',
-  iconName: '',
+  branding: {} as ExpressionGroupBranding,
   description: '',
   codeEx: '',
   definition: '',

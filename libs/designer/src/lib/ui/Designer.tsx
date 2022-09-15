@@ -45,35 +45,36 @@ const edgeTypes = {
 };
 export const CanvasFinder = () => {
   const focusNode = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
-  const [nodes] = useLayout();
   const { setCenter, getZoom } = useReactFlow();
   const { height } = useStore();
   const [firstLoad, setFirstLoad] = useState(true);
   const nodeData = useNodes().find((x) => x.id === focusNode);
   const dispatch = useDispatch<AppDispatch>();
   const handleTransform = useCallback(() => {
-    if (!focusNode) {
+    if (!focusNode) return;
+    if ((!nodeData?.position?.x && !nodeData?.position?.y) || !nodeData?.width || !nodeData?.height) {
       return;
     }
-    const node = nodes.find((x) => x.id === focusNode);
-    if ((!node?.position?.x && !node?.position?.y) || !nodeData?.width) {
-      return;
-    }
+
+    const xTarget = (nodeData.positionAbsolute?.x ?? 0) + nodeData.width / 2;
+    const yTarget = (nodeData.positionAbsolute?.y ?? 0) + nodeData.height / 2;
+
     if (firstLoad) {
-      setCenter((node.position?.x ?? 0) + nodeData.width / 2, height / 2 - 50, { zoom: 1 });
+      setCenter(xTarget, height / 2 - 50, { zoom: 1 });
       setFirstLoad(false);
     } else {
-      setCenter((node.position?.x ?? 0) + nodeData.width, node.position?.y ?? 0, {
+      setCenter(xTarget, yTarget, {
         zoom: getZoom(),
+        duration: 500,
       });
     }
     dispatch(clearFocusNode());
-  }, [dispatch, firstLoad, focusNode, getZoom, height, nodeData?.width, nodes, setCenter]);
+  }, [dispatch, firstLoad, focusNode, getZoom, height, nodeData, setCenter]);
 
   useEffect(() => {
     handleTransform();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, focusNode]);
+  }, [nodeData, focusNode]);
   return null;
 };
 

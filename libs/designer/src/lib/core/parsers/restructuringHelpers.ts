@@ -3,75 +3,92 @@ import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInt
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
 
-export const addNewEdge = (parent: string, child: string, graph: WorkflowNode) => {
+///////////////////////////////////////////////////////////
+// EDGES
+
+export const addNewEdge = (state: WorkflowState, source: string, target: string, graph: WorkflowNode) => {
   const workflowEdge: WorkflowEdge = {
-    id: `${parent}-${child}`,
-    source: parent,
-    target: child,
+    id: `${source}-${target}`,
+    source,
+    target,
     type: WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
   };
   if (!graph?.edges) graph.edges = [];
   graph?.edges.push(workflowEdge);
+
+  const targetOp = state.operations?.[target] as any;
+  if (targetOp) (state.operations?.[target] as any).runAfter = { [source]: [RUN_AFTER_STATUS.SUCCEEDED] };
 };
 
-export const removeEdge = (sourceId: string, targetId: string, graph: WorkflowNode) => {
+export const removeEdge = (state: WorkflowState, sourceId: string, targetId: string, graph: WorkflowNode) => {
+  if (!state) return;
   graph.edges = graph.edges?.filter((edge) => !(edge.source === sourceId && edge.target === targetId));
+  const targetRunAfter = (state.operations?.[targetId] as any)?.runAfter;
+  if (targetRunAfter) delete targetRunAfter.runAfter?.[sourceId as any];
 };
+
+const setEdgeSource = (edge: WorkflowEdge, newSource: string) => {
+  edge.id = `${newSource}-${edge.target}`;
+  edge.source = newSource;
+};
+
+const setEdgeTarget = (edge: WorkflowEdge, newTarget: string) => {
+  edge.id = `${edge.source}-${newTarget}`;
+  edge.target = newTarget;
+};
+
+///////////////////////////////////////////////////////////
+// BULK FUNCTIONS
 
 // Reassign edge source ids to new node id
-//   |
-//  /|\
+//   /|\   =>   |
+//             /|\
 export const reassignEdgeSources = (state: WorkflowState, oldSourceId: string, newSourceId: string, graph: WorkflowNode) => {
+  if (!state) return;
   graph.edges = graph.edges?.map((edge) => {
     if (edge.source === oldSourceId) {
-      edge.source = newSourceId;
-      if (state) reassignNodeRunAfter(state, edge.target, oldSourceId, newSourceId);
+      setEdgeSource(edge, newSourceId);
+      moveRunAfterSource(state, edge.target, oldSourceId, newSourceId);
     }
     return edge;
   });
 };
 
 // Reassign edge target ids to new node id
-//  \|/
-//   |
+//   \|/   =>   \|/
+//               |
 export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, newTargetId: string, graph: WorkflowNode) => {
-  reassignAllNodeRunAfter(state, oldTargetId, newTargetId);
+  moveRunAfterTarget(state, oldTargetId, newTargetId);
   graph.edges = graph.edges?.map((edge) => {
     if (edge.target === oldTargetId) {
-      edge.target = newTargetId;
-      // Remove RunAfter settings
-      const runAfter = (state.operations[edge.source] as LogicAppsV2.ActionDefinition).runAfter;
-      delete runAfter?.[oldTargetId];
+      setEdgeTarget(edge, newTargetId);
     }
     return edge;
   });
 };
 
-export const reassignAllNodeRunAfter = (state: WorkflowState | undefined, oldNodeId: string, newNodeId: string) => {
+const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
   if (!state) return;
-  const runAfter = (state.operations[oldNodeId] as LogicAppsV2.ActionDefinition).runAfter;
-  state.operations[newNodeId] = { ...state.operations[newNodeId], runAfter };
-  if (state.operations[oldNodeId]) (state.operations[oldNodeId] as any).runAfter = { [newNodeId]: ['Succeeded'] };
-};
-
-export const reassignNodeRunAfter = (state: WorkflowState | undefined, childNodeId: string, parentNodeId: string, newNodeId: string) => {
-  if (!state) return;
-  const childRunAfter = (state.operations[childNodeId] as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
-  if (state.operations[newNodeId]) {
-    (state.operations[newNodeId] as any).runAfter = { [parentNodeId]: childRunAfter[parentNodeId] };
+  const targetRunAfter = (state.operations?.[oldTargetId] as any)?.runAfter;
+  if (targetRunAfter) {
+    (state.operations[newTargetId] as LogicAppsV2.ActionDefinition).runAfter = targetRunAfter;
+    (state.operations[oldTargetId] as any).runAfter = {};
   }
-  delete childRunAfter[parentNodeId];
-
-  childRunAfter[newNodeId] = [RUN_AFTER_STATUS.SUCCEEDED];
 };
 
-export const assignNodeRunAfterLeafNode = (state: WorkflowState | undefined, parentNodeId: string, newNodeId: string) => {
+const moveRunAfterSource = (state: WorkflowState | undefined, nodeId: string, oldSourceId: string, newSourceId: string) => {
   if (!state) return;
-  (state.operations[newNodeId] as LogicAppsV2.ActionDefinition).runAfter = { [parentNodeId]: [RUN_AFTER_STATUS.SUCCEEDED] };
+  const targetRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
+  targetRunAfter[newSourceId] = targetRunAfter[oldSourceId];
+  delete targetRunAfter[oldSourceId];
 };
 
-export const resetIsRootNode = (sourceId: string, graph: WorkflowNode, metadata: NodesMetadata) => {
+export const applyIsRootNode = (state: WorkflowState, rootNodeId: string, graph: WorkflowNode, metadata: NodesMetadata) => {
   graph.edges?.forEach((edge) => {
-    if (edge.source === sourceId) delete metadata[edge.target].isRoot;
+    if (edge.source === rootNodeId)
+      if (metadata?.[edge.target]) {
+        delete metadata[edge.target].isRoot;
+        (state.operations[edge.target] as LogicAppsV2.ActionDefinition).runAfter = {};
+      }
   });
 };

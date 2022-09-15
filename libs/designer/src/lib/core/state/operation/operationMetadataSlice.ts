@@ -30,13 +30,20 @@ export interface OutputInfo {
   value?: string;
 }
 
+export enum DynamicLoadStatus {
+  NOTSTARTED,
+  STARTED,
+  FAILED,
+  SUCCEEDED,
+}
+
 export interface NodeInputs {
-  isLoading?: boolean;
+  dynamicLoadStatus?: DynamicLoadStatus;
   parameterGroups: Record<string, ParameterGroup>;
 }
 
 export interface NodeOutputs {
-  isLoading?: boolean;
+  dynamicLoadStatus?: DynamicLoadStatus;
   outputs: Record<string, OutputInfo>;
 }
 
@@ -143,10 +150,17 @@ export const operationMetadataSlice = createSlice({
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
       const { nodeId, groupId, inputs } = action.payload;
       if (state.inputParameters[nodeId] && state.inputParameters[nodeId].parameterGroups[groupId]) {
-        state.inputParameters[nodeId].parameterGroups[groupId].parameters = [
-          ...state.inputParameters[nodeId].parameterGroups[groupId].parameters,
-          ...inputs,
-        ];
+        const { parameters } = state.inputParameters[nodeId].parameterGroups[groupId];
+        const newParameters = [...parameters];
+        for (const input of inputs) {
+          const index = newParameters.findIndex((parameter) => parameter.parameterKey === input.parameterKey);
+          if (index > -1) {
+            newParameters.splice(index, 1, input);
+          } else {
+            newParameters.push(input);
+          }
+        }
+        state.inputParameters[nodeId].parameterGroups[groupId].parameters = newParameters;
       }
     },
     addDynamicOutputs: (state, action: PayloadAction<AddDynamicOutputsPayload>) => {
