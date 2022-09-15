@@ -65,12 +65,10 @@ const TokenField = ({
       const { options, multiSelect } = editorOptions;
       return (
         <DropdownEditor
-          placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
           options={options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           multiSelect={!!multiSelect}
-          GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
       );
