@@ -12,7 +12,12 @@ import { useDispatch, useSelector } from 'react-redux';
 const maxBreadcrumbItems = 3;
 const overflowIndex = 1;
 
-export const EditorBreadcrumb = (): JSX.Element => {
+interface EditorBreadcrumbProps {
+  isCodeViewOpen: boolean;
+  setIsCodeViewOpen: (isOpen: boolean) => void;
+}
+
+export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBreadcrumbProps): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
@@ -55,8 +60,7 @@ export const EditorBreadcrumb = (): JSX.Element => {
         appearance="transparent"
         icon={<Code20Regular />}
         onClick={() => {
-          // TODO (refortie) #14887351 - Create the code view
-          console.log('Code view button clicked');
+          setIsCodeViewOpen(!isCodeViewOpen);
         }}
       >
         {intl.formatMessage({
