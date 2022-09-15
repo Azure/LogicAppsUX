@@ -38,13 +38,15 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen 
         <Button icon={<Dismiss20Regular />} appearance="subtle" onClick={() => setIsCodeViewOpen(false)} />
       </Stack>
 
-      <MonacoEditor
-        language={EditorLanguage.templateExpressionLanguage}
-        value={dataMapDefinition}
-        lineNumbers="on"
-        scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
-        readOnly
-      />
+      <div style={{ border: '1px solid black', borderRadius: '3px', padding: '1px' }}>
+        <MonacoEditor
+          language={EditorLanguage.templateExpressionLanguage}
+          value={dataMapDefinition}
+          lineNumbers="on"
+          scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
+          readOnly
+        />
+      </div>
     </div>
   );
 };
