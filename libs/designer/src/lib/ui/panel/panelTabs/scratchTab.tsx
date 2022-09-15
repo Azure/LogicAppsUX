@@ -51,8 +51,7 @@ export const ScratchTab = () => {
           initialValue={[
             {
               type: ValueSegmentType.LITERAL,
-              value: `
-function createTable(rows, cols) {
+              value: `function createTable(rows, cols) {
   var j = 1;
   var output = "<table>";
   for (i = 1; i <= rows; i++) {
