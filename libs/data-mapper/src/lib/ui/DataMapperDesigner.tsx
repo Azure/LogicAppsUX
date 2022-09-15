@@ -437,6 +437,24 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           setCanvasViewport(viewport);
         }}
       >
+        <ButtonPivot {...toolboxButtonPivotProps} />
+        {displayToolboxItem === 'inputSchemaTreePanel' && (
+          <FloatingPanel {...toolboxPanelProps}>
+            {inputSchema && (
+              <SchemaTree
+                schema={inputSchema}
+                currentlySelectedNodes={currentlySelectedInputNodes}
+                visibleConnectedNodes={connectedInputNodes}
+                onNodeClick={onToolboxItemClick}
+              />
+            )}
+          </FloatingPanel>
+        )}
+        {displayToolboxItem === 'expressionsPanel' && (
+          <FloatingPanel {...toolboxPanelProps}>
+            <ExpressionList sample="sample" onExpressionClick={onExpressionItemClick}></ExpressionList>
+          </FloatingPanel>
+        )}
         <ButtonContainer {...mapControlsButtonContainerProps} />
         {displayMiniMap ? (
           <MiniMap
@@ -487,28 +505,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           >
             {inputSchema && outputSchema ? (
               <Stack horizontal style={{ height: '100%' }}>
-                <div style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%' }}>
-                  <ButtonPivot {...toolboxButtonPivotProps} />
-                  {displayToolboxItem === 'inputSchemaTreePanel' && (
-                    <FloatingPanel {...toolboxPanelProps}>
-                      <SchemaTree
-                        schema={inputSchema}
-                        currentlySelectedNodes={currentlySelectedInputNodes}
-                        visibleConnectedNodes={connectedInputNodes}
-                        onNodeClick={onToolboxItemClick}
-                      />
-                    </FloatingPanel>
-                  )}
-                  {displayToolboxItem === 'expressionsPanel' && (
-                    <FloatingPanel {...toolboxPanelProps}>
-                      <ExpressionList sample="sample" onExpressionClick={onExpressionItemClick}></ExpressionList>
-                    </FloatingPanel>
-                  )}
-                  <div className="msla-designer-canvas msla-panel-mode">
-                    <ReactFlowProvider>
-                      <ReactFlowWrapper />
-                    </ReactFlowProvider>
-                  </div>
+                <div className="msla-designer-canvas msla-panel-mode" style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%' }}>
+                  <ReactFlowProvider>
+                    <ReactFlowWrapper />
+                  </ReactFlowProvider>
                 </div>
 
                 <CodeView dataMapDefinition={dataMapDefinition} isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
