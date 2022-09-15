@@ -21,6 +21,8 @@ export default function TokenPickerHandler({ handleUpdateExpressionToken }: Toke
         const node = findChildNode($getRoot(), payload, TokenType.FX);
         if (node?.token?.tokenType === TokenType.FX) {
           handleUpdateExpressionToken?.(node?.token?.value ?? '', payload);
+        } else {
+          editor.focus();
         }
         return true;
       },

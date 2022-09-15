@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
-import type { PanelTab } from '@microsoft/designer-ui';
+import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
   ValueSegmentType,
   CodeEditor, // HTMLEditor,
@@ -26,15 +26,20 @@ const testTokenGroup: TokenGroup[] = [
 export const ScratchTab = () => {
   const expressionGroup = getExpressionTokenSections();
 
-  const GetTokenPicker = (editorId: string, labelId: string, onClick?: (b: boolean) => void, noEditor?: boolean): JSX.Element => {
+  const GetTokenPicker = (
+    editorId: string,
+    labelId: string,
+    onClick?: (b: boolean) => void,
+    tokenClicked?: (token: ValueSegment) => void
+  ): JSX.Element => {
     return (
       <TokenPicker
         editorId={editorId}
         labelId={labelId}
         tokenGroup={testTokenGroup}
         expressionGroup={expressionGroup}
-        noEditor={noEditor}
         tokenPickerFocused={onClick}
+        tokenClickedCallback={tokenClicked}
       />
     );
   };

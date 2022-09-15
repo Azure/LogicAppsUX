@@ -14,7 +14,7 @@ import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
-import type { ChangeState, PanelTab, ParameterInfo } from '@microsoft/designer-ui';
+import type { ChangeState, PanelTab, ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -121,7 +121,7 @@ const ParameterSection = ({
     editorId: string,
     labelId: string,
     tokenPickerFocused?: (b: boolean) => void,
-    setShowTokenPickerButton?: (b: boolean) => void
+    tokenClicked?: (token: ValueSegment) => void
   ): JSX.Element => {
     // check to see if there's a custom Token Picker
     return (
@@ -131,7 +131,7 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerFocused}
-        setShowTokenPickerButton={setShowTokenPickerButton}
+        tokenClickedCallback={tokenClicked}
       />
     );
   };

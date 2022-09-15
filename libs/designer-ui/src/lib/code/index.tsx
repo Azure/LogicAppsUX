@@ -49,6 +49,10 @@ export function CodeEditor({ readonly = false, initialValue, onChange, onFocus, 
     setInTokenPicker(b);
   };
 
+  const tokenClicked = (token: ValueSegment) => {
+    console.log(token);
+  };
+
   return (
     <div className="msla-code-editor-body" id={editorId}>
       <Editor
@@ -66,7 +70,7 @@ export function CodeEditor({ readonly = false, initialValue, onChange, onFocus, 
         <TokenPickerButton labelId={labelId} showTokenPicker={showTokenPicker} setShowTokenPicker={handleShowTokenPicker} />
       ) : null}
       {(showTokenPickerButton && showTokenPicker) || getInTokenPicker()
-        ? GetTokenPicker?.(editorId, labelId, onClickTokenPicker, true)
+        ? GetTokenPicker?.(editorId, labelId, onClickTokenPicker, tokenClicked)
         : null}
     </div>
   );

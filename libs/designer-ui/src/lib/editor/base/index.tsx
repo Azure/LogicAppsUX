@@ -46,7 +46,12 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   tokenPickerButtonProps?: TokenPickerButtonProps;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void, noEditor?: boolean) => JSX.Element;
+  GetTokenPicker: (
+    editorId: string,
+    labelId: string,
+    onClick?: (b: boolean) => void,
+    tokenClicked?: (token: ValueSegment) => void
+  ) => JSX.Element;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;

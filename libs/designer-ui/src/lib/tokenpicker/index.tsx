@@ -1,3 +1,4 @@
+import type { ValueSegment } from '../editor';
 import type { ExpressionEditorEvent } from '../expressioneditor';
 import type { TokenGroup } from './models/token';
 import TokenPickerHandler from './plugins/TokenPickerHandler';
@@ -31,10 +32,9 @@ export interface TokenPickerProps {
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   initialMode?: TokenPickerMode;
-  noEditor?: boolean;
   tokenPickerFocused?: (b: boolean) => void;
-  setShowTokenPickerButton?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
+  tokenClickedCallback?: (token: ValueSegment) => void;
 }
 export function TokenPicker({
   editorId,
@@ -42,9 +42,9 @@ export function TokenPicker({
   tokenGroup,
   expressionGroup,
   initialMode,
-  noEditor = false,
   tokenPickerFocused,
   onSearchTextChanged,
+  tokenClickedCallback,
 }: TokenPickerProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
@@ -133,7 +133,7 @@ export function TokenPicker({
       >
         <div className="msla-token-picker-container">
           <div className="msla-token-picker">
-            <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} />
+            <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
             <TokenPickerSearch
               selectedKey={selectedKey}
               searchQuery={searchQuery}
@@ -157,12 +157,13 @@ export function TokenPicker({
               editMode={updatingExpression !== null || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
               setExpression={setExpression}
               isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
+              tokenClickedCallback={tokenClickedCallback}
             />
           </div>
         </div>
       </Callout>
-      {noEditor ? null : <TokenPickerHandler handleUpdateExpressionToken={handleUpdateExpressionToken} />}
-      {noEditor ? null : <UpdateTokenNode />}
+      {tokenClickedCallback ? null : <TokenPickerHandler handleUpdateExpressionToken={handleUpdateExpressionToken} />}
+      {tokenClickedCallback ? null : <UpdateTokenNode />}
     </>
   );
 }
