@@ -1,3 +1,4 @@
+import type { ExpressionGroupBranding } from "../constants/ExpressionConstants";
 import type { ExpressionInput } from "./Expression";
 import type { SchemaNodeDataType } from "./Schema";
 
@@ -19,7 +20,7 @@ export interface SelectedInputNode {
 
 export interface SelectedOutputNode extends Omit<SelectedInputNode, 'nodeType'> {
   nodeType: NodeType.Output;
-  inputIds?: string[];
+  inputIds: string[];
   defaultValue: string;
   doNotGenerateIfNoValue: boolean;
   nullable: boolean;
@@ -29,7 +30,7 @@ export interface SelectedOutputNode extends Omit<SelectedInputNode, 'nodeType'> 
 export interface SelectedExpressionNode {
     nodeType: NodeType.Expression;
     name: string;
-    iconName: string;
+    branding: ExpressionGroupBranding;
     description: string;
     codeEx: string;
     definition: string;
