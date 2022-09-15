@@ -127,7 +127,7 @@ export const Designer = () => {
     },
   ];
 
-  const newNodes = !isEmpty ? nodes : emptyWorkflowPlaceholderNodes;
+  const nodesWithPlaceholder = !isEmpty ? nodes : emptyWorkflowPlaceholderNodes;
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
@@ -137,7 +137,7 @@ export const Designer = () => {
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
-            nodes={newNodes}
+            nodes={nodesWithPlaceholder}
             edges={edges}
             onNodesChange={onNodesChange}
             minZoom={0}
