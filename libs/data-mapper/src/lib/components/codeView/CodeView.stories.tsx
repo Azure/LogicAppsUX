@@ -9,6 +9,6 @@ export default {
 
 export const Standard: ComponentStory<typeof CodeView> = (args: CodeViewProps) => <CodeView {...args} />;
 Standard.args = {
-  dataMapDefYaml: 'Placeholder: YAML',
+  dataMapDefinition: 'Placeholder: YAML',
   isCodeViewOpen: true,
 };

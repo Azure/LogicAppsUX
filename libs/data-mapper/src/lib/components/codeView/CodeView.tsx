@@ -11,12 +11,12 @@ const useStyles = makeStyles({
 });
 
 export interface CodeViewProps {
-  dataMapDefYaml: string;
+  dataMapDefinition: string;
   isCodeViewOpen: boolean;
   setIsCodeViewOpen: (isOpen: boolean) => void;
 }
 
-export const CodeView = ({ dataMapDefYaml, isCodeViewOpen, setIsCodeViewOpen }: CodeViewProps) => {
+export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen }: CodeViewProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -40,7 +40,7 @@ export const CodeView = ({ dataMapDefYaml, isCodeViewOpen, setIsCodeViewOpen }: 
 
       <MonacoEditor
         language={EditorLanguage.templateExpressionLanguage}
-        value={dataMapDefYaml}
+        value={dataMapDefinition}
         lineNumbers="on"
         scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
         readOnly

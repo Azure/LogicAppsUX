@@ -511,7 +511,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                   </div>
                 </div>
 
-                <CodeView dataMapDefYaml={dataMapDefinition} isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
+                <CodeView dataMapDefinition={dataMapDefinition} isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
               </Stack>
             ) : (
               <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
