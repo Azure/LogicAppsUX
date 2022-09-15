@@ -608,6 +608,28 @@
       "value": "(UTC+03:30) Teherán"
     }
   ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -821,7 +843,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "Este paso se quitará de la aplicación lógica."
     }
   ],
   "6oqk+A": [
@@ -1369,6 +1391,12 @@
       "value": "Conexión obligatoria"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1396,7 +1424,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "Nodo"
     }
   ],
   "DGMwU4": [
@@ -1826,6 +1854,12 @@
       "value": "Seleccionar un esquema de entrada"
     }
   ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -2145,12 +2179,6 @@
       "value": "Agregar un comentario"
     }
   ],
-  "M3lzNo": [
-    {
-      "type": 0,
-      "value": "Formato JSON no válido. Falta el signo { del principio o el signo } del final"
-    }
-  ],
   "M48CGd": [
     {
       "type": 0,
@@ -2308,7 +2336,7 @@
   "O9ZExg": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "Aceptar"
     }
   ],
   "OD8igU": [
@@ -2441,10 +2469,22 @@
       "value": "Obligatorio. Este valor es el número de enteros que se encuentran en esta matriz."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Funciones de recopilación"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -3506,6 +3546,12 @@
       "value": "(UTC-03:00) Brasilia"
     }
   ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -3866,6 +3912,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) San Pedro y Miquelón"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
     }
   ],
   "gCXOd5": [
@@ -4599,6 +4651,12 @@
       "value": "Obligatorio. Número de unidades de tiempo cuya hora deseada es futura."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -5211,7 +5269,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Cancelar"
     }
   ],
   "tsmuoF": [
@@ -5648,6 +5706,12 @@
       "value": "Funciones de fecha y hora"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5676,6 +5740,12 @@
     {
       "type": 0,
       "value": "This will also remove all child steps."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [
