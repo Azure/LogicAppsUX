@@ -486,7 +486,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             }}
           >
             {inputSchema && outputSchema ? (
-              <Stack horizontal verticalAlign="center" style={{ height: '100%' }}>
+              <Stack horizontal style={{ height: '100%' }}>
                 <div style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%' }}>
                   <ButtonPivot {...toolboxButtonPivotProps} />
                   {displayToolboxItem === 'inputSchemaTreePanel' && (
