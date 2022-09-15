@@ -26,7 +26,7 @@ export const CodeView = ({ dataMapDefYaml, isCodeViewOpen, setIsCodeViewOpen }: 
   });
 
   return (
-    <div style={{ display: isCodeViewOpen ? 'block' : 'none', height: '100%', width: '25%', padding: '12px' }}>
+    <div style={{ display: isCodeViewOpen ? 'block' : 'none', height: '100%', overflow: 'hidden', width: '25%', padding: '12px' }}>
       <Stack horizontal verticalAlign="center" style={{ justifyContent: 'space-between', marginBottom: '24px', marginTop: '12px' }}>
         <Stack horizontal verticalAlign="center">
           <Code20Regular />
