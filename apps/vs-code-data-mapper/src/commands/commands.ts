@@ -1,4 +1,5 @@
 import DataMapperExt from '../DataMapperExt';
+import { startBackendRuntime } from '../FxWorkflowRuntime';
 import { dataMapDefinitionsPath, schemasPath } from '../extensionConfig';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as yaml from 'js-yaml';
@@ -13,7 +14,10 @@ export const registerCommands = (context: ExtensionContext) => {
 };
 
 const openDataMapperCmd = (context: ExtensionContext) => {
-  DataMapperExt.createOrShow(context);
+  // TODO (WI #15558678): If necessary, better handle creation/updating/placement of host.json/local.settings.json files
+  startBackendRuntime(DataMapperExt.getWorkspaceFolder()).then(() => {
+    DataMapperExt.createOrShow(context);
+  });
 };
 
 const createNewDataMapCmd = async () => {
