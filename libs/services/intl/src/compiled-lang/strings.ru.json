@@ -619,6 +619,28 @@
       "value": "(UTC+03:30) Тегеран"
     }
   ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -832,7 +854,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "Этот шаг будет удален из приложения логики."
     }
   ],
   "6oqk+A": [
@@ -1391,6 +1413,12 @@
       "value": "Требуется подключение"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1418,7 +1446,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "Узел"
     }
   ],
   "DGMwU4": [
@@ -1867,6 +1895,12 @@
       "value": "Выберите входную схему"
     }
   ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -2088,7 +2122,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Удалить граф рабочего процесса"
     }
   ],
   "LCUU5q": [
@@ -2203,12 +2237,6 @@
     {
       "type": 0,
       "value": "Добавить комментарий"
-    }
-  ],
-  "M3lzNo": [
-    {
-      "type": 0,
-      "value": "Недопустимый формат JSON. Отсутствует открывающая или закрывающая фигурная скобка"
     }
   ],
   "M48CGd": [
@@ -2368,7 +2396,7 @@
   "O9ZExg": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "ОК"
     }
   ],
   "OD8igU": [
@@ -2501,10 +2529,22 @@
       "value": "Требуется. Это значение — число целых чисел в массиве."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Функции сбора"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -2704,7 +2744,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Триггеры удалить невозможно."
     }
   ],
   "RFjYpH": [
@@ -3008,7 +3048,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Удалить действие рабочего процесса"
     }
   ],
   "UHCVNK": [
@@ -3577,6 +3617,12 @@
       "value": "(UTC-03:00) Бразилиа"
     }
   ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -3939,6 +3985,12 @@
       "value": "(UTC –03:00) Сен-Пьер и Микелон"
     }
   ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -4182,7 +4234,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Действительно удалить "
     },
     {
       "type": 1,
@@ -4691,6 +4743,12 @@
     {
       "type": 0,
       "value": "Обязательно. Количество единиц измерения времени, на которое желаемая дата находится в будущем по отношению к текущему времени."
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
     }
   ],
   "nTA155": [
@@ -5316,7 +5374,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Отмена"
     }
   ],
   "tsmuoF": [
@@ -5753,6 +5811,12 @@
       "value": "Функции даты и времени"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5780,7 +5844,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "При этом будут также удалены все дочерние действия."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [

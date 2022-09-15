@@ -570,6 +570,28 @@
       "value": "(UTC+03:30) 德黑蘭"
     }
   ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -783,7 +805,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "將會從該邏輯應用程式移除此步驟。"
     }
   ],
   "6oqk+A": [
@@ -1277,6 +1299,12 @@
       "value": "需要連線"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1304,7 +1332,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "節點"
     }
   ],
   "DGMwU4": [
@@ -1712,6 +1740,12 @@
       "value": "選取輸入結構描述"
     }
   ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -1900,7 +1934,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "刪除工作流程圖"
     }
   ],
   "LCUU5q": [
@@ -1991,12 +2025,6 @@
     {
       "type": 0,
       "value": "新增註解"
-    }
-  ],
-  "M3lzNo": [
-    {
-      "type": 0,
-      "value": "JSON 格式無效。遺漏開頭 { 或結尾 }"
     }
   ],
   "M48CGd": [
@@ -2156,7 +2184,7 @@
   "O9ZExg": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "確定"
     }
   ],
   "OD8igU": [
@@ -2273,10 +2301,22 @@
       "value": "必要。此值是陣列中整數數目。"
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "集合函數"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -2476,7 +2516,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "無法刪除觸發。"
     }
   ],
   "RFjYpH": [
@@ -2747,7 +2787,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "刪除工作流程動作"
     }
   ],
   "UHCVNK": [
@@ -3320,6 +3360,12 @@
       "value": "(UTC-03:00) 巴西利亞"
     }
   ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -3682,6 +3728,12 @@
       "value": "(UTC-03:00) 聖皮埃與密克隆群島"
     }
   ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -3872,7 +3924,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "確定要刪除 "
     },
     {
       "type": 1,
@@ -3880,7 +3932,7 @@
     },
     {
       "type": 0,
-      "value": "?"
+      "value": " 嗎?"
     }
   ],
   "iJOIca": [
@@ -4365,6 +4417,12 @@
     {
       "type": 0,
       "value": "必要。未來所需時間的時間單位數字。"
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
     }
   ],
   "nTA155": [
@@ -4957,7 +5015,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "tsmuoF": [
@@ -5394,6 +5452,12 @@
       "value": "日期和時間函數"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5421,7 +5485,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "這也會移除所有子步驟。"
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [

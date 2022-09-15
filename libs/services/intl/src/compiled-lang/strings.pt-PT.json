@@ -608,6 +608,28 @@
       "value": "(UTC+03:30) Teerão"
     }
   ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -821,7 +843,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "Este passo vai ser removido da Aplicação Lógica."
     }
   ],
   "6oqk+A": [
@@ -1369,6 +1391,12 @@
       "value": "Ligação necessária"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1396,7 +1424,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "Nó"
     }
   ],
   "DGMwU4": [
@@ -1834,6 +1862,12 @@
       "value": "Selecione um esquema de entrada"
     }
   ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -2161,12 +2195,6 @@
       "value": "Adicionar comentário"
     }
   ],
-  "M3lzNo": [
-    {
-      "type": 0,
-      "value": "Formado json inválido. Início { ou fim } em falta"
-    }
-  ],
   "M48CGd": [
     {
       "type": 0,
@@ -2457,10 +2485,22 @@
       "value": "Obrigatório. Este valor é o número de números inteiros que existe na matriz."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Funções de coleção"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -3522,6 +3562,12 @@
       "value": "(UTC-03:00) Brasília"
     }
   ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -3882,6 +3928,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) São Pedro e Miquelão"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
     }
   ],
   "gCXOd5": [
@@ -4623,6 +4675,12 @@
       "value": "Obrigatório. O número de unidades de tempo que o tempo pretendido é no futuro."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -5235,7 +5293,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Cancelar"
     }
   ],
   "tsmuoF": [
@@ -5672,6 +5730,12 @@
       "value": "Funções de data e hora"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5700,6 +5764,12 @@
     {
       "type": 0,
       "value": "This will also remove all child steps."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [

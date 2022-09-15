@@ -581,6 +581,28 @@
       "value": "(UTC+03:30) Tahran"
     }
   ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "3kI7xF": [
     {
       "type": 0,
@@ -794,7 +816,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "Bu adım mantıksal uygulamadan kaldırılacak."
     }
   ],
   "6oqk+A": [
@@ -1299,6 +1321,12 @@
       "value": "Bağlantı gerekli"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1326,7 +1354,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "Düğüm"
     }
   ],
   "DGMwU4": [
@@ -1745,6 +1773,12 @@
       "value": "Giriş şeması seçin"
     }
   ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
+    }
+  ],
   "Ip7Iax": [
     {
       "type": 0,
@@ -2037,12 +2071,6 @@
       "value": "Yorum ekle"
     }
   ],
-  "M3lzNo": [
-    {
-      "type": 0,
-      "value": "Geçersiz json Biçimi. Başlangıç { işareti veya bitiş } işareti eksik"
-    }
-  ],
   "M48CGd": [
     {
       "type": 0,
@@ -2200,7 +2228,7 @@
   "O9ZExg": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "Tamam"
     }
   ],
   "OD8igU": [
@@ -2317,10 +2345,22 @@
       "value": "Gerekli. Bu değer, dizideki tamsayıların sayısıdır."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Koleksiyon işlevleri"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -3371,6 +3411,12 @@
       "value": "(UTC-03:00) Brezilya"
     }
   ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
+    }
+  ],
   "bzF/qn": [
     {
       "type": 0,
@@ -3727,6 +3773,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Saint Pierre ve Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
     }
   ],
   "gCXOd5": [
@@ -4425,6 +4477,12 @@
       "value": "Zorunlu. İstenen saatin gelecekteki zaman birimlerinin sayısı."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -5026,7 +5084,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "İptal"
     }
   ],
   "tsmuoF": [
@@ -5459,6 +5517,12 @@
       "value": "Tarih ve saat işlevleri"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5487,6 +5551,12 @@
     {
       "type": 0,
       "value": "This will also remove all child steps."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [
