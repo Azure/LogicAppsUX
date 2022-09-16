@@ -102,7 +102,7 @@ export const DevToolbox: React.FC = () => {
 
   return (
     <div style={{ width: '50vw', marginBottom: '20px', backgroundColor: '#eaeaea', padding: 4 }}>
-      <Accordion collapsible>
+      <Accordion defaultOpenItems={'1'} collapsible>
         <AccordionItem value="1">
           <AccordionHeader>Dev Toolbox</AccordionHeader>
           <AccordionPanel>
