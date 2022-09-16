@@ -57,12 +57,11 @@ const convertInputToReactFlowParentAndChildNodes = (
     reactFlowNodes.push({
       id: `${inputPrefix}${inputNode.key}`,
       data: {
-        label: inputNode.name,
+        schemaNode: inputNode,
         schemaType: SchemaTypes.Input,
         displayHandle: true,
         isLeaf: true,
         isChild: false,
-        nodeDataType: inputNode.schemaNodeDataType,
         disabled: false,
         error: false,
       },
@@ -81,12 +80,11 @@ const convertInputToReactFlowParentAndChildNodes = (
       reactFlowNodes.push({
         id: nodeId,
         data: {
-          label: inputNode.name,
+          schemaNode: inputNode,
           schemaType: SchemaTypes.Input,
           displayHandle: true,
           isLeaf: true,
           isChild: false,
-          nodeDataType: inputNode.schemaNodeDataType,
           disabled: false,
           error: false,
         },
@@ -119,12 +117,11 @@ export const convertToReactFlowParentAndChildNodes = (
   reactFlowNodes.push({
     id: `${idPrefix}${parentSchemaNode.key}`,
     data: {
-      label: parentSchemaNode.name,
+      schemaNode: parentSchemaNode,
       schemaType,
       displayHandle: displayTargets,
       isLeaf: false,
       isChild: false,
-      nodeDataType: parentSchemaNode.schemaNodeDataType,
       disabled: false,
       error: false,
     },
@@ -140,12 +137,11 @@ export const convertToReactFlowParentAndChildNodes = (
     reactFlowNodes.push({
       id: `${idPrefix}${childNode.key}`,
       data: {
-        label: childNode.name,
+        schemaNode: childNode,
         schemaType,
         displayHandle: displayTargets,
         isLeaf: isLeafNode(childNode),
         isChild: true,
-        nodeDataType: childNode.schemaNodeDataType,
         disabled: false,
         error: false,
       },
