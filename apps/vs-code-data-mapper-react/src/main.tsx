@@ -1,4 +1,3 @@
-import { VsCodeThemeHandler } from './VsCodeThemeHandler';
 import { WebViewMsgHandler } from './WebViewMsgHandler';
 import { App } from './app/app';
 import { store } from './state/Store';
@@ -17,12 +16,10 @@ const container = document.getElementById('root')!;
 const root = createRoot(container);
 root.render(
   <StrictMode>
-    <VsCodeThemeHandler>
-      <Provider store={store}>
-        <WebViewMsgHandler>
-          <App />
-        </WebViewMsgHandler>
-      </Provider>
-    </VsCodeThemeHandler>
+    <Provider store={store}>
+      <WebViewMsgHandler>
+        <App />
+      </WebViewMsgHandler>
+    </Provider>
   </StrictMode>
 );
