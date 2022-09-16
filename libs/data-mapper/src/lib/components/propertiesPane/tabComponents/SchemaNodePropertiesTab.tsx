@@ -1,8 +1,8 @@
 import { NodeType } from '../../../models/SelectedNode';
 import type { SelectedSchemaNode } from '../../../models/SelectedNode';
+import { Stack } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Checkbox, Input, makeStyles, Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import { Stack } from '@fluentui/react';
 
 const useStyles = makeStyles({
   nodeInfoGridContainer: {
@@ -84,18 +84,18 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
       <div>
         <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
           <Text style={{ gridColumn: '1 / span 2' }}>{inputLoc}</Text>
-          <Input placeholder='Temporary placeholder' />
+          <Input placeholder="Temporary placeholder" />
         </div>
 
         <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px' }}>
-          <AccordionItem value='1'>
+          <AccordionItem value="1">
             <AccordionHeader>{advOptLoc}</AccordionHeader>
             <AccordionPanel>
               <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
                 <Text style={{ gridColumn: '1 / span 2' }}>{defValLoc}</Text>
-                <Input placeholder='Temporary placeholder' />
+                <Input placeholder="Temporary placeholder" />
               </div>
-              
+
               <Stack>
                 <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
                 <Checkbox label={nullableLabelLoc} defaultChecked style={{ marginTop: '16px' }} />

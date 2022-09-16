@@ -3,6 +3,7 @@ import { useReadOnly } from '../../../../core/state/designerOptions/designerOpti
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeConnectionName } from '../../../../core/state/selectors/actionMetadataSelector';
+import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
 import type { RootState } from '../../../../core/store';
 import { getConnectionId } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
@@ -13,12 +14,11 @@ import { getAllVariables, getAvailableVariables } from '../../../../core/utils/v
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
+import { equals } from '@microsoft-logic-apps/utils';
 import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
-import type { ChangeState, PanelTab, ParameterInfo } from '@microsoft/designer-ui';
+import type { ChangeState, PanelTab, ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { equals } from '@microsoft-logic-apps/utils';
-import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
 
 export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
@@ -75,7 +75,7 @@ const ParameterSection = ({
     settings: nodeSettings,
     variables,
     upstreamNodeIds,
-    operationDefinition
+    operationDefinition,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
@@ -115,7 +115,19 @@ const ParameterSection = ({
         operationDefinition
       );
     },
-    [nodeId, group.id, isTrigger, operationInfo, connectionId, nodeInputs, dependencies, variables, nodeSettings, dispatch, operationDefinition]
+    [
+      nodeId,
+      group.id,
+      isTrigger,
+      operationInfo,
+      connectionId,
+      nodeInputs,
+      dependencies,
+      variables,
+      nodeSettings,
+      dispatch,
+      operationDefinition,
+    ]
   );
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
@@ -128,7 +140,7 @@ const ParameterSection = ({
     editorId: string,
     labelId: string,
     tokenPickerFocused?: (b: boolean) => void,
-    setShowTokenPickerButton?: (b: boolean) => void
+    tokenClicked?: (token: ValueSegment) => void
   ): JSX.Element => {
     // check to see if there's a custom Token Picker
     return (
@@ -138,7 +150,7 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerFocused}
-        setShowTokenPickerButton={setShowTokenPickerButton}
+        tokenClickedCallback={tokenClicked}
       />
     );
   };
@@ -172,19 +184,26 @@ const ParameterSection = ({
   );
 };
 
-const getEditorAndOptions = (parameter: ParameterInfo, upstreamNodeIds: string[], variables: Record<string, VariableDeclaration[]>): { editor?: string; editorOptions?: any; } => {
+const getEditorAndOptions = (
+  parameter: ParameterInfo,
+  upstreamNodeIds: string[],
+  variables: Record<string, VariableDeclaration[]>
+): { editor?: string; editorOptions?: any } => {
   const { editor, editorOptions } = parameter;
   if (equals(editor, 'variablename')) {
     return {
       editor: 'dropdown',
       editorOptions: {
-        options: getAvailableVariables(variables, upstreamNodeIds).map(variable => ({ value: variable.name, displayName: variable.name }))
-      }
+        options: getAvailableVariables(variables, upstreamNodeIds).map((variable) => ({
+          value: variable.name,
+          displayName: variable.name,
+        })),
+      },
     };
   }
 
   return { editor, editorOptions };
-}
+};
 
 export const parametersTab: PanelTab = {
   title: 'Parameters',

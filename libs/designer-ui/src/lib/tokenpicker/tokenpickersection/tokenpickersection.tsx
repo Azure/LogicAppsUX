@@ -1,3 +1,4 @@
+import type { ValueSegment } from '../../editor';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
 import { TokenPickerMode } from '../tokenpickerpivot';
@@ -16,8 +17,9 @@ interface TokenPickerSectionProps {
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: ExpressionEditorEvent;
   editMode: boolean;
-  setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
   isDynamicContentAvailable: boolean;
+  setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
+  tokenClickedCallback?: (token: ValueSegment) => void;
 }
 export const TokenPickerSection = ({
   selectedKey,
@@ -27,8 +29,9 @@ export const TokenPickerSection = ({
   expressionEditorRef,
   expression,
   editMode,
-  setExpression,
   isDynamicContentAvailable,
+  setExpression,
+  tokenClickedCallback,
 }: TokenPickerSectionProps): JSX.Element => {
   const [tokenLength, setTokenLength] = useState(new Array<number>(tokenGroup.length));
   const [noItems, setNoItems] = useState(false);
@@ -56,6 +59,7 @@ export const TokenPickerSection = ({
                     expressionEditorRef={expressionEditorRef}
                     expression={expression}
                     setExpression={setExpression}
+                    tokenClickedCallback={tokenClickedCallback}
                   />
                 </div>
               );

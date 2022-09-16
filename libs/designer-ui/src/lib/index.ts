@@ -10,7 +10,8 @@ export * from './card/graphContainer';
 export * from './card/types';
 export * from './card/images/dynamicsvgs/trafficlightsvgs';
 export * from './checkbox';
-// export * from './colorizer';
+// export * from './colorizer'
+export * from './code';
 export * from './combobox';
 export * from './html';
 // export * from './conditioncontrol';

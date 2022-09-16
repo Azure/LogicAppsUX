@@ -9,10 +9,22 @@ import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
 import { PanelPivot } from './panelpivot';
 import type { ILayerProps } from '@fluentui/react';
-import type { IPanelHeaderRenderer, IPanelProps } from '@fluentui/react/lib/Panel';
+import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles } from '@fluentui/react/lib/Panel';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import React, { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+
+const panelStyles: Partial<IPanelStyles> = {
+  content: { padding: '1rem' },
+  main: { overflow: 'hidden' },
+  scrollableContent: { height: '100%' },
+};
+
+const panelStylesCollapsed: Partial<IPanelStyles> = {
+  content: { padding: 0 },
+  main: { overflow: 'hidden' },
+  scrollableContent: { height: '100%' },
+};
 
 export type PanelContainerProps = {
   cardIcon?: string;
@@ -131,15 +143,15 @@ export const PanelContainer = ({
       hasCloseButton={false}
       type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
       customWidth={width}
-      styles={{ content: { padding: isCollapsed ? 0 : '1rem' }, main: { overflow: 'hidden' } }}
+      styles={isCollapsed ? panelStylesCollapsed : panelStyles}
       layerProps={layerProps}
     >
       {!isCollapsed && (
-        <div className="msla-panel-content-container">
+        <>
           {noNodeSelected && panelScope === PanelScope.CardLevel ? (
             <EmptyContent />
           ) : (
-            <div className="msla-panel-content">
+            <div className="msla-panel-page">
               <PanelPivot
                 isCollapsed={isCollapsed}
                 tabs={tabs}
@@ -150,7 +162,7 @@ export const PanelContainer = ({
               <PanelContent tabs={tabs} selectedTab={selectedTab} />
             </div>
           )}
-        </div>
+        </>
       )}
     </Panel>
   );

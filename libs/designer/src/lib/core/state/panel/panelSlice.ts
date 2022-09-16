@@ -39,7 +39,10 @@ export const panelSlice = createSlice({
       state.selectedNode = action.payload;
       state.isDiscovery = false;
     },
-    expandDiscoveryPanel: (state, action: PayloadAction<{ relationshipIds: RelationshipIds; nodeId: string; isParallelBranch?: boolean }>) => {
+    expandDiscoveryPanel: (
+      state,
+      action: PayloadAction<{ relationshipIds: RelationshipIds; nodeId: string; isParallelBranch?: boolean }>
+    ) => {
       state.collapsed = false;
       state.isDiscovery = true;
       state.relationshipIds = action.payload.relationshipIds;

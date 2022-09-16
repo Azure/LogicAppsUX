@@ -16,7 +16,7 @@ export const addNewEdge = (state: WorkflowState, source: string, target: string,
   if (!graph?.edges) graph.edges = [];
   graph?.edges.push(workflowEdge);
 
-  const targetOp = (state.operations?.[target] as any);
+  const targetOp = state.operations?.[target] as any;
   if (targetOp) (state.operations?.[target] as any).runAfter = { [source]: [RUN_AFTER_STATUS.SUCCEEDED] };
 };
 
