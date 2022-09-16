@@ -6,7 +6,7 @@ import { ExpressionList } from '../components/expressionList/expressionList';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { ExpressionCard } from '../components/nodeCard/ExpressionCard';
-import { SchemaCard, type SchemaCardProps } from '../components/nodeCard/SchemaCard';
+import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { checkerboardBackgroundImage, defaultCanvasZoom } from '../constants/ReactFlowConstants';
 import {
@@ -17,11 +17,11 @@ import {
   makeConnection,
   removeInputNodes,
   setCurrentlySelectedNode,
-  setCurrentOutputNode,
   toggleInputNode,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { type SchemaExtended, SchemaTypes, type SchemaNodeExtended } from '../models';
+import type { SchemaExtended, SchemaNodeExtended } from '../models';
+import { SchemaTypes } from '../models';
 import type { Expression } from '../models/Expression';
 import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
@@ -43,9 +43,10 @@ import {
   ZoomOut20Filled,
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
-import { useCallback, useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
-import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'react-flow-renderer';
+import type { MouseEvent as ReactMouseEvent } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
+import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -68,7 +69,6 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
   const { fitView, zoomIn, zoomOut } = useReactFlow();
 
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
-  const flattenedOutputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedOutputSchema);
   const allExpressionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentExpressionNodes);
   const flattenedInputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedInputSchema);
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
@@ -77,7 +77,6 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
 
-  const clickTimerRef: { current: ReturnType<typeof setTimeout> | null } = useRef(null); // NOTE: ReturnType to support NodeJS & window Timeouts
   const edgeUpdateSuccessful = useRef(true);
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard, expressionNode: ExpressionCard }), []);
 
@@ -114,24 +113,6 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
     setDisplayToolboxItem(undefined);
   };
 
-  const handleNodeClicks = (_event: ReactMouseEvent, node: ReactFlowNode) => {
-    if (clickTimerRef.current !== null) {
-      // Double click
-      onNodeDoubleClick(node);
-
-      clearTimeout(clickTimerRef.current);
-      clickTimerRef.current = null;
-    } else {
-      // Single click
-      clickTimerRef.current = setTimeout(() => {
-        onNodeSingleClick(node);
-
-        clearTimeout(clickTimerRef.current as unknown as number);
-        clickTimerRef.current = null;
-      }, 200); // ms to wait for potential second click
-    }
-  };
-
   const onExpressionItemClick = (selectedExpression: Expression) => {
     dispatch(addExpressionNode(selectedExpression));
   };
@@ -154,7 +135,7 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
     }
   };
 
-  const onNodeSingleClick = (node: ReactFlowNode): void => {
+  const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
     console.log(node);
     if (node.type === ReactFlowNodeType.SchemaNode) {
       if (node.data.schemaType === SchemaTypes.Input) {
@@ -193,15 +174,6 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
       };
 
       dispatch(setCurrentlySelectedNode(selectedExpressionNode));
-    }
-  };
-
-  const onNodeDoubleClick = (node: ReactFlowNode<SchemaCardProps>): void => {
-    if (node.data.schemaType === SchemaTypes.Output && !node.data.isLeaf) {
-      const newCurrentSchemaNode = flattenedOutputSchema[node.id];
-      if (currentOutputNode && newCurrentSchemaNode) {
-        dispatch(setCurrentOutputNode({ schemaNode: newCurrentSchemaNode, resetSelectedInputNodes: true }));
-      }
     }
   };
 
@@ -324,10 +296,6 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
     onTabSelect: onTabSelect,
   };
 
-  useEffect(() => {
-    return () => clearTimeout(clickTimerRef.current as unknown as number); // Make sure we clean up the timeout
-  }, []);
-
   const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, allExpressionNodes, currentOutputNode, connections);
 
   return (
@@ -336,8 +304,7 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
       edges={edges}
       onConnect={onConnect}
       onPaneClick={onPaneClick}
-      onNodeClick={handleNodeClicks}
-      onNodeDoubleClick={handleNodeClicks}
+      onNodeClick={onNodeSingleClick}
       defaultZoom={defaultCanvasZoom}
       nodesDraggable={false}
       fitView={false}
