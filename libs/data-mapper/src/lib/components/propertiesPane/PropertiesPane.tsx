@@ -126,6 +126,11 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const onStartDrag = (e: React.DragEvent) => {
     setInitialDragYPos(e.clientY);
     setInitialDragHeight(contentHeight);
+
+    // Show empty image in place of dragging ghost preview
+    const img = new Image();
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+    e.dataTransfer.setDragImage(img, 0, 0);
   };
 
   const onDrag = (e: React.DragEvent) => {
@@ -227,7 +232,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   return (
     <div className={styles.pane}>
       <div
-        style={{ height: 4, cursor: isExpanded ? 'row-resize' : 'auto' }}
+        style={{ height: 12, cursor: isExpanded ? 'row-resize' : 'auto' }}
         draggable={isExpanded ? 'true' : 'false'}
         onDragStart={onStartDrag}
         onDrag={onDrag}

@@ -39,12 +39,6 @@ export const ButtonPivot: React.FC<ButtonPivotProps> = ({
     );
   });
 
-  const divContainerStyle: React.CSSProperties = {
-    position: 'relative',
-    width: 0,
-    height: 0,
-  };
-
   const tabListStyle: React.CSSProperties = {
     position: 'absolute',
     zIndex: 10,
@@ -56,18 +50,15 @@ export const ButtonPivot: React.FC<ButtonPivotProps> = ({
   };
 
   return (
-    // Placeholder div so that we can move the stack locally to the spot it's been inserted
-    <div style={divContainerStyle}>
-      <TabList
-        vertical={!horizontal}
-        style={tabListStyle}
-        appearance="subtle"
-        size="medium"
-        onTabSelect={onTabSelect}
-        selectedValue={selectedValue}
-      >
-        {stackItems}
-      </TabList>
-    </div>
+    <TabList
+      vertical={!horizontal}
+      style={tabListStyle}
+      appearance="subtle"
+      size="medium"
+      onTabSelect={onTabSelect}
+      selectedValue={selectedValue}
+    >
+      {stackItems}
+    </TabList>
   );
 };
