@@ -13,11 +13,25 @@ import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
+import { makeStyles, shorthands } from '@fluentui/react-components';
 import { useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
+
+const useStyles = makeStyles({
+  dataMapperShell: {
+    ...shorthands.border('1px', 'solid', '#ccc'),
+  },
+  canvasWrapper: {
+    height: '100%',
+    width: '100%',
+    backgroundColor: '#edebe9',
+    minHeight: 0,
+    ...shorthands.overflow('hidden'),
+  },
+});
 
 export interface DataMapperDesignerProps {
   saveStateCall: (dataMapDefinition: string) => void;
@@ -27,6 +41,7 @@ export interface DataMapperDesignerProps {
 
 export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const styles = useStyles();
 
   const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
@@ -77,7 +92,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <div className="data-mapper-shell">
+      <div className={styles.dataMapperShell}>
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
         <WarningModal />
         <EditorConfigPanel
@@ -94,7 +109,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           >
             {inputSchema && outputSchema ? (
               <Stack horizontal style={{ height: '100%' }}>
-                <div className="msla-designer-canvas msla-panel-mode" style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%' }}>
+                <div className={styles.canvasWrapper} style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%' }}>
                   <ReactFlowProvider>
                     <ReactFlowWrapper inputSchema={inputSchema} />
                   </ReactFlowProvider>
