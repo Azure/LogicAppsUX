@@ -25,7 +25,12 @@ export interface SettingTokenFieldProps extends SettingProps {
   required?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  GetTokenPicker: (
+    editorId: string,
+    labelId: string,
+    onClick?: (b: boolean) => void,
+    tokenClicked?: (token: ValueSegment) => void
+  ) => JSX.Element;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
 }
@@ -60,12 +65,10 @@ const TokenField = ({
       const { options, multiSelect } = editorOptions;
       return (
         <DropdownEditor
-          placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
           options={options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           multiSelect={!!multiSelect}
-          GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
       );
@@ -85,7 +88,7 @@ const TokenField = ({
       );
 
     case 'schema':
-      return <SchemaEditor placeholder={placeholder} disabled={readOnly} initialValue={value} onChange={onValueChange} />;
+      return <SchemaEditor readonly={readOnly} initialValue={value} onChange={onValueChange} />;
 
     case 'dictionary':
       return (

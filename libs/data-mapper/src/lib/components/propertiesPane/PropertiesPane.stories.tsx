@@ -1,11 +1,11 @@
-import React from 'react';
-import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import type { ExpressionGroupBranding } from '../../constants/ExpressionConstants';
 import { SchemaNodeDataType } from '../../models';
 import { NodeType } from '../../models/SelectedNode';
 import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
 import { PropertiesPane } from './PropertiesPane';
 import type { PropertiesPaneProps } from './PropertiesPane';
-import type { ExpressionGroupBranding } from '../../constants/ExpressionConstants';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 
 const exInputNode: SelectedInputNode = {
   nodeType: NodeType.Input,
@@ -21,7 +21,7 @@ const exOutputNode: SelectedOutputNode = {
   defaultValue: 'Default value',
   doNotGenerateIfNoValue: true,
   nullable: true,
-  inputIds: ['miscInputId']
+  inputIds: ['miscInputId'],
 };
 const exExpressionNode: SelectedExpressionNode = {
   nodeType: NodeType.Expression,
@@ -31,7 +31,7 @@ const exExpressionNode: SelectedExpressionNode = {
   codeEx: '',
   definition: '',
   inputs: [],
-  outputId: ''
+  outputId: '',
 };
 
 const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exExpressionNode };

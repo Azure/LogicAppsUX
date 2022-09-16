@@ -1,6 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { BaseEditorProps } from '../editor/base';
+import type { ChangeHandler } from '../editor/base';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
 import type { FormEvent } from 'react';
@@ -24,9 +24,12 @@ const dropdownStyles: Partial<IDropdownStyles> = {
   },
 };
 
-interface DropdownEditorProps extends BaseEditorProps {
+interface DropdownEditorProps {
   multiSelect?: boolean;
+  initialValue: ValueSegment[];
   options: DropdownItem[];
+  readonly?: boolean;
+  onChange?: ChangeHandler;
 }
 
 export interface DropdownItem {
@@ -38,8 +41,8 @@ export interface DropdownItem {
 }
 
 export const DropdownEditor = ({ multiSelect = false, initialValue, readonly, options }: DropdownEditorProps): JSX.Element => {
-  const [selectedKey, setSelectedKey] = useState<string>(getSelectedKey(options, initialValue));
-  const [selectedKeys, setSelectedKeys] = useState<string[]>(getSelectedKeys(options, initialValue));
+  const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
+  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? getSelectedKeys(options, initialValue) : undefined);
   const [dropdownOptions] = useState<IDropdownOption[]>(getOptions(options));
 
   const handleOptionSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
@@ -49,7 +52,7 @@ export const DropdownEditor = ({ multiSelect = false, initialValue, readonly, op
   };
 
   const handleOptionMultiSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
-    if (option) {
+    if (option && selectedKeys) {
       setSelectedKeys(option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key));
     }
   };

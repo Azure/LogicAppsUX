@@ -29,7 +29,10 @@ export const getAllVariables = (variables: Record<string, VariableDeclaration[]>
   return aggregate(Object.keys(variables).map((nodeId) => variables[nodeId]));
 };
 
-export const getAvailableVariables = (variables: Record<string, VariableDeclaration[]>, upstreamNodeIds: string[]): VariableDeclaration[] => {
+export const getAvailableVariables = (
+  variables: Record<string, VariableDeclaration[]>,
+  upstreamNodeIds: string[]
+): VariableDeclaration[] => {
   const allVariables = upstreamNodeIds.map((nodeId) => variables[nodeId] ?? []);
   return aggregate(allVariables);
 };

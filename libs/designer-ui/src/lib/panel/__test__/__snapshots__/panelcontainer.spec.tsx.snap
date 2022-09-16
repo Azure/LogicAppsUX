@@ -19,15 +19,16 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
       "main": Object {
         "overflow": "hidden",
       },
+      "scrollableContent": Object {
+        "height": "100%",
+      },
     }
   }
   type={7}
 >
-  <div
-    className="msla-panel-content-container"
-  >
+  <React.Fragment>
     <div
-      className="msla-panel-content"
+      className="msla-panel-page"
     >
       <PanelPivot
         isCollapsed={false}
@@ -39,6 +40,6 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
         tabs={Object {}}
       />
     </div>
-  </div>
+  </React.Fragment>
 </StyledPanelBase>
 `;

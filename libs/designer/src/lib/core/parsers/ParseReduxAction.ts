@@ -21,7 +21,12 @@ export const initializeGraphState = createAsyncThunk<DeserializedWorkflow, Workf
       thunkAPI.dispatch(initializeConnectionReferences(workflowDefinition.connectionReferences ?? {})); // danielle I think we need
       const operationMetadataPromise = initializeOperationMetadata(deserializedWorkflow, thunkAPI.dispatch);
       const actionsAndTriggers = deserializedWorkflow.actionData;
-      const connectionsPromise = getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch, operationMetadataPromise);
+      const connectionsPromise = getConnectionsApiAndMapping(
+        actionsAndTriggers,
+        thunkAPI.getState,
+        thunkAPI.dispatch,
+        operationMetadataPromise
+      );
 
       updateDynamicDataInNodes(connectionsPromise, thunkAPI.getState, thunkAPI.dispatch);
       return deserializedWorkflow;

@@ -189,7 +189,7 @@ const serializeOperationParameters = (inputs: SerializedParameter[], manifest: O
 
   while (inputsLocation.length) {
     const property = inputsLocation.pop() as string;
-    parametersValue = property === '[*]' ? [ parametersValue ] : { [property]: parametersValue };
+    parametersValue = property === '[*]' ? [parametersValue] : { [property]: parametersValue };
   }
 
   return parametersValue;

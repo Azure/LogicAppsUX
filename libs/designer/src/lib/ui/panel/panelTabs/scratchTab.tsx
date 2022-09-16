@@ -2,18 +2,19 @@ import constants from '../../../common/constants';
 import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
-import type { PanelTab } from '@microsoft/designer-ui';
+import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
-  // HTMLEditor,
+  EditorLanguage,
+  ValueSegmentType,
+  CodeEditor, // HTMLEditor,
   TokenPicker, // TokenType,
   // DictionaryEditor,
   // testTokenSegment,
-  // SchemaEditor,
-  // Combobox,
-  ValueSegmentType, // ArrayEditor,
+  SchemaEditor, // Combobox,
+  // ArrayEditor,
   Scratch, // StringEditor,
   // AuthenticationEditor,
-  DropdownEditor,
+  // DropdownEditor,
   outputToken,
   outputToken2,
 } from '@microsoft/designer-ui';
@@ -26,7 +27,12 @@ const testTokenGroup: TokenGroup[] = [
 export const ScratchTab = () => {
   const expressionGroup = getExpressionTokenSections();
 
-  const GetTokenPicker = (editorId: string, labelId: string, onClick?: (b: boolean) => void): JSX.Element => {
+  const GetTokenPicker = (
+    editorId: string,
+    labelId: string,
+    onClick?: (b: boolean) => void,
+    tokenClicked?: (token: ValueSegment) => void
+  ): JSX.Element => {
     return (
       <TokenPicker
         editorId={editorId}
@@ -34,13 +40,39 @@ export const ScratchTab = () => {
         tokenGroup={testTokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={onClick}
+        tokenClickedCallback={tokenClicked}
       />
     );
   };
   const children = (): React.ReactNode => {
     return (
       <>
-        <DropdownEditor
+        <CodeEditor
+          initialValue={[
+            {
+              type: ValueSegmentType.LITERAL,
+              value: `function createTable(rows, cols) {
+  var j = 1;
+  var output = "<table>";
+  for (i = 1; i <= rows; i++) {
+    output = output + "<tr>";
+    while (j <= cols) {
+  		output = output + "<td>" + i * j + "</td>";
+   		j = j + 1;
+   	}
+   	output = output + "</tr>";
+   	j = 1;
+  }
+  output = output + "</table>";
+  document.write(output);
+}`,
+              id: guid(),
+            },
+          ]}
+          GetTokenPicker={GetTokenPicker}
+          language={EditorLanguage.javascript}
+        />
+        {/* <DropdownEditor
           multiSelect={true}
           initialValue={[
             { id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' },
@@ -54,7 +86,7 @@ export const ScratchTab = () => {
             { displayName: 'PATCH', value: 'PATCH', key: 'PATCH', disabled: false },
             { displayName: 'DELETE', value: 'DELETE', key: 'DELETE', disabled: false },
           ]}
-        />
+        /> */}
         {/* <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} authProps={{}} /> */}
         {/* <ArrayEditor
           labelProps={{ text: 'Input Array', isRequiredField: true }}
@@ -84,9 +116,9 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
           GetTokenPicker={GetTokenPicker}
-        />
+        /> */}
 
-        <Combobox
+        {/* <Combobox
           options={[
             { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },
             { displayName: 'PUT', value: 'PUT', key: 'PUT', disabled: false },
@@ -98,12 +130,13 @@ export const ScratchTab = () => {
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
           GetTokenPicker={GetTokenPicker}
           // readonly={true}
-        />
+        /> */}
 
         <SchemaEditor
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
         />
+        {/* 
         <DictionaryEditor
           initialItems={[
             {

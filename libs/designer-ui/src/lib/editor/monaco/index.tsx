@@ -52,6 +52,7 @@ export interface MonacoOptions {
   fontSize?: number;
   readOnly?: boolean;
   lineNumbers?: 'on' | 'off' | 'relative' | 'interval' | ((lineNumber: number) => string);
+  lineNumbersMinChars?: number;
   lineHeight?: number;
   minimapEnabled?: boolean;
   scrollBeyondLastLine?: boolean;
@@ -76,6 +77,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       scrollBeyondLastLine = false,
       height,
       width,
+      lineNumbersMinChars,
       onBlur,
       onBlurText,
       onChanged,
@@ -189,6 +191,10 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       onMouseDown?.(e);
     };
 
+    const handleUpdate = () => {
+      currentRef.current?.layout();
+    };
+
     const handleEditorMounted = (editor: editor.IStandaloneCodeEditor) => {
       currentRef.current = editor;
 
@@ -235,6 +241,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
               folding: folding,
               minimap: { enabled: minimapEnabled },
               scrollBeyondLastLine: scrollBeyondLastLine,
+              lineNumbersMinChars: lineNumbersMinChars,
               ...options,
             }}
             value={value}
@@ -242,6 +249,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
             defaultLanguage={language ? language.toString() : undefined}
             theme={language === EditorLanguage.templateExpressionLanguage ? language : isHighContrastBlack() ? 'vs-dark' : 'vs'}
             onMount={handleEditorMounted}
+            onChange={handleUpdate}
             height={height}
             width={width}
           />

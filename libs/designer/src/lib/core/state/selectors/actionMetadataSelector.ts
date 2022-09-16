@@ -1,13 +1,13 @@
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionById } from '../../queries/connections';
 import type { RootState } from '../../store';
+import { getConnectionId } from '../../utils/connectors/connections';
 import { useConnector } from '../connection/connectionSelector';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
 import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
-import { getConnectionId } from '../../utils/connectors/connections';
 
 interface QueryResult {
   isLoading?: boolean;

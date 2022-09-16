@@ -1,7 +1,7 @@
+import type { SelectedOutputNode } from '../../../models/SelectedNode';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, Input, makeStyles, Text, Textarea, tokens, typographyStyles } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
-import type { SelectedOutputNode } from '../../../models/SelectedNode';
 
 const useStyles = makeStyles({
   testTabDivStyle: {
@@ -67,21 +67,21 @@ export const TestTab = ({ currentNode }: TestTabProps) => {
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{inputLoc}</Text>
 
-          {currentNode.inputIds.length > 0 ?
-            currentNode.inputIds.map((inputId) =>
-              <Input placeholder='Temporary placeholder' className={styles.inputStyle} style={{ marginTop: 16 }} key={inputId} />
-            )
-          :
+          {currentNode.inputIds.length > 0 ? (
+            currentNode.inputIds.map((inputId) => (
+              <Input placeholder="Temporary placeholder" className={styles.inputStyle} style={{ marginTop: 16 }} key={inputId} />
+            ))
+          ) : (
             <>
               {/* TODO: Inputs are visual placeholders for now, will swap w/ 'No inputs' type msg */}
-              <Input placeholder='Temporary placeholder' className={styles.inputStyle} style={{ marginTop: 16 }} />
-              <Input placeholder='Temporary placeholder' className={styles.inputStyle} style={{ marginTop: 16 }} />
+              <Input placeholder="Temporary placeholder" className={styles.inputStyle} style={{ marginTop: 16 }} />
+              <Input placeholder="Temporary placeholder" className={styles.inputStyle} style={{ marginTop: 16 }} />
             </>
-          }
+          )}
 
-          <Stack horizontal verticalAlign='center' className={styles.buttonContainerStyle} style={{ marginTop: 16 }}>
-            <Button appearance='primary'>{runTestLoc}</Button>
-            <Button appearance='subtle'>{resetLoc}</Button>
+          <Stack horizontal verticalAlign="center" className={styles.buttonContainerStyle} style={{ marginTop: 16 }}>
+            <Button appearance="primary">{runTestLoc}</Button>
+            <Button appearance="subtle">{resetLoc}</Button>
           </Stack>
         </Stack>
 
@@ -90,7 +90,7 @@ export const TestTab = ({ currentNode }: TestTabProps) => {
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{outputLoc}</Text>
 
-          <Textarea placeholder='Temporary placeholder' resize='both' className={styles.inputStyle} style={{ marginTop: 16 }} />
+          <Textarea placeholder="Temporary placeholder" resize="both" className={styles.inputStyle} style={{ marginTop: 16 }} />
         </Stack>
       </Stack>
     </div>

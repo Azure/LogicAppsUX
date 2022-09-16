@@ -21,6 +21,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
       trackEvent: jest.fn(),
       setSelectedTab: jest.fn(),
       toggleCollapse: jest.fn(),
+      onTitleChange: jest.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });
@@ -42,11 +43,5 @@ describe('ui/workflowparameters/workflowparameter', () => {
     expect(panel.props.headerClassName).toBe('msla-panel-header');
     expect(panel.props.headerText).toBe(minimal.title);
     expect(panel.props.customWidth).toBe(minimal.width);
-
-    const panelContentContainer = panel.props.children;
-    expect(panelContentContainer.props.className).toBe('msla-panel-content-container');
-
-    const panelContent = panelContentContainer.props.children;
-    expect(panelContent.props.className).toBe('msla-panel-content');
   });
 });

@@ -1,11 +1,11 @@
-import type { ExpressionGroupBranding } from "../constants/ExpressionConstants";
-import type { ExpressionInput } from "./Expression";
-import type { SchemaNodeDataType } from "./Schema";
+import type { ExpressionGroupBranding } from '../constants/ExpressionConstants';
+import type { ExpressionInput } from './Expression';
+import type { SchemaNodeDataType } from './Schema';
 
 export enum NodeType {
-    Input = 'input',
-    Output = 'output',
-    Expression = 'expression',
+  Input = 'input',
+  Output = 'output',
+  Expression = 'expression',
 }
 
 export type SelectedNode = SelectedSchemaNode | SelectedExpressionNode;
@@ -28,12 +28,12 @@ export interface SelectedOutputNode extends Omit<SelectedInputNode, 'nodeType'> 
 
 // TODO: refine property specifics once fleshed out
 export interface SelectedExpressionNode {
-    nodeType: NodeType.Expression;
-    name: string;
-    branding: ExpressionGroupBranding;
-    description: string;
-    codeEx: string;
-    definition: string;
-    inputs: ExpressionInput[];
-    outputId: string;
+  nodeType: NodeType.Expression;
+  name: string;
+  branding: ExpressionGroupBranding;
+  description: string;
+  codeEx: string;
+  definition: string;
+  inputs: ExpressionInput[];
+  outputId: string;
 }
