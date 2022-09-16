@@ -19,14 +19,13 @@ export const DataMapperStandaloneDesigner = () => {
   const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
   const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
 
-  const schemaState = useSelector((state: RootState) => {
-    return state.dataMapDataLoader;
-  });
+  const resourceUrl = useSelector((state: RootState) => state.dataMapDataLoader.resourcePath);
+  const armToken = useSelector((state: RootState) => state.dataMapDataLoader.armToken);
 
   InitDataMapperApiService({
     baseUrl: defaultDataMapperApiServiceOptions.baseUrl,
-    resourceUrl: schemaState.resourcePath,
-    accessToken: schemaState.armToken,
+    resourceUrl: resourceUrl,
+    accessToken: armToken,
   });
 
   const saveStateCall = (dataMapDefinition: string) => {
