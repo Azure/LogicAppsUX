@@ -14,14 +14,6 @@ import type { editor } from 'monaco-editor';
 import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface SchemaEditorProps {
-  initialValue: ValueSegment[];
-  label?: string;
-  readonly?: boolean;
-  onChange?: ChangeHandler;
-  onFocus?: () => void;
-}
-
 const removeStyle: IStyle = {
   border: '0',
   color: 'rgb(0, 120, 212)',
@@ -35,6 +27,14 @@ const buttonStyles: IButtonStyles = {
   rootHovered: removeStyle,
   rootPressed: removeStyle,
 };
+
+export interface SchemaEditorProps {
+  initialValue: ValueSegment[];
+  label?: string;
+  readonly?: boolean;
+  onChange?: ChangeHandler;
+  onFocus?: () => void;
+}
 
 export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus }: SchemaEditorProps): JSX.Element {
   const intl = useIntl();

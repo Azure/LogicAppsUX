@@ -78,7 +78,6 @@ export const ScratchTab = () => {
             { id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' },
             { id: '0', type: ValueSegmentType.LITERAL, value: 'GET' },
           ]}
-          GetTokenPicker={GetTokenPicker}
           options={[
             { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },
             { displayName: 'PUT', value: 'PUT', key: 'PUT', disabled: false },

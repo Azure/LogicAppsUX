@@ -6,6 +6,7 @@ import { useIntl } from 'react-intl';
 
 export type CollapsedDictionaryProps = {
   isValid?: boolean;
+  isTrigger?: boolean;
   collapsedValue: ValueSegment[];
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
   setIsValid: (b: boolean) => void;
@@ -16,6 +17,7 @@ export type CollapsedDictionaryProps = {
 
 export const CollapsedDictionary = ({
   isValid,
+  isTrigger,
   collapsedValue,
   GetTokenPicker,
   setItems,
@@ -46,6 +48,7 @@ export const CollapsedDictionary = ({
           tokenPickerButtonProps={{ buttonClassName: `msla-editor-tokenpicker-button` }}
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
+          isTrigger={isTrigger}
           onBlur={onBlur}
           GetTokenPicker={GetTokenPicker}
         >

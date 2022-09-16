@@ -63,12 +63,10 @@ export interface ComboboxProps extends BaseEditorProps {
 export const Combobox = ({
   options,
   initialValue,
-  placeholder,
   useOption = true,
-  readonly,
-  GetTokenPicker,
   onChange,
   onMenuOpen,
+  ...baseEditorProps
 }: ComboboxProps): JSX.Element => {
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
@@ -182,14 +180,15 @@ export const Combobox = ({
       {mode === Mode.Custom ? (
         <div className="msla-combobox-editor-container">
           <BaseEditor
-            readonly={readonly}
+            readonly={baseEditorProps.readonly}
             className="msla-combobox-editor"
-            placeholder={placeholder}
             BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
             initialValue={value}
             onBlur={handleBlur}
-            GetTokenPicker={GetTokenPicker}
+            GetTokenPicker={baseEditorProps.GetTokenPicker}
             tokenPickerButtonProps={{ buttonClassName: 'msla-combobox-editor-tokenpicker' }}
+            placeholder={baseEditorProps.placeholder}
+            isTrigger={baseEditorProps.isTrigger}
           >
             <Change setValue={setValue} />
           </BaseEditor>
@@ -199,15 +198,15 @@ export const Combobox = ({
         </div>
       ) : (
         <ComboBox
-          disabled={readonly}
           className="msla-combobox"
           selectedKey={selectedKey}
           componentRef={comboBoxRef}
           useComboBoxAsMenuWidth
           allowFreeform
           autoComplete="off"
-          placeholder={placeholder}
           options={comboboxOptions}
+          disabled={baseEditorProps.readonly}
+          placeholder={baseEditorProps.placeholder}
           onInputValueChange={updateOptions}
           onClick={toggleExpand}
           onRenderOption={onRenderOption}

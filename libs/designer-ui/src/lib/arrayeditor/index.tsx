@@ -18,7 +18,6 @@ export interface ArrayEditorProps extends BaseEditorProps {
   disableToggle?: boolean;
   initialItems?: ArrayEditorItemProps[];
   labelProps: LabelProps;
-  readOnly?: boolean;
 }
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
@@ -27,9 +26,9 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   initialValue,
   initialItems = [],
   labelProps,
-  readOnly = false,
   GetTokenPicker,
   onChange,
+  ...baseEditorProps
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState(false);
   const [items, setItems] = useState(initialItems);
@@ -61,6 +60,8 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           labelProps={labelProps}
           isValid={isValid}
           collapsedValue={collapsedValue}
+          isTrigger={baseEditorProps.isTrigger}
+          readOnly={baseEditorProps.readonly}
           setItems={updateItems}
           setIsValid={setIsValid}
           GetTokenPicker={GetTokenPicker}
@@ -70,16 +71,17 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
       ) : (
         <ExpandedArray
           items={items}
-          setItems={updateItems}
           labelProps={labelProps}
-          readOnly={readOnly}
+          readOnly={baseEditorProps.readonly}
+          isTrigger={baseEditorProps.isTrigger}
           canDeleteLastItem={canDeleteLastItem}
+          setItems={updateItems}
           GetTokenPicker={GetTokenPicker}
         />
       )}
       <div className="msla-array-commands">
         {!disableToggle ? (
-          <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || readOnly} toggleCollapsed={toggleCollapsed} />
+          <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || baseEditorProps.readonly} toggleCollapsed={toggleCollapsed} />
         ) : null}
       </div>
     </div>
