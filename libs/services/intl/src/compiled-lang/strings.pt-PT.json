@@ -5,6 +5,28 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Propriedades \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" inválidas para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -554,6 +576,20 @@
       "value": "Carregue ou selecione um esquema de saída a utilizar para o seu mapa."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -570,6 +606,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Teerão"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -782,6 +840,12 @@
       "value": "Obrigatório. O nome da ação com uma resposta em várias partes."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Este passo vai ser removido da Aplicação Lógica."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -810,6 +874,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Ilha de Lord Howe"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -864,6 +942,38 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Propriedade \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" inválida para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -924,6 +1034,16 @@
     {
       "type": 0,
       "value": "Quinta-feira"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1055,7 +1175,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Tipo de Autenticação"
     }
   ],
   "AHB418": [
@@ -1092,6 +1212,28 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangum)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "O tipo de \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" é \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "Amz9+m": [
@@ -1259,6 +1401,12 @@
       "value": "Ligação necessária"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1281,6 +1429,12 @@
     {
       "type": 0,
       "value": "Necessário. A cadeia a partir da qual pretende remover os espaços em branco à esquerda e à direita."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Nó"
     }
   ],
   "DGMwU4": [
@@ -1640,6 +1794,12 @@
       "value": "Obrigatório. O nome da chave do valor dos dados de formulário a devolver."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1656,6 +1816,12 @@
     {
       "type": 0,
       "value": "Selecione um cartão para ver o conteúdo"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "O conteúdo dinâmico não é suportado como propriedades na autenticação."
     }
   ],
   "IA+Ogm": [
@@ -1704,6 +1870,12 @@
     {
       "type": 0,
       "value": "Selecione um esquema de entrada"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
     }
   ],
   "Ip7Iax": [
@@ -1913,6 +2085,12 @@
       "value": "Não existem resultados para a pesquisa"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Eliminar Grafo de Fluxo de Trabalho"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1963,6 +2141,28 @@
       "value": "Adicionar novo"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Propriedades \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" obrigatórias em falta para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -2005,10 +2205,22 @@
       "value": "Adicionar comentário"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) Ilhas Salomão, Nova Caledónia"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Remover"
     }
   ],
   "M6U2LE": [
@@ -2153,6 +2365,12 @@
       "value": "Editar Parâmetro"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2175,6 +2393,28 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Ilha de Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Propriedade \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" obrigatória em falta para o tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "OH9xlX": [
@@ -2261,10 +2501,22 @@
       "value": "Obrigatório. Este valor é o número de números inteiros que existe na matriz."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Funções de coleção"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -2459,6 +2711,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Os acionadores não podem ser eliminados."
     }
   ],
   "RFjYpH": [
@@ -2748,6 +3006,12 @@
       "value": "Para referenciar um parâmetro, utilize a lista de conteúdo dinâmico."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Eliminar Ação de Fluxo de Trabalho"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2784,10 +3048,22 @@
       "value": "Mostrar menos"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Introduza um JSON válido."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) Hora das Regiões Montanhosas (E.U.A. e Canadá)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expandir"
     }
   ],
   "VKAk5g": [
@@ -2956,6 +3232,16 @@
     {
       "type": 0,
       "value": "Assegure-se de que todas as palavras são escritas corretamente."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3250,6 +3536,16 @@
       "value": "Valor"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3300,6 +3596,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brasília"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
     }
   ],
   "bzF/qn": [
@@ -3598,6 +3900,12 @@
       "value": "Matriz"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3662,6 +3970,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) São Pedro e Miquelão"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
     }
   ],
   "gCXOd5": [
@@ -3889,6 +4203,20 @@
       "value": "Conteúdo dinâmico"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Tem a certeza de que pretende eliminar "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3899,6 +4227,20 @@
     {
       "type": 0,
       "value": "Necessário. O URI a analisar."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Tipo de autenticação \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" não suportado."
     }
   ],
   "iRe/g7": [
@@ -4165,6 +4507,12 @@
       "value": "Obrigatório. Este valor é o número inteiro seguinte depois do maior número inteiro que foi possível devolver."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Propriedade do tipo de autenticação em falta: \"type\"."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4291,6 +4639,12 @@
       "value": "URL codifica a cadeia de entrada"
     }
   ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "As propriedades obrigatórias \"secret\" ou \"pfx\" e \"password\" estão em falta para o tipo de autenticação \"ActiveDirectoryOAuth\"."
+    }
+  ],
   "mZCHKf": [
     {
       "type": 0,
@@ -4361,6 +4715,12 @@
     {
       "type": 0,
       "value": "Obrigatório. O número de unidades de tempo que o tempo pretendido é no futuro."
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
     }
   ],
   "nTA155": [
@@ -4503,6 +4863,12 @@
       "value": "Introduzir chave"
     }
   ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
   "pIczsS": [
     {
       "type": 0,
@@ -4633,6 +4999,12 @@
     {
       "type": 0,
       "value": "Obrigatório"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4958,6 +5330,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "tsmuoF": [
@@ -5352,6 +5730,12 @@
       "value": "Obrigatório. A cadeia a partir da qual se escapam carateres não seguros de URL."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5388,6 +5772,12 @@
       "value": "Funções de data e hora"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5410,6 +5800,18 @@
     {
       "type": 0,
       "value": "Introduza o valor predefinido para o parâmetro."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Isto também removerá todos os passos subordinados."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [

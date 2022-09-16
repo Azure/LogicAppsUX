@@ -1,12 +1,11 @@
 import Constants from '../../../common/constants';
-import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping } from '../../state/connection/connectionSlice';
-import type { AddNodeOperationPayload } from '../../state/operation/operationMetadataSlice';
+import type { AddNodeOperationPayload, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
-import type { IdsForDiscovery } from '../../state/panel/panelInterfaces';
+import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { switchToOperationPanel, isolateTab } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
@@ -16,6 +15,7 @@ import type { RootState } from '../../store';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations } from '../../utils/variables';
+import { isConnectionRequiredForOperation } from './connections';
 import { getInputParametersFromManifest, getOutputParametersFromManifest, getParameterDependencies } from './initialize';
 import type { NodeDataWithManifest } from './operationdeserializer';
 import { getOperationSettings } from './settings';
@@ -27,52 +27,51 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
-  discoveryIds: IdsForDiscovery;
+  relationshipIds: RelationshipIds;
   nodeId: string;
+  isParallelBranch?: boolean;
 };
-export const addOperation = createAsyncThunk(
-  'addOperation',
-  async ({ operation, discoveryIds, nodeId: id }: AddOperationPayload, { dispatch, getState }) => {
-    if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
-    let count = 1;
-    let nodeId = id;
-    while ((getState() as RootState).workflow.operations[nodeId]) {
-      nodeId = `${id}_${count}`;
-      count++;
-    }
 
-    const addPayload: AddNodePayload = {
-      operation,
-      id: nodeId,
-      discoveryIds,
-    };
-    const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
-    const operationId = operation.id;
-    const operationType = operation.properties.operationType ?? '';
-    const operationKind = operation.properties.operationKind ?? '';
-    dispatch(addNode(addPayload));
-    const operationPayload: AddNodeOperationPayload = {
-      id: nodeId,
-      type: operationType,
-      connectorId,
-      operationId,
-    };
-    setDefaultConnectionForNode(nodeId, connectorId, dispatch);
-    dispatch(initializeOperationInfo(operationPayload));
-    const newWorkflowState = (getState() as RootState).workflow;
-    initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
-
-    getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
-    dispatch(setFocusNode(nodeId));
-    return;
+export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
+  const { operation, nodeId: actionId } = payload;
+  if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+  let count = 1;
+  let nodeId = actionId;
+  while ((getState() as RootState).workflow.operations[nodeId]) {
+    nodeId = `${actionId}_${count}`;
+    count++;
   }
-);
+
+  const newPayload = { ...payload, nodeId };
+
+  const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
+  const operationId = operation.id;
+  const operationType = operation.properties.operationType ?? '';
+  const operationKind = operation.properties.operationKind ?? '';
+  dispatch(addNode(newPayload as any));
+  const operationPayload: AddNodeOperationPayload = {
+    id: nodeId,
+    type: operationType,
+    connectorId,
+    operationId,
+  };
+
+  dispatch(initializeOperationInfo(operationPayload));
+  const newWorkflowState = (getState() as RootState).workflow;
+  initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
+
+  // Update settings for children and parents
+
+  getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
+  dispatch(setFocusNode(nodeId));
+  return;
+});
 
 export const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: OperationInfo,
   operationType: string,
-  operationKind: string,
+  operationKind: string | undefined,
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): Promise<void> => {
@@ -80,11 +79,22 @@ export const initializeOperationDetails = async (
   if (operationManifestService.isSupported(operationType)) {
     const manifest = await getOperationManifest(operationInfo);
 
+    if (isConnectionRequiredForOperation(manifest)) {
+      setDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
+    } else {
+      dispatch(switchToOperationPanel(nodeId));
+    }
+
     // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
     const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest, workflowState.operations[nodeId]);
     const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
-    const nodeOutputs = getOutputParametersFromManifest(manifest, false /* isTrigger */, nodeInputs, settings.splitOn?.value?.value);
-    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);
+    const { nodeOutputs, dynamicOutput } = getOutputParametersFromManifest(
+      manifest,
+      false /* isTrigger */,
+      nodeInputs,
+      settings.splitOn?.value?.value
+    );
+    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs, dynamicOutput);
 
     dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
 
@@ -93,6 +103,49 @@ export const initializeOperationDetails = async (
     addTokensAndVariables(
       nodeId,
       operationType,
+      { id: nodeId, nodeInputs, nodeOutputs, settings, manifest, nodeDependencies },
+      workflowState,
+      dispatch
+    );
+  } else {
+    // TODO - swagger case here
+    setDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
+  }
+};
+
+// TODO: Riley - this is very similar to the init function, but we might want to alter it to not overwrite some data
+export const reinitializeOperationDetails = async (
+  nodeId: string,
+  operation: NodeOperation,
+  workflowState: WorkflowState,
+  dispatch: Dispatch
+): Promise<void> => {
+  const operationManifestService = OperationManifestService();
+  if (operationManifestService.isSupported(operation.type)) {
+    const manifest = await getOperationManifest(operation);
+
+    // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
+    const settings = getOperationSettings(
+      false /* isTrigger */,
+      operation.type,
+      operation.kind,
+      manifest,
+      workflowState.operations[nodeId]
+    );
+    const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
+    const { nodeOutputs, dynamicOutput } = getOutputParametersFromManifest(
+      manifest,
+      false /* isTrigger */,
+      nodeInputs,
+      settings.splitOn?.value?.value
+    );
+    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs, dynamicOutput);
+
+    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
+
+    addTokensAndVariables(
+      nodeId,
+      operation.type,
       { id: nodeId, nodeInputs, nodeOutputs, settings, manifest, nodeDependencies },
       workflowState,
       dispatch

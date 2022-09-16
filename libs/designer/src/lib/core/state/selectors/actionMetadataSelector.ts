@@ -1,6 +1,7 @@
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionById } from '../../queries/connections';
 import type { RootState } from '../../store';
+import { getConnectionId } from '../../utils/connectors/connections';
 import { useConnector } from '../connection/connectionSelector';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
@@ -24,12 +25,12 @@ export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
 };
 
 export const useNodeConnectionId = (nodeId: string): string =>
-  useSelector((state: RootState) => state.connections.connectionsMapping[nodeId]);
+  useSelector((state: RootState) => getConnectionId(state.connections, nodeId));
 
 export const useNodeConnectionName = (nodeId: string): QueryResult => {
   const { connectionId, connectorId } = useSelector((state: RootState) => {
     return nodeId
-      ? { connectionId: state.connections.connectionsMapping[nodeId], connectorId: state.operations.operationInfo[nodeId]?.connectorId }
+      ? { connectionId: getConnectionId(state.connections, nodeId), connectorId: state.operations.operationInfo[nodeId]?.connectorId }
       : { connectionId: '', connectorId: '' };
   });
 

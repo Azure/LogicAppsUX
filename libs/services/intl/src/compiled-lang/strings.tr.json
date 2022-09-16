@@ -5,6 +5,12 @@
       "value": "Tamam"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "{1} kimlik doğrulama türü için geçersiz özellikler: {0}."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -543,6 +549,20 @@
       "value": "Eşlemeniz için kullanılacak bir çıkış şeması yükleyin veya seçin."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -559,6 +579,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Tahran"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -771,6 +813,12 @@
       "value": "Gerekli. Çok bölümlü bir yanıt içeren eylemin adı."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Bu adım mantıksal uygulamadan kaldırılacak."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -799,6 +847,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe Adası"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -853,6 +915,22 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "{1} kimlik doğrulama türü için geçersiz özellik: {0}."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -913,6 +991,16 @@
     {
       "type": 0,
       "value": "Perşembe"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1044,7 +1132,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Kimlik Doğrulama Türü"
     }
   ],
   "AHB418": [
@@ -1081,6 +1169,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "{0} türü {1}."
     }
   ],
   "Amz9+m": [
@@ -1237,6 +1331,12 @@
       "value": "Bağlantı gerekli"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1259,6 +1359,12 @@
     {
       "type": 0,
       "value": "Gerekli. Baştaki ve sondaki boşluğun kaldırılacağı dize."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Düğüm"
     }
   ],
   "DGMwU4": [
@@ -1599,6 +1705,12 @@
       "value": "Gerekli. Döndürülecek form verileri değerinin anahtar adı."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1615,6 +1727,12 @@
     {
       "type": 0,
       "value": "İçeriği görmek için lütfen bir kart seçin"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dinamik içerik, kimlik doğrulamasında özellik olarak desteklenmiyor."
     }
   ],
   "IA+Ogm": [
@@ -1663,6 +1781,12 @@
     {
       "type": 0,
       "value": "Giriş şeması seçin"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
     }
   ],
   "Ip7Iax": [
@@ -1861,6 +1985,12 @@
       "value": "Aramanız için sonuç yok"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "İş Akışı Grafiğini Sil"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1901,6 +2031,12 @@
     {
       "type": 0,
       "value": "Yeni ekle"
+    }
+  ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "{1} kimlik doğrulama türü için gerekli {0} özellikleri eksik"
     }
   ],
   "LlYz9c": [
@@ -1945,10 +2081,22 @@
       "value": "Yorum ekle"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) Solomon Adl., Yeni Kaledonya"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Kaldır"
     }
   ],
   "M6U2LE": [
@@ -2093,6 +2241,12 @@
       "value": "Parametreyi Düzenle"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "Tamam"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2115,6 +2269,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville Adası"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "{1} kimlik doğrulama türü için gerekli {0} özelliği eksik"
     }
   ],
   "OH9xlX": [
@@ -2201,10 +2361,22 @@
       "value": "Gerekli. Bu değer, dizideki tamsayıların sayısıdır."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Koleksiyon işlevleri"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -2399,6 +2571,12 @@
     {
       "type": 0,
       "value": " sa"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Tetikleyiciler silinemez."
     }
   ],
   "RFjYpH": [
@@ -2677,6 +2855,12 @@
       "value": "Bir parametreye başvurmak için dinamik içerik listesini kullanın."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "İş Akışını Eylemini Sil"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2713,10 +2897,22 @@
       "value": "Daha az göster"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Geçerli bir JSON girin."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) Dağ Saati (ABD ve Kanada)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Genişlet"
     }
   ],
   "VKAk5g": [
@@ -2885,6 +3081,16 @@
     {
       "type": 0,
       "value": "Sözcüklerin doğru yazıldığından emin olun."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3179,6 +3385,16 @@
       "value": "Değer"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3229,6 +3445,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brezilya"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
     }
   ],
   "bzF/qn": [
@@ -3523,6 +3745,12 @@
       "value": "Dizi"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3587,6 +3815,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Saint Pierre ve Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
     }
   ],
   "gCXOd5": [
@@ -3787,6 +4021,16 @@
       "value": "Dinamik içerik"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": " düğümünü silmek istediğinizden emin misiniz?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3797,6 +4041,12 @@
     {
       "type": 0,
       "value": "Gerekli. Ayrıştırılacak URI."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Desteklenmeyen kimlik doğrulama türü: {0}."
     }
   ],
   "iRe/g7": [
@@ -4055,6 +4305,12 @@
       "value": "Gerekli. Bu değer, döndürülebilecek en yüksek tamsayıdan bir sonraki tamsayıdır."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Kimlik doğrulama türü özelliği eksik: 'Type'."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4181,6 +4437,12 @@
       "value": "URL, giriş dizesini kodlar"
     }
   ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "'ActiveDirectoryOAuth' kimlik doğrulama türü için gerekli 'secret' veya 'PFX' ve 'password' özellikleri eksik."
+    }
+  ],
   "mZCHKf": [
     {
       "type": 0,
@@ -4251,6 +4513,12 @@
     {
       "type": 0,
       "value": "Zorunlu. İstenen saatin gelecekteki zaman birimlerinin sayısı."
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
     }
   ],
   "nTA155": [
@@ -4393,6 +4661,12 @@
       "value": "Anahtar girin"
     }
   ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Daralt"
+    }
+  ],
   "pIczsS": [
     {
       "type": 0,
@@ -4523,6 +4797,12 @@
     {
       "type": 0,
       "value": "Gerekli"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4837,6 +5117,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "İptal"
     }
   ],
   "tsmuoF": [
@@ -5227,6 +5513,12 @@
       "value": "Gerekli. URL güvenli olmayan karakterlerin kaçırılacağı dize."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5263,6 +5555,12 @@
       "value": "Tarih ve saat işlevleri"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5285,6 +5583,18 @@
     {
       "type": 0,
       "value": "Parametre için varsayılan değer girin."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Bu işlem tüm alt adımları da kaldırır."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [

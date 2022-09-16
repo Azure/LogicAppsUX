@@ -4,13 +4,14 @@ export interface PanelState {
   collapsed: boolean;
   selectedNode: string;
   isDiscovery: boolean;
-  discoveryIds: IdsForDiscovery;
+  isParallelBranch: boolean;
+  relationshipIds: RelationshipIds;
   registeredTabs: Record<string, PanelTab>;
   selectedTabName: string | undefined;
   selectedOperationGroupId: string;
 }
 
-export interface IdsForDiscovery {
+export interface RelationshipIds {
   graphId: string;
   parentId?: string;
   childId?: string;

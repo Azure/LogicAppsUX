@@ -82,6 +82,7 @@ interface StandardConnectionServiceArgs {
     location: string;
   };
   httpClient: IHttpClient;
+  isDev?: boolean;
 }
 
 interface ContinuationTokenResponse<T> {
@@ -121,10 +122,10 @@ const functionsLocation = 'functionConnections';
 export class StandardConnectionService implements IConnectionService {
   private _connections: Record<string, Connection> = {};
   private _subscriptionResourceGroupWebUrl = '';
-  private isStandalone = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
+  private _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
-    const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;
+    const { apiHubServiceDetails, apiVersion, baseUrl, readConnections, isDev } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
     } else if (!apiVersion) {
@@ -134,7 +135,8 @@ export class StandardConnectionService implements IConnectionService {
     } else if (!apiHubServiceDetails) {
       throw new ArgumentException('apiHubServiceDetails required for workflow app');
     }
-    this._subscriptionResourceGroupWebUrl = `/subscriptions/${options.apiHubServiceDetails.subscriptionId}/resourceGroups/${options.apiHubServiceDetails.resourceGroup}/providers/Microsoft.Web`;
+    this._subscriptionResourceGroupWebUrl = `/subscriptions/${apiHubServiceDetails.subscriptionId}/resourceGroups/${apiHubServiceDetails.resourceGroup}/providers/Microsoft.Web`;
+    this._isDev = isDev || false;
   }
 
   dispose(): void {
@@ -146,7 +148,7 @@ export class StandardConnectionService implements IConnectionService {
   }
 
   private async getAllBuiltInOperations(): Promise<DiscoveryOpArray> {
-    if (this.isStandalone) {
+    if (this._isDev) {
       return Promise.resolve([...almostAllBuiltInOperations]);
     }
     const { apiVersion, baseUrl, httpClient } = this.options;
@@ -160,7 +162,7 @@ export class StandardConnectionService implements IConnectionService {
   }
 
   private async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
-    if (this.isStandalone) return { value: [], hasMore: false };
+    if (this._isDev) return { value: [], hasMore: false };
 
     const {
       apiHubServiceDetails: { apiVersion },
@@ -213,7 +215,7 @@ export class StandardConnectionService implements IConnectionService {
     const {
       apiHubServiceDetails: { location, subscriptionId },
     } = this.options;
-    if (this.isStandalone) return Promise.resolve(azureOperationsResponse);
+    if (this._isDev) return Promise.resolve(azureOperationsResponse);
 
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
     const queryParameters: QueryParameters = {
@@ -238,7 +240,7 @@ export class StandardConnectionService implements IConnectionService {
   }
 
   private async getAllBuiltInConnectors(): Promise<Connector[]> {
-    if (this.isStandalone) {
+    if (this._isDev) {
       return Promise.resolve(connectorsSearchResultsMock);
     }
     const { apiVersion, baseUrl, httpClient } = this.options;
@@ -251,7 +253,7 @@ export class StandardConnectionService implements IConnectionService {
   }
 
   private async getAllAzureConnectors(): Promise<Connector[]> {
-    if (this.isStandalone) {
+    if (this._isDev) {
       const connectors = AzureConnectorMock.value as Connector[];
       const formattedConnectors = this.moveGeneralInformation(connectors);
       return Promise.resolve(formattedConnectors);

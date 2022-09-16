@@ -5,6 +5,12 @@
       "value": "確定"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "驗證類型 {1} 的屬性 {0} 無效。"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -532,6 +538,20 @@
       "value": "上傳或選取要用於對應的輸出結構描述。"
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -548,6 +568,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) 德黑蘭"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -760,6 +802,12 @@
       "value": "必要。包含多組件回應之動作的名稱。"
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "將會從該邏輯應用程式移除此步驟。"
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -788,6 +836,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) 羅豪島"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -842,6 +904,22 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "驗證類型 {1} 的屬性 {0} 無效。"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -902,6 +980,16 @@
     {
       "type": 0,
       "value": "星期四"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1033,7 +1121,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "驗證類型"
     }
   ],
   "AHB418": [
@@ -1070,6 +1158,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) 仰光"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "{0} 的類型為 {1}。"
     }
   ],
   "Amz9+m": [
@@ -1215,6 +1309,12 @@
       "value": "需要連線"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1237,6 +1337,12 @@
     {
       "type": 0,
       "value": "必要。將移除其開頭及結尾空白字元的字串。"
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "節點"
     }
   ],
   "DGMwU4": [
@@ -1566,6 +1672,12 @@
       "value": "必要。要傳回之表單資料值的索引鍵名稱。"
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1582,6 +1694,12 @@
     {
       "type": 0,
       "value": "請選取卡片以查看內容"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "不支援在驗證中的屬性使用動態內容。"
     }
   ],
   "IA+Ogm": [
@@ -1630,6 +1748,12 @@
     {
       "type": 0,
       "value": "選取輸入結構描述"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
     }
   ],
   "Ip7Iax": [
@@ -1817,6 +1941,12 @@
       "value": "您的搜尋沒有相符的結果"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "刪除工作流程圖"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1857,6 +1987,12 @@
     {
       "type": 0,
       "value": "新增"
+    }
+  ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "驗證類型 {0} 遺漏必要屬性 {1}"
     }
   ],
   "LlYz9c": [
@@ -1901,10 +2037,22 @@
       "value": "新增註解"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) 索羅門群島，新喀里多尼亞群島"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "移除"
     }
   ],
   "M6U2LE": [
@@ -2049,6 +2197,12 @@
       "value": "編輯參數"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "確定"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2071,6 +2225,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) 布干維爾島"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "驗證類型 {0} 遺漏必要屬性 {1}"
     }
   ],
   "OH9xlX": [
@@ -2157,10 +2317,22 @@
       "value": "必要。此值是陣列中整數數目。"
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "集合函數"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -2355,6 +2527,12 @@
     {
       "type": 0,
       "value": " 小時"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "無法刪除觸發。"
     }
   ],
   "RFjYpH": [
@@ -2622,6 +2800,12 @@
       "value": "若要參考參數，請使用動態內容清單。"
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "刪除工作流程動作"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2658,10 +2842,22 @@
       "value": "顯示較少內容"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "請輸入有效的 JSON。"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) 山區時間 (美國及加拿大)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "展開"
     }
   ],
   "VKAk5g": [
@@ -2830,6 +3026,16 @@
     {
       "type": 0,
       "value": "請確定文字拼法正確。"
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3124,6 +3330,16 @@
       "value": "值"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3178,6 +3394,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 巴西利亞"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
     }
   ],
   "bzF/qn": [
@@ -3476,6 +3698,12 @@
       "value": "陣列"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3540,6 +3768,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 聖皮埃與密克隆群島"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
     }
   ],
   "gCXOd5": [
@@ -3729,6 +3963,20 @@
       "value": "動態內容"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "確定要刪除 "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": " 嗎?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3739,6 +3987,12 @@
     {
       "type": 0,
       "value": "必要。用於剖析的 URI。"
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "不支援驗證類型 {0}。"
     }
   ],
   "iRe/g7": [
@@ -3997,6 +4251,12 @@
       "value": "必要。此值是接續在可傳回之最高整數後的整數。"
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "遺漏驗證類型屬性: 'type'。"
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4123,6 +4383,12 @@
       "value": "編碼輸入字串的 URL"
     }
   ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "驗證類型 'ActiveDirectoryOAuth' 遺漏必要屬性 'secret' 或 'pfx' 以及 'password'。"
+    }
+  ],
   "mZCHKf": [
     {
       "type": 0,
@@ -4193,6 +4459,12 @@
     {
       "type": 0,
       "value": "必要。未來所需時間的時間單位數字。"
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
     }
   ],
   "nTA155": [
@@ -4335,6 +4607,12 @@
       "value": "輸入金鑰"
     }
   ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "摺疊"
+    }
+  ],
   "pIczsS": [
     {
       "type": 0,
@@ -4465,6 +4743,12 @@
     {
       "type": 0,
       "value": "必要"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4768,6 +5052,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) 霍巴特"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "取消"
     }
   ],
   "tsmuoF": [
@@ -5162,6 +5452,12 @@
       "value": "必要。從逸出 URL Unsafe 字元的字串。"
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5198,6 +5494,12 @@
       "value": "日期和時間函數"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5220,6 +5522,18 @@
     {
       "type": 0,
       "value": "輸入參數的預設值。"
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "這也會移除所有子步驟。"
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [

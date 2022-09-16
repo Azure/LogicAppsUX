@@ -18,11 +18,15 @@ import { ProgressLocation, Uri, window } from 'vscode';
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
 // For now at least, DM is just going to do everything in workflowFolder
 
+// NOTE (9/12/2022): It's expected that user will already have the Logic Apps
+// (Standard) VS Code extension and that it will already automatically install
+// Azure Functions Core Tools (so no need to repeat here)
+
 export async function startBackendRuntime(projectPath: string): Promise<void> {
   // Note: Must append operationGroups as it's a valid endpoint to ping
   const url = `${backendRuntimeBaseUrl}${workflowMgmtApi}operationGroups`;
 
-  window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
+  await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
 
     if (await isBackendRuntimeUp(url)) {

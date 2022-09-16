@@ -1,7 +1,10 @@
-import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended, SelectedNode } from '../../models';
+import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
+import type { Expression, ExpressionDictionary } from '../../models/Expression';
+import type { SelectedNode } from '../../models/SelectedNode';
 import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import * as yaml from 'js-yaml';
@@ -22,12 +25,14 @@ export interface DataMapOperationState {
   flattenedOutputSchema: SchemaNodeDictionary;
   currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
+  currentExpressionNodes: ExpressionDictionary;
   currentlySelectedNode?: SelectedNode;
 }
 
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
   currentInputNodes: [],
+  currentExpressionNodes: {},
   flattenedInputSchema: {},
   flattenedOutputSchema: {},
 };
@@ -211,20 +216,80 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    addExpressionNode: (state, action: PayloadAction<Expression>) => {
+      const expression = action.payload;
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentExpressionNodes: { ...state.curDataMapOperation.currentExpressionNodes },
+      };
+
+      newState.currentExpressionNodes[`${expression.name}-${guid()}`] = expression;
+
+      doDataMapOperation(state, newState);
+    },
+
+    removeExpressionNode: (state, action: PayloadAction<string>) => {
+      const expressionKey = action.payload;
+
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentExpressionNodes: { ...state.curDataMapOperation.currentExpressionNodes },
+      };
+
+      delete newState.dataMapConnections[expressionKey];
+
+      doDataMapOperation(state, newState);
+    },
+
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      const trimmedKey = action.payload.outputNodeKey.split('-', 2)[1];
-      const trimmedValue = action.payload.value.split('-', 2)[1];
+      const trimmedKey = action.payload.outputNodeKey.substring(action.payload.outputNodeKey.indexOf('-') + 1);
+      const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
 
-      newState.dataMapConnections[trimmedKey] = {
-        value: trimmedValue,
+      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
+        destination: trimmedKey,
+        sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,
         reactFlowDestination: action.payload.outputNodeKey,
       };
+
+      doDataMapOperation(state, newState);
+    },
+
+    changeConnection: (state, action: PayloadAction<ConnectionAction & { oldConnectionKey: string }>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      const trimmedOldConnectionKey = action.payload.oldConnectionKey.substring(action.payload.oldConnectionKey.indexOf('-') + 1);
+      delete newState.dataMapConnections[trimmedOldConnectionKey];
+
+      const trimmedKey = action.payload.outputNodeKey.substring(action.payload.outputNodeKey.indexOf('-') + 1);
+      const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
+
+      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
+        destination: trimmedKey,
+        sourceValue: trimmedValue,
+        reactFlowSource: action.payload.value,
+        reactFlowDestination: action.payload.outputNodeKey,
+      };
+
+      doDataMapOperation(state, newState);
+    },
+
+    deleteConnection: (state, action: PayloadAction<{ oldConnectionKey: string }>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      const trimmedOldConnectionKey = action.payload.oldConnectionKey.substring(action.payload.oldConnectionKey.indexOf('-') + 1);
+      delete newState.dataMapConnections[trimmedOldConnectionKey];
 
       doDataMapOperation(state, newState);
     },
@@ -281,7 +346,11 @@ export const {
   toggleInputNode,
   setCurrentOutputNode,
   setCurrentlySelectedNode,
+  addExpressionNode,
+  removeExpressionNode,
   makeConnection,
+  changeConnection,
+  deleteConnection,
   undoDataMapOperation,
   redoDataMapOperation,
   saveDataMap,

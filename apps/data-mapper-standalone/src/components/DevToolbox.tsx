@@ -1,19 +1,21 @@
 import { dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
-import { loadAvailableSchemas, loadInputSchema, loadOutputSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
+import { loadInputSchema, loadOutputSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
-import { Checkbox, Dropdown, TextField } from '@fluentui/react';
+import { Checkbox, Dropdown, TextField, MessageBar } from '@fluentui/react';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+const themeOptions = ['Light', 'Dark'];
+
 export const mapFileOptions = ['SimpleCustomerOrder.json'];
-export const schemaFileOptions = ['SimpleCustomerOrderSchema.json', 'SimpleBuyerOrderSchema.json'];
+export const schemaFileOptions = ['SimpleInputOrderSchema.json', 'SimpleOutputOrderSchema.json'];
 
 export const DevToolbox: React.FC = () => {
-  const { resourcePath, armToken, loadingMethod } = useSelector((state: RootState) => {
-    const { resourcePath, armToken, loadingMethod } = state.dataMapDataLoader;
+  const { theme, resourcePath, armToken, loadingMethod } = useSelector((state: RootState) => {
+    const { theme, resourcePath, armToken, loadingMethod } = state.dataMapDataLoader;
 
-    return { resourcePath, armToken, loadingMethod };
+    return { theme, resourcePath, armToken, loadingMethod };
   });
 
   const { inputResourcePath, outputResourcePath } = useSelector((state: RootState) => {
@@ -47,11 +49,6 @@ export const DevToolbox: React.FC = () => {
     },
     [dispatch]
   );
-
-  const loadSchemasIntoMemory = useCallback(() => {
-    dispatch(schemaDataLoaderSlice.actions.changeAvailableResourcesPath(schemaFileOptions));
-    dispatch(loadAvailableSchemas());
-  }, [dispatch]);
 
   const changeInputSchemaResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
@@ -91,13 +88,25 @@ export const DevToolbox: React.FC = () => {
     [dispatch]
   );
 
+  const changeThemeCB = useCallback(
+    (_: unknown, item: IDropdownOption | undefined) => {
+      dispatch(dataMapDataLoaderSlice.actions.changeTheme((item?.key as string) ?? ''));
+    },
+    [dispatch]
+  );
+
+  const themeDropdownOptions = themeOptions.map((theme) => ({ key: theme, text: theme }));
   const dataMapDropdownOptions = mapFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
   const schemaDropdownOptions = schemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
 
   return (
     <div style={{ width: '400px', marginBottom: '20px' }}>
+      <div style={{ marginBottom: 10 }}>
+        <Dropdown label="Theme" selectedKey={theme} onChange={changeThemeCB} placeholder="Select a theme" options={themeDropdownOptions} />
+      </div>
+
       <div style={{ paddingBottom: '10px' }}>
-        <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} />
+        <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} disabled />
       </div>
       {loadingMethod === 'arm' ? (
         <>
@@ -122,26 +131,28 @@ export const DevToolbox: React.FC = () => {
       ) : null}
       {loadingMethod === 'file' ? (
         <div>
-          <button onClick={loadSchemasIntoMemory}>Load schemas into memory</button>
+          <MessageBar>
+            The below dropdowns load mock objects (equivalent to what we expect from a data map definition or GET schemaTree)
+          </MessageBar>
           <Dropdown
             label="Data Map"
             selectedKey={resourcePath}
             onChange={changeDataMapResourcePathDropdownCB}
-            placeholder="Select an option"
+            placeholder="Select a data map"
             options={dataMapDropdownOptions}
           />
           <Dropdown
             label="Input Schema"
             selectedKey={inputResourcePath}
             onChange={changeInputSchemaResourcePathDropdownCB}
-            placeholder="Select an option"
+            placeholder="Select an input schema"
             options={schemaDropdownOptions}
           />
           <Dropdown
             label="Output Schema"
             selectedKey={outputResourcePath}
             onChange={changeOutputSchemaResourcePathDropdownCB}
-            placeholder="Select an option"
+            placeholder="Select an output schema"
             options={schemaDropdownOptions}
           />
         </div>

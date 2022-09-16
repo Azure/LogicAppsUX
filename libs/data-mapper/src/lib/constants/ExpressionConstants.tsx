@@ -1,55 +1,57 @@
+import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import type { IconProps } from '../images/IconModel';
 import { SchemaNodeDataType } from '../models';
 import type { Expression } from '../models/Expression';
-import { ExpressionCategory, ExpressionIconSource } from '../models/Expression';
-import {
-  AddSubtractCircle20Filled,
-  CalendarClock20Regular,
-  Cube20Regular,
-  MathSymbols20Regular,
-  Wrench20Regular,
-} from '@fluentui/react-icons';
+import { ExpressionCategory } from '../models/Expression';
+import { AddSubtractCircle20Filled, CalendarClock20Regular, Cube20Regular, MathSymbols20Regular } from '@fluentui/react-icons';
 
 export interface ExpressionGroupBranding {
+  displayName: string;
   colorLight: string;
   colorDark: string;
   icon: IconProps;
 }
 
 export const collectionBranding: ExpressionGroupBranding = {
+  displayName: 'Collection',
   colorLight: '#ae8c00',
   colorDark: '#c9a618',
-  icon: <Cube20Regular />,
+  icon: <Collection20Regular />,
 };
 
-export const datetimeBranding: ExpressionGroupBranding = {
+export const dateTimeBranding: ExpressionGroupBranding = {
+  displayName: 'Date and time',
   colorLight: '#4f6bed',
   colorDark: '#93a4f4',
   icon: <CalendarClock20Regular />,
 };
 
 export const logicalBranding: ExpressionGroupBranding = {
+  displayName: 'Logical comparison',
   colorLight: '#038387',
   colorDark: '#4bb4b7',
   icon: <AddSubtractCircle20Filled />,
 };
 
 export const mathBranding: ExpressionGroupBranding = {
+  displayName: 'Math',
   colorLight: '#004e8c',
   colorDark: '#286ea8',
   icon: <MathSymbols20Regular />,
 };
 
 export const stringBranding: ExpressionGroupBranding = {
+  displayName: 'String',
   colorLight: '#e43ba6',
   colorDark: '#ef85cb',
   icon: <Cube20Regular />,
 };
 
 export const utilityBranding: ExpressionGroupBranding = {
+  displayName: 'Utility',
   colorLight: '#8764b8',
   colorDark: '#a083c9',
-  icon: <Wrench20Regular />,
+  icon: <StringCategory20Regular />,
 };
 
 export const TempExpressionManifest: Expression[] = [
@@ -61,9 +63,10 @@ export const TempExpressionManifest: Expression[] = [
     xsltExpression: 'current-date()',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [],
+    allowCustom: false,
     expressionCategory: ExpressionCategory.DateTime,
-    iconSpecification: 'CalendarDate20Regular',
-    iconSource: ExpressionIconSource.Fluent,
+    iconFileName: 'CalendarDate20Regular.svg',
     outputType: SchemaNodeDataType.DateTime,
     detailedDescription:
       'Returns the current date. For example, a call to date() might return 2004-05-12+01:00. The returned date will always have an associated time zone, which will always be the same as the implicit time zone in the dynamic context',
@@ -77,9 +80,10 @@ export const TempExpressionManifest: Expression[] = [
     xsltExpression: 'current-dateTime()',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [],
+    allowCustom: false,
     expressionCategory: ExpressionCategory.DateTime,
-    iconSpecification: '',
-    iconSource: ExpressionIconSource.None,
+    iconFileName: '',
     outputType: SchemaNodeDataType.DateTime,
     detailedDescription:
       'Returns the current date and time (with time zone).For example, a call to date-time() might return 2004-05-12T18:17:15.125Z corresponding to the current time on May 12, 2004 in time zone Z.',
@@ -93,9 +97,10 @@ export const TempExpressionManifest: Expression[] = [
     xsltExpression: 'current-time()',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [],
+    allowCustom: false,
     expressionCategory: ExpressionCategory.DateTime,
-    iconSpecification: 'Clock20Regular',
-    iconSource: ExpressionIconSource.Fluent,
+    iconFileName: 'Clock20Regular.svg',
     outputType: SchemaNodeDataType.DateTime,
     detailedDescription:
       'Returns the current time. The returned time will always have an associated time zone, which will always be the same as the implicit time zone in the dynamic context. For example, a call to time() might return 23:17:00.000-05:00.',
@@ -109,9 +114,15 @@ export const TempExpressionManifest: Expression[] = [
     xsltExpression: 'concat({0})',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [
+      {
+        inputName: 'Input',
+        acceptableInputTypes: [SchemaNodeDataType.AnyAtomicType],
+      },
+    ],
+    allowCustom: true,
     expressionCategory: ExpressionCategory.String,
-    iconSpecification: 'TextNumberFormat20Regular',
-    iconSource: ExpressionIconSource.Fluent,
+    iconFileName: 'TextNumberFormat20Regular.svg',
     outputType: SchemaNodeDataType.String,
     detailedDescription: 'Evaluates to a string that contains the specified strings, concatenated in the order specified',
     tooltip: 'Concatenate the strings specified by input parameters, in the order given',
@@ -124,9 +135,15 @@ export const TempExpressionManifest: Expression[] = [
     xsltExpression: 'lower-case({0})',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [
+      {
+        inputName: 'Input String',
+        acceptableInputTypes: [SchemaNodeDataType.String],
+      },
+    ],
+    allowCustom: true,
     expressionCategory: ExpressionCategory.String,
-    iconSpecification: 'TextCaseUppercase20Regular',
-    iconSource: ExpressionIconSource.Fluent,
+    iconFileName: 'TextCaseUppercase20Regular.svg',
     outputType: SchemaNodeDataType.String,
     detailedDescription:
       'Evaluates to a string that is the same as the string value of input parameter,  except that any uppercase characters in it are converted to lowercase.',
@@ -139,9 +156,15 @@ export const TempExpressionManifest: Expression[] = [
     userExpression: '$if',
     isSequenceInputSupported: false,
     isXsltOperatorExpression: false,
+    inputs: [
+      {
+        inputName: 'Condition',
+        acceptableInputTypes: [SchemaNodeDataType.AnyAtomicType],
+      },
+    ],
+    allowCustom: false,
     expressionCategory: ExpressionCategory.Utility,
-    iconSpecification: '',
-    iconSource: ExpressionIconSource.None,
+    iconFileName: '',
     outputType: SchemaNodeDataType.String,
     detailedDescription:
       'Evaluates to Boolean value True if the values of the two input parameters are equal; the Boolean value False otherwise. Input parameter values can be in a variety of data types (string, numeric, or logical).',

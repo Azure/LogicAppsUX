@@ -10,12 +10,19 @@ export interface Expression {
   isXsltOperatorExpression: boolean;
 
   // Made up
+  inputs: ExpressionInput[];
+  outputType: SchemaNodeDataType;
+  allowCustom: boolean;
+
   expressionCategory: ExpressionCategory;
-  iconSpecification: string;
-  iconSource: ExpressionIconSource;
-  outputType: SchemaNodeDataType; // Maybe make this type generic
+  iconFileName?: string;
   detailedDescription: string;
   tooltip: string;
+}
+
+export interface ExpressionInput {
+  inputName: string;
+  acceptableInputTypes: SchemaNodeDataType[];
 }
 
 export enum ExpressionCategory {
@@ -27,10 +34,4 @@ export enum ExpressionCategory {
   Utility = 'utility',
 }
 
-export enum ExpressionIconSource {
-  MDL2 = 'mdl2',
-  Fluent = 'fluent',
-  Windows = 'windows',
-  Custom = 'custom',
-  None = 'none',
-}
+export type ExpressionDictionary = { [key: string]: Expression };

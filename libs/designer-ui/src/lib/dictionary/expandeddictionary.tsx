@@ -16,11 +16,12 @@ export enum ExpandedDictionaryEditorType {
 }
 export interface ExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
+  isTrigger?: boolean;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
 }
 
-export const ExpandedDictionary = ({ items, GetTokenPicker, setItems }: ExpandedDictionaryProps): JSX.Element => {
+export const ExpandedDictionary = ({ items, isTrigger, GetTokenPicker, setItems }: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<HTMLDivElement>(null);
@@ -74,6 +75,7 @@ export const ExpandedDictionary = ({ items, GetTokenPicker, setItems }: Expanded
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={keyPlaceholder}
                 initialValue={item.key ?? []}
+                isTrigger={isTrigger}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 onFocus={() => addItem(index, ExpandedDictionaryEditorType.KEY)}
                 tokenPickerButtonProps={{
@@ -97,6 +99,7 @@ export const ExpandedDictionary = ({ items, GetTokenPicker, setItems }: Expanded
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={valuePlaceholder}
                 initialValue={item.value ?? []}
+                isTrigger={isTrigger}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 tokenPickerButtonProps={{
                   buttonOffset: pickerOffset,

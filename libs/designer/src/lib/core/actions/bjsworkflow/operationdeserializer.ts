@@ -9,11 +9,19 @@ import { clearPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
+import type { RootState } from '../../store';
+import { getConnectionId } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { getAllInputParameters, updateTokenMetadata } from '../../utils/parameters/helper';
+import {
+  getAllInputParameters,
+  getGroupAndParameterFromParameterKey,
+  loadDynamicData,
+  loadDynamicValuesForParameter,
+  updateTokenMetadata,
+} from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
-import { getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
+import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { getInputParametersFromManifest, getOutputParametersFromManifest, getParameterDependencies } from './initialize';
 import { getOperationSettings } from './settings';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
@@ -57,10 +65,11 @@ export const initializeOperationMetadata = async (deserializedWorkflow: Deserial
     )
   );
 
+  const variables = initializeVariables(operations, allNodeData);
   dispatch(
     initializeTokensAndVariables({
       outputTokens: initializeOutputTokensForOperations(allNodeData, operations, graph, nodesMetadata),
-      variables: initializeVariables(operations, allNodeData),
+      variables,
     })
   );
 };
@@ -75,16 +84,23 @@ const initializeOperationDetailsForManifest = async (
     const operationInfo = await getOperationInfo(nodeId, operation);
 
     if (operationInfo) {
+      const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
       const manifest = await getOperationManifest(operationInfo);
 
-      dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo, type: operation.type, kind: operation.kind }));
+      dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
 
       const settings = getOperationSettings(isTrigger, operation.type, operation.kind, manifest, operation);
       const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
-      const nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs, settings.splitOn?.value?.value);
-      const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs);
+      const { nodeOutputs, dynamicOutput } = getOutputParametersFromManifest(
+        manifest,
+        isTrigger,
+        nodeInputs,
+        settings.splitOn?.value?.value
+      );
+      const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs, dynamicOutput);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
+
       return [{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, manifest }, ...childGraphInputs];
     }
 
@@ -226,4 +242,61 @@ const initializeVariables = (operations: Operations, allNodesData: NodeDataWithM
   }
 
   return declarations;
+};
+
+export const updateDynamicDataInNodes = async (
+  connectionsPromise: Promise<void>,
+  getState: () => RootState,
+  dispatch: Dispatch
+): Promise<void> => {
+  await connectionsPromise;
+  const rootState = getState();
+  const {
+    workflow: { nodesMetadata, operations },
+    operations: { inputParameters, settings, dependencies, operationInfo },
+    tokens: { variables },
+  } = rootState;
+  for (const [nodeId, operation] of Object.entries(operations)) {
+    const nodeDependencies = dependencies[nodeId];
+    const nodeInputs = inputParameters[nodeId];
+    const nodeSettings = settings[nodeId];
+    const connectionId = getConnectionId(rootState.connections, nodeId);
+    const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
+    const nodeOperationInfo = operationInfo[nodeId];
+
+    // TODO - The below if check should be removed once swagger based operations are correctly implemented
+    if (nodeOperationInfo) {
+      loadDynamicData(
+        nodeId,
+        isTrigger,
+        nodeOperationInfo,
+        connectionId,
+        nodeDependencies,
+        nodeInputs,
+        nodeSettings,
+        getAllVariables(variables),
+        dispatch,
+        operation
+      );
+
+      for (const parameterKey of Object.keys(nodeDependencies.inputs)) {
+        const dependencyInfo = nodeDependencies.inputs[parameterKey];
+        if (dependencyInfo.dependencyType === 'ListValues') {
+          const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
+          if (details) {
+            loadDynamicValuesForParameter(
+              nodeId,
+              details.groupId,
+              details.parameter.id,
+              nodeOperationInfo,
+              connectionId,
+              nodeInputs,
+              nodeDependencies,
+              dispatch
+            );
+          }
+        }
+      }
+    }
+  }
 };

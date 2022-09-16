@@ -1,4 +1,5 @@
 export * from './lib/connection';
+export * from './lib/connector';
 export * from './lib/operationmanifest';
 export * from './lib/search';
 export * from './lib/oAuth';
@@ -8,6 +9,7 @@ export * from './lib/logger';
 export * from './lib/logging/devLogger';
 export * from './lib/logging/logEntry';
 export { StandardConnectionService } from './lib/standard/connection';
+export { StandardConnectorService } from './lib/standard/connector';
 export { StandardOperationManifestService } from './lib/standard/operationmanifest';
 export { StandardOAuthService } from './lib/standard/oAuth';
 export type { StandardOperationManifestServiceOptions } from './lib/standard/operationmanifest';

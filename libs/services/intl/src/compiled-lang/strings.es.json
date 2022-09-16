@@ -5,6 +5,28 @@
       "value": "Aceptar"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Propiedades ' "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " ' no válidas para el tipo de autenticación ' "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": " '."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -554,6 +576,20 @@
       "value": "Cargue o seleccione un esquema de salida que se usará para la asignación."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -570,6 +606,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Teherán"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -782,6 +840,12 @@
       "value": "Obligatorio. El nombre de la acción con una respuesta de varias partes."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Este paso se quitará de la aplicación lógica."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -810,6 +874,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Isla Lord Howe"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -864,6 +942,38 @@
     {
       "type": 0,
       "value": "Archivo PFX"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Propiedad ' "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " ' no válida para el tipo de autenticación ' "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": " '."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -924,6 +1034,16 @@
     {
       "type": 0,
       "value": "Jueves"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1055,7 +1175,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Tipo de autenticación"
     }
   ],
   "AHB418": [
@@ -1092,6 +1212,28 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangón (Rangún)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "El tipo de \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" es \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "Amz9+m": [
@@ -1259,6 +1401,12 @@
       "value": "Conexión obligatoria"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1281,6 +1429,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Cadena de la que se quitará el espacio en blanco inicial y final."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Nodo"
     }
   ],
   "DGMwU4": [
@@ -1632,6 +1786,12 @@
       "value": "Obligatorio. El nombre de clave del valor de los datos de formulario que se devolverá."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1648,6 +1808,12 @@
     {
       "type": 0,
       "value": "Seleccione una tarjeta para ver el contenido."
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "El contenido dinámico no se admite como propiedades en la autenticación."
     }
   ],
   "IA+Ogm": [
@@ -1696,6 +1862,12 @@
     {
       "type": 0,
       "value": "Seleccionar un esquema de entrada"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
     }
   ],
   "Ip7Iax": [
@@ -1905,6 +2077,12 @@
       "value": "No hay ningún resultado para su búsqueda."
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Eliminar gráfico de flujo de trabajo"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1945,6 +2123,28 @@
     {
       "type": 0,
       "value": "Agregar nuevo"
+    }
+  ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Faltan las propiedades obligatorias \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" para el tipo de autenticación \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "LlYz9c": [
@@ -1989,10 +2189,22 @@
       "value": "Agregar un comentario"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) Islas Salomón, Nueva Caledonia"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Quitar"
     }
   ],
   "M6U2LE": [
@@ -2137,6 +2349,12 @@
       "value": "Editar parámetro"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "Aceptar"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2159,6 +2377,28 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Isla Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Falta la propiedad obligatoria \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" para el tipo de autenticación \""
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "OH9xlX": [
@@ -2245,10 +2485,22 @@
       "value": "Obligatorio. Este valor es el número de enteros que se encuentran en esta matriz."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Funciones de recopilación"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -2443,6 +2695,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "No se pueden eliminar los desencadenadores."
     }
   ],
   "RFjYpH": [
@@ -2732,6 +2990,12 @@
       "value": "Para hacer referencia a un parámetro, uSEe la lista de contenido dinámico."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Eliminar acción de flujo de trabajo"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2768,10 +3032,22 @@
       "value": "Mostrar menos"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Especifica un nombre válido."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) Hora de las Montañas Rocosas (EE. UU. y Canadá)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expandir"
     }
   ],
   "VKAk5g": [
@@ -2940,6 +3216,16 @@
     {
       "type": 0,
       "value": "Asegúrese de que las palabras están escritas correctamente."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3234,6 +3520,16 @@
       "value": "Valor"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3284,6 +3580,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brasilia"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
     }
   ],
   "bzF/qn": [
@@ -3582,6 +3884,12 @@
       "value": "Matriz"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3646,6 +3954,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) San Pedro y Miquelón"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
     }
   ],
   "gCXOd5": [
@@ -3865,6 +4179,20 @@
       "value": "Contenido dinámico"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "¿Está seguro de que quiere eliminar "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3875,6 +4203,20 @@
     {
       "type": 0,
       "value": "Obligatorio. URI que se analizará."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Tipo de autenticación \""
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": "\" no admitido."
     }
   ],
   "iRe/g7": [
@@ -4141,6 +4483,12 @@
       "value": "Obligatorio. Este valor es el entero siguiente al entero más alto que se pudo devolver."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Falta la propiedad de tipo de autenticación: \"type\"."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4267,6 +4615,12 @@
       "value": "La dirección URL codifica la cadena de entrada."
     }
   ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Faltan las propiedades necesarias ' Secret ', ' pfx ' y ' password ' para el tipo de autenticación ' ActiveDirectoryOAuth '."
+    }
+  ],
   "mZCHKf": [
     {
       "type": 0,
@@ -4337,6 +4691,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Número de unidades de tiempo cuya hora deseada es futura."
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
     }
   ],
   "nTA155": [
@@ -4479,6 +4839,12 @@
       "value": "Escribir clave"
     }
   ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Contraer"
+    }
+  ],
   "pIczsS": [
     {
       "type": 0,
@@ -4609,6 +4975,12 @@
     {
       "type": 0,
       "value": "Obligatorio"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4934,6 +5306,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "tsmuoF": [
@@ -5328,6 +5706,12 @@
       "value": "Obligatorio. La cadena desde la que se usará el escape de caracteres de dirección URL no seguros."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5364,6 +5748,12 @@
       "value": "Funciones de fecha y hora"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5386,6 +5776,18 @@
     {
       "type": 0,
       "value": "Permite escribir un valor predeterminado para el parámetro."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Esto también quitará todos los pasos secundarios."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [

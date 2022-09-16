@@ -1,8 +1,9 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { Combobox } from '../../combobox';
 import { DictionaryEditor } from '../../dictionary';
+import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
-import type { ChangeHandler } from '../../editor/base';
+import type { CallbackHandler, ChangeHandler } from '../../editor/base';
 import { StringEditor } from '../../editor/string';
 import { SchemaEditor } from '../../schemaeditor';
 import type { TokenGroup } from '../../tokenpicker/models/token';
@@ -24,8 +25,15 @@ export interface SettingTokenFieldProps extends SettingProps {
   required?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  isTrigger?: boolean;
+  GetTokenPicker: (
+    editorId: string,
+    labelId: string,
+    onClick?: (b: boolean) => void,
+    tokenClicked?: (token: ValueSegment) => void
+  ) => JSX.Element;
   onValueChange?: ChangeHandler;
+  onComboboxMenuOpen?: CallbackHandler;
 }
 
 export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
@@ -48,27 +56,42 @@ const TokenField = ({
   placeholder,
   readOnly,
   value,
+  isTrigger,
   GetTokenPicker,
   onValueChange,
+  onComboboxMenuOpen,
 }: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
-    case 'combobox':
+    case 'dropdown':
       // eslint-disable-next-line no-case-declarations
-      const options = editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }));
+      const { options, multiSelect } = editorOptions;
       return (
-        <Combobox
-          placeholder={placeholder}
-          readOnly={readOnly}
+        <DropdownEditor
+          readonly={readOnly}
           initialValue={value}
-          options={options}
-          useOption={true}
-          GetTokenPicker={GetTokenPicker}
+          options={options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          multiSelect={!!multiSelect}
           onChange={onValueChange}
         />
       );
 
+    case 'combobox':
+      return (
+        <Combobox
+          placeholder={placeholder}
+          readonly={readOnly}
+          initialValue={value}
+          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          useOption={true}
+          isTrigger={isTrigger}
+          GetTokenPicker={GetTokenPicker}
+          onChange={onValueChange}
+          onMenuOpen={onComboboxMenuOpen}
+        />
+      );
+
     case 'schema':
-      return <SchemaEditor placeholder={placeholder} disabled={readOnly} initialValue={value} onChange={onValueChange} />;
+      return <SchemaEditor readonly={readOnly} initialValue={value} onChange={onValueChange} />;
 
     case 'dictionary':
       return (
@@ -77,6 +100,7 @@ const TokenField = ({
           readOnly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
+          isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
@@ -88,8 +112,9 @@ const TokenField = ({
         <ArrayEditor
           labelProps={{ text: '' }}
           placeholder={placeholder}
-          readOnly={readOnly}
+          readonly={readOnly}
           initialValue={value}
+          isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
@@ -102,6 +127,7 @@ const TokenField = ({
           placeholder={placeholder}
           BasePlugins={{ tokens: true }}
           readonly={readOnly}
+          isTrigger={isTrigger}
           initialValue={value}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}

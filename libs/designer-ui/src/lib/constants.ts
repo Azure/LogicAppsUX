@@ -317,4 +317,5 @@ export default {
     KEY_OFFSET: -269,
     VALUE_OFFSET: -7,
   },
+  DROPDOWN_CALLOUT_MAX_HEIGHT: 380,
 };

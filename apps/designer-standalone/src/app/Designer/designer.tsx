@@ -22,6 +22,7 @@ const connectionService = new StandardConnectionService({
     location: '',
   },
   readConnections: () => Promise.resolve({}),
+  isDev: true,
 });
 const operationManifestService = new StandardOperationManifestService({
   apiVersion: '2018-11-01',

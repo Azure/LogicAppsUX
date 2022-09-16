@@ -1,5 +1,6 @@
 import type {
   IConnectionService,
+  IConnectorService,
   ILoggerService,
   IOperationManifestService,
   ISearchService,
@@ -16,6 +17,7 @@ export interface ServiceOptions {
   connectionService: IConnectionService;
   operationManifestService: IOperationManifestService;
   searchService: ISearchService;
+  connectorService?: IConnectorService;
   loggerService?: ILoggerService;
   oAuthService: IOAuthService;
 }

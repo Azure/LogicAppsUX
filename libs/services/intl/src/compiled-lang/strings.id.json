@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Properti {0} tidak valid untuk jenis autentikasi {1}."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -532,6 +538,20 @@
       "value": "Unggah atau pilih skema output yang akan digunakan untuk peta Anda."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Required parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " not set or invalid"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -548,6 +568,28 @@
     {
       "type": 0,
       "value": "(UTC+03.30) Tehran"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Invalid json format. Missing beginning "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " or ending "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -760,6 +802,12 @@
       "value": "Wajib. Nama tindakan dengan respons beberapa bagian."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Langkah ini akan dihapus dari aplikasi logika."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -788,6 +836,20 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Pulau Lord Howe"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" cannot be found for this operation"
     }
   ],
   "7QymrD": [
@@ -842,6 +904,22 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Properti {0} tidak valid untuk jenis autentikasi {1}."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Error executing the api - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -902,6 +980,16 @@
     {
       "type": 0,
       "value": "Kamis"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1033,7 +1121,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Tipe Autentikasi"
     }
   ],
   "AHB418": [
@@ -1070,6 +1158,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Jenis {0} adalah {1}."
     }
   ],
   "Amz9+m": [
@@ -1215,6 +1309,12 @@
       "value": "Koneksi diperlukan"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1237,6 +1337,12 @@
     {
       "type": 0,
       "value": "Diperlukan. String untuk menghapus spasi awal dan akhir."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Node"
     }
   ],
   "DGMwU4": [
@@ -1566,6 +1672,12 @@
       "value": "Wajib. Nama kunci nilai data formulir yang akan ditampilkan."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1582,6 +1694,12 @@
     {
       "type": 0,
       "value": "Pilih kartu untuk melihat konten"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Konten dinamis tidak didukung sebagai properti dalam autentikasi."
     }
   ],
   "IA+Ogm": [
@@ -1630,6 +1748,12 @@
     {
       "type": 0,
       "value": "Pilih skema input"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Advanced options"
     }
   ],
   "Ip7Iax": [
@@ -1817,6 +1941,12 @@
       "value": "Tidak ada hasil untuk pencarian Anda"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Hapus Grafik Alur Kerja"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1857,6 +1987,12 @@
     {
       "type": 0,
       "value": "Tambah baru"
+    }
+  ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "Tidak ada properti {0} yang diperlukan untuk tipe autentikasi {1}"
     }
   ],
   "LlYz9c": [
@@ -1901,10 +2037,22 @@
       "value": "Tambahkan komentar"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) Kep. Solomon, Kaledonia Baru"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Hapus"
     }
   ],
   "M6U2LE": [
@@ -2049,6 +2197,12 @@
       "value": "Edit Parameter"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2071,6 +2225,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Pulau Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "Tidak ada properti {0} yang diperlukan untuk tipe autentikasi {1}"
     }
   ],
   "OH9xlX": [
@@ -2157,10 +2317,22 @@
       "value": "Wajib. Nilai ini adalah nomor bilangan bulat yang ada dalam array."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Default value"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Fungsi pengumpulan"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -2355,6 +2527,12 @@
     {
       "type": 0,
       "value": "j"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Pemicu tidak dapat dihapus."
     }
   ],
   "RFjYpH": [
@@ -2622,6 +2800,12 @@
       "value": "Untuk mereferensikan parameter, gunakan daftar konten dinamis."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Hapus Tindakan Alur Kerja"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2658,10 +2842,22 @@
       "value": "Tampilkan lebih sedikit"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Masukkan JSON yang valid."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) Mountain Time (AS & Kanada)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Luaskan"
     }
   ],
   "VKAk5g": [
@@ -2830,6 +3026,16 @@
     {
       "type": 0,
       "value": "Pastikan kata dieja dengan benar."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3124,6 +3330,16 @@
       "value": "Nilai"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3174,6 +3390,12 @@
     {
       "type": 0,
       "value": "(UTC-03.00) Brasilia"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Provide parameters to test the output."
     }
   ],
   "bzF/qn": [
@@ -3472,6 +3694,12 @@
       "value": "Array"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3536,6 +3764,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Saint Pierre and Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Run test"
     }
   ],
   "gCXOd5": [
@@ -3725,6 +3959,20 @@
       "value": "Konten dinamis"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Yakin ingin menghapus "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3735,6 +3983,12 @@
     {
       "type": 0,
       "value": "Diperlukan. URI untuk mengurai."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Tipe autentikasi yang tidak didukung {0}."
     }
   ],
   "iRe/g7": [
@@ -3993,6 +4247,12 @@
       "value": "Wajib. Nilai ini adalah bilangan bulat berikutnya setelah bilangan bulat tertinggi yang dapat ditampilkan."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Tidak ada properti tipe autentikasi: 'type'."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4119,6 +4379,12 @@
       "value": "Url mengkodekan string input"
     }
   ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Tidak ada properti 'secret' atau 'pfx' dan 'password' yang diperlukan untuk tipe autentikasi 'ActiveDirectoryOAuth'."
+    }
+  ],
   "mZCHKf": [
     {
       "type": 0,
@@ -4189,6 +4455,12 @@
     {
       "type": 0,
       "value": "Wajib. Jumlah unit waktu yang diinginkan adalah di masa depan."
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reset"
     }
   ],
   "nTA155": [
@@ -4331,6 +4603,12 @@
       "value": "Masukkan kunci"
     }
   ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Ciutkan"
+    }
+  ],
   "pIczsS": [
     {
       "type": 0,
@@ -4461,6 +4739,12 @@
     {
       "type": 0,
       "value": "Wajib diisi"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Error code: {errorCode}, Message: {message}."
     }
   ],
   "qUWBUX": [
@@ -4764,6 +5048,12 @@
     {
       "type": 0,
       "value": "(UTC+10.00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Batal"
     }
   ],
   "tsmuoF": [
@@ -5158,6 +5448,12 @@
       "value": "Wajib. String untuk melepas karakter URL yang dapat berubah."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5194,6 +5490,12 @@
       "value": "Fungsi tanggal dan waktu"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Add field"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5216,6 +5518,18 @@
     {
       "type": 0,
       "value": "Masukkan nilai default untuk parameter."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Tindakan ini juga akan menghapus semua langkah turunan."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "This expression doesn't require any input."
     }
   ],
   "zBMVKg": [

@@ -1,5 +1,6 @@
 import { TokenNode } from '../nodes/tokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import type { LexicalEditor } from 'lexical';
 import { useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -26,14 +27,20 @@ export default function TokenPickerButton({
   labelId,
   setShowTokenPicker,
 }: ButtonProps): JSX.Element {
-  const [editor] = useLexicalComposerContext();
+  let editor: LexicalEditor | null;
+  try {
+    [editor] = useLexicalComposerContext();
+  } catch {
+    editor = null;
+  }
 
-  const intl = useIntl();
   useEffect(() => {
-    if (!editor.hasNodes([TokenNode])) {
+    if (editor && !editor.hasNodes([TokenNode])) {
       throw new Error('TokenPlugin: Register the TokenNode on editor');
     }
   }, [editor]);
+
+  const intl = useIntl();
 
   const addContent = intl.formatMessage({
     defaultMessage: 'Add dynamic content',
@@ -50,7 +57,9 @@ export default function TokenPickerButton({
 
   const handleClick = () => {
     setShowTokenPicker?.();
-    editor.focus();
+    if (editor) {
+      editor.focus();
+    }
   };
 
   return (
