@@ -8,6 +8,7 @@ import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
 import { getExpressionBrandingForCategory } from './Expression.Utils';
 import { isLeafNode } from './Schema.Utils';
+import { useMemo } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import { ConnectionLineType, Position } from 'react-flow-renderer';
 
@@ -198,4 +199,28 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
       type: ConnectionLineType.SmoothStep,
     };
   });
+};
+
+export const useLayout = (
+  allInputSchemaNodes: SchemaNodeExtended[],
+  connectedInputNodes: SchemaNodeExtended[],
+  allExpressionNodes: ExpressionDictionary,
+  currentOutputNode: SchemaNodeExtended | undefined,
+  connections: ConnectionDictionary
+): [ReactFlowNode[], ReactFlowEdge[]] => {
+  const reactFlowNodes = useMemo(() => {
+    if (currentOutputNode) {
+      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, allExpressionNodes, currentOutputNode);
+    } else {
+      return [];
+    }
+    // Explicitly ignoring connectedInputNodes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allInputSchemaNodes, currentOutputNode, allExpressionNodes]);
+
+  const reactFlowEdges = useMemo(() => {
+    return convertToReactFlowEdges(connections);
+  }, [connections]);
+
+  return [reactFlowNodes, reactFlowEdges];
 };
