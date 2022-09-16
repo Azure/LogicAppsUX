@@ -1036,6 +1036,16 @@
       "value": "Jeudi"
     }
   ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -2179,6 +2189,12 @@
       "value": "Ajouter un commentaire"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -3202,6 +3218,16 @@
       "value": "Vérifiez que les mots sont correctement orthographiés."
     }
   ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -3492,6 +3518,16 @@
     {
       "type": 0,
       "value": "Valeur"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
     }
   ],
   "bS5DyV": [
@@ -3846,6 +3882,12 @@
     {
       "type": 0,
       "value": "Tableau"
+    }
+  ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
     }
   ],
   "f/lWTW": [

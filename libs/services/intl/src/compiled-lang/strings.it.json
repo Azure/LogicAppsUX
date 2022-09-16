@@ -1004,6 +1004,16 @@
       "value": "Giovedì"
     }
   ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -2115,6 +2125,12 @@
       "value": "Aggiungere un commento"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -3130,6 +3146,16 @@
       "value": "Verificare che le parole siano scritte correttamente."
     }
   ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -3420,6 +3446,16 @@
     {
       "type": 0,
       "value": "Valore"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
     }
   ],
   "bS5DyV": [
@@ -3774,6 +3810,12 @@
     {
       "type": 0,
       "value": "Array"
+    }
+  ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
     }
   ],
   "f/lWTW": [

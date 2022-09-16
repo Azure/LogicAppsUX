@@ -1036,6 +1036,16 @@
       "value": "Quinta-feira"
     }
   ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -2078,7 +2088,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Eliminar Grafo de Fluxo de Trabalho"
     }
   ],
   "LCUU5q": [
@@ -2193,6 +2203,12 @@
     {
       "type": 0,
       "value": "Adicionar comentário"
+    }
+  ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
     }
   ],
   "M48CGd": [
@@ -2700,7 +2716,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Os acionadores não podem ser eliminados."
     }
   ],
   "RFjYpH": [
@@ -2993,7 +3009,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Eliminar Ação de Fluxo de Trabalho"
     }
   ],
   "UHCVNK": [
@@ -3216,6 +3232,16 @@
     {
       "type": 0,
       "value": "Assegure-se de que todas as palavras são escritas corretamente."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3508,6 +3534,16 @@
     {
       "type": 0,
       "value": "Valor"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
     }
   ],
   "bS5DyV": [
@@ -3864,6 +3900,12 @@
       "value": "Matriz"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -4164,7 +4206,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Tem a certeza de que pretende eliminar "
     },
     {
       "type": 1,
@@ -5763,7 +5805,7 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Isto também removerá todos os passos subordinados."
     }
   ],
   "zBBJuL": [

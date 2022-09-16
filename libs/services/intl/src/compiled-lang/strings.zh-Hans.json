@@ -1018,6 +1018,16 @@
       "value": "星期四"
     }
   ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -1986,7 +1996,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "删除工作流图"
     }
   ],
   "LCUU5q": [
@@ -2093,6 +2103,12 @@
     {
       "type": 0,
       "value": "添加评论"
+    }
+  ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
     }
   ],
   "M48CGd": [
@@ -2604,7 +2620,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "无法删除触发器。"
     }
   ],
   "RFjYpH": [
@@ -2875,7 +2891,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "删除工作流操作"
     }
   ],
   "UHCVNK": [
@@ -3102,6 +3118,16 @@
     {
       "type": 0,
       "value": "请确保单词拼写正确。"
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3394,6 +3420,16 @@
     {
       "type": 0,
       "value": "值"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
     }
   ],
   "bS5DyV": [
@@ -3754,6 +3790,12 @@
       "value": "数组"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -4028,7 +4070,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "是否确实要删除 "
     },
     {
       "type": 1,
@@ -5613,7 +5655,7 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "这还将移除所有子步骤。"
     }
   ],
   "zBBJuL": [

@@ -993,6 +993,16 @@
       "value": "Perşembe"
     }
   ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -1978,7 +1988,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "İş Akışı Grafiğini Sil"
     }
   ],
   "LCUU5q": [
@@ -2069,6 +2079,12 @@
     {
       "type": 0,
       "value": "Yorum ekle"
+    }
+  ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
     }
   ],
   "M48CGd": [
@@ -2560,7 +2576,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Tetikleyiciler silinemez."
     }
   ],
   "RFjYpH": [
@@ -2842,7 +2858,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "İş Akışını Eylemini Sil"
     }
   ],
   "UHCVNK": [
@@ -3065,6 +3081,16 @@
     {
       "type": 0,
       "value": "Sözcüklerin doğru yazıldığından emin olun."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3357,6 +3383,16 @@
     {
       "type": 0,
       "value": "Değer"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
     }
   ],
   "bS5DyV": [
@@ -3709,6 +3745,12 @@
       "value": "Dizi"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3981,16 +4023,12 @@
   ],
   "iHVVTl": [
     {
-      "type": 0,
-      "value": "Are you sure you want to delete "
-    },
-    {
       "type": 1,
       "value": "nodeId"
     },
     {
       "type": 0,
-      "value": "?"
+      "value": " düğümünü silmek istediğinizden emin misiniz?"
     }
   ],
   "iJOIca": [
@@ -5550,7 +5588,7 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Bu işlem tüm alt adımları da kaldırır."
     }
   ],
   "zBBJuL": [

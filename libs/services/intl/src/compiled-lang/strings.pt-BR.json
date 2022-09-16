@@ -1004,6 +1004,16 @@
       "value": "Quinta-feira"
     }
   ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -2115,6 +2125,12 @@
       "value": "Adicionar um comentário"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -3122,6 +3138,16 @@
       "value": "Certifique-se de que as palavras foram escritas corretamente."
     }
   ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -3412,6 +3438,16 @@
     {
       "type": 0,
       "value": "Valor"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
     }
   ],
   "bS5DyV": [
@@ -3766,6 +3802,12 @@
     {
       "type": 0,
       "value": "Matriz"
+    }
+  ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
     }
   ],
   "f/lWTW": [

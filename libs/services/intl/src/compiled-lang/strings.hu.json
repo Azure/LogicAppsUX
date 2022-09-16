@@ -1025,6 +1025,16 @@
       "value": "Csütörtök"
     }
   ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -2034,7 +2044,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Munkafolyamatgráf törlése"
     }
   ],
   "LCUU5q": [
@@ -2149,6 +2159,12 @@
     {
       "type": 0,
       "value": "Hozzászólás hozzáadása"
+    }
+  ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
     }
   ],
   "M48CGd": [
@@ -2660,7 +2676,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Az eseményindítók nem törölhetők."
     }
   ],
   "RFjYpH": [
@@ -2942,7 +2958,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Munkafolyamatművelet törlése"
     }
   ],
   "UHCVNK": [
@@ -3165,6 +3181,16 @@
     {
       "type": 0,
       "value": "Ügyeljen arra, hogy helyesen írja be a szavakat."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3457,6 +3483,16 @@
     {
       "type": 0,
       "value": "Érték"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
     }
   ],
   "bS5DyV": [
@@ -3817,6 +3853,12 @@
       "value": "Tömb"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -4106,7 +4148,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Biztosan törli a(z) "
     },
     {
       "type": 1,
@@ -4114,7 +4156,7 @@
     },
     {
       "type": 0,
-      "value": "?"
+      "value": " csomópontot?"
     }
   ],
   "iJOIca": [
@@ -5690,7 +5732,7 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "A művelet az összes gyermeklépést is eltávolítja."
     }
   ],
   "zBBJuL": [

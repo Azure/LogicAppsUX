@@ -1025,6 +1025,16 @@
       "value": "Donnerstag"
     }
   ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -2034,7 +2044,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Workflowdiagramm löschen"
     }
   ],
   "LCUU5q": [
@@ -2149,6 +2159,12 @@
     {
       "type": 0,
       "value": "Kommentar hinzufügen"
+    }
+  ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
     }
   ],
   "M48CGd": [
@@ -2660,7 +2676,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Trigger können nicht gelöscht werden."
     }
   ],
   "RFjYpH": [
@@ -2942,7 +2958,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Workflowaktion löschen"
     }
   ],
   "UHCVNK": [
@@ -3165,6 +3181,16 @@
     {
       "type": 0,
       "value": "Stellen Sie sicher, dass die Wörter richtig geschrieben sind."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3457,6 +3483,16 @@
     {
       "type": 0,
       "value": "Wert"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
     }
   ],
   "bS5DyV": [
@@ -3817,6 +3853,12 @@
       "value": "Array"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -4098,7 +4140,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Möchten Sie \""
     },
     {
       "type": 1,
@@ -4106,7 +4148,7 @@
     },
     {
       "type": 0,
-      "value": "?"
+      "value": "\" löschen?"
     }
   ],
   "iJOIca": [
@@ -5686,7 +5728,7 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Dadurch werden auch alle untergeordneten Schritte entfernt."
     }
   ],
   "zBBJuL": [
