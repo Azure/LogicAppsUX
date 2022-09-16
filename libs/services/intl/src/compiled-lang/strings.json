@@ -519,6 +519,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -867,6 +873,12 @@
     {
       "type": 0,
       "value": "Required. The string from which the substring is taken."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -2157,6 +2169,12 @@
       "value": "Returns the current timestamp as a string"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2961,6 +2979,12 @@
       "value": "Run History"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3007,6 +3031,12 @@
     {
       "type": 0,
       "value": "Please enter a valid dictionary"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -4743,6 +4773,12 @@
     {
       "type": 0,
       "value": "Returns an XML node, nodeset or value as JSON from the provided XPath expression"
+    }
+  ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
     }
   ],
   "q2OCEx": [
