@@ -18,7 +18,7 @@ export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
 };
 
 // This is the starting size for all nodes
-const DEFAULT_NODE_SIZE = {
+export const DEFAULT_NODE_SIZE = {
   width: 200,
   height: 40,
 };

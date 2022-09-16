@@ -1,4 +1,11 @@
-export type WorkflowNodeType = 'GRAPH_NODE' | 'SUBGRAPH_NODE' | 'OPERATION_NODE' | 'SCOPE_CARD_NODE' | 'SUBGRAPH_CARD_NODE' | 'HIDDEN_NODE';
+export type WorkflowNodeType =
+  | 'GRAPH_NODE'
+  | 'SUBGRAPH_NODE'
+  | 'OPERATION_NODE'
+  | 'SCOPE_CARD_NODE'
+  | 'SUBGRAPH_CARD_NODE'
+  | 'HIDDEN_NODE'
+  | 'PLACEHOLDER_NODE';
 export const WORKFLOW_NODE_TYPES: Record<string, WorkflowNodeType> = {
   GRAPH_NODE: 'GRAPH_NODE',
   SUBGRAPH_NODE: 'SUBGRAPH_NODE',
@@ -6,6 +13,7 @@ export const WORKFLOW_NODE_TYPES: Record<string, WorkflowNodeType> = {
   SCOPE_CARD_NODE: 'SCOPE_CARD_NODE',
   SUBGRAPH_CARD_NODE: 'SUBGRAPH_CARD_NODE',
   HIDDEN_NODE: 'HIDDEN_NODE',
+  PLACEHOLDER_NODE: 'PLACEHOLDER_NODE',
 };
 
 export type WorkflowEdgeType = 'BUTTON_EDGE' | 'HEADING_EDGE' | 'ONLY_EDGE' | 'HIDDEN_EDGE';

@@ -111,4 +111,8 @@ export const useWorkflowNode = (actionId?: string) => {
   });
 };
 
+export const useIsGraphEmpty = () => {
+  return useSelector((state: RootState) => state.workflow.graph?.children?.length === 0);
+};
+
 export const useIsLeafNode = (nodeId: string): boolean => useNodeEdgeTargets(nodeId).length === 0;
