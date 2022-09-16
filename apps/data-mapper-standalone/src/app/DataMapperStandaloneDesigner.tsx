@@ -33,10 +33,11 @@ export const DataMapperStandaloneDesigner = () => {
     console.log(dataMapDefinition);
   };
 
+  // NOTE: Adding FluentProvider here to encapsulate DevToolbox
   return (
     <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
       <DevToolbox />
-      <DataMapperDesignerProvider locale="en-US" options={{}}>
+      <DataMapperDesignerProvider locale="en-US" theme={theme === 'Light' ? 'light' : 'dark'} options={{}}>
         <DataMapDataProvider
           dataMap={dataMap}
           inputSchema={inputSchema}
