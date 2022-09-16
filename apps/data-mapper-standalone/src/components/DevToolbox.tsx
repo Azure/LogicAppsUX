@@ -1,4 +1,4 @@
-import { dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
+import { dataMapDataLoaderSlice, loadDataMap, type ThemeType } from '../state/DataMapDataLoader';
 import { loadInputSchema, loadOutputSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
@@ -91,7 +91,7 @@ export const DevToolbox: React.FC = () => {
 
   const changeThemeCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeTheme((item?.key as string) ?? ''));
+      dispatch(dataMapDataLoaderSlice.actions.changeTheme((item?.key as ThemeType) ?? ''));
     },
     [dispatch]
   );
@@ -102,7 +102,7 @@ export const DevToolbox: React.FC = () => {
 
   return (
     <div style={{ width: '50vw', marginBottom: '20px', backgroundColor: '#eaeaea', padding: 4 }}>
-      <Accordion collapsible>
+      <Accordion defaultOpenItems={'1'} collapsible>
         <AccordionItem value="1">
           <AccordionHeader>Dev Toolbox</AccordionHeader>
           <AccordionPanel>
