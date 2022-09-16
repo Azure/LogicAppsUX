@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { NodeDependencies, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { DynamicLoadStatus , updateOutputs } from '../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import { updateTokens } from '../../state/tokensSlice';
 import { getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
 import { getRecurrenceParameters } from '../../utils/parameters/builtins';
@@ -83,7 +83,7 @@ export const getInputParametersFromManifest = (nodeId: string, manifest: Operati
 
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
   const recurrenceParameters = getRecurrenceParameters(manifest.properties.recurrence, stepDefinition);
-  const dynamicInput = primaryInputParametersInArray.find(parameter => parameter.dynamicSchema);
+  const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
   // TODO(14490585)- Initialize editor view models for array
 
@@ -151,7 +151,10 @@ export const getOutputParametersFromManifest = (
     }
   }
 
-  return { nodeOutputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs }, dynamicOutput };
+  return {
+    nodeOutputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs },
+    dynamicOutput,
+  };
 };
 
 export const getParameterDependencies = (

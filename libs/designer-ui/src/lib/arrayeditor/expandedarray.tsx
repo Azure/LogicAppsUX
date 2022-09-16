@@ -7,15 +7,6 @@ import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/re
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
-export interface ExpandedArrayProps {
-  labelProps: LabelProps;
-  items: ArrayEditorItemProps[];
-  canDeleteLastItem: boolean;
-  readOnly: boolean;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
-  setItems: (newItems: ArrayEditorItemProps[]) => void;
-}
-
 const addItemButtonIconProps: IIconProps = {
   iconName: 'Add',
 };
@@ -32,12 +23,22 @@ const menuButtonStyles: IIconStyles = {
     height: '20px',
   },
 };
+export interface ExpandedArrayProps {
+  labelProps: LabelProps;
+  items: ArrayEditorItemProps[];
+  canDeleteLastItem: boolean;
+  readOnly?: boolean;
+  isTrigger?: boolean;
+  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  setItems: (newItems: ArrayEditorItemProps[]) => void;
+}
 
 export const ExpandedArray = ({
   labelProps,
   items,
   canDeleteLastItem,
   readOnly,
+  isTrigger,
   GetTokenPicker,
   setItems,
 }: ExpandedArrayProps): JSX.Element => {
@@ -70,7 +71,7 @@ export const ExpandedArray = ({
               {renderLabel(index)}
               <div className="msla-array-item-commands">
                 <ItemMenuButton
-                  disabled={readOnly}
+                  disabled={!!readOnly}
                   itemKey={index}
                   visible={canDeleteLastItem || items.length > 1}
                   onDeleteItem={(index) => deleteItem(index)}
@@ -81,6 +82,7 @@ export const ExpandedArray = ({
               className="msla-array-editor-container-expanded"
               initialValue={item.content ?? []}
               BasePlugins={{ tokens: true, clearEditor: true }}
+              isTrigger={isTrigger}
               tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
               GetTokenPicker={GetTokenPicker}
             >

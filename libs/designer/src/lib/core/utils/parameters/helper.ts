@@ -8,12 +8,13 @@ import type {
   NodeInputs,
   NodeOperation,
   OutputInfo,
-  UpdateParametersPayload} from '../../state/operation/operationMetadataSlice';
+  UpdateParametersPayload,
+} from '../../state/operation/operationMetadataSlice';
 import {
   DynamicLoadStatus,
   addDynamicInputs,
   clearDynamicInputs,
-  updateNodeParameters
+  updateNodeParameters,
 } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokensSlice';
 import type { Operations as Actions } from '../../state/workflow/workflowInterfaces';
@@ -88,6 +89,7 @@ import {
 import type { DictionaryEditorItemProps, OutputToken, ParameterInfo, Token as SegmentToken, ValueSegment } from '@microsoft/designer-ui';
 import { DynamicCallStatus, ValueSegmentType, TokenType } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
+
 // import { debounce } from 'lodash';
 
 const ParameterIcon =
@@ -1118,7 +1120,16 @@ export async function loadDynamicData(
   }
 
   if (Object.keys(dependencies.inputs).length) {
-    loadDynamicContentForInputsInNode(nodeId, dependencies.inputs, operationInfo, connectionId, nodeInputs, variables, dispatch, operationDefinition);
+    loadDynamicContentForInputsInNode(
+      nodeId,
+      dependencies.inputs,
+      operationInfo,
+      connectionId,
+      nodeInputs,
+      variables,
+      dispatch,
+      operationDefinition
+    );
   }
 }
 
@@ -1308,9 +1319,12 @@ export function parameterValidForDynamicCall(parameter: ParameterInfo): boolean 
   return parameter.required ? parameterHasValue(parameter) && !hasTokenSegment : !hasTokenSegment;
 }
 
-export function getGroupAndParameterFromParameterKey(nodeInputs: NodeInputs, parameterKey: string): { groupId: string; parameter: ParameterInfo; } | undefined {
+export function getGroupAndParameterFromParameterKey(
+  nodeInputs: NodeInputs,
+  parameterKey: string
+): { groupId: string; parameter: ParameterInfo } | undefined {
   for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
-    const parameter = nodeInputs.parameterGroups[groupId].parameters.find(param => param.parameterKey === parameterKey);
+    const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === parameterKey);
     if (parameter) {
       return { groupId, parameter };
     }
@@ -1328,7 +1342,7 @@ export function getInputsValueFromDefinitionForManifest(inputsLocation: string[]
     inputsValue = property === '[*]' ? inputsValue[0] : getPropertyValue(inputsValue, property);
   }
 
-  return inputsValue
+  return inputsValue;
 }
 
 export function escapeSchemaProperties(schemaProperties: Record<string, any>): Record<string, any> {

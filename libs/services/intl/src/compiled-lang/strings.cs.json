@@ -1051,6 +1051,16 @@
       "value": "Čtvrtek"
     }
   ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
   "8j+a0n": [
     {
       "type": 0,
@@ -2243,6 +2253,12 @@
       "value": "Přidat komentář"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Code view"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
@@ -3281,6 +3297,16 @@
       "value": "Ujistěte se, že ve slovech není překlep."
     }
   ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
+    }
+  ],
   "XN9RvJ": [
     {
       "type": 0,
@@ -3571,6 +3597,16 @@
     {
       "type": 0,
       "value": "Hodnota"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
     }
   ],
   "bS5DyV": [
@@ -3925,6 +3961,12 @@
     {
       "type": 0,
       "value": "Pole"
+    }
+  ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Unsupported programming language."
     }
   ],
   "f/lWTW": [
