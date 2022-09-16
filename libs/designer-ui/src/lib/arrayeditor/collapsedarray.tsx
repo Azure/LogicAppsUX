@@ -10,6 +10,8 @@ export interface CollapsedArrayProps {
   labelProps?: LabelProps;
   isValid?: boolean;
   collapsedValue: ValueSegment[];
+  readOnly?: boolean;
+  isTrigger?: boolean;
   setCollapsedValue: (val: ValueSegment[]) => void;
   setItems: (items: ArrayEditorItemProps[]) => void;
   setIsValid: (b: boolean) => void;
@@ -21,6 +23,8 @@ export const CollapsedArray = ({
   labelProps,
   isValid = true,
   collapsedValue,
+  readOnly,
+  isTrigger,
   GetTokenPicker,
   setItems,
   setIsValid,
@@ -58,6 +62,8 @@ export const CollapsedArray = ({
           BasePlugins={{
             tokens: true,
           }}
+          readonly={readOnly}
+          isTrigger={isTrigger}
           tokenPickerButtonProps={{ buttonClassName: `msla-editor-tokenpicker-button` }}
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}

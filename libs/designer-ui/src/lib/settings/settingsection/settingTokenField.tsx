@@ -25,6 +25,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   required?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
+  isTrigger?: boolean;
   GetTokenPicker: (
     editorId: string,
     labelId: string,
@@ -55,6 +56,7 @@ const TokenField = ({
   placeholder,
   readOnly,
   value,
+  isTrigger,
   GetTokenPicker,
   onValueChange,
   onComboboxMenuOpen,
@@ -81,6 +83,7 @@ const TokenField = ({
           initialValue={value}
           options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
+          isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
@@ -97,6 +100,7 @@ const TokenField = ({
           readOnly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
+          isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
@@ -108,8 +112,9 @@ const TokenField = ({
         <ArrayEditor
           labelProps={{ text: '' }}
           placeholder={placeholder}
-          readOnly={readOnly}
+          readonly={readOnly}
           initialValue={value}
+          isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
@@ -122,6 +127,7 @@ const TokenField = ({
           placeholder={placeholder}
           BasePlugins={{ tokens: true }}
           readonly={readOnly}
+          isTrigger={isTrigger}
           initialValue={value}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}

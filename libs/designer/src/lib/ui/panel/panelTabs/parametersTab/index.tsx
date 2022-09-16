@@ -172,6 +172,7 @@ const ParameterSection = ({
           editorViewModel: param.editorViewModel,
           placeholder: param.placeholder,
           tokenEditor: true,
+          isTrigger: isTrigger,
           GetTokenPicker: GetTokenPicker,
           onValueChange: (newState: ChangeState) => onValueChange(param.id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
