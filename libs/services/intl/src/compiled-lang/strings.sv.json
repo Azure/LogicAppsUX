@@ -535,6 +535,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -568,7 +574,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "De obligatoriska parametrarna "
     },
     {
       "type": 1,
@@ -576,7 +582,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " har inte angetts eller är ogiltiga"
     }
   ],
   "3afjx+": [
@@ -868,7 +874,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Det går inte att hitta parametern "
     },
     {
       "type": 1,
@@ -876,13 +882,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": " för den här åtgärden"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Obligatoriskt. Den sträng från vilken delsträngen hämtas."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -958,7 +970,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Fel vid körning av API – "
     },
     {
       "type": 1,
@@ -1382,7 +1394,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Utdata"
     }
   ],
   "CsPY74": [
@@ -1764,7 +1776,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Mer diagnostikinformation: x-ms-client-request-id är "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HQ8/tk": [
@@ -1842,7 +1862,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Avancerade alternativ"
     }
   ],
   "Ip7Iax": [
@@ -2044,7 +2064,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Ta bort arbetsflödesdiagram"
     }
   ],
   "LCUU5q": [
@@ -2231,6 +2251,12 @@
     {
       "type": 0,
       "value": "Returnerar den aktuella tidsstämpeln som en sträng"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "Mb+Eaq": [
@@ -2452,7 +2478,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Standardvärde"
     }
   ],
   "P4rEwD": [
@@ -2464,7 +2490,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Indata"
     }
   ],
   "P8ZBF9": [
@@ -2668,7 +2694,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Det går inte att ta bort utlösare."
     }
   ],
   "RFjYpH": [
@@ -2950,7 +2976,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Ta bort arbetsflödesåtgärd"
     }
   ],
   "UHCVNK": [
@@ -3049,6 +3075,12 @@
       "value": "Körningshistorik"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3095,6 +3127,12 @@
     {
       "type": 0,
       "value": "Ange en giltig ordlista"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3916,7 +3954,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Kör test"
     }
   ],
   "gCXOd5": [
@@ -4132,7 +4170,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Vill du ta bort "
     },
     {
       "type": 1,
@@ -4642,7 +4680,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Återställ"
     }
   ],
   "nTA155": [
@@ -4857,6 +4895,12 @@
       "value": "Rerturnerar en XML-nod, en noduppsättning eller ett värde som JSON från det tillhandahållna XPath-uttrycket"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4926,7 +4970,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Felkod: "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": ", meddelande: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "qUWBUX": [
@@ -5644,7 +5704,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Värdet innehåller funktionsuttryck som inte kan matchas. Endast konstantvärden stöds"
     }
   ],
   "yBrsFJ": [
@@ -5686,7 +5746,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Lägg till fält"
     }
   ],
   "yxsn7s": [
@@ -5716,7 +5776,7 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Detta tar även bort alla underordnade steg."
     }
   ],
   "zBBJuL": [

@@ -519,6 +519,12 @@
       "value": "(UTC+04:00) Tiflis"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -867,6 +873,12 @@
     {
       "type": 0,
       "value": "Gerekli. Alt dizenin alındığı dize."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -1334,7 +1346,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Çıkış"
     }
   ],
   "CsPY74": [
@@ -1786,7 +1798,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Gelişmiş seçenekler"
     }
   ],
   "Ip7Iax": [
@@ -2157,6 +2169,12 @@
       "value": "Geçerli zaman damgasını dize olarak döndürür"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2364,7 +2382,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Varsayılan değer"
     }
   ],
   "P4rEwD": [
@@ -2376,7 +2394,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Giriş"
     }
   ],
   "P8ZBF9": [
@@ -2957,6 +2975,12 @@
       "value": "Çalıştırma Geçmişi"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3003,6 +3027,12 @@
     {
       "type": 0,
       "value": "Lütfen geçerli bir sözlük girin"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3820,7 +3850,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Testi çalıştır"
     }
   ],
   "gCXOd5": [
@@ -4518,7 +4548,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Sıfırla"
     }
   ],
   "nTA155": [
@@ -4731,6 +4761,12 @@
     {
       "type": 0,
       "value": "Bir XML düğümünü, düğüm kümesini veya değeri, sağlanan XPath ifadesinden JSON olarak döndürür"
+    }
+  ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
     }
   ],
   "q2OCEx": [
@@ -5558,7 +5594,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Alan ekle"
     }
   ],
   "yxsn7s": [

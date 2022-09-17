@@ -546,6 +546,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -611,7 +617,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Formato JSON inválido. Falta o início de "
     },
     {
       "type": 1,
@@ -619,7 +625,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " ou o fim de "
     },
     {
       "type": 1,
@@ -894,6 +900,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia da qual a subcadeia é retirada."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -1404,7 +1416,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Resultado"
     }
   ],
   "CsPY74": [
@@ -1875,7 +1887,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Opções avançadas"
     }
   ],
   "Ip7Iax": [
@@ -2281,6 +2293,12 @@
       "value": "Devolve o carimbo de data/hora atual como uma cadeia"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2504,7 +2522,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Valor predefinido"
     }
   ],
   "P4rEwD": [
@@ -2516,7 +2534,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Entrada"
     }
   ],
   "P8ZBF9": [
@@ -3108,6 +3126,12 @@
       "value": "Histórico de Execuções"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3154,6 +3178,12 @@
     {
       "type": 0,
       "value": "Introduza um dicionário válido"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3601,7 +3631,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Forneça parâmetros para testar a saída."
     }
   ],
   "bzF/qn": [
@@ -3975,7 +4005,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Executar teste"
     }
   ],
   "gCXOd5": [
@@ -4720,7 +4750,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Repor"
     }
   ],
   "nTA155": [
@@ -4933,6 +4963,12 @@
     {
       "type": 0,
       "value": "Devolve um nó XML, conjunto de nós ou valor como JSON a partir da expressão XPath fornecida"
+    }
+  ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
     }
   ],
   "q2OCEx": [
@@ -5775,7 +5811,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Adicionar campo"
     }
   ],
   "yxsn7s": [
@@ -5811,7 +5847,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "Esta expressão não requer qualquer entrada."
     }
   ],
   "zBMVKg": [

@@ -535,6 +535,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -883,6 +889,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks waarvan de subtekenreeks wordt gebruikt."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -1382,7 +1394,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Uitvoer"
     }
   ],
   "CsPY74": [
@@ -1842,7 +1854,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Geavanceerde opties"
     }
   ],
   "Ip7Iax": [
@@ -2233,6 +2245,12 @@
       "value": "Het huidige tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2452,7 +2470,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Standaardwaarde"
     }
   ],
   "P4rEwD": [
@@ -2464,7 +2482,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Invoer"
     }
   ],
   "P8ZBF9": [
@@ -3049,6 +3067,12 @@
       "value": "Uitvoeringsgeschiedenis"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3095,6 +3119,12 @@
     {
       "type": 0,
       "value": "Voer een geldige woordenlijst in"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3916,7 +3946,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Test uitvoeren"
     }
   ],
   "gCXOd5": [
@@ -4642,7 +4672,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Opnieuw instellen"
     }
   ],
   "nTA155": [
@@ -4855,6 +4885,12 @@
     {
       "type": 0,
       "value": "Hiermee wordt een XML-knooppunt, knooppuntenset of waarde als JSON geretourneerd uit de opgegeven XPath-expressie"
+    }
+  ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
     }
   ],
   "q2OCEx": [
@@ -5686,7 +5722,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Veld toevoegen"
     }
   ],
   "yxsn7s": [

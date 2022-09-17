@@ -573,6 +573,12 @@
       "value": "(UTC+04:00) Tibilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -606,7 +612,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Wymagane parametry "
     },
     {
       "type": 1,
@@ -614,7 +620,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " nie są ustawione lub są nieprawidłowe"
     }
   ],
   "3afjx+": [
@@ -906,7 +912,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Nie można odnaleźć parametru „"
     },
     {
       "type": 1,
@@ -914,13 +920,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "” dla tej operacji"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Parametr wymagany. Ciąg, z którego został pobrany podciąg."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -996,7 +1008,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Błąd podczas wykonywania interfejsu API — "
     },
     {
       "type": 1,
@@ -1442,7 +1454,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Dane wyjściowe"
     }
   ],
   "CsPY74": [
@@ -1846,7 +1858,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Więcej informacji diagnostycznych: x-ms-client-request-id to „"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "HQ8/tk": [
@@ -1924,7 +1944,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Opcje zaawansowane"
     }
   ],
   "Ip7Iax": [
@@ -2341,6 +2361,12 @@
       "value": "Zwraca bieżącą sygnaturę czasową jako ciąg"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2564,7 +2590,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Wartość domyślna"
     }
   ],
   "P4rEwD": [
@@ -2576,7 +2602,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Dane wejściowe"
     }
   ],
   "P8ZBF9": [
@@ -3179,6 +3205,12 @@
       "value": "Historia uruchamiania"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3225,6 +3257,12 @@
     {
       "type": 0,
       "value": "Wprowadź prawidłowy słownik"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -4046,7 +4084,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Uruchom test"
     }
   ],
   "gCXOd5": [
@@ -4802,7 +4840,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Resetuj"
     }
   ],
   "nTA155": [
@@ -5017,6 +5055,12 @@
       "value": "Zwraca węzeł, zestaw węzłów lub wartość XML jako kod JSON na podstawie podanego wyrażenia XPath"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -5086,7 +5130,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Kod błędu: „"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "”, komunikat: „"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "qUWBUX": [
@@ -5826,7 +5886,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Wartość zawiera wyrażenia funkcji, których nie można rozpoznać. Obsługiwane są tylko wartości stałe"
     }
   ],
   "yBrsFJ": [
@@ -5868,7 +5928,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Dodaj pole"
     }
   ],
   "yxsn7s": [

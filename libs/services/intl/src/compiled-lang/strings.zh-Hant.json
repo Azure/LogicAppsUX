@@ -508,6 +508,12 @@
       "value": "(UTC+04:00) 第比利斯"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -541,7 +547,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "必要的參數 "
     },
     {
       "type": 1,
@@ -549,7 +555,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " 未設定或無效"
     }
   ],
   "3afjx+": [
@@ -573,7 +579,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "不正確 json 格式。缺少 "
     },
     {
       "type": 1,
@@ -581,7 +587,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " 開頭或 "
     },
     {
       "type": 1,
@@ -589,7 +595,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " 結尾。"
     }
   ],
   "3kI7xF": [
@@ -841,7 +847,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "找不到此作業的參數 \""
     },
     {
       "type": 1,
@@ -849,13 +855,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\""
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "必要。取出子字串的字串。"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -915,7 +927,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "執行 API 時發生錯誤 - "
     },
     {
       "type": 1,
@@ -1312,7 +1324,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "輸出"
     }
   ],
   "CsPY74": [
@@ -1675,7 +1687,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "其他診斷資訊: x-ms-client-request-id 是 {clientRequestId}。"
     }
   ],
   "HQ8/tk": [
@@ -1753,7 +1765,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "進階選項"
     }
   ],
   "Ip7Iax": [
@@ -2113,6 +2125,12 @@
       "value": "將目前的時間戳記傳回為字串"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2320,7 +2338,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "預設值"
     }
   ],
   "P4rEwD": [
@@ -2332,7 +2350,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "輸入"
     }
   ],
   "P8ZBF9": [
@@ -2902,6 +2920,12 @@
       "value": "執行歷程記錄"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -2948,6 +2972,12 @@
     {
       "type": 0,
       "value": "請輸入有效的字典"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3399,7 +3429,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "提供參數以測試輸出。"
     }
   ],
   "bzF/qn": [
@@ -3773,7 +3803,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "執行測試"
     }
   ],
   "gCXOd5": [
@@ -4464,7 +4494,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "重設"
     }
   ],
   "nTA155": [
@@ -4679,6 +4709,12 @@
       "value": "從提供的 XPath 運算式以 JSON 格式傳回 XML 節點、節點集或值"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4748,7 +4784,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "錯誤碼: {errorCode}，訊息: {message}。"
     }
   ],
   "qUWBUX": [
@@ -5455,7 +5491,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "值包含無法解析的函數運算式。僅支援常數值"
     }
   ],
   "yBrsFJ": [
@@ -5497,7 +5533,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "新增欄位"
     }
   ],
   "yxsn7s": [
@@ -5533,7 +5569,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "此運算式不需要任何輸入。"
     }
   ],
   "zBMVKg": [

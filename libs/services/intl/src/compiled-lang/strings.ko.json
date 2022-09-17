@@ -508,6 +508,12 @@
       "value": "(UTC+04:00) 트빌리시"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -541,7 +547,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "필수 매개 변수 "
     },
     {
       "type": 1,
@@ -549,7 +555,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": "이(가) 설정되지 않았거나 잘못되었습니다."
     }
   ],
   "3afjx+": [
@@ -573,7 +579,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "잘못된 json 형식입니다. 시작 "
     },
     {
       "type": 1,
@@ -581,7 +587,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " 또는 끝 "
     },
     {
       "type": 1,
@@ -589,7 +595,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "이(가) 없습니다."
     }
   ],
   "3kI7xF": [
@@ -841,7 +847,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "이 작업에 대한 매개 변수 \""
     },
     {
       "type": 1,
@@ -849,13 +855,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\"을(를) 찾을 수 없습니다."
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "필수 항목으로, 하위 문자열을 가져온 문자열입니다."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -915,7 +927,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "API 실행 오류 - "
     },
     {
       "type": 1,
@@ -1312,7 +1324,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "출력"
     }
   ],
   "CsPY74": [
@@ -1675,7 +1687,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "추가 진단 정보: x-ms-client-request-id는 {clientRequestId}입니다."
     }
   ],
   "HQ8/tk": [
@@ -1753,7 +1765,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "고급 옵션"
     }
   ],
   "Ip7Iax": [
@@ -2113,6 +2125,12 @@
       "value": "현재 타임스탬프를 문자열로 반환합니다."
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2320,7 +2338,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "기본값"
     }
   ],
   "P4rEwD": [
@@ -2332,7 +2350,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "입력"
     }
   ],
   "P8ZBF9": [
@@ -2902,6 +2920,12 @@
       "value": "실행 기록"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -2948,6 +2972,12 @@
     {
       "type": 0,
       "value": "유효한 디렉터리를 입력하세요."
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3395,7 +3425,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "출력을 테스트할 매개 변수를 제공합니다."
     }
   ],
   "bzF/qn": [
@@ -3765,7 +3795,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "테스트 실행"
     }
   ],
   "gCXOd5": [
@@ -4452,7 +4482,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "다시 설정"
     }
   ],
   "nTA155": [
@@ -4667,6 +4697,12 @@
       "value": "XML 노드, 노드 집합 또는 값을 제공된 XPath 식의 JSON으로 반환합니다."
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4736,7 +4772,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "오류 코드: {errorCode}, 메시지: {message}."
     }
   ],
   "qUWBUX": [
@@ -5439,7 +5475,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "값에 확인할 수 없는 함수 식이 포함되어 있습니다. 상수 값만 지원됨"
     }
   ],
   "yBrsFJ": [
@@ -5481,7 +5517,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "필드 추가"
     }
   ],
   "yxsn7s": [
@@ -5517,7 +5553,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "이 식에는 입력이 필요하지 않습니다."
     }
   ],
   "zBMVKg": [

@@ -530,6 +530,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -563,7 +569,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Parâmetros necessários "
     },
     {
       "type": 1,
@@ -571,7 +577,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " não definidos ou inválidos"
     }
   ],
   "3afjx+": [
@@ -595,7 +601,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Formato json inválido. Falta o início "
     },
     {
       "type": 1,
@@ -603,7 +609,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " ou final "
     },
     {
       "type": 1,
@@ -863,7 +869,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "O parâmetro \" "
     },
     {
       "type": 1,
@@ -871,13 +877,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" não pode ser encontrado para esta operação"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Necessário. A cadeia de caracteres da qual a subcadeia de caracteres é obtida."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -937,11 +949,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
-    },
-    {
-      "type": 1,
-      "value": "url"
+      "value": "Erro ao executar a API {url}."
     }
   ],
   "8CWFEh": [
@@ -1356,7 +1364,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Saída"
     }
   ],
   "CsPY74": [
@@ -1741,7 +1749,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Mais informações de diagnóstico: x-ms-client-request-id é {clientRequestId}."
     }
   ],
   "HQ8/tk": [
@@ -1819,7 +1827,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Opções avançadas"
     }
   ],
   "Ip7Iax": [
@@ -2201,6 +2209,12 @@
       "value": "Retorna o carimbo de data/hora atual como uma cadeia de caracteres"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2408,7 +2422,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Valor padrão"
     }
   ],
   "P4rEwD": [
@@ -2420,7 +2434,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Entrada"
     }
   ],
   "P8ZBF9": [
@@ -3012,6 +3026,12 @@
       "value": "Histórico de Execução"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3058,6 +3078,12 @@
     {
       "type": 0,
       "value": "Insira um dicionário válido"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3505,7 +3531,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Forneça parâmetros para testar a saída."
     }
   ],
   "bzF/qn": [
@@ -3879,7 +3905,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Executar teste"
     }
   ],
   "gCXOd5": [
@@ -4592,7 +4618,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Redefinir"
     }
   ],
   "nTA155": [
@@ -4807,6 +4833,12 @@
       "value": "Retorna um nó XML, um conjunto de nós ou um valor como JSON da expressão XPath fornecida"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4876,7 +4908,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Código de erro: {errorCode}, Mensagem: {message}."
     }
   ],
   "qUWBUX": [
@@ -5605,7 +5637,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "O valor contém expressões de função que não podem ser resolvidas. Somente valores constantes são suportados"
     }
   ],
   "yBrsFJ": [
@@ -5647,7 +5679,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Adicionar campo"
     }
   ],
   "yxsn7s": [
@@ -5683,7 +5715,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "Esta expressão não requer nenhuma entrada."
     }
   ],
   "zBMVKg": [

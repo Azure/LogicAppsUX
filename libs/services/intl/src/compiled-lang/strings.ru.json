@@ -557,6 +557,12 @@
       "value": "(UTC+04:00) Тбилиси"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -590,7 +596,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Обязательные параметры "
     },
     {
       "type": 1,
@@ -598,7 +604,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " не настроены или недопустимы"
     }
   ],
   "3afjx+": [
@@ -890,7 +896,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Не удается найти параметр \""
     },
     {
       "type": 1,
@@ -898,13 +904,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" для этой операции"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Обязательное поле. Строка, из которой извлекается подстрока."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -980,7 +992,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Ошибка при выполнении API — "
     },
     {
       "type": 1,
@@ -1426,7 +1438,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Выходные данные"
     }
   ],
   "CsPY74": [
@@ -1830,7 +1842,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Дополнительные диагностические сведения: x-ms-client-request-id — \""
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "HQ8/tk": [
@@ -1908,7 +1928,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Расширенные параметры"
     }
   ],
   "Ip7Iax": [
@@ -2325,6 +2345,12 @@
       "value": "Возвращает текущую метку времени в виде строки"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2548,7 +2574,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Значение по умолчанию"
     }
   ],
   "P4rEwD": [
@@ -2560,7 +2586,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Ввод"
     }
   ],
   "P8ZBF9": [
@@ -3163,6 +3189,12 @@
       "value": "Журнал запусков"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3209,6 +3241,12 @@
     {
       "type": 0,
       "value": "Введите допустимый словарь"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -4030,7 +4068,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Запустить тест"
     }
   ],
   "gCXOd5": [
@@ -4790,7 +4828,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Сброс"
     }
   ],
   "nTA155": [
@@ -5005,6 +5043,12 @@
       "value": "Возвращает узел XML, набор узлов или значение JSON из предоставленного выражения XPath"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -5074,7 +5118,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Код ошибки: \""
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "\", сообщение: \""
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "qUWBUX": [
@@ -5814,7 +5874,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Значение содержит выражения функций, которые невозможно разрешить. Поддерживаются только постоянные значения"
     }
   ],
   "yBrsFJ": [
@@ -5856,7 +5916,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Добавить поле"
     }
   ],
   "yxsn7s": [
