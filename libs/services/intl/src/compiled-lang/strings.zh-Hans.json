@@ -528,6 +528,12 @@
       "value": "(UTC+04:00)第比利斯"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -876,6 +882,12 @@
     {
       "type": 0,
       "value": "必需。要从中获取子字符串的字符串。"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -1364,7 +1376,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "输出"
     }
   ],
   "CsPY74": [
@@ -1805,7 +1817,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "高级选项"
     }
   ],
   "Ip7Iax": [
@@ -2185,6 +2197,12 @@
       "value": "以字符串形式返回当前时间戳"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2408,7 +2426,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "默认值"
     }
   ],
   "P4rEwD": [
@@ -2420,7 +2438,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "输入"
     }
   ],
   "P8ZBF9": [
@@ -2990,6 +3008,12 @@
       "value": "运行历史记录"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3040,6 +3064,12 @@
     {
       "type": 0,
       "value": "请输入有效的字典"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3865,7 +3895,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "运行测试"
     }
   ],
   "gCXOd5": [
@@ -4584,7 +4614,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "重置"
     }
   ],
   "nTA155": [
@@ -4805,6 +4835,12 @@
     {
       "type": 0,
       "value": "从提供 XPath 表达式返回 XML 节点、节点集或 JSON 形式的值"
+    }
+  ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
     }
   ],
   "q2OCEx": [
@@ -5625,7 +5661,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "添加字段"
     }
   ],
   "yxsn7s": [

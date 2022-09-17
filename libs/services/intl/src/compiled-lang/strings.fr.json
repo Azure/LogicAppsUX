@@ -546,6 +546,12 @@
       "value": "(UTC+04:00) Tbilissi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -894,6 +900,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne dont la sous-chaîne est extraite."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -1404,7 +1416,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Sortie"
     }
   ],
   "CsPY74": [
@@ -1867,7 +1879,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Options avancées"
     }
   ],
   "Ip7Iax": [
@@ -2080,7 +2092,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Supprimer le graphique de flux de travail"
     }
   ],
   "LCUU5q": [
@@ -2263,6 +2275,12 @@
     {
       "type": 0,
       "value": "Retourne l'horodateur actuel en tant que chaîne"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "Mb+Eaq": [
@@ -2488,7 +2506,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Valeur par défaut"
     }
   ],
   "P4rEwD": [
@@ -2500,7 +2518,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Entrée"
     }
   ],
   "P8ZBF9": [
@@ -2700,7 +2718,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Les déclencheurs ne peuvent pas être supprimés."
     }
   ],
   "RFjYpH": [
@@ -2993,7 +3011,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Supprimer l’action de flux de travail"
     }
   ],
   "UHCVNK": [
@@ -3092,6 +3110,12 @@
       "value": "Historique d’exécution"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3138,6 +3162,12 @@
     {
       "type": 0,
       "value": "Entrez un dictionnaire valide"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3959,7 +3989,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Exécuter le test"
     }
   ],
   "gCXOd5": [
@@ -4182,7 +4212,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Voulez-vous vraiment supprimer "
     },
     {
       "type": 1,
@@ -4190,7 +4220,7 @@
     },
     {
       "type": 0,
-      "value": "?"
+      "value": " ?"
     }
   ],
   "iJOIca": [
@@ -4688,7 +4718,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Réinitialiser"
     }
   ],
   "nTA155": [
@@ -4901,6 +4931,12 @@
     {
       "type": 0,
       "value": "Retourne un nœud XML, un jeu de nœuds ou une valeur au format JSON à partir de l'expression XPath fournie"
+    }
+  ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
     }
   ],
   "q2OCEx": [
@@ -5743,7 +5779,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Ajouter un champ"
     }
   ],
   "yxsn7s": [
@@ -5773,7 +5809,7 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Cette opération supprime également toutes les étapes enfants."
     }
   ],
   "zBBJuL": [

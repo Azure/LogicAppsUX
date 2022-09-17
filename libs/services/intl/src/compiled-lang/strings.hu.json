@@ -535,6 +535,12 @@
       "value": "(UTC+04:00) Tbiliszi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -568,7 +574,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "A kötelező "
     },
     {
       "type": 1,
@@ -576,7 +582,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " paraméterek nincsenek beállítva vagy érvénytelenek"
     }
   ],
   "3afjx+": [
@@ -868,7 +874,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "A(z) "
     },
     {
       "type": 1,
@@ -876,13 +882,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": " paraméter nem található ehhez a művelethez"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Kötelező megadni. Az a sztring, amelyből a sztringrész származik."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -958,7 +970,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Hiba történt az API végrehajtása közben – "
     },
     {
       "type": 1,
@@ -1382,7 +1394,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Kimenet"
     }
   ],
   "CsPY74": [
@@ -1764,7 +1776,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "További diagnosztikai információ: az x-mS-client-request-id: "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HQ8/tk": [
@@ -1842,7 +1862,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Speciális beállítások"
     }
   ],
   "Ip7Iax": [
@@ -2237,6 +2257,12 @@
       "value": "Az aktuális időbélyeget adja vissza sztringként."
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2460,7 +2486,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Alapértelmezett érték"
     }
   ],
   "P4rEwD": [
@@ -2472,7 +2498,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Bemenet"
     }
   ],
   "P8ZBF9": [
@@ -3057,6 +3083,12 @@
       "value": "Futtatási előzmények"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3103,6 +3135,12 @@
     {
       "type": 0,
       "value": "Adjon meg egy érvényes tulajdonságtárat"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3928,7 +3966,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Teszt futtatása"
     }
   ],
   "gCXOd5": [
@@ -4658,7 +4696,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Alaphelyzet"
     }
   ],
   "nTA155": [
@@ -4873,6 +4911,12 @@
       "value": "Egy XML-csomópontot, -csomópontkészlet vagy értéket ad vissza JSON formájában a megadott XPath-kifejezés alapján"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4942,7 +4986,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Hibakód: "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": ", üzenet: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "qUWBUX": [
@@ -5660,7 +5720,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Az érték olyan függvénykifejezéseket tartalmaz, amelyek nem oldhatók fel. Csak konstans értékek támogatottak"
     }
   ],
   "yBrsFJ": [
@@ -5702,7 +5762,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Mező hozzáadása"
     }
   ],
   "yxsn7s": [

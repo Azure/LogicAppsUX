@@ -530,6 +530,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -563,7 +569,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "I parametri obbligatori "
     },
     {
       "type": 1,
@@ -571,7 +577,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " non sono impostati o non sono validi"
     }
   ],
   "3afjx+": [
@@ -863,7 +869,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Parametro \" "
     },
     {
       "type": 1,
@@ -871,13 +877,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "> non è stato trovato per questa operazione"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Obbligatorio. Stringa da cui viene recuperata la sottostringa."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -937,7 +949,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Errore durante l'esecuzione dell'API - "
     },
     {
       "type": 1,
@@ -1741,7 +1753,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Altre informazioni di diagnostica: x-ms-client-request-id è {clientRequestId}."
     }
   ],
   "HQ8/tk": [
@@ -1819,7 +1831,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Opzioni avanzate"
     }
   ],
   "Ip7Iax": [
@@ -2201,6 +2213,12 @@
       "value": "Restituisce il timestamp corrente in formato stringa"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2416,7 +2434,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Valore predefinito"
     }
   ],
   "P4rEwD": [
@@ -3020,6 +3038,12 @@
       "value": "Cronologia esecuzioni"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3066,6 +3090,12 @@
     {
       "type": 0,
       "value": "Immetti un dizionario valido"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3887,7 +3917,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Esegui test"
     }
   ],
   "gCXOd5": [
@@ -4600,7 +4630,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Reimposta"
     }
   ],
   "nTA155": [
@@ -4815,6 +4845,12 @@
       "value": "Restituisce un valore, un set di nodi o un nodo XML come JSON dall'espressione XPath specificata"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4884,7 +4920,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Codice di errore: {errorCode}, messaggio: {message}."
     }
   ],
   "qUWBUX": [
@@ -5613,7 +5649,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Il valore contiene espressioni di funzione che non possono essere risolte. Sono supportati solo valori costanti"
     }
   ],
   "yBrsFJ": [
@@ -5655,7 +5691,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Aggiungi campo"
     }
   ],
   "yxsn7s": [

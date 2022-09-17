@@ -535,6 +535,12 @@
       "value": "(UTC+04:00) Tiflis"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -568,7 +574,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Erforderliche Parameter "
     },
     {
       "type": 1,
@@ -576,7 +582,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " nicht festgelegt oder ungültig"
     }
   ],
   "3afjx+": [
@@ -868,7 +874,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Der Parameter \""
     },
     {
       "type": 1,
@@ -876,13 +882,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" wurde für diesen Vorgang nicht gefunden"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, aus der die Teilzeichenfolge entnommen wird."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -958,7 +970,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Fehler beim Ausführen der API : "
     },
     {
       "type": 1,
@@ -1382,7 +1394,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Ausgabe"
     }
   ],
   "CsPY74": [
@@ -1764,7 +1776,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Weitere Diagnoseinformationen: x-ms-client-request-id ist \""
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "HQ8/tk": [
@@ -1842,7 +1862,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Erweiterte Optionen"
     }
   ],
   "Ip7Iax": [
@@ -2237,6 +2257,12 @@
       "value": "Gibt den aktuellen Zeitstempel als Zeichenfolge zurück."
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2460,7 +2486,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Standardwert"
     }
   ],
   "P4rEwD": [
@@ -2472,7 +2498,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Eingabe"
     }
   ],
   "P8ZBF9": [
@@ -3057,6 +3083,12 @@
       "value": "Ausführungsverlauf"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3103,6 +3135,12 @@
     {
       "type": 0,
       "value": "Bitte geben Sie ein gültiges Wörterbuch ein"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3928,7 +3966,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Test ausführen"
     }
   ],
   "gCXOd5": [
@@ -4654,7 +4692,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Zurücksetzen"
     }
   ],
   "nTA155": [
@@ -4869,6 +4907,12 @@
       "value": "Gibt einen XML-Knoten, einen Knotensatz oder Wert in JSON-Schreibweise aus dem angegebenen XPath-Ausdruck zurück."
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4938,7 +4982,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Fehlercode: {errorCode}, Meldung: {message}."
     }
   ],
   "qUWBUX": [
@@ -5656,7 +5700,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Der Wert enthält Funktionsausdrücke, die nicht aufgelöst werden können. Es werden nur konstante Werte unterstützt"
     }
   ],
   "yBrsFJ": [
@@ -5698,7 +5742,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Feld hinzufügen"
     }
   ],
   "yxsn7s": [

@@ -508,6 +508,12 @@
       "value": "(UTC+04.00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -541,7 +547,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Parameter yang diperlukan "
     },
     {
       "type": 1,
@@ -549,7 +555,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " tidak diatur atau tidak valid"
     }
   ],
   "3afjx+": [
@@ -849,13 +855,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" tidak dapat ditemukan untuk operasi ini"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Harus diisi. String dari substring yang diambil."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -915,7 +927,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Kesalahan saat menjalankan API - "
     },
     {
       "type": 1,
@@ -1675,7 +1687,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Informasi diagnostik lainnya: x-ms-client-request-id adalah {clientRequestId}."
     }
   ],
   "HQ8/tk": [
@@ -1753,7 +1765,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Opsi tingkat lanjut"
     }
   ],
   "Ip7Iax": [
@@ -2113,6 +2125,12 @@
       "value": "Menampilkan tanda waktu saat ini sebagai string"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2320,7 +2338,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Nilai default"
     }
   ],
   "P4rEwD": [
@@ -2902,6 +2920,12 @@
       "value": "Riwayat Eksekusi"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -2948,6 +2972,12 @@
     {
       "type": 0,
       "value": "Masukkan kamus yang valid"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -3769,7 +3799,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Jalankan pengujian"
     }
   ],
   "gCXOd5": [
@@ -4460,7 +4490,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Atur ulang"
     }
   ],
   "nTA155": [
@@ -4675,6 +4705,12 @@
       "value": "Menghasilkan node XML, kumpulan node atau nilai sebagai JSON dari ekspresi JalurX yang disediakan"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4744,7 +4780,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Kode kesalahan: {errorCode}, Pesan: {message}."
     }
   ],
   "qUWBUX": [
@@ -5451,7 +5487,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Nilai berisi ekspresi fungsi yang tidak dapat diatasi. Hanya nilai konstanta yang didukung"
     }
   ],
   "yBrsFJ": [
@@ -5493,7 +5529,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Tambah bidang"
     }
   ],
   "yxsn7s": [

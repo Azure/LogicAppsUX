@@ -565,6 +565,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -598,7 +604,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Požadované parametry "
     },
     {
       "type": 1,
@@ -606,7 +612,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " nejsou nastavené nebo jsou neplatné."
     }
   ],
   "3afjx+": [
@@ -898,7 +904,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Parametr "
     },
     {
       "type": 1,
@@ -906,13 +912,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": " nelze pro tuto operaci najít."
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, ze kterého se má získat podřetězec."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -984,7 +996,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Chyba při provádění rozhraní API – "
     },
     {
       "type": 1,
@@ -1430,7 +1442,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Výstup"
     }
   ],
   "CsPY74": [
@@ -1834,7 +1846,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Další diagnostické informace: x-ms-client-request-id je "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HQ8/tk": [
@@ -1912,7 +1932,7 @@
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Upřesnit možnosti"
     }
   ],
   "Ip7Iax": [
@@ -2136,7 +2156,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Odstranit graf pracovního postupu"
     }
   ],
   "LCUU5q": [
@@ -2331,6 +2351,12 @@
     {
       "type": 0,
       "value": "Vrátí aktuální časové razítko jako řetězec."
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "Mb+Eaq": [
@@ -2556,7 +2582,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Výchozí hodnota"
     }
   ],
   "P4rEwD": [
@@ -2568,7 +2594,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Vstup"
     }
   ],
   "P8ZBF9": [
@@ -2768,7 +2794,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Aktivační události nelze odstranit."
     }
   ],
   "RFjYpH": [
@@ -3072,7 +3098,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Odstranit akci pracovního postupu"
     }
   ],
   "UHCVNK": [
@@ -3171,6 +3197,12 @@
       "value": "Historie spuštění"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3217,6 +3249,12 @@
     {
       "type": 0,
       "value": "Zadejte prosím platný slovník."
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -4038,7 +4076,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Spustit test"
     }
   ],
   "gCXOd5": [
@@ -4276,7 +4314,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Opravdu chcete odstranit uzel "
     },
     {
       "type": 1,
@@ -4782,7 +4820,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Resetovat"
     }
   ],
   "nTA155": [
@@ -4997,6 +5035,12 @@
       "value": "Vrátí ze zadaného výrazu XPath uzel XML, sadu uzlů nebo hodnotu jako JSON."
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -5066,7 +5110,19 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Kód chyby: "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": ", zpráva: "
+    },
+    {
+      "type": 1,
+      "value": "message"
     }
   ],
   "qUWBUX": [
@@ -5806,7 +5862,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Hodnota obsahuje výrazy funkce, které nelze přeložit. Podporovány jsou pouze konstantní hodnoty."
     }
   ],
   "yBrsFJ": [
@@ -5848,7 +5904,7 @@
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Přidat pole"
     }
   ],
   "yxsn7s": [
@@ -5878,7 +5934,7 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Tato akce také odebere všechny podřízené kroky."
     }
   ],
   "zBBJuL": [
