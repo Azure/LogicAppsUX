@@ -997,7 +997,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "不支援的權杖類型: "
     },
     {
       "type": 1,
@@ -2052,7 +2052,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "程式碼檢視"
     }
   ],
   "M48CGd": [
@@ -3061,7 +3061,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "不支援的權杖類型: "
     },
     {
       "type": 1,
@@ -3363,7 +3363,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "不支援的權杖類型: "
     },
     {
       "type": 1,
@@ -3731,7 +3731,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "不支援的程式設計語言。"
     }
   ],
   "f/lWTW": [

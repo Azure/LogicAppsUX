@@ -585,7 +585,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Os parâmetros necessários "
     },
     {
       "type": 1,
@@ -593,7 +593,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " não foram definidos ou são inválidos"
     }
   ],
   "3afjx+": [
@@ -885,7 +885,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Parâmetro \""
     },
     {
       "type": 1,
@@ -893,7 +893,7 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" não é possível encontrar esta operação"
     }
   ],
   "7QymrD": [
@@ -981,7 +981,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Erro ao executar a API - "
     },
     {
       "type": 1,
@@ -1051,7 +1051,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tipo de Token Não Suportado: "
     },
     {
       "type": 1,
@@ -1809,7 +1809,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Mais informações de diagnóstico: x-ms-client-request-id é \""
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "HQ8/tk": [
@@ -2220,7 +2228,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Vista de código"
     }
   ],
   "M48CGd": [
@@ -3267,7 +3275,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tipo de Token Não Suportado: "
     },
     {
       "type": 1,
@@ -3569,7 +3577,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tipo de Token Não Suportado: "
     },
     {
       "type": 1,
@@ -3933,7 +3941,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Linguagem de programação não suportada."
     }
   ],
   "f/lWTW": [
@@ -5040,7 +5048,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Código de erro: \""
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "\", Mensagem: \""
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "qUWBUX": [
@@ -5769,7 +5793,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "O valor contém expressões de função que não podem ser resolvidas. Apenas são suportados valores constantes"
     }
   ],
   "yBrsFJ": [

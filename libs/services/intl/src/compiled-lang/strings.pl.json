@@ -644,7 +644,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Nieprawidłowy format JSON. Brak początku "
     },
     {
       "type": 1,
@@ -652,7 +652,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " lub zakończenia "
     },
     {
       "type": 1,
@@ -2288,7 +2288,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Widok kodu"
     }
   ],
   "M48CGd": [
@@ -3710,7 +3710,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Podaj parametry do testowania danych wyjściowych."
     }
   ],
   "bzF/qn": [
@@ -4012,7 +4012,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Nieobsługiwany język programowania."
     }
   ],
   "f/lWTW": [
@@ -5964,7 +5964,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "To wyrażenie nie wymaga żadnych danych wejściowych."
     }
   ],
   "zBMVKg": [

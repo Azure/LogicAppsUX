@@ -628,7 +628,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Недопустимый формат JSON. Отсутствует начало "
     },
     {
       "type": 1,
@@ -636,7 +636,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " или окончание "
     },
     {
       "type": 1,
@@ -1062,7 +1062,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Неподдерживаемый тип токена: "
     },
     {
       "type": 1,
@@ -2272,7 +2272,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Представление кода"
     }
   ],
   "M48CGd": [
@@ -3330,7 +3330,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Неподдерживаемый тип токена: "
     },
     {
       "type": 1,
@@ -3632,7 +3632,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Неподдерживаемый тип токена: "
     },
     {
       "type": 1,
@@ -3694,7 +3694,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Укажите параметры для проверки выходных данных."
     }
   ],
   "bzF/qn": [
@@ -3996,7 +3996,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Неподдерживаемый язык программирования."
     }
   ],
   "f/lWTW": [
@@ -5952,7 +5952,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "Для этого выражения не требуются входные данные."
     }
   ],
   "zBMVKg": [

@@ -585,7 +585,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Paramètres obligatoires "
     },
     {
       "type": 1,
@@ -593,7 +593,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " non définis ou non valides"
     }
   ],
   "3afjx+": [
@@ -617,23 +617,23 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Format JSON non valide. Début "
     },
     {
       "type": 1,
-      "value": "openingBracket"
+      "value": "openingBracst"
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " ou fin "
     },
     {
       "type": 1,
-      "value": "closingBracket"
+      "value": "closingBraflt"
     },
     {
       "type": 0,
-      "value": "."
+      "value": " manquants."
     }
   ],
   "3kI7xF": [
@@ -885,7 +885,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Le paramètre « "
     },
     {
       "type": 1,
@@ -893,7 +893,7 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": " » est introuvable pour cette opération"
     }
   ],
   "7QymrD": [
@@ -981,7 +981,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Erreur lors de l’exécution de l’API - "
     },
     {
       "type": 1,
@@ -1801,7 +1801,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Informations de diagnostic supplémentaires : x-ms-client-request-id est « "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": " »."
     }
   ],
   "HQ8/tk": [
@@ -2204,7 +2212,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Mode Code"
     }
   ],
   "M48CGd": [
@@ -3615,7 +3623,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Fournissez des paramètres pour tester la sortie."
     }
   ],
   "bzF/qn": [
@@ -3917,7 +3925,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Langage de programmation non pris en charge."
     }
   ],
   "f/lWTW": [
@@ -5008,7 +5016,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Code d’erreur : « "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": " », Message : « "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": " »."
     }
   ],
   "qUWBUX": [
@@ -5737,7 +5761,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "La valeur contient des expressions de fonction qui ne peuvent pas être résolues. Seules les valeurs constantes sont prises en charge"
     }
   ],
   "yBrsFJ": [
@@ -5815,7 +5839,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "Cette expression ne nécessite aucune entrée."
     }
   ],
   "zBMVKg": [
