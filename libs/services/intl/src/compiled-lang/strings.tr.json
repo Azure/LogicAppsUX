@@ -558,7 +558,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Gerekli "
     },
     {
       "type": 1,
@@ -566,7 +566,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " parametreleri ayarlanmadı veya geçersiz"
     }
   ],
   "3afjx+": [
@@ -858,7 +858,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Bu işlem için \""
     },
     {
       "type": 1,
@@ -866,7 +866,7 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" parametresi bulunamadı"
     }
   ],
   "7QymrD": [
@@ -938,7 +938,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "API yürütülürken hata oluştu - "
     },
     {
       "type": 1,
@@ -1720,7 +1720,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Daha fazla tanılama bilgisi: x-ms-client-request-id is {clientRequestId}."
     }
   ],
   "HQ8/tk": [
@@ -2096,7 +2096,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Kod görünümü"
     }
   ],
   "M48CGd": [
@@ -3778,7 +3778,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Desteklenmeyen programlama dili."
     }
   ],
   "f/lWTW": [
@@ -4838,7 +4838,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Hata kodu: {errorCode}, İleti: {message}."
     }
   ],
   "qUWBUX": [
@@ -5552,7 +5552,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Değer çözümlenemeyen işlev ifadeleri içeriyor. Yalnızca sabit değerler desteklenir"
     }
   ],
   "yBrsFJ": [

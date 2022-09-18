@@ -567,7 +567,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "所需参数 "
     },
     {
       "type": 1,
@@ -575,7 +575,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " 未设置或无效"
     }
   ],
   "3afjx+": [
@@ -599,7 +599,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "json 格式无效。缺少开始 "
     },
     {
       "type": 1,
@@ -607,7 +607,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " 或结束 "
     },
     {
       "type": 1,
@@ -615,7 +615,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "。"
     }
   ],
   "3kI7xF": [
@@ -867,7 +867,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "此操作找不到参数 \""
     },
     {
       "type": 1,
@@ -875,7 +875,7 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\""
     }
   ],
   "7QymrD": [
@@ -963,7 +963,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "执行 API 时出错 - "
     },
     {
       "type": 1,
@@ -1033,7 +1033,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "不支持的令牌类型: "
     },
     {
       "type": 1,
@@ -1739,7 +1739,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "更多诊断信息: x-ms-client-request-id 为 \""
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "\"。"
     }
   ],
   "HQ8/tk": [
@@ -2120,7 +2128,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "代码视图"
     }
   ],
   "M48CGd": [
@@ -3153,7 +3161,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "不支持的令牌类型: "
     },
     {
       "type": 1,
@@ -3455,7 +3463,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "不支持的令牌类型: "
     },
     {
       "type": 1,
@@ -3521,7 +3529,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "提供参数以测试输出。"
     }
   ],
   "bzF/qn": [
@@ -3823,7 +3831,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "不支持的编程语言。"
     }
   ],
   "f/lWTW": [
@@ -4912,7 +4920,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "错误代码: \""
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "\"，消息: \""
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "\"。"
     }
   ],
   "qUWBUX": [
@@ -5619,7 +5643,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "值包含无法解析的函数表达式。仅支持常量值"
     }
   ],
   "yBrsFJ": [
@@ -5697,7 +5721,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "此表达式不需要任何输入。"
     }
   ],
   "zBMVKg": [

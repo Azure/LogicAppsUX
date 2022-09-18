@@ -636,23 +636,23 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Neplatný formát JSON. Chybí "
     },
     {
       "type": 1,
-      "value": "openingBracket"
+      "value": "openingBrahornt"
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " na začátku nebo "
     },
     {
       "type": 1,
-      "value": "closingBracket"
+      "value": "closingBrahornt"
     },
     {
       "type": 0,
-      "value": "."
+      "value": " na konci."
     }
   ],
   "3kI7xF": [
@@ -1066,7 +1066,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nepodporovaný typ tokenu: "
     },
     {
       "type": 1,
@@ -2276,7 +2276,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Zobrazení kódu"
     }
   ],
   "M48CGd": [
@@ -3338,7 +3338,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nepodporovaný typ tokenu: "
     },
     {
       "type": 1,
@@ -3640,7 +3640,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nepodporovaný typ tokenu: "
     },
     {
       "type": 1,
@@ -3702,7 +3702,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Zadejte parametry pro otestování výstupu."
     }
   ],
   "bzF/qn": [
@@ -4004,7 +4004,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Nepodporovaný programovací jazyk."
     }
   ],
   "f/lWTW": [
@@ -5940,7 +5940,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "Tento výraz nevyžaduje žádný vstup."
     }
   ],
   "zBMVKg": [

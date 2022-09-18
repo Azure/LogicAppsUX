@@ -574,7 +574,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Vereiste parameters "
     },
     {
       "type": 1,
@@ -582,7 +582,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " zijn niet ingesteld of ongeldig"
     }
   ],
   "3afjx+": [
@@ -606,19 +606,19 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Ongeldige json-indeling. Begin van "
     },
     {
       "type": 1,
-      "value": "openingBracket"
+      "value": "openingBrarollt"
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " ontbreekt of eindigt op "
     },
     {
       "type": 1,
-      "value": "closingBracket"
+      "value": "closingBrarollt"
     },
     {
       "type": 0,
@@ -874,7 +874,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Kan parameter "
     },
     {
       "type": 1,
@@ -882,7 +882,7 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": " niet vinden voor deze bewerking"
     }
   ],
   "7QymrD": [
@@ -970,7 +970,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Fout bij het uitvoeren van de API - "
     },
     {
       "type": 1,
@@ -1776,7 +1776,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Meer diagnostische informatie: x-ms-client-request-id is "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HQ8/tk": [
@@ -2172,7 +2180,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Codeweergave"
     }
   ],
   "M48CGd": [
@@ -3572,7 +3580,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Geef parameters op om de uitvoer te testen."
     }
   ],
   "bzF/qn": [
@@ -3874,7 +3882,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Niet-ondersteunde programmeertaal."
     }
   ],
   "f/lWTW": [
@@ -4962,7 +4970,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Foutcode: "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": ", bericht: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "qUWBUX": [
@@ -5680,7 +5704,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "De waarde bevat functie-expressies die niet kunnen worden omgezet. Alleen constante waarden worden ondersteund"
     }
   ],
   "yBrsFJ": [
@@ -5758,7 +5782,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "Voor deze expressie is geen invoer vereist."
     }
   ],
   "zBMVKg": [

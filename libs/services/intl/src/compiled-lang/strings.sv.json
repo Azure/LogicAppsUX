@@ -606,7 +606,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Ogiltigt json-format. Start-"
     },
     {
       "type": 1,
@@ -614,7 +614,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " eller slut-"
     },
     {
       "type": 1,
@@ -622,7 +622,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " saknas."
     }
   ],
   "3kI7xF": [
@@ -2180,7 +2180,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Kodvy"
     }
   ],
   "M48CGd": [
@@ -3580,7 +3580,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Ange parametrar för att testa utdata."
     }
   ],
   "bzF/qn": [
@@ -3882,7 +3882,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Programmeringsspråket stöds inte."
     }
   ],
   "f/lWTW": [
@@ -5782,7 +5782,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "Det här uttrycket kräver inga indata."
     }
   ],
   "zBMVKg": [

@@ -606,7 +606,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Érvénytelen json-formátum. Hiányzik az elejéről a(z) "
     },
     {
       "type": 1,
@@ -614,7 +614,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " vagy a végéről a(z) "
     },
     {
       "type": 1,
@@ -2184,7 +2184,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Kódnézet"
     }
   ],
   "M48CGd": [
@@ -3592,7 +3592,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Adja meg a paramétereket a kimenet teszteléséhez."
     }
   ],
   "bzF/qn": [
@@ -3894,7 +3894,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "A programozási nyelv nem támogatott."
     }
   ],
   "f/lWTW": [
@@ -4696,7 +4696,7 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Alaphelyzet"
+      "value": "Alaphelyzetbe állítás"
     }
   ],
   "nTA155": [
@@ -5798,7 +5798,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "Ez a kifejezés nem igényel bemenetet."
     }
   ],
   "zBMVKg": [
