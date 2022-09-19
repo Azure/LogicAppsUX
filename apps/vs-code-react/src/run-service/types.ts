@@ -10,10 +10,9 @@ export interface IRunService {
 }
 
 export interface IApiService {
-  getWorkflows(subscriptionId: string, iseId?: string, location?: string): Promise<WorkflowsList[]>;
+  getWorkflows(subscriptionId: string, iseId: string): Promise<any>;
   getSubscriptions(): Promise<any>;
   getIse(selectedSubscription: string): Promise<any>;
-  getRegions(subscriptionId: string): Promise<IRegion[]>;
   validateWorkflows(
     selectedWorkflows: Array<WorkflowsList>,
     selectedSubscription: string,
@@ -180,7 +179,6 @@ export interface Workflow {
 export interface GraphApiOptions {
   selectedSubscription?: string;
   selectedIse?: string;
-  location?: string;
   skipToken?: string;
 }
 
@@ -206,7 +204,6 @@ export enum QueryKeys {
   subscriptionData = 'subscriptionData',
   runsData = 'runsData',
   iseData = 'iseData',
-  regionData = 'regionData',
   validation = 'validation',
   summary = 'summary',
   resourceGroupsData = 'resourceGroupsData',
@@ -227,7 +224,7 @@ export interface ManagedConnections {
 export type ExportData = {
   selectedWorkflows: Array<WorkflowsList>;
   selectedSubscription: string;
-  selectedIse?: string;
+  selectedIse: string;
   location: string;
   validationState: string;
   targetDirectory: ITargetDirectory;
@@ -249,12 +246,6 @@ export interface IIse {
   iseName: string;
   location: string;
   resourceGroup: string;
-}
-
-export interface IRegion {
-  name: string;
-  displayName: string;
-  count: number;
 }
 
 export interface IDropDownOption {

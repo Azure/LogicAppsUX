@@ -1,6 +1,18 @@
-import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
+import type { WorkflowsList, SelectedWorkflowsList, Workflow } from '../../../run-service';
 import { AdvancedOptionsTypes } from '../../../run-service';
 import type { IDropdownOption } from '@fluentui/react';
+
+export const parseWorkflowData = (workflows: Workflow[]): Array<WorkflowsList> => {
+  return workflows.map((workflow: Workflow) => {
+    const { name, id, resourceGroup } = workflow;
+
+    return {
+      key: id,
+      name,
+      resourceGroup,
+    };
+  });
+};
 
 export const parseResourceGroups = (workflowItems: Array<WorkflowsList>): IDropdownOption[] => {
   const resourceGroups: Array<string> = workflowItems.reduce((acc: Array<string>, curr: WorkflowsList): Array<string> => {

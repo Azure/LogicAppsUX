@@ -1,11 +1,11 @@
 import { QueryKeys } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import type { AppDispatch, RootState } from '../../../state/store';
-import { updateSelectedLocation, updateSelectedSubscripton } from '../../../state/vscodeSlice';
+import { updateSelectedIse, updateSelectedSubscripton } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { SearchableDropdown } from '../../components/searchableDropdown';
-import { getDropdownPlaceholder, parseIseData, parseRegionData, parseSubscriptionsData } from './helper';
-import { Text, DropdownMenuItemType } from '@fluentui/react';
+import { getDropdownPlaceholder, parseIseData, parseSubscriptionsData } from './helper';
+import { Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -15,20 +15,12 @@ import { useDispatch, useSelector } from 'react-redux';
 export const InstanceSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse, location } = exportData;
+  const { selectedSubscription, selectedIse } = exportData;
 
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
 
   const intlText = {
-    DIVIDER_REGIONS: intl.formatMessage({
-      defaultMessage: 'Regions',
-      description: 'Divider title for azure regions',
-    }),
-    DIVIDER_ISE: intl.formatMessage({
-      defaultMessage: 'Integration service environments',
-      description: 'Divider title for ISE',
-    }),
     SELECT_TITLE: intl.formatMessage({
       defaultMessage: 'Select logic app instance',
       description: 'Select logic app instance title',
@@ -41,9 +33,9 @@ export const InstanceSelection: React.FC = () => {
       defaultMessage: 'Select a subscription',
       description: 'Select a subscription',
     }),
-    SELECTION_LOCATION: intl.formatMessage({
-      defaultMessage: 'Select a region or an integration service environment (ISE) instance',
-      description: 'Select a region or an ISE instance',
+    SELECTION_ISE: intl.formatMessage({
+      defaultMessage: 'Select an integration service environment (ISE) instance',
+      description: 'Select an ISE instance',
     }),
     SELECT_OPTION: intl.formatMessage({
       defaultMessage: 'Select an option',
@@ -53,17 +45,17 @@ export const InstanceSelection: React.FC = () => {
       defaultMessage: 'No subscriptions available',
       description: 'No subscriptions available',
     }),
-    EMPTY_LOCATION: intl.formatMessage({
-      defaultMessage: 'No regions and integration service environment (ISE) instances available',
-      description: 'No regions and ISE instances available text',
+    EMPTY_ISE: intl.formatMessage({
+      defaultMessage: 'No integration service environment (ISE) instances available',
+      description: 'No ISE instances available text',
     }),
     SEARCH_SUBSCRIPTION: intl.formatMessage({
       defaultMessage: 'Find and select subscription',
       description: 'Find and select subscription text',
     }),
-    SEARCH_LOCATION: intl.formatMessage({
-      defaultMessage: 'Find and select region or integration service environment (ISE)',
-      description: 'Find region or ISE text',
+    SEARCH_ISE: intl.formatMessage({
+      defaultMessage: 'Find and select integration service environment (ISE)',
+      description: 'Find ISE text',
     }),
     LOADING: intl.formatMessage({
       defaultMessage: 'Loading...',
@@ -86,23 +78,10 @@ export const InstanceSelection: React.FC = () => {
     return apiService.getIse(selectedSubscription);
   };
 
-  const loadRegion = () => {
-    return apiService.getRegions(selectedSubscription);
-  };
-
   const { data: subscriptionsData, isLoading: isSubscriptionsLoading } = useQuery<any>(QueryKeys.subscriptionData, loadSubscriptions, {
     refetchOnWindowFocus: false,
     enabled: accessToken !== undefined,
     retry: 4,
-  });
-
-  const {
-    data: regionData,
-    isLoading: isRegionLoading,
-    refetch: refetchRegion,
-  } = useQuery<any>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
-    refetchOnWindowFocus: false,
-    enabled: selectedSubscription !== '',
   });
 
   const {
@@ -123,45 +102,24 @@ export const InstanceSelection: React.FC = () => {
         })
       );
       refetchIse();
-      refetchRegion();
     }
   };
 
-  const onChangeLocation = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
+  const onChangeIse = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption) {
-      console.log(JSON.stringify(selectedOption));
-      const key = selectedOption.key as string;
-      if (key.startsWith('ise:')) {
-        dispatch(
-          updateSelectedLocation({
-            selectedIse: key.substring('ise:'.length),
-            location: selectedOption.data,
-          })
-        );
-      } else {
-        dispatch(
-          updateSelectedLocation({
-            selectedIse: '',
-            location: selectedOption.data,
-          })
-        );
-      }
+      const iseId = selectedOption.key as string;
+      dispatch(
+        updateSelectedIse({
+          selectedIse: iseId,
+          location: selectedOption.data,
+        })
+      );
     }
   };
 
   const subscriptions: IDropdownOption[] = isSubscriptionsLoading || !subscriptionsData ? [] : parseSubscriptionsData(subscriptionsData);
 
-  const ise: IDropdownOption[] = selectedSubscription !== '' && !isIseLoading && iseData ? parseIseData(iseData) : [];
-  const regions: IDropdownOption[] = selectedSubscription !== '' && !isRegionLoading && regionData ? parseRegionData(regionData) : [];
-
-  const locations: IDropdownOption[] = [
-    { key: 'divider:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Divider },
-    { key: 'header:ise', text: intlText.DIVIDER_ISE, itemType: DropdownMenuItemType.Header },
-    ...ise,
-    { key: 'divider:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Divider },
-    { key: 'header:regions', text: intlText.DIVIDER_REGIONS, itemType: DropdownMenuItemType.Header },
-    ...regions,
-  ];
+  const iseInstances: IDropdownOption[] = isIseLoading || selectedSubscription === '' || !iseData ? [] : parseIseData(iseData);
 
   const subscriptionLoading = accessToken === undefined ? true : isSubscriptionsLoading;
   const subscriptionPlaceholder = getDropdownPlaceholder(
@@ -175,9 +133,9 @@ export const InstanceSelection: React.FC = () => {
   const iseLoading = selectedSubscription === '' ? false : isIseLoading;
   const isePlaceholder = getDropdownPlaceholder(
     iseLoading,
-    locations.length,
+    iseInstances.length,
     intlText.SELECT_OPTION,
-    intlText.EMPTY_LOCATION,
+    intlText.EMPTY_ISE,
     intlText.LOADING
   );
 
@@ -201,17 +159,15 @@ export const InstanceSelection: React.FC = () => {
         searchBoxPlaceholder={intlText.SEARCH_SUBSCRIPTION}
       />
       <SearchableDropdown
-        label={intlText.SELECTION_LOCATION}
-        options={locations}
+        label={intlText.SELECTION_ISE}
+        options={iseInstances}
         placeholder={isePlaceholder}
-        disabled={
-          isSubscriptionsLoading || isIseLoading || isRegionLoading || selectedSubscription === '' || !(ise.length || regions.length)
-        }
-        onChange={onChangeLocation}
-        selectedKey={selectedIse !== '' ? `ise:${selectedIse}` : location ? `region:${location}` : null}
+        disabled={isSubscriptionsLoading || isIseLoading || selectedSubscription === '' || !iseInstances.length}
+        onChange={onChangeIse}
+        selectedKey={selectedIse !== '' ? selectedIse : null}
         className="msla-export-instance-panel-dropdown"
         isLoading={iseLoading}
-        searchBoxPlaceholder={intlText.SEARCH_LOCATION}
+        searchBoxPlaceholder={intlText.SEARCH_ISE}
       />
     </div>
   );
