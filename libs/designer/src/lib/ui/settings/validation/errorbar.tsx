@@ -1,29 +1,31 @@
-import { MessageBar, MessageBarType, type IMessageBarStyles } from '@fluentui/react/lib/MessageBar';
+import { MessageBar, type MessageBarType, type IMessageBarStyles } from '@fluentui/react/lib/MessageBar';
 import { isHighContrastBlack } from '@microsoft/designer-ui';
 
 export interface MessageBarProps {
+  type: MessageBarType;
   message: string;
-  onErrorDismiss?: () => void | undefined;
+  onWarningDismiss?: () => void | undefined;
 }
 
 const messageBarStyles: IMessageBarStyles = isHighContrastBlack()
   ? { content: { background: '#442726' }, innerText: { color: '#f3f2f1' } }
   : {};
 
-export const ErrorBar = ({ message }: MessageBarProps): JSX.Element => {
+export function CustomizableMessageBar({ type, message, onWarningDismiss }: MessageBarProps): JSX.Element {
+  if (onWarningDismiss) {
+    return (
+      <div className="msla-setting-section-message-bar">
+        <MessageBar styles={messageBarStyles} messageBarType={type} onDismiss={onWarningDismiss}>
+          {message}
+        </MessageBar>
+      </div>
+    );
+  }
   return (
-    <div className="msla-setting-section-error-bar">
-      <MessageBar styles={messageBarStyles} messageBarType={MessageBarType.error}>
+    <div className="msla-setting-section-message-bar">
+      <MessageBar styles={messageBarStyles} messageBarType={type}>
         {message}
       </MessageBar>
     </div>
   );
-};
-
-export const WarningBar = ({ message, onErrorDismiss }: MessageBarProps): JSX.Element => {
-  return (
-    <MessageBar styles={messageBarStyles} messageBarType={MessageBarType.warning} onDismiss={onErrorDismiss}>
-      {message}
-    </MessageBar>
-  );
-};
+}

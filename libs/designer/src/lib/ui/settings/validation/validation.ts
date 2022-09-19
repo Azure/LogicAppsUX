@@ -18,7 +18,7 @@ export const useValidate = () => {
     description: 'error message for invalid paging count',
   });
   const pagingCountMax = intl.formatMessage({
-    defaultMessage: 'Paging Count exceeds maximum value',
+    defaultMessage: 'Paging count exceeds maximum value',
     description: 'error message for max-exceeding paging count',
   });
 

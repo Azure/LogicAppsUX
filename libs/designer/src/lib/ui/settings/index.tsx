@@ -213,11 +213,11 @@ function GeneralSettings(): JSX.Element | null {
     onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.GENERAL),
     validationErrors: validationErrors.filter(({ key }) => {
-      return [
-        ValidationErrorKeys.TRIGGER_CONDITION_EMPTY,
-        ValidationErrorKeys.CHUNK_SIZE_INVALID,
-        ValidationErrorKeys.SINGLE_INSTANCE_SPLITON,
-      ].includes(key);
+      return (
+        key === ValidationErrorKeys.TRIGGER_CONDITION_EMPTY ||
+        key === ValidationErrorKeys.CHUNK_SIZE_INVALID ||
+        key === ValidationErrorKeys.SINGLE_INSTANCE_SPLITON
+      );
     }),
   };
 
@@ -269,23 +269,6 @@ function TrackingSettings(): JSX.Element | null {
       }
     }
 
-    // TODO (14427339): Setting Validation
-    // const {
-    //   operations: { settings },
-    // } = rootState;
-    // const proposedState: OperationMetadataState = {
-    //   ...rootState.operations,
-    //   settings: {
-    //     [nodeId]: {
-    //       ...settings[nodeId],
-    //       trackedProperties: {
-    //         isSupported: true,
-    //         value: trackedPropertiesInput,
-    //       },
-    //     },
-    //   },
-    // };
-    // const validationResult = validate('operations', proposedState, nodeId);
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -439,7 +422,6 @@ function NetworkingSettings(): JSX.Element | null {
   }, [dispatch, nodeId, operations]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onAsyncPatternToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -516,7 +498,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onHeadersOnResponseToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -531,7 +512,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onContentTransferToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -571,7 +551,7 @@ function NetworkingSettings(): JSX.Element | null {
     onHeadersOnResponseToggle,
     onSuppressHeadersToggle,
     validationErrors: validationErrors.filter(({ key }) => {
-      return [ValidationErrorKeys.PAGING_COUNT].includes(key);
+      return key === ValidationErrorKeys.PAGING_COUNT;
     }),
   };
   if (

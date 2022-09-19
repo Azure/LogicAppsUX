@@ -1,11 +1,12 @@
 import type { HeaderClickHandler } from '.';
 import constants from '../../common/constants';
-import { type ValidationError, ValidationErrorKeys } from '../../core/state/settingSlice';
+import { type ValidationError, ValidationWarningKeys } from '../../core/state/settingSlice';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
-import { ErrorBar, WarningBar } from './validation/errorbar';
+import { CustomizableMessageBar } from './validation/errorbar';
 import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconStyles, IIconProps } from '@fluentui/react';
+import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { guid } from '@microsoft-logic-apps/utils';
 import {
   isHighContrastBlack,
@@ -99,7 +100,7 @@ export type Settings = SettingBase &
       }
   );
 
-type ErrorDismissHandler = (key?: string, message?: string) => void;
+type WarningDismissHandler = (key?: string, message?: string) => void;
 export interface SettingSectionProps {
   id?: string;
   title?: string;
@@ -111,7 +112,7 @@ export interface SettingSectionProps {
   isReadOnly?: boolean;
   onHeaderClick?: HeaderClickHandler;
   validationErrors?: ValidationError[];
-  onErrorDismiss?: ErrorDismissHandler;
+  onWarningDismiss?: WarningDismissHandler;
 }
 
 export const SettingsSection: FC<SettingSectionProps> = ({
@@ -124,7 +125,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   settings,
   onHeaderClick,
   validationErrors,
-  onErrorDismiss,
+  onWarningDismiss,
 }) => {
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
@@ -147,11 +148,28 @@ export const SettingsSection: FC<SettingSectionProps> = ({
     <>
       {expanded || !showHeading ? <Setting isReadOnly={isReadOnly} settings={settings} /> : null}
       {expanded
-        ? (validationErrors ?? []).map((error) => {
-            if (error.key === ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION) {
-              return <WarningBar key={guid()} message={error.message} onErrorDismiss={() => onErrorDismiss?.(error.key)} />;
+        ? (validationErrors ?? []).map(({ key: errorKey, message }) => {
+            if (errorKey === ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION) {
+              return (
+                <CustomizableMessageBar
+                  key={guid()}
+                  type={MessageBarType.warning}
+                  message={message}
+                  onWarningDismiss={() => onWarningDismiss?.(errorKey)}
+                />
+              );
             }
-            return <ErrorBar key={guid()} message={error.message} />;
+            if (errorKey === ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS) {
+              return (
+                <CustomizableMessageBar
+                  key={guid()}
+                  type={MessageBarType.warning}
+                  message={message}
+                  onWarningDismiss={() => onWarningDismiss?.(errorKey)}
+                />
+              );
+            }
+            return <CustomizableMessageBar key={guid()} type={MessageBarType.error} message={message} />;
           })
         : null}
       {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}

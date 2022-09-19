@@ -10,11 +10,15 @@ export enum ValidationErrorKeys {
   TRIGGER_CONDITION_EMPTY = 'TriggerConditionEmpty',
   TIMEOUT_VALUE_INVALID = 'TimeoutValueInvalid',
   RETRY_INTERVAL_INVALID = 'RetryIntervalInvalid',
+}
+
+export enum ValidationWarningKeys {
   CANNOT_DELETE_LAST_ACTION = 'CannotDeleteLastAction',
+  CANNOT_DELETE_LAST_STATUS = 'CannotDeleteLastStatus',
 }
 
 export interface ValidationError {
-  key: ValidationErrorKeys;
+  key: ValidationErrorKeys | ValidationWarningKeys;
   message: string;
 }
 
