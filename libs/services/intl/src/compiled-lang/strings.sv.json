@@ -538,7 +538,7 @@
   "3GINhd": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Utlösare"
     }
   ],
   "3NhwIJ": [
@@ -894,7 +894,7 @@
   "7ZR1xr": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Lägga till en åtgärd"
     }
   ],
   "7aJqIH": [
@@ -1040,7 +1040,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tokentyp som inte stöds: "
     },
     {
       "type": 1,
@@ -2256,7 +2256,7 @@
   "MYgKHu": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Åtgärder"
     }
   ],
   "Mb+Eaq": [
@@ -3216,7 +3216,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tokentypen stöds inte: "
     },
     {
       "type": 1,
@@ -3518,7 +3518,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tokentypen stöds inte: "
     },
     {
       "type": 1,
@@ -4898,7 +4898,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Lägg till en utlösare"
     }
   ],
   "q2OCEx": [

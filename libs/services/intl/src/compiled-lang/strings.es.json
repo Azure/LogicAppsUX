@@ -549,7 +549,7 @@
   "3GINhd": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Desencadenadores"
     }
   ],
   "3NhwIJ": [
@@ -905,7 +905,7 @@
   "7ZR1xr": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Agregar una acción"
     }
   ],
   "7aJqIH": [
@@ -1051,7 +1051,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tipo de token no admitido: "
     },
     {
       "type": 1,
@@ -2288,7 +2288,7 @@
   "MYgKHu": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Acciones"
     }
   ],
   "Mb+Eaq": [
@@ -3121,7 +3121,7 @@
   "VbMYd8": [
     {
       "type": 0,
-      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+      "value": "Los desencadenadores indican a la aplicación cuándo debe empezar a ejecutarse. Cada flujo de trabajo necesita al menos un desencadenador."
     }
   ],
   "VlvlX1": [
@@ -3175,7 +3175,7 @@
   "WOOYW1": [
     {
       "type": 0,
-      "value": "Actions perform operations on data or communicate between systems to execute."
+      "value": "Las acciones realizan operaciones en datos o se comunican entre sistemas para ejecutarse."
     }
   ],
   "WS9kXD": [
@@ -3259,7 +3259,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tipo de token no admitido: "
     },
     {
       "type": 1,
@@ -3561,7 +3561,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tipo de token no admitido: "
     },
     {
       "type": 1,
@@ -4952,7 +4952,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Agregar un desencadenador"
     }
   ],
   "q2OCEx": [
