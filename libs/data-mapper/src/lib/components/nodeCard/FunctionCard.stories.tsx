@@ -1,4 +1,4 @@
-import { logicalBranding } from '../../constants/ExpressionConstants';
+import { logicalBranding } from '../../constants/FunctionConstants';
 import type { ExpressionCardProps } from './ExpressionCard';
 import { ExpressionCard } from './ExpressionCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';

@@ -2,7 +2,7 @@ import { baseCanvasHeight, basePropertyPaneContentHeight } from '../../constants
 import { NodeType } from '../../models/SelectedNode';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { CodeTab } from './tabComponents/CodeTab';
-import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
+import { FunctionNodePropertiesTab } from './tabComponents/FunctionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
 import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
@@ -74,9 +74,9 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     description: 'Label for output schema node',
   });
 
-  const expressionLoc = intl.formatMessage({
-    defaultMessage: 'Expression',
-    description: 'Label for expression node',
+  const functionLoc = intl.formatMessage({
+    defaultMessage: 'Function',
+    description: 'Label for function node',
   });
 
   const propertiesLoc = intl.formatMessage({
@@ -171,8 +171,8 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         return inputSchemaNodeLoc;
       case NodeType.Output:
         return outputSchemaNodeLoc;
-      case NodeType.Expression:
-        return expressionLoc;
+      case NodeType.Function:
+        return functionLoc;
       default:
         console.error("Panel item hasn't been chosen.");
         return;
@@ -187,8 +187,8 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        if (currentNode.nodeType === NodeType.Expression) {
-          return <ExpressionNodePropertiesTab currentNode={currentNode} />;
+        if (currentNode.nodeType === NodeType.Function) {
+          return <FunctionNodePropertiesTab currentNode={currentNode} />;
         } else {
           return <SchemaNodePropertiesTab currentNode={currentNode} />;
         }
@@ -242,7 +242,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
-          {(currentNode?.nodeType === NodeType.Input || currentNode?.nodeType === NodeType.Expression) && (
+          {(currentNode?.nodeType === NodeType.Input || currentNode?.nodeType === NodeType.Function) && (
             <Button
               appearance="subtle"
               size="medium"
