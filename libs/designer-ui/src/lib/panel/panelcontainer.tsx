@@ -98,6 +98,7 @@ export const PanelContainer = ({
     },
     [
       cardIcon,
+      onTitleChange,
       isCollapsed,
       isLoading,
       panelLocation,

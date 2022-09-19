@@ -15,7 +15,14 @@ interface RunAfterProps extends SectionProps {
   allEdges: WorkflowEdge[];
 }
 
-export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, nodeId }: RunAfterProps): JSX.Element | null => {
+export const RunAfter = ({
+  runAfter,
+  readOnly = false,
+  expanded,
+  onHeaderClick,
+  nodeId,
+  validationErrors,
+}: RunAfterProps): JSX.Element | null => {
   const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
   const dispatch = useDispatch<AppDispatch>();
 
@@ -92,6 +99,7 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, 
         visible: runAfter?.isSupported,
       },
     ],
+    validationErrors,
   };
 
   return <SettingsSection {...runAfterSectionProps} />;

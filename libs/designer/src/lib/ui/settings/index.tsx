@@ -2,7 +2,7 @@ import constants from '../../common/constants';
 import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initialize';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
-import { updateNodeSettings, type OperationMetadataState } from '../../core/state/operation/operationMetadataSlice';
+import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { setTabError } from '../../core/state/panel/panelSlice';
 import { useOperationManifest } from '../../core/state/selectors/actionMetadataSelector';
@@ -18,8 +18,8 @@ import { Security, type SecuritySectionProps } from './sections/security';
 import { Tracking, type TrackingSectionProps } from './sections/tracking';
 import { useValidate } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { isNullOrUndefined, equals, isObject, type OperationManifest } from '@microsoft-logic-apps/utils';
-import { useState, useEffect } from 'react';
+import { equals, isObject, type OperationManifest } from '@microsoft-logic-apps/utils';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export type ToggleHandler = (checked: boolean) => void;
@@ -50,9 +50,7 @@ export const SettingsPanel = (): JSX.Element => {
 };
 
 function GeneralSettings(): JSX.Element | null {
-  const validate = useValidate();
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
-  const rootState: RootState = useSelector((state: RootState) => state);
+  const { validate: triggerValidation, validationErrors } = useValidate();
   const dispatch = useDispatch();
   const nodeId = useSelectedNodeId();
   const { expandedSections, isTrigger, nodeInputs, operationInfo, settings, operations } = useSelector((state: RootState) => {
@@ -72,9 +70,9 @@ function GeneralSettings(): JSX.Element | null {
   );
 
   useEffect(() => {
-    setValidationErrors(validate('operations', operations, nodeId) ?? []);
-    dispatch(setTabError({ tabName: 'Settings', hasErrors: (validate('operations', operations, nodeId) ?? []).length > 0, nodeId }));
-  }, [operations, nodeId, dispatch]); // eslint-disable-line react-hooks/exhaustive-deps
+    const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
+    dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
+  }, [dispatch, nodeId, operations]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onConcurrencyToggle = (checked: boolean): void => {
     dispatch(
@@ -145,22 +143,6 @@ function GeneralSettings(): JSX.Element | null {
   };
 
   const onTriggerConditionsChange = (newExpressions: string[]): void => {
-    const proposedState: OperationMetadataState = {
-      ...rootState.operations,
-      settings: {
-        [nodeId]: {
-          ...settings,
-          conditionExpressions: {
-            isSupported: !!conditionExpressions?.isSupported,
-            value: newExpressions,
-          },
-        },
-      },
-    };
-    const errors = validate('operations', proposedState, nodeId);
-    if (errors?.length) {
-      setValidationErrors(errors);
-    }
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -230,7 +212,7 @@ function GeneralSettings(): JSX.Element | null {
     onClientTrackingIdChange,
     onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.GENERAL),
-    validationErrors: (validationErrors ?? []).filter(({ key }) => {
+    validationErrors: validationErrors.filter(({ key }) => {
       return [
         ValidationErrorKeys.TRIGGER_CONDITION_EMPTY,
         ValidationErrorKeys.CHUNK_SIZE_INVALID,
@@ -246,11 +228,9 @@ function GeneralSettings(): JSX.Element | null {
 
 function TrackingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
-  const validate = useValidate();
-  const [validationErrors, setValidationError] = useState<ValidationError[]>([]);
-  let rootState: RootState;
+  // let rootState: RootState;
   const expandedSections = useSelector((state: RootState) => {
-      rootState = state;
+      // rootState = state;
       return state.settings.expandedSections;
     }),
     nodeId = useSelectedNodeId(),
@@ -290,37 +270,33 @@ function TrackingSettings(): JSX.Element | null {
     }
 
     // TODO (14427339): Setting Validation
-    const {
-      operations: { settings },
-    } = rootState;
-    const proposedState: OperationMetadataState = {
-      ...rootState.operations,
-      settings: {
-        [nodeId]: {
-          ...settings[nodeId],
+    // const {
+    //   operations: { settings },
+    // } = rootState;
+    // const proposedState: OperationMetadataState = {
+    //   ...rootState.operations,
+    //   settings: {
+    //     [nodeId]: {
+    //       ...settings[nodeId],
+    //       trackedProperties: {
+    //         isSupported: true,
+    //         value: trackedPropertiesInput,
+    //       },
+    //     },
+    //   },
+    // };
+    // const validationResult = validate('operations', proposedState, nodeId);
+    dispatch(
+      updateNodeSettings({
+        id: nodeId,
+        settings: {
           trackedProperties: {
-            isSupported: true,
+            isSupported: !!trackedProperties?.isSupported,
             value: trackedPropertiesInput,
           },
         },
-      },
-    };
-    const validationResult = validate('operations', proposedState, nodeId);
-    if (isNullOrUndefined(validationResult)) {
-      dispatch(
-        updateNodeSettings({
-          id: nodeId,
-          settings: {
-            trackedProperties: {
-              isSupported: !!trackedProperties?.isSupported,
-              value: trackedPropertiesInput,
-            },
-          },
-        })
-      );
-    } else {
-      setValidationError(validationResult);
-    }
+      })
+    );
   };
 
   const onTrackedPropertiesStringValueChange = (newValue: string): void => {
@@ -356,7 +332,6 @@ function TrackingSettings(): JSX.Element | null {
     onClientTrackingIdChange,
     onTrackedPropertiesDictionaryValueChanged,
     onTrackedPropertiesStringValueChange,
-    validationErrors,
   };
 
   if (trackedProperties?.isSupported || correlation?.isSupported) {
@@ -415,9 +390,8 @@ function DataHandlingSettings(): JSX.Element | null {
 }
 
 function NetworkingSettings(): JSX.Element | null {
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
+  const { validate: triggerValidation, validationErrors } = useValidate();
   const dispatch = useDispatch();
-  const validate = useValidate();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
     nodeId = useSelectedNodeId(),
     {
@@ -458,6 +432,11 @@ function NetworkingSettings(): JSX.Element | null {
         operations,
       };
     });
+
+  useEffect(() => {
+    const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
+    dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
+  }, [dispatch, nodeId, operations]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onAsyncPatternToggle = (checked: boolean): void => {
     // TODO (14427339): Setting Validation
@@ -520,25 +499,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onPaginationValueChange = (newVal: string): void => {
-    const proposedState: OperationMetadataState = {
-      ...operations,
-      settings: {
-        [nodeId]: {
-          ...operations.settings[nodeId],
-          paging: {
-            isSupported: !!paging?.isSupported,
-            value: {
-              enabled: !!paging?.value?.enabled,
-              value: Number(newVal),
-            },
-          },
-        },
-      },
-    };
-    const validationResult = validate('operations', proposedState, nodeId);
-    if (validationResult?.length) {
-      setValidationErrors(validationResult);
-    }
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -630,10 +590,17 @@ function NetworkingSettings(): JSX.Element | null {
 }
 
 function RunAfterSettings(): JSX.Element | null {
+  const { validate: triggerValidation, validationErrors } = useValidate();
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
     nodeId = useSelectedNodeId(),
-    { runAfter } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
+    operations = useSelector((state: RootState) => state.operations),
+    { runAfter } = operations.settings[nodeId];
+
+  useEffect(() => {
+    const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
+    dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
+  }, [dispatch, nodeId, operations]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
   const allEdges: WorkflowEdge[] = useEdgesBySource();
@@ -643,6 +610,7 @@ function RunAfterSettings(): JSX.Element | null {
     runAfter,
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.RUNAFTER),
     onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
+    validationErrors,
   };
 
   return runAfter?.isSupported ? <RunAfter allEdges={allEdges} {...runAfterProps} /> : null;
