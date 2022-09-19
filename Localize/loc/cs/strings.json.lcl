@@ -4395,6 +4395,9 @@
       <Item ItemId=";VbMYd8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Triggers tell your app when to start running. Each workflow needs at least one trigger.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aktivační události sdělí aplikaci, kdy se má spustit. Každý pracovní postup vyžaduje alespoň jednu aktivační událost.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4455,6 +4458,9 @@
       <Item ItemId=";WOOYW1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Actions perform operations on data or communicate between systems to execute.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Akce provádějí operace s daty nebo komunikují mezi systémy, které se mají spustit.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6928,7 +6934,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add a trigger]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Přidat trigger]]></Val>
+            <Val><![CDATA[Přidat aktivační událost]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
