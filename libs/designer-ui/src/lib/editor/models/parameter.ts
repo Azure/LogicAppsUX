@@ -46,6 +46,7 @@ export enum DynamicCallStatus {
   STARTED,
   SUCCEEDED,
   FAILED,
+  NOTSTARTED,
 }
 
 export interface ValueSegment {

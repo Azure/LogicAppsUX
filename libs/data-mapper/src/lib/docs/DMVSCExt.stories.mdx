@@ -1,0 +1,80 @@
+import { Meta } from '@storybook/addon-docs';
+
+<Meta title="Docs/Data Mapper/VS Code Extension" />
+
+# Data Mapper - VS Code Extension
+
+## Setup
+
+### Prerequisites
+
+- `git clone`, and run `npm install` in, the logic_apps_designer repo
+- Install nx if you haven't already - `npm install -g nx`
+
+- .NET Core SDK 3.1 (https://dotnet.microsoft.com/en-us/download/dotnet/3.1)
+- Azure Functions Core Tools (https://github.com/Azure/azure-functions-core-tools or `npm i -g azure-functions-core-tools --unsafe-perm true`)
+- **VS Code Extensions:** Azure Tools, Azure Logic Apps (Standard)
+
+- Logic Apps workflow (folder - w/ schemas) - see steps to create below:
+  1.  In Azure Tools extension tab under Logic Apps (Standard), click the 'Create New Project' icon, and choose where you want the project folder
+  2.  Open that folder in VS Code, then go back to Logic Apps (Standard), and click 'Create New Workflow' -> Stateless -> Press Enter
+  3.  Make sure that ./Artifacts/Schemas exists within the project folder, and add an .xsd template schema for testing (ask the DM/LA team for some)
+
+### Daily .VSIX Build
+
+The daily build of the VS Code extension (.vsix) for Data Mapper can be found at https://github.com/Azure/logic_apps_designer/releases
+under Assets with the name `microsoft-data-mapper-vscode-extension-x.x.x.vsix`
+
+In order to utilize the above file once downloaded:
+
+1. Open VS Code, click the Extensions tab (left - on the Activity Bar)
+2. Click the ellipsis/three-dots button on the title bar
+3. Click 'Install from VSIX...', and then select the .vsix file just downloaded
+
+You're all set! See the section on usage/functionality at the bottom to help you get started!
+
+**NOTE (9/15/2022):** Leaving this here for now until completely sure that public workflow extension bundle has necessary endpoints - if
+you're having issues, you may still have to follow the 'Backend Runtime Setup' instructions below
+
+### Build (Dev/Debug)
+
+To build, run the following commands in order (from the root of the repo folder):
+
+```bash
+nx build vs-code-data-mapper
+```
+
+```bash
+nx build vs-code-data-mapper-react
+```
+
+### Run (Dev/Debug)
+
+**NOTE:** If this is your first time running the Data Mapper extension, follow the backend setup instructions below
+
+To run the VS Code extension (in debug mode):
+
+1.  Open the repo folder in VS Code
+2.  Click the 'Run and Debug' tab on the left (Activity) bar
+3.  Select 'Run Data Mapper Extension...' in the dropdown at the top, then click the 'Start debugging' icon
+
+### Backend Runtime Setup - \***\*ONLY for first time setup or new extension bundle version\*\***
+
+1. Once the Data Mapper extension has been run, wait until you see that 'func host start' has acquired a lease in the output log.
+   This is so that the necessary path/folder get generated for us to change out the runtime. Close the VS Code window running the Data Mapper extension once this is complete.
+2. Download/Set-up the latest workflow extension bundle (https://msazure.visualstudio.com/One/_build?definitionId=160488&_a=summary)
+   - Click the latest run -> Click on the 'artifacts' link under the 'build' stage -> Expand the '...Windows' dropdown -> Download the '...any-any.zip'
+   - Go to `yourRootUsernameFolder/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows`
+   - Rename the current version folder (Ex: backup-1.1.16)
+   - Replace it with the extracted folder you just downloaded (renaming it to the same version as the one you replaced)
+3. You can now run the Data Mapper extension with its latest backend runtime!
+
+## Usage / Supported Functionality
+
+The extension will activate/initialize automatically upon viewing the Azure Tools extension tree, or by having a Logic Apps workflow folder (with a host.json) open in your VS Code workspace
+
+Listed below are different ways you can kick off your usage/flow of Data Mapper:
+
+- Context menu - load data map
+- Azure Tools view - create new data map
+- Within Data Mapper component - ConfigPane (choosing schemas) for existing schema files; save data maps to filesystem

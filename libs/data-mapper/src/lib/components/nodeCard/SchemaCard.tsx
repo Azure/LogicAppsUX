@@ -1,6 +1,8 @@
 import { childOutputNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
+import { setCurrentOutputNode } from '../../core/state/DataMapSlice';
+import type { AppDispatch } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
-import type { SchemaNodeDataType } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 import { SchemaTypes } from '../../models';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
@@ -20,18 +22,18 @@ import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/
 import type { FunctionComponent } from 'react';
 import type { Connection as ReactFlowConnection, NodeProps } from 'react-flow-renderer';
 import { Handle, Position } from 'react-flow-renderer';
+import { useDispatch } from 'react-redux';
 
 export type SchemaCardProps = {
-  label: string;
+  schemaNode: SchemaNodeExtended;
   schemaType: SchemaTypes;
   displayHandle: boolean;
   isLeaf: boolean;
   isChild: boolean;
-  nodeDataType: SchemaNodeDataType;
 } & CardProps;
 
 const useStyles = makeStyles({
-  root: {
+  container: {
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     backgroundColor: tokens.colorNeutralBackground1,
     display: 'flex',
@@ -43,14 +45,21 @@ const useStyles = makeStyles({
     justifyContent: 'left',
     ...shorthands.gap('8px'),
     ...shorthands.margin('2px'),
-
+    isolation: 'isolate',
     '&:hover': {
-      backgroundColor: tokens.colorNeutralBackground1,
+      boxShadow: tokens.shadow8,
     },
     '&:active': {
       '&:hover': {
         backgroundColor: tokens.colorNeutralBackground1,
       },
+    },
+    '&:focus-within': {
+      outlineWidth: tokens.strokeWidthThick,
+      outlineColor: tokens.colorBrandStroke1,
+      outlineStyle: 'solid',
+      opacity: 1,
+      boxShadow: tokens.shadow4,
     },
   },
   badge: {
@@ -59,8 +68,12 @@ const useStyles = makeStyles({
     right: '-10px',
     zIndex: '1',
   },
-  badgeDisabled: {
-    opacity: '0.38',
+  contentButton: {
+    height: '48px',
+    width: '170px',
+    ...shorthands.border('0px'),
+    ...shorthands.padding('0px'),
+    marginRight: '0px',
   },
   cardIcon: {
     backgroundColor: tokens.colorBrandBackground2,
@@ -74,22 +87,25 @@ const useStyles = makeStyles({
     flexGrow: '0',
     flexShrink: '0',
     flexBasis: '44px',
+    marginRight: '8px',
   },
-  container: { height: '48px', isolation: 'isolate', position: 'relative' },
   cardText: {
     ...typographyStyles.body1Strong,
     display: 'inline-block',
     alignSelf: 'center',
     color: tokens.colorNeutralForeground1,
     textAlign: 'left',
-    width: '112px',
+    width: '100%',
   },
   cardChevron: {
     color: tokens.colorNeutralForeground3,
     display: 'flex',
     fontSize: '16px',
-
+    flexBasis: '48px',
     justifyContent: 'right',
+  },
+  disabled: {
+    opacity: 0.38,
   },
   outputChildCard: {
     width: `${childOutputNodeCardWidth}px`,
@@ -118,29 +134,45 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
     const inputNode = flattenedInputSchema[connection.source];
     const outputNode = flattenedOutputSchema[connection.target];
 
-    return inputNode.schemaNodeDataType === outputNode.schemaNodeDataType;
+    // If we have no outputNode that means it's an expression and just allow the connection for now
+    // TODO validate expression allowed input types
+    return !outputNode || inputNode.schemaNodeDataType === outputNode.schemaNodeDataType;
   }
 
   return false;
 };
 
 export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
-  const { label, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, nodeDataType } = props.data;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle } = props.data;
+  const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
-  const mergedClasses = mergeClasses(sharedStyles.root, classes.root);
-  const mergedChildOutputClasses = mergeClasses(sharedStyles.root, classes.root, classes.outputChildCard);
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
-  const errorClass = mergeClasses(mergedClasses, sharedStyles.error);
-  const disabledError = mergeClasses(classes.badge, classes.badgeDisabled);
-  const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
-  const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
-  const BundledTypeIcon = icon24ForSchemaNodeType(nodeDataType);
 
   const isOutputChildNode = schemaType === SchemaTypes.Output && isChild;
 
+  const containerStyleClasses = [sharedStyles.root, classes.container];
+  if (isOutputChildNode) {
+    containerStyleClasses.push(classes.outputChildCard);
+  }
+
+  if (disabled) {
+    containerStyleClasses.push(classes.disabled);
+  }
+
+  const containerStyle = mergeClasses(...containerStyleClasses);
+
+  const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
+
+  const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
+  const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType);
+
+  const outputChevronOnClick = (newCurrentSchemaNode: SchemaNodeExtended) => {
+    dispatch(setCurrentOutputNode({ schemaNode: newCurrentSchemaNode, resetSelectedInputNodes: true }));
+  };
+
   return (
-    <div className={classes.container}>
+    <div className={containerStyle}>
       {displayHandle && isLeaf ? (
         <Handle
           type={schemaType === SchemaTypes.Input ? 'source' : 'target'}
@@ -149,24 +181,23 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
           isValidConnection={isValidConnection}
         />
       ) : null}
-      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={disabled ? disabledError : classes.badge}></Badge>}
-      <Button
-        className={error ? errorClass : isOutputChildNode ? mergedChildOutputClasses : mergedClasses}
-        disabled={!!disabled}
-        onClick={onClick}
-      >
+      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.badge}></Badge>}{' '}
+      <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
         <span className={classes.cardIcon}>
           <BundledTypeIcon />
         </span>
         <Text className={schemaType === SchemaTypes.Output ? classes.cardText : mergedInputText} block={true} nowrap={true}>
-          {label}
+          {schemaNode.name}
         </Text>
-        {showOutputChevron && (
-          <div className={classes.cardChevron}>
-            <ChevronRight16Regular />
-          </div>
-        )}
       </Button>
+      {showOutputChevron && (
+        <Button
+          className={classes.cardChevron}
+          onClick={() => outputChevronOnClick(schemaNode)}
+          icon={<ChevronRight16Regular />}
+          appearance={'transparent'}
+        />
+      )}
     </div>
   );
 };

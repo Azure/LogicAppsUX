@@ -1,3 +1,5 @@
+import type { ExpressionGroupBranding } from '../constants/ExpressionConstants';
+import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import {
   Any16Filled,
   Any16Regular,
@@ -22,15 +24,19 @@ import {
   String24Filled,
   String24Regular,
 } from '../images/DataType24Icons';
+import { ExpressionCategory } from '../models/Expression';
 import { SchemaNodeDataType } from '../models/Schema';
+import { Image } from '@fluentui/react-components';
 import {
   AddSubtractCircle16Filled,
   AddSubtractCircle16Regular,
+  AddSubtractCircle20Filled,
   AddSubtractCircle24Filled,
   AddSubtractCircle24Regular,
   bundleIcon,
   CalendarClock16Filled,
   CalendarClock16Regular,
+  CalendarClock20Regular,
   CalendarClock24Filled,
   CalendarClock24Regular,
   CircleOff16Filled,
@@ -41,6 +47,8 @@ import {
   Cube16Regular,
   Cube24Filled,
   Cube24Regular,
+  MathSymbols20Regular,
+  Wrench20Regular,
 } from '@fluentui/react-icons';
 
 export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
@@ -365,4 +373,40 @@ export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return CircleOffRegular; // Null
     }
   }
+};
+
+export const iconForExpressionCategory = (expressionCategory: ExpressionCategory) => {
+  switch (expressionCategory) {
+    case ExpressionCategory.Collection: {
+      return Collection20Regular;
+    }
+    case ExpressionCategory.DateTime: {
+      return CalendarClock20Regular;
+    }
+    case ExpressionCategory.Logical: {
+      return AddSubtractCircle20Filled;
+    }
+    case ExpressionCategory.Math: {
+      return MathSymbols20Regular;
+    }
+    case ExpressionCategory.String: {
+      return StringCategory20Regular;
+    }
+    case ExpressionCategory.Utility: {
+      return Wrench20Regular;
+    }
+    default: {
+      console.error(`Invalid category type: ${expressionCategory}`);
+      return Wrench20Regular;
+    }
+  }
+};
+
+export const iconUriForIconImageName = (iconImageName: string) => {
+  // TODO Temp CDN, will need to be moved into a production location
+  return `https://datamappericons.azureedge.net/icons/${iconImageName}`;
+};
+
+export const getIconForExpression = (name: string, fileName: string | undefined, branding: ExpressionGroupBranding) => {
+  return fileName ? <Image src={iconUriForIconImageName(fileName)} height={20} width={20} alt={name} /> : <>{branding.icon}</>;
 };

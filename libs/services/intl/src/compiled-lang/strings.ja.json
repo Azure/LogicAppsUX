@@ -5,6 +5,12 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "認証の種類 {1} のプロパティ {0} が無効です。"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -502,6 +508,12 @@
       "value": "(UTC+04:00) トビリシ"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -532,6 +544,20 @@
       "value": "マップに使用する出力スキーマをアップロードまたは選択します。"
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "必要なパラメーター "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " が設定されていないか、無効です"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -548,6 +574,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) テヘラン"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "JSON 形式が無効です。開始 "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " または終了 "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": " がありません。"
     }
   ],
   "3kI7xF": [
@@ -760,6 +808,12 @@
       "value": "必須。マルチパート応答を含むアクションの名前。"
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "このステップはロジック アプリから削除されます。"
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -790,10 +844,30 @@
       "value": "(UTC+10:30) ロードハウ島"
     }
   ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "この操作のパラメーター \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" が見つかりません"
+    }
+  ],
   "7QymrD": [
     {
       "type": 0,
       "value": "必須。取得する部分文字列が含まれる文字列。"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -842,6 +916,22 @@
     {
       "type": 0,
       "value": "PFX"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "認証の種類 {1} のプロパティ {0} が無効です。"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "API の実行でエラーが発生しました - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -902,6 +992,16 @@
     {
       "type": 0,
       "value": "木曜日"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1033,7 +1133,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "認証の種類"
     }
   ],
   "AHB418": [
@@ -1070,6 +1170,12 @@
     {
       "type": 0,
       "value": "(UTC+06:30) ヤンゴン (ラングーン)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "{0} の型は {1} です。"
     }
   ],
   "Amz9+m": [
@@ -1215,6 +1321,12 @@
       "value": "接続が必要"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "出力"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1237,6 +1349,12 @@
     {
       "type": 0,
       "value": "必須。先頭と末尾の空白が削除される文字列です。"
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "ノード"
     }
   ],
   "DGMwU4": [
@@ -1566,6 +1684,12 @@
       "value": "必須。取得するフォーム データ値のキー名。"
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "詳細な診断情報: x-ms-client-request-id は {clientRequestId} です。"
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1582,6 +1706,12 @@
     {
       "type": 0,
       "value": "コンテンツを表示するには、カードを選択してください"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "動的コンテンツは認証のプロパティとしてサポートされていません。"
     }
   ],
   "IA+Ogm": [
@@ -1630,6 +1760,12 @@
     {
       "type": 0,
       "value": "入力スキーマの選択"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "詳細オプション"
     }
   ],
   "Ip7Iax": [
@@ -1817,6 +1953,12 @@
       "value": "検索の結果がありません"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "WorkflowGraphの削除"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1857,6 +1999,12 @@
     {
       "type": 0,
       "value": "新規追加"
+    }
+  ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "認証の種類 {0} の必須プロパティ {1} がありません"
     }
   ],
   "LlYz9c": [
@@ -1901,10 +2049,22 @@
       "value": "コメントの追加"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "コード ビュー"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) ソロモン諸島、ニューカレドニア"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "削除"
     }
   ],
   "M6U2LE": [
@@ -1963,6 +2123,12 @@
     {
       "type": 0,
       "value": "現在のタイムスタンプを文字列として返します"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "Mb+Eaq": [
@@ -2049,6 +2215,12 @@
       "value": "パラメーターの編集"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2071,6 +2243,12 @@
     {
       "type": 0,
       "value": "(UTC+11:00) ブーゲンビル島"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "認証の種類 {0} の必須プロパティ {1} がありません"
     }
   ],
   "OH9xlX": [
@@ -2157,10 +2335,22 @@
       "value": "必須。この値は、アレイに含まれる整数の数です。"
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "既定値"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "コレクション関数"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "入力"
     }
   ],
   "P8ZBF9": [
@@ -2355,6 +2545,12 @@
     {
       "type": 0,
       "value": " 時間"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "トリガーを削除できません。"
     }
   ],
   "RFjYpH": [
@@ -2622,6 +2818,12 @@
       "value": "パラメーターを参照するには、動的コンテンツ リストを使用してください。"
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Workflowアクションの削除"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2658,10 +2860,22 @@
       "value": "表示数を少なくする"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "有効な JSON を入力してください。"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) 山地標準時 (米国およびカナダ)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "展開"
     }
   ],
   "VKAk5g": [
@@ -2704,6 +2918,12 @@
     {
       "type": 0,
       "value": "実行履歴"
+    }
+  ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
     }
   ],
   "VlvlX1": [
@@ -2752,6 +2972,12 @@
     {
       "type": 0,
       "value": "有効な辞書を入力してください"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -2830,6 +3056,16 @@
     {
       "type": 0,
       "value": "単語の入力ミスがないことを確認する。"
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3124,6 +3360,16 @@
       "value": "値"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3174,6 +3420,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) ブラジリア"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "出力をテストするためのパラメーターを指定します。"
     }
   ],
   "bzF/qn": [
@@ -3468,6 +3720,12 @@
       "value": "アレイ"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "サポートされていないプログラミング言語です。"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3532,6 +3790,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) サンピエール・ミクロン"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "テストの実行"
     }
   ],
   "gCXOd5": [
@@ -3721,6 +3985,16 @@
       "value": "動的なコンテンツ"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": " を削除しますか?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3731,6 +4005,12 @@
     {
       "type": 0,
       "value": "必須。解析対象の URI。"
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "サポートされていない認証の種類 {0} です。"
     }
   ],
   "iRe/g7": [
@@ -3989,6 +4269,12 @@
       "value": "必須。この値は、返される可能性のある最も大きい整数の次の整数です。"
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "認証の種類のプロパティ 'type' がありません。"
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4115,6 +4401,12 @@
       "value": "URL で入力文字列をエンコードします"
     }
   ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "認証の種類 'ActiveDirectoryOAuth' に必要なプロパティ 'secret' または 'pfx' および 'password' がありません。"
+    }
+  ],
   "mZCHKf": [
     {
       "type": 0,
@@ -4185,6 +4477,12 @@
     {
       "type": 0,
       "value": "必須。時間単位数は希望する将来の時間です。"
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "リセット"
     }
   ],
   "nTA155": [
@@ -4327,6 +4625,12 @@
       "value": "キーの入力"
     }
   ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "折りたたむ"
+    }
+  ],
   "pIczsS": [
     {
       "type": 0,
@@ -4393,6 +4697,12 @@
       "value": "指定された XPath 式から XML ノード、ノードセット、または値を JSON として返します"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4457,6 +4767,12 @@
     {
       "type": 0,
       "value": "必須"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "エラー コード: {errorCode}、メッセージ: {message}。"
     }
   ],
   "qUWBUX": [
@@ -4760,6 +5076,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) ホバート"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "キャンセル"
     }
   ],
   "tsmuoF": [
@@ -5150,6 +5472,12 @@
       "value": "必須。URL の安全でない文字をエスケープする文字列。"
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "解決できない関数式が値に含まれています。定数値のみがサポートされています"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5186,6 +5514,12 @@
       "value": "日付と時刻関数"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "フィールドの追加"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5208,6 +5542,18 @@
     {
       "type": 0,
       "value": "パラメーターの既定値を入力してください。"
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "これにより、子ステップもすべて削除されます。"
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "この式は入力を必要としません。"
     }
   ],
   "zBMVKg": [

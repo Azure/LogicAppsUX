@@ -60,6 +60,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
               onClick={subgraphClick}
               collapsed={graphCollapsed}
               handleCollapse={handleGraphCollapse}
+              contextMenuOptions={[]}
             />
           ) : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />

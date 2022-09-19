@@ -5,6 +5,28 @@
       "value": "OK"
     }
   ],
+  "+20fdv": [
+    {
+      "type": 0,
+      "value": "Ongeldige eigenschappen "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " voor het verificatietype "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -513,6 +535,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -543,6 +571,20 @@
       "value": "Upload of selecteer een uitvoerschema dat voor uw toewijzing moet worden gebruikt."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Vereiste parameters "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " zijn niet ingesteld of ongeldig"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -559,6 +601,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Teheran"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Ongeldige json-indeling. Begin van "
+    },
+    {
+      "type": 1,
+      "value": "openingBrarollt"
+    },
+    {
+      "type": 0,
+      "value": " ontbreekt of eindigt op "
+    },
+    {
+      "type": 1,
+      "value": "closingBrarollt"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -771,6 +835,12 @@
       "value": "Vereist. De naam van de actie met een antwoord met meerdere onderdelen."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Deze stap wordt verwijderd uit de logische app."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -801,10 +871,30 @@
       "value": "(UTC+10:30) Lord Howe Island"
     }
   ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Kan parameter "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " niet vinden voor deze bewerking"
+    }
+  ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Vereist. De tekenreeks waarvan de subtekenreeks wordt gebruikt."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Add an action"
     }
   ],
   "7aJqIH": [
@@ -853,6 +943,38 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "89FJnl": [
+    {
+      "type": 0,
+      "value": "Ongeldige eigenschap "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " voor het verificatietype "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Fout bij het uitvoeren van de API - "
+    },
+    {
+      "type": 1,
+      "value": "url"
     }
   ],
   "8CWFEh": [
@@ -913,6 +1035,16 @@
     {
       "type": 0,
       "value": "Donderdag"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1044,7 +1176,7 @@
   "ADM1Z8": [
     {
       "type": 0,
-      "value": "Authentication Type"
+      "value": "Verificatietype"
     }
   ],
   "AHB418": [
@@ -1081,6 +1213,28 @@
     {
       "type": 0,
       "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
+  "AgrMqq": [
+    {
+      "type": 0,
+      "value": "Het type van "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " is "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "Amz9+m": [
@@ -1237,6 +1391,12 @@
       "value": "Een verbinding is vereist"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Uitvoer"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1259,6 +1419,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks waaruit u voorloopspaties en volgspaties wilt verwijderen."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Knooppunt"
     }
   ],
   "DGMwU4": [
@@ -1607,6 +1773,20 @@
       "value": "Vereist. De sleutelnaam van de formuliergegevenswaarde die moeten worden geretourneerd."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "Meer diagnostische informatie: x-ms-client-request-id is "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1623,6 +1803,12 @@
     {
       "type": 0,
       "value": "Selecteer een kaart om de inhoud weer te geven"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamische inhoud wordt niet ondersteund voor eigenschappen bij de verificatie."
     }
   ],
   "IA+Ogm": [
@@ -1671,6 +1857,12 @@
     {
       "type": 0,
       "value": "Een invoerschema selecteren"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Geavanceerde opties"
     }
   ],
   "Ip7Iax": [
@@ -1869,6 +2061,12 @@
       "value": "Er zijn geen resultaten voor uw zoekactie"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Werkstroomgrafiek verwijderen"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1919,6 +2117,24 @@
       "value": "Nieuwe toevoegen"
     }
   ],
+  "Li6x/B": [
+    {
+      "type": 0,
+      "value": "De vereiste eigenschappen "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " ontbreken voor het verificatietype "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    }
+  ],
   "LlYz9c": [
     {
       "type": 0,
@@ -1961,10 +2177,22 @@
       "value": "Opmerking toevoegen"
     }
   ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Codeweergave"
+    }
+  ],
   "M48CGd": [
     {
       "type": 0,
       "value": "(UTC+11:00) Salomonseilanden, Nieuw-Caledonië"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Verwijderen"
     }
   ],
   "M6U2LE": [
@@ -2023,6 +2251,12 @@
     {
       "type": 0,
       "value": "Het huidige tijdstempel wordt als tekenreeks geretourneerd"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "Mb+Eaq": [
@@ -2109,6 +2343,12 @@
       "value": "Parameter bewerken"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2131,6 +2371,24 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Bougainville"
+    }
+  ],
+  "OH94j3": [
+    {
+      "type": 0,
+      "value": "De vereiste eigenschap "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " ontbreekt voor het verificatietype "
+    },
+    {
+      "type": 1,
+      "value": "1"
     }
   ],
   "OH9xlX": [
@@ -2217,10 +2475,22 @@
       "value": "Vereist. Deze waarde is het aantal gehele getallen in de matrix."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Standaardwaarde"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Verzamelingsfuncties"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Invoer"
     }
   ],
   "P8ZBF9": [
@@ -2419,6 +2689,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Triggers kunnen niet worden verwijderd."
     }
   ],
   "RFjYpH": [
@@ -2697,6 +2973,12 @@
       "value": "Gebruik de lijst met dynamische inhoud om te verwijzen naar een parameter."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Werkstroomactie verwijderen"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2733,10 +3015,22 @@
       "value": "Minder weergeven"
     }
   ],
+  "V0le5X": [
+    {
+      "type": 0,
+      "value": "Voer een geldige JSON in."
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
       "value": "(UTC-07:00) Mountain Time (VS en Canada)"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Uitvouwen"
     }
   ],
   "VKAk5g": [
@@ -2779,6 +3073,12 @@
     {
       "type": 0,
       "value": "Uitvoeringsgeschiedenis"
+    }
+  ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
     }
   ],
   "VlvlX1": [
@@ -2827,6 +3127,12 @@
     {
       "type": 0,
       "value": "Voer een geldige woordenlijst in"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Actions perform operations on data or communicate between systems to execute."
     }
   ],
   "WS9kXD": [
@@ -2905,6 +3211,16 @@
     {
       "type": 0,
       "value": "Controleer of woorden goed gespeld zijn."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3199,6 +3515,16 @@
       "value": "Waarde"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Unsupported Token Type: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3249,6 +3575,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brasilia"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Geef parameters op om de uitvoer te testen."
     }
   ],
   "bzF/qn": [
@@ -3547,6 +3879,12 @@
       "value": "Matrix"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Niet-ondersteunde programmeertaal."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3611,6 +3949,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Saint-Pierre en Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Test uitvoeren"
     }
   ],
   "gCXOd5": [
@@ -3827,6 +4171,20 @@
       "value": "Dynamische inhoud"
     }
   ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Weet u zeker dat u "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": " wilt verwijderen?"
+    }
+  ],
   "iJOIca": [
     {
       "type": 0,
@@ -3837,6 +4195,20 @@
     {
       "type": 0,
       "value": "Vereist. De URI die moet worden geparseerd."
+    }
+  ],
+  "iRARwF": [
+    {
+      "type": 0,
+      "value": "Het verificatietype "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " wordt niet ondersteund."
     }
   ],
   "iRe/g7": [
@@ -4095,6 +4467,12 @@
       "value": "Vereist. Deze waarde is het volgende gehele getal na het hoogste gehele getal dat kan worden geretourneerd."
     }
   ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Ontbrekende verificatietype-eigenschap: type."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4221,6 +4599,12 @@
       "value": "De invoertekensreeks wordt door URL gecodeerd"
     }
   ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "De vereiste eigenschappen secret of pfx en password ontbreken voor het verificatietype ActiveDirectoryOAuth."
+    }
+  ],
   "mZCHKf": [
     {
       "type": 0,
@@ -4291,6 +4675,12 @@
     {
       "type": 0,
       "value": "Vereist. Het aantal tijdseenheden waarmee de gewenste tijd in de toekomst wordt opgegeven."
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Opnieuw instellen"
     }
   ],
   "nTA155": [
@@ -4433,6 +4823,12 @@
       "value": "Sleutel invoeren"
     }
   ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Samenvouwen"
+    }
+  ],
   "pIczsS": [
     {
       "type": 0,
@@ -4499,6 +4895,12 @@
       "value": "Hiermee wordt een XML-knooppunt, knooppuntenset of waarde als JSON geretourneerd uit de opgegeven XPath-expressie"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Add a trigger"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4563,6 +4965,28 @@
     {
       "type": 0,
       "value": "Vereist"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Foutcode: "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": ", bericht: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "qUWBUX": [
@@ -4877,6 +5301,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Annuleren"
     }
   ],
   "tsmuoF": [
@@ -5271,6 +5701,12 @@
       "value": "Vereist. De tekenreeks waaruit de onveilige tekens voor URL's moeten worden voorzien van escaptekens."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "De waarde bevat functie-expressies die niet kunnen worden omgezet. Alleen constante waarden worden ondersteund"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5307,6 +5743,12 @@
       "value": "Datum- en tijdfuncties"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Veld toevoegen"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5329,6 +5771,18 @@
     {
       "type": 0,
       "value": "Voer de standaardwaarde voor de parameter in."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Hiermee worden ook alle onderliggende stappen verwijderd."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "Voor deze expressie is geen invoer vereist."
     }
   ],
   "zBMVKg": [

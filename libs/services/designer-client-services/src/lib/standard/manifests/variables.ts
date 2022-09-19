@@ -52,7 +52,7 @@ export const initializeManifest = {
           'x-ms-dynamic-properties': {
             dynamicState: {
               extension: {
-                operationId: 'GetVariableSchema',
+                builtInOperation: 'getVariableSchema',
               },
               isInput: true,
             },
@@ -100,7 +100,7 @@ export const setManifest = {
           'x-ms-dynamic-properties': {
             dynamicState: {
               extension: {
-                builtInOperation: 'GetVariable',
+                builtInOperation: 'getVariable',
               },
             },
             parameters: {

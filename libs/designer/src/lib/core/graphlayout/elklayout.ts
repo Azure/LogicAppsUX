@@ -1,9 +1,9 @@
 import type { WorkflowNode } from '../parsers/models/workflowNode';
-import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, isWorkflowNode } from '../parsers/models/workflowNode';
+import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
-import { useThrottledEffect } from '@microsoft-logic-apps/utils';
+import { useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useState } from 'react';

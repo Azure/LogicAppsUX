@@ -1,12 +1,38 @@
-import { NodeType, type SelectedNode } from '../../models';
+import type { ExpressionGroupBranding } from '../../constants/ExpressionConstants';
+import { SchemaNodeDataType } from '../../models';
+import { NodeType } from '../../models/SelectedNode';
+import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
 import { PropertiesPane } from './PropertiesPane';
 import type { PropertiesPaneProps } from './PropertiesPane';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-const exInputNode: SelectedNode = { type: NodeType.Input, name: 'ExInputNode', path: '/path/to/ExInputNode' };
-const exOutputNode: SelectedNode = { type: NodeType.Output, name: 'ExOutputNode', path: '/path/to/ExOutputNode' };
-const exExpressionNode: SelectedNode = { type: NodeType.Expression, name: 'ExExpressionNode', path: '/path/to/ExExpressionNode' };
+const exInputNode: SelectedInputNode = {
+  nodeType: NodeType.Input,
+  name: 'ExInputNode',
+  path: '/path/to/ExInputNode',
+  dataType: SchemaNodeDataType.String,
+};
+const exOutputNode: SelectedOutputNode = {
+  nodeType: NodeType.Output,
+  name: 'ExOutputNode',
+  path: '/path/to/ExOutputNode',
+  dataType: SchemaNodeDataType.Int,
+  defaultValue: 'Default value',
+  doNotGenerateIfNoValue: true,
+  nullable: true,
+  inputIds: ['miscInputId'],
+};
+const exExpressionNode: SelectedExpressionNode = {
+  nodeType: NodeType.Expression,
+  name: 'ExExpressionNode',
+  branding: {} as ExpressionGroupBranding,
+  description: '',
+  codeEx: '',
+  definition: '',
+  inputs: [],
+  outputId: '',
+};
 
 const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exExpressionNode };
 

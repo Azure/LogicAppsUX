@@ -1,7 +1,6 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReferences, Workflow } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { WORKFLOW_NODE_TYPES } from '../../parsers/models/workflowNode';
 import { getOperationManifest } from '../../queries/operation';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { RootState } from '../../store';
@@ -30,6 +29,7 @@ import {
   RecurrenceType,
   first,
   isNullOrEmpty,
+  WORKFLOW_NODE_TYPES,
 } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 
@@ -189,7 +189,7 @@ const serializeOperationParameters = (inputs: SerializedParameter[], manifest: O
 
   while (inputsLocation.length) {
     const property = inputsLocation.pop() as string;
-    parametersValue = { [property]: parametersValue };
+    parametersValue = property === '[*]' ? [parametersValue] : { [property]: parametersValue };
   }
 
   return parametersValue;

@@ -330,8 +330,6 @@ export function getStatusString(status: string, hasRetries: boolean): string {
   }
 }
 
-export const getIdLeaf = (id?: string): string => id?.split('/').at(-1) ?? '';
-
 export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, _val: any) => boolean): Record<string, T> => {
   return Object.entries(data)
     .filter(([key, value]) => filter(key, value))

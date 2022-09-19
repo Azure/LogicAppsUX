@@ -1,9 +1,8 @@
 import type { WorkflowEdge, WorkflowNode } from '../../parsers/models/workflowNode';
-import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '../../parsers/models/workflowNode';
 import type { RootState } from '../../store';
 import { createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowState } from './workflowInterfaces';
-import { labelCase } from '@microsoft-logic-apps/utils';
+import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
@@ -110,6 +109,10 @@ export const useWorkflowNode = (actionId?: string) => {
     }
     return getWorkflowNodeFromGraphState(state.workflow, actionId);
   });
+};
+
+export const useIsGraphEmpty = () => {
+  return useSelector((state: RootState) => state.workflow.graph?.children?.length === 0);
 };
 
 export const useIsLeafNode = (nodeId: string): boolean => useNodeEdgeTargets(nodeId).length === 0;

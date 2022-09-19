@@ -32,6 +32,21 @@
         "runAfter": {},
         "type": "InitializeVariable"
       },
+      "Initialize_variable_1": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "IntegerVar",
+              "type": "integer",
+              "value": 123
+            }
+          ]
+        },
+        "runAfter": {
+          "Initialize_variable": ["Succeeded"]
+        },
+        "type": "InitializeVariable"
+      },
       "Join": {
         "inputs": {
           "from": "@triggerBody()",
@@ -58,7 +73,12 @@
           }
         },
         "runAfter": {
-          "Initialize_variable": ["Succeeded"]
+          "Initialize_variable_1": ["Succeeded"]
+        },
+        "runtimeConfiguration": {
+          "secureData": {
+            "properties": ["inputs"]
+          }
         },
         "type": "ParseJson"
       },

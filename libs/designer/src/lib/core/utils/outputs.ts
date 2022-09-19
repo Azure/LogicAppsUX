@@ -1,9 +1,24 @@
 import Constants from '../../common/constants';
-import type { NodeInputs, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
-import { getAllInputParameters, getTokenExpressionValue } from './parameters/helper';
+import { updateOutputsAndTokens } from '../actions/bjsworkflow/initialize';
+import type { Settings } from '../actions/bjsworkflow/settings';
+import { getOperationManifest } from '../queries/operation';
+import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
+import { clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
+import { addDynamicTokens } from '../state/tokensSlice';
+import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dynamicdata';
+import { getAllInputParameters, getTokenExpressionValue, isDynamicDataReadyToLoad } from './parameters/helper';
+import { convertOutputsToTokens } from './tokens';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft-logic-apps/parsers';
-import { ExpressionParser, isTemplateExpression, isFunction, isStringLiteral } from '@microsoft-logic-apps/parsers';
+import type { Expression, ExpressionFunction, ExpressionLiteral, OutputParameter } from '@microsoft-logic-apps/parsers';
+import {
+  create,
+  OutputKeys,
+  OutputSource,
+  ExpressionParser,
+  isTemplateExpression,
+  isFunction,
+  isStringLiteral,
+} from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import {
   getObjectPropertyValue,
@@ -15,7 +30,42 @@ import {
   equals,
 } from '@microsoft-logic-apps/utils';
 import { generateSchemaFromJsonString, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type { Dispatch } from '@reduxjs/toolkit';
 
+export const toOutputInfo = (output: OutputParameter): OutputInfo => {
+  const {
+    key,
+    format,
+    type,
+    isDynamic,
+    isInsideArray,
+    name,
+    itemSchema,
+    parentArray,
+    title,
+    summary,
+    description,
+    source,
+    required,
+    visibility,
+  } = output;
+
+  return {
+    key,
+    type,
+    format,
+    isAdvanced: equals(visibility, Constants.VISIBILITY.ADVANCED),
+    name,
+    isDynamic,
+    isInsideArray,
+    itemSchema,
+    parentArray,
+    title: title ?? summary ?? description ?? name,
+    source,
+    required,
+    description,
+  };
+};
 export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitOn: string | undefined): OperationManifest => {
   const intl = getIntl();
   const invalidSplitOn = intl.formatMessage(
@@ -197,6 +247,92 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
   }
 
   return updatedManifest;
+};
+
+const getSplitOnArrayName = (splitOnValue: string): string | undefined => {
+  if (isTemplateExpression(splitOnValue)) {
+    try {
+      const parsedValue = ExpressionParser.parseTemplateExpression(splitOnValue);
+      if (isSupportedSplitOnExpression(parsedValue)) {
+        const { dereferences } = parsedValue as ExpressionFunction;
+        return !dereferences.length
+          ? undefined
+          : dereferences.map((dereference) => (dereference.expression as ExpressionLiteral).value).join('.');
+      } else {
+        return undefined;
+      }
+    } catch {
+      // If parsing fails, the splitOn expression is not supported.
+      return undefined;
+    }
+  } else {
+    // If the value is not an expression, there is no array name.
+    return undefined;
+  }
+};
+
+export const loadDynamicOutputsInNode = async (
+  nodeId: string,
+  isTrigger: boolean,
+  operationInfo: NodeOperation,
+  connectionId: string,
+  outputDependencies: Record<string, DependencyInfo>,
+  nodeInputs: NodeInputs,
+  settings: Settings,
+  dispatch: Dispatch
+): Promise<void> => {
+  const manifest = await getOperationManifest(operationInfo);
+  for (const outputKey of Object.keys(outputDependencies)) {
+    const info = outputDependencies[outputKey];
+    dispatch(clearDynamicOutputs(nodeId));
+
+    if (isDynamicDataReadyToLoad(info)) {
+      if (info.dependencyType === 'StaticSchema') {
+        updateOutputsAndTokens(nodeId, operationInfo.type, dispatch, manifest, isTrigger, nodeInputs, settings);
+      } else {
+        const outputSchema = await getDynamicSchema(info, nodeInputs, connectionId, operationInfo);
+        const schemaOutputs = getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter);
+        const hasSplitOn = settings.splitOn?.value?.enabled;
+
+        if (hasSplitOn) {
+          const splitOnArray = getSplitOnArrayName(settings.splitOn?.value?.value as string);
+          // If splitOn is enabled the output info is not present in the store, hence generate the outputKey from the name.
+          const outputKeyForSplitOnArray = splitOnArray
+            ? create([OutputSource.Body, Constants.DEFAULT_KEY_PREFIX, splitOnArray])
+            : undefined;
+
+          for (const outputKey of Object.keys(schemaOutputs)) {
+            const outputParameter = schemaOutputs[outputKey];
+
+            const isParentArrayResponseBody = splitOnArray === undefined && outputParameter.parentArray === OutputKeys.Body;
+
+            const isOutputInSplitOnArray =
+              (outputParameter.isInsideArray && isParentArrayResponseBody) || equals(outputParameter.parentArray, splitOnArray);
+            // Resetting the InsideArray property for parameters in batching trigger,
+            // as for the actions in flow they are body parameters not inside an array.
+            if (isOutputInSplitOnArray) {
+              outputParameter.isInsideArray = false;
+            }
+
+            // Filtering the outputs if it is not equal to the top level array in a batching trigger.
+            if (outputParameter.key !== outputKeyForSplitOnArray) {
+              schemaOutputs[outputKey] = outputParameter;
+            }
+          }
+        }
+
+        const dynamicOutputs = Object.keys(schemaOutputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {
+          const outputInfo = toOutputInfo(schemaOutputs[outputKey]);
+          return { ...result, [outputInfo.key]: outputInfo };
+        }, {});
+
+        dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
+        dispatch(
+          addDynamicTokens({ nodeId, tokens: convertOutputsToTokens(nodeId, operationInfo.type, dynamicOutputs, manifest, settings) })
+        );
+      }
+    }
+  }
 };
 
 const getExpressionValue = ({ name, required, key, title, source }: OutputInfo): string => {

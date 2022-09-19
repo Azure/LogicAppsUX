@@ -20,8 +20,8 @@ describe('edit workflow', () => {
     addNodeToWorkflow(
       {
         operation: {} as any,
-        id: 'post_in_teams',
-        discoveryIds: {
+        nodeId: 'post_in_teams',
+        relationshipIds: {
           graphId: graph.id,
           parentId: parentId,
           childId: childId,
@@ -44,8 +44,8 @@ describe('edit workflow', () => {
     addNodeToWorkflow(
       {
         operation: {} as any,
-        id: 'post_in_teams',
-        discoveryIds: {
+        nodeId: 'post_in_teams',
+        relationshipIds: {
           graphId: graph.id,
           parentId: parentId,
           childId: undefined,
