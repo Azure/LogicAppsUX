@@ -4380,6 +4380,9 @@
       <Item ItemId=";VbMYd8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Triggers tell your app when to start running. Each workflow needs at least one trigger.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Os gatilhos informam ao aplicativo quando começar a ser executado. Cada fluxo de trabalho precisa de pelo menos um gatilho.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4440,6 +4443,9 @@
       <Item ItemId=";WOOYW1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Actions perform operations on data or communicate between systems to execute.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[As ações executam operações em dados ou se comunicam entre sistemas a serem executados.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
