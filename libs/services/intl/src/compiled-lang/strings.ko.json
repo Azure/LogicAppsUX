@@ -511,7 +511,7 @@
   "3GINhd": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "트리거"
     }
   ],
   "3NhwIJ": [
@@ -867,7 +867,7 @@
   "7ZR1xr": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "작업 추가"
     }
   ],
   "7aJqIH": [
@@ -997,7 +997,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "지원되지 않는 토큰 형식: "
     },
     {
       "type": 1,
@@ -2128,7 +2128,7 @@
   "MYgKHu": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "작업"
     }
   ],
   "Mb+Eaq": [
@@ -2923,7 +2923,7 @@
   "VbMYd8": [
     {
       "type": 0,
-      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+      "value": "트리거는 실행을 시작할 시기를 앱에 알릴 수 있습니다. 각 워크플로에는 하나 이상의 트리거가 필요합니다."
     }
   ],
   "VlvlX1": [
@@ -2977,7 +2977,7 @@
   "WOOYW1": [
     {
       "type": 0,
-      "value": "Actions perform operations on data or communicate between systems to execute."
+      "value": "작업은 데이터에 대한 작업을 수행하거나 실행할 시스템 간에 통신합니다."
     }
   ],
   "WS9kXD": [
@@ -3061,7 +3061,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "지원되지 않는 토큰 형식: "
     },
     {
       "type": 1,
@@ -3363,7 +3363,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "지원되지 않는 토큰 형식: "
     },
     {
       "type": 1,
@@ -4700,7 +4700,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "트리거 추가"
     }
   ],
   "q2OCEx": [

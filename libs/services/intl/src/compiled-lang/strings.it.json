@@ -533,7 +533,7 @@
   "3GINhd": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Trigger"
     }
   ],
   "3NhwIJ": [
@@ -889,7 +889,7 @@
   "7ZR1xr": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Aggiungerei un'azione"
     }
   ],
   "7aJqIH": [
@@ -1019,7 +1019,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tipo di token non supportato: "
     },
     {
       "type": 1,
@@ -2216,7 +2216,7 @@
   "MYgKHu": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Azioni"
     }
   ],
   "Mb+Eaq": [
@@ -3041,7 +3041,7 @@
   "VbMYd8": [
     {
       "type": 0,
-      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+      "value": "I trigger indicano all'app quando avviare l'esecuzione. Ogni flusso di lavoro richiede almeno un trigger."
     }
   ],
   "VlvlX1": [
@@ -3095,7 +3095,7 @@
   "WOOYW1": [
     {
       "type": 0,
-      "value": "Actions perform operations on data or communicate between systems to execute."
+      "value": "Le azioni eseguono operazioni sui dati o comunicano tra i sistemi da eseguire."
     }
   ],
   "WS9kXD": [
@@ -3179,7 +3179,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tipo di token non supportato: "
     },
     {
       "type": 1,
@@ -3481,7 +3481,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tipo di token non supportato: "
     },
     {
       "type": 1,
@@ -4848,7 +4848,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Aggiungere un trigger"
     }
   ],
   "q2OCEx": [

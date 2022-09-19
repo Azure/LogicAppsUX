@@ -522,7 +522,7 @@
   "3GINhd": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Tetikleyiciler"
     }
   ],
   "3NhwIJ": [
@@ -590,7 +590,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "JSON biçimi geçersiz. Başlangıç "
     },
     {
       "type": 1,
@@ -598,7 +598,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " veya bitiş "
     },
     {
       "type": 1,
@@ -606,7 +606,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " eksik."
     }
   ],
   "3kI7xF": [
@@ -878,7 +878,7 @@
   "7ZR1xr": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Eylem ekle"
     }
   ],
   "7aJqIH": [
@@ -2172,7 +2172,7 @@
   "MYgKHu": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Eylemler"
     }
   ],
   "Mb+Eaq": [
@@ -3480,7 +3480,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Çıkışı test etmek için parametreleri belirtin."
     }
   ],
   "bzF/qn": [
@@ -4766,7 +4766,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Tetikleyici ekleyin"
     }
   ],
   "q2OCEx": [
@@ -5630,7 +5630,7 @@
   "zBBJuL": [
     {
       "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "Bu ifade herhangi bir giriş gerektirmiyor."
     }
   ],
   "zBMVKg": [

@@ -576,7 +576,7 @@
   "3GINhd": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Wyzwalacze"
     }
   ],
   "3NhwIJ": [
@@ -932,7 +932,7 @@
   "7ZR1xr": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Dodaj akcję"
     }
   ],
   "7aJqIH": [
@@ -1078,7 +1078,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nieobsługiowany typ tokenu: "
     },
     {
       "type": 1,
@@ -2364,7 +2364,7 @@
   "MYgKHu": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Akcje"
     }
   ],
   "Mb+Eaq": [
@@ -3346,7 +3346,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nieobsługiwany typ tokenu: "
     },
     {
       "type": 1,
@@ -3648,7 +3648,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nieobsługiowany typ tokenu: "
     },
     {
       "type": 1,
@@ -5058,7 +5058,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Dodaj wyzwalacz"
     }
   ],
   "q2OCEx": [

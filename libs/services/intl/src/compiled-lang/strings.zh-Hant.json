@@ -511,7 +511,7 @@
   "3GINhd": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "觸發程序"
     }
   ],
   "3NhwIJ": [
@@ -867,7 +867,7 @@
   "7ZR1xr": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "新增動作"
     }
   ],
   "7aJqIH": [
@@ -2128,7 +2128,7 @@
   "MYgKHu": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "動作"
     }
   ],
   "Mb+Eaq": [
@@ -2923,7 +2923,7 @@
   "VbMYd8": [
     {
       "type": 0,
-      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+      "value": "觸發程式會告訴您的應用程式何時開始執行。每個工作流程至少需要一個觸發程式。"
     }
   ],
   "VlvlX1": [
@@ -2977,7 +2977,7 @@
   "WOOYW1": [
     {
       "type": 0,
-      "value": "Actions perform operations on data or communicate between systems to execute."
+      "value": "動作會在資料上執行作業，或在系統之間進行通訊以執行。"
     }
   ],
   "WS9kXD": [
@@ -4712,7 +4712,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "新增觸發程序"
     }
   ],
   "q2OCEx": [

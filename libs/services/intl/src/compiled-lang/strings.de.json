@@ -538,7 +538,7 @@
   "3GINhd": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Trigger"
     }
   ],
   "3NhwIJ": [
@@ -894,7 +894,7 @@
   "7ZR1xr": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Aktion hinzufügen"
     }
   ],
   "7aJqIH": [
@@ -2260,7 +2260,7 @@
   "MYgKHu": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Aktionen"
     }
   ],
   "Mb+Eaq": [
@@ -3086,7 +3086,7 @@
   "VbMYd8": [
     {
       "type": 0,
-      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+      "value": "Trigger (Auslöser) teilen Ihrer App mit, wann sie gestartet werden soll. Jeder Workflow benötigt mindestens einen Trigger."
     }
   ],
   "VlvlX1": [
@@ -3140,7 +3140,7 @@
   "WOOYW1": [
     {
       "type": 0,
-      "value": "Actions perform operations on data or communicate between systems to execute."
+      "value": "Aktionen führen Vorgänge für Daten aus oder kommunizieren zwischen auszuführenden Systemen."
     }
   ],
   "WS9kXD": [
@@ -4910,7 +4910,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Trigger hinzufügen"
     }
   ],
   "q2OCEx": [
