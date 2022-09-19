@@ -538,7 +538,7 @@
   "3GINhd": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Triggerek"
     }
   ],
   "3NhwIJ": [
@@ -894,7 +894,7 @@
   "7ZR1xr": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Művelet hozzáadása"
     }
   ],
   "7aJqIH": [
@@ -1040,7 +1040,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "A lexikális elem típusa nem támogatott: "
     },
     {
       "type": 1,
@@ -2260,7 +2260,7 @@
   "MYgKHu": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Műveletek"
     }
   ],
   "Mb+Eaq": [
@@ -3224,7 +3224,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "A lexikális elem típusa nem támogatott: "
     },
     {
       "type": 1,
@@ -3526,7 +3526,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "A lexikális elem típusa nem támogatott: "
     },
     {
       "type": 1,
@@ -4914,7 +4914,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Trigger hozzáadása"
     }
   ],
   "q2OCEx": [

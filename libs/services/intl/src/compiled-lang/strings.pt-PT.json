@@ -549,7 +549,7 @@
   "3GINhd": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Acionadores"
     }
   ],
   "3NhwIJ": [
@@ -905,7 +905,7 @@
   "7ZR1xr": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Adicionar uma ação"
     }
   ],
   "7aJqIH": [
@@ -2304,7 +2304,7 @@
   "MYgKHu": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Ações"
     }
   ],
   "Mb+Eaq": [
@@ -3137,7 +3137,7 @@
   "VbMYd8": [
     {
       "type": 0,
-      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+      "value": "Os acionadores dizem à sua aplicação quando começar a executar. Cada fluxo de trabalho precisa de, pelo menos, um acionador."
     }
   ],
   "VlvlX1": [
@@ -3191,7 +3191,7 @@
   "WOOYW1": [
     {
       "type": 0,
-      "value": "Actions perform operations on data or communicate between systems to execute."
+      "value": "As ações executam operações em dados ou comunicam entre sistemas para executar."
     }
   ],
   "WS9kXD": [
@@ -4976,7 +4976,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Add a trigger"
+      "value": "Adicionar um acionador"
     }
   ],
   "q2OCEx": [

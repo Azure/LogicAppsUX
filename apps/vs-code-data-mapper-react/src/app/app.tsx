@@ -56,7 +56,7 @@ export const App = (): JSX.Element => {
   };
 
   return (
-    <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeDark ? 'dark' : 'light'} options={{}}>
+    <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>
       <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={schemaFileList}>
         <DataMapperDesigner
           saveStateCall={saveStateCall}
