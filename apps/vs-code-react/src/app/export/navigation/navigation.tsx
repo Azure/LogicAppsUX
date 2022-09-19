@@ -19,16 +19,8 @@ export const Navigation: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode) as InitializedVscodeState;
   const { exportData } = vscodeState;
   const { finalStatus } = vscodeState;
-  const {
-    selectedSubscription,
-    selectedIse,
-    selectedWorkflows,
-    validationState,
-    targetDirectory,
-    packageUrl,
-    managedConnections,
-    location: selectedLocation,
-  } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows, validationState, targetDirectory, packageUrl, managedConnections } =
+    exportData;
   const { isManaged, resourceGroup, resourceGroupLocation } = managedConnections;
 
   const intlText = {
@@ -102,10 +94,10 @@ export const Navigation: React.FC = () => {
 
     switch (pathname) {
       case `/${RouteName.export}/${RouteName.instance_selection}`: {
-        return selectedSubscription === '' || (selectedIse === '' && selectedLocation === '');
+        return selectedSubscription === '' || selectedIse === '';
       }
       case `/${RouteName.export}/${RouteName.workflows_selection}`: {
-        return selectedWorkflows.length === 0;
+        return selectedSubscription === '' || selectedIse === '' || selectedWorkflows.length === 0;
       }
       case `/${RouteName.export}/${RouteName.validation}`: {
         return validationState === '' || validationState === ValidationStatus.failed;
