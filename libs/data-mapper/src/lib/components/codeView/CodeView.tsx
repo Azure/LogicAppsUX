@@ -1,5 +1,5 @@
 import { Stack } from '@fluentui/react';
-import { Button, makeStyles, shorthands, Text, typographyStyles } from '@fluentui/react-components';
+import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
@@ -11,6 +11,7 @@ const useStyles = makeStyles({
     width: '25%',
     ...shorthands.padding('12px'),
     boxSizing: 'border-box',
+    backgroundColor: tokens.colorNeutralBackground1,
   },
   titleTextStyle: {
     ...typographyStyles.body1Strong,

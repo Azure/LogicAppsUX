@@ -13,7 +13,7 @@ import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -22,7 +22,9 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   dataMapperShell: {
-    ...shorthands.border('1px', 'solid', '#ccc'),
+    backgroundColor: tokens.colorNeutralBackground4,
+    paddingLeft: '12px',
+    paddingRight: '12px',
   },
   canvasWrapper: {
     height: '100%',
@@ -31,6 +33,7 @@ const useStyles = makeStyles({
     minHeight: 0,
     ...shorthands.overflow('hidden'),
   },
+  centerView: {},
 });
 
 export interface DataMapperDesignerProps {
@@ -100,16 +103,21 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           readCurrentSchemaOptions={readCurrentSchemaOptions ?? placeholderFunc}
         />
         <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
-        <div id="center-view">
+        <div className={styles.centerView}>
           <div
             style={{
               maxHeight: baseCanvasHeight,
               height: isPropPaneExpanded ? baseCanvasHeight - propPaneExpandedHeightPx : baseCanvasHeight,
+              marginBottom: isPropPaneExpanded && propPaneExpandedHeightPx === baseCanvasHeight ? 0 : '8px',
+              boxSizing: 'border-box',
             }}
           >
             {inputSchema && outputSchema ? (
               <Stack horizontal style={{ height: '100%' }}>
-                <div className={styles.canvasWrapper} style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%' }}>
+                <div
+                  className={styles.canvasWrapper}
+                  style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%', marginRight: isCodeViewOpen ? '8px' : 0 }}
+                >
                   <ReactFlowProvider>
                     <ReactFlowWrapper inputSchema={inputSchema} />
                   </ReactFlowProvider>
