@@ -1,43 +1,43 @@
 import { logicalBranding } from '../../constants/FunctionConstants';
-import type { ExpressionCardProps } from './ExpressionCard';
-import { ExpressionCard } from './ExpressionCard';
+import type { FunctionCardProps } from './FunctionCard';
+import { FunctionCard } from './FunctionCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import type { NodeProps } from 'react-flow-renderer';
 
 export default {
-  component: ExpressionCard,
-  title: 'Data Mapper/ExpressionCard',
-} as ComponentMeta<typeof ExpressionCard>;
+  component: FunctionCard,
+  title: 'Data Mapper/FunctionCard',
+} as ComponentMeta<typeof FunctionCard>;
 
-export const WithIcon: ComponentStory<typeof ExpressionCard> = (args: NodeProps<ExpressionCardProps>) => <ExpressionCard {...args} />;
+export const WithIcon: ComponentStory<typeof FunctionCard> = (args: NodeProps<FunctionCardProps>) => <FunctionCard {...args} />;
 WithIcon.args = {
   data: {
     onClick: () => {
-      console.log('Expression card clicked');
+      console.log('Function card clicked');
     },
-    expressionName: 'Expression Name',
+    functionName: 'Function Name',
     inputs: [],
     numberOfInputs: 0,
     iconFileName: 'ChartYAngel.svg',
-    expressionBranding: logicalBranding,
+    functionBranding: logicalBranding,
     displayHandle: false,
     disabled: false,
     error: false,
   },
 };
 
-export const WithoutIcon: ComponentStory<typeof ExpressionCard> = (args: NodeProps<ExpressionCardProps>) => <ExpressionCard {...args} />;
+export const WithoutIcon: ComponentStory<typeof FunctionCard> = (args: NodeProps<FunctionCardProps>) => <FunctionCard {...args} />;
 WithoutIcon.args = {
   data: {
     onClick: () => {
-      console.log('Expression card clicked');
+      console.log('Function card clicked');
     },
-    expressionName: 'Expression Name',
+    functionName: 'Function Name',
     inputs: [],
     numberOfInputs: 0,
     iconFileName: '',
-    expressionBranding: logicalBranding,
+    functionBranding: logicalBranding,
     displayHandle: false,
     disabled: false,
     error: false,
