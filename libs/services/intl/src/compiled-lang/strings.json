@@ -2415,6 +2415,12 @@
       "value": "Required. The collection to take the first object from."
     }
   ],
+  "PA4gx6": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run afters configured"
+    }
+  ],
   "PBvR9Q": [
     {
       "type": 0,

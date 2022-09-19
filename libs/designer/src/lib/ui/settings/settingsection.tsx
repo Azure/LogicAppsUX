@@ -1,9 +1,9 @@
 import type { HeaderClickHandler } from '.';
 import constants from '../../common/constants';
-import type { ValidationError } from '../../core/state/settingSlice';
+import { type ValidationError, ValidationErrorKeys } from '../../core/state/settingSlice';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
-import { ErrorBar } from './validation/errorbar';
+import { ErrorBar, WarningBar } from './validation/errorbar';
 import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconStyles, IIconProps } from '@fluentui/react';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -99,6 +99,7 @@ export type Settings = SettingBase &
       }
   );
 
+type ErrorDismissHandler = (key?: string, message?: string) => void;
 export interface SettingSectionProps {
   id?: string;
   title?: string;
@@ -110,6 +111,7 @@ export interface SettingSectionProps {
   isReadOnly?: boolean;
   onHeaderClick?: HeaderClickHandler;
   validationErrors?: ValidationError[];
+  onErrorDismiss?: ErrorDismissHandler;
 }
 
 export const SettingsSection: FC<SettingSectionProps> = ({
@@ -122,6 +124,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   settings,
   onHeaderClick,
   validationErrors,
+  onErrorDismiss,
 }) => {
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
@@ -143,7 +146,14 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   const internalSettings = (
     <>
       {expanded || !showHeading ? <Setting isReadOnly={isReadOnly} settings={settings} /> : null}
-      {expanded ? (validationErrors ?? []).map((error) => <ErrorBar key={guid()} message={error.message} />) : null}
+      {expanded
+        ? (validationErrors ?? []).map((error) => {
+            if (error.key === ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION) {
+              return <WarningBar key={guid()} message={error.message} onErrorDismiss={() => onErrorDismiss?.(error.key)} />;
+            }
+            return <ErrorBar key={guid()} message={error.message} />;
+          })
+        : null}
       {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
     </>
   );

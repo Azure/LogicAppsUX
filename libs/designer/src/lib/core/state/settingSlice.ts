@@ -10,6 +10,7 @@ export enum ValidationErrorKeys {
   TRIGGER_CONDITION_EMPTY = 'TriggerConditionEmpty',
   TIMEOUT_VALUE_INVALID = 'TimeoutValueInvalid',
   RETRY_INTERVAL_INVALID = 'RetryIntervalInvalid',
+  CANNOT_DELETE_LAST_ACTION = 'CannotDeleteLastAction',
 }
 
 export interface ValidationError {

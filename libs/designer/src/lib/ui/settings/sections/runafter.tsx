@@ -2,10 +2,12 @@ import type { SectionProps } from '../';
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
 import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
+import { type ValidationError, ValidationErrorKeys } from '../../../core/state/settingSlice';
 import { addEdgeFromRunAfter, removeEdgeFromRunAfter, updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import type { SettingSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -15,16 +17,20 @@ interface RunAfterProps extends SectionProps {
   allEdges: WorkflowEdge[];
 }
 
-export const RunAfter = ({
-  runAfter,
-  readOnly = false,
-  expanded,
-  onHeaderClick,
-  nodeId,
-  validationErrors,
-}: RunAfterProps): JSX.Element | null => {
+export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, nodeId }: RunAfterProps): JSX.Element | null => {
   const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
   const dispatch = useDispatch<AppDispatch>();
+  const [errors, setErrors] = useState<ValidationError[]>([]);
+
+  const intl = useIntl();
+  const runAfterTitle = intl.formatMessage({
+    defaultMessage: 'Run After',
+    description: 'title for run after setting section',
+  });
+  const lastActionErrorMessage = intl.formatMessage({
+    description: 'error message for deselection of last run after action',
+    defaultMessage: 'Each action must have one or more run afters configured',
+  });
 
   const handleStatusChange = (predecessorId: string, status: string, checked?: boolean) => {
     if (!nodeData.runAfter) {
@@ -47,7 +53,7 @@ export const RunAfter = ({
 
   const GetRunAfterProps = (): RunAfterActionDetailsProps[] => {
     const items: RunAfterActionDetailsProps[] = [];
-    Object.entries(nodeData?.runAfter ?? {}).forEach(([id, value]) => {
+    Object.entries(nodeData?.runAfter ?? {}).forEach(([id, value], _i, arr) => {
       items.push({
         collapsible: true,
         expanded: false,
@@ -59,6 +65,12 @@ export const RunAfter = ({
           handleStatusChange(id, status, checked);
         },
         onDelete: () => {
+          if (arr.length < 2 && !errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION)) {
+            setErrors([...errors, { key: ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION, message: lastActionErrorMessage }]);
+            return;
+          } else if (arr.length < 2) {
+            return;
+          }
           dispatch(
             removeEdgeFromRunAfter({
               parentOperationId: id,
@@ -70,11 +82,10 @@ export const RunAfter = ({
     });
     return items;
   };
-  const intl = useIntl();
-  const runAfterTitle = intl.formatMessage({
-    defaultMessage: 'Run After',
-    description: 'title for run after setting section',
-  });
+
+  const handleErrorDismiss = (key?: string, message?: string): void => {
+    setErrors(errors.filter((err) => (key ? err.key !== key : message ? err.message !== message : true)));
+  };
 
   const runAfterSectionProps: SettingSectionProps = {
     id: 'runAfter',
@@ -99,7 +110,8 @@ export const RunAfter = ({
         visible: runAfter?.isSupported,
       },
     ],
-    validationErrors,
+    validationErrors: errors,
+    onErrorDismiss: handleErrorDismiss,
   };
 
   return <SettingsSection {...runAfterSectionProps} />;

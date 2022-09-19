@@ -3,6 +3,7 @@ import { isHighContrastBlack } from '@microsoft/designer-ui';
 
 export interface MessageBarProps {
   message: string;
+  onErrorDismiss?: () => void | undefined;
 }
 
 const messageBarStyles: IMessageBarStyles = isHighContrastBlack()
@@ -19,9 +20,9 @@ export const ErrorBar = ({ message }: MessageBarProps): JSX.Element => {
   );
 };
 
-export const WarningBar = ({ message }: MessageBarProps): JSX.Element => {
+export const WarningBar = ({ message, onErrorDismiss }: MessageBarProps): JSX.Element => {
   return (
-    <MessageBar styles={messageBarStyles} messageBarType={MessageBarType.warning} onDismiss={() => null}>
+    <MessageBar styles={messageBarStyles} messageBarType={MessageBarType.warning} onDismiss={onErrorDismiss}>
       {message}
     </MessageBar>
   );
