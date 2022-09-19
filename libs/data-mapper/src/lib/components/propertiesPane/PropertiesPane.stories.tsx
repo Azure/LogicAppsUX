@@ -57,7 +57,17 @@ export default {
   },
 } as ComponentMeta<typeof PropertiesPane>;
 
-export const Standard: ComponentStory<typeof PropertiesPane> = (args: PropertiesPaneProps) => <PropertiesPane {...args} />;
+export const Standard: ComponentStory<typeof PropertiesPane> = (args: PropertiesPaneProps) => (
+  <PropertiesPane
+    {...args}
+    setIsExpanded={() => {
+      return;
+    }}
+    setContentHeight={() => {
+      return;
+    }}
+  />
+);
 Standard.args = {
   currentNode: undefined,
 };
