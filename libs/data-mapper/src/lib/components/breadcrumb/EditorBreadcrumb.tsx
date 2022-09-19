@@ -3,7 +3,7 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import type { IBreadcrumbItem } from '@fluentui/react';
 import { Breadcrumb } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
+import { Button, tokens } from '@fluentui/react-components';
 import { Code20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -11,6 +11,13 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const maxBreadcrumbItems = 3;
 const overflowIndex = 1;
+
+const baseBreadcrumbStyles = {
+  height: '40px',
+  padding: '4px 8px',
+  marginBottom: '8px',
+  backgroundColor: tokens.colorNeutralBackground1,
+};
 
 interface EditorBreadcrumbProps {
   isCodeViewOpen: boolean;
@@ -33,16 +40,15 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
 
   return breadcrumbItems.length < 1 ? (
     // Breadcrumb doesn't display when empty, this is a breadcrumb space placeholder
-    <div style={{ height: '40px', padding: '4px 8px' }}></div>
+    <div style={{ ...baseBreadcrumbStyles }}></div>
   ) : (
     <div
       style={{
+        ...baseBreadcrumbStyles,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '4px 8px',
-        height: '40px',
       }}
     >
       <Breadcrumb
