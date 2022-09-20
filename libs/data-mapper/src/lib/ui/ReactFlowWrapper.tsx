@@ -27,8 +27,8 @@ import type { SelectedFunctionNode, SelectedInputNode, SelectedOutputNode } from
 import { NodeType } from '../models/SelectedNode';
 import { inputPrefix, outputPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnectionAtCurrentOutputNode, isLeafNode } from '../utils/Schema.Utils';
-import { tokens } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
+import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -295,7 +295,14 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
     onTabSelect: onTabSelect,
   };
 
-  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, allFunctionNodes, currentOutputNode, connections);
+  const [nodes, edges] = useLayout(
+    currentlySelectedInputNodes,
+    connectedInputNodes,
+    flattenedInputSchema,
+    allFunctionNodes,
+    currentOutputNode,
+    connections
+  );
 
   return (
     <ReactFlow
