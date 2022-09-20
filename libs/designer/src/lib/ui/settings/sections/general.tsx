@@ -35,6 +35,7 @@ export const General = ({
   onClientTrackingIdChange,
   expanded,
   onHeaderClick,
+  validationErrors,
 }: GeneralSectionProps): JSX.Element => {
   const intl = useIntl();
   const nodeId = useSelectedNodeId();
@@ -201,6 +202,7 @@ export const General = ({
         visible: conditionExpressions?.isSupported,
       },
     ],
+    validationErrors,
   };
 
   return <SettingsSection {...generalSectionProps} />;

@@ -173,7 +173,13 @@ export const Expression = ({ expression, index, readOnly = false, onChange, onDe
         onGetErrorMessage={handleGetErrorMessage}
       />
       <TooltipHost content={deleteValue}>
-        <IconButton ariaLabel={deleteValue} disabled={readOnly} iconProps={deleteIconButtonProps} onClick={handleDeleteClick} />
+        <IconButton
+          className="msla-trigger-condition-expression-add"
+          ariaLabel={deleteValue}
+          disabled={readOnly}
+          iconProps={deleteIconButtonProps}
+          onClick={handleDeleteClick}
+        />
       </TooltipHost>
     </div>
   );

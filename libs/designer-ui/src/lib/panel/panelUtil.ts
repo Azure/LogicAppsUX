@@ -22,6 +22,7 @@ export interface PanelTab {
   icon?: string;
   visible?: boolean;
   order: number;
+  tabErrors?: Record<string, boolean>;
   content: React.ReactElement;
 }
 
