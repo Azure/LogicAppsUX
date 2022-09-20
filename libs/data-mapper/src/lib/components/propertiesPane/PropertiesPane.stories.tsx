@@ -1,9 +1,9 @@
-import type { ExpressionGroupBranding } from '../../constants/ExpressionConstants';
+import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
 import { SchemaNodeDataType } from '../../models';
+import type { SelectedFunctionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
-import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
-import { PropertiesPane } from './PropertiesPane';
 import type { PropertiesPaneProps } from './PropertiesPane';
+import { PropertiesPane } from './PropertiesPane';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
@@ -23,10 +23,10 @@ const exOutputNode: SelectedOutputNode = {
   nullable: true,
   inputIds: ['miscInputId'],
 };
-const exExpressionNode: SelectedExpressionNode = {
-  nodeType: NodeType.Expression,
-  name: 'ExExpressionNode',
-  branding: {} as ExpressionGroupBranding,
+const exFunctionNode: SelectedFunctionNode = {
+  nodeType: NodeType.Function,
+  name: 'ExFunctionNode',
+  branding: {} as FunctionGroupBranding,
   description: '',
   codeEx: '',
   definition: '',
@@ -34,7 +34,7 @@ const exExpressionNode: SelectedExpressionNode = {
   outputId: '',
 };
 
-const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exExpressionNode };
+const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exFunctionNode };
 
 export default {
   component: PropertiesPane,
@@ -50,7 +50,7 @@ export default {
           noneSelected: 'No node selected',
           exInputNode: 'Input node',
           exOutputNode: 'Output node',
-          exExpressionNode: 'Expression node',
+          exFunctionNode: 'Function node',
         },
       },
     },

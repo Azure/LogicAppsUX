@@ -68,12 +68,17 @@ export const MappingToolbox: ComponentStory<typeof ButtonPivot> = (args: ButtonP
       <ButtonPivot {...updatedArgs} />
       {showToolboxPane === 'toolbox' && (
         <FloatingPanel {...ToolboxPanelProps}>
-          <SchemaTree schema={extendedSchema} currentlySelectedNodes={[]} onLeafNodeClick={() => console.log('Node clicked')} />
+          <SchemaTree
+            schema={extendedSchema}
+            currentlySelectedNodes={[]}
+            visibleConnectedNodes={[]}
+            onNodeClick={() => console.log('Node clicked')}
+          />
         </FloatingPanel>
       )}
-      {showToolboxPane === 'expressions' && (
+      {showToolboxPane === 'functions' && (
         <FloatingPanel {...ToolboxPanelProps}>
-          <span>This is where we will put expression tree</span>
+          <span>This is where we will put function tree</span>
         </FloatingPanel>
       )}
     </>
@@ -88,10 +93,10 @@ MappingToolbox.args = {
       value: 'toolbox',
     },
     {
-      tooltip: 'Expressions',
+      tooltip: 'Functions',
       regularIcon: MathFormula20Regular,
       filledIcon: MathFormula20Filled,
-      value: 'expressions',
+      value: 'functions',
     },
   ],
   horizontal: true,

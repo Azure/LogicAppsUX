@@ -997,7 +997,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "サポートされていないトークンの種類: "
     },
     {
       "type": 1,
@@ -2923,7 +2923,7 @@
   "VbMYd8": [
     {
       "type": 0,
-      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+      "value": "トリガーによって、アプリに実行開始のタイミングを通知します。各ワークフローには少なくとも 1 つのトリガーが必要です。"
     }
   ],
   "VlvlX1": [
@@ -2977,7 +2977,7 @@
   "WOOYW1": [
     {
       "type": 0,
-      "value": "Actions perform operations on data or communicate between systems to execute."
+      "value": "アクションによって、データに対する操作を実行したり、実行するためのシステム間での通信を行ったりします。"
     }
   ],
   "WS9kXD": [
@@ -3061,7 +3061,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "サポートされていないトークンの種類: "
     },
     {
       "type": 1,
@@ -3363,7 +3363,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "サポートされていないトークンの種類: "
     },
     {
       "type": 1,

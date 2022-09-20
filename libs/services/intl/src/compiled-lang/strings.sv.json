@@ -3078,7 +3078,7 @@
   "VbMYd8": [
     {
       "type": 0,
-      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+      "value": "Utlösare meddelar din app när den ska börja köras. Varje arbetsflöde behöver minst en utlösare."
     }
   ],
   "VlvlX1": [
@@ -3132,7 +3132,7 @@
   "WOOYW1": [
     {
       "type": 0,
-      "value": "Actions perform operations on data or communicate between systems to execute."
+      "value": "Uppgifter utför åtgärder på data eller kommunicerar mellan system som ska köras."
     }
   ],
   "WS9kXD": [
