@@ -170,7 +170,6 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
         branding: node.data.functionBranding,
         description: '', // TODO: this property and below
         codeEx: '',
-        definition: '',
         outputId: '',
       };
 
