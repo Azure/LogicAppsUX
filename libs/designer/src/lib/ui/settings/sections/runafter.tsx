@@ -51,7 +51,7 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, 
       return;
     } else if (!updatedStatus.length) {
       return;
-    } else if (updatedStatus.length && errors.some(({ key }) => key === ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS)) {
+    } else if (errors.some(({ key }) => key === ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS)) {
       setErrors(errors.filter(({ key }) => key !== ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS));
     }
 
