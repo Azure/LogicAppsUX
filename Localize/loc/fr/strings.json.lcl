@@ -789,6 +789,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";3GINhd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Triggers]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Déclencheurs]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";3NhwIJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The separator.]]></Val>
@@ -834,6 +843,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";3Y8a6G" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Required parameters {parameters} not set or invalid]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Paramètres obligatoires {parameters} non définis ou non valides]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";3afjx+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+09:00) Chita]]></Val>
@@ -857,6 +875,15 @@
           <Val><![CDATA[(UTC+03:30) Tehran]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+03:30) Téhéran]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";3jwMBm" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid json format. Missing beginning {openingBracket} or ending {closingBracket}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Format JSON non valide. Début {openingBracst} ou fin {closingBraflt} manquants.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1230,11 +1257,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";7LmpNN" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Parameter "{parameterName}" cannot be found for this operation]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Le paramètre « {parameterName} » est introuvable pour cette opération]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";7QymrD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The string from which the substring is taken.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Obligatoire. Chaîne dont la sous-chaîne est extraite.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";7ZR1xr" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add an action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ajouter une action]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1316,6 +1361,15 @@
           <Val><![CDATA[Invalid property '{0}' for authentication type '{1}'.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Propriété « {0} » non valide pour le type d’authentification « {1} ».]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8BoVtZ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Error executing the api - {url}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Erreur lors de l’exécution de l’API - {url}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1406,6 +1460,15 @@
           <Val><![CDATA[Thursday]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Jeudi]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";8baaNC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Unsupported Token Type: {expressions}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Type de jeton non pris en charge : {expressions}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1898,6 +1961,15 @@
           <Val><![CDATA[Connection required]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Connexion obligatoire]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Ciol6I" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Output]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sortie]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2457,6 +2529,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";HJIZrG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[More diagnostic information: x-ms-client-request-id is '{clientRequestId}'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Informations de diagnostic supplémentaires : x-ms-client-request-id est « {clientRequestId} ».]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";HQ8/tk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Button to add dynamic content if TokenPicker is shown]]></Val>
@@ -2561,6 +2642,15 @@
           <Val><![CDATA[Select an input schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Sélectionner un schéma d’entrée]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";IooQu1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Advanced options]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Options avancées]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2862,6 +2952,9 @@
       <Item ItemId=";LBbhCu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Delete Workflow Graph]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Supprimer le graphique de flux de travail]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3000,11 +3093,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";M3lzNo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";M0xrm+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Invalid json format. Missing beginning '{' or ending '}']]></Val>
+          <Val><![CDATA[Code view]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Format de json non valide. '{' de début ou '}' de fin manquant]]></Val>
+            <Val><![CDATA[Mode Code]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3104,6 +3197,15 @@
           <Val><![CDATA[Returns the current timestamp as a string]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Retourne l'horodateur actuel en tant que chaîne]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";MYgKHu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Actions]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Actions]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3396,11 +3498,29 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";P2rzqn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Default value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Valeur par défaut]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";P4rEwD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Collection functions]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Fonctions de collection]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";P6I90y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Input]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Entrée]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3687,6 +3807,9 @@
       <Item ItemId=";Qy0Kha" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Triggers cannot be deleted.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Les déclencheurs ne peuvent pas être supprimés.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4104,6 +4227,9 @@
       <Item ItemId=";UEryJE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Delete Workflow Action]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Supprimer l’action de flux de travail]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4251,6 +4377,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";VbMYd8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Triggers tell your app when to start running. Each workflow needs at least one trigger.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Les déclencheurs indiquent à votre application quand elle doit commencer à s’exécuter. Chaque flux de travail a besoin d’au moins un déclencheur.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";VlvlX1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Certificate]]></Val>
@@ -4301,6 +4436,15 @@
           <Val><![CDATA[Please enter a valid dictionary]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Entrez un dictionnaire valide]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WOOYW1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Actions perform operations on data or communicate between systems to execute.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Les actions effectuent des opérations sur les données ou communiquent entre les systèmes à exécuter.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4400,6 +4544,15 @@
           <Val><![CDATA[Ensure words are spelled correctly.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Vérifiez que les mots sont correctement orthographiés.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";XLUs2P" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Unsupported Token Type: {var}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Type de jeton non pris en charge : {var}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4818,6 +4971,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";b9P8SA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Unsupported Token Type: {controls}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Type de jeton non pris en charge : {controls}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";bS5DyV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+02:00) Kaliningrad]]></Val>
@@ -4886,6 +5048,15 @@
           <Val><![CDATA[(UTC-03:00) Brasilia]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC-03:00) Brasilia]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";bxhkTi" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Provide parameters to test the output.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Fournissez des paramètres pour tester la sortie.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5322,6 +5493,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";exo9v7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Unsupported programming language.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Langage de programmation non pris en charge.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";f/lWTW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The objects to check for null.]]></Val>
@@ -5417,6 +5597,15 @@
           <Val><![CDATA[(UTC-03:00) Saint Pierre and Miquelon]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC-03:00) Saint-Pierre-et-Miquelon]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";g7my78" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Run test]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Exécuter le test]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5718,6 +5907,9 @@
       <Item ItemId=";iHVVTl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Are you sure you want to delete {nodeId}?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Voulez-vous vraiment supprimer {nodeId} ?]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6405,6 +6597,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";nSan4V" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Reset]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Réinitialiser]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";nTA155" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The name of the property to remove.]]></Val>
@@ -6711,6 +6912,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";q1gfIs" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add a trigger]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ajouter un déclencheur]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";q2OCEx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value to assign to the property.]]></Val>
@@ -6806,6 +7016,15 @@
           <Val><![CDATA[Required]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Obligatoire]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";qTqSqD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Error code: '{errorCode}', Message: '{message}'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Code d’erreur : « {errorCode} », Message : « {message} ».]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7851,6 +8070,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";yB6PB/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Value contains function expressions which cannot be resolved. Only constant values supported]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[La valeur contient des expressions de fonction qui ne peuvent pas être résolues. Seules les valeurs constantes sont prises en charge]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";yBrsFJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The value that is converted to an array.]]></Val>
@@ -7905,6 +8133,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";ysoumb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add field]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ajouter un champ]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";yxsn7s" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+00:00) Casablanca]]></Val>
@@ -7944,6 +8181,18 @@
       <Item ItemId=";z9kH+0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This will also remove all child steps.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Cette opération supprime également toutes les étapes enfants.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";zBBJuL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This expression doesn't require any input.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Cette expression ne nécessite aucune entrée.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

@@ -546,6 +546,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Acionadores"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -576,6 +582,20 @@
       "value": "Carregue ou selecione um esquema de saída a utilizar para o seu mapa."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Os parâmetros necessários "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " não foram definidos ou são inválidos"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -592,6 +612,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Teerão"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Formato JSON inválido. Falta o início de "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " ou o fim de "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -804,6 +846,12 @@
       "value": "Obrigatório. O nome da ação com uma resposta em várias partes."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Este passo vai ser removido da Aplicação Lógica."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -834,10 +882,30 @@
       "value": "(UTC+10:30) Ilha de Lord Howe"
     }
   ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parâmetro \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" não é possível encontrar esta operação"
+    }
+  ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Obrigatório. A cadeia da qual a subcadeia é retirada."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação"
     }
   ],
   "7aJqIH": [
@@ -910,6 +978,16 @@
       "value": "\"."
     }
   ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Erro ao executar a API - "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -968,6 +1046,16 @@
     {
       "type": 0,
       "value": "Quinta-feira"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Tipo de Token Não Suportado: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1325,6 +1413,12 @@
       "value": "Ligação necessária"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Resultado"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1347,6 +1441,12 @@
     {
       "type": 0,
       "value": "Necessário. A cadeia a partir da qual pretende remover os espaços em branco à esquerda e à direita."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Nó"
     }
   ],
   "DGMwU4": [
@@ -1706,6 +1806,20 @@
       "value": "Obrigatório. O nome da chave do valor dos dados de formulário a devolver."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "Mais informações de diagnóstico: x-ms-client-request-id é \""
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1776,6 +1890,12 @@
     {
       "type": 0,
       "value": "Selecione um esquema de entrada"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Opções avançadas"
     }
   ],
   "Ip7Iax": [
@@ -1985,6 +2105,12 @@
       "value": "Não existem resultados para a pesquisa"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Eliminar Grafo de Fluxo de Trabalho"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -2099,10 +2225,10 @@
       "value": "Adicionar comentário"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "Formado json inválido. Início { ou fim } em falta"
+      "value": "Vista de código"
     }
   ],
   "M48CGd": [
@@ -2173,6 +2299,12 @@
     {
       "type": 0,
       "value": "Devolve o carimbo de data/hora atual como uma cadeia"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Ações"
     }
   ],
   "Mb+Eaq": [
@@ -2257,6 +2389,12 @@
     {
       "type": 0,
       "value": "Editar Parâmetro"
+    }
+  ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "OD8igU": [
@@ -2389,10 +2527,22 @@
       "value": "Obrigatório. Este valor é o número de números inteiros que existe na matriz."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Valor predefinido"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Funções de coleção"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Entrada"
     }
   ],
   "P8ZBF9": [
@@ -2587,6 +2737,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Os acionadores não podem ser eliminados."
     }
   ],
   "RFjYpH": [
@@ -2876,6 +3032,12 @@
       "value": "Para referenciar um parâmetro, utilize a lista de conteúdo dinâmico."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Eliminar Ação de Fluxo de Trabalho"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2972,6 +3134,12 @@
       "value": "Histórico de Execuções"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Os acionadores dizem à sua aplicação quando começar a executar. Cada fluxo de trabalho precisa de, pelo menos, um acionador."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3018,6 +3186,12 @@
     {
       "type": 0,
       "value": "Introduza um dicionário válido"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "As ações executam operações em dados ou comunicam entre sistemas para executar."
     }
   ],
   "WS9kXD": [
@@ -3096,6 +3270,16 @@
     {
       "type": 0,
       "value": "Assegure-se de que todas as palavras são escritas corretamente."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Tipo de Token Não Suportado: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3390,6 +3574,16 @@
       "value": "Valor"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Tipo de Token Não Suportado: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3440,6 +3634,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brasília"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Forneça parâmetros para testar a saída."
     }
   ],
   "bzF/qn": [
@@ -3738,6 +3938,12 @@
       "value": "Matriz"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Linguagem de programação não suportada."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3802,6 +4008,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) São Pedro e Miquelão"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Executar teste"
     }
   ],
   "gCXOd5": [
@@ -4027,6 +4239,20 @@
     {
       "type": 0,
       "value": "Conteúdo dinâmico"
+    }
+  ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Tem a certeza de que pretende eliminar "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
     }
   ],
   "iJOIca": [
@@ -4529,6 +4755,12 @@
       "value": "Obrigatório. O número de unidades de tempo que o tempo pretendido é no futuro."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Repor"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4741,6 +4973,12 @@
       "value": "Devolve um nó XML, conjunto de nós ou valor como JSON a partir da expressão XPath fornecida"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Adicionar um acionador"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4805,6 +5043,28 @@
     {
       "type": 0,
       "value": "Obrigatório"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Código de erro: \""
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "\", Mensagem: \""
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "qUWBUX": [
@@ -5130,6 +5390,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "tsmuoF": [
@@ -5524,6 +5790,12 @@
       "value": "Obrigatório. A cadeia a partir da qual se escapam carateres não seguros de URL."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "O valor contém expressões de função que não podem ser resolvidas. Apenas são suportados valores constantes"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5560,6 +5832,12 @@
       "value": "Funções de data e hora"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Adicionar campo"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5582,6 +5860,18 @@
     {
       "type": 0,
       "value": "Introduza o valor predefinido para o parâmetro."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Isto também removerá todos os passos subordinados."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "Esta expressão não requer qualquer entrada."
     }
   ],
   "zBMVKg": [

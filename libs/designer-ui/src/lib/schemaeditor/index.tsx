@@ -11,17 +11,8 @@ import { ActionButton } from '@fluentui/react/lib/Button';
 import { FontSizes } from '@fluentui/theme';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor } from 'monaco-editor';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
-
-export interface SchemaEditorProps {
-  disabled?: boolean;
-  initialValue: ValueSegment[];
-  label?: string;
-  placeholder?: string; // TODO - Need to implement this.
-  onChange?: ChangeHandler;
-  onFocus?(): void;
-}
 
 const removeStyle: IStyle = {
   border: '0',
@@ -37,18 +28,22 @@ const buttonStyles: IButtonStyles = {
   rootPressed: removeStyle,
 };
 
-export function SchemaEditor({ disabled = false, label, initialValue, onChange, onFocus }: SchemaEditorProps): JSX.Element {
+export interface SchemaEditorProps {
+  initialValue: ValueSegment[];
+  label?: string;
+  readonly?: boolean;
+  onChange?: ChangeHandler;
+  onFocus?: () => void;
+}
+
+export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus }: SchemaEditorProps): JSX.Element {
   const intl = useIntl();
   const [errorMessage, setErrorMessage] = useState('');
   const [modalOpen, setModalOpen] = useState(false);
-  const [getCurrentValue, setCurrentValue] = useFunctionalState(formatValue(initialValue[0].value));
+  const [getCurrentValue, setCurrentValue] = useFunctionalState(getInitialValue(initialValue));
+  const [editorHeight, setEditorHeight] = useState(getEditorHeight(getInitialValue(initialValue)));
   const [samplePayload, setSamplePayload] = useState<string | undefined>('');
   const modalEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
-  const [editorHeight, setEditorHeight] = useState('');
-
-  useEffect(() => {
-    setEditorHeight(getEditorHeight(getCurrentValue()));
-  }, [getCurrentValue]);
 
   const getStyles = (): Partial<IDialogStyles> => {
     return {
@@ -77,6 +72,7 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
     setErrorMessage('');
     if (e.value !== undefined) {
       setCurrentValue(e.value);
+      setEditorHeight(getEditorHeight(e.value));
     }
   };
 
@@ -100,6 +96,7 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
         const jsonSchema = generateSchemaFromJsonString(samplePayload);
         const stringifiedJsonSchema = formatValue(JSON.stringify(jsonSchema, null, 4));
         setCurrentValue(stringifiedJsonSchema);
+        setEditorHeight(getEditorHeight(stringifiedJsonSchema));
         onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: stringifiedJsonSchema }] });
       } catch (ex) {
         const error = intl.formatMessage({
@@ -116,6 +113,7 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
     setErrorMessage('');
     setModalOpen(false);
   };
+
   const handleSamplePayloadChanged = (e: EditorContentChangedEventArgs): void => {
     setSamplePayload(e.value);
   };
@@ -127,7 +125,7 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
         height={editorHeight}
         value={getCurrentValue()}
         fontSize={13}
-        readOnly={disabled}
+        readOnly={readonly}
         lineNumbers="off"
         language={EditorLanguage.json}
         onContentChanged={handleContentChanged}
@@ -135,7 +133,7 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
         onBlur={handleBlur}
       />
       <div className="msla-schema-editor-operations">
-        <ActionButton className="msla-schema-card-button" disabled={disabled} styles={buttonStyles} onClick={openModal}>
+        <ActionButton className="msla-schema-card-button" disabled={readonly} styles={buttonStyles} onClick={openModal}>
           {schemaEditorLabel}
         </ActionButton>
         <div className="msla-schema-editor-error-message">{errorMessage}</div>
@@ -161,6 +159,13 @@ export function SchemaEditor({ disabled = false, label, initialValue, onChange, 
     </div>
   );
 }
+
+const getInitialValue = (initialValue: ValueSegment[]): string => {
+  if (initialValue[0]?.value) {
+    return formatValue(initialValue[0].value);
+  }
+  return '';
+};
 
 const formatValue = (input: string): string => {
   try {

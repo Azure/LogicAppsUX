@@ -20,7 +20,23 @@ import { Meta } from '@storybook/addon-docs';
   2.  Open that folder in VS Code, then go back to Logic Apps (Standard), and click 'Create New Workflow' -> Stateless -> Press Enter
   3.  Make sure that ./Artifacts/Schemas exists within the project folder, and add an .xsd template schema for testing (ask the DM/LA team for some)
 
-### Build
+### Daily .VSIX Build
+
+The daily build of the VS Code extension (.vsix) for Data Mapper can be found at https://github.com/Azure/logic_apps_designer/releases
+under Assets with the name `microsoft-data-mapper-vscode-extension-x.x.x.vsix`
+
+In order to utilize the above file once downloaded:
+
+1. Open VS Code, click the Extensions tab (left - on the Activity Bar)
+2. Click the ellipsis/three-dots button on the title bar
+3. Click 'Install from VSIX...', and then select the .vsix file just downloaded
+
+You're all set! See the section on usage/functionality at the bottom to help you get started!
+
+**NOTE (9/15/2022):** Leaving this here for now until completely sure that public workflow extension bundle has necessary endpoints - if
+you're having issues, you may still have to follow the 'Backend Runtime Setup' instructions below
+
+### Build (Dev/Debug)
 
 To build, run the following commands in order (from the root of the repo folder):
 
@@ -32,7 +48,7 @@ nx build vs-code-data-mapper
 nx build vs-code-data-mapper-react
 ```
 
-### Run
+### Run (Dev/Debug)
 
 **NOTE:** If this is your first time running the Data Mapper extension, follow the backend setup instructions below
 
@@ -48,7 +64,7 @@ To run the VS Code extension (in debug mode):
    This is so that the necessary path/folder get generated for us to change out the runtime. Close the VS Code window running the Data Mapper extension once this is complete.
 2. Download/Set-up the latest workflow extension bundle (https://msazure.visualstudio.com/One/_build?definitionId=160488&_a=summary)
    - Click the latest run -> Click on the 'artifacts' link under the 'build' stage -> Expand the '...Windows' dropdown -> Download the '...any-any.zip'
-   - Go to yourRootUsernameFolder/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows
+   - Go to `yourRootUsernameFolder/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows`
    - Rename the current version folder (Ex: backup-1.1.16)
    - Replace it with the extracted folder you just downloaded (renaming it to the same version as the one you replaced)
 3. You can now run the Data Mapper extension with its latest backend runtime!

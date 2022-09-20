@@ -29,7 +29,8 @@ describe('Map definition conversions', () => {
     it('Test 1 connection', () => {
       const connections: ConnectionDictionary = {
         '/ns0:CBRInputRecord/Identity/UserID': {
-          value: '/ns0:CBRInputRecord/Identity/UserID',
+          destination: '/ns0:CBRInputRecord/Identity/UserID',
+          sourceValue: '/ns0:CBRInputRecord/Identity/UserID',
           reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/UserID',
           reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/UserID',
         },
@@ -44,7 +45,8 @@ describe('Map definition conversions', () => {
     it('Test deep connection', () => {
       const connections: ConnectionDictionary = {
         '/ns0:CBRInputRecord/Identity/Name/FirstName': {
-          value: '/ns0:CBRInputRecord/Identity/Name/FirstName',
+          destination: '/ns0:CBRInputRecord/Identity/Name/FirstName',
+          sourceValue: '/ns0:CBRInputRecord/Identity/Name/FirstName',
           reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/Name/FirstName',
           reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/Name/FirstName',
         },
@@ -59,12 +61,14 @@ describe('Map definition conversions', () => {
     it('Test 2 connections', () => {
       const connections: ConnectionDictionary = {
         '/ns0:CBRInputRecord/Identity/Name/FirstName': {
-          value: '/ns0:CBRInputRecord/Identity/Name/FirstName',
+          destination: '/ns0:CBRInputRecord/Identity/Name/FirstName',
+          sourceValue: '/ns0:CBRInputRecord/Identity/Name/FirstName',
           reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/Name/FirstName',
           reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/Name/FirstName',
         },
         '/ns0:CBRInputRecord/Identity/Name/LastName': {
-          value: '/ns0:CBRInputRecord/Identity/Name/LastName',
+          destination: '/ns0:CBRInputRecord/Identity/Name/LastName',
+          sourceValue: '/ns0:CBRInputRecord/Identity/Name/LastName',
           reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/Name/LastName',
           reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/Name/LastName',
         },
@@ -120,11 +124,11 @@ describe('Map definition conversions', () => {
       expect(parseLoopMapping('for(abcde)')).toEqual({ loopSource: 'abcde' });
     });
 
-    it('Regular for case: No comma case (no index) with random spaces excluding the expression', async () => {
+    it('Regular for case: No comma case (no index) with random spaces excluding the function', async () => {
       expect(parseLoopMapping('  for(abcde) ')).toEqual({ loopSource: 'abcde' });
     });
 
-    it('Regular for case: No comma case (no index) with random spaces including the expression', async () => {
+    it('Regular for case: No comma case (no index) with random spaces including the function', async () => {
       expect(parseLoopMapping('  for (  abcde ) ')).toEqual({ loopSource: 'abcde' });
     });
 
@@ -132,15 +136,15 @@ describe('Map definition conversions', () => {
       expect(parseLoopMapping('for(abcde, ind)')).toEqual({ loopSource: 'abcde', loopIndex: 'ind' });
     });
 
-    it('Regular for case: Yes comma case (yes index) with random spaces excluding the expression', async () => {
+    it('Regular for case: Yes comma case (yes index) with random spaces excluding the function', async () => {
       expect(parseLoopMapping(' for  (abcde,ind)  ')).toEqual({ loopSource: 'abcde', loopIndex: 'ind' });
     });
 
-    it('Regular for case: Yes comma case (yes index) with random spaces including the expression', async () => {
+    it('Regular for case: Yes comma case (yes index) with random spaces including the function', async () => {
       expect(parseLoopMapping(' for  ( abcde,    ind )  ')).toEqual({ loopSource: 'abcde', loopIndex: 'ind' });
     });
 
-    it('Regular for case: Yes comma case (yes index) with random spaces including the expression', async () => {
+    it('Regular for case: Yes comma case (yes index) with random spaces including the function', async () => {
       // permitted since starting with "$for" is checked before this function call
       expect(parseLoopMapping('for-example(abcde)')).toEqual({ loopSource: 'abcde' });
     });
@@ -151,11 +155,11 @@ describe('Map definition conversions', () => {
       expect(parseConditionalMapping('if(not_equal(variable1))')).toEqual('not_equal(variable1)');
     });
 
-    it('Regular if case with random spaces excluding the expression', async () => {
+    it('Regular if case with random spaces excluding the function', async () => {
       expect(parseConditionalMapping('if ( not_equal(variable1)) ')).toEqual('not_equal(variable1)');
     });
 
-    it('Regular if case with random spaces including the expression', async () => {
+    it('Regular if case with random spaces including the function', async () => {
       expect(parseConditionalMapping('if ( not_equal ( variable1 ) ) ')).toEqual('not_equal ( variable1 )');
     });
 

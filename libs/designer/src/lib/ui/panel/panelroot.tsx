@@ -220,6 +220,7 @@ export const PanelRoot = (): JSX.Element => {
       selectedTab={selectedPanelTab}
       showCommentBox={showCommentBox}
       tabs={registeredTabs}
+      nodeId={selectedNode}
       width={width}
       onDismissButtonClicked={handleDelete}
       readOnlyMode={readOnly}

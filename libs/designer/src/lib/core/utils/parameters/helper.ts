@@ -10,7 +10,12 @@ import type {
   OutputInfo,
   UpdateParametersPayload,
 } from '../../state/operation/operationMetadataSlice';
-import { addDynamicInputs, clearDynamicInputs, updateNodeParameters } from '../../state/operation/operationMetadataSlice';
+import {
+  DynamicLoadStatus,
+  addDynamicInputs,
+  clearDynamicInputs,
+  updateNodeParameters,
+} from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokensSlice';
 import type { Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../card';
@@ -84,7 +89,8 @@ import {
 import type { DictionaryEditorItemProps, OutputToken, ParameterInfo, Token as SegmentToken, ValueSegment } from '@microsoft/designer-ui';
 import { DynamicCallStatus, ValueSegmentType, TokenType } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
-import { debounce } from 'lodash';
+
+// import { debounce } from 'lodash';
 
 const ParameterIcon =
   'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiA8cGF0aCBkPSJtMCAwaDMydjMyaC0zMnoiIGZpbGw9IiM5MTZmNmYiLz4NCiA8ZyBmaWxsPSIjZmZmIj4NCiAgPHBhdGggZD0ibTE2LjAyMyAxMS41cTAuOTQ1MzEgMCAxLjc3MzQgMC4yODkwNiAwLjgyODEyIDAuMjg5MDYgMS40NDUzIDAuODM1OTQgMC42MTcxOSAwLjU0Njg4IDAuOTY4NzUgMS4zMjgxIDAuMzU5MzggMC43ODEyNSAwLjM1OTM4IDEuNzY1NiAwIDAuNTE1NjItMC4xNDA2MiAxLjA3ODEtMC4xMzI4MSAwLjU1NDY5LTAuNDIxODggMS4wMTU2LTAuMjgxMjUgMC40NTMxMi0wLjcyNjU2IDAuNzUtMC40Mzc1IDAuMjk2ODgtMS4wNDY5IDAuMjk2ODgtMC42NzE4OCAwLTAuOTY4NzUtMC4zNjcxOS0wLjI5Njg4LTAuMzY3MTktMC4zMDQ2OS0xLjAwNzhoLTAuMDMxMjVxLTAuMTc5NjkgMC42MTcxOS0wLjU4NTk0IDEtMC4zOTg0NCAwLjM3NS0xLjA3MDMgMC4zNzUtMC40NjA5NCAwLTAuNzk2ODgtMC4xNzk2OS0wLjMyODEyLTAuMTg3NS0wLjU0Njg4LTAuNDg0MzgtMC4yMTA5NC0wLjMwNDY5LTAuMzEyNS0wLjY4NzUtMC4xMDE1Ni0wLjM5MDYyLTAuMTAxNTYtMC44MDQ2OSAwLTAuNTQ2ODggMC4xNDA2Mi0xLjA5MzggMC4xNDg0NC0wLjU0Njg4IDAuNDQ1MzEtMC45NzY1NiAwLjI5Njg4LTAuNDI5NjkgMC43NS0wLjY5NTMxIDAuNDYwOTQtMC4yNzM0NCAxLjA4NTktMC4yNzM0NCAwLjE3OTY5IDAgMC4zNTkzOCAwLjA0Njg3IDAuMTg3NSAwLjA0Njg3IDAuMzUxNTYgMC4xNDA2MiAwLjE2NDA2IDAuMDkzNzUgMC4yODkwNiAwLjIzNDM4dDAuMTg3NSAwLjMyODEydi0wLjAzOTA1OHEwLjAxNTYzLTAuMTU2MjUgMC4wMjM0NC0wLjMxMjUgMC4wMTU2My0wLjE1NjI1IDAuMDMxMjUtMC4zMTI1aDAuNzI2NTZsLTAuMTg3NSAyLjIzNDRxLTAuMDIzNDQgMC4yNS0wLjA1NDY5IDAuNTA3ODEtMC4wMzEyNTEgMC4yNTc4MS0wLjAzMTI1MSAwLjUwNzgxIDAgMC4xNzE4OCAwLjAxNTYzIDAuMzgyODEgMC4wMjM0NCAwLjIwMzEyIDAuMDkzNzUgMC4zOTA2MiAwLjA3MDMxIDAuMTc5NjkgMC4yMDMxMiAwLjMwNDY5IDAuMTQwNjIgMC4xMTcxOSAwLjM3NSAwLjExNzE5IDAuMjgxMjUgMCAwLjUtMC4xMTcxOSAwLjIxODc1LTAuMTI1IDAuMzc1LTAuMzIwMzEgMC4xNjQwNi0wLjE5NTMxIDAuMjczNDQtMC40NDUzMSAwLjEwOTM4LTAuMjU3ODEgMC4xNzk2OS0wLjUyMzQ0IDAuMDcwMzEtMC4yNzM0NCAwLjA5Mzc1LTAuNTM5MDYgMC4wMzEyNS0wLjI2NTYyIDAuMDMxMjUtMC40ODQzOCAwLTAuODU5MzgtMC4yODEyNS0xLjUzMTJ0LTAuNzg5MDYtMS4xMzI4cS0wLjUtMC40NjA5NC0xLjIwMzEtMC43MDMxMi0wLjY5NTMxLTAuMjQyMTktMS41MjM0LTAuMjQyMTktMC44OTg0NCAwLTEuNjMyOCAwLjMzNTk0LTAuNzI2NTYgMC4zMzU5NC0xLjI1IDAuOTE0MDYtMC41MTU2MiAwLjU3MDMxLTAuNzk2ODggMS4zMzU5dC0wLjI4MTI1IDEuNjMyOHEwIDAuODk4NDQgMC4yNzM0NCAxLjYzMjggMC4yODEyNSAwLjcyNjU2IDAuNzk2ODggMS4yNDIydDEuMjQyMiAwLjc5Njg4cTAuNzM0MzggMC4yODEyNSAxLjYzMjggMC4yODEyNSAwLjYzMjgxIDAgMS4yNS0wLjEwMTU2IDAuNjI1LTAuMTAxNTYgMS4xOTUzLTAuMzc1djAuNzE4NzVxLTAuNTg1OTQgMC4yNS0xLjIyNjYgMC4zNDM3NS0wLjY0MDYzIDAuMDg1OTM4LTEuMjczNCAwLjA4NTkzOC0xLjAzOTEgMC0xLjg5ODQtMC4zMjAzMS0wLjg1OTM4LTAuMzI4MTItMS40ODQ0LTAuOTIxODgtMC42MTcxOS0wLjYwMTU2LTAuOTYwOTQtMS40NTMxLTAuMzQzNzUtMC44NTE1Ni0wLjM0Mzc1LTEuODk4NCAwLTEuMDU0NyAwLjM1MTU2LTEuOTUzMSAwLjM1MTU2LTAuODk4NDQgMC45ODQzOC0xLjU1NDcgMC42MzI4MS0wLjY1NjI1IDEuNTE1Ni0xLjAyMzQgMC44ODI4MS0wLjM3NSAxLjk1MzEtMC4zNzV6bS0wLjYwOTM3IDYuNjc5N3EwLjQ3NjU2IDAgMC43ODEyNS0wLjI2NTYyIDAuMzA0NjktMC4yNzM0NCAwLjQ3NjU2LTAuNjcxODggMC4xNzE4OC0wLjM5ODQ0IDAuMjM0MzgtMC44NTE1NiAwLjA3MDMxLTAuNDUzMTIgMC4wNzAzMS0wLjgyMDMxIDAtMC4yNjU2Mi0wLjA1NDY5LTAuNDkyMTktMC4wNTQ2OS0wLjIyNjU2LTAuMTc5NjktMC4zOTA2Mi0wLjExNzE5LTAuMTY0MDYtMC4zMjAzMS0wLjI1NzgxdC0wLjQ5MjE5LTAuMDkzNzVxLTAuNDUzMTIgMC0wLjc1NzgxIDAuMjM0MzgtMC4zMDQ2OSAwLjIzNDM4LTAuNDkyMTkgMC41ODU5NC0wLjE4NzUgMC4zNTE1Ni0wLjI3MzQ0IDAuNzczNDQtMC4wNzgxMyAwLjQxNDA2LTAuMDc4MTMgMC43ODEyNSAwIDAuMjU3ODEgMC4wNTQ2OSAwLjUyMzQ0IDAuMDU0NjkgMC4yNTc4MSAwLjE3OTY5IDAuNDY4NzUgMC4xMjUgMC4yMTA5NCAwLjMzNTk0IDAuMzQzNzUgMC4yMTA5NCAwLjEzMjgxIDAuNTE1NjIgMC4xMzI4MXptLTcuNDE0MS04LjE3OTdoM3YxaC0ydjEwaDJ2MWgtM3ptMTYgMHYxMmgtM3YtMWgydi0xMGgtMnYtMXoiIHN0cm9rZS13aWR0aD0iLjQiLz4NCiA8L2c+DQo8L3N2Zz4NCg==';
@@ -1003,7 +1009,8 @@ export async function updateParameterAndDependencies(
   dependencies: NodeDependencies,
   variables: VariableDeclaration[],
   settings: Settings,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  operationDefinition?: any
 ): Promise<void> {
   const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
   const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
@@ -1044,21 +1051,20 @@ export async function updateParameterAndDependencies(
 
   dispatch(updateNodeParameters(payload));
 
-  debounce(() => {
-    if (dependenciesToUpdate) {
-      loadDynamicData(
-        nodeId,
-        isTrigger,
-        operationInfo,
-        connectionId,
-        dependenciesToUpdate,
-        updateNodeInputsWithParameter(nodeInputs, parameterId, groupId, properties),
-        settings,
-        variables,
-        dispatch
-      );
-    }
-  }, 500);
+  if (dependenciesToUpdate) {
+    loadDynamicData(
+      nodeId,
+      isTrigger,
+      operationInfo,
+      connectionId,
+      dependenciesToUpdate,
+      updateNodeInputsWithParameter(nodeInputs, parameterId, groupId, properties),
+      settings,
+      variables,
+      dispatch,
+      operationDefinition
+    );
+  }
 }
 
 function getDependenciesToUpdate(
@@ -1097,7 +1103,7 @@ function getDependenciesToUpdate(
   return dependenciesToUpdate;
 }
 
-async function loadDynamicData(
+export async function loadDynamicData(
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
@@ -1106,14 +1112,24 @@ async function loadDynamicData(
   nodeInputs: NodeInputs,
   settings: Settings,
   variables: VariableDeclaration[],
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  operationDefinition?: any
 ): Promise<void> {
   if (Object.keys(dependencies.outputs).length) {
     loadDynamicOutputsInNode(nodeId, isTrigger, operationInfo, connectionId, dependencies.outputs, nodeInputs, settings, dispatch);
   }
 
   if (Object.keys(dependencies.inputs).length) {
-    loadDynamicContentForInputsInNode(nodeId, dependencies.inputs, operationInfo, connectionId, nodeInputs, variables, dispatch);
+    loadDynamicContentForInputsInNode(
+      nodeId,
+      dependencies.inputs,
+      operationInfo,
+      connectionId,
+      nodeInputs,
+      variables,
+      dispatch,
+      operationDefinition
+    );
   }
 }
 
@@ -1124,29 +1140,33 @@ async function loadDynamicContentForInputsInNode(
   connectionId: string,
   allInputs: NodeInputs,
   variables: VariableDeclaration[],
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  operationDefinition?: any
 ): Promise<void> {
   for (const inputKey of Object.keys(inputDependencies)) {
     const info = inputDependencies[inputKey];
-    if (isDynamicDataReadyToLoad(info) && info.dependencyType === 'ApiSchema') {
+    if (info.dependencyType === 'ApiSchema') {
       dispatch(clearDynamicInputs(nodeId));
-      const inputSchema = await getDynamicSchema(info, allInputs, connectionId, operationInfo, variables);
-      const manifest = await getOperationManifest(operationInfo);
-      const allInputParameters = getAllInputParameters(allInputs);
-      const allInputKeys = allInputParameters.map((param) => param.parameterKey);
-      const schemaInputs = getDynamicInputsFromSchema(
-        inputSchema,
-        info.parameter as InputParameter,
-        manifest,
-        allInputKeys,
-        /* operationDefinition */ undefined
-      );
-      const inputParameters = schemaInputs.map((input) => ({
-        ...createParameterInfo(input),
-        schema: input,
-      })) as ParameterInfo[];
-      // Initialize Editor View for dynamic inputs
-      dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters }));
+
+      if (isDynamicDataReadyToLoad(info)) {
+        const inputSchema = await getDynamicSchema(info, allInputs, connectionId, operationInfo, variables);
+        const manifest = await getOperationManifest(operationInfo);
+        const allInputParameters = getAllInputParameters(allInputs);
+        const allInputKeys = allInputParameters.map((param) => param.parameterKey);
+        const schemaInputs = getDynamicInputsFromSchema(
+          inputSchema,
+          info.parameter as InputParameter,
+          manifest,
+          allInputKeys,
+          operationDefinition
+        );
+        const inputParameters = schemaInputs.map((input) => ({
+          ...createParameterInfo(input),
+          schema: input,
+        })) as ParameterInfo[];
+        // Initialize Editor View for dynamic inputs
+        dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters }));
+      }
     }
   }
 }
@@ -1248,6 +1268,10 @@ export async function loadDynamicValuesForParameter(
   }
 }
 
+export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
+  return nodeInputs.dynamicLoadStatus === DynamicLoadStatus.FAILED || nodeInputs.dynamicLoadStatus === DynamicLoadStatus.NOTSTARTED;
+}
+
 export function isDynamicDataReadyToLoad({ dependentParameters }: DependencyInfo): boolean {
   return Object.keys(dependentParameters).every((key) => dependentParameters[key].isValid);
 }
@@ -1293,6 +1317,32 @@ export function parameterHasValue(parameter: ParameterInfo): boolean {
 export function parameterValidForDynamicCall(parameter: ParameterInfo): boolean {
   const hasTokenSegment = parameter.value.some((segment) => segment.type === ValueSegmentType.TOKEN);
   return parameter.required ? parameterHasValue(parameter) && !hasTokenSegment : !hasTokenSegment;
+}
+
+export function getGroupAndParameterFromParameterKey(
+  nodeInputs: NodeInputs,
+  parameterKey: string
+): { groupId: string; parameter: ParameterInfo } | undefined {
+  for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
+    const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === parameterKey);
+    if (parameter) {
+      return { groupId, parameter };
+    }
+  }
+
+  return undefined;
+}
+
+export function getInputsValueFromDefinitionForManifest(inputsLocation: string[], stepDefinition: any): any {
+  let inputsValue = stepDefinition;
+
+  for (const property of inputsLocation) {
+    // NOTE: Currently this only supports single item array. Might need to be updated when multiple array support operations are added.
+    // None right now in any connectors.
+    inputsValue = property === '[*]' ? inputsValue[0] : getPropertyValue(inputsValue, property);
+  }
+
+  return inputsValue;
 }
 
 export function escapeSchemaProperties(schemaProperties: Record<string, any>): Record<string, any> {

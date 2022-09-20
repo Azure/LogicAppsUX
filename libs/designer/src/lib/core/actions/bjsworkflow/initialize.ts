@@ -1,12 +1,13 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
 import type { NodeDependencies, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { updateOutputs } from '../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import { updateTokens } from '../../state/tokensSlice';
 import { getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
 import { getRecurrenceParameters } from '../../utils/parameters/builtins';
 import {
   getAllInputParameters,
+  getInputsValueFromDefinitionForManifest,
   getParameterFromName,
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
@@ -22,7 +23,7 @@ import { getIntl } from '@microsoft-logic-apps/intl';
 import type { DynamicListExtension, DynamicParameters, OutputParameter, SchemaProperty } from '@microsoft-logic-apps/parsers';
 import { DynamicSchemaType, DynamicValuesType, ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { ConnectionReferenceKeyFormat, equals, getObjectPropertyValue, unmap } from '@microsoft-logic-apps/utils';
+import { ConnectionReferenceKeyFormat, equals, unmap } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -70,7 +71,7 @@ export const getInputParametersFromManifest = (nodeId: string, manifest: Operati
 
     primaryInputParametersInArray = updateParameterWithValues(
       'inputs.$',
-      inputsLocation ? getObjectPropertyValue(stepDefinition, inputsLocation) : stepDefinition.inputs,
+      getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], stepDefinition),
       '',
       primaryInputParametersInArray,
       true /* createInvisibleParameter */,
@@ -82,6 +83,7 @@ export const getInputParametersFromManifest = (nodeId: string, manifest: Operati
 
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
   const recurrenceParameters = getRecurrenceParameters(manifest.properties.recurrence, stepDefinition);
+  const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
   // TODO(14490585)- Initialize editor view models for array
 
@@ -112,7 +114,7 @@ export const getInputParametersFromManifest = (nodeId: string, manifest: Operati
 
   defaultParameterGroup.parameters = getParametersSortedByVisibility(defaultParameterGroup.parameters);
 
-  return { parameterGroups };
+  return { dynamicLoadStatus: dynamicInput ? DynamicLoadStatus.NOTSTARTED : undefined, parameterGroups };
 };
 
 export const getOutputParametersFromManifest = (
@@ -149,7 +151,10 @@ export const getOutputParametersFromManifest = (
     }
   }
 
-  return { nodeOutputs: { outputs: nodeOutputs }, dynamicOutput };
+  return {
+    nodeOutputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs },
+    dynamicOutput,
+  };
 };
 
 export const getParameterDependencies = (

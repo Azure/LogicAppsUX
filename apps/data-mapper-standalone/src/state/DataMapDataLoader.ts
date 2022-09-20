@@ -3,8 +3,10 @@ import type { DataMap } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
+export type ThemeType = 'Light' | 'Dark';
+
 export interface DataMapLoadingState {
-  theme: string;
+  theme: ThemeType;
   armToken?: string;
   resourcePath?: string;
   loadingMethod: 'file' | 'arm';
@@ -38,7 +40,7 @@ export const dataMapDataLoaderSlice = createSlice({
   name: 'dataMapDataLoader',
   initialState,
   reducers: {
-    changeTheme: (state, action: PayloadAction<string>) => {
+    changeTheme: (state, action: PayloadAction<ThemeType>) => {
       state.theme = action.payload;
     },
     changeArmToken: (state, action: PayloadAction<string>) => {

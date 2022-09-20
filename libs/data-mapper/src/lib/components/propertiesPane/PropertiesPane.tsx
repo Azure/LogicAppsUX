@@ -2,7 +2,7 @@ import { baseCanvasHeight, basePropertyPaneContentHeight } from '../../constants
 import { NodeType } from '../../models/SelectedNode';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { CodeTab } from './tabComponents/CodeTab';
-import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
+import { FunctionNodePropertiesTab } from './tabComponents/FunctionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
 import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   pane: {
     width: '100%',
     backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.borderRadius('medium', 'medium', 0, 0),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium, tokens.borderRadiusMedium, 0, 0),
   },
   topBar: {
     height: `${topBarHeight}px`,
@@ -74,9 +74,9 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     description: 'Label for output schema node',
   });
 
-  const expressionLoc = intl.formatMessage({
-    defaultMessage: 'Expression',
-    description: 'Label for expression node',
+  const functionLoc = intl.formatMessage({
+    defaultMessage: 'Function',
+    description: 'Label for function node',
   });
 
   const propertiesLoc = intl.formatMessage({
@@ -126,6 +126,11 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const onStartDrag = (e: React.DragEvent) => {
     setInitialDragYPos(e.clientY);
     setInitialDragHeight(contentHeight);
+
+    // Show empty image in place of dragging ghost preview
+    const img = new Image();
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+    e.dataTransfer.setDragImage(img, 0, 0);
   };
 
   const onDrag = (e: React.DragEvent) => {
@@ -166,8 +171,8 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         return inputSchemaNodeLoc;
       case NodeType.Output:
         return outputSchemaNodeLoc;
-      case NodeType.Expression:
-        return expressionLoc;
+      case NodeType.Function:
+        return functionLoc;
       default:
         console.error("Panel item hasn't been chosen.");
         return;
@@ -182,8 +187,8 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        if (currentNode.nodeType === NodeType.Expression) {
-          return <ExpressionNodePropertiesTab currentNode={currentNode} />;
+        if (currentNode.nodeType === NodeType.Function) {
+          return <FunctionNodePropertiesTab currentNode={currentNode} />;
         } else {
           return <SchemaNodePropertiesTab currentNode={currentNode} />;
         }
@@ -227,7 +232,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   return (
     <div className={styles.pane}>
       <div
-        style={{ height: 4, cursor: isExpanded ? 'row-resize' : 'auto' }}
+        style={{ height: 12, cursor: isExpanded ? 'row-resize' : 'auto' }}
         draggable={isExpanded ? 'true' : 'false'}
         onDragStart={onStartDrag}
         onDrag={onDrag}
@@ -237,7 +242,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
-          {(currentNode?.nodeType === NodeType.Input || currentNode?.nodeType === NodeType.Expression) && (
+          {(currentNode?.nodeType === NodeType.Input || currentNode?.nodeType === NodeType.Function) && (
             <Button
               appearance="subtle"
               size="medium"

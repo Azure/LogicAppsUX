@@ -80,17 +80,17 @@ const generateFullDataMapMapping = (connections: ConnectionDictionary, outputSch
 };
 
 const generateFullChildDataMapMapping = (connections: ConnectionDictionary, node: SchemaNodeExtended): MapNode => {
-  const connectionKeys = Object.keys(connections);
-  const currentConnectionKey = connectionKeys.find((key) => key === node.key);
-  const currentConnection = currentConnectionKey ? connections[currentConnectionKey] : undefined;
+  const currentConnectionEntry = Object.entries(connections).find(
+    ([_connectionKey, connectionValue]) => connectionValue.destination === node.key
+  );
   const splitNodeKey = node.key.split('/');
 
   return {
     targetNodeKey: splitNodeKey[splitNodeKey.length - 1],
     children: node.children.map((childNode) => generateFullChildDataMapMapping(connections, childNode)),
-    targetValue: currentConnection ? { value: currentConnection.value } : undefined,
-    loopSource: currentConnection?.loop ? { ...currentConnection.loop } : undefined,
-    condition: currentConnection?.condition ? { condition: currentConnection.condition } : undefined,
+    targetValue: currentConnectionEntry ? { value: currentConnectionEntry[1].sourceValue } : undefined,
+    //loopSource: currentConnectionEntry?.loop ? { ...currentConnection.loop } : undefined, // TODO Loops
+    //condition: currentConnectionEntry?.condition ? { condition: currentConnection.condition } : undefined, // TODO Conditions
   };
 };
 
@@ -131,10 +131,11 @@ const parseMappingsJsonToNode = (
   // Basic leaf node
   if (typeof targetNodeObject === 'string') {
     connections[connectionKey] = {
-      value: targetNodeObject,
+      destination: connectionKey,
+      sourceValue: targetNodeObject,
       loop: undefined,
       condition: undefined,
-      // Needs to be addressed again once we have expressions properly coded out in the designer
+      // Needs to be addressed again once we have functions properly coded out in the designer
       reactFlowSource: `${inputPrefix}${targetNodeObject}`,
       reactFlowDestination: `${outputPrefix}${connectionKey}`,
     };
@@ -177,7 +178,8 @@ const parseMappingsJsonToNode = (
   // TODO (#15388621) revisit this once we've got loops and conditionals enabled in the designer to double check all the logic
   if (targetValue) {
     connections[connectionKey] = {
-      value: targetValue,
+      destination: connectionKey,
+      sourceValue: targetValue,
       loop: undefined,
       condition: undefined,
       reactFlowSource: `${inputPrefix}${targetValue}`,
@@ -189,11 +191,11 @@ const parseMappingsJsonToNode = (
 // Exported for testing purposes only
 export const parseLoopMapping = (line: string): LoopConnection => {
   const formattedLine = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
-  const expressionSplitOnComma = formattedLine.split(',');
+  const functionSplitOnComma = formattedLine.split(',');
 
   return {
-    loopSource: expressionSplitOnComma[0].trim(),
-    loopIndex: expressionSplitOnComma[1]?.trim(),
+    loopSource: functionSplitOnComma[0].trim(),
+    loopIndex: functionSplitOnComma[1]?.trim(),
   };
 };
 

@@ -546,6 +546,12 @@
       "value": "(UTC+04:00) Tbilissi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Déclencheurs"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -576,6 +582,20 @@
       "value": "Chargez ou sélectionnez un schéma de sortie à utiliser pour votre carte."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Paramètres obligatoires "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " non définis ou non valides"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -592,6 +612,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Téhéran"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Format JSON non valide. Début "
+    },
+    {
+      "type": 1,
+      "value": "openingBracst"
+    },
+    {
+      "type": 0,
+      "value": " ou fin "
+    },
+    {
+      "type": 1,
+      "value": "closingBraflt"
+    },
+    {
+      "type": 0,
+      "value": " manquants."
     }
   ],
   "3kI7xF": [
@@ -804,6 +846,12 @@
       "value": "Obligatoire. Nom de l'action avec une réponse en plusieurs parties."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Cette étape sera supprimée de l'application logique."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -834,10 +882,30 @@
       "value": "(UTC+10:30) Île Lord Howe"
     }
   ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Le paramètre « "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " » est introuvable pour cette opération"
+    }
+  ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Obligatoire. Chaîne dont la sous-chaîne est extraite."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Ajouter une action"
     }
   ],
   "7aJqIH": [
@@ -910,6 +978,16 @@
       "value": " »."
     }
   ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Erreur lors de l’exécution de l’API - "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -968,6 +1046,16 @@
     {
       "type": 0,
       "value": "Jeudi"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Type de jeton non pris en charge : "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1325,6 +1413,12 @@
       "value": "Connexion obligatoire"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Sortie"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1347,6 +1441,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne de laquelle supprimer les espaces à gauche et à droite."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Nœud"
     }
   ],
   "DGMwU4": [
@@ -1698,6 +1798,20 @@
       "value": "Obligatoire. Nom de clé de la valeur de données de formulaire à retourner."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "Informations de diagnostic supplémentaires : x-ms-client-request-id est « "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": " »."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1768,6 +1882,12 @@
     {
       "type": 0,
       "value": "Sélectionner un schéma d’entrée"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Options avancées"
     }
   ],
   "Ip7Iax": [
@@ -1977,6 +2097,12 @@
       "value": "Il n’y a aucun résultat de recherche."
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Supprimer le graphique de flux de travail"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -2083,10 +2209,10 @@
       "value": "Ajouter un commentaire"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "Format de json non valide. { de début ou } de fin manquant"
+      "value": "Mode Code"
     }
   ],
   "M48CGd": [
@@ -2157,6 +2283,12 @@
     {
       "type": 0,
       "value": "Retourne l'horodateur actuel en tant que chaîne"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "Mb+Eaq": [
@@ -2241,6 +2373,12 @@
     {
       "type": 0,
       "value": "Modifier le paramètre"
+    }
+  ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
     }
   ],
   "OD8igU": [
@@ -2373,10 +2511,22 @@
       "value": "Obligatoire. Cette valeur correspond au nombre d'entiers qui se trouvent dans le tableau."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Valeur par défaut"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Fonctions de collection"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Entrée"
     }
   ],
   "P8ZBF9": [
@@ -2571,6 +2721,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Les déclencheurs ne peuvent pas être supprimés."
     }
   ],
   "RFjYpH": [
@@ -2860,6 +3016,12 @@
       "value": "Pour référencer un paramètre, utilisez la liste contenu dynamique."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Supprimer l’action de flux de travail"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2956,6 +3118,12 @@
       "value": "Historique d’exécution"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Les déclencheurs indiquent à votre application quand elle doit commencer à s’exécuter. Chaque flux de travail a besoin d’au moins un déclencheur."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3002,6 +3170,12 @@
     {
       "type": 0,
       "value": "Entrez un dictionnaire valide"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Les actions effectuent des opérations sur les données ou communiquent entre les systèmes à exécuter."
     }
   ],
   "WS9kXD": [
@@ -3080,6 +3254,16 @@
     {
       "type": 0,
       "value": "Vérifiez que les mots sont correctement orthographiés."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Type de jeton non pris en charge : "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3374,6 +3558,16 @@
       "value": "Valeur"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Type de jeton non pris en charge : "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3424,6 +3618,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brasilia"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Fournissez des paramètres pour tester la sortie."
     }
   ],
   "bzF/qn": [
@@ -3722,6 +3922,12 @@
       "value": "Tableau"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Langage de programmation non pris en charge."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3786,6 +3992,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Saint-Pierre-et-Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Exécuter le test"
     }
   ],
   "gCXOd5": [
@@ -4003,6 +4215,20 @@
     {
       "type": 0,
       "value": "Contenu dynamique"
+    }
+  ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Voulez-vous vraiment supprimer "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": " ?"
     }
   ],
   "iJOIca": [
@@ -4497,6 +4723,12 @@
       "value": "Obligatoire. Nombre d'unités de temps de l'heure souhaitée dans le futur."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Réinitialiser"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4709,6 +4941,12 @@
       "value": "Retourne un nœud XML, un jeu de nœuds ou une valeur au format JSON à partir de l'expression XPath fournie"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Ajouter un déclencheur"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4773,6 +5011,28 @@
     {
       "type": 0,
       "value": "Obligatoire"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Code d’erreur : « "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": " », Message : « "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": " »."
     }
   ],
   "qUWBUX": [
@@ -5098,6 +5358,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Annuler"
     }
   ],
   "tsmuoF": [
@@ -5492,6 +5758,12 @@
       "value": "Obligatoire. Chaîne où il faut ajouter un caractère d'échappement aux caractères d'URL non fiables."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "La valeur contient des expressions de fonction qui ne peuvent pas être résolues. Seules les valeurs constantes sont prises en charge"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5528,6 +5800,12 @@
       "value": "Fonctions de date et heure"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Ajouter un champ"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5550,6 +5828,18 @@
     {
       "type": 0,
       "value": "Entrez une valeur par défaut pour le paramètre."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Cette opération supprime également toutes les étapes enfants."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "Cette expression ne nécessite aucune entrée."
     }
   ],
   "zBMVKg": [

@@ -1,13 +1,14 @@
-import type { ExpressionInput } from "./Expression";
-import type { SchemaNodeDataType } from "./Schema";
+import type { FunctionGroupBranding } from '../constants/FunctionConstants';
+import type { FunctionInput } from './Function';
+import type { SchemaNodeDataType } from './Schema';
 
 export enum NodeType {
-    Input = 'input',
-    Output = 'output',
-    Expression = 'expression',
+  Input = 'input',
+  Output = 'output',
+  Function = 'function',
 }
 
-export type SelectedNode = SelectedSchemaNode | SelectedExpressionNode;
+export type SelectedNode = SelectedSchemaNode | SelectedFunctionNode;
 export type SelectedSchemaNode = SelectedInputNode | SelectedOutputNode;
 
 export interface SelectedInputNode {
@@ -19,20 +20,20 @@ export interface SelectedInputNode {
 
 export interface SelectedOutputNode extends Omit<SelectedInputNode, 'nodeType'> {
   nodeType: NodeType.Output;
-  inputIds?: string[];
+  inputIds: string[];
   defaultValue: string;
   doNotGenerateIfNoValue: boolean;
   nullable: boolean;
 }
 
 // TODO: refine property specifics once fleshed out
-export interface SelectedExpressionNode {
-    nodeType: NodeType.Expression;
-    name: string;
-    iconName: string;
-    description: string;
-    codeEx: string;
-    definition: string;
-    inputs: ExpressionInput[];
-    outputId: string;
+export interface SelectedFunctionNode {
+  nodeType: NodeType.Function;
+  name: string;
+  branding: FunctionGroupBranding;
+  description: string;
+  codeEx: string;
+  definition: string;
+  inputs: FunctionInput[];
+  outputId: string;
 }

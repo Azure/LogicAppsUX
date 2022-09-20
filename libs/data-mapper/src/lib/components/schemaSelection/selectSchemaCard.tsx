@@ -1,19 +1,39 @@
 import { SchemaTypes } from '../../models';
-import stateImageOnHover from './card_image_onhover.png';
-import stateImageOnRest from './card_image_onrest.png';
-import { Image } from '@fluentui/react/lib/Image';
-import type { FunctionComponent } from 'react';
+import CardOnHover from './card_onHover.svg';
+import CardOnRest from './card_onRest.svg';
+import { Image, Stack } from '@fluentui/react';
+import { makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
+
+const useStyles = makeStyles({
+  schemaSelectCard: {
+    width: '200px',
+    height: '260px',
+    backgroundColor: tokens.colorNeutralBackground1,
+    color: tokens.colorNeutralForeground1,
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    ...shorthands.border(tokens.strokeWidthThick, 'solid', tokens.colorNeutralBackground1),
+    ...typographyStyles.body1Strong,
+    cursor: 'pointer',
+    ...shorthands.margin('auto'),
+    ':hover': {
+      backgroundColor: tokens.colorBrandBackground2,
+      ...shorthands.border(tokens.strokeWidthThick, 'solid', tokens.colorBrandStroke1),
+    },
+  },
+});
 
 export interface SelectSchemaCardProps {
   schemaType: SchemaTypes;
   onClick: () => void;
 }
 
-const imageStyle = { paddingLeft: 70, paddingRight: 70, paddingTop: 64, paddingBottom: 28 };
-
-export const SelectSchemaCard: FunctionComponent<SelectSchemaCardProps> = ({ schemaType, onClick }) => {
+export const SelectSchemaCard = ({ schemaType, onClick }: SelectSchemaCardProps) => {
   const intl = useIntl();
+  const styles = useStyles();
+
+  const [isHovering, setIsHovering] = useState(false);
 
   let selectSchemaMsg = '';
 
@@ -35,10 +55,16 @@ export const SelectSchemaCard: FunctionComponent<SelectSchemaCardProps> = ({ sch
   }
 
   return (
-    <div className="schema-select-card" onClick={onClick}>
-      <Image className="on-hover" src={stateImageOnHover} alt="select a schema - on hover" style={imageStyle} />
-      <Image className="on-rest" src={stateImageOnRest} alt="select a schema - on rest" style={imageStyle} />
+    <Stack
+      verticalAlign="center"
+      horizontalAlign="center"
+      className={styles.schemaSelectCard}
+      onClick={onClick}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      <Image src={isHovering ? CardOnHover : CardOnRest} alt="Empty schema card svg" style={{ paddingBottom: '28px' }} />
       {selectSchemaMsg}
-    </div>
+    </Stack>
   );
 };

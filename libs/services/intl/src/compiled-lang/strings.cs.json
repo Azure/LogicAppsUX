@@ -565,6 +565,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Aktivační události"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -595,6 +601,20 @@
       "value": "Nahrajte nebo vyberte výstupní schéma, které se použije pro vaši mapu."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Požadované parametry "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " nejsou nastavené nebo jsou neplatné."
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -611,6 +631,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Teherán"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Neplatný formát JSON. Chybí "
+    },
+    {
+      "type": 1,
+      "value": "openingBrahornt"
+    },
+    {
+      "type": 0,
+      "value": " na začátku nebo "
+    },
+    {
+      "type": 1,
+      "value": "closingBrahornt"
+    },
+    {
+      "type": 0,
+      "value": " na konci."
     }
   ],
   "3kI7xF": [
@@ -823,6 +865,12 @@
       "value": "Povinný parametr. Název akce s odpovědí s více částmi."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Tento krok se odebere z aplikace logiky."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -853,10 +901,30 @@
       "value": "(UTC+10:30) Ostrov Lorda Howa"
     }
   ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parametr "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": " nelze pro tuto operaci najít."
+    }
+  ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, ze kterého se má získat podřetězec."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Přidat akci"
     }
   ],
   "7aJqIH": [
@@ -925,6 +993,16 @@
       "value": "1"
     }
   ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Chyba při provádění rozhraní API – "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
   "8CWFEh": [
     {
       "type": 0,
@@ -983,6 +1061,16 @@
     {
       "type": 0,
       "value": "Čtvrtek"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Nepodporovaný typ tokenu: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1351,6 +1439,12 @@
       "value": "Připojení je povinné"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Výstup"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1373,6 +1467,12 @@
     {
       "type": 0,
       "value": "Povinné. Řetězec, z jehož začátku a konce se odeberou prázdné znaky."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Uzel"
     }
   ],
   "DGMwU4": [
@@ -1743,6 +1843,20 @@
       "value": "Povinný parametr. Název klíče datové hodnoty ve formuláři, která se má vrátit."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "Další diagnostické informace: x-ms-client-request-id je "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1813,6 +1927,12 @@
     {
       "type": 0,
       "value": "Vyberte vstupní schéma."
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Upřesnit možnosti"
     }
   ],
   "Ip7Iax": [
@@ -2033,6 +2153,12 @@
       "value": "Vaše hledání nemá žádné výsledky."
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Odstranit graf pracovního postupu"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -2086,7 +2212,23 @@
   "Li6x/B": [
     {
       "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
+      "value": "Chybí požadované vlastnosti "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "LlYz9c": [
@@ -2131,10 +2273,10 @@
       "value": "Přidat komentář"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "Neplatný formát JSON. Chybí počáteční { nebo koncový znak }."
+      "value": "Zobrazení kódu"
     }
   ],
   "M48CGd": [
@@ -2209,6 +2351,12 @@
     {
       "type": 0,
       "value": "Vrátí aktuální časové razítko jako řetězec."
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Akce"
     }
   ],
   "Mb+Eaq": [
@@ -2295,6 +2443,12 @@
       "value": "Upravit parametr"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2322,7 +2476,23 @@
   "OH94j3": [
     {
       "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
+      "value": "Chybí požadovaná vlastnost "
+    },
+    {
+      "type": 1,
+      "value": "0"
+    },
+    {
+      "type": 0,
+      "value": " pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "1"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "OH9xlX": [
@@ -2409,10 +2579,22 @@
       "value": "Povinný parametr. Tato hodnota představuje počet celých čísel v poli."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Výchozí hodnota"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Funkce kolekce"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Vstup"
     }
   ],
   "P8ZBF9": [
@@ -2607,6 +2789,12 @@
     {
       "type": 0,
       "value": " h"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Aktivační události nelze odstranit."
     }
   ],
   "RFjYpH": [
@@ -2907,6 +3095,12 @@
       "value": "Pokud chcete odkazovat na parametr, použijte seznam dynamického obsahu."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Odstranit akci pracovního postupu"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -3003,6 +3197,12 @@
       "value": "Historie spuštění"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Aktivační události sdělí aplikaci, kdy se má spustit. Každý pracovní postup vyžaduje alespoň jednu aktivační událost."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3049,6 +3249,12 @@
     {
       "type": 0,
       "value": "Zadejte prosím platný slovník."
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Akce provádějí operace s daty nebo komunikují mezi systémy, které se mají spustit."
     }
   ],
   "WS9kXD": [
@@ -3127,6 +3333,16 @@
     {
       "type": 0,
       "value": "Ujistěte se, že ve slovech není překlep."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Nepodporovaný typ tokenu: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3421,6 +3637,16 @@
       "value": "Hodnota"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Nepodporovaný typ tokenu: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3471,6 +3697,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brazílie"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Zadejte parametry pro otestování výstupu."
     }
   ],
   "bzF/qn": [
@@ -3769,6 +4001,12 @@
       "value": "Pole"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Nepodporovaný programovací jazyk."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3833,6 +4071,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Saint-Pierre a Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Spustit test"
     }
   ],
   "gCXOd5": [
@@ -4065,6 +4309,20 @@
     {
       "type": 0,
       "value": "Dynamický obsah"
+    }
+  ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Opravdu chcete odstranit uzel "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
     }
   ],
   "iJOIca": [
@@ -4559,6 +4817,12 @@
       "value": "Povinný parametr. Počet časových jednotek, o který je požadovaný čas v budoucnosti"
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Resetovat"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4771,6 +5035,12 @@
       "value": "Vrátí ze zadaného výrazu XPath uzel XML, sadu uzlů nebo hodnotu jako JSON."
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Přidat aktivační událost"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4835,6 +5105,24 @@
     {
       "type": 0,
       "value": "Povinné"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Kód chyby: "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": ", zpráva: "
+    },
+    {
+      "type": 1,
+      "value": "message"
     }
   ],
   "qUWBUX": [
@@ -5171,6 +5459,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Zrušit"
     }
   ],
   "tsmuoF": [
@@ -5565,6 +5859,12 @@
       "value": "Povinný parametr. Řetězec, ze kterého se mají vyjmout znaky, které nejsou pro adresu URL bezpečné."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Hodnota obsahuje výrazy funkce, které nelze přeložit. Podporovány jsou pouze konstantní hodnoty."
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5601,6 +5901,12 @@
       "value": "Funkce data a času"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Přidat pole"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5623,6 +5929,18 @@
     {
       "type": 0,
       "value": "Zadejte výchozí hodnotu parametru."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Tato akce také odebere všechny podřízené kroky."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "Tento výraz nevyžaduje žádný vstup."
     }
   ],
   "zBMVKg": [

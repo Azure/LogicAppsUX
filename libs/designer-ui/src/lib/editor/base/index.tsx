@@ -46,7 +46,13 @@ export interface BaseEditorProps {
   initialValue: ValueSegment[];
   children?: React.ReactNode;
   tokenPickerButtonProps?: TokenPickerButtonProps;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  isTrigger?: boolean;
+  GetTokenPicker: (
+    editorId: string,
+    labelId: string,
+    onClick?: (b: boolean) => void,
+    tokenClicked?: (token: ValueSegment) => void
+  ) => JSX.Element;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -74,6 +80,7 @@ export const BaseEditor = ({
   initialValue,
   children,
   tokenPickerButtonProps,
+  isTrigger,
   GetTokenPicker,
   onBlur,
   onFocus,
@@ -144,7 +151,7 @@ export const BaseEditor = ({
         {autoLink ? <AutoLink /> : null}
         {clearEditor ? <ClearEditor showButton={false} /> : null}
 
-        {(tokens && showTokenPickerButton) || getInTokenPicker() ? (
+        {!isTrigger && ((tokens && showTokenPickerButton) || getInTokenPicker()) ? (
           <TokenPickerButton
             labelId={labelId}
             showTokenPicker={showTokenPicker}
@@ -153,7 +160,9 @@ export const BaseEditor = ({
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}
-        {(showTokenPickerButton && showTokenPicker) || getInTokenPicker() ? GetTokenPicker(editorId, labelId, onClickTokenPicker) : null}
+        {!isTrigger && ((showTokenPickerButton && showTokenPicker) || getInTokenPicker())
+          ? GetTokenPicker(editorId, labelId, onClickTokenPicker)
+          : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
         {tokens ? <InsertTokenNode /> : null}

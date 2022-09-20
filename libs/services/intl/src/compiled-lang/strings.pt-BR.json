@@ -530,6 +530,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Gatilhos"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -560,6 +566,20 @@
       "value": "Carregue ou selecione um esquema de saída a ser usado no mapa."
     }
   ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Parâmetros necessários "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " não definidos ou inválidos"
+    }
+  ],
   "3afjx+": [
     {
       "type": 0,
@@ -576,6 +596,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Teerã"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Formato json inválido. Falta o início "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " ou final "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -788,6 +830,12 @@
       "value": "Necessário. O nome da ação com uma resposta de várias partes."
     }
   ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Esta etapa será removida do Aplicativo Lógico."
+    }
+  ],
   "6oqk+A": [
     {
       "type": 0,
@@ -818,10 +866,30 @@
       "value": "(UTC+10:30) Ilha Lord Howe"
     }
   ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "O parâmetro \" "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" não pode ser encontrado para esta operação"
+    }
+  ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Necessário. A cadeia de caracteres da qual a subcadeia de caracteres é obtida."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação"
     }
   ],
   "7aJqIH": [
@@ -876,6 +944,12 @@
     {
       "type": 0,
       "value": "Propriedade {0} inválida para o tipo de autenticação {1}."
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Erro ao executar a API {url}."
     }
   ],
   "8CWFEh": [
@@ -936,6 +1010,16 @@
     {
       "type": 0,
       "value": "Quinta-feira"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Tipo de token não suportado: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1277,6 +1361,12 @@
       "value": "Conexão exigida"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Saída"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1299,6 +1389,12 @@
     {
       "type": 0,
       "value": "Necessário. A cadeia de caracteres da qual deseja remover os espaços em branco à esquerda e à direita."
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Nó"
     }
   ],
   "DGMwU4": [
@@ -1650,6 +1746,12 @@
       "value": "Necessário. O nome da chave do valor de dados do formulário a retornar."
     }
   ],
+  "HJIZrG": [
+    {
+      "type": 0,
+      "value": "Mais informações de diagnóstico: x-ms-client-request-id é {clientRequestId}."
+    }
+  ],
   "HQ8/tk": [
     {
       "type": 0,
@@ -1720,6 +1822,12 @@
     {
       "type": 0,
       "value": "Selecionar um esquema de entrada"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Opções avançadas"
     }
   ],
   "Ip7Iax": [
@@ -1929,6 +2037,12 @@
       "value": "Sua pesquisa não retornou resultados"
     }
   ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Excluir Graph do Fluxo de Trabalho"
+    }
+  ],
   "LCUU5q": [
     {
       "type": 0,
@@ -1974,7 +2088,7 @@
   "Li6x/B": [
     {
       "type": 0,
-      "value": "Missing required properties {0} for authentication type {1}"
+      "value": "Propriedades obrigatórias ausentes {0} para o tipo de autenticação {1}"
     }
   ],
   "LlYz9c": [
@@ -2019,10 +2133,10 @@
       "value": "Adicionar um comentário"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "Formato de json inválido. { inicial ou } final ausente"
+      "value": "Exibição de código"
     }
   ],
   "M48CGd": [
@@ -2093,6 +2207,12 @@
     {
       "type": 0,
       "value": "Retorna o carimbo de data/hora atual como uma cadeia de caracteres"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Ações"
     }
   ],
   "Mb+Eaq": [
@@ -2179,6 +2299,12 @@
       "value": "Editar Parâmetro"
     }
   ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
   "OD8igU": [
     {
       "type": 0,
@@ -2206,7 +2332,7 @@
   "OH94j3": [
     {
       "type": 0,
-      "value": "Missing required property {0} for authentication type {1}"
+      "value": "Falta a propriedade necessária {0} para o tipo de autenticação {1}"
     }
   ],
   "OH9xlX": [
@@ -2293,10 +2419,22 @@
       "value": "Necessário. Este valor é o número de inteiros que está na matriz."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Valor padrão"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Funções de coleção"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Entrada"
     }
   ],
   "P8ZBF9": [
@@ -2491,6 +2629,12 @@
     {
       "type": 0,
       "value": "h"
+    }
+  ],
+  "Qy0Kha": [
+    {
+      "type": 0,
+      "value": "Os gatilhos não podem ser excluídos."
     }
   ],
   "RFjYpH": [
@@ -2780,6 +2924,12 @@
       "value": "Para fazer referência a um parâmetro, use a lista de conteúdo dinâmico."
     }
   ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Excluir Ação de Fluxo de Trabalho"
+    }
+  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -2876,6 +3026,12 @@
       "value": "Histórico de Execução"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Os gatilhos informam ao aplicativo quando começar a ser executado. Cada fluxo de trabalho precisa de pelo menos um gatilho."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -2922,6 +3078,12 @@
     {
       "type": 0,
       "value": "Insira um dicionário válido"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "As ações executam operações em dados ou se comunicam entre sistemas a serem executados."
     }
   ],
   "WS9kXD": [
@@ -3000,6 +3162,16 @@
     {
       "type": 0,
       "value": "Certifique-se de que as palavras foram escritas corretamente."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Tipo de token não suportado: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3294,6 +3466,16 @@
       "value": "Valor"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Tipo de token não suportado: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3344,6 +3526,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brasília"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Forneça parâmetros para testar a saída."
     }
   ],
   "bzF/qn": [
@@ -3642,6 +3830,12 @@
       "value": "Matriz"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Linguagem de programação não suportada."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3706,6 +3900,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) São Pedro e Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Executar teste"
     }
   ],
   "gCXOd5": [
@@ -3915,6 +4115,20 @@
     {
       "type": 0,
       "value": "Conteúdo dinâmico"
+    }
+  ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Tem certeza de que deseja excluir "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
     }
   ],
   "iJOIca": [
@@ -4401,6 +4615,12 @@
       "value": "Necessário. O número de unidades de tempo que o horário desejado tem no futuro."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Redefinir"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4613,6 +4833,12 @@
       "value": "Retorna um nó XML, um conjunto de nós ou um valor como JSON da expressão XPath fornecida"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Adicionar um gatilho"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4677,6 +4903,12 @@
     {
       "type": 0,
       "value": "Obrigatório"
+    }
+  ],
+  "qTqSqD": [
+    {
+      "type": 0,
+      "value": "Código de erro: {errorCode}, Mensagem: {message}."
     }
   ],
   "qUWBUX": [
@@ -5002,6 +5234,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "tsmuoF": [
@@ -5396,6 +5634,12 @@
       "value": "Necessário. A cadeia de caracteres da qual escapar caracteres não seguros da URL."
     }
   ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "O valor contém expressões de função que não podem ser resolvidas. Somente valores constantes são suportados"
+    }
+  ],
   "yBrsFJ": [
     {
       "type": 0,
@@ -5432,6 +5676,12 @@
       "value": "Funções de data e hora"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Adicionar campo"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5454,6 +5704,18 @@
     {
       "type": 0,
       "value": "Insira um valor padrão para o parâmetro."
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Isso também removerá todas as etapas filhas."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "Esta expressão não requer nenhuma entrada."
     }
   ],
   "zBMVKg": [
