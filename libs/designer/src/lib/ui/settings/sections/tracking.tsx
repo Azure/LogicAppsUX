@@ -21,6 +21,7 @@ export const Tracking = ({
   onClientTrackingIdChange,
   onTrackedPropertiesDictionaryValueChanged,
   onTrackedPropertiesStringValueChange,
+  validationErrors,
 }: TrackingSectionProps): JSX.Element | null => {
   const intl = useIntl();
 
@@ -92,6 +93,7 @@ export const Tracking = ({
         visible: trackedProperties?.isSupported,
       },
     ],
+    validationErrors,
   };
 
   return <SettingsSection {...trackingSectionProps} />;
