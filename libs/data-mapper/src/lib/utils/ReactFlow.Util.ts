@@ -4,7 +4,7 @@ import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childOutputNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
-import type { SchemaNodeExtended } from '../models/Schema';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
@@ -33,13 +33,14 @@ export const functionPrefix = 'function-';
 export const convertToReactFlowNodes = (
   currentlySelectedInputNodes: SchemaNodeExtended[],
   connectedInputNodes: SchemaNodeExtended[],
+  allInputNodes: SchemaNodeDictionary,
   allFunctionNodes: FunctionDictionary,
   outputSchemaNode: SchemaNodeExtended
 ): ReactFlowNode<CardProps>[] => {
   const reactFlowNodes: ReactFlowNode<CardProps>[] = [];
 
   reactFlowNodes.push(
-    ...convertInputToReactFlowParentAndChildNodes(currentlySelectedInputNodes, connectedInputNodes),
+    ...convertInputToReactFlowParentAndChildNodes(currentlySelectedInputNodes, connectedInputNodes, allInputNodes),
     ...convertOutputToReactFlowParentAndChildNodes(outputSchemaNode),
     ...convertFunctionsToReactFlowParentAndChildNodes(allFunctionNodes)
   );
@@ -49,11 +50,26 @@ export const convertToReactFlowNodes = (
 
 const convertInputToReactFlowParentAndChildNodes = (
   currentlySelectedInputNodes: SchemaNodeExtended[],
-  connectedInputNodes: SchemaNodeExtended[]
+  connectedInputNodes: SchemaNodeExtended[],
+  allInputNodes: SchemaNodeDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
 
-  connectedInputNodes.forEach((inputNode) => {
+  const combinedNodes = [
+    ...connectedInputNodes,
+    ...currentlySelectedInputNodes.filter((selectedNode) => {
+      const existingNode = connectedInputNodes.find((currentNode) => currentNode.key === selectedNode.key);
+      return !existingNode;
+    }),
+  ];
+  const flattenedKeys = Object.values(allInputNodes).map((inputNode) => inputNode.key);
+  combinedNodes.sort((nodeA, nodeB) =>
+    nodeA.pathToRoot.length !== nodeB.pathToRoot.length
+      ? nodeA.pathToRoot.length - nodeB.pathToRoot.length
+      : flattenedKeys.indexOf(nodeA.key) - flattenedKeys.indexOf(nodeB.key)
+  );
+
+  combinedNodes.forEach((inputNode) => {
     reactFlowNodes.push({
       id: `${inputPrefix}${inputNode.key}`,
       data: {
@@ -72,30 +88,6 @@ const convertInputToReactFlowParentAndChildNodes = (
         y: rootY + rootYOffset * reactFlowNodes.length,
       },
     });
-  });
-
-  currentlySelectedInputNodes.forEach((inputNode) => {
-    const nodeId = `${inputPrefix}${inputNode.key}`;
-    if (!reactFlowNodes.some((reactFlowNode) => reactFlowNode.id === nodeId)) {
-      reactFlowNodes.push({
-        id: nodeId,
-        data: {
-          schemaNode: inputNode,
-          schemaType: SchemaTypes.Input,
-          displayHandle: true,
-          isLeaf: true,
-          isChild: false,
-          disabled: false,
-          error: false,
-        },
-        type: ReactFlowNodeType.SchemaNode,
-        sourcePosition: Position.Right,
-        position: {
-          x: inputX,
-          y: rootY + rootYOffset * reactFlowNodes.length,
-        },
-      });
-    }
   });
 
   return reactFlowNodes;
@@ -196,21 +188,22 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
 };
 
 export const useLayout = (
-  allInputSchemaNodes: SchemaNodeExtended[],
+  currentlySelectedInputNodes: SchemaNodeExtended[],
   connectedInputNodes: SchemaNodeExtended[],
+  allInputNodes: SchemaNodeDictionary,
   allFunctionNodes: FunctionDictionary,
   currentOutputNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
     if (currentOutputNode) {
-      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, allFunctionNodes, currentOutputNode);
+      return convertToReactFlowNodes(currentlySelectedInputNodes, connectedInputNodes, allInputNodes, allFunctionNodes, currentOutputNode);
     } else {
       return [];
     }
     // Explicitly ignoring connectedInputNodes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allInputSchemaNodes, currentOutputNode, allFunctionNodes]);
+  }, [currentlySelectedInputNodes, currentOutputNode, allFunctionNodes]);
 
   const reactFlowEdges = useMemo(() => {
     return convertToReactFlowEdges(connections);
