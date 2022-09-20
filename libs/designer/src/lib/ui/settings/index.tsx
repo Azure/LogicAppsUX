@@ -72,7 +72,7 @@ function GeneralSettings(): JSX.Element | null {
   useEffect(() => {
     const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
     dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
-  }, [dispatch, nodeId, operations]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dispatch, nodeId, operations, triggerValidation]);
 
   const onConcurrencyToggle = (checked: boolean): void => {
     dispatch(
@@ -103,7 +103,6 @@ function GeneralSettings(): JSX.Element | null {
   };
 
   const onSplitOnToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     const splitOnSetting = {
       isSupported: !!splitOn?.isSupported,
       value: {
@@ -128,7 +127,6 @@ function GeneralSettings(): JSX.Element | null {
   };
 
   const onTimeoutValueChange = (newVal: string): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -171,7 +169,6 @@ function GeneralSettings(): JSX.Element | null {
   };
 
   const onSplitOnSelectionChanged = (selectedOption: IDropdownOption): void => {
-    // TODO (14427339): Setting Validation
     const splitOnSetting = {
       isSupported: !!splitOn?.isSupported,
       value: {
@@ -228,16 +225,13 @@ function GeneralSettings(): JSX.Element | null {
 
 function TrackingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
-  // let rootState: RootState;
   const expandedSections = useSelector((state: RootState) => {
-      // rootState = state;
       return state.settings.expandedSections;
     }),
     nodeId = useSelectedNodeId(),
     { trackedProperties, correlation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
 
   const onClientTrackingIdChange = (newValue: string): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -291,7 +285,6 @@ function TrackingSettings(): JSX.Element | null {
         trackedPropertiesInput = newValue;
       }
     }
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -329,7 +322,6 @@ function DataHandlingSettings(): JSX.Element | null {
     { disableAutomaticDecompression, requestSchemaValidation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
 
   const onAutomaticDecompressionChange = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -343,7 +335,6 @@ function DataHandlingSettings(): JSX.Element | null {
     );
   };
   const onSchemaValidationChange = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -419,7 +410,7 @@ function NetworkingSettings(): JSX.Element | null {
   useEffect(() => {
     const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
     dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
-  }, [dispatch, nodeId, operations]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dispatch, nodeId, operations, triggerValidation]);
 
   const onAsyncPatternToggle = (checked: boolean): void => {
     dispatch(
@@ -436,7 +427,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onAsyncResponseToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -451,7 +441,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onRequestOptionsChange = (newVal: string): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -466,7 +455,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onSuppressHeadersToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -580,7 +568,7 @@ function RunAfterSettings(): JSX.Element | null {
   useEffect(() => {
     const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
     dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
-  }, [dispatch, nodeId, operations]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [dispatch, nodeId, operations, triggerValidation]);
 
   // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
   const allEdges: WorkflowEdge[] = useEdgesBySource();
@@ -602,7 +590,6 @@ function SecuritySettings(): JSX.Element | null {
     nodeId = useSelectedNodeId(),
     { secureInputs, secureOutputs } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
   const onSecureInputsChange = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -614,7 +601,6 @@ function SecuritySettings(): JSX.Element | null {
   };
 
   const onSecureOutputsChange = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,

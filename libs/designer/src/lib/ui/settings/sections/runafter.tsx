@@ -87,7 +87,7 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, 
             return;
           } else if (arr.length < 2) {
             return;
-          } else if (arr.length > 1 && errors.some(({ key }) => key === ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION)) {
+          } else if (errors.some(({ key }) => key === ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION)) {
             setErrors(errors.filter(({ key }) => key !== ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION));
           }
 

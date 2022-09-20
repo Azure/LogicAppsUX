@@ -4,7 +4,7 @@ import { isHighContrastBlack } from '@microsoft/designer-ui';
 export interface MessageBarProps {
   type: MessageBarType;
   message: string;
-  onWarningDismiss?: () => void | undefined;
+  onWarningDismiss?: () => void;
 }
 
 const messageBarStyles: IMessageBarStyles = isHighContrastBlack()
@@ -12,18 +12,9 @@ const messageBarStyles: IMessageBarStyles = isHighContrastBlack()
   : {};
 
 export function CustomizableMessageBar({ type, message, onWarningDismiss }: MessageBarProps): JSX.Element {
-  if (onWarningDismiss) {
-    return (
-      <div className="msla-setting-section-message-bar">
-        <MessageBar styles={messageBarStyles} messageBarType={type} onDismiss={onWarningDismiss}>
-          {message}
-        </MessageBar>
-      </div>
-    );
-  }
   return (
     <div className="msla-setting-section-message-bar">
-      <MessageBar styles={messageBarStyles} messageBarType={type}>
+      <MessageBar styles={messageBarStyles} messageBarType={type} onDismiss={onWarningDismiss ?? undefined}>
         {message}
       </MessageBar>
     </div>

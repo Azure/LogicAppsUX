@@ -22,19 +22,6 @@ export const useValidate = () => {
     description: 'error message for max-exceeding paging count',
   });
 
-  const validate = <K extends keyof RootState>(validationType: K, proposedState: RootState[K], nodeId: string): Array<ValidationError> => {
-    switch (validationType) {
-      case 'operations': {
-        const proposedOperationMetadataState = proposedState as OperationMetadataState;
-        const errors = validateOperationSettings(proposedOperationMetadataState.settings[nodeId]);
-        setValidationErrors(errors);
-        return errors;
-      }
-      default:
-        return [];
-    }
-  };
-
   const validateOperationSettings = useCallback(
     (settings: Settings): ValidationError[] => {
       const { conditionExpressions, paging } = settings;
@@ -65,6 +52,22 @@ export const useValidate = () => {
       return validationErrors;
     },
     [pagingCount, pagingCountMax, triggerConditionEmpty]
+  );
+
+  const validate = useCallback(
+    <K extends keyof RootState>(validationType: K, proposedState: RootState[K], nodeId: string): ValidationError[] => {
+      switch (validationType) {
+        case 'operations': {
+          const proposedOperationMetadataState = proposedState as OperationMetadataState;
+          const errors = validateOperationSettings(proposedOperationMetadataState.settings[nodeId]);
+          setValidationErrors(errors);
+          return errors;
+        }
+        default:
+          return [];
+      }
+    },
+    [validateOperationSettings]
   );
 
   return {
