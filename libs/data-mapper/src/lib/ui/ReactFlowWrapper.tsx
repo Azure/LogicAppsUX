@@ -137,23 +137,22 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
   };
 
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
-    console.log(node);
     if (node.type === ReactFlowNodeType.SchemaNode) {
       if (node.data.schemaType === SchemaTypes.Input) {
         const selectedInputNode: SelectedInputNode = {
           nodeType: NodeType.Input,
-          name: node.data.label,
+          name: node.data.schemaNode.name,
           path: node.id.replace(inputPrefix, ''),
-          dataType: node.data.nodeDataType,
+          dataType: node.data.schemaNode.schemaNodeDataType,
         };
 
         dispatch(setCurrentlySelectedNode(selectedInputNode));
       } else if (node.data.schemaType === SchemaTypes.Output) {
         const selectedOutputNode: SelectedOutputNode = {
           nodeType: NodeType.Output,
-          name: node.data.label,
+          name: node.data.schemaNode.name,
           path: node.id.replace(outputPrefix, ''),
-          dataType: node.data.nodeDataType,
+          dataType: node.data.schemaNode.schemaNodeDataType,
           defaultValue: '', // TODO: this property and below
           doNotGenerateIfNoValue: true,
           nullable: true,
@@ -170,7 +169,6 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
         branding: node.data.functionBranding,
         description: '', // TODO: this property and below
         codeEx: '',
-        definition: '',
         outputId: '',
       };
 
