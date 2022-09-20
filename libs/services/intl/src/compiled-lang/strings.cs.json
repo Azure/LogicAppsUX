@@ -3200,7 +3200,7 @@
   "VbMYd8": [
     {
       "type": 0,
-      "value": "Triggers tell your app when to start running. Each workflow needs at least one trigger."
+      "value": "Aktivační události sdělí aplikaci, kdy se má spustit. Každý pracovní postup vyžaduje alespoň jednu aktivační událost."
     }
   ],
   "VlvlX1": [
@@ -3254,7 +3254,7 @@
   "WOOYW1": [
     {
       "type": 0,
-      "value": "Actions perform operations on data or communicate between systems to execute."
+      "value": "Akce provádějí operace s daty nebo komunikují mezi systémy, které se mají spustit."
     }
   ],
   "WS9kXD": [
@@ -5038,7 +5038,7 @@
   "q1gfIs": [
     {
       "type": 0,
-      "value": "Přidat trigger"
+      "value": "Přidat aktivační událost"
     }
   ],
   "q2OCEx": [
