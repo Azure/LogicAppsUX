@@ -19,7 +19,8 @@ export const App = (): JSX.Element => {
   const vscode = useContext(VSCodeContext);
   const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
 
-  const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
+  // TODO (After theming): set initial value back to getVscodeTheme()
+  const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(VsCodeThemeType.VsCodeLight);
 
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
   const inputSchema = useSelector((state: RootState) => state.dataMapDataLoader.inputSchema);
