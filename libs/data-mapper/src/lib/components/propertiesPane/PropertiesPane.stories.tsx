@@ -29,7 +29,6 @@ const exFunctionNode: SelectedFunctionNode = {
   branding: {} as FunctionGroupBranding,
   description: '',
   codeEx: '',
-  definition: '',
   inputs: [],
   outputId: '',
 };
