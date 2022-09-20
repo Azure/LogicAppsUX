@@ -1,8 +1,10 @@
+import { TrafficLightDot } from '..';
 import constants from '../constants';
 import type { PageActionTelemetryData } from '../telemetry/models';
 import type { PanelTab } from './panelUtil';
-import type { IPivotStyles } from '@fluentui/react/lib/Pivot';
+import type { IPivotItemProps, IPivotStyles } from '@fluentui/react/lib/Pivot';
 import { Pivot, PivotItem } from '@fluentui/react/lib/Pivot';
+import { RUN_AFTER_COLORS } from '@microsoft-logic-apps/utils';
 import React from 'react';
 import { useIntl } from 'react-intl';
 
@@ -17,6 +19,7 @@ const pivotStyles: Partial<IPivotStyles> = {
   },
 };
 export interface PanelPivotProps {
+  nodeId: string;
   isCollapsed: boolean;
   tabs: Record<string, PanelTab>;
   selectedTab?: string;
@@ -24,7 +27,7 @@ export interface PanelPivotProps {
   onCategoryClick?(item: PivotItem): void;
   trackEvent(data: PageActionTelemetryData): void;
 }
-export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange }: PanelPivotProps): JSX.Element => {
+export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange, nodeId }: PanelPivotProps): JSX.Element => {
   const intl = useIntl();
   const onTabSelected = (item?: PivotItem): void => {
     if (item) {
@@ -51,10 +54,33 @@ export const PanelPivot = ({ isCollapsed, tabs, selectedTab, onTabChange }: Pane
         overflowBehavior="menu"
         overflowAriaLabel={overflowLabel}
       >
-        {Object.entries(tabs).map(([name, panelTab]) => {
-          return panelTab.visible ? <PivotItem key={name} itemKey={name} headerText={panelTab.title} /> : null;
+        {Object.entries(tabs).map(([name, { visible, tabErrors, title }]) => {
+          return visible && tabErrors?.[nodeId] ? (
+            <PivotItem key={name} itemKey={name} headerText={title} onRenderItemLink={customRenderer} />
+          ) : visible ? (
+            <PivotItem key={name} itemKey={name} headerText={title} />
+          ) : null;
         })}
       </Pivot>
     </div>
   );
 };
+
+function customRenderer(
+  link?: IPivotItemProps,
+  defaultRenderer?: (link?: IPivotItemProps) => JSX.Element | null,
+  isInverted?: boolean
+): JSX.Element | null {
+  const themeName = isInverted ? 'dark' : 'light';
+  if (!link || !defaultRenderer) {
+    return null;
+  }
+  return (
+    <>
+      {defaultRenderer({ ...link, itemIcon: undefined })}
+      <span className="msla-workflowpanel-pivot-error-icon">
+        <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
+      </span>
+    </>
+  );
+}
