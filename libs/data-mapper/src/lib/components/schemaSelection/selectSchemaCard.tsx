@@ -1,6 +1,7 @@
 import { SchemaTypes } from '../../models';
-import { ReactComponent as CardOnHover } from './card_onHover.svg';
-import { ReactComponent as CardOnRest } from './card_onRest.svg';
+import CardOnHover from './card_onHover.svg';
+import CardOnRest from './card_onRest.svg';
+import { Image } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -64,7 +65,7 @@ export const SelectSchemaCard = ({ schemaType, onClick }: SelectSchemaCardProps)
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      {isHovering ? <CardOnHover style={svgStyle} /> : <CardOnRest style={svgStyle} />}
+      <Image src={isHovering ? CardOnHover : CardOnRest} style={svgStyle} alt="Empty schema card svg" />
       {selectSchemaMsg}
     </div>
   );
