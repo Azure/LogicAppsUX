@@ -1,14 +1,14 @@
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';
-import type { ExpressionListProps } from './expressionList';
-import { ExpressionList } from './expressionList';
+import type { FunctionListProps } from './FunctionList';
+import { FunctionList } from './FunctionList';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
 export default {
-  component: ExpressionList,
-  title: 'Data Mapper/ExpressionList',
-} as ComponentMeta<typeof ExpressionList>;
+  component: FunctionList,
+  title: 'Data Mapper/FunctionList',
+} as ComponentMeta<typeof FunctionList>;
 
 const toolboxPanelProps: FloatingPanelProps = {
   xPos: '16px',
@@ -18,9 +18,9 @@ const toolboxPanelProps: FloatingPanelProps = {
   maxHeight: '450px',
 };
 
-export const Standard: ComponentStory<typeof ExpressionList> = (args: ExpressionListProps) => (
+export const Standard: ComponentStory<typeof FunctionList> = (args: FunctionListProps) => (
   <FloatingPanel {...toolboxPanelProps}>
-    <ExpressionList {...args} />
+    <FunctionList {...args} />
   </FloatingPanel>
 );
 Standard.args = {

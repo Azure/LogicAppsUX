@@ -2,15 +2,15 @@ import type { ButtonContainerProps } from '../components/buttonContainer/ButtonC
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import type { ButtonPivotProps } from '../components/buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
-import { ExpressionList } from '../components/expressionList/expressionList';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
-import { ExpressionCard } from '../components/nodeCard/ExpressionCard';
+import { FunctionList } from '../components/functionList/FunctionList';
+import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import { checkerboardBackgroundImage, defaultCanvasZoom } from '../constants/ReactFlowConstants';
 import {
-  addExpressionNode,
+  addFunctionNode,
   addInputNodes,
   changeConnection,
   deleteConnection,
@@ -22,8 +22,8 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
-import type { Expression } from '../models/Expression';
-import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../models/SelectedNode';
+import type { FunctionData } from '../models/Function';
+import type { SelectedFunctionNode, SelectedInputNode, SelectedOutputNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
 import { inputPrefix, outputPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnectionAtCurrentOutputNode, isLeafNode } from '../utils/Schema.Utils';
@@ -69,7 +69,7 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
   const { fitView, zoomIn, zoomOut } = useReactFlow();
 
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
-  const allExpressionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentExpressionNodes);
+  const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedInputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedInputSchema);
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
@@ -78,9 +78,9 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
 
   const edgeUpdateSuccessful = useRef(true);
-  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard, expressionNode: ExpressionCard }), []);
+  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard, functionNode: FunctionCard }), []);
 
-  // TODO update to support input nodes connected to an expression, connected to an output node
+  // TODO update to support input nodes connected to an function, connected to an output node
   const connectedInputNodes = useMemo(() => {
     if (currentOutputNode) {
       const connectionValues = Object.values(connections);
@@ -113,8 +113,8 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
     setDisplayToolboxItem(undefined);
   };
 
-  const onExpressionItemClick = (selectedExpression: Expression) => {
-    dispatch(addExpressionNode(selectedExpression));
+  const onFunctionItemClick = (selectedFunction: FunctionData) => {
+    dispatch(addFunctionNode(selectedFunction));
   };
 
   const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
@@ -161,19 +161,19 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
 
         dispatch(setCurrentlySelectedNode(selectedOutputNode));
       }
-    } else if (node.type === ReactFlowNodeType.ExpressionNode) {
-      const selectedExpressionNode: SelectedExpressionNode = {
-        nodeType: NodeType.Expression,
-        name: node.data.expressionName,
+    } else if (node.type === ReactFlowNodeType.FunctionNode) {
+      const selectedFunctionNode: SelectedFunctionNode = {
+        nodeType: NodeType.Function,
+        name: node.data.functionName,
         inputs: node.data.inputs,
-        branding: node.data.expressionBranding,
+        branding: node.data.functionBranding,
         description: '', // TODO: this property and below
         codeEx: '',
         definition: '',
         outputId: '',
       };
 
-      dispatch(setCurrentlySelectedNode(selectedExpressionNode));
+      dispatch(setCurrentlySelectedNode(selectedFunctionNode));
     }
   };
 
@@ -286,7 +286,7 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
         tooltip: functionLoc,
         regularIcon: MathFormula20Regular,
         filledIcon: MathFormula20Filled,
-        value: 'expressionsPanel',
+        value: 'functionsPanel',
       },
     ],
     horizontal: true,
@@ -296,7 +296,7 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
     onTabSelect: onTabSelect,
   };
 
-  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, allExpressionNodes, currentOutputNode, connections);
+  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, allFunctionNodes, currentOutputNode, connections);
 
   return (
     <ReactFlow
@@ -336,9 +336,9 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
           )}
         </FloatingPanel>
       )}
-      {displayToolboxItem === 'expressionsPanel' && (
+      {displayToolboxItem === 'functionsPanel' && (
         <FloatingPanel {...toolboxPanelProps}>
-          <ExpressionList sample="sample" onExpressionClick={onExpressionItemClick}></ExpressionList>
+          <FunctionList sample="sample" onFunctionClick={onFunctionItemClick}></FunctionList>
         </FloatingPanel>
       )}
       <ButtonContainer {...mapControlsButtonContainerProps} />

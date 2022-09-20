@@ -1,7 +1,7 @@
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
-import type { Expression, ExpressionDictionary } from '../../models/Expression';
+import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -25,14 +25,14 @@ export interface DataMapOperationState {
   flattenedOutputSchema: SchemaNodeDictionary;
   currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
-  currentExpressionNodes: ExpressionDictionary;
+  currentFunctionNodes: FunctionDictionary;
   currentlySelectedNode?: SelectedNode;
 }
 
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
   currentInputNodes: [],
-  currentExpressionNodes: {},
+  currentFunctionNodes: {},
   flattenedInputSchema: {},
   flattenedOutputSchema: {},
 };
@@ -216,27 +216,27 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
-    addExpressionNode: (state, action: PayloadAction<Expression>) => {
-      const expression = action.payload;
+    addFunctionNode: (state, action: PayloadAction<FunctionData>) => {
+      const functionData = action.payload;
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentExpressionNodes: { ...state.curDataMapOperation.currentExpressionNodes },
+        currentFunctionNodes: { ...state.curDataMapOperation.currentFunctionNodes },
       };
 
-      newState.currentExpressionNodes[`${expression.name}-${guid()}`] = expression;
+      newState.currentFunctionNodes[`${functionData.name}-${guid()}`] = functionData;
 
       doDataMapOperation(state, newState);
     },
 
-    removeExpressionNode: (state, action: PayloadAction<string>) => {
-      const expressionKey = action.payload;
+    removeFunctionNode: (state, action: PayloadAction<string>) => {
+      const functionKey = action.payload;
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentExpressionNodes: { ...state.curDataMapOperation.currentExpressionNodes },
+        currentFunctionNodes: { ...state.curDataMapOperation.currentFunctionNodes },
       };
 
-      delete newState.dataMapConnections[expressionKey];
+      delete newState.dataMapConnections[functionKey];
 
       doDataMapOperation(state, newState);
     },
@@ -346,8 +346,8 @@ export const {
   toggleInputNode,
   setCurrentOutputNode,
   setCurrentlySelectedNode,
-  addExpressionNode,
-  removeExpressionNode,
+  addFunctionNode,
+  removeFunctionNode,
   makeConnection,
   changeConnection,
   deleteConnection,

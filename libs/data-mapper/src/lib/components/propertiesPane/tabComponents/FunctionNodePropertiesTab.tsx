@@ -1,8 +1,8 @@
-import type { SelectedExpressionNode } from '../../../models/SelectedNode';
-import { getIconForExpression } from '../../../utils/Icon.Utils';
+import type { SelectedFunctionNode } from '../../../models/SelectedNode';
+import { getIconForFunction } from '../../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, Input, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { Delete20Regular, Add20Regular } from '@fluentui/react-icons';
+import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 
 const useStyles = makeStyles({
@@ -23,11 +23,11 @@ const useStyles = makeStyles({
   },
 });
 
-interface ExpressionNodePropertiesTabProps {
-  currentNode: SelectedExpressionNode;
+interface FunctionNodePropertiesTabProps {
+  currentNode: SelectedFunctionNode;
 }
 
-export const ExpressionNodePropertiesTab = ({ currentNode }: ExpressionNodePropertiesTabProps): JSX.Element => {
+export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -46,9 +46,9 @@ export const ExpressionNodePropertiesTab = ({ currentNode }: ExpressionNodePrope
     description: 'Output',
   });
 
-  const exprNoReqInputLoc = intl.formatMessage({
-    defaultMessage: `This expression doesn't require any input.`,
-    description: `Expression doesn't have or require inputs`,
+  const functionNoReqInputLoc = intl.formatMessage({
+    defaultMessage: `This function doesn't require any input.`,
+    description: `Function doesn't have or require inputs`,
   });
 
   return (
@@ -64,7 +64,7 @@ export const ExpressionNodePropertiesTab = ({ currentNode }: ExpressionNodePrope
             }}
           >
             <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1, textAlign: 'center' }}>
-              {getIconForExpression(currentNode.name, undefined, currentNode.branding)}
+              {getIconForFunction(currentNode.name, undefined, currentNode.branding)}
             </div>
           </span>
 
@@ -93,7 +93,7 @@ export const ExpressionNodePropertiesTab = ({ currentNode }: ExpressionNodePrope
               </Button>
             </>
           ) : (
-            <Text style={{ marginTop: '16px' }}>{exprNoReqInputLoc}</Text>
+            <Text style={{ marginTop: '16px' }}>{functionNoReqInputLoc}</Text>
           )}
         </Stack>
 

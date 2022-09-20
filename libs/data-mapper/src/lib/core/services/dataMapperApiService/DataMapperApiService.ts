@@ -1,5 +1,5 @@
 import type { SchemaInfoProperties } from '.';
-import type { Expression } from '../../../models/Expression';
+import type { FunctionData } from '../../../models/Function';
 
 export interface DataMapperApiServiceOptions {
   baseUrl: string;
@@ -52,18 +52,18 @@ export class DataMapperApiService {
     return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`; // TODO (danielle): to test
   };
 
-  private getExpressionsManifestUri = () => {
+  private getFunctionsManifestUri = () => {
     return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/transformations/getManifest?api-version=2019-10-01-edge-preview`;
   };
 
-  async getExpressionsManifest(): Promise<Expression[]> {
-    const uri = this.getExpressionsManifestUri();
+  async getFunctionsManifest(): Promise<FunctionData[]> {
+    const uri = this.getFunctionsManifestUri();
     const response = await fetch(uri, { method: 'GET' });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
-    const expressions: Expression[] = await response.json();
-    return expressions;
+    const functions: FunctionData[] = await response.json();
+    return functions;
   }
 
   private getGenerateXsltUri = () => {

@@ -1,12 +1,12 @@
-import type { ExpressionCardProps } from '../components/nodeCard/ExpressionCard';
+import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childOutputNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
 import type { ConnectionDictionary } from '../models/Connection';
-import type { ExpressionDictionary } from '../models/Expression';
+import type { FunctionDictionary } from '../models/Function';
 import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
-import { getExpressionBrandingForCategory } from './Expression.Utils';
+import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { useMemo } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
@@ -16,24 +16,24 @@ const inputX = 400;
 const rootOutputX = 1100;
 const childXOffSet = childOutputNodeCardIndent;
 const rightOfInputs = inputX + nodeCardWidth;
-const expressionX = (rootOutputX - rightOfInputs) / 2 + rightOfInputs;
+const functionX = (rootOutputX - rightOfInputs) / 2 + rightOfInputs;
 
 const rootY = 30;
 const rootYOffset = 60;
 
 export enum ReactFlowNodeType {
   SchemaNode = 'schemaNode',
-  ExpressionNode = 'expressionNode',
+  FunctionNode = 'functionNode',
 }
 
 export const inputPrefix = 'input-';
 export const outputPrefix = 'output-';
-export const expressionPrefix = 'ex-';
+export const functionPrefix = 'function-';
 
 export const convertToReactFlowNodes = (
   currentlySelectedInputNodes: SchemaNodeExtended[],
   connectedInputNodes: SchemaNodeExtended[],
-  allExpressionNodes: ExpressionDictionary,
+  allFunctionNodes: FunctionDictionary,
   outputSchemaNode: SchemaNodeExtended
 ): ReactFlowNode<CardProps>[] => {
   const reactFlowNodes: ReactFlowNode<CardProps>[] = [];
@@ -41,7 +41,7 @@ export const convertToReactFlowNodes = (
   reactFlowNodes.push(
     ...convertInputToReactFlowParentAndChildNodes(currentlySelectedInputNodes, connectedInputNodes),
     ...convertOutputToReactFlowParentAndChildNodes(outputSchemaNode),
-    ...convertExpressionsToReactFlowParentAndChildNodes(allExpressionNodes)
+    ...convertFunctionsToReactFlowParentAndChildNodes(allFunctionNodes)
   );
 
   return reactFlowNodes;
@@ -157,27 +157,25 @@ export const convertToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-const convertExpressionsToReactFlowParentAndChildNodes = (
-  allExpressionNodes: ExpressionDictionary
-): ReactFlowNode<ExpressionCardProps>[] => {
-  const reactFlowNodes: ReactFlowNode<ExpressionCardProps>[] = [];
+const convertFunctionsToReactFlowParentAndChildNodes = (allFunctionNodes: FunctionDictionary): ReactFlowNode<FunctionCardProps>[] => {
+  const reactFlowNodes: ReactFlowNode<FunctionCardProps>[] = [];
 
-  Object.entries(allExpressionNodes).forEach(([expressionKey, expressionNode]) => {
+  Object.entries(allFunctionNodes).forEach(([functionKey, functionNode]) => {
     reactFlowNodes.push({
-      id: expressionKey,
+      id: functionKey,
       data: {
-        expressionName: expressionNode.name,
+        functionName: functionNode.name,
         displayHandle: true,
-        numberOfInputs: expressionNode.numberOfInputs,
-        inputs: expressionNode.inputs,
-        expressionBranding: getExpressionBrandingForCategory(expressionNode.expressionCategory),
+        numberOfInputs: functionNode.numberOfInputs,
+        inputs: functionNode.inputs,
+        functionBranding: getFunctionBrandingForCategory(functionNode.functionCategory),
         disabled: false,
         error: false,
       },
-      type: ReactFlowNodeType.ExpressionNode,
+      type: ReactFlowNodeType.FunctionNode,
       sourcePosition: Position.Right,
       position: {
-        x: expressionX,
+        x: functionX,
         y: rootY + rootYOffset * reactFlowNodes.length,
       },
     });
@@ -200,19 +198,19 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
 export const useLayout = (
   allInputSchemaNodes: SchemaNodeExtended[],
   connectedInputNodes: SchemaNodeExtended[],
-  allExpressionNodes: ExpressionDictionary,
+  allFunctionNodes: FunctionDictionary,
   currentOutputNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
     if (currentOutputNode) {
-      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, allExpressionNodes, currentOutputNode);
+      return convertToReactFlowNodes(allInputSchemaNodes, connectedInputNodes, allFunctionNodes, currentOutputNode);
     } else {
       return [];
     }
     // Explicitly ignoring connectedInputNodes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allInputSchemaNodes, currentOutputNode, allExpressionNodes]);
+  }, [allInputSchemaNodes, currentOutputNode, allFunctionNodes]);
 
   const reactFlowEdges = useMemo(() => {
     return convertToReactFlowEdges(connections);

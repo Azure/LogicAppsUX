@@ -1,8 +1,8 @@
-import { getExpressions } from '../../core/queries/expressions';
-import type { Expression } from '../../models/Expression';
-import { ExpressionCategory } from '../../models/Expression';
-import { getExpressionBrandingForCategory } from '../../utils/Expression.Utils';
-import { getIconForExpression } from '../../utils/Icon.Utils';
+import { getFunctions } from '../../core/queries/functions';
+import type { FunctionData } from '../../models/Function';
+import { FunctionCategory } from '../../models/Function';
+import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
+import { getIconForFunction } from '../../utils/Icon.Utils';
 import { DMTooltip } from '../tooltip/tooltip';
 import { TreeHeader } from '../tree/treeHeader';
 import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
@@ -12,9 +12,9 @@ import Fuse from 'fuse.js';
 import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
-export interface ExpressionListProps {
+export interface FunctionListProps {
   sample: string;
-  onExpressionClick: (expression: Expression) => void;
+  onFunctionClick: (functionNode: FunctionData) => void;
 }
 
 const buttonHoverStyles = makeStyles({
@@ -23,19 +23,19 @@ const buttonHoverStyles = makeStyles({
   },
 });
 
-export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionListProps) => {
-  const expressionListData = useQuery<Expression[]>(['expressions'], () => getExpressions());
+export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListProps) => {
+  const functionListData = useQuery<FunctionData[]>(['functions'], () => getFunctions());
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [sortedExpressionsByCategory, setSortedExpressionsByCategory] = useState<Expression[]>([]);
+  const [sortedFunctionsByCategory, setSortedFunctionsByCategory] = useState<FunctionData[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
 
   useEffect(() => {
-    if (expressionListData.data) {
-      const categoriesArray: ExpressionCategory[] = [];
-      let newSortedExpressions: Expression[] = [];
-      let dataCopy = expressionListData.data;
+    if (functionListData.data) {
+      const categoriesArray: FunctionCategory[] = [];
+      let newSortedFunctions: FunctionData[] = [];
+      let dataCopy = functionListData.data;
       if (searchTerm) {
-        const options: Fuse.IFuseOptions<Expression> = {
+        const options: Fuse.IFuseOptions<FunctionData> = {
           includeScore: true,
           minMatchCharLength: 2,
           includeMatches: true,
@@ -46,21 +46,21 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
             },
           ],
         };
-        const fuse = new Fuse(expressionListData.data, options);
+        const fuse = new Fuse(functionListData.data, options);
         const results = fuse.search(searchTerm);
         dataCopy = results.map((fuse) => {
           return { ...fuse.item, matchIndices: fuse.matches };
         });
-        dataCopy.forEach((expression) => {
-          if (!categoriesArray.find((category) => category === expression.expressionCategory))
-            categoriesArray.push(expression.expressionCategory);
+        dataCopy.forEach((functionNode) => {
+          if (!categoriesArray.find((category) => category === functionNode.functionCategory))
+            categoriesArray.push(functionNode.functionCategory);
         });
-        newSortedExpressions = dataCopy.sort((a, b) => a.expressionCategory.localeCompare(b.expressionCategory));
+        newSortedFunctions = dataCopy.sort((a, b) => a.functionCategory.localeCompare(b.functionCategory));
       } else {
-        dataCopy = expressionListData.data;
-        Object.values(ExpressionCategory).forEach((category) => categoriesArray.push(category));
-        newSortedExpressions = dataCopy.sort((a, b) => {
-          const categorySort = a.expressionCategory.localeCompare(b.expressionCategory);
+        dataCopy = functionListData.data;
+        Object.values(FunctionCategory).forEach((category) => categoriesArray.push(category));
+        newSortedFunctions = dataCopy.sort((a, b) => {
+          const categorySort = a.functionCategory.localeCompare(b.functionCategory);
           if (categorySort !== 0) {
             return categorySort;
           } else {
@@ -69,31 +69,31 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
         });
       }
 
-      setSortedExpressionsByCategory(newSortedExpressions);
+      setSortedFunctionsByCategory(newSortedFunctions);
       let startInd = 0;
       const newGroups = categoriesArray.map((value): IGroup => {
         let numInGroup = 0;
-        newSortedExpressions.forEach((expression) => {
-          if (expression.expressionCategory === value) {
+        newSortedFunctions.forEach((functionNode) => {
+          if (functionNode.functionCategory === value) {
             numInGroup++;
           }
         });
         const group: IGroup = {
           key: value,
           startIndex: startInd,
-          name: getExpressionBrandingForCategory(value).displayName,
+          name: getFunctionBrandingForCategory(value).displayName,
           count: numInGroup,
-          data: expressionListData.data[0],
+          data: functionListData.data[0],
         };
         startInd += numInGroup;
         return group;
       });
       setGroups(newGroups);
     }
-  }, [expressionListData.data, searchTerm]);
+  }, [functionListData.data, searchTerm]);
 
-  const cell = (expression: Expression, onExpressionClick: (expression: Expression) => void) => {
-    return <ExpressionListCell expression={expression} onExpressionClick={onExpressionClick}></ExpressionListCell>;
+  const cell = (functionNode: FunctionData, onFunctionClick: (functionNode: FunctionData) => void) => {
+    return <FunctionListCell functionData={functionNode} onFunctionClick={onFunctionClick}></FunctionListCell>;
   };
 
   const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
@@ -129,14 +129,14 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
 
   return (
     <>
-      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Expression"></TreeHeader>
+      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Function"></TreeHeader>
       <div>
         <GroupedList
           onShouldVirtualize={() => false}
           groups={groups}
           styles={headerStyle}
-          items={sortedExpressionsByCategory}
-          onRenderCell={(depth, item) => cell(item, props.onExpressionClick)}
+          items={sortedFunctionsByCategory}
+          onRenderCell={(depth, item) => cell(item, props.onFunctionClick)}
           selectionMode={0}
         ></GroupedList>
       </div>
@@ -144,9 +144,9 @@ export const ExpressionList: React.FC<ExpressionListProps> = (props: ExpressionL
   );
 };
 
-interface ExpressionListCellProps {
-  expression: Expression;
-  onExpressionClick: (expression: Expression) => void;
+interface FunctionListCellProps {
+  functionData: FunctionData;
+  onFunctionClick: (functionNode: FunctionData) => void;
 }
 
 const cardStyles = makeStyles({
@@ -167,21 +167,21 @@ const cardStyles = makeStyles({
   },
 });
 
-const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onExpressionClick }) => {
+const FunctionListCell: React.FC<FunctionListCellProps> = ({ functionData, onFunctionClick }) => {
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
   const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
-  const brand = getExpressionBrandingForCategory(expression.expressionCategory);
+  const brand = getFunctionBrandingForCategory(functionData.functionCategory);
 
   return (
     <Button
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      key={expression.name}
-      alt-text={expression.name}
+      key={functionData.name}
+      alt-text={functionData.name}
       className={isHover ? buttonHovered : cardStyle.button}
       onClick={() => {
-        onExpressionClick(expression);
+        onFunctionClick(functionData);
       }}
     >
       <span
@@ -193,14 +193,14 @@ const ExpressionListCell: React.FC<ExpressionListCellProps> = ({ expression, onE
         }}
       >
         <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1 }}>
-          {getIconForExpression(expression.name, expression.iconFileName, brand)}
+          {getIconForFunction(functionData.name, functionData.iconFileName, brand)}
         </div>
       </span>
       <Caption1 truncate block className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
-        {expression.name}
+        {functionData.name}
       </Caption1>
       <span style={{ justifyContent: 'right' }}>
-        <DMTooltip text={expression.detailedDescription}></DMTooltip>
+        <DMTooltip text={functionData.detailedDescription}></DMTooltip>
       </span>
     </Button>
   );

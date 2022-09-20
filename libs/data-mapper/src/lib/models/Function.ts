@@ -1,6 +1,6 @@
 import type { SchemaNodeDataType } from './Schema';
 
-export interface Expression {
+export interface FunctionData {
   name: string;
   numberOfInputs: number;
   type: string;
@@ -10,22 +10,22 @@ export interface Expression {
   isXsltOperatorExpression: boolean;
 
   // Made up
-  inputs: ExpressionInput[];
+  inputs: FunctionInput[];
   outputType: SchemaNodeDataType;
   allowCustom: boolean;
 
-  expressionCategory: ExpressionCategory;
+  functionCategory: FunctionCategory;
   iconFileName?: string;
   detailedDescription: string;
   tooltip: string;
 }
 
-export interface ExpressionInput {
+export interface FunctionInput {
   inputName: string;
   acceptableInputTypes: SchemaNodeDataType[];
 }
 
-export enum ExpressionCategory {
+export enum FunctionCategory {
   Collection = 'collection',
   DateTime = 'dateTime',
   Logical = 'logical',
@@ -34,4 +34,4 @@ export enum ExpressionCategory {
   Utility = 'utility',
 }
 
-export type ExpressionDictionary = { [key: string]: Expression };
+export type FunctionDictionary = { [key: string]: FunctionData };

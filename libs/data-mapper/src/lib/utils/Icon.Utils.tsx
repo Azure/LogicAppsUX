@@ -1,4 +1,4 @@
-import type { ExpressionGroupBranding } from '../constants/ExpressionConstants';
+import type { FunctionGroupBranding } from '../constants/FunctionConstants';
 import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import {
   Any16Filled,
@@ -24,7 +24,7 @@ import {
   String24Filled,
   String24Regular,
 } from '../images/DataType24Icons';
-import { ExpressionCategory } from '../models/Expression';
+import { FunctionCategory } from '../models/Function';
 import { SchemaNodeDataType } from '../models/Schema';
 import { Image } from '@fluentui/react-components';
 import {
@@ -375,28 +375,28 @@ export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   }
 };
 
-export const iconForExpressionCategory = (expressionCategory: ExpressionCategory) => {
-  switch (expressionCategory) {
-    case ExpressionCategory.Collection: {
+export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
+  switch (functionCategory) {
+    case FunctionCategory.Collection: {
       return Collection20Regular;
     }
-    case ExpressionCategory.DateTime: {
+    case FunctionCategory.DateTime: {
       return CalendarClock20Regular;
     }
-    case ExpressionCategory.Logical: {
+    case FunctionCategory.Logical: {
       return AddSubtractCircle20Filled;
     }
-    case ExpressionCategory.Math: {
+    case FunctionCategory.Math: {
       return MathSymbols20Regular;
     }
-    case ExpressionCategory.String: {
+    case FunctionCategory.String: {
       return StringCategory20Regular;
     }
-    case ExpressionCategory.Utility: {
+    case FunctionCategory.Utility: {
       return Wrench20Regular;
     }
     default: {
-      console.error(`Invalid category type: ${expressionCategory}`);
+      console.error(`Invalid category type: ${functionCategory}`);
       return Wrench20Regular;
     }
   }
@@ -407,6 +407,6 @@ export const iconUriForIconImageName = (iconImageName: string) => {
   return `https://datamappericons.azureedge.net/icons/${iconImageName}`;
 };
 
-export const getIconForExpression = (name: string, fileName: string | undefined, branding: ExpressionGroupBranding) => {
+export const getIconForFunction = (name: string, fileName: string | undefined, branding: FunctionGroupBranding) => {
   return fileName ? <Image src={iconUriForIconImageName(fileName)} height={20} width={20} alt={name} /> : <>{branding.icon}</>;
 };

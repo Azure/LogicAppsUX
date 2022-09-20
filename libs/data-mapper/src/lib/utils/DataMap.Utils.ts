@@ -135,7 +135,7 @@ const parseMappingsJsonToNode = (
       sourceValue: targetNodeObject,
       loop: undefined,
       condition: undefined,
-      // Needs to be addressed again once we have expressions properly coded out in the designer
+      // Needs to be addressed again once we have functions properly coded out in the designer
       reactFlowSource: `${inputPrefix}${targetNodeObject}`,
       reactFlowDestination: `${outputPrefix}${connectionKey}`,
     };
@@ -191,11 +191,11 @@ const parseMappingsJsonToNode = (
 // Exported for testing purposes only
 export const parseLoopMapping = (line: string): LoopConnection => {
   const formattedLine = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
-  const expressionSplitOnComma = formattedLine.split(',');
+  const functionSplitOnComma = formattedLine.split(',');
 
   return {
-    loopSource: expressionSplitOnComma[0].trim(),
-    loopIndex: expressionSplitOnComma[1]?.trim(),
+    loopSource: functionSplitOnComma[0].trim(),
+    loopIndex: functionSplitOnComma[1]?.trim(),
   };
 };
 
