@@ -5,7 +5,6 @@ import { azureFunctionConnectorId } from './operationmanifest';
 import type { Connection, ConnectionParameter, Connector } from '@microsoft-logic-apps/utils';
 import {
   isArmResourceId,
-  UnsupportedException,
   AssertionErrorCode,
   AssertionException,
   ConnectionParameterSource,
@@ -110,7 +109,7 @@ export class StandardConnectionService implements IConnectionService {
 
   async getConnectorAndSwagger(connectorId: string): Promise<ConnectorWithSwagger> {
     if (!isArmResourceId(connectorId)) {
-      throw new UnsupportedException(`Invalid connector '${connectorId}' to fetch swagger for`);
+      return { connector: await this.getConnector(connectorId), swagger: null as any };
     }
 
     const {
@@ -123,6 +122,11 @@ export class StandardConnectionService implements IConnectionService {
     ]);
 
     return { connector, swagger };
+  }
+
+  async getSwaggerFromUri(uri: string): Promise<OpenAPIV2.Document> {
+    const { httpClient } = this.options;
+    return httpClient.get<OpenAPIV2.Document>({ uri, noAuth: true });
   }
 
   async getConnector(connectorId: string): Promise<Connector> {

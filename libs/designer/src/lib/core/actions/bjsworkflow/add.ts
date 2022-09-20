@@ -16,8 +16,8 @@ import { isRootNodeInGraph } from '../../utils/graph';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations } from '../../utils/variables';
 import { isConnectionRequiredForOperation } from './connections';
-import { getInputParametersFromManifest, getOutputParametersFromManifest, getParameterDependencies } from './initialize';
-import type { NodeDataWithManifest } from './operationdeserializer';
+import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
+import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import { getOperationSettings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes, OperationInfo } from '@microsoft-logic-apps/utils';
@@ -75,9 +75,11 @@ export const initializeOperationDetails = async (
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): Promise<void> => {
+  const nodeOperationInfo = { ...operationInfo, type: operationType, kind: operationKind };
   const operationManifestService = OperationManifestService();
   if (operationManifestService.isSupported(operationType)) {
     const manifest = await getOperationManifest(operationInfo);
+    const { iconUri, brandColor } = manifest.properties;
 
     if (isConnectionRequiredForOperation(manifest)) {
       setDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
@@ -86,15 +88,21 @@ export const initializeOperationDetails = async (
     }
 
     // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
-    const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest, workflowState.operations[nodeId]);
-    const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
-    const { nodeOutputs, dynamicOutput } = getOutputParametersFromManifest(
+    const settings = getOperationSettings(
+      false /* isTrigger */,
+      nodeOperationInfo,
+      manifest,
+      /* swagger */ undefined,
+      workflowState.operations[nodeId]
+    );
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       manifest,
       false /* isTrigger */,
       nodeInputs,
       settings.splitOn?.value?.value
     );
-    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs, dynamicOutput);
+    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
     dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
 
@@ -103,7 +111,7 @@ export const initializeOperationDetails = async (
     addTokensAndVariables(
       nodeId,
       operationType,
-      { id: nodeId, nodeInputs, nodeOutputs, settings, manifest, nodeDependencies },
+      { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest, nodeDependencies },
       workflowState,
       dispatch
     );
@@ -116,37 +124,38 @@ export const initializeOperationDetails = async (
 // TODO: Riley - this is very similar to the init function, but we might want to alter it to not overwrite some data
 export const reinitializeOperationDetails = async (
   nodeId: string,
-  operation: NodeOperation,
+  operationInfo: NodeOperation,
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): Promise<void> => {
   const operationManifestService = OperationManifestService();
-  if (operationManifestService.isSupported(operation.type)) {
-    const manifest = await getOperationManifest(operation);
+  if (operationManifestService.isSupported(operationInfo.type)) {
+    const manifest = await getOperationManifest(operationInfo);
+    const { iconUri, brandColor } = manifest.properties;
 
     // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
     const settings = getOperationSettings(
       false /* isTrigger */,
-      operation.type,
-      operation.kind,
+      operationInfo,
       manifest,
+      undefined /* swagger */,
       workflowState.operations[nodeId]
     );
-    const nodeInputs = getInputParametersFromManifest(nodeId, manifest);
-    const { nodeOutputs, dynamicOutput } = getOutputParametersFromManifest(
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       manifest,
       false /* isTrigger */,
       nodeInputs,
       settings.splitOn?.value?.value
     );
-    const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs, dynamicOutput);
+    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
     dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
 
     addTokensAndVariables(
       nodeId,
-      operation.type,
-      { id: nodeId, nodeInputs, nodeOutputs, settings, manifest, nodeDependencies },
+      operationInfo.type,
+      { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest, nodeDependencies },
       workflowState,
       dispatch
     );
@@ -165,10 +174,11 @@ export const setDefaultConnectionForNode = async (nodeId: string, connectorId: s
   dispatch(switchToOperationPanel(nodeId));
 };
 
+// TODO - Figure out whether this is manifest or swagger
 export const addTokensAndVariables = (
   nodeId: string,
   operationType: string,
-  nodeData: NodeDataWithManifest,
+  nodeData: NodeDataWithOperationMetadata,
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): void => {
@@ -191,13 +201,13 @@ export const addTokensAndVariables = (
       isRootNodeInGraph(nodeId, 'root', nodesMetadata) ? undefined : nodeId,
       operationType,
       nodeOutputs.outputs ?? {},
-      manifest,
+      { iconUri: manifest?.properties.iconUri as string, brandColor: manifest?.properties.brandColor as string },
       settings
     )
   );
 
   if (equals(operationType, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
-    setVariableMetadata(manifest.properties.iconUri, manifest.properties.brandColor);
+    setVariableMetadata(manifest?.properties.iconUri as string, manifest?.properties.brandColor as string);
 
     const variables = getVariableDeclarations(nodeInputs);
     if (variables.length) {

@@ -1,30 +1,37 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
-import type { NodeDependencies, NodeInputs, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { DynamicLoadStatus , updateOutputs } from '../../state/operation/operationMetadataSlice';
+import type { DependencyInfo, NodeInputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import { updateTokens } from '../../state/tokensSlice';
 import { getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
-import { getRecurrenceParameters } from '../../utils/parameters/builtins';
 import {
+  addRecurrenceParametersInGroup,
   getAllInputParameters,
+  getDependentParameters,
   getInputsValueFromDefinitionForManifest,
-  getParameterFromName,
+  getParametersSortedByVisibility,
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
-  parameterValidForDynamicCall,
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../../utils/parameters/helper';
 import { convertOutputsToTokens, getBuiltInTokens } from '../../utils/tokens';
+import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
 import type { Settings } from './settings';
 import type { IConnectionService, IOperationManifestService, ISearchService } from '@microsoft-logic-apps/designer-client-services';
 import { InitConnectionService, InitOperationManifestService, InitSearchService } from '@microsoft-logic-apps/designer-client-services';
-import { getIntl } from '@microsoft-logic-apps/intl';
-import type { DynamicListExtension, DynamicParameters, OutputParameter, SchemaProperty } from '@microsoft-logic-apps/parsers';
-import { DynamicSchemaType, DynamicValuesType, ManifestParser, PropertyName, Visibility } from '@microsoft-logic-apps/parsers';
+import type { InputParameter, SchemaProperty } from '@microsoft-logic-apps/parsers';
+import {
+  isDynamicListExtension,
+  isDynamicPropertiesExtension,
+  isDynamicSchemaExtension,
+  isLegacyDynamicValuesExtension,
+  DynamicSchemaType,
+  ManifestParser,
+  PropertyName,
+} from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { ConnectionReferenceKeyFormat, equals, unmap } from '@microsoft-logic-apps/utils';
-import type { ParameterInfo } from '@microsoft/designer-ui';
+import { ConnectionReferenceKeyFormat, unmap } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -39,10 +46,20 @@ export const InitializeServices = ({ connectionService, operationManifestService
   InitSearchService(searchService);
 };
 
-export const getInputParametersFromManifest = (nodeId: string, manifest: OperationManifest, stepDefinition?: any): NodeInputs => {
+export const getInputParametersFromManifest = (
+  nodeId: string,
+  manifest: OperationManifest,
+  stepDefinition?: any
+): NodeInputsWithDependencies => {
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
     false /* includeParentObject */,
     0 /* expandArrayPropertiesDepth */
+  );
+  const allInputParameters = unmap(
+    new ManifestParser(manifest).getInputParameters(
+      true /* includeParentObject */,
+      Constants.MAX_EXPAND_ARRAY_DEPTH /* expandArrayPropertiesDepth */
+    )
   );
   let primaryInputParametersInArray = unmap(primaryInputParameters);
 
@@ -82,8 +99,7 @@ export const getInputParametersFromManifest = (nodeId: string, manifest: Operati
   }
 
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
-  const recurrenceParameters = getRecurrenceParameters(manifest.properties.recurrence, stepDefinition);
-  const dynamicInput = primaryInputParametersInArray.find(parameter => parameter.dynamicSchema);
+  const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
   // TODO(14490585)- Initialize editor view models for array
 
@@ -96,25 +112,12 @@ export const getInputParametersFromManifest = (nodeId: string, manifest: Operati
     [ParameterGroupKeys.DEFAULT]: defaultParameterGroup,
   };
 
-  if (recurrenceParameters.length) {
-    const intl = getIntl();
-    if (manifest.properties.recurrence?.useLegacyParameterGroup) {
-      defaultParameterGroup.parameters = recurrenceParameters;
-    } else {
-      parameterGroups[ParameterGroupKeys.RECURRENCE] = {
-        id: ParameterGroupKeys.RECURRENCE,
-        description: intl.formatMessage({
-          defaultMessage: 'How often do you want to check for items?',
-          description: 'Recurrence parameter group title',
-        }),
-        parameters: recurrenceParameters,
-      };
-    }
-  }
+  addRecurrenceParametersInGroup(parameterGroups, manifest.properties.recurrence, stepDefinition);
 
   defaultParameterGroup.parameters = getParametersSortedByVisibility(defaultParameterGroup.parameters);
 
-  return { dynamicLoadStatus: dynamicInput ? DynamicLoadStatus.NOTSTARTED : undefined, parameterGroups };
+  const nodeInputs = { dynamicLoadStatus: dynamicInput ? DynamicLoadStatus.NOTSTARTED : undefined, parameterGroups };
+  return { inputs: nodeInputs, dependencies: getInputDependencies(nodeInputs, allInputParameters) };
 };
 
 export const getOutputParametersFromManifest = (
@@ -122,7 +125,7 @@ export const getOutputParametersFromManifest = (
   isTrigger: boolean,
   inputs: NodeInputs,
   splitOnValue?: string
-): { nodeOutputs: NodeOutputs; dynamicOutput?: OutputParameter } => {
+): NodeOutputsWithDependencies => {
   let manifestToParse = manifest;
 
   if (manifest.properties.outputsSchema) {
@@ -151,52 +154,10 @@ export const getOutputParametersFromManifest = (
     }
   }
 
-  return { nodeOutputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs }, dynamicOutput };
-};
-
-export const getParameterDependencies = (
-  manifest: OperationManifest,
-  inputs: NodeInputs,
-  outputs: NodeOutputs,
-  dynamicOutput?: OutputParameter
-): NodeDependencies => {
-  const dependencies = { inputs: {}, outputs: {} } as NodeDependencies;
-  const allInputParameters = unmap(
-    new ManifestParser(manifest).getInputParameters(
-      true /* includeParentObject */,
-      Constants.MAX_EXPAND_ARRAY_DEPTH /* expandArrayPropertiesDepth */
-    )
-  );
-  for (const inputParameter of allInputParameters) {
-    const { dynamicValues, dynamicSchema } = inputParameter;
-    if (dynamicValues) {
-      if (dynamicValues.type === DynamicValuesType.DynamicList) {
-        dependencies.inputs[inputParameter.key] = {
-          definition: dynamicValues,
-          dependencyType: 'ListValues',
-          dependentParameters: getDependentParameters(inputs, (dynamicValues.extension as DynamicListExtension).parameters),
-          parameter: inputParameter,
-        };
-      }
-
-      // TODO - Add for Swagger case here
-    } else if (dynamicSchema) {
-      if (dynamicSchema.type === DynamicSchemaType.DynamicProperties) {
-        dependencies.inputs[inputParameter.key] = {
-          definition: dynamicSchema,
-          dependencyType: 'ApiSchema',
-          dependentParameters: getDependentParameters(inputs, dynamicSchema.extension.parameters),
-          parameter: inputParameter,
-        };
-      }
-
-      // TODO - Add for Swagger case here
-    }
-  }
-
+  const dependencies: Record<string, DependencyInfo> = {};
   if (dynamicOutput && dynamicOutput.dynamicSchema) {
     if (dynamicOutput.dynamicSchema.type === DynamicSchemaType.DynamicProperties) {
-      dependencies.outputs[dynamicOutput.key] = {
+      dependencies[dynamicOutput.key] = {
         definition: dynamicOutput.dynamicSchema,
         dependencyType: 'ApiSchema',
         dependentParameters: getDependentParameters(inputs, dynamicOutput.dynamicSchema.extension.parameters),
@@ -206,16 +167,17 @@ export const getParameterDependencies = (
 
     // TODO - Add for Swagger case here
   }
+
   const { outputsSchema } = manifest.properties;
   if (outputsSchema) {
-    const allOutputs = unmap(outputs.outputs);
+    const allOutputs = unmap(nodeOutputs);
     for (const outputPath of outputsSchema.outputPaths) {
       const outputName = outputPath.outputLocation.filter((location) => location !== 'properties').join('.');
       const matchingOutput = allOutputs.find((output) => output.name === outputName);
       const dependentInput = getAllInputParameters(inputs).find((input) => input.parameterName === outputPath.name);
 
       if (matchingOutput && dependentInput) {
-        dependencies.outputs[matchingOutput.key] = {
+        dependencies[matchingOutput.key] = {
           definition: outputPath,
           dependencyType: 'StaticSchema',
           dependentParameters: {
@@ -226,7 +188,7 @@ export const getParameterDependencies = (
     }
   }
 
-  return dependencies;
+  return { outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs }, dependencies };
 };
 
 export const updateOutputsAndTokens = (
@@ -238,54 +200,46 @@ export const updateOutputsAndTokens = (
   inputs: NodeInputs,
   settings: Settings
 ): void => {
-  const { nodeOutputs } = getOutputParametersFromManifest(manifest, isTrigger, inputs, settings.splitOn?.value?.value);
+  const { outputs: nodeOutputs } = getOutputParametersFromManifest(manifest, isTrigger, inputs, settings.splitOn?.value?.value);
   dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
 
   const tokens = [
     ...getBuiltInTokens(manifest),
-    ...convertOutputsToTokens(isTrigger ? undefined : nodeId, operationType, nodeOutputs.outputs ?? {}, manifest, settings),
+    ...convertOutputsToTokens(
+      isTrigger ? undefined : nodeId,
+      operationType,
+      nodeOutputs.outputs ?? {},
+      { iconUri: manifest.properties.iconUri, brandColor: manifest.properties.brandColor },
+      settings
+    ),
   ];
   dispatch(updateTokens({ id: nodeId, tokens }));
 };
 
-const getParametersSortedByVisibility = (parameters: ParameterInfo[]): ParameterInfo[] => {
-  const sortedParameters: ParameterInfo[] = parameters.filter((parameter) => parameter.required);
-
-  for (const parameter of parameters) {
-    if (!parameter.required && equals(parameter.visibility, Visibility.Important)) {
-      sortedParameters.push(parameter);
+export const getInputDependencies = (nodeInputs: NodeInputs, allInputs: InputParameter[]): Record<string, DependencyInfo> => {
+  const dependencies: Record<string, DependencyInfo> = {};
+  for (const inputParameter of allInputs) {
+    const { dynamicValues, dynamicSchema } = inputParameter;
+    if (dynamicValues) {
+      if (isLegacyDynamicValuesExtension(dynamicValues) || isDynamicListExtension(dynamicValues)) {
+        dependencies[inputParameter.key] = {
+          definition: dynamicValues,
+          dependencyType: 'ListValues',
+          dependentParameters: getDependentParameters(nodeInputs, dynamicValues.extension.parameters),
+          parameter: inputParameter,
+        };
+      }
+    } else if (dynamicSchema) {
+      if (isDynamicSchemaExtension(dynamicSchema) || isDynamicPropertiesExtension(dynamicSchema)) {
+        dependencies[inputParameter.key] = {
+          definition: dynamicSchema,
+          dependencyType: 'ApiSchema',
+          dependentParameters: getDependentParameters(nodeInputs, dynamicSchema.extension.parameters),
+          parameter: inputParameter,
+        };
+      }
     }
   }
 
-  parameters.forEach((parameter) => {
-    if (!parameter.required && !equals(parameter.visibility, Visibility.Important) && !equals(parameter.visibility, Visibility.Advanced)) {
-      sortedParameters.push(parameter);
-    }
-  });
-
-  parameters.forEach((parameter) => {
-    if (!parameter.required && equals(parameter.visibility, Visibility.Advanced)) {
-      sortedParameters.push(parameter);
-    }
-  });
-
-  return sortedParameters;
-};
-
-const getDependentParameters = (
-  inputs: NodeInputs,
-  parameters: Record<string, any> | DynamicParameters
-): Record<string, { isValid: boolean }> => {
-  return Object.keys(parameters).reduce((result: Record<string, { isValid: boolean }>, key: string) => {
-    const parameter = parameters[key];
-    const operationInput = getParameterFromName(inputs, parameter.parameterReference);
-    if (operationInput) {
-      return {
-        ...result,
-        [operationInput.id]: { isValid: parameterValidForDynamicCall(operationInput) },
-      };
-    }
-
-    return result;
-  }, {});
+  return dependencies;
 };

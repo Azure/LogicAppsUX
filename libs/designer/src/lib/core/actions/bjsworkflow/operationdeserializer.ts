@@ -5,7 +5,7 @@ import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserial
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
-import type { NodeData } from '../../state/operation/operationMetadataSlice';
+import type { DependencyInfo, NodeData, NodeInputs, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
@@ -14,7 +14,6 @@ import type { NodesMetadata, Operations } from '../../state/workflow/workflowInt
 import type { RootState } from '../../store';
 import { getConnectionId } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { initializeOperationDetailsForSwagger } from '../../utils/operation';
 import {
   getAllInputParameters,
   getGroupAndParameterFromParameterKey,
@@ -23,18 +22,39 @@ import {
   updateTokenMetadata,
 } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
+import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
-import { getInputParametersFromManifest, getOutputParametersFromManifest, getParameterDependencies } from './initialize';
+import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
 import { getOperationSettings } from './settings';
 import type { ConnectorWithSwagger } from '@microsoft-logic-apps/designer-client-services';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import type { InputParameter, OutputParameter } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
-export interface NodeDataWithManifest extends NodeData {
-  manifest: OperationManifest;
+export interface NodeDataWithOperationMetadata extends NodeData {
+  manifest?: OperationManifest;
+  iconUri: string;
+  brandColor: string;
+}
+
+export interface NodeInputsWithDependencies {
+  inputs: NodeInputs;
+  dependencies: Record<string, DependencyInfo>;
+  dynamicInput?: InputParameter;
+}
+
+export interface NodeOutputsWithDependencies {
+  outputs: NodeOutputs;
+  dependencies: Record<string, DependencyInfo>;
+  dynamicOutput?: OutputParameter;
+}
+
+export interface OperationMetadata {
+  iconUri: string;
+  brandColor: string;
 }
 
 export const initializeOperationMetadata = async (
@@ -44,7 +64,7 @@ export const initializeOperationMetadata = async (
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
 
-  const promises: Promise<NodeDataWithManifest[] | undefined>[] = [];
+  const promises: Promise<NodeDataWithOperationMetadata[] | undefined>[] = [];
   const { actionData: operations, graph, nodesMetadata } = deserializedWorkflow;
   const operationManifestService = OperationManifestService();
   let triggerNodeId = '';
@@ -62,7 +82,7 @@ export const initializeOperationMetadata = async (
     }
   }
 
-  const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithManifest[][]);
+  const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
 
   updateTokenMetadataInParameters(allNodeData, operations, triggerNodeId);
   dispatch(clearPanel());
@@ -107,29 +127,30 @@ const initializeOperationDetailsForManifest = async (
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
   dispatch: Dispatch
-): Promise<NodeDataWithManifest[] | undefined> => {
+): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
     const operationInfo = await getOperationInfo(nodeId, operation);
 
     if (operationInfo) {
       const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
       const manifest = await getOperationManifest(operationInfo);
+      const { iconUri, brandColor } = manifest.properties;
 
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
 
-      const settings = getOperationSettings(isTrigger, operation.type, operation.kind, manifest, operation);
-      const nodeInputs = getInputParametersFromManifest(nodeId, manifest, operation);
-      const { nodeOutputs, dynamicOutput } = getOutputParametersFromManifest(
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation);
+      const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, operation);
+      const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
         manifest,
         isTrigger,
         nodeInputs,
         settings.splitOn?.value?.value
       );
-      const nodeDependencies = getParameterDependencies(manifest, nodeInputs, nodeOutputs, dynamicOutput);
+      const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 
-      return [{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, manifest }, ...childGraphInputs];
+      return [{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, manifest, iconUri, brandColor }, ...childGraphInputs];
     }
 
     return;
@@ -148,9 +169,9 @@ const initializeOperationDetailsForManifest = async (
 const processChildGraphAndItsInputs = (
   manifest: OperationManifest,
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
-): NodeDataWithManifest[] => {
+): NodeDataWithOperationMetadata[] => {
   const { subGraphDetails } = manifest.properties;
-  const nodesData: NodeDataWithManifest[] = [];
+  const nodesData: NodeDataWithOperationMetadata[] = [];
 
   if (subGraphDetails) {
     for (const subGraphKey of Object.keys(subGraphDetails)) {
@@ -160,26 +181,38 @@ const processChildGraphAndItsInputs = (
         const subManifest = { properties: { inputs, inputsLocation } } as any;
         if (isAdditive) {
           for (const subNodeKey of Object.keys(subOperation)) {
-            const subNodeInputs = getInputParametersFromManifest(subNodeKey, subManifest, subOperation[subNodeKey]);
+            const { inputs: subNodeInputs, dependencies: subNodeInputDependencies } = getInputParametersFromManifest(
+              subNodeKey,
+              subManifest,
+              subOperation[subNodeKey]
+            );
             const subNodeOutputs = { outputs: {} };
             nodesData.push({
               id: subNodeKey,
               nodeInputs: subNodeInputs,
               nodeOutputs: subNodeOutputs,
-              nodeDependencies: getParameterDependencies(subManifest, subNodeInputs, subNodeOutputs),
+              nodeDependencies: { inputs: subNodeInputDependencies, outputs: {} },
               manifest: subManifest,
+              iconUri: '',
+              brandColor: '',
             });
           }
         }
 
-        const nodeInputs = getInputParametersFromManifest(subGraphKey, subManifest, subOperation);
+        const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+          subGraphKey,
+          subManifest,
+          subOperation
+        );
         const nodeOutputs = { outputs: {} };
         nodesData.push({
           id: subGraphKey,
           nodeInputs,
           nodeOutputs,
-          nodeDependencies: getParameterDependencies(subManifest, nodeInputs, nodeOutputs),
+          nodeDependencies: { inputs: inputDependencies, outputs: {} },
           manifest: subManifest,
+          iconUri: '',
+          brandColor: '',
         });
       }
     }
@@ -188,7 +221,7 @@ const processChildGraphAndItsInputs = (
   return nodesData;
 };
 
-const updateTokenMetadataInParameters = (nodes: NodeDataWithManifest[], operations: Operations, triggerNodeId: string) => {
+const updateTokenMetadataInParameters = (nodes: NodeDataWithOperationMetadata[], operations: Operations, triggerNodeId: string) => {
   const nodesData = map(nodes, 'id');
   const actionNodes = nodes
     .map((node) => node.id)
@@ -213,34 +246,38 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithManifest[], operatio
   }
 };
 
+// TODO - Fix this for swagger scenarios
 const initializeOutputTokensForOperations = (
-  allNodesData: NodeDataWithManifest[],
+  allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
   graph: WorkflowNode,
   nodesMetadata: NodesMetadata
 ): Record<string, NodeTokens> => {
   const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
-  const nodesWithManifest = allNodesData.reduce(
-    (actionNodes: Record<string, NodeDataWithManifest>, nodeData: NodeDataWithManifest) => ({ ...actionNodes, [nodeData.id]: nodeData }),
+  const nodesWithData = allNodesData.reduce(
+    (actionNodes: Record<string, NodeDataWithOperationMetadata>, nodeData: NodeDataWithOperationMetadata) => ({
+      ...actionNodes,
+      [nodeData.id]: nodeData,
+    }),
     {}
   );
 
   const result: Record<string, NodeTokens> = {};
 
   for (const operationId of Object.keys(operations)) {
-    const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithManifest, nodeMap);
+    const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithData, nodeMap);
     const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds };
-    const nodeData = nodesWithManifest[operationId];
-    const nodeManifest = nodeData?.manifest;
+    const nodeData = nodesWithData[operationId];
+    const { manifest, nodeOutputs, iconUri, brandColor } = nodeData;
 
-    nodeTokens.tokens.push(...getBuiltInTokens(nodeManifest));
+    nodeTokens.tokens.push(...getBuiltInTokens(manifest));
     nodeTokens.tokens.push(
       ...convertOutputsToTokens(
         isRootNodeInGraph(operationId, 'root', nodesMetadata) ? undefined : operationId,
         operations[operationId]?.type,
-        nodeData?.nodeOutputs.outputs ?? {},
-        nodeManifest,
-        nodesWithManifest[operationId]?.settings
+        nodeOutputs.outputs ?? {},
+        { iconUri, brandColor },
+        nodesWithData[operationId]?.settings
       )
     );
 
@@ -250,7 +287,10 @@ const initializeOutputTokensForOperations = (
   return result;
 };
 
-const initializeVariables = (operations: Operations, allNodesData: NodeDataWithManifest[]): Record<string, VariableDeclaration[]> => {
+const initializeVariables = (
+  operations: Operations,
+  allNodesData: NodeDataWithOperationMetadata[]
+): Record<string, VariableDeclaration[]> => {
   const declarations: Record<string, VariableDeclaration[]> = {};
   let detailsInitialized = false;
 

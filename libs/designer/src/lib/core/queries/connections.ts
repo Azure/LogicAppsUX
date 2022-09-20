@@ -1,21 +1,26 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
 import type { ConnectorWithSwagger } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
+import { SwaggerParser } from '@microsoft-logic-apps/parsers';
 import { equals } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 
 const connectionKey = 'connections';
 export interface ConnectorWithParsedSwagger extends ConnectorWithSwagger {
-  parsedSwagger: any;
+  parsedSwagger: SwaggerParser;
 }
 
 export const getConnectorWithSwagger = async (connectorId: string): Promise<ConnectorWithParsedSwagger> => {
-  const queryClient = getReactQueryClient();
-  const connectionService = ConnectionService();
-  return queryClient.fetchQuery(['apiWithSwaggers', { connectorId }], async () => {
-    const { connector, swagger } = await connectionService.getConnectorAndSwagger(connectorId);
-    const parsedSwagger = swagger;
-    return { connector, swagger, parsedSwagger: parsedSwagger };
+  return getReactQueryClient().fetchQuery(['apiWithSwaggers', { connectorId }], async () => {
+    const { connector, swagger } = await ConnectionService().getConnectorAndSwagger(connectorId);
+    return { connector, swagger, parsedSwagger: await SwaggerParser.parse(swagger) };
+  });
+};
+
+export const getSwaggerFromEndpoint = async (uri: string): Promise<SwaggerParser> => {
+  return getReactQueryClient().fetchQuery(['swaggers', { uri }], async () => {
+    const swagger = await ConnectionService().getSwaggerFromUri(uri);
+    return SwaggerParser.parse(swagger);
   });
 };
 
