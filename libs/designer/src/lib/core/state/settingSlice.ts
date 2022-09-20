@@ -12,20 +12,22 @@ export enum ValidationErrorKeys {
   RETRY_INTERVAL_INVALID = 'RetryIntervalInvalid',
 }
 
+export enum ValidationWarningKeys {
+  CANNOT_DELETE_LAST_ACTION = 'CannotDeleteLastAction',
+  CANNOT_DELETE_LAST_STATUS = 'CannotDeleteLastStatus',
+}
+
 export interface ValidationError {
-  key?: ValidationErrorKeys;
+  key: ValidationErrorKeys | ValidationWarningKeys;
   message: string;
-  shouldRenderBelowConfigurationsSections?: boolean;
 }
 
 export interface SettingsState {
-  // settings: Settings;
   validationErrors: Record<string, ValidationError[]>;
   expandedSections: string[];
 }
 
 const initialState: SettingsState = {
-  // settings: {},
   validationErrors: {},
   expandedSections: [],
 };

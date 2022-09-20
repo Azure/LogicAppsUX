@@ -1,11 +1,15 @@
 import { useLayout } from '../core/graphlayout';
 import { useAllOperations, useAllConnectors } from '../core/queries/browse';
+import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
+import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
+import { DEFAULT_NODE_SIZE } from '../core/utils/graph';
 import Controls from './Controls';
 import GraphNode from './CustomNodes/GraphContainerNode';
 import HiddenNode from './CustomNodes/HiddenNode';
 import OperationNode from './CustomNodes/OperationCardNode';
+import PlaceholderNode from './CustomNodes/PlaceholderNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
@@ -13,7 +17,7 @@ import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
 import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
-import { useThrottledEffect } from '@microsoft-logic-apps/utils';
+import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft-logic-apps/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -35,6 +39,7 @@ const nodeTypes: NodeTypesObj = {
   SCOPE_CARD_NODE: ScopeCardNode,
   SUBGRAPH_CARD_NODE: SubgraphCardNode,
   HIDDEN_NODE: HiddenNode,
+  PLACEHOLDER_NODE: PlaceholderNode,
 };
 
 const edgeTypes = {
@@ -45,9 +50,21 @@ const edgeTypes = {
 };
 export const CanvasFinder = () => {
   const focusNode = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
+  const isEmpty = useIsGraphEmpty();
   const { setCenter, getZoom } = useReactFlow();
   const { height } = useStore();
+
+  const isPanelCollapsed = useIsPanelCollapsed();
   const [firstLoad, setFirstLoad] = useState(true);
+
+  // If first load is an empty workflow, set canvas to center
+  useEffect(() => {
+    if (isEmpty && firstLoad) {
+      setCenter(DEFAULT_NODE_SIZE.width / 2, DEFAULT_NODE_SIZE.height, { zoom: 1 });
+      setFirstLoad(false);
+    }
+  }, [setCenter, height, isEmpty, firstLoad]);
+
   const nodeData = useNodes().find((x) => x.id === focusNode);
   const dispatch = useDispatch<AppDispatch>();
   const handleTransform = useCallback(() => {
@@ -56,11 +73,18 @@ export const CanvasFinder = () => {
       return;
     }
 
-    const xTarget = (nodeData.positionAbsolute?.x ?? 0) + nodeData.width / 2;
-    const yTarget = (nodeData.positionAbsolute?.y ?? 0) + nodeData.height / 2;
+    let xRawPos = nodeData?.positionAbsolute?.x ?? 0;
+    const yRawPos = nodeData?.positionAbsolute?.y ?? 0;
+
+    // If the panel is open, reduce X space
+    if (!isPanelCollapsed) xRawPos += 630 / 2;
+
+    const xTarget = xRawPos + (nodeData?.width ?? DEFAULT_NODE_SIZE.width) / 2; // Center X on node midpoint
+    const yTarget = yRawPos + (nodeData?.height ?? DEFAULT_NODE_SIZE.height); // Center Y on bottom edge
 
     if (firstLoad) {
-      setCenter(xTarget, height / 2 - 50, { zoom: 1 });
+      const firstNodeYPos = 150;
+      setCenter(xTarget, height / 2 - firstNodeYPos, { zoom: 1 });
       setFirstLoad(false);
     } else {
       setCenter(xTarget, yTarget, {
@@ -69,7 +93,7 @@ export const CanvasFinder = () => {
       });
     }
     dispatch(clearFocusNode());
-  }, [dispatch, firstLoad, focusNode, getZoom, height, nodeData, setCenter]);
+  }, [dispatch, firstLoad, focusNode, getZoom, nodeData, setCenter, height, isPanelCollapsed]);
 
   useEffect(() => {
     handleTransform();
@@ -80,7 +104,9 @@ export const CanvasFinder = () => {
 
 export const Designer = () => {
   const [nodes, edges] = useLayout();
+  const isEmpty = useIsGraphEmpty();
   const dispatch = useDispatch();
+
   useAllOperations();
   useAllConnectors();
 
@@ -91,6 +117,18 @@ export const Designer = () => {
     [dispatch]
   );
 
+  const emptyWorkflowPlaceholderNodes = [
+    {
+      id: 'newWorkflowTrigger',
+      position: { x: 0, y: 0 },
+      data: { label: 'newWorkflowTrigger' },
+      parentNode: undefined,
+      type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
+    },
+  ];
+
+  const nodesWithPlaceholder = !isEmpty ? nodes : emptyWorkflowPlaceholderNodes;
+
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
   return (
@@ -99,7 +137,7 @@ export const Designer = () => {
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
-            nodes={nodes}
+            nodes={nodesWithPlaceholder}
             edges={edges}
             onNodesChange={onNodesChange}
             minZoom={0}

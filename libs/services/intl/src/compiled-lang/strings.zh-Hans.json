@@ -528,6 +528,12 @@
       "value": "(UTC+04:00)第比利斯"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "触发器"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -561,7 +567,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "所需参数 "
     },
     {
       "type": 1,
@@ -569,7 +575,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " 未设置或无效"
     }
   ],
   "3afjx+": [
@@ -588,6 +594,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30)德黑兰"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "json 格式无效。缺少开始 "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " 或结束 "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "。"
     }
   ],
   "3kI7xF": [
@@ -803,7 +831,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "将从逻辑应用中删除此步骤。"
     }
   ],
   "6oqk+A": [
@@ -839,7 +867,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "此操作找不到参数 \""
     },
     {
       "type": 1,
@@ -847,13 +875,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\""
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "必需。要从中获取子字符串的字符串。"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "添加操作"
     }
   ],
   "7aJqIH": [
@@ -929,7 +963,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "执行 API 时出错 - "
     },
     {
       "type": 1,
@@ -994,6 +1028,16 @@
     {
       "type": 0,
       "value": "星期四"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "不支持的令牌类型: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1329,6 +1373,12 @@
       "value": "需要连接"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "输出"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1356,7 +1406,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "节点"
     }
   ],
   "DGMwU4": [
@@ -1689,7 +1739,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "更多诊断信息: x-ms-client-request-id 为 \""
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "\"。"
     }
   ],
   "HQ8/tk": [
@@ -1762,6 +1820,12 @@
     {
       "type": 0,
       "value": "选择输入架构"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "高级选项"
     }
   ],
   "Ip7Iax": [
@@ -1952,7 +2016,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "删除工作流图"
     }
   ],
   "LCUU5q": [
@@ -2061,10 +2125,10 @@
       "value": "添加评论"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "json 格式无效。缺少开头的 { 或结尾的 }"
+      "value": "代码视图"
     }
   ],
   "M48CGd": [
@@ -2139,6 +2203,12 @@
     {
       "type": 0,
       "value": "以字符串形式返回当前时间戳"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "操作"
     }
   ],
   "Mb+Eaq": [
@@ -2228,7 +2298,7 @@
   "O9ZExg": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "确定"
     }
   ],
   "OD8igU": [
@@ -2361,10 +2431,22 @@
       "value": "必需。此值为数组中的整数数目。"
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "默认值"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "集合函数"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "输入"
     }
   ],
   "P8ZBF9": [
@@ -2564,7 +2646,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "无法删除触发器。"
     }
   ],
   "RFjYpH": [
@@ -2835,7 +2917,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "删除工作流操作"
     }
   ],
   "UHCVNK": [
@@ -2934,6 +3016,12 @@
       "value": "运行历史记录"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "触发器会告知应用何时开始运行。每个工作流至少需要一个触发器。"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -2984,6 +3072,12 @@
     {
       "type": 0,
       "value": "请输入有效的字典"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "操作对数据执行操作或在系统之间进行通信以执行。"
     }
   ],
   "WS9kXD": [
@@ -3062,6 +3156,16 @@
     {
       "type": 0,
       "value": "请确保单词拼写正确。"
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "不支持的令牌类型: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3356,6 +3460,16 @@
       "value": "值"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "不支持的令牌类型: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3410,6 +3524,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00)巴西利亚"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "提供参数以测试输出。"
     }
   ],
   "bzF/qn": [
@@ -3708,6 +3828,12 @@
       "value": "数组"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "不支持的编程语言。"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3772,6 +3898,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 圣皮埃尔和密克隆"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "运行测试"
     }
   ],
   "gCXOd5": [
@@ -3976,7 +4108,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "是否确实要删除 "
     },
     {
       "type": 1,
@@ -4487,6 +4619,12 @@
       "value": "必需。表示所需将来时间与当前时间相差的时间单位数。"
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "重置"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4707,6 +4845,12 @@
       "value": "从提供 XPath 表达式返回 XML 节点、节点集或 JSON 形式的值"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "添加触发器"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4776,7 +4920,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "错误代码: \""
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "\"，消息: \""
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "\"。"
     }
   ],
   "qUWBUX": [
@@ -5085,7 +5245,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "tsmuoF": [
@@ -5483,7 +5643,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "值包含无法解析的函数表达式。仅支持常量值"
     }
   ],
   "yBrsFJ": [
@@ -5522,6 +5682,12 @@
       "value": "日期和时间函数"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "添加字段"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5549,7 +5715,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "这还将移除所有子步骤。"
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "此表达式不需要任何输入。"
     }
   ],
   "zBMVKg": [

@@ -535,6 +535,12 @@
       "value": "(UTC+04:00) Tbiliszi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggerek"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -568,7 +574,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "A kötelező "
     },
     {
       "type": 1,
@@ -576,7 +582,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " paraméterek nincsenek beállítva vagy érvénytelenek"
     }
   ],
   "3afjx+": [
@@ -595,6 +601,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Teherán"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Érvénytelen json-formátum. Hiányzik az elejéről a(z) "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " vagy a végéről a(z) "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -810,7 +838,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "A lépés el lesz távolítva a logikai alkalmazásból."
     }
   ],
   "6oqk+A": [
@@ -846,7 +874,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "A(z) "
     },
     {
       "type": 1,
@@ -854,13 +882,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": " paraméter nem található ehhez a művelethez"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Kötelező megadni. Az a sztring, amelyből a sztringrész származik."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Művelet hozzáadása"
     }
   ],
   "7aJqIH": [
@@ -936,7 +970,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Hiba történt az API végrehajtása közben – "
     },
     {
       "type": 1,
@@ -1001,6 +1035,16 @@
     {
       "type": 0,
       "value": "Csütörtök"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "A lexikális elem típusa nem támogatott: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1347,6 +1391,12 @@
       "value": "Kapcsolat szükséges"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Kimenet"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1374,7 +1424,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "Csomópont"
     }
   ],
   "DGMwU4": [
@@ -1726,7 +1776,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "További diagnosztikai információ: az x-mS-client-request-id: "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HQ8/tk": [
@@ -1799,6 +1857,12 @@
     {
       "type": 0,
       "value": "Bemeneti séma kiválasztása"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Speciális beállítások"
     }
   ],
   "Ip7Iax": [
@@ -2000,7 +2064,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Munkafolyamatgráf törlése"
     }
   ],
   "LCUU5q": [
@@ -2117,10 +2181,10 @@
       "value": "Hozzászólás hozzáadása"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "Érvénytelen JSON-formátum. Hiányzik a kezdő { vagy a záró } karakter."
+      "value": "Kódnézet"
     }
   ],
   "M48CGd": [
@@ -2191,6 +2255,12 @@
     {
       "type": 0,
       "value": "Az aktuális időbélyeget adja vissza sztringként."
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Műveletek"
     }
   ],
   "Mb+Eaq": [
@@ -2413,10 +2483,22 @@
       "value": "Kötelező megadni. Az érték a tömbben található egész számok száma."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Alapértelmezett érték"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Gyűjteményfüggvények"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Bemenet"
     }
   ],
   "P8ZBF9": [
@@ -2620,7 +2702,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Az eseményindítók nem törölhetők."
     }
   ],
   "RFjYpH": [
@@ -2902,7 +2984,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Munkafolyamatművelet törlése"
     }
   ],
   "UHCVNK": [
@@ -3001,6 +3083,12 @@
       "value": "Futtatási előzmények"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "A triggerek jelzik az alkalmazásnak, hogy mikor induljon el. Minden munkafolyamathoz legalább egy trigger szükséges."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3047,6 +3135,12 @@
     {
       "type": 0,
       "value": "Adjon meg egy érvényes tulajdonságtárat"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "A műveletek az adatokon végeznek műveleteket, vagy kommunikálnak a végrehajtandó rendszerek között."
     }
   ],
   "WS9kXD": [
@@ -3125,6 +3219,16 @@
     {
       "type": 0,
       "value": "Ügyeljen arra, hogy helyesen írja be a szavakat."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "A lexikális elem típusa nem támogatott: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3419,6 +3523,16 @@
       "value": "Érték"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "A lexikális elem típusa nem támogatott: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3473,6 +3587,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brazíliaváros"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Adja meg a paramétereket a kimenet teszteléséhez."
     }
   ],
   "bzF/qn": [
@@ -3771,6 +3891,12 @@
       "value": "Tömb"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "A programozási nyelv nem támogatott."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3835,6 +3961,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Saint-Pierre és Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Teszt futtatása"
     }
   ],
   "gCXOd5": [
@@ -4054,7 +4186,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Biztosan törli a(z) "
     },
     {
       "type": 1,
@@ -4062,7 +4194,7 @@
     },
     {
       "type": 0,
-      "value": "?"
+      "value": " csomópontot?"
     }
   ],
   "iJOIca": [
@@ -4561,6 +4693,12 @@
       "value": "Kötelező megadni. Az időegységek azon mennyisége, amellyel a kívánt időpont a jövőben van."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Alaphelyzetbe állítás"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4773,6 +4911,12 @@
       "value": "Egy XML-csomópontot, -csomópontkészlet vagy értéket ad vissza JSON formájában a megadott XPath-kifejezés alapján"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Trigger hozzáadása"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4842,7 +4986,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Hibakód: "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": ", üzenet: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "qUWBUX": [
@@ -5162,7 +5322,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Mégse"
     }
   ],
   "tsmuoF": [
@@ -5560,7 +5720,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Az érték olyan függvénykifejezéseket tartalmaz, amelyek nem oldhatók fel. Csak konstans értékek támogatottak"
     }
   ],
   "yBrsFJ": [
@@ -5599,6 +5759,12 @@
       "value": "Dátum- és időfüggvények"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Mező hozzáadása"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5626,7 +5792,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "A művelet az összes gyermeklépést is eltávolítja."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "Ez a kifejezés nem igényel bemenetet."
     }
   ],
   "zBMVKg": [

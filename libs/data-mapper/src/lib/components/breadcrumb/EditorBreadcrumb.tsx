@@ -3,7 +3,7 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import type { IBreadcrumbItem } from '@fluentui/react';
 import { Breadcrumb } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
+import { Button, tokens } from '@fluentui/react-components';
 import { Code20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -12,7 +12,20 @@ import { useDispatch, useSelector } from 'react-redux';
 const maxBreadcrumbItems = 3;
 const overflowIndex = 1;
 
-export const EditorBreadcrumb = (): JSX.Element => {
+const baseBreadcrumbStyles = {
+  height: '40px',
+  padding: '4px 8px',
+  marginBottom: '8px',
+  backgroundColor: tokens.colorNeutralBackground1,
+  borderRadius: tokens.borderRadiusMedium,
+};
+
+interface EditorBreadcrumbProps {
+  isCodeViewOpen: boolean;
+  setIsCodeViewOpen: (isOpen: boolean) => void;
+}
+
+export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBreadcrumbProps): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
@@ -28,16 +41,15 @@ export const EditorBreadcrumb = (): JSX.Element => {
 
   return breadcrumbItems.length < 1 ? (
     // Breadcrumb doesn't display when empty, this is a breadcrumb space placeholder
-    <div style={{ height: '40px', padding: '4px 8px' }}></div>
+    <div style={{ ...baseBreadcrumbStyles }}></div>
   ) : (
     <div
       style={{
+        ...baseBreadcrumbStyles,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '4px 8px',
-        height: '40px',
       }}
     >
       <Breadcrumb
@@ -55,8 +67,7 @@ export const EditorBreadcrumb = (): JSX.Element => {
         appearance="transparent"
         icon={<Code20Regular />}
         onClick={() => {
-          // TODO (refortie) #14887351 - Create the code view
-          console.log('Code view button clicked');
+          setIsCodeViewOpen(!isCodeViewOpen);
         }}
       >
         {intl.formatMessage({

@@ -546,6 +546,12 @@
       "value": "(UTC+04:00) Tbilissi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Déclencheurs"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -579,7 +585,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Paramètres obligatoires "
     },
     {
       "type": 1,
@@ -587,7 +593,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " non définis ou non valides"
     }
   ],
   "3afjx+": [
@@ -606,6 +612,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Téhéran"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Format JSON non valide. Début "
+    },
+    {
+      "type": 1,
+      "value": "openingBracst"
+    },
+    {
+      "type": 0,
+      "value": " ou fin "
+    },
+    {
+      "type": 1,
+      "value": "closingBraflt"
+    },
+    {
+      "type": 0,
+      "value": " manquants."
     }
   ],
   "3kI7xF": [
@@ -821,7 +849,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "Cette étape sera supprimée de l'application logique."
     }
   ],
   "6oqk+A": [
@@ -857,7 +885,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Le paramètre « "
     },
     {
       "type": 1,
@@ -865,13 +893,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": " » est introuvable pour cette opération"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Obligatoire. Chaîne dont la sous-chaîne est extraite."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Ajouter une action"
     }
   ],
   "7aJqIH": [
@@ -947,7 +981,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Erreur lors de l’exécution de l’API - "
     },
     {
       "type": 1,
@@ -1012,6 +1046,16 @@
     {
       "type": 0,
       "value": "Jeudi"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Type de jeton non pris en charge : "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1369,6 +1413,12 @@
       "value": "Connexion obligatoire"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Sortie"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1396,7 +1446,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "Nœud"
     }
   ],
   "DGMwU4": [
@@ -1751,7 +1801,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Informations de diagnostic supplémentaires : x-ms-client-request-id est « "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": " »."
     }
   ],
   "HQ8/tk": [
@@ -1824,6 +1882,12 @@
     {
       "type": 0,
       "value": "Sélectionner un schéma d’entrée"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Options avancées"
     }
   ],
   "Ip7Iax": [
@@ -2036,7 +2100,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Supprimer le graphique de flux de travail"
     }
   ],
   "LCUU5q": [
@@ -2145,10 +2209,10 @@
       "value": "Ajouter un commentaire"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "Format de json non valide. { de début ou } de fin manquant"
+      "value": "Mode Code"
     }
   ],
   "M48CGd": [
@@ -2219,6 +2283,12 @@
     {
       "type": 0,
       "value": "Retourne l'horodateur actuel en tant que chaîne"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "Mb+Eaq": [
@@ -2441,10 +2511,22 @@
       "value": "Obligatoire. Cette valeur correspond au nombre d'entiers qui se trouvent dans le tableau."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Valeur par défaut"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Fonctions de collection"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Entrée"
     }
   ],
   "P8ZBF9": [
@@ -2644,7 +2726,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Les déclencheurs ne peuvent pas être supprimés."
     }
   ],
   "RFjYpH": [
@@ -2937,7 +3019,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Supprimer l’action de flux de travail"
     }
   ],
   "UHCVNK": [
@@ -3036,6 +3118,12 @@
       "value": "Historique d’exécution"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Les déclencheurs indiquent à votre application quand elle doit commencer à s’exécuter. Chaque flux de travail a besoin d’au moins un déclencheur."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3082,6 +3170,12 @@
     {
       "type": 0,
       "value": "Entrez un dictionnaire valide"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Les actions effectuent des opérations sur les données ou communiquent entre les systèmes à exécuter."
     }
   ],
   "WS9kXD": [
@@ -3160,6 +3254,16 @@
     {
       "type": 0,
       "value": "Vérifiez que les mots sont correctement orthographiés."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Type de jeton non pris en charge : "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3454,6 +3558,16 @@
       "value": "Valeur"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Type de jeton non pris en charge : "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3504,6 +3618,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brasilia"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Fournissez des paramètres pour tester la sortie."
     }
   ],
   "bzF/qn": [
@@ -3802,6 +3922,12 @@
       "value": "Tableau"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Langage de programmation non pris en charge."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3866,6 +3992,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Saint-Pierre-et-Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Exécuter le test"
     }
   ],
   "gCXOd5": [
@@ -4088,7 +4220,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Voulez-vous vraiment supprimer "
     },
     {
       "type": 1,
@@ -4096,7 +4228,7 @@
     },
     {
       "type": 0,
-      "value": "?"
+      "value": " ?"
     }
   ],
   "iJOIca": [
@@ -4591,6 +4723,12 @@
       "value": "Obligatoire. Nombre d'unités de temps de l'heure souhaitée dans le futur."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Réinitialiser"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4803,6 +4941,12 @@
       "value": "Retourne un nœud XML, un jeu de nœuds ou une valeur au format JSON à partir de l'expression XPath fournie"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Ajouter un déclencheur"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4872,7 +5016,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Code d’erreur : « "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": " », Message : « "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": " »."
     }
   ],
   "qUWBUX": [
@@ -5203,7 +5363,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Annuler"
     }
   ],
   "tsmuoF": [
@@ -5601,7 +5761,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "La valeur contient des expressions de fonction qui ne peuvent pas être résolues. Seules les valeurs constantes sont prises en charge"
     }
   ],
   "yBrsFJ": [
@@ -5640,6 +5800,12 @@
       "value": "Fonctions de date et heure"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Ajouter un champ"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5667,7 +5833,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Cette opération supprime également toutes les étapes enfants."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "Cette expression ne nécessite aucune entrée."
     }
   ],
   "zBMVKg": [

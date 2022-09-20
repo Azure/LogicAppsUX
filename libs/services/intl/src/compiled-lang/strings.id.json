@@ -508,6 +508,12 @@
       "value": "(UTC+04.00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Pemicu"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -541,7 +547,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Parameter yang diperlukan "
     },
     {
       "type": 1,
@@ -549,7 +555,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " tidak diatur atau tidak valid"
     }
   ],
   "3afjx+": [
@@ -568,6 +574,28 @@
     {
       "type": 0,
       "value": "(UTC+03.30) Tehran"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Format json tidak valid. Tidak ada awalan "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " atau akhiran "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -783,7 +811,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "Langkah ini akan dihapus dari aplikasi logika."
     }
   ],
   "6oqk+A": [
@@ -827,13 +855,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" tidak dapat ditemukan untuk operasi ini"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Harus diisi. String dari substring yang diambil."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Tambahkan tindakan"
     }
   ],
   "7aJqIH": [
@@ -893,7 +927,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Kesalahan saat menjalankan API - "
     },
     {
       "type": 1,
@@ -958,6 +992,16 @@
     {
       "type": 0,
       "value": "Kamis"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Tipe Token yang Tidak Didukung: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1275,6 +1319,12 @@
     {
       "type": 0,
       "value": "Koneksi diperlukan"
+    }
+  ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
     }
   ],
   "CsPY74": [
@@ -1637,7 +1687,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Informasi diagnostik lainnya: x-ms-client-request-id adalah {clientRequestId}."
     }
   ],
   "HQ8/tk": [
@@ -1710,6 +1760,12 @@
     {
       "type": 0,
       "value": "Pilih skema input"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Opsi tingkat lanjut"
     }
   ],
   "Ip7Iax": [
@@ -1900,7 +1956,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Hapus Grafik Alur Kerja"
     }
   ],
   "LCUU5q": [
@@ -1993,10 +2049,10 @@
       "value": "Tambahkan komentar"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "Format json tidak valid. Awal { atau akhiran } tidak ada"
+      "value": "Tampilan kode"
     }
   ],
   "M48CGd": [
@@ -2067,6 +2123,12 @@
     {
       "type": 0,
       "value": "Menampilkan tanda waktu saat ini sebagai string"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Tindakan"
     }
   ],
   "Mb+Eaq": [
@@ -2273,10 +2335,22 @@
       "value": "Wajib. Nilai ini adalah nomor bilangan bulat yang ada dalam array."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Nilai default"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Fungsi pengumpulan"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
     }
   ],
   "P8ZBF9": [
@@ -2476,7 +2550,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Pemicu tidak dapat dihapus."
     }
   ],
   "RFjYpH": [
@@ -2747,7 +2821,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Hapus Tindakan Alur Kerja"
     }
   ],
   "UHCVNK": [
@@ -2846,6 +2920,12 @@
       "value": "Riwayat Eksekusi"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Pemicu memberi tahu aplikasi Anda kapan harus mulai berjalan. Setiap alur kerja memerlukan setidaknya satu pemicu."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -2892,6 +2972,12 @@
     {
       "type": 0,
       "value": "Masukkan kamus yang valid"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Tindakan melakukan operasi pada data atau berkomunikasi antara sistem yang akan dijalankan."
     }
   ],
   "WS9kXD": [
@@ -2970,6 +3056,16 @@
     {
       "type": 0,
       "value": "Pastikan kata dieja dengan benar."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Tipe Token yang Tidak Didukung: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3264,6 +3360,16 @@
       "value": "Nilai"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Tipe Token yang Tidak Didukung: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3314,6 +3420,12 @@
     {
       "type": 0,
       "value": "(UTC-03.00) Brasilia"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Berikan parameter untuk menguji output."
     }
   ],
   "bzF/qn": [
@@ -3612,6 +3724,12 @@
       "value": "Array"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Bahasa pemrogram yang tidak didukung."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3676,6 +3794,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Saint Pierre and Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Jalankan pengujian"
     }
   ],
   "gCXOd5": [
@@ -3868,7 +3992,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Yakin ingin menghapus "
     },
     {
       "type": 1,
@@ -4363,6 +4487,12 @@
       "value": "Wajib. Jumlah unit waktu yang diinginkan adalah di masa depan."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Atur ulang"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4575,6 +4705,12 @@
       "value": "Menghasilkan node XML, kumpulan node atau nilai sebagai JSON dari ekspresi JalurX yang disediakan"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Tambahkan pemicu"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4644,7 +4780,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Kode kesalahan: {errorCode}, Pesan: {message}."
     }
   ],
   "qUWBUX": [
@@ -4953,7 +5089,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Batal"
     }
   ],
   "tsmuoF": [
@@ -5351,7 +5487,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Nilai berisi ekspresi fungsi yang tidak dapat diatasi. Hanya nilai konstanta yang didukung"
     }
   ],
   "yBrsFJ": [
@@ -5390,6 +5526,12 @@
       "value": "Fungsi tanggal dan waktu"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Tambah bidang"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5417,7 +5559,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Tindakan ini juga akan menghapus semua langkah turunan."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "Ekspresi ini tidak memerlukan input apa pun."
     }
   ],
   "zBMVKg": [

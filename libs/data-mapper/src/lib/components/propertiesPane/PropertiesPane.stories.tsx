@@ -1,11 +1,11 @@
-import React from 'react';
-import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
 import { SchemaNodeDataType } from '../../models';
+import type { SelectedFunctionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
-import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
-import { PropertiesPane } from './PropertiesPane';
 import type { PropertiesPaneProps } from './PropertiesPane';
-import type { ExpressionGroupBranding } from '../../constants/ExpressionConstants';
+import { PropertiesPane } from './PropertiesPane';
+import type { ComponentMeta, ComponentStory } from '@storybook/react';
+import React from 'react';
 
 const exInputNode: SelectedInputNode = {
   nodeType: NodeType.Input,
@@ -21,20 +21,20 @@ const exOutputNode: SelectedOutputNode = {
   defaultValue: 'Default value',
   doNotGenerateIfNoValue: true,
   nullable: true,
-  inputIds: ['miscInputId']
+  inputIds: ['miscInputId'],
 };
-const exExpressionNode: SelectedExpressionNode = {
-  nodeType: NodeType.Expression,
-  name: 'ExExpressionNode',
-  branding: {} as ExpressionGroupBranding,
+const exFunctionNode: SelectedFunctionNode = {
+  nodeType: NodeType.Function,
+  name: 'ExFunctionNode',
+  branding: {} as FunctionGroupBranding,
   description: '',
   codeEx: '',
   definition: '',
   inputs: [],
-  outputId: ''
+  outputId: '',
 };
 
-const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exExpressionNode };
+const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exFunctionNode };
 
 export default {
   component: PropertiesPane,
@@ -50,14 +50,24 @@ export default {
           noneSelected: 'No node selected',
           exInputNode: 'Input node',
           exOutputNode: 'Output node',
-          exExpressionNode: 'Expression node',
+          exFunctionNode: 'Function node',
         },
       },
     },
   },
 } as ComponentMeta<typeof PropertiesPane>;
 
-export const Standard: ComponentStory<typeof PropertiesPane> = (args: PropertiesPaneProps) => <PropertiesPane {...args} />;
+export const Standard: ComponentStory<typeof PropertiesPane> = (args: PropertiesPaneProps) => (
+  <PropertiesPane
+    {...args}
+    setIsExpanded={() => {
+      return;
+    }}
+    setContentHeight={() => {
+      return;
+    }}
+  />
+);
 Standard.args = {
   currentNode: undefined,
 };

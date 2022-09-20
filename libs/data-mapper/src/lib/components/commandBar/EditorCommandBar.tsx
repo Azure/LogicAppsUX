@@ -6,11 +6,26 @@ import type { DataMap } from '../../models';
 import { publishState, runTest, showConfig, showFeedback, showSearchbar, showTutorial } from './helpers';
 import type { ICommandBarItemProps, IComponentAs } from '@fluentui/react';
 import { CommandBar, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
+import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { FunctionComponent } from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+
+const cmdBarStyles = {
+  root: {
+    backgroundColor: tokens.colorNeutralBackground4,
+    marginBottom: '8px',
+    borderBottom: 'none',
+  },
+  primarySet: {
+    backgroundColor: tokens.colorNeutralBackground4,
+  },
+  secondarySet: {
+    backgroundColor: tokens.colorNeutralBackground4,
+  },
+};
 
 export interface EditorCommandBarProps {
   onSaveClick: () => void;
@@ -132,6 +147,12 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     }),
   };
 
+  const cmdBarItemBgStyles = {
+    style: {
+      backgroundColor: tokens.colorNeutralBackground4,
+    },
+  };
+
   const divider: ICommandBarItemProps = {
     key: 'global-divider',
     itemType: ContextualMenuItemType.Divider,
@@ -146,6 +167,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
         minWidth: 'unset',
       },
     },
+    ...cmdBarItemBgStyles,
   };
 
   const undoRedoOnClick = (performUndo: boolean) => {
@@ -166,6 +188,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       iconProps: { iconName: 'Save' },
       onClick: onSaveClick,
       disabled: !isStateDirty,
+      ...cmdBarItemBgStyles,
     },
     {
       key: 'undo-redo',
@@ -195,6 +218,12 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       },
       onClick: () => undoRedoOnClick(showUndo),
       primaryDisabled: showUndo ? isUndoStackEmpty : isRedoStackEmpty,
+      ...cmdBarItemBgStyles,
+      buttonStyles: {
+        splitButtonMenuButton: {
+          backgroundColor: tokens.colorNeutralBackground4,
+        },
+      },
     },
     {
       key: 'discard',
@@ -205,6 +234,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
         dispatch(openDiscardWarning());
       },
       disabled: !isStateDirty,
+      ...cmdBarItemBgStyles,
     },
     {
       ...divider,
@@ -216,6 +246,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       ariaLabel: Resources.RUN_TEST,
       iconProps: { iconName: 'Play' },
       onClick: onTestClick,
+      ...cmdBarItemBgStyles,
     },
     {
       ...divider,
@@ -229,6 +260,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       onClick: () => {
         dispatch(openDefaultConfigPanel());
       },
+      ...cmdBarItemBgStyles,
     },
     {
       key: 'tour_tutorial',
@@ -236,6 +268,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       ariaLabel: Resources.TOUR_TUTORIAL,
       iconProps: { iconName: 'Help' },
       onClick: onTutorialClick,
+      ...cmdBarItemBgStyles,
     },
     {
       key: 'feedback',
@@ -243,6 +276,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       ariaLabel: Resources.GIVE_FEEDBACK,
       iconProps: { iconName: 'Feedback' },
       onClick: onFeedbackClick,
+      ...cmdBarItemBgStyles,
     },
   ];
 
@@ -254,6 +288,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       iconOnly: true,
       iconProps: { iconName: 'Search' },
       onClick: onSearchClick,
+      ...cmdBarItemBgStyles,
     },
     {
       ...divider,
@@ -274,6 +309,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
           };
         }),
       },
+      ...cmdBarItemBgStyles,
     },
     {
       key: 'publish',
@@ -283,7 +319,14 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     },
   ];
 
-  return <CommandBar items={items} farItems={farItems} ariaLabel="Use left and right arrow keys to navigate between commands" />;
+  return (
+    <CommandBar
+      items={items}
+      farItems={farItems}
+      ariaLabel="Use left and right arrow keys to navigate between commands"
+      styles={cmdBarStyles}
+    />
+  );
 };
 
 const EditorCommandBarWrapper: FunctionComponent<EditorCommandBarProps> = ({ onSaveClick, onUndoClick, onRedoClick }) => {

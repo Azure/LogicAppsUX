@@ -508,6 +508,12 @@
       "value": "(UTC+04:00) トビリシ"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "トリガー"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -541,7 +547,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "必要なパラメーター "
     },
     {
       "type": 1,
@@ -549,7 +555,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " が設定されていないか、無効です"
     }
   ],
   "3afjx+": [
@@ -568,6 +574,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) テヘラン"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "JSON 形式が無効です。開始 "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " または終了 "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": " がありません。"
     }
   ],
   "3kI7xF": [
@@ -783,7 +811,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "このステップはロジック アプリから削除されます。"
     }
   ],
   "6oqk+A": [
@@ -819,7 +847,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "この操作のパラメーター \""
     },
     {
       "type": 1,
@@ -827,13 +855,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" が見つかりません"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "必須。取得する部分文字列が含まれる文字列。"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "アクションの追加"
     }
   ],
   "7aJqIH": [
@@ -893,7 +927,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "API の実行でエラーが発生しました - "
     },
     {
       "type": 1,
@@ -958,6 +992,16 @@
     {
       "type": 0,
       "value": "木曜日"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "サポートされていないトークンの種類: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1277,6 +1321,12 @@
       "value": "接続が必要"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "出力"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1304,7 +1354,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "ノード"
     }
   ],
   "DGMwU4": [
@@ -1637,7 +1687,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "詳細な診断情報: x-ms-client-request-id は {clientRequestId} です。"
     }
   ],
   "HQ8/tk": [
@@ -1710,6 +1760,12 @@
     {
       "type": 0,
       "value": "入力スキーマの選択"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "詳細オプション"
     }
   ],
   "Ip7Iax": [
@@ -1900,7 +1956,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "WorkflowGraphの削除"
     }
   ],
   "LCUU5q": [
@@ -1993,10 +2049,10 @@
       "value": "コメントの追加"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "JSON 形式が無効です。先頭の { または末尾の } がありません"
+      "value": "コード ビュー"
     }
   ],
   "M48CGd": [
@@ -2067,6 +2123,12 @@
     {
       "type": 0,
       "value": "現在のタイムスタンプを文字列として返します"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "アクション"
     }
   ],
   "Mb+Eaq": [
@@ -2273,10 +2335,22 @@
       "value": "必須。この値は、アレイに含まれる整数の数です。"
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "既定値"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "コレクション関数"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "入力"
     }
   ],
   "P8ZBF9": [
@@ -2476,7 +2550,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "トリガーを削除できません。"
     }
   ],
   "RFjYpH": [
@@ -2747,7 +2821,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Workflowアクションの削除"
     }
   ],
   "UHCVNK": [
@@ -2846,6 +2920,12 @@
       "value": "実行履歴"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "トリガーによって、アプリに実行開始のタイミングを通知します。各ワークフローには少なくとも 1 つのトリガーが必要です。"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -2892,6 +2972,12 @@
     {
       "type": 0,
       "value": "有効な辞書を入力してください"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "アクションによって、データに対する操作を実行したり、実行するためのシステム間での通信を行ったりします。"
     }
   ],
   "WS9kXD": [
@@ -2970,6 +3056,16 @@
     {
       "type": 0,
       "value": "単語の入力ミスがないことを確認する。"
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "サポートされていないトークンの種類: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3264,6 +3360,16 @@
       "value": "値"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "サポートされていないトークンの種類: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3314,6 +3420,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) ブラジリア"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "出力をテストするためのパラメーターを指定します。"
     }
   ],
   "bzF/qn": [
@@ -3608,6 +3720,12 @@
       "value": "アレイ"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "サポートされていないプログラミング言語です。"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3672,6 +3790,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) サンピエール・ミクロン"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "テストの実行"
     }
   ],
   "gCXOd5": [
@@ -3863,16 +3987,12 @@
   ],
   "iHVVTl": [
     {
-      "type": 0,
-      "value": "Are you sure you want to delete "
-    },
-    {
       "type": 1,
       "value": "nodeId"
     },
     {
       "type": 0,
-      "value": "?"
+      "value": " を削除しますか?"
     }
   ],
   "iJOIca": [
@@ -4359,6 +4479,12 @@
       "value": "必須。時間単位数は希望する将来の時間です。"
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "リセット"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4571,6 +4697,12 @@
       "value": "指定された XPath 式から XML ノード、ノードセット、または値を JSON として返します"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "トリガーの追加"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4640,7 +4772,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "エラー コード: {errorCode}、メッセージ: {message}。"
     }
   ],
   "qUWBUX": [
@@ -4949,7 +5081,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "キャンセル"
     }
   ],
   "tsmuoF": [
@@ -5343,7 +5475,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "解決できない関数式が値に含まれています。定数値のみがサポートされています"
     }
   ],
   "yBrsFJ": [
@@ -5382,6 +5514,12 @@
       "value": "日付と時刻関数"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "フィールドの追加"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5409,7 +5547,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "これにより、子ステップもすべて削除されます。"
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "この式は入力を必要としません。"
     }
   ],
   "zBMVKg": [

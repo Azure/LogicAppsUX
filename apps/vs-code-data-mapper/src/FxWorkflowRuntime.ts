@@ -26,7 +26,7 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
   // Note: Must append operationGroups as it's a valid endpoint to ping
   const url = `${backendRuntimeBaseUrl}${workflowMgmtApi}operationGroups`;
 
-  window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
+  await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
 
     if (await isBackendRuntimeUp(url)) {

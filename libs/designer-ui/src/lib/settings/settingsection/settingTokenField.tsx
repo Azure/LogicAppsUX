@@ -25,7 +25,13 @@ export interface SettingTokenFieldProps extends SettingProps {
   required?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  isTrigger?: boolean;
+  GetTokenPicker: (
+    editorId: string,
+    labelId: string,
+    onClick?: (b: boolean) => void,
+    tokenClicked?: (token: ValueSegment) => void
+  ) => JSX.Element;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
 }
@@ -50,6 +56,7 @@ const TokenField = ({
   placeholder,
   readOnly,
   value,
+  isTrigger,
   GetTokenPicker,
   onValueChange,
   onComboboxMenuOpen,
@@ -60,12 +67,10 @@ const TokenField = ({
       const { options, multiSelect } = editorOptions;
       return (
         <DropdownEditor
-          placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
           options={options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           multiSelect={!!multiSelect}
-          GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
       );
@@ -78,6 +83,7 @@ const TokenField = ({
           initialValue={value}
           options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
+          isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
@@ -85,7 +91,7 @@ const TokenField = ({
       );
 
     case 'schema':
-      return <SchemaEditor placeholder={placeholder} disabled={readOnly} initialValue={value} onChange={onValueChange} />;
+      return <SchemaEditor readonly={readOnly} initialValue={value} onChange={onValueChange} />;
 
     case 'dictionary':
       return (
@@ -94,6 +100,7 @@ const TokenField = ({
           readOnly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
+          isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
@@ -105,8 +112,9 @@ const TokenField = ({
         <ArrayEditor
           labelProps={{ text: '' }}
           placeholder={placeholder}
-          readOnly={readOnly}
+          readonly={readOnly}
           initialValue={value}
+          isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />
@@ -119,6 +127,7 @@ const TokenField = ({
           placeholder={placeholder}
           BasePlugins={{ tokens: true }}
           readonly={readOnly}
+          isTrigger={isTrigger}
           initialValue={value}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}

@@ -508,6 +508,12 @@
       "value": "(UTC+04:00) 第比利斯"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "觸發程序"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -541,7 +547,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "必要的參數 "
     },
     {
       "type": 1,
@@ -549,7 +555,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " 未設定或無效"
     }
   ],
   "3afjx+": [
@@ -568,6 +574,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) 德黑蘭"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "不正確 json 格式。缺少 "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " 開頭或 "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": " 結尾。"
     }
   ],
   "3kI7xF": [
@@ -783,7 +811,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "將會從該邏輯應用程式移除此步驟。"
     }
   ],
   "6oqk+A": [
@@ -819,7 +847,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "找不到此作業的參數 \""
     },
     {
       "type": 1,
@@ -827,13 +855,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\""
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "必要。取出子字串的字串。"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "新增動作"
     }
   ],
   "7aJqIH": [
@@ -893,7 +927,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "執行 API 時發生錯誤 - "
     },
     {
       "type": 1,
@@ -958,6 +992,16 @@
     {
       "type": 0,
       "value": "星期四"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "不支援的權杖類型: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1277,6 +1321,12 @@
       "value": "需要連線"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "輸出"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1304,7 +1354,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "節點"
     }
   ],
   "DGMwU4": [
@@ -1637,7 +1687,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "其他診斷資訊: x-ms-client-request-id 是 {clientRequestId}。"
     }
   ],
   "HQ8/tk": [
@@ -1710,6 +1760,12 @@
     {
       "type": 0,
       "value": "選取輸入結構描述"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "進階選項"
     }
   ],
   "Ip7Iax": [
@@ -1900,7 +1956,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "刪除工作流程圖"
     }
   ],
   "LCUU5q": [
@@ -1993,10 +2049,10 @@
       "value": "新增註解"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "JSON 格式無效。遺漏開頭 { 或結尾 }"
+      "value": "程式碼檢視"
     }
   ],
   "M48CGd": [
@@ -2067,6 +2123,12 @@
     {
       "type": 0,
       "value": "將目前的時間戳記傳回為字串"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "動作"
     }
   ],
   "Mb+Eaq": [
@@ -2156,7 +2218,7 @@
   "O9ZExg": [
     {
       "type": 0,
-      "value": "OK"
+      "value": "確定"
     }
   ],
   "OD8igU": [
@@ -2273,10 +2335,22 @@
       "value": "必要。此值是陣列中整數數目。"
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "預設值"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "集合函數"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "輸入"
     }
   ],
   "P8ZBF9": [
@@ -2476,7 +2550,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "無法刪除觸發。"
     }
   ],
   "RFjYpH": [
@@ -2747,7 +2821,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "刪除工作流程動作"
     }
   ],
   "UHCVNK": [
@@ -2846,6 +2920,12 @@
       "value": "執行歷程記錄"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "觸發程式會告訴您的應用程式何時開始執行。每個工作流程至少需要一個觸發程式。"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -2892,6 +2972,12 @@
     {
       "type": 0,
       "value": "請輸入有效的字典"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "動作會在資料上執行作業，或在系統之間進行通訊以執行。"
     }
   ],
   "WS9kXD": [
@@ -2970,6 +3056,16 @@
     {
       "type": 0,
       "value": "請確定文字拼法正確。"
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "不支援的權杖類型: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3264,6 +3360,16 @@
       "value": "值"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "不支援的權杖類型: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3318,6 +3424,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 巴西利亞"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "提供參數以測試輸出。"
     }
   ],
   "bzF/qn": [
@@ -3616,6 +3728,12 @@
       "value": "陣列"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "不支援的程式設計語言。"
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3680,6 +3798,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) 聖皮埃與密克隆群島"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "執行測試"
     }
   ],
   "gCXOd5": [
@@ -3872,7 +3996,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "確定要刪除 "
     },
     {
       "type": 1,
@@ -3880,7 +4004,7 @@
     },
     {
       "type": 0,
-      "value": "?"
+      "value": " 嗎?"
     }
   ],
   "iJOIca": [
@@ -4367,6 +4491,12 @@
       "value": "必要。未來所需時間的時間單位數字。"
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "重設"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4579,6 +4709,12 @@
       "value": "從提供的 XPath 運算式以 JSON 格式傳回 XML 節點、節點集或值"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "新增觸發程序"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4648,7 +4784,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "錯誤碼: {errorCode}，訊息: {message}。"
     }
   ],
   "qUWBUX": [
@@ -4957,7 +5093,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "tsmuoF": [
@@ -5355,7 +5491,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "值包含無法解析的函數運算式。僅支援常數值"
     }
   ],
   "yBrsFJ": [
@@ -5394,6 +5530,12 @@
       "value": "日期和時間函數"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "新增欄位"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5421,7 +5563,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "這也會移除所有子步驟。"
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "此運算式不需要任何輸入。"
     }
   ],
   "zBMVKg": [

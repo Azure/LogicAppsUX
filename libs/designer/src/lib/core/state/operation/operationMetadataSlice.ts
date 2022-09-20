@@ -34,8 +34,8 @@ export enum DynamicLoadStatus {
   NOTSTARTED,
   STARTED,
   FAILED,
-  SUCCEEDED
-};
+  SUCCEEDED,
+}
 
 export interface NodeInputs {
   dynamicLoadStatus?: DynamicLoadStatus;
@@ -151,9 +151,9 @@ export const operationMetadataSlice = createSlice({
       const { nodeId, groupId, inputs } = action.payload;
       if (state.inputParameters[nodeId] && state.inputParameters[nodeId].parameterGroups[groupId]) {
         const { parameters } = state.inputParameters[nodeId].parameterGroups[groupId];
-        const newParameters = [ ...parameters ];
+        const newParameters = [...parameters];
         for (const input of inputs) {
-          const index = newParameters.findIndex(parameter => parameter.parameterKey === input.parameterKey);
+          const index = newParameters.findIndex((parameter) => parameter.parameterKey === input.parameterKey);
           if (index > -1) {
             newParameters.splice(index, 1, input);
           } else {

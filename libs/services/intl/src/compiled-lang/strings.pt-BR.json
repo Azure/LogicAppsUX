@@ -530,6 +530,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Gatilhos"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -563,7 +569,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Parâmetros necessários "
     },
     {
       "type": 1,
@@ -571,7 +577,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " não definidos ou inválidos"
     }
   ],
   "3afjx+": [
@@ -590,6 +596,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Teerã"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Formato json inválido. Falta o início "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " ou final "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -805,7 +833,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "Esta etapa será removida do Aplicativo Lógico."
     }
   ],
   "6oqk+A": [
@@ -841,7 +869,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "O parâmetro \" "
     },
     {
       "type": 1,
@@ -849,13 +877,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" não pode ser encontrado para esta operação"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Necessário. A cadeia de caracteres da qual a subcadeia de caracteres é obtida."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação"
     }
   ],
   "7aJqIH": [
@@ -915,11 +949,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
-    },
-    {
-      "type": 1,
-      "value": "url"
+      "value": "Erro ao executar a API {url}."
     }
   ],
   "8CWFEh": [
@@ -980,6 +1010,16 @@
     {
       "type": 0,
       "value": "Quinta-feira"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Tipo de token não suportado: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1321,6 +1361,12 @@
       "value": "Conexão exigida"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Saída"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1348,7 +1394,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "Nó"
     }
   ],
   "DGMwU4": [
@@ -1703,7 +1749,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Mais informações de diagnóstico: x-ms-client-request-id é {clientRequestId}."
     }
   ],
   "HQ8/tk": [
@@ -1776,6 +1822,12 @@
     {
       "type": 0,
       "value": "Selecionar um esquema de entrada"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Opções avançadas"
     }
   ],
   "Ip7Iax": [
@@ -1988,7 +2040,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Excluir Graph do Fluxo de Trabalho"
     }
   ],
   "LCUU5q": [
@@ -2081,10 +2133,10 @@
       "value": "Adicionar um comentário"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "Formato de json inválido. { inicial ou } final ausente"
+      "value": "Exibição de código"
     }
   ],
   "M48CGd": [
@@ -2155,6 +2207,12 @@
     {
       "type": 0,
       "value": "Retorna o carimbo de data/hora atual como uma cadeia de caracteres"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Ações"
     }
   ],
   "Mb+Eaq": [
@@ -2361,10 +2419,22 @@
       "value": "Necessário. Este valor é o número de inteiros que está na matriz."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Valor padrão"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Funções de coleção"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Entrada"
     }
   ],
   "P8ZBF9": [
@@ -2564,7 +2634,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Os gatilhos não podem ser excluídos."
     }
   ],
   "RFjYpH": [
@@ -2857,7 +2927,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Excluir Ação de Fluxo de Trabalho"
     }
   ],
   "UHCVNK": [
@@ -2956,6 +3026,12 @@
       "value": "Histórico de Execução"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Os gatilhos informam ao aplicativo quando começar a ser executado. Cada fluxo de trabalho precisa de pelo menos um gatilho."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3002,6 +3078,12 @@
     {
       "type": 0,
       "value": "Insira um dicionário válido"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "As ações executam operações em dados ou se comunicam entre sistemas a serem executados."
     }
   ],
   "WS9kXD": [
@@ -3080,6 +3162,16 @@
     {
       "type": 0,
       "value": "Certifique-se de que as palavras foram escritas corretamente."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Tipo de token não suportado: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3374,6 +3466,16 @@
       "value": "Valor"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Tipo de token não suportado: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3424,6 +3526,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brasília"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Forneça parâmetros para testar a saída."
     }
   ],
   "bzF/qn": [
@@ -3722,6 +3830,12 @@
       "value": "Matriz"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Linguagem de programação não suportada."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3786,6 +3900,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) São Pedro e Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Executar teste"
     }
   ],
   "gCXOd5": [
@@ -4000,7 +4120,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Tem certeza de que deseja excluir "
     },
     {
       "type": 1,
@@ -4495,6 +4615,12 @@
       "value": "Necessário. O número de unidades de tempo que o horário desejado tem no futuro."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Redefinir"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4707,6 +4833,12 @@
       "value": "Retorna um nó XML, um conjunto de nós ou um valor como JSON da expressão XPath fornecida"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Adicionar um gatilho"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4776,7 +4908,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Código de erro: {errorCode}, Mensagem: {message}."
     }
   ],
   "qUWBUX": [
@@ -5107,7 +5239,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Cancelar"
     }
   ],
   "tsmuoF": [
@@ -5505,7 +5637,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "O valor contém expressões de função que não podem ser resolvidas. Somente valores constantes são suportados"
     }
   ],
   "yBrsFJ": [
@@ -5544,6 +5676,12 @@
       "value": "Funções de data e hora"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Adicionar campo"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5571,7 +5709,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Isso também removerá todas as etapas filhas."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "Esta expressão não requer nenhuma entrada."
     }
   ],
   "zBMVKg": [

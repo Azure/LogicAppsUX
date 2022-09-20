@@ -1,9 +1,13 @@
 import type { HeaderClickHandler } from '.';
 import constants from '../../common/constants';
+import { type ValidationError, ValidationWarningKeys } from '../../core/state/settingSlice';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
+import { CustomizableMessageBar } from './validation/errorbar';
 import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconStyles, IIconProps } from '@fluentui/react';
+import { MessageBarType } from '@fluentui/react/lib/MessageBar';
+import { guid } from '@microsoft-logic-apps/utils';
 import {
   isHighContrastBlack,
   MultiSelectSetting,
@@ -96,6 +100,7 @@ export type Settings = SettingBase &
       }
   );
 
+type WarningDismissHandler = (key?: string, message?: string) => void;
 export interface SettingSectionProps {
   id?: string;
   title?: string;
@@ -106,6 +111,8 @@ export interface SettingSectionProps {
   settings: Settings[];
   isReadOnly?: boolean;
   onHeaderClick?: HeaderClickHandler;
+  validationErrors?: ValidationError[];
+  onWarningDismiss?: WarningDismissHandler;
 }
 
 export const SettingsSection: FC<SettingSectionProps> = ({
@@ -117,6 +124,8 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   isReadOnly,
   settings,
   onHeaderClick,
+  validationErrors,
+  onWarningDismiss,
 }) => {
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
@@ -138,6 +147,31 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   const internalSettings = (
     <>
       {expanded || !showHeading ? <Setting isReadOnly={isReadOnly} settings={settings} /> : null}
+      {expanded
+        ? (validationErrors ?? []).map(({ key: errorKey, message }) => {
+            if (errorKey === ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION) {
+              return (
+                <CustomizableMessageBar
+                  key={guid()}
+                  type={MessageBarType.warning}
+                  message={message}
+                  onWarningDismiss={() => onWarningDismiss?.(errorKey)}
+                />
+              );
+            }
+            if (errorKey === ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS) {
+              return (
+                <CustomizableMessageBar
+                  key={guid()}
+                  type={MessageBarType.warning}
+                  message={message}
+                  onWarningDismiss={() => onWarningDismiss?.(errorKey)}
+                />
+              );
+            }
+            return <CustomizableMessageBar key={guid()} type={MessageBarType.error} message={message} />;
+          })
+        : null}
       {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
     </>
   );
@@ -168,7 +202,14 @@ export const SettingsSection: FC<SettingSectionProps> = ({
   );
 };
 
-const Setting = ({ settings, isReadOnly }: { settings: Settings[]; isReadOnly?: boolean }): JSX.Element => {
+const Setting = ({
+  settings,
+  isReadOnly,
+}: {
+  settings: Settings[];
+  isReadOnly?: boolean;
+  validationErrors?: ValidationError[];
+}): JSX.Element => {
   return (
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {

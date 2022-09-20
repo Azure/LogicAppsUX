@@ -573,6 +573,12 @@
       "value": "(UTC+04:00) Tibilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Wyzwalacze"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -606,7 +612,7 @@
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Wymagane parametry "
     },
     {
       "type": 1,
@@ -614,7 +620,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " nie są ustawione lub są nieprawidłowe"
     }
   ],
   "3afjx+": [
@@ -633,6 +639,28 @@
     {
       "type": 0,
       "value": "(UTC+03:30) Teheran"
+    }
+  ],
+  "3jwMBm": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowy format JSON. Brak początku "
+    },
+    {
+      "type": 1,
+      "value": "openingBracket"
+    },
+    {
+      "type": 0,
+      "value": " lub zakończenia "
+    },
+    {
+      "type": 1,
+      "value": "closingBracket"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "3kI7xF": [
@@ -848,7 +876,7 @@
   "6lLsi+": [
     {
       "type": 0,
-      "value": "This step will be removed from the Logic App."
+      "value": "Ten krok zostanie usunięty z aplikacji logiki."
     }
   ],
   "6oqk+A": [
@@ -884,7 +912,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Nie można odnaleźć parametru „"
     },
     {
       "type": 1,
@@ -892,13 +920,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "” dla tej operacji"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Parametr wymagany. Ciąg, z którego został pobrany podciąg."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Dodaj akcję"
     }
   ],
   "7aJqIH": [
@@ -974,7 +1008,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Błąd podczas wykonywania interfejsu API — "
     },
     {
       "type": 1,
@@ -1039,6 +1073,16 @@
     {
       "type": 0,
       "value": "Czwartek"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Nieobsługiowany typ tokenu: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
     }
   ],
   "8j+a0n": [
@@ -1407,6 +1451,12 @@
       "value": "Wymagane połączenie"
     }
   ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Dane wyjściowe"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1434,7 +1484,7 @@
   "DDIIAQ": [
     {
       "type": 0,
-      "value": "Node"
+      "value": "Węzeł"
     }
   ],
   "DGMwU4": [
@@ -1808,7 +1858,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Więcej informacji diagnostycznych: x-ms-client-request-id to „"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "HQ8/tk": [
@@ -1881,6 +1939,12 @@
     {
       "type": 0,
       "value": "Wybierz schemat danych wejściowych"
+    }
+  ],
+  "IooQu1": [
+    {
+      "type": 0,
+      "value": "Opcje zaawansowane"
     }
   ],
   "Ip7Iax": [
@@ -2104,7 +2168,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Usuń wykres przepływu pracy"
     }
   ],
   "LCUU5q": [
@@ -2221,10 +2285,10 @@
       "value": "Dodaj komentarz"
     }
   ],
-  "M3lzNo": [
+  "M0xrm+": [
     {
       "type": 0,
-      "value": "Nieprawidłowy format JSON. Brak początkowego znaku { lub końcowego znaku }."
+      "value": "Widok kodu"
     }
   ],
   "M48CGd": [
@@ -2295,6 +2359,12 @@
     {
       "type": 0,
       "value": "Zwraca bieżącą sygnaturę czasową jako ciąg"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Akcje"
     }
   ],
   "Mb+Eaq": [
@@ -2517,10 +2587,22 @@
       "value": "Wymagane. Ta wartość określa ilość liczb całkowitych w tablicy."
     }
   ],
+  "P2rzqn": [
+    {
+      "type": 0,
+      "value": "Wartość domyślna"
+    }
+  ],
   "P4rEwD": [
     {
       "type": 0,
       "value": "Funkcje kolekcji"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Dane wejściowe"
     }
   ],
   "P8ZBF9": [
@@ -2720,7 +2802,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Nie można usunąć wyzwalaczy."
     }
   ],
   "RFjYpH": [
@@ -3024,7 +3106,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Usuń akcję przepływu pracy"
     }
   ],
   "UHCVNK": [
@@ -3123,6 +3205,12 @@
       "value": "Historia uruchamiania"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Wyzwalacze informują aplikację, kiedy zacząć działać. Każdy przepływ pracy wymaga co najmniej jednego wyzwalacza."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3169,6 +3257,12 @@
     {
       "type": 0,
       "value": "Wprowadź prawidłowy słownik"
+    }
+  ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Akcje wykonują operacje na danych lub komunikują się między systemami w celu wykonania."
     }
   ],
   "WS9kXD": [
@@ -3247,6 +3341,16 @@
     {
       "type": 0,
       "value": "Upewnij się, że pisownia wyrazów jest prawidłowa."
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Nieobsługiwany typ tokenu: "
+    },
+    {
+      "type": 1,
+      "value": "var"
     }
   ],
   "XN9RvJ": [
@@ -3541,6 +3645,16 @@
       "value": "Wartość"
     }
   ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Nieobsługiowany typ tokenu: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3591,6 +3705,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Brasilia"
+    }
+  ],
+  "bxhkTi": [
+    {
+      "type": 0,
+      "value": "Podaj parametry do testowania danych wyjściowych."
     }
   ],
   "bzF/qn": [
@@ -3889,6 +4009,12 @@
       "value": "Tablica"
     }
   ],
+  "exo9v7": [
+    {
+      "type": 0,
+      "value": "Nieobsługiwany język programowania."
+    }
+  ],
   "f/lWTW": [
     {
       "type": 0,
@@ -3953,6 +4079,12 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Saint-Pierre i Miquelon"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Uruchom test"
     }
   ],
   "gCXOd5": [
@@ -4194,7 +4326,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Czy na pewno chcesz usunąć "
     },
     {
       "type": 1,
@@ -4705,6 +4837,12 @@
       "value": "Wymagane. Liczba jednostek czasu określająca żądany czas w przyszłości."
     }
   ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Resetuj"
+    }
+  ],
   "nTA155": [
     {
       "type": 0,
@@ -4917,6 +5055,12 @@
       "value": "Zwraca węzeł, zestaw węzłów lub wartość XML jako kod JSON na podstawie podanego wyrażenia XPath"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Dodaj wyzwalacz"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4986,7 +5130,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Kod błędu: „"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "”, komunikat: „"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "qUWBUX": [
@@ -5328,7 +5488,7 @@
   "ti5TEd": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Anuluj"
     }
   ],
   "tsmuoF": [
@@ -5726,7 +5886,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Wartość zawiera wyrażenia funkcji, których nie można rozpoznać. Obsługiwane są tylko wartości stałe"
     }
   ],
   "yBrsFJ": [
@@ -5765,6 +5925,12 @@
       "value": "Funkcje daty i godziny"
     }
   ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Dodaj pole"
+    }
+  ],
   "yxsn7s": [
     {
       "type": 0,
@@ -5792,7 +5958,13 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
+      "value": "Spowoduje to również usunięcie wszystkich kroków podrzędnych."
+    }
+  ],
+  "zBBJuL": [
+    {
+      "type": 0,
+      "value": "To wyrażenie nie wymaga żadnych danych wejściowych."
     }
   ],
   "zBMVKg": [
