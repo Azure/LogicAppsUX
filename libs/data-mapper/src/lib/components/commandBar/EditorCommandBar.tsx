@@ -4,7 +4,7 @@ import { openDefaultConfigPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { DataMap } from '../../models';
 import { publishState, runTest, showConfig, showFeedback, showSearchbar, showTutorial } from './helpers';
-import type { ICommandBarItemProps, IComponentAs } from '@fluentui/react';
+import type { IButtonStyles, ICommandBarItemProps, IComponentAs } from '@fluentui/react';
 import { CommandBar, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -153,6 +153,18 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     },
   };
 
+  const cmdBarButtonStyles: IButtonStyles = {
+    label: {
+      color: tokens.colorNeutralForeground1,
+    },
+    icon: {
+      color: tokens.colorBrandForeground1,
+    },
+    splitButtonDivider: {
+      color: tokens.colorNeutralStroke1,
+    },
+  };
+
   const divider: ICommandBarItemProps = {
     key: 'global-divider',
     itemType: ContextualMenuItemType.Divider,
@@ -166,6 +178,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
         width: 10,
         minWidth: 'unset',
       },
+      ...cmdBarButtonStyles,
     },
     ...cmdBarItemBgStyles,
   };
@@ -188,6 +201,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       iconProps: { iconName: 'Save' },
       onClick: onSaveClick,
       disabled: !isStateDirty,
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
     {
@@ -223,6 +237,16 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
         splitButtonMenuButton: {
           backgroundColor: tokens.colorNeutralBackground4,
         },
+        splitButtonMenuIcon: {
+          color: tokens.colorNeutralForeground2,
+        },
+        splitButtonMenuButtonExpanded: {
+          backgroundColor: tokens.colorNeutralBackground4,
+        },
+        splitButtonMenuButtonChecked: {
+          color: tokens.colorNeutralForeground2,
+        },
+        ...cmdBarButtonStyles,
       },
     },
     {
@@ -246,6 +270,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       ariaLabel: Resources.RUN_TEST,
       iconProps: { iconName: 'Play' },
       onClick: onTestClick,
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
     {
@@ -260,6 +285,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       onClick: () => {
         dispatch(openDefaultConfigPanel());
       },
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
     {
@@ -268,6 +294,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       ariaLabel: Resources.TOUR_TUTORIAL,
       iconProps: { iconName: 'Help' },
       onClick: onTutorialClick,
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
     {
@@ -276,6 +303,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       ariaLabel: Resources.GIVE_FEEDBACK,
       iconProps: { iconName: 'Feedback' },
       onClick: onFeedbackClick,
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
   ];
@@ -288,6 +316,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       iconOnly: true,
       iconProps: { iconName: 'Search' },
       onClick: onSearchClick,
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
     {
@@ -309,6 +338,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
           };
         }),
       },
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
     {
