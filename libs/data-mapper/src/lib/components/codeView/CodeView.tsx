@@ -12,6 +12,7 @@ const useStyles = makeStyles({
     ...shorthands.padding('12px'),
     boxSizing: 'border-box',
     backgroundColor: tokens.colorNeutralBackground1,
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
   },
   titleTextStyle: {
     ...typographyStyles.body1Strong,

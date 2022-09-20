@@ -27,6 +27,7 @@ import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } fr
 import { NodeType } from '../models/SelectedNode';
 import { inputPrefix, outputPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnectionAtCurrentOutputNode, isLeafNode } from '../utils/Schema.Utils';
+import { tokens } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
@@ -317,6 +318,7 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
         backgroundImage: checkerboardBackgroundImage,
         backgroundSize: '20px 20px',
         backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+        borderRadius: tokens.borderRadiusMedium,
       }}
       nodeTypes={nodeTypes}
       onEdgeUpdate={onEdgeUpdate}
