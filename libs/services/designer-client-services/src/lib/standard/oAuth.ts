@@ -13,7 +13,7 @@ export class OAuthPopup implements IOAuthPopup {
 
     this.loginPromise = new Promise<LoginResult>((resolve) => {
       // Check for authorization status every 1000 ms.
-      const timerId = setInterval(() => {
+      const timerId: number = window.setInterval(() => {
         try {
           const url = new URL(oAuthWindow.document.URL);
           const code = url.searchParams.get('code');

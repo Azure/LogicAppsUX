@@ -15,7 +15,6 @@ import type { RootState } from '../../store';
 import { isRootNodeInGraph } from '../../utils/graph';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations } from '../../utils/variables';
-import { isConnectionRequiredForOperation } from './connections';
 import { getInputParametersFromManifest, getOutputParametersFromManifest, getParameterDependencies } from './initialize';
 import type { NodeDataWithManifest } from './operationdeserializer';
 import { getOperationSettings } from './settings';
@@ -79,11 +78,8 @@ export const initializeOperationDetails = async (
   if (operationManifestService.isSupported(operationType)) {
     const manifest = await getOperationManifest(operationInfo);
 
-    if (isConnectionRequiredForOperation(manifest)) {
-      setDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
-    } else {
-      dispatch(switchToOperationPanel(nodeId));
-    }
+    trySetDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
+    dispatch(switchToOperationPanel(nodeId));
 
     // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
     const settings = getOperationSettings(false /* isTrigger */, operationType, operationKind, manifest, workflowState.operations[nodeId]);
@@ -109,7 +105,8 @@ export const initializeOperationDetails = async (
     );
   } else {
     // TODO - swagger case here
-    setDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
+    trySetDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
+    dispatch(switchToOperationPanel(nodeId));
   }
 };
 
@@ -155,14 +152,13 @@ export const reinitializeOperationDetails = async (
   }
 };
 
-export const setDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
+export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
   const connections = await getConnectionsForConnector(connectorId);
   if (connections.length !== 0) {
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id }));
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
-  dispatch(switchToOperationPanel(nodeId));
 };
 
 export const addTokensAndVariables = (

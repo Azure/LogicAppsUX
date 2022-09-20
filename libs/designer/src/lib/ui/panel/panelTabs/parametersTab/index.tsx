@@ -2,7 +2,11 @@ import constants from '../../../../common/constants';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useNodeConnectionName } from '../../../../core/state/selectors/actionMetadataSelector';
+import {
+  useAllowUserToChangeConnection,
+  useNodeConnectionName,
+  useOperationInfo,
+} from '../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
 import type { RootState } from '../../../../core/store';
 import { getConnectionId } from '../../../../core/utils/connectors/connections';
@@ -28,6 +32,8 @@ export const ParametersTab = () => {
   const readOnly = useReadOnly();
 
   const connectionName = useNodeConnectionName(selectedNodeId);
+  const operationInfo = useOperationInfo(selectedNodeId);
+  const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
 
   const tokenGroup = getOutputTokenSections(tokenstate, selectedNodeId, nodeType);
 
@@ -47,7 +53,7 @@ export const ParametersTab = () => {
           />
         </div>
       ))}
-      {connectionName?.result && <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />}
+      {showConnectionDisplay ? <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} /> : null}
     </>
   );
 };

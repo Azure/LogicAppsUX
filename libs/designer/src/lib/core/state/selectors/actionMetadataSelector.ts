@@ -3,7 +3,8 @@ import { useConnectionById } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { getConnectionId } from '../../utils/connectors/connections';
 import { useConnector } from '../connection/connectionSelector';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import type { NodeOperation } from '../operation/operationMetadataSlice';
+import { isInBuiltOperation, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
 import { getObjectPropertyValue } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
@@ -22,6 +23,11 @@ export const useIsConnectionRequired = (operationInfo: OperationInfo) => {
   }
   // else case needs to be implemented: work item 14936435
   return true;
+};
+
+export const useAllowUserToChangeConnection = (op: NodeOperation) => {
+  // TODO: Riley - This is temporary until we get correct `required` connection property from the manifest, right now that data is not given from the api in our manifest call. For now it this works but it should be dependent on the api, not our hard-coded list
+  return !isInBuiltOperation(op);
 };
 
 export const useNodeConnectionId = (nodeId: string): string =>
