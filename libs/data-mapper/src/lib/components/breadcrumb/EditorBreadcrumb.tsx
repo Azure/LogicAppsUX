@@ -17,6 +17,7 @@ const baseBreadcrumbStyles = {
   padding: '4px 8px',
   marginBottom: '8px',
   backgroundColor: tokens.colorNeutralBackground1,
+  borderRadius: tokens.borderRadiusMedium,
 };
 
 interface EditorBreadcrumbProps {

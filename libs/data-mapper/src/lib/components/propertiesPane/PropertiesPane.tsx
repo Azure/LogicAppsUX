@@ -23,7 +23,7 @@ const useStyles = makeStyles({
   pane: {
     width: '100%',
     backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.borderRadius('medium', 'medium', 0, 0),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium, tokens.borderRadiusMedium, 0, 0),
   },
   topBar: {
     height: `${topBarHeight}px`,
