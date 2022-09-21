@@ -92,6 +92,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     dispatch(redoDataMapOperation());
   };
 
+  const onTestClick = () => {
+    // TODO: Hook up once Test Map pane work starts
+  };
+
   const placeholderFunc = () => {
     return;
   };
@@ -99,7 +103,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={styles.dataMapperShell}>
-        <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
+        <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} onTestClick={onTestClick} />
         <WarningModal />
         <EditorConfigPanel
           onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
