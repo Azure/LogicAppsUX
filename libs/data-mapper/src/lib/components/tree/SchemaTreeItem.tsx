@@ -30,6 +30,11 @@ const useStyles = makeStyles({
   },
 });
 
+export const expandButtonStyle = `
+  :host(.nested) .expand-collapse-button:hover {
+    background: inherit;
+  }`;
+
 export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps> = ({
   childNode,
   currentlySelectedNodes,
@@ -66,12 +71,15 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
       const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
       const fastStyles = css`
         ${baseStyles} ${fastTreeItemStyles}
+        ${expandButtonStyle}
       `;
       return fastStyles;
     },
   };
   const FastTreeItem = wrap(fluentTreeItem(overrides));
-  const isNodeSelected = !!currentlySelectedNodes.find((currentlySelectedNode) => currentlySelectedNode.key === childNode.key);
+  const isNodeSelected = !!currentlySelectedNodes.find(
+    (currentlySelectedNode) => currentlySelectedNode && currentlySelectedNode.key === childNode.key
+  );
   const onMouseEnter = () => {
     setIsHover(true);
   };
@@ -135,19 +143,25 @@ export interface SchemaNodeTreeItemContentProps {
 }
 
 const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, isSelected, children }) => {
-  const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
   const filledIcon = <CheckmarkCircle16Filled primaryFill={tokens.colorBrandForeground1} />;
   const restIcon = <Circle16Regular primaryFill={tokens.colorNeutralForeground3} />;
 
   return (
     <>
-      <span style={{ display: 'flex', marginRight: '4px' }} slot="start">
-        <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={isSelected} />
-      </span>
+      {SharedTreeItemContent(nodeType, isSelected)}
       <span style={{ marginRight: '8px', width: '100%' }}>{children}</span>
       <span style={{ display: 'flex', marginRight: '4px' }} slot="end">
         {isSelected ? filledIcon : restIcon}
       </span>
     </>
+  );
+};
+
+export const SharedTreeItemContent = (nodeType: SchemaNodeDataType, isSelected: boolean): JSX.Element => {
+  const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
+  return (
+    <span style={{ display: 'flex', paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} slot="start">
+      <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={isSelected} />
+    </span>
   );
 };

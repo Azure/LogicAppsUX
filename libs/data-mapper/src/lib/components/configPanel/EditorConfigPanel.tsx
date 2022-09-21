@@ -89,13 +89,25 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     description: 'aria label for close icon button that closes that panel on click',
   });
 
-  const downloadedSchema = useQuery(
+  const fetchedInputSchema = useQuery(
     [selectedInputSchema?.text],
     () => {
       return getSelectedSchema(selectedInputSchema?.text ?? '');
     },
     {
       enabled: selectedInputSchema !== undefined,
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 5,
+    }
+  );
+
+  const fetchedOutputSchema = useQuery(
+    [selectedOutputSchema?.text],
+    () => {
+      return getSelectedSchema(selectedOutputSchema?.text ?? '');
+    },
+    {
+      enabled: selectedOutputSchema !== undefined,
       staleTime: 1000 * 60 * 5,
       cacheTime: 1000 * 60 * 5,
     }
@@ -112,7 +124,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
   }, [dispatch, setErrorMessage]);
 
   const editSchema = useCallback(() => {
-    const selectedSchema = downloadedSchema.data as Schema;
+    const selectedSchema = schemaType === SchemaTypes.Input ? (fetchedInputSchema.data as Schema) : (fetchedOutputSchema.data as Schema);
 
     setErrorMessage('');
     if (selectedSchema) {
@@ -121,7 +133,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     } else {
       setErrorMessage(genericErrMsg);
     }
-  }, [closeSchemaPanel, onSubmitSchema, genericErrMsg, downloadedSchema]);
+  }, [closeSchemaPanel, onSubmitSchema, genericErrMsg, fetchedInputSchema, fetchedOutputSchema, schemaType]);
 
   const addSchema = useCallback(() => {
     if (schemaType === undefined) {

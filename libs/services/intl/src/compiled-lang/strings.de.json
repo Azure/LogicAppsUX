@@ -373,6 +373,12 @@
       "value": "Weitere Informationen"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1451,6 +1457,12 @@
       "value": "(UTC-10:00) Aleuten-Inseln"
     }
   ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Trigger condition cannot be empty"
+    }
+  ],
   "DuXV2M": [
     {
       "type": 0,
@@ -2305,12 +2317,6 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
-    {
-      "type": 0,
-      "value": "Ausdruck"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2409,6 +2415,12 @@
     {
       "type": 0,
       "value": "Verbindungsname"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "This function doesn't require any input."
     }
   ],
   "ORVfYZ": [
@@ -2895,6 +2907,12 @@
     {
       "type": 0,
       "value": "Gibt den Anfang des Monats eines Zeichenfolgen-Zeitstempels zurück."
+    }
+  ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Paging count invalid"
     }
   ],
   "TUaunO": [
@@ -3915,6 +3933,12 @@
       "value": "Gibt TRUE zurück, wenn das erste Argument größer als das zweite oder gleich ist."
     }
   ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4645,6 +4669,12 @@
     {
       "type": 0,
       "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "mx2IMJ": [
@@ -5419,6 +5449,12 @@
       "value": "Generiert eine global eindeutige Zeichenfolge (GUID)."
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run after configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5773,12 +5809,6 @@
     {
       "type": 0,
       "value": "Dadurch werden auch alle untergeordneten Schritte entfernt."
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Für diesen Ausdruck ist keine Eingabe erforderlich."
     }
   ],
   "zBMVKg": [

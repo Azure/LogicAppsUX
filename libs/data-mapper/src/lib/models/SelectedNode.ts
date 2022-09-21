@@ -26,14 +26,12 @@ export interface SelectedOutputNode extends Omit<SelectedInputNode, 'nodeType'> 
   nullable: boolean;
 }
 
-// TODO: refine property specifics once fleshed out
 export interface SelectedFunctionNode {
   nodeType: NodeType.Function;
   name: string;
   branding: FunctionGroupBranding;
   description: string;
   codeEx: string;
-  definition: string;
   inputs: FunctionInput[];
   outputId: string;
 }

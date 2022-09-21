@@ -27,8 +27,8 @@ import type { SelectedFunctionNode, SelectedInputNode, SelectedOutputNode } from
 import { NodeType } from '../models/SelectedNode';
 import { inputPrefix, outputPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnectionAtCurrentOutputNode, isLeafNode } from '../utils/Schema.Utils';
-import { tokens } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
+import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   CubeTree20Filled,
@@ -137,23 +137,22 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
   };
 
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
-    console.log(node);
     if (node.type === ReactFlowNodeType.SchemaNode) {
       if (node.data.schemaType === SchemaTypes.Input) {
         const selectedInputNode: SelectedInputNode = {
           nodeType: NodeType.Input,
-          name: node.data.label,
+          name: node.data.schemaNode.name,
           path: node.id.replace(inputPrefix, ''),
-          dataType: node.data.nodeDataType,
+          dataType: node.data.schemaNode.schemaNodeDataType,
         };
 
         dispatch(setCurrentlySelectedNode(selectedInputNode));
       } else if (node.data.schemaType === SchemaTypes.Output) {
         const selectedOutputNode: SelectedOutputNode = {
           nodeType: NodeType.Output,
-          name: node.data.label,
+          name: node.data.schemaNode.name,
           path: node.id.replace(outputPrefix, ''),
-          dataType: node.data.nodeDataType,
+          dataType: node.data.schemaNode.schemaNodeDataType,
           defaultValue: '', // TODO: this property and below
           doNotGenerateIfNoValue: true,
           nullable: true,
@@ -170,7 +169,6 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
         branding: node.data.functionBranding,
         description: '', // TODO: this property and below
         codeEx: '',
-        definition: '',
         outputId: '',
       };
 
@@ -297,7 +295,14 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
     onTabSelect: onTabSelect,
   };
 
-  const [nodes, edges] = useLayout(currentlySelectedInputNodes, connectedInputNodes, allFunctionNodes, currentOutputNode, connections);
+  const [nodes, edges] = useLayout(
+    currentlySelectedInputNodes,
+    connectedInputNodes,
+    flattenedInputSchema,
+    allFunctionNodes,
+    currentOutputNode,
+    connections
+  );
 
   return (
     <ReactFlow

@@ -16,7 +16,7 @@
         "styles": ["apps/data-mapper-standalone/src/styles.less"],
         "scripts": [],
         "statsJson": true,
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "custom-webpack.config.js"
       },
       "configurations": {
         "production": {

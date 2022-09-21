@@ -52,7 +52,17 @@ const RenderedComponent = (props: ComponentProps) => (
             baseUrl: '/url',
             httpClient,
           }),
-          searchService: new StandardSearchService(),
+          searchService: new StandardSearchService({
+            baseUrl: '/url',
+            apiVersion: '2018-11-01',
+            httpClient,
+            apiHubServiceDetails: {
+              apiVersion: '2018-07-01-preview',
+              subscriptionId: '',
+              location: '',
+            },
+            isDev: true,
+          }),
         },
       }}
     >
