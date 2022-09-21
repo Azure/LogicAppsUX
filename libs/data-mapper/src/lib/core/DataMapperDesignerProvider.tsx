@@ -22,8 +22,8 @@ export const DataMapperDesignerProvider = ({ theme = 'light', locale = 'en', opt
   return (
     <ReduxProvider store={store}>
       <DataMapperWrappedContext.Provider value={options}>
-        <FluentProvider theme={theme === 'light' ? webLightTheme : webDarkTheme}>
-          <ThemeProvider theme={AzureThemeLight}>
+        <FluentProvider theme={theme === 'light' ? webLightTheme : webDarkTheme} style={{ height: '100%' }}>
+          <ThemeProvider theme={AzureThemeLight} style={{ height: '100%' }}>
             <IntlProvider
               locale={locale}
               defaultLocale={locale}

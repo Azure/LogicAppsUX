@@ -1,4 +1,3 @@
-import { baseCanvasHeight, basePropertyPaneContentHeight } from '../../constants/ReactFlowConstants';
 import { NodeType } from '../../models/SelectedNode';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { CodeTab } from './tabComponents/CodeTab';
@@ -17,7 +16,9 @@ enum TABS {
   TEST,
 }
 
-const topBarHeight = 40;
+const propPaneTopBarHeight = 40;
+const minPropPaneContentHeight = 192;
+export const basePropPaneContentHeightPct = 15;
 
 const useStyles = makeStyles({
   pane: {
@@ -26,7 +27,7 @@ const useStyles = makeStyles({
     ...shorthands.borderRadius(tokens.borderRadiusMedium, tokens.borderRadiusMedium, 0, 0),
   },
   topBar: {
-    height: `${topBarHeight}px`,
+    height: `${propPaneTopBarHeight}px`,
     p: '4px',
     marginLeft: '8px',
     marginRight: '8px',
@@ -51,13 +52,13 @@ export interface PropertiesPaneProps {
   currentNode?: SelectedNode;
   isExpanded: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
-  contentHeight: number;
-  setContentHeight: (newHeight: number) => void;
+  contentHeightPct: number;
+  setContentHeightPct: (newHeight: number) => void;
 }
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const intl = useIntl();
-  const { currentNode, isExpanded, setIsExpanded, contentHeight, setContentHeight } = props;
+  const { currentNode, isExpanded, setIsExpanded, contentHeightPct, setContentHeightPct } = props;
 
   const styles = useStyles();
   const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
@@ -125,7 +126,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const onStartDrag = (e: React.DragEvent) => {
     setInitialDragYPos(e.clientY);
-    setInitialDragHeight(contentHeight);
+    setInitialDragHeight(contentHeightPct);
 
     // Show empty image in place of dragging ghost preview
     const img = new Image();
@@ -139,25 +140,26 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       return;
     }
 
-    const deltaY = e.clientY - initialDragYPos; // Going up == negative
+    // TODO: Needs figuring out
+    const deltaYPct = e.clientY - initialDragYPos; // Going up == negative
 
-    // Clamp height between 0 and the full canvas height
-    const newPaneContentHeight = Math.min(baseCanvasHeight, Math.max(0, initialDragHeight - deltaY));
+    // Clamp height percent between 0 and 100
+    const newPaneContentHeightPct = Math.min(100, Math.max(0, initialDragHeight - deltaYPct));
 
     // Snap properties pane to full height if expanded >=80%
-    if (newPaneContentHeight >= 0.8 * baseCanvasHeight) {
-      setContentHeight(baseCanvasHeight);
+    if (newPaneContentHeightPct >= 80) {
+      setContentHeightPct(100);
       return;
     }
 
     // Automatically collapse pane if resized below a certain amount, and reset expanded height
-    if (newPaneContentHeight <= 25) {
+    if (newPaneContentHeightPct <= 25) {
       setIsExpanded(false);
-      setContentHeight(basePropertyPaneContentHeight);
+      setContentHeightPct(basePropPaneContentHeightPct);
       return;
     }
 
-    setContentHeight(newPaneContentHeight);
+    setContentHeightPct(newPaneContentHeightPct);
   };
 
   const onDragEnd = () => {
@@ -230,15 +232,17 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   }, [currentNode, setIsExpanded]);
 
   return (
-    <div className={styles.pane}>
-      <div
-        style={{ height: 12, cursor: isExpanded ? 'row-resize' : 'auto' }}
+    <div className={styles.pane} style={{ flex: '0 1 auto' }}>
+      <Stack
+        horizontal
+        verticalAlign="center"
+        className={styles.topBar}
+        style={{ cursor: isExpanded ? 'row-resize' : 'auto' }}
         draggable={isExpanded ? 'true' : 'false'}
         onDragStart={onStartDrag}
         onDrag={onDrag}
         onDragEnd={onDragEnd}
-      />
-      <Stack horizontal verticalAlign="center" className={styles.topBar}>
+      >
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
@@ -266,7 +270,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       </Stack>
 
       {currentNode && isExpanded && (
-        <div className={styles.paneContent} style={{ height: contentHeight }}>
+        <div className={styles.paneContent} style={{ minHeight: minPropPaneContentHeight, height: `${contentHeightPct}%` }}>
           {getSelectedTab()}
         </div>
       )}

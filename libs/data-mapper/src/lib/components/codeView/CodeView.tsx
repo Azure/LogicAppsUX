@@ -4,6 +4,8 @@ import { Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
+// TODO: Figure out how to get MonacoEditor to take up full height
+
 const useStyles = makeStyles({
   containerStyle: {
     height: '100%',
@@ -13,6 +15,7 @@ const useStyles = makeStyles({
     boxSizing: 'border-box',
     backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    flexDirection: 'column',
   },
   titleTextStyle: {
     ...typographyStyles.body1Strong,
@@ -20,7 +23,6 @@ const useStyles = makeStyles({
   editorStyle: {
     ...shorthands.border('1px', 'solid', '#313131'),
     ...shorthands.borderRadius('3px'),
-    height: '500px',
   },
 });
 
@@ -40,7 +42,7 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen 
   });
 
   return (
-    <div className={styles.containerStyle} style={{ height: '100%', display: isCodeViewOpen ? 'block' : 'none' }}>
+    <div className={styles.containerStyle} style={{ display: isCodeViewOpen ? 'flex' : 'none' }}>
       <Stack horizontal verticalAlign="center" style={{ justifyContent: 'space-between', marginBottom: '12px', marginTop: '4px' }}>
         <Stack horizontal verticalAlign="center">
           <Code20Regular />
@@ -52,14 +54,16 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen 
         <Button icon={<Dismiss20Regular />} appearance="subtle" onClick={() => setIsCodeViewOpen(false)} />
       </Stack>
 
-      <MonacoEditor
-        language={EditorLanguage.templateExpressionLanguage}
-        value={dataMapDefinition}
-        lineNumbers="on"
-        scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
-        className={styles.editorStyle}
-        readOnly
-      />
+      <div style={{ flex: '1 1 auto' }}>
+        <MonacoEditor
+          language={EditorLanguage.templateExpressionLanguage}
+          value={dataMapDefinition}
+          lineNumbers="on"
+          scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
+          className={styles.editorStyle}
+          readOnly
+        />
+      </div>
     </div>
   );
 };

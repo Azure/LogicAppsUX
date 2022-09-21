@@ -32,20 +32,26 @@ export const DataMapperStandaloneDesigner = () => {
     console.log(dataMapDefinition);
   };
 
-  // NOTE: Adding FluentProvider here to encapsulate DevToolbox
   return (
-    <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
-      <DevToolbox />
-      <DataMapperDesignerProvider locale="en-US" theme={theme === 'Light' ? 'light' : 'dark'} options={{}}>
-        <DataMapDataProvider
-          dataMap={dataMap}
-          inputSchema={inputSchema}
-          outputSchema={outputSchema}
-          availableSchemas={workflowSchemaFilenames}
-        >
-          <DataMapperDesigner saveStateCall={saveStateCall} />
-        </DataMapDataProvider>
-      </DataMapperDesignerProvider>
-    </FluentProvider>
+    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: '0 1 auto' }}>
+        <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
+          <DevToolbox />
+        </FluentProvider>
+      </div>
+
+      <div style={{ flex: '1 1 auto' }}>
+        <DataMapperDesignerProvider locale="en-US" theme={theme === 'Light' ? 'light' : 'dark'} options={{}}>
+          <DataMapDataProvider
+            dataMap={dataMap}
+            inputSchema={inputSchema}
+            outputSchema={outputSchema}
+            availableSchemas={workflowSchemaFilenames}
+          >
+            <DataMapperDesigner saveStateCall={saveStateCall} />
+          </DataMapDataProvider>
+        </DataMapperDesignerProvider>
+      </div>
+    </div>
   );
 };

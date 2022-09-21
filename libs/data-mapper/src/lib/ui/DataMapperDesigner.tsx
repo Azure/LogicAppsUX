@@ -4,9 +4,8 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
-import { PropertiesPane } from '../components/propertiesPane/PropertiesPane';
+import { basePropPaneContentHeightPct, PropertiesPane } from '../components/propertiesPane/PropertiesPane';
 import { WarningModal } from '../components/warningModal/WarningModal';
-import { baseCanvasHeight, basePropertyPaneContentHeight } from '../constants/ReactFlowConstants';
 import { redoDataMapOperation, saveDataMap, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
@@ -25,15 +24,19 @@ const useStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground4,
     paddingLeft: '12px',
     paddingRight: '12px',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  centerView: {
+    minHeight: '600px',
+    height: '100%',
+    ...shorthands.flex(1, 2, 'auto'),
   },
   canvasWrapper: {
-    height: '100%',
-    width: '100%',
     backgroundColor: '#edebe9',
-    minHeight: 0,
-    ...shorthands.overflow('hidden'),
+    height: '100%',
   },
-  centerView: {},
 });
 
 export interface DataMapperDesignerProps {
@@ -52,7 +55,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
 
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
-  const [propPaneExpandedHeightPx, setPropPaneExpandedHeightPx] = useState(basePropertyPaneContentHeight);
+  const [propPaneExpandedHeightPct, setPropPaneExpandedHeightPct] = useState(basePropPaneContentHeightPct);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
 
   const dataMapDefinition = useMemo((): string => {
@@ -103,12 +106,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           readCurrentSchemaOptions={readCurrentSchemaOptions ?? placeholderFunc}
         />
         <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
-        <div className={styles.centerView}>
+
+        <div className={styles.centerView} style={{ display: 'flex', flexDirection: 'column' }}>
           <div
             style={{
-              maxHeight: baseCanvasHeight,
-              height: isPropPaneExpanded ? baseCanvasHeight - propPaneExpandedHeightPx : baseCanvasHeight,
-              marginBottom: isPropPaneExpanded && propPaneExpandedHeightPx === baseCanvasHeight ? 0 : '8px',
+              flex: '1 1 auto',
+              marginBottom: isPropPaneExpanded && propPaneExpandedHeightPct === 100 ? 0 : '8px',
               boxSizing: 'border-box',
             }}
           >
@@ -116,7 +119,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
               <Stack horizontal style={{ height: '100%' }}>
                 <div
                   className={styles.canvasWrapper}
-                  style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%', marginRight: isCodeViewOpen ? '8px' : 0 }}
+                  style={{ width: isCodeViewOpen ? '75%' : '100%', marginRight: isCodeViewOpen ? '8px' : 0 }}
                 >
                   <ReactFlowProvider>
                     <ReactFlowWrapper inputSchema={inputSchema} />
@@ -133,8 +136,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             currentNode={currentlySelectedNode}
             isExpanded={isPropPaneExpanded}
             setIsExpanded={setIsPropPaneExpanded}
-            contentHeight={propPaneExpandedHeightPx}
-            setContentHeight={setPropPaneExpandedHeightPx}
+            contentHeightPct={propPaneExpandedHeightPct}
+            setContentHeightPct={setPropPaneExpandedHeightPct}
           />
         </div>
       </div>

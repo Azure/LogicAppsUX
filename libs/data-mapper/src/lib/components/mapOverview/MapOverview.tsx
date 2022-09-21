@@ -1,4 +1,4 @@
-import { baseCanvasHeight, defaultCanvasZoom } from '../../constants/ReactFlowConstants';
+import { defaultCanvasZoom } from '../../constants/ReactFlowConstants';
 import { openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
@@ -6,6 +6,7 @@ import { SchemaTypes } from '../../models/';
 import { convertToReactFlowParentAndChildNodes } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
+import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands } from '@fluentui/react-components';
 import { useMemo } from 'react';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
@@ -27,6 +28,7 @@ const useStyles = makeStyles({
 
 const reactFlowStyle = {
   background: '#e0e0e0',
+  height: '100%',
 };
 
 export interface MapOverviewProps {
@@ -61,7 +63,7 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSch
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
 
   const layeredReactFlow = (
-    <div className={styles.mapOverviewStyles} style={{ height: baseCanvasHeight }}>
+    <div className={styles.mapOverviewStyles} style={{ height: '100%' }}>
       <ReactFlowProvider>
         <ReactFlow
           nodes={reactFlowNodes}
@@ -85,12 +87,12 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSch
 
   return (
     <div className={styles.mapOverviewStyles} style={reactFlowStyle}>
-      <div style={{ width: '50%' }}>
+      <Stack verticalAlign="center" style={{ width: '50%', height: '100%' }}>
         {inputSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Input} onClick={onInputSchemaClick} />}
-      </div>
-      <div style={{ width: '50%' }}>
+      </Stack>
+      <Stack verticalAlign="center" style={{ width: '50%', height: '100%' }}>
         {outputSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Output} onClick={onOutputSchemaClick} />}
-      </div>
+      </Stack>
     </div>
   );
 };
