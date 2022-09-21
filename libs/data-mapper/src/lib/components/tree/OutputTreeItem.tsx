@@ -1,7 +1,7 @@
 import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
-import { icon16ForSchemaNodeType } from '../../utils/Icon.Utils';
+import { expandButtonStyle, SharedTreeItemContent } from './SchemaTreeItem';
 import { Caption1, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { ChevronRight16Regular, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
+import { ChevronRight16Regular, CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular } from '@fluentui/react-icons';
 import { fluentTreeItem, provideFluentDesignSystem, treeItemStyles } from '@fluentui/web-components';
 import { css } from '@microsoft/fast-element';
 import type { OverrideFoundationElementDefinition, TreeItemOptions } from '@microsoft/fast-foundation';
@@ -11,7 +11,7 @@ import { renderToString } from 'react-dom/server';
 
 const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
 
-export type SchemaFastTreeItemProps = {
+export type OutputSchemaFastTreeItemProps = {
   childNode: SchemaNodeExtended;
   currentlySelectedNodes: SchemaNodeExtended[];
   onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
@@ -30,12 +30,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const expandButtonStyle = `
-  :host(.nested) .expand-collapse-button:hover {
-    background: inherit;
-  }`;
-
-export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps> = ({
+export const SchemaFastTreeItem: React.FunctionComponent<OutputSchemaFastTreeItemProps> = ({
   childNode,
   currentlySelectedNodes,
   onLeafNodeClick,
@@ -43,22 +38,20 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
   const styles = useStyles();
   const [isHover, setIsHover] = useState(false);
   const iconString = renderToString(<ChevronRight16Regular className={styles.icon} />);
-  const fastTreeItemStyles = `
+  const positionRegionStyling = `  
   .positioning-region {
     border-radius: ${tokens.borderRadiusMedium};
-    background-color: ${tokens.colorNeutralBackground1};
+    background-color: ${tokens.colorNeutralBackground4};
     height: 28px;
     padding: 4px 6px 4px 6px;
   }
+  :host(:not([disabled])).positioning-region:hover {
+    background: ${tokens.colorNeutralBackground4Hover};
+  }`;
+  const fastTreeItemStyles = `
   .content-region {
     height: 16px;
     color: ${tokens.colorNeutralForeground1};
-  }
-  :host(:not([disabled])).positioning-region:hover {
-    background: ${tokens.colorNeutralBackground1Hover};
-  }
-  :host([selected])::after {
-    visibility: hidden;
   }
   :host(.nested) .expand-collapse-button:hover {
     background: inherit;
@@ -70,8 +63,7 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
     styles: (ctx, def) => {
       const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
       const fastStyles = css`
-        ${baseStyles} ${fastTreeItemStyles}
-        ${expandButtonStyle}
+        ${baseStyles} ${fastTreeItemStyles} ${positionRegionStyling} ${expandButtonStyle}
       `;
       return fastStyles;
     },
@@ -80,24 +72,23 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
   const isNodeSelected = !!currentlySelectedNodes.find(
     (currentlySelectedNode) => currentlySelectedNode && currentlySelectedNode.key === childNode.key
   );
-  const onMouseEnter = () => {
-    setIsHover(true);
+
+  const onMouseEnterOrLeave = () => {
+    setIsHover(!isHover);
   };
-  const onMouseLeave = () => {
-    setIsHover(false);
-  };
+
   const nameText = isHover ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>;
   if (childNode.schemaNodeDataType === 'ComplexType' || childNode.schemaNodeDataType === 'None') {
     return (
       <FastTreeItem
         key={childNode.key}
-        onMouseLeave={() => onMouseLeave()}
-        onMouseEnter={() => onMouseEnter()}
+        onMouseLeave={() => onMouseEnterOrLeave()}
+        onMouseEnter={() => onMouseEnterOrLeave()}
         className={isNodeSelected ? 'selected' : ''}
       >
-        <TreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected}>
+        <OutputTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="Completed">
           {nameText}
-        </TreeItemContent>
+        </OutputTreeItemContent>
         {convertToFastTreeItem(childNode, currentlySelectedNodes, onLeafNodeClick)}
       </FastTreeItem>
     );
@@ -108,12 +99,12 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
         onClick={() => {
           onLeafNodeClick(childNode);
         }}
-        onMouseLeave={() => onMouseLeave()}
-        onMouseEnter={() => onMouseEnter()}
+        onMouseLeave={() => onMouseEnterOrLeave()}
+        onMouseEnter={() => onMouseEnterOrLeave()}
       >
-        <TreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected}>
+        <OutputTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="InProgress">
           {nameText}
-        </TreeItemContent>
+        </OutputTreeItemContent>
       </FastTreeItem>
     );
   }
@@ -140,28 +131,37 @@ export interface SchemaNodeTreeItemContentProps {
   nodeType: SchemaNodeDataType;
   isSelected: boolean;
   children?: React.ReactNode;
+  status: 'Completed' | 'InProgress' | 'NotStarted';
 }
 
-const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, isSelected, children }) => {
-  const filledIcon = <CheckmarkCircle16Filled primaryFill={tokens.colorBrandForeground1} />;
-  const restIcon = <Circle16Regular primaryFill={tokens.colorNeutralForeground3} />;
+const OutputTreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, isSelected, children, status }) => {
+  let statusIcon: JSX.Element;
+  switch (status) {
+    case 'Completed':
+      statusIcon = (
+        <CheckmarkCircle12Filled
+          style={{ display: 'flex', marginRight: '4px' }}
+          primaryFill={tokens.colorPaletteGreenForeground1}
+        ></CheckmarkCircle12Filled>
+      );
+      break;
+    case 'InProgress':
+      statusIcon = <CircleHalfFill12Regular primaryFill={tokens.colorPaletteYellowForeground1}></CircleHalfFill12Regular>;
+      break;
+    case 'NotStarted':
+      statusIcon = <Circle12Regular primaryFill={tokens.colorNeutralForegroundDisabled}></Circle12Regular>;
+      break;
+    default:
+      statusIcon = <div></div>;
+  }
 
   return (
     <>
+      <span style={{ display: 'flex', marginRight: '4px', marginTop: '2px' }} slot="start">
+        {statusIcon}
+      </span>
       {SharedTreeItemContent(nodeType, isSelected)}
       <span style={{ marginRight: '8px', width: '100%' }}>{children}</span>
-      <span style={{ display: 'flex', marginRight: '4px' }} slot="end">
-        {isSelected ? filledIcon : restIcon}
-      </span>
     </>
-  );
-};
-
-export const SharedTreeItemContent = (nodeType: SchemaNodeDataType, isSelected: boolean): JSX.Element => {
-  const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
-  return (
-    <span style={{ display: 'flex', paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} slot="start">
-      <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={isSelected} />
-    </span>
   );
 };
