@@ -65,6 +65,8 @@
     "fuse.js": "6.6.2",
     "github-markdown-css": "5.1.0",
     "guid-typescript": "1.0.9",
+    "http-browserify": "^1.7.0",
+    "https-browserify": "^1.0.0",
     "immer": "9.0.15",
     "js-yaml": "4.1.0",
     "json-schema-generator": "2.0.6",
