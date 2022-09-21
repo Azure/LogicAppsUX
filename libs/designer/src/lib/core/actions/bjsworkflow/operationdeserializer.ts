@@ -336,7 +336,9 @@ export const updateDynamicDataInNodes = async (
     const connectionId = getConnectionId(rootState.connections, nodeId);
     const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
     const nodeOperationInfo = operationInfo[nodeId];
-    const isManifestBased = OperationManifestService().isSupported(nodeOperationInfo.type, nodeOperationInfo.kind);
+    const isManifestBased = nodeOperationInfo
+      ? OperationManifestService().isSupported(nodeOperationInfo.type, nodeOperationInfo.kind)
+      : false;
 
     // TODO - The below if check should be removed once swagger based operations are correctly implemented
     if (isManifestBased) {

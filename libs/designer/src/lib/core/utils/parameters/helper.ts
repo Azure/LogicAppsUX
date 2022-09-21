@@ -52,6 +52,7 @@ import type {
   Segment,
 } from '@microsoft-logic-apps/parsers';
 import {
+  isLegacyDynamicValuesExtension,
   ParameterLocations,
   ExpressionType,
   createEx,
@@ -277,6 +278,7 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
   let type = inputParameter.editor;
   let editorViewModel;
   let schema = inputParameter.schema;
+  const { dynamicValues } = inputParameter;
 
   if (
     !type &&
@@ -289,11 +291,13 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
     schema = { ...schema, ...{ 'x-ms-editor': Constants.EDITOR.ARRAY } };
   } else if (type === 'dictionary') {
     editorViewModel = toDictionaryViewModel(inputParameter.value);
+  } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
+    type = undefined;
   }
 
   return {
     type,
-    options: inputParameter.editorOptions,
+    options: !type ? undefined : inputParameter.editorOptions,
     viewModel: editorViewModel,
     schema,
   };
