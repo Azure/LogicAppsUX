@@ -56,7 +56,7 @@ export const DataHandling = ({
         settingProp: {
           readOnly,
           checked: !disableAutomaticDecompression?.value,
-          onToggleInputChange: (_, checked) => onAutomaticDecompressionChange(!!checked),
+          onToggleInputChange: (_, checked) => onAutomaticDecompressionChange(!checked),
           customLabel: () => automaticDecompressionLabel,
           onText,
           offText,
