@@ -211,10 +211,11 @@ export class ParametersProcessor {
   }
 
   private _getScalarParameter(parameter: Parameter, key?: string, keyProjectionOption: KeyProjectionOptions = {}): InputParameter {
+    const dynamicValues = getParameterDynamicValues(parameter as OpenAPIV2.SchemaObject);
     const $default = parameter.default,
       description = parameter.description,
-      editor = parameter[Constants.ExtensionProperties.Editor],
-      editorOptions = parameter[Constants.ExtensionProperties.EditorOptions],
+      editor = dynamicValues ? 'combobox': parameter[Constants.ExtensionProperties.Editor],
+      editorOptions = dynamicValues ? { options: [] } : parameter[Constants.ExtensionProperties.EditorOptions],
       encode = parameter[Constants.ExtensionProperties.Encode],
       $enum = getEnum(parameter as OpenAPIV2.SchemaObject, parameter.required),
       format = parameter.format,

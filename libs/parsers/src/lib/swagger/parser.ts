@@ -14,7 +14,7 @@ import type {
 } from '../models/operation';
 import { ParametersProcessor } from './parameterprocessor';
 import { UriTemplateParser, UriTemplateGenerator } from './uritemplateparser';
-import { validate } from '@apidevtools/swagger-parser';
+import APIParser from '@apidevtools/swagger-parser';
 import type { DownloadChunkMetadata, UploadChunkMetadata } from '@microsoft-logic-apps/utils';
 import { aggregate, equals, getPropertyValue, map, unmap } from '@microsoft-logic-apps/utils';
 
@@ -70,7 +70,7 @@ const ApiNotificationConstants = {
 
 export class SwaggerParser {
   static parse = async (swagger: OpenAPIV2.Document): Promise<SwaggerParser> => {
-    const api = await validate(swagger);
+    const api = await APIParser.validate(swagger);
     return new SwaggerParser(api as any);
   };
 

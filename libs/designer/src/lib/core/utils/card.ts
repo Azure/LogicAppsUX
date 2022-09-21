@@ -10,9 +10,11 @@ export function getIconUriFromManifest(manifest: OperationManifest): string {
 }
 
 export function getBrandColorFromConnector(connector: Connector): string {
-  return connector.properties.brandColor as string;
+  const { properties: { brandColor, metadata } } = connector;
+  return brandColor ?? metadata?.brandColor ?? '';
 }
 
 export function getIconUriFromConnector(connector: Connector): string {
-  return connector.properties.iconUri;
+  const { properties: { iconUrl, generalInformation } } = connector;
+  return iconUrl ?? generalInformation?.iconUrl ?? '';
 }

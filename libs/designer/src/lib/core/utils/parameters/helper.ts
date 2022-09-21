@@ -1238,7 +1238,7 @@ async function loadDynamicContentForInputsInNode(
           ...createParameterInfo(input),
           schema: input,
         })) as ParameterInfo[];
-        // Initialize Editor View for dynamic inputs
+        // TODO - Initialize Editor View for dynamic inputs
         dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters }));
       }
     }

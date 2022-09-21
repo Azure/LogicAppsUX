@@ -27,17 +27,20 @@ import {
 } from '../parameters/helper';
 import { loadInputValuesFromDefinition } from './inputsbuilder';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
-import type { Operation, OutputParameter } from '@microsoft-logic-apps/parsers';
+import type {
+  Operation,
+  OutputParameter ,
+  SwaggerParser
+} from '@microsoft-logic-apps/parsers';
 import {
   create,
   isDynamicSchemaExtension,
   ParameterLocations,
   removeConnectionPrefix,
-  isTemplateExpression,
-  SwaggerParser,
+  isTemplateExpression
 } from '@microsoft-logic-apps/parsers';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
-import { map, RecurrenceType, clone, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft-logic-apps/utils';
+import { copyArray , map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 interface OperationInputInfo {
@@ -230,7 +233,7 @@ export const getOutputParametersFromSwagger = (
       dependencies[dynamicOutput.key] = {
         definition: dynamicOutput.dynamicSchema,
         dependencyType: 'ApiSchema',
-        dependentParameters: getDependentParameters(nodeInputs, dynamicOutput.dynamicSchema.extension.parameters),
+        dependentParameters: getDependentParameters(nodeInputs, dynamicOutput.dynamicSchema.extension.parameters ?? {}),
         parameter: dynamicOutput,
       };
     }
@@ -254,14 +257,14 @@ const getOperationInfo = async (
         throw new Error(`Incomplete information for operation '${nodeId}'`);
       }
       const connectorId = reference.api.id;
-      const { swagger } = await getConnectorWithSwagger(connectorId);
-      const operationInputInfo = getOperationInputInfoFromDefinition(swagger, operation, type);
+      const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
+      const operationInputInfo = getOperationInputInfoFromDefinition(parsedSwagger, operation, type);
 
       if (!operationInputInfo) {
         throw new Error('Could not fetch operation input info from swagger and definition');
       }
 
-      const operationId = getOperationIdFromDefinition(operationInputInfo, swagger);
+      const operationId = getOperationIdFromDefinition(operationInputInfo, parsedSwagger);
 
       if (!operationId) {
         throw new Error('Operation Id cannot be determined from definition and swagger');
@@ -274,9 +277,8 @@ const getOperationInfo = async (
   }
 };
 
-const getOperationIdFromDefinition = (operationInputInfo: OperationInputInfo, swagger: OpenAPIV2.Document): string | undefined => {
-  const parser = new SwaggerParser(swagger);
-  const operations = unmap(parser.getOperations());
+const getOperationIdFromDefinition = (operationInputInfo: OperationInputInfo, swagger: SwaggerParser): string | undefined => {
+  const operations = unmap(swagger.getOperations());
 
   if (!operationInputInfo.path && (!operationInputInfo.pathTemplate || !operationInputInfo.pathTemplate.template)) {
     throw new Error('Invalid operationInputInfo');
@@ -287,7 +289,7 @@ const getOperationIdFromDefinition = (operationInputInfo: OperationInputInfo, sw
 };
 
 function getOperationIdFromSwagger(operationMethod: string, operationPath: string, swaggerOperations: Operation[]): string | undefined {
-  const operations = clone(swaggerOperations);
+  const operations = copyArray(swaggerOperations) as Operation[];
   let operationId: string | undefined;
 
   const filteredOperations: any = operations
@@ -344,7 +346,7 @@ function getOperationIdFromSwagger(operationMethod: string, operationPath: strin
 }
 
 function getOperationInputInfoFromDefinition(
-  swagger: OpenAPIV2.Document,
+  swagger: SwaggerParser,
   operation: any,
   type: string
 ): OperationInputInfo | null | undefined {
@@ -363,7 +365,7 @@ function getOperationInputInfoFromDefinition(
     case Constants.NODE.TYPE.HTTP:
       // const swaggerEndpointUrl = operation.metadata['apiDefinitionUrl'];
       // TODO - Make the call to get the http swagger
-      return { method: stepInputs.method, path: extractPathFromUri(stepInputs.uri, swagger.basePath as string) };
+      return { method: stepInputs.method, path: extractPathFromUri(stepInputs.uri, swagger.api.basePath as string) };
 
     case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK:
       return { method: Constants.POST, path: stepInputs.path };

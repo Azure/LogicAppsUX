@@ -160,7 +160,7 @@ export const getOutputParametersFromManifest = (
       dependencies[dynamicOutput.key] = {
         definition: dynamicOutput.dynamicSchema,
         dependencyType: 'ApiSchema',
-        dependentParameters: getDependentParameters(inputs, dynamicOutput.dynamicSchema.extension.parameters),
+        dependentParameters: getDependentParameters(inputs, dynamicOutput.dynamicSchema.extension.parameters ?? {}),
         parameter: dynamicOutput,
       };
     }
@@ -225,7 +225,7 @@ export const getInputDependencies = (nodeInputs: NodeInputs, allInputs: InputPar
         dependencies[inputParameter.key] = {
           definition: dynamicValues,
           dependencyType: 'ListValues',
-          dependentParameters: getDependentParameters(nodeInputs, dynamicValues.extension.parameters),
+          dependentParameters: getDependentParameters(nodeInputs, dynamicValues.extension.parameters ?? {}),
           parameter: inputParameter,
         };
       }
@@ -234,7 +234,7 @@ export const getInputDependencies = (nodeInputs: NodeInputs, allInputs: InputPar
         dependencies[inputParameter.key] = {
           definition: dynamicSchema,
           dependencyType: 'ApiSchema',
-          dependentParameters: getDependentParameters(nodeInputs, dynamicSchema.extension.parameters),
+          dependentParameters: getDependentParameters(nodeInputs, dynamicSchema.extension.parameters ?? {}),
           parameter: inputParameter,
         };
       }
