@@ -321,8 +321,8 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
       }}
       style={{
         backgroundImage: checkerboardBackgroundImage,
-        backgroundSize: '20px 20px',
-        backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px',
+        backgroundPosition: '0 0, 11px 11px',
+        backgroundSize: '22px 22px',
         borderRadius: tokens.borderRadiusMedium,
       }}
       nodeTypes={nodeTypes}

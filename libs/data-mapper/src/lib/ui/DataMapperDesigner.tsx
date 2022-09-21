@@ -116,7 +116,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
               <Stack horizontal style={{ height: '100%' }}>
                 <div
                   className={styles.canvasWrapper}
-                  style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%', marginRight: isCodeViewOpen ? '8px' : 0 }}
+                  style={{
+                    height: '100%',
+                    width: isCodeViewOpen ? '75%' : '100%',
+                    marginRight: isCodeViewOpen ? '8px' : 0,
+                    backgroundColor: tokens.colorNeutralBackground4,
+                  }}
                 >
                   <ReactFlowProvider>
                     <ReactFlowWrapper inputSchema={inputSchema} />
