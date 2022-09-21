@@ -1,5 +1,5 @@
 import { SwaggerParser } from '../parser';
-import { Outlook } from './fixtures/outlook.spec';
+import { Outlook } from './fixtures/outlook';
 
 describe('Swagger tests', () => {
   it('should be able to successfully parse and dereference swagger', async () => {
