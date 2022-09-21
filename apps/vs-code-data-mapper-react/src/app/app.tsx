@@ -23,8 +23,8 @@ export const App = (): JSX.Element => {
   const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(VsCodeThemeType.VsCodeLight);
 
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
-  const inputSchema = useSelector((state: RootState) => state.dataMapDataLoader.inputSchema);
-  const outputSchema = useSelector((state: RootState) => state.dataMapDataLoader.outputSchema);
+  const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
 
   // Monitor document.body for VS Code theme changes
@@ -58,7 +58,7 @@ export const App = (): JSX.Element => {
 
   return (
     <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>
-      <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={schemaFileList}>
+      <DataMapDataProvider dataMap={dataMap} sourceSchema={sourceSchema} targetSchema={targetSchema} availableSchemas={schemaFileList}>
         <DataMapperDesigner
           saveStateCall={saveStateCall}
           addSchemaFromFile={addSchemaFromFile}

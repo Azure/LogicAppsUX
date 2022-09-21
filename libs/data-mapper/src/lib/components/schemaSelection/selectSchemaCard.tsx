@@ -40,14 +40,14 @@ export const SelectSchemaCard = ({ schemaType, onClick }: SelectSchemaCardProps)
   switch (schemaType) {
     case SchemaTypes.Input:
       selectSchemaMsg = intl.formatMessage({
-        defaultMessage: 'Select an input schema',
-        description: 'label to inform to select input schema to be used',
+        defaultMessage: 'Select a source schema',
+        description: 'label to inform to select source schema to be used',
       });
       break;
     case SchemaTypes.Output:
       selectSchemaMsg = intl.formatMessage({
-        defaultMessage: 'Select an output schema',
-        description: 'label to inform to select output schema to be used',
+        defaultMessage: 'Select a target schema',
+        description: 'label to inform to select target schema to be used',
       });
       break;
     default:

@@ -974,7 +974,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
   }
 
   const schemaProcessorOptions: SchemaProcessorOptions = {
-    isInputSchema: true,
+    isSourceSchema: true,
     expandArrayOutputs: true,
     expandArrayOutputsDepth: Constants.MAX_EXPAND_ARRAY_DEPTH,
     excludeAdvanced: false,
@@ -1227,12 +1227,12 @@ async function loadDynamicContentForInputsInNode(
       dispatch(clearDynamicInputs(nodeId));
 
       if (isDynamicDataReadyToLoad(info)) {
-        const inputSchema = await getDynamicSchema(info, allInputs, connectionId, operationInfo, variables);
+        const sourceSchema = await getDynamicSchema(info, allInputs, connectionId, operationInfo, variables);
         const manifest = await getOperationManifest(operationInfo);
         const allInputParameters = getAllInputParameters(allInputs);
         const allInputKeys = allInputParameters.map((param) => param.parameterKey);
         const schemaInputs = getDynamicInputsFromSchema(
-          inputSchema,
+          sourceSchema,
           info.parameter as InputParameter,
           manifest,
           allInputKeys,

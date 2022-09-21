@@ -64,14 +64,14 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const [initialDragYPos, setInitialDragYPos] = useState<number | undefined>(undefined);
   const [initialDragHeight, setInitialDragHeight] = useState<number | undefined>(undefined);
 
-  const inputSchemaNodeLoc = intl.formatMessage({
-    defaultMessage: 'Input schema node',
-    description: 'Label for input schema node',
+  const sourceSchemaNodeLoc = intl.formatMessage({
+    defaultMessage: 'Source schema node',
+    description: 'Label for source schema node',
   });
 
-  const outputSchemaNodeLoc = intl.formatMessage({
-    defaultMessage: 'Output schema node',
-    description: 'Label for output schema node',
+  const targetSchemaNodeLoc = intl.formatMessage({
+    defaultMessage: 'Target schema node',
+    description: 'Label for target schema node',
   });
 
   const functionLoc = intl.formatMessage({
@@ -168,9 +168,9 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const getPaneTitle = (): string | undefined => {
     switch (currentNode?.nodeType) {
       case NodeType.Input:
-        return inputSchemaNodeLoc;
+        return sourceSchemaNodeLoc;
       case NodeType.Output:
-        return outputSchemaNodeLoc;
+        return targetSchemaNodeLoc;
       case NodeType.Function:
         return functionLoc;
       default:

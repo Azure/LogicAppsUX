@@ -66,7 +66,7 @@ export class ManifestParser {
       expandArrayOutputsDepth: expandArrayDepth,
       includeParentObject,
       required: !this._operationManifest.properties.isInputsOptional,
-      isInputSchema: true,
+      isSourceSchema: true,
       keyPrefix: 'inputs.$',
       excludeAdvanced: false,
       excludeInternal: true,
@@ -108,7 +108,7 @@ export class ManifestParser {
       expandArrayOutputsDepth: expandArrayDepth,
       includeParentObject,
       required: !this._operationManifest.properties.isOutputsOptional,
-      isInputSchema: false,
+      isSourceSchema: false,
       excludeAdvanced: false,
       excludeInternal: true,
       useAliasedIndexing: true,
@@ -134,12 +134,12 @@ export class ManifestParser {
   }
 
   private getOutputsSchema(outputs: any | undefined): SchemaObject | undefined {
-    const alternativeSchema = this.getAlternativeOutputSchema(outputs);
+    const alternativeSchema = this.getAlternativeTargetSchema(outputs);
 
     return alternativeSchema || this._operationManifest.properties.outputs;
   }
 
-  private getAlternativeOutputSchema(outputs: any | undefined): SchemaObject | undefined {
+  private getAlternativeTargetSchema(outputs: any | undefined): SchemaObject | undefined {
     if (!outputs) {
       return undefined;
     }

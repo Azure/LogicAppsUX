@@ -135,7 +135,7 @@ function expandArrayParameters(parameter: InputParameter): InputParameter[] {
     keyPrefix: `${parameter.key}.${WildIndexSegment}`,
     titlePrefix,
     summaryPrefix,
-    isInputSchema: true,
+    isSourceSchema: true,
     isNested: false,
     expandArrayOutputs: true,
     expandArrayOutputsDepth: Constants.MAX_EXPAND_ARRAY_DEPTH,

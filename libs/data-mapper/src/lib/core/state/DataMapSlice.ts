@@ -19,10 +19,10 @@ export interface DataMapState {
 
 export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
-  inputSchema?: SchemaExtended;
-  flattenedInputSchema: SchemaNodeDictionary;
-  outputSchema?: SchemaExtended;
-  flattenedOutputSchema: SchemaNodeDictionary;
+  sourceSchema?: SchemaExtended;
+  flattenedSourceSchema: SchemaNodeDictionary;
+  targetSchema?: SchemaExtended;
+  flattenedTargetSchema: SchemaNodeDictionary;
   currentInputNodes: SchemaNodeExtended[];
   currentOutputNode?: SchemaNodeExtended;
   currentFunctionNodes: FunctionDictionary;
@@ -33,8 +33,8 @@ const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
   currentInputNodes: [],
   currentFunctionNodes: {},
-  flattenedInputSchema: {},
-  flattenedOutputSchema: {},
+  flattenedSourceSchema: {},
+  flattenedTargetSchema: {},
 };
 const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
@@ -62,16 +62,16 @@ export const dataMapSlice = createSlice({
       }>
     ) => {
       if (action.payload.schemaType === SchemaTypes.Input) {
-        state.curDataMapOperation.inputSchema = action.payload.schema;
-        state.curDataMapOperation.flattenedInputSchema = action.payload.flattenedSchema;
-        state.pristineDataMap.inputSchema = action.payload.schema;
-        state.pristineDataMap.flattenedInputSchema = action.payload.flattenedSchema;
+        state.curDataMapOperation.sourceSchema = action.payload.schema;
+        state.curDataMapOperation.flattenedSourceSchema = action.payload.flattenedSchema;
+        state.pristineDataMap.sourceSchema = action.payload.schema;
+        state.pristineDataMap.flattenedSourceSchema = action.payload.flattenedSchema;
       } else {
-        state.curDataMapOperation.outputSchema = action.payload.schema;
-        state.curDataMapOperation.flattenedOutputSchema = action.payload.flattenedSchema;
+        state.curDataMapOperation.targetSchema = action.payload.schema;
+        state.curDataMapOperation.flattenedTargetSchema = action.payload.flattenedSchema;
         state.curDataMapOperation.currentOutputNode = action.payload.schema.schemaTreeRoot;
-        state.pristineDataMap.outputSchema = action.payload.schema;
-        state.pristineDataMap.flattenedOutputSchema = action.payload.flattenedSchema;
+        state.pristineDataMap.targetSchema = action.payload.schema;
+        state.pristineDataMap.flattenedTargetSchema = action.payload.flattenedSchema;
         state.pristineDataMap.currentOutputNode = action.payload.schema.schemaTreeRoot;
       }
     },
@@ -81,12 +81,12 @@ export const dataMapSlice = createSlice({
       const incomingDataMap = action.payload;
       const currentState = state.curDataMapOperation;
 
-      if (currentState.inputSchema && currentState.outputSchema) {
+      if (currentState.sourceSchema && currentState.targetSchema) {
         let newState: DataMapOperationState = {
           ...currentState,
           dataMapConnections: {},
           currentInputNodes: [],
-          currentOutputNode: currentState.outputSchema.schemaTreeRoot,
+          currentOutputNode: currentState.targetSchema.schemaTreeRoot,
         };
 
         if (incomingDataMap) {
@@ -95,7 +95,7 @@ export const dataMapSlice = createSlice({
 
           Object.entries(loadedConnections).forEach(([_key, con]) => {
             // TODO: Only push input nodes at TOP-LEVEL of output
-            topLevelInputNodes.push(currentState.flattenedInputSchema[con.reactFlowSource]);
+            topLevelInputNodes.push(currentState.flattenedSourceSchema[con.reactFlowSource]);
           });
 
           newState = {
@@ -110,7 +110,7 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    changeInputSchema: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
+    changeSourceSchema: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
       const incomingDataMapOperation = action.payload;
 
       if (incomingDataMapOperation) {
@@ -121,7 +121,7 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    changeOutputSchema: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
+    changeTargetSchema: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
       const incomingDataMapOperation = action.payload;
       if (incomingDataMapOperation) {
         state.curDataMapOperation = incomingDataMapOperation;
@@ -314,13 +314,13 @@ export const dataMapSlice = createSlice({
 
     saveDataMap: (
       state,
-      action: PayloadAction<{ inputSchemaExtended: SchemaExtended | undefined; outputSchemaExtended: SchemaExtended | undefined }>
+      action: PayloadAction<{ sourceSchemaExtended: SchemaExtended | undefined; targetSchemaExtended: SchemaExtended | undefined }>
     ) => {
-      const inputSchemaExtended = action.payload.inputSchemaExtended;
-      const outputSchemaExtended = action.payload.outputSchemaExtended;
+      const sourceSchemaExtended = action.payload.sourceSchemaExtended;
+      const targetSchemaExtended = action.payload.targetSchemaExtended;
       if (state.curDataMapOperation) {
-        state.curDataMapOperation.inputSchema = inputSchemaExtended;
-        state.curDataMapOperation.outputSchema = outputSchemaExtended;
+        state.curDataMapOperation.sourceSchema = sourceSchemaExtended;
+        state.curDataMapOperation.targetSchema = targetSchemaExtended;
       }
       state.pristineDataMap = state.curDataMapOperation;
       state.isDirty = false;
@@ -338,8 +338,8 @@ export const dataMapSlice = createSlice({
 export const {
   setInitialSchema,
   setInitialDataMap,
-  changeInputSchema,
-  changeOutputSchema,
+  changeSourceSchema,
+  changeTargetSchema,
   setCurrentInputNodes,
   addInputNodes,
   removeInputNodes,

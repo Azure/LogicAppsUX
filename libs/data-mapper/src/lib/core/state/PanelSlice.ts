@@ -37,12 +37,12 @@ export const panelSlice = createSlice({
       state.isDefaultConfigPanelOpen = false;
     },
 
-    openInputSchemaPanel: (state) => {
+    openSourceSchemaPanel: (state) => {
       state.schemaType = SchemaTypes.Input;
       state.isChangeSchemaPanelOpen = true;
     },
 
-    openOutputSchemaPanel: (state) => {
+    openTargetSchemaPanel: (state) => {
       state.schemaType = SchemaTypes.Output;
       state.isChangeSchemaPanelOpen = true;
     },
@@ -59,8 +59,8 @@ export const {
   collapseLeftPanel,
   openDefaultConfigPanel,
   closeDefaultConfigPanel,
-  openInputSchemaPanel,
-  openOutputSchemaPanel,
+  openSourceSchemaPanel,
+  openTargetSchemaPanel,
   closeSchemaChangePanel,
 } = panelSlice.actions;
 

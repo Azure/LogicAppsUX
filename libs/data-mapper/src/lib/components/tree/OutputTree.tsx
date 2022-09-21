@@ -14,7 +14,7 @@ export interface SchemaTreeProps {
   onNodeClick: (schemaNode: SchemaNodeExtended) => void;
 }
 
-export const OutputSchemaTree: React.FC<SchemaTreeProps> = ({
+export const TargetSchemaTree: React.FC<SchemaTreeProps> = ({
   schema,
   currentlySelectedNodes,
   visibleConnectedNodes,

@@ -60,18 +60,18 @@ const toolboxPanelProps: FloatingPanelProps = {
 };
 
 interface ReactFlowWrapperProps {
-  inputSchema: SchemaExtended;
+  sourceSchema: SchemaExtended;
 }
 
 // ReactFlow must be wrapped if we want to access the internal state of ReactFlow
-export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
+export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const { fitView, zoomIn, zoomOut } = useReactFlow();
 
   const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
   const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
-  const flattenedInputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedInputSchema);
+  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
@@ -92,13 +92,13 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
 
       return outputFilteredConnections
         .map((connection) => {
-          return flattenedInputSchema[connection.reactFlowSource];
+          return flattenedSourceSchema[connection.reactFlowSource];
         })
         .filter((connection) => connection !== undefined);
     } else {
       return [];
     }
-  }, [flattenedInputSchema, currentOutputNode, connections]);
+  }, [flattenedSourceSchema, currentOutputNode, connections]);
 
   const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
     if (data.value === displayToolboxItem) {
@@ -279,7 +279,7 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
         tooltip: toolboxLoc,
         regularIcon: CubeTree20Regular,
         filledIcon: CubeTree20Filled,
-        value: 'inputSchemaTreePanel',
+        value: 'sourceSchemaTreePanel',
       },
       {
         tooltip: functionLoc,
@@ -298,7 +298,7 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
   const [nodes, edges] = useLayout(
     currentlySelectedInputNodes,
     connectedInputNodes,
-    flattenedInputSchema,
+    flattenedSourceSchema,
     allFunctionNodes,
     currentOutputNode,
     connections
@@ -331,11 +331,11 @@ export const ReactFlowWrapper = ({ inputSchema }: ReactFlowWrapperProps) => {
       onEdgeUpdateEnd={onEdgeUpdateEnd}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
-      {displayToolboxItem === 'inputSchemaTreePanel' && (
+      {displayToolboxItem === 'sourceSchemaTreePanel' && (
         <FloatingPanel {...toolboxPanelProps}>
-          {inputSchema && (
+          {sourceSchema && (
             <SchemaTree
-              schema={inputSchema}
+              schema={sourceSchema}
               currentlySelectedNodes={currentlySelectedInputNodes}
               visibleConnectedNodes={connectedInputNodes}
               onNodeClick={onToolboxItemClick}

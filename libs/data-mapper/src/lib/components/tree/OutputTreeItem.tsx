@@ -11,7 +11,7 @@ import { renderToString } from 'react-dom/server';
 
 const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
 
-export type OutputSchemaFastTreeItemProps = {
+export type TargetSchemaFastTreeItemProps = {
   childNode: SchemaNodeExtended;
   currentlySelectedNodes: SchemaNodeExtended[];
   onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
@@ -30,7 +30,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const SchemaFastTreeItem: React.FunctionComponent<OutputSchemaFastTreeItemProps> = ({
+export const SchemaFastTreeItem: React.FunctionComponent<TargetSchemaFastTreeItemProps> = ({
   childNode,
   currentlySelectedNodes,
   onLeafNodeClick,

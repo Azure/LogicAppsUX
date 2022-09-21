@@ -28,16 +28,16 @@ interface EditorBreadcrumbProps {
 export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBreadcrumbProps): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
 
   const breadcrumbItems = useMemo<IBreadcrumbItem[]>(() => {
-    if (outputSchema) {
-      return convertToBreadcrumbItems(dispatch, outputSchema, currentOutputNode);
+    if (targetSchema) {
+      return convertToBreadcrumbItems(dispatch, targetSchema, currentOutputNode);
     }
 
     return [];
-  }, [dispatch, outputSchema, currentOutputNode]);
+  }, [dispatch, targetSchema, currentOutputNode]);
 
   return breadcrumbItems.length < 1 ? (
     // Breadcrumb doesn't display when empty, this is a breadcrumb space placeholder

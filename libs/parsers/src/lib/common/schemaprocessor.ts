@@ -40,7 +40,7 @@ export interface SchemaProcessorOptions extends InternalSchemaProcessorOptions {
   expandArrayOutputsDepth?: number;
   fileParameterAware?: boolean;
   includeParentObject?: boolean;
-  isInputSchema?: boolean;
+  isSourceSchema?: boolean;
   keyPrefix?: string;
 
   /**
@@ -67,7 +67,7 @@ export class SchemaProcessor {
       excludeInternal: true,
       expandArrayOutputs: true,
       expandArrayOutputsDepth: 0,
-      isInputSchema: false,
+      isSourceSchema: false,
       required: false,
       ...options,
     };
@@ -121,7 +121,7 @@ export class SchemaProcessor {
     const itemsSchema = (this._dereferenceRefSchema(schema.items as Schema) || {}) as SchemaObject;
     const itemsType = itemsSchema.type;
     const arrayOutputs = skipParent ? [] : this._getScalarProperties(schema);
-    const isReadOnlyInputParameter = this.options.isInputSchema && this._isReadOnlyParameter(schema);
+    const isReadOnlyInputParameter = this.options.isSourceSchema && this._isReadOnlyParameter(schema);
 
     if (this.options.expandArrayOutputs && !this._isInternalParameter(schema) && !isReadOnlyInputParameter) {
       if (
@@ -146,14 +146,14 @@ export class SchemaProcessor {
       }
 
       // NOTE(psamband): Reset the prefix only while expanding array properties for outputs.
-      if (!this.options.isInputSchema) {
+      if (!this.options.isSourceSchema) {
         this.options.prefix = undefined;
       }
 
       const summary = schema[SwaggerConstants.ExtensionProperties.Summary];
       const intl = getIntl();
-      // NOTE(johnwa): always apply array name as prefix for input schema
-      const title = this.options.isInputSchema
+      // NOTE(johnwa): always apply array name as prefix for source schema
+      const title = this.options.isSourceSchema
         ? schema.title ||
           (this.options.currentKey === ParameterKeyUtility.WildIndexSegment
             ? intl.formatMessage({ defaultMessage: 'Item', description: 'Label for single item inside an array.' })
@@ -241,7 +241,7 @@ export class SchemaProcessor {
     const requiredProperties = schema.required || [];
     const keys = Object.keys(properties);
     const permission = schema[SwaggerConstants.ExtensionProperties.Permission] || this.options.permission;
-    const isReadOnlyInputParameter = this.options.isInputSchema && this._isReadOnlyParameter(schema);
+    const isReadOnlyInputParameter = this.options.isSourceSchema && this._isReadOnlyParameter(schema);
     const summary = schema[SwaggerConstants.ExtensionProperties.Summary];
     let schemaProperties: SchemaProperty[] = [];
     titlePrefix = this._concatenateString(titlePrefix, schema.title);
@@ -283,7 +283,7 @@ export class SchemaProcessor {
           expandArrayOutputsDepth: this.options.expandArrayOutputsDepth,
           fileParameterAware: this.options.fileParameterAware,
           includeParentObject: this.options.includeParentObject,
-          isInputSchema: this.options.isInputSchema,
+          isSourceSchema: this.options.isSourceSchema,
           useAliasedIndexing: this.options.useAliasedIndexing,
           isNested: true,
           keyPrefix: childKeyPrefix,
@@ -357,7 +357,7 @@ export class SchemaProcessor {
         expandArrayOutputsDepth: 0,
         includeParentObject: false,
         required: schemaProperty.required,
-        isInputSchema: true,
+        isSourceSchema: true,
         keyPrefix: schemaProperty.key,
         excludeAdvanced: false,
         excludeInternal: false,
@@ -420,7 +420,7 @@ export class SchemaProcessor {
    * If the parameter has a path, use that as the name. With no path it is either the body or an array item reference.
    */
   private _getName(): string | undefined {
-    if (!this.options.prefix && !this.options.isInputSchema) {
+    if (!this.options.prefix && !this.options.isSourceSchema) {
       const { parentProperty } = this.options;
       if (parentProperty && parentProperty.isArray) {
         return parentProperty.arrayName && parentProperty.arrayName !== SwaggerConstants.OutputKeys.Body
@@ -433,7 +433,7 @@ export class SchemaProcessor {
 
     // NOTE(psamband): Prefix is not well defined for items in array of primitive types. Hence explicitly setting the name.
     if (
-      this.options.isInputSchema &&
+      this.options.isSourceSchema &&
       this.options.parentProperty &&
       this.options.parentProperty.isArray &&
       this.options.parentProperty.arrayName &&
@@ -445,14 +445,14 @@ export class SchemaProcessor {
     return this.options.prefix || this.options.currentKey;
   }
 
-  private _getPropertyDetails(inputSchema: SchemaObject, $schema?: SchemaObject, isArrayItems = false): SchemaProperty | undefined {
-    const { isInputSchema, parentProperty, permission: $permission, required: $required } = this.options;
+  private _getPropertyDetails(sourceSchema: SchemaObject, $schema?: SchemaObject, isArrayItems = false): SchemaProperty | undefined {
+    const { isSourceSchema, parentProperty, permission: $permission, required: $required } = this.options;
 
     let keyPrefix = this.options.keyPrefix ? this.options.keyPrefix : '$';
     keyPrefix = isArrayItems ? `${keyPrefix}.${ParameterKeyUtility.WildIndexSegment}` : keyPrefix;
 
     const name = this._getName();
-    const schema = $schema || inputSchema;
+    const schema = $schema || sourceSchema;
     const $default = schema.default;
     const contentHint = schema[SwaggerConstants.ExtensionProperties.ContentHint];
     const description = schema.description;
@@ -479,12 +479,12 @@ export class SchemaProcessor {
     const groupName = this._getGroupName(schema);
     const alias = schema[SwaggerConstants.ExtensionProperties.Alias];
 
-    // Exclude read-only parameters from input schema, i.e., objects in Swagger body parameters.
-    if (isInputSchema && this._isReadOnlyParameter(schema)) {
+    // Exclude read-only parameters from source schema, i.e., objects in Swagger body parameters.
+    if (isSourceSchema && this._isReadOnlyParameter(schema)) {
       return undefined;
     }
 
-    if (!title && isInputSchema) {
+    if (!title && isSourceSchema) {
       title = 'Body';
     }
 

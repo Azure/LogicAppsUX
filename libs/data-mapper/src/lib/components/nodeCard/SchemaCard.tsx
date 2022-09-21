@@ -127,12 +127,12 @@ const cardInputText = makeStyles({
 const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
 
 const isValidConnection = (connection: ReactFlowConnection): boolean => {
-  const flattenedInputSchema = store.getState().dataMap.curDataMapOperation.flattenedInputSchema;
-  const flattenedOutputSchema = store.getState().dataMap.curDataMapOperation.flattenedOutputSchema;
+  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
+  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
 
-  if (connection.source && connection.target && flattenedInputSchema && flattenedOutputSchema) {
-    const inputNode = flattenedInputSchema[connection.source];
-    const outputNode = flattenedOutputSchema[connection.target];
+  if (connection.source && connection.target && flattenedSourceSchema && flattenedTargetSchema) {
+    const inputNode = flattenedSourceSchema[connection.source];
+    const outputNode = flattenedTargetSchema[connection.target];
 
     // If we have no outputNode that means it's an function and just allow the connection for now
     // TODO validate function allowed input types

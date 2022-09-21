@@ -35,13 +35,13 @@ export const convertToReactFlowNodes = (
   connectedInputNodes: SchemaNodeExtended[],
   allInputNodes: SchemaNodeDictionary,
   allFunctionNodes: FunctionDictionary,
-  outputSchemaNode: SchemaNodeExtended
+  targetSchemaNode: SchemaNodeExtended
 ): ReactFlowNode<CardProps>[] => {
   const reactFlowNodes: ReactFlowNode<CardProps>[] = [];
 
   reactFlowNodes.push(
     ...convertInputToReactFlowParentAndChildNodes(currentlySelectedInputNodes, connectedInputNodes, allInputNodes),
-    ...convertOutputToReactFlowParentAndChildNodes(outputSchemaNode),
+    ...convertOutputToReactFlowParentAndChildNodes(targetSchemaNode),
     ...convertFunctionsToReactFlowParentAndChildNodes(allFunctionNodes)
   );
 
@@ -93,8 +93,8 @@ const convertInputToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-const convertOutputToReactFlowParentAndChildNodes = (outputSchemaNode: SchemaNodeExtended): ReactFlowNode<SchemaCardProps>[] => {
-  return convertToReactFlowParentAndChildNodes(outputSchemaNode, SchemaTypes.Output, true);
+const convertOutputToReactFlowParentAndChildNodes = (targetSchemaNode: SchemaNodeExtended): ReactFlowNode<SchemaCardProps>[] => {
+  return convertToReactFlowParentAndChildNodes(targetSchemaNode, SchemaTypes.Output, true);
 };
 
 export const convertToReactFlowParentAndChildNodes = (

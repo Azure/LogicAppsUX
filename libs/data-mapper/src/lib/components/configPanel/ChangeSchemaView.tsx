@@ -69,7 +69,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   });
   const dropdownAriaLabel = intl.formatMessage({
     defaultMessage: 'Select the schema for dropdown',
-    description: 'Dropdown for selecting or changing the input or output schema ',
+    description: 'Dropdown for selecting or changing the input or target schema ',
   });
   const browseLoc = intl.formatMessage({
     defaultMessage: 'Browse',
@@ -82,22 +82,22 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   switch (schemaType) {
     case SchemaTypes.Input:
       uploadSelectLabelMessage = intl.formatMessage({
-        defaultMessage: 'Upload or select an input schema to be used for your map.',
-        description: 'label to inform to upload or select input schema to be used',
+        defaultMessage: 'Upload or select a source schema to be used for your map.',
+        description: 'label to inform to upload or select source schema to be used',
       });
       selectSchemaPlaceholderMessage = intl.formatMessage({
-        defaultMessage: 'Select an input schema',
-        description: 'placeholder for selecting the input schema dropdown',
+        defaultMessage: 'Select a source schema',
+        description: 'placeholder for selecting the source schema dropdown',
       });
       break;
     case SchemaTypes.Output:
       uploadSelectLabelMessage = intl.formatMessage({
-        defaultMessage: 'Upload or select an output schema to be used for your map.',
-        description: 'label to inform to upload or select output schema to be used',
+        defaultMessage: 'Upload or select a target schema to be used for your map.',
+        description: 'label to inform to upload or select target schema to be used',
       });
       selectSchemaPlaceholderMessage = intl.formatMessage({
-        defaultMessage: 'Select an output schema',
-        description: 'placeholder for selecting the output schema dropdown',
+        defaultMessage: 'Select a target schema',
+        description: 'placeholder for selecting the target schema dropdown',
       });
       break;
     default:

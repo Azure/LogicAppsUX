@@ -105,7 +105,7 @@ export class ParametersProcessor {
           case Constants.Types.Array:
             const processor = new SchemaProcessor({
               prefix: parameter.name ? encodePropertySegment(parameter.name) : undefined,
-              isInputSchema: true,
+              isSourceSchema: true,
               expandArrayOutputs: !!this.options.expandArray,
               expandArrayOutputsDepth: this.options.expandArrayDepth,
               keyPrefix: create(this._getMergedKeySegments(location, keyProjectionOption)),
@@ -136,7 +136,7 @@ export class ParametersProcessor {
               const processor = new SchemaProcessor({
                   prefix: hasDynamicSchema ? encodePropertySegment(parameter.name) : undefined,
                   keyPrefix: create(this._getMergedKeySegments(location, keyProjectionOption)),
-                  isInputSchema: true,
+                  isSourceSchema: true,
                   expandArrayOutputs: !!this.options.expandArray,
                   expandArrayOutputsDepth: this.options.expandArrayDepth,
                   required: parameter.required,
@@ -214,7 +214,7 @@ export class ParametersProcessor {
     const dynamicValues = getParameterDynamicValues(parameter as OpenAPIV2.SchemaObject);
     const $default = parameter.default,
       description = parameter.description,
-      editor = dynamicValues ? 'combobox': parameter[Constants.ExtensionProperties.Editor],
+      editor = dynamicValues ? 'combobox' : parameter[Constants.ExtensionProperties.Editor],
       editorOptions = dynamicValues ? { options: [] } : parameter[Constants.ExtensionProperties.EditorOptions],
       encode = parameter[Constants.ExtensionProperties.Encode],
       $enum = getEnum(parameter as OpenAPIV2.SchemaObject, parameter.required),
