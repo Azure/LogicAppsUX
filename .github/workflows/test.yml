@@ -7,7 +7,7 @@ on:
     branches: [main]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     strategy:
       matrix:
@@ -32,6 +32,14 @@ jobs:
       - run: npx nx affected --target=lint --parallel
       - run: npx nx affected --target=build --parallel
       - run: npx nx affected --target=test --parallel
-      - run: npm run test:e2e:ci
+      - run: npx nx e2e designer-e2e --reporter=html
+
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
       - run: npm run build-storybook
       # - run: npm run storybook:files-axe

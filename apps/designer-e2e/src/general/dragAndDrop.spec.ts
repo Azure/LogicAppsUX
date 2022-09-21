@@ -23,5 +23,7 @@ test('Should be able to drag and drop operations', async ({ page }) => {
 
   //wait on animations to complete and things to settle
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  await expect(page).toHaveScreenshot();
+  await expect(page).toHaveScreenshot('dragAndDrop.png', {
+    maxDiffPixels: 100,
+  });
 });

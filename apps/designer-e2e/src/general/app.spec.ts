@@ -6,6 +6,7 @@ test('Sanity Check', async ({ page }) => {
 
   await page.locator('[aria-label="Close React Query Devtools"]').click();
   await page.locator('div[role="button"]:has-text("🧰")').click();
+  //expect(false).toBeTruthy();
   await page.locator('text=Simple Big Workflow').click();
 
   await page.locator('button[role="option"]:has-text("Simple Big Workflow")').click();

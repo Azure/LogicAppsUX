@@ -25,14 +25,14 @@ const runPlaywright = async (baseUrl: string, options: PlaywrightExecutorSchema)
       `${runnerCommand} playwright test src --config ${options.e2eFolder}/playwright.config.ts ${flags}`.trim()
     );
 
-    console.info(`Playwright output ${stdout}`);
+    console.info(`${stdout}`);
     if (stderr) {
-      console.error(`Playwright errors ${stderr}`);
+      console.log(stderr);
+      return false;
     }
-    console.log('passed');
     return stdout.includes('passed');
   } catch (error) {
-    console.error('Unexpected error', error);
+    console.log(error.stdout);
     return false;
   }
 };
