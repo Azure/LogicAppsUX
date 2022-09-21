@@ -26,8 +26,8 @@ export enum ReactFlowNodeType {
   FunctionNode = 'functionNode',
 }
 
-export const inputPrefix = 'input-';
-export const outputPrefix = 'output-';
+export const inputPrefix = 'source-';
+export const outputPrefix = 'target-';
 export const functionPrefix = 'function-';
 
 export const convertToReactFlowNodes = (
@@ -62,18 +62,18 @@ const convertInputToReactFlowParentAndChildNodes = (
       return !existingNode;
     }),
   ];
-  const flattenedKeys = Object.values(allSourceNodes).map((inputNode) => inputNode.key);
+  const flattenedKeys = Object.values(allSourceNodes).map((sourceNode) => sourceNode.key);
   combinedNodes.sort((nodeA, nodeB) =>
     nodeA.pathToRoot.length !== nodeB.pathToRoot.length
       ? nodeA.pathToRoot.length - nodeB.pathToRoot.length
       : flattenedKeys.indexOf(nodeA.key) - flattenedKeys.indexOf(nodeB.key)
   );
 
-  combinedNodes.forEach((inputNode) => {
+  combinedNodes.forEach((sourceNode) => {
     reactFlowNodes.push({
-      id: `${inputPrefix}${inputNode.key}`,
+      id: `${inputPrefix}${sourceNode.key}`,
       data: {
-        schemaNode: inputNode,
+        schemaNode: sourceNode,
         schemaType: SchemaTypes.Source,
         displayHandle: true,
         isLeaf: true,

@@ -4,8 +4,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export enum WarningModalState {
   DiscardWarning = 'discard',
-  ChangeInputWarning = 'change-input-schema',
-  ChangeOutputWarning = 'change-out-schema',
+  ChangeSourceWarning = 'change-source-schema',
+  ChangeTargetWarning = 'change-out-schema',
 }
 
 export interface ModalState {
@@ -32,15 +32,15 @@ export const modalSlice = createSlice({
       state.isOkClicked = false;
       state.isWarningModalOpen = true;
       if (action.payload.schemaType === SchemaTypes.Source) {
-        state.warningModalType = WarningModalState.ChangeInputWarning;
+        state.warningModalType = WarningModalState.ChangeSourceWarning;
       } else {
-        state.warningModalType = WarningModalState.ChangeOutputWarning;
+        state.warningModalType = WarningModalState.ChangeTargetWarning;
       }
     },
-    openChangeOutputWarning: (state) => {
+    openChangeTargetWarning: (state) => {
       state.isOkClicked = false;
       state.isWarningModalOpen = true;
-      state.warningModalType = WarningModalState.ChangeOutputWarning;
+      state.warningModalType = WarningModalState.ChangeTargetWarning;
     },
     closeAllWarning: (state) => {
       state.isWarningModalOpen = false;

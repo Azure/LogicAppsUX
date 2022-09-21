@@ -131,12 +131,12 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
   const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
 
   if (connection.source && connection.target && flattenedSourceSchema && flattenedTargetSchema) {
-    const inputNode = flattenedSourceSchema[connection.source];
-    const outputNode = flattenedTargetSchema[connection.target];
+    const sourceNode = flattenedSourceSchema[connection.source];
+    const targetNode = flattenedTargetSchema[connection.target];
 
-    // If we have no outputNode that means it's an function and just allow the connection for now
+    // If we have no targetNode that means it's an function and just allow the connection for now
     // TODO validate function allowed input types
-    return !outputNode || inputNode.schemaNodeDataType === outputNode.schemaNodeDataType;
+    return !targetNode || sourceNode.schemaNodeDataType === targetNode.schemaNodeDataType;
   }
 
   return false;

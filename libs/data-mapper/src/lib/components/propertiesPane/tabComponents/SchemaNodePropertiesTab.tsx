@@ -66,7 +66,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Default value',
   });
 
-  // Base info shared by input/output nodes
+  // Base info shared by source/target nodes
   const NodeInfo = () => {
     return (
       <div className={styles.nodeInfoGridContainer}>

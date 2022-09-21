@@ -45,7 +45,7 @@ const initialState: DataMapState = {
 };
 
 export interface ConnectionAction {
-  outputNodeKey: string;
+  targetNodeKey: string;
   value: string;
 }
 
@@ -94,7 +94,7 @@ export const dataMapSlice = createSlice({
           const topLevelSourceNodes: SchemaNodeExtended[] = [];
 
           Object.entries(loadedConnections).forEach(([_key, con]) => {
-            // TODO: Only push input nodes at TOP-LEVEL of output
+            // TODO: Only push source nodes at TOP-LEVEL of target
             topLevelSourceNodes.push(currentState.flattenedSourceSchema[con.reactFlowSource]);
           });
 
@@ -247,14 +247,14 @@ export const dataMapSlice = createSlice({
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      const trimmedKey = action.payload.outputNodeKey.substring(action.payload.outputNodeKey.indexOf('-') + 1);
+      const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
       const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
 
       newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
         destination: trimmedKey,
         sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,
-        reactFlowDestination: action.payload.outputNodeKey,
+        reactFlowDestination: action.payload.targetNodeKey,
       };
 
       doDataMapOperation(state, newState);
@@ -269,14 +269,14 @@ export const dataMapSlice = createSlice({
       const trimmedOldConnectionKey = action.payload.oldConnectionKey.substring(action.payload.oldConnectionKey.indexOf('-') + 1);
       delete newState.dataMapConnections[trimmedOldConnectionKey];
 
-      const trimmedKey = action.payload.outputNodeKey.substring(action.payload.outputNodeKey.indexOf('-') + 1);
+      const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
       const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
 
       newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
         destination: trimmedKey,
         sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,
-        reactFlowDestination: action.payload.outputNodeKey,
+        reactFlowDestination: action.payload.targetNodeKey,
       };
 
       doDataMapOperation(state, newState);

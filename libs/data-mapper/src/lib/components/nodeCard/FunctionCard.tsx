@@ -88,13 +88,13 @@ const isValidConnection = (connection: ReactFlowConnection, inputs: FunctionInpu
   const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
 
   if (connection.source && connection.target && flattenedSourceSchema) {
-    const inputNode = flattenedSourceSchema[connection.source];
+    const sourceNode = flattenedSourceSchema[connection.source];
 
     // For now just allow all function to function
     // TODO validate express to function connections
     return (
-      !inputNode ||
-      inputs.some((input) => input.acceptableInputTypes.some((acceptableType) => acceptableType === inputNode.schemaNodeDataType))
+      !sourceNode ||
+      inputs.some((input) => input.acceptableInputTypes.some((acceptableType) => acceptableType === sourceNode.schemaNodeDataType))
     );
   }
 

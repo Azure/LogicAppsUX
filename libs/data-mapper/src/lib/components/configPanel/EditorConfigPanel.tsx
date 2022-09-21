@@ -30,8 +30,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
   const isChangeSchemaConfirmed = useSelector(
     (state: RootState) =>
-      (state.modal.warningModalType === WarningModalState.ChangeInputWarning ||
-        state.modal.warningModalType === WarningModalState.ChangeOutputWarning) &&
+      (state.modal.warningModalType === WarningModalState.ChangeSourceWarning ||
+        state.modal.warningModalType === WarningModalState.ChangeTargetWarning) &&
       state.modal.isOkClicked
   );
   const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);

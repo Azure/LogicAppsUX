@@ -24,14 +24,14 @@ export const WarningModal: FunctionComponent = () => {
           description:
             'Message to inform users that they will not be able to revert back to previous changes and to ask if they want to proceed.',
         })
-      : warningModalType === WarningModalState.ChangeInputWarning
+      : warningModalType === WarningModalState.ChangeSourceWarning
       ? intl.formatMessage({
           defaultMessage:
             'Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?',
           description:
             'Message to inform users that they will not be able to revert back to previous changes after changing source schema and to ask if they still want to proceed',
         })
-      : warningModalType === WarningModalState.ChangeOutputWarning
+      : warningModalType === WarningModalState.ChangeTargetWarning
       ? intl.formatMessage({
           defaultMessage:
             'Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?',

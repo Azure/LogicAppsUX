@@ -31,8 +31,8 @@ describe('Map definition conversions', () => {
         '/ns0:CBRInputRecord/Identity/UserID': {
           destination: '/ns0:CBRInputRecord/Identity/UserID',
           sourceValue: '/ns0:CBRInputRecord/Identity/UserID',
-          reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/UserID',
-          reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/UserID',
+          reactFlowSource: 'source-/ns0:CBRInputRecord/Identity/UserID',
+          reactFlowDestination: 'target-/ns0:CBRInputRecord/Identity/UserID',
         },
       };
 
@@ -47,8 +47,8 @@ describe('Map definition conversions', () => {
         '/ns0:CBRInputRecord/Identity/Name/FirstName': {
           destination: '/ns0:CBRInputRecord/Identity/Name/FirstName',
           sourceValue: '/ns0:CBRInputRecord/Identity/Name/FirstName',
-          reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/Name/FirstName',
-          reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/Name/FirstName',
+          reactFlowSource: 'source-/ns0:CBRInputRecord/Identity/Name/FirstName',
+          reactFlowDestination: 'target-/ns0:CBRInputRecord/Identity/Name/FirstName',
         },
       };
 
@@ -63,14 +63,14 @@ describe('Map definition conversions', () => {
         '/ns0:CBRInputRecord/Identity/Name/FirstName': {
           destination: '/ns0:CBRInputRecord/Identity/Name/FirstName',
           sourceValue: '/ns0:CBRInputRecord/Identity/Name/FirstName',
-          reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/Name/FirstName',
-          reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/Name/FirstName',
+          reactFlowSource: 'source-/ns0:CBRInputRecord/Identity/Name/FirstName',
+          reactFlowDestination: 'target-/ns0:CBRInputRecord/Identity/Name/FirstName',
         },
         '/ns0:CBRInputRecord/Identity/Name/LastName': {
           destination: '/ns0:CBRInputRecord/Identity/Name/LastName',
           sourceValue: '/ns0:CBRInputRecord/Identity/Name/LastName',
-          reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/Name/LastName',
-          reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/Name/LastName',
+          reactFlowSource: 'source-/ns0:CBRInputRecord/Identity/Name/LastName',
+          reactFlowDestination: 'target-/ns0:CBRInputRecord/Identity/Name/LastName',
         },
       };
 

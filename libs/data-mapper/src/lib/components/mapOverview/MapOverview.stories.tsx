@@ -54,12 +54,12 @@ Standard.args = {
   targetSchema: schema,
 };
 
-export const InputOnly: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
-InputOnly.args = {
+export const SourceOnly: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
+SourceOnly.args = {
   sourceSchema: schema,
 };
 
-export const OutputOnly: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
-OutputOnly.args = {
+export const TargetOnly: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
+TargetOnly.args = {
   targetSchema: schema,
 };
