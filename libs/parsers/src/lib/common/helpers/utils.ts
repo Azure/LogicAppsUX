@@ -5,6 +5,37 @@ import { getIntl } from '@microsoft-logic-apps/intl';
 import { equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
+type Parameter = OpenAPIV2.ParameterObject;
+
+export function toSwaggerSchema(parameter: Parameter | OpenAPIV2.ItemsObject): SchemaObject {
+  const schema: SchemaObject = {
+    format: parameter.format,
+    description: (parameter as Parameter).description,
+    default: parameter.default,
+    multipleOf: parameter.multipleOf,
+    maximum: parameter.maximum,
+    exclusiveMaximum: parameter.exclusiveMaximum,
+    minimum: parameter.minimum,
+    exclusiveMinimum: parameter.exclusiveMinimum,
+    maxLength: parameter.maxLength,
+    minLength: parameter.minLength,
+    pattern: parameter.pattern,
+    maxItems: parameter.maxItems,
+    minItems: parameter.minItems,
+    uniqueItems: parameter.uniqueItems,
+    enum: parameter.enum,
+    type: parameter.type,
+    items: parameter.items ? toSwaggerSchema(parameter.items) : undefined,
+  };
+
+  for (const propertyName of Object.getOwnPropertyNames(parameter)) {
+    if (propertyName.startsWith('x-ms-')) {
+      schema[propertyName] = (parameter as Parameter)[propertyName];
+    }
+  }
+
+  return schema;
+}
 
 export function getEnum(parameter: SchemaObject, required: boolean | undefined): EnumObject[] | undefined {
   if (parameter.enum) {

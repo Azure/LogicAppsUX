@@ -21,7 +21,6 @@ const connectionService = new StandardConnectionService({
     location: '',
   },
   readConnections: () => Promise.resolve({}),
-  isDev: true,
 });
 const operationManifestService = new StandardOperationManifestService({
   apiVersion: '2018-11-01',
@@ -29,7 +28,17 @@ const operationManifestService = new StandardOperationManifestService({
   httpClient,
 });
 
-const searchService = new StandardSearchService();
+const searchService = new StandardSearchService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  apiHubServiceDetails: {
+    apiVersion: '2018-07-01-preview',
+    subscriptionId: '',
+    location: '',
+  },
+  isDev: true,
+});
 export const DesignerWrapper = () => {
   const { workflowDefinition, readOnly, monitoringView, connections } = useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {

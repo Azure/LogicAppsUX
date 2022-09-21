@@ -15,7 +15,19 @@ describe('search view', () => {
 
   it('loads and makes search results', () => {
     const searchComp = <SearchView searchTerm="azure blob"></SearchView>;
-    InitSearchService(new StandardSearchService());
+    InitSearchService(
+      new StandardSearchService({
+        baseUrl: '/url',
+        apiVersion: '2018-11-01',
+        httpClient: null as any,
+        apiHubServiceDetails: {
+          apiVersion: '2018-07-01-preview',
+          subscriptionId: '',
+          location: '',
+        },
+        isDev: true,
+      })
+    );
     const wrappedSearch = wrapper({ children: searchComp });
     const renderer = TestRenderer.create(wrappedSearch);
     const renderedSearch = renderer.root;

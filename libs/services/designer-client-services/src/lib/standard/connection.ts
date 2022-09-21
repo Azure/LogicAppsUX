@@ -1,20 +1,10 @@
 /* eslint-disable no-param-reassign */
-import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
-import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
-import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
-import type { ConnectionCreationInfo, ConnectionParametersMetadata, IConnectionService } from '../connection';
+import type { ConnectionCreationInfo, ConnectionParametersMetadata, ConnectorWithSwagger, IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
-import { LoggerService } from '../logger';
 import { azureFunctionConnectorId } from './operationmanifest';
-import type {
-  Connection,
-  ConnectionParameter,
-  Connector,
-  DiscoveryOperation,
-  DiscoveryResultTypes,
-  SomeKindOfAzureOperationDiscovery,
-} from '@microsoft-logic-apps/utils';
+import type { Connection, ConnectionParameter, Connector } from '@microsoft-logic-apps/utils';
 import {
+  isArmResourceId,
   AssertionErrorCode,
   AssertionException,
   ConnectionParameterSource,
@@ -22,7 +12,6 @@ import {
   safeSetObjectPropertyValue,
   ArgumentException,
   equals,
-  connectorsSearchResultsMock,
 } from '@microsoft-logic-apps/utils';
 
 interface ServiceProviderConnectionModel {
@@ -79,13 +68,6 @@ interface StandardConnectionServiceArgs {
     location: string;
   };
   httpClient: IHttpClient;
-  isDev?: boolean;
-}
-
-interface ContinuationTokenResponse<T> {
-  // danielle to move
-  value: T;
-  nextLink: string;
 }
 
 export type getAccessTokenType = () => Promise<string>;
@@ -100,19 +82,15 @@ type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnection
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
 
-type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]>;
-type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
-
 const serviceProviderLocation = 'serviceProviderConnections';
 const functionsLocation = 'functionConnections';
 
 export class StandardConnectionService implements IConnectionService {
   private _connections: Record<string, Connection> = {};
   private _subscriptionResourceGroupWebUrl = '';
-  private _isDev = false; // TODO: Find a better way to do this, can't use process.env.NODE_ENV here
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
-    const { apiHubServiceDetails, apiVersion, baseUrl, readConnections, isDev } = options;
+    const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
     } else if (!apiVersion) {
@@ -123,168 +101,33 @@ export class StandardConnectionService implements IConnectionService {
       throw new ArgumentException('apiHubServiceDetails required for workflow app');
     }
     this._subscriptionResourceGroupWebUrl = `/subscriptions/${apiHubServiceDetails.subscriptionId}/resourceGroups/${apiHubServiceDetails.resourceGroup}/providers/Microsoft.Web`;
-    this._isDev = isDev || false;
   }
 
   dispose(): void {
     return;
   }
 
-  public async getAllOperations(): Promise<DiscoveryOpArray> {
-    return [...(await this.getAllBuiltInOperations()), ...(await this.getAllAzureOperations())];
-  }
-
-  private async getAllBuiltInOperations(): Promise<DiscoveryOpArray> {
-    if (this._isDev) {
-      return Promise.resolve([...almostAllBuiltInOperations]);
+  async getConnectorAndSwagger(connectorId: string): Promise<ConnectorWithSwagger> {
+    if (!isArmResourceId(connectorId)) {
+      return { connector: await this.getConnector(connectorId), swagger: null as any };
     }
-    const { apiVersion, baseUrl, httpClient } = this.options;
-    const uri = `${baseUrl}/operations`;
-    const queryParameters: QueryParameters = {
-      'api-version': apiVersion,
-      workflowKind: 'stateful',
-    };
-    const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
-    return response.value;
-  }
-
-  private async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
-    if (this._isDev) return { value: [], hasMore: false };
 
     const {
       apiHubServiceDetails: { apiVersion },
       httpClient,
     } = this.options;
+    const [connector, swagger] = await Promise.all([
+      this.getConnector(connectorId),
+      httpClient.get<OpenAPIV2.Document>({ uri: connectorId, queryParameters: { 'api-version': apiVersion, export: 'true' } }),
+    ]);
 
-    const pageSize = 250; // This is the number of results that can be returned in a single call
-    const queryParameters: QueryParameters = {
-      'api-version': apiVersion,
-      $top: pageSize.toString(),
-      $skiptoken: (pageNumber * pageSize).toString(),
-      ...queryParams,
-    };
-
-    const { nextLink, value } = await httpClient.get<ContinuationTokenResponse<Connector[]>>({ uri, queryParameters });
-    return { value, hasMore: !!nextLink };
+    return { connector, swagger };
   }
 
-  private async batchAzureResourceRequests(uri: string, queryParams?: any): Promise<any[]> {
-    const batchSize = 50; // Number of calls to make in parallel
-
-    const output: any[] = [];
-    let batchIteration = 0;
-    let continueFetching = true;
-
-    while (continueFetching) {
-      await Promise.all(
-        Array.from(Array(batchSize).keys()).map(async (index) => {
-          const pageNum = batchIteration * batchSize + index;
-          const { value, hasMore } = await this.getAzureResourceByPage(uri, queryParams, pageNum);
-          output.push(...value);
-          if (index === batchSize - 1) {
-            continueFetching = hasMore;
-          }
-        })
-      );
-      batchIteration++;
-    }
-
-    return output;
+  async getSwaggerFromUri(uri: string): Promise<OpenAPIV2.Document> {
+    const { httpClient } = this.options;
+    return httpClient.get<OpenAPIV2.Document>({ uri, noAuth: true });
   }
-
-  private async getAllAzureOperations(): Promise<DiscoveryOpArray> {
-    const traceId = LoggerService().startTrace({
-      name: 'Get All Azure Operations',
-      action: 'getAllAzureOperations',
-      source: 'connection.ts',
-    });
-
-    const {
-      apiHubServiceDetails: { location, subscriptionId },
-    } = this.options;
-    if (this._isDev) return Promise.resolve(azureOperationsResponse);
-
-    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
-    const queryParameters: QueryParameters = {
-      $filter: "type eq 'Microsoft.Web/locations/managedApis/apiOperations' and properties/integrationServiceEnvironmentResourceId eq null",
-    };
-
-    const operations = await this.batchAzureResourceRequests(uri, queryParameters);
-
-    LoggerService().endTrace(traceId);
-    return operations;
-  }
-
-  async getAllConnectors(): Promise<Connector[]> {
-    const allBuiltInConnectorsPromise = this.getAllBuiltInConnectors();
-    const allAzureConnectorsPromise = this.getAllAzureConnectors();
-    return Promise.all([allBuiltInConnectorsPromise, allAzureConnectorsPromise]).then((values) => {
-      const builtInResults = values[0];
-      const azureResults = values[1];
-      // danielle possibly tag built in vs azure
-      return [...builtInResults, ...azureResults];
-    });
-  }
-
-  private async getAllBuiltInConnectors(): Promise<Connector[]> {
-    if (this._isDev) {
-      return Promise.resolve(connectorsSearchResultsMock);
-    }
-    const { apiVersion, baseUrl, httpClient } = this.options;
-    const uri = `${baseUrl}/operationGroups`;
-    const queryParameters: QueryParameters = {
-      'api-version': apiVersion,
-    };
-    const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
-    return response.value;
-  }
-
-  private async getAllAzureConnectors(): Promise<Connector[]> {
-    if (this._isDev) {
-      const connectors = AzureConnectorMock.value as Connector[];
-      const formattedConnectors = this.moveGeneralInformation(connectors);
-      return Promise.resolve(formattedConnectors);
-    } else {
-      const {
-        apiHubServiceDetails: { location, subscriptionId },
-      } = this.options;
-      const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/managedApis`;
-      const responseArray = await this.batchAzureResourceRequests(uri);
-      return this.moveGeneralInformation(responseArray);
-    }
-  }
-
-  private moveGeneralInformation(connectors: Connector[]): Connector[] {
-    connectors.forEach((connector) => {
-      if (connector.properties.generalInformation) {
-        connector.properties.displayName = connector.properties.generalInformation.displayName ?? '';
-        connector.properties.iconUri = connector.properties.generalInformation.iconUrl ?? '';
-      }
-    });
-    return connectors;
-  }
-
-  // public async getAllOperationsForGroup(connectorId: string): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> { we will not need this while doing frontend search
-  //   if (!isArmResourceId(connectorId)) {
-  //     const { apiVersion, baseUrl, httpClient } = this.options;
-  //     return httpClient.get<DiscoveryOperation<DiscoveryResultTypes>[]>({
-  //       uri: `${baseUrl}/operationGroups/${connectorId.split('/').slice(-1)[0]}/operations?api-version=${apiVersion}`, // danielle to test
-  //     }); // danielle this should work as it is same as priti
-  //   } else {
-  //     const {
-  //       apiHubServiceDetails: { apiVersion },
-  //       httpClient,
-  //     } = this.options;
-  //     const response = await httpClient.get<DiscoveryOperation<DiscoveryResultTypes>[]>({
-  //       uri: `${connectorId}/apiOperations`,
-  //       queryParameters: { 'api-version': apiVersion },
-  //     }); // danielle this could be wrong
-  //     return {
-  //       ...response,
-  //     };
-  //   }
-  //   //return Promise.resolve(MockSearchOperations);
-  // }
 
   async getConnector(connectorId: string): Promise<Connector> {
     if (!isArmResourceId(connectorId)) {
@@ -489,10 +332,6 @@ export class StandardConnectionService implements IConnectionService {
 type ConnectionsResponse = {
   value: Connection[];
 };
-
-export function isArmResourceId(resourceId: string): boolean {
-  return resourceId ? resourceId.startsWith('/subscriptions/') : false;
-}
 
 function convertServiceProviderConnectionDataToConnection(
   connectionKey: string,

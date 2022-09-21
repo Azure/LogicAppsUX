@@ -28,9 +28,7 @@ export const ParametersTab = () => {
   const readOnly = useReadOnly();
 
   const connectionName = useNodeConnectionName(selectedNodeId);
-
   const tokenGroup = getOutputTokenSections(tokenstate, selectedNodeId, nodeType);
-
   const expressionGroup = getExpressionTokenSections();
 
   return (

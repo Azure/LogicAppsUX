@@ -1,9 +1,11 @@
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
 
 export interface ISearchService {
   search(term: string): Promise<SearchResult>;
   preloadOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getAllConnectors(): Promise<Connector[]>;
+  getAllOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
 }
 
 let service: ISearchService;

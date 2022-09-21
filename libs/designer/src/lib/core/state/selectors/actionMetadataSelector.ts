@@ -93,11 +93,11 @@ const useNodeAttribute = (operationInfo: OperationInfo, propertyInManifest: stri
 };
 
 export const useBrandColor = (operationInfo: OperationInfo) => {
-  return useNodeAttribute(operationInfo, ['brandColor'], ['brandColor']);
+  return useNodeAttribute(operationInfo, ['brandColor'], ['metadata', 'brandColor']);
 };
 
 export const useIconUri = (operationInfo: OperationInfo) => {
-  return useNodeAttribute(operationInfo, ['iconUri'], ['iconUri']);
+  return useNodeAttribute(operationInfo, ['iconUri'], ['iconUrl']);
 };
 
 export const useConnectorName = (operationInfo: OperationInfo) => {

@@ -1,5 +1,6 @@
 import '../../../libs/designer/src/lib/ui/styles.less';
 import { DesignerWrapper } from './app/Designer/designer';
+import './polyfills';
 import { store } from './state/store';
 import { initializeIcons } from '@fluentui/react';
 import { StrictMode } from 'react';
