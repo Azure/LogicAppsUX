@@ -30,7 +30,7 @@ export const BrowseGrid = (props: BrowseGridProps) => {
               key={connector.id}
               id={connector.id}
               connectorName={properties.displayName}
-              description={properties['description'] || ''}
+              description={properties.description || ''}
               iconUrl={properties.iconUri}
               brandColor={properties.brandColor}
               onClick={props.onConnectorSelected}

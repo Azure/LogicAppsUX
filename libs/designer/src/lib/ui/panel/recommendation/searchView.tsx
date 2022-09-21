@@ -35,6 +35,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     if (!allOperations) return;
     const options = {
       includeScore: true,
+      threshold: 0.4,
       keys: [
         {
           name: 'properties.summary', // Operation 'name'
@@ -54,9 +55,11 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
         },
       ],
     };
+    console.log('All operations: ' + allOperations.length);
     if (allOperations) {
       const fuse = new Fuse(allOperations, options);
-      setSearchResults(fuse.search(searchTerm));
+      const searchResults = fuse.search(searchTerm);
+      setSearchResults(searchResults.length > 50 ? searchResults.slice(49) : fuse.search(searchTerm));
     }
   }, [searchTerm, allOperations]);
 
