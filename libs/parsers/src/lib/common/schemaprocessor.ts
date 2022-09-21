@@ -152,7 +152,7 @@ export class SchemaProcessor {
 
       const summary = schema[SwaggerConstants.ExtensionProperties.Summary];
       const intl = getIntl();
-      // NOTE(johnwa): always apply array name as prefix for source schema
+      // NOTE(johnwa): always apply array name as prefix for input schema
       const title = this.options.isInputSchema
         ? schema.title ||
           (this.options.currentKey === ParameterKeyUtility.WildIndexSegment
@@ -479,7 +479,7 @@ export class SchemaProcessor {
     const groupName = this._getGroupName(schema);
     const alias = schema[SwaggerConstants.ExtensionProperties.Alias];
 
-    // Exclude read-only parameters from source schema, i.e., objects in Swagger body parameters.
+    // Exclude read-only parameters from input schema, i.e., objects in Swagger body parameters.
     if (isInputSchema && this._isReadOnlyParameter(schema)) {
       return undefined;
     }
