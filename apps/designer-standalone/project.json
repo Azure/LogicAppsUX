@@ -16,7 +16,7 @@
         "styles": ["apps/designer-standalone/src/styles.less"],
         "scripts": [],
         "statsJson": true,
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "apps/designer-standalone/custom-webpack.config.js"
       },
       "configurations": {
         "production": {
