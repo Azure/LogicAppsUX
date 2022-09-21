@@ -395,6 +395,12 @@
       "value": "Подробнее"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1495,6 +1501,12 @@
       "value": "(UTC –10:00) Алеутские острова"
     }
   ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Trigger condition cannot be empty"
+    }
+  ],
   "DuXV2M": [
     {
       "type": 0,
@@ -2393,12 +2405,6 @@
       "value": "(UTC+03:00) Минск"
     }
   ],
-  "NlSWOG": [
-    {
-      "type": 0,
-      "value": "Выражение"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2497,6 +2503,12 @@
     {
       "type": 0,
       "value": "Имя подключения"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "This function doesn't require any input."
     }
   ],
   "ORVfYZ": [
@@ -3001,6 +3013,12 @@
     {
       "type": 0,
       "value": "Возвращает начало месяца метки времени строки"
+    }
+  ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Paging count invalid"
     }
   ],
   "TUaunO": [
@@ -4017,6 +4035,12 @@
       "value": "Возвращает значение true, если первый аргумент больше второго или равен ему"
     }
   ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4781,6 +4805,12 @@
     {
       "type": 0,
       "value": "Введите пароль в виде обычного текста или используйте безопасный параметр."
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "mx2IMJ": [
@@ -5593,6 +5623,12 @@
       "value": "Создает глобальную уникальную строку (GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run after configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5947,12 +5983,6 @@
     {
       "type": 0,
       "value": "При этом будут также удалены все дочерние действия."
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Для этого выражения не требуются входные данные."
     }
   ],
   "zBMVKg": [

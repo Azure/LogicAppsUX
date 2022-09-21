@@ -346,6 +346,12 @@
       "value": "深入了解"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1381,6 +1387,12 @@
       "value": "(UTC-10:00) 阿留申群島"
     }
   ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Trigger condition cannot be empty"
+    }
+  ],
   "DuXV2M": [
     {
       "type": 0,
@@ -2173,12 +2185,6 @@
       "value": "(UTC+03:00) 明斯克"
     }
   ],
-  "NlSWOG": [
-    {
-      "type": 0,
-      "value": "運算式"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2261,6 +2267,12 @@
     {
       "type": 0,
       "value": "連線名稱"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "This function doesn't require any input."
     }
   ],
   "ORVfYZ": [
@@ -2732,6 +2744,12 @@
     {
       "type": 0,
       "value": "傳回字串時間戳記的每月開始時間"
+    }
+  ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Paging count invalid"
     }
   ],
   "TUaunO": [
@@ -3752,6 +3770,12 @@
       "value": "若第一個引數大於或等於第二個引數，則傳回 True"
     }
   ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4447,6 +4471,12 @@
     {
       "type": 0,
       "value": "以純文字形式輸入密碼或使用安全參數"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "mx2IMJ": [
@@ -5210,6 +5240,12 @@
       "value": "產生全域唯一字串 (GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run after configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5564,12 +5600,6 @@
     {
       "type": 0,
       "value": "這也會移除所有子步驟。"
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "此運算式不需要任何輸入。"
     }
   ],
   "zBMVKg": [

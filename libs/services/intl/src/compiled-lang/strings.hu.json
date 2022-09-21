@@ -373,6 +373,12 @@
       "value": "További információ"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1451,6 +1457,12 @@
       "value": "(UTC-10:00) Aleut-szigetek"
     }
   ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Trigger condition cannot be empty"
+    }
+  ],
   "DuXV2M": [
     {
       "type": 0,
@@ -2305,12 +2317,6 @@
       "value": "(UTC+03:00) Minszk"
     }
   ],
-  "NlSWOG": [
-    {
-      "type": 0,
-      "value": "Kifejezés"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2409,6 +2415,12 @@
     {
       "type": 0,
       "value": "Kapcsolat neve"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "This function doesn't require any input."
     }
   ],
   "ORVfYZ": [
@@ -2895,6 +2907,12 @@
     {
       "type": 0,
       "value": "Egy átadott sztring típusú időbélyegből a hónap kezdetét adja vissza."
+    }
+  ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Paging count invalid"
     }
   ],
   "TUaunO": [
@@ -3915,6 +3933,12 @@
       "value": "Igaz értéket ad vissza, ha az első argumentum nagyobb a másodiknál, vagy azzal egyenlő."
     }
   ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4649,6 +4673,12 @@
     {
       "type": 0,
       "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "mx2IMJ": [
@@ -5439,6 +5469,12 @@
       "value": "Globálisan egyedi sztring (GUID) létrehozása"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run after configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5793,12 +5829,6 @@
     {
       "type": 0,
       "value": "A művelet az összes gyermeklépést is eltávolítja."
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Ez a kifejezés nem igényel bemenetet."
     }
   ],
   "zBMVKg": [

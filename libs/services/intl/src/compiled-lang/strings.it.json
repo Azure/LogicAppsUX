@@ -368,6 +368,12 @@
       "value": "Altre informazioni"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1425,6 +1431,12 @@
       "value": "(UTC - 10.00) Isole Aleutine"
     }
   ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Trigger condition cannot be empty"
+    }
+  ],
   "DuXV2M": [
     {
       "type": 0,
@@ -2261,12 +2273,6 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
-    {
-      "type": 0,
-      "value": "Espressione"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2349,6 +2355,12 @@
     {
       "type": 0,
       "value": "Nome connessione"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "This function doesn't require any input."
     }
   ],
   "ORVfYZ": [
@@ -2850,6 +2862,12 @@
     {
       "type": 0,
       "value": "Restituisce l'inizio del mese di un timestamp in formato stringa"
+    }
+  ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Paging count invalid"
     }
   ],
   "TUaunO": [
@@ -3866,6 +3884,12 @@
       "value": "Restituisce true se il primo argomento è maggiore o uguale al secondo"
     }
   ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4583,6 +4607,12 @@
     {
       "type": 0,
       "value": "Immettere la password come testo normale o usare un parametro protetto"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "mx2IMJ": [
@@ -5368,6 +5398,12 @@
       "value": "Genera una stringa univoca globale (GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run after configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5722,12 +5758,6 @@
     {
       "type": 0,
       "value": "Verranno rimossi anche tutti i passaggi figlio."
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "L'espressione non richiede alcun input."
     }
   ],
   "zBMVKg": [

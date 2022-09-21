@@ -346,6 +346,12 @@
       "value": "자세한 정보"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1381,6 +1387,12 @@
       "value": "(UTC-10:00) 알루샨 열도"
     }
   ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Trigger condition cannot be empty"
+    }
+  ],
   "DuXV2M": [
     {
       "type": 0,
@@ -2173,12 +2185,6 @@
       "value": "(UTC+03:00) 민스크"
     }
   ],
-  "NlSWOG": [
-    {
-      "type": 0,
-      "value": "식"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2261,6 +2267,12 @@
     {
       "type": 0,
       "value": "연결 이름"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "This function doesn't require any input."
     }
   ],
   "ORVfYZ": [
@@ -2732,6 +2744,12 @@
     {
       "type": 0,
       "value": "문자열 타임스탬프의 월초를 반환합니다."
+    }
+  ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Paging count invalid"
     }
   ],
   "TUaunO": [
@@ -3744,6 +3762,12 @@
       "value": "첫 번째 인수가 두 번째 인수보다 크거나 같은 경우 true를 반환합니다."
     }
   ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4435,6 +4459,12 @@
     {
       "type": 0,
       "value": "일반 텍스트로 암호 입력 또는 보안 매개 변수 사용"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "mx2IMJ": [
@@ -5198,6 +5228,12 @@
       "value": "전역적으로 고유한 문자열(GUID)을 생성합니다."
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run after configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5548,12 +5584,6 @@
     {
       "type": 0,
       "value": "이렇게 하면 모든 자식 단계도 제거됩니다."
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "이 식에는 입력이 필요하지 않습니다."
     }
   ],
   "zBMVKg": [

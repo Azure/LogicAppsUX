@@ -373,6 +373,12 @@
       "value": "Läs mer"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1451,6 +1457,12 @@
       "value": "(UTC-10:00) Aleuterna"
     }
   ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Trigger condition cannot be empty"
+    }
+  ],
   "DuXV2M": [
     {
       "type": 0,
@@ -2301,12 +2313,6 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
-    {
-      "type": 0,
-      "value": "Uttryck"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2401,6 +2407,12 @@
     {
       "type": 0,
       "value": "Anslutningens namn"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "This function doesn't require any input."
     }
   ],
   "ORVfYZ": [
@@ -2887,6 +2899,12 @@
     {
       "type": 0,
       "value": "Returnerar månadens start för en strängtidsstämpel"
+    }
+  ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Paging count invalid"
     }
   ],
   "TUaunO": [
@@ -3903,6 +3921,12 @@
       "value": "Returnerar sant om det första argumentet är större än eller lika med det andra"
     }
   ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4633,6 +4657,12 @@
     {
       "type": 0,
       "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "mx2IMJ": [
@@ -5423,6 +5453,12 @@
       "value": "Genererar en globalt unik sträng (GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run after configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5777,12 +5813,6 @@
     {
       "type": 0,
       "value": "Detta tar även bort alla underordnade steg."
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Det här uttrycket kräver inga indata."
     }
   ],
   "zBMVKg": [
