@@ -1,5 +1,5 @@
 import { baseUrl } from '../utils';
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 
 test('Should be able to drag and drop operations', async ({ page }) => {
   await page.goto(baseUrl);
@@ -20,10 +20,4 @@ test('Should be able to drag and drop operations', async ({ page }) => {
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   await destinationElement.hover();
   await page.mouse.up();
-
-  //wait on animations to complete and things to settle
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  await expect(page).toHaveScreenshot('dragAndDrop.png', {
-    maxDiffPixels: 100,
-  });
 });
