@@ -264,7 +264,7 @@ function serializeFormData(formDataParameters: SerializedParameter[]): Partial<O
   const multiparts = keys
     .map((parameterName) => {
       const items = formDataValue[parameterName];
-      const name = parameterName.replace('"', '%22');
+      const name = parameterName.replaceAll('"', '%22');
       if (items.length === 1) {
         // NOTE: This is item for non file type form data parameter.
         return createMultipart(name, items[0].value);
