@@ -15,7 +15,7 @@ interface MockStoreData {
 }
 
 const MockStore = ({ mockState, children }) => {
-  store.dispatch(setInitialSchema({ schema: mockState.schema, schemaType: SchemaTypes.Output, flattenedSchema: {} }));
+  store.dispatch(setInitialSchema({ schema: mockState.schema, schemaType: SchemaTypes.Target, flattenedSchema: {} }));
   store.dispatch(setCurrentTargetNode(mockState.currentNode));
 
   return <Provider store={store}>{children}</Provider>;

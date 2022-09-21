@@ -57,11 +57,11 @@ export const dataMapSlice = createSlice({
       state,
       action: PayloadAction<{
         schema: SchemaExtended;
-        schemaType: SchemaTypes.Input | SchemaTypes.Output;
+        schemaType: SchemaTypes.Source | SchemaTypes.Target;
         flattenedSchema: SchemaNodeDictionary;
       }>
     ) => {
-      if (action.payload.schemaType === SchemaTypes.Input) {
+      if (action.payload.schemaType === SchemaTypes.Source) {
         state.curDataMapOperation.sourceSchema = action.payload.schema;
         state.curDataMapOperation.flattenedSourceSchema = action.payload.flattenedSchema;
         state.pristineDataMap.sourceSchema = action.payload.schema;

@@ -117,7 +117,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     <div>
       <NodeInfo />
 
-      {currentNode.nodeType === NodeType.Output && <AdditionalTargetNodeProperties />}
+      {currentNode.nodeType === NodeType.Target && <AdditionalTargetNodeProperties />}
     </div>
   );
 };

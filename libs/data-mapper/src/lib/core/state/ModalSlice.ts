@@ -28,10 +28,10 @@ export const modalSlice = createSlice({
       state.isWarningModalOpen = true;
       state.warningModalType = WarningModalState.DiscardWarning;
     },
-    openChangeSchemaWarning: (state, action: PayloadAction<{ schemaType: SchemaTypes.Input | SchemaTypes.Output }>) => {
+    openChangeSchemaWarning: (state, action: PayloadAction<{ schemaType: SchemaTypes.Source | SchemaTypes.Target }>) => {
       state.isOkClicked = false;
       state.isWarningModalOpen = true;
-      if (action.payload.schemaType === SchemaTypes.Input) {
+      if (action.payload.schemaType === SchemaTypes.Source) {
         state.warningModalType = WarningModalState.ChangeInputWarning;
       } else {
         state.warningModalType = WarningModalState.ChangeOutputWarning;

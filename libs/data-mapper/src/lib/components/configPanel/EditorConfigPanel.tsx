@@ -124,7 +124,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
   }, [dispatch, setErrorMessage]);
 
   const editSchema = useCallback(() => {
-    const selectedSchema = schemaType === SchemaTypes.Input ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
+    const selectedSchema = schemaType === SchemaTypes.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
 
     setErrorMessage('');
     if (selectedSchema) {
@@ -184,7 +184,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     let isNoNewSchemaSelected = true;
 
     if (uploadType === UploadSchemaTypes.SelectFrom) {
-      if (schemaType === SchemaTypes.Input) {
+      if (schemaType === SchemaTypes.Source) {
         isNoNewSchemaSelected = !selectedSourceSchema || selectedSourceSchema.key === curDataMapOperation.sourceSchema?.name;
       } else {
         isNoNewSchemaSelected = !selectedTargetSchema || selectedTargetSchema.key === curDataMapOperation.targetSchema?.name;
@@ -244,7 +244,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
         ) : isDefaultPanelOpen ? (
           <Text className="header-text">{configurationHeader}</Text>
         ) : isChangeSchemaPanelOpen ? (
-          <Text className="header-text">{schemaType === SchemaTypes.Input ? addSourceSchemaHeaderMsg : addTargetSchemaHeaderMsg}</Text>
+          <Text className="header-text">{schemaType === SchemaTypes.Source ? addSourceSchemaHeaderMsg : addTargetSchemaHeaderMsg}</Text>
         ) : (
           <div />
         )}
@@ -279,8 +279,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
           {isChangeSchemaPanelOpen ? (
             <ChangeSchemaView
               schemaType={schemaType}
-              selectedSchema={schemaType === SchemaTypes.Input ? selectedSourceSchema : selectedTargetSchema}
-              setSelectedSchema={schemaType === SchemaTypes.Input ? setSelectedSourceSchema : setSelectedTargetSchema}
+              selectedSchema={schemaType === SchemaTypes.Source ? selectedSourceSchema : selectedTargetSchema}
+              setSelectedSchema={schemaType === SchemaTypes.Source ? setSelectedSourceSchema : setSelectedTargetSchema}
               selectedSchemaFile={selectedSchemaFile}
               setSelectedSchemaFile={setSelectedSchemaFile}
               errorMessage={errorMessage}

@@ -74,7 +74,7 @@ const convertInputToReactFlowParentAndChildNodes = (
       id: `${inputPrefix}${inputNode.key}`,
       data: {
         schemaNode: inputNode,
-        schemaType: SchemaTypes.Input,
+        schemaType: SchemaTypes.Source,
         displayHandle: true,
         isLeaf: true,
         isChild: false,
@@ -94,7 +94,7 @@ const convertInputToReactFlowParentAndChildNodes = (
 };
 
 const convertOutputToReactFlowParentAndChildNodes = (targetSchemaNode: SchemaNodeExtended): ReactFlowNode<SchemaCardProps>[] => {
-  return convertToReactFlowParentAndChildNodes(targetSchemaNode, SchemaTypes.Output, true);
+  return convertToReactFlowParentAndChildNodes(targetSchemaNode, SchemaTypes.Target, true);
 };
 
 export const convertToReactFlowParentAndChildNodes = (
@@ -103,8 +103,8 @@ export const convertToReactFlowParentAndChildNodes = (
   displayTargets: boolean
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
-  const rootX = schemaType === SchemaTypes.Input ? inputX : rootOutputX;
-  const idPrefix = schemaType === SchemaTypes.Input ? inputPrefix : outputPrefix;
+  const rootX = schemaType === SchemaTypes.Source ? inputX : rootOutputX;
+  const idPrefix = schemaType === SchemaTypes.Source ? inputPrefix : outputPrefix;
 
   reactFlowNodes.push({
     id: `${idPrefix}${parentSchemaNode.key}`,
@@ -118,7 +118,7 @@ export const convertToReactFlowParentAndChildNodes = (
       error: false,
     },
     type: ReactFlowNodeType.SchemaNode,
-    targetPosition: !displayTargets ? undefined : SchemaTypes.Input ? Position.Right : Position.Left,
+    targetPosition: !displayTargets ? undefined : SchemaTypes.Source ? Position.Right : Position.Left,
     position: {
       x: rootX,
       y: rootY,
@@ -138,7 +138,7 @@ export const convertToReactFlowParentAndChildNodes = (
         error: false,
       },
       type: ReactFlowNodeType.SchemaNode,
-      targetPosition: !displayTargets ? undefined : SchemaTypes.Input ? Position.Right : Position.Left,
+      targetPosition: !displayTargets ? undefined : SchemaTypes.Source ? Position.Right : Position.Left,
       position: {
         x: rootX + childXOffSet,
         y: rootY + rootYOffset * reactFlowNodes.length,

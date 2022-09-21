@@ -41,11 +41,11 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSc
   const reactFlowNodes = useMemo(() => {
     const reactFlowNodes: ReactFlowNode[] = [];
     if (sourceSchema) {
-      reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(sourceSchema.schemaTreeRoot, SchemaTypes.Input, false));
+      reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(sourceSchema.schemaTreeRoot, SchemaTypes.Source, false));
     }
 
     if (targetSchema) {
-      reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(targetSchema.schemaTreeRoot, SchemaTypes.Output, false));
+      reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(targetSchema.schemaTreeRoot, SchemaTypes.Target, false));
     }
 
     return reactFlowNodes;
@@ -86,10 +86,10 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSc
   return (
     <div className={styles.mapOverviewStyles} style={reactFlowStyle}>
       <div style={{ width: '50%' }}>
-        {sourceSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Input} onClick={onSourceSchemaClick} />}
+        {sourceSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Source} onClick={onSourceSchemaClick} />}
       </div>
       <div style={{ width: '50%' }}>
-        {targetSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Output} onClick={onTargetSchemaClick} />}
+        {targetSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Target} onClick={onTargetSchemaClick} />}
       </div>
     </div>
   );

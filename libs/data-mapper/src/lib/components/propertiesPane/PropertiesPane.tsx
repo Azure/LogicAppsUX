@@ -167,9 +167,9 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const getPaneTitle = (): string | undefined => {
     switch (currentNode?.nodeType) {
-      case NodeType.Input:
+      case NodeType.Source:
         return sourceSchemaNodeLoc;
-      case NodeType.Output:
+      case NodeType.Target:
         return targetSchemaNodeLoc;
       case NodeType.Function:
         return functionLoc;
@@ -195,7 +195,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       case TABS.CODE:
         return <CodeTab />;
       case TABS.TEST:
-        if (currentNode.nodeType === NodeType.Output) {
+        if (currentNode.nodeType === NodeType.Target) {
           return <TestTab currentNode={currentNode} />;
         } else {
           return null;
@@ -213,7 +213,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
         <Tab value={TABS.CODE}>{codeLoc}</Tab>
-        {currentNode?.nodeType === NodeType.Output && <Tab value={TABS.TEST}>{testLoc}</Tab>}
+        {currentNode?.nodeType === NodeType.Target && <Tab value={TABS.TEST}>{testLoc}</Tab>}
       </TabList>
     </>
   );
@@ -242,7 +242,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
-          {(currentNode?.nodeType === NodeType.Input || currentNode?.nodeType === NodeType.Function) && (
+          {(currentNode?.nodeType === NodeType.Source || currentNode?.nodeType === NodeType.Function) && (
             <Button
               appearance="subtle"
               size="medium"

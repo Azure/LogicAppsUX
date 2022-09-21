@@ -138,18 +138,18 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
     if (node.type === ReactFlowNodeType.SchemaNode) {
-      if (node.data.schemaType === SchemaTypes.Input) {
+      if (node.data.schemaType === SchemaTypes.Source) {
         const selectedSourceNode: SelectedSourceNode = {
-          nodeType: NodeType.Input,
+          nodeType: NodeType.Source,
           name: node.data.schemaNode.name,
           path: node.id.replace(inputPrefix, ''),
           dataType: node.data.schemaNode.schemaNodeDataType,
         };
 
         dispatch(setCurrentlySelectedNode(selectedSourceNode));
-      } else if (node.data.schemaType === SchemaTypes.Output) {
+      } else if (node.data.schemaType === SchemaTypes.Target) {
         const selectedTargetNode: SelectedTargetNode = {
-          nodeType: NodeType.Output,
+          nodeType: NodeType.Target,
           name: node.data.schemaNode.name,
           path: node.id.replace(outputPrefix, ''),
           dataType: node.data.schemaNode.schemaNodeDataType,

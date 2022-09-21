@@ -32,8 +32,8 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ dataMap, source
       dispatch(
         setInitialSchema({
           schema: convertSchemaToSchemaExtended(sourceSchema),
-          schemaType: SchemaTypes.Input,
-          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Input),
+          schemaType: SchemaTypes.Source,
+          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Source),
         })
       );
     }
@@ -45,8 +45,8 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ dataMap, source
       dispatch(
         setInitialSchema({
           schema: extendedSchema,
-          schemaType: SchemaTypes.Output,
-          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Output),
+          schemaType: SchemaTypes.Target,
+          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Target),
         })
       );
     }

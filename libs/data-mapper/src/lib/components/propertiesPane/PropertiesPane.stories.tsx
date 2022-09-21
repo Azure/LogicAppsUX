@@ -8,13 +8,13 @@ import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
 const exSourceNode: SelectedSourceNode = {
-  nodeType: NodeType.Input,
+  nodeType: NodeType.Source,
   name: 'ExSourceNode',
   path: '/path/to/ExSourceNode',
   dataType: SchemaNodeDataType.String,
 };
 const exTargetNode: SelectedTargetNode = {
-  nodeType: NodeType.Output,
+  nodeType: NodeType.Target,
   name: 'ExTargetNode',
   path: '/path/to/ExTargetNode',
   dataType: SchemaNodeDataType.Int,

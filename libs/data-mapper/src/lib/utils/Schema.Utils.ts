@@ -26,7 +26,7 @@ const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPat
 
 export const flattenSchema = (schema: SchemaExtended, schemaType: SchemaTypes): SchemaNodeDictionary => {
   const result: SchemaNodeDictionary = {};
-  const idPrefix = schemaType === SchemaTypes.Input ? inputPrefix : outputPrefix;
+  const idPrefix = schemaType === SchemaTypes.Source ? inputPrefix : outputPrefix;
   const schemaNodeArray = flattenSchemaNode(schema.schemaTreeRoot);
 
   schemaNodeArray.reduce((dict, node) => {

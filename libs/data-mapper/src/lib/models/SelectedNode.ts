@@ -3,8 +3,8 @@ import type { FunctionInput } from './Function';
 import type { SchemaNodeDataType } from './Schema';
 
 export enum NodeType {
-  Input = 'input',
-  Output = 'output',
+  Source = 'source',
+  Target = 'target',
   Function = 'function',
 }
 
@@ -12,14 +12,14 @@ export type SelectedNode = SelectedSchemaNode | SelectedFunctionNode;
 export type SelectedSchemaNode = SelectedSourceNode | SelectedTargetNode;
 
 export interface SelectedSourceNode {
-  nodeType: NodeType.Input;
+  nodeType: NodeType.Source;
   name: string;
   path: string;
   dataType: SchemaNodeDataType;
 }
 
 export interface SelectedTargetNode extends Omit<SelectedSourceNode, 'nodeType'> {
-  nodeType: NodeType.Output;
+  nodeType: NodeType.Target;
   inputIds: string[];
   defaultValue: string;
   doNotGenerateIfNoValue: boolean;

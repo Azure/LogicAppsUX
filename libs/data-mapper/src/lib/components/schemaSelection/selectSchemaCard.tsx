@@ -38,13 +38,13 @@ export const SelectSchemaCard = ({ schemaType, onClick }: SelectSchemaCardProps)
   let selectSchemaMsg = '';
 
   switch (schemaType) {
-    case SchemaTypes.Input:
+    case SchemaTypes.Source:
       selectSchemaMsg = intl.formatMessage({
         defaultMessage: 'Select a source schema',
         description: 'label to inform to select source schema to be used',
       });
       break;
-    case SchemaTypes.Output:
+    case SchemaTypes.Target:
       selectSchemaMsg = intl.formatMessage({
         defaultMessage: 'Select a target schema',
         description: 'label to inform to select target schema to be used',

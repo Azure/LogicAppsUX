@@ -149,7 +149,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
   const sharedStyles = getStylesForSharedState();
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
 
-  const isOutputChildNode = schemaType === SchemaTypes.Output && isChild;
+  const isOutputChildNode = schemaType === SchemaTypes.Target && isChild;
 
   const containerStyleClasses = [sharedStyles.root, classes.container];
   if (isOutputChildNode) {
@@ -162,7 +162,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
 
   const containerStyle = mergeClasses(...containerStyleClasses);
 
-  const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
+  const showOutputChevron = schemaType === SchemaTypes.Target && !isLeaf;
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType);
@@ -175,8 +175,8 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
     <div className={containerStyle}>
       {displayHandle && isLeaf ? (
         <Handle
-          type={schemaType === SchemaTypes.Input ? 'source' : 'target'}
-          position={schemaType === SchemaTypes.Input ? Position.Right : Position.Left}
+          type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
+          position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
           style={handleStyle}
           isValidConnection={isValidConnection}
         />
@@ -186,7 +186,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
         <span className={classes.cardIcon}>
           <BundledTypeIcon />
         </span>
-        <Text className={schemaType === SchemaTypes.Output ? classes.cardText : mergedInputText} block={true} nowrap={true}>
+        <Text className={schemaType === SchemaTypes.Target ? classes.cardText : mergedInputText} block={true} nowrap={true}>
           {schemaNode.name}
         </Text>
       </Button>

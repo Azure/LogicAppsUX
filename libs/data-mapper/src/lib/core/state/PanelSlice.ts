@@ -38,12 +38,12 @@ export const panelSlice = createSlice({
     },
 
     openSourceSchemaPanel: (state) => {
-      state.schemaType = SchemaTypes.Input;
+      state.schemaType = SchemaTypes.Source;
       state.isChangeSchemaPanelOpen = true;
     },
 
     openTargetSchemaPanel: (state) => {
-      state.schemaType = SchemaTypes.Output;
+      state.schemaType = SchemaTypes.Target;
       state.isChangeSchemaPanelOpen = true;
     },
 

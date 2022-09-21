@@ -80,7 +80,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   let selectSchemaPlaceholderMessage = '';
 
   switch (schemaType) {
-    case SchemaTypes.Input:
+    case SchemaTypes.Source:
       uploadSelectLabelMessage = intl.formatMessage({
         defaultMessage: 'Upload or select a source schema to be used for your map.',
         description: 'label to inform to upload or select source schema to be used',
@@ -90,7 +90,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
         description: 'placeholder for selecting the source schema dropdown',
       });
       break;
-    case SchemaTypes.Output:
+    case SchemaTypes.Target:
       uploadSelectLabelMessage = intl.formatMessage({
         defaultMessage: 'Upload or select a target schema to be used for your map.',
         description: 'label to inform to upload or select target schema to be used',
