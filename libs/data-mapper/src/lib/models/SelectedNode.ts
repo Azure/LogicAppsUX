@@ -9,16 +9,16 @@ export enum NodeType {
 }
 
 export type SelectedNode = SelectedSchemaNode | SelectedFunctionNode;
-export type SelectedSchemaNode = SelectedInputNode | SelectedOutputNode;
+export type SelectedSchemaNode = SelectedSourceNode | SelectedTargetNode;
 
-export interface SelectedInputNode {
+export interface SelectedSourceNode {
   nodeType: NodeType.Input;
   name: string;
   path: string;
   dataType: SchemaNodeDataType;
 }
 
-export interface SelectedOutputNode extends Omit<SelectedInputNode, 'nodeType'> {
+export interface SelectedTargetNode extends Omit<SelectedSourceNode, 'nodeType'> {
   nodeType: NodeType.Output;
   inputIds: string[];
   defaultValue: string;

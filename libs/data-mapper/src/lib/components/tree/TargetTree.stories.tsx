@@ -1,7 +1,7 @@
 import { simpleMockSchema } from '../../__mocks__';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
-import type { SchemaTreeProps } from './OutputTree';
-import { TargetSchemaTree } from './OutputTree';
+import type { SchemaTreeProps } from './TargetTree';
+import { TargetSchemaTree } from './TargetTree';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 

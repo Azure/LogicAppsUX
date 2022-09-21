@@ -23,15 +23,15 @@ export interface DataMapOperationState {
   flattenedSourceSchema: SchemaNodeDictionary;
   targetSchema?: SchemaExtended;
   flattenedTargetSchema: SchemaNodeDictionary;
-  currentInputNodes: SchemaNodeExtended[];
-  currentOutputNode?: SchemaNodeExtended;
+  currentSourceNodes: SchemaNodeExtended[];
+  currentTargetNode?: SchemaNodeExtended;
   currentFunctionNodes: FunctionDictionary;
   currentlySelectedNode?: SelectedNode;
 }
 
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
-  currentInputNodes: [],
+  currentSourceNodes: [],
   currentFunctionNodes: {},
   flattenedSourceSchema: {},
   flattenedTargetSchema: {},
@@ -69,10 +69,10 @@ export const dataMapSlice = createSlice({
       } else {
         state.curDataMapOperation.targetSchema = action.payload.schema;
         state.curDataMapOperation.flattenedTargetSchema = action.payload.flattenedSchema;
-        state.curDataMapOperation.currentOutputNode = action.payload.schema.schemaTreeRoot;
+        state.curDataMapOperation.currentTargetNode = action.payload.schema.schemaTreeRoot;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = action.payload.flattenedSchema;
-        state.pristineDataMap.currentOutputNode = action.payload.schema.schemaTreeRoot;
+        state.pristineDataMap.currentTargetNode = action.payload.schema.schemaTreeRoot;
       }
     },
 
@@ -85,22 +85,22 @@ export const dataMapSlice = createSlice({
         let newState: DataMapOperationState = {
           ...currentState,
           dataMapConnections: {},
-          currentInputNodes: [],
-          currentOutputNode: currentState.targetSchema.schemaTreeRoot,
+          currentSourceNodes: [],
+          currentTargetNode: currentState.targetSchema.schemaTreeRoot,
         };
 
         if (incomingDataMap) {
           const loadedConnections = convertFromMapDefinition(yaml.dump(incomingDataMap));
-          const topLevelInputNodes: SchemaNodeExtended[] = [];
+          const topLevelSourceNodes: SchemaNodeExtended[] = [];
 
           Object.entries(loadedConnections).forEach(([_key, con]) => {
             // TODO: Only push input nodes at TOP-LEVEL of output
-            topLevelInputNodes.push(currentState.flattenedSourceSchema[con.reactFlowSource]);
+            topLevelSourceNodes.push(currentState.flattenedSourceSchema[con.reactFlowSource]);
           });
 
           newState = {
             ...currentState,
-            currentInputNodes: topLevelInputNodes,
+            currentSourceNodes: topLevelSourceNodes,
             dataMapConnections: loadedConnections,
           };
         }
@@ -131,10 +131,10 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    setCurrentInputNodes: (state, action: PayloadAction<SchemaNodeExtended[] | undefined>) => {
+    setCurrentSourceNodes: (state, action: PayloadAction<SchemaNodeExtended[] | undefined>) => {
       let nodes: SchemaNodeExtended[] = [];
       if (action.payload) {
-        const uniqueNodes = state.curDataMapOperation.currentInputNodes.concat(action.payload).filter((node, index, self) => {
+        const uniqueNodes = state.curDataMapOperation.currentSourceNodes.concat(action.payload).filter((node, index, self) => {
           return self.findIndex((subNode) => subNode.key === node.key) === index;
         });
 
@@ -143,16 +143,16 @@ export const dataMapSlice = createSlice({
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentInputNodes: nodes,
+        currentSourceNodes: nodes,
       };
 
       doDataMapOperation(state, newState);
     },
 
-    addInputNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
-      const nodes = [...state.curDataMapOperation.currentInputNodes];
+    addSourceNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
+      const nodes = [...state.curDataMapOperation.currentSourceNodes];
       action.payload.forEach((payloadNode) => {
-        const existingNode = state.curDataMapOperation.currentInputNodes.find((currentNode) => currentNode.key === payloadNode.key);
+        const existingNode = state.curDataMapOperation.currentSourceNodes.find((currentNode) => currentNode.key === payloadNode.key);
         if (!existingNode) {
           nodes.push(payloadNode);
         }
@@ -160,48 +160,48 @@ export const dataMapSlice = createSlice({
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentInputNodes: nodes,
+        currentSourceNodes: nodes,
       };
 
       doDataMapOperation(state, newState);
     },
 
-    removeInputNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
-      let nodes = [...state.curDataMapOperation.currentInputNodes];
-      nodes = state.curDataMapOperation.currentInputNodes.filter((currentNode) =>
+    removeSourceNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
+      let nodes = [...state.curDataMapOperation.currentSourceNodes];
+      nodes = state.curDataMapOperation.currentSourceNodes.filter((currentNode) =>
         action.payload.every((payloadNode) => payloadNode.key !== currentNode.key)
       );
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentInputNodes: nodes,
+        currentSourceNodes: nodes,
       };
 
       doDataMapOperation(state, newState);
     },
 
-    toggleInputNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
-      let nodes = [...state.curDataMapOperation.currentInputNodes];
-      const existingNode = state.curDataMapOperation.currentInputNodes.find((currentNode) => currentNode.key === action.payload.key);
+    toggleSourceNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
+      let nodes = [...state.curDataMapOperation.currentSourceNodes];
+      const existingNode = state.curDataMapOperation.currentSourceNodes.find((currentNode) => currentNode.key === action.payload.key);
       if (existingNode) {
-        nodes = state.curDataMapOperation.currentInputNodes.filter((currentNode) => currentNode.key !== action.payload.key);
+        nodes = state.curDataMapOperation.currentSourceNodes.filter((currentNode) => currentNode.key !== action.payload.key);
       } else {
         nodes.push(action.payload);
       }
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentInputNodes: nodes,
+        currentSourceNodes: nodes,
       };
 
       doDataMapOperation(state, newState);
     },
 
-    setCurrentOutputNode: (state, action: PayloadAction<{ schemaNode: SchemaNodeExtended; resetSelectedInputNodes: boolean }>) => {
+    setCurrentTargetNode: (state, action: PayloadAction<{ schemaNode: SchemaNodeExtended; resetSelectedSourceNodes: boolean }>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
-        currentOutputNode: action.payload.schemaNode,
-        currentInputNodes: action.payload.resetSelectedInputNodes ? [] : state.curDataMapOperation.currentInputNodes,
+        currentTargetNode: action.payload.schemaNode,
+        currentSourceNodes: action.payload.resetSelectedSourceNodes ? [] : state.curDataMapOperation.currentSourceNodes,
       };
 
       doDataMapOperation(state, newState);
@@ -340,11 +340,11 @@ export const {
   setInitialDataMap,
   changeSourceSchema,
   changeTargetSchema,
-  setCurrentInputNodes,
-  addInputNodes,
-  removeInputNodes,
-  toggleInputNode,
-  setCurrentOutputNode,
+  setCurrentSourceNodes,
+  addSourceNodes,
+  removeSourceNodes,
+  toggleSourceNode,
+  setCurrentTargetNode,
   setCurrentlySelectedNode,
   addFunctionNode,
   removeFunctionNode,

@@ -1,5 +1,5 @@
 import { simpleMockSchema } from '../../__mocks__';
-import { setCurrentOutputNode, setInitialSchema } from '../../core/state/DataMapSlice';
+import { setCurrentTargetNode, setInitialSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { SchemaTypes } from '../../models/Schema';
@@ -16,7 +16,7 @@ interface MockStoreData {
 
 const MockStore = ({ mockState, children }) => {
   store.dispatch(setInitialSchema({ schema: mockState.schema, schemaType: SchemaTypes.Output, flattenedSchema: {} }));
-  store.dispatch(setCurrentOutputNode(mockState.currentNode));
+  store.dispatch(setCurrentTargetNode(mockState.currentNode));
 
   return <Provider store={store}>{children}</Provider>;
 };

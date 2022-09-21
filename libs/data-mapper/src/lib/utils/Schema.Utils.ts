@@ -59,13 +59,13 @@ export const hasAConnection = (schemaNode: SchemaNodeExtended, connections: Conn
   );
 };
 
-export const hasAConnectionAtCurrentOutputNode = (
+export const hasAConnectionAtCurrentTargetNode = (
   schemaNode: SchemaNodeExtended,
-  currentOutputNode: SchemaNodeExtended,
+  currentTargetNode: SchemaNodeExtended,
   connections: ConnectionDictionary
 ): boolean => {
   return Object.values(connections)
-    .filter((connection) => currentOutputNode.children.some((outputChild) => outputChild.key === connection.destination))
+    .filter((connection) => currentTargetNode.children.some((outputChild) => outputChild.key === connection.destination))
     .some(
       (connection) =>
         connection.reactFlowSource === `${inputPrefix}${schemaNode.key}` ||

@@ -1,5 +1,5 @@
-import { childOutputNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
-import { setCurrentOutputNode } from '../../core/state/DataMapSlice';
+import { childTargetNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
+import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
@@ -108,7 +108,7 @@ const useStyles = makeStyles({
     opacity: 0.38,
   },
   outputChildCard: {
-    width: `${childOutputNodeCardWidth}px`,
+    width: `${childTargetNodeCardWidth}px`,
   },
 
   focusIndicator: createFocusOutlineStyle({
@@ -168,7 +168,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
   const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType);
 
   const outputChevronOnClick = (newCurrentSchemaNode: SchemaNodeExtended) => {
-    dispatch(setCurrentOutputNode({ schemaNode: newCurrentSchemaNode, resetSelectedInputNodes: true }));
+    dispatch(setCurrentTargetNode({ schemaNode: newCurrentSchemaNode, resetSelectedSourceNodes: true }));
   };
 
   return (

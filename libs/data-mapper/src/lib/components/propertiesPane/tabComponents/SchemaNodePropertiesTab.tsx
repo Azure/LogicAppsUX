@@ -85,7 +85,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     );
   };
 
-  const AdditionalOutputNodeProperties = () => {
+  const AdditionalTargetNodeProperties = () => {
     return (
       <div>
         <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
@@ -117,7 +117,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     <div>
       <NodeInfo />
 
-      {currentNode.nodeType === NodeType.Output && <AdditionalOutputNodeProperties />}
+      {currentNode.nodeType === NodeType.Output && <AdditionalTargetNodeProperties />}
     </div>
   );
 };

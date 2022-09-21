@@ -11,22 +11,22 @@ import { SchemaTree } from '../components/tree/SchemaTree';
 import { checkerboardBackgroundImage, defaultCanvasZoom } from '../constants/ReactFlowConstants';
 import {
   addFunctionNode,
-  addInputNodes,
+  addSourceNodes,
   changeConnection,
   deleteConnection,
   makeConnection,
-  removeInputNodes,
+  removeSourceNodes,
   setCurrentlySelectedNode,
-  toggleInputNode,
+  toggleSourceNode,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
 import type { FunctionData } from '../models/Function';
-import type { SelectedFunctionNode, SelectedInputNode, SelectedOutputNode } from '../models/SelectedNode';
+import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
 import { inputPrefix, outputPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
-import { allChildNodesSelected, hasAConnectionAtCurrentOutputNode, isLeafNode } from '../utils/Schema.Utils';
+import { allChildNodesSelected, hasAConnectionAtCurrentTargetNode, isLeafNode } from '../utils/Schema.Utils';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -69,10 +69,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { fitView, zoomIn, zoomOut } = useReactFlow();
 
-  const currentlySelectedInputNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentInputNodes);
+  const currentlySelectedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
+  const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
@@ -82,10 +82,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard, functionNode: FunctionCard }), []);
 
   // TODO update to support input nodes connected to an function, connected to an output node
-  const connectedInputNodes = useMemo(() => {
-    if (currentOutputNode) {
+  const connectedSourceNodes = useMemo(() => {
+    if (currentTargetNode) {
       const connectionValues = Object.values(connections);
-      const outputFilteredConnections = currentOutputNode.children.flatMap((childNode) => {
+      const outputFilteredConnections = currentTargetNode.children.flatMap((childNode) => {
         const foundConnection = connectionValues.find((connection) => connection.destination === childNode.key);
         return foundConnection ? [foundConnection] : [];
       });
@@ -98,7 +98,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     } else {
       return [];
     }
-  }, [flattenedSourceSchema, currentOutputNode, connections]);
+  }, [flattenedSourceSchema, currentTargetNode, connections]);
 
   const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
     if (data.value === displayToolboxItem) {
@@ -120,18 +120,18 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
     if (isLeafNode(selectedNode)) {
-      if (currentOutputNode && !hasAConnectionAtCurrentOutputNode(selectedNode, currentOutputNode, currentConnections)) {
-        dispatch(toggleInputNode(selectedNode));
+      if (currentTargetNode && !hasAConnectionAtCurrentTargetNode(selectedNode, currentTargetNode, currentConnections)) {
+        dispatch(toggleSourceNode(selectedNode));
       }
     } else {
-      if (allChildNodesSelected(selectedNode, currentlySelectedInputNodes)) {
+      if (allChildNodesSelected(selectedNode, currentlySelectedSourceNodes)) {
         // TODO reconfirm this works for loops and conditionals
         const nodesToRemove = selectedNode.children.filter((childNodes) =>
           Object.values(currentConnections).some((currentConnection) => childNodes.key !== currentConnection.sourceValue)
         );
-        dispatch(removeInputNodes(nodesToRemove));
+        dispatch(removeSourceNodes(nodesToRemove));
       } else {
-        dispatch(addInputNodes(selectedNode.children));
+        dispatch(addSourceNodes(selectedNode.children));
       }
     }
   };
@@ -139,16 +139,16 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
     if (node.type === ReactFlowNodeType.SchemaNode) {
       if (node.data.schemaType === SchemaTypes.Input) {
-        const selectedInputNode: SelectedInputNode = {
+        const selectedSourceNode: SelectedSourceNode = {
           nodeType: NodeType.Input,
           name: node.data.schemaNode.name,
           path: node.id.replace(inputPrefix, ''),
           dataType: node.data.schemaNode.schemaNodeDataType,
         };
 
-        dispatch(setCurrentlySelectedNode(selectedInputNode));
+        dispatch(setCurrentlySelectedNode(selectedSourceNode));
       } else if (node.data.schemaType === SchemaTypes.Output) {
-        const selectedOutputNode: SelectedOutputNode = {
+        const selectedTargetNode: SelectedTargetNode = {
           nodeType: NodeType.Output,
           name: node.data.schemaNode.name,
           path: node.id.replace(outputPrefix, ''),
@@ -159,7 +159,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
           inputIds: [],
         };
 
-        dispatch(setCurrentlySelectedNode(selectedOutputNode));
+        dispatch(setCurrentlySelectedNode(selectedTargetNode));
       }
     } else if (node.type === ReactFlowNodeType.FunctionNode) {
       const selectedFunctionNode: SelectedFunctionNode = {
@@ -296,11 +296,11 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   };
 
   const [nodes, edges] = useLayout(
-    currentlySelectedInputNodes,
-    connectedInputNodes,
+    currentlySelectedSourceNodes,
+    connectedSourceNodes,
     flattenedSourceSchema,
     allFunctionNodes,
-    currentOutputNode,
+    currentTargetNode,
     connections
   );
 
@@ -336,8 +336,8 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
           {sourceSchema && (
             <SchemaTree
               schema={sourceSchema}
-              currentlySelectedNodes={currentlySelectedInputNodes}
-              visibleConnectedNodes={connectedInputNodes}
+              currentlySelectedNodes={currentlySelectedSourceNodes}
+              visibleConnectedNodes={connectedSourceNodes}
               onNodeClick={onToolboxItemClick}
             />
           )}
