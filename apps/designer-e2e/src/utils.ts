@@ -1,3 +1,3 @@
 // todo use global config
 
-export const baseUrl = 'https://designer.local:4200/';
+export const baseUrl = 'https://localhost:4200/';

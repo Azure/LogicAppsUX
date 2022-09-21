@@ -48,7 +48,7 @@
       "options": {
         "buildTarget": "designer-standalone:build",
         "hmr": true,
-        "host": "designer.local",
+        "host": "localhost",
         "ssl": true,
         "sslKey": "local-key.pem",
         "sslCert": "local-cert.pem"
