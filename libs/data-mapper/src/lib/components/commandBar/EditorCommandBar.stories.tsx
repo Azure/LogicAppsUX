@@ -20,6 +20,7 @@ Template.args = {
   onSaveClick: () => console.log('Save button clicked'),
   onUndoClick: () => console.log('Undo button clicked'),
   onRedoClick: () => console.log('Redo button clicked'),
+  onTestClick: () => console.log('Test button clicked'),
 };
 
 export const Standard = Template.bind({});
