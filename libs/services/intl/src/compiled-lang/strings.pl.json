@@ -411,6 +411,12 @@
       "value": "Dowiedz się więcej"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1511,6 +1517,12 @@
       "value": "(UTC-10:00) Aleuty"
     }
   ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Trigger condition cannot be empty"
+    }
+  ],
   "DuXV2M": [
     {
       "type": 0,
@@ -2409,12 +2421,6 @@
       "value": "(UTC+03:00) Mińsk"
     }
   ],
-  "NlSWOG": [
-    {
-      "type": 0,
-      "value": "Wyrażenie"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2513,6 +2519,12 @@
     {
       "type": 0,
       "value": "Nazwa połączenia"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "This function doesn't require any input."
     }
   ],
   "ORVfYZ": [
@@ -3017,6 +3029,12 @@
     {
       "type": 0,
       "value": "Zwraca początek miesiąca z sygnatury czasowej przekazanego ciągu"
+    }
+  ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Paging count invalid"
     }
   ],
   "TUaunO": [
@@ -4033,6 +4051,12 @@
       "value": "Zwraca wartość true, jeśli pierwszy argument jest większy od drugiego lub jemu równy"
     }
   ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4793,6 +4817,12 @@
     {
       "type": 0,
       "value": "Wprowadź hasło w postaci zwykłego tekstu lub użyj parametru secure"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "mx2IMJ": [
@@ -5605,6 +5635,12 @@
       "value": "Generuje globalnie unikatowy ciąg (identyfikator GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run after configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5959,12 +5995,6 @@
     {
       "type": 0,
       "value": "Spowoduje to również usunięcie wszystkich kroków podrzędnych."
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "To wyrażenie nie wymaga żadnych danych wejściowych."
     }
   ],
   "zBMVKg": [

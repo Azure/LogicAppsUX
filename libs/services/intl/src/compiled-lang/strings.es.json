@@ -384,6 +384,12 @@
       "value": "Obtener más información"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1473,6 +1479,12 @@
       "value": "(UTC-10:00) Islas Aleutianas"
     }
   ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Trigger condition cannot be empty"
+    }
+  ],
   "DuXV2M": [
     {
       "type": 0,
@@ -2333,12 +2345,6 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
-    {
-      "type": 0,
-      "value": "Expresión"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2437,6 +2443,12 @@
     {
       "type": 0,
       "value": "Nombre de conexión"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "This function doesn't require any input."
     }
   ],
   "ORVfYZ": [
@@ -2930,6 +2942,12 @@
     {
       "type": 0,
       "value": "Devuelve el inicio del mes de la marca de tiempo de una cadena."
+    }
+  ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Paging count invalid"
     }
   ],
   "TUaunO": [
@@ -3946,6 +3964,12 @@
       "value": "Devuelve true si el primer argumento es mayor o igual que el segundo."
     }
   ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4687,6 +4711,12 @@
     {
       "type": 0,
       "value": "Escribir la contraseña como texto sin formato o usar un parámetro seguro"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "mx2IMJ": [
@@ -5488,6 +5518,12 @@
       "value": "Genera una cadena única global (GUID)."
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run after configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5842,12 +5878,6 @@
     {
       "type": 0,
       "value": "Esto también quitará todos los pasos secundarios."
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Esta expresión no requiere ninguna entrada."
     }
   ],
   "zBMVKg": [

@@ -403,6 +403,12 @@
       "value": "Další informace"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Each run after configuration must have at least one status checked"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -1499,6 +1505,12 @@
       "value": "(UTC-10:00) Aleutské ostrovy"
     }
   ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Trigger condition cannot be empty"
+    }
+  ],
   "DuXV2M": [
     {
       "type": 0,
@@ -2401,12 +2413,6 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
-    {
-      "type": 0,
-      "value": "Výraz"
-    }
-  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2505,6 +2511,12 @@
     {
       "type": 0,
       "value": "Název připojení"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "This function doesn't require any input."
     }
   ],
   "ORVfYZ": [
@@ -3009,6 +3021,12 @@
     {
       "type": 0,
       "value": "Vrátí začátek měsíce řetězcového časového razítka."
+    }
+  ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Paging count invalid"
     }
   ],
   "TUaunO": [
@@ -4025,6 +4043,12 @@
       "value": "Vrátí true, pokud je první argument větší nebo roven druhému."
     }
   ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Paging count exceeds maximum value"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
@@ -4773,6 +4797,12 @@
     {
       "type": 0,
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Function"
     }
   ],
   "mx2IMJ": [
@@ -5581,6 +5611,12 @@
       "value": "Vygeneruje globálně jedinečný řetězec (GUID)."
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Each action must have one or more run after configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5935,12 +5971,6 @@
     {
       "type": 0,
       "value": "Tato akce také odebere všechny podřízené kroky."
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Tento výraz nevyžaduje žádný vstup."
     }
   ],
   "zBMVKg": [
