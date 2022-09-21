@@ -4,7 +4,7 @@
   "projectType": "application",
   "targets": {
     "e2e": {
-      "executor": "@mands/nx-playwright:playwright-executor",
+      "executor": "@microsoft/nx-playwright:run-tests",
       "options": {
         "e2eFolder": "apps/designer-e2e",
         "devServerTarget": "designer-standalone:serve",

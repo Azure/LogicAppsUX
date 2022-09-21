@@ -24,7 +24,8 @@
       "@microsoft-logic-apps/utils": ["libs/utils/src/index.ts"],
       "@microsoft/designer-ui": ["libs/designer-ui/src/index.ts"],
       "@microsoft/logic-apps-data-mapper": ["libs/data-mapper/src/index.ts"],
-      "@microsoft/logic-apps-designer": ["libs/designer/src/index.ts"]
+      "@microsoft/logic-apps-designer": ["libs/designer/src/index.ts"],
+      "@microsoft/nx-playwright": ["libs/plugins/playwright/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"],
