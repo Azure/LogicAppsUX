@@ -31,7 +31,7 @@ const Template: ComponentStory<typeof ChangeSchemaView> = (args: ChangeSchemaVie
 export const Standard = Template.bind({});
 
 Standard.args = {
-  schemaType: SchemaTypes.Input,
+  schemaType: SchemaTypes.Source,
   setSelectedSchema: () => console.log('Selected new schema'),
   errorMessage: '',
 };

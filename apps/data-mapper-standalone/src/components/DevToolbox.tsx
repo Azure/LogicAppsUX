@@ -1,5 +1,5 @@
 import { dataMapDataLoaderSlice, loadDataMap, type ThemeType } from '../state/DataMapDataLoader';
-import { loadInputSchema, loadOutputSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
+import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
 import { Stack, Checkbox, Dropdown, TextField, MessageBar } from '@fluentui/react';
@@ -51,18 +51,18 @@ export const DevToolbox: React.FC = () => {
     [dispatch]
   );
 
-  const changeInputSchemaResourcePathDropdownCB = useCallback(
+  const changeSourceSchemaResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
       dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath((item?.key as string) ?? ''));
-      dispatch(loadInputSchema());
+      dispatch(loadSourceSchema());
     },
     [dispatch]
   );
 
-  const changeOutputSchemaResourcePathDropdownCB = useCallback(
+  const changeTargetSchemaResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
       dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath((item?.key as string) ?? ''));
-      dispatch(loadOutputSchema());
+      dispatch(loadTargetSchema());
     },
     [dispatch]
   );
@@ -72,8 +72,8 @@ export const DevToolbox: React.FC = () => {
       dispatch(dataMapDataLoaderSlice.actions.changeArmToken(newValue ?? ''));
       dispatch(schemaDataLoaderSlice.actions.changeArmToken(newValue ?? ''));
       dispatch(loadDataMap());
-      dispatch(loadInputSchema());
-      dispatch(loadOutputSchema());
+      dispatch(loadSourceSchema());
+      dispatch(loadTargetSchema());
     },
     [dispatch]
   );
@@ -83,8 +83,8 @@ export const DevToolbox: React.FC = () => {
       dispatch(dataMapDataLoaderSlice.actions.changeLoadingMethod(checked ? 'arm' : 'file'));
       dispatch(schemaDataLoaderSlice.actions.changeLoadingMethod(checked ? 'arm' : 'file'));
       dispatch(loadDataMap());
-      dispatch(loadInputSchema());
-      dispatch(loadOutputSchema());
+      dispatch(loadSourceSchema());
+      dispatch(loadTargetSchema());
     },
     [dispatch]
   );
@@ -132,17 +132,17 @@ export const DevToolbox: React.FC = () => {
                     options={dataMapDropdownOptions}
                   />
                   <Dropdown
-                    label="Input Schema"
+                    label="Source Schema"
                     selectedKey={inputResourcePath}
-                    onChange={changeInputSchemaResourcePathDropdownCB}
-                    placeholder="Select an input schema"
+                    onChange={changeSourceSchemaResourcePathDropdownCB}
+                    placeholder="Select a source schema"
                     options={schemaDropdownOptions}
                   />
                   <Dropdown
-                    label="Output Schema"
+                    label="Target Schema"
                     selectedKey={outputResourcePath}
-                    onChange={changeOutputSchemaResourcePathDropdownCB}
-                    placeholder="Select an output schema"
+                    onChange={changeTargetSchemaResourcePathDropdownCB}
+                    placeholder="Select a target schema"
                     options={schemaDropdownOptions}
                   />
                 </div>
