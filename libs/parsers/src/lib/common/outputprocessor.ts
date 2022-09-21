@@ -17,7 +17,7 @@ export class OutputsProcessor {
     this._responses = responses;
   }
 
-  getTargetSchema(): Schema {
+  getOutputSchema(): Schema {
     const response = this._getResponse();
     return response.schema;
   }

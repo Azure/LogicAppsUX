@@ -694,7 +694,7 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
   const recurrenceParameters = new SchemaProcessor({
     dataKeyPrefix: 'recurrence.$',
     required: true,
-    isSourceSchema: true,
+    isInputSchema: true,
     keyPrefix: 'recurrence.$',
     expandArrayOutputs: false,
   })

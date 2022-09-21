@@ -105,7 +105,7 @@ export class ParametersProcessor {
           case Constants.Types.Array:
             const processor = new SchemaProcessor({
               prefix: parameter.name ? encodePropertySegment(parameter.name) : undefined,
-              isSourceSchema: true,
+              isInputSchema: true,
               expandArrayOutputs: !!this.options.expandArray,
               expandArrayOutputsDepth: this.options.expandArrayDepth,
               keyPrefix: create(this._getMergedKeySegments(location, keyProjectionOption)),
@@ -136,7 +136,7 @@ export class ParametersProcessor {
               const processor = new SchemaProcessor({
                   prefix: hasDynamicSchema ? encodePropertySegment(parameter.name) : undefined,
                   keyPrefix: create(this._getMergedKeySegments(location, keyProjectionOption)),
-                  isSourceSchema: true,
+                  isInputSchema: true,
                   expandArrayOutputs: !!this.options.expandArray,
                   expandArrayOutputsDepth: this.options.expandArrayDepth,
                   required: parameter.required,

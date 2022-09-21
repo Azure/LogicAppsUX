@@ -686,7 +686,7 @@ describe('SchemaProcessor Tests', () => {
       currentKey: '[*]',
       expandArrayOutputs: false,
       expandArrayOutputsDepth: 0,
-      isSourceSchema: true,
+      isInputSchema: true,
       keyPrefix: 'body.$.labels.[*]',
       parentProperty: {
         arrayName: 'labels',
@@ -770,7 +770,7 @@ describe('SchemaProcessor Tests', () => {
 
     const options = {
       expandArrayOutputs: false,
-      isSourceSchema: true,
+      isInputSchema: true,
       excludeInternal: false,
     };
 
@@ -878,7 +878,7 @@ describe('SchemaProcessor Tests', () => {
 
     const options = {
       expandArrayOutputs: false,
-      isSourceSchema: true,
+      isInputSchema: true,
       excludeInternal: false,
     };
 
@@ -965,7 +965,7 @@ describe('SchemaProcessor Tests', () => {
     const options = {
       prefix: '',
       keyPrefix: 'body.$',
-      isSourceSchema: true,
+      isInputSchema: true,
       expandArrayOutputs: false,
     };
     const parameters = new SchemaProcessor(options).getSchemaProperties(schema);
@@ -998,7 +998,7 @@ describe('SchemaProcessor Tests', () => {
     const options = {
       prefix: '',
       keyPrefix: 'body.$',
-      isSourceSchema: true,
+      isInputSchema: true,
       expandArrayOutputs: true,
     };
     const parameters = new SchemaProcessor(options).getSchemaProperties(schema);
