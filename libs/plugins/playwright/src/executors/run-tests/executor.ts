@@ -10,8 +10,8 @@ function getFlags(options: PlaywrightExecutorSchema): string {
   const browserOption = options.browser?.length ? `--browser=${options.browser}` : '';
   const reporterOption = options.reporter?.length ? `--reporter=${options.reporter}` : '';
   const timeoutOption = options.timeout !== undefined ? `--timeout=${options.timeout}` : '';
-
-  const flagStrings = [headedOption, browserOption, reporterOption, timeoutOption].filter(Boolean);
+  const updateSnapshots = options.updateSnapshots ? '--update-snapshots' : '';
+  const flagStrings = [headedOption, browserOption, reporterOption, timeoutOption, updateSnapshots].filter(Boolean);
 
   return flagStrings.join(' ');
 }
@@ -42,9 +42,11 @@ export default async function executor(options: PlaywrightExecutorSchema, contex
   for await (const baseUrl of startDevServer(options, context)) {
     try {
       success = await runPlaywright(baseUrl, options);
+      break;
     } catch (e) {
       console.error(e.message);
       success = false;
+      break;
     }
   }
 

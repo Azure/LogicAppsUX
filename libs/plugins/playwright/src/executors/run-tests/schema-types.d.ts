@@ -12,4 +12,5 @@ export interface PlaywrightExecutorSchema {
   packageRunner?: PackageRunner;
   timeout?: number;
   skipServe?: boolean;
+  updateSnapshots?: boolean;
 }
