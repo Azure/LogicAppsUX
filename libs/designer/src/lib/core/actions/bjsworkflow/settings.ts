@@ -1,4 +1,7 @@
 import Constants from '../../../common/constants';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+import { getTokenExpressionValue } from '../../utils/parameters/helper';
+import type { SwaggerParser } from '@microsoft-logic-apps/parsers';
 import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft-logic-apps/parsers';
 import type {
   DownloadChunkMetadata,
@@ -17,6 +20,7 @@ import {
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft-logic-apps/utils';
+import { TokenType } from '@microsoft/designer-ui';
 
 type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;
 
@@ -104,11 +108,12 @@ export interface Settings {
  */
 export const getOperationSettings = (
   isTrigger: boolean,
-  nodeType: string,
-  nodeKind?: string,
+  operationInfo: NodeOperation,
   manifest?: OperationManifest,
+  swagger?: SwaggerParser,
   operation?: LogicAppsV2.OperationDefinition
 ): Settings => {
+  const { operationId, type: nodeType } = operationInfo;
   return {
     asynchronous: { isSupported: isAsynchronousSupported(isTrigger, nodeType, manifest), value: getAsynchronous(operation) },
     correlation: { isSupported: isCorrelationSupported(isTrigger, manifest), value: getCorrelationSettings(operation) },
@@ -128,7 +133,10 @@ export const getOperationSettings = (
       isSupported: isDisableAutomaticDecompressionSupported(isTrigger, nodeType, manifest),
       value: getDisableAutomaticDecompression(isTrigger, nodeType, manifest, operation),
     },
-    splitOn: { isSupported: isSplitOnSupported(isTrigger, nodeType, manifest, operation), value: getSplitOn(manifest, operation) },
+    splitOn: {
+      isSupported: isSplitOnSupported(isTrigger, manifest, swagger, operationId, operation),
+      value: getSplitOn(manifest, swagger, operationId, operation),
+    },
     retryPolicy: {
       isSupported: isRetryPolicySupported(isTrigger, manifest, operation),
       value: getRetryPolicy(isTrigger, manifest, operation),
@@ -140,7 +148,7 @@ export const getOperationSettings = (
       value: getSuppressWorkflowHeaders(isTrigger, nodeType, manifest, operation),
     },
     suppressWorkflowHeadersOnResponse: {
-      isSupported: isSuppressWorklowHeadersOnResponseSupported(isTrigger, nodeType, nodeKind, manifest),
+      isSupported: isSuppressWorklowHeadersOnResponseSupported(isTrigger, manifest),
       value: getSuppressWorkflowHeadersOnResponse(operation),
     },
     concurrency: {
@@ -153,13 +161,13 @@ export const getOperationSettings = (
       isSupported: isTimeoutSupported(isTrigger, nodeType, manifest),
       value: getTimeout(nodeType, isTrigger, manifest, operation),
     },
-    paging: { isSupported: isPagingSupported(isTrigger, nodeType, manifest), value: getPaging(operation) },
+    paging: { isSupported: isPagingSupported(isTrigger, nodeType, manifest, swagger, operationId), value: getPaging(operation) },
     uploadChunk: {
-      isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest),
-      value: getUploadChunk(isTrigger, nodeType, manifest, operation),
+      isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest, swagger, operationId),
+      value: getUploadChunk(isTrigger, nodeType, manifest, swagger, operationId, operation),
     },
     downloadChunkSize: {
-      isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest),
+      isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest, swagger, operationId),
       value: getDownloadChunkSize(operation),
     },
     trackedProperties: {
@@ -167,7 +175,7 @@ export const getOperationSettings = (
       value: getTrackedProperties(isTrigger, manifest, operation),
     },
     requestSchemaValidation: {
-      isSupported: isRequestSchemaValidationSupported(isTrigger, nodeType, nodeKind, manifest),
+      isSupported: isRequestSchemaValidationSupported(isTrigger, manifest),
       value: getRequestSchemaValidation(operation),
     },
     conditionExpressions: { isSupported: isTrigger, value: getConditionExpressions(operation) },
@@ -239,14 +247,7 @@ const isDisableAsyncPatternSupported = (isTrigger: boolean, nodeType: string, ma
       ? operationOptionsSetting.options.indexOf(OperationOptions.DisableAsyncPattern) > -1
       : false;
   } else {
-    const supportedTypes = [
-      Constants.NODE.TYPE.API_CONNECTION,
-      Constants.NODE.TYPE.API_MANAGEMENT,
-      Constants.NODE.TYPE.FUNCTION,
-      Constants.NODE.TYPE.HTTP,
-      Constants.NODE.TYPE.OPEN_API_CONNECTION,
-      Constants.NODE.TYPE.WORKFLOW,
-    ];
+    const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.HTTP];
     return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   }
 };
@@ -278,14 +279,7 @@ const isDisableAutomaticDecompressionSupported = (isTrigger: boolean, nodeType: 
       ? operationOptionsSetting.options.indexOf(OperationOptions.DisableAutomaticDecompression) > -1
       : false;
   } else {
-    const supportedTypes = [
-      Constants.NODE.TYPE.API_CONNECTION,
-      Constants.NODE.TYPE.API_MANAGEMENT,
-      Constants.NODE.TYPE.FUNCTION,
-      Constants.NODE.TYPE.HTTP,
-      Constants.NODE.TYPE.OPEN_API_CONNECTION,
-      Constants.NODE.TYPE.WORKFLOW,
-    ];
+    const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.HTTP];
 
     return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   }
@@ -311,7 +305,7 @@ const isSuppressWorkflowHeadersSupported = (isTrigger: boolean, nodeType: string
       ? operationOptionsSetting.options.indexOf(OperationOptions.SuppressWorkflowHeaders) > -1
       : false;
   } else {
-    const supportedTypes = [Constants.NODE.TYPE.API_MANAGEMENT, Constants.NODE.TYPE.FUNCTION, Constants.NODE.TYPE.HTTP];
+    const supportedTypes = [Constants.NODE.TYPE.HTTP];
 
     return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   }
@@ -322,12 +316,7 @@ const getSuppressWorkflowHeadersOnResponse = (definition?: LogicAppsV2.Operation
   return isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SUPPRESS_WORKFLOW_HEADERS_ON_RESPONSE, operationOptions);
 };
 
-const isSuppressWorklowHeadersOnResponseSupported = (
-  isTrigger: boolean,
-  nodeType: string,
-  nodeKind?: string,
-  manifest?: OperationManifest
-): boolean => {
+const isSuppressWorklowHeadersOnResponseSupported = (isTrigger: boolean, manifest?: OperationManifest): boolean => {
   if (manifest) {
     const operationOptionsSetting = getOperationSettingFromManifest(manifest, 'operationOptions') as
       | OperationManifestSetting<OperationOptions[]>
@@ -339,7 +328,7 @@ const isSuppressWorklowHeadersOnResponseSupported = (
         : false)
     );
   } else {
-    return isTrigger && equals(nodeType, Constants.NODE.TYPE.MANUAL) && equals(nodeKind, Constants.NODE.KIND.HTTP);
+    return false;
   }
 };
 
@@ -350,12 +339,7 @@ const getRequestSchemaValidation = (definition?: LogicAppsV2.OperationDefinition
     : undefined;
 };
 
-const isRequestSchemaValidationSupported = (
-  isTrigger: boolean,
-  nodeType: string,
-  nodeKind?: string,
-  manifest?: OperationManifest
-): boolean => {
+const isRequestSchemaValidationSupported = (isTrigger: boolean, manifest?: OperationManifest): boolean => {
   if (manifest) {
     const operationOptionsSetting = getOperationSettingFromManifest(manifest, 'operationOptions') as
       | OperationManifestSetting<OperationOptions[]>
@@ -366,9 +350,9 @@ const isRequestSchemaValidationSupported = (
         ? operationOptionsSetting.options.indexOf(OperationOptions.EnableSchemaValidation) > -1
         : false)
     );
-  } else {
-    return equals(nodeType, Constants.NODE.TYPE.MANUAL) && equals(nodeKind, Constants.NODE.KIND.HTTP);
   }
+
+  return false;
 };
 
 const getConcurrency = (
@@ -431,15 +415,11 @@ const isConcurrencySupported = (isTrigger: boolean, nodeType: string, manifest?:
         Constants.NODE.TYPE.API_CONNECTION,
         Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
         Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
-        Constants.NODE.TYPE.API_MANAGEMENT,
         Constants.NODE.TYPE.HTTP,
-        Constants.NODE.TYPE.HTTP_WEBHOOK,
-        Constants.NODE.TYPE.MANUAL,
-        Constants.NODE.TYPE.RECURRENCE,
       ];
       return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
     } else {
-      return equals(nodeType, Constants.NODE.TYPE.FOREACH);
+      return false;
     }
   }
 };
@@ -492,17 +472,7 @@ const isRetryableOperation = (operation?: LogicAppsV2.OperationDefinition): bool
     return false;
   }
 
-  const supportedTypes = [
-    Constants.NODE.TYPE.API_CONNECTION,
-    Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
-    Constants.NODE.TYPE.OPEN_API_CONNECTION,
-    Constants.NODE.TYPE.OPEN_API_CONNECTION_WEBHOOK,
-    Constants.NODE.TYPE.API_MANAGEMENT,
-    Constants.NODE.TYPE.FUNCTION,
-    Constants.NODE.TYPE.HTTP,
-    Constants.NODE.TYPE.HTTP_WEBHOOK,
-    Constants.NODE.TYPE.WORKFLOW,
-  ];
+  const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK, Constants.NODE.TYPE.HTTP];
   return supportedTypes.indexOf(operation.type.toLowerCase()) > -1;
 };
 
@@ -529,15 +499,25 @@ const getSingleInstance = (definition?: LogicAppsV2.OperationDefinition): boolea
   return isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SINGLE_INSTANCE, operationOptions);
 };
 
-const getSplitOn = (manifest?: OperationManifest, definition?: LogicAppsV2.OperationDefinition): SimpleSetting<string> => {
-  const splitOnValue = getSplitOnValue(manifest, definition);
+const getSplitOn = (
+  manifest?: OperationManifest,
+  swagger?: SwaggerParser,
+  operationId?: string,
+  definition?: LogicAppsV2.OperationDefinition
+): SimpleSetting<string> => {
+  const splitOnValue = getSplitOnValue(manifest, swagger, operationId, definition);
   return {
     enabled: !!splitOnValue,
     value: splitOnValue,
   };
 };
 
-const getSplitOnValue = (manifest?: OperationManifest, definition?: LogicAppsV2.TriggerDefinition): string | undefined => {
+const getSplitOnValue = (
+  manifest?: OperationManifest,
+  swagger?: SwaggerParser,
+  operationId?: string,
+  definition?: LogicAppsV2.TriggerDefinition
+): string | undefined => {
   if (definition) {
     return definition.splitOn;
   } else {
@@ -552,21 +532,41 @@ const getSplitOnValue = (manifest?: OperationManifest, definition?: LogicAppsV2.
       }
 
       return undefined;
-    } else {
-      // Implement for swagger code.
+    } else if (swagger && operationId) {
+      const swaggerOperations = swagger.getOperations();
+      if (!swaggerOperations) {
+        return undefined;
+      }
 
-      return undefined;
+      const outputMetadata = equals(swaggerOperations[operationId]?.triggerType, Constants.BATCH_TRIGGER)
+        ? swagger.getOutputMetadata(operationId)
+        : undefined;
+      if (outputMetadata) {
+        const { array } = outputMetadata;
+
+        // NOTE: Array will be null when we don't support the scenario even if it is batching trigger.
+        // Eg. If there are peer properties to array property.
+        if (array) {
+          const { collectionPath, required } = array;
+          return collectionPath
+            ? `@${getTokenExpressionValue({ name: collectionPath, required, tokenType: TokenType.OUTPUTS } as any)}`
+            : `@${Constants.TRIGGER_BODY_OUTPUT}`;
+        }
+      }
     }
+
+    return undefined;
   }
 };
 
 const isSplitOnSupported = (
   isTrigger: boolean,
-  nodeType: string,
   manifest?: OperationManifest,
+  swagger?: SwaggerParser,
+  operationId?: string,
   definition?: LogicAppsV2.OperationDefinition
 ): boolean => {
-  const existingSplitOn = getSplitOn(manifest, definition);
+  const existingSplitOn = getSplitOn(manifest, swagger, operationId, definition);
   return isTrigger && existingSplitOn.enabled;
 };
 
@@ -592,17 +592,7 @@ const getTimeout = (
 };
 
 const isTimeoutableAction = (operationType: string): boolean => {
-  const supportedTypes = [
-    Constants.NODE.TYPE.API_CONNECTION,
-    Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
-    Constants.NODE.TYPE.OPEN_API_CONNECTION,
-    Constants.NODE.TYPE.OPEN_API_CONNECTION_WEBHOOK,
-    Constants.NODE.TYPE.API_MANAGEMENT,
-    Constants.NODE.TYPE.FUNCTION,
-    Constants.NODE.TYPE.HTTP,
-    Constants.NODE.TYPE.HTTP_WEBHOOK,
-    Constants.NODE.TYPE.WORKFLOW,
-  ];
+  const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK, Constants.NODE.TYPE.HTTP];
   return supportedTypes.indexOf(operationType.toLowerCase()) > -1;
 };
 
@@ -647,7 +637,13 @@ const getPaging = (definition: any): SimpleSetting<number> => {
   };
 };
 
-const isPagingSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
+const isPagingSupported = (
+  isTrigger: boolean,
+  nodeType: string,
+  manifest?: OperationManifest,
+  swagger?: SwaggerParser,
+  operationId?: string
+): boolean => {
   // TODO (andrewfowose): return false if isBranchNode
   if (manifest) {
     const pagingSetting = getOperationSettingFromManifest(manifest, 'paging') as OperationManifestSetting<void> | undefined;
@@ -656,17 +652,22 @@ const isPagingSupported = (isTrigger: boolean, nodeType: string, manifest?: Oper
     if (isTrigger) {
       return false;
     }
-    const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.FUNCTION, Constants.NODE.TYPE.HTTP];
+    const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.HTTP];
     const isSupportedType = supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
-    return isSupportedType;
+    if (!isSupportedType || !swagger || !operationId) {
+      return false;
+    }
+
+    return !!swagger.getOperationByOperationId(operationId)?.supportsPaging;
   }
-  // TODO (andrewfowose): add check for if paging is supported from swagger
 };
 
 const getUploadChunk = (
   isTrigger: boolean,
   nodeType: string,
   manifest?: OperationManifest,
+  swagger?: SwaggerParser,
+  operationId?: string,
   definition?: LogicAppsV2.OperationDefinition
 ): UploadChunk | undefined => {
   if (definition) {
@@ -692,25 +693,42 @@ const getUploadChunk = (
         | OperationManifestSetting<UploadChunkMetadata>
         | undefined;
       isChunkTransferSupported = isSettingSupportedFromOperationManifest(chunkingSetting, isTrigger);
-    } else if (equals(nodeType, Constants.NODE.TYPE.API_CONNECTION)) {
-      // TODO - Implement for swagger operation.
+    } else if (equals(nodeType, Constants.NODE.TYPE.API_CONNECTION) && swagger && operationId) {
+      isChunkTransferSupported = !!swagger.getOperationByOperationId(operationId)?.uploadChunkMetadata?.chunkTransferSupported;
     }
 
     return isChunkTransferSupported ? { transferMode: Constants.SETTINGS.TRANSFER_MODE.CHUNKED } : undefined;
   }
 };
 
-export const isChunkedTransferModeSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
+export const isChunkedTransferModeSupported = (
+  isTrigger: boolean,
+  nodeType: string,
+  manifest?: OperationManifest,
+  swagger?: SwaggerParser,
+  operationId?: string
+): boolean => {
   if (manifest) {
     const chunkingSetting = getOperationSettingFromManifest(manifest, 'chunking') as
       | OperationManifestSetting<UploadChunkMetadata>
       | undefined;
     return isSettingSupportedFromOperationManifest(chunkingSetting, isTrigger);
-  } else if (isTrigger) {
-    return false;
+  } else {
+    if (isTrigger || !swagger || !operationId) {
+      return false;
+    }
+
+    switch (nodeType.toLowerCase()) {
+      case Constants.NODE.TYPE.API_CONNECTION:
+        return !!swagger.getOperationByOperationId(operationId)?.uploadChunkMetadata?.chunkTransferSupported;
+
+      case Constants.NODE.TYPE.HTTP:
+        return true;
+
+      default:
+        return false;
+    }
   }
-  return equals(nodeType, Constants.NODE.TYPE.API_CONNECTION);
-  // add if check to implement swagger operation.
 };
 
 const getDownloadChunkSize = (definition?: LogicAppsV2.OperationDefinition): number | undefined => {
@@ -757,22 +775,13 @@ const isInputsPropertySupportedInSecureDataSetting = (nodeType: string, manifest
     return false;
   } else {
     // TODO (andrewfowose) add else if to check if node is branch node and return false if so
-    const unsupportedTypes = [
-      Constants.NODE.TYPE.APPEND_TO_ARRAY_VARIABLE,
-      Constants.NODE.TYPE.APPEND_TO_STRING_VARIABLE,
-      Constants.NODE.TYPE.DECREMENT_VARIABLE,
-      Constants.NODE.TYPE.FOREACH,
-      Constants.NODE.TYPE.IF,
-      Constants.NODE.TYPE.INCREMENT_VARIABLE,
-      Constants.NODE.TYPE.INITIALIZE_VARIABLE,
-      Constants.NODE.TYPE.RECURRENCE,
-      Constants.NODE.TYPE.SCOPE,
-      Constants.NODE.TYPE.SET_VARIABLE,
-      Constants.NODE.TYPE.SWITCH,
-      Constants.NODE.TYPE.TERMINATE,
-      Constants.NODE.TYPE.UNTIL,
+    const supportedTypes = [
+      Constants.NODE.TYPE.API_CONNECTION,
+      Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
+      Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+      Constants.NODE.TYPE.HTTP,
     ];
-    return unsupportedTypes.indexOf(nodeType.toLowerCase()) < 0;
+    return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   }
 };
 
@@ -788,26 +797,13 @@ const isOutputsPropertySupportedInSecureDataSetting = (nodeType: string, manifes
     return false;
   } else {
     // TODO (andrewfowose) add else if to check if node is branch node and return false if so
-    const unsupportedTypes = [
-      Constants.NODE.TYPE.APPEND_TO_ARRAY_VARIABLE,
-      Constants.NODE.TYPE.APPEND_TO_STRING_VARIABLE,
-      Constants.NODE.TYPE.COMPOSE,
-      Constants.NODE.TYPE.DECREMENT_VARIABLE,
-      Constants.NODE.TYPE.FOREACH,
-      Constants.NODE.TYPE.IF,
-      Constants.NODE.TYPE.INCREMENT_VARIABLE,
-      Constants.NODE.TYPE.INITIALIZE_VARIABLE,
-      Constants.NODE.TYPE.PARSE_JSON,
-      Constants.NODE.TYPE.RECURRENCE,
-      Constants.NODE.TYPE.RESPONSE,
-      Constants.NODE.TYPE.SCOPE,
-      Constants.NODE.TYPE.SET_VARIABLE,
-      Constants.NODE.TYPE.SWITCH,
-      Constants.NODE.TYPE.TERMINATE,
-      Constants.NODE.TYPE.UNTIL,
-      Constants.NODE.TYPE.WAIT,
+    const supportedTypes = [
+      Constants.NODE.TYPE.API_CONNECTION,
+      Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
+      Constants.NODE.TYPE.API_CONNECTION_WEBHOOK,
+      Constants.NODE.TYPE.HTTP,
     ];
-    return unsupportedTypes.indexOf(nodeType.toLowerCase()) < 0;
+    return supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
   }
 };
 

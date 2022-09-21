@@ -1,5 +1,5 @@
 import Constants from '../../../common/constants';
-import type { NodeDataWithManifest } from '../../actions/bjsworkflow/operationdeserializer';
+import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import { getOperationManifest } from '../../queries/operation';
 import type {
@@ -8,6 +8,7 @@ import type {
   NodeInputs,
   NodeOperation,
   OutputInfo,
+  ParameterGroup,
   UpdateParametersPayload,
 } from '../../state/operation/operationMetadataSlice';
 import {
@@ -18,10 +19,10 @@ import {
 } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokensSlice';
 import type { Operations as Actions } from '../../state/workflow/workflowInterfaces';
-import { getBrandColorFromManifest, getIconUriFromManifest } from '../card';
 import { initializeArrayViewModel } from '../editors/array';
 import { loadDynamicOutputsInNode } from '../outputs';
 import { hasSecureOutputs } from '../setting';
+import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
 import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues } from './dynamicdata';
 import {
@@ -40,6 +41,7 @@ import {
 } from './segment';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type {
+  DynamicParameters,
   Expression,
   ExpressionFunction,
   ExpressionLiteral,
@@ -50,6 +52,7 @@ import type {
   Segment,
 } from '@microsoft-logic-apps/parsers';
 import {
+  isLegacyDynamicValuesExtension,
   ParameterLocations,
   ExpressionType,
   createEx,
@@ -66,7 +69,7 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft-logic-apps/parsers';
-import type { Exception, OperationInfo, OperationManifest } from '@microsoft-logic-apps/utils';
+import type { Exception, OperationInfo, OperationManifest, RecurrenceSetting } from '@microsoft-logic-apps/utils';
 import {
   isUndefinedOrEmptyString,
   aggregate,
@@ -114,6 +117,78 @@ export interface RepetitionReference {
   repetitionStep?: string; // NOTE: the output original step
   repetitionPath?: string; // NOTE: the full output path for repetition value if it coming from output
 }
+
+export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
+  const sortedParameters: ParameterInfo[] = parameters.filter((parameter) => parameter.required);
+
+  for (const parameter of parameters) {
+    if (!parameter.required && equals(parameter.visibility, Visibility.Important)) {
+      sortedParameters.push(parameter);
+    }
+  }
+
+  parameters.forEach((parameter) => {
+    if (!parameter.required && !equals(parameter.visibility, Visibility.Important) && !equals(parameter.visibility, Visibility.Advanced)) {
+      sortedParameters.push(parameter);
+    }
+  });
+
+  parameters.forEach((parameter) => {
+    if (!parameter.required && equals(parameter.visibility, Visibility.Advanced)) {
+      sortedParameters.push(parameter);
+    }
+  });
+
+  return sortedParameters;
+}
+
+export function addRecurrenceParametersInGroup(
+  parameterGroups: Record<string, ParameterGroup>,
+  recurrence: RecurrenceSetting | undefined,
+  definition: any
+): void {
+  if (!recurrence) {
+    return;
+  }
+
+  const recurrenceParameters = getRecurrenceParameters(recurrence, definition);
+
+  if (recurrenceParameters.length) {
+    const intl = getIntl();
+    if (recurrence.useLegacyParameterGroup) {
+      // eslint-disable-next-line no-param-reassign
+      parameterGroups[ParameterGroupKeys.DEFAULT].parameters = recurrenceParameters;
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      parameterGroups[ParameterGroupKeys.RECURRENCE] = {
+        id: ParameterGroupKeys.RECURRENCE,
+        description: intl.formatMessage({
+          defaultMessage: 'How often do you want to check for items?',
+          description: 'Recurrence parameter group title',
+        }),
+        parameters: recurrenceParameters,
+      };
+    }
+  }
+}
+
+export const getDependentParameters = (
+  inputs: NodeInputs,
+  parameters: Record<string, any> | DynamicParameters
+): Record<string, { isValid: boolean }> => {
+  return Object.keys(parameters).reduce((result: Record<string, { isValid: boolean }>, key: string) => {
+    const parameter = parameters[key];
+    const operationInput = getParameterFromName(inputs, parameter.parameter ?? parameter.parameterReference);
+    if (operationInput) {
+      return {
+        ...result,
+        [operationInput.id]: { isValid: parameterValidForDynamicCall(operationInput) },
+      };
+    }
+
+    return result;
+  }, {});
+};
 
 /**
  * Converts to parameter info map.
@@ -203,6 +278,7 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
   let type = inputParameter.editor;
   let editorViewModel;
   let schema = inputParameter.schema;
+  const { dynamicValues } = inputParameter;
 
   if (
     !type &&
@@ -215,11 +291,13 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
     schema = { ...schema, ...{ 'x-ms-editor': Constants.EDITOR.ARRAY } };
   } else if (type === 'dictionary') {
     editorViewModel = toDictionaryViewModel(inputParameter.value);
+  } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
+    type = undefined;
   }
 
   return {
     type,
-    options: inputParameter.editorOptions,
+    options: !type ? undefined : inputParameter.editorOptions,
     viewModel: editorViewModel,
     schema,
   };
@@ -853,7 +931,7 @@ function getExtraSegments(key: string, ancestorKey: string): Segment[] {
   return childSegments.slice(startIndex);
 }
 
-function transformInputParameter(inputParameter: InputParameter, parameterValue: any, invisible = false): InputParameter {
+export function transformInputParameter(inputParameter: InputParameter, parameterValue: any, invisible = false): InputParameter {
   return { ...inputParameter, hideInUI: invisible, value: parameterValue };
 }
 
@@ -1164,7 +1242,7 @@ async function loadDynamicContentForInputsInNode(
           ...createParameterInfo(input),
           schema: input,
         })) as ParameterInfo[];
-        // Initialize Editor View for dynamic inputs
+        // TODO - Initialize Editor View for dynamic inputs
         dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters }));
       }
     }
@@ -1394,7 +1472,7 @@ export function updateTokenMetadata(
   valueSegment: ValueSegment,
   actionNodes: Record<string, string>,
   triggerNodeId: string,
-  nodes: Record<string, NodeDataWithManifest>,
+  nodes: Record<string, NodeDataWithOperationMetadata>,
   operations: Actions,
   parameterType?: string
 ): ValueSegment {
@@ -1428,21 +1506,18 @@ export function updateTokenMetadata(
     // TODO - Item token details
   }
 
-  const tokenNodeData = nodes[tokenNodeId];
+  const { settings, nodeOutputs, brandColor: nodeBrandColor, iconUri: nodeIconUri } = nodes[tokenNodeId];
   const tokenNodeOperation = operations[tokenNodeId];
   const nodeType = tokenNodeOperation?.type;
-  const isSecure = tokenNodeData ? hasSecureOutputs(nodeType, tokenNodeData.settings ?? {}) : false;
-  const nodeOutputInfo = getOutputByTokenInfo(unmap(tokenNodeData?.nodeOutputs.outputs), valueSegment.token as SegmentToken, parameterType);
+  const isSecure = hasSecureOutputs(nodeType, settings ?? {});
+  const nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs.outputs), valueSegment.token as SegmentToken, parameterType);
 
-  const brandColor =
-    token.tokenType === TokenType.ITEM
-      ? '#486991' // foreach brand color
-      : getBrandColorFromManifest(tokenNodeData?.manifest);
+  const brandColor = token.tokenType === TokenType.ITEM ? '#486991' : nodeBrandColor;
 
   const iconUri =
     token.tokenType === TokenType.ITEM
       ? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzQ4Njk5MSIvPg0KIDxwYXRoIGQ9Ik0xMSAyMGg3LjJsMSAxaC05LjJ2LTguM2wtMS4zIDEuMy0uNy0uNyAyLjUtMi41IDIuNSAyLjUtLjcuNy0xLjMtMS4zem0xMi4zLTJsLjcuNy0yLjUgMi41LTIuNS0yLjUuNy0uNyAxLjMgMS4zdi03LjNoLTcuMmwtMS0xaDkuMnY4LjN6IiBmaWxsPSIjZmZmIi8+DQo8L3N2Zz4NCg=='
-      : getIconUriFromManifest(tokenNodeData?.manifest);
+      : nodeIconUri;
 
   // TODO - Code to get parent array name for item tokens.
 
@@ -1493,7 +1568,6 @@ export function updateTokenMetadata(
   return valueSegment;
 }
 
-// eslint-disable no-case-declarations
 export function getExpressionTokenTitle(expression: Expression): string {
   switch (expression.type) {
     case ExpressionType.NullLiteral:

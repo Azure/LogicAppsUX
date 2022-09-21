@@ -25,7 +25,17 @@ const operationManifestService = new StandardOperationManifestService({
   baseUrl: 'url',
   httpClient,
 });
-const searchService = new StandardSearchService();
+const searchService = new StandardSearchService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  apiHubServiceDetails: {
+    apiVersion: '2018-07-01-preview',
+    subscriptionId: '',
+    location: '',
+  },
+  isDev: true,
+});
 export const App = () => {
   return (
     <DesignerProvider
