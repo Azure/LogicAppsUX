@@ -1,13 +1,13 @@
 {
-  "name": "OutputSchema.xsd",
+  "name": "TargetSchema.xsd",
   "type": "XML",
-  "targetNamespace": "http://OutputSchema",
-  "namespaces": { "ns0": "http://OutputSchema", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "targetNamespace": "http://TargetSchema",
+  "namespaces": { "ns0": "http://TargetSchema", "xs": "http://www.w3.org/2001/XMLSchema" },
   "schemaTreeRoot": {
     "key": "/ns0:OutputRecord",
     "name": "OutputRecord",
     "namespacePrefix": "ns0",
-    "namespaceUri": "http://OutputSchema",
+    "namespaceUri": "http://TargetSchema",
     "schemaNodeDataType": "None",
     "properties": "NotSpecified",
     "children": [

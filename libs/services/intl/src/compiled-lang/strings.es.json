@@ -3889,7 +3889,7 @@
   "eIlosa": [
     {
       "type": 0,
-      "value": "Output schema node"
+      "value": "Target schema node"
     }
   ],
   "eRvGw3": [
@@ -5299,7 +5299,7 @@
   "surdl/": [
     {
       "type": 0,
-      "value": "Input schema node"
+      "value": "Source schema node"
     }
   ],
   "syiNc+": [

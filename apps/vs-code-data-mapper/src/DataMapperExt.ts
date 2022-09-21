@@ -5,7 +5,7 @@ import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ExtensionContext, OutputChannel } from 'vscode';
 
-type SchemaType = 'input' | 'output';
+type SchemaType = 'source' | 'target';
 
 type SendingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: SchemaType } }
@@ -122,7 +122,7 @@ export default class DataMapperExt {
     }
   }
 
-  public addSchemaFromFile(filePath: string, schemaType: 'input' | 'output') {
+  public addSchemaFromFile(filePath: string, schemaType: 'source' | 'target') {
     // NOTE: .xsd files are utf-16 encoded
     fs.readFile(filePath, 'utf16le').then((text: string) => {
       // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call

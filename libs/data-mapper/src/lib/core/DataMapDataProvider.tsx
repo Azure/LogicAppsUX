@@ -11,46 +11,46 @@ import { useDispatch } from 'react-redux';
 
 export interface DataMapDataProviderProps {
   dataMap?: DataMap;
-  inputSchema?: Schema;
-  outputSchema?: Schema;
+  sourceSchema?: Schema;
+  targetSchema?: Schema;
   availableSchemas?: string[];
   children?: React.ReactNode;
 }
 
-const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ dataMap, inputSchema, outputSchema, availableSchemas, children }) => {
+const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ dataMap, sourceSchema, targetSchema, availableSchemas, children }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (inputSchema && outputSchema && dataMap) {
+    if (sourceSchema && targetSchema && dataMap) {
       dispatch(setInitialDataMap(dataMap));
     }
-  }, [dispatch, dataMap, inputSchema, outputSchema]);
+  }, [dispatch, dataMap, sourceSchema, targetSchema]);
 
   useEffect(() => {
-    if (inputSchema) {
-      const extendedSchema = convertSchemaToSchemaExtended(inputSchema);
+    if (sourceSchema) {
+      const extendedSchema = convertSchemaToSchemaExtended(sourceSchema);
       dispatch(
         setInitialSchema({
-          schema: convertSchemaToSchemaExtended(inputSchema),
-          schemaType: SchemaTypes.Input,
-          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Input),
+          schema: convertSchemaToSchemaExtended(sourceSchema),
+          schemaType: SchemaTypes.Source,
+          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Source),
         })
       );
     }
-  }, [dispatch, inputSchema]);
+  }, [dispatch, sourceSchema]);
 
   useEffect(() => {
-    if (outputSchema) {
-      const extendedSchema = convertSchemaToSchemaExtended(outputSchema);
+    if (targetSchema) {
+      const extendedSchema = convertSchemaToSchemaExtended(targetSchema);
       dispatch(
         setInitialSchema({
           schema: extendedSchema,
-          schemaType: SchemaTypes.Output,
-          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Output),
+          schemaType: SchemaTypes.Target,
+          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Target),
         })
       );
     }
-  }, [dispatch, outputSchema]);
+  }, [dispatch, targetSchema]);
 
   useEffect(() => {
     if (availableSchemas) {

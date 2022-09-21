@@ -1,13 +1,13 @@
 {
-  "name": "CBRInputSchema2.xsd",
+  "name": "CBRSourceSchema2.xsd",
   "type": "XML",
-  "targetNamespace": "http://CBR.CBRInputSchema",
-  "namespaces": { "ns0": "http://CBR.CBRInputSchema", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "targetNamespace": "http://CBR.CBRSourceSchema",
+  "namespaces": { "ns0": "http://CBR.CBRSourceSchema", "xs": "http://www.w3.org/2001/XMLSchema" },
   "schemaTreeRoot": {
     "key": "/ns0:CBRInputRecord",
     "name": "CBRInputRecord",
     "namespacePrefix": "ns0",
-    "namespaceUri": "http://CBR.CBRInputSchema",
+    "namespaceUri": "http://CBR.CBRSourceSchema",
     "schemaNodeDataType": "None",
     "properties": "NotSpecified",
     "children": []

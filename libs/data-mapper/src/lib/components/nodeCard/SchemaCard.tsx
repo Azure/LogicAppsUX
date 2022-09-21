@@ -1,5 +1,5 @@
-import { childOutputNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
-import { setCurrentOutputNode } from '../../core/state/DataMapSlice';
+import { childTargetNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
+import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
@@ -108,7 +108,7 @@ const useStyles = makeStyles({
     opacity: 0.38,
   },
   outputChildCard: {
-    width: `${childOutputNodeCardWidth}px`,
+    width: `${childTargetNodeCardWidth}px`,
   },
 
   focusIndicator: createFocusOutlineStyle({
@@ -127,16 +127,16 @@ const cardInputText = makeStyles({
 const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
 
 const isValidConnection = (connection: ReactFlowConnection): boolean => {
-  const flattenedInputSchema = store.getState().dataMap.curDataMapOperation.flattenedInputSchema;
-  const flattenedOutputSchema = store.getState().dataMap.curDataMapOperation.flattenedOutputSchema;
+  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
+  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
 
-  if (connection.source && connection.target && flattenedInputSchema && flattenedOutputSchema) {
-    const inputNode = flattenedInputSchema[connection.source];
-    const outputNode = flattenedOutputSchema[connection.target];
+  if (connection.source && connection.target && flattenedSourceSchema && flattenedTargetSchema) {
+    const sourceNode = flattenedSourceSchema[connection.source];
+    const targetNode = flattenedTargetSchema[connection.target];
 
-    // If we have no outputNode that means it's an function and just allow the connection for now
+    // If we have no targetNode that means it's an function and just allow the connection for now
     // TODO validate function allowed input types
-    return !outputNode || inputNode.schemaNodeDataType === outputNode.schemaNodeDataType;
+    return !targetNode || sourceNode.schemaNodeDataType === targetNode.schemaNodeDataType;
   }
 
   return false;
@@ -149,7 +149,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
   const sharedStyles = getStylesForSharedState();
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
 
-  const isOutputChildNode = schemaType === SchemaTypes.Output && isChild;
+  const isOutputChildNode = schemaType === SchemaTypes.Target && isChild;
 
   const containerStyleClasses = [sharedStyles.root, classes.container];
   if (isOutputChildNode) {
@@ -162,21 +162,21 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
 
   const containerStyle = mergeClasses(...containerStyleClasses);
 
-  const showOutputChevron = schemaType === SchemaTypes.Output && !isLeaf;
+  const showOutputChevron = schemaType === SchemaTypes.Target && !isLeaf;
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType);
 
   const outputChevronOnClick = (newCurrentSchemaNode: SchemaNodeExtended) => {
-    dispatch(setCurrentOutputNode({ schemaNode: newCurrentSchemaNode, resetSelectedInputNodes: true }));
+    dispatch(setCurrentTargetNode({ schemaNode: newCurrentSchemaNode, resetSelectedSourceNodes: true }));
   };
 
   return (
     <div className={containerStyle}>
       {displayHandle && isLeaf ? (
         <Handle
-          type={schemaType === SchemaTypes.Input ? 'source' : 'target'}
-          position={schemaType === SchemaTypes.Input ? Position.Right : Position.Left}
+          type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
+          position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
           style={handleStyle}
           isValidConnection={isValidConnection}
         />
@@ -186,7 +186,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
         <span className={classes.cardIcon}>
           <BundledTypeIcon />
         </span>
-        <Text className={schemaType === SchemaTypes.Output ? classes.cardText : mergedInputText} block={true} nowrap={true}>
+        <Text className={schemaType === SchemaTypes.Target ? classes.cardText : mergedInputText} block={true} nowrap={true}>
           {schemaNode.name}
         </Text>
       </Button>

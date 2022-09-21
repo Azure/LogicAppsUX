@@ -5,26 +5,26 @@ import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
 export interface DefaultPanelViewProps {
-  onInputSchemaClick: () => void;
-  onOutputSchemaClick: () => void;
+  onSourceSchemaClick: () => void;
+  onTargetSchemaClick: () => void;
 }
 
-export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onInputSchemaClick, onOutputSchemaClick }) => {
-  const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
-  const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onSourceSchemaClick, onTargetSchemaClick }) => {
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const intl = useIntl();
 
   const replaceMessage = intl.formatMessage({
     defaultMessage: 'Replace existing schema.',
     description: 'label to inform the ability to replace schemas',
   });
-  const inputSchemaLabel = intl.formatMessage({
-    defaultMessage: 'Input Schema',
-    description: 'label to inform the below schema name is for input schema',
+  const sourceSchemaLabel = intl.formatMessage({
+    defaultMessage: 'Source Schema',
+    description: 'label to inform the below schema name is for source schema',
   });
-  const outputSchemaLabel = intl.formatMessage({
-    defaultMessage: 'Output Schema',
-    description: 'label to inform the below schema name is for output schema',
+  const targetSchemaLabel = intl.formatMessage({
+    defaultMessage: 'Target Schema',
+    description: 'label to inform the below schema name is for target schema',
   });
   const pencilAriaLabel = intl.formatMessage({
     defaultMessage: 'pencil icon',
@@ -37,18 +37,18 @@ export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onI
 
       <div className="schema-selection-container">
         <div>
-          <Text className="schema-label-text">{inputSchemaLabel}</Text>
-          <p>{inputSchema?.name}</p>
+          <Text className="schema-label-text">{sourceSchemaLabel}</Text>
+          <p>{sourceSchema?.name}</p>
         </div>
-        <IconButton iconProps={{ iconName: 'Edit' }} title={pencilAriaLabel} ariaLabel={pencilAriaLabel} onClick={onInputSchemaClick} />
+        <IconButton iconProps={{ iconName: 'Edit' }} title={pencilAriaLabel} ariaLabel={pencilAriaLabel} onClick={onSourceSchemaClick} />
       </div>
 
       <div className="schema-selection-container">
         <div>
-          <Text className="schema-label-text">{outputSchemaLabel}</Text>
-          <p>{outputSchema?.name}</p>
+          <Text className="schema-label-text">{targetSchemaLabel}</Text>
+          <p>{targetSchema?.name}</p>
         </div>
-        <IconButton iconProps={{ iconName: 'Edit' }} title={pencilAriaLabel} ariaLabel={pencilAriaLabel} onClick={onOutputSchemaClick} />
+        <IconButton iconProps={{ iconName: 'Edit' }} title={pencilAriaLabel} ariaLabel={pencilAriaLabel} onClick={onTargetSchemaClick} />
       </div>
     </div>
   );

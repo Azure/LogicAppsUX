@@ -1,13 +1,13 @@
 {
-  "name": "InputSchema.xsd",
+  "name": "SourceSchema.xsd",
   "type": "XML",
-  "targetNamespace": "http://InputSchema",
-  "namespaces": { "ns0": "http://InputSchema", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "targetNamespace": "http://SourceSchema",
+  "namespaces": { "ns0": "http://SourceSchema", "xs": "http://www.w3.org/2001/XMLSchema" },
   "schemaTreeRoot": {
     "key": "/ns0:InputRecord",
     "name": "InputRecord",
     "namespacePrefix": "ns0",
-    "namespaceUri": "http://InputSchema",
+    "namespaceUri": "http://SourceSchema",
     "schemaNodeDataType": "None",
     "properties": "NotSpecified",
     "children": [

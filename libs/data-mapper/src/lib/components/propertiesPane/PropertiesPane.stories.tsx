@@ -1,22 +1,22 @@
 import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
 import { SchemaNodeDataType } from '../../models';
-import type { SelectedFunctionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
+import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
 import type { PropertiesPaneProps } from './PropertiesPane';
 import { PropertiesPane } from './PropertiesPane';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-const exInputNode: SelectedInputNode = {
-  nodeType: NodeType.Input,
-  name: 'ExInputNode',
-  path: '/path/to/ExInputNode',
+const exSourceNode: SelectedSourceNode = {
+  nodeType: NodeType.Source,
+  name: 'ExSourceNode',
+  path: '/path/to/ExSourceNode',
   dataType: SchemaNodeDataType.String,
 };
-const exOutputNode: SelectedOutputNode = {
-  nodeType: NodeType.Output,
-  name: 'ExOutputNode',
-  path: '/path/to/ExOutputNode',
+const exTargetNode: SelectedTargetNode = {
+  nodeType: NodeType.Target,
+  name: 'ExTargetNode',
+  path: '/path/to/ExTargetNode',
   dataType: SchemaNodeDataType.Int,
   defaultValue: 'Default value',
   doNotGenerateIfNoValue: true,
@@ -33,7 +33,7 @@ const exFunctionNode: SelectedFunctionNode = {
   outputId: '',
 };
 
-const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exFunctionNode };
+const nodeOptions = { noneSelected: undefined, exSourceNode, exTargetNode, exFunctionNode };
 
 export default {
   component: PropertiesPane,
@@ -47,8 +47,8 @@ export default {
         type: 'select',
         labels: {
           noneSelected: 'No node selected',
-          exInputNode: 'Input node',
-          exOutputNode: 'Output node',
+          exSourceNode: 'Input node',
+          exTargetNode: 'Output node',
           exFunctionNode: 'Function node',
         },
       },

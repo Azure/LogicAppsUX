@@ -7,9 +7,9 @@ import { useDispatch } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 
 type ReceivingMessageTypes =
-  | { command: 'fetchSchema'; data: { fileName: string; type: 'input' | 'output' } }
+  | { command: 'fetchSchema'; data: { fileName: string; type: 'source' | 'target' } }
   | { command: 'loadNewDataMap'; data: DataMap }
-  | { command: 'loadDataMap'; data: { dataMap: DataMap; inputSchemaFileName: string; outputSchemaFileName: string } }
+  | { command: 'loadDataMap'; data: { dataMap: DataMap; sourceSchemaFileName: string; targetSchemaFileName: string } }
   | { command: 'showAvailableSchemas'; data: string[] };
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
@@ -26,10 +26,10 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
     switch (msg.command) {
       case 'fetchSchema':
         getSelectedSchema(msg.data.fileName).then((schema) => {
-          if (msg.data.type === 'input') {
-            changeInputSchemaCB(schema as Schema);
+          if (msg.data.type === 'source') {
+            changeSourceSchemaCB(schema as Schema);
           } else {
-            changeOutputSchemaCB(schema as Schema);
+            changeTargetSchemaCB(schema as Schema);
           }
         });
         break;
@@ -37,7 +37,7 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         changeDataMapCB(msg.data);
         break;
       case 'loadDataMap':
-        Promise.all([getSelectedSchema(msg.data.inputSchemaFileName), getSelectedSchema(msg.data.outputSchemaFileName)]).then((values) => {
+        Promise.all([getSelectedSchema(msg.data.sourceSchemaFileName), getSelectedSchema(msg.data.targetSchemaFileName)]).then((values) => {
           setSchemasBeforeSettingDataMap(values[0], values[1]).then(() => {
             changeDataMapCB(msg.data.dataMap);
           });
@@ -51,16 +51,16 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   });
 
-  const changeInputSchemaCB = useCallback(
+  const changeSourceSchemaCB = useCallback(
     (newSchema: Schema) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeInputSchema(newSchema));
+      dispatch(dataMapDataLoaderSlice.actions.changeSourceSchema(newSchema));
     },
     [dispatch]
   );
 
-  const changeOutputSchemaCB = useCallback(
+  const changeTargetSchemaCB = useCallback(
     (newSchema: Schema) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeOutputSchema(newSchema));
+      dispatch(dataMapDataLoaderSlice.actions.changeTargetSchema(newSchema));
     },
     [dispatch]
   );
@@ -79,9 +79,9 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
     [dispatch]
   );
 
-  const setSchemasBeforeSettingDataMap = (newInputSchema: Schema, newOutputSchema: Schema) => {
-    changeInputSchemaCB(newInputSchema);
-    changeOutputSchemaCB(newOutputSchema);
+  const setSchemasBeforeSettingDataMap = (newSourceSchema: Schema, newTargetSchema: Schema) => {
+    changeSourceSchemaCB(newSourceSchema);
+    changeTargetSchemaCB(newTargetSchema);
 
     return Promise.resolve();
   };

@@ -1,7 +1,7 @@
 import { getSelectedSchema } from '../../core';
 import { setInitialDataMap, setInitialSchema } from '../../core/state/DataMapSlice';
 import { closeAllWarning, openChangeSchemaWarning, removeOkClicked, WarningModalState } from '../../core/state/ModalSlice';
-import { closeDefaultConfigPanel, closeSchemaChangePanel, openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
+import { closeDefaultConfigPanel, closeSchemaChangePanel, openSourceSchemaPanel, openTargetSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
@@ -30,13 +30,13 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
   const isChangeSchemaConfirmed = useSelector(
     (state: RootState) =>
-      (state.modal.warningModalType === WarningModalState.ChangeInputWarning ||
-        state.modal.warningModalType === WarningModalState.ChangeOutputWarning) &&
+      (state.modal.warningModalType === WarningModalState.ChangeSourceWarning ||
+        state.modal.warningModalType === WarningModalState.ChangeTargetWarning) &&
       state.modal.isOkClicked
   );
   const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
-  const [selectedInputSchema, setSelectedInputSchema] = useState<IDropdownOption>();
-  const [selectedOutputSchema, setSelectedOutputSchema] = useState<IDropdownOption>();
+  const [selectedSourceSchema, setSelectedSourceSchema] = useState<IDropdownOption>();
+  const [selectedTargetSchema, setSelectedTargetSchema] = useState<IDropdownOption>();
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -72,13 +72,13 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     defaultMessage: 'Failed loading the schema. Please try again.',
     description: 'error message for loading the schema',
   });
-  const addInputSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Add Input Schema',
-    description: 'header message for adding input schema',
+  const addSourceSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Add Source Schema',
+    description: 'header message for adding source schema',
   });
-  const addOutputSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Add Output Schema',
-    description: 'header message for adding output schema',
+  const addTargetSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Add Target Schema',
+    description: 'header message for adding target schema',
   });
   const backMessage = intl.formatMessage({
     defaultMessage: 'Back',
@@ -89,25 +89,25 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     description: 'aria label for close icon button that closes that panel on click',
   });
 
-  const fetchedInputSchema = useQuery(
-    [selectedInputSchema?.text],
+  const fetchedSourceSchema = useQuery(
+    [selectedSourceSchema?.text],
     () => {
-      return getSelectedSchema(selectedInputSchema?.text ?? '');
+      return getSelectedSchema(selectedSourceSchema?.text ?? '');
     },
     {
-      enabled: selectedInputSchema !== undefined,
+      enabled: selectedSourceSchema !== undefined,
       staleTime: 1000 * 60 * 5,
       cacheTime: 1000 * 60 * 5,
     }
   );
 
-  const fetchedOutputSchema = useQuery(
-    [selectedOutputSchema?.text],
+  const fetchedTargetSchema = useQuery(
+    [selectedTargetSchema?.text],
     () => {
-      return getSelectedSchema(selectedOutputSchema?.text ?? '');
+      return getSelectedSchema(selectedTargetSchema?.text ?? '');
     },
     {
-      enabled: selectedOutputSchema !== undefined,
+      enabled: selectedTargetSchema !== undefined,
       staleTime: 1000 * 60 * 5,
       cacheTime: 1000 * 60 * 5,
     }
@@ -124,7 +124,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
   }, [dispatch, setErrorMessage]);
 
   const editSchema = useCallback(() => {
-    const selectedSchema = schemaType === SchemaTypes.Input ? (fetchedInputSchema.data as Schema) : (fetchedOutputSchema.data as Schema);
+    const selectedSchema = schemaType === SchemaTypes.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
 
     setErrorMessage('');
     if (selectedSchema) {
@@ -133,7 +133,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     } else {
       setErrorMessage(genericErrMsg);
     }
-  }, [closeSchemaPanel, onSubmitSchema, genericErrMsg, fetchedInputSchema, fetchedOutputSchema, schemaType]);
+  }, [closeSchemaPanel, onSubmitSchema, genericErrMsg, fetchedSourceSchema, fetchedTargetSchema, schemaType]);
 
   const addSchema = useCallback(() => {
     if (schemaType === undefined) {
@@ -174,7 +174,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
       editSchema();
       dispatch(closeAllWarning());
     }
-  }, [closeSchemaPanel, dispatch, editSchema, genericErrMsg, isChangeSchemaConfirmed, onSubmitSchema, schemaType, selectedInputSchema]);
+  }, [closeSchemaPanel, dispatch, editSchema, genericErrMsg, isChangeSchemaConfirmed, onSubmitSchema, schemaType, selectedSourceSchema]);
 
   useEffect(() => {
     readCurrentSchemaOptions();
@@ -184,10 +184,10 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     let isNoNewSchemaSelected = true;
 
     if (uploadType === UploadSchemaTypes.SelectFrom) {
-      if (schemaType === SchemaTypes.Input) {
-        isNoNewSchemaSelected = !selectedInputSchema || selectedInputSchema.key === curDataMapOperation.inputSchema?.name;
+      if (schemaType === SchemaTypes.Source) {
+        isNoNewSchemaSelected = !selectedSourceSchema || selectedSourceSchema.key === curDataMapOperation.sourceSchema?.name;
       } else {
-        isNoNewSchemaSelected = !selectedOutputSchema || selectedOutputSchema.key === curDataMapOperation.outputSchema?.name;
+        isNoNewSchemaSelected = !selectedTargetSchema || selectedTargetSchema.key === curDataMapOperation.targetSchema?.name;
       }
     } else {
       isNoNewSchemaSelected = !selectedSchemaFile;
@@ -213,8 +213,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     isChangeSchemaPanelOpen,
     schemaType,
     curDataMapOperation,
-    selectedInputSchema,
-    selectedOutputSchema,
+    selectedSourceSchema,
+    selectedTargetSchema,
     addMessage,
     hideEntirePanel,
     discardMessage,
@@ -223,11 +223,11 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     uploadType,
   ]);
 
-  const onInputSchemaClick = () => {
-    dispatch(openInputSchemaPanel());
+  const onSourceSchemaClick = () => {
+    dispatch(openSourceSchemaPanel());
   };
-  const onOutputSchemaClick = () => {
-    dispatch(openOutputSchemaPanel());
+  const onTargetSchemaClick = () => {
+    dispatch(openTargetSchemaPanel());
   };
   const onBackButtonClick = useCallback(() => {
     closeSchemaPanel();
@@ -244,7 +244,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
         ) : isDefaultPanelOpen ? (
           <Text className="header-text">{configurationHeader}</Text>
         ) : isChangeSchemaPanelOpen ? (
-          <Text className="header-text">{schemaType === SchemaTypes.Input ? addInputSchemaHeaderMsg : addOutputSchemaHeaderMsg}</Text>
+          <Text className="header-text">{schemaType === SchemaTypes.Source ? addSourceSchemaHeaderMsg : addTargetSchemaHeaderMsg}</Text>
         ) : (
           <div />
         )}
@@ -252,8 +252,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
       </div>
     ),
     [
-      addInputSchemaHeaderMsg,
-      addOutputSchemaHeaderMsg,
+      addSourceSchemaHeaderMsg,
+      addTargetSchemaHeaderMsg,
       configurationHeader,
       isChangeSchemaPanelOpen,
       isDefaultPanelOpen,
@@ -279,8 +279,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
           {isChangeSchemaPanelOpen ? (
             <ChangeSchemaView
               schemaType={schemaType}
-              selectedSchema={schemaType === SchemaTypes.Input ? selectedInputSchema : selectedOutputSchema}
-              setSelectedSchema={schemaType === SchemaTypes.Input ? setSelectedInputSchema : setSelectedOutputSchema}
+              selectedSchema={schemaType === SchemaTypes.Source ? selectedSourceSchema : selectedTargetSchema}
+              setSelectedSchema={schemaType === SchemaTypes.Source ? setSelectedSourceSchema : setSelectedTargetSchema}
               selectedSchemaFile={selectedSchemaFile}
               setSelectedSchemaFile={setSelectedSchemaFile}
               errorMessage={errorMessage}
@@ -288,7 +288,7 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
               setUploadType={setUploadType}
             />
           ) : (
-            <DefaultPanelView onInputSchemaClick={onInputSchemaClick} onOutputSchemaClick={onOutputSchemaClick} />
+            <DefaultPanelView onSourceSchemaClick={onSourceSchemaClick} onTargetSchemaClick={onTargetSchemaClick} />
           )}
         </div>
       </Panel>

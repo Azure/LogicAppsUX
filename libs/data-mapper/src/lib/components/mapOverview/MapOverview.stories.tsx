@@ -50,16 +50,16 @@ const schema: SchemaExtended = {
 
 export const Standard: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
 Standard.args = {
-  inputSchema: schema,
-  outputSchema: schema,
+  sourceSchema: schema,
+  targetSchema: schema,
 };
 
-export const InputOnly: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
-InputOnly.args = {
-  inputSchema: schema,
+export const SourceOnly: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
+SourceOnly.args = {
+  sourceSchema: schema,
 };
 
-export const OutputOnly: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
-OutputOnly.args = {
-  outputSchema: schema,
+export const TargetOnly: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
+TargetOnly.args = {
+  targetSchema: schema,
 };

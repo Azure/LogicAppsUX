@@ -833,7 +833,7 @@
       </Item>
       <Item ItemId=";3X/ZDK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Upload or select an output schema to be used for your map.]]></Val>
+          <Val><![CDATA[Upload or select a target schema to be used for your map.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Upload of selecteer een uitvoerschema dat voor uw toewijzing moet worden gebruikt.]]></Val>
           </Tgt>
@@ -1067,7 +1067,7 @@
       </Item>
       <Item ItemId=";53PSgA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?]]></Val>
+          <Val><![CDATA[Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Het invoerschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het invoerschema?]]></Val>
           </Tgt>
@@ -1409,7 +1409,7 @@
       </Item>
       <Item ItemId=";8JFxmV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Add Output Schema]]></Val>
+          <Val><![CDATA[Add Target Schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Voeg uitvoerschema toe]]></Val>
           </Tgt>
@@ -1490,7 +1490,7 @@
       </Item>
       <Item ItemId=";8to63i" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Input Schema]]></Val>
+          <Val><![CDATA[Source Schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Invoerschema]]></Val>
           </Tgt>
@@ -1625,7 +1625,7 @@
       </Item>
       <Item ItemId=";9mWdNA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Select an output schema]]></Val>
+          <Val><![CDATA[Select a target schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Een uitvoerschema selecteren]]></Val>
           </Tgt>
@@ -2630,7 +2630,7 @@
       </Item>
       <Item ItemId=";IngtMG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Select an input schema]]></Val>
+          <Val><![CDATA[Select a source schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Een invoerschema selecteren]]></Val>
           </Tgt>
@@ -2810,7 +2810,7 @@
       </Item>
       <Item ItemId=";KUw9iC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Output Schema]]></Val>
+          <Val><![CDATA[Target Schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Uitvoerschema]]></Val>
           </Tgt>
@@ -4490,7 +4490,7 @@
       </Item>
       <Item ItemId=";XBPhr0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Select an output schema]]></Val>
+          <Val><![CDATA[Select a target schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Een uitvoerschema selecteren]]></Val>
           </Tgt>
@@ -4850,7 +4850,7 @@
       </Item>
       <Item ItemId=";a3QJzO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?]]></Val>
+          <Val><![CDATA[Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Het uitvoerschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het uitvoerschema?]]></Val>
           </Tgt>
@@ -5399,7 +5399,7 @@
       </Item>
       <Item ItemId=";eIlosa" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Output schema node]]></Val>
+          <Val><![CDATA[Target schema node]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Uitvoerschemaknooppunt]]></Val>
           </Tgt>
@@ -6167,7 +6167,7 @@
       </Item>
       <Item ItemId=";kBw1WQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Add Input Schema]]></Val>
+          <Val><![CDATA[Add Source Schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Voeg invoerschema toe]]></Val>
           </Tgt>
@@ -6923,7 +6923,7 @@
       </Item>
       <Item ItemId=";q5SkF5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Select an input schema]]></Val>
+          <Val><![CDATA[Select a source schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Een invoerschema selecteren]]></Val>
           </Tgt>
@@ -7331,7 +7331,7 @@
       </Item>
       <Item ItemId=";surdl/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Input schema node]]></Val>
+          <Val><![CDATA[Source schema node]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Invoerschemaknooppunt]]></Val>
           </Tgt>
@@ -7358,7 +7358,7 @@
       </Item>
       <Item ItemId=";t5CdhT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Upload or select an input schema to be used for your map.]]></Val>
+          <Val><![CDATA[Upload or select a source schema to be used for your map.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Upload of selecteer een invoerschema dat voor de toewijzing moet worden gebruikt.]]></Val>
           </Tgt>

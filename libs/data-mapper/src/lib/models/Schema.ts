@@ -97,8 +97,8 @@ export interface PathItem {
 }
 
 export enum SchemaTypes {
-  Input = 'input',
-  Output = 'output',
+  Source = 'source',
+  Target = 'target',
 }
 
 export type SchemaNodeDictionary = { [key: string]: SchemaNodeExtended };

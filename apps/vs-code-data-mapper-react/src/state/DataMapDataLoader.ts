@@ -6,8 +6,8 @@ export interface DataMapLoadingState {
   armToken?: string;
   loadingMethod: 'file' | 'arm';
   dataMap?: DataMap;
-  inputSchema?: Schema;
-  outputSchema?: Schema;
+  sourceSchema?: Schema;
+  targetSchema?: Schema;
   schemaFileList?: string[];
 }
 
@@ -28,11 +28,11 @@ export const dataMapDataLoaderSlice = createSlice({
     changeDataMap: (state, action: PayloadAction<DataMap>) => {
       state.dataMap = action.payload;
     },
-    changeInputSchema: (state, action: PayloadAction<Schema>) => {
-      state.inputSchema = action.payload;
+    changeSourceSchema: (state, action: PayloadAction<Schema>) => {
+      state.sourceSchema = action.payload;
     },
-    changeOutputSchema: (state, action: PayloadAction<Schema>) => {
-      state.outputSchema = action.payload;
+    changeTargetSchema: (state, action: PayloadAction<Schema>) => {
+      state.targetSchema = action.payload;
     },
     changeSchemaList: (state, action: PayloadAction<string[]>) => {
       state.schemaFileList = action.payload;

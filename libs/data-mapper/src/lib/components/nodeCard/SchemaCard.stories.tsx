@@ -30,7 +30,7 @@ Standard.args = {
       children: [],
       pathToRoot: [],
     },
-    schemaType: SchemaTypes.Input,
+    schemaType: SchemaTypes.Source,
     displayHandle: false,
     isLeaf: false,
     isChild: false,

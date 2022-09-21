@@ -66,7 +66,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Default value',
   });
 
-  // Base info shared by input/output nodes
+  // Base info shared by source/target nodes
   const NodeInfo = () => {
     return (
       <div className={styles.nodeInfoGridContainer}>
@@ -85,7 +85,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     );
   };
 
-  const AdditionalOutputNodeProperties = () => {
+  const AdditionalTargetNodeProperties = () => {
     return (
       <div>
         <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
@@ -117,7 +117,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     <div>
       <NodeInfo />
 
-      {currentNode.nodeType === NodeType.Output && <AdditionalOutputNodeProperties />}
+      {currentNode.nodeType === NodeType.Target && <AdditionalTargetNodeProperties />}
     </div>
   );
 };
