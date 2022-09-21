@@ -267,19 +267,24 @@ const initializeOutputTokensForOperations = (
   for (const operationId of Object.keys(operations)) {
     const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithData, nodeMap);
     const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds };
-    const nodeData = nodesWithData[operationId];
-    const { manifest, nodeOutputs, iconUri, brandColor } = nodeData;
 
-    nodeTokens.tokens.push(...getBuiltInTokens(manifest));
-    nodeTokens.tokens.push(
-      ...convertOutputsToTokens(
-        isRootNodeInGraph(operationId, 'root', nodesMetadata) ? undefined : operationId,
-        operations[operationId]?.type,
-        nodeOutputs.outputs ?? {},
-        { iconUri, brandColor },
-        nodesWithData[operationId]?.settings
-      )
-    );
+    try {
+      const nodeData = nodesWithData[operationId];
+      const { manifest, nodeOutputs, iconUri, brandColor } = nodeData;
+
+      nodeTokens.tokens.push(...getBuiltInTokens(manifest));
+      nodeTokens.tokens.push(
+        ...convertOutputsToTokens(
+          isRootNodeInGraph(operationId, 'root', nodesMetadata) ? undefined : operationId,
+          operations[operationId]?.type,
+          nodeOutputs.outputs ?? {},
+          { iconUri, brandColor },
+          nodesWithData[operationId]?.settings
+        )
+      );
+    } catch (e) {
+      // No tokens will be added if there is an exception. This will allow continuining loading other operations.
+    }
 
     result[operationId] = nodeTokens;
   }

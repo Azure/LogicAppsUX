@@ -1,9 +1,9 @@
 import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { getConnectionsForConnector } from '../../queries/connections';
+import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping } from '../../state/connection/connectionSlice';
-import type { AddNodeOperationPayload, NodeOperation } from '../../state/operation/operationMetadataSlice';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { switchToOperationPanel, isolateTab } from '../../state/panel/panelSlice';
@@ -12,7 +12,9 @@ import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { RootState } from '../../store';
+import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { isRootNodeInGraph } from '../../utils/graph';
+import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations } from '../../utils/variables';
 import { isConnectionRequiredForOperation } from './connections';
@@ -20,7 +22,7 @@ import { getInputParametersFromManifest, getOutputParametersFromManifest } from 
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import { getOperationSettings } from './settings';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { DiscoveryOperation, DiscoveryResultTypes, OperationInfo } from '@microsoft-logic-apps/utils';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -44,80 +46,92 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
 
   const newPayload = { ...payload, nodeId };
 
-  const connectorId = operation.properties.api.id; // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
-  const operationId = operation.id;
-  const operationType = operation.properties.operationType ?? '';
-  const operationKind = operation.properties.operationKind ?? '';
   dispatch(addNode(newPayload as any));
-  const operationPayload: AddNodeOperationPayload = {
-    id: nodeId,
-    type: operationType,
-    connectorId,
-    operationId,
+
+  const nodeOperationInfo = {
+    connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
+    operationId: operation.name,
+    type: operation.properties.operationType ?? '',
+    kind: operation.properties.operationKind ?? '',
   };
 
-  dispatch(initializeOperationInfo(operationPayload));
+  dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
   const newWorkflowState = (getState() as RootState).workflow;
-  initializeOperationDetails(nodeId, { connectorId, operationId }, operationType, operationKind, newWorkflowState, dispatch);
+  initializeOperationDetails(nodeId, nodeOperationInfo, newWorkflowState, dispatch);
 
   // Update settings for children and parents
 
-  getOperationManifest({ connectorId: operation.properties.api.id, operationId: operation.id });
   dispatch(setFocusNode(nodeId));
   return;
 });
 
 export const initializeOperationDetails = async (
   nodeId: string,
-  operationInfo: OperationInfo,
-  operationType: string,
-  operationKind: string | undefined,
+  operationInfo: NodeOperation,
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): Promise<void> => {
-  const nodeOperationInfo = { ...operationInfo, type: operationType, kind: operationKind };
+  const isTrigger = isRootNodeInGraph(nodeId, 'root', workflowState.nodesMetadata);
+  const { type, connectorId } = operationInfo;
   const operationManifestService = OperationManifestService();
-  if (operationManifestService.isSupported(operationType)) {
+
+  if (operationManifestService.isSupported(type)) {
     const manifest = await getOperationManifest(operationInfo);
     const { iconUri, brandColor } = manifest.properties;
 
     if (isConnectionRequiredForOperation(manifest)) {
-      setDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
+      setDefaultConnectionForNode(nodeId, connectorId, dispatch);
     } else {
       dispatch(switchToOperationPanel(nodeId));
     }
 
-    // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
-    const settings = getOperationSettings(
-      false /* isTrigger */,
-      nodeOperationInfo,
-      manifest,
-      /* swagger */ undefined,
-      workflowState.operations[nodeId]
-    );
+    const settings = getOperationSettings(isTrigger, operationInfo, manifest, /* swagger */ undefined);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       manifest,
-      false /* isTrigger */,
+      isTrigger,
       nodeInputs,
       settings.splitOn?.value?.value
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
     dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
-
-    // TODO(Danielle) - Please comment out the below part when state has updated graph and nodesMetadata.
-    // We need the graph and nodesMetadata updated with the newly added node for token dependencies to be calculated.
     addTokensAndVariables(
       nodeId,
-      operationType,
+      type,
       { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest, nodeDependencies },
       workflowState,
       dispatch
     );
   } else {
-    // TODO - swagger case here
-    setDefaultConnectionForNode(nodeId, operationInfo.connectorId, dispatch);
+    setDefaultConnectionForNode(nodeId, connectorId, dispatch);
+    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    const iconUri = getIconUriFromConnector(connector);
+    const brandColor = getBrandColorFromConnector(connector);
+
+    const settings = getOperationSettings(isTrigger, operationInfo, /* manifest */ undefined, parsedSwagger);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
+      nodeId,
+      isTrigger,
+      parsedSwagger,
+      operationInfo
+    );
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
+      nodeId,
+      parsedSwagger,
+      operationInfo,
+      nodeInputs
+    );
+    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+
+    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
+    addTokensAndVariables(
+      nodeId,
+      type,
+      { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, nodeDependencies },
+      workflowState,
+      dispatch
+    );
   }
 };
 
@@ -128,23 +142,19 @@ export const reinitializeOperationDetails = async (
   workflowState: WorkflowState,
   dispatch: Dispatch
 ): Promise<void> => {
+  const isTrigger = isRootNodeInGraph(nodeId, 'root', workflowState.nodesMetadata);
+  const { type, connectorId } = operationInfo;
+  const definition = workflowState.operations[nodeId];
   const operationManifestService = OperationManifestService();
-  if (operationManifestService.isSupported(operationInfo.type)) {
+  if (operationManifestService.isSupported(type)) {
     const manifest = await getOperationManifest(operationInfo);
     const { iconUri, brandColor } = manifest.properties;
 
-    // TODO(Danielle) - Please set the isTrigger correctly once we know the added operation is trigger or action.
-    const settings = getOperationSettings(
-      false /* isTrigger */,
-      operationInfo,
-      manifest,
-      undefined /* swagger */,
-      workflowState.operations[nodeId]
-    );
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
+    const settings = getOperationSettings(isTrigger, operationInfo, manifest, undefined /* swagger */, definition);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, definition);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       manifest,
-      false /* isTrigger */,
+      isTrigger,
       nodeInputs,
       settings.splitOn?.value?.value
     );
@@ -154,13 +164,40 @@ export const reinitializeOperationDetails = async (
 
     addTokensAndVariables(
       nodeId,
-      operationInfo.type,
+      type,
       { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest, nodeDependencies },
       workflowState,
       dispatch
     );
   } else {
-    // TODO - swagger case here
+    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    const iconUri = getIconUriFromConnector(connector);
+    const brandColor = getBrandColorFromConnector(connector);
+
+    const settings = getOperationSettings(isTrigger, operationInfo, /* manifest */ undefined, parsedSwagger, definition);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
+      nodeId,
+      isTrigger,
+      parsedSwagger,
+      operationInfo,
+      definition
+    );
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
+      nodeId,
+      parsedSwagger,
+      operationInfo,
+      nodeInputs
+    );
+    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+
+    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
+    addTokensAndVariables(
+      nodeId,
+      type,
+      { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, nodeDependencies },
+      workflowState,
+      dispatch
+    );
   }
 };
 

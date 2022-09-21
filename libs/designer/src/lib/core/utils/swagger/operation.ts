@@ -27,20 +27,16 @@ import {
 } from '../parameters/helper';
 import { loadInputValuesFromDefinition } from './inputsbuilder';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
-import type {
-  Operation,
-  OutputParameter ,
-  SwaggerParser
-} from '@microsoft-logic-apps/parsers';
+import type { Operation, OutputParameter, SwaggerParser } from '@microsoft-logic-apps/parsers';
 import {
   create,
   isDynamicSchemaExtension,
   ParameterLocations,
   removeConnectionPrefix,
-  isTemplateExpression
+  isTemplateExpression,
 } from '@microsoft-logic-apps/parsers';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
-import { copyArray , map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft-logic-apps/utils';
+import { copyArray, map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 interface OperationInputInfo {
@@ -114,7 +110,7 @@ export const getInputParametersFromSwagger = (
   isTrigger: boolean,
   swagger: SwaggerParser,
   operationInfo: NodeOperation,
-  stepDefinition: any
+  stepDefinition?: any
 ): NodeInputsWithDependencies => {
   const { type, operationId } = operationInfo;
   const includeNotificationParameters = !equals(type, Constants.NODE.TYPE.API_CONNECTION);
@@ -345,11 +341,7 @@ function getOperationIdFromSwagger(operationMethod: string, operationPath: strin
   return operationId;
 }
 
-function getOperationInputInfoFromDefinition(
-  swagger: SwaggerParser,
-  operation: any,
-  type: string
-): OperationInputInfo | null | undefined {
+function getOperationInputInfoFromDefinition(swagger: SwaggerParser, operation: any, type: string): OperationInputInfo | null | undefined {
   const stepInputs = operation.inputs;
   if (!stepInputs) {
     return undefined;
