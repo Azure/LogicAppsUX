@@ -47,7 +47,11 @@
       "executor": "@nrwl/web:dev-server",
       "options": {
         "buildTarget": "designer-standalone:build",
-        "hmr": true
+        "hmr": true,
+        "host": "designer.local",
+        "ssl": true,
+        "sslKey": "local-key.pem",
+        "sslCert": "local-cert.pem"
       },
       "configurations": {
         "production": {
