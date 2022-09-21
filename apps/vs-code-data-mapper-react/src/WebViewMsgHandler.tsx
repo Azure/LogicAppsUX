@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 
 type ReceivingMessageTypes =
-  | { command: 'fetchSchema'; data: { fileName: string; type: 'input' | 'output' } }
+  | { command: 'fetchSchema'; data: { fileName: string; type: 'source' | 'target' } }
   | { command: 'loadNewDataMap'; data: DataMap }
   | { command: 'loadDataMap'; data: { dataMap: DataMap; sourceSchemaFileName: string; targetSchemaFileName: string } }
   | { command: 'showAvailableSchemas'; data: string[] };
@@ -26,7 +26,7 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
     switch (msg.command) {
       case 'fetchSchema':
         getSelectedSchema(msg.data.fileName).then((schema) => {
-          if (msg.data.type === 'input') {
+          if (msg.data.type === 'source') {
             changeSourceSchemaCB(schema as Schema);
           } else {
             changeTargetSchemaCB(schema as Schema);

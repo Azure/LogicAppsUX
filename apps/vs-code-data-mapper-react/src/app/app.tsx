@@ -12,7 +12,7 @@ enum VsCodeThemeType {
 
 interface SchemaFile {
   path: string;
-  type: 'input' | 'output';
+  type: 'source' | 'target';
 }
 
 export const App = (): JSX.Element => {
