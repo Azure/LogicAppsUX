@@ -8,6 +8,8 @@
     "designer-standalone": "apps/designer-standalone",
     "designer-ui": "libs/designer-ui",
     "parsers": "libs/parsers",
+    "plugins-playwright": "libs/plugins/playwright",
+    "plugins-playwright-e2e": "apps/plugins/playwright-e2e",
     "services-designer-client-services": "libs/services/designer-client-services",
     "services-intl": "libs/services/intl",
     "utils": "libs/utils",

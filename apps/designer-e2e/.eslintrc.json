@@ -1,9 +1,21 @@
 {
-  "extends": ["plugin:cypress/recommended", "../../.eslintrc.json"],
+  "extends": ["../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "rules": {
+        "jest/no-done-callback": "off"
+      }
+    },
+    {
+      "files": ["*.ts", "*.tsx"],
+      "rules": {
+        "jest/no-done-callback": "off"
+      }
+    },
+    {
+      "files": ["*.js", "*.jsx"],
       "rules": {}
     }
   ]

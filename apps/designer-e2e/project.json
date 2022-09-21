@@ -4,40 +4,36 @@
   "projectType": "application",
   "targets": {
     "e2e": {
-      "executor": "@nrwl/cypress:cypress",
+      "executor": "@microsoft/nx-playwright:run-tests",
       "options": {
-        "cypressConfig": "apps/designer-e2e/cypress.config.ts",
-        "devServerTarget": "designer:storybook"
+        "e2eFolder": "apps/designer-e2e",
+        "devServerTarget": "designer-standalone:serve",
+        "packageRunner": "npx"
       },
       "configurations": {
-        "debugchrome": {
-          "headed": true,
-          "browser": "chrome"
-        },
-        "debugedge": {
-          "headed": true,
-          "browser": "edge"
-        },
-        "debugfirefox": {
-          "headed": true,
-          "browser": "firefox"
-        },
-        "debug": {
-          "headed": true,
-          "exit": false
-        },
-        "ci": {
-          "devServerTarget": "designer:storybook:ci",
-          "headed": false
+        "production": {
+          "devServerTarget": "designer-standalone:serve:production"
         }
+      }
+    },
+    "ts-check": {
+      "executor": "@nrwl/workspace:run-commands",
+      "options": {
+        "commands": [
+          {
+            "command": "tsc --build --force --verbose apps/designer-standalone-e2e/tsconfig.json"
+          }
+        ]
       }
     },
     "lint": {
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["apps/designer-e2e/**/*.{js,ts}"]
+        "lintFilePatterns": ["apps/designer-e2e/**/*.{ts,tsx,js,jsx}"]
       }
     }
-  }
+  },
+  "tags": [],
+  "implicitDependencies": ["designer-standalone"]
 }
