@@ -1,7 +1,9 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReferences, Workflow } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
+import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { RootState } from '../../store';
 import { getNode, isRootNode, isRootNodeInGraph } from '../../utils/graph';
@@ -12,11 +14,12 @@ import {
   getJSONValueFromString,
   parameterValueToString,
 } from '../../utils/parameters/helper';
+import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { Segment } from '@microsoft-logic-apps/parsers';
-import { cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft-logic-apps/parsers';
+import { create, removeConnectionPrefix, cleanIndexedValue, isAncestorKey, parseEx, SegmentType } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest, SubGraphDetail } from '@microsoft-logic-apps/utils';
 import {
   equals,
@@ -118,8 +121,22 @@ export const serializeOperation = async (
   if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
   } else {
-    // TODO - Implement for ApiConnection type operations [swagger based]
-    serializedOperation = rootState.workflow.operations[operationId] ?? {};
+    switch (operation.type.toLowerCase()) {
+      case Constants.NODE.TYPE.API_CONNECTION:
+      case Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION:
+      case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK:
+        serializedOperation = await serializeSwaggerBasedOperation(rootState, operationId);
+        break;
+
+      default:
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'operation serializer',
+          message: `Do not recognize type: '${operation.type} as swagger based operation'`,
+        });
+        serializedOperation = rootState.workflow.operations[operationId] ?? {};
+        break;
+    }
   }
 
   // TODO - We might have to just serialize bare minimum data for partially loaded node.
@@ -162,6 +179,35 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     ...optional('kind', operation.kind),
     ...optional((manifest.properties.inputsLocation ?? ['inputs'])[0], inputs),
     ...childOperations,
+    ...optional('runAfter', runAfter),
+    ...optional('recurrence', recurrence),
+    ...serializeSettings(operationId, nodeSettings, rootState),
+  };
+};
+
+const serializeSwaggerBasedOperation = async (rootState: RootState, operationId: string): Promise<LogicAppsV2.OperationDefinition> => {
+  const idReplacements = rootState.workflow.idReplacements;
+  const operationInfo = rootState.operations.operationInfo[operationId];
+  const { type, kind } = operationInfo;
+  const operationFromWorkflow = rootState.workflow.operations[operationId];
+  const isTrigger = isRootNode(operationId, rootState.workflow.nodesMetadata);
+  const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
+  const nodeSettings = rootState.operations.settings[operationId] ?? {};
+  const runAfter = isTrigger ? undefined : getRunAfter(operationFromWorkflow, idReplacements);
+  const recurrence =
+    isTrigger && equals(type, Constants.NODE.TYPE.API_CONNECTION)
+      ? constructInputValues('recurrence.$', inputsToSerialize, false /* encodePathComponents */)
+      : undefined;
+  const retryPolicy = getRetryPolicy(nodeSettings);
+  const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
+  const hostInfo = { host: { connection: { referenceName: rootState.connections.connectionsMapping[operationId] ?? '' } } };
+  const inputs = { ...hostInfo, ...inputPathValue, retryPolicy };
+
+  return {
+    type,
+    ...optional('description', operationFromWorkflow.description),
+    ...optional('kind', kind),
+    ...inputs,
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
     ...serializeSettings(operationId, nodeSettings, rootState),
@@ -272,6 +318,29 @@ const serializeParameterWithPath = (
   }
 
   return result;
+};
+
+const serializeParametersFromSwagger = async (
+  inputs: SerializedParameter[],
+  operationInfo: NodeOperation
+): Promise<Record<string, any>> => {
+  const { operationId, connectorId, type } = operationInfo;
+  const { parsedSwagger } = await getConnectorWithSwagger(connectorId);
+  const { method, path } = parsedSwagger.getOperationByOperationId(operationId);
+  const operationPath = removeConnectionPrefix(path);
+  const operationMethod = equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK) ? undefined : method;
+  const parameterInputs = equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
+    ? constructInputValues(create(['inputs', '$']) as string, inputs, false /* encodePathComponents */)
+    : buildOperationDetailsFromControls(inputs, operationPath, false /* encodePathComponents */, operationMethod);
+
+  // Ignore unencoded newline characters in the operation path since
+  // the regular expression used to match paths to their operations
+  // does not match across multiple lines.
+  if (parameterInputs.path) {
+    parameterInputs.path = parameterInputs.path.replace(/[\r\n]/g, '');
+  }
+
+  return parameterInputs;
 };
 
 //#endregion
@@ -447,7 +516,7 @@ const serializeSettings = (
   const conditions = conditionExpressions
     ? conditionExpressions.value?.filter((expression) => !!expression).map((expression) => ({ expression }))
     : undefined;
-  const timeout = settings.timeout?.isSupported ? { timeout: settings.timeout.value } : undefined;
+  const timeout = settings.timeout?.isSupported && settings.timeout.value ? { timeout: settings.timeout.value } : undefined;
   const trackedProperties = settings.trackedProperties?.value;
 
   return {
