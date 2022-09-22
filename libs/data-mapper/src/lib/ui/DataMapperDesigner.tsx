@@ -4,7 +4,12 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
-import { basePropPaneContentHeight, PropertiesPane, propPaneTopBarHeight } from '../components/propertiesPane/PropertiesPane';
+import {
+  basePropPaneContentHeight,
+  canvasAreaAndPropPaneMargin,
+  PropertiesPane,
+  propPaneTopBarHeight,
+} from '../components/propertiesPane/PropertiesPane';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { redoDataMapOperation, saveDataMap, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
@@ -12,12 +17,33 @@ import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
-import { makeStyles, tokens } from '@fluentui/react-components';
-import { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { useLayoutEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
+
+const useCenterViewHeight = () => {
+  const [centerViewHeight, setCenterViewHeight] = useState(0);
+
+  const handleCenterViewHeight = () => {
+    const centerView = document.getElementById('centerView');
+
+    if (centerView?.clientHeight) {
+      setCenterViewHeight(centerView.clientHeight);
+    }
+  };
+
+  useLayoutEffect(() => {
+    window.addEventListener('resize', handleCenterViewHeight);
+    handleCenterViewHeight();
+
+    return () => window.removeEventListener('resize', handleCenterViewHeight);
+  }, []);
+
+  return centerViewHeight;
+};
 
 const useStyles = makeStyles({
   dataMapperShell: {
@@ -27,8 +53,8 @@ const useStyles = makeStyles({
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    ...shorthands.flex(1, 1, '1px'),
   },
-  centerView: {},
   canvasWrapper: {
     backgroundColor: '#edebe9',
     height: '100%',
@@ -50,12 +76,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
 
-  const [centerViewHeight, setCenterViewHeight] = useState(0);
+  const centerViewHeight = useCenterViewHeight();
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
-
-  const centerViewRef = useRef<HTMLDivElement>(null);
 
   const dataMapDefinition = useMemo((): string => {
     if (sourceSchema && targetSchema) {
@@ -95,19 +119,31 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     // TODO: Hook up once Test Map pane work starts
   };
 
-  useLayoutEffect(() => {
-    const handleCenterViewHeight = () => {
-      if (centerViewRef.current?.clientHeight) {
-        setCenterViewHeight(centerViewRef.current.clientHeight);
-      }
-    };
+  const getCanvasAreaAndPropPaneMargin = () => {
+    return isPropPaneExpanded && propPaneExpandedHeight === centerViewHeight - propPaneTopBarHeight ? 0 : canvasAreaAndPropPaneMargin;
+  };
 
-    handleCenterViewHeight();
+  // NOTE: The below two methods include the margin between the canvas area and proppane
+  const getCollapsedPropPaneTotalHeight = () => {
+    return propPaneTopBarHeight + getCanvasAreaAndPropPaneMargin();
+  };
 
-    window.addEventListener('resize', handleCenterViewHeight);
+  const getExpandedPropPaneTotalHeight = () => {
+    return propPaneExpandedHeight + propPaneTopBarHeight + getCanvasAreaAndPropPaneMargin();
+  };
 
-    return () => window.removeEventListener('resize', handleCenterViewHeight);
-  }, []);
+  const getCanvasAreaHeight = () => {
+    if (isPropPaneExpanded) {
+      return centerViewHeight - getExpandedPropPaneTotalHeight();
+    } else {
+      return centerViewHeight - getCollapsedPropPaneTotalHeight();
+    }
+  };
+
+  console.log(`Center View (TOTAL) Height: ${centerViewHeight}`);
+
+  console.log(`Expanded PropPane Height: ${getExpandedPropPaneTotalHeight()}`);
+  console.log(`Canvas Area Height: ${getCanvasAreaHeight()}`);
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -117,13 +153,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         <EditorConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
         <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
 
-        <div className={styles.centerView} style={{ minHeight: 400, maxHeight: '80%', flex: '1 2 auto' }} ref={centerViewRef}>
+        <div id="centerView" style={{ minHeight: 400, flex: '1 1 1px' }}>
           <div
             style={{
-              height: isPropPaneExpanded
-                ? centerViewHeight - (propPaneExpandedHeight + propPaneTopBarHeight)
-                : centerViewHeight - propPaneTopBarHeight,
-              marginBottom: isPropPaneExpanded && propPaneExpandedHeight === centerViewHeight ? 0 : '8px',
+              height: getCanvasAreaHeight(),
+              marginBottom: getCanvasAreaAndPropPaneMargin(),
               boxSizing: 'border-box',
             }}
           >

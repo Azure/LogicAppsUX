@@ -33,14 +33,14 @@ export const DataMapperStandaloneDesigner = () => {
   };
 
   return (
-    <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ flex: '0' }}>
+    <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: '0 1 1px' }}>
         <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
           <DevToolbox />
         </FluentProvider>
       </div>
 
-      <div style={{ flex: '1' }}>
+      <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
         <DataMapperDesignerProvider locale="en-US" theme={theme === 'Light' ? 'light' : 'dark'} options={{}}>
           <DataMapDataProvider
             dataMap={dataMap}

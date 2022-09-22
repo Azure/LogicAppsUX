@@ -16,8 +16,9 @@ enum TABS {
   TEST,
 }
 
-export const propPaneTopBarHeight = 40;
-export const basePropPaneContentHeight = 192;
+export const canvasAreaAndPropPaneMargin = 8;
+export const propPaneTopBarHeight = 48;
+export const basePropPaneContentHeight = 224;
 
 const useStyles = makeStyles({
   pane: {
@@ -40,6 +41,7 @@ const useStyles = makeStyles({
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
     ...shorthands.overflow('hidden', 'auto'),
+    boxSizing: 'border-box',
   },
   noItemSelectedText: {
     color: tokens.colorNeutralForegroundDisabled,
@@ -142,12 +144,14 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     const deltaY = e.clientY - initialDragYPos; // Going up == negative
 
+    const fullCenterViewHeight = centerViewHeight - propPaneTopBarHeight;
+
     // Clamp height percent between 0 and the full centerViewHeight
-    const newPaneContentHeight = Math.min(centerViewHeight, Math.max(0, initialDragHeight - deltaY));
+    const newPaneContentHeight = Math.min(fullCenterViewHeight, Math.max(0, initialDragHeight - deltaY));
 
     // Snap properties pane to full height if expanded >=80%
-    if (newPaneContentHeight >= 0.8 * centerViewHeight) {
-      setContentHeight(centerViewHeight);
+    if (newPaneContentHeight >= 0.8 * fullCenterViewHeight) {
+      setContentHeight(fullCenterViewHeight);
       return;
     }
 
@@ -231,7 +235,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   }, [currentNode, setIsExpanded]);
 
   return (
-    <div className={styles.pane} style={{ flex: '0 1 auto' }}>
+    <div className={styles.pane}>
       <Stack
         horizontal
         verticalAlign="center"
