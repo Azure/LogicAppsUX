@@ -24,6 +24,10 @@ const useStyles = makeStyles({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  schemaCardStackStyles: {
+    height: '100%',
+    width: '50%',
+  },
 });
 
 const reactFlowStyle = {
@@ -87,10 +91,10 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSc
 
   return (
     <div className={styles.mapOverviewStyles} style={reactFlowStyle}>
-      <Stack verticalAlign="center" style={{ width: '50%', height: '100%' }}>
+      <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
         {sourceSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Source} onClick={onSourceSchemaClick} />}
       </Stack>
-      <Stack verticalAlign="center" style={{ width: '50%', height: '100%' }}>
+      <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
         {targetSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Target} onClick={onTargetSchemaClick} />}
       </Stack>
     </div>
