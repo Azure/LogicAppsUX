@@ -16,9 +16,8 @@ enum TABS {
   TEST,
 }
 
-const propPaneTopBarHeight = 40;
-const minPropPaneContentHeight = 192;
-export const basePropPaneContentHeightPct = 15;
+export const propPaneTopBarHeight = 40;
+export const basePropPaneContentHeight = 192;
 
 const useStyles = makeStyles({
   pane: {
@@ -52,13 +51,14 @@ export interface PropertiesPaneProps {
   currentNode?: SelectedNode;
   isExpanded: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
-  contentHeightPct: number;
-  setContentHeightPct: (newHeight: number) => void;
+  centerViewHeight: number;
+  contentHeight: number;
+  setContentHeight: (newHeight: number) => void;
 }
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const intl = useIntl();
-  const { currentNode, isExpanded, setIsExpanded, contentHeightPct, setContentHeightPct } = props;
+  const { currentNode, isExpanded, setIsExpanded, centerViewHeight, contentHeight, setContentHeight } = props;
 
   const styles = useStyles();
   const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
@@ -126,7 +126,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const onStartDrag = (e: React.DragEvent) => {
     setInitialDragYPos(e.clientY);
-    setInitialDragHeight(contentHeightPct);
+    setInitialDragHeight(contentHeight);
 
     // Show empty image in place of dragging ghost preview
     const img = new Image();
@@ -140,26 +140,25 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       return;
     }
 
-    // TODO: Needs figuring out
-    const deltaYPct = e.clientY - initialDragYPos; // Going up == negative
+    const deltaY = e.clientY - initialDragYPos; // Going up == negative
 
-    // Clamp height percent between 0 and 100
-    const newPaneContentHeightPct = Math.min(100, Math.max(0, initialDragHeight - deltaYPct));
+    // Clamp height percent between 0 and the full centerViewHeight
+    const newPaneContentHeight = Math.min(centerViewHeight, Math.max(0, initialDragHeight - deltaY));
 
     // Snap properties pane to full height if expanded >=80%
-    if (newPaneContentHeightPct >= 80) {
-      setContentHeightPct(100);
+    if (newPaneContentHeight >= 0.8 * centerViewHeight) {
+      setContentHeight(centerViewHeight);
       return;
     }
 
     // Automatically collapse pane if resized below a certain amount, and reset expanded height
-    if (newPaneContentHeightPct <= 25) {
+    if (newPaneContentHeight <= 25) {
       setIsExpanded(false);
-      setContentHeightPct(basePropPaneContentHeightPct);
+      setContentHeight(basePropPaneContentHeight);
       return;
     }
 
-    setContentHeightPct(newPaneContentHeightPct);
+    setContentHeight(newPaneContentHeight);
   };
 
   const onDragEnd = () => {
@@ -270,7 +269,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       </Stack>
 
       {currentNode && isExpanded && (
-        <div className={styles.paneContent} style={{ minHeight: minPropPaneContentHeight, height: `${contentHeightPct}%` }}>
+        <div className={styles.paneContent} style={{ height: contentHeight }}>
           {getSelectedTab()}
         </div>
       )}

@@ -7,7 +7,7 @@ import { convertToReactFlowParentAndChildNodes } from '../../utils/ReactFlow.Uti
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
 import { Stack } from '@fluentui/react';
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useMemo } from 'react';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
@@ -23,6 +23,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
   },
   schemaCardStackStyles: {
     height: '100%',

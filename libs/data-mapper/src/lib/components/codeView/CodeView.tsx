@@ -4,8 +4,6 @@ import { Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
-// TODO: Figure out how to get MonacoEditor to take up full height
-
 const useStyles = makeStyles({
   containerStyle: {
     height: '100%',
@@ -23,6 +21,7 @@ const useStyles = makeStyles({
   editorStyle: {
     ...shorthands.border('1px', 'solid', '#313131'),
     ...shorthands.borderRadius('3px'),
+    height: '500px',
   },
 });
 

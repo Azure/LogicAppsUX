@@ -4,7 +4,7 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
-import { basePropPaneContentHeightPct, PropertiesPane } from '../components/propertiesPane/PropertiesPane';
+import { basePropPaneContentHeight, PropertiesPane, propPaneTopBarHeight } from '../components/propertiesPane/PropertiesPane';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { redoDataMapOperation, saveDataMap, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
@@ -12,8 +12,8 @@ import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
-import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { useMemo, useState } from 'react';
+import { makeStyles, tokens } from '@fluentui/react-components';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { ReactFlowProvider } from 'react-flow-renderer';
@@ -28,11 +28,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'column',
   },
-  centerView: {
-    minHeight: '600px',
-    height: '100%',
-    ...shorthands.flex(1, 2, 'auto'),
-  },
+  centerView: {},
   canvasWrapper: {
     backgroundColor: '#edebe9',
     height: '100%',
@@ -54,9 +50,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
 
+  const [centerViewHeight, setCenterViewHeight] = useState(0);
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
-  const [propPaneExpandedHeightPct, setPropPaneExpandedHeightPct] = useState(basePropPaneContentHeightPct);
+  const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
+
+  const centerViewRef = useRef<HTMLDivElement>(null);
 
   const dataMapDefinition = useMemo((): string => {
     if (sourceSchema && targetSchema) {
@@ -96,6 +95,20 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     // TODO: Hook up once Test Map pane work starts
   };
 
+  useLayoutEffect(() => {
+    const handleCenterViewHeight = () => {
+      if (centerViewRef.current?.clientHeight) {
+        setCenterViewHeight(centerViewRef.current.clientHeight);
+      }
+    };
+
+    handleCenterViewHeight();
+
+    window.addEventListener('resize', handleCenterViewHeight);
+
+    return () => window.removeEventListener('resize', handleCenterViewHeight);
+  }, []);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={styles.dataMapperShell}>
@@ -104,11 +117,13 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         <EditorConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
         <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
 
-        <div className={styles.centerView} style={{ display: 'flex', flexDirection: 'column' }}>
+        <div className={styles.centerView} style={{ minHeight: 400, maxHeight: '80%', flex: '1 2 auto' }} ref={centerViewRef}>
           <div
             style={{
-              flex: '1 1 auto',
-              marginBottom: isPropPaneExpanded && propPaneExpandedHeightPct === 100 ? 0 : '8px',
+              height: isPropPaneExpanded
+                ? centerViewHeight - (propPaneExpandedHeight + propPaneTopBarHeight)
+                : centerViewHeight - propPaneTopBarHeight,
+              marginBottom: isPropPaneExpanded && propPaneExpandedHeight === centerViewHeight ? 0 : '8px',
               boxSizing: 'border-box',
             }}
           >
@@ -133,12 +148,14 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
               <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
             )}
           </div>
+
           <PropertiesPane
             currentNode={currentlySelectedNode}
             isExpanded={isPropPaneExpanded}
             setIsExpanded={setIsPropPaneExpanded}
-            contentHeightPct={propPaneExpandedHeightPct}
-            setContentHeightPct={setPropPaneExpandedHeightPct}
+            centerViewHeight={centerViewHeight}
+            contentHeight={propPaneExpandedHeight}
+            setContentHeight={setPropPaneExpandedHeight}
           />
         </div>
       </div>
