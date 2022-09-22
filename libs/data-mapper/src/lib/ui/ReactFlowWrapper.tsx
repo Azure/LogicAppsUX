@@ -200,7 +200,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     (_: any, edge: ReactFlowEdge) => {
       if (!edgeUpdateSuccessful.current) {
         if (edge.target) {
-          dispatch(deleteConnection({ oldConnectionKey: edge.id }));
+          dispatch(deleteConnection(edge.id));
         }
       }
 

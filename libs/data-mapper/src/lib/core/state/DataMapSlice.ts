@@ -266,8 +266,7 @@ export const dataMapSlice = createSlice({
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      const trimmedOldConnectionKey = action.payload.oldConnectionKey.substring(action.payload.oldConnectionKey.indexOf('-') + 1);
-      delete newState.dataMapConnections[trimmedOldConnectionKey];
+      delete newState.dataMapConnections[action.payload.oldConnectionKey];
 
       const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
       const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
@@ -282,14 +281,13 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
-    deleteConnection: (state, action: PayloadAction<{ oldConnectionKey: string }>) => {
+    deleteConnection: (state, action: PayloadAction<string>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      const trimmedOldConnectionKey = action.payload.oldConnectionKey.substring(action.payload.oldConnectionKey.indexOf('-') + 1);
-      delete newState.dataMapConnections[trimmedOldConnectionKey];
+      delete newState.dataMapConnections[action.payload];
 
       doDataMapOperation(state, newState);
     },
