@@ -208,6 +208,11 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    setCurrentlySelectedEdge: (state, action: PayloadAction<string>) => {
+      const edge = state.curDataMapOperation.dataMapConnections[action.payload];
+      edge.isSelected = !edge.isSelected;
+    },
+
     setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -236,6 +241,13 @@ export const dataMapSlice = createSlice({
             break;
         }
         state.curDataMapOperation.currentlySelectedNode = undefined;
+      } else {
+        const connections = state.curDataMapOperation.dataMapConnections;
+        for (const key in connections) {
+          if (connections[key].isSelected) {
+            delete connections[key];
+          }
+        }
       }
     },
 
@@ -379,6 +391,7 @@ export const {
   saveDataMap,
   discardDataMap,
   deleteCurrentlySelectedNode,
+  setCurrentlySelectedEdge,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

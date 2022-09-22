@@ -16,6 +16,7 @@ import {
   deleteConnection,
   makeConnection,
   removeSourceNodes,
+  setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
   toggleSourceNode,
 } from '../core/state/DataMapSlice';
@@ -46,7 +47,7 @@ import {
 } from '@fluentui/react-icons';
 import type { MouseEvent as ReactMouseEvent } from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
-import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
+import type { Connection as ReactFlowConnection, Edge, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -305,6 +306,14 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     connections
   );
 
+  const onEdgeClick = (_event: React.MouseEvent, node: Edge) => {
+    const selectedNode = edges.find((edge) => edge.id === node.id);
+    if (selectedNode) {
+      selectedNode.selected = !selectedNode.selected;
+    }
+    dispatch(setCurrentlySelectedEdge(node.id));
+  };
+
   return (
     <ReactFlow
       nodes={nodes}
@@ -330,6 +339,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onEdgeUpdate={onEdgeUpdate}
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}
+      onEdgeClick={onEdgeClick}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
       {displayToolboxItem === 'sourceSchemaTreePanel' && (
