@@ -285,12 +285,6 @@
       "value": "Vereist. De waarde die moet worden geconverteerd naar XML."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Alle versies weergeven"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -407,6 +401,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Upload or select a target schema to be used for your map."
     }
   ],
   "1zgFh1": [
@@ -569,12 +569,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Dhaka"
-    }
-  ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Upload of selecteer een uitvoerschema dat voor uw toewijzing moet worden gebruikt."
     }
   ],
   "3Y8a6G": [
@@ -751,16 +745,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "Het invoerschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het invoerschema?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Vereist. De XPath-expressie die moet worden geëvalueerd."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Select a source schema"
     }
   ],
   "5SAQOb": [
@@ -779,6 +773,12 @@
     {
       "type": 0,
       "value": "Indien een object, matrix of tekenreeks leeg is, wordt Waar geretourneerd"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Add Source Schema"
     }
   ],
   "5cPiWA": [
@@ -815,6 +815,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Select a target schema"
     }
   ],
   "6XR3FS": [
@@ -1007,12 +1013,6 @@
       "value": "Zaterdag"
     }
   ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Voeg uitvoerschema toe"
-    }
-  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -1063,12 +1063,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Norfolk"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Invoerschema"
     }
   ],
   "8ubEPi": [
@@ -1153,12 +1147,6 @@
     {
       "type": 0,
       "value": "Het resultaat van het bij elkaar optellen van de twee getallen wordt geretourneerd"
-    }
-  ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Een uitvoerschema selecteren"
     }
   ],
   "9pdXmX": [
@@ -1259,6 +1247,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die moet worden gecodeerd naar de Base 64-indeling."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
     }
   ],
   "B/JzwK": [
@@ -1719,6 +1713,12 @@
       "value": "Vereist. Het object dat in de verzameling Binnen moet worden gevonden."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Source Schema"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1729,6 +1729,12 @@
     {
       "type": 0,
       "value": "Indien de parameters onwaar zijn, wordt Waar geretourneerd"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Upload or select a source schema to be used for your map."
     }
   ],
   "Gi72X5": [
@@ -1865,12 +1871,6 @@
       "value": "Terug naar bladeren"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Een invoerschema selecteren"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -1899,6 +1899,20 @@
     {
       "type": 0,
       "value": "Een tekenreeks wordt aan de hand van de regels voor hoofdlettergebruik van de cultuur geconverteerd naar kleine letters"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Invalid operation. Number of items: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -1983,12 +1997,6 @@
     {
       "type": 0,
       "value": "Er wordt een tekensubset van een tekenreeks geretourneerd"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Uitvoerschema"
     }
   ],
   "KX1poC": [
@@ -2313,6 +2321,24 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "NnD8gF": [
+    {
+      "type": 0,
+      "value": "Invalid operation path input value. Path value - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " Path template - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2427,6 +2453,12 @@
       "value": "Opmerking"
     }
   ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
+    }
+  ],
   "OVvieE": [
     {
       "type": 0,
@@ -2529,6 +2561,12 @@
       "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 1."
     }
   ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Source schema node"
+    }
+  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2611,6 +2649,12 @@
     {
       "type": 0,
       "value": "Negeren"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Select a source schema"
     }
   ],
   "QEp3C8": [
@@ -3009,6 +3053,16 @@
       "value": "Kan de inhoud niet weergegeven vanwege de beveiligingsconfiguratie."
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (file name)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -3159,6 +3213,12 @@
       "value": "Vereist. Het eerste gehele getal in de matrix."
     }
   ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Select a target schema"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -3199,12 +3259,6 @@
     {
       "type": 0,
       "value": " uren"
-    }
-  ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Een uitvoerschema selecteren"
     }
   ],
   "XCunbR": [
@@ -3337,6 +3391,12 @@
       "value": "Meer informatie"
     }
   ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "Invalid expression type {type}."
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3461,10 +3521,10 @@
       "value": "(UTC+07:00) Tomsk"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "Het uitvoerschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het uitvoerschema?"
+      "value": "Unsupported 'in' value : {value} in Parameter"
     }
   ],
   "a64zhX": [
@@ -3843,10 +3903,10 @@
       "value": "Vereist. De naam van de variabele met de gewenste waarde."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Uitvoerschemaknooppunt"
+      "value": "Target Schema"
     }
   ],
   "eRvGw3": [
@@ -3877,12 +3937,6 @@
     {
       "type": 0,
       "value": "Vereist. De index van waar de subtekenreeks begint in parameter 1."
-    }
-  ],
-  "er+4Cd": [
-    {
-      "type": 0,
-      "value": "Selecteer het schema voor de vervolgkeuzelijst"
     }
   ],
   "esOQ5p": [
@@ -4141,6 +4195,24 @@
       "value": " te downloaden"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "Operation path value does not match the template for segment. Path "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", Template "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -4151,6 +4223,12 @@
     {
       "type": 0,
       "value": "Doelgroep"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
     }
   ],
   "i/SguY": [
@@ -4399,12 +4477,6 @@
     {
       "type": 0,
       "value": "Ja"
-    }
-  ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Voeg invoerschema toe"
     }
   ],
   "kDsud+": [
@@ -4943,12 +5015,6 @@
       "value": "De parameter naar een tekenreeks converteren"
     }
   ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Een invoerschema selecteren"
-    }
-  ],
   "q87X20": [
     {
       "type": 0,
@@ -5231,12 +5297,6 @@
       "value": "Nieuwe parameter"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Invoerschemaknooppunt"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5247,12 +5307,6 @@
     {
       "type": 0,
       "value": "Vereist. Een tekenreeks die de tijdzonenaam van de doeltijdzone bevat. Zie https://msdn.microsoft.com/en-us/library/gg154758.aspx voor meer informatie."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Upload of selecteer een invoerschema dat voor de toewijzing moet worden gebruikt."
     }
   ],
   "tE7Zam": [
@@ -5779,6 +5833,12 @@
       "value": "Datum- en tijdfuncties"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Add Target Schema"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5843,6 +5903,12 @@
     {
       "type": 0,
       "value": "Aangepaste waarde wissen"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Target schema node"
     }
   ],
   "zbtUQ/": [
