@@ -222,21 +222,21 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
-    deleteCurrentlySelectedNode: (state) => {
+    deleteCurrentlySelectedItem: (state) => {
       const selectedNode = state.curDataMapOperation.currentlySelectedNode;
       if (selectedNode && selectedNode.nodeType !== NodeType.Target) {
         switch (selectedNode.nodeType) {
-          case NodeType.Source:
-            // eslint-disable-next-line no-case-declarations
+          case NodeType.Source: {
             const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== selectedNode.name);
             doDataMapOperation(state, { ...state.curDataMapOperation, currentSourceNodes: removedNodes });
             break;
-          case NodeType.Function:
-            // eslint-disable-next-line no-case-declarations
+          }
+          case NodeType.Function: {
             const newFunctionsState = { ...state.curDataMapOperation.currentFunctionNodes };
-            delete newFunctionsState[selectedNode.id]; // need to get actual node ID here
+            delete newFunctionsState[selectedNode.id];
             doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
             break;
+          }
           default:
             break;
         }
@@ -248,6 +248,7 @@ export const dataMapSlice = createSlice({
             delete connections[key];
           }
         }
+        doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: connections });
       }
     },
 
@@ -390,7 +391,7 @@ export const {
   redoDataMapOperation,
   saveDataMap,
   discardDataMap,
-  deleteCurrentlySelectedNode,
+  deleteCurrentlySelectedItem,
   setCurrentlySelectedEdge,
 } = dataMapSlice.actions;
 
