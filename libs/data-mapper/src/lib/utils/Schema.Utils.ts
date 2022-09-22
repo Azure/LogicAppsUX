@@ -45,8 +45,8 @@ const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[]
   return childArray;
 };
 
-export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean =>
-  schemaNode.schemaNodeDataType !== SchemaNodeDataType.ComplexType && schemaNode.schemaNodeDataType !== SchemaNodeDataType.None;
+// TODO Handle values with attributes
+export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.schemaNodeDataType !== SchemaNodeDataType.None;
 
 export const allChildNodesSelected = (schemaNode: SchemaNodeExtended, selectedNodes: SchemaNodeExtended[]): boolean =>
   schemaNode.children.every((childNode) => selectedNodes.some((selectedNode) => selectedNode.key === childNode.key));

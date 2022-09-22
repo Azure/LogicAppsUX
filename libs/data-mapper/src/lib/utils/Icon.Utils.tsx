@@ -53,7 +53,7 @@ import {
 
 export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return bundleIcon(NumberSymbol16Filled, NumberSymbol16Regular); // Number
     }
@@ -114,7 +114,6 @@ export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return bundleIcon(Array16Filled, Array16Regular); // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       return bundleIcon(Cube16Filled, Cube16Regular); // Object
@@ -134,7 +133,7 @@ export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
 
 export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return bundleIcon(NumberSymbol16Filled, NumberSymbol16Regular); // Number
     }
@@ -195,7 +194,6 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return Array16Regular; // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       return Cube16Regular; // Object
@@ -215,7 +213,7 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
 
 export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return bundleIcon(NumberSymbol24Filled, NumberSymbol24Regular); // Number
     }
@@ -276,7 +274,6 @@ export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return bundleIcon(Array24Filled, Array24Regular); // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       return bundleIcon(Cube24Filled, Cube24Regular); // Object
@@ -296,7 +293,7 @@ export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
 
 export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return NumberSymbol24Regular; // Number
     }
@@ -357,7 +354,6 @@ export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return Array24Regular; // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       return Cube24Regular; // Object

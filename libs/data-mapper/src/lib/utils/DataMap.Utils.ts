@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { MapDefinitionProperties, MapNodeParams, YamlFormats } from '../constants/MapDefinitionConstants';
+import { MapDefinitionKeys, mapDefinitionVersion, MapNodeParams, YamlFormats } from '../constants/MapDefinitionConstants';
 import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
 import type { ConnectionDictionary, LoopConnection } from '../models/Connection';
 import type { DataMap, MapNode } from '../models/DataMap';
@@ -9,18 +9,53 @@ import yaml from 'js-yaml';
 
 export const convertToMapDefinition = (
   connections: ConnectionDictionary,
-  sourceSchema: SchemaExtended,
-  targetSchema: SchemaExtended
+  sourceSchema?: SchemaExtended,
+  targetSchema?: SchemaExtended
 ): string => {
-  const dataMap = generateDataMap(connections, sourceSchema.name, targetSchema);
+  if (sourceSchema && targetSchema) {
+    const dataMap = generateDataMap(connections, sourceSchema.name, targetSchema);
 
-  const codeDetails = `${MapDefinitionProperties.SourceSchema}: ${dataMap?.srcSchemaName ?? ''}${YamlFormats.newLine}${
-    MapDefinitionProperties.TargetSchema
-  }: ${dataMap?.dstSchemaName ?? ''}${YamlFormats.newLine}`;
+    const mapDefinitionHeader = generateMapDefinitionHeader(sourceSchema, targetSchema);
 
-  const mapDefinition = keepNode(dataMap.mappings) ? `${codeDetails}${nodeToMapDefinition(dataMap.mappings, '').trim()}` : codeDetails;
-  return mapDefinition;
+    const mapDefinition = keepNode(dataMap.mappings)
+      ? `${mapDefinitionHeader}${nodeToMapDefinition(dataMap.mappings, '').trim()}`
+      : mapDefinitionHeader;
+    return mapDefinition;
+  }
+
+  return '';
 };
+
+const generateMapDefinitionHeader = (sourceSchema: SchemaExtended, targetSchema: SchemaExtended): string => {
+  let mapDefinitionHeader = `${MapDefinitionKeys.Version}: ${mapDefinitionVersion}${YamlFormats.newLine}`;
+  mapDefinitionHeader += `${MapDefinitionKeys.SourceFormat}: ${sourceSchema.type}${YamlFormats.newLine}`;
+  mapDefinitionHeader += `${MapDefinitionKeys.TargetFormat}: ${targetSchema.type}${YamlFormats.newLine}`;
+  mapDefinitionHeader += `${MapDefinitionKeys.SourceSchemaName}: ${targetSchema.name}${YamlFormats.newLine}`;
+  mapDefinitionHeader += `${MapDefinitionKeys.TargetSchemaName}: ${targetSchema.name}${YamlFormats.newLine}`;
+
+  if (sourceSchema.namespaces && sourceSchema.namespaces.size > 0) {
+    mapDefinitionHeader += `${MapDefinitionKeys.SourceNamespaces}:${YamlFormats.newLine}`;
+    mapDefinitionHeader += generateNamespaceEntries(sourceSchema.namespaces);
+  }
+
+  if (targetSchema.namespaces && targetSchema.namespaces.size > 0) {
+    mapDefinitionHeader += `${MapDefinitionKeys.TargetNamespaces}:${YamlFormats.newLine}`;
+    mapDefinitionHeader += generateNamespaceEntries(targetSchema.namespaces);
+  }
+
+  return mapDefinitionHeader;
+};
+
+const generateNamespaceEntries = (namespaces: Map<string, string>): string => {
+  let results = '';
+  namespaces.forEach((value, key) => {
+    results += `${key}: ${value}${YamlFormats.newLine}`;
+  });
+
+  return results;
+};
+
+//// BELOW IS UNCONFIRMED TO BE CORRECT LOGIC
 
 const nodeToMapDefinition = (node: MapNode, initIndent: string): string => {
   let mapDefinition = '';
@@ -109,7 +144,7 @@ export const convertFromMapDefinition = (mapDefinition: string): ConnectionDicti
   const parsedYaml: any = yaml.load(formattedMapDefinition);
   const parsedYamlKeys: string[] = Object.keys(parsedYaml);
 
-  if (parsedYamlKeys[0] !== MapDefinitionProperties.SourceSchema || parsedYamlKeys[1] !== MapDefinitionProperties.TargetSchema) {
+  if (parsedYamlKeys[0] !== MapDefinitionKeys.SourceSchemaName || parsedYamlKeys[1] !== MapDefinitionKeys.TargetSchemaName) {
     throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME, InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
   }
 

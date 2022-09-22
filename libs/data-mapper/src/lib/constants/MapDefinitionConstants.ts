@@ -3,9 +3,14 @@ export const YamlFormats = {
   newLine: '\n',
 };
 
-export const MapDefinitionProperties = {
-  SourceSchema: '$sourceSchema',
-  TargetSchema: '$targetSchema',
+export const MapDefinitionKeys = {
+  Version: '$version',
+  SourceFormat: '$input',
+  TargetFormat: '$output',
+  SourceSchemaName: '$sourceSchema',
+  TargetSchemaName: '$targetSchema',
+  SourceNamespaces: '$sourceNamespaces',
+  TargetNamespaces: '$targetNamespaces',
 };
 
 export const MapNodeParams = {
@@ -13,3 +18,5 @@ export const MapNodeParams = {
   If: '$if',
   Value: '$value',
 };
+
+export const mapDefinitionVersion = '1.0';
