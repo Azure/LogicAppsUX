@@ -96,19 +96,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     // TODO: Hook up once Test Map pane work starts
   };
 
-  const placeholderFunc = () => {
-    return;
-  };
-
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={styles.dataMapperShell}>
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} onTestClick={onTestClick} />
         <WarningModal />
-        <EditorConfigPanel
-          onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
-          readCurrentSchemaOptions={readCurrentSchemaOptions ?? placeholderFunc}
-        />
+        <EditorConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
         <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
 
         <div className={styles.centerView} style={{ display: 'flex', flexDirection: 'column' }}>
