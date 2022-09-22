@@ -7,8 +7,8 @@ export function isArmResourceId(resourceId: string): boolean {
 export const isBuiltInConnector = (connectorId: string) => {
   // NOTE(lakshmia): connectorId format: connectionProviders/{connector}
   const fields = connectorId.split('/');
-  if (fields.length !== 2) return false;
-  return equals(fields[0], 'connectionProviders');
+  if (fields.length !== 3) return false;
+  return equals(fields[1], 'serviceProviders');
 };
 
 export const isCustomConnector = (connectorId: string) => {
