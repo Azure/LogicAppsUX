@@ -37,7 +37,10 @@ const useCenterViewHeight = () => {
 
   useLayoutEffect(() => {
     window.addEventListener('resize', handleCenterViewHeight);
-    handleCenterViewHeight();
+
+    // NOTE: Not the nicest, but it's required to ensure we get the actual final height after the initial render
+    // TODO: 96% chance this will a better solution around Fit/Finish time
+    setTimeout(handleCenterViewHeight, 75);
 
     return () => window.removeEventListener('resize', handleCenterViewHeight);
   }, []);
@@ -139,11 +142,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       return centerViewHeight - getCollapsedPropPaneTotalHeight();
     }
   };
-
-  console.log(`Center View (TOTAL) Height: ${centerViewHeight}`);
-
-  console.log(`Expanded PropPane Height: ${getExpandedPropPaneTotalHeight()}`);
-  console.log(`Canvas Area Height: ${getCanvasAreaHeight()}`);
 
   return (
     <DndProvider backend={HTML5Backend}>
