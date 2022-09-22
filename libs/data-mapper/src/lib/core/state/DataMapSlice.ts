@@ -3,6 +3,7 @@ import { SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
+import { NodeType } from '../../models/SelectedNode';
 import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -216,6 +217,27 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    deleteCurrentlySelectedNode: (state) => {
+      const selectedNode = state.curDataMapOperation.currentlySelectedNode;
+      if (selectedNode && selectedNode.nodeType !== NodeType.Target) {
+        switch (selectedNode.nodeType) {
+          case NodeType.Source:
+            // eslint-disable-next-line no-case-declarations
+            const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== selectedNode.name);
+            doDataMapOperation(state, { ...state.curDataMapOperation, currentSourceNodes: removedNodes });
+            break;
+          case NodeType.Function:
+            // eslint-disable-next-line no-case-declarations
+            const newFunctionsState = { ...state.curDataMapOperation.currentFunctionNodes };
+            delete newFunctionsState[selectedNode.name]; // need to get actual node ID here
+            doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
+            break;
+          default:
+            break;
+        }
+      }
+    },
+
     addFunctionNode: (state, action: PayloadAction<FunctionData>) => {
       const functionData = action.payload;
       const newState: DataMapOperationState = {
@@ -355,6 +377,7 @@ export const {
   redoDataMapOperation,
   saveDataMap,
   discardDataMap,
+  deleteCurrentlySelectedNode,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

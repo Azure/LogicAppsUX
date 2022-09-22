@@ -11,14 +11,14 @@ import {
   propPaneTopBarHeight,
 } from '../components/propertiesPane/PropertiesPane';
 import { WarningModal } from '../components/warningModal/WarningModal';
-import { redoDataMapOperation, saveDataMap, undoDataMapOperation } from '../core/state/DataMapSlice';
+import { deleteCurrentlySelectedNode, redoDataMapOperation, saveDataMap, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { ReactFlowProvider } from 'react-flow-renderer';
@@ -142,6 +142,23 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       return centerViewHeight - getCollapsedPropPaneTotalHeight();
     }
   };
+
+  useEffect(() => {
+    const keyDownHandler = (event: KeyboardEvent) => {
+      console.log('User pressed: ', event.key);
+
+      if (event.key === 'Delete' || event.key === 'Backspace') {
+        event.preventDefault();
+        dispatch(deleteCurrentlySelectedNode());
+      }
+    };
+
+    document.addEventListener('keydown', keyDownHandler);
+
+    return () => {
+      document.removeEventListener('keydown', keyDownHandler);
+    };
+  }, []);
 
   return (
     <DndProvider backend={HTML5Backend}>
