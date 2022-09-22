@@ -41,10 +41,6 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
           name: 'properties.summary', // Operation 'name'
           weight: 2.1,
         },
-        // {
-        //   name: 'properties.description',
-        //   weight: 1,
-        // },
         {
           name: 'displayName', // Connector 'name'
           getFn: (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
@@ -52,13 +48,8 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
           },
           weight: 2,
         },
-        // {
-        //   name: 'properties.api.description',
-        //   weight: 1,
-        // },
       ],
     };
-    console.log('All operations: ' + allOperations.length);
     if (allOperations) {
       const fuse = new Fuse(allOperations, options);
       const searchResults = fuse.search(searchTerm);
