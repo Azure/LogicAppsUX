@@ -22,8 +22,8 @@ const openDataMapperCmd = (context: ExtensionContext) => {
 
 const createNewDataMapCmd = async () => {
   const newDataMapTemplate = yaml.dump({
-    srcSchemaName: '',
-    dstSchemaName: '',
+    $sourceSchema: '',
+    $targetSchema: '',
     mappings: {
       targetNodeKey: '',
     },
@@ -46,7 +46,7 @@ const createNewDataMapCmd = async () => {
   });
 };
 
-// NOTE: Input/Output schemas are both expected to be defined, and their files present
+// NOTE: Source/Target schemas are both expected to be defined, and their files present
 // TODO (WI #15434984): Handle schema files not being found
 const loadDataMapFileCmd = async (uri: Uri) => {
   commands.executeCommand('azureDataMapper.openDataMapper');
@@ -56,9 +56,9 @@ const loadDataMapFileCmd = async (uri: Uri) => {
   // Attempt to load schema files if specified
   const schemasFolder = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath);
   const srcSchemaPath = path.join(schemasFolder, dataMap.$sourceSchema);
-  const dstSchemaPath = path.join(schemasFolder, dataMap.$targetSchema);
+  const tgtSchemaPath = path.join(schemasFolder, dataMap.$targetSchema);
 
-  if (!fileExists(srcSchemaPath) || !fileExists(dstSchemaPath)) {
+  if (!fileExists(srcSchemaPath) || !fileExists(tgtSchemaPath)) {
     DataMapperExt.log('At least one of the schema files was not found in the Schemas folder!');
   }
 
@@ -66,8 +66,8 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     command: 'loadDataMap',
     data: {
       dataMap: dataMap,
-      inputSchemaFileName: path.basename(srcSchemaPath),
-      outputSchemaFileName: path.basename(dstSchemaPath),
+      sourceSchemaFileName: path.basename(srcSchemaPath),
+      targetSchemaFileName: path.basename(tgtSchemaPath),
     },
   });
 

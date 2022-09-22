@@ -1,5 +1,5 @@
 import { baseCanvasHeight, defaultCanvasZoom } from '../../constants/ReactFlowConstants';
-import { openInputSchemaPanel, openOutputSchemaPanel } from '../../core/state/PanelSlice';
+import { openSourceSchemaPanel, openTargetSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
 import { SchemaTypes } from '../../models/';
@@ -30,32 +30,32 @@ const reactFlowStyle = {
 };
 
 export interface MapOverviewProps {
-  inputSchema?: SchemaExtended;
-  outputSchema?: SchemaExtended;
+  sourceSchema?: SchemaExtended;
+  targetSchema?: SchemaExtended;
 }
 
-export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSchema }: MapOverviewProps) => {
+export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSchema }: MapOverviewProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
 
   const reactFlowNodes = useMemo(() => {
     const reactFlowNodes: ReactFlowNode[] = [];
-    if (inputSchema) {
-      reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(inputSchema.schemaTreeRoot, SchemaTypes.Input, false));
+    if (sourceSchema) {
+      reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(sourceSchema.schemaTreeRoot, SchemaTypes.Source, false));
     }
 
-    if (outputSchema) {
-      reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(outputSchema.schemaTreeRoot, SchemaTypes.Output, false));
+    if (targetSchema) {
+      reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(targetSchema.schemaTreeRoot, SchemaTypes.Target, false));
     }
 
     return reactFlowNodes;
-  }, [inputSchema, outputSchema]);
+  }, [sourceSchema, targetSchema]);
 
-  const onInputSchemaClick = () => {
-    dispatch(openInputSchemaPanel());
+  const onSourceSchemaClick = () => {
+    dispatch(openSourceSchemaPanel());
   };
-  const onOutputSchemaClick = () => {
-    dispatch(openOutputSchemaPanel());
+  const onTargetSchemaClick = () => {
+    dispatch(openTargetSchemaPanel());
   };
 
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
@@ -86,10 +86,10 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ inputSchema, outputSch
   return (
     <div className={styles.mapOverviewStyles} style={reactFlowStyle}>
       <div style={{ width: '50%' }}>
-        {inputSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Input} onClick={onInputSchemaClick} />}
+        {sourceSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Source} onClick={onSourceSchemaClick} />}
       </div>
       <div style={{ width: '50%' }}>
-        {outputSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Output} onClick={onOutputSchemaClick} />}
+        {targetSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Target} onClick={onTargetSchemaClick} />}
       </div>
     </div>
   );

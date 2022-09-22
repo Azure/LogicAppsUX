@@ -18,7 +18,7 @@
         "assets": ["apps/vs-code-data-mapper-react/src/favicon.ico", "apps/vs-code-data-mapper-react/src/assets"],
         "styles": ["apps/vs-code-data-mapper-react/src/styles.less"],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "custom-webpack.config.js"
       },
       "configurations": {
         "production": {

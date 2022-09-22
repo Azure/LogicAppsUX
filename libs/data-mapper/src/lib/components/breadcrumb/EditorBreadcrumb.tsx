@@ -1,4 +1,4 @@
-import { setCurrentOutputNode } from '../../core/state/DataMapSlice';
+import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import type { IBreadcrumbItem } from '@fluentui/react';
@@ -28,16 +28,16 @@ interface EditorBreadcrumbProps {
 export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBreadcrumbProps): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
-  const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
 
   const breadcrumbItems = useMemo<IBreadcrumbItem[]>(() => {
-    if (outputSchema) {
-      return convertToBreadcrumbItems(dispatch, outputSchema, currentOutputNode);
+    if (targetSchema) {
+      return convertToBreadcrumbItems(dispatch, targetSchema, currentTargetNode);
     }
 
     return [];
-  }, [dispatch, outputSchema, currentOutputNode]);
+  }, [dispatch, targetSchema, currentTargetNode]);
 
   return breadcrumbItems.length < 1 ? (
     // Breadcrumb doesn't display when empty, this is a breadcrumb space placeholder
@@ -61,7 +61,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
         onReduceData={() => undefined}
         items={breadcrumbItems}
         maxDisplayedItems={maxBreadcrumbItems}
-        overflowIndex={currentOutputNode ? overflowIndex : 0}
+        overflowIndex={currentTargetNode ? overflowIndex : 0}
       />
       <Button
         appearance="transparent"
@@ -85,7 +85,7 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
     text: schema.name,
     // TODO (14748905): Click root to view map overview, not top node
     onClick: () => {
-      dispatch(setCurrentOutputNode({ schemaNode: schema.schemaTreeRoot, resetSelectedInputNodes: true }));
+      dispatch(setCurrentTargetNode({ schemaNode: schema.schemaTreeRoot, resetSelectedSourceNodes: true }));
     },
   };
 
@@ -98,7 +98,7 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
         text: pathItem.name,
         onClick: () => {
           const destinationNode = findChildNode(schema.schemaTreeRoot, [...currentNode.pathToRoot]);
-          dispatch(setCurrentOutputNode({ schemaNode: destinationNode, resetSelectedInputNodes: true }));
+          dispatch(setCurrentTargetNode({ schemaNode: destinationNode, resetSelectedSourceNodes: true }));
         },
       });
     });

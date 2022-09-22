@@ -4,7 +4,7 @@ interface CodeTabProps {
   code?: string;
 }
 
-// For Input/Output/Function nodes
+// For Source/Target/Function nodes
 export const CodeTab = ({ code }: CodeTabProps) => {
   return (
     <MonacoEditor

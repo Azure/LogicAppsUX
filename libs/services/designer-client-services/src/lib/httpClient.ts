@@ -17,6 +17,7 @@ export interface HttpRequestOptions<ContentType> {
   content?: ContentType;
   headers?: Record<string, string>;
   queryParameters?: QueryParameters;
+  noAuth?: boolean;
 }
 
 export interface QueryParameters {

@@ -46,8 +46,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
 
-  const inputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inputSchema);
-  const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
 
@@ -56,12 +56,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
 
   const dataMapDefinition = useMemo((): string => {
-    if (inputSchema && outputSchema) {
-      return convertToMapDefinition(currentConnections, inputSchema, outputSchema);
+    if (sourceSchema && targetSchema) {
+      return convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
     }
 
     return '';
-  }, [currentConnections, inputSchema, outputSchema]);
+  }, [currentConnections, sourceSchema, targetSchema]);
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
     if (addSchemaFromFile) {
@@ -74,8 +74,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     saveStateCall(dataMapDefinition); // TODO: do the next call only when this is successful
     dispatch(
       saveDataMap({
-        inputSchemaExtended: inputSchema,
-        outputSchemaExtended: outputSchema,
+        sourceSchemaExtended: sourceSchema,
+        targetSchemaExtended: targetSchema,
       })
     );
     console.log(dataMapDefinition);
@@ -89,6 +89,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     dispatch(redoDataMapOperation());
   };
 
+  const onTestClick = () => {
+    // TODO: Hook up once Test Map pane work starts
+  };
+
   const placeholderFunc = () => {
     return;
   };
@@ -96,7 +100,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   return (
     <DndProvider backend={HTML5Backend}>
       <div className={styles.dataMapperShell}>
-        <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} />
+        <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} onTestClick={onTestClick} />
         <WarningModal />
         <EditorConfigPanel
           onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
@@ -112,21 +116,26 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
               boxSizing: 'border-box',
             }}
           >
-            {inputSchema && outputSchema ? (
+            {sourceSchema && targetSchema ? (
               <Stack horizontal style={{ height: '100%' }}>
                 <div
                   className={styles.canvasWrapper}
-                  style={{ height: '100%', width: isCodeViewOpen ? '75%' : '100%', marginRight: isCodeViewOpen ? '8px' : 0 }}
+                  style={{
+                    height: '100%',
+                    width: isCodeViewOpen ? '75%' : '100%',
+                    marginRight: isCodeViewOpen ? '8px' : 0,
+                    backgroundColor: tokens.colorNeutralBackground4,
+                  }}
                 >
                   <ReactFlowProvider>
-                    <ReactFlowWrapper inputSchema={inputSchema} />
+                    <ReactFlowWrapper sourceSchema={sourceSchema} />
                   </ReactFlowProvider>
                 </div>
 
                 <CodeView dataMapDefinition={dataMapDefinition} isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
               </Stack>
             ) : (
-              <MapOverview inputSchema={inputSchema} outputSchema={outputSchema} />
+              <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
             )}
           </div>
           <PropertiesPane
