@@ -48,13 +48,14 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     return {
       ...connection,
       ...connection.properties,
-      invalid: errors.length ? (
-        <div className="msla-connection-error-icon-container">
-          <TooltipHost content={errors.map((error) => error.error?.message).join(', ')}>
-            <Icon iconName="Error" className="msla-connection-error-icon" />
-          </TooltipHost>
-        </div>
-      ) : null,
+      invalid:
+        errors.length > 0 ? (
+          <div className="msla-connection-error-icon-container">
+            <TooltipHost content={errors.map((error) => error.error?.message).join(', ')}>
+              <Icon iconName="Error" className="msla-connection-error-icon" styles={{ root: { color: '#e00202' } }} />
+            </TooltipHost>
+          </div>
+        ) : null,
     };
   });
 

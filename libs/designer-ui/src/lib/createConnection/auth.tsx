@@ -59,7 +59,7 @@ export const ConnectionAuth = (props: ConnectionAuthProps) => {
 
   const errorText = intl.formatMessage(
     {
-      defaultMessage: "Failed with error: '{errorMessage}'. Please sign in again.",
+      defaultMessage: 'Failed with error: {errorMessage}. Please sign in again.',
       description: 'Error message for creating a connection',
     },
     { errorMessage }

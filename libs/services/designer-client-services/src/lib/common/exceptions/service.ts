@@ -28,7 +28,7 @@ export class ServiceException extends BaseException {
   }
 }
 
-interface HttpResponse<T> {
+export interface HttpResponse<T> {
   body?: T;
   headers: Headers;
   ok: boolean;

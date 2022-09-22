@@ -2,7 +2,7 @@
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
-import { throwWhenNotOk } from '../common/exceptions/service';
+import type { HttpResponse } from '../common/exceptions/service';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
@@ -18,6 +18,9 @@ import type {
   SomeKindOfAzureOperationDiscovery,
 } from '@microsoft-logic-apps/utils';
 import {
+  HTTP_METHODS,
+  UserErrorCode,
+  UserException,
   AssertionErrorCode,
   AssertionException,
   ConnectionParameterSource,
@@ -428,13 +431,58 @@ export class StandardConnectionService implements IConnectionService {
         await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
       }
 
-      const connection = this.createConnection(connectionId, connectorId, connectionInfo) as any;
+      await this.testConnection(connection);
+
+      // Do something to the exisiting connection
+
       return { connection };
     } catch (error: any) {
-      console.error('Failed to Authorize.', error, error?.message);
+      console.error('Failed to Authorize', error, error?.message);
       await this.deleteConnection(connectionId);
-      return { errorMessage: 'Failed to Authorize.' };
+      return { errorMessage: this.tryParseErrorMessage(error) };
     }
+  }
+
+  private async testConnection(connection: Connection): Promise<void> {
+    const testLinks = connection.properties.testLinks;
+    if (!testLinks || testLinks.length < 1) return Promise.resolve();
+
+    try {
+      const { httpClient } = this.options;
+      const { method, requestUri: uri } = testLinks[0];
+
+      let response: HttpResponse<any> | undefined = undefined;
+      const requestOptions: HttpRequestOptions<any> = { uri };
+      if (method === HTTP_METHODS.GET) response = await httpClient.get(requestOptions);
+      else if (method === HTTP_METHODS.POST) response = await httpClient.post(requestOptions);
+      else if (method === HTTP_METHODS.PUT) response = await httpClient.put(requestOptions);
+      else if (method === HTTP_METHODS.DELETE) response = await httpClient.delete(requestOptions);
+      if (!response) throw new Error('Invalid test link method');
+
+      this.handleTestConnectionResponse(response);
+    } catch (error: any) {
+      console.error('Failed to test connection', this.tryParseErrorMessage(error));
+      Promise.reject(error);
+    }
+  }
+
+  private handleTestConnectionResponse(response: HttpResponse<any>): void {
+    const defaultErrorResponse = 'Please check your account info and/or permissions and try again.';
+    if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+      let errorMessage = defaultErrorResponse;
+      if (response.body && typeof response.body === 'string') {
+        errorMessage = this.tryParseErrorMessage(JSON.parse(response.body), defaultErrorResponse);
+      }
+
+      const exception = new UserException(UserErrorCode.TEST_CONNECTION_FAILED, errorMessage);
+      throw exception;
+    }
+  }
+
+  private tryParseErrorMessage(error: any, defaultErrorMessage?: string): string {
+    if (error?.message) return error.message;
+    else if (error?.error?.message) error.error.message;
+    return defaultErrorMessage ?? 'Unknown error';
   }
 
   private getConnectionsConfiguration(
@@ -602,19 +650,16 @@ export class StandardConnectionService implements IConnectionService {
   }
 
   async deleteConnection(connectionId: string): Promise<void> {
-    if (isArmResourceId(connectionId)) {
-      const {
-        httpClient,
-        apiHubServiceDetails: { apiVersion },
-      } = this.options;
-      const request = {
-        uri: connectionId,
-        queryParameters: { 'api-version': apiVersion },
-      };
-      const response = await httpClient.delete<any>(request);
-      throwWhenNotOk(response);
-      delete this._connections[connectionId];
-    }
+    const {
+      httpClient,
+      apiHubServiceDetails: { apiVersion },
+    } = this.options;
+    const request = {
+      uri: this.getConnectionRequestPath(connectionId),
+      queryParameters: { 'api-version': apiVersion },
+    };
+    await httpClient.delete<any>(request);
+    delete this._connections[connectionId];
   }
 
   async createConnectionAclIfNeeded(_connection: Connection): Promise<void> {

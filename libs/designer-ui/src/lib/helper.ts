@@ -25,8 +25,8 @@ export function isApple(): boolean {
 }
 
 export function getConnectionErrors(connection: Connection): ConnectionStatus[] {
-  if (connection && connection.properties && connection.properties.statuses) {
-    return connection.properties.statuses.filter((status) => status.status === 'error');
+  if (connection?.properties?.statuses) {
+    return connection.properties.statuses.filter((status) => status.status.toLowerCase() === 'error');
   }
   return [];
 }
