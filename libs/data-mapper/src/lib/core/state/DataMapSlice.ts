@@ -235,6 +235,7 @@ export const dataMapSlice = createSlice({
           default:
             break;
         }
+        state.curDataMapOperation.currentlySelectedNode = undefined;
       }
     },
 
