@@ -23,7 +23,9 @@ describe('Map definition conversions', () => {
       const connections: ConnectionDictionary = {};
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
-      expect(mapDefinition).toEqual('$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\n');
+      expect(mapDefinition).toEqual(
+        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\n'
+      );
     });
 
     it('Test 1 connection', () => {
@@ -38,7 +40,7 @@ describe('Map definition conversions', () => {
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
       expect(mapDefinition).toEqual(
-        '$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    UserID: /ns0:CBRInputRecord/Identity/UserID'
+        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    UserID: /ns0:CBRInputRecord/Identity/UserID'
       );
     });
 
@@ -54,7 +56,7 @@ describe('Map definition conversions', () => {
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
       expect(mapDefinition).toEqual(
-        '$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    Name:\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName'
+        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    Name:\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName'
       );
     });
 
@@ -76,7 +78,7 @@ describe('Map definition conversions', () => {
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
       expect(mapDefinition).toEqual(
-        '$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    Name:\n      LastName: /ns0:CBRInputRecord/Identity/Name/LastName\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName'
+        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    Name:\n      LastName: /ns0:CBRInputRecord/Identity/Name/LastName\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName'
       );
     });
 

@@ -87,7 +87,8 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
     setIsHover(false);
   };
   const nameText = isHover ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>;
-  if (childNode.schemaNodeDataType === 'ComplexType' || childNode.schemaNodeDataType === 'None') {
+  // TODO Handle value objects with attribute children
+  if (childNode.schemaNodeDataType === 'None') {
     return (
       <FastTreeItem
         key={childNode.key}
