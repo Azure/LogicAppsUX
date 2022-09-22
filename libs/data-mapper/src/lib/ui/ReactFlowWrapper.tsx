@@ -164,6 +164,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     } else if (node.type === ReactFlowNodeType.FunctionNode) {
       const selectedFunctionNode: SelectedFunctionNode = {
         nodeType: NodeType.Function,
+        id: node.id,
         name: node.data.functionName,
         inputs: node.data.inputs,
         branding: node.data.functionBranding,

@@ -229,7 +229,7 @@ export const dataMapSlice = createSlice({
           case NodeType.Function:
             // eslint-disable-next-line no-case-declarations
             const newFunctionsState = { ...state.curDataMapOperation.currentFunctionNodes };
-            delete newFunctionsState[selectedNode.name]; // need to get actual node ID here
+            delete newFunctionsState[selectedNode.id]; // need to get actual node ID here
             doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
             break;
           default:
