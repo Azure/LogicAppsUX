@@ -543,6 +543,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";1ZSzl6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Each run after configuration must have at least one status checked]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Voor elke uitvoering na de configuratie moet ten minste één status zijn gecontroleerd]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";1ejxkP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Secure Inputs]]></Val>
@@ -833,7 +842,7 @@
       </Item>
       <Item ItemId=";3X/ZDK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Upload or select a target schema to be used for your map.]]></Val>
+          <Val><![CDATA[Upload or select an output schema to be used for your map.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Upload of selecteer een uitvoerschema dat voor uw toewijzing moet worden gebruikt.]]></Val>
           </Tgt>
@@ -1067,7 +1076,7 @@
       </Item>
       <Item ItemId=";53PSgA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?]]></Val>
+          <Val><![CDATA[Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Het invoerschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het invoerschema?]]></Val>
           </Tgt>
@@ -1409,7 +1418,7 @@
       </Item>
       <Item ItemId=";8JFxmV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Add Target Schema]]></Val>
+          <Val><![CDATA[Add Output Schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Voeg uitvoerschema toe]]></Val>
           </Tgt>
@@ -1490,7 +1499,7 @@
       </Item>
       <Item ItemId=";8to63i" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Source Schema]]></Val>
+          <Val><![CDATA[Input Schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Invoerschema]]></Val>
           </Tgt>
@@ -1625,7 +1634,7 @@
       </Item>
       <Item ItemId=";9mWdNA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Select a target schema]]></Val>
+          <Val><![CDATA[Select an output schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Een uitvoerschema selecteren]]></Val>
           </Tgt>
@@ -2045,6 +2054,15 @@
           <Val><![CDATA[(UTC-10:00) Aleutian Islands]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC-10:00) Aleoeten]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";DsPDVB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Trigger condition cannot be empty]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Triggervoorwaarde mag niet leeg zijn]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2630,7 +2648,7 @@
       </Item>
       <Item ItemId=";IngtMG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Select a source schema]]></Val>
+          <Val><![CDATA[Select an input schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Een invoerschema selecteren]]></Val>
           </Tgt>
@@ -2810,7 +2828,7 @@
       </Item>
       <Item ItemId=";KUw9iC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Target Schema]]></Val>
+          <Val><![CDATA[Output Schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Uitvoerschema]]></Val>
           </Tgt>
@@ -3261,15 +3279,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";NlSWOG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Expression]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Expressie]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";No6CS+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter tenant]]></Val>
@@ -3392,6 +3401,15 @@
           <Val><![CDATA[Connection Name]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Verbindingsnaam]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OOUSLP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[This function doesn't require any input.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Voor deze functie is geen invoer vereist.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4083,6 +4101,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";TPV6j/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Paging count invalid]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ongeldig aantal pagineringen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";TUaunO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a value]]></Val>
@@ -4490,7 +4517,7 @@
       </Item>
       <Item ItemId=";XBPhr0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Select a target schema]]></Val>
+          <Val><![CDATA[Select an output schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Een uitvoerschema selecteren]]></Val>
           </Tgt>
@@ -4850,7 +4877,7 @@
       </Item>
       <Item ItemId=";a3QJzO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?]]></Val>
+          <Val><![CDATA[Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Het uitvoerschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het uitvoerschema?]]></Val>
           </Tgt>
@@ -5399,7 +5426,7 @@
       </Item>
       <Item ItemId=";eIlosa" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Target schema node]]></Val>
+          <Val><![CDATA[Output schema node]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Uitvoerschemaknooppunt]]></Val>
           </Tgt>
@@ -5510,6 +5537,15 @@
           <Val><![CDATA[Returns true if the first argument is greater than or equal to the second]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Indien het eerste argument groter dan of gelijk aan het tweede is, wordt Waar geretourneerd]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";fGcSFd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Paging count exceeds maximum value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Het aantal pagineringen overschrijdt de maximumwaarde]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6167,7 +6203,7 @@
       </Item>
       <Item ItemId=";kBw1WQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Add Source Schema]]></Val>
+          <Val><![CDATA[Add Input Schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Voeg invoerschema toe]]></Val>
           </Tgt>
@@ -6512,6 +6548,15 @@
           <Val><![CDATA[Enter password as plain text or use a secure parameter]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";mwEHSX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Function]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Functie]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6923,7 +6968,7 @@
       </Item>
       <Item ItemId=";q5SkF5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Select a source schema]]></Val>
+          <Val><![CDATA[Select an input schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Een invoerschema selecteren]]></Val>
           </Tgt>
@@ -7331,7 +7376,7 @@
       </Item>
       <Item ItemId=";surdl/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Source schema node]]></Val>
+          <Val><![CDATA[Input schema node]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Invoerschemaknooppunt]]></Val>
           </Tgt>
@@ -7358,7 +7403,7 @@
       </Item>
       <Item ItemId=";t5CdhT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Upload or select a source schema to be used for your map.]]></Val>
+          <Val><![CDATA[Upload or select an input schema to be used for your map.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Upload of selecteer een invoerschema dat voor de toewijzing moet worden gebruikt.]]></Val>
           </Tgt>
@@ -7640,6 +7685,15 @@
           <Val><![CDATA[Generates a globally unique string (GUID)]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Er wordt een wereldwijd unieke tekenreeks gegenereerd (GUID)]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";v7ipqH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Each action must have one or more run after configurations]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Elke actie moet een of meer uitvoeringen hebben na configuraties]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8162,15 +8216,6 @@
           <Val><![CDATA[This will also remove all child steps.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Hiermee worden ook alle onderliggende stappen verwijderd.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";zBBJuL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[This expression doesn't require any input.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Voor deze expressie is geen invoer vereist.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
