@@ -4,7 +4,7 @@ import { openDefaultConfigPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { DataMap } from '../../models';
 import { publishState, runTest, showConfig, showFeedback, showSearchbar, showTutorial } from './helpers';
-import type { IButtonStyles, ICommandBarItemProps, IComponentAs } from '@fluentui/react';
+import type { IButtonStyles, ICommandBarItemProps, IComponentAs, IContextualMenuStyles } from '@fluentui/react';
 import { CommandBar, ContextualMenuItemType, PrimaryButton } from '@fluentui/react';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -163,6 +163,43 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
     splitButtonDivider: {
       color: tokens.colorNeutralStroke1,
     },
+    labelDisabled: {
+      color: tokens.colorNeutralForegroundDisabled,
+    },
+    iconDisabled: {
+      color: tokens.colorNeutralForegroundDisabled,
+    },
+  };
+
+  const contextualMenuStyles: IContextualMenuStyles = {
+    container: {},
+    header: {},
+    list: {},
+    root: {},
+    subComponentStyles: {
+      callout: {},
+      menuItem: {
+        label: {
+          color: tokens.colorNeutralForeground1,
+        },
+        secondaryText: {
+          color: tokens.colorNeutralForeground1,
+        },
+        subMenuIcon: {
+          color: tokens.colorNeutralForeground1,
+        },
+        icon: {
+          color: tokens.colorNeutralForeground1,
+        },
+        iconDisabled: {
+          color: tokens.colorNeutralForegroundDisabled,
+        },
+        labelDisabled: {
+          color: tokens.colorNeutralForegroundDisabled,
+        },
+      },
+    },
+    title: {},
   };
 
   const divider: ICommandBarItemProps = {
@@ -211,6 +248,7 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
       iconProps: { iconName: showUndo ? 'Undo' : 'Redo' },
       split: true,
       subMenuProps: {
+        styles: contextualMenuStyles,
         items: [
           {
             key: 'undo',
@@ -245,6 +283,12 @@ const EditorCommandBarButtons: FunctionComponent<EditorCommandBarButtonsProps> =
         },
         splitButtonMenuButtonChecked: {
           color: tokens.colorNeutralForeground2,
+        },
+        splitButtonDividerDisabled: {
+          color: tokens.colorNeutralForegroundDisabled,
+        },
+        splitButtonMenuIconDisabled: {
+          color: tokens.colorNeutralForegroundDisabled,
         },
         ...cmdBarButtonStyles,
       },
