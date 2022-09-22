@@ -35,28 +35,25 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     if (!allOperations) return;
     const options = {
       includeScore: true,
+      threshold: 0.4,
       keys: [
         {
           name: 'properties.summary', // Operation 'name'
+          weight: 2.1,
+        },
+        {
+          name: 'displayName', // Connector 'name'
+          getFn: (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
+            return operation.properties.api.displayName;
+          },
           weight: 2,
-        },
-        {
-          name: 'properties.description',
-          weight: 1,
-        },
-        {
-          name: 'properties.api.displayName', // Connector 'name'
-          weight: 2,
-        },
-        {
-          name: 'properties.api.description',
-          weight: 1,
         },
       ],
     };
     if (allOperations) {
       const fuse = new Fuse(allOperations, options);
-      setSearchResults(fuse.search(searchTerm));
+      const searchResults = fuse.search(searchTerm);
+      setSearchResults(searchResults.length > 50 ? searchResults.slice(49) : fuse.search(searchTerm));
     }
   }, [searchTerm, allOperations]);
 

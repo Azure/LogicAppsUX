@@ -24,7 +24,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   useEffect(() => {
     if (allOperations.data && selectedOperationGroupId) {
-      const filteredOps = allOperations.data.filter((operation) => operation.properties.api.id === selectedOperationGroupId);
+      const filteredOps = allOperations.data.filter((operation) => {
+        const operationId = operation.properties.api.id;
+        return operationId === selectedOperationGroupId;
+      });
       setAllOperationsForGroup(filteredOps);
     }
   }, [selectedOperationGroupId, allOperations.data]);

@@ -13,6 +13,7 @@ export const BrowseView: React.FC = () => {
 
   const allConnectors = useAllConnectors();
   const connectors = allConnectors.data ?? [];
+  connectors.sort((a, b) => a.properties.displayName.localeCompare(b.properties.displayName));
 
   const onConnectorCardSelected = (id: string): void => {
     dispatch(selectOperationGroupId(id));

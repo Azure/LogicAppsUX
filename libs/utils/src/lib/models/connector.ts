@@ -159,6 +159,7 @@ export interface ConnectorProperty {
   capabilities: string[];
   connectionDisplayName?: string;
   displayName: string;
+  description?: string;
   environmentBadge?: Badge;
   environment?: string;
   purpose?: string;
