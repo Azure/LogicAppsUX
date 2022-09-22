@@ -39,20 +39,23 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
       keys: [
         {
           name: 'properties.summary', // Operation 'name'
+          weight: 2.1,
+        },
+        // {
+        //   name: 'properties.description',
+        //   weight: 1,
+        // },
+        {
+          name: 'displayName', // Connector 'name'
+          getFn: (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
+            return operation.properties.api.displayName;
+          },
           weight: 2,
         },
-        {
-          name: 'properties.description',
-          weight: 1,
-        },
-        {
-          name: 'properties.api.displayName', // Connector 'name'
-          weight: 2,
-        },
-        {
-          name: 'properties.api.description',
-          weight: 1,
-        },
+        // {
+        //   name: 'properties.api.description',
+        //   weight: 1,
+        // },
       ],
     };
     console.log('All operations: ' + allOperations.length);
