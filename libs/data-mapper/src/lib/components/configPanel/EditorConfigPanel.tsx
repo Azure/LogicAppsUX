@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export interface EditorConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
-  readCurrentSchemaOptions: () => void;
+  readCurrentSchemaOptions?: () => void;
 }
 
 export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelection }) => {
@@ -177,7 +177,9 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
   }, [closeSchemaPanel, dispatch, editSchema, genericErrMsg, isChangeSchemaConfirmed, onSubmitSchema, schemaType, selectedSourceSchema]);
 
   useEffect(() => {
-    readCurrentSchemaOptions();
+    if (readCurrentSchemaOptions) {
+      readCurrentSchemaOptions();
+    }
   }, [readCurrentSchemaOptions]);
 
   const onRenderFooterContent = useCallback(() => {
