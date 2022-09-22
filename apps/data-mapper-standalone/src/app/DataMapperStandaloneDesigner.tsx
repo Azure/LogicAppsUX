@@ -16,8 +16,8 @@ export const DataMapperStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.dataMapDataLoader.theme);
 
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
-  const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
-  const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
+  const sourceSchema = useSelector((state: RootState) => state.schemaDataLoader.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.schemaDataLoader.targetSchema);
 
   const resourceUrl = useSelector((state: RootState) => state.dataMapDataLoader.resourcePath);
   const armToken = useSelector((state: RootState) => state.dataMapDataLoader.armToken);
@@ -44,8 +44,8 @@ export const DataMapperStandaloneDesigner = () => {
         <DataMapperDesignerProvider locale="en-US" theme={theme === 'Light' ? 'light' : 'dark'} options={{}}>
           <DataMapDataProvider
             dataMap={dataMap}
-            inputSchema={inputSchema}
-            outputSchema={outputSchema}
+            sourceSchema={sourceSchema}
+            targetSchema={targetSchema}
             availableSchemas={workflowSchemaFilenames}
           >
             <DataMapperDesigner saveStateCall={saveStateCall} />

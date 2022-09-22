@@ -11,7 +11,7 @@ import { renderToString } from 'react-dom/server';
 
 const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
 
-export type OutputSchemaFastTreeItemProps = {
+export type TargetSchemaFastTreeItemProps = {
   childNode: SchemaNodeExtended;
   currentlySelectedNodes: SchemaNodeExtended[];
   onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
@@ -30,7 +30,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const SchemaFastTreeItem: React.FunctionComponent<OutputSchemaFastTreeItemProps> = ({
+export const SchemaFastTreeItem: React.FunctionComponent<TargetSchemaFastTreeItemProps> = ({
   childNode,
   currentlySelectedNodes,
   onLeafNodeClick,
@@ -86,9 +86,9 @@ export const SchemaFastTreeItem: React.FunctionComponent<OutputSchemaFastTreeIte
         onMouseEnter={() => onMouseEnterOrLeave()}
         className={isNodeSelected ? 'selected' : ''}
       >
-        <OutputTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="Completed">
+        <TargetTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="Completed">
           {nameText}
-        </OutputTreeItemContent>
+        </TargetTreeItemContent>
         {convertToFastTreeItem(childNode, currentlySelectedNodes, onLeafNodeClick)}
       </FastTreeItem>
     );
@@ -102,9 +102,9 @@ export const SchemaFastTreeItem: React.FunctionComponent<OutputSchemaFastTreeIte
         onMouseLeave={() => onMouseEnterOrLeave()}
         onMouseEnter={() => onMouseEnterOrLeave()}
       >
-        <OutputTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="InProgress">
+        <TargetTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="InProgress">
           {nameText}
-        </OutputTreeItemContent>
+        </TargetTreeItemContent>
       </FastTreeItem>
     );
   }
@@ -134,7 +134,7 @@ export interface SchemaNodeTreeItemContentProps {
   status: 'Completed' | 'InProgress' | 'NotStarted';
 }
 
-const OutputTreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, isSelected, children, status }) => {
+const TargetTreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, isSelected, children, status }) => {
   let statusIcon: JSX.Element;
   switch (status) {
     case 'Completed':

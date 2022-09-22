@@ -3,23 +3,23 @@ import type { FunctionInput } from './Function';
 import type { SchemaNodeDataType } from './Schema';
 
 export enum NodeType {
-  Input = 'input',
-  Output = 'output',
+  Source = 'source',
+  Target = 'target',
   Function = 'function',
 }
 
 export type SelectedNode = SelectedSchemaNode | SelectedFunctionNode;
-export type SelectedSchemaNode = SelectedInputNode | SelectedOutputNode;
+export type SelectedSchemaNode = SelectedSourceNode | SelectedTargetNode;
 
-export interface SelectedInputNode {
-  nodeType: NodeType.Input;
+export interface SelectedSourceNode {
+  nodeType: NodeType.Source;
   name: string;
   path: string;
   dataType: SchemaNodeDataType;
 }
 
-export interface SelectedOutputNode extends Omit<SelectedInputNode, 'nodeType'> {
-  nodeType: NodeType.Output;
+export interface SelectedTargetNode extends Omit<SelectedSourceNode, 'nodeType'> {
+  nodeType: NodeType.Target;
   inputIds: string[];
   defaultValue: string;
   doNotGenerateIfNoValue: boolean;

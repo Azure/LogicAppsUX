@@ -1,4 +1,4 @@
-import type { SelectedOutputNode } from '../../../models/SelectedNode';
+import type { SelectedTargetNode } from '../../../models/SelectedNode';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, Input, makeStyles, Text, Textarea, tokens, typographyStyles } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
@@ -27,7 +27,7 @@ const useStyles = makeStyles({
 });
 
 interface TestTabProps {
-  currentNode: SelectedOutputNode;
+  currentNode: SelectedTargetNode;
 }
 
 export const TestTab = ({ currentNode }: TestTabProps) => {

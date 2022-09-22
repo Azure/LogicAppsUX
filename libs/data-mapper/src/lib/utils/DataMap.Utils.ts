@@ -9,10 +9,10 @@ import yaml from 'js-yaml';
 
 export const convertToMapDefinition = (
   connections: ConnectionDictionary,
-  inputSchema: SchemaExtended,
-  outputSchema: SchemaExtended
+  sourceSchema: SchemaExtended,
+  targetSchema: SchemaExtended
 ): string => {
-  const dataMap = generateDataMap(connections, inputSchema.name, outputSchema);
+  const dataMap = generateDataMap(connections, sourceSchema.name, targetSchema);
 
   const codeDetails = `${MapDefinitionProperties.SourceSchema}: ${dataMap?.srcSchemaName ?? ''}${YamlFormats.newLine}${
     MapDefinitionProperties.TargetSchema
@@ -65,18 +65,18 @@ const nodeToMapDefinition = (node: MapNode, initIndent: string): string => {
   return mapDefinition;
 };
 
-const generateDataMap = (connections: ConnectionDictionary, inputSchemaName: string, outputSchema: SchemaExtended): DataMap => {
+const generateDataMap = (connections: ConnectionDictionary, sourceSchemaName: string, targetSchema: SchemaExtended): DataMap => {
   const fullDataMap = {
-    srcSchemaName: inputSchemaName,
-    dstSchemaName: outputSchema.name,
-    mappings: generateFullDataMapMapping(connections, outputSchema),
+    srcSchemaName: sourceSchemaName,
+    dstSchemaName: targetSchema.name,
+    mappings: generateFullDataMapMapping(connections, targetSchema),
   };
 
   return fullDataMap;
 };
 
-const generateFullDataMapMapping = (connections: ConnectionDictionary, outputSchema: SchemaExtended): MapNode => {
-  return generateFullChildDataMapMapping(connections, outputSchema.schemaTreeRoot);
+const generateFullDataMapMapping = (connections: ConnectionDictionary, targetSchema: SchemaExtended): MapNode => {
+  return generateFullChildDataMapMapping(connections, targetSchema.schemaTreeRoot);
 };
 
 const generateFullChildDataMapMapping = (connections: ConnectionDictionary, node: SchemaNodeExtended): MapNode => {

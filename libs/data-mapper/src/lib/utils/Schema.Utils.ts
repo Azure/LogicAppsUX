@@ -26,7 +26,7 @@ const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPat
 
 export const flattenSchema = (schema: SchemaExtended, schemaType: SchemaTypes): SchemaNodeDictionary => {
   const result: SchemaNodeDictionary = {};
-  const idPrefix = schemaType === SchemaTypes.Input ? inputPrefix : outputPrefix;
+  const idPrefix = schemaType === SchemaTypes.Source ? inputPrefix : outputPrefix;
   const schemaNodeArray = flattenSchemaNode(schema.schemaTreeRoot);
 
   schemaNodeArray.reduce((dict, node) => {
@@ -59,13 +59,13 @@ export const hasAConnection = (schemaNode: SchemaNodeExtended, connections: Conn
   );
 };
 
-export const hasAConnectionAtCurrentOutputNode = (
+export const hasAConnectionAtCurrentTargetNode = (
   schemaNode: SchemaNodeExtended,
-  currentOutputNode: SchemaNodeExtended,
+  currentTargetNode: SchemaNodeExtended,
   connections: ConnectionDictionary
 ): boolean => {
   return Object.values(connections)
-    .filter((connection) => currentOutputNode.children.some((outputChild) => outputChild.key === connection.destination))
+    .filter((connection) => currentTargetNode.children.some((outputChild) => outputChild.key === connection.destination))
     .some(
       (connection) =>
         connection.reactFlowSource === `${inputPrefix}${schemaNode.key}` ||
