@@ -9,8 +9,8 @@ import type { ExtensionContext, Uri } from 'vscode';
 
 export const registerCommands = (context: ExtensionContext) => {
   context.subscriptions.push(commands.registerCommand('azureDataMapper.openDataMapper', () => openDataMapperCmd(context)));
-  context.subscriptions.push(commands.registerCommand('azureDataMapper.createNewDataMap', createNewDataMapCmd));
-  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadDataMapFile', loadDataMapFileCmd));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.createNewDataMap', () => createNewDataMapCmd(context)));
+  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadDataMapFile', (uri: Uri) => loadDataMapFileCmd(uri, context)));
 };
 
 const openDataMapperCmd = async (context: ExtensionContext) => {
@@ -20,7 +20,7 @@ const openDataMapperCmd = async (context: ExtensionContext) => {
   });
 };
 
-const createNewDataMapCmd = async () => {
+const createNewDataMapCmd = async (context: ExtensionContext) => {
   const newDataMapTemplate = yaml.dump({
     $sourceSchema: '',
     $targetSchema: '',
@@ -36,15 +36,14 @@ const createNewDataMapCmd = async () => {
     }
 
     DataMapperExt.currentDataMapName = newDatamapName;
-    commands.executeCommand('azureDataMapper.openDataMapper'); // Doing it this way so we don't have to pass context everywhere
 
-    DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'loadNewDataMap', data: newDataMapTemplate });
+    openDataMapperCmd(context).then(() => {
+      DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'loadNewDataMap', data: newDataMapTemplate });
+    });
   });
 };
 
-const loadDataMapFileCmd = async (uri: Uri) => {
-  commands.executeCommand('azureDataMapper.openDataMapper');
-
+const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
   const dataMap = yaml.load(await fs.readFile(uri.fsPath, 'utf-8')) as { $sourceSchema: string; $targetSchema: string; [key: string]: any };
 
   // Attempt to load schema files if specified
@@ -58,20 +57,20 @@ const loadDataMapFileCmd = async (uri: Uri) => {
   }
 
   if (!fileExists(tgtSchemaPath)) {
-    DataMapperExt.showError(
-      'Loading data map definition failed: the defined target schema file was not found in the Schemas folder! Cancelling...'
-    );
+    DataMapperExt.showError('Loading data map definition failed: the defined target schema file was not found in the Schemas folder!');
     return;
   }
 
-  DataMapperExt.currentPanel.sendMsgToWebview({
-    command: 'loadDataMap',
-    data: {
-      dataMap: dataMap,
-      sourceSchemaFileName: path.basename(srcSchemaPath),
-      targetSchemaFileName: path.basename(tgtSchemaPath),
-    },
-  });
-
   DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
+
+  openDataMapperCmd(context).then(() => {
+    DataMapperExt.currentPanel.sendMsgToWebview({
+      command: 'loadDataMap',
+      data: {
+        dataMap: dataMap,
+        sourceSchemaFileName: path.basename(srcSchemaPath),
+        targetSchemaFileName: path.basename(tgtSchemaPath),
+      },
+    });
+  });
 };
