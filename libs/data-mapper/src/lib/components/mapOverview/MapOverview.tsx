@@ -1,4 +1,4 @@
-import { baseCanvasHeight, defaultCanvasZoom } from '../../constants/ReactFlowConstants';
+import { defaultCanvasZoom } from '../../constants/ReactFlowConstants';
 import { openSourceSchemaPanel, openTargetSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
@@ -6,7 +6,8 @@ import { SchemaTypes } from '../../models/';
 import { convertToReactFlowParentAndChildNodes } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { Stack } from '@fluentui/react';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useMemo } from 'react';
 import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
@@ -22,11 +23,17 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+  },
+  schemaCardStackStyles: {
+    height: '100%',
+    width: '50%',
   },
 });
 
 const reactFlowStyle = {
   background: '#e0e0e0',
+  height: '100%',
 };
 
 export interface MapOverviewProps {
@@ -61,7 +68,7 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSc
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
 
   const layeredReactFlow = (
-    <div className={styles.mapOverviewStyles} style={{ height: baseCanvasHeight }}>
+    <div className={styles.mapOverviewStyles} style={{ height: '100%' }}>
       <ReactFlowProvider>
         <ReactFlow
           nodes={reactFlowNodes}
@@ -85,12 +92,12 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSc
 
   return (
     <div className={styles.mapOverviewStyles} style={reactFlowStyle}>
-      <div style={{ width: '50%' }}>
+      <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
         {sourceSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Source} onClick={onSourceSchemaClick} />}
-      </div>
-      <div style={{ width: '50%' }}>
+      </Stack>
+      <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
         {targetSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Target} onClick={onTargetSchemaClick} />}
-      </div>
+      </Stack>
     </div>
   );
 };
