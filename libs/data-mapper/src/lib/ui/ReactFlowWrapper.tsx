@@ -14,6 +14,7 @@ import {
   addSourceNodes,
   changeConnection,
   deleteConnection,
+  deleteCurrentlySelectedItem,
   makeConnection,
   removeSourceNodes,
   setCurrentlySelectedEdge,
@@ -45,7 +46,7 @@ import {
   ZoomOut20Filled,
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
-import type { MouseEvent as ReactMouseEvent } from 'react';
+import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'react-flow-renderer';
@@ -314,8 +315,15 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     dispatch(setCurrentlySelectedEdge(node.id));
   };
 
+  const keyDownHandler2: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      dispatch(deleteCurrentlySelectedItem());
+    }
+  };
+
   return (
     <ReactFlow
+      onKeyDown={keyDownHandler2}
       nodes={nodes}
       edges={edges}
       onConnect={onConnect}
