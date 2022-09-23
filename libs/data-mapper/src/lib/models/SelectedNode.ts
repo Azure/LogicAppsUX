@@ -29,6 +29,7 @@ export interface SelectedTargetNode extends Omit<SelectedSourceNode, 'nodeType'>
 export interface SelectedFunctionNode {
   nodeType: NodeType.Function;
   name: string;
+  id: string;
   branding: FunctionGroupBranding;
   description: string;
   codeEx: string;
