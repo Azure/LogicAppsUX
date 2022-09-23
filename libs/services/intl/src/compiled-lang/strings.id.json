@@ -343,7 +343,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Setiap eksekusi setelah konfigurasi harus memiliki setidaknya satu status yang diperiksa"
     }
   ],
   "1ejxkP": [
@@ -1384,7 +1384,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Kondisi pemicu tidak boleh kosong"
     }
   ],
   "DuXV2M": [
@@ -2298,7 +2298,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Fungsi ini tidak memerlukan input apa pun."
     }
   ],
   "ORVfYZ": [
@@ -2793,7 +2793,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Jumlah halaman tidak valid"
     }
   ],
   "TUaunO": [
@@ -3823,7 +3823,7 @@
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Jumlah halaman melebihi nilai maksimum"
     }
   ],
   "faSDuD": [
@@ -4544,7 +4544,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Fungsi"
     }
   ],
   "mx2IMJ": [
@@ -5293,7 +5293,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Setiap tindakan harus memiliki satu atau beberapa operasi setelah konfigurasi"
     }
   ],
   "vD2lQy": [

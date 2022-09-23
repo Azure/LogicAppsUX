@@ -381,7 +381,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Cada configuración de ejecución posterior deberá tener un estado seleccionado como mínimo"
     }
   ],
   "1ejxkP": [
@@ -1476,7 +1476,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "La condición desencadenadora no puede estar vacía."
     }
   ],
   "DuXV2M": [
@@ -2474,7 +2474,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Esta función no requiere ninguna entrada."
     }
   ],
   "ORVfYZ": [
@@ -2991,7 +2991,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Recuento de paginación no válido"
     }
   ],
   "TUaunO": [
@@ -4021,7 +4021,7 @@
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "El recuento de paginación supera el valor máximo"
     }
   ],
   "faSDuD": [
@@ -4788,7 +4788,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Función"
     }
   ],
   "mx2IMJ": [
@@ -5575,7 +5575,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Cada acción deberá tener una o varias configuraciones de ejecución posterior"
     }
   ],
   "vD2lQy": [

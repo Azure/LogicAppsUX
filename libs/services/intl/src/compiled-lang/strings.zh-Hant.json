@@ -343,7 +343,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "每次在組定之後執行都必須至少檢查一個狀態"
     }
   ],
   "1ejxkP": [
@@ -1384,7 +1384,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "觸發條件不可為空白"
     }
   ],
   "DuXV2M": [
@@ -2298,7 +2298,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "此函數不需要任何輸入。"
     }
   ],
   "ORVfYZ": [
@@ -2793,7 +2793,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "分頁計數無效"
     }
   ],
   "TUaunO": [
@@ -3827,7 +3827,7 @@
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "分頁計數超過最大值"
     }
   ],
   "faSDuD": [
@@ -4548,7 +4548,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "函數"
     }
   ],
   "mx2IMJ": [
@@ -5297,7 +5297,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "每個動作在設定之後必須執行一或多個"
     }
   ],
   "vD2lQy": [

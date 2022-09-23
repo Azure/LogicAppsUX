@@ -365,7 +365,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Cada execução após a configuração deve ter pelo menos um status marcado"
     }
   ],
   "1ejxkP": [
@@ -1424,7 +1424,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "A condição do gatilho não pode estar vazia"
     }
   ],
   "DuXV2M": [
@@ -2382,7 +2382,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Esta função não requer nenhuma entrada."
     }
   ],
   "ORVfYZ": [
@@ -2899,7 +2899,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Contagem de paginação inválida"
     }
   ],
   "TUaunO": [
@@ -3929,7 +3929,7 @@
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "A contagem de paginação excede o valor máximo"
     }
   ],
   "faSDuD": [
@@ -4672,7 +4672,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Função"
     }
   ],
   "mx2IMJ": [
@@ -5443,7 +5443,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Cada ação deve ter uma ou mais execuções após as configurações"
     }
   ],
   "vD2lQy": [

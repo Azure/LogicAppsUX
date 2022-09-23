@@ -370,7 +370,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Voor elke uitvoering na de configuratie moet ten minste één status zijn gecontroleerd"
     }
   ],
   "1ejxkP": [
@@ -1454,7 +1454,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Triggervoorwaarde mag niet leeg zijn"
     }
   ],
   "DuXV2M": [
@@ -2438,7 +2438,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Voor deze functie is geen invoer vereist."
     }
   ],
   "ORVfYZ": [
@@ -2948,7 +2948,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Ongeldig aantal pagineringen"
     }
   ],
   "TUaunO": [
@@ -3978,7 +3978,7 @@
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Het aantal pagineringen overschrijdt de maximumwaarde"
     }
   ],
   "faSDuD": [
@@ -4734,7 +4734,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Functie"
     }
   ],
   "mx2IMJ": [
@@ -5510,7 +5510,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Elke actie moet een of meer uitvoeringen hebben na configuraties"
     }
   ],
   "vD2lQy": [
