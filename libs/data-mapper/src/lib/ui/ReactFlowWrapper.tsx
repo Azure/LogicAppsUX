@@ -14,8 +14,10 @@ import {
   addSourceNodes,
   changeConnection,
   deleteConnection,
+  deleteCurrentlySelectedItem,
   makeConnection,
   removeSourceNodes,
+  setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
   toggleSourceNode,
 } from '../core/state/DataMapSlice';
@@ -44,7 +46,7 @@ import {
   ZoomOut20Filled,
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
-import type { MouseEvent as ReactMouseEvent } from 'react';
+import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'react-flow-renderer';
@@ -164,6 +166,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     } else if (node.type === ReactFlowNodeType.FunctionNode) {
       const selectedFunctionNode: SelectedFunctionNode = {
         nodeType: NodeType.Function,
+        id: node.id,
         name: node.data.functionName,
         inputs: node.data.inputs,
         branding: node.data.functionBranding,
@@ -304,8 +307,23 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     connections
   );
 
+  const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
+    const selectedNode = edges.find((edge) => edge.id === node.id);
+    if (selectedNode) {
+      selectedNode.selected = !selectedNode.selected;
+    }
+    dispatch(setCurrentlySelectedEdge(node.id));
+  };
+
+  const keyDownHandler2: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      dispatch(deleteCurrentlySelectedItem());
+    }
+  };
+
   return (
     <ReactFlow
+      onKeyDown={keyDownHandler2}
       nodes={nodes}
       edges={edges}
       onConnect={onConnect}
@@ -329,6 +347,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onEdgeUpdate={onEdgeUpdate}
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}
+      onEdgeClick={onEdgeClick}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
       {displayToolboxItem === 'sourceSchemaTreePanel' && (

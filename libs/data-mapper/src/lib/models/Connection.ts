@@ -5,6 +5,7 @@ export interface Connection {
   sourceValue: string;
   loop?: LoopConnection;
   condition?: string;
+  isSelected?: boolean;
 
   //Only used to display edges
   reactFlowSource: string;
