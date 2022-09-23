@@ -1,5 +1,6 @@
 export * from './lib/connection';
 export * from './lib/connector';
+export * from './lib/gateway';
 export * from './lib/operationmanifest';
 export * from './lib/search';
 export * from './lib/httpClient';
@@ -8,6 +9,7 @@ export * from './lib/logging/devLogger';
 export * from './lib/logging/logEntry';
 export { StandardConnectionService } from './lib/standard/connection';
 export { StandardConnectorService } from './lib/standard/connector';
+export { StandardGatewayService } from './lib/standard/gateway';
 export { StandardOperationManifestService } from './lib/standard/operationmanifest';
 export type { StandardOperationManifestServiceOptions } from './lib/standard/operationmanifest';
 export { StandardSearchService } from './lib/standard/search';

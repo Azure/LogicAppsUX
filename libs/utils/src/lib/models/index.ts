@@ -7,3 +7,4 @@ export * from './operation';
 export * from './operationDiscoveryResults';
 export * from './operationmanifest';
 export * from './workflowNode';
+export * from './gateway';

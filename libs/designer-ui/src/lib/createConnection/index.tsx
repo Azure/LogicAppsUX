@@ -189,6 +189,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
               if (!isParamVisible(parameter)) return null;
 
+              console.log(parameter);
               const data = parameter?.uiDefinition;
               let inputComponent = undefined;
               if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {

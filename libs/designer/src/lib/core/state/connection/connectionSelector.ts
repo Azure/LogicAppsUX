@@ -1,18 +1,29 @@
 import type { ConnectionReference } from '../../../common/models/workflow';
 import type { RootState } from '../../store';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
-import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
+import { ConnectionService, GatewayService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connector } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 export const useConnector = (connectorId: string) => {
   const connectionService = ConnectionService();
-  return useQuery(['apiWithSwaggers', { connectorId }], async () => {
-    const { connector } = await connectionService.getConnectorAndSwagger(connectorId);
-    return connector;
-  }, {
-    enabled: !!connectorId,
+  return useQuery(
+    ['apiWithSwaggers', { connectorId }],
+    async () => {
+      const { connector } = await connectionService.getConnectorAndSwagger(connectorId);
+      return connector;
+    },
+    {
+      enabled: !!connectorId,
+    }
+  );
+};
+
+export const useGateways = (connectorName: string) => {
+  const gatewayService = GatewayService();
+  return useQuery(['gateways', { connectorName }], async () => gatewayService.getGateways(connectorName), {
+    enabled: !!connectorName,
   });
 };
 
