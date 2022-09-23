@@ -199,6 +199,7 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
       source: connection.reactFlowSource,
       target: connection.reactFlowDestination,
       type: ConnectionLineType.SmoothStep,
+      selected: connection.isSelected,
     };
   });
 };

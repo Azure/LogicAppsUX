@@ -3,6 +3,7 @@ import { SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
+import { NodeType } from '../../models/SelectedNode';
 import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -207,6 +208,11 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    setCurrentlySelectedEdge: (state, action: PayloadAction<string>) => {
+      const edge = state.curDataMapOperation.dataMapConnections[action.payload];
+      edge.isSelected = !edge.isSelected;
+    },
+
     setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -214,6 +220,36 @@ export const dataMapSlice = createSlice({
       };
 
       doDataMapOperation(state, newState);
+    },
+
+    deleteCurrentlySelectedItem: (state) => {
+      const selectedNode = state.curDataMapOperation.currentlySelectedNode;
+      if (selectedNode && selectedNode.nodeType !== NodeType.Target) {
+        switch (selectedNode.nodeType) {
+          case NodeType.Source: {
+            const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== selectedNode.name);
+            doDataMapOperation(state, { ...state.curDataMapOperation, currentSourceNodes: removedNodes });
+            break;
+          }
+          case NodeType.Function: {
+            const newFunctionsState = { ...state.curDataMapOperation.currentFunctionNodes };
+            delete newFunctionsState[selectedNode.id];
+            doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
+            break;
+          }
+          default:
+            break;
+        }
+        state.curDataMapOperation.currentlySelectedNode = undefined;
+      } else {
+        const connections = state.curDataMapOperation.dataMapConnections;
+        for (const key in connections) {
+          if (connections[key].isSelected) {
+            delete connections[key];
+          }
+        }
+        doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: connections });
+      }
     },
 
     addFunctionNode: (state, action: PayloadAction<FunctionData>) => {
@@ -353,6 +389,8 @@ export const {
   redoDataMapOperation,
   saveDataMap,
   discardDataMap,
+  deleteCurrentlySelectedItem,
+  setCurrentlySelectedEdge,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
