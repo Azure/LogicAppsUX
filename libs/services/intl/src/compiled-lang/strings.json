@@ -3117,6 +3117,12 @@
       "value": "Returns the result from multiplying the two numbers"
     }
   ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
+    }
+  ],
   "Wy/bhW": [
     {
       "type": 0,
@@ -3877,6 +3883,12 @@
     {
       "type": 0,
       "value": "Returns true if the first argument is greater than or equal to the second"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
     }
   ],
   "fGcSFd": [
@@ -5453,6 +5465,12 @@
     {
       "type": 0,
       "value": "has timed out"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [
