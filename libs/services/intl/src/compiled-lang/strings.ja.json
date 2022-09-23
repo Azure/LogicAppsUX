@@ -343,7 +343,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "構成後の各実行では、少なくとも 1 つの状態が確認されている必要があります"
     }
   ],
   "1ejxkP": [
@@ -1384,7 +1384,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "トリガー条件を空にすることはできません"
     }
   ],
   "DuXV2M": [
@@ -2298,7 +2298,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "この関数は入力を必要としません。"
     }
   ],
   "ORVfYZ": [
@@ -2793,7 +2793,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "ページング数が無効です"
     }
   ],
   "TUaunO": [
@@ -3819,7 +3819,7 @@
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "ページング数が最大値を超えています"
     }
   ],
   "faSDuD": [
@@ -4536,7 +4536,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "関数"
     }
   ],
   "mx2IMJ": [
@@ -5285,7 +5285,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "各アクションは、構成後に 1 回以上の実行を必要とします"
     }
   ],
   "vD2lQy": [

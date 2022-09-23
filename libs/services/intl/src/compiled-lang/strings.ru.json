@@ -392,7 +392,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "У каждого выполнения после конфигурации должно быть выбрано по меньшей мере одно состояние"
     }
   ],
   "1ejxkP": [
@@ -1498,7 +1498,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Условие триггера не может быть пустым"
     }
   ],
   "DuXV2M": [
@@ -2534,7 +2534,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Для этой функции не требуются входные данные."
     }
   ],
   "ORVfYZ": [
@@ -3062,7 +3062,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Недопустимое число подкачки"
     }
   ],
   "TUaunO": [
@@ -4092,7 +4092,7 @@
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Число подкачки превышает максимальное значение"
     }
   ],
   "faSDuD": [
@@ -4882,7 +4882,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Функция"
     }
   ],
   "mx2IMJ": [
@@ -5680,7 +5680,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Каждое действие должно иметь одно или несколько выполнений после конфигурации"
     }
   ],
   "vD2lQy": [
