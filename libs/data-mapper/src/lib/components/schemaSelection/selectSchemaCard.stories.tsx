@@ -11,6 +11,6 @@ export default {
 
 export const Standard: ComponentStory<typeof SelectSchemaCard> = (args: SelectSchemaCardProps) => <SelectSchemaCard {...args} />;
 Standard.args = {
-  schemaType: SchemaTypes.Input,
+  schemaType: SchemaTypes.Source,
   onClick: () => console.log('Select Schema Card clicked'),
 };

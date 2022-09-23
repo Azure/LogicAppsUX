@@ -13,6 +13,7 @@ const useStyles = makeStyles({
     boxSizing: 'border-box',
     backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    flexDirection: 'column',
   },
   titleTextStyle: {
     ...typographyStyles.body1Strong,
@@ -40,7 +41,7 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen 
   });
 
   return (
-    <div className={styles.containerStyle} style={{ height: '100%', display: isCodeViewOpen ? 'block' : 'none' }}>
+    <div className={styles.containerStyle} style={{ display: isCodeViewOpen ? 'flex' : 'none' }}>
       <Stack horizontal verticalAlign="center" style={{ justifyContent: 'space-between', marginBottom: '12px', marginTop: '4px' }}>
         <Stack horizontal verticalAlign="center">
           <Code20Regular />
@@ -52,14 +53,16 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen 
         <Button icon={<Dismiss20Regular />} appearance="subtle" onClick={() => setIsCodeViewOpen(false)} />
       </Stack>
 
-      <MonacoEditor
-        language={EditorLanguage.templateExpressionLanguage}
-        value={dataMapDefinition}
-        lineNumbers="on"
-        scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
-        className={styles.editorStyle}
-        readOnly
-      />
+      <div style={{ flex: '1 1 auto' }}>
+        <MonacoEditor
+          language={EditorLanguage.templateExpressionLanguage}
+          value={dataMapDefinition}
+          lineNumbers="on"
+          scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
+          className={styles.editorStyle}
+          readOnly
+        />
+      </div>
     </div>
   );
 };

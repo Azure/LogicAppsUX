@@ -285,12 +285,6 @@
       "value": "Обязательное поле. Значение, которое необходимо преобразовать в код XML."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Показать все версии"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -398,7 +392,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "У каждого выполнения после конфигурации должно быть выбрано по меньшей мере одно состояние"
     }
   ],
   "1ejxkP": [
@@ -429,6 +423,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Upload or select a target schema to be used for your map."
     }
   ],
   "1zgFh1": [
@@ -591,12 +591,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Дакка"
-    }
-  ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Отправьте или выберите выходную схему, которая будет использоваться для вашего сопоставления."
     }
   ],
   "3Y8a6G": [
@@ -773,16 +767,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "Входная схема будет заменена, и вы не сможете вернуться к предыдущим изменениям. Продолжить изменение входной схемы?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Обязательное поле. Выражение XPath для вычисления."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Select a source schema"
     }
   ],
   "5SAQOb": [
@@ -801,6 +795,12 @@
     {
       "type": 0,
       "value": "Возвращает значение true, если объект, массив или строка пусты"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Add Source Schema"
     }
   ],
   "5cPiWA": [
@@ -837,6 +837,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Юкла"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Select a target schema"
     }
   ],
   "6XR3FS": [
@@ -1029,12 +1035,6 @@
       "value": "Суббота"
     }
   ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Добавление выходной схемы"
-    }
-  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -1085,12 +1085,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) О-в Норфолк"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Входная схема"
     }
   ],
   "8ubEPi": [
@@ -1175,12 +1169,6 @@
     {
       "type": 0,
       "value": "Возвращает результат сложения двух чисел"
-    }
-  ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Выберите выходную схему"
     }
   ],
   "9pdXmX": [
@@ -1281,6 +1269,12 @@
     {
       "type": 0,
       "value": "Требуется. Строка, которая кодируется в представление base64."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
     }
   ],
   "B/JzwK": [
@@ -1504,7 +1498,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Условие триггера не может быть пустым"
     }
   ],
   "DuXV2M": [
@@ -1785,6 +1779,12 @@
       "value": "Обязательное поле. Объект, который необходимо найти в коллекции."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Source Schema"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1795,6 +1795,12 @@
     {
       "type": 0,
       "value": "Возвращает значение true, если параметры имеют значение false"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Upload or select a source schema to be used for your map."
     }
   ],
   "Gi72X5": [
@@ -1931,12 +1937,6 @@
       "value": "Вернуться к обзору"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Выберите входную схему"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -1965,6 +1965,20 @@
     {
       "type": 0,
       "value": "Преобразует строку в нижний регистр, используя правила использования регистра инвариантных языка и региональных параметров"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Invalid operation. Number of items: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -2049,12 +2063,6 @@
     {
       "type": 0,
       "value": "Возвращает подмножество символов из строки"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Выходная схема"
     }
   ],
   "KX1poC": [
@@ -2405,6 +2413,24 @@
       "value": "(UTC+03:00) Минск"
     }
   ],
+  "NnD8gF": [
+    {
+      "type": 0,
+      "value": "Invalid operation path input value. Path value - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " Path template - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "No6CS+": [
     {
       "type": 0,
@@ -2508,7 +2534,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Для этой функции не требуются входные данные."
     }
   ],
   "ORVfYZ": [
@@ -2521,6 +2547,12 @@
     {
       "type": 0,
       "value": "Комментарий"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
     }
   ],
   "OVvieE": [
@@ -2625,6 +2657,12 @@
       "value": "Требуется. Число, которое прибавляется к слагаемому 1."
     }
   ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Source schema node"
+    }
+  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2707,6 +2745,12 @@
     {
       "type": 0,
       "value": "Отменить"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Select a source schema"
     }
   ],
   "QEp3C8": [
@@ -3018,7 +3062,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Недопустимое число подкачки"
     }
   ],
   "TUaunO": [
@@ -3121,6 +3165,16 @@
     {
       "type": 0,
       "value": "Содержимое не показано из-за конфигурации безопасности."
+    }
+  ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (file name)"
     }
   ],
   "Ur+wph": [
@@ -3273,6 +3327,12 @@
       "value": "Требуется. Первое целое число в массиве."
     }
   ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Select a target schema"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -3313,12 +3373,6 @@
     {
       "type": 0,
       "value": " ч"
-    }
-  ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Выберите выходную схему"
     }
   ],
   "XCunbR": [
@@ -3451,6 +3505,12 @@
       "value": "Дополнительные сведения"
     }
   ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "Invalid expression type {type}."
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3575,10 +3635,10 @@
       "value": "(UTC+07:00) Томск"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "Выходная схема будет заменена, и вы не сможете вернуться к предыдущим изменениям. Продолжить изменение выходной схемы?"
+      "value": "Unsupported 'in' value : {value} in Parameter"
     }
   ],
   "a64zhX": [
@@ -3957,10 +4017,10 @@
       "value": "Требуется. Имя переменной, значение которой нужно получить."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Узел выходной схемы"
+      "value": "Target Schema"
     }
   ],
   "eRvGw3": [
@@ -3991,12 +4051,6 @@
     {
       "type": 0,
       "value": "Обязательное поле. Индекс начала подстроки в параметре 1."
-    }
-  ],
-  "er+4Cd": [
-    {
-      "type": 0,
-      "value": "Выберите схему для раскрывающегося списка"
     }
   ],
   "esOQ5p": [
@@ -4038,7 +4092,7 @@
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Число подкачки превышает максимальное значение"
     }
   ],
   "faSDuD": [
@@ -4281,6 +4335,24 @@
       "value": "\""
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "Operation path value does not match the template for segment. Path "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", Template "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -4291,6 +4363,12 @@
     {
       "type": 0,
       "value": "Аудитория"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
     }
   ],
   "i/SguY": [
@@ -4549,12 +4627,6 @@
       "value": "Да"
     }
   ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Добавление входной схемы"
-    }
-  ],
   "kDsud+": [
     {
       "type": 0,
@@ -4810,7 +4882,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Функция"
     }
   ],
   "mx2IMJ": [
@@ -5089,12 +5161,6 @@
     {
       "type": 0,
       "value": "Преобразует параметр в строку"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Выберите входную схему"
     }
   ],
   "q87X20": [
@@ -5401,12 +5467,6 @@
       "value": "Новый параметр"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Узел входной схемы"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5417,12 +5477,6 @@
     {
       "type": 0,
       "value": "Обязательно. Строка, содержащая название часового пояса назначения. Дополнительные сведения: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Отправьте или выберите входную схему, которая будет использоваться для вашего сопоставления."
     }
   ],
   "tE7Zam": [
@@ -5626,7 +5680,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Каждое действие должно иметь одно или несколько выполнений после конфигурации"
     }
   ],
   "vD2lQy": [
@@ -5949,6 +6003,12 @@
       "value": "Функции даты и времени"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Add Target Schema"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
@@ -6013,6 +6073,12 @@
     {
       "type": 0,
       "value": "Удалить пользовательское значение"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Target schema node"
     }
   ],
   "zbtUQ/": [

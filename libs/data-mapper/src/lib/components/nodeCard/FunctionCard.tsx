@@ -85,16 +85,16 @@ const useStyles = makeStyles({
 const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
 
 const isValidConnection = (connection: ReactFlowConnection, inputs: FunctionInput[]): boolean => {
-  const flattenedInputSchema = store.getState().dataMap.curDataMapOperation.flattenedInputSchema;
+  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
 
-  if (connection.source && connection.target && flattenedInputSchema) {
-    const inputNode = flattenedInputSchema[connection.source];
+  if (connection.source && connection.target && flattenedSourceSchema) {
+    const sourceNode = flattenedSourceSchema[connection.source];
 
     // For now just allow all function to function
     // TODO validate express to function connections
     return (
-      !inputNode ||
-      inputs.some((input) => input.acceptableInputTypes.some((acceptableType) => acceptableType === inputNode.schemaNodeDataType))
+      !sourceNode ||
+      inputs.some((input) => input.acceptableInputTypes.some((acceptableType) => acceptableType === sourceNode.schemaNodeDataType))
     );
   }
 

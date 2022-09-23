@@ -2,7 +2,7 @@ export interface Schema {
   name: string;
   type: SchemaType;
   targetNamespace: string;
-  namespaces: Map<string, string>;
+  namespaces?: Map<string, string>;
   schemaTreeRoot: SchemaNode;
 }
 
@@ -33,7 +33,6 @@ export enum SchemaNodeProperties {
 }
 
 export enum SchemaNodeDataType {
-  ComplexType = 'ComplexType',
   AnyAtomicType = 'AnyAtomicType',
   AnyUri = 'AnyUri',
   Base64Binary = 'Base64Binary',
@@ -97,8 +96,8 @@ export interface PathItem {
 }
 
 export enum SchemaTypes {
-  Input = 'input',
-  Output = 'output',
+  Source = 'source',
+  Target = 'target',
 }
 
 export type SchemaNodeDictionary = { [key: string]: SchemaNodeExtended };

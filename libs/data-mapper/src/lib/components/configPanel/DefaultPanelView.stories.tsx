@@ -1,5 +1,5 @@
 import { simpleMockSchema } from '../../__mocks__';
-import { setInitialInputSchema, setInitialOutputSchema } from '../../core/state/DataMapSlice';
+import { setInitialSourceSchema, setInitialTargetSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended } from '../../models/Schema';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
@@ -10,13 +10,13 @@ import React from 'react';
 import { Provider } from 'react-redux';
 
 interface MockStoreData {
-  inputSchema: SchemaExtended;
-  outputSchema: SchemaExtended;
+  sourceSchema: SchemaExtended;
+  targetSchema: SchemaExtended;
 }
 
 const MockStore = ({ mockState, children }) => {
-  store.dispatch(setInitialInputSchema(mockState.inputSchema));
-  store.dispatch(setInitialOutputSchema(mockState.outputSchema));
+  store.dispatch(setInitialSourceSchema(mockState.sourceSchema));
+  store.dispatch(setInitialTargetSchema(mockState.targetSchema));
 
   return <Provider store={store}>{children}</Provider>;
 };
@@ -33,8 +33,8 @@ const Template: ComponentStory<typeof DefaultPanelView> = (args: DefaultPanelVie
 export const Standard = Template.bind({});
 
 Standard.args = {
-  onInputSchemaClick: () => console.log('Input schema button clicked'),
-  onOutputSchemaClick: () => console.log('Output schema button clicked'),
+  onSourceSchemaClick: () => console.log('Source schema button clicked'),
+  onTargetSchemaClick: () => console.log('Target schema button clicked'),
 };
 
 Standard.decorators = [
@@ -43,8 +43,8 @@ Standard.decorators = [
     const extendedSchema = convertSchemaToSchemaExtended(schema);
 
     const stateUpdate: MockStoreData = {
-      inputSchema: extendedSchema,
-      outputSchema: extendedSchema,
+      sourceSchema: extendedSchema,
+      targetSchema: extendedSchema,
     };
 
     return <MockStore mockState={stateUpdate}>{story()}</MockStore>;

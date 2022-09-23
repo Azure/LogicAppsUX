@@ -23,7 +23,9 @@ describe('Map definition conversions', () => {
       const connections: ConnectionDictionary = {};
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
-      expect(mapDefinition).toEqual('$sourceSchema: CBRInputSchema.xsd\n$targetSchema: CBRInputSchema.xsd\n');
+      expect(mapDefinition).toEqual(
+        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\n'
+      );
     });
 
     it('Test 1 connection', () => {
@@ -31,14 +33,14 @@ describe('Map definition conversions', () => {
         '/ns0:CBRInputRecord/Identity/UserID': {
           destination: '/ns0:CBRInputRecord/Identity/UserID',
           sourceValue: '/ns0:CBRInputRecord/Identity/UserID',
-          reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/UserID',
-          reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/UserID',
+          reactFlowSource: 'source-/ns0:CBRInputRecord/Identity/UserID',
+          reactFlowDestination: 'target-/ns0:CBRInputRecord/Identity/UserID',
         },
       };
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
       expect(mapDefinition).toEqual(
-        '$sourceSchema: CBRInputSchema.xsd\n$targetSchema: CBRInputSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    UserID: /ns0:CBRInputRecord/Identity/UserID'
+        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    UserID: /ns0:CBRInputRecord/Identity/UserID'
       );
     });
 
@@ -47,14 +49,14 @@ describe('Map definition conversions', () => {
         '/ns0:CBRInputRecord/Identity/Name/FirstName': {
           destination: '/ns0:CBRInputRecord/Identity/Name/FirstName',
           sourceValue: '/ns0:CBRInputRecord/Identity/Name/FirstName',
-          reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/Name/FirstName',
-          reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/Name/FirstName',
+          reactFlowSource: 'source-/ns0:CBRInputRecord/Identity/Name/FirstName',
+          reactFlowDestination: 'target-/ns0:CBRInputRecord/Identity/Name/FirstName',
         },
       };
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
       expect(mapDefinition).toEqual(
-        '$sourceSchema: CBRInputSchema.xsd\n$targetSchema: CBRInputSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    Name:\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName'
+        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    Name:\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName'
       );
     });
 
@@ -63,20 +65,20 @@ describe('Map definition conversions', () => {
         '/ns0:CBRInputRecord/Identity/Name/FirstName': {
           destination: '/ns0:CBRInputRecord/Identity/Name/FirstName',
           sourceValue: '/ns0:CBRInputRecord/Identity/Name/FirstName',
-          reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/Name/FirstName',
-          reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/Name/FirstName',
+          reactFlowSource: 'source-/ns0:CBRInputRecord/Identity/Name/FirstName',
+          reactFlowDestination: 'target-/ns0:CBRInputRecord/Identity/Name/FirstName',
         },
         '/ns0:CBRInputRecord/Identity/Name/LastName': {
           destination: '/ns0:CBRInputRecord/Identity/Name/LastName',
           sourceValue: '/ns0:CBRInputRecord/Identity/Name/LastName',
-          reactFlowSource: 'input-/ns0:CBRInputRecord/Identity/Name/LastName',
-          reactFlowDestination: 'output-/ns0:CBRInputRecord/Identity/Name/LastName',
+          reactFlowSource: 'source-/ns0:CBRInputRecord/Identity/Name/LastName',
+          reactFlowDestination: 'target-/ns0:CBRInputRecord/Identity/Name/LastName',
         },
       };
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
       expect(mapDefinition).toEqual(
-        '$sourceSchema: CBRInputSchema.xsd\n$targetSchema: CBRInputSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    Name:\n      LastName: /ns0:CBRInputRecord/Identity/Name/LastName\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName'
+        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    Name:\n      LastName: /ns0:CBRInputRecord/Identity/Name/LastName\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName'
       );
     });
 
