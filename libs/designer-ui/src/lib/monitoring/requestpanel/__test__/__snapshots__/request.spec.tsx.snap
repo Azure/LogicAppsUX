@@ -156,6 +156,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
             <div
               aria-colcount={2}
               aria-label="Headers"
+              aria-readonly="true"
               aria-rowcount={1}
               role="grid"
             >
@@ -466,6 +467,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
             <div
               aria-colcount={2}
               aria-label="Headers"
+              aria-readonly="true"
               aria-rowcount={1}
               role="grid"
             >
@@ -901,6 +903,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
             <div
               aria-colcount={2}
               aria-label="Headers"
+              aria-readonly="true"
               aria-rowcount={1}
               role="grid"
             >
