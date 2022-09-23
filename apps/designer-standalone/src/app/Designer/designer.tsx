@@ -6,6 +6,7 @@ import {
   StandardOperationManifestService,
   StandardSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
+import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 
@@ -20,6 +21,7 @@ const connectionService = new StandardConnectionService({
     resourceGroup: '',
     location: '',
   },
+  workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
   readConnections: () => Promise.resolve({}),
 });
 const operationManifestService = new StandardOperationManifestService({

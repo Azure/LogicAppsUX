@@ -75,3 +75,9 @@ export const getConnectionsForConnector = (connectorId: string) => {
     return connectionService.getConnections(connectorId);
   });
 };
+
+export const getUniqueConnectionName = async (connectorId: string): Promise<string> => {
+  const connectionNames = (await getConnectionsForConnector(connectorId)).map((connection) => connection.name);
+  const connectorName = connectorId.split('/').at(-1);
+  return ConnectionService().getUniqueConnectionName(connectorId, connectionNames, connectorName as string);
+};

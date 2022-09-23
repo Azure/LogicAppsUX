@@ -1,3 +1,5 @@
+import type { ManagedIdentity } from '../models';
+import { ResourceIdentityType } from '../models';
 import { equals } from './functions';
 
 export function isArmResourceId(resourceId: string): boolean {
@@ -52,4 +54,27 @@ export const isSharedManagedConnector = (connectorId: string) => {
   if (!equals(fields[7], 'managedapis')) return false;
 
   return true;
+};
+
+export const getUniqueName = (keys: string[], prefix: string): { name: string; index: number } => {
+  const set = new Set(keys.map((name) => name.split('::')[0]));
+
+  let index = 1;
+  let name = prefix;
+  while (set.has(name)) {
+    name = `${prefix}-${++index}`;
+  }
+
+  return { name, index };
+};
+
+export const isIdentityAssociatedWithLogicApp = (managedIdentity: ManagedIdentity | undefined): boolean => {
+  return (
+    !!managedIdentity &&
+    (equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED) ||
+      equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
+      (equals(managedIdentity.type, ResourceIdentityType.USER_ASSIGNED) &&
+        !!managedIdentity.userAssignedIdentities &&
+        Object.keys(managedIdentity.userAssignedIdentities).length > 0))
+  );
 };

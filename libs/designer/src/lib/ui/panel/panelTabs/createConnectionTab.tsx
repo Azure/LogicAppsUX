@@ -1,16 +1,15 @@
 import constants from '../../../common/constants';
-import type { ConnectionReference } from '../../../common/models/workflow';
 import type { RootState } from '../../../core';
 import { getConnectionMetadata } from '../../../core/actions/bjsworkflow/connections';
+import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
-import { addConnectionReference, changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
+import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
-import { getIdLeaf } from '@microsoft-logic-apps/utils';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useCallback, useState } from 'react';
@@ -29,7 +28,7 @@ const CreateConnectionTab = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const createConnectionCallback = useCallback(
-    async (newName: string, selectedParameterSet?: ConnectionParameterSet, parameterValues: Record<string, any> = {}) => {
+    async (displayName: string, selectedParameterSet?: ConnectionParameterSet, parameterValues: Record<string, any> = {}) => {
       const connectionParameterSetValues: ConnectionParameterSetValues = {
         name: selectedParameterSet?.name ?? '',
         values: Object.keys(parameterValues).reduce((acc: any, key) => {
@@ -39,7 +38,7 @@ const CreateConnectionTab = () => {
         }, {}),
       };
       const connectionInfo: ConnectionCreationInfo = {
-        displayName: newName,
+        displayName,
         connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
         connectionParameters: parameterValues,
       };
@@ -51,16 +50,16 @@ const CreateConnectionTab = () => {
       };
 
       setIsLoading(true);
-      const newConnection = await ConnectionService().createConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata);
+      const connectorId = connector?.id as string;
+      const uniqueConnectionName = await getUniqueConnectionName(connectorId);
+      const newConnection = await ConnectionService().createConnection(
+        uniqueConnectionName,
+        connectorId,
+        connectionInfo,
+        parametersMetadata
+      );
 
-      const connectionId = getIdLeaf(newConnection?.id);
-      const connectionReference: ConnectionReference = {
-        api: { id: connector?.id ?? '' },
-        connection: { id: connectionId },
-        connectionName: newName,
-      };
-      dispatch(changeConnectionMapping({ nodeId, connectionId }));
-      dispatch(addConnectionReference({ connectionId, connectionReference }));
+      dispatch(changeConnectionMapping({ nodeId, connectionId: newConnection.id, connectorId }));
       dispatch(showDefaultTabs());
       setIsLoading(false);
     },
