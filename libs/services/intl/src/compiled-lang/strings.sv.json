@@ -370,7 +370,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Minst en status för varje körning efter konfiguration måste kontrolleras."
     }
   ],
   "1ejxkP": [
@@ -1454,7 +1454,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Utlösarvillkoret får inte vara tomt"
     }
   ],
   "DuXV2M": [
@@ -2438,7 +2438,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Den här funktionen kräver inga indata."
     }
   ],
   "ORVfYZ": [
@@ -2456,7 +2456,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Välj schema för listrutan"
     }
   ],
   "OVvieE": [
@@ -2948,7 +2948,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Växlingsantalet är ogiltigt"
     }
   ],
   "TUaunO": [
@@ -3093,6 +3093,12 @@
       "value": "Ange en giltig JSON."
     }
   ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -3229,6 +3235,12 @@
     {
       "type": 0,
       "value": "Returnerar resultatet av att ha dividerat de två talen"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3927,16 +3939,16 @@
       "value": "Krävs. Talet att dela nämnaren med."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Fördefinierade"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Obligatoriskt. Det index i vilket delsträngen börjar i parameter 1."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3975,10 +3987,16 @@
       "value": "Returnerar sant om det första argumentet är större än eller lika med det andra"
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Växlingsantalet överskrider maxvärdet"
     }
   ],
   "faSDuD": [
@@ -4791,12 +4809,6 @@
       "value": "Obligatoriskt. Namnet på den egenskap som ska tas bort."
     }
   ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
-    }
-  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -5510,7 +5522,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Varje åtgärd måste köras en eller flera gånger efter konfiguration"
     }
   ],
   "vD2lQy": [
@@ -5571,6 +5583,12 @@
     {
       "type": 0,
       "value": "har uppnått tidsgränsen"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [

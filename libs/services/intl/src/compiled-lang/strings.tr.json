@@ -354,7 +354,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Her “sonrasında çalıştır” yapılandırmasında en az bir durum işaretli olmalıdır"
     }
   ],
   "1ejxkP": [
@@ -1406,7 +1406,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Tetikleyici koşulu boş olamaz"
     }
   ],
   "DuXV2M": [
@@ -1660,7 +1660,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Kaynak Şema"
     }
   ],
   "GYvF54": [
@@ -2342,7 +2342,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Bu işlev herhangi bir giriş gerektirmiyor."
     }
   ],
   "ORVfYZ": [
@@ -2360,7 +2360,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Açılan menü şemasını seçin"
     }
   ],
   "OVvieE": [
@@ -2848,7 +2848,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Disk belleği sayısı geçersiz"
     }
   ],
   "TUaunO": [
@@ -2993,6 +2993,12 @@
       "value": "Geçerli bir JSON girin."
     }
   ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -3129,6 +3135,12 @@
     {
       "type": 0,
       "value": "İki sayı arasındaki çarpma işleminin sonucunu döndürür"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3802,7 +3814,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Hedef Şema"
     }
   ],
   "eRvGw3": [
@@ -3823,16 +3835,16 @@
       "value": "Gerekli. Bölünenin bölüneceği sayı."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Yerleşik"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Gerekli. Parametre 1'de alt dizenin başladığı konumun dizini."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3871,10 +3883,16 @@
       "value": "Birinci bağımsız değişken ikinciden büyük veya ikinciye eşitse true döndürür"
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Disk belleği sayısı maksimum değeri aşıyor"
     }
   ],
   "faSDuD": [
@@ -4659,12 +4677,6 @@
       "value": "Gerekli. Kaldırılacak özelliğin adı."
     }
   ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
-    }
-  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -5362,7 +5374,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Her eylem bir veya daha fazla “sonrasında çalıştır” yapılandırması içermelidir"
     }
   ],
   "vD2lQy": [
@@ -5423,6 +5435,12 @@
     {
       "type": 0,
       "value": "zaman aşımına uğradı"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [

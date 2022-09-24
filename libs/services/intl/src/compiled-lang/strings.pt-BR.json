@@ -1689,7 +1689,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Esquema de Origem"
     }
   ],
   "GYvF54": [
@@ -2400,7 +2400,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Selecione o esquema para o menu suspenso"
     }
   ],
   "OVvieE": [
@@ -3044,6 +3044,12 @@
       "value": "Insira um JSON válido."
     }
   ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -3180,6 +3186,12 @@
     {
       "type": 0,
       "value": "Retorna o resultado da multiplicação dos dois números"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3857,7 +3869,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Esquema de Destino"
     }
   ],
   "eRvGw3": [
@@ -3878,16 +3890,16 @@
       "value": "Necessário. O número pelo qual dividir o Dividendo."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Interno"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Necessário. O índice de onde a subcadeia de caracteres começa no parâmetro 1."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3924,6 +3936,12 @@
     {
       "type": 0,
       "value": "Retornará true se o primeiro argumento for maior ou igual ao segundo"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
     }
   ],
   "fGcSFd": [
@@ -4729,12 +4747,6 @@
       "value": "Necessário. O nome da propriedade a ser removida."
     }
   ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
-    }
-  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -5504,6 +5516,12 @@
     {
       "type": 0,
       "value": "atingiu o tempo limite"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [

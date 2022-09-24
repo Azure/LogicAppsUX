@@ -2456,7 +2456,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Selecteer het schema voor de vervolgkeuzelijst"
     }
   ],
   "OVvieE": [
@@ -3093,6 +3093,12 @@
       "value": "Voer een geldige JSON in."
     }
   ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -3229,6 +3235,12 @@
     {
       "type": 0,
       "value": "Het resultaat van het vermenigvuldigen van de twee getallen wordt geretourneerd"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3927,16 +3939,16 @@
       "value": "Vereist. Het getal waardoor het deeltal moet worden gedeeld."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Ingebouwd"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Vereist. De index van waar de subtekenreeks begint in parameter 1."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3973,6 +3985,12 @@
     {
       "type": 0,
       "value": "Indien het eerste argument groter dan of gelijk aan het tweede is, wordt Waar geretourneerd"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
     }
   ],
   "fGcSFd": [
@@ -4791,12 +4809,6 @@
       "value": "Vereist. De naam van de eigenschap die moet worden verwijderd."
     }
   ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
-    }
-  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -5571,6 +5583,12 @@
     {
       "type": 0,
       "value": "heeft een time-out gehad"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [

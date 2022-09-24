@@ -408,7 +408,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Każdy przebieg po konfiguracji musi mieć sprawdzony co najmniej jeden stan."
     }
   ],
   "1ejxkP": [
@@ -1514,7 +1514,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Warunek wyzwalacza nie może być pusty"
     }
   ],
   "DuXV2M": [
@@ -1798,7 +1798,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Schemat źródłowy"
     }
   ],
   "GYvF54": [
@@ -2550,7 +2550,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Ta funkcja nie wymaga żadnych danych wejściowych."
     }
   ],
   "ORVfYZ": [
@@ -2568,7 +2568,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Wybierz schemat z listy rozwijanej"
     }
   ],
   "OVvieE": [
@@ -3078,7 +3078,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Nieprawidłowa liczba stronicowania"
     }
   ],
   "TUaunO": [
@@ -3223,6 +3223,12 @@
       "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -3359,6 +3365,12 @@
     {
       "type": 0,
       "value": "Zwraca wynik mnożenia dwóch liczb"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -4036,7 +4048,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Schemat docelowy"
     }
   ],
   "eRvGw3": [
@@ -4057,16 +4069,16 @@
       "value": "Wymagane. Liczba, przez którą dzielona jest dzielna."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Wbudowany"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Parametr wymagany. Indeks, w którym podciąg rozpoczyna się w parametrze 1."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -4105,10 +4117,16 @@
       "value": "Zwraca wartość true, jeśli pierwszy argument jest większy od drugiego lub jemu równy"
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Liczba stronicowania przekracza wartość maksymalną"
     }
   ],
   "faSDuD": [
@@ -4951,12 +4969,6 @@
       "value": "Wymagane. Nazwa właściwości do usunięcia."
     }
   ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
-    }
-  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -5692,7 +5704,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Każda akcja musi mieć co najmniej jeden przebieg po konfiguracji"
     }
   ],
   "vD2lQy": [
@@ -5753,6 +5765,12 @@
     {
       "type": 0,
       "value": "upłynął limit czasu"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [
