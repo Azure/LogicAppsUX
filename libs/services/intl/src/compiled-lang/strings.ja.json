@@ -379,7 +379,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "マップに使用するターゲット スキーマをアップロードまたは選択します。"
     }
   ],
   "1zgFh1": [
@@ -727,7 +727,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "ソース スキーマの選択"
     }
   ],
   "5SAQOb": [
@@ -751,7 +751,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "ソース スキーマの追加"
     }
   ],
   "5cPiWA": [
@@ -793,7 +793,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "ターゲット スキーマの選択"
     }
   ],
   "6XR3FS": [
@@ -1193,7 +1193,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "ターゲット スキーマが置き換えられ、以前の変更に戻ることはできなくなります。ターゲット スキーマの変更を続行しますか?"
     }
   ],
   "B/JzwK": [
@@ -1627,7 +1627,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "ソース スキーマ"
     }
   ],
   "GYvF54": [
@@ -1645,7 +1645,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "マップに使用するソース スキーマをアップロードまたは選択します。"
     }
   ],
   "Gi72X5": [
@@ -1807,7 +1807,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "無効な操作です。アイテムの数: "
     },
     {
       "type": 1,
@@ -1815,7 +1815,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "。"
     }
   ],
   "JErLDT": [
@@ -2196,7 +2196,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "操作パスの入力値が無効です。パスの値 - "
     },
     {
       "type": 1,
@@ -2204,7 +2204,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " パス テンプレート - "
     },
     {
       "type": 1,
@@ -2316,7 +2316,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "ドロップダウンのスキーマを選択する"
     }
   ],
   "OVvieE": [
@@ -2424,7 +2424,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "ソース スキーマ ノード"
     }
   ],
   "PP63jY": [
@@ -2514,7 +2514,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "ソース スキーマの選択"
     }
   ],
   "QEp3C8": [
@@ -2905,7 +2905,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (ファイル名)"
     }
   ],
   "Ur+wph": [
@@ -2936,6 +2936,12 @@
     {
       "type": 0,
       "value": "有効な JSON を入力してください。"
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3061,7 +3067,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "ターゲット スキーマの選択"
     }
   ],
   "WUe3DY": [
@@ -3074,6 +3080,12 @@
     {
       "type": 0,
       "value": "2 つの数値を乗算した結果を返します"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3239,7 +3251,7 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "式の型 {type} が無効です。"
     }
   ],
   "Y9kBz5": [
@@ -3369,7 +3381,7 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "パラメーターでサポートされていない 'in' 値: {value}"
     }
   ],
   "a64zhX": [
@@ -3747,7 +3759,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "ターゲット スキーマ"
     }
   ],
   "eRvGw3": [
@@ -3768,16 +3780,16 @@
       "value": "必須。Dividend を除算する数値。"
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "組み込み"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "必須。パラメーター 1 で部分文字列の開始位置を示すインデックス。"
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3814,6 +3826,12 @@
     {
       "type": 0,
       "value": "1 番目の引数が 2 番目の引数以上の場合は true を返します"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
     }
   ],
   "fGcSFd": [
@@ -4012,7 +4030,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "操作パス値が、セグメントのテンプレートと一致しません。パス "
     },
     {
       "type": 1,
@@ -4020,7 +4038,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": "、テンプレート "
     },
     {
       "type": 1,
@@ -4042,7 +4060,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "ソース スキーマが置き換えられ、以前の変更に戻ることはできなくなります。ソース スキーマの変更を続行しますか?"
     }
   ],
   "i/SguY": [
@@ -4591,12 +4609,6 @@
     {
       "type": 0,
       "value": "必須。削除するプロパティの名前。"
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5348,6 +5360,12 @@
       "value": "がタイムアウトしました"
     }
   ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
+    }
+  ],
   "vr70Gn": [
     {
       "type": 1,
@@ -5607,7 +5625,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "ターゲット スキーマの追加"
     }
   ],
   "ysoumb": [
@@ -5679,7 +5697,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "ターゲット スキーマ ノード"
     }
   ],
   "zbtUQ/": [

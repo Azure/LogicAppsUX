@@ -400,7 +400,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Každé spuštění po konfiguraci musí mít zaškrtnutý alespoň jeden stav."
     }
   ],
   "1ejxkP": [
@@ -1502,7 +1502,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Podmínka triggeru nemůže být prázdná."
     }
   ],
   "DuXV2M": [
@@ -1786,7 +1786,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Zdrojové schéma"
     }
   ],
   "GYvF54": [
@@ -2542,7 +2542,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Tato funkce nevyžaduje žádný vstup."
     }
   ],
   "ORVfYZ": [
@@ -2560,7 +2560,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Vyberte schéma pro rozevírací nabídku"
     }
   ],
   "OVvieE": [
@@ -3070,7 +3070,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Neplatný počet stránkování"
     }
   ],
   "TUaunO": [
@@ -3215,6 +3215,12 @@
       "value": "Zadejte platný kód JSON."
     }
   ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -3351,6 +3357,12 @@
     {
       "type": 0,
       "value": "Vrátí výsledek vynásobení daných dvou čísel."
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -4028,7 +4040,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Cílové schéma"
     }
   ],
   "eRvGw3": [
@@ -4049,16 +4061,16 @@
       "value": "Povinný parametr. Číslo, kterým se má dělit dělenec."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Předdefinované"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -4097,10 +4109,16 @@
       "value": "Vrátí true, pokud je první argument větší nebo roven druhému."
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Počet stránkování překračuje maximální hodnotu."
     }
   ],
   "faSDuD": [
@@ -4931,12 +4949,6 @@
       "value": "Povinné. Název vlastnosti, která se odebere"
     }
   ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
-    }
-  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -5668,7 +5680,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Každá akce musí mít jedno nebo více spuštění po konfiguraci."
     }
   ],
   "vD2lQy": [
@@ -5729,6 +5741,12 @@
     {
       "type": 0,
       "value": "vypršelo"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [

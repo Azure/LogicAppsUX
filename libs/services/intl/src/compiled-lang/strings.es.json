@@ -417,7 +417,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Cargue o seleccione un esquema de destino que se usará para la asignación."
     }
   ],
   "1zgFh1": [
@@ -765,7 +765,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Seleccionar un esquema de origen"
     }
   ],
   "5SAQOb": [
@@ -789,7 +789,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Agregar esquema de origen"
     }
   ],
   "5cPiWA": [
@@ -831,7 +831,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Seleccionar un esquema de destino"
     }
   ],
   "6XR3FS": [
@@ -1263,7 +1263,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "El esquema de destino se reemplazará y no podrá volver a los cambios anteriores. ¿Desea continuar para cambiar el esquema de destino?"
     }
   ],
   "B/JzwK": [
@@ -1741,7 +1741,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Esquema de origen"
     }
   ],
   "GYvF54": [
@@ -1759,7 +1759,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Cargue o seleccione un esquema de origen que se usará para la asignación."
     }
   ],
   "Gi72X5": [
@@ -1929,7 +1929,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Operación no válida. Número de elementos: "
     },
     {
       "type": 1,
@@ -2356,7 +2356,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Valor de entrada de ruta de acceso de operación no válido. Valor de ruta de acceso: "
     },
     {
       "type": 1,
@@ -2364,7 +2364,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " Plantilla de ruta de acceso: "
     },
     {
       "type": 1,
@@ -2492,7 +2492,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Seleccione el esquema para la lista desplegable"
     }
   ],
   "OVvieE": [
@@ -2600,7 +2600,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Nodo de esquema de origen"
     }
   ],
   "PP63jY": [
@@ -2690,7 +2690,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Seleccionar un esquema de origen"
     }
   ],
   "QEp3C8": [
@@ -3103,7 +3103,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (nombre de archivo)"
     }
   ],
   "Ur+wph": [
@@ -3134,6 +3134,12 @@
     {
       "type": 0,
       "value": "Especifica un nombre válido."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3259,7 +3265,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Seleccionar un esquema de destino"
     }
   ],
   "WUe3DY": [
@@ -3272,6 +3278,12 @@
     {
       "type": 0,
       "value": "Devuelve el resultado de multiplicar los dos números."
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3437,7 +3449,7 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Tipo de expresión {type} no válido."
     }
   ],
   "Y9kBz5": [
@@ -3567,7 +3579,15 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Valor \"in\" no admitido: \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" en el parámetro"
     }
   ],
   "a64zhX": [
@@ -3949,7 +3969,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Esquema de destino"
     }
   ],
   "eRvGw3": [
@@ -3970,16 +3990,16 @@
       "value": "Obligatorio. El número por el cual se dividirá el dividendo."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Integrado"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Obligatorio. El índice a partir del cual empieza la subcadena en el parámetro 1."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -4016,6 +4036,12 @@
     {
       "type": 0,
       "value": "Devuelve true si el primer argumento es mayor o igual que el segundo."
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
     }
   ],
   "fGcSFd": [
@@ -4244,7 +4270,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "El valor de la ruta de acceso de la operación no coincide con la plantilla del segmento. Ruta de acceso "
     },
     {
       "type": 1,
@@ -4252,7 +4278,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", plantilla "
     },
     {
       "type": 1,
@@ -4274,7 +4300,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "El esquema de origen se reemplazará y no podrá volver a los cambios anteriores. ¿Desea continuar para cambiar el esquema de origen?"
     }
   ],
   "i/SguY": [
@@ -4843,12 +4869,6 @@
     {
       "type": 0,
       "value": "Obligatorio. Nombre de la propiedad que se quitará."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5638,6 +5658,12 @@
       "value": "ha agotado el tiempo de espera"
     }
   ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5901,7 +5927,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Agregar esquema de destino"
     }
   ],
   "ysoumb": [
@@ -5973,7 +5999,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Nodo de esquema de destino"
     }
   ],
   "zbtUQ/": [

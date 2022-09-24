@@ -2316,7 +2316,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Pilih skema untuk menu menurun"
     }
   ],
   "OVvieE": [
@@ -2938,6 +2938,12 @@
       "value": "Masukkan JSON yang valid."
     }
   ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
+    }
+  ],
   "VE3cxq": [
     {
       "type": 0,
@@ -3074,6 +3080,12 @@
     {
       "type": 0,
       "value": "Menampilkan hasil perkalian dua angka tersebut"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3772,16 +3784,16 @@
       "value": "Wajib. Nomor untuk membagi Dividend."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Bawaan"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Harus diisi. Indeks substring awal dalam parameter 1."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3818,6 +3830,12 @@
     {
       "type": 0,
       "value": "Menampilkan true jika argumen pertama lebih besar atau sama dengan yang kedua"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
     }
   ],
   "fGcSFd": [
@@ -4601,12 +4619,6 @@
       "value": "Diperlukan. Nama properti yang akan dihapus."
     }
   ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
-    }
-  ],
   "nZ4nLn": [
     {
       "type": 0,
@@ -5354,6 +5366,12 @@
     {
       "type": 0,
       "value": "waktu telah habis"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [
