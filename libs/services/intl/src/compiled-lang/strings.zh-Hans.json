@@ -399,7 +399,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "上传或选择要用于地图的目标架构。"
     }
   ],
   "1zgFh1": [
@@ -747,7 +747,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "选择源架构"
     }
   ],
   "5SAQOb": [
@@ -771,7 +771,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "添加源架构"
     }
   ],
   "5cPiWA": [
@@ -813,7 +813,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "选择目标架构"
     }
   ],
   "6XR3FS": [
@@ -1245,7 +1245,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "目标架构将被替换，并且你将无法返回到以前的更改。是否要继续更改目标架构?"
     }
   ],
   "B/JzwK": [
@@ -1697,7 +1697,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "上传或选择要用于地图的源架构。"
     }
   ],
   "Gi72X5": [
@@ -1867,7 +1867,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "操作无效。项目数: "
     },
     {
       "type": 1,
@@ -1875,7 +1875,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "。"
     }
   ],
   "JErLDT": [
@@ -2276,7 +2276,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "操作路径输入值无效。路径值 - "
     },
     {
       "type": 1,
@@ -2284,7 +2284,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " 路径模板 - "
     },
     {
       "type": 1,
@@ -2520,7 +2520,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "源架构节点"
     }
   ],
   "PP63jY": [
@@ -2610,7 +2610,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "选择源架构"
     }
   ],
   "QEp3C8": [
@@ -3001,7 +3001,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (文件名)"
     }
   ],
   "Ur+wph": [
@@ -3167,7 +3167,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "选择目标架构"
     }
   ],
   "WUe3DY": [
@@ -3351,7 +3351,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "表达式类型 \""
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "\" 无效。"
     }
   ],
   "Y9kBz5": [
@@ -3481,7 +3489,15 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "\"in\" 值不受支持: 参数中的 \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "a64zhX": [
@@ -4150,7 +4166,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "操作路径值与段的模板不匹配。路径 "
     },
     {
       "type": 1,
@@ -4158,7 +4174,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": "，模板 "
     },
     {
       "type": 1,
@@ -4180,7 +4196,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "源架构将被替换，并且你将无法返回到以前的更改。是否要继续更改源架构?"
     }
   ],
   "i/SguY": [
@@ -5793,7 +5809,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "添加目标架构"
     }
   ],
   "ysoumb": [
@@ -5865,7 +5881,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "目标架构节点"
     }
   ],
   "zbtUQ/": [

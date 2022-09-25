@@ -406,7 +406,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Laden Sie ein Zielschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
   "1zgFh1": [
@@ -754,7 +754,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Quellschema auswählen"
     }
   ],
   "5SAQOb": [
@@ -778,7 +778,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Quellschema hinzufügen"
     }
   ],
   "5cPiWA": [
@@ -820,7 +820,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Zielschema auswählen"
     }
   ],
   "6XR3FS": [
@@ -1252,7 +1252,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Das Zielschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Zielschemas fortfahren?"
     }
   ],
   "B/JzwK": [
@@ -1734,7 +1734,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Laden Sie ein Quellschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
   "Gi72X5": [
@@ -1904,7 +1904,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Ungültiger Vorgang. Anzahl der Elemente: "
     },
     {
       "type": 1,
@@ -2328,7 +2328,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Ungültiger Eingabewert für den Vorgangspfad. Pfadwert - "
     },
     {
       "type": 1,
@@ -2336,7 +2336,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " Pfadvorlage - "
     },
     {
       "type": 1,
@@ -2572,7 +2572,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Quellschemaknoten"
     }
   ],
   "PP63jY": [
@@ -2662,7 +2662,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Quellschema auswählen"
     }
   ],
   "QEp3C8": [
@@ -3068,7 +3068,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (Dateiname)"
     }
   ],
   "Ur+wph": [
@@ -3230,7 +3230,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Zielschema auswählen"
     }
   ],
   "WUe3DY": [
@@ -3414,7 +3414,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Ungültiger Ausdruckstyp \""
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "Y9kBz5": [
@@ -3544,7 +3552,7 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Nicht unterstützter \"in\"-Wert: {value} im Parameter"
     }
   ],
   "a64zhX": [
@@ -4220,7 +4228,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "Der Wert für den Vorgangspfad entspricht nicht der Vorlage für das Segment. Pfad "
     },
     {
       "type": 1,
@@ -4228,7 +4236,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", Vorlage "
     },
     {
       "type": 1,
@@ -4250,7 +4258,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Das Quellschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Quellschemas fortfahren?"
     }
   ],
   "i/SguY": [
@@ -5850,7 +5858,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Zielschema hinzufügen"
     }
   ],
   "ysoumb": [
@@ -5922,7 +5930,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Zielschemaknoten"
     }
   ],
   "zbtUQ/": [
