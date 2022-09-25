@@ -269,12 +269,6 @@
       "value": "Harus diisi. Nilai untuk dikonversi ke XML."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Tampilkan semua versi"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -346,6 +340,12 @@
       "value": "Pelajari selengkapnya"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Setiap eksekusi setelah konfigurasi harus memiliki setidaknya satu status yang diperiksa"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -374,6 +374,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Unggah atau pilih skema target yang akan digunakan untuk peta Anda."
     }
   ],
   "1zgFh1": [
@@ -536,12 +542,6 @@
     {
       "type": 0,
       "value": "(UTC+06.00) Dhaka"
-    }
-  ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Unggah atau pilih skema output yang akan digunakan untuk peta Anda."
     }
   ],
   "3Y8a6G": [
@@ -718,16 +718,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "Skema input akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema input?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Harus diisi. Ekspresi Xpath untuk dievaluasi."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Pilih skema sumber"
     }
   ],
   "5SAQOb": [
@@ -746,6 +746,12 @@
     {
       "type": 0,
       "value": "Menampilkan true jika objek, array, atau string kosong"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Tambahkan Skema Sumber"
     }
   ],
   "5cPiWA": [
@@ -782,6 +788,12 @@
     {
       "type": 0,
       "value": "(UTC+08.45) Eucla"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Pilih skema target"
     }
   ],
   "6XR3FS": [
@@ -958,12 +970,6 @@
       "value": "Sabtu"
     }
   ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Tambahkan Skema Output"
-    }
-  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -1014,12 +1020,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Kepulauan Norfolk"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Skema Input"
     }
   ],
   "8ubEPi": [
@@ -1106,12 +1106,6 @@
       "value": "Menampilkan hasil penambahan dua angka tersebut"
     }
   ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Pilih skema output"
-    }
-  ],
   "9pdXmX": [
     {
       "type": 0,
@@ -1194,6 +1188,12 @@
     {
       "type": 0,
       "value": "Wajib. String yang dikodekan menjadi representasi base64."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "Skema target akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema target?"
     }
   ],
   "B/JzwK": [
@@ -1379,6 +1379,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Kepulauan Aleutian"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Kondisi pemicu tidak boleh kosong"
     }
   ],
   "DuXV2M": [
@@ -1618,6 +1624,12 @@
       "value": "Harus diisi. Objek untuk dicari Di dalam koleksi."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Skema Sumber"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1628,6 +1640,12 @@
     {
       "type": 0,
       "value": "Menampilkan true jika parameter salah"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Unggah atau pilih skema sumber yang akan digunakan untuk peta Anda."
     }
   ],
   "Gi72X5": [
@@ -1756,12 +1774,6 @@
       "value": "Kembali ke penelusuran"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Pilih skema input"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -1790,6 +1802,20 @@
     {
       "type": 0,
       "value": "Mengonversi string ke huruf kecil menggunakan aturan huruf besar/kecil kultur invarian"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Operasi tidak valid. Jumlah item: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -1874,12 +1900,6 @@
     {
       "type": 0,
       "value": "Menampilkan subset karakter dari string"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Skema Output"
     }
   ],
   "KX1poC": [
@@ -2173,10 +2193,22 @@
       "value": "(UTC+03.00) Minsk"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "Ekspresi"
+      "value": "Nilai input jalur operasi tidak valid. Nilai jalur - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " Templat jalur - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2263,6 +2295,12 @@
       "value": "Nama Koneksi"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Fungsi ini tidak memerlukan input apa pun."
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2273,6 +2311,12 @@
     {
       "type": 0,
       "value": "Komentar"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Pilih skema untuk menu menurun"
     }
   ],
   "OVvieE": [
@@ -2377,6 +2421,12 @@
       "value": "Wajib. Nomor yang akan ditambahkan ke Summand 1."
     }
   ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Node skema sumber"
+    }
+  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2459,6 +2509,12 @@
     {
       "type": 0,
       "value": "Buang"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Pilih skema sumber"
     }
   ],
   "QEp3C8": [
@@ -2734,6 +2790,12 @@
       "value": "Menampilkan permulaan bulan pada tanda waktu string"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Jumlah halaman tidak valid"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -2836,6 +2898,16 @@
       "value": "Konten tidak ditampilkan karena konfigurasi keamanan."
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (file name)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2864,6 +2936,12 @@
     {
       "type": 0,
       "value": "Masukkan JSON yang valid."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -2986,6 +3064,12 @@
       "value": "Wajib. Bilangan bulat pertama dalam array."
     }
   ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Pilih skema target"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -2996,6 +3080,12 @@
     {
       "type": 0,
       "value": "Menampilkan hasil perkalian dua angka tersebut"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3026,12 +3116,6 @@
     {
       "type": 0,
       "value": " jam"
-    }
-  ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Pilih skema output"
     }
   ],
   "XCunbR": [
@@ -3164,6 +3248,12 @@
       "value": "Info Selengkapnya"
     }
   ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "Tipe ekspresi tidak valid {type}."
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3288,10 +3378,10 @@
       "value": "(UTC+07.00) Tomsk"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "Skema output akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema output?"
+      "value": "Nilai 'in' yang tidak didukung: {value} dalam Parameter"
     }
   ],
   "a64zhX": [
@@ -3670,10 +3760,10 @@
       "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Node skema output"
+      "value": "Skema Target"
     }
   ],
   "eRvGw3": [
@@ -3694,22 +3784,16 @@
       "value": "Wajib. Nomor untuk membagi Dividend."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Bawaan"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Harus diisi. Indeks substring awal dalam parameter 1."
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "Pilih skema untuk menu menurun"
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3746,6 +3830,18 @@
     {
       "type": 0,
       "value": "Menampilkan true jika argumen pertama lebih besar atau sama dengan yang kedua"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Jumlah halaman melebihi nilai maksimum"
     }
   ],
   "faSDuD": [
@@ -3935,6 +4031,24 @@
       "value": "Alt/Option + klik untuk mengunduh {displayName}"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "Nilai jalur operasi tidak cocok dengan templat untuk segmen. Jalur "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", Templat "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -3945,6 +4059,12 @@
     {
       "type": 0,
       "value": "Audiens"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "Skema sumber akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema sumber?"
     }
   ],
   "i/SguY": [
@@ -4185,12 +4305,6 @@
     {
       "type": 0,
       "value": "Ya"
-    }
-  ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Tambahkan Skema Input"
     }
   ],
   "kDsud+": [
@@ -4445,6 +4559,12 @@
       "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Fungsi"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4497,12 +4617,6 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama properti yang akan dihapus."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4721,12 +4835,6 @@
     {
       "type": 0,
       "value": "Konversikan parameter menjadi string"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Pilih skema input"
     }
   ],
   "q87X20": [
@@ -4984,12 +5092,6 @@
       "value": "Parameter baru"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Node skema input"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5000,12 +5102,6 @@
     {
       "type": 0,
       "value": "Wajib. String berisi nama zona waktu dari zona waktu tempat tujuan. Lihat https://msdn.microsoft.com/en-us/library/gg154758.aspx untuk rinciannya."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Unggah atau pilih skema input yang akan digunakan untuk peta Anda."
     }
   ],
   "tE7Zam": [
@@ -5206,6 +5302,12 @@
       "value": "Menghasilkan string unik global (GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Setiap tindakan harus memiliki satu atau beberapa operasi setelah konfigurasi"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5264,6 +5366,12 @@
     {
       "type": 0,
       "value": "waktu telah habis"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [
@@ -5526,6 +5634,12 @@
       "value": "Fungsi tanggal dan waktu"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Tambahkan Skema Target"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5562,12 +5676,6 @@
       "value": "Tindakan ini juga akan menghapus semua langkah turunan."
     }
   ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Ekspresi ini tidak memerlukan input apa pun."
-    }
-  ],
   "zBMVKg": [
     {
       "type": 0,
@@ -5596,6 +5704,12 @@
     {
       "type": 0,
       "value": "Hapus nilai kustom"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Node skema target"
     }
   ],
   "zbtUQ/": [

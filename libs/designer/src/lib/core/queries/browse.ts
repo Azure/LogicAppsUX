@@ -28,8 +28,7 @@ export const useAllConnectors = () => {
   return useQuery(
     ['browseResult'],
     () => {
-      const connectionService = ConnectionService();
-      return connectionService.getAllConnectors();
+      return SearchService().getAllConnectors();
     },
     {
       retry: false,

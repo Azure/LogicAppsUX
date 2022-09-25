@@ -1,4 +1,4 @@
-import { SchemaNodeDataType, SchemaTypes } from '../../models';
+import { SchemaNodeDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { SchemaCardProps } from './SchemaCard';
 import { SchemaCard } from './SchemaCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -20,12 +20,20 @@ export const Standard: ComponentStory<typeof SchemaCard> = (args: NodeProps<Sche
 );
 Standard.args = {
   data: {
-    label: 'label',
-    schemaType: SchemaTypes.Input,
+    schemaNode: {
+      key: 'key',
+      name: 'Name',
+      namespacePrefix: '',
+      namespaceUri: '',
+      schemaNodeDataType: SchemaNodeDataType.String,
+      properties: SchemaNodeProperties.NotSpecified,
+      children: [],
+      pathToRoot: [],
+    },
+    schemaType: SchemaTypes.Source,
     displayHandle: false,
     isLeaf: false,
     isChild: false,
-    nodeDataType: SchemaNodeDataType.String,
     onClick: () => console.log('Schema card clicked'),
     disabled: false,
     error: false,

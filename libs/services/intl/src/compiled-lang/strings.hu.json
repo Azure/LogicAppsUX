@@ -285,12 +285,6 @@
       "value": "Kötelező megadni. Az XML formátumúvá alakítandó érték."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Az összes verzió megjelenítése"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -373,6 +367,12 @@
       "value": "További információ"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Minden futtatás utáni konfigurációnak legalább egy bejelölt állapottal kell rendelkeznie"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -401,6 +401,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt célsémát."
     }
   ],
   "1zgFh1": [
@@ -563,12 +569,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Dakka"
-    }
-  ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt kimeneti sémát."
     }
   ],
   "3Y8a6G": [
@@ -745,16 +745,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "A bemeneti séma le lesz cserélve, és nem tud visszatérni a korábbi módosításokhoz. Folytatja a bemeneti séma módosítását?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Kötelező megadni. A kiértékelendő XPath-kifejezés."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Válasszon forrássémát"
     }
   ],
   "5SAQOb": [
@@ -773,6 +773,12 @@
     {
       "type": 0,
       "value": "Igaz értéket ad vissza, ha egy objektum, tömb vagy sztring üres."
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Forrásséma hozzáadása"
     }
   ],
   "5cPiWA": [
@@ -809,6 +815,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Válasszon célsémát"
     }
   ],
   "6XR3FS": [
@@ -1001,12 +1013,6 @@
       "value": "Szombat"
     }
   ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Kimeneti séma hozzáadása"
-    }
-  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -1057,12 +1063,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Norfolk-sziget"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Bemeneti séma"
     }
   ],
   "8ubEPi": [
@@ -1147,12 +1147,6 @@
     {
       "type": 0,
       "value": "Két szám összeadásának eredményét adja vissza."
-    }
-  ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Kimeneti séma kiválasztása"
     }
   ],
   "9pdXmX": [
@@ -1253,6 +1247,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A Base64-ábrázolással kódolandó sztring."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "A célsémát a rendszer lecseréli, Ön pedig nem tud majd visszatérni a korábbi módosításokhoz. Folytatja a célséma módosítását?"
     }
   ],
   "B/JzwK": [
@@ -1449,6 +1449,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Aleut-szigetek"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Az aktiválási feltétel nem lehet üres"
     }
   ],
   "DuXV2M": [
@@ -1707,6 +1713,12 @@
       "value": "Kötelező megadni. A tartalmazó gyűjteményben keresendő objektum."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Forrásséma"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1717,6 +1729,12 @@
     {
       "type": 0,
       "value": "Igaz értéket ad vissza, ha a paraméterek hamisak."
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt forrássémát."
     }
   ],
   "Gi72X5": [
@@ -1853,12 +1871,6 @@
       "value": "Visszatérés a tallózáshoz"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Bemeneti séma kiválasztása"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -1887,6 +1899,20 @@
     {
       "type": 0,
       "value": "Sztring átalakítása kisbetűssé az invariáns kulturális környezet kis- és nagybetű-használati szabályai alapján."
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Érvénytelen művelet. Elemek száma: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -1971,12 +1997,6 @@
     {
       "type": 0,
       "value": "Karakterek részhalmazát adja vissza egy sztringből."
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Kimeneti séma"
     }
   ],
   "KX1poC": [
@@ -2305,10 +2325,22 @@
       "value": "(UTC+03:00) Minszk"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "Kifejezés"
+      "value": "A művelet elérési útjának bemeneti értéke érvénytelen. Elérési út értéke – "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", elérésiút-sablon – "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2411,6 +2443,12 @@
       "value": "Kapcsolat neve"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Ez a függvény nem igényel bemenetet."
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2421,6 +2459,12 @@
     {
       "type": 0,
       "value": "Megjegyzés"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Válassza ki a sémát a legördülő listához."
     }
   ],
   "OVvieE": [
@@ -2525,6 +2569,12 @@
       "value": "Kötelező megadni. Az 1. összeadandóhoz hozzáadandó szám."
     }
   ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Forrásséma csomópontja"
+    }
+  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2607,6 +2657,12 @@
     {
       "type": 0,
       "value": "Elvetés"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Válasszon forrássémát"
     }
   ],
   "QEp3C8": [
@@ -2897,6 +2953,12 @@
       "value": "Egy átadott sztring típusú időbélyegből a hónap kezdetét adja vissza."
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "A lapozások száma érvénytelen"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -2999,6 +3061,16 @@
       "value": "A tartalom a biztonsági konfiguráció miatt nem jelenik meg."
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (fájlnév)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -3027,6 +3099,12 @@
     {
       "type": 0,
       "value": "Érvényes JSON-t adjon meg."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3149,6 +3227,12 @@
       "value": "Kötelező megadni. A tömbben található első egész szám."
     }
   ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Válasszon célsémát"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -3159,6 +3243,12 @@
     {
       "type": 0,
       "value": "A két szám szorzásának eredményét adja vissza."
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3189,12 +3279,6 @@
     {
       "type": 0,
       "value": " óra"
-    }
-  ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Kimeneti séma kiválasztása"
     }
   ],
   "XCunbR": [
@@ -3327,6 +3411,20 @@
       "value": "További információ"
     }
   ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "A(z) "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": " érvénytelen kifejezéstípus"
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3451,10 +3549,18 @@
       "value": "(UTC+07:00) Tomszk"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "A kimeneti séma le lesz cserélve, és nem tud visszatérni a korábbi módosításokhoz. Folytatja a kimeneti séma módosítását?"
+      "value": "Nem támogatott „in” érték: „"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "” a paraméterben"
     }
   ],
   "a64zhX": [
@@ -3837,10 +3943,10 @@
       "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Kimeneti séma csomópontja"
+      "value": "Célséma"
     }
   ],
   "eRvGw3": [
@@ -3861,22 +3967,16 @@
       "value": "Kötelező megadni. A szám, mellyel el kell osztani az osztandót."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Beépített"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Kötelező megadni. A sztringrész kezdetének indexe az 1. paraméterben."
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "Válassza ki a sémát a legördülő listához."
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3913,6 +4013,18 @@
     {
       "type": 0,
       "value": "Igaz értéket ad vissza, ha az első argumentum nagyobb a másodiknál, vagy azzal egyenlő."
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "A lapozások száma meghaladja a maximális értéket"
     }
   ],
   "faSDuD": [
@@ -4129,6 +4241,24 @@
       "value": "“ letöltéséhez nyomja le az Alt/Option billentyűt, és kattintson"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "A művelet elérési útjának értéke nem felel meg a szegmens sablonjának. Elérési út: "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", sablon: "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -4139,6 +4269,12 @@
     {
       "type": 0,
       "value": "Célközönség"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "A forrássémát a rendszer lecseréli, Ön pedig nem tud majd visszatérni a korábbi módosításokhoz. Folytatja a forrásséma módosítását?"
     }
   ],
   "i/SguY": [
@@ -4393,12 +4529,6 @@
       "value": "Igen"
     }
   ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Bemeneti séma hozzáadása"
-    }
-  ],
   "kDsud+": [
     {
       "type": 0,
@@ -4651,6 +4781,12 @@
       "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Függvény"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4703,12 +4839,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az eltávolítandó tulajdonság neve."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4927,12 +5057,6 @@
     {
       "type": 0,
       "value": "A paraméter átalakítása sztringgé."
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Bemeneti séma kiválasztása"
     }
   ],
   "q87X20": [
@@ -5217,12 +5341,6 @@
       "value": "Új paraméter"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Bemeneti séma csomópontja"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5233,12 +5351,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A célidőzóna nevét tartalmazó sztring. A részleteket lásd: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt bemeneti sémát."
     }
   ],
   "tE7Zam": [
@@ -5439,6 +5551,12 @@
       "value": "Globálisan egyedi sztring (GUID) létrehozása"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Minden műveletnek egy vagy több futtatás utáni konfigurációval kell rendelkeznie"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5497,6 +5615,12 @@
     {
       "type": 0,
       "value": "túllépte az időkorlátot"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [
@@ -5759,6 +5883,12 @@
       "value": "Dátum- és időfüggvények"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Célséma hozzáadása"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5795,12 +5925,6 @@
       "value": "A művelet az összes gyermeklépést is eltávolítja."
     }
   ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Ez a kifejezés nem igényel bemenetet."
-    }
-  ],
   "zBMVKg": [
     {
       "type": 0,
@@ -5829,6 +5953,12 @@
     {
       "type": 0,
       "value": "Egyéni érték törlése"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Célséma csomópontja"
     }
   ],
   "zbtUQ/": [

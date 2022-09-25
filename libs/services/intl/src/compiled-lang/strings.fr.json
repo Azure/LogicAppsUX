@@ -285,12 +285,6 @@
       "value": "Obligatoire. Valeur à convertir en XML."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Afficher toutes les versions"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -384,6 +378,12 @@
       "value": "En savoir plus"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Chaque exécution après configuration après doit avoir au moins un état sélectionné"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -412,6 +412,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Chargez ou sélectionnez un schéma cible à utiliser pour votre carte."
     }
   ],
   "1zgFh1": [
@@ -574,12 +580,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Dhaka"
-    }
-  ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Chargez ou sélectionnez un schéma de sortie à utiliser pour votre carte."
     }
   ],
   "3Y8a6G": [
@@ -756,16 +756,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "Le schéma d’entrée sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma d’entrée ?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Obligatoire. Expression XPath à évaluer."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Sélectionner un schéma source"
     }
   ],
   "5SAQOb": [
@@ -784,6 +784,12 @@
     {
       "type": 0,
       "value": "Retourne true si un objet, un tableau ou une chaîne est vide"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Ajouter un schéma source"
     }
   ],
   "5cPiWA": [
@@ -820,6 +826,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Sélectionnez un schéma cible"
     }
   ],
   "6XR3FS": [
@@ -1012,12 +1024,6 @@
       "value": "Samedi"
     }
   ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Ajouter un schéma de sortie"
-    }
-  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -1068,12 +1074,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Île Norfolk"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Schéma d’entrée"
     }
   ],
   "8ubEPi": [
@@ -1158,12 +1158,6 @@
     {
       "type": 0,
       "value": "Retourne le résultat de l'ajout de deux nombres"
-    }
-  ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Sélectionner une option de sortie"
     }
   ],
   "9pdXmX": [
@@ -1264,6 +1258,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne à encoder dans une représentation en base64."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "Le schéma cible sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma cible ?"
     }
   ],
   "B/JzwK": [
@@ -1471,6 +1471,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Îles Aléoutiennes"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "La condition de déclencheur ne peut pas être vide"
     }
   ],
   "DuXV2M": [
@@ -1732,6 +1738,12 @@
       "value": "Obligatoire. Objet à trouver dans la collection Within."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Schéma source"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1742,6 +1754,12 @@
     {
       "type": 0,
       "value": "Retourne true si les paramètres ont la valeur false"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Chargez ou sélectionnez un schéma source à utiliser pour votre carte."
     }
   ],
   "Gi72X5": [
@@ -1878,12 +1896,6 @@
       "value": "Retour au navigateur"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Sélectionner un schéma d’entrée"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -1912,6 +1924,20 @@
     {
       "type": 0,
       "value": "Convertit une chaîne en minuscules à l'aide des règles de casse de la culture invariante"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Opération non valide. Nombre d’éléments : "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -1996,12 +2022,6 @@
     {
       "type": 0,
       "value": "Retourne un sous-ensemble de caractères à partir d'une chaîne"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Schéma de sortie"
     }
   ],
   "KX1poC": [
@@ -2333,10 +2353,22 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "Expression"
+      "value": "Valeur d’entrée du chemin d’accès de l’opération non valide. Valeur du chemin d’accès - modèle de chemin d’accès "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2439,6 +2471,12 @@
       "value": "Nom de la connexion"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Cette fonction ne nécessite aucune entrée."
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2449,6 +2487,12 @@
     {
       "type": 0,
       "value": "Commentaire"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Sélectionner le schéma pour la liste déroulante"
     }
   ],
   "OVvieE": [
@@ -2553,6 +2597,12 @@
       "value": "Obligatoire. Numéro à ajouter à l'opérande 1."
     }
   ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Nœud du schéma source"
+    }
+  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2635,6 +2685,12 @@
     {
       "type": 0,
       "value": "Abandonner"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Sélectionner un schéma source"
     }
   ],
   "QEp3C8": [
@@ -2932,6 +2988,12 @@
       "value": "Retourne le début du mois en horodateur de chaîne"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Nombre de paginations non valide"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3034,6 +3096,16 @@
       "value": "Contenu non affiché en raison de la configuration de la sécurité."
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (nom de fichier)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -3062,6 +3134,12 @@
     {
       "type": 0,
       "value": "Entrez un JSON valide."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3184,6 +3262,12 @@
       "value": "Obligatoire. Premier entier du tableau."
     }
   ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Sélectionnez un schéma cible"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -3194,6 +3278,12 @@
     {
       "type": 0,
       "value": "Retourne le résultat de la multiplication de deux nombres"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3224,12 +3314,6 @@
     {
       "type": 0,
       "value": " heures"
-    }
-  ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Sélectionner une option de sortie"
     }
   ],
   "XCunbR": [
@@ -3362,6 +3446,12 @@
       "value": "Plus d'informations"
     }
   ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "Type d'expression non valide {type}."
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3486,10 +3576,10 @@
       "value": "(UTC+07:00) Tomsk"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "Le schéma de sortie sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma de sortie ?"
+      "value": "Valeur 'in' non prise en charge : {value} dans Paramètre"
     }
   ],
   "a64zhX": [
@@ -3868,10 +3958,10 @@
       "value": "Obligatoire. Nom de la variable dont vous voulez la valeur."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Nœud de schéma de sortie"
+      "value": "Schéma cible"
     }
   ],
   "eRvGw3": [
@@ -3892,22 +3982,16 @@
       "value": "Obligatoire. Nombre par lequel diviser le dividende."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Intégré"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Obligatoire. Index d'où la sous-chaîne commence dans le paramètre 1."
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "Sélectionner le schéma pour la liste déroulante"
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3944,6 +4028,18 @@
     {
       "type": 0,
       "value": "Retourne true si le premier argument est supérieur ou égal à la seconde"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Le nombre de paginations dépasse la valeur maximale"
     }
   ],
   "faSDuD": [
@@ -4163,6 +4259,24 @@
       "value": " »"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "La valeur de chemin d'accès de l'opération ne correspond pas au modèle de segment. Path "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", Modèle "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -4173,6 +4287,12 @@
     {
       "type": 0,
       "value": "Audience"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "Le schéma source sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma source ?"
     }
   ],
   "i/SguY": [
@@ -4421,12 +4541,6 @@
     {
       "type": 0,
       "value": "Oui"
-    }
-  ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Ajouter un schéma d’entrée"
     }
   ],
   "kDsud+": [
@@ -4681,6 +4795,12 @@
       "value": "Entrez le mot de passe en tant que texte brut ou utilisez un paramètre sécurisé"
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Fonction"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4733,12 +4853,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la propriété à supprimer."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4957,12 +5071,6 @@
     {
       "type": 0,
       "value": "Convertir le paramètre en chaîne"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Sélectionner un schéma d’entrée"
     }
   ],
   "q87X20": [
@@ -5258,12 +5366,6 @@
       "value": "Nouveau paramètre"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Nœud de schéma d’entrée"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5274,12 +5376,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne contenant le nom du fuseau horaire de destination. Pour plus d'informations, consultez https://msdn.microsoft.com/fr-fr/library/gg154758.aspx."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Chargez ou sélectionnez un schéma d’entrée à utiliser pour votre carte."
     }
   ],
   "tE7Zam": [
@@ -5480,6 +5576,12 @@
       "value": "Génère un GUID (identificateur global unique)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Chaque action doit avoir une ou plusieurs exécutions après les configurations"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5538,6 +5640,12 @@
     {
       "type": 0,
       "value": "a expiré"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [
@@ -5800,6 +5908,12 @@
       "value": "Fonctions de date et heure"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Ajouter un schéma cible"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5836,12 +5950,6 @@
       "value": "Cette opération supprime également toutes les étapes enfants."
     }
   ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Cette expression ne nécessite aucune entrée."
-    }
-  ],
   "zBMVKg": [
     {
       "type": 0,
@@ -5870,6 +5978,12 @@
     {
       "type": 0,
       "value": "Effacer la valeur par défaut"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Nœud du schéma cible"
     }
   ],
   "zbtUQ/": [

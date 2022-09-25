@@ -1,4 +1,4 @@
-import type { ExpressionGroupBranding } from '../constants/ExpressionConstants';
+import type { FunctionGroupBranding } from '../constants/FunctionConstants';
 import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import {
   Any16Filled,
@@ -24,7 +24,7 @@ import {
   String24Filled,
   String24Regular,
 } from '../images/DataType24Icons';
-import { ExpressionCategory } from '../models/Expression';
+import { FunctionCategory } from '../models/Function';
 import { SchemaNodeDataType } from '../models/Schema';
 import { Image } from '@fluentui/react-components';
 import {
@@ -53,7 +53,7 @@ import {
 
 export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return bundleIcon(NumberSymbol16Filled, NumberSymbol16Regular); // Number
     }
@@ -114,7 +114,6 @@ export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return bundleIcon(Array16Filled, Array16Regular); // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       return bundleIcon(Cube16Filled, Cube16Regular); // Object
@@ -134,7 +133,7 @@ export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
 
 export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return bundleIcon(NumberSymbol16Filled, NumberSymbol16Regular); // Number
     }
@@ -195,7 +194,6 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return Array16Regular; // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       return Cube16Regular; // Object
@@ -215,7 +213,7 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
 
 export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return bundleIcon(NumberSymbol24Filled, NumberSymbol24Regular); // Number
     }
@@ -276,7 +274,6 @@ export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return bundleIcon(Array24Filled, Array24Regular); // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       return bundleIcon(Cube24Filled, Cube24Regular); // Object
@@ -296,7 +293,7 @@ export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
 
 export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return NumberSymbol24Regular; // Number
     }
@@ -357,7 +354,6 @@ export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return Array24Regular; // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       return Cube24Regular; // Object
@@ -375,28 +371,28 @@ export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   }
 };
 
-export const iconForExpressionCategory = (expressionCategory: ExpressionCategory) => {
-  switch (expressionCategory) {
-    case ExpressionCategory.Collection: {
+export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
+  switch (functionCategory) {
+    case FunctionCategory.Collection: {
       return Collection20Regular;
     }
-    case ExpressionCategory.DateTime: {
+    case FunctionCategory.DateTime: {
       return CalendarClock20Regular;
     }
-    case ExpressionCategory.Logical: {
+    case FunctionCategory.Logical: {
       return AddSubtractCircle20Filled;
     }
-    case ExpressionCategory.Math: {
+    case FunctionCategory.Math: {
       return MathSymbols20Regular;
     }
-    case ExpressionCategory.String: {
+    case FunctionCategory.String: {
       return StringCategory20Regular;
     }
-    case ExpressionCategory.Utility: {
+    case FunctionCategory.Utility: {
       return Wrench20Regular;
     }
     default: {
-      console.error(`Invalid category type: ${expressionCategory}`);
+      console.error(`Invalid category type: ${functionCategory}`);
       return Wrench20Regular;
     }
   }
@@ -407,6 +403,6 @@ export const iconUriForIconImageName = (iconImageName: string) => {
   return `https://datamappericons.azureedge.net/icons/${iconImageName}`;
 };
 
-export const getIconForExpression = (name: string, fileName: string | undefined, branding: ExpressionGroupBranding) => {
+export const getIconForFunction = (name: string, fileName: string | undefined, branding: FunctionGroupBranding) => {
   return fileName ? <Image src={iconUriForIconImageName(fileName)} height={20} width={20} alt={name} /> : <>{branding.icon}</>;
 };

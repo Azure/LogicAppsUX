@@ -1,4 +1,5 @@
 const rootMain = require('../../../.storybook/main');
+const webpack = require('webpack');
 
 module.exports = {
   ...rootMain,
@@ -20,6 +21,27 @@ module.exports = {
       config = await rootMain.webpackFinal(config, { configType });
     }
 
+    config = {
+      ...config,
+      resolve: {
+        ...config.resolve,
+        fallback: {
+          ...config.resolve?.fallback,
+          http: require.resolve('stream-http'),
+          https: require.resolve('https-browserify'),
+        },
+        aliasFields: ['browser', 'browser.esm'],
+      },
+      plugins: [
+        ...config.plugins,
+        new webpack.ProvidePlugin({
+          // Make a global `process` variable that points to the `process` package,
+          // because the `util` package expects there to be a global variable named `process`.
+          // Thanks to https://stackoverflow.com/a/65018686/14239942
+          process: 'process/browser',
+        }),
+      ],
+    };
     // add your own webpack tweaks if needed
 
     return config;

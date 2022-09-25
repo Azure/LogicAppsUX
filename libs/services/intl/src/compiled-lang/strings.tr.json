@@ -269,12 +269,6 @@
       "value": "Gerekli. XML'ye dönüştürülecek değer."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Tüm sürümleri göster"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -357,6 +351,12 @@
       "value": "Daha fazla bilgi edinin"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Her “sonrasında çalıştır” yapılandırmasında en az bir durum işaretli olmalıdır"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -385,6 +385,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Eşlemeniz için kullanılacak bir hedef şema yükleyin veya seçin."
     }
   ],
   "1zgFh1": [
@@ -547,12 +553,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Dakka"
-    }
-  ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Eşlemeniz için kullanılacak bir çıkış şeması yükleyin veya seçin."
     }
   ],
   "3Y8a6G": [
@@ -729,16 +729,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "Giriş şeması değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Giriş şemasını değiştirmeye devam etmek istiyor musunuz?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Gerekli. Değerlendirilecek XPath ifadesi."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Kaynak şema seçin"
     }
   ],
   "5SAQOb": [
@@ -757,6 +757,12 @@
     {
       "type": 0,
       "value": "Bir nesne, dizi veya dize boşsa true döndürür"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Kaynak Şema Ekle"
     }
   ],
   "5cPiWA": [
@@ -793,6 +799,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Hedef şema seçin"
     }
   ],
   "6XR3FS": [
@@ -969,12 +981,6 @@
       "value": "Cumartesi"
     }
   ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Çıkış Şeması Ekle"
-    }
-  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -1025,12 +1031,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Norfolk Adası"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Giriş Şeması"
     }
   ],
   "8ubEPi": [
@@ -1117,12 +1117,6 @@
       "value": "İki sayı arasındaki toplama işleminin sonucunu döndürür"
     }
   ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Çıkış şeması seçin"
-    }
-  ],
   "9pdXmX": [
     {
       "type": 0,
@@ -1205,6 +1199,12 @@
     {
       "type": 0,
       "value": "Gerekli. Base64 gösterimine kodlanacak dize."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "Hedef şema değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Hedef şemayı değiştirmeye devam etmek istiyor musunuz?"
     }
   ],
   "B/JzwK": [
@@ -1401,6 +1401,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Aleutian Adaları"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Tetikleyici koşulu boş olamaz"
     }
   ],
   "DuXV2M": [
@@ -1651,6 +1657,12 @@
       "value": "Gerekli. Koleksiyon içinde bulunacak nesne."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Kaynak Şema"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1661,6 +1673,12 @@
     {
       "type": 0,
       "value": "Parametreler false ise true döndürür"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Eşlemeniz için kullanılacak bir kaynak şema yükleyin veya seçin."
     }
   ],
   "Gi72X5": [
@@ -1789,12 +1807,6 @@
       "value": "Göz atmaya dön"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Giriş şeması seçin"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -1823,6 +1835,20 @@
     {
       "type": 0,
       "value": "Sabit kültürün büyük-küçük harf kurallarını kullanarak bir dizeyi küçük harfe dönüştürür"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Geçersiz işlem. Öğe sayısı: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -1907,12 +1933,6 @@
     {
       "type": 0,
       "value": "Bir dizedeki karakterlerin bir alt kümesini döndürür"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Çıkış Şeması"
     }
   ],
   "KX1poC": [
@@ -2217,10 +2237,22 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "İfade"
+      "value": "Geçersiz işlem yolu giriş değeri. Yol değeri - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " Yol şablonu - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2307,6 +2339,12 @@
       "value": "Bağlantı Adı"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Bu işlev herhangi bir giriş gerektirmiyor."
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2317,6 +2355,12 @@
     {
       "type": 0,
       "value": "Yorum"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Açılan menü şemasını seçin"
     }
   ],
   "OVvieE": [
@@ -2421,6 +2465,12 @@
       "value": "Gerekli. Toplanan 1'e eklenecek sayı."
     }
   ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Kaynak şema düğümü"
+    }
+  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2503,6 +2553,12 @@
     {
       "type": 0,
       "value": "At"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Kaynak şema seçin"
     }
   ],
   "QEp3C8": [
@@ -2789,6 +2845,12 @@
       "value": "Bir dize zaman damgası için ayın başlangıcını döndürür"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Disk belleği sayısı geçersiz"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -2891,6 +2953,16 @@
       "value": "Güvenlik yapılandırması nedeniyle içerik gösterilmiyor."
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (dosya adı)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2919,6 +2991,12 @@
     {
       "type": 0,
       "value": "Geçerli bir JSON girin."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3041,6 +3119,12 @@
       "value": "Gerekli. Dizideki ilk tamsayı."
     }
   ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Hedef şema seçin"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -3051,6 +3135,12 @@
     {
       "type": 0,
       "value": "İki sayı arasındaki çarpma işleminin sonucunu döndürür"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3081,12 +3171,6 @@
     {
       "type": 0,
       "value": " saat"
-    }
-  ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Çıkış şeması seçin"
     }
   ],
   "XCunbR": [
@@ -3219,6 +3303,12 @@
       "value": "Daha Fazla Bilgi"
     }
   ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "Geçersiz ifade türü {type}."
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3343,10 +3433,10 @@
       "value": "(UTC+07:00) Tomsk"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "Çıkış şeması değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Çıkış şemasını değiştirmeye devam etmek istiyor musunuz?"
+      "value": "Parametrede desteklenmeyen 'in' değeri: {value}"
     }
   ],
   "a64zhX": [
@@ -3721,10 +3811,10 @@
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Çıkış şeması düğümü"
+      "value": "Hedef Şema"
     }
   ],
   "eRvGw3": [
@@ -3745,22 +3835,16 @@
       "value": "Gerekli. Bölünenin bölüneceği sayı."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Yerleşik"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Gerekli. Parametre 1'de alt dizenin başladığı konumun dizini."
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "Açılan menü şemasını seçin"
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3797,6 +3881,18 @@
     {
       "type": 0,
       "value": "Birinci bağımsız değişken ikinciden büyük veya ikinciye eşitse true döndürür"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Disk belleği sayısı maksimum değeri aşıyor"
     }
   ],
   "faSDuD": [
@@ -3997,6 +4093,24 @@
       "value": "{displayName} indirmek için Alt/Option + tıklama"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "İşlem yolu değeri, segmentin şablonuyla eşleşmiyor. Yol "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", Şablon "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -4007,6 +4121,12 @@
     {
       "type": 0,
       "value": "Hedef kitle"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "Kaynak şema değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Kaynak şemayı değiştirmeye devam etmek istiyor musunuz?"
     }
   ],
   "i/SguY": [
@@ -4243,12 +4363,6 @@
     {
       "type": 0,
       "value": "Evet"
-    }
-  ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Giriş Şeması Ekle"
     }
   ],
   "kDsud+": [
@@ -4503,6 +4617,12 @@
       "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "İşlev"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4555,12 +4675,6 @@
     {
       "type": 0,
       "value": "Gerekli. Kaldırılacak özelliğin adı."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4779,12 +4893,6 @@
     {
       "type": 0,
       "value": "Parametreyi bir dizeye dönüştürür"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Giriş şeması seçin"
     }
   ],
   "q87X20": [
@@ -5053,12 +5161,6 @@
       "value": "Yeni parametre"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Giriş şeması düğümü"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5069,12 +5171,6 @@
     {
       "type": 0,
       "value": "Zorunlu. Hedef saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Eşlemeniz için kullanılacak bir giriş şeması yükleyin veya seçin."
     }
   ],
   "tE7Zam": [
@@ -5275,6 +5371,12 @@
       "value": "Genel benzersiz dize (GUID) oluşturur"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Her eylem bir veya daha fazla “sonrasında çalıştır” yapılandırması içermelidir"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5333,6 +5435,12 @@
     {
       "type": 0,
       "value": "zaman aşımına uğradı"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [
@@ -5591,6 +5699,12 @@
       "value": "Tarih ve saat işlevleri"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Hedef Şema Ekle"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5627,12 +5741,6 @@
       "value": "Bu işlem tüm alt adımları da kaldırır."
     }
   ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Bu ifade herhangi bir giriş gerektirmiyor."
-    }
-  ],
   "zBMVKg": [
     {
       "type": 0,
@@ -5661,6 +5769,12 @@
     {
       "type": 0,
       "value": "Özel değeri temizle"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Hedef şema düğümü"
     }
   ],
   "zbtUQ/": [

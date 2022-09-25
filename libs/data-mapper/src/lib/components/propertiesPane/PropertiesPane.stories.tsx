@@ -1,40 +1,39 @@
-import type { ExpressionGroupBranding } from '../../constants/ExpressionConstants';
+import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
 import { SchemaNodeDataType } from '../../models';
+import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
-import type { SelectedExpressionNode, SelectedInputNode, SelectedOutputNode } from '../../models/SelectedNode';
-import { PropertiesPane } from './PropertiesPane';
 import type { PropertiesPaneProps } from './PropertiesPane';
+import { PropertiesPane } from './PropertiesPane';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-const exInputNode: SelectedInputNode = {
-  nodeType: NodeType.Input,
-  name: 'ExInputNode',
-  path: '/path/to/ExInputNode',
+const exSourceNode: SelectedSourceNode = {
+  nodeType: NodeType.Source,
+  name: 'ExSourceNode',
+  path: '/path/to/ExSourceNode',
   dataType: SchemaNodeDataType.String,
 };
-const exOutputNode: SelectedOutputNode = {
-  nodeType: NodeType.Output,
-  name: 'ExOutputNode',
-  path: '/path/to/ExOutputNode',
+const exTargetNode: SelectedTargetNode = {
+  nodeType: NodeType.Target,
+  name: 'ExTargetNode',
+  path: '/path/to/ExTargetNode',
   dataType: SchemaNodeDataType.Int,
   defaultValue: 'Default value',
   doNotGenerateIfNoValue: true,
   nullable: true,
   inputIds: ['miscInputId'],
 };
-const exExpressionNode: SelectedExpressionNode = {
-  nodeType: NodeType.Expression,
-  name: 'ExExpressionNode',
-  branding: {} as ExpressionGroupBranding,
+const exFunctionNode: SelectedFunctionNode = {
+  nodeType: NodeType.Function,
+  name: 'ExFunctionNode',
+  branding: {} as FunctionGroupBranding,
   description: '',
   codeEx: '',
-  definition: '',
   inputs: [],
   outputId: '',
 };
 
-const nodeOptions = { noneSelected: undefined, exInputNode, exOutputNode, exExpressionNode };
+const nodeOptions = { noneSelected: undefined, exSourceNode, exTargetNode, exFunctionNode };
 
 export default {
   component: PropertiesPane,
@@ -48,9 +47,9 @@ export default {
         type: 'select',
         labels: {
           noneSelected: 'No node selected',
-          exInputNode: 'Input node',
-          exOutputNode: 'Output node',
-          exExpressionNode: 'Expression node',
+          exSourceNode: 'Input node',
+          exTargetNode: 'Output node',
+          exFunctionNode: 'Function node',
         },
       },
     },

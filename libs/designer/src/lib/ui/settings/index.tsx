@@ -4,25 +4,22 @@ import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { setTabError } from '../../core/state/panel/panelSlice';
 import { useOperationManifest } from '../../core/state/selectors/actionMetadataSelector';
-import { setExpandedSections } from '../../core/state/settingSlice';
+import { setExpandedSections, ValidationErrorKeys, type ValidationError } from '../../core/state/settingSlice';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
-import { DataHandling } from './sections/datahandling';
-import type { DataHandlingSectionProps } from './sections/datahandling';
-import { General } from './sections/general';
-import type { GeneralSectionProps } from './sections/general';
-import { Networking } from './sections/networking';
-import type { NetworkingSectionProps } from './sections/networking';
+import { DataHandling, type DataHandlingSectionProps } from './sections/datahandling';
+import { General, type GeneralSectionProps } from './sections/general';
+import { Networking, type NetworkingSectionProps } from './sections/networking';
 import { RunAfter } from './sections/runafter';
-import { Security } from './sections/security';
-import type { SecuritySectionProps } from './sections/security';
-import { Tracking } from './sections/tracking';
-import type { TrackingSectionProps } from './sections/tracking';
+import { Security, type SecuritySectionProps } from './sections/security';
+import { Tracking, type TrackingSectionProps } from './sections/tracking';
+import { useValidate } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { equals, isObject } from '@microsoft-logic-apps/utils';
+import { equals, isObject, type OperationManifest } from '@microsoft-logic-apps/utils';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export type ToggleHandler = (checked: boolean) => void;
@@ -34,6 +31,7 @@ export interface SectionProps extends Settings {
   nodeId: string;
   expanded: boolean;
   onHeaderClick?: HeaderClickHandler;
+  validationErrors?: ValidationError[];
 }
 
 export type HeaderClickHandler = (sectionName: string) => void;
@@ -52,15 +50,17 @@ export const SettingsPanel = (): JSX.Element => {
 };
 
 function GeneralSettings(): JSX.Element | null {
+  const { validate: triggerValidation, validationErrors } = useValidate();
   const dispatch = useDispatch();
   const nodeId = useSelectedNodeId();
-  const { expandedSections, isTrigger, nodeInputs, operationInfo, settings } = useSelector((state: RootState) => {
+  const { expandedSections, isTrigger, nodeInputs, operationInfo, settings, operations } = useSelector((state: RootState) => {
     return {
       expandedSections: state.settings.expandedSections,
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
       nodeInputs: state.operations.inputParameters[nodeId],
       operationInfo: state.operations.operationInfo[nodeId],
       settings: state.operations.settings[nodeId],
+      operations: state.operations,
     };
   });
   const { data: manifest } = useOperationManifest(operationInfo);
@@ -69,8 +69,12 @@ function GeneralSettings(): JSX.Element | null {
     (state: RootState) => state.operations.settings[nodeId] ?? {}
   );
 
+  useEffect(() => {
+    const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
+    dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
+  }, [dispatch, nodeId, operations, triggerValidation]);
+
   const onConcurrencyToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -85,7 +89,6 @@ function GeneralSettings(): JSX.Element | null {
   };
 
   const onConcurrencyValueChange = (value: number): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -100,7 +103,6 @@ function GeneralSettings(): JSX.Element | null {
   };
 
   const onSplitOnToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     const splitOnSetting = {
       isSupported: !!splitOn?.isSupported,
       value: {
@@ -125,7 +127,6 @@ function GeneralSettings(): JSX.Element | null {
   };
 
   const onTimeoutValueChange = (newVal: string): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -140,7 +141,6 @@ function GeneralSettings(): JSX.Element | null {
   };
 
   const onTriggerConditionsChange = (newExpressions: string[]): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -169,7 +169,6 @@ function GeneralSettings(): JSX.Element | null {
   };
 
   const onSplitOnSelectionChanged = (selectedOption: IDropdownOption): void => {
-    // TODO (14427339): Setting Validation
     const splitOnSetting = {
       isSupported: !!splitOn?.isSupported,
       value: {
@@ -210,6 +209,13 @@ function GeneralSettings(): JSX.Element | null {
     onClientTrackingIdChange,
     onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.GENERAL),
+    validationErrors: validationErrors.filter(({ key }) => {
+      return (
+        key === ValidationErrorKeys.TRIGGER_CONDITION_EMPTY ||
+        key === ValidationErrorKeys.CHUNK_SIZE_INVALID ||
+        key === ValidationErrorKeys.SINGLE_INSTANCE_SPLITON
+      );
+    }),
   };
 
   if (splitOn?.isSupported || timeout?.isSupported || concurrency?.isSupported || conditionExpressions?.isSupported) {
@@ -219,12 +225,13 @@ function GeneralSettings(): JSX.Element | null {
 
 function TrackingSettings(): JSX.Element | null {
   const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
+  const expandedSections = useSelector((state: RootState) => {
+      return state.settings.expandedSections;
+    }),
     nodeId = useSelectedNodeId(),
     { trackedProperties, correlation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
 
   const onClientTrackingIdChange = (newValue: string): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -255,7 +262,7 @@ function TrackingSettings(): JSX.Element | null {
         trackedPropertiesInput[key] = propertyValue;
       }
     }
-    // TODO (14427339): Setting Validation
+
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -278,7 +285,6 @@ function TrackingSettings(): JSX.Element | null {
         trackedPropertiesInput = newValue;
       }
     }
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -316,7 +322,6 @@ function DataHandlingSettings(): JSX.Element | null {
     { disableAutomaticDecompression, requestSchemaValidation } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
 
   const onAutomaticDecompressionChange = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -330,7 +335,6 @@ function DataHandlingSettings(): JSX.Element | null {
     );
   };
   const onSchemaValidationChange = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -360,6 +364,7 @@ function DataHandlingSettings(): JSX.Element | null {
 }
 
 function NetworkingSettings(): JSX.Element | null {
+  const { validate: triggerValidation, validationErrors } = useValidate();
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
     nodeId = useSelectedNodeId(),
@@ -373,10 +378,41 @@ function NetworkingSettings(): JSX.Element | null {
       uploadChunk,
       paging,
       downloadChunkSize,
-    } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
+      operations,
+    } = useSelector((state: RootState) => {
+      const { operations } = state;
+      const operationSettings = operations.settings[nodeId];
+      const {
+        asynchronous,
+        disableAsyncPattern,
+        suppressWorkflowHeaders,
+        suppressWorkflowHeadersOnResponse,
+        requestOptions,
+        retryPolicy,
+        uploadChunk,
+        paging,
+        downloadChunkSize,
+      } = operationSettings;
+      return {
+        asynchronous,
+        disableAsyncPattern,
+        suppressWorkflowHeaders,
+        suppressWorkflowHeadersOnResponse,
+        requestOptions,
+        retryPolicy,
+        uploadChunk,
+        paging,
+        downloadChunkSize,
+        operations,
+      };
+    });
+
+  useEffect(() => {
+    const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
+    dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
+  }, [dispatch, nodeId, operations, triggerValidation]);
 
   const onAsyncPatternToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -391,7 +427,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onAsyncResponseToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -406,7 +441,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onRequestOptionsChange = (newVal: string): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -421,7 +455,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onSuppressHeadersToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -436,7 +469,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onPaginationValueChange = (newVal: string): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -454,7 +486,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onHeadersOnResponseToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -469,7 +500,6 @@ function NetworkingSettings(): JSX.Element | null {
   };
 
   const onContentTransferToggle = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -508,6 +538,9 @@ function NetworkingSettings(): JSX.Element | null {
     onRequestOptionsChange,
     onHeadersOnResponseToggle,
     onSuppressHeadersToggle,
+    validationErrors: validationErrors.filter(({ key }) => {
+      return key === ValidationErrorKeys.PAGING_COUNT;
+    }),
   };
   if (
     retryPolicy?.isSupported ||
@@ -525,10 +558,17 @@ function NetworkingSettings(): JSX.Element | null {
 }
 
 function RunAfterSettings(): JSX.Element | null {
+  const { validate: triggerValidation, validationErrors } = useValidate();
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
     nodeId = useSelectedNodeId(),
-    { runAfter } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
+    operations = useSelector((state: RootState) => state.operations),
+    { runAfter } = operations.settings[nodeId];
+
+  useEffect(() => {
+    const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
+    dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
+  }, [dispatch, nodeId, operations, triggerValidation]);
 
   // TODO: 14714481 We need to support all incoming edges (currently using all edges) and runAfterConfigMenu
   const allEdges: WorkflowEdge[] = useEdgesBySource();
@@ -538,6 +578,7 @@ function RunAfterSettings(): JSX.Element | null {
     runAfter,
     expanded: expandedSections.includes(constants.SETTINGSECTIONS.RUNAFTER),
     onHeaderClick: (sectionName) => dispatch(setExpandedSections(sectionName)),
+    validationErrors,
   };
 
   return runAfter?.isSupported ? <RunAfter allEdges={allEdges} {...runAfterProps} /> : null;
@@ -549,7 +590,6 @@ function SecuritySettings(): JSX.Element | null {
     nodeId = useSelectedNodeId(),
     { secureInputs, secureOutputs } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
   const onSecureInputsChange = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,
@@ -561,7 +601,6 @@ function SecuritySettings(): JSX.Element | null {
   };
 
   const onSecureOutputsChange = (checked: boolean): void => {
-    // TODO (14427339): Setting Validation
     dispatch(
       updateNodeSettings({
         id: nodeId,

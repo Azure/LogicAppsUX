@@ -5,7 +5,7 @@ import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ExtensionContext, OutputChannel } from 'vscode';
 
-type SchemaType = 'input' | 'output';
+type SchemaType = 'source' | 'target';
 
 type SendingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: SchemaType } }
@@ -105,7 +105,7 @@ export default class DataMapperExt {
         break;
       }
       case 'readLocalFileOptions': {
-        const folderPath = DataMapperExt.getWorkspaceFolder(); // [WI 15419837] Find out how multi folder workspaces work
+        const folderPath = DataMapperExt.getWorkspaceFolder(); // TODO (WI 15419837): Find out how multi folder workspaces work
         fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
           DataMapperExt.currentPanel?.sendMsgToWebview({
             command: 'showAvailableSchemas',
@@ -115,6 +115,10 @@ export default class DataMapperExt {
         break;
       }
       case 'saveDataMapDefinition': {
+        if (!DataMapperExt.currentDataMapName) {
+          DataMapperExt.currentDataMapName = 'default';
+        }
+
         const fileName = `${DataMapperExt.currentDataMapName}.yml`;
         const filePath = path.join(DataMapperExt.getWorkspaceFolder(), dataMapDefinitionsPath, fileName);
         fs.writeFile(filePath, msg.data, 'utf8');
@@ -122,7 +126,7 @@ export default class DataMapperExt {
     }
   }
 
-  public addSchemaFromFile(filePath: string, schemaType: 'input' | 'output') {
+  public addSchemaFromFile(filePath: string, schemaType: 'source' | 'target') {
     // NOTE: .xsd files are utf-16 encoded
     fs.readFile(filePath, 'utf16le').then((text: string) => {
       // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call
@@ -142,6 +146,11 @@ export default class DataMapperExt {
   public static log(text: string) {
     DataMapperExt.outputChannel.appendLine(text);
     DataMapperExt.outputChannel.show();
+  }
+
+  public static showError(errMsg: string) {
+    DataMapperExt.log(errMsg);
+    window.showErrorMessage(errMsg);
   }
 
   public static getWorkspaceFolder() {

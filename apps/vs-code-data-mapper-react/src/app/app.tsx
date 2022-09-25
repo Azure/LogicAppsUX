@@ -12,24 +12,27 @@ enum VsCodeThemeType {
 
 interface SchemaFile {
   path: string;
-  type: 'input' | 'output';
+  type: 'source' | 'target';
 }
 
 export const App = (): JSX.Element => {
   const vscode = useContext(VSCodeContext);
-  const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
+  // const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
 
-  const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
+  // TODO (After theming): set initial value back to getVscodeTheme()
+  const [vsCodeTheme, _setVsCodeTheme] = useState<VsCodeThemeType>(VsCodeThemeType.VsCodeLight);
 
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
-  const inputSchema = useSelector((state: RootState) => state.dataMapDataLoader.inputSchema);
-  const outputSchema = useSelector((state: RootState) => state.dataMapDataLoader.outputSchema);
+  const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
 
+  /*
   // Monitor document.body for VS Code theme changes
   new MutationObserver(() => {
     setVsCodeTheme(getVscodeTheme());
   }).observe(document.body, { attributes: true });
+  */
 
   const saveStateCall = (dataMapDefinition: string) => {
     saveDataMapDefinition(dataMapDefinition);
@@ -57,7 +60,7 @@ export const App = (): JSX.Element => {
 
   return (
     <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>
-      <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={schemaFileList}>
+      <DataMapDataProvider dataMap={dataMap} sourceSchema={sourceSchema} targetSchema={targetSchema} availableSchemas={schemaFileList}>
         <DataMapperDesigner
           saveStateCall={saveStateCall}
           addSchemaFromFile={addSchemaFromFile}

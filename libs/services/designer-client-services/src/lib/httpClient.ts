@@ -17,6 +17,7 @@ export interface HttpRequestOptions<ContentType> {
   content?: ContentType;
   headers?: Record<string, string>;
   queryParameters?: QueryParameters;
+  noAuth?: boolean;
 }
 
 export interface QueryParameters {
@@ -27,4 +28,6 @@ export interface IHttpClient {
   dispose(): void;
   get<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType>;
   post<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType>;
+  put<ReturnType, BodyType>(options: HttpRequestOptions<BodyType>): Promise<ReturnType>;
+  delete<ReturnType>(options: HttpRequestOptions<unknown>): Promise<ReturnType>;
 }

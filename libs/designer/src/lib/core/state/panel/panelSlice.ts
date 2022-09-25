@@ -63,6 +63,21 @@ export const panelSlice = createSlice({
         state.registeredTabs[tab.name.toLowerCase()] = tab;
       });
     },
+
+    setTabError: (state, action: PayloadAction<{ tabName: string; hasErrors: boolean; nodeId: string }>) => {
+      const tabName = action.payload.tabName.toLowerCase();
+      const { nodeId, hasErrors } = action.payload;
+      if (tabName) {
+        state.registeredTabs[tabName] = {
+          ...state.registeredTabs[tabName],
+          tabErrors: {
+            ...state.registeredTabs[tabName].tabErrors,
+            [nodeId]: hasErrors,
+          },
+        };
+      }
+    },
+
     unregisterPanelTab: (state, action: PayloadAction<string>) => {
       delete state.registeredTabs[action.payload];
     },
@@ -117,6 +132,7 @@ export const {
   setTabVisibility,
   isolateTab,
   selectPanelTab,
+  setTabError,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

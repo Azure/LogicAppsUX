@@ -285,12 +285,6 @@
       "value": "Obrigatório. O valor a converter em XML."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Mostrar todas as versões"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -384,6 +378,12 @@
       "value": "Saber mais"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Cada execução após a configuração tem de ter, pelo menos, um estado verificado"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -412,6 +412,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Carregue ou selecione um esquema de destino a utilizar para o seu mapa."
     }
   ],
   "1zgFh1": [
@@ -574,12 +580,6 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Daca"
-    }
-  ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Carregue ou selecione um esquema de saída a utilizar para o seu mapa."
     }
   ],
   "3Y8a6G": [
@@ -756,16 +756,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "O esquema de entrada será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de entrada?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Obrigatório. A expressão XPath a avaliar."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Selecionar um esquema de origem"
     }
   ],
   "5SAQOb": [
@@ -784,6 +784,12 @@
     {
       "type": 0,
       "value": "Devolve verdadeiro se um objeto, uma matriz ou uma cadeia estiver vazia"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Adicionar Esquema de Origem"
     }
   ],
   "5cPiWA": [
@@ -820,6 +826,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Selecionar um esquema de destino"
     }
   ],
   "6XR3FS": [
@@ -1012,12 +1024,6 @@
       "value": "Sábado"
     }
   ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Adicionar Esquema de Saída"
-    }
-  ],
   "8L+oIz": [
     {
       "type": 0,
@@ -1068,12 +1074,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Ilha de Norfolk"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Esquema de Entrada"
     }
   ],
   "8ubEPi": [
@@ -1158,12 +1158,6 @@
     {
       "type": 0,
       "value": "Devolve o resultado da adição dos dois números"
-    }
-  ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Selecione um esquema de saída"
     }
   ],
   "9pdXmX": [
@@ -1264,6 +1258,12 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia a codificar numa representação base64."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "O esquema de destino será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de saída?"
     }
   ],
   "B/JzwK": [
@@ -1471,6 +1471,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Ilhas Aleutian"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "A condição do acionador não pode estar vazia"
     }
   ],
   "DuXV2M": [
@@ -1740,6 +1746,12 @@
       "value": "Obrigatório. O objeto a encontrar na coleção Dentro."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Esquema de origem"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1750,6 +1762,12 @@
     {
       "type": 0,
       "value": "Devolve verdadeiro se os parâmetros forem falsos"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Carregue ou selecione um esquema de origem a utilizar para o seu mapa."
     }
   ],
   "Gi72X5": [
@@ -1886,12 +1904,6 @@
       "value": "Regressar à procura"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Selecione um esquema de entrada"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
@@ -1920,6 +1932,20 @@
     {
       "type": 0,
       "value": "Converte uma cadeia em minúsculas com as regras de sensível a maiúsculas/minúsculas da cultura invariante"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Operação inválida. Número de itens: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -2004,12 +2030,6 @@
     {
       "type": 0,
       "value": "Devolve um subconjunto de carateres a partir de uma cadeia"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Esquema de Saída"
     }
   ],
   "KX1poC": [
@@ -2349,10 +2369,22 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "Expressão"
+      "value": "Valor de entrada de caminho de operação inválido. Valor do caminho - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " Modelo de caminho - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2455,6 +2487,12 @@
       "value": "Nome da Ligação"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Esta função não requer qualquer entrada."
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2465,6 +2503,12 @@
     {
       "type": 0,
       "value": "Comentário"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Selecione o esquema para o menu suspenso"
     }
   ],
   "OVvieE": [
@@ -2569,6 +2613,12 @@
       "value": "Obrigatório. O número a adicionar à Parcela 1."
     }
   ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Nó de esquema de origem"
+    }
+  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2651,6 +2701,12 @@
     {
       "type": 0,
       "value": "Eliminar"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Selecionar um esquema de origem"
     }
   ],
   "QEp3C8": [
@@ -2948,6 +3004,12 @@
       "value": "Devolve o início do mês de um carimbo de data/hora de cadeia"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Contagem de paginação inválida"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3050,6 +3112,16 @@
       "value": "O conteúdo não foi apresentado devido à configuração de segurança."
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (nome de ficheiro)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -3078,6 +3150,12 @@
     {
       "type": 0,
       "value": "Introduza um JSON válido."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3200,6 +3278,12 @@
       "value": "Obrigatório. O primeiro número inteiro na matriz."
     }
   ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Selecionar um esquema de destino"
+    }
+  ],
   "WUe3DY": [
     {
       "type": 0,
@@ -3210,6 +3294,12 @@
     {
       "type": 0,
       "value": "Devolve o resultado da multiplicação dos dois números"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "A managed identity is not configured on the logic app."
     }
   ],
   "Wy/bhW": [
@@ -3240,12 +3330,6 @@
     {
       "type": 0,
       "value": " horas"
-    }
-  ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Selecione um esquema de saída"
     }
   ],
   "XCunbR": [
@@ -3378,6 +3462,20 @@
       "value": "Mais Informações"
     }
   ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "Tipo de expressão “"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "” inválido."
+    }
+  ],
   "Y9kBz5": [
     {
       "type": 0,
@@ -3502,10 +3600,18 @@
       "value": "(UTC+07:00) Tomsk"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "O esquema de saída será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de saída?"
+      "value": "Valor \"in\" não suportado: \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" no Parâmetro"
     }
   ],
   "a64zhX": [
@@ -3884,10 +3990,10 @@
       "value": "Obrigatório. O nome da variável do valor que pretende."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Nó de esquema de saída"
+      "value": "Esquema de Destino"
     }
   ],
   "eRvGw3": [
@@ -3908,22 +4014,16 @@
       "value": "Obrigatório. O número pelo qual se divide o Dividendo."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Incorporado"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Obrigatório. O índice a partir do qual a subcadeia começa no parâmetro 1."
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "Selecione o esquema para o menu suspenso"
+      "value": "Shared"
     }
   ],
   "esOQ5p": [
@@ -3960,6 +4060,18 @@
     {
       "type": 0,
       "value": "Devolve verdadeiro se o primeiro argumento for maior ou igual ao segundo"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "A contagem de paginação excede o valor máximo"
     }
   ],
   "faSDuD": [
@@ -4187,6 +4299,24 @@
       "value": "”"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "O valor do caminho da operação não é igual ao modelo do segmento. Caminho "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", Modelo "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -4197,6 +4327,12 @@
     {
       "type": 0,
       "value": "Audiência"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "O esquema de origem será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de saída?"
     }
   ],
   "i/SguY": [
@@ -4455,12 +4591,6 @@
       "value": "Sim"
     }
   ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Adicionar Esquema de Entrada"
-    }
-  ],
   "kDsud+": [
     {
       "type": 0,
@@ -4713,6 +4843,12 @@
       "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Função"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4765,12 +4901,6 @@
     {
       "type": 0,
       "value": "Necessário. O nome da propriedade a remover."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4989,12 +5119,6 @@
     {
       "type": 0,
       "value": "Converter o parâmetro para uma cadeia"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Selecione um esquema de entrada"
     }
   ],
   "q87X20": [
@@ -5290,12 +5414,6 @@
       "value": "Novo parâmetro"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Nó de esquema de entrada"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5306,12 +5424,6 @@
     {
       "type": 0,
       "value": "Obrigatório. Uma cadeia que contém o nome do fuso horário de destino. Veja https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Carregue ou selecione um esquema de entrada a utilizar para o seu mapa."
     }
   ],
   "tE7Zam": [
@@ -5512,6 +5624,12 @@
       "value": "Gera uma cadeia de carateres exclusiva global (GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Cada ação tem de ter uma ou mais execução após as configurações"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5570,6 +5688,12 @@
     {
       "type": 0,
       "value": "excedeu o tempo limite"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
     }
   ],
   "vr70Gn": [
@@ -5832,6 +5956,12 @@
       "value": "Funções de data e hora"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Adicionar Esquema de Destino"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5868,12 +5998,6 @@
       "value": "Isto também removerá todos os passos subordinados."
     }
   ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "Esta expressão não requer qualquer entrada."
-    }
-  ],
   "zBMVKg": [
     {
       "type": 0,
@@ -5902,6 +6026,12 @@
     {
       "type": 0,
       "value": "Limpar valor personalizado"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Nó de esquema de destino"
     }
   ],
   "zbtUQ/": [
