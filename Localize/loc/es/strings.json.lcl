@@ -4368,6 +4368,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";VA7M1u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[In App]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";VE3cxq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC-07:00) Mountain Time (US & Canada)]]></Val>
@@ -4553,6 +4559,15 @@
           <Val><![CDATA[Returns the result from multiplying the two numbers]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Devuelve el resultado de multiplicar los dos números.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";WnU9v0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[A managed identity is not configured on the logic app.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Una identidad administrada no está configurada en la aplicación lógica.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5529,20 +5544,20 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";eX84FI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Built-in]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Integrado]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";egLI8P" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The index of where the substring begins in parameter 1.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Obligatorio. El índice a partir del cual empieza la subcadena en el parámetro 1.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";epOMnV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Shared]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Compartido]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5598,6 +5613,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Devuelve true si el primer argumento es mayor o igual que el segundo.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";fDisLL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Acl creation failed for connection. Deleting the connection.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6714,15 +6735,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";nXwBF7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Azure]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Azure]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";nZ4nLn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Suppress workflow headers]]></Val>
@@ -7829,6 +7841,15 @@
           <Val><![CDATA[has timed out]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[ha agotado el tiempo de espera]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vdtKjT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To create and use an API connection, you must have a managed identity configured on this logic app.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Para crear y usar una conexión API, debe tener una identidad administrada configurada en esta aplicación lógica.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
