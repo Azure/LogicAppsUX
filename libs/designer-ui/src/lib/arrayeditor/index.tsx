@@ -61,7 +61,13 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const [collapsed, setCollapsed] = useState(isCollapsed);
   const [items, setItems] = useState(initialItems);
   const [isValid, setIsValid] = useState<boolean>(initializeArrayValidation(initialValue));
-  const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
+  const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(
+    initialItems
+      ? type === ArrayType.SIMPLE
+        ? parseSimpleItems(initialItems as SimpleArrayItem[])
+        : parseComplexItems(initialItems as ComplexArrayItem[], itemSchema)
+      : initialValue
+  );
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
