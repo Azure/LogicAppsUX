@@ -18,7 +18,7 @@ Standard.args = {
   initialItems: [
     {
       key: 'test',
-      content: [
+      value: [
         { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
         // testTokenSegment,
         { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
@@ -26,7 +26,7 @@ Standard.args = {
     },
     {
       key: 'test2',
-      content: [
+      value: [
         // testTokenSegment, testTokenSegment,
         { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
       ],

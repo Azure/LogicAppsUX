@@ -1,4 +1,4 @@
-import type { ArrayEditorItemProps } from '.';
+import type { SimpleArrayItem, ComplexArrayItem } from '.';
 import type { ValueSegment } from '../editor';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
@@ -12,8 +12,9 @@ export interface CollapsedArrayProps {
   collapsedValue: ValueSegment[];
   readOnly?: boolean;
   isTrigger?: boolean;
+  itemSchema?: string | string[];
   setCollapsedValue: (val: ValueSegment[]) => void;
-  setItems: (items: ArrayEditorItemProps[]) => void;
+  setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItem[]) => void);
   setIsValid: (b: boolean) => void;
   onBlur?: () => void;
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
@@ -25,6 +26,7 @@ export const CollapsedArray = ({
   collapsedValue,
   readOnly,
   isTrigger,
+  itemSchema,
   GetTokenPicker,
   setItems,
   setIsValid,
@@ -44,7 +46,7 @@ export const CollapsedArray = ({
     );
   };
 
-  const errorMessage = intl.formatMessage({
+  const defaultErrorMessage = intl.formatMessage({
     defaultMessage: 'Please enter a valid array',
     description: 'Error Message for Invalid Array',
   });
@@ -71,10 +73,11 @@ export const CollapsedArray = ({
           GetTokenPicker={GetTokenPicker}
         >
           <CollapsedArrayValidation
-            errorMessage={errorMessage}
+            defaultErrorMessage={defaultErrorMessage}
             className={'msla-collapsed-editor-validation'}
             isValid={isValid}
             collapsedValue={collapsedValue}
+            itemSchema={itemSchema}
             setCollapsedValue={setCollapsedValue}
             setIsValid={setIsValid}
             setItems={setItems}
