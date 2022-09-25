@@ -379,7 +379,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Unggah atau pilih skema target yang akan digunakan untuk peta Anda."
     }
   ],
   "1zgFh1": [
@@ -727,7 +727,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Pilih skema sumber"
     }
   ],
   "5SAQOb": [
@@ -751,7 +751,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Tambahkan Skema Sumber"
     }
   ],
   "5cPiWA": [
@@ -793,7 +793,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Pilih skema target"
     }
   ],
   "6XR3FS": [
@@ -1193,7 +1193,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Skema target akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema target?"
     }
   ],
   "B/JzwK": [
@@ -1627,7 +1627,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Skema Sumber"
     }
   ],
   "GYvF54": [
@@ -1645,7 +1645,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Unggah atau pilih skema sumber yang akan digunakan untuk peta Anda."
     }
   ],
   "Gi72X5": [
@@ -1807,7 +1807,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Operasi tidak valid. Jumlah item: "
     },
     {
       "type": 1,
@@ -2196,7 +2196,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Nilai input jalur operasi tidak valid. Nilai jalur - "
     },
     {
       "type": 1,
@@ -2204,7 +2204,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " Templat jalur - "
     },
     {
       "type": 1,
@@ -2424,7 +2424,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Node skema sumber"
     }
   ],
   "PP63jY": [
@@ -2514,7 +2514,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Pilih skema sumber"
     }
   ],
   "QEp3C8": [
@@ -3067,7 +3067,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Pilih skema target"
     }
   ],
   "WUe3DY": [
@@ -3251,7 +3251,7 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Tipe ekspresi tidak valid {type}."
     }
   ],
   "Y9kBz5": [
@@ -3381,7 +3381,7 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Nilai 'in' yang tidak didukung: {value} dalam Parameter"
     }
   ],
   "a64zhX": [
@@ -3763,7 +3763,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Skema Target"
     }
   ],
   "eRvGw3": [
@@ -4034,7 +4034,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "Nilai jalur operasi tidak cocok dengan templat untuk segmen. Jalur "
     },
     {
       "type": 1,
@@ -4042,7 +4042,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", Templat "
     },
     {
       "type": 1,
@@ -4064,7 +4064,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Skema sumber akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema sumber?"
     }
   ],
   "i/SguY": [
@@ -5637,7 +5637,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Tambahkan Skema Target"
     }
   ],
   "ysoumb": [
@@ -5709,7 +5709,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Node skema target"
     }
   ],
   "zbtUQ/": [

@@ -436,7 +436,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Nahrajte nebo vyberte cílové schéma, které se použije pro vaši mapu."
     }
   ],
   "1zgFh1": [
@@ -784,7 +784,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Vyberte zdrojové schéma."
     }
   ],
   "5SAQOb": [
@@ -808,7 +808,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Přidat zdrojové schéma"
     }
   ],
   "5cPiWA": [
@@ -850,7 +850,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Vyberte cílové schéma."
     }
   ],
   "6XR3FS": [
@@ -1278,7 +1278,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Cílové schéma se nahradí a nebudete se moct vrátit k předchozím změnám. Chcete pokračovat ve změně cílového schématu?"
     }
   ],
   "B/JzwK": [
@@ -1804,7 +1804,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Nahrajte nebo vyberte zdrojové schéma, které se použije pro vaši mapu."
     }
   ],
   "Gi72X5": [
@@ -1974,15 +1974,11 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Neplatná operace. Počet položek: "
     },
     {
       "type": 1,
       "value": "length"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "JErLDT": [
@@ -2424,7 +2420,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Vstupní hodnota cesty operace je neplatná. Hodnota cesty: "
     },
     {
       "type": 1,
@@ -2432,11 +2428,15 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": ", šablona cesty: "
     },
     {
       "type": 1,
       "value": "pathTemplate"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "No6CS+": [
@@ -2668,7 +2668,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Uzel zdrojového schématu"
     }
   ],
   "PP63jY": [
@@ -2758,7 +2758,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Vyberte zdrojové schéma."
     }
   ],
   "QEp3C8": [
@@ -3182,7 +3182,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (název souboru)"
     }
   ],
   "Ur+wph": [
@@ -3344,7 +3344,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Vyberte cílové schéma."
     }
   ],
   "WUe3DY": [
@@ -3528,7 +3528,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Typ výrazu "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": " je neplatný."
     }
   ],
   "Y9kBz5": [
@@ -3658,7 +3666,15 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Nepodporovaná hodnota in: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " v parametru"
     }
   ],
   "a64zhX": [
@@ -4356,7 +4372,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "Hodnota cesty operace se neshoduje se šablonou pro segment. Cesta: "
     },
     {
       "type": 1,
@@ -4364,11 +4380,15 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", šablona: "
     },
     {
       "type": 1,
       "value": "pathTemplate"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "hrbDu6": [
@@ -4386,7 +4406,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Zdrojové schéma se nahradí a nebudete se moct vrátit k předchozím změnám. Chcete pokračovat ve změně zdrojového schématu?"
     }
   ],
   "i/SguY": [
@@ -6012,7 +6032,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Přidat cílové schéma"
     }
   ],
   "ysoumb": [
@@ -6084,7 +6104,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Uzel cílového schématu"
     }
   ],
   "zbtUQ/": [

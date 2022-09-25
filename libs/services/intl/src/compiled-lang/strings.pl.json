@@ -444,7 +444,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Przekaż lub wybierz schemat docelowy, który ma być używany dla mapy."
     }
   ],
   "1zgFh1": [
@@ -792,7 +792,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Wybierz schemat źródłowy"
     }
   ],
   "5SAQOb": [
@@ -816,7 +816,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Dodaj schemat źródłowy"
     }
   ],
   "5cPiWA": [
@@ -858,7 +858,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Wybierz schemat docelowy"
     }
   ],
   "6XR3FS": [
@@ -1290,7 +1290,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Schemat docelowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat docelowy?"
     }
   ],
   "B/JzwK": [
@@ -1816,7 +1816,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Przekaż lub wybierz schemat źródłowy, który ma być używany dla mapy."
     }
   ],
   "Gi72X5": [
@@ -1986,7 +1986,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Nieprawidłowa operacja. Liczba elementów: "
     },
     {
       "type": 1,
@@ -2432,7 +2432,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Nieprawidłowa wartość wejściowa ścieżki operacji. Wartość ścieżki — "
     },
     {
       "type": 1,
@@ -2440,7 +2440,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": "Szablon ścieżki — "
     },
     {
       "type": 1,
@@ -2676,7 +2676,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Węzeł schematu źródłowego"
     }
   ],
   "PP63jY": [
@@ -2766,7 +2766,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Wybierz schemat źródłowy"
     }
   ],
   "QEp3C8": [
@@ -3190,7 +3190,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (nazwa pliku)"
     }
   ],
   "Ur+wph": [
@@ -3352,7 +3352,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Wybierz schemat docelowy"
     }
   ],
   "WUe3DY": [
@@ -3536,7 +3536,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Nieprawidłowy typ wyrażenia „"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "Y9kBz5": [
@@ -3666,7 +3674,15 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Nieobsługiwana wartość „in”: „"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "” w parametrze"
     }
   ],
   "a64zhX": [
@@ -4368,7 +4384,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "Wartość ścieżki operacji jest niezgodna z szablonem segmentu. Ścieżka "
     },
     {
       "type": 1,
@@ -4376,7 +4392,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", szablon "
     },
     {
       "type": 1,
@@ -4398,7 +4414,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Schemat źródłowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat źródłowy?"
     }
   ],
   "i/SguY": [
@@ -6036,7 +6052,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Dodaj schemat docelowy"
     }
   ],
   "ysoumb": [
@@ -6108,7 +6124,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Węzeł schematu docelowego"
     }
   ],
   "zbtUQ/": [

@@ -406,7 +406,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Upload of selecteer een doelschema dat voor de toewijzing moet worden gebruikt."
     }
   ],
   "1zgFh1": [
@@ -754,7 +754,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Een bronschema selecteren"
     }
   ],
   "5SAQOb": [
@@ -778,7 +778,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Bronschema toevoegen"
     }
   ],
   "5cPiWA": [
@@ -820,7 +820,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Een doelschema selecteren"
     }
   ],
   "6XR3FS": [
@@ -1252,7 +1252,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Het doelschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het doelschema?"
     }
   ],
   "B/JzwK": [
@@ -1716,7 +1716,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Bronschema"
     }
   ],
   "GYvF54": [
@@ -1734,7 +1734,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Upload of selecteer een bronschema dat voor de toewijzing moet worden gebruikt."
     }
   ],
   "Gi72X5": [
@@ -1904,7 +1904,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Ongeldige bewerking. Aantal items: "
     },
     {
       "type": 1,
@@ -2324,7 +2324,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Ongeldige invoerwaarde voor bewerkingspad. Padwaarde - "
     },
     {
       "type": 1,
@@ -2332,7 +2332,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " padsjabloon - "
     },
     {
       "type": 1,
@@ -2564,7 +2564,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Knooppunt van het bronschema"
     }
   ],
   "PP63jY": [
@@ -2654,7 +2654,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Een bronschema selecteren"
     }
   ],
   "QEp3C8": [
@@ -3060,7 +3060,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (bestandsnaam)"
     }
   ],
   "Ur+wph": [
@@ -3222,7 +3222,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Een doelschema selecteren"
     }
   ],
   "WUe3DY": [
@@ -3406,7 +3406,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Ongeldig expressietype "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "Y9kBz5": [
@@ -3536,7 +3544,7 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Niet-ondersteunde in-waarde: {value} in parameter"
     }
   ],
   "a64zhX": [
@@ -3918,7 +3926,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Doelschema"
     }
   ],
   "eRvGw3": [
@@ -4216,7 +4224,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "De padwaarde voor de bewerking komt niet overeen met de sjabloon voor het segment. Pad "
     },
     {
       "type": 1,
@@ -4224,7 +4232,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", sjabloon "
     },
     {
       "type": 1,
@@ -4246,7 +4254,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Het bronschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het bronschema?"
     }
   ],
   "i/SguY": [
@@ -5854,7 +5862,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Doelschema toevoegen"
     }
   ],
   "ysoumb": [
@@ -5926,7 +5934,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Knooppunt van het doelschema"
     }
   ],
   "zbtUQ/": [
