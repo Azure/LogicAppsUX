@@ -17,6 +17,7 @@ const connectionService = new StandardConnectionService({
   httpClient,
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
+    baseUrl: '/baseUrl',
     subscriptionId: '',
     resourceGroup: '',
     location: '',

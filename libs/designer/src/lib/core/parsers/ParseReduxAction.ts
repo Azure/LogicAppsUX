@@ -1,6 +1,7 @@
 import type { Workflow } from '../../common/models/workflow';
 import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections';
 import { initializeOperationMetadata, updateDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
+import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import type { RootState } from '../store';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
@@ -17,6 +18,7 @@ export const initializeGraphState = createAsyncThunk<DeserializedWorkflow, Workf
       throw new Error('Trying to import workflow without specifying the workflow type');
     }
     if (spec === 'BJS') {
+      getConnectionsQuery();
       const { definition, connectionReferences } = workflowDefinition;
       const deserializedWorkflow = BJSDeserialize(definition);
       thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {})); // danielle I think we need
