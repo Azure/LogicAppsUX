@@ -116,7 +116,7 @@ const CreateConnectionTab = () => {
   }, [dispatch]);
 
   // By the time you get to this component, there should always be a connector associated
-  if (connector?.properties === undefined) return <p></p>;
+  if (connector?.properties === undefined) return <p>{JSON.stringify(connector)}</p>;
 
   return (
     <CreateConnection

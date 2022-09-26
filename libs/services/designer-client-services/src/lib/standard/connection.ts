@@ -400,29 +400,18 @@ export class StandardConnectionService implements IConnectionService {
     return connection;
   }
 
-  getRedirectUrlFromConnection(_connection: Connection): string {
-    // TODO: Get redirect url from connection parameters
-    // const url = getAuthRedirect(connection as any);
-    // if (url) {
-    //   console.log(`Redirect url for connection ${connection.id} is ${url}`);
-    //   return url;
-    // }
-    return 'https://ema.hosting.portal.azure.net/ema/Content/2.20815.1.1/Html/authredirect.html?pid=1&trustedAuthority=https://portal.azure.com';
-  }
-
   async createAndAuthorizeOAuthConnection(
     connectionId: string,
     connectorId: string,
     connectionInfo: ConnectionCreationInfo
   ): Promise<CreateConnectionResult> {
     const connection = await this.createConnectionInApiHub(connectionId, connectorId, connectionInfo);
-    const redirectUrl = this.getRedirectUrlFromConnection(connection);
     const oAuthService = OAuthService();
     let oAuthPopupInstance: IOAuthPopup | undefined;
 
     try {
-      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId, redirectUrl);
-      oAuthPopupInstance = oAuthService.openLoginPopup({ consentUrl, redirectUrl });
+      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
+      oAuthPopupInstance = oAuthService.openLoginPopup({ consentUrl });
 
       const loginResponse = await oAuthPopupInstance.loginPromise;
       if (loginResponse.error) {
@@ -434,6 +423,11 @@ export class StandardConnectionService implements IConnectionService {
       await this.testConnection(connection);
 
       // Do something to the exisiting connection
+      console.log('Connection created and authorized successfully', connection);
+      connection.properties.displayName = (connection.properties as any).authenticatedUser.name;
+
+      const fetchedConnection = await this.getConnection(connectionId);
+      console.log('Connection fetched successfully', fetchedConnection);
 
       return { connection };
     } catch (error: any) {
@@ -449,15 +443,17 @@ export class StandardConnectionService implements IConnectionService {
 
     try {
       const { httpClient } = this.options;
-      const { method, requestUri: uri } = testLinks[0];
+      const { method: httpMethod, requestUri: uri } = testLinks[0];
+      const method = httpMethod.toUpperCase() as HTTP_METHODS;
 
       let response: HttpResponse<any> | undefined = undefined;
       const requestOptions: HttpRequestOptions<any> = { uri };
-      if (method === HTTP_METHODS.GET) response = await httpClient.get(requestOptions);
-      else if (method === HTTP_METHODS.POST) response = await httpClient.post(requestOptions);
-      else if (method === HTTP_METHODS.PUT) response = await httpClient.put(requestOptions);
-      else if (method === HTTP_METHODS.DELETE) response = await httpClient.delete(requestOptions);
-      if (!response) throw new Error('Invalid test link method');
+      if (method === HTTP_METHODS.GET) response = await httpClient.get<any>(requestOptions);
+      else if (method === HTTP_METHODS.POST) response = await httpClient.post<any, any>(requestOptions);
+      else if (method === HTTP_METHODS.PUT) response = await httpClient.put<any, any>(requestOptions);
+      else if (method === HTTP_METHODS.DELETE) response = await httpClient.delete<any>(requestOptions);
+      // console.log('Test connection response', response);
+      // if (!response) throw new Error('Invalid test link method');
 
       this.handleTestConnectionResponse(response);
     } catch (error: any) {
@@ -466,7 +462,8 @@ export class StandardConnectionService implements IConnectionService {
     }
   }
 
-  private handleTestConnectionResponse(response: HttpResponse<any>): void {
+  private handleTestConnectionResponse(response?: HttpResponse<any>): void {
+    if (!response) return;
     const defaultErrorResponse = 'Please check your account info and/or permissions and try again.';
     if (response.status >= 400 && response.status < 500 && response.status !== 429) {
       let errorMessage = defaultErrorResponse;
@@ -595,7 +592,7 @@ export class StandardConnectionService implements IConnectionService {
     // TODO: Support external parameter values
     const request = this.getRequestForCreateConnection(connectorId, connectionName, connectionInfo);
 
-    const connection = await httpClient.put<any, Connection>(request);
+    const connection = await httpClient.put<Connection, any>(request);
     if (!connection) {
       // TODO: Log error, creation failed
     }

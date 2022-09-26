@@ -5,9 +5,9 @@ export class OAuthPopup implements IOAuthPopup {
   public loginPromise: Promise<LoginResult>;
 
   constructor(options: OAuthPopupOptions) {
-    const { consentUrl, redirectUrl } = options;
+    const { consentUrl } = options;
     const windowName: string = Date.now().toString();
-    const authUrl = `${consentUrl}&redirect_uri=${encodeURIComponent(redirectUrl)}`;
+    const authUrl = consentUrl;
     const oAuthWindow = window.open(authUrl, windowName, 'scrollbars=1, resizable=1, width=500, height=600, popup=1');
     if (!oAuthWindow) throw new Error('The browser has blocked the popup window.');
 
@@ -60,7 +60,7 @@ export class StandardOAuthService implements IOAuthService {
     return new Promise(() => null);
   }
 
-  public fetchConsentUrlForConnection(_connectionId: string, _redirectUrl: string) {
+  public fetchConsentUrlForConnection(_connectionId: string) {
     return new Promise<string>(() => 'null');
   }
 
