@@ -107,7 +107,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         targetSchemaExtended: targetSchema,
       })
     );
-    console.log(dataMapDefinition);
   };
 
   const onUndoClick = () => {
