@@ -13,6 +13,7 @@ import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
 import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
+import { DirectionalHint, TooltipHost } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -141,10 +142,12 @@ export const BaseEditor = ({
     <LexicalComposer initialConfig={initialConfig}>
       <div className={className ?? 'msla-editor-container'} id={editorId}>
         {toolBar ? <Toolbar /> : null}
-        <RichTextPlugin
-          contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
-          placeholder={<span className="editor-placeholder"> {placeholder} </span>}
-        />
+        <TooltipHost content={placeholder}>
+          <RichTextPlugin
+            contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
+            placeholder={<span className="editor-placeholder"> {createPlaceholder(placeholder)} </span>}
+          />
+        </TooltipHost>
         {treeView ? <TreeView /> : null}
         {autoFocus ? <AutoFocus /> : null}
         {history ? <History /> : null}
@@ -172,3 +175,10 @@ export const BaseEditor = ({
     </LexicalComposer>
   );
 };
+function createPlaceholder(placeholder?: string): JSX.Element {
+  return (
+    <TooltipHost content={placeholder} directionalHint={DirectionalHint.rightCenter}>
+      {placeholder}
+    </TooltipHost>
+  );
+}
