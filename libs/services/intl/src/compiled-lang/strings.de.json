@@ -3248,7 +3248,7 @@
   "WnU9v0": [
     {
       "type": 0,
-      "value": "A managed identity is not configured on the logic app."
+      "value": "Eine verwaltete Identität ist in der Logik-App nicht konfiguriert."
     }
   ],
   "Wy/bhW": [
@@ -3968,7 +3968,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Freigegeben"
     }
   ],
   "esOQ5p": [
@@ -5592,7 +5592,7 @@
   "vdtKjT": [
     {
       "type": 0,
-      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
+      "value": "Zum Erstellen und Verwenden einer API-Verbindung muss eine verwaltete Identität für diese Logik-App konfiguriert sein."
     }
   ],
   "vr70Gn": [
