@@ -42,7 +42,15 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
 }) => {
   const styles = useStyles();
   const [isHover, setIsHover] = useState(false);
-  const iconString = renderToString(<ChevronRight16Regular className={styles.icon} />);
+  const iconString = renderToString(
+    <span
+      onClick={(event) => {
+        event.stopPropagation();
+      }}
+    >
+      <ChevronRight16Regular className={styles.icon} />
+    </span>
+  );
   const fastTreeItemStyles = `
   .positioning-region {
     border-radius: ${tokens.borderRadiusMedium};
@@ -95,6 +103,15 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
         onMouseLeave={() => onMouseLeave()}
         onMouseEnter={() => onMouseEnter()}
         className={isNodeSelected ? 'selected' : ''}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (!(e.target as any).expandCollapseButton) {
+            onLeafNodeClick(childNode);
+          }
+        }}
       >
         <TreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected}>
           {nameText}
@@ -106,7 +123,11 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
     return (
       <FastTreeItem
         key={childNode.key}
-        onClick={() => {
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
           onLeafNodeClick(childNode);
         }}
         onMouseLeave={() => onMouseLeave()}
