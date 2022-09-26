@@ -142,12 +142,10 @@ export const BaseEditor = ({
     <LexicalComposer initialConfig={initialConfig}>
       <div className={className ?? 'msla-editor-container'} id={editorId}>
         {toolBar ? <Toolbar /> : null}
-        <TooltipHost content={placeholder}>
-          <RichTextPlugin
-            contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
-            placeholder={<span className="editor-placeholder"> {createPlaceholder(placeholder)} </span>}
-          />
-        </TooltipHost>
+        <RichTextPlugin
+          contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
+          placeholder={<span className="editor-placeholder"> {createPlaceholder(placeholder)} </span>}
+        />
         {treeView ? <TreeView /> : null}
         {autoFocus ? <AutoFocus /> : null}
         {history ? <History /> : null}
