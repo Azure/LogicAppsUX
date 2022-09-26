@@ -1,4 +1,4 @@
-import { baseCanvasHeight, defaultCanvasZoom } from '../../constants/ReactFlowConstants';
+import { defaultCanvasZoom } from '../../constants/ReactFlowConstants';
 import { openSourceSchemaPanel, openTargetSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
@@ -6,10 +6,11 @@ import { SchemaTypes } from '../../models/';
 import { convertToReactFlowParentAndChildNodes } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
-import { makeStyles, shorthands } from '@fluentui/react-components';
+import { Stack } from '@fluentui/react';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useMemo } from 'react';
-import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
+import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
 
 const useStyles = makeStyles({
@@ -22,11 +23,65 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+  },
+  schemaCardStackStyles: {
+    height: '100%',
+    width: '50%',
   },
 });
 
 const reactFlowStyle = {
   background: '#e0e0e0',
+  height: '100%',
+};
+
+interface LayeredReactFlowProps {
+  schema: SchemaExtended;
+  isSourceSchema?: boolean;
+}
+
+const LayeredReactFlow = ({ schema, isSourceSchema }: LayeredReactFlowProps) => {
+  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
+
+  const reactFlowNodes = useMemo(() => {
+    const reactFlowNodes: ReactFlowNode[] = [];
+
+    // TODO/NOTE: This placeholder doesn't seem to impact currently expected positioning, so it
+    // can be safely left alone until further dev is done in this area (likely thanks to fitView)
+    const viewportCoordsPlaceholder = { startX: 0, startY: 0, endX: 0, endY: 0 };
+
+    if (isSourceSchema) {
+      reactFlowNodes.push(
+        ...convertToReactFlowParentAndChildNodes(viewportCoordsPlaceholder, schema.schemaTreeRoot, SchemaTypes.Source, false)
+      );
+    } else {
+      reactFlowNodes.push(
+        ...convertToReactFlowParentAndChildNodes(viewportCoordsPlaceholder, schema.schemaTreeRoot, SchemaTypes.Target, false)
+      );
+    }
+
+    return reactFlowNodes;
+  }, [schema, isSourceSchema]);
+
+  return (
+    <ReactFlow
+      nodes={reactFlowNodes}
+      nodesDraggable={false}
+      panOnDrag={false}
+      zoomOnDoubleClick={false}
+      zoomOnPinch={false}
+      zoomOnScroll={false}
+      defaultZoom={defaultCanvasZoom}
+      proOptions={{
+        account: 'paid-sponsor',
+        hideAttribution: true,
+      }}
+      nodeTypes={nodeTypes}
+      style={reactFlowStyle}
+      fitView
+    ></ReactFlow>
+  );
 };
 
 export interface MapOverviewProps {
@@ -38,19 +93,6 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSc
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
 
-  const reactFlowNodes = useMemo(() => {
-    const reactFlowNodes: ReactFlowNode[] = [];
-    if (sourceSchema) {
-      reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(sourceSchema.schemaTreeRoot, SchemaTypes.Source, false));
-    }
-
-    if (targetSchema) {
-      reactFlowNodes.push(...convertToReactFlowParentAndChildNodes(targetSchema.schemaTreeRoot, SchemaTypes.Target, false));
-    }
-
-    return reactFlowNodes;
-  }, [sourceSchema, targetSchema]);
-
   const onSourceSchemaClick = () => {
     dispatch(openSourceSchemaPanel());
   };
@@ -58,39 +100,26 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSc
     dispatch(openTargetSchemaPanel());
   };
 
-  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
-
-  const layeredReactFlow = (
-    <div className={styles.mapOverviewStyles} style={{ height: baseCanvasHeight }}>
-      <ReactFlowProvider>
-        <ReactFlow
-          nodes={reactFlowNodes}
-          nodesDraggable={false}
-          panOnDrag={false}
-          zoomOnDoubleClick={false}
-          zoomOnPinch={false}
-          zoomOnScroll={false}
-          defaultZoom={defaultCanvasZoom}
-          proOptions={{
-            account: 'paid-sponsor',
-            hideAttribution: true,
-          }}
-          nodeTypes={nodeTypes}
-          style={reactFlowStyle}
-          fitView
-        ></ReactFlow>
-      </ReactFlowProvider>
-    </div>
-  );
-
   return (
     <div className={styles.mapOverviewStyles} style={reactFlowStyle}>
-      <div style={{ width: '50%' }}>
-        {sourceSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Source} onClick={onSourceSchemaClick} />}
-      </div>
-      <div style={{ width: '50%' }}>
-        {targetSchema ? layeredReactFlow : <SelectSchemaCard schemaType={SchemaTypes.Target} onClick={onTargetSchemaClick} />}
-      </div>
+      <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
+        {sourceSchema ? (
+          <ReactFlowProvider>
+            <LayeredReactFlow schema={sourceSchema} isSourceSchema />
+          </ReactFlowProvider>
+        ) : (
+          <SelectSchemaCard schemaType={SchemaTypes.Source} onClick={onSourceSchemaClick} />
+        )}
+      </Stack>
+      <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
+        {targetSchema ? (
+          <ReactFlowProvider>
+            <LayeredReactFlow schema={targetSchema} />
+          </ReactFlowProvider>
+        ) : (
+          <SelectSchemaCard schemaType={SchemaTypes.Target} onClick={onTargetSchemaClick} />
+        )}
+      </Stack>
     </div>
   );
 };

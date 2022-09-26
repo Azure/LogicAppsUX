@@ -354,7 +354,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Her “sonrasında çalıştır” yapılandırmasında en az bir durum işaretli olmalıdır"
     }
   ],
   "1ejxkP": [
@@ -390,7 +390,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Eşlemeniz için kullanılacak bir hedef şema yükleyin veya seçin."
     }
   ],
   "1zgFh1": [
@@ -738,7 +738,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Kaynak şema seçin"
     }
   ],
   "5SAQOb": [
@@ -762,7 +762,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Kaynak Şema Ekle"
     }
   ],
   "5cPiWA": [
@@ -804,7 +804,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Hedef şema seçin"
     }
   ],
   "6XR3FS": [
@@ -1204,7 +1204,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Hedef şema değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Hedef şemayı değiştirmeye devam etmek istiyor musunuz?"
     }
   ],
   "B/JzwK": [
@@ -1406,7 +1406,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Tetikleyici koşulu boş olamaz"
     }
   ],
   "DuXV2M": [
@@ -1660,7 +1660,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Kaynak Şema"
     }
   ],
   "GYvF54": [
@@ -1678,7 +1678,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Eşlemeniz için kullanılacak bir kaynak şema yükleyin veya seçin."
     }
   ],
   "Gi72X5": [
@@ -1840,7 +1840,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Geçersiz işlem. Öğe sayısı: "
     },
     {
       "type": 1,
@@ -2240,7 +2240,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Geçersiz işlem yolu giriş değeri. Yol değeri - "
     },
     {
       "type": 1,
@@ -2248,7 +2248,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " Yol şablonu - "
     },
     {
       "type": 1,
@@ -2342,7 +2342,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Bu işlev herhangi bir giriş gerektirmiyor."
     }
   ],
   "ORVfYZ": [
@@ -2360,7 +2360,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Açılan menü şemasını seçin"
     }
   ],
   "OVvieE": [
@@ -2468,7 +2468,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Kaynak şema düğümü"
     }
   ],
   "PP63jY": [
@@ -2558,7 +2558,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Kaynak şema seçin"
     }
   ],
   "QEp3C8": [
@@ -2848,7 +2848,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Disk belleği sayısı geçersiz"
     }
   ],
   "TUaunO": [
@@ -2960,7 +2960,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (dosya adı)"
     }
   ],
   "Ur+wph": [
@@ -2991,6 +2991,12 @@
     {
       "type": 0,
       "value": "Geçerli bir JSON girin."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3116,7 +3122,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Hedef şema seçin"
     }
   ],
   "WUe3DY": [
@@ -3129,6 +3135,12 @@
     {
       "type": 0,
       "value": "İki sayı arasındaki çarpma işleminin sonucunu döndürür"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Mantıksal uygulamada yapılandırılmış bir yönetilen kimlik yok."
     }
   ],
   "Wy/bhW": [
@@ -3294,7 +3306,7 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Geçersiz ifade türü {type}."
     }
   ],
   "Y9kBz5": [
@@ -3424,7 +3436,7 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Parametrede desteklenmeyen 'in' değeri: {value}"
     }
   ],
   "a64zhX": [
@@ -3802,7 +3814,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Hedef Şema"
     }
   ],
   "eRvGw3": [
@@ -3823,16 +3835,16 @@
       "value": "Gerekli. Bölünenin bölüneceği sayı."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Yerleşik"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Gerekli. Parametre 1'de alt dizenin başladığı konumun dizini."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Paylaşıldı"
     }
   ],
   "esOQ5p": [
@@ -3871,10 +3883,16 @@
       "value": "Birinci bağımsız değişken ikinciden büyük veya ikinciye eşitse true döndürür"
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Disk belleği sayısı maksimum değeri aşıyor"
     }
   ],
   "faSDuD": [
@@ -4078,7 +4096,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "İşlem yolu değeri, segmentin şablonuyla eşleşmiyor. Yol "
     },
     {
       "type": 1,
@@ -4086,7 +4104,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", Şablon "
     },
     {
       "type": 1,
@@ -4108,7 +4126,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Kaynak şema değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Kaynak şemayı değiştirmeye devam etmek istiyor musunuz?"
     }
   ],
   "i/SguY": [
@@ -4602,7 +4620,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "İşlev"
     }
   ],
   "mx2IMJ": [
@@ -4657,12 +4675,6 @@
     {
       "type": 0,
       "value": "Gerekli. Kaldırılacak özelliğin adı."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5362,7 +5374,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Her eylem bir veya daha fazla “sonrasında çalıştır” yapılandırması içermelidir"
     }
   ],
   "vD2lQy": [
@@ -5423,6 +5435,12 @@
     {
       "type": 0,
       "value": "zaman aşımına uğradı"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Bir API bağlantısı oluşturmak ve kullanmak için bu mantıksal uygulamada yapılandırılmış bir yönetilen kimliğe sahip olmanız gerekir."
     }
   ],
   "vr70Gn": [
@@ -5684,7 +5702,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Hedef Şema Ekle"
     }
   ],
   "ysoumb": [
@@ -5756,7 +5774,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Hedef şema düğümü"
     }
   ],
   "zbtUQ/": [

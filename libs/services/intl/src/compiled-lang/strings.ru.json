@@ -392,7 +392,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "У каждого выполнения после конфигурации должно быть выбрано по меньшей мере одно состояние"
     }
   ],
   "1ejxkP": [
@@ -428,7 +428,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Отправьте или выберите целевую схему, которая будет использоваться для вашей карты."
     }
   ],
   "1zgFh1": [
@@ -776,7 +776,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Выберите исходную схему"
     }
   ],
   "5SAQOb": [
@@ -800,7 +800,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Добавить исходную схему"
     }
   ],
   "5cPiWA": [
@@ -842,7 +842,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Выберите целевую схему"
     }
   ],
   "6XR3FS": [
@@ -1274,7 +1274,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Целевая схема будет заменена, и вы не сможете вернуться к предыдущим изменениям. Продолжить изменение целевой схемы?"
     }
   ],
   "B/JzwK": [
@@ -1498,7 +1498,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Условие триггера не может быть пустым"
     }
   ],
   "DuXV2M": [
@@ -1782,7 +1782,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Исходная схема"
     }
   ],
   "GYvF54": [
@@ -1800,7 +1800,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Отправьте или выберите исходную схему, которая будет использоваться для вашей карты."
     }
   ],
   "Gi72X5": [
@@ -1970,7 +1970,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Недействительная операция. Количество элементов: "
     },
     {
       "type": 1,
@@ -2416,7 +2416,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Недопустимое входное значение пути операции. Значение пути — "
     },
     {
       "type": 1,
@@ -2424,7 +2424,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": ". Шаблон пути — "
     },
     {
       "type": 1,
@@ -2534,7 +2534,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Для этой функции не требуются входные данные."
     }
   ],
   "ORVfYZ": [
@@ -2552,7 +2552,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Выберите схему для раскрывающегося списка"
     }
   ],
   "OVvieE": [
@@ -2660,7 +2660,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Узел исходной схемы"
     }
   ],
   "PP63jY": [
@@ -2750,7 +2750,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Выберите исходную схему"
     }
   ],
   "QEp3C8": [
@@ -3062,7 +3062,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Недопустимое число подкачки"
     }
   ],
   "TUaunO": [
@@ -3174,7 +3174,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (имя файла)"
     }
   ],
   "Ur+wph": [
@@ -3205,6 +3205,12 @@
     {
       "type": 0,
       "value": "Введите допустимый объект JSON."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "В приложении"
     }
   ],
   "VE3cxq": [
@@ -3330,7 +3336,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Выберите целевую схему"
     }
   ],
   "WUe3DY": [
@@ -3343,6 +3349,12 @@
     {
       "type": 0,
       "value": "Возвращает результат умножения двух чисел"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "В приложении логики не настроено управляемое удостоверение"
     }
   ],
   "Wy/bhW": [
@@ -3508,7 +3520,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Недопустимый тип выражения \""
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "Y9kBz5": [
@@ -3638,7 +3658,15 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Неподдерживаемое значение \"in\": \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" в параметре"
     }
   ],
   "a64zhX": [
@@ -4020,7 +4048,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Целевая схема"
     }
   ],
   "eRvGw3": [
@@ -4041,16 +4069,16 @@
       "value": "Требуется. Число, на которое делится делимое."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Встроено"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Обязательное поле. Индекс начала подстроки в параметре 1."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Общий доступ"
     }
   ],
   "esOQ5p": [
@@ -4089,10 +4117,16 @@
       "value": "Возвращает значение true, если первый аргумент больше второго или равен ему"
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Не удалось создать список управления доступом для подключения. Удаление подключения."
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Число подкачки превышает максимальное значение"
     }
   ],
   "faSDuD": [
@@ -4338,7 +4372,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "Значение пути операции не соответствует шаблону для сегмента. Путь "
     },
     {
       "type": 1,
@@ -4346,7 +4380,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", шаблон "
     },
     {
       "type": 1,
@@ -4368,7 +4402,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Исходная схема будет заменена, и вы не сможете вернуться к предыдущим изменениям. Продолжить изменение исходной схемы?"
     }
   ],
   "i/SguY": [
@@ -4882,7 +4916,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Функция"
     }
   ],
   "mx2IMJ": [
@@ -4937,12 +4971,6 @@
     {
       "type": 0,
       "value": "Требуется. Имя удаляемого свойства."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5680,7 +5708,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Каждое действие должно иметь одно или несколько выполнений после конфигурации"
     }
   ],
   "vD2lQy": [
@@ -5741,6 +5769,12 @@
     {
       "type": 0,
       "value": "превысил время ожидания"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Для создания и использования подключения к API в приложении логики должно быть настроено управляемое удостоверение."
     }
   ],
   "vr70Gn": [
@@ -6006,7 +6040,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Добавить целевую схему"
     }
   ],
   "ysoumb": [
@@ -6078,7 +6112,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Узел целевой схемы"
     }
   ],
   "zbtUQ/": [

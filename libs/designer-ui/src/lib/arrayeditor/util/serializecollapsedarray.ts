@@ -1,4 +1,4 @@
-import type { ArrayEditorItemProps } from '..';
+import type { ComplexArrayItem, SimpleArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
@@ -7,7 +7,12 @@ import { guid } from '@microsoft-logic-apps/utils';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
-export const serializeArray = (editor: LexicalEditor, setItems: (items: ArrayEditorItemProps[]) => void) => {
+interface jsonItemObject {
+  key: string;
+  value: string;
+}
+
+export const serializeSimpleArray = (editor: LexicalEditor, setItems: (items: SimpleArrayItem[]) => void) => {
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
@@ -17,29 +22,89 @@ export const serializeArray = (editor: LexicalEditor, setItems: (items: ArrayEdi
     } catch (e) {
       console.log(e);
     }
-    const returnItems: ArrayEditorItemProps[] = [];
+    const returnItems: SimpleArrayItem[] = [];
 
     for (const [, value] of Object.entries(jsonEditor)) {
       returnItems.push({
-        content: convertStringToSegments(value as string, true, nodeMap),
+        value: convertStringToSegments(value as string, true, nodeMap),
+        key: guid(),
       });
     }
     setItems(returnItems);
   });
 };
 
-export const parseInitialValue = (items: ArrayEditorItemProps[]): ValueSegment[] => {
+export const serializeComplexArray = (editor: LexicalEditor, setItems: (items: ComplexArrayItem[]) => void) => {
+  editor.getEditorState().read(() => {
+    const nodeMap = new Map<string, ValueSegment>();
+    const editorString = getChildrenNodes($getRoot(), nodeMap);
+    let jsonEditor;
+    try {
+      jsonEditor = JSON.parse(editorString);
+    } catch (e) {
+      console.log(e);
+    }
+    const returnItems: ComplexArrayItem[] = [];
+    for (const [, item] of Object.entries(jsonEditor)) {
+      const currItem: ValueSegment[][] = [];
+      for (const [, value] of Object.entries(item as jsonItemObject)) {
+        currItem.push(convertStringToSegments(value as string, true, nodeMap));
+      }
+      returnItems.push({
+        value: currItem,
+        key: guid(),
+      });
+    }
+    setItems(returnItems);
+  });
+};
+
+export const parseSimpleItems = (items: SimpleArrayItem[]): ValueSegment[] => {
   if (items.length === 0) {
     return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
   }
   const parsedItems: ValueSegment[] = [];
   parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' });
   items.forEach((item, index) => {
-    const { content } = item;
-    content?.forEach((segment) => {
+    const { value } = item;
+    value?.forEach((segment) => {
       parsedItems.push(segment);
     });
     parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? '",\n  "' : '"\n]' });
+  });
+  return parsedItems;
+};
+
+export const parseComplexItems = (items: ComplexArrayItem[], itemSchema: string[]): ValueSegment[] => {
+  if (items.length === 0) {
+    return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  null\n]' }];
+  }
+  const currItems = items.filter((item) => {
+    let bool = false;
+    item.value.forEach((valSegment) => {
+      if (valSegment.length > 0) {
+        bool = true;
+      }
+    });
+    return bool;
+  });
+  const parsedItems: ValueSegment[] = [];
+  parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  ' });
+  currItems.forEach((item, index) => {
+    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '{\n    "' });
+    const { value } = item;
+    value.forEach((complexItem, index2) => {
+      parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: `${itemSchema[index2]}" : "` });
+      complexItem?.forEach((segment) => {
+        parsedItems.push(segment);
+      });
+      parsedItems.push({
+        id: guid(),
+        type: ValueSegmentType.LITERAL,
+        value: index2 < value.length - 1 ? '",\n    "' : index < currItems.length - 1 ? '"\n  },' : '"\n  }',
+      });
+    });
+    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < currItems.length - 1 ? '\n  ' : '\n]' });
   });
   return parsedItems;
 };

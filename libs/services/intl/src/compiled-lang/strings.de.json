@@ -370,7 +370,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Für jede Ausführung nach der Konfiguration muss mindestens ein Status überprüft werden."
     }
   ],
   "1ejxkP": [
@@ -406,7 +406,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Laden Sie ein Zielschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
   "1zgFh1": [
@@ -754,7 +754,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Quellschema auswählen"
     }
   ],
   "5SAQOb": [
@@ -778,7 +778,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Quellschema hinzufügen"
     }
   ],
   "5cPiWA": [
@@ -820,7 +820,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Zielschema auswählen"
     }
   ],
   "6XR3FS": [
@@ -1252,7 +1252,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Das Zielschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Zielschemas fortfahren?"
     }
   ],
   "B/JzwK": [
@@ -1454,7 +1454,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Die Triggerbedingung darf nicht leer sein"
     }
   ],
   "DuXV2M": [
@@ -1716,7 +1716,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Quellschema"
     }
   ],
   "GYvF54": [
@@ -1734,7 +1734,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Laden Sie ein Quellschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
   "Gi72X5": [
@@ -1904,7 +1904,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Ungültiger Vorgang. Anzahl der Elemente: "
     },
     {
       "type": 1,
@@ -2328,7 +2328,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Ungültiger Eingabewert für den Vorgangspfad. Pfadwert - "
     },
     {
       "type": 1,
@@ -2336,7 +2336,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " Pfadvorlage - "
     },
     {
       "type": 1,
@@ -2446,7 +2446,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Diese Funktion erfordert keine Eingabe."
     }
   ],
   "ORVfYZ": [
@@ -2464,7 +2464,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Wählen Sie das Schema für die Dropdownliste aus."
     }
   ],
   "OVvieE": [
@@ -2572,7 +2572,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Quellschemaknoten"
     }
   ],
   "PP63jY": [
@@ -2662,7 +2662,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Quellschema auswählen"
     }
   ],
   "QEp3C8": [
@@ -2956,7 +2956,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Auslagerungsanzahl ist ungültig"
     }
   ],
   "TUaunO": [
@@ -3068,7 +3068,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (Dateiname)"
     }
   ],
   "Ur+wph": [
@@ -3099,6 +3099,12 @@
     {
       "type": 0,
       "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3224,7 +3230,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Zielschema auswählen"
     }
   ],
   "WUe3DY": [
@@ -3237,6 +3243,12 @@
     {
       "type": 0,
       "value": "Gibt das Ergebnis aus der Multiplikation der beiden Zahlen zurück."
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Eine verwaltete Identität ist in der Logik-App nicht konfiguriert."
     }
   ],
   "Wy/bhW": [
@@ -3402,7 +3414,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Ungültiger Ausdruckstyp \""
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "Y9kBz5": [
@@ -3532,7 +3552,7 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Nicht unterstützter \"in\"-Wert: {value} im Parameter"
     }
   ],
   "a64zhX": [
@@ -3918,7 +3938,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Zielschema"
     }
   ],
   "eRvGw3": [
@@ -3939,16 +3959,16 @@
       "value": "Erforderlich. Die Zahl, durch die der Dividend zu teilen ist."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Integriert"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Erforderlich. Der Index, bei dem die Teilzeichenfolge in Parameter 1 beginnt."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Freigegeben"
     }
   ],
   "esOQ5p": [
@@ -3987,10 +4007,16 @@
       "value": "Gibt TRUE zurück, wenn das erste Argument größer als das zweite oder gleich ist."
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Die Auslagerungsanzahl überschreitet den Maximalwert"
     }
   ],
   "faSDuD": [
@@ -4202,7 +4228,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "Der Wert für den Vorgangspfad entspricht nicht der Vorlage für das Segment. Pfad "
     },
     {
       "type": 1,
@@ -4210,7 +4236,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", Vorlage "
     },
     {
       "type": 1,
@@ -4232,7 +4258,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Das Quellschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Quellschemas fortfahren?"
     }
   ],
   "i/SguY": [
@@ -4746,7 +4772,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Funktion"
     }
   ],
   "mx2IMJ": [
@@ -4801,12 +4827,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der zu entfernenden Eigenschaft."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5506,7 +5526,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Jede Aktion muss mindestens eine Ausführung nach der Konfiguration aufweisen"
     }
   ],
   "vD2lQy": [
@@ -5567,6 +5587,12 @@
     {
       "type": 0,
       "value": "hat die Zeit überschritten"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Zum Erstellen und Verwenden einer API-Verbindung muss eine verwaltete Identität für diese Logik-App konfiguriert sein."
     }
   ],
   "vr70Gn": [
@@ -5832,7 +5858,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Zielschema hinzufügen"
     }
   ],
   "ysoumb": [
@@ -5904,7 +5930,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Zielschemaknoten"
     }
   ],
   "zbtUQ/": [

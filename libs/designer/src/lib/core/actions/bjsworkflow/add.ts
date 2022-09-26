@@ -21,7 +21,7 @@ import { isConnectionRequiredForOperation } from './connections';
 import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import { getOperationSettings } from './settings';
-import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -204,7 +204,8 @@ export const reinitializeOperationDetails = async (
 export const setDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
   const connections = await getConnectionsForConnector(connectorId);
   if (connections.length !== 0) {
-    dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id }));
+    dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id, connectorId }));
+    ConnectionService().createConnectionAclIfNeeded(connections[0]);
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }

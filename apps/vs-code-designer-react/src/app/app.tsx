@@ -5,6 +5,7 @@ import {
   StandardOperationManifestService,
   StandardSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
+import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 
 const httpClient = new HttpClient();
@@ -14,10 +15,12 @@ const connectionService = new StandardConnectionService({
   httpClient,
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
+    baseUrl: '/baseUrl',
     subscriptionId: '',
     resourceGroup: '',
     location: '',
   },
+  workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
   readConnections: () => Promise.resolve({}),
 });
 const operationManifestService = new StandardOperationManifestService({
