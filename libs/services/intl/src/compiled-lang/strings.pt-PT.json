@@ -3155,7 +3155,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "Na Aplicação"
     }
   ],
   "VE3cxq": [
@@ -3299,7 +3299,7 @@
   "WnU9v0": [
     {
       "type": 0,
-      "value": "A managed identity is not configured on the logic app."
+      "value": "Uma identidade gerida não está configurada na aplicação lógica."
     }
   ],
   "Wy/bhW": [
@@ -4023,7 +4023,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Partilhada"
     }
   ],
   "esOQ5p": [
@@ -4065,7 +4065,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "A criação da ACL falhou para a ligação. A eliminar a ligação."
     }
   ],
   "fGcSFd": [
@@ -5693,7 +5693,7 @@
   "vdtKjT": [
     {
       "type": 0,
-      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
+      "value": "Para criar e utilizar uma ligação à API, tem de ter uma identidade gerida configurada nesta aplicação lógica."
     }
   ],
   "vr70Gn": [

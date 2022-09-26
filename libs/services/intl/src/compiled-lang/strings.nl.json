@@ -3240,7 +3240,7 @@
   "WnU9v0": [
     {
       "type": 0,
-      "value": "A managed identity is not configured on the logic app."
+      "value": "Er is geen beheerde identiteit geconfigureerd in de logische app."
     }
   ],
   "Wy/bhW": [
@@ -3956,7 +3956,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Gedeeld"
     }
   ],
   "esOQ5p": [
@@ -5596,7 +5596,7 @@
   "vdtKjT": [
     {
       "type": 0,
-      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
+      "value": "Als u een API-verbinding wilt maken en gebruiken, moet u een beheerde identiteit hebben geconfigureerd voor deze logische app."
     }
   ],
   "vr70Gn": [

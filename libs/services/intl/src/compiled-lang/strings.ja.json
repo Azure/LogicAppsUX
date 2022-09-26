@@ -2941,7 +2941,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "アプリ内"
     }
   ],
   "VE3cxq": [
@@ -3085,7 +3085,7 @@
   "WnU9v0": [
     {
       "type": 0,
-      "value": "A managed identity is not configured on the logic app."
+      "value": "マネージド ID がロジック アプリで構成されていません。"
     }
   ],
   "Wy/bhW": [
@@ -3789,7 +3789,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "共有済み"
     }
   ],
   "esOQ5p": [
@@ -3831,7 +3831,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "接続用の ACL の作成に失敗しました。接続を削除しています。"
     }
   ],
   "fGcSFd": [
@@ -5363,7 +5363,7 @@
   "vdtKjT": [
     {
       "type": 0,
-      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
+      "value": "API 接続を作成して使用するには、このロジック アプリ上で構成したマネージド ID が必要です。"
     }
   ],
   "vr70Gn": [

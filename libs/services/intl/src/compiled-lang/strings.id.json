@@ -2941,7 +2941,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "Dalam Aplikasi"
     }
   ],
   "VE3cxq": [
@@ -3085,7 +3085,7 @@
   "WnU9v0": [
     {
       "type": 0,
-      "value": "A managed identity is not configured on the logic app."
+      "value": "Identitas terkelola tidak dikonfigurasi di aplikasi logika."
     }
   ],
   "Wy/bhW": [
@@ -3793,7 +3793,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Dibagikan"
     }
   ],
   "esOQ5p": [
@@ -3835,7 +3835,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Pembuatan Acl gagal karena koneksi. Menghapus koneksi."
     }
   ],
   "fGcSFd": [
@@ -5371,7 +5371,7 @@
   "vdtKjT": [
     {
       "type": 0,
-      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
+      "value": "Untuk membuat dan menggunakan koneksi API, Anda harus memiliki identitas terkelola yang dikonfigurasi di aplikasi logika ini."
     }
   ],
   "vr70Gn": [
