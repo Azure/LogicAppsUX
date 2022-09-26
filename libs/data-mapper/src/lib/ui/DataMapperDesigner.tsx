@@ -11,6 +11,7 @@ import {
   propPaneTopBarHeight,
 } from '../components/propertiesPane/PropertiesPane';
 import { WarningModal } from '../components/warningModal/WarningModal';
+import { generateDataMapXslt } from '../core/queries/datamap';
 import { redoDataMapOperation, saveDataMap, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
@@ -65,7 +66,7 @@ const useStyles = makeStyles({
 });
 
 export interface DataMapperDesignerProps {
-  saveStateCall: (dataMapDefinition: string) => void;
+  saveStateCall: (dataMapDefinition: string, dataMapXslt: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
 }
@@ -100,14 +101,19 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onSaveClick = () => {
-    saveStateCall(dataMapDefinition); // TODO: do the next call only when this is successful
-    dispatch(
-      saveDataMap({
-        sourceSchemaExtended: sourceSchema,
-        targetSchemaExtended: targetSchema,
-      })
-    );
     console.log(dataMapDefinition);
+
+    generateDataMapXslt(dataMapDefinition).then((xsltStr) => {
+      console.log(xsltStr);
+      saveStateCall(dataMapDefinition, xsltStr);
+
+      dispatch(
+        saveDataMap({
+          sourceSchemaExtended: sourceSchema,
+          targetSchemaExtended: targetSchema,
+        })
+      );
+    });
   };
 
   const onUndoClick = () => {

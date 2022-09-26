@@ -19,6 +19,10 @@ type ReceivingMessageTypes =
   | {
       command: 'saveDataMapDefinition';
       data: string;
+    }
+  | {
+      command: 'saveDataMapXslt';
+      data: string;
     };
 
 export default class DataMapperExt {
@@ -122,6 +126,17 @@ export default class DataMapperExt {
         const fileName = `${DataMapperExt.currentDataMapName}.yml`;
         const filePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath, fileName);
         fs.writeFile(filePath, msg.data, 'utf8');
+        break;
+      }
+      case 'saveDataMapXslt': {
+        if (!DataMapperExt.currentDataMapName) {
+          DataMapperExt.currentDataMapName = 'default';
+        }
+
+        const fileName = `${DataMapperExt.currentDataMapName}.xslt`;
+        const filePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath, fileName);
+        fs.writeFile(filePath, msg.data, 'utf8');
+        break;
       }
     }
   }

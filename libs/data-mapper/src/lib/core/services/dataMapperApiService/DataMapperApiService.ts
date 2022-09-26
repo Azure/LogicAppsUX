@@ -101,7 +101,7 @@ export class DataMapperApiService {
     const response = await fetch(this.getGenerateXsltUri(), {
       method: 'POST',
       body: JSON.stringify({
-        MapContent: dataMapDefinition,
+        mapContent: dataMapDefinition,
       }),
     });
 
@@ -111,6 +111,6 @@ export class DataMapperApiService {
 
     const dataMapXsltResponse = await response.json();
 
-    return dataMapXsltResponse;
+    return dataMapXsltResponse.xsltContent;
   }
 }
