@@ -15,7 +15,7 @@ export const registerCommands = (context: ExtensionContext) => {
 
 const openDataMapperCmd = async (context: ExtensionContext) => {
   // TODO (WI #15558678): If necessary, better handle creation/updating/placement of host.json/local.settings.json files
-  await startBackendRuntime(DataMapperExt.getWorkspaceFolder());
+  await startBackendRuntime(DataMapperExt.getWorkspaceFolderFsPath());
 
   DataMapperExt.createOrShow(context);
 };

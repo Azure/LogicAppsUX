@@ -105,7 +105,7 @@ export default class DataMapperExt {
         break;
       }
       case 'readLocalFileOptions': {
-        const folderPath = DataMapperExt.getWorkspaceFolder(); // TODO (WI 15419837): Find out how multi folder workspaces work
+        const folderPath = DataMapperExt.getWorkspaceFolderFsPath();
         fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
           DataMapperExt.currentPanel?.sendMsgToWebview({
             command: 'showAvailableSchemas',
@@ -120,7 +120,7 @@ export default class DataMapperExt {
         }
 
         const fileName = `${DataMapperExt.currentDataMapName}.yml`;
-        const filePath = path.join(DataMapperExt.getWorkspaceFolder(), dataMapDefinitionsPath, fileName);
+        const filePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath, fileName);
         fs.writeFile(filePath, msg.data, 'utf8');
       }
     }
@@ -131,7 +131,7 @@ export default class DataMapperExt {
     fs.readFile(filePath, 'utf16le').then((text: string) => {
       // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call
       const schemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
-      const expectedSchemaPath = path.join(DataMapperExt.getWorkspaceFolder(), schemasPath, schemaFileName);
+      const expectedSchemaPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, schemaFileName);
 
       if (!fileExists(expectedSchemaPath)) {
         fs.writeFile(expectedSchemaPath, text, 'utf16le').then(() => {
@@ -153,7 +153,12 @@ export default class DataMapperExt {
     window.showErrorMessage(errMsg);
   }
 
-  public static getWorkspaceFolder() {
-    return workspace.workspaceFolders[0].uri.fsPath;
+  public static getWorkspaceFolderFsPath() {
+    if (workspace.workspaceFolders) {
+      return workspace.workspaceFolders[0].uri.fsPath;
+    } else {
+      DataMapperExt.showError('No VS Code folder/workspace found...');
+      return undefined;
+    }
   }
 }
