@@ -8,6 +8,11 @@ import { format } from '@microsoft-logic-apps/utils';
 import type { ElementNode } from 'lexical';
 import { $getNodeByKey, $isElementNode, $isTextNode } from 'lexical';
 
+interface jsonItemObject {
+  key: string;
+  value: string;
+}
+
 export const removeFirstAndLast = (segments: ValueSegment[], removeFirst?: string, removeLast?: string): ValueSegment[] => {
   const n = segments.length - 1;
   segments.forEach((segment, i) => {
@@ -38,8 +43,13 @@ export const initializeArrayValidation = (initialValue?: ValueSegment[]): boolea
   return !editorString || isValidArray(editorString);
 };
 
-export const isValidArray = (s: string): boolean => {
-  return s.startsWith('[') && s.endsWith(']') && validateArrayStrings(s);
+export const isValidArray = (s: string, itemSchema?: string | string[], setErrorMessage?: (error: string) => void): boolean => {
+  return (
+    s.startsWith('[') &&
+    s.endsWith(']') &&
+    validateArrayStrings(s) &&
+    (Array.isArray(itemSchema) ? validateComplexArray(s, itemSchema, setErrorMessage) : true)
+  );
 };
 
 export const validateArrayStrings = (s: string): boolean => {
@@ -47,6 +57,19 @@ export const validateArrayStrings = (s: string): boolean => {
     JSON.parse(s);
   } catch (e) {
     return false;
+  }
+  return true;
+};
+
+const validateComplexArray = (s: string, itemSchema: string[], setErrorMessage?: (error: string) => void): boolean => {
+  const currItems = JSON.parse(s);
+  for (const [index, [, item]] of Object.entries(Object.entries(currItems))) {
+    for (let i = 0; i < itemSchema.length; i++) {
+      if (!(itemSchema[i] in (item as jsonItemObject))) {
+        setErrorMessage?.(`Array Item ${index} is missing property ${itemSchema[i]}`);
+        return false;
+      }
+    }
   }
   return true;
 };

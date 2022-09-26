@@ -406,7 +406,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt célsémát."
     }
   ],
   "1zgFh1": [
@@ -754,7 +754,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Válasszon forrássémát"
     }
   ],
   "5SAQOb": [
@@ -778,7 +778,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Forrásséma hozzáadása"
     }
   ],
   "5cPiWA": [
@@ -820,7 +820,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Válasszon célsémát"
     }
   ],
   "6XR3FS": [
@@ -1252,7 +1252,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "A célsémát a rendszer lecseréli, Ön pedig nem tud majd visszatérni a korábbi módosításokhoz. Folytatja a célséma módosítását?"
     }
   ],
   "B/JzwK": [
@@ -1716,7 +1716,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Forrásséma"
     }
   ],
   "GYvF54": [
@@ -1734,7 +1734,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt forrássémát."
     }
   ],
   "Gi72X5": [
@@ -1904,7 +1904,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Érvénytelen művelet. Elemek száma: "
     },
     {
       "type": 1,
@@ -2328,7 +2328,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "A művelet elérési útjának bemeneti értéke érvénytelen. Elérési út értéke – "
     },
     {
       "type": 1,
@@ -2336,7 +2336,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": ", elérésiút-sablon – "
     },
     {
       "type": 1,
@@ -2464,7 +2464,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Válassza ki a sémát a legördülő listához."
     }
   ],
   "OVvieE": [
@@ -2572,7 +2572,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Forrásséma csomópontja"
     }
   ],
   "PP63jY": [
@@ -2662,7 +2662,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Válasszon forrássémát"
     }
   ],
   "QEp3C8": [
@@ -3068,7 +3068,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (fájlnév)"
     }
   ],
   "Ur+wph": [
@@ -3099,6 +3099,12 @@
     {
       "type": 0,
       "value": "Érvényes JSON-t adjon meg."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "Alkalmazáson belüli termék"
     }
   ],
   "VE3cxq": [
@@ -3224,7 +3230,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Válasszon célsémát"
     }
   ],
   "WUe3DY": [
@@ -3237,6 +3243,12 @@
     {
       "type": 0,
       "value": "A két szám szorzásának eredményét adja vissza."
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Egy felügyelt identitás nincs konfigurálva a logikai alkalmazásban."
     }
   ],
   "Wy/bhW": [
@@ -3402,7 +3414,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "A(z) "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": " érvénytelen kifejezéstípus"
     }
   ],
   "Y9kBz5": [
@@ -3532,7 +3552,15 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Nem támogatott „in” érték: „"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "” a paraméterben"
     }
   ],
   "a64zhX": [
@@ -3918,7 +3946,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Célséma"
     }
   ],
   "eRvGw3": [
@@ -3939,16 +3967,16 @@
       "value": "Kötelező megadni. A szám, mellyel el kell osztani az osztandót."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Beépített"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Kötelező megadni. A sztringrész kezdetének indexe az 1. paraméterben."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Közös"
     }
   ],
   "esOQ5p": [
@@ -3985,6 +4013,12 @@
     {
       "type": 0,
       "value": "Igaz értéket ad vissza, ha az első argumentum nagyobb a másodiknál, vagy azzal egyenlő."
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Nem sikerült létrehozni az ACL-t a kapcsolathoz. Kapcsolat törlése."
     }
   ],
   "fGcSFd": [
@@ -4210,7 +4244,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "A művelet elérési útjának értéke nem felel meg a szegmens sablonjának. Elérési út: "
     },
     {
       "type": 1,
@@ -4218,7 +4252,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", sablon: "
     },
     {
       "type": 1,
@@ -4240,7 +4274,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "A forrássémát a rendszer lecseréli, Ön pedig nem tud majd visszatérni a korábbi módosításokhoz. Folytatja a forrásséma módosítását?"
     }
   ],
   "i/SguY": [
@@ -4805,12 +4839,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az eltávolítandó tulajdonság neve."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5589,6 +5617,12 @@
       "value": "túllépte az időkorlátot"
     }
   ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "API-kapcsolat létrehozásához és használatához konfigurálni kell egy felügyelt identitást ebben a logikai alkalmazásban."
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5852,7 +5886,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Célséma hozzáadása"
     }
   ],
   "ysoumb": [
@@ -5924,7 +5958,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Célséma csomópontja"
     }
   ],
   "zbtUQ/": [
