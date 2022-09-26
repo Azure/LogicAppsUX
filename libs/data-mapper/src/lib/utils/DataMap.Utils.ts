@@ -9,7 +9,7 @@ import {
 import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
 import type { ConnectionDictionary, LoopConnection } from '../models/Connection';
 import type { DataMap, MapNode } from '../models/DataMap';
-import type { SchemaExtended, SchemaNodeExtended } from '../models/Schema';
+import type { NamespaceDictionary, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
 import { inputPrefix, outputPrefix } from '../utils/ReactFlow.Util';
 import yaml from 'js-yaml';
 
@@ -36,15 +36,15 @@ const generateMapDefinitionHeader = (sourceSchema: SchemaExtended, targetSchema:
   let mapDefinitionHeader = `${reservedMapDefinitionKeys.version}: ${mapDefinitionVersion}${yamlFormats.newLine}`;
   mapDefinitionHeader += `${reservedMapDefinitionKeys.sourceFormat}: ${sourceSchema.type}${yamlFormats.newLine}`;
   mapDefinitionHeader += `${reservedMapDefinitionKeys.targetFormat}: ${targetSchema.type}${yamlFormats.newLine}`;
-  mapDefinitionHeader += `${reservedMapDefinitionKeys.sourceSchemaName}: ${targetSchema.name}${yamlFormats.newLine}`;
+  mapDefinitionHeader += `${reservedMapDefinitionKeys.sourceSchemaName}: ${sourceSchema.name}${yamlFormats.newLine}`;
   mapDefinitionHeader += `${reservedMapDefinitionKeys.targetSchemaName}: ${targetSchema.name}${yamlFormats.newLine}`;
 
-  if (sourceSchema.namespaces && sourceSchema.namespaces.size > 0) {
+  if (sourceSchema.namespaces && Object.keys(sourceSchema.namespaces).length > 0) {
     mapDefinitionHeader += `${reservedMapDefinitionKeys.sourceNamespaces}:${yamlFormats.newLine}`;
     mapDefinitionHeader += generateNamespaceEntries(sourceSchema.namespaces);
   }
 
-  if (targetSchema.namespaces && targetSchema.namespaces.size > 0) {
+  if (targetSchema.namespaces && Object.keys(targetSchema.namespaces).length > 0) {
     mapDefinitionHeader += `${reservedMapDefinitionKeys.targetNamespaces}:${yamlFormats.newLine}`;
     mapDefinitionHeader += generateNamespaceEntries(targetSchema.namespaces);
   }
@@ -52,10 +52,10 @@ const generateMapDefinitionHeader = (sourceSchema: SchemaExtended, targetSchema:
   return mapDefinitionHeader;
 };
 
-const generateNamespaceEntries = (namespaces: Map<string, string>): string => {
+const generateNamespaceEntries = (namespaces: NamespaceDictionary): string => {
   let results = '';
-  namespaces.forEach((value, key) => {
-    results += `${key}: ${value}${yamlFormats.newLine}`;
+  Object.entries(namespaces).forEach(([key, value]) => {
+    results += `${yamlFormats.indentGap}${key}: ${value}${yamlFormats.newLine}`;
   });
 
   return results;

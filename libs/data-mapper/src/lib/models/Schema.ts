@@ -2,7 +2,7 @@ export interface Schema {
   name: string;
   type: SchemaType;
   targetNamespace: string;
-  namespaces?: Map<string, string>;
+  namespaces?: NamespaceDictionary;
   schemaTreeRoot: SchemaNode;
 }
 
@@ -101,3 +101,4 @@ export enum SchemaTypes {
 }
 
 export type SchemaNodeDictionary = { [key: string]: SchemaNodeExtended };
+export type NamespaceDictionary = { [key: string]: string };
