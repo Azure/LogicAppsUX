@@ -2,7 +2,7 @@ import { discardDataMap } from '../../core/state/DataMapSlice';
 import { closeAllWarning, openDiscardWarning, removeOkClicked, WarningModalState } from '../../core/state/ModalSlice';
 import { openDefaultConfigPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { ICommandBarItemProps } from '@fluentui/react';
+import type { IButtonStyles, ICommandBarItemProps, IContextualMenuStyles } from '@fluentui/react';
 import { CommandBar, ContextualMenuItemType } from '@fluentui/react';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -28,6 +28,95 @@ const cmdBarItemBgStyles = {
   style: {
     backgroundColor: tokens.colorNeutralBackground4,
   },
+};
+
+const cmdBarButtonStyles: IButtonStyles = {
+  label: {
+    color: tokens.colorNeutralForeground1,
+  },
+  icon: {
+    color: tokens.colorBrandForeground1,
+  },
+  splitButtonDivider: {
+    color: tokens.colorNeutralStroke1,
+  },
+  labelDisabled: {
+    color: tokens.colorNeutralForegroundDisabled,
+  },
+  iconDisabled: {
+    color: tokens.colorNeutralForegroundDisabled,
+  },
+};
+
+const contextualMenuStyles: IContextualMenuStyles = {
+  container: {},
+  header: {},
+  list: {},
+  root: {},
+  subComponentStyles: {
+    callout: {},
+    menuItem: {
+      label: {
+        color: tokens.colorNeutralForeground1,
+      },
+      secondaryText: {
+        color: tokens.colorNeutralForeground1,
+      },
+      subMenuIcon: {
+        color: tokens.colorNeutralForeground1,
+      },
+      icon: {
+        color: tokens.colorNeutralForeground1,
+      },
+      iconDisabled: {
+        color: tokens.colorNeutralForegroundDisabled,
+      },
+      labelDisabled: {
+        color: tokens.colorNeutralForegroundDisabled,
+      },
+    },
+  },
+  title: {},
+};
+
+const undoRedoButtonStyles: IButtonStyles = {
+  splitButtonMenuButton: {
+    backgroundColor: tokens.colorNeutralBackground4,
+  },
+  splitButtonMenuIcon: {
+    color: tokens.colorNeutralForeground2,
+  },
+  splitButtonMenuButtonExpanded: {
+    backgroundColor: tokens.colorNeutralBackground4,
+  },
+  splitButtonMenuButtonChecked: {
+    color: tokens.colorNeutralForeground2,
+  },
+  splitButtonDividerDisabled: {
+    color: tokens.colorNeutralForegroundDisabled,
+  },
+  splitButtonMenuIconDisabled: {
+    color: tokens.colorNeutralForegroundDisabled,
+  },
+  ...cmdBarButtonStyles,
+};
+
+const divider: ICommandBarItemProps = {
+  key: 'global-divider',
+  itemType: ContextualMenuItemType.Divider,
+  iconProps: {
+    iconName: 'Separator',
+  },
+  iconOnly: true,
+  disabled: true,
+  buttonStyles: {
+    root: {
+      width: 10,
+      minWidth: 'unset',
+    },
+    ...cmdBarButtonStyles,
+  },
+  ...cmdBarItemBgStyles,
 };
 
 export interface EditorCommandBarProps {
@@ -122,23 +211,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
     }),
   };
 
-  const divider: ICommandBarItemProps = {
-    key: 'global-divider',
-    itemType: ContextualMenuItemType.Divider,
-    iconProps: {
-      iconName: 'Separator',
-    },
-    iconOnly: true,
-    disabled: true,
-    buttonStyles: {
-      root: {
-        width: 10,
-        minWidth: 'unset',
-      },
-    },
-    ...cmdBarItemBgStyles,
-  };
-
   const items: ICommandBarItemProps[] = [
     {
       key: 'save',
@@ -147,6 +219,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       iconProps: { iconName: 'Save' },
       onClick: onSaveClick,
       disabled: !isStateDirty,
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
     {
@@ -156,6 +229,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       iconProps: { iconName: showUndo ? 'Undo' : 'Redo' },
       split: true,
       subMenuProps: {
+        styles: contextualMenuStyles,
         items: [
           {
             key: 'undo',
@@ -178,11 +252,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       onClick: () => undoRedoOnClick(showUndo),
       primaryDisabled: showUndo ? isUndoStackEmpty : isRedoStackEmpty,
       ...cmdBarItemBgStyles,
-      buttonStyles: {
-        splitButtonMenuButton: {
-          backgroundColor: tokens.colorNeutralBackground4,
-        },
-      },
+      buttonStyles: undoRedoButtonStyles,
     },
     {
       key: 'discard',
@@ -205,6 +275,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       ariaLabel: Resources.RUN_TEST,
       iconProps: { iconName: 'Play' },
       onClick: onTestClick,
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
     {
@@ -219,6 +290,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       onClick: () => {
         dispatch(openDefaultConfigPanel());
       },
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
   ];
