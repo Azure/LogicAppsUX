@@ -1,4 +1,4 @@
-import type { SimpleArrayItem } from '..';
+import type { ComplexArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
 import { parseSegments } from '../../editor/base/utils/parsesegments';
@@ -10,12 +10,13 @@ import { useState, useEffect } from 'react';
 
 interface updateStateProps {
   item: ValueSegment[];
-  items: SimpleArrayItem[];
+  items: ComplexArrayItem[];
   index: number;
-  setItems: (newItems: SimpleArrayItem[]) => void;
+  innerIndex: number;
+  setItems: (newItems: ComplexArrayItem[]) => void;
 }
 
-export const EditorChange = ({ item, items, index, setItems }: updateStateProps) => {
+export const EditorChangeComplex = ({ item, items, index, innerIndex, setItems }: updateStateProps) => {
   const [editor] = useLexicalComposerContext();
   const [itemLength, setItemLength] = useState(items.length);
   useEffect(() => {
@@ -27,13 +28,13 @@ export const EditorChange = ({ item, items, index, setItems }: updateStateProps)
       });
       setItemLength(items.length);
     }
-  }, [editor, item, itemLength, items.length]);
+  }, [editor, innerIndex, item, itemLength, items.length]);
 
   const onChange = (editorState: EditorState) => {
     const newValue = serializeEditorState(editorState);
     if (notEqual(item, newValue)) {
       const newItems = [...items];
-      newItems[index].value = newValue;
+      newItems[index].value[innerIndex] = newValue;
       setItems(newItems);
       editor.focus();
     }
