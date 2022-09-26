@@ -8,12 +8,16 @@ import { useSelector } from 'react-redux';
 
 export const useConnector = (connectorId: string) => {
   const connectionService = ConnectionService();
-  return useQuery(['apiWithSwaggers', { connectorId }], async () => {
-    const { connector } = await connectionService.getConnectorAndSwagger(connectorId);
-    return connector;
-  }, {
-    enabled: !!connectorId,
-  });
+  return useQuery(
+    ['apiWithSwaggers', { connectorId }],
+    async () => {
+      const { connector } = await connectionService.getConnectorAndSwagger(connectorId);
+      return connector;
+    },
+    {
+      enabled: !!connectorId,
+    }
+  );
 };
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {

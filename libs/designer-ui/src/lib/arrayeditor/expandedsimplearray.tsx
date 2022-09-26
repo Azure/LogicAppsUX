@@ -1,10 +1,11 @@
-import type { ArrayEditorItemProps } from '.';
+import type { SimpleArrayItem } from '..';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
 import { EditorChange } from './plugins/EditorChange';
 import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
+import { guid } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 const addItemButtonIconProps: IIconProps = {
@@ -23,17 +24,19 @@ const menuButtonStyles: IIconStyles = {
     height: '20px',
   },
 };
-export interface ExpandedArrayProps {
+export interface ExpandedSimpleArrayProps {
+  itemSchema?: string;
   labelProps: LabelProps;
-  items: ArrayEditorItemProps[];
+  items: SimpleArrayItem[];
   canDeleteLastItem: boolean;
   readOnly?: boolean;
   isTrigger?: boolean;
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
-  setItems: (newItems: ArrayEditorItemProps[]) => void;
+  setItems: (newItems: SimpleArrayItem[]) => void;
 }
 
-export const ExpandedArray = ({
+export const ExpandedSimpleArray = ({
+  itemSchema,
   labelProps,
   items,
   canDeleteLastItem,
@@ -41,22 +44,13 @@ export const ExpandedArray = ({
   isTrigger,
   GetTokenPicker,
   setItems,
-}: ExpandedArrayProps): JSX.Element => {
+}: ExpandedSimpleArrayProps): JSX.Element => {
   const intl = useIntl();
 
   const addItemButtonLabel = intl.formatMessage({
     defaultMessage: 'Add new item',
     description: 'Label to add item to array editor',
   });
-
-  const renderLabel = (index: number): JSX.Element => {
-    const { text, isRequiredField } = labelProps as LabelProps;
-    return (
-      <div className="msla-array-editor-label">
-        <Label text={text + ' Item - ' + (index + 1)} isRequiredField={isRequiredField} />
-      </div>
-    );
-  };
 
   const deleteItem = (index: number): void => {
     setItems(items.filter((_, i) => i !== index));
@@ -68,7 +62,7 @@ export const ExpandedArray = ({
         return (
           <div key={index} className="msla-array-item">
             <div className="msla-array-item-header">
-              {renderLabel(index)}
+              {renderLabel(index, labelProps, itemSchema)}
               <div className="msla-array-item-commands">
                 <ItemMenuButton
                   disabled={!!readOnly}
@@ -80,13 +74,13 @@ export const ExpandedArray = ({
             </div>
             <BaseEditor
               className="msla-array-editor-container-expanded"
-              initialValue={item.content ?? []}
+              initialValue={item.value ?? []}
               BasePlugins={{ tokens: true, clearEditor: true }}
               isTrigger={isTrigger}
               tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
               GetTokenPicker={GetTokenPicker}
             >
-              <EditorChange item={item.content ?? []} items={items} setItems={setItems} index={index} />
+              <EditorChange item={item.value ?? []} items={items} setItems={setItems} index={index} />
             </BaseEditor>
           </div>
         );
@@ -96,9 +90,18 @@ export const ExpandedArray = ({
           className="msla-array-add-item-button"
           iconProps={addItemButtonIconProps}
           text={addItemButtonLabel}
-          onClick={() => setItems([...items, { content: [] }])}
+          onClick={() => setItems([...items, { value: [], key: guid() }])}
         />
       </div>
+    </div>
+  );
+};
+
+export const renderLabel = (index: number, labelProps: LabelProps, labelName?: string): JSX.Element => {
+  const { text, isRequiredField } = labelProps as LabelProps;
+  return (
+    <div className="msla-array-editor-label">
+      <Label text={(labelName ?? text) + ' - ' + (index + 1)} isRequiredField={isRequiredField} />
     </div>
   );
 };
@@ -110,7 +113,7 @@ interface ItemMenuButtonProps {
   onDeleteItem(itemKey: number): void;
 }
 
-const ItemMenuButton = ({ disabled, itemKey, visible, onDeleteItem }: ItemMenuButtonProps): JSX.Element | null => {
+export const ItemMenuButton = ({ disabled, itemKey, visible, onDeleteItem }: ItemMenuButtonProps): JSX.Element | null => {
   const intl = useIntl();
   if (!visible) {
     return null;
