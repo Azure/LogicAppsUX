@@ -107,7 +107,7 @@ export const DevToolbox: React.FC = () => {
           <AccordionHeader>Dev Toolbox</AccordionHeader>
           <AccordionPanel>
             <Stack horizontal horizontalAlign="space-around" style={{ width: '100%', marginBottom: 8 }}>
-              <div style={{ width: '250px' }}>
+              <div style={{ width: '250px', margin: '0px 8px' }}>
                 <Dropdown
                   label="Theme"
                   selectedKey={theme}

@@ -1,9 +1,15 @@
 /* eslint-disable no-param-reassign */
 import type { ConnectionCreationInfo, ConnectionParametersMetadata, ConnectorWithSwagger, IConnectionService } from '../connection';
 import type { IHttpClient, QueryParameters } from '../httpClient';
+import { LoggerService } from '../logger';
+import { LogEntryLevel } from '../logging/logEntry';
 import { azureFunctionConnectorId } from './operationmanifest';
-import type { Connection, ConnectionParameter, Connector } from '@microsoft-logic-apps/utils';
+import { getIntl } from '@microsoft-logic-apps/intl';
+import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft-logic-apps/utils';
 import {
+  isIdentityAssociatedWithLogicApp,
+  ResourceIdentityType,
+  getUniqueName,
   isArmResourceId,
   AssertionErrorCode,
   AssertionException,
@@ -59,10 +65,16 @@ interface StandardConnectionServiceArgs {
   baseUrl: string;
   locale?: string;
   filterByLocation?: boolean;
+  tenantId?: string;
+  workflowAppDetails: {
+    appName: string;
+    identity?: ManagedIdentity;
+  };
   readConnections: ReadConnectionsFunc;
   writeConnection?: WriteConnectionFunc;
   apiHubServiceDetails: {
     apiVersion: string;
+    baseUrl: string;
     subscriptionId: string;
     resourceGroup: string;
     location: string;
@@ -78,6 +90,22 @@ interface ConnectionsData {
   functionConnections?: Record<string, FunctionsConnectionModel>;
 }
 
+interface ConnectionAcl {
+  id: string;
+  location: string;
+  name: string;
+  properties: {
+    principal: {
+      type: string;
+      identity: {
+        objectId: string;
+        tenantId: string;
+      };
+    };
+  };
+  type: string;
+}
+
 type LocalConnectionModel = FunctionsConnectionModel | ServiceProviderConnectionModel | APIManagementConnectionModel;
 type ReadConnectionsFunc = () => Promise<ConnectionsData>;
 type WriteConnectionFunc = (connectionData: ConnectionAndAppSetting<LocalConnectionModel>) => Promise<void>;
@@ -88,6 +116,7 @@ const functionsLocation = 'functionConnections';
 export class StandardConnectionService implements IConnectionService {
   private _connections: Record<string, Connection> = {};
   private _subscriptionResourceGroupWebUrl = '';
+  private _allConnectionsInitialized = false;
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
     const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;
@@ -174,6 +203,7 @@ export class StandardConnectionService implements IConnectionService {
     const serviceProviderConnections = (localConnections[serviceProviderLocation] || {}) as Record<string, ServiceProviderConnectionModel>;
     const functionConnections = (localConnections[functionsLocation] || {}) as Record<string, FunctionsConnectionModel>;
 
+    this._allConnectionsInitialized = true;
     return [
       ...Object.keys(serviceProviderConnections).map((key) => {
         const connection = convertServiceProviderConnectionDataToConnection(key, serviceProviderConnections[key]);
@@ -203,12 +233,193 @@ export class StandardConnectionService implements IConnectionService {
     return connection;
   }
 
+  async createConnectionAclIfNeeded(connection: Connection): Promise<void> {
+    const { tenantId, workflowAppDetails } = this.options;
+    if (!isArmResourceId(connection.id) || !workflowAppDetails) {
+      return;
+    }
+
+    const intl = getIntl();
+
+    if (!isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
+      throw new Error(
+        intl.formatMessage({
+          defaultMessage: 'A managed identity is not configured on the logic app.',
+          description: 'Error message when no identity is associated',
+        })
+      );
+    }
+
+    const connectionAcls = (await this._getConnectionAcls(connection.id)) || [];
+    const { identity, appName } = workflowAppDetails;
+    const identityDetailsForApiHubAuth = this._getIdentityDetailsForApiHubAuth(identity as ManagedIdentity, tenantId as string);
+
+    try {
+      if (
+        !connectionAcls.some((acl) => {
+          const { identity: principalIdentity } = acl.properties.principal;
+          return principalIdentity.objectId === identityDetailsForApiHubAuth.principalId && principalIdentity.tenantId === tenantId;
+        })
+      ) {
+        await this._createAccessPolicyInConnection(connection.id, appName, identityDetailsForApiHubAuth, connection.location as string);
+      }
+    } catch {
+      LoggerService().log({ level: LogEntryLevel.Error, area: 'ConnectionACLCreate', message: 'Acl creation failed for connection.' });
+    }
+  }
+
   private async createConnectionInApiHub(
-    _connectionName: string,
-    _connectorId: string,
-    _connectionInfo: ConnectionCreationInfo
+    connectionName: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo
   ): Promise<Connection> {
-    throw new Error('Not implemented for Azure connections yet');
+    const {
+      httpClient,
+      apiHubServiceDetails: { apiVersion, baseUrl, subscriptionId, resourceGroup },
+      workflowAppDetails,
+    } = this.options;
+    const intl = getIntl();
+
+    // NOTE: Block connection creation if identity does not exist on Logic App.
+    if (workflowAppDetails && !isIdentityAssociatedWithLogicApp(workflowAppDetails.identity)) {
+      throw new Error(
+        intl.formatMessage({
+          defaultMessage: 'To create and use an API connection, you must have a managed identity configured on this logic app.',
+          description: 'Error message to show when logic app does not have managed identity when creating azure connection',
+        })
+      );
+    }
+
+    const connectionId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
+    const connection = await httpClient.put<any, Connection>({
+      uri: `${baseUrl}${connectionId}`,
+      queryParameters: { 'api-version': apiVersion },
+      content: connectionInfo?.externalAlternativeParameterValues
+        ? this._getRequestForCreateConnectionWithAlternativeParameters(connectorId, connectionName, connectionInfo)
+        : this._getRequestForCreateConnection(connectorId, connectionName, connectionInfo),
+    });
+
+    try {
+      await this.createConnectionAclIfNeeded(connection);
+    } catch {
+      // NOTE: Delete the connection created in this method if Acl creation failed.
+      const error = new Error(
+        intl.formatMessage({
+          defaultMessage: 'Acl creation failed for connection. Deleting the connection.',
+          description: 'Error while creating acl',
+        })
+      );
+      httpClient.delete({ uri: connectionId, queryParameters: { 'api-version': apiVersion } });
+      throw error;
+    }
+
+    return connection;
+  }
+
+  // NOTE: Use the system-assigned MI if exists, else use the first user assigned identity.
+  private _getIdentityDetailsForApiHubAuth(managedIdentity: ManagedIdentity, tenantId: string): { principalId: string; tenantId: string } {
+    return equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
+      equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
+      ? { principalId: managedIdentity.principalId as string, tenantId: managedIdentity.tenantId as string }
+      : {
+          principalId: managedIdentity.userAssignedIdentities?.[Object.keys(managedIdentity.userAssignedIdentities)[0]]
+            .principalId as string,
+          tenantId,
+        };
+  }
+
+  private async _getConnectionAcls(connectionId: string): Promise<ConnectionAcl[]> {
+    const {
+      apiHubServiceDetails: { apiVersion },
+      httpClient,
+    } = this.options;
+
+    // TODO: Handle nextLink from this response as well.
+    const response = await httpClient.get<any>({
+      uri: `${connectionId}/accessPolicies`,
+      queryParameters: { 'api-version': apiVersion },
+      headers: { 'x-ms-command-name': 'LADesigner.getConnectionAcls' },
+    });
+
+    return response.value;
+  }
+
+  private async _createAccessPolicyInConnection(
+    connectionId: string,
+    appName: string,
+    identityDetails: Record<string, any>,
+    location: string
+  ): Promise<void> {
+    const {
+      apiHubServiceDetails: { apiVersion, baseUrl },
+      httpClient,
+    } = this.options;
+    const { principalId: objectId, tenantId } = identityDetails;
+    const policyName = `${appName}-${objectId}`;
+
+    await httpClient.put({
+      uri: `${baseUrl}${connectionId}/accessPolicies/${policyName}`,
+      queryParameters: { 'api-version': apiVersion },
+      headers: {
+        'If-Match': '*',
+        'x-ms-command-name': 'LADesigner.createAccessPolicyInConnection',
+      },
+      content: {
+        name: appName,
+        type: 'Microsoft.Web/connections/accessPolicy',
+        location,
+        properties: {
+          principal: {
+            type: 'ActiveDirectory',
+            identity: { objectId, tenantId },
+          },
+        },
+      },
+    });
+  }
+
+  private _getRequestForCreateConnection(connectorId: string, connectionName: string, connectionInfo: ConnectionCreationInfo): any {
+    const parameterValues = connectionInfo?.connectionParameters;
+    const parameterValueSet = connectionInfo?.connectionParametersSet;
+    const displayName = connectionInfo?.displayName;
+    const {
+      apiHubServiceDetails: { location },
+    } = this.options;
+
+    return {
+      properties: {
+        api: { id: connectorId },
+        parameterValues,
+        parameterValueSet,
+        displayName,
+      },
+      kind: 'V2',
+      location,
+    };
+  }
+
+  private _getRequestForCreateConnectionWithAlternativeParameters(
+    connectorId: string,
+    connectionName: string,
+    properties: ConnectionCreationInfo
+  ): any {
+    const alternativeParameterValues = properties?.internalAlternativeParameterValues;
+    const {
+      apiHubServiceDetails: { location },
+    } = this.options;
+
+    return {
+      properties: {
+        api: {
+          id: connectorId,
+        },
+        parameterValueType: 'Alternative',
+        alternativeParameterValues,
+        displayName: properties?.displayName,
+      },
+      kind: 'V2',
+      location,
+    };
   }
 
   private async createConnectionInLocal(
@@ -283,6 +494,10 @@ export class StandardConnectionService implements IConnectionService {
       });
       return response.value;
     } else {
+      if (!this._allConnectionsInitialized) {
+        await this.getConnections();
+      }
+
       return Object.keys(this._connections)
         .filter((connectionId) => equals(this._connections[connectionId].properties.api.id, connectorId))
         .map((connectionId) => this._connections[connectionId]);
@@ -326,6 +541,43 @@ export class StandardConnectionService implements IConnectionService {
     } catch {
       return [];
     }
+  }
+
+  async getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string> {
+    const { name: connectionName, index } = getUniqueName(connectionNames, connectorName);
+    return isArmResourceId(connectorId)
+      ? this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, index)
+      : connectionName;
+  }
+
+  private async _getUniqueConnectionNameInApiHub(
+    connectorName: string,
+    connectorId: string,
+    connectionName: string,
+    i: number
+  ): Promise<string> {
+    const { subscriptionId, resourceGroup } = this.options.apiHubServiceDetails;
+    const connectionId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
+    const isUnique = await this._testConnectionIdUniquenessInApiHub(connectionId);
+
+    if (isUnique) {
+      return connectionName;
+    } else {
+      connectionName = `${connectorName}-${i++}`;
+      return this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, i);
+    }
+  }
+
+  private _testConnectionIdUniquenessInApiHub(id: string): Promise<boolean> {
+    const request = {
+      uri: id,
+      queryParameters: { 'api-version': this.options.apiHubServiceDetails.apiVersion },
+    };
+
+    return this.options.httpClient
+      .get<Connection>(request)
+      .then(() => false)
+      .catch(() => true);
   }
 }
 

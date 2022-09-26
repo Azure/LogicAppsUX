@@ -408,7 +408,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Każdy przebieg po konfiguracji musi mieć sprawdzony co najmniej jeden stan."
     }
   ],
   "1ejxkP": [
@@ -444,7 +444,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Przekaż lub wybierz schemat docelowy, który ma być używany dla mapy."
     }
   ],
   "1zgFh1": [
@@ -792,7 +792,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Wybierz schemat źródłowy"
     }
   ],
   "5SAQOb": [
@@ -816,7 +816,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Dodaj schemat źródłowy"
     }
   ],
   "5cPiWA": [
@@ -858,7 +858,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Wybierz schemat docelowy"
     }
   ],
   "6XR3FS": [
@@ -1290,7 +1290,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Schemat docelowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat docelowy?"
     }
   ],
   "B/JzwK": [
@@ -1514,7 +1514,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Warunek wyzwalacza nie może być pusty"
     }
   ],
   "DuXV2M": [
@@ -1798,7 +1798,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Schemat źródłowy"
     }
   ],
   "GYvF54": [
@@ -1816,7 +1816,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Przekaż lub wybierz schemat źródłowy, który ma być używany dla mapy."
     }
   ],
   "Gi72X5": [
@@ -1986,7 +1986,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Nieprawidłowa operacja. Liczba elementów: "
     },
     {
       "type": 1,
@@ -2432,7 +2432,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Nieprawidłowa wartość wejściowa ścieżki operacji. Wartość ścieżki — "
     },
     {
       "type": 1,
@@ -2440,7 +2440,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": "Szablon ścieżki — "
     },
     {
       "type": 1,
@@ -2550,7 +2550,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Ta funkcja nie wymaga żadnych danych wejściowych."
     }
   ],
   "ORVfYZ": [
@@ -2568,7 +2568,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Wybierz schemat z listy rozwijanej"
     }
   ],
   "OVvieE": [
@@ -2676,7 +2676,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Węzeł schematu źródłowego"
     }
   ],
   "PP63jY": [
@@ -2766,7 +2766,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Wybierz schemat źródłowy"
     }
   ],
   "QEp3C8": [
@@ -3078,7 +3078,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Nieprawidłowa liczba stronicowania"
     }
   ],
   "TUaunO": [
@@ -3190,7 +3190,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (nazwa pliku)"
     }
   ],
   "Ur+wph": [
@@ -3221,6 +3221,12 @@
     {
       "type": 0,
       "value": "Wprowadź prawidłowy kod JSON."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3346,7 +3352,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Wybierz schemat docelowy"
     }
   ],
   "WUe3DY": [
@@ -3359,6 +3365,12 @@
     {
       "type": 0,
       "value": "Zwraca wynik mnożenia dwóch liczb"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Tożsamość zarządzana nie jest skonfigurowana w aplikacji logiki."
     }
   ],
   "Wy/bhW": [
@@ -3524,7 +3536,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Nieprawidłowy typ wyrażenia „"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "Y9kBz5": [
@@ -3654,7 +3674,15 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Nieobsługiwana wartość „in”: „"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "” w parametrze"
     }
   ],
   "a64zhX": [
@@ -4036,7 +4064,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Schemat docelowy"
     }
   ],
   "eRvGw3": [
@@ -4057,16 +4085,16 @@
       "value": "Wymagane. Liczba, przez którą dzielona jest dzielna."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Wbudowany"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Parametr wymagany. Indeks, w którym podciąg rozpoczyna się w parametrze 1."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Udostępniono"
     }
   ],
   "esOQ5p": [
@@ -4105,10 +4133,16 @@
       "value": "Zwraca wartość true, jeśli pierwszy argument jest większy od drugiego lub jemu równy"
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Liczba stronicowania przekracza wartość maksymalną"
     }
   ],
   "faSDuD": [
@@ -4350,7 +4384,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "Wartość ścieżki operacji jest niezgodna z szablonem segmentu. Ścieżka "
     },
     {
       "type": 1,
@@ -4358,7 +4392,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", szablon "
     },
     {
       "type": 1,
@@ -4380,7 +4414,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Schemat źródłowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat źródłowy?"
     }
   ],
   "i/SguY": [
@@ -4894,7 +4928,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Funkcja"
     }
   ],
   "mx2IMJ": [
@@ -4949,12 +4983,6 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa właściwości do usunięcia."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5692,7 +5720,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Każda akcja musi mieć co najmniej jeden przebieg po konfiguracji"
     }
   ],
   "vD2lQy": [
@@ -5753,6 +5781,12 @@
     {
       "type": 0,
       "value": "upłynął limit czasu"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Aby utworzyć i użyć połączenia interfejsu API, musisz mieć skonfigurowaną tożsamość zarządzaną w tej aplikacji logiki."
     }
   ],
   "vr70Gn": [
@@ -6018,7 +6052,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Dodaj schemat docelowy"
     }
   ],
   "ysoumb": [
@@ -6090,7 +6124,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Węzeł schematu docelowego"
     }
   ],
   "zbtUQ/": [

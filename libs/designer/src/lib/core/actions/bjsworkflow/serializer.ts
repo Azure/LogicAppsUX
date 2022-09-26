@@ -207,7 +207,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
     type,
     ...optional('description', operationFromWorkflow.description),
     ...optional('kind', kind),
-    ...inputs,
+    ...optional('inputs', inputs),
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
     ...serializeSettings(operationId, nodeSettings, rootState),
