@@ -6,7 +6,7 @@ export interface NotificationData {
   msg?: string;
 }
 
-interface NotificationState {
+export interface NotificationState {
   data?: NotificationData;
 }
 
