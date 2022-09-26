@@ -74,6 +74,7 @@ interface StandardConnectionServiceArgs {
   writeConnection?: WriteConnectionFunc;
   apiHubServiceDetails: {
     apiVersion: string;
+    baseUrl: string;
     subscriptionId: string;
     resourceGroup: string;
     location: string;
@@ -115,6 +116,7 @@ const functionsLocation = 'functionConnections';
 export class StandardConnectionService implements IConnectionService {
   private _connections: Record<string, Connection> = {};
   private _subscriptionResourceGroupWebUrl = '';
+  private _allConnectionsInitialized = false;
 
   constructor(public readonly options: StandardConnectionServiceArgs) {
     const { apiHubServiceDetails, apiVersion, baseUrl, readConnections } = options;
@@ -201,6 +203,7 @@ export class StandardConnectionService implements IConnectionService {
     const serviceProviderConnections = (localConnections[serviceProviderLocation] || {}) as Record<string, ServiceProviderConnectionModel>;
     const functionConnections = (localConnections[functionsLocation] || {}) as Record<string, FunctionsConnectionModel>;
 
+    this._allConnectionsInitialized = true;
     return [
       ...Object.keys(serviceProviderConnections).map((key) => {
         const connection = convertServiceProviderConnectionDataToConnection(key, serviceProviderConnections[key]);
@@ -272,7 +275,7 @@ export class StandardConnectionService implements IConnectionService {
   ): Promise<Connection> {
     const {
       httpClient,
-      apiHubServiceDetails: { apiVersion, subscriptionId, resourceGroup },
+      apiHubServiceDetails: { apiVersion, baseUrl, subscriptionId, resourceGroup },
       workflowAppDetails,
     } = this.options;
     const intl = getIntl();
@@ -289,7 +292,7 @@ export class StandardConnectionService implements IConnectionService {
 
     const connectionId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
     const connection = await httpClient.put<any, Connection>({
-      uri: connectionId,
+      uri: `${baseUrl}${connectionId}`,
       queryParameters: { 'api-version': apiVersion },
       content: connectionInfo?.externalAlternativeParameterValues
         ? this._getRequestForCreateConnectionWithAlternativeParameters(connectorId, connectionName, connectionInfo)
@@ -333,7 +336,7 @@ export class StandardConnectionService implements IConnectionService {
 
     // TODO: Handle nextLink from this response as well.
     const response = await httpClient.get<any>({
-      uri: `/${connectionId}/accessPolicies?api-version=${apiVersion}`,
+      uri: `${connectionId}/accessPolicies`,
       queryParameters: { 'api-version': apiVersion },
       headers: { 'x-ms-command-name': 'LADesigner.getConnectionAcls' },
     });
@@ -348,14 +351,14 @@ export class StandardConnectionService implements IConnectionService {
     location: string
   ): Promise<void> {
     const {
-      apiHubServiceDetails: { apiVersion },
+      apiHubServiceDetails: { apiVersion, baseUrl },
       httpClient,
     } = this.options;
     const { principalId: objectId, tenantId } = identityDetails;
     const policyName = `${appName}-${objectId}`;
 
     await httpClient.put({
-      uri: `/${connectionId}/accessPolicies/${policyName}`,
+      uri: `${baseUrl}${connectionId}/accessPolicies/${policyName}`,
       queryParameters: { 'api-version': apiVersion },
       headers: {
         'If-Match': '*',
@@ -491,6 +494,10 @@ export class StandardConnectionService implements IConnectionService {
       });
       return response.value;
     } else {
+      if (!this._allConnectionsInitialized) {
+        await this.getConnections();
+      }
+
       return Object.keys(this._connections)
         .filter((connectionId) => equals(this._connections[connectionId].properties.api.id, connectorId))
         .map((connectionId) => this._connections[connectionId]);

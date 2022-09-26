@@ -3240,7 +3240,7 @@
   "WnU9v0": [
     {
       "type": 0,
-      "value": "A managed identity is not configured on the logic app."
+      "value": "Någon hanterad identitet har inte ställts in i logikappen."
     }
   ],
   "Wy/bhW": [
@@ -3960,7 +3960,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Delad"
     }
   ],
   "esOQ5p": [
@@ -5600,7 +5600,7 @@
   "vdtKjT": [
     {
       "type": 0,
-      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
+      "value": "Om du vill skapa och använda en API-anslutning måste du ha konfigurerat en hanterad identitet på den här logikappen."
     }
   ],
   "vr70Gn": [

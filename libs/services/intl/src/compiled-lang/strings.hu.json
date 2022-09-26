@@ -3104,7 +3104,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "Alkalmazáson belüli termék"
     }
   ],
   "VE3cxq": [
@@ -3248,7 +3248,7 @@
   "WnU9v0": [
     {
       "type": 0,
-      "value": "A managed identity is not configured on the logic app."
+      "value": "Egy felügyelt identitás nincs konfigurálva a logikai alkalmazásban."
     }
   ],
   "Wy/bhW": [
@@ -3976,7 +3976,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Közös"
     }
   ],
   "esOQ5p": [
@@ -4018,7 +4018,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Nem sikerült létrehozni az ACL-t a kapcsolathoz. Kapcsolat törlése."
     }
   ],
   "fGcSFd": [
@@ -5620,7 +5620,7 @@
   "vdtKjT": [
     {
       "type": 0,
-      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
+      "value": "API-kapcsolat létrehozásához és használatához konfigurálni kell egy felügyelt identitást ebben a logikai alkalmazásban."
     }
   ],
   "vr70Gn": [

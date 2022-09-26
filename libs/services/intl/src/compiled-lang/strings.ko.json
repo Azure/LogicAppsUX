@@ -2941,7 +2941,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "앱 내"
     }
   ],
   "VE3cxq": [
@@ -3085,7 +3085,7 @@
   "WnU9v0": [
     {
       "type": 0,
-      "value": "A managed identity is not configured on the logic app."
+      "value": "논리 앱에 관리 ID가 구성되어 있지 않습니다."
     }
   ],
   "Wy/bhW": [
@@ -3789,7 +3789,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "공유"
     }
   ],
   "esOQ5p": [
@@ -3831,7 +3831,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "연결에 대한 ACL을 만들지 못했습니다. 연결을 삭제하는 중입니다."
     }
   ],
   "fGcSFd": [
@@ -5363,7 +5363,7 @@
   "vdtKjT": [
     {
       "type": 0,
-      "value": "To create and use an API connection, you must have a managed identity configured on this logic app."
+      "value": "API 연결을 만들고 사용하려면 이 논리 앱에 구성된 관리 ID가 있어야 합니다."
     }
   ],
   "vr70Gn": [
