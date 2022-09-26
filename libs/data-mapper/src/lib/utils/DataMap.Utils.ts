@@ -54,8 +54,8 @@ const generateMapDefinitionHeader = (sourceSchema: SchemaExtended, targetSchema:
 
 const generateNamespaceEntries = (namespaces: NamespaceDictionary): string => {
   let results = '';
-  Object.entries(namespaces).forEach(([value, key]) => {
-    results += `${yamlFormats.indentGap}${value}: ${key}${yamlFormats.newLine}`;
+  Object.entries(namespaces).forEach(([key, value]) => {
+    results += `${yamlFormats.indentGap}${key}: ${value}${yamlFormats.newLine}`;
   });
 
   return results;
