@@ -66,7 +66,9 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
   const getFooterContent = () => {
     return (
       <div>
-        <PrimaryButton onClick={testMap}>{testLoc}</PrimaryButton>
+        <PrimaryButton onClick={testMap} style={{ marginRight: 8 }}>
+          {testLoc}
+        </PrimaryButton>
         <DefaultButton onClick={onClose}>{discardLoc}</DefaultButton>
       </div>
     );
@@ -82,26 +84,28 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
       onRenderFooterContent={getFooterContent}
       isFooterAtBottom={true}
     >
-      <TabList selectedValue={selectedTab} onTabSelect={(_e, data) => setSelectedTab(data.value as SelectedTab)}>
-        <Tab value={SelectedTab.Input}>{inputLoc}</Tab>
-        <Tab value={SelectedTab.Output}>{outputLoc}</Tab>
-      </TabList>
+      <div>
+        <TabList selectedValue={selectedTab} onTabSelect={(_e, data) => setSelectedTab(data.value as SelectedTab)}>
+          <Tab value={SelectedTab.Input}>{inputLoc}</Tab>
+          <Tab value={SelectedTab.Output}>{outputLoc}</Tab>
+        </TabList>
 
-      {selectedTab === SelectedTab.Input && (
-        <div>
-          <RadioGroup value={selectedInputOption} onChange={(_, data) => setSelectedInputOption(data.value as InputDataOptions)}>
-            <Radio label={pasteFromSample} value={InputDataOptions.PasteSample} />
-          </RadioGroup>
+        {selectedTab === SelectedTab.Input && (
+          <div>
+            <RadioGroup value={selectedInputOption} onChange={(_, data) => setSelectedInputOption(data.value as InputDataOptions)}>
+              <Radio label={pasteFromSample} value={InputDataOptions.PasteSample} />
+            </RadioGroup>
 
-          <Textarea placeholder="Input helper text" />
-        </div>
-      )}
+            <Textarea placeholder="Input helper text" />
+          </div>
+        )}
 
-      {selectedTab === SelectedTab.Output && (
-        <div>
-          <Textarea placeholder="Output helper text" />
-        </div>
-      )}
+        {selectedTab === SelectedTab.Output && (
+          <div>
+            <Textarea placeholder="Output helper text" />
+          </div>
+        )}
+      </div>
     </Panel>
   );
 };
