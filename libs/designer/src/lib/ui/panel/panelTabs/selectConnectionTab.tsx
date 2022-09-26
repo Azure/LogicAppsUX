@@ -5,8 +5,8 @@ import { changeConnectionMapping } from '../../../core/state/connection/connecti
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
+import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connection } from '@microsoft-logic-apps/utils';
-import { getIdLeaf } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -40,10 +40,13 @@ export const SelectConnectionTab = () => {
   const saveSelectionCallback = useCallback(
     (connection?: Connection) => {
       if (!connection) return;
-      dispatch(changeConnectionMapping({ nodeId: selectedNodeId, connectionId: getIdLeaf(connection?.id) }));
+      dispatch(
+        changeConnectionMapping({ nodeId: selectedNodeId, connectionId: connection?.id as string, connectorId: connector?.id as string })
+      );
+      ConnectionService().createConnectionAclIfNeeded(connection);
       hideConnectionTabs();
     },
-    [dispatch, selectedNodeId, hideConnectionTabs]
+    [dispatch, selectedNodeId, connector?.id, hideConnectionTabs]
   );
 
   const cancelSelectionCallback = useCallback(() => {

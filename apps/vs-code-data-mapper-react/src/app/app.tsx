@@ -1,21 +1,38 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
 import type { RootState } from '../state/Store';
 import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
+
+enum VsCodeThemeType {
+  VsCodeLight = 'vscode-light',
+  VsCodeDark = 'vscode-dark',
+  VsCodeHighContrast = 'vscode-high-contrast',
+}
 
 interface SchemaFile {
   path: string;
-  type: 'input' | 'output';
+  type: 'source' | 'target';
 }
 
 export const App = (): JSX.Element => {
   const vscode = useContext(VSCodeContext);
+  // const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
+
+  // TODO (After theming): set initial value back to getVscodeTheme()
+  const [vsCodeTheme, _setVsCodeTheme] = useState<VsCodeThemeType>(VsCodeThemeType.VsCodeLight);
 
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
-  const inputSchema = useSelector((state: RootState) => state.dataMapDataLoader.inputSchema);
-  const outputSchema = useSelector((state: RootState) => state.dataMapDataLoader.outputSchema);
+  const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
+
+  /*
+  // Monitor document.body for VS Code theme changes
+  new MutationObserver(() => {
+    setVsCodeTheme(getVscodeTheme());
+  }).observe(document.body, { attributes: true });
+  */
 
   const saveStateCall = (dataMapDefinition: string) => {
     saveDataMapDefinition(dataMapDefinition);
@@ -42,8 +59,8 @@ export const App = (): JSX.Element => {
   };
 
   return (
-    <DataMapperDesignerProvider locale="en-US" options={{}}>
-      <DataMapDataProvider dataMap={dataMap} inputSchema={inputSchema} outputSchema={outputSchema} availableSchemas={schemaFileList}>
+    <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>
+      <DataMapDataProvider dataMap={dataMap} sourceSchema={sourceSchema} targetSchema={targetSchema} availableSchemas={schemaFileList}>
         <DataMapperDesigner
           saveStateCall={saveStateCall}
           addSchemaFromFile={addSchemaFromFile}

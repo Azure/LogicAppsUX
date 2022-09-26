@@ -285,12 +285,6 @@
       "value": "Vereist. De waarde die moet worden geconverteerd naar XML."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Alle versies weergeven"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -373,6 +367,12 @@
       "value": "Meer informatie"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Voor elke uitvoering na de configuratie moet ten minste één status zijn gecontroleerd"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -401,6 +401,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Upload of selecteer een doelschema dat voor de toewijzing moet worden gebruikt."
     }
   ],
   "1zgFh1": [
@@ -535,6 +541,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Triggers"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -559,16 +571,10 @@
       "value": "(UTC+06:00) Dhaka"
     }
   ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Upload of selecteer een uitvoerschema dat voor uw toewijzing moet worden gebruikt."
-    }
-  ],
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Vereiste parameters "
     },
     {
       "type": 1,
@@ -576,7 +582,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " zijn niet ingesteld of ongeldig"
     }
   ],
   "3afjx+": [
@@ -600,19 +606,19 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Ongeldige json-indeling. Begin van "
     },
     {
       "type": 1,
-      "value": "openingBracket"
+      "value": "openingBrarollt"
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " ontbreekt of eindigt op "
     },
     {
       "type": 1,
-      "value": "closingBracket"
+      "value": "closingBrarollt"
     },
     {
       "type": 0,
@@ -739,16 +745,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "Het invoerschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het invoerschema?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Vereist. De XPath-expressie die moet worden geëvalueerd."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Een bronschema selecteren"
     }
   ],
   "5SAQOb": [
@@ -767,6 +773,12 @@
     {
       "type": 0,
       "value": "Indien een object, matrix of tekenreeks leeg is, wordt Waar geretourneerd"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Bronschema toevoegen"
     }
   ],
   "5cPiWA": [
@@ -803,6 +815,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Een doelschema selecteren"
     }
   ],
   "6XR3FS": [
@@ -868,7 +886,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Kan parameter "
     },
     {
       "type": 1,
@@ -876,13 +894,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": " niet vinden voor deze bewerking"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Vereist. De tekenreeks waarvan de subtekenreeks wordt gebruikt."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Een actie toevoegen"
     }
   ],
   "7aJqIH": [
@@ -958,7 +982,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Fout bij het uitvoeren van de API - "
     },
     {
       "type": 1,
@@ -987,12 +1011,6 @@
     {
       "type": 0,
       "value": "Zaterdag"
-    }
-  ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Voeg uitvoerschema toe"
     }
   ],
   "8L+oIz": [
@@ -1028,7 +1046,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Niet-ondersteund tokentype: "
     },
     {
       "type": 1,
@@ -1045,12 +1063,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Norfolk"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Invoerschema"
     }
   ],
   "8ubEPi": [
@@ -1135,12 +1147,6 @@
     {
       "type": 0,
       "value": "Het resultaat van het bij elkaar optellen van de twee getallen wordt geretourneerd"
-    }
-  ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Een uitvoerschema selecteren"
     }
   ],
   "9pdXmX": [
@@ -1241,6 +1247,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die moet worden gecodeerd naar de Base 64-indeling."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "Het doelschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het doelschema?"
     }
   ],
   "B/JzwK": [
@@ -1382,7 +1394,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Uitvoer"
     }
   ],
   "CsPY74": [
@@ -1437,6 +1449,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Aleoeten"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Triggervoorwaarde mag niet leeg zijn"
     }
   ],
   "DuXV2M": [
@@ -1695,6 +1713,12 @@
       "value": "Vereist. Het object dat in de verzameling Binnen moet worden gevonden."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Bronschema"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1705,6 +1729,12 @@
     {
       "type": 0,
       "value": "Indien de parameters onwaar zijn, wordt Waar geretourneerd"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Upload of selecteer een bronschema dat voor de toewijzing moet worden gebruikt."
     }
   ],
   "Gi72X5": [
@@ -1764,7 +1794,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Meer diagnostische informatie: x-ms-client-request-id is "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HQ8/tk": [
@@ -1833,16 +1871,10 @@
       "value": "Terug naar bladeren"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Een invoerschema selecteren"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Geavanceerde opties"
     }
   ],
   "Ip7Iax": [
@@ -1867,6 +1899,20 @@
     {
       "type": 0,
       "value": "Een tekenreeks wordt aan de hand van de regels voor hoofdlettergebruik van de cultuur geconverteerd naar kleine letters"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Ongeldige bewerking. Aantal items: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -1951,12 +1997,6 @@
     {
       "type": 0,
       "value": "Er wordt een tekensubset van een tekenreeks geretourneerd"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Uitvoerschema"
     }
   ],
   "KX1poC": [
@@ -2160,7 +2200,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Codeweergave"
     }
   ],
   "M48CGd": [
@@ -2233,6 +2273,12 @@
       "value": "Het huidige tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Acties"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2275,10 +2321,22 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "Expressie"
+      "value": "Ongeldige invoerwaarde voor bewerkingspad. Padwaarde - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " padsjabloon - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2377,6 +2435,12 @@
       "value": "Verbindingsnaam"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Voor deze functie is geen invoer vereist."
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2387,6 +2451,12 @@
     {
       "type": 0,
       "value": "Opmerking"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Selecteer het schema voor de vervolgkeuzelijst"
     }
   ],
   "OVvieE": [
@@ -2452,7 +2522,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Standaardwaarde"
     }
   ],
   "P4rEwD": [
@@ -2464,7 +2534,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Invoer"
     }
   ],
   "P8ZBF9": [
@@ -2489,6 +2559,12 @@
     {
       "type": 0,
       "value": "Vereist. Het getal dat moet worden opgeteld bij opteltal 1."
+    }
+  ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Knooppunt van het bronschema"
     }
   ],
   "PP63jY": [
@@ -2573,6 +2649,12 @@
     {
       "type": 0,
       "value": "Negeren"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Een bronschema selecteren"
     }
   ],
   "QEp3C8": [
@@ -2863,6 +2945,12 @@
       "value": "Het begin van de maand van een ingevoerd tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Ongeldig aantal pagineringen"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -2965,6 +3053,16 @@
       "value": "Kan de inhoud niet weergegeven vanwege de beveiligingsconfiguratie."
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (bestandsnaam)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2993,6 +3091,12 @@
     {
       "type": 0,
       "value": "Voer een geldige JSON in."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3049,6 +3153,12 @@
       "value": "Uitvoeringsgeschiedenis"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Triggers laten uw app weten wanneer deze moet worden gestart. Voor elke werkstroom is ten minste één trigger vereist."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3097,10 +3207,22 @@
       "value": "Voer een geldige woordenlijst in"
     }
   ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Acties voeren bewerkingen uit op gegevens of communiceren tussen systemen die moeten worden uitgevoerd."
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
       "value": "Vereist. Het eerste gehele getal in de matrix."
+    }
+  ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Een doelschema selecteren"
     }
   ],
   "WUe3DY": [
@@ -3113,6 +3235,12 @@
     {
       "type": 0,
       "value": "Het resultaat van het vermenigvuldigen van de twee getallen wordt geretourneerd"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Er is geen beheerde identiteit geconfigureerd in de logische app."
     }
   ],
   "Wy/bhW": [
@@ -3145,12 +3273,6 @@
       "value": " uren"
     }
   ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Een uitvoerschema selecteren"
-    }
-  ],
   "XCunbR": [
     {
       "type": 0,
@@ -3178,7 +3300,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Niet-ondersteund tokentype: "
     },
     {
       "type": 1,
@@ -3279,6 +3401,20 @@
     {
       "type": 0,
       "value": "Meer informatie"
+    }
+  ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "Ongeldig expressietype "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "Y9kBz5": [
@@ -3405,10 +3541,10 @@
       "value": "(UTC+07:00) Tomsk"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "Het uitvoerschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het uitvoerschema?"
+      "value": "Niet-ondersteunde in-waarde: {value} in parameter"
     }
   ],
   "a64zhX": [
@@ -3480,7 +3616,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Niet-ondersteund tokentype: "
     },
     {
       "type": 1,
@@ -3542,7 +3678,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Geef parameters op om de uitvoer te testen."
     }
   ],
   "bzF/qn": [
@@ -3787,10 +3923,10 @@
       "value": "Vereist. De naam van de variabele met de gewenste waarde."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Uitvoerschemaknooppunt"
+      "value": "Doelschema"
     }
   ],
   "eRvGw3": [
@@ -3811,22 +3947,16 @@
       "value": "Vereist. Het getal waardoor het deeltal moet worden gedeeld."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Ingebouwd"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Vereist. De index van waar de subtekenreeks begint in parameter 1."
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "Selecteer het schema voor de vervolgkeuzelijst"
+      "value": "Gedeeld"
     }
   ],
   "esOQ5p": [
@@ -3844,7 +3974,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Niet-ondersteunde computertaal."
     }
   ],
   "f/lWTW": [
@@ -3863,6 +3993,18 @@
     {
       "type": 0,
       "value": "Indien het eerste argument groter dan of gelijk aan het tweede is, wordt Waar geretourneerd"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Het aantal pagineringen overschrijdt de maximumwaarde"
     }
   ],
   "faSDuD": [
@@ -3916,7 +4058,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Test uitvoeren"
     }
   ],
   "gCXOd5": [
@@ -4079,6 +4221,24 @@
       "value": " te downloaden"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "De padwaarde voor de bewerking komt niet overeen met de sjabloon voor het segment. Pad "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", sjabloon "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -4089,6 +4249,12 @@
     {
       "type": 0,
       "value": "Doelgroep"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "Het bronschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het bronschema?"
     }
   ],
   "i/SguY": [
@@ -4337,12 +4503,6 @@
     {
       "type": 0,
       "value": "Ja"
-    }
-  ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Voeg invoerschema toe"
     }
   ],
   "kDsud+": [
@@ -4597,6 +4757,12 @@
       "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Functie"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4642,19 +4808,13 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Opnieuw instellen"
     }
   ],
   "nTA155": [
     {
       "type": 0,
       "value": "Vereist. De naam van de eigenschap die moet worden verwijderd."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4857,6 +5017,12 @@
       "value": "Hiermee wordt een XML-knooppunt, knooppuntenset of waarde als JSON geretourneerd uit de opgegeven XPath-expressie"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Een trigger toevoegen"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4867,12 +5033,6 @@
     {
       "type": 0,
       "value": "De parameter naar een tekenreeks converteren"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Een invoerschema selecteren"
     }
   ],
   "q87X20": [
@@ -4926,7 +5086,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Foutcode: "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": ", bericht: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "qUWBUX": [
@@ -5141,12 +5317,6 @@
       "value": "Nieuwe parameter"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Invoerschemaknooppunt"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5157,12 +5327,6 @@
     {
       "type": 0,
       "value": "Vereist. Een tekenreeks die de tijdzonenaam van de doeltijdzone bevat. Zie https://msdn.microsoft.com/en-us/library/gg154758.aspx voor meer informatie."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Upload of selecteer een invoerschema dat voor de toewijzing moet worden gebruikt."
     }
   ],
   "tE7Zam": [
@@ -5363,6 +5527,12 @@
       "value": "Er wordt een wereldwijd unieke tekenreeks gegenereerd (GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Elke actie moet een of meer uitvoeringen hebben na configuraties"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5421,6 +5591,12 @@
     {
       "type": 0,
       "value": "heeft een time-out gehad"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Als u een API-verbinding wilt maken en gebruiken, moet u een beheerde identiteit hebben geconfigureerd voor deze logische app."
     }
   ],
   "vr70Gn": [
@@ -5644,7 +5820,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "De waarde bevat functie-expressies die niet kunnen worden omgezet. Alleen constante waarden worden ondersteund"
     }
   ],
   "yBrsFJ": [
@@ -5683,10 +5859,16 @@
       "value": "Datum- en tijdfuncties"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Doelschema toevoegen"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Veld toevoegen"
     }
   ],
   "yxsn7s": [
@@ -5719,12 +5901,6 @@
       "value": "Hiermee worden ook alle onderliggende stappen verwijderd."
     }
   ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "This expression doesn't require any input."
-    }
-  ],
   "zBMVKg": [
     {
       "type": 0,
@@ -5753,6 +5929,12 @@
     {
       "type": 0,
       "value": "Aangepaste waarde wissen"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Knooppunt van het doelschema"
     }
   ],
   "zbtUQ/": [

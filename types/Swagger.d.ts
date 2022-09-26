@@ -217,6 +217,7 @@ declare namespace OpenAPIV2 {
     contact?: ContactObject;
     license?: LicenseObject;
     version: string;
+    [index: string]: any;
   }
   interface ContactObject {
     name?: string;

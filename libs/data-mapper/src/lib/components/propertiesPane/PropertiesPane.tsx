@@ -1,8 +1,7 @@
-import { baseCanvasHeight, basePropertyPaneContentHeight } from '../../constants/ReactFlowConstants';
 import { NodeType } from '../../models/SelectedNode';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { CodeTab } from './tabComponents/CodeTab';
-import { ExpressionNodePropertiesTab } from './tabComponents/ExpressionNodePropertiesTab';
+import { FunctionNodePropertiesTab } from './tabComponents/FunctionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
 import { TestTab } from './tabComponents/TestTab';
 import { Stack } from '@fluentui/react';
@@ -17,16 +16,18 @@ enum TABS {
   TEST,
 }
 
-const topBarHeight = 40;
+export const canvasAreaAndPropPaneMargin = 8;
+export const propPaneTopBarHeight = 48;
+export const basePropPaneContentHeight = 224;
 
 const useStyles = makeStyles({
   pane: {
     width: '100%',
     backgroundColor: tokens.colorNeutralBackground1,
-    ...shorthands.borderRadius('medium', 'medium', 0, 0),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium, tokens.borderRadiusMedium, 0, 0),
   },
   topBar: {
-    height: `${topBarHeight}px`,
+    height: `${propPaneTopBarHeight}px`,
     p: '4px',
     marginLeft: '8px',
     marginRight: '8px',
@@ -40,6 +41,7 @@ const useStyles = makeStyles({
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
     ...shorthands.overflow('hidden', 'auto'),
+    boxSizing: 'border-box',
   },
   noItemSelectedText: {
     color: tokens.colorNeutralForegroundDisabled,
@@ -51,32 +53,33 @@ export interface PropertiesPaneProps {
   currentNode?: SelectedNode;
   isExpanded: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
+  centerViewHeight: number;
   contentHeight: number;
   setContentHeight: (newHeight: number) => void;
 }
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const intl = useIntl();
-  const { currentNode, isExpanded, setIsExpanded, contentHeight, setContentHeight } = props;
+  const { currentNode, isExpanded, setIsExpanded, centerViewHeight, contentHeight, setContentHeight } = props;
 
   const styles = useStyles();
   const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
   const [initialDragYPos, setInitialDragYPos] = useState<number | undefined>(undefined);
   const [initialDragHeight, setInitialDragHeight] = useState<number | undefined>(undefined);
 
-  const inputSchemaNodeLoc = intl.formatMessage({
-    defaultMessage: 'Input schema node',
-    description: 'Label for input schema node',
+  const sourceSchemaNodeLoc = intl.formatMessage({
+    defaultMessage: 'Source schema node',
+    description: 'Label for source schema node',
   });
 
-  const outputSchemaNodeLoc = intl.formatMessage({
-    defaultMessage: 'Output schema node',
-    description: 'Label for output schema node',
+  const targetSchemaNodeLoc = intl.formatMessage({
+    defaultMessage: 'Target schema node',
+    description: 'Label for target schema node',
   });
 
-  const expressionLoc = intl.formatMessage({
-    defaultMessage: 'Expression',
-    description: 'Label for expression node',
+  const functionLoc = intl.formatMessage({
+    defaultMessage: 'Function',
+    description: 'Label for function node',
   });
 
   const propertiesLoc = intl.formatMessage({
@@ -126,6 +129,11 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const onStartDrag = (e: React.DragEvent) => {
     setInitialDragYPos(e.clientY);
     setInitialDragHeight(contentHeight);
+
+    // Show empty image in place of dragging ghost preview
+    const img = new Image();
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=';
+    e.dataTransfer.setDragImage(img, 0, 0);
   };
 
   const onDrag = (e: React.DragEvent) => {
@@ -136,19 +144,21 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     const deltaY = e.clientY - initialDragYPos; // Going up == negative
 
-    // Clamp height between 0 and the full canvas height
-    const newPaneContentHeight = Math.min(baseCanvasHeight, Math.max(0, initialDragHeight - deltaY));
+    const fullCenterViewHeight = centerViewHeight - propPaneTopBarHeight;
+
+    // Clamp height percent between 0 and the full centerViewHeight
+    const newPaneContentHeight = Math.min(fullCenterViewHeight, Math.max(0, initialDragHeight - deltaY));
 
     // Snap properties pane to full height if expanded >=80%
-    if (newPaneContentHeight >= 0.8 * baseCanvasHeight) {
-      setContentHeight(baseCanvasHeight);
+    if (newPaneContentHeight >= 0.8 * fullCenterViewHeight) {
+      setContentHeight(fullCenterViewHeight);
       return;
     }
 
     // Automatically collapse pane if resized below a certain amount, and reset expanded height
     if (newPaneContentHeight <= 25) {
       setIsExpanded(false);
-      setContentHeight(basePropertyPaneContentHeight);
+      setContentHeight(basePropPaneContentHeight);
       return;
     }
 
@@ -162,12 +172,12 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const getPaneTitle = (): string | undefined => {
     switch (currentNode?.nodeType) {
-      case NodeType.Input:
-        return inputSchemaNodeLoc;
-      case NodeType.Output:
-        return outputSchemaNodeLoc;
-      case NodeType.Expression:
-        return expressionLoc;
+      case NodeType.Source:
+        return sourceSchemaNodeLoc;
+      case NodeType.Target:
+        return targetSchemaNodeLoc;
+      case NodeType.Function:
+        return functionLoc;
       default:
         console.error("Panel item hasn't been chosen.");
         return;
@@ -182,15 +192,15 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        if (currentNode.nodeType === NodeType.Expression) {
-          return <ExpressionNodePropertiesTab currentNode={currentNode} />;
+        if (currentNode.nodeType === NodeType.Function) {
+          return <FunctionNodePropertiesTab currentNode={currentNode} />;
         } else {
           return <SchemaNodePropertiesTab currentNode={currentNode} />;
         }
       case TABS.CODE:
         return <CodeTab />;
       case TABS.TEST:
-        if (currentNode.nodeType === NodeType.Output) {
+        if (currentNode.nodeType === NodeType.Target) {
           return <TestTab currentNode={currentNode} />;
         } else {
           return null;
@@ -208,7 +218,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
         <Tab value={TABS.CODE}>{codeLoc}</Tab>
-        {currentNode?.nodeType === NodeType.Output && <Tab value={TABS.TEST}>{testLoc}</Tab>}
+        {currentNode?.nodeType === NodeType.Target && <Tab value={TABS.TEST}>{testLoc}</Tab>}
       </TabList>
     </>
   );
@@ -226,18 +236,20 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   return (
     <div className={styles.pane}>
-      <div
-        style={{ height: 4, cursor: isExpanded ? 'row-resize' : 'auto' }}
+      <Stack
+        horizontal
+        verticalAlign="center"
+        className={styles.topBar}
+        style={{ cursor: isExpanded ? 'row-resize' : 'auto' }}
         draggable={isExpanded ? 'true' : 'false'}
         onDragStart={onStartDrag}
         onDrag={onDrag}
         onDragEnd={onDragEnd}
-      />
-      <Stack horizontal verticalAlign="center" className={styles.topBar}>
+      >
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
-          {(currentNode?.nodeType === NodeType.Input || currentNode?.nodeType === NodeType.Expression) && (
+          {(currentNode?.nodeType === NodeType.Source || currentNode?.nodeType === NodeType.Function) && (
             <Button
               appearance="subtle"
               size="medium"

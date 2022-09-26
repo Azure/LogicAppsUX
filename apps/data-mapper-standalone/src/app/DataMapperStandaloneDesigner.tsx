@@ -16,17 +16,16 @@ export const DataMapperStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.dataMapDataLoader.theme);
 
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
-  const inputSchema = useSelector((state: RootState) => state.schemaDataLoader.inputSchema);
-  const outputSchema = useSelector((state: RootState) => state.schemaDataLoader.outputSchema);
+  const sourceSchema = useSelector((state: RootState) => state.schemaDataLoader.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.schemaDataLoader.targetSchema);
 
-  const schemaState = useSelector((state: RootState) => {
-    return state.dataMapDataLoader;
-  });
+  const resourceUrl = useSelector((state: RootState) => state.dataMapDataLoader.resourcePath);
+  const armToken = useSelector((state: RootState) => state.dataMapDataLoader.armToken);
 
   InitDataMapperApiService({
     baseUrl: defaultDataMapperApiServiceOptions.baseUrl,
-    resourceUrl: schemaState.resourcePath,
-    accessToken: schemaState.armToken,
+    resourceUrl: resourceUrl,
+    accessToken: armToken,
   });
 
   const saveStateCall = (dataMapDefinition: string) => {
@@ -34,18 +33,25 @@ export const DataMapperStandaloneDesigner = () => {
   };
 
   return (
-    <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
-      <DevToolbox />
-      <DataMapperDesignerProvider locale="en-US" options={{}}>
-        <DataMapDataProvider
-          dataMap={dataMap}
-          inputSchema={inputSchema}
-          outputSchema={outputSchema}
-          availableSchemas={workflowSchemaFilenames}
-        >
-          <DataMapperDesigner saveStateCall={saveStateCall} />
-        </DataMapDataProvider>
-      </DataMapperDesignerProvider>
-    </FluentProvider>
+    <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ flex: '0 1 1px' }}>
+        <FluentProvider theme={theme === 'Light' ? webLightTheme : webDarkTheme}>
+          <DevToolbox />
+        </FluentProvider>
+      </div>
+
+      <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
+        <DataMapperDesignerProvider locale="en-US" theme={theme === 'Light' ? 'light' : 'dark'} options={{}}>
+          <DataMapDataProvider
+            dataMap={dataMap}
+            sourceSchema={sourceSchema}
+            targetSchema={targetSchema}
+            availableSchemas={workflowSchemaFilenames}
+          >
+            <DataMapperDesigner saveStateCall={saveStateCall} />
+          </DataMapDataProvider>
+        </DataMapperDesignerProvider>
+      </div>
+    </div>
   );
 };

@@ -9,6 +9,7 @@ import {
   useVisiblePanelTabs,
 } from '../../core/state/panel/panelSelectors';
 import {
+  clearPanel,
   collapsePanel,
   expandPanel,
   isolateTab,
@@ -19,7 +20,7 @@ import {
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
-import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
+import { deleteNode, replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
@@ -197,8 +198,9 @@ export const PanelRoot = (): JSX.Element => {
     dispatch(replaceId({ originalId: selectedNode, newId }));
   };
 
-  // TODO: 12798945? onClick for delete when node store gets built
   const handleDelete = (): void => {
+    dispatch(deleteNode({ nodeId: selectedNode }));
+    dispatch(clearPanel());
     // TODO: 12798935 Analytics (event logging)
   };
 
@@ -220,6 +222,7 @@ export const PanelRoot = (): JSX.Element => {
       selectedTab={selectedPanelTab}
       showCommentBox={showCommentBox}
       tabs={registeredTabs}
+      nodeId={selectedNode}
       width={width}
       onDismissButtonClicked={handleDelete}
       readOnlyMode={readOnly}

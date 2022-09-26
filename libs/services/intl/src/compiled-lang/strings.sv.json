@@ -285,12 +285,6 @@
       "value": "Obligatoriskt. Det värde som ska konverteras till XML."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Visa alla versioner"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -373,6 +367,12 @@
       "value": "Läs mer"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Minst en status för varje körning efter konfiguration måste kontrolleras."
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -401,6 +401,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Ladda upp eller välj ett målschema som ska användas för kartan."
     }
   ],
   "1zgFh1": [
@@ -535,6 +541,12 @@
       "value": "(UTC+04:00) Tbilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Utlösare"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -559,16 +571,10 @@
       "value": "(UTC+06:00) Dhaka"
     }
   ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Ladda upp eller välj ett utdataschema som ska användas för kartan."
-    }
-  ],
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "De obligatoriska parametrarna "
     },
     {
       "type": 1,
@@ -576,7 +582,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " har inte angetts eller är ogiltiga"
     }
   ],
   "3afjx+": [
@@ -600,7 +606,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Ogiltigt json-format. Start-"
     },
     {
       "type": 1,
@@ -608,7 +614,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " eller slut-"
     },
     {
       "type": 1,
@@ -616,7 +622,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " saknas."
     }
   ],
   "3kI7xF": [
@@ -739,16 +745,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "Indataschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra indataschemat?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Obligatoriskt. Det XPath-uttryck som ska utvärderas."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Välj ett källschema"
     }
   ],
   "5SAQOb": [
@@ -767,6 +773,12 @@
     {
       "type": 0,
       "value": "Returnerar sant om ett objekt, en matris eller en sträng är tom"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Lägg till källschema"
     }
   ],
   "5cPiWA": [
@@ -803,6 +815,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Välj ett målschema"
     }
   ],
   "6XR3FS": [
@@ -868,7 +886,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Det går inte att hitta parametern "
     },
     {
       "type": 1,
@@ -876,13 +894,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": " för den här åtgärden"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Obligatoriskt. Den sträng från vilken delsträngen hämtas."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Lägga till en åtgärd"
     }
   ],
   "7aJqIH": [
@@ -958,7 +982,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Fel vid körning av API – "
     },
     {
       "type": 1,
@@ -987,12 +1011,6 @@
     {
       "type": 0,
       "value": "Lördag"
-    }
-  ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Lägg till utdataschema"
     }
   ],
   "8L+oIz": [
@@ -1028,7 +1046,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tokentyp som inte stöds: "
     },
     {
       "type": 1,
@@ -1045,12 +1063,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Norfolköarna"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Indataschema"
     }
   ],
   "8ubEPi": [
@@ -1135,12 +1147,6 @@
     {
       "type": 0,
       "value": "Returnerar resultatet av att lägga till de två talen"
-    }
-  ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Välj ett utdataschema"
     }
   ],
   "9pdXmX": [
@@ -1241,6 +1247,12 @@
     {
       "type": 0,
       "value": "Krävs. Strängen som ska kodas till base64-representation."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "Målschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra målschemat?"
     }
   ],
   "B/JzwK": [
@@ -1382,7 +1394,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Utdata"
     }
   ],
   "CsPY74": [
@@ -1437,6 +1449,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Aleuterna"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Utlösarvillkoret får inte vara tomt"
     }
   ],
   "DuXV2M": [
@@ -1695,6 +1713,12 @@
       "value": "Obligatoriskt. Det objekt det ska sökas efter i Within-samlingen."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Källschema"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1705,6 +1729,12 @@
     {
       "type": 0,
       "value": "Returnerar sant om båda parametrarna är falsk"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Ladda upp eller välj ett källschema som ska användas för kartan."
     }
   ],
   "Gi72X5": [
@@ -1764,7 +1794,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Mer diagnostikinformation: x-ms-client-request-id är "
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "HQ8/tk": [
@@ -1833,16 +1871,10 @@
       "value": "Gå tillbaka för att bläddra"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Välj ett indataschema"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Avancerade alternativ"
     }
   ],
   "Ip7Iax": [
@@ -1867,6 +1899,20 @@
     {
       "type": 0,
       "value": "Konverterar en sträng till gemena bokstäver med skiftlägesregler för den invarianta kulturen"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Ogiltig åtgärd. Antal objekt: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -1951,12 +1997,6 @@
     {
       "type": 0,
       "value": "Returnerar en delmängd av tecken från en sträng"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Utdataschema"
     }
   ],
   "KX1poC": [
@@ -2044,7 +2084,7 @@
   "LBbhCu": [
     {
       "type": 0,
-      "value": "Delete Workflow Graph"
+      "value": "Ta bort arbetsflödesdiagram"
     }
   ],
   "LCUU5q": [
@@ -2160,7 +2200,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Kodvy"
     }
   ],
   "M48CGd": [
@@ -2233,6 +2273,12 @@
       "value": "Returnerar den aktuella tidsstämpeln som en sträng"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Åtgärder"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2275,10 +2321,22 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "Uttryck"
+      "value": "Ogiltigt indatavärde för åtgärdssökväg. Sökvägsvärde – "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " Sökvägsmall – "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2377,6 +2435,12 @@
       "value": "Anslutningens namn"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Den här funktionen kräver inga indata."
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2387,6 +2451,12 @@
     {
       "type": 0,
       "value": "Kommentar"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Välj schema för listrutan"
     }
   ],
   "OVvieE": [
@@ -2452,7 +2522,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Standardvärde"
     }
   ],
   "P4rEwD": [
@@ -2464,7 +2534,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Indata"
     }
   ],
   "P8ZBF9": [
@@ -2489,6 +2559,12 @@
     {
       "type": 0,
       "value": "Krävs. Talet som ska läggas till i Summand 1."
+    }
+  ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Nod för källschema"
     }
   ],
   "PP63jY": [
@@ -2573,6 +2649,12 @@
     {
       "type": 0,
       "value": "Ignorera"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Välj ett källschema"
     }
   ],
   "QEp3C8": [
@@ -2668,7 +2750,7 @@
   "Qy0Kha": [
     {
       "type": 0,
-      "value": "Triggers cannot be deleted."
+      "value": "Det går inte att ta bort utlösare."
     }
   ],
   "RFjYpH": [
@@ -2863,6 +2945,12 @@
       "value": "Returnerar månadens start för en strängtidsstämpel"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Växlingsantalet är ogiltigt"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -2950,7 +3038,7 @@
   "UEryJE": [
     {
       "type": 0,
-      "value": "Delete Workflow Action"
+      "value": "Ta bort arbetsflödesåtgärd"
     }
   ],
   "UHCVNK": [
@@ -2963,6 +3051,16 @@
     {
       "type": 0,
       "value": "Innehållet visas inte på grund av säkerhetskonfigurationen."
+    }
+  ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (filnamn)"
     }
   ],
   "Ur+wph": [
@@ -2993,6 +3091,12 @@
     {
       "type": 0,
       "value": "Ange en giltig JSON."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3049,6 +3153,12 @@
       "value": "Körningshistorik"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Utlösare meddelar din app när den ska börja köras. Varje arbetsflöde behöver minst en utlösare."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3097,10 +3207,22 @@
       "value": "Ange en giltig ordlista"
     }
   ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Uppgifter utför åtgärder på data eller kommunicerar mellan system som ska köras."
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
       "value": "Krävs. Det första heltalet i matrisen."
+    }
+  ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Välj ett målschema"
     }
   ],
   "WUe3DY": [
@@ -3113,6 +3235,12 @@
     {
       "type": 0,
       "value": "Returnerar resultatet av att ha dividerat de två talen"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Någon hanterad identitet har inte ställts in i logikappen."
     }
   ],
   "Wy/bhW": [
@@ -3145,12 +3273,6 @@
       "value": " timmar"
     }
   ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Välj ett utdataschema"
-    }
-  ],
   "XCunbR": [
     {
       "type": 0,
@@ -3178,7 +3300,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tokentypen stöds inte: "
     },
     {
       "type": 1,
@@ -3279,6 +3401,16 @@
     {
       "type": 0,
       "value": "Mer information"
+    }
+  ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "Ogiltig uttryckstyp "
+    },
+    {
+      "type": 1,
+      "value": "type"
     }
   ],
   "Y9kBz5": [
@@ -3405,10 +3537,18 @@
       "value": "(UTC+07:00) Tomsk"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "Utdataschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra utdataschemat?"
+      "value": "In-värdet stöds inte: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " i parameter"
     }
   ],
   "a64zhX": [
@@ -3480,7 +3620,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Tokentypen stöds inte: "
     },
     {
       "type": 1,
@@ -3542,7 +3682,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Ange parametrar för att testa utdata."
     }
   ],
   "bzF/qn": [
@@ -3787,10 +3927,10 @@
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Utdataschemanod"
+      "value": "Målschema"
     }
   ],
   "eRvGw3": [
@@ -3811,22 +3951,16 @@
       "value": "Krävs. Talet att dela nämnaren med."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Fördefinierade"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Obligatoriskt. Det index i vilket delsträngen börjar i parameter 1."
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "Välj schema för listrutan"
+      "value": "Delad"
     }
   ],
   "esOQ5p": [
@@ -3844,7 +3978,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Programmeringsspråket stöds inte."
     }
   ],
   "f/lWTW": [
@@ -3863,6 +3997,18 @@
     {
       "type": 0,
       "value": "Returnerar sant om det första argumentet är större än eller lika med det andra"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Växlingsantalet överskrider maxvärdet"
     }
   ],
   "faSDuD": [
@@ -3916,7 +4062,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Kör test"
     }
   ],
   "gCXOd5": [
@@ -4075,6 +4221,24 @@
       "value": "displayName"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "Värdet för åtgärdssökvägen matchar inte segmentmallen. Sökvägen "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", mallen "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -4085,6 +4249,12 @@
     {
       "type": 0,
       "value": "Målgrupp"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "Källschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra källschemat?"
     }
   ],
   "i/SguY": [
@@ -4132,7 +4302,7 @@
   "iHVVTl": [
     {
       "type": 0,
-      "value": "Are you sure you want to delete "
+      "value": "Vill du ta bort "
     },
     {
       "type": 1,
@@ -4337,12 +4507,6 @@
     {
       "type": 0,
       "value": "Ja"
-    }
-  ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Lägg till indataschema"
     }
   ],
   "kDsud+": [
@@ -4597,6 +4761,12 @@
       "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Funktion"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4642,19 +4812,13 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Återställ"
     }
   ],
   "nTA155": [
     {
       "type": 0,
       "value": "Obligatoriskt. Namnet på den egenskap som ska tas bort."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4857,6 +5021,12 @@
       "value": "Rerturnerar en XML-nod, en noduppsättning eller ett värde som JSON från det tillhandahållna XPath-uttrycket"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Lägg till en utlösare"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4867,12 +5037,6 @@
     {
       "type": 0,
       "value": "Konverterar parametern till en sträng"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Välj ett indataschema"
     }
   ],
   "q87X20": [
@@ -4926,7 +5090,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Felkod: "
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": ", meddelande: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "qUWBUX": [
@@ -5141,12 +5321,6 @@
       "value": "Ny parameter"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Indataschemanod"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5157,12 +5331,6 @@
     {
       "type": 0,
       "value": "Krävs. En sträng som innehåller tidszonnamnet för måltidszonen. Se https://msdn.microsoft.com/sv-se/library/gg154758.aspx för Information."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Ladda upp eller välj ett indataschema som ska användas för kartan."
     }
   ],
   "tE7Zam": [
@@ -5363,6 +5531,12 @@
       "value": "Genererar en globalt unik sträng (GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Varje åtgärd måste köras en eller flera gånger efter konfiguration"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5421,6 +5595,12 @@
     {
       "type": 0,
       "value": "har uppnått tidsgränsen"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Om du vill skapa och använda en API-anslutning måste du ha konfigurerat en hanterad identitet på den här logikappen."
     }
   ],
   "vr70Gn": [
@@ -5644,7 +5824,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Värdet innehåller funktionsuttryck som inte kan matchas. Endast konstantvärden stöds"
     }
   ],
   "yBrsFJ": [
@@ -5683,10 +5863,16 @@
       "value": "Datum- och tidsfunktioner"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Lägg till målschema"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Lägg till fält"
     }
   ],
   "yxsn7s": [
@@ -5716,13 +5902,7 @@
   "z9kH+0": [
     {
       "type": 0,
-      "value": "This will also remove all child steps."
-    }
-  ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "This expression doesn't require any input."
+      "value": "Detta tar även bort alla underordnade steg."
     }
   ],
   "zBMVKg": [
@@ -5753,6 +5933,12 @@
     {
       "type": 0,
       "value": "Rensa anpassat värde"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Nod för målschema"
     }
   ],
   "zbtUQ/": [

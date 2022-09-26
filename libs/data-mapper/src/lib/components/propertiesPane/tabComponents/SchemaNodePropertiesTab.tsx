@@ -1,5 +1,6 @@
 import { NodeType } from '../../../models/SelectedNode';
 import type { SelectedSchemaNode } from '../../../models/SelectedNode';
+import { icon16ForSchemaNodeType } from '../../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Checkbox, Input, makeStyles, Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
@@ -22,6 +23,8 @@ interface SchemaNodePropertiesTabProps {
 export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
+
+  const DataTypeIcon = icon16ForSchemaNodeType(currentNode.dataType);
 
   const nameLoc = intl.formatMessage({
     defaultMessage: 'Name',
@@ -63,7 +66,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Default value',
   });
 
-  // Base info shared by input/output nodes
+  // Base info shared by source/target nodes
   const NodeInfo = () => {
     return (
       <div className={styles.nodeInfoGridContainer}>
@@ -74,12 +77,15 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
         <Text>{currentNode.path}</Text>
 
         <Text style={{ gridColumn: '1 / span 2' }}>{dataTypeLoc}</Text>
-        <Text>{currentNode.dataType}</Text>
+        <Stack horizontal verticalAlign="center">
+          <DataTypeIcon style={{ marginRight: '5px' }} />
+          <Text>{currentNode.dataType}</Text>
+        </Stack>
       </div>
     );
   };
 
-  const AdditionalOutputNodeProperties = () => {
+  const AdditionalTargetNodeProperties = () => {
     return (
       <div>
         <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
@@ -111,7 +117,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     <div>
       <NodeInfo />
 
-      {currentNode.nodeType === NodeType.Output && <AdditionalOutputNodeProperties />}
+      {currentNode.nodeType === NodeType.Target && <AdditionalTargetNodeProperties />}
     </div>
   );
 };

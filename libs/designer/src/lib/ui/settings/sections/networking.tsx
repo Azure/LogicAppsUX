@@ -128,7 +128,7 @@ export const Networking = ({
       settingProp: {
         readOnly,
         checked: !disableAsyncPattern?.value,
-        onToggleInputChange: (_, checked) => onAsyncPatternToggle(!!checked),
+        onToggleInputChange: (_, checked) => onAsyncPatternToggle(!checked),
         customLabel: () => asyncPatternCustomLabel,
         inlineLabel: true,
         onText,

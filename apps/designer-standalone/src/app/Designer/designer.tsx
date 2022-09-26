@@ -7,6 +7,7 @@ import {
   StandardSearchService,
   StandardOAuthService,
 } from '@microsoft-logic-apps/designer-client-services';
+import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 
@@ -17,12 +18,13 @@ const connectionService = new StandardConnectionService({
   httpClient,
   apiHubServiceDetails: {
     apiVersion: '2018-07-01-preview',
+    baseUrl: '/baseUrl',
     subscriptionId: '',
     resourceGroup: '',
     location: '',
   },
+  workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
   readConnections: () => Promise.resolve({}),
-  isDev: true,
 });
 const operationManifestService = new StandardOperationManifestService({
   apiVersion: '2018-11-01',
@@ -30,7 +32,17 @@ const operationManifestService = new StandardOperationManifestService({
   httpClient,
 });
 
-const searchService = new StandardSearchService();
+const searchService = new StandardSearchService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  apiHubServiceDetails: {
+    apiVersion: '2018-07-01-preview',
+    subscriptionId: '',
+    location: '',
+  },
+  isDev: true,
+});
 
 const oAuthService = new StandardOAuthService({
   apiVersion: '2018-11-01',

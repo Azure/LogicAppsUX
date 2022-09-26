@@ -1,5 +1,4 @@
 import Constants from '../../../common/constants';
-import { getConnectionsQuery } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import { initializeConnectionsMappings } from '../../state/connection/connectionSlice';
 import type { Operations } from '../../state/workflow/workflowInterfaces';
@@ -80,7 +79,6 @@ export async function getConnectionsApiAndMapping(
   dispatch: Dispatch,
   operationInfoPromise: Promise<void>
 ) {
-  getConnectionsQuery();
   await operationInfoPromise;
   const connectionsMappings = await getConnectionsMappingForNodes(operations, getState);
   dispatch(initializeConnectionsMappings(connectionsMappings));

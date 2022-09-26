@@ -1,9 +1,9 @@
-import { setCurrentOutputNode } from '../../core/state/DataMapSlice';
+import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import type { IBreadcrumbItem } from '@fluentui/react';
 import { Breadcrumb } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
+import { Button, tokens } from '@fluentui/react-components';
 import { Code20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -11,6 +11,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const maxBreadcrumbItems = 3;
 const overflowIndex = 1;
+
+const baseBreadcrumbStyles = {
+  height: '40px',
+  padding: '4px 8px',
+  marginBottom: '8px',
+  backgroundColor: tokens.colorNeutralBackground1,
+  borderRadius: tokens.borderRadiusMedium,
+};
 
 interface EditorBreadcrumbProps {
   isCodeViewOpen: boolean;
@@ -20,29 +28,28 @@ interface EditorBreadcrumbProps {
 export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBreadcrumbProps): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const outputSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.outputSchema);
-  const currentOutputNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentOutputNode);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
 
   const breadcrumbItems = useMemo<IBreadcrumbItem[]>(() => {
-    if (outputSchema) {
-      return convertToBreadcrumbItems(dispatch, outputSchema, currentOutputNode);
+    if (targetSchema) {
+      return convertToBreadcrumbItems(dispatch, targetSchema, currentTargetNode);
     }
 
     return [];
-  }, [dispatch, outputSchema, currentOutputNode]);
+  }, [dispatch, targetSchema, currentTargetNode]);
 
   return breadcrumbItems.length < 1 ? (
     // Breadcrumb doesn't display when empty, this is a breadcrumb space placeholder
-    <div style={{ height: '40px', padding: '4px 8px' }}></div>
+    <div style={{ ...baseBreadcrumbStyles }}></div>
   ) : (
     <div
       style={{
+        ...baseBreadcrumbStyles,
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '4px 8px',
-        height: '40px',
       }}
     >
       <Breadcrumb
@@ -54,7 +61,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
         onReduceData={() => undefined}
         items={breadcrumbItems}
         maxDisplayedItems={maxBreadcrumbItems}
-        overflowIndex={currentOutputNode ? overflowIndex : 0}
+        overflowIndex={currentTargetNode ? overflowIndex : 0}
       />
       <Button
         appearance="transparent"
@@ -78,7 +85,7 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
     text: schema.name,
     // TODO (14748905): Click root to view map overview, not top node
     onClick: () => {
-      dispatch(setCurrentOutputNode({ schemaNode: schema.schemaTreeRoot, resetSelectedInputNodes: true }));
+      dispatch(setCurrentTargetNode({ schemaNode: schema.schemaTreeRoot, resetSelectedSourceNodes: true }));
     },
   };
 
@@ -91,7 +98,7 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
         text: pathItem.name,
         onClick: () => {
           const destinationNode = findChildNode(schema.schemaTreeRoot, [...currentNode.pathToRoot]);
-          dispatch(setCurrentOutputNode({ schemaNode: destinationNode, resetSelectedInputNodes: true }));
+          dispatch(setCurrentTargetNode({ schemaNode: destinationNode, resetSelectedSourceNodes: true }));
         },
       });
     });

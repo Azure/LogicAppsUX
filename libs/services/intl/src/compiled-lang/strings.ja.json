@@ -269,12 +269,6 @@
       "value": "必須。XML に変換する値。"
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "すべてのバージョンを表示"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -346,6 +340,12 @@
       "value": "詳細情報"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "構成後の各実行では、少なくとも 1 つの状態が確認されている必要があります"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -374,6 +374,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "マップに使用するターゲット スキーマをアップロードまたは選択します。"
     }
   ],
   "1zgFh1": [
@@ -508,6 +514,12 @@
       "value": "(UTC+04:00) トビリシ"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "トリガー"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -532,16 +544,10 @@
       "value": "(UTC+06:00) ダッカ"
     }
   ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "マップに使用する出力スキーマをアップロードまたは選択します。"
-    }
-  ],
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "必要なパラメーター "
     },
     {
       "type": 1,
@@ -549,7 +555,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " が設定されていないか、無効です"
     }
   ],
   "3afjx+": [
@@ -573,7 +579,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "JSON 形式が無効です。開始 "
     },
     {
       "type": 1,
@@ -581,7 +587,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " または終了 "
     },
     {
       "type": 1,
@@ -589,7 +595,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " がありません。"
     }
   ],
   "3kI7xF": [
@@ -712,16 +718,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "入力スキーマが置き換えられ、以前の変更に戻ることはできなくなります。入力スキーマの変更を続行しますか?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "必須。評価する XPath 式。"
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "ソース スキーマの選択"
     }
   ],
   "5SAQOb": [
@@ -740,6 +746,12 @@
     {
       "type": 0,
       "value": "オブジェクト、アレイ、または文字列が空の場合は true を返します"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "ソース スキーマの追加"
     }
   ],
   "5cPiWA": [
@@ -776,6 +788,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) ユークラ"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "ターゲット スキーマの選択"
     }
   ],
   "6XR3FS": [
@@ -841,7 +859,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "この操作のパラメーター \""
     },
     {
       "type": 1,
@@ -849,13 +867,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" が見つかりません"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "必須。取得する部分文字列が含まれる文字列。"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "アクションの追加"
     }
   ],
   "7aJqIH": [
@@ -915,7 +939,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "API の実行でエラーが発生しました - "
     },
     {
       "type": 1,
@@ -944,12 +968,6 @@
     {
       "type": 0,
       "value": "土曜日"
-    }
-  ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "出力スキーマの追加"
     }
   ],
   "8L+oIz": [
@@ -985,7 +1003,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "サポートされていないトークンの種類: "
     },
     {
       "type": 1,
@@ -1002,12 +1020,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) ノーフォーク島"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "入力スキーマ"
     }
   ],
   "8ubEPi": [
@@ -1094,12 +1106,6 @@
       "value": "2 つの数値を加算した結果を返します"
     }
   ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "出力スキーマの選択"
-    }
-  ],
   "9pdXmX": [
     {
       "type": 0,
@@ -1182,6 +1188,12 @@
     {
       "type": 0,
       "value": "必須。base64 表現にエンコードする文字列。"
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "ターゲット スキーマが置き換えられ、以前の変更に戻ることはできなくなります。ターゲット スキーマの変更を続行しますか?"
     }
   ],
   "B/JzwK": [
@@ -1312,7 +1324,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "出力"
     }
   ],
   "CsPY74": [
@@ -1367,6 +1379,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) アリューシャン諸島"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "トリガー条件を空にすることはできません"
     }
   ],
   "DuXV2M": [
@@ -1606,6 +1624,12 @@
       "value": "必須。Within collection 内で検索するオブジェクト。"
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "ソース スキーマ"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1616,6 +1640,12 @@
     {
       "type": 0,
       "value": "パラメーターが false の場合は true を返します"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "マップに使用するソース スキーマをアップロードまたは選択します。"
     }
   ],
   "Gi72X5": [
@@ -1675,7 +1705,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "詳細な診断情報: x-ms-client-request-id は {clientRequestId} です。"
     }
   ],
   "HQ8/tk": [
@@ -1744,16 +1774,10 @@
       "value": "参照に戻る"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "入力スキーマの選択"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "詳細オプション"
     }
   ],
   "Ip7Iax": [
@@ -1778,6 +1802,20 @@
     {
       "type": 0,
       "value": "インバリアント カルチャの大文字小文字の規則を使用して文字列を小文字に変換します"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "無効な操作です。アイテムの数: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "。"
     }
   ],
   "JErLDT": [
@@ -1862,12 +1900,6 @@
     {
       "type": 0,
       "value": "文字列から文字のサブセットを返します"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "出力スキーマ"
     }
   ],
   "KX1poC": [
@@ -2040,7 +2072,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "コード ビュー"
     }
   ],
   "M48CGd": [
@@ -2113,6 +2145,12 @@
       "value": "現在のタイムスタンプを文字列として返します"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "アクション"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2155,10 +2193,22 @@
       "value": "(UTC+03:00) ミンスク"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "式"
+      "value": "操作パスの入力値が無効です。パスの値 - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " パス テンプレート - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2245,6 +2295,12 @@
       "value": "接続名"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "この関数は入力を必要としません。"
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2255,6 +2311,12 @@
     {
       "type": 0,
       "value": "コメント"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "ドロップダウンのスキーマを選択する"
     }
   ],
   "OVvieE": [
@@ -2320,7 +2382,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "既定値"
     }
   ],
   "P4rEwD": [
@@ -2332,7 +2394,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "入力"
     }
   ],
   "P8ZBF9": [
@@ -2357,6 +2419,12 @@
     {
       "type": 0,
       "value": "必須。Summand 1 に加算する数値。"
+    }
+  ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "ソース スキーマ ノード"
     }
   ],
   "PP63jY": [
@@ -2441,6 +2509,12 @@
     {
       "type": 0,
       "value": "破棄"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "ソース スキーマの選択"
     }
   ],
   "QEp3C8": [
@@ -2716,6 +2790,12 @@
       "value": "文字列のタイムスタンプの月の開始を返します"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "ページング数が無効です"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -2818,6 +2898,16 @@
       "value": "セキュリティ構成のため、コンテンツは表示されません。"
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (ファイル名)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2846,6 +2936,12 @@
     {
       "type": 0,
       "value": "有効な JSON を入力してください。"
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "アプリ内"
     }
   ],
   "VE3cxq": [
@@ -2902,6 +2998,12 @@
       "value": "実行履歴"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "トリガーによって、アプリに実行開始のタイミングを通知します。各ワークフローには少なくとも 1 つのトリガーが必要です。"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -2950,10 +3052,22 @@
       "value": "有効な辞書を入力してください"
     }
   ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "アクションによって、データに対する操作を実行したり、実行するためのシステム間での通信を行ったりします。"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
       "value": "必須。アレイ内の最初の整数。"
+    }
+  ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "ターゲット スキーマの選択"
     }
   ],
   "WUe3DY": [
@@ -2966,6 +3080,12 @@
     {
       "type": 0,
       "value": "2 つの数値を乗算した結果を返します"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "マネージド ID がロジック アプリで構成されていません。"
     }
   ],
   "Wy/bhW": [
@@ -2998,12 +3118,6 @@
       "value": " 時間"
     }
   ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "出力スキーマの選択"
-    }
-  ],
   "XCunbR": [
     {
       "type": 0,
@@ -3031,7 +3145,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "サポートされていないトークンの種類: "
     },
     {
       "type": 1,
@@ -3132,6 +3246,12 @@
     {
       "type": 0,
       "value": "詳細情報"
+    }
+  ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "式の型 {type} が無効です。"
     }
   ],
   "Y9kBz5": [
@@ -3258,10 +3378,10 @@
       "value": "(UTC+07:00) トムスク"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "出力スキーマが置き換えられ、以前の変更に戻ることはできなくなります。出力スキーマの変更を続行しますか?"
+      "value": "パラメーターでサポートされていない 'in' 値: {value}"
     }
   ],
   "a64zhX": [
@@ -3333,7 +3453,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "サポートされていないトークンの種類: "
     },
     {
       "type": 1,
@@ -3395,7 +3515,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "出力をテストするためのパラメーターを指定します。"
     }
   ],
   "bzF/qn": [
@@ -3636,10 +3756,10 @@
       "value": "必須。値を求める対象の変数の名前。"
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "出力スキーマ ノード"
+      "value": "ターゲット スキーマ"
     }
   ],
   "eRvGw3": [
@@ -3660,22 +3780,16 @@
       "value": "必須。Dividend を除算する数値。"
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "組み込み"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "必須。パラメーター 1 で部分文字列の開始位置を示すインデックス。"
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "ドロップダウンのスキーマを選択する"
+      "value": "共有済み"
     }
   ],
   "esOQ5p": [
@@ -3693,7 +3807,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "サポートされていないプログラミング言語です。"
     }
   ],
   "f/lWTW": [
@@ -3712,6 +3826,18 @@
     {
       "type": 0,
       "value": "1 番目の引数が 2 番目の引数以上の場合は true を返します"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "接続用の ACL の作成に失敗しました。接続を削除しています。"
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "ページング数が最大値を超えています"
     }
   ],
   "faSDuD": [
@@ -3765,7 +3891,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "テストの実行"
     }
   ],
   "gCXOd5": [
@@ -3901,6 +4027,24 @@
       "value": "Alt または Option キーを押しながらクリックして {displayName} をダウンロードします"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "操作パス値が、セグメントのテンプレートと一致しません。パス "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": "、テンプレート "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -3911,6 +4055,12 @@
     {
       "type": 0,
       "value": "対象ユーザー"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "ソース スキーマが置き換えられ、以前の変更に戻ることはできなくなります。ソース スキーマの変更を続行しますか?"
     }
   ],
   "i/SguY": [
@@ -4147,12 +4297,6 @@
     {
       "type": 0,
       "value": "はい"
-    }
-  ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "入力スキーマの追加"
     }
   ],
   "kDsud+": [
@@ -4407,6 +4551,12 @@
       "value": "パスワードをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "関数"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4452,19 +4602,13 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "リセット"
     }
   ],
   "nTA155": [
     {
       "type": 0,
       "value": "必須。削除するプロパティの名前。"
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4667,6 +4811,12 @@
       "value": "指定された XPath 式から XML ノード、ノードセット、または値を JSON として返します"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "トリガーの追加"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4677,12 +4827,6 @@
     {
       "type": 0,
       "value": "パラメーターを文字列に変換します"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "入力スキーマの選択"
     }
   ],
   "q87X20": [
@@ -4736,7 +4880,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "エラー コード: {errorCode}、メッセージ: {message}。"
     }
   ],
   "qUWBUX": [
@@ -4940,12 +5084,6 @@
       "value": "新しいパラメーター"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "入力スキーマ ノード"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -4956,12 +5094,6 @@
     {
       "type": 0,
       "value": "必須。変換先のタイム ゾーンのタイム ゾーン名を含む文字列です。詳しくは、https://msdn.microsoft.com/ja-jp/library/gg154758.aspx をご覧ください。"
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "マップに使用する入力スキーマをアップロードまたは選択します。"
     }
   ],
   "tE7Zam": [
@@ -5162,6 +5294,12 @@
       "value": "グローバルに一意の文字列 (GUID) を生成します"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "各アクションは、構成後に 1 回以上の実行を必要とします"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5220,6 +5358,12 @@
     {
       "type": 0,
       "value": "がタイムアウトしました"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "API 接続を作成して使用するには、このロジック アプリ上で構成したマネージド ID が必要です。"
     }
   ],
   "vr70Gn": [
@@ -5439,7 +5583,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "解決できない関数式が値に含まれています。定数値のみがサポートされています"
     }
   ],
   "yBrsFJ": [
@@ -5478,10 +5622,16 @@
       "value": "日付と時刻関数"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "ターゲット スキーマの追加"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "フィールドの追加"
     }
   ],
   "yxsn7s": [
@@ -5514,12 +5664,6 @@
       "value": "これにより、子ステップもすべて削除されます。"
     }
   ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "This expression doesn't require any input."
-    }
-  ],
   "zBMVKg": [
     {
       "type": 0,
@@ -5548,6 +5692,12 @@
     {
       "type": 0,
       "value": "カスタム値のクリア"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "ターゲット スキーマ ノード"
     }
   ],
   "zbtUQ/": [

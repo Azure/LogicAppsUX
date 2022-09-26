@@ -3,6 +3,7 @@
 .msla-setting-token-editor-container {
   width: 100%;
   border-radius: 2px;
+  position: relative;
 
   .editor-input {
     outline: 1px solid @panel-mode-panel-border-color;
@@ -13,7 +14,6 @@
     line-height: 30px;
     caret-color: #444;
     padding-inline-start: 5px;
-    position: relative;
     p {
       margin: 0;
     }
@@ -23,7 +23,7 @@
     overflow: hidden;
     position: absolute;
     text-overflow: ellipsis;
-    margin-top: -28px;
+    margin-top: -26px;
     margin-left: 5px;
     font-size: 15px;
     user-select: none;
@@ -192,6 +192,11 @@
       margin-right: 36px;
     }
   }
+
+  .msla-setting-section-message-bar {
+    padding-top: 12px;
+    padding-bottom: 2px;
+  }
 }
 
 .msla-card-section-description {
@@ -209,10 +214,15 @@
   }
 }
 
+.msla-trigger-condition-expression-add {
+  margin-top: -4px;
+}
+
 .msla-setting-section-expression-field {
   display: flex;
   flex-wrap: wrap;
   margin-left: 48px;
+  margin-bottom: 5px;
 
   .msla-setting-section-row-label {
     display: flex;

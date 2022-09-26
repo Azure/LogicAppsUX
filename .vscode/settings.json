@@ -1,4 +1,5 @@
 {
   "typescript.tsdk": "node_modules\\typescript\\lib",
-  "cSpell.words": ["fluentui"]
+  "cSpell.words": ["fluentui"],
+  "eslint.validate": ["json"]
 }

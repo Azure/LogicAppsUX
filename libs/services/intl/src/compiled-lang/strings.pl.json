@@ -285,12 +285,6 @@
       "value": "Parametr wymagany. Wartość do przekonwertowania na dane XML."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Wyświetlanie wszystkich wersji"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -411,6 +405,12 @@
       "value": "Dowiedz się więcej"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Każdy przebieg po konfiguracji musi mieć sprawdzony co najmniej jeden stan."
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -439,6 +439,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Przekaż lub wybierz schemat docelowy, który ma być używany dla mapy."
     }
   ],
   "1zgFh1": [
@@ -573,6 +579,12 @@
       "value": "(UTC+04:00) Tibilisi"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Wyzwalacze"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -597,16 +609,10 @@
       "value": "(UTC+06:00) Dakka"
     }
   ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Przekaż lub wybierz schemat danych wyjściowych, który ma być używany dla mapy."
-    }
-  ],
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Wymagane parametry "
     },
     {
       "type": 1,
@@ -614,7 +620,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " nie są ustawione lub są nieprawidłowe"
     }
   ],
   "3afjx+": [
@@ -638,7 +644,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Nieprawidłowy format JSON. Brak początku "
     },
     {
       "type": 1,
@@ -646,7 +652,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " lub zakończenia "
     },
     {
       "type": 1,
@@ -777,16 +783,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "Schemat wejściowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat wejściowy?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Parametr wymagany. Wyrażenie XPath do wyznaczenia wartości."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Wybierz schemat źródłowy"
     }
   ],
   "5SAQOb": [
@@ -805,6 +811,12 @@
     {
       "type": 0,
       "value": "Zwraca wartość true, jeśli obiekt, tablica lub ciąg jest pusty"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Dodaj schemat źródłowy"
     }
   ],
   "5cPiWA": [
@@ -841,6 +853,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Wybierz schemat docelowy"
     }
   ],
   "6XR3FS": [
@@ -906,7 +924,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Nie można odnaleźć parametru „"
     },
     {
       "type": 1,
@@ -914,13 +932,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "” dla tej operacji"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Parametr wymagany. Ciąg, z którego został pobrany podciąg."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Dodaj akcję"
     }
   ],
   "7aJqIH": [
@@ -996,7 +1020,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Błąd podczas wykonywania interfejsu API — "
     },
     {
       "type": 1,
@@ -1025,12 +1049,6 @@
     {
       "type": 0,
       "value": "Sobota"
-    }
-  ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Dodaj schemat danych wyjściowych"
     }
   ],
   "8L+oIz": [
@@ -1066,7 +1084,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nieobsługiowany typ tokenu: "
     },
     {
       "type": 1,
@@ -1083,12 +1101,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Norfolk"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Schemat wejściowy"
     }
   ],
   "8ubEPi": [
@@ -1173,12 +1185,6 @@
     {
       "type": 0,
       "value": "Zwraca wynik dodawania dwóch liczb"
-    }
-  ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Wybierz schemat danych wyjściowych"
     }
   ],
   "9pdXmX": [
@@ -1279,6 +1285,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg do zakodowania do reprezentacji base64."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "Schemat docelowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat docelowy?"
     }
   ],
   "B/JzwK": [
@@ -1442,7 +1454,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Dane wyjściowe"
     }
   ],
   "CsPY74": [
@@ -1497,6 +1509,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Aleuty"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Warunek wyzwalacza nie może być pusty"
     }
   ],
   "DuXV2M": [
@@ -1777,6 +1795,12 @@
       "value": "Parametr wymagany. Obiekt do wyszukiwania wewnątrz kolekcji typu W zakresie."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Schemat źródłowy"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1787,6 +1811,12 @@
     {
       "type": 0,
       "value": "Zwraca wartość true, jeśli parametry mają wartość false"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Przekaż lub wybierz schemat źródłowy, który ma być używany dla mapy."
     }
   ],
   "Gi72X5": [
@@ -1846,7 +1876,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Więcej informacji diagnostycznych: x-ms-client-request-id to „"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "HQ8/tk": [
@@ -1915,16 +1953,10 @@
       "value": "Powrót do przeglądania"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Wybierz schemat danych wejściowych"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Opcje zaawansowane"
     }
   ],
   "Ip7Iax": [
@@ -1949,6 +1981,20 @@
     {
       "type": 0,
       "value": "Konwertuje ciąg na małe litery, używając reguł stosowania wielkości liter kultury niezmiennej"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowa operacja. Liczba elementów: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -2033,12 +2079,6 @@
     {
       "type": 0,
       "value": "Zwraca podciąg znaków z ciągu"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Schemat wyjściowy"
     }
   ],
   "KX1poC": [
@@ -2268,7 +2308,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Widok kodu"
     }
   ],
   "M48CGd": [
@@ -2341,6 +2381,12 @@
       "value": "Zwraca bieżącą sygnaturę czasową jako ciąg"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Akcje"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2383,10 +2429,22 @@
       "value": "(UTC+03:00) Mińsk"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "Wyrażenie"
+      "value": "Nieprawidłowa wartość wejściowa ścieżki operacji. Wartość ścieżki — "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": "Szablon ścieżki — "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2489,6 +2547,12 @@
       "value": "Nazwa połączenia"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Ta funkcja nie wymaga żadnych danych wejściowych."
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2499,6 +2563,12 @@
     {
       "type": 0,
       "value": "Komentarz"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Wybierz schemat z listy rozwijanej"
     }
   ],
   "OVvieE": [
@@ -2564,7 +2634,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Wartość domyślna"
     }
   ],
   "P4rEwD": [
@@ -2576,7 +2646,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Dane wejściowe"
     }
   ],
   "P8ZBF9": [
@@ -2601,6 +2671,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba dodawana do składnika 1."
+    }
+  ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Węzeł schematu źródłowego"
     }
   ],
   "PP63jY": [
@@ -2685,6 +2761,12 @@
     {
       "type": 0,
       "value": "Odrzuć"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Wybierz schemat źródłowy"
     }
   ],
   "QEp3C8": [
@@ -2993,6 +3075,12 @@
       "value": "Zwraca początek miesiąca z sygnatury czasowej przekazanego ciągu"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowa liczba stronicowania"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -3095,6 +3183,16 @@
       "value": "Nie pokazano zawartości z powodu konfiguracji zabezpieczeń."
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (nazwa pliku)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -3123,6 +3221,12 @@
     {
       "type": 0,
       "value": "Wprowadź prawidłowy kod JSON."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3179,6 +3283,12 @@
       "value": "Historia uruchamiania"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Wyzwalacze informują aplikację, kiedy zacząć działać. Każdy przepływ pracy wymaga co najmniej jednego wyzwalacza."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3227,10 +3337,22 @@
       "value": "Wprowadź prawidłowy słownik"
     }
   ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Akcje wykonują operacje na danych lub komunikują się między systemami w celu wykonania."
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
       "value": "Wymagane. Pierwsza liczba całkowita w tablicy."
+    }
+  ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Wybierz schemat docelowy"
     }
   ],
   "WUe3DY": [
@@ -3243,6 +3365,12 @@
     {
       "type": 0,
       "value": "Zwraca wynik mnożenia dwóch liczb"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Tożsamość zarządzana nie jest skonfigurowana w aplikacji logiki."
     }
   ],
   "Wy/bhW": [
@@ -3275,12 +3403,6 @@
       "value": " godz."
     }
   ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Wybierz schemat danych wyjściowych"
-    }
-  ],
   "XCunbR": [
     {
       "type": 0,
@@ -3308,7 +3430,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nieobsługiwany typ tokenu: "
     },
     {
       "type": 1,
@@ -3409,6 +3531,20 @@
     {
       "type": 0,
       "value": "Więcej informacji"
+    }
+  ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "Nieprawidłowy typ wyrażenia „"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "Y9kBz5": [
@@ -3535,10 +3671,18 @@
       "value": "(UTC+07:00) Tomsk"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "Schemat wyjściowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat wyjściowy?"
+      "value": "Nieobsługiwana wartość „in”: „"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "” w parametrze"
     }
   ],
   "a64zhX": [
@@ -3610,7 +3754,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nieobsługiowany typ tokenu: "
     },
     {
       "type": 1,
@@ -3672,7 +3816,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Podaj parametry do testowania danych wyjściowych."
     }
   ],
   "bzF/qn": [
@@ -3917,10 +4061,10 @@
       "value": "Wymagane. Nazwa zmiennej z żądanymi wartościami."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Węzeł schematu wyjściowego"
+      "value": "Schemat docelowy"
     }
   ],
   "eRvGw3": [
@@ -3941,22 +4085,16 @@
       "value": "Wymagane. Liczba, przez którą dzielona jest dzielna."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Wbudowany"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Parametr wymagany. Indeks, w którym podciąg rozpoczyna się w parametrze 1."
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "Wybierz schemat z listy rozwijanej"
+      "value": "Udostępniono"
     }
   ],
   "esOQ5p": [
@@ -3974,7 +4112,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Nieobsługiwany język programowania."
     }
   ],
   "f/lWTW": [
@@ -3993,6 +4131,18 @@
     {
       "type": 0,
       "value": "Zwraca wartość true, jeśli pierwszy argument jest większy od drugiego lub jemu równy"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Liczba stronicowania przekracza wartość maksymalną"
     }
   ],
   "faSDuD": [
@@ -4046,7 +4196,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Uruchom test"
     }
   ],
   "gCXOd5": [
@@ -4231,6 +4381,24 @@
       "value": "”"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "Wartość ścieżki operacji jest niezgodna z szablonem segmentu. Ścieżka "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", szablon "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -4241,6 +4409,12 @@
     {
       "type": 0,
       "value": "Odbiorcy"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "Schemat źródłowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat źródłowy?"
     }
   ],
   "i/SguY": [
@@ -4499,12 +4673,6 @@
       "value": "Tak"
     }
   ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Dodaj schemat danych wejściowych"
-    }
-  ],
   "kDsud+": [
     {
       "type": 0,
@@ -4757,6 +4925,12 @@
       "value": "Wprowadź hasło w postaci zwykłego tekstu lub użyj parametru secure"
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Funkcja"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4802,19 +4976,13 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Resetuj"
     }
   ],
   "nTA155": [
     {
       "type": 0,
       "value": "Wymagane. Nazwa właściwości do usunięcia."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5017,6 +5185,12 @@
       "value": "Zwraca węzeł, zestaw węzłów lub wartość XML jako kod JSON na podstawie podanego wyrażenia XPath"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Dodaj wyzwalacz"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -5027,12 +5201,6 @@
     {
       "type": 0,
       "value": "Konwertuj parametr na ciąg"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Wybierz schemat danych wejściowych"
     }
   ],
   "q87X20": [
@@ -5086,7 +5254,23 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Kod błędu: „"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "”, komunikat: „"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "qUWBUX": [
@@ -5323,12 +5507,6 @@
       "value": "Nowy parametr"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Węzeł schematu wejściowego"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5339,12 +5517,6 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg zawierający nazwę docelowej strefy czasowej. Szczegółowe informacje można znaleźć na stronie https://msdn.microsoft.com/pl-pl/library/gg154758.aspx."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Przekaż lub wybierz schemat danych wejściowych, który ma być używany dla mapy."
     }
   ],
   "tE7Zam": [
@@ -5545,6 +5717,12 @@
       "value": "Generuje globalnie unikatowy ciąg (identyfikator GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Każda akcja musi mieć co najmniej jeden przebieg po konfiguracji"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5603,6 +5781,12 @@
     {
       "type": 0,
       "value": "upłynął limit czasu"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Aby utworzyć i użyć połączenia interfejsu API, musisz mieć skonfigurowaną tożsamość zarządzaną w tej aplikacji logiki."
     }
   ],
   "vr70Gn": [
@@ -5826,7 +6010,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Wartość zawiera wyrażenia funkcji, których nie można rozpoznać. Obsługiwane są tylko wartości stałe"
     }
   ],
   "yBrsFJ": [
@@ -5865,10 +6049,16 @@
       "value": "Funkcje daty i godziny"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Dodaj schemat docelowy"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Dodaj pole"
     }
   ],
   "yxsn7s": [
@@ -5901,12 +6091,6 @@
       "value": "Spowoduje to również usunięcie wszystkich kroków podrzędnych."
     }
   ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "This expression doesn't require any input."
-    }
-  ],
   "zBMVKg": [
     {
       "type": 0,
@@ -5935,6 +6119,12 @@
     {
       "type": 0,
       "value": "Wyczyść wartość niestandardową"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Węzeł schematu docelowego"
     }
   ],
   "zbtUQ/": [

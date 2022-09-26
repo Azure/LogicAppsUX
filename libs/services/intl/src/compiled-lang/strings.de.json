@@ -285,12 +285,6 @@
       "value": "Erforderlich. Der Wert, der in XML konvertiert werden soll."
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "Alle Versionen anzeigen"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -373,6 +367,12 @@
       "value": "Weitere Informationen"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Für jede Ausführung nach der Konfiguration muss mindestens ein Status überprüft werden."
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -401,6 +401,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "Laden Sie ein Zielschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
   "1zgFh1": [
@@ -535,6 +541,12 @@
       "value": "(UTC+04:00) Tiflis"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -559,16 +571,10 @@
       "value": "(UTC+06:00) Dhaka"
     }
   ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "Laden Sie ein Ausgabeschema hoch, das für Ihre Zuordnung verwendet werden soll, oder wählen Sie eines aus."
-    }
-  ],
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "Erforderliche Parameter "
     },
     {
       "type": 1,
@@ -576,7 +582,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " nicht festgelegt oder ungültig"
     }
   ],
   "3afjx+": [
@@ -600,7 +606,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "Ungültiges JSON-Format. Fehlender Anfang "
     },
     {
       "type": 1,
@@ -608,7 +614,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " oder Ende "
     },
     {
       "type": 1,
@@ -739,16 +745,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "Das Eingabeschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Eingabeschemas fortfahren?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "Erforderlich. Der XPath-Ausdruck, der ausgewertet werden soll."
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "Quellschema auswählen"
     }
   ],
   "5SAQOb": [
@@ -767,6 +773,12 @@
     {
       "type": 0,
       "value": "Gibt TRUE zurück, wenn ein Objekt, ein Array oder eine Zeichenfolge leer ist."
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "Quellschema hinzufügen"
     }
   ],
   "5cPiWA": [
@@ -803,6 +815,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "Zielschema auswählen"
     }
   ],
   "6XR3FS": [
@@ -868,7 +886,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "Der Parameter \""
     },
     {
       "type": 1,
@@ -876,13 +894,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\" wurde für diesen Vorgang nicht gefunden"
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, aus der die Teilzeichenfolge entnommen wird."
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Aktion hinzufügen"
     }
   ],
   "7aJqIH": [
@@ -958,7 +982,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "Fehler beim Ausführen der API : "
     },
     {
       "type": 1,
@@ -987,12 +1011,6 @@
     {
       "type": 0,
       "value": "Samstag"
-    }
-  ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "Ausgabeschema hinzufügen"
     }
   ],
   "8L+oIz": [
@@ -1028,7 +1046,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nicht unterstützter Tokentyp: "
     },
     {
       "type": 1,
@@ -1045,12 +1063,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) Norfolkinsel"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "Eingabeschema"
     }
   ],
   "8ubEPi": [
@@ -1135,12 +1147,6 @@
     {
       "type": 0,
       "value": "Gibt das Ergebnis aus der Addition der beiden Zahlen zurück."
-    }
-  ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "Ausgabeschema auswählen"
     }
   ],
   "9pdXmX": [
@@ -1241,6 +1247,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, die als Base64-Darstellung codiert werden soll."
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "Das Zielschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Zielschemas fortfahren?"
     }
   ],
   "B/JzwK": [
@@ -1382,7 +1394,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "Ausgabe"
     }
   ],
   "CsPY74": [
@@ -1437,6 +1449,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Aleuten-Inseln"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Die Triggerbedingung darf nicht leer sein"
     }
   ],
   "DuXV2M": [
@@ -1695,6 +1713,12 @@
       "value": "Erforderlich. Das Objekt, das in der Within-Sammlung gesucht werden soll."
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "Quellschema"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1705,6 +1729,12 @@
     {
       "type": 0,
       "value": "Gibt TRUE zurück, wenn die Parameter FALSE sind."
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "Laden Sie ein Quellschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
   "Gi72X5": [
@@ -1764,7 +1794,15 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "Weitere Diagnoseinformationen: x-ms-client-request-id ist \""
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "HQ8/tk": [
@@ -1833,16 +1871,10 @@
       "value": "Zurück zum Browsen"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "Eingabeschema auswählen"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "Erweiterte Optionen"
     }
   ],
   "Ip7Iax": [
@@ -1867,6 +1899,20 @@
     {
       "type": 0,
       "value": "Konvertiert eine Zeichenfolge anhand der Groß-/Kleinschreibregeln der invarianten Kultur in Kleinbuchstaben."
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Ungültiger Vorgang. Anzahl der Elemente: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "JErLDT": [
@@ -1951,12 +1997,6 @@
     {
       "type": 0,
       "value": "Gibt eine Teilmenge von Zeichen aus einer Zeichenfolge zurück."
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "Ausgabeschema"
     }
   ],
   "KX1poC": [
@@ -2164,7 +2204,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "Codeansicht"
     }
   ],
   "M48CGd": [
@@ -2237,6 +2277,12 @@
       "value": "Gibt den aktuellen Zeitstempel als Zeichenfolge zurück."
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Aktionen"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2279,10 +2325,22 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "Ausdruck"
+      "value": "Ungültiger Eingabewert für den Vorgangspfad. Pfadwert - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " Pfadvorlage - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2385,6 +2443,12 @@
       "value": "Verbindungsname"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Diese Funktion erfordert keine Eingabe."
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2395,6 +2459,12 @@
     {
       "type": 0,
       "value": "Kommentar"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "Wählen Sie das Schema für die Dropdownliste aus."
     }
   ],
   "OVvieE": [
@@ -2460,7 +2530,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "Standardwert"
     }
   ],
   "P4rEwD": [
@@ -2472,7 +2542,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "Eingabe"
     }
   ],
   "P8ZBF9": [
@@ -2497,6 +2567,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zahl, die mit Summand 1 addiert werden soll."
+    }
+  ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "Quellschemaknoten"
     }
   ],
   "PP63jY": [
@@ -2581,6 +2657,12 @@
     {
       "type": 0,
       "value": "Verwerfen"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "Quellschema auswählen"
     }
   ],
   "QEp3C8": [
@@ -2871,6 +2953,12 @@
       "value": "Gibt den Anfang des Monats eines Zeichenfolgen-Zeitstempels zurück."
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "Auslagerungsanzahl ist ungültig"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -2973,6 +3061,16 @@
       "value": "Der Inhalt wird aufgrund der Sicherheitskonfiguration nicht angezeigt."
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (Dateiname)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -3001,6 +3099,12 @@
     {
       "type": 0,
       "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -3057,6 +3161,12 @@
       "value": "Ausführungsverlauf"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Trigger (Auslöser) teilen Ihrer App mit, wann sie gestartet werden soll. Jeder Workflow benötigt mindestens einen Trigger."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -3105,10 +3215,22 @@
       "value": "Bitte geben Sie ein gültiges Wörterbuch ein"
     }
   ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "Aktionen führen Vorgänge für Daten aus oder kommunizieren zwischen auszuführenden Systemen."
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
       "value": "Erforderlich. Die erste ganze Zahl im Array."
+    }
+  ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "Zielschema auswählen"
     }
   ],
   "WUe3DY": [
@@ -3121,6 +3243,12 @@
     {
       "type": 0,
       "value": "Gibt das Ergebnis aus der Multiplikation der beiden Zahlen zurück."
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Eine verwaltete Identität ist in der Logik-App nicht konfiguriert."
     }
   ],
   "Wy/bhW": [
@@ -3153,12 +3281,6 @@
       "value": " Stunden"
     }
   ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "Ausgabeschema auswählen"
-    }
-  ],
   "XCunbR": [
     {
       "type": 0,
@@ -3186,7 +3308,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nicht unterstützter Tokentyp: "
     },
     {
       "type": 1,
@@ -3287,6 +3409,20 @@
     {
       "type": 0,
       "value": "Weitere Informationen"
+    }
+  ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "Ungültiger Ausdruckstyp \""
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "Y9kBz5": [
@@ -3413,10 +3549,10 @@
       "value": "(UTC+07:00) Tomsk"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "Das Ausgabeschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Ausgabeschemas fortfahren?"
+      "value": "Nicht unterstützter \"in\"-Wert: {value} im Parameter"
     }
   ],
   "a64zhX": [
@@ -3488,7 +3624,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "Nicht unterstützter Tokentyp: "
     },
     {
       "type": 1,
@@ -3554,7 +3690,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "Geben Sie Parameter zum Testen der Ausgabe an."
     }
   ],
   "bzF/qn": [
@@ -3799,10 +3935,10 @@
       "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "Ausgabeschemaknoten"
+      "value": "Zielschema"
     }
   ],
   "eRvGw3": [
@@ -3823,22 +3959,16 @@
       "value": "Erforderlich. Die Zahl, durch die der Dividend zu teilen ist."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Integriert"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Erforderlich. Der Index, bei dem die Teilzeichenfolge in Parameter 1 beginnt."
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "Wählen Sie das Schema für die Dropdownliste aus."
+      "value": "Freigegeben"
     }
   ],
   "esOQ5p": [
@@ -3856,7 +3986,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "Nicht unterstützte Programmiersprache."
     }
   ],
   "f/lWTW": [
@@ -3875,6 +4005,18 @@
     {
       "type": 0,
       "value": "Gibt TRUE zurück, wenn das erste Argument größer als das zweite oder gleich ist."
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "Die Auslagerungsanzahl überschreitet den Maximalwert"
     }
   ],
   "faSDuD": [
@@ -3928,7 +4070,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "Test ausführen"
     }
   ],
   "gCXOd5": [
@@ -4083,6 +4225,24 @@
       "value": "ALT/OPTION + Klicken Sie, um {displayName} herunterzuladen"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "Der Wert für den Vorgangspfad entspricht nicht der Vorlage für das Segment. Pfad "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", Vorlage "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -4093,6 +4253,12 @@
     {
       "type": 0,
       "value": "Benutzergruppe"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "Das Quellschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Quellschemas fortfahren?"
     }
   ],
   "i/SguY": [
@@ -4351,12 +4517,6 @@
       "value": "Ja"
     }
   ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "Eingabeschema hinzufügen"
-    }
-  ],
   "kDsud+": [
     {
       "type": 0,
@@ -4609,6 +4769,12 @@
       "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Funktion"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4654,19 +4820,13 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "Zurücksetzen"
     }
   ],
   "nTA155": [
     {
       "type": 0,
       "value": "Erforderlich. Der Name der zu entfernenden Eigenschaft."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4869,6 +5029,12 @@
       "value": "Gibt einen XML-Knoten, einen Knotensatz oder Wert in JSON-Schreibweise aus dem angegebenen XPath-Ausdruck zurück."
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Trigger hinzufügen"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4879,12 +5045,6 @@
     {
       "type": 0,
       "value": "Parameter in Zeichenfolge konvertieren"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "Eingabeschema auswählen"
     }
   ],
   "q87X20": [
@@ -4938,7 +5098,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "Fehlercode: {errorCode}, Meldung: {message}."
     }
   ],
   "qUWBUX": [
@@ -5153,12 +5313,6 @@
       "value": "Neuer Parameter"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "Eingabeschemaknoten"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -5169,12 +5323,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Zielzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx."
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "Laden Sie ein Eingabeschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
   "tE7Zam": [
@@ -5375,6 +5523,12 @@
       "value": "Generiert eine global eindeutige Zeichenfolge (GUID)."
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Jede Aktion muss mindestens eine Ausführung nach der Konfiguration aufweisen"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5433,6 +5587,12 @@
     {
       "type": 0,
       "value": "hat die Zeit überschritten"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Zum Erstellen und Verwenden einer API-Verbindung muss eine verwaltete Identität für diese Logik-App konfiguriert sein."
     }
   ],
   "vr70Gn": [
@@ -5656,7 +5816,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "Der Wert enthält Funktionsausdrücke, die nicht aufgelöst werden können. Es werden nur konstante Werte unterstützt"
     }
   ],
   "yBrsFJ": [
@@ -5695,10 +5855,16 @@
       "value": "Datums- und Uhrzeitfunktionen"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "Zielschema hinzufügen"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "Feld hinzufügen"
     }
   ],
   "yxsn7s": [
@@ -5731,12 +5897,6 @@
       "value": "Dadurch werden auch alle untergeordneten Schritte entfernt."
     }
   ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "This expression doesn't require any input."
-    }
-  ],
   "zBMVKg": [
     {
       "type": 0,
@@ -5765,6 +5925,12 @@
     {
       "type": 0,
       "value": "Benutzerdefinierten Wert löschen"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "Zielschemaknoten"
     }
   ],
   "zbtUQ/": [

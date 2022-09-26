@@ -269,12 +269,6 @@
       "value": "必要。轉換為 XML 的值。"
     }
   ],
-  "1ED/HW": [
-    {
-      "type": 0,
-      "value": "顯示所有版本"
-    }
-  ],
   "1Fn5n+": [
     {
       "type": 0,
@@ -346,6 +340,12 @@
       "value": "深入了解"
     }
   ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "每次在組定之後執行都必須至少檢查一個狀態"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -374,6 +374,12 @@
     {
       "type": 0,
       "value": "5"
+    }
+  ],
+  "1yiiWM": [
+    {
+      "type": 0,
+      "value": "上傳或選取要用於對應的目標結構描述。"
     }
   ],
   "1zgFh1": [
@@ -508,6 +514,12 @@
       "value": "(UTC+04:00) 第比利斯"
     }
   ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "觸發程序"
+    }
+  ],
   "3NhwIJ": [
     {
       "type": 0,
@@ -532,16 +544,10 @@
       "value": "(UTC+06:00) 達卡"
     }
   ],
-  "3X/ZDK": [
-    {
-      "type": 0,
-      "value": "上傳或選取要用於對應的輸出結構描述。"
-    }
-  ],
   "3Y8a6G": [
     {
       "type": 0,
-      "value": "Required parameters "
+      "value": "必要的參數 "
     },
     {
       "type": 1,
@@ -549,7 +555,7 @@
     },
     {
       "type": 0,
-      "value": " not set or invalid"
+      "value": " 未設定或無效"
     }
   ],
   "3afjx+": [
@@ -573,7 +579,7 @@
   "3jwMBm": [
     {
       "type": 0,
-      "value": "Invalid json format. Missing beginning "
+      "value": "不正確 json 格式。缺少 "
     },
     {
       "type": 1,
@@ -581,7 +587,7 @@
     },
     {
       "type": 0,
-      "value": " or ending "
+      "value": " 開頭或 "
     },
     {
       "type": 1,
@@ -589,7 +595,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " 結尾。"
     }
   ],
   "3kI7xF": [
@@ -712,16 +718,16 @@
       "value": "14"
     }
   ],
-  "53PSgA": [
-    {
-      "type": 0,
-      "value": "將會取代輸入結構描述，而且您將無法回復到先前的變更。您要繼續變更輸入結構描述嗎?"
-    }
-  ],
   "5J7j9k": [
     {
       "type": 0,
       "value": "必要。要評估的 XPath 運算式。"
+    }
+  ],
+  "5P8UWJ": [
+    {
+      "type": 0,
+      "value": "選取來源結構描述"
     }
   ],
   "5SAQOb": [
@@ -740,6 +746,12 @@
     {
       "type": 0,
       "value": "若物件、陣列或字串是空的，則傳回 True"
+    }
+  ],
+  "5bE93I": [
+    {
+      "type": 0,
+      "value": "新增來源結構描述"
     }
   ],
   "5cPiWA": [
@@ -776,6 +788,12 @@
     {
       "type": 0,
       "value": "(UTC+08:45) 尤克拉"
+    }
+  ],
+  "6Ld/c8": [
+    {
+      "type": 0,
+      "value": "選取目標結構描述"
     }
   ],
   "6XR3FS": [
@@ -841,7 +859,7 @@
   "7LmpNN": [
     {
       "type": 0,
-      "value": "Parameter \""
+      "value": "找不到此作業的參數 \""
     },
     {
       "type": 1,
@@ -849,13 +867,19 @@
     },
     {
       "type": 0,
-      "value": "\" cannot be found for this operation"
+      "value": "\""
     }
   ],
   "7QymrD": [
     {
       "type": 0,
       "value": "必要。取出子字串的字串。"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "新增動作"
     }
   ],
   "7aJqIH": [
@@ -915,7 +939,7 @@
   "8BoVtZ": [
     {
       "type": 0,
-      "value": "Error executing the api - "
+      "value": "執行 API 時發生錯誤 - "
     },
     {
       "type": 1,
@@ -944,12 +968,6 @@
     {
       "type": 0,
       "value": "星期六"
-    }
-  ],
-  "8JFxmV": [
-    {
-      "type": 0,
-      "value": "新增輸出結構描述"
     }
   ],
   "8L+oIz": [
@@ -985,7 +1003,7 @@
   "8baaNC": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "不支援的權杖類型: "
     },
     {
       "type": 1,
@@ -1002,12 +1020,6 @@
     {
       "type": 0,
       "value": "(UTC+11:00) 諾福克島"
-    }
-  ],
-  "8to63i": [
-    {
-      "type": 0,
-      "value": "輸入結構描述"
     }
   ],
   "8ubEPi": [
@@ -1094,12 +1106,6 @@
       "value": "傳回兩個數字相加的結果"
     }
   ],
-  "9mWdNA": [
-    {
-      "type": 0,
-      "value": "選取輸出結構描述"
-    }
-  ],
   "9pdXmX": [
     {
       "type": 0,
@@ -1182,6 +1188,12 @@
     {
       "type": 0,
       "value": "必要。要編碼成 base64 表示法的字串。"
+    }
+  ],
+  "AwwPJC": [
+    {
+      "type": 0,
+      "value": "將取代目標結構描述，而且您將無法回復到先前的變更。您要繼續變更目標結構描述嗎?"
     }
   ],
   "B/JzwK": [
@@ -1312,7 +1324,7 @@
   "Ciol6I": [
     {
       "type": 0,
-      "value": "Output"
+      "value": "輸出"
     }
   ],
   "CsPY74": [
@@ -1367,6 +1379,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) 阿留申群島"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "觸發條件不可為空白"
     }
   ],
   "DuXV2M": [
@@ -1606,6 +1624,12 @@
       "value": "必要。要在 Within 集合中尋找的物件。"
     }
   ],
+  "GWpB4z": [
+    {
+      "type": 0,
+      "value": "來源結構描述"
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1616,6 +1640,12 @@
     {
       "type": 0,
       "value": "若參數皆為 False，則傳回 True"
+    }
+  ],
+  "GdnEhu": [
+    {
+      "type": 0,
+      "value": "上傳或選取要用於對應的來源結構描述。"
     }
   ],
   "Gi72X5": [
@@ -1675,7 +1705,7 @@
   "HJIZrG": [
     {
       "type": 0,
-      "value": "More diagnostic information: x-ms-client-request-id is {clientRequestId}."
+      "value": "其他診斷資訊: x-ms-client-request-id 是 {clientRequestId}。"
     }
   ],
   "HQ8/tk": [
@@ -1744,16 +1774,10 @@
       "value": "返回以瀏覽"
     }
   ],
-  "IngtMG": [
-    {
-      "type": 0,
-      "value": "選取輸入結構描述"
-    }
-  ],
   "IooQu1": [
     {
       "type": 0,
-      "value": "Advanced options"
+      "value": "進階選項"
     }
   ],
   "Ip7Iax": [
@@ -1778,6 +1802,20 @@
     {
       "type": 0,
       "value": "使用不因文化特性而異的大小寫規則，將字串轉換為小寫字串"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "操作無效。項目數目: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "。"
     }
   ],
   "JErLDT": [
@@ -1862,12 +1900,6 @@
     {
       "type": 0,
       "value": "從字串傳回一部分的字元"
-    }
-  ],
-  "KUw9iC": [
-    {
-      "type": 0,
-      "value": "輸出結構描述"
     }
   ],
   "KX1poC": [
@@ -2040,7 +2072,7 @@
   "M0xrm+": [
     {
       "type": 0,
-      "value": "Code view"
+      "value": "程式碼檢視"
     }
   ],
   "M48CGd": [
@@ -2113,6 +2145,12 @@
       "value": "將目前的時間戳記傳回為字串"
     }
   ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "動作"
+    }
+  ],
   "Mb+Eaq": [
     {
       "type": 0,
@@ -2155,10 +2193,22 @@
       "value": "(UTC+03:00) 明斯克"
     }
   ],
-  "NlSWOG": [
+  "NnD8gF": [
     {
       "type": 0,
-      "value": "運算式"
+      "value": "不正確作業路徑輸入值。路徑值 - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " 路徑範本 - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
     }
   ],
   "No6CS+": [
@@ -2245,6 +2295,12 @@
       "value": "連線名稱"
     }
   ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "此函數不需要任何輸入。"
+    }
+  ],
   "ORVfYZ": [
     {
       "type": 0,
@@ -2255,6 +2311,12 @@
     {
       "type": 0,
       "value": "註解"
+    }
+  ],
+  "OUS2wX": [
+    {
+      "type": 0,
+      "value": "選取下拉式清單的結構描述"
     }
   ],
   "OVvieE": [
@@ -2320,7 +2382,7 @@
   "P2rzqn": [
     {
       "type": 0,
-      "value": "Default value"
+      "value": "預設值"
     }
   ],
   "P4rEwD": [
@@ -2332,7 +2394,7 @@
   "P6I90y": [
     {
       "type": 0,
-      "value": "Input"
+      "value": "輸入"
     }
   ],
   "P8ZBF9": [
@@ -2357,6 +2419,12 @@
     {
       "type": 0,
       "value": "必要。要加到被加數 1 的數字。"
+    }
+  ],
+  "PMMNKR": [
+    {
+      "type": 0,
+      "value": "來源結構描述節點"
     }
   ],
   "PP63jY": [
@@ -2441,6 +2509,12 @@
     {
       "type": 0,
       "value": "捨棄"
+    }
+  ],
+  "QBOaAu": [
+    {
+      "type": 0,
+      "value": "選取來源結構描述"
     }
   ],
   "QEp3C8": [
@@ -2716,6 +2790,12 @@
       "value": "傳回字串時間戳記的每月開始時間"
     }
   ],
+  "TPV6j/": [
+    {
+      "type": 0,
+      "value": "分頁計數無效"
+    }
+  ],
   "TUaunO": [
     {
       "type": 0,
@@ -2818,6 +2898,16 @@
       "value": "因為安全性設定的緣故，所以未顯示內容。"
     }
   ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (檔案名稱)"
+    }
+  ],
   "Ur+wph": [
     {
       "type": 0,
@@ -2846,6 +2936,12 @@
     {
       "type": 0,
       "value": "請輸入有效的 JSON。"
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In App"
     }
   ],
   "VE3cxq": [
@@ -2902,6 +2998,12 @@
       "value": "執行歷程記錄"
     }
   ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "觸發程式會告訴您的應用程式何時開始執行。每個工作流程至少需要一個觸發程式。"
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -2950,10 +3052,22 @@
       "value": "請輸入有效的字典"
     }
   ],
+  "WOOYW1": [
+    {
+      "type": 0,
+      "value": "動作會在資料上執行作業，或在系統之間進行通訊以執行。"
+    }
+  ],
   "WS9kXD": [
     {
       "type": 0,
       "value": "必要。陣列中第一個整數。"
+    }
+  ],
+  "WTTJ89": [
+    {
+      "type": 0,
+      "value": "選取目標結構描述"
     }
   ],
   "WUe3DY": [
@@ -2966,6 +3080,12 @@
     {
       "type": 0,
       "value": "傳回兩個數字相乘的結果"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "邏輯應用程式上未設定受控識別。"
     }
   ],
   "Wy/bhW": [
@@ -2998,12 +3118,6 @@
       "value": " 小時"
     }
   ],
-  "XBPhr0": [
-    {
-      "type": 0,
-      "value": "選取輸出結構描述"
-    }
-  ],
   "XCunbR": [
     {
       "type": 0,
@@ -3031,7 +3145,7 @@
   "XLUs2P": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "不支援的權杖類型: "
     },
     {
       "type": 1,
@@ -3132,6 +3246,12 @@
     {
       "type": 0,
       "value": "詳細資訊"
+    }
+  ],
+  "Y7yyKD": [
+    {
+      "type": 0,
+      "value": "無效的運算式類型 {type}。"
     }
   ],
   "Y9kBz5": [
@@ -3258,10 +3378,10 @@
       "value": "(UTC+07:00) 托木斯克"
     }
   ],
-  "a3QJzO": [
+  "Zr0yTE": [
     {
       "type": 0,
-      "value": "將取代輸出結構描述，而且您將無法回復到先前的變更。您要繼續變更輸出結構描述嗎?"
+      "value": "不支援的 'in' 值: 參數中的 {value}"
     }
   ],
   "a64zhX": [
@@ -3333,7 +3453,7 @@
   "b9P8SA": [
     {
       "type": 0,
-      "value": "Unsupported Token Type: "
+      "value": "不支援的權杖類型: "
     },
     {
       "type": 1,
@@ -3399,7 +3519,7 @@
   "bxhkTi": [
     {
       "type": 0,
-      "value": "Provide parameters to test the output."
+      "value": "提供參數以測試輸出。"
     }
   ],
   "bzF/qn": [
@@ -3644,10 +3764,10 @@
       "value": "必要。您需要的值所屬變數名稱。"
     }
   ],
-  "eIlosa": [
+  "eRoJ/H": [
     {
       "type": 0,
-      "value": "輸出結構描述節點"
+      "value": "目標結構描述"
     }
   ],
   "eRvGw3": [
@@ -3668,22 +3788,16 @@
       "value": "必要。要除以被除數的數字。"
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "內建"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "必要。參數 1 中子字串起始處的索引。"
     }
   ],
-  "er+4Cd": [
+  "epOMnV": [
     {
       "type": 0,
-      "value": "選取下拉式清單的結構描述"
+      "value": "共用"
     }
   ],
   "esOQ5p": [
@@ -3701,7 +3815,7 @@
   "exo9v7": [
     {
       "type": 0,
-      "value": "Unsupported programming language."
+      "value": "不支援的程式設計語言。"
     }
   ],
   "f/lWTW": [
@@ -3720,6 +3834,18 @@
     {
       "type": 0,
       "value": "若第一個引數大於或等於第二個引數，則傳回 True"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl creation failed for connection. Deleting the connection."
+    }
+  ],
+  "fGcSFd": [
+    {
+      "type": 0,
+      "value": "分頁計數超過最大值"
     }
   ],
   "faSDuD": [
@@ -3773,7 +3899,7 @@
   "g7my78": [
     {
       "type": 0,
-      "value": "Run test"
+      "value": "執行測試"
     }
   ],
   "gCXOd5": [
@@ -3909,6 +4035,24 @@
       "value": "Alt/Option + 按一下以下載 {displayName}"
     }
   ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "作業路徑值與區段的範本不符。路徑 - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " 範本 - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
   "hrbDu6": [
     {
       "type": 0,
@@ -3919,6 +4063,12 @@
     {
       "type": 0,
       "value": "對象"
+    }
+  ],
+  "hwngB3": [
+    {
+      "type": 0,
+      "value": "將取代來源結構描述，而且您將無法回復到先前的變更。您要繼續變更來源結構描述嗎?"
     }
   ],
   "i/SguY": [
@@ -4159,12 +4309,6 @@
     {
       "type": 0,
       "value": "是"
-    }
-  ],
-  "kBw1WQ": [
-    {
-      "type": 0,
-      "value": "新增輸入結構描述"
     }
   ],
   "kDsud+": [
@@ -4419,6 +4563,12 @@
       "value": "以純文字形式輸入密碼或使用安全參數"
     }
   ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "函數"
+    }
+  ],
   "mx2IMJ": [
     {
       "type": 0,
@@ -4464,19 +4614,13 @@
   "nSan4V": [
     {
       "type": 0,
-      "value": "Reset"
+      "value": "重設"
     }
   ],
   "nTA155": [
     {
       "type": 0,
       "value": "必要。要移除的屬性之名稱。"
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -4679,6 +4823,12 @@
       "value": "從提供的 XPath 運算式以 JSON 格式傳回 XML 節點、節點集或值"
     }
   ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "新增觸發程序"
+    }
+  ],
   "q2OCEx": [
     {
       "type": 0,
@@ -4689,12 +4839,6 @@
     {
       "type": 0,
       "value": "將參數轉換為字串"
-    }
-  ],
-  "q5SkF5": [
-    {
-      "type": 0,
-      "value": "選取輸入結構描述"
     }
   ],
   "q87X20": [
@@ -4748,7 +4892,7 @@
   "qTqSqD": [
     {
       "type": 0,
-      "value": "Error code: {errorCode}, Message: {message}."
+      "value": "錯誤碼: {errorCode}，訊息: {message}。"
     }
   ],
   "qUWBUX": [
@@ -4952,12 +5096,6 @@
       "value": "新增參數"
     }
   ],
-  "surdl/": [
-    {
-      "type": 0,
-      "value": "輸入結構描述節點"
-    }
-  ],
   "syiNc+": [
     {
       "type": 0,
@@ -4968,12 +5106,6 @@
     {
       "type": 0,
       "value": "必要。包含目的地時區之時區名稱的字串。如需詳細資料，請參閱 https://msdn.microsoft.com/en-us/library/gg154758.aspx。"
-    }
-  ],
-  "t5CdhT": [
-    {
-      "type": 0,
-      "value": "上傳或選取要用於對應的輸入結構描述。"
     }
   ],
   "tE7Zam": [
@@ -5174,6 +5306,12 @@
       "value": "產生全域唯一字串 (GUID)"
     }
   ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "每個動作在設定之後必須執行一或多個"
+    }
+  ],
   "vD2lQy": [
     {
       "type": 0,
@@ -5232,6 +5370,12 @@
     {
       "type": 0,
       "value": "已逾時"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "若要建立及使用 API 連線，您必須在此邏輯應用程式上設定受控識別。"
     }
   ],
   "vr70Gn": [
@@ -5455,7 +5599,7 @@
   "yB6PB/": [
     {
       "type": 0,
-      "value": "Value contains function expressions which cannot be resolved. Only constant values supported"
+      "value": "值包含無法解析的函數運算式。僅支援常數值"
     }
   ],
   "yBrsFJ": [
@@ -5494,10 +5638,16 @@
       "value": "日期和時間函數"
     }
   ],
+  "yrWKLF": [
+    {
+      "type": 0,
+      "value": "新增目標結構描述"
+    }
+  ],
   "ysoumb": [
     {
       "type": 0,
-      "value": "Add field"
+      "value": "新增欄位"
     }
   ],
   "yxsn7s": [
@@ -5530,12 +5680,6 @@
       "value": "這也會移除所有子步驟。"
     }
   ],
-  "zBBJuL": [
-    {
-      "type": 0,
-      "value": "This expression doesn't require any input."
-    }
-  ],
   "zBMVKg": [
     {
       "type": 0,
@@ -5564,6 +5708,12 @@
     {
       "type": 0,
       "value": "清除自訂值"
+    }
+  ],
+  "zUs2yb": [
+    {
+      "type": 0,
+      "value": "目標結構描述節點"
     }
   ],
   "zbtUQ/": [

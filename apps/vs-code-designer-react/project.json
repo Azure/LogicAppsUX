@@ -18,7 +18,7 @@
         "assets": ["apps/vs-code-designer-react/src/favicon.ico", "apps/vs-code-designer-react/src/assets"],
         "styles": ["apps/vs-code-designer-react/src/styles.less"],
         "scripts": [],
-        "webpackConfig": "@nrwl/react/plugins/webpack"
+        "webpackConfig": "custom-webpack.config.js"
       },
       "configurations": {
         "production": {
