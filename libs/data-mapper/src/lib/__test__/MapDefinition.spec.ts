@@ -2,13 +2,10 @@ import {
   forWithChildrenValueMapDefinitionMock,
   forWithIndexAndValueMapDefinitionMock,
   ifWithChildrenAndValueMapDefinitionMock,
-  missingDstSchemaNameMapDefinitionMock,
-  missingSrcSchemaNameMapDefinitionMock,
   simpleMapDefExampleConnectionsMock,
   simpleMapDefExampleMapDefinitionMock,
   simpleMockSchema,
 } from '../__mocks__';
-import { InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { Schema } from '../models/Schema';
 import { convertFromMapDefinition, convertToMapDefinition, parseConditionalMapping, parseLoopMapping } from '../utils/DataMap.Utils';
@@ -106,18 +103,6 @@ describe('Map definition conversions', () => {
     it.skip('Test if with children and value at the same time', () => {
       const actualConnections = convertFromMapDefinition(ifWithChildrenAndValueMapDefinitionMock);
       expect(actualConnections).toEqual({});
-    });
-
-    it('Test missing source schema name', () => {
-      expect(() => {
-        convertFromMapDefinition(missingSrcSchemaNameMapDefinitionMock);
-      }).toThrow(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
-    });
-
-    it('Test missing destination schema name', () => {
-      expect(() => {
-        convertFromMapDefinition(missingDstSchemaNameMapDefinitionMock);
-      }).toThrow(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
     });
   });
 

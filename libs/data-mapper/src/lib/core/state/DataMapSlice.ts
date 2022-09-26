@@ -4,7 +4,7 @@ import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
-import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
+import { convertFromMapDefinition, generateConnectionKey } from '../../utils/DataMap.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -285,8 +285,9 @@ export const dataMapSlice = createSlice({
 
       const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
       const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
+      const connectionKey = generateConnectionKey(trimmedValue, trimmedKey);
 
-      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
+      newState.dataMapConnections[connectionKey] = {
         destination: trimmedKey,
         sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,
@@ -306,8 +307,9 @@ export const dataMapSlice = createSlice({
 
       const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
       const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
+      const connectionKey = generateConnectionKey(trimmedValue, trimmedKey);
 
-      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
+      newState.dataMapConnections[connectionKey] = {
         destination: trimmedKey,
         sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,
