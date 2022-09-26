@@ -386,6 +386,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onEdgeClick={onEdgeClick}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
+
       {displayToolboxItem === 'sourceSchemaTreePanel' && (
         <FloatingPanel {...toolboxPanelProps}>
           {sourceSchema && (
@@ -398,12 +399,15 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
           )}
         </FloatingPanel>
       )}
+
       {displayToolboxItem === 'functionsPanel' && (
         <FloatingPanel {...toolboxPanelProps}>
           <FunctionList sample="sample" onFunctionClick={onFunctionItemClick}></FunctionList>
         </FloatingPanel>
       )}
+
       <ButtonContainer {...mapControlsButtonContainerProps} />
+
       {displayMiniMap && (
         <MiniMap
           nodeStrokeColor={(node) => {
@@ -425,6 +429,19 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
           }}
         />
       )}
+
+      {/* Toast Placeholder
+        {notification.data &&
+          <Notification
+            msg={notification.data.msg}
+            intent={notification.data.intent}
+            icon={!notification.data.intent && <Delete20Regular />}
+            action={{ icon: <Dismiss20Regular /> }}
+            autoHideDuration={2000}
+            onClose={notificationSlice.actions.hideNotification}
+          />
+        }
+      */}
     </ReactFlow>
   );
 };
