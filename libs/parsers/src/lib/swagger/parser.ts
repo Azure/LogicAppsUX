@@ -301,8 +301,8 @@ export class SwaggerParser {
     return processor.getOutputMetadata();
   }
 
-  operationIsWebhook(_operationName: string): boolean {
-    return false;
+  operationIsWebhook(operationName: string): boolean {
+    return getPropertyValue(this._getResponses(), operationName)?.notificationContent;
   }
 
   private _getOperations(options: GetOperationsOptions): OpenAPIV2.OperationObject[] {
