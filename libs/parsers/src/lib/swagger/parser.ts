@@ -69,9 +69,8 @@ const ApiNotificationConstants = {
 };
 
 export class SwaggerParser {
-  static parse = async (swagger: OpenAPIV2.Document): Promise<SwaggerParser> => {
-    const api = await APIParser.validate(swagger);
-    return new SwaggerParser(api as any);
+  static parse = async (swagger: OpenAPIV2.Document): Promise<OpenAPIV2.Document> => {
+    return APIParser.validate(swagger, { dereference: { circular: 'ignore' } });
   };
 
   constructor(public api: OpenAPIV2.Document) {}
