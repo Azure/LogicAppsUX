@@ -24,6 +24,7 @@ const exTargetNode: SelectedTargetNode = {
   inputIds: ['miscInputId'],
 };
 const exFunctionNode: SelectedFunctionNode = {
+  id: 'functionId',
   nodeType: NodeType.Function,
   name: 'ExFunctionNode',
   branding: {} as FunctionGroupBranding,
@@ -37,7 +38,7 @@ const nodeOptions = { noneSelected: undefined, exSourceNode, exTargetNode, exFun
 
 export default {
   component: PropertiesPane,
-  title: 'Data Mapper/PropertiesPane',
+  title: 'Data Mapper Component/Pane/Properties Pane',
   argTypes: {
     currentNode: {
       defaultValue: nodeOptions[0],

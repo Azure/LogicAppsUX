@@ -7,7 +7,7 @@ import React from 'react';
 
 export default {
   component: TargetSchemaTree,
-  title: 'Data Mapper/TargetSchemaTree',
+  title: 'Data Mapper Components/Tree/Target Schema Tree',
 } as ComponentMeta<typeof TargetSchemaTree>;
 
 const mockSchema = convertSchemaToSchemaExtended(JSON.parse(JSON.stringify(simpleMockSchema)));

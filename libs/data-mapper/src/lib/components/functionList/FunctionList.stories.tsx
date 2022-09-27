@@ -7,7 +7,7 @@ import React from 'react';
 
 export default {
   component: FunctionList,
-  title: 'Data Mapper/FunctionList',
+  title: 'Data Mapper Components/Tree/Function List',
 } as ComponentMeta<typeof FunctionList>;
 
 const toolboxPanelProps: FloatingPanelProps = {
@@ -23,6 +23,3 @@ export const Standard: ComponentStory<typeof FunctionList> = (args: FunctionList
     <FunctionList {...args} />
   </FloatingPanel>
 );
-Standard.args = {
-  sample: 'something',
-};

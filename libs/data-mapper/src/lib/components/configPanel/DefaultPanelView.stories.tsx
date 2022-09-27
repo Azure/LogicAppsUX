@@ -1,8 +1,10 @@
 import { simpleMockSchema } from '../../__mocks__';
-import { setInitialSourceSchema, setInitialTargetSchema } from '../../core/state/DataMapSlice';
+import type { InitialSchemaAction } from '../../core/state/DataMapSlice';
+import { setInitialSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended } from '../../models/Schema';
-import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
+import { SchemaTypes } from '../../models/Schema';
+import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema.Utils';
 import type { DefaultPanelViewProps } from './DefaultPanelView';
 import { DefaultPanelView } from './DefaultPanelView';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -15,15 +17,29 @@ interface MockStoreData {
 }
 
 const MockStore = ({ mockState, children }) => {
-  store.dispatch(setInitialSourceSchema(mockState.sourceSchema));
-  store.dispatch(setInitialTargetSchema(mockState.targetSchema));
+  const extendedSourceSchema = convertSchemaToSchemaExtended(mockState.sourceSchema);
+  const sourceAction: InitialSchemaAction = {
+    schema: extendedSourceSchema,
+    schemaType: SchemaTypes.Source,
+    flattenedSchema: flattenSchema(extendedSourceSchema, SchemaTypes.Source),
+  };
+
+  const extendedTargetSchema = convertSchemaToSchemaExtended(mockState.targetSchema);
+  const targetAction: InitialSchemaAction = {
+    schema: extendedTargetSchema,
+    schemaType: SchemaTypes.Target,
+    flattenedSchema: flattenSchema(extendedTargetSchema, SchemaTypes.Target),
+  };
+
+  store.dispatch(setInitialSchema(sourceAction));
+  store.dispatch(setInitialSchema(targetAction));
 
   return <Provider store={store}>{children}</Provider>;
 };
 
 export default {
   component: DefaultPanelView,
-  title: 'Data Mapper/DefaultPanelView',
+  title: 'Data Mapper Components/Panel/DefaultPanelView',
 } as ComponentMeta<typeof DefaultPanelView>;
 
 const Template: ComponentStory<typeof DefaultPanelView> = (args: DefaultPanelViewProps) => {

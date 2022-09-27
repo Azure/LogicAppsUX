@@ -406,7 +406,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
       {displayToolboxItem === 'functionsPanel' && (
         <FloatingPanel {...toolboxPanelProps}>
-          <FunctionList sample="sample" onFunctionClick={onFunctionItemClick}></FunctionList>
+          <FunctionList onFunctionClick={onFunctionItemClick}></FunctionList>
         </FloatingPanel>
       )}
 

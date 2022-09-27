@@ -4,7 +4,7 @@ import React from 'react';
 
 export default {
   component: CodeView,
-  title: 'Data Mapper/CodeView',
+  title: 'Data Mapper Components/Pane/CodeView',
 } as ComponentMeta<typeof CodeView>;
 
 export const Standard: ComponentStory<typeof CodeView> = (args: CodeViewProps) => <CodeView {...args} />;

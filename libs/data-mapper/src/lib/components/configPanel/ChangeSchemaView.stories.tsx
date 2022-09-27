@@ -21,7 +21,7 @@ const MockStore = ({ mockState, children }) => {
 
 export default {
   component: ChangeSchemaView,
-  title: 'Data Mapper/ChangeSchemaView',
+  title: 'Data Mapper Components/Panel/ChangeSchemaView',
 } as ComponentMeta<typeof ChangeSchemaView>;
 
 const Template: ComponentStory<typeof ChangeSchemaView> = (args: ChangeSchemaViewProps) => {

@@ -15,7 +15,7 @@ export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onS
   const intl = useIntl();
 
   const replaceMessage = intl.formatMessage({
-    defaultMessage: 'Replace existing schema.',
+    defaultMessage: 'Replace existing schema',
     description: 'label to inform the ability to replace schemas',
   });
   const sourceSchemaLabel = intl.formatMessage({

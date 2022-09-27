@@ -31,7 +31,7 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ dataMap, source
       const extendedSchema = convertSchemaToSchemaExtended(sourceSchema);
       dispatch(
         setInitialSchema({
-          schema: convertSchemaToSchemaExtended(sourceSchema),
+          schema: extendedSchema,
           schemaType: SchemaTypes.Source,
           flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Source),
         })

@@ -11,7 +11,7 @@ const MockStore = ({ children }) => {
 
 export default {
   component: EditorCommandBar,
-  title: 'Data Mapper/EditorCommandBar',
+  title: 'Data Mapper Component/Command Bar',
 } as ComponentMeta<typeof EditorCommandBar>;
 
 const Template: ComponentStory<typeof EditorCommandBar> = (args: EditorCommandBarProps) => <EditorCommandBar {...args} />;
