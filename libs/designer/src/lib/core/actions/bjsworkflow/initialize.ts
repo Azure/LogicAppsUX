@@ -1,8 +1,11 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
-import type { DependencyInfo, NodeInputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import { getConnectorWithSwagger } from '../../queries/connections';
+import { getOperationManifest } from '../../queries/operation';
+import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import { updateTokens } from '../../state/tokensSlice';
+import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
@@ -15,6 +18,7 @@ import {
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../../utils/parameters/helper';
+import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens } from '../../utils/tokens';
 import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
 import type { Settings } from './settings';
@@ -29,6 +33,7 @@ import {
   InitOperationManifestService,
   InitSearchService,
   InitOAuthService,
+  OperationManifestService,
 } from '@microsoft-logic-apps/designer-client-services';
 import type { SchemaProperty, InputParameter } from '@microsoft-logic-apps/parsers';
 import {
@@ -42,6 +47,7 @@ import {
 } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
 import { ConnectionReferenceKeyFormat, unmap } from '@microsoft-logic-apps/utils';
+import type { OutputToken } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -176,8 +182,6 @@ export const getOutputParametersFromManifest = (
         parameter: dynamicOutput,
       };
     }
-
-    // TODO - Add for Swagger case here
   }
 
   const { outputsSchema } = manifest.properties;
@@ -203,28 +207,45 @@ export const getOutputParametersFromManifest = (
   return { outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs }, dependencies };
 };
 
-export const updateOutputsAndTokens = (
+export const updateOutputsAndTokens = async (
   nodeId: string,
-  operationType: string,
+  operationInfo: NodeOperation,
   dispatch: Dispatch,
-  manifest: OperationManifest,
   isTrigger: boolean,
   inputs: NodeInputs,
   settings: Settings
-): void => {
-  const { outputs: nodeOutputs } = getOutputParametersFromManifest(manifest, isTrigger, inputs, settings.splitOn?.value?.value);
-  dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
-
-  const tokens = [
-    ...getBuiltInTokens(manifest),
-    ...convertOutputsToTokens(
+): Promise<void> => {
+  const { type, kind, connectorId } = operationInfo;
+  const supportsManifest = OperationManifestService().isSupported(type, kind);
+  const splitOnValue = settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined;
+  let nodeOutputs: NodeOutputs;
+  let tokens: OutputToken[];
+  if (supportsManifest) {
+    const manifest = await getOperationManifest(operationInfo);
+    nodeOutputs = getOutputParametersFromManifest(manifest, isTrigger, inputs, splitOnValue).outputs;
+    tokens = [
+      ...getBuiltInTokens(manifest),
+      ...convertOutputsToTokens(
+        isTrigger ? undefined : nodeId,
+        type,
+        nodeOutputs.outputs ?? {},
+        { iconUri: manifest.properties.iconUri, brandColor: manifest.properties.brandColor },
+        settings
+      ),
+    ];
+  } else {
+    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    nodeOutputs = getOutputParametersFromSwagger(parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
+    tokens = convertOutputsToTokens(
       isTrigger ? undefined : nodeId,
-      operationType,
+      type,
       nodeOutputs.outputs ?? {},
-      { iconUri: manifest.properties.iconUri, brandColor: manifest.properties.brandColor },
+      { iconUri: getIconUriFromConnector(connector), brandColor: getBrandColorFromConnector(connector) },
       settings
-    ),
-  ];
+    );
+  }
+
+  dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
   dispatch(updateTokens({ id: nodeId, tokens }));
 };
 

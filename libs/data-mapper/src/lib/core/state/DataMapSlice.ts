@@ -4,7 +4,7 @@ import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
-import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
+import { convertFromMapDefinition, generateConnectionKey } from '../../utils/DataMap.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -37,6 +37,7 @@ const emptyPristineState: DataMapOperationState = {
   flattenedSourceSchema: {},
   flattenedTargetSchema: {},
 };
+
 const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
@@ -44,6 +45,12 @@ const initialState: DataMapState = {
   undoStack: [],
   redoStack: [],
 };
+
+export interface InitialSchemaAction {
+  schema: SchemaExtended;
+  schemaType: SchemaTypes.Source | SchemaTypes.Target;
+  flattenedSchema: SchemaNodeDictionary;
+}
 
 export interface ConnectionAction {
   targetNodeKey: string;
@@ -54,14 +61,7 @@ export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    setInitialSchema: (
-      state,
-      action: PayloadAction<{
-        schema: SchemaExtended;
-        schemaType: SchemaTypes.Source | SchemaTypes.Target;
-        flattenedSchema: SchemaNodeDictionary;
-      }>
-    ) => {
+    setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
       if (action.payload.schemaType === SchemaTypes.Source) {
         state.curDataMapOperation.sourceSchema = action.payload.schema;
         state.curDataMapOperation.flattenedSourceSchema = action.payload.flattenedSchema;
@@ -285,8 +285,9 @@ export const dataMapSlice = createSlice({
 
       const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
       const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
+      const connectionKey = generateConnectionKey(trimmedValue, trimmedKey);
 
-      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
+      newState.dataMapConnections[connectionKey] = {
         destination: trimmedKey,
         sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,
@@ -306,8 +307,9 @@ export const dataMapSlice = createSlice({
 
       const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
       const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
+      const connectionKey = generateConnectionKey(trimmedValue, trimmedKey);
 
-      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
+      newState.dataMapConnections[connectionKey] = {
         destination: trimmedKey,
         sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,

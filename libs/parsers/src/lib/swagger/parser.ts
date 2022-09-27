@@ -296,9 +296,9 @@ export class SwaggerParser {
     return getPropertyValue(this._getResponses(), operationId)?.notification?.operationId;
   }
 
-  // TODO - To be implemented
-  getOutputMetadata(_operationId: string): OutputMetadata {
-    return {};
+  getOutputMetadata(operationId: string): OutputMetadata {
+    const processor = this._getResponsesProcessor(operationId);
+    return processor.getOutputMetadata();
   }
 
   operationIsWebhook(_operationName: string): boolean {

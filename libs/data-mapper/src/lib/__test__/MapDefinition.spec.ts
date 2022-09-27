@@ -2,13 +2,10 @@ import {
   forWithChildrenValueMapDefinitionMock,
   forWithIndexAndValueMapDefinitionMock,
   ifWithChildrenAndValueMapDefinitionMock,
-  missingDstSchemaNameMapDefinitionMock,
-  missingSrcSchemaNameMapDefinitionMock,
   simpleMapDefExampleConnectionsMock,
   simpleMapDefExampleMapDefinitionMock,
   simpleMockSchema,
 } from '../__mocks__';
-import { InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { Schema } from '../models/Schema';
 import { convertFromMapDefinition, convertToMapDefinition, parseConditionalMapping, parseLoopMapping } from '../utils/DataMap.Utils';
@@ -18,14 +15,14 @@ describe('Map definition conversions', () => {
   describe('convertToMapDefinition', () => {
     const schema: Schema = simpleMockSchema;
     const extendedSchema = convertSchemaToSchemaExtended(schema);
+    const headerString =
+      '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\n$sourceNamespaces:\n  ns0: http://CBR.CBRSourceSchema\n  xs: http://www.w3.org/2001/XMLSchema\n$targetNamespaces:\n  ns0: http://CBR.CBRSourceSchema\n  xs: http://www.w3.org/2001/XMLSchema\n';
 
     it('Test no connections', () => {
       const connections: ConnectionDictionary = {};
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
-      expect(mapDefinition).toEqual(
-        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\n'
-      );
+      expect(mapDefinition).toEqual(headerString);
     });
 
     it('Test 1 connection', () => {
@@ -39,9 +36,7 @@ describe('Map definition conversions', () => {
       };
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
-      expect(mapDefinition).toEqual(
-        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    UserID: /ns0:CBRInputRecord/Identity/UserID'
-      );
+      expect(mapDefinition).toEqual(`${headerString}ns0:CBRInputRecord:\n  Identity:\n    UserID: /ns0:CBRInputRecord/Identity/UserID`);
     });
 
     it('Test deep connection', () => {
@@ -56,7 +51,7 @@ describe('Map definition conversions', () => {
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
       expect(mapDefinition).toEqual(
-        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    Name:\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName'
+        `${headerString}ns0:CBRInputRecord:\n  Identity:\n    Name:\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName`
       );
     });
 
@@ -78,7 +73,7 @@ describe('Map definition conversions', () => {
 
       const mapDefinition = convertToMapDefinition(connections, extendedSchema, extendedSchema);
       expect(mapDefinition).toEqual(
-        '$version: 1.0\n$input: XML\n$output: XML\n$sourceSchema: CBRSourceSchema.xsd\n$targetSchema: CBRSourceSchema.xsd\nns0:CBRInputRecord:\n  Identity:\n    Name:\n      LastName: /ns0:CBRInputRecord/Identity/Name/LastName\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName'
+        `${headerString}ns0:CBRInputRecord:\n  Identity:\n    Name:\n      LastName: /ns0:CBRInputRecord/Identity/Name/LastName\n      FirstName: /ns0:CBRInputRecord/Identity/Name/FirstName`
       );
     });
 
@@ -106,18 +101,6 @@ describe('Map definition conversions', () => {
     it.skip('Test if with children and value at the same time', () => {
       const actualConnections = convertFromMapDefinition(ifWithChildrenAndValueMapDefinitionMock);
       expect(actualConnections).toEqual({});
-    });
-
-    it('Test missing source schema name', () => {
-      expect(() => {
-        convertFromMapDefinition(missingSrcSchemaNameMapDefinitionMock);
-      }).toThrow(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
-    });
-
-    it('Test missing destination schema name', () => {
-      expect(() => {
-        convertFromMapDefinition(missingDstSchemaNameMapDefinitionMock);
-      }).toThrow(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
     });
   });
 

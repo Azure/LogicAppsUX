@@ -4356,6 +4356,9 @@
       <Item ItemId=";VA7M1u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[In App]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[I appen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5542,7 +5545,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Shared]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Delad]]></Val>
+            <Val><![CDATA[Delat]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5604,6 +5607,9 @@
       <Item ItemId=";fDisLL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Acl creation failed for connection. Deleting the connection.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Det gick inte att skapa ACL för anslutningen. Tar bort anslutningen.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

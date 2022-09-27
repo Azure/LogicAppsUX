@@ -6,7 +6,7 @@ export function hasSecureOutputs(nodeType: string, allSettings: Settings | undef
   return isSecureOutputsLinkedToInputs(nodeType) ? !!secureInputs?.value : !!secureOutputs?.value;
 }
 
-function isSecureOutputsLinkedToInputs(nodeType: string): boolean {
+export function isSecureOutputsLinkedToInputs(nodeType: string): boolean {
   switch (nodeType.toLowerCase()) {
     case Constants.NODE.TYPE.COMPOSE:
     case Constants.NODE.TYPE.PARSE_JSON:
