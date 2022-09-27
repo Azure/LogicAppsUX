@@ -303,7 +303,9 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (selectedNode) {
       selectedNode.selected = !selectedNode.selected;
     }
-    dispatch(setCurrentlySelectedEdge(node.id));
+    if (node) {
+      dispatch(setCurrentlySelectedEdge(node.id));
+    }
   };
 
   const keyDownHandler2: KeyboardEventHandler<HTMLDivElement> = (event) => {

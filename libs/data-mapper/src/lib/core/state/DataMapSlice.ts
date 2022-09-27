@@ -229,6 +229,15 @@ export const dataMapSlice = createSlice({
         switch (selectedNode.nodeType) {
           case NodeType.Source: {
             const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== selectedNode.name);
+
+            // remove any connections
+            const connectedNodes = [];
+            for (const connectionKey in state.curDataMapOperation.dataMapConnections) {
+              if (state.curDataMapOperation.dataMapConnections[connectionKey].sourceValue === selectedNode.path) {
+                connectedNodes.push(connectionKey);
+                delete state.curDataMapOperation.dataMapConnections[connectionKey];
+              }
+            }
             doDataMapOperation(state, { ...state.curDataMapOperation, currentSourceNodes: removedNodes });
             break;
           }
@@ -236,6 +245,7 @@ export const dataMapSlice = createSlice({
             const newFunctionsState = { ...state.curDataMapOperation.currentFunctionNodes };
             delete newFunctionsState[selectedNode.id];
             doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
+            // remove any connections
             break;
           }
           default:
