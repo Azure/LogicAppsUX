@@ -52,6 +52,15 @@ export const tokensSlice = createSlice({
         state.outputTokens[id].tokens = tokens;
       }
     },
+    updateTokenSecureStatus: (state, action: PayloadAction<{ id: string; isSecure: boolean }>) => {
+      const { id, isSecure } = action.payload;
+      if (state.outputTokens[id]) {
+        state.outputTokens[id].tokens = state.outputTokens[id].tokens.map((token) => ({
+          ...token,
+          outputInfo: { ...token.outputInfo, isSecure },
+        }));
+      }
+    },
     addDynamicTokens: (state, action: PayloadAction<AddDynamicTokensPayload>) => {
       const { nodeId, tokens } = action.payload;
       if (state.outputTokens[nodeId]) {
@@ -62,6 +71,7 @@ export const tokensSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeTokensAndVariables, deinitializeTokensAndVariables, addDynamicTokens, updateTokens } = tokensSlice.actions;
+export const { initializeTokensAndVariables, deinitializeTokensAndVariables, addDynamicTokens, updateTokens, updateTokenSecureStatus } =
+  tokensSlice.actions;
 
 export default tokensSlice.reducer;

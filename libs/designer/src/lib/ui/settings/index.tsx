@@ -5,11 +5,12 @@ import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { setTabError } from '../../core/state/panel/panelSlice';
-import { useOperationManifest } from '../../core/state/selectors/actionMetadataSelector';
 import { setExpandedSections, ValidationErrorKeys, type ValidationError } from '../../core/state/settingSlice';
+import { updateTokenSecureStatus } from '../../core/state/tokensSlice';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
+import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
 import { DataHandling, type DataHandlingSectionProps } from './sections/datahandling';
 import { General, type GeneralSectionProps } from './sections/general';
 import { Networking, type NetworkingSectionProps } from './sections/networking';
@@ -18,7 +19,7 @@ import { Security, type SecuritySectionProps } from './sections/security';
 import { Tracking, type TrackingSectionProps } from './sections/tracking';
 import { useValidate } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { equals, isObject, type OperationManifest } from '@microsoft-logic-apps/utils';
+import { equals, isObject } from '@microsoft-logic-apps/utils';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -63,7 +64,6 @@ function GeneralSettings(): JSX.Element | null {
       operations: state.operations,
     };
   });
-  const { data: manifest } = useOperationManifest(operationInfo);
 
   const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions } = useSelector(
     (state: RootState) => state.operations.settings[nodeId] ?? {}
@@ -120,10 +120,7 @@ function GeneralSettings(): JSX.Element | null {
       })
     );
 
-    updateOutputsAndTokens(nodeId, operationInfo.type, dispatch, manifest as OperationManifest, isTrigger, nodeInputs, {
-      ...settings,
-      splitOn: splitOnSetting,
-    });
+    updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, { ...settings, splitOn: splitOnSetting });
   };
 
   const onTimeoutValueChange = (newVal: string): void => {
@@ -186,10 +183,7 @@ function GeneralSettings(): JSX.Element | null {
       })
     );
 
-    updateOutputsAndTokens(nodeId, operationInfo.type, dispatch, manifest as OperationManifest, isTrigger, nodeInputs, {
-      ...settings,
-      splitOn: splitOnSetting,
-    });
+    updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, { ...settings, splitOn: splitOnSetting });
   };
 
   const generalSectionProps: GeneralSectionProps = {
@@ -586,9 +580,15 @@ function RunAfterSettings(): JSX.Element | null {
 
 function SecuritySettings(): JSX.Element | null {
   const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelectedNodeId(),
-    { secureInputs, secureOutputs } = useSelector((state: RootState) => state.operations.settings[nodeId] ?? {});
+  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
+  const nodeId = useSelectedNodeId();
+  const {
+    settings: { secureInputs, secureOutputs },
+    operationInfo,
+  } = useSelector((state: RootState) => ({
+    settings: state.operations.settings[nodeId] ?? {},
+    operationInfo: state.operations.operationInfo[nodeId],
+  }));
   const onSecureInputsChange = (checked: boolean): void => {
     dispatch(
       updateNodeSettings({
@@ -598,6 +598,10 @@ function SecuritySettings(): JSX.Element | null {
         },
       })
     );
+
+    if (isSecureOutputsLinkedToInputs(operationInfo.type)) {
+      dispatch(updateTokenSecureStatus({ id: nodeId, isSecure: checked }));
+    }
   };
 
   const onSecureOutputsChange = (checked: boolean): void => {
@@ -609,6 +613,7 @@ function SecuritySettings(): JSX.Element | null {
         },
       })
     );
+    dispatch(updateTokenSecureStatus({ id: nodeId, isSecure: checked }));
   };
 
   const securitySectionProps: SecuritySectionProps = {

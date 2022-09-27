@@ -9,7 +9,7 @@ import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dyna
 import { getAllInputParameters, getTokenExpressionValue, isDynamicDataReadyToLoad } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import type { Expression, ExpressionFunction, ExpressionLiteral, OutputParameter } from '@microsoft-logic-apps/parsers';
+import type { Expression, ExpressionFunction, ExpressionLiteral, OutputParameter, OutputParameters } from '@microsoft-logic-apps/parsers';
 import {
   create,
   OutputKeys,
@@ -271,6 +271,38 @@ const getSplitOnArrayName = (splitOnValue: string): string | undefined => {
   }
 };
 
+export const updateOutputsForBatchingTrigger = (outputs: OutputParameters, splitOn: string | undefined): OutputParameters => {
+  if (splitOn === undefined) {
+    return outputs;
+  }
+
+  const splitOnArray = getSplitOnArrayName(splitOn);
+  // If splitOn is enabled the output info is not present in the store, hence generate the outputKey from the name.
+  const outputKeyForSplitOnArray = splitOnArray ? create([OutputSource.Body, Constants.DEFAULT_KEY_PREFIX, splitOnArray]) : undefined;
+
+  const updatedOutputs: OutputParameters = {};
+  for (const outputKey of Object.keys(outputs)) {
+    const outputParameter = outputs[outputKey];
+
+    const isParentArrayResponseBody = splitOnArray === undefined && outputParameter.parentArray === OutputKeys.Body;
+
+    const isOutputInSplitOnArray =
+      (outputParameter.isInsideArray && isParentArrayResponseBody) || equals(outputParameter.parentArray, splitOnArray);
+    // Resetting the InsideArray property for parameters in batching trigger,
+    // as for the actions in flow they are body parameters not inside an array.
+    if (isOutputInSplitOnArray) {
+      outputParameter.isInsideArray = false;
+    }
+
+    // Filtering the outputs if it is not equal to the top level array in a batching trigger.
+    if (outputParameter.key !== outputKeyForSplitOnArray) {
+      updatedOutputs[outputKey] = outputParameter;
+    }
+  }
+
+  return updatedOutputs;
+};
+
 export const loadDynamicOutputsInNode = async (
   nodeId: string,
   isTrigger: boolean,
@@ -288,37 +320,13 @@ export const loadDynamicOutputsInNode = async (
 
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
-        updateOutputsAndTokens(nodeId, operationInfo.type, dispatch, manifest, isTrigger, nodeInputs, settings);
+        updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
       } else {
         const outputSchema = await getDynamicSchema(info, nodeInputs, connectionId, operationInfo);
-        const schemaOutputs = getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter);
-        const hasSplitOn = settings.splitOn?.value?.enabled;
+        let schemaOutputs = getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter);
 
-        if (hasSplitOn) {
-          const splitOnArray = getSplitOnArrayName(settings.splitOn?.value?.value as string);
-          // If splitOn is enabled the output info is not present in the store, hence generate the outputKey from the name.
-          const outputKeyForSplitOnArray = splitOnArray
-            ? create([OutputSource.Body, Constants.DEFAULT_KEY_PREFIX, splitOnArray])
-            : undefined;
-
-          for (const outputKey of Object.keys(schemaOutputs)) {
-            const outputParameter = schemaOutputs[outputKey];
-
-            const isParentArrayResponseBody = splitOnArray === undefined && outputParameter.parentArray === OutputKeys.Body;
-
-            const isOutputInSplitOnArray =
-              (outputParameter.isInsideArray && isParentArrayResponseBody) || equals(outputParameter.parentArray, splitOnArray);
-            // Resetting the InsideArray property for parameters in batching trigger,
-            // as for the actions in flow they are body parameters not inside an array.
-            if (isOutputInSplitOnArray) {
-              outputParameter.isInsideArray = false;
-            }
-
-            // Filtering the outputs if it is not equal to the top level array in a batching trigger.
-            if (outputParameter.key !== outputKeyForSplitOnArray) {
-              schemaOutputs[outputKey] = outputParameter;
-            }
-          }
+        if (settings.splitOn?.value?.enabled) {
+          schemaOutputs = updateOutputsForBatchingTrigger(schemaOutputs, settings.splitOn?.value?.value);
         }
 
         const dynamicOutputs = Object.keys(schemaOutputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {

@@ -144,7 +144,7 @@ const initializeOperationDetailsForManifest = async (
         manifest,
         isTrigger,
         nodeInputs,
-        settings.splitOn?.value?.value
+        settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -246,7 +246,6 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithOperationMetadata[],
   }
 };
 
-// TODO - Fix this for swagger scenarios
 const initializeOutputTokensForOperations = (
   allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
