@@ -1,4 +1,4 @@
-import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionConfig';
+import { dataMapDefinitionsPath, dataMapsPath, schemasPath, webviewTitle } from './extensionConfig';
 import type { ChildProcess } from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
@@ -18,6 +18,10 @@ type ReceivingMessageTypes =
     }
   | {
       command: 'saveDataMapDefinition';
+      data: string;
+    }
+  | {
+      command: 'saveDataMapXslt';
       data: string;
     };
 
@@ -122,6 +126,17 @@ export default class DataMapperExt {
         const fileName = `${DataMapperExt.currentDataMapName}.yml`;
         const filePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath, fileName);
         fs.writeFile(filePath, msg.data, 'utf8');
+        break;
+      }
+      case 'saveDataMapXslt': {
+        if (!DataMapperExt.currentDataMapName) {
+          DataMapperExt.currentDataMapName = 'default';
+        }
+
+        const fileName = `${DataMapperExt.currentDataMapName}.xslt`;
+        const filePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath, fileName);
+        fs.writeFile(filePath, msg.data, 'utf8');
+        break;
       }
     }
   }

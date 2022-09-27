@@ -34,8 +34,10 @@ export const App = (): JSX.Element => {
   }).observe(document.body, { attributes: true });
   */
 
-  const saveStateCall = (dataMapDefinition: string) => {
+  const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
     saveDataMapDefinition(dataMapDefinition);
+
+    saveDataMap(dataMapXslt);
   };
 
   const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
@@ -51,10 +53,18 @@ export const App = (): JSX.Element => {
     });
   }, [vscode]);
 
+  // TODO: May combine the below two functions - will revisit when touched on again in future
   const saveDataMapDefinition = (dataMapDefinition: string) => {
     vscode.postMessage({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,
+    });
+  };
+
+  const saveDataMap = (dataMapXslt: string) => {
+    vscode.postMessage({
+      command: 'saveDataMapXslt',
+      data: dataMapXslt,
     });
   };
 

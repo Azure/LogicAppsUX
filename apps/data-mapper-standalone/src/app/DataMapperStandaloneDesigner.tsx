@@ -28,8 +28,9 @@ export const DataMapperStandaloneDesigner = () => {
     accessToken: armToken,
   });
 
-  const saveStateCall = (dataMapDefinition: string) => {
+  const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
     console.log(dataMapDefinition);
+    console.log(dataMapXslt);
   };
 
   return (
