@@ -39,6 +39,7 @@ import {
   AssertionErrorCode,
   AssertionException,
   clone,
+  ConnectionType,
   equals,
   format,
   UnsupportedException,
@@ -167,7 +168,6 @@ export class StandardOperationManifestService implements IOperationManifestServi
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isSupported(operationType: string, _operationKind?: string): boolean {
     const { supportedTypes } = this.options;
     const normalizedOperationType = operationType.toLowerCase();
@@ -216,11 +216,18 @@ export class StandardOperationManifestService implements IOperationManifestServi
       });
 
       const {
-        properties: { brandColor, description, iconUri, manifest },
+        properties: { brandColor, description, iconUri, manifest, operationType },
       } = response;
 
+      // TODO(psamband): Remove below patching of connection when backend api sends correct information for service providers
       const operationManifest = {
-        properties: { brandColor, description, iconUri, ...manifest },
+        properties: {
+          brandColor,
+          description,
+          iconUri,
+          connection: equals(operationType, 'serviceprovider') ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
+          ...manifest
+        },
       };
 
       return operationManifest;
