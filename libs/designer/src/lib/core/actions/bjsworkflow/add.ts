@@ -205,11 +205,11 @@ export const setDefaultConnectionForNode = async (nodeId: string, connectorId: s
   const connections = await getConnectionsForConnector(connectorId);
   if (connections.length !== 0) {
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id, connectorId }));
-    ConnectionService().createConnectionAclIfNeeded(connections[0]);
+    await ConnectionService().createConnectionAclIfNeeded(connections[0]);
+    dispatch(switchToOperationPanel(nodeId));
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
-  dispatch(switchToOperationPanel(nodeId));
 };
 
 const addTokensAndVariables = (
