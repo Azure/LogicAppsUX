@@ -117,10 +117,10 @@ export const initializeOperationDetails = async (
       operationInfo
     );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
-      nodeId,
       parsedSwagger,
       operationInfo,
-      nodeInputs
+      nodeInputs,
+      settings.splitOn?.value?.value
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -183,10 +183,10 @@ export const reinitializeOperationDetails = async (
       definition
     );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
-      nodeId,
       parsedSwagger,
       operationInfo,
-      nodeInputs
+      nodeInputs,
+      settings.splitOn?.value?.value
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 

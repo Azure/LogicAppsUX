@@ -246,7 +246,6 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithOperationMetadata[],
   }
 };
 
-// TODO - Fix this for swagger scenarios
 const initializeOutputTokensForOperations = (
   allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
