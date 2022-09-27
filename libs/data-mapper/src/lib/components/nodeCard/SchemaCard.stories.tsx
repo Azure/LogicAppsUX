@@ -8,7 +8,7 @@ import { ReactFlowProvider } from 'react-flow-renderer';
 
 export default {
   component: SchemaCard,
-  title: 'Data Mapper/SchemaCard',
+  title: 'Data Mapper Components/Card/Schema Card',
 } as ComponentMeta<typeof SchemaCard>;
 
 export const Standard: ComponentStory<typeof SchemaCard> = (args: NodeProps<SchemaCardProps>) => (

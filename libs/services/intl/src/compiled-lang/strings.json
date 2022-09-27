@@ -1349,6 +1349,12 @@
       "value": "Connection required"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Replace existing schema"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -3163,12 +3169,6 @@
     {
       "type": 0,
       "value": "A managed identity is not configured on the logic app."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Replace existing schema."
     }
   ],
   "X4gDhV": [

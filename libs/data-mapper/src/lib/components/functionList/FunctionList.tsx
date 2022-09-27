@@ -13,7 +13,6 @@ import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 export interface FunctionListProps {
-  sample: string;
   onFunctionClick: (functionNode: FunctionData) => void;
 }
 

@@ -5,7 +5,7 @@ import React from 'react';
 
 export default {
   component: OutputPane,
-  title: 'Data Mapper/Output Pane',
+  title: 'Data Mapper Component/Pane/Output Pane',
 } as ComponentMeta<typeof OutputPane>;
 
 export const Standard: ComponentStory<typeof OutputPane> = (args: OutputPaneProps) => <OutputPane {...args} />;
