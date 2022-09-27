@@ -2996,7 +2996,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "Uygulama İçi"
     }
   ],
   "VE3cxq": [
@@ -3844,7 +3844,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Paylaşıldı"
+      "value": "Paylaşılan"
     }
   ],
   "esOQ5p": [
@@ -3886,7 +3886,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Bağlantı için ACL oluşturulamadı. Bağlantı siliniyor."
     }
   ],
   "fGcSFd": [

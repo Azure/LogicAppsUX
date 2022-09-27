@@ -3226,7 +3226,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "W aplikacji"
     }
   ],
   "VE3cxq": [
@@ -4094,7 +4094,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Udostępniono"
+      "value": "Udostępnione"
     }
   ],
   "esOQ5p": [
@@ -4136,7 +4136,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Tworzenie listy ACL dla połączenia nie powiodło się. Usuwanie połączenia."
     }
   ],
   "fGcSFd": [
