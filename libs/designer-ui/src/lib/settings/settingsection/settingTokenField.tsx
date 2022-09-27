@@ -1,4 +1,4 @@
-import { ArrayEditor } from '../../arrayeditor';
+import { ArrayEditor, ArrayType } from '../../arrayeditor';
 import { CodeEditor } from '../../code';
 import { Combobox } from '../../combobox';
 import { DictionaryEditor } from '../../dictionary';
@@ -124,10 +124,12 @@ const TokenField = ({
       // TODO - This requires update
       return (
         <ArrayEditor
+          type={ArrayType.SIMPLE}
           labelProps={{ text: '' }}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
+          initialItems={editorViewModel.items}
           isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}

@@ -24,6 +24,7 @@ import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
 import type { FunctionData } from '../models/Function';
+import type { ViewportCoords } from '../models/ReactFlow';
 import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
 import { inputPrefix, outputPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
@@ -44,10 +45,10 @@ import {
   ZoomOut20Filled,
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'react-flow-renderer';
+import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -67,16 +68,20 @@ interface ReactFlowWrapperProps {
 export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { fitView, zoomIn, zoomOut } = useReactFlow();
+  const { fitView, zoomIn, zoomOut, project } = useReactFlow();
 
   const currentlySelectedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
+  const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
+  const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
 
+  const reactFlowRef = useRef<HTMLDivElement>(null);
   const edgeUpdateSuccessful = useRef(true);
   const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard, functionNode: FunctionCard }), []);
 
@@ -109,7 +114,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
-    dispatch(setCurrentlySelectedNode(undefined));
+    if (currentlySelectedNode) {
+      dispatch(setCurrentlySelectedNode(undefined));
+    }
+
     setDisplayToolboxItem(undefined);
   };
 
@@ -289,8 +297,40 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     onTabSelect: onTabSelect,
   };
 
+  useLayoutEffect(() => {
+    const handleCanvasViewportCoords = () => {
+      if (reactFlowRef.current) {
+        const bounds = reactFlowRef.current.getBoundingClientRect();
+
+        const startProjection = project({
+          x: bounds.left,
+          y: bounds.top,
+        });
+
+        const endProjection = project({
+          x: bounds.left + Math.max(bounds.width, 1000), // Min canvas width of 1000px
+          y: bounds.top + bounds.height,
+        });
+
+        setCanvasViewportCoords({
+          startX: startProjection.x,
+          endX: endProjection.x,
+          startY: startProjection.y,
+          endY: endProjection.y,
+        });
+      }
+    };
+
+    window.addEventListener('resize', handleCanvasViewportCoords);
+
+    handleCanvasViewportCoords();
+
+    return () => window.removeEventListener('resize', handleCanvasViewportCoords);
+  }, [project]);
+
   const [nodes, edges] = useLayout(
-    currentlySelectedSourceNodes,
+    canvasViewportCoords,
+    currentlyAddedSourceNodes,
     connectedSourceNodes,
     flattenedSourceSchema,
     allFunctionNodes,
@@ -316,6 +356,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   return (
     <ReactFlow
+      ref={reactFlowRef}
       onKeyDown={keyDownHandler2}
       nodes={nodes}
       edges={edges}
@@ -343,24 +384,28 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onEdgeClick={onEdgeClick}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
+
       {displayToolboxItem === 'sourceSchemaTreePanel' && (
         <FloatingPanel {...toolboxPanelProps}>
           {sourceSchema && (
             <SchemaTree
               schema={sourceSchema}
-              currentlySelectedNodes={currentlySelectedSourceNodes}
+              currentlySelectedNodes={currentlyAddedSourceNodes}
               visibleConnectedNodes={connectedSourceNodes}
               onNodeClick={onToolboxItemClick}
             />
           )}
         </FloatingPanel>
       )}
+
       {displayToolboxItem === 'functionsPanel' && (
         <FloatingPanel {...toolboxPanelProps}>
-          <FunctionList sample="sample" onFunctionClick={onFunctionItemClick}></FunctionList>
+          <FunctionList onFunctionClick={onFunctionItemClick}></FunctionList>
         </FloatingPanel>
       )}
+
       <ButtonContainer {...mapControlsButtonContainerProps} />
+
       {displayMiniMap && (
         <MiniMap
           nodeStrokeColor={(node) => {
@@ -382,6 +427,19 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
           }}
         />
       )}
+
+      {/* Toast Placeholder
+        {notification.data &&
+          <Notification
+            msg={notification.data.msg}
+            intent={notification.data.intent}
+            icon={!notification.data.intent && <Delete20Regular />}
+            action={{ icon: <Dismiss20Regular /> }}
+            autoHideDuration={2000}
+            onClose={notificationSlice.actions.hideNotification}
+          />
+        }
+      */}
     </ReactFlow>
   );
 };

@@ -38,6 +38,7 @@ const emptyPristineState: DataMapOperationState = {
   flattenedSourceSchema: {},
   flattenedTargetSchema: {},
 };
+
 const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
@@ -45,6 +46,12 @@ const initialState: DataMapState = {
   undoStack: [],
   redoStack: [],
 };
+
+export interface InitialSchemaAction {
+  schema: SchemaExtended;
+  schemaType: SchemaTypes.Source | SchemaTypes.Target;
+  flattenedSchema: SchemaNodeDictionary;
+}
 
 export interface ConnectionAction {
   targetNodeKey: string;
@@ -55,14 +62,7 @@ export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    setInitialSchema: (
-      state,
-      action: PayloadAction<{
-        schema: SchemaExtended;
-        schemaType: SchemaTypes.Source | SchemaTypes.Target;
-        flattenedSchema: SchemaNodeDictionary;
-      }>
-    ) => {
+    setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
       if (action.payload.schemaType === SchemaTypes.Source) {
         state.curDataMapOperation.sourceSchema = action.payload.schema;
         state.curDataMapOperation.flattenedSourceSchema = action.payload.flattenedSchema;
@@ -341,11 +341,12 @@ export const dataMapSlice = createSlice({
       delete newState.dataMapConnections[action.payload.oldConnectionKey];
 
       // danielle what happens when connection changes from one array to another
-
       const trimmedKey = getDestinationIdFromConnection(action.payload.targetNodeKey);
       const trimmedValue = getDestinationIdFromConnection(action.payload.value);
 
-      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
+      const connectionKey = createConnectionKey(trimmedValue, trimmedKey);
+
+      newState.dataMapConnections[connectionKey] = {
         destination: trimmedKey,
         sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,

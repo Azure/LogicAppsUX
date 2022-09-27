@@ -363,7 +363,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "配置后的每次运行必须选中至少一个状态"
     }
   ],
   "1ejxkP": [
@@ -399,7 +399,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "上传或选择要用于地图的目标架构。"
     }
   ],
   "1zgFh1": [
@@ -747,7 +747,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "选择源架构"
     }
   ],
   "5SAQOb": [
@@ -771,7 +771,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "添加源架构"
     }
   ],
   "5cPiWA": [
@@ -813,7 +813,7 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "选择目标架构"
     }
   ],
   "6XR3FS": [
@@ -1245,7 +1245,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "目标架构将被替换，并且你将无法返回到以前的更改。是否要继续更改目标架构?"
     }
   ],
   "B/JzwK": [
@@ -1436,7 +1436,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "触发器条件不得为空"
     }
   ],
   "DuXV2M": [
@@ -1679,7 +1679,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "源架构"
     }
   ],
   "GYvF54": [
@@ -1697,7 +1697,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "上传或选择要用于地图的源架构。"
     }
   ],
   "Gi72X5": [
@@ -1867,7 +1867,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "操作无效。项目数: "
     },
     {
       "type": 1,
@@ -1875,7 +1875,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "。"
     }
   ],
   "JErLDT": [
@@ -2276,7 +2276,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "操作路径输入值无效。路径值 - "
     },
     {
       "type": 1,
@@ -2284,7 +2284,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " 路径模板 - "
     },
     {
       "type": 1,
@@ -2394,7 +2394,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "此函数不需要任何输入。"
     }
   ],
   "ORVfYZ": [
@@ -2412,7 +2412,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "选择下拉列表的架构"
     }
   ],
   "OVvieE": [
@@ -2520,7 +2520,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "源架构节点"
     }
   ],
   "PP63jY": [
@@ -2610,7 +2610,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "选择源架构"
     }
   ],
   "QEp3C8": [
@@ -2889,7 +2889,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "分页计数无效"
     }
   ],
   "TUaunO": [
@@ -3001,7 +3001,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (文件名)"
     }
   ],
   "Ur+wph": [
@@ -3032,6 +3032,12 @@
     {
       "type": 0,
       "value": "输入有效的 JSON。"
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "应用内"
     }
   ],
   "VE3cxq": [
@@ -3161,7 +3167,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "选择目标架构"
     }
   ],
   "WUe3DY": [
@@ -3174,6 +3180,12 @@
     {
       "type": 0,
       "value": "返回这两个数字相乘后的结果"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "未在逻辑应用上配置托管标识。"
     }
   ],
   "Wy/bhW": [
@@ -3339,7 +3351,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "表达式类型 \""
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "\" 无效。"
     }
   ],
   "Y9kBz5": [
@@ -3469,7 +3489,15 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "\"in\" 值不受支持: 参数中的 \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\""
     }
   ],
   "a64zhX": [
@@ -3855,7 +3883,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "目标架构"
     }
   ],
   "eRvGw3": [
@@ -3876,16 +3904,16 @@
       "value": "必需。被除数要除以的数字。"
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "内置"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "必需。其中子字符换以参数 1 开头的索引。"
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "共享"
     }
   ],
   "esOQ5p": [
@@ -3924,10 +3952,16 @@
       "value": "如果第一个参数大于或等于第二个参数，则返回 true"
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl 创建因为连接而失败。正在删除连接。"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "分页计数超过最大值"
     }
   ],
   "faSDuD": [
@@ -4132,7 +4166,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "操作路径值与段的模板不匹配。路径 "
     },
     {
       "type": 1,
@@ -4140,7 +4174,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": "，模板 "
     },
     {
       "type": 1,
@@ -4162,7 +4196,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "源架构将被替换，并且你将无法返回到以前的更改。是否要继续更改源架构?"
     }
   ],
   "i/SguY": [
@@ -4731,12 +4765,6 @@
     {
       "type": 0,
       "value": "必填。要删除的属性名称。"
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5449,7 +5477,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "每个操作必须在配置后有一个或多个运行"
     }
   ],
   "vD2lQy": [
@@ -5510,6 +5538,12 @@
     {
       "type": 0,
       "value": "已超时"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "要创建和使用 API 连接，必须在此逻辑应用上配置托管标识。"
     }
   ],
   "vr70Gn": [
@@ -5775,7 +5809,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "添加目标架构"
     }
   ],
   "ysoumb": [
@@ -5847,7 +5881,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "目标架构节点"
     }
   ],
   "zbtUQ/": [
