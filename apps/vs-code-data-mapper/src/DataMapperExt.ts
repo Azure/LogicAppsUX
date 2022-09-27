@@ -1,4 +1,4 @@
-import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionConfig';
+import { dataMapDefinitionsPath, dataMapsPath, schemasPath, webviewTitle } from './extensionConfig';
 import type { ChildProcess } from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
@@ -134,7 +134,7 @@ export default class DataMapperExt {
         }
 
         const fileName = `${DataMapperExt.currentDataMapName}.xslt`;
-        const filePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath, fileName);
+        const filePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapsPath, fileName);
         fs.writeFile(filePath, msg.data, 'utf8');
         break;
       }
