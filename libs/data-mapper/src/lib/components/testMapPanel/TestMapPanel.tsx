@@ -1,16 +1,6 @@
-import { DefaultButton, Panel, PanelType, PrimaryButton } from '@fluentui/react';
-import { Radio, RadioGroup, Tab, TabList, Textarea } from '@fluentui/react-components';
+import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, TextField } from '@fluentui/react';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
-
-enum SelectedTab {
-  Input,
-  Output,
-}
-
-enum InputDataOptions {
-  PasteSample = 'pasteSample',
-}
 
 export interface TestMapPanelProps {
   isOpen: boolean;
@@ -21,8 +11,7 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
   const { isOpen, onClose } = props;
   const intl = useIntl();
 
-  const [selectedTab, setSelectedTab] = useState(SelectedTab.Input);
-  const [selectedInputOption, setSelectedInputOption] = useState(InputDataOptions.PasteSample);
+  const [selectedInputOption, setSelectedInputOption] = useState<string | undefined>('pasteSample');
 
   const testMapLoc = intl.formatMessage({
     defaultMessage: 'Test map',
@@ -49,7 +38,7 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
     description: 'Output',
   });
 
-  const pasteFromSample = intl.formatMessage({
+  const pasteFromSampleLoc = intl.formatMessage({
     defaultMessage: 'Paste from sample',
     description: 'Paste from sample',
   });
@@ -58,6 +47,13 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
     defaultMessage: 'Discard',
     description: 'Discard',
   });
+
+  const inputDataOptionsLabelLoc = intl.formatMessage({
+    defaultMessage: 'Provide input data to test the map with',
+    description: 'Label for input data option choice group',
+  });
+
+  const inputDataOptions = [{ key: 'pasteSample', text: pasteFromSampleLoc }];
 
   const testMap = () => {
     // TODO: Call testMap API once we get it
@@ -85,28 +81,34 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
       isFooterAtBottom={true}
       isLightDismiss
     >
-      <div>
-        <TabList selectedValue={selectedTab} onTabSelect={(_e, data) => setSelectedTab(data.value as SelectedTab)}>
-          <Tab value={SelectedTab.Input}>{inputLoc}</Tab>
-          <Tab value={SelectedTab.Output}>{outputLoc}</Tab>
-        </TabList>
+      <Pivot style={{ marginTop: 16 }}>
+        <PivotItem headerText={inputLoc} style={{ marginTop: 12 }}>
+          <ChoiceGroup
+            label={inputDataOptionsLabelLoc}
+            selectedKey={selectedInputOption}
+            options={inputDataOptions}
+            onChange={(_, option) => setSelectedInputOption(option?.key)}
+          />
 
-        {selectedTab === SelectedTab.Input && (
-          <div>
-            <RadioGroup value={selectedInputOption} onChange={(_, data) => setSelectedInputOption(data.value as InputDataOptions)}>
-              <Radio label={pasteFromSample} value={InputDataOptions.PasteSample} />
-            </RadioGroup>
+          <TextField
+            multiline
+            resizable={false}
+            placeholder="Input helper text"
+            style={{ height: 500 }}
+            styles={{ root: { marginTop: 12 } }}
+          />
+        </PivotItem>
 
-            <Textarea placeholder="Input helper text" />
-          </div>
-        )}
-
-        {selectedTab === SelectedTab.Output && (
-          <div>
-            <Textarea placeholder="Output helper text" />
-          </div>
-        )}
-      </div>
+        <PivotItem headerText={outputLoc} style={{ marginTop: 12 }}>
+          <TextField
+            multiline
+            resizable={false}
+            placeholder="Output helper text"
+            style={{ height: 500 }}
+            styles={{ root: { marginTop: 12 } }}
+          />
+        </PivotItem>
+      </Pivot>
     </Panel>
   );
 };
