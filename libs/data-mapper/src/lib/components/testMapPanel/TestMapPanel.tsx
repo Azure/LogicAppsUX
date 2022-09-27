@@ -83,6 +83,7 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
       closeButtonAriaLabel={closeLoc}
       onRenderFooterContent={getFooterContent}
       isFooterAtBottom={true}
+      isLightDismiss
     >
       <div>
         <TabList selectedValue={selectedTab} onTabSelect={(_e, data) => setSelectedTab(data.value as SelectedTab)}>
