@@ -67,7 +67,7 @@ export class DataMapperApiService {
   }
 
   private getGenerateXsltUri = () => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/maps/generateXslt`;
+    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/maps/generateXslt?api-version=2019-10-01-edge-preview`;
   };
 
   async getSchemas(): Promise<SchemaInfoProperties[]> {
@@ -100,6 +100,9 @@ export class DataMapperApiService {
   async generateDataMapXslt(dataMapDefinition: string): Promise<any> {
     const response = await fetch(this.getGenerateXsltUri(), {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({
         MapContent: dataMapDefinition,
       }),
@@ -111,6 +114,6 @@ export class DataMapperApiService {
 
     const dataMapXsltResponse = await response.json();
 
-    return dataMapXsltResponse;
+    return dataMapXsltResponse.xsltContent;
   }
 }
