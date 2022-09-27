@@ -5,6 +5,7 @@ import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
 import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
+import { addReactFlowPrefix, createConnectionKey, getDestinationIdFromConnection } from '../../utils/DataMapIds.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -329,8 +330,10 @@ export const dataMapSlice = createSlice({
 
       delete newState.dataMapConnections[action.payload.oldConnectionKey];
 
-      const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
-      const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
+      // danielle what happens when connection changes from one array to another
+
+      const trimmedKey = getDestinationIdFromConnection(action.payload.targetNodeKey);
+      const trimmedValue = getDestinationIdFromConnection(action.payload.value);
 
       newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
         destination: trimmedKey,
@@ -427,7 +430,3 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperati
   state.redoStack = [];
   state.isDirty = true;
 };
-
-const createConnectionKey = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
-
-const addReactFlowPrefix = (key: string, type: 'source' | 'target') => `${type}-${key}`;

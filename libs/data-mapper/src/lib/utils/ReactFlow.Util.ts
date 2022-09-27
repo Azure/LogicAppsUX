@@ -94,6 +94,7 @@ const convertInputToReactFlowParentAndChildNodes = (
 };
 
 const convertOutputToReactFlowParentAndChildNodes = (targetSchemaNode: SchemaNodeExtended): ReactFlowNode<SchemaCardProps>[] => {
+  // danielle this is for output
   return convertToReactFlowParentAndChildNodes(targetSchemaNode, SchemaTypes.Target, true);
 };
 
