@@ -3096,7 +3096,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "In-app"
     }
   ],
   "VE3cxq": [
@@ -3998,7 +3998,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Maken van ACL mislukt voor de verbinding. De verbinding wordt verwijderd."
     }
   ],
   "fGcSFd": [
