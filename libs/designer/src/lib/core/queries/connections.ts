@@ -69,11 +69,10 @@ export const useConnectionsForConnector = (connectorId: string) => {
   );
 };
 
-export const getConnectionsForConnector = (connectorId: string) => {
+export const getConnectionsForConnector = async (connectorId: string) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery([connectionKey, connectorId?.toLowerCase()], async () => {
-    const connectionService = ConnectionService();
-    const connections = await connectionService.getConnections(connectorId);
+    const connections = await ConnectionService().getConnections(connectorId);
     return connections.filter((connection) => getConnectionErrors(connection).length === 0);
   });
 };

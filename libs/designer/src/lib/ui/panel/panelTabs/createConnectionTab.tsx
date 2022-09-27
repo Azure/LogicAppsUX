@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { getConnectionMetadata, needsAuth } from '../../../core/actions/bjsworkflow/connections';
-import { getConnectionsForConnector, getUniqueConnectionName } from '../../../core/queries/connections';
+import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
 import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
@@ -15,7 +15,6 @@ import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ConnectionReference } from '@microsoft/logic-apps-designer';
 
 const CreateConnectionTab = () => {
   const dispatch = useDispatch();
@@ -32,7 +31,7 @@ const CreateConnectionTab = () => {
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const applyNewConnection = useCallback(
-    (newConnection: Connection, newName: string) => {
+    (newConnection: Connection, _newName: string) => {
       const connectionId = getIdLeaf(newConnection?.id);
       // const connectionReference: ConnectionReference = {
       //   api: { id: connector?.id ?? '' },

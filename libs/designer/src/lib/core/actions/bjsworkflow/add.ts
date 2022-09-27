@@ -20,7 +20,7 @@ import { setVariableMetadata, getVariableDeclarations } from '../../utils/variab
 import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import { getOperationSettings } from './settings';
-import { ConnectionService, isInBuiltOperation, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { ConnectionService, isBuiltInOperation, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -78,9 +78,8 @@ export const initializeOperationDetails = async (
     const manifest = await getOperationManifest(operationInfo);
     const { iconUri, brandColor } = manifest.properties;
 
-    dispatch(switchToOperationPanel(nodeId));
-    if (!isInBuiltOperation(operationInfo))
-      trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+    if (!isBuiltInOperation(operationInfo)) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+    else dispatch(switchToOperationPanel(nodeId));
 
     // if (isConnectionRequiredForOperation(manifest)) {
     //   trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
@@ -107,9 +106,8 @@ export const initializeOperationDetails = async (
       dispatch
     );
   } else {
-    dispatch(switchToOperationPanel(nodeId));
-    if (!isInBuiltOperation(operationInfo))
-      trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+    if (!isBuiltInOperation(operationInfo)) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+    else dispatch(switchToOperationPanel(nodeId));
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
@@ -208,9 +206,10 @@ export const reinitializeOperationDetails = async (
 
 export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
   const connections = await getConnectionsForConnector(connectorId);
-  if (connections.length !== 0) {
+  if (connections.length > 0) {
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id, connectorId }));
     ConnectionService().createConnectionAclIfNeeded(connections[0]);
+    dispatch(switchToOperationPanel(nodeId));
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }

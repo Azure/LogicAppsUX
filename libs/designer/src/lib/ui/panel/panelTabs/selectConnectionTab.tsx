@@ -5,13 +5,13 @@ import { changeConnectionMapping } from '../../../core/state/connection/connecti
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { Spinner, SpinnerSize } from '@fluentui/react';
 
 export const SelectConnectionTab = () => {
   const dispatch = useDispatch();
@@ -25,6 +25,7 @@ export const SelectConnectionTab = () => {
   }, [dispatch]);
 
   const createConnectionCallback = useCallback(() => {
+    // This is getting called and showing create tab after adding a new operation under certain circumstances
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }, [dispatch]);
 
@@ -33,8 +34,7 @@ export const SelectConnectionTab = () => {
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
 
   useEffect(() => {
-    if (!connectionQuery.isLoading && connections.length === 0)
-      createConnectionCallback();
+    if (!connectionQuery.isLoading && connections.length === 0) createConnectionCallback();
   }, [connectionQuery.isLoading, connections, createConnectionCallback]);
 
   // TODO: RILEY - RACE CONDITION HERE, if you are on select connection and you click another node, this fires off, and sets the old node's connection to the same as the new node's connection
@@ -55,11 +55,12 @@ export const SelectConnectionTab = () => {
     hideConnectionTabs();
   }, [hideConnectionTabs]);
 
-  if (connectionQuery.isLoading) return (
-    <div className="msla-loading-container">
-      <Spinner size={SpinnerSize.large} />
-    </div>
-  );
+  if (connectionQuery.isLoading)
+    return (
+      <div className="msla-loading-container">
+        <Spinner size={SpinnerSize.large} />
+      </div>
+    );
 
   return (
     <SelectConnection
