@@ -11,6 +11,7 @@ import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 
 export const SelectConnectionTab = () => {
   const dispatch = useDispatch();
@@ -32,8 +33,9 @@ export const SelectConnectionTab = () => {
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
 
   useEffect(() => {
-    if (connections.length === 0) createConnectionCallback();
-  }, [connections, createConnectionCallback]);
+    if (!connectionQuery.isLoading && connections.length === 0)
+      createConnectionCallback();
+  }, [connectionQuery.isLoading, connections, createConnectionCallback]);
 
   // TODO: RILEY - RACE CONDITION HERE, if you are on select connection and you click another node, this fires off, and sets the old node's connection to the same as the new node's connection
   // We really just need to make our own selection component here, using the 'DetailsList' component here is just really hacky and not the way it was intended to be used
@@ -52,6 +54,12 @@ export const SelectConnectionTab = () => {
   const cancelSelectionCallback = useCallback(() => {
     hideConnectionTabs();
   }, [hideConnectionTabs]);
+
+  if (connectionQuery.isLoading) return (
+    <div className="msla-loading-container">
+      <Spinner size={SpinnerSize.large} />
+    </div>
+  );
 
   return (
     <SelectConnection

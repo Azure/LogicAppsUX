@@ -10,6 +10,7 @@ import { azureFunctionConnectorId } from './operationmanifest';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft-logic-apps/utils';
 import { 
+  getUniqueName,
   isIdentityAssociatedWithLogicApp,
   HTTP_METHODS,
   UserErrorCode,

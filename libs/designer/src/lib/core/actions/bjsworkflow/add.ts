@@ -6,7 +6,7 @@ import { changeConnectionMapping } from '../../state/connection/connectionSlice'
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
-import { switchToOperationPanel, isolateTab } from '../../state/panel/panelSlice';
+import { isolateTab, switchToOperationPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
@@ -18,10 +18,9 @@ import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '.
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations } from '../../utils/variables';
 import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
-import { isConnectionRequiredForOperation } from './connections';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import { getOperationSettings } from './settings';
-import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { ConnectionService, isInBuiltOperation, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -79,11 +78,15 @@ export const initializeOperationDetails = async (
     const manifest = await getOperationManifest(operationInfo);
     const { iconUri, brandColor } = manifest.properties;
 
-    if (isConnectionRequiredForOperation(manifest)) {
+    dispatch(switchToOperationPanel(nodeId));
+    if (!isInBuiltOperation(operationInfo))
       trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
-    } else {
-      dispatch(switchToOperationPanel(nodeId));
-    }
+
+    // if (isConnectionRequiredForOperation(manifest)) {
+    //   trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+    // } else {
+    //   dispatch(switchToOperationPanel(nodeId));
+    // }
 
     const settings = getOperationSettings(isTrigger, operationInfo, manifest, /* swagger */ undefined);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
@@ -104,7 +107,9 @@ export const initializeOperationDetails = async (
       dispatch
     );
   } else {
-    trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+    dispatch(switchToOperationPanel(nodeId));
+    if (!isInBuiltOperation(operationInfo))
+      trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
