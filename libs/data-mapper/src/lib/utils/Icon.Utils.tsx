@@ -191,11 +191,6 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType, properties
     case SchemaNodeDataType.Time: {
       return CalendarClock16Regular; // Date time
     }
-    /* Currently Unused
-    case SchemaNodeDataType: {
-      return Array16Regular; // Array
-    }
-    */
     case SchemaNodeDataType.Entity: // danielle refactor this
     case SchemaNodeDataType.None: {
       if (properties === SchemaNodeProperties.Repeating) {

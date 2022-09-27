@@ -1,5 +1,5 @@
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
-import { SchemaTypes } from '../../models';
+import { SchemaTypes, SchemaNodeProperties } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
@@ -286,12 +286,37 @@ export const dataMapSlice = createSlice({
       const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
       const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
 
-      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
+      newState.dataMapConnections[createConnectionKey(trimmedValue, trimmedKey)] = {
         destination: trimmedKey,
         sourceValue: trimmedValue,
         reactFlowSource: action.payload.value,
         reactFlowDestination: action.payload.targetNodeKey,
       };
+
+      const sourceNode = state.curDataMapOperation.currentSourceNodes.find((node) => node.key === trimmedValue);
+      const targetParentNode = state.curDataMapOperation.currentTargetNode;
+
+      if (targetParentNode?.properties === SchemaNodeProperties.Repeating) {
+        // only add parent source node and connection if parent node & parent node repeating
+        sourceNode?.pathToRoot.forEach((parentKey) => {
+          // danielle refactor
+          const sourceParent = state.curDataMapOperation.flattenedSourceSchema[addReactFlowPrefix(parentKey.key, 'source')];
+          if (sourceParent.properties === SchemaNodeProperties.Repeating) {
+            if (state.curDataMapOperation.currentSourceNodes.find((node) => node.key !== sourceParent.key)) {
+              newState.currentSourceNodes.push(sourceParent);
+            }
+            if (state.curDataMapOperation.dataMapConnections[createConnectionKey(sourceParent.key, targetParentNode.key)] === undefined) {
+              // danielle test undo!!!
+              newState.dataMapConnections[createConnectionKey(sourceParent.key, targetParentNode.key)] = {
+                destination: targetParentNode.key,
+                sourceValue: sourceParent.key,
+                reactFlowSource: addReactFlowPrefix(sourceParent.key, 'source'),
+                reactFlowDestination: addReactFlowPrefix(targetParentNode.key, 'target'),
+              };
+            }
+          }
+        });
+      }
 
       doDataMapOperation(state, newState);
     },
@@ -402,3 +427,7 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperati
   state.redoStack = [];
   state.isDirty = true;
 };
+
+const createConnectionKey = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
+
+const addReactFlowPrefix = (key: string, type: 'source' | 'target') => `${type}-${key}`;

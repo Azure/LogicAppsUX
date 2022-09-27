@@ -173,7 +173,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
 
   return (
     <div className={containerStyle}>
-      {displayHandle && isLeaf ? (
+      {displayHandle ? (
         <Handle
           type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
           position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
