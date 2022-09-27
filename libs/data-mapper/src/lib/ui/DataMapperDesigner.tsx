@@ -103,10 +103,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onSaveClick = () => {
-    console.log(dataMapDefinition);
-
     generateDataMapXslt(dataMapDefinition).then((xsltStr) => {
-      console.log(xsltStr);
       saveStateCall(dataMapDefinition, xsltStr);
 
       dispatch(
