@@ -10,7 +10,7 @@ import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { useMemo } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
-import { ConnectionLineType, Position } from 'react-flow-renderer';
+import { MarkerType, ConnectionLineType, Position } from 'react-flow-renderer';
 
 const inputX = 400;
 const rootOutputX = 1100;
@@ -184,6 +184,10 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
       target: connection.reactFlowDestination,
       type: ConnectionLineType.SmoothStep,
       selected: connection.isSelected,
+      markerStart: {
+        type: MarkerType.Arrow,
+        width: 30,
+      },
     };
   });
 };

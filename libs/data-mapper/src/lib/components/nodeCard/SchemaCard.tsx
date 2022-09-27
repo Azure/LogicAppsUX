@@ -165,7 +165,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
   const showOutputChevron = schemaType === SchemaTypes.Target && !isLeaf;
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
-  const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType);
+  const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType, schemaNode.properties);
 
   const outputChevronOnClick = (newCurrentSchemaNode: SchemaNodeExtended) => {
     dispatch(setCurrentTargetNode({ schemaNode: newCurrentSchemaNode, resetSelectedSourceNodes: true }));

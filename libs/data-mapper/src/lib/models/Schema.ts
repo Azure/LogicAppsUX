@@ -26,10 +26,10 @@ export enum SchemaType {
 }
 
 export enum SchemaNodeProperties {
-  NotSpecified = 0,
-  Optional = 1,
-  Repeating = 2,
-  Attribute = 4,
+  NotSpecified = 'NotSpecified',
+  Optional = 'Optional',
+  Repeating = 'Repeating',
+  Attribute = 'Attribute',
 }
 
 export enum SchemaNodeDataType {

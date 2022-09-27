@@ -1,4 +1,4 @@
-import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 import { icon16ForSchemaNodeType } from '../../utils/Icon.Utils';
 import { Caption1, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronRight16Regular, CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
@@ -113,7 +113,7 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
           }
         }}
       >
-        <TreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected}>
+        <TreeItemContent node={childNode} isSelected={isNodeSelected}>
           {nameText}
         </TreeItemContent>
         {convertToFastTreeItem(childNode, currentlySelectedNodes, onLeafNodeClick)}
@@ -133,7 +133,7 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
         onMouseLeave={() => onMouseLeave()}
         onMouseEnter={() => onMouseEnter()}
       >
-        <TreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected}>
+        <TreeItemContent node={childNode} isSelected={isNodeSelected}>
           {nameText}
         </TreeItemContent>
       </FastTreeItem>
@@ -159,18 +159,18 @@ export const convertToFastTreeItem = (
 };
 
 export interface SchemaNodeTreeItemContentProps {
-  nodeType: SchemaNodeDataType;
+  node: SchemaNodeExtended;
   isSelected: boolean;
   children?: React.ReactNode;
 }
 
-const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, isSelected, children }) => {
+const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ node, isSelected, children }) => {
   const filledIcon = <CheckmarkCircle16Filled primaryFill={tokens.colorBrandForeground1} />;
   const restIcon = <Circle16Regular primaryFill={tokens.colorNeutralForeground3} />;
 
   return (
     <>
-      {SharedTreeItemContent(nodeType, isSelected)}
+      {SharedTreeItemContent(node, isSelected)}
       <span style={{ marginRight: '8px', width: '100%' }}>{children}</span>
       <span style={{ display: 'flex', marginRight: '4px' }} slot="end">
         {isSelected ? filledIcon : restIcon}
@@ -179,8 +179,8 @@ const TreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, i
   );
 };
 
-export const SharedTreeItemContent = (nodeType: SchemaNodeDataType, isSelected: boolean): JSX.Element => {
-  const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
+export const SharedTreeItemContent = (node: SchemaNodeExtended, isSelected: boolean): JSX.Element => {
+  const BundledTypeIcon = icon16ForSchemaNodeType(node.schemaNodeDataType, node.properties);
   return (
     <span style={{ display: 'flex', paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} slot="start">
       <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={isSelected} />
