@@ -10,6 +10,7 @@ import {
   PropertiesPane,
   propPaneTopBarHeight,
 } from '../components/propertiesPane/PropertiesPane';
+import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
 import { redoDataMapOperation, saveDataMap, undoDataMapOperation } from '../core/state/DataMapSlice';
@@ -84,6 +85,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
+  const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
 
   const dataMapDefinition = useMemo((): string => {
     if (sourceSchema && targetSchema) {
@@ -125,7 +127,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onTestClick = () => {
-    // TODO: Hook up once Test Map pane work starts
+    setIsTestMapPanelOpen(true);
   };
 
   const getCanvasAreaAndPropPaneMargin = () => {
@@ -196,6 +198,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             setContentHeight={setPropPaneExpandedHeight}
           />
         </div>
+
+        <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setIsTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
   );
