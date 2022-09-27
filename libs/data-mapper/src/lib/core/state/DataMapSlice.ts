@@ -37,6 +37,7 @@ const emptyPristineState: DataMapOperationState = {
   flattenedSourceSchema: {},
   flattenedTargetSchema: {},
 };
+
 const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
@@ -44,6 +45,12 @@ const initialState: DataMapState = {
   undoStack: [],
   redoStack: [],
 };
+
+export interface InitialSchemaAction {
+  schema: SchemaExtended;
+  schemaType: SchemaTypes.Source | SchemaTypes.Target;
+  flattenedSchema: SchemaNodeDictionary;
+}
 
 export interface ConnectionAction {
   targetNodeKey: string;
@@ -54,14 +61,7 @@ export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    setInitialSchema: (
-      state,
-      action: PayloadAction<{
-        schema: SchemaExtended;
-        schemaType: SchemaTypes.Source | SchemaTypes.Target;
-        flattenedSchema: SchemaNodeDictionary;
-      }>
-    ) => {
+    setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
       if (action.payload.schemaType === SchemaTypes.Source) {
         state.curDataMapOperation.sourceSchema = action.payload.schema;
         state.curDataMapOperation.flattenedSourceSchema = action.payload.flattenedSchema;

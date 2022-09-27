@@ -3,6 +3,7 @@ import type { Schema } from '../../models/Schema';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';
+import { FunctionList } from '../functionList/FunctionList';
 import { SchemaTree } from '../tree/SchemaTree';
 import type { ButtonPivotProps } from './ButtonPivot';
 import { ButtonPivot } from './ButtonPivot';
@@ -13,11 +14,11 @@ import React, { useState } from 'react';
 
 export default {
   component: ButtonPivot,
-  title: 'Data Mapper/Button Groups/Button Pivot',
+  title: 'Data Mapper Components/Floaties/Button Pivot',
 } as ComponentMeta<typeof ButtonPivot>;
 
-export const Simple: ComponentStory<typeof ButtonPivot> = (args: ButtonPivotProps) => <ButtonPivot {...args} />;
-Simple.args = {
+export const Standard: ComponentStory<typeof ButtonPivot> = (args: ButtonPivotProps) => <ButtonPivot {...args} />;
+Standard.args = {
   buttons: [
     {
       tooltip: 'Toolbox',
@@ -78,7 +79,7 @@ export const MappingToolbox: ComponentStory<typeof ButtonPivot> = (args: ButtonP
       )}
       {showToolboxPane === 'functions' && (
         <FloatingPanel {...ToolboxPanelProps}>
-          <span>This is where we will put function tree</span>
+          <FunctionList onFunctionClick={() => console.log('Function clicked')}></FunctionList>
         </FloatingPanel>
       )}
     </>
