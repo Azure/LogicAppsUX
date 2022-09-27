@@ -91,7 +91,7 @@ export const initializeOperationDetails = async (
       manifest,
       isTrigger,
       nodeInputs,
-      settings.splitOn?.value?.value
+      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -120,7 +120,7 @@ export const initializeOperationDetails = async (
       parsedSwagger,
       operationInfo,
       nodeInputs,
-      settings.splitOn?.value?.value
+      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -156,7 +156,7 @@ export const reinitializeOperationDetails = async (
       manifest,
       isTrigger,
       nodeInputs,
-      settings.splitOn?.value?.value
+      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -186,7 +186,7 @@ export const reinitializeOperationDetails = async (
       parsedSwagger,
       operationInfo,
       nodeInputs,
-      settings.splitOn?.value?.value
+      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
