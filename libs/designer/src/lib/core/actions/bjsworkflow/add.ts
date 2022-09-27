@@ -22,7 +22,7 @@ import { getInputParametersFromManifest, getOutputParametersFromManifest } from 
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import type { DiscoveryOperation, DiscoveryResultTypes, SomeKindOfAzureOperationDiscovery } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -51,7 +51,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   const nodeOperationInfo = {
     connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
     operationId: operation.name,
-    type: operation.properties.operationType ?? '',
+    type: getOperationType(operation),
     kind: operation.properties.operationKind ?? '',
   };
 
@@ -212,8 +212,7 @@ export const setDefaultConnectionForNode = async (nodeId: string, connectorId: s
   dispatch(switchToOperationPanel(nodeId));
 };
 
-// TODO - Figure out whether this is manifest or swagger
-export const addTokensAndVariables = (
+const addTokensAndVariables = (
   nodeId: string,
   operationType: string,
   nodeData: NodeDataWithOperationMetadata,
@@ -221,7 +220,7 @@ export const addTokensAndVariables = (
   dispatch: Dispatch
 ): void => {
   const { graph, nodesMetadata, operations } = workflowState;
-  const { nodeInputs, nodeOutputs, settings, manifest } = nodeData;
+  const { nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest } = nodeData;
   const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {
     [nodeId]: nodeId,
   });
@@ -239,13 +238,13 @@ export const addTokensAndVariables = (
       isRootNodeInGraph(nodeId, 'root', nodesMetadata) ? undefined : nodeId,
       operationType,
       nodeOutputs.outputs ?? {},
-      { iconUri: manifest?.properties.iconUri as string, brandColor: manifest?.properties.brandColor as string },
+      { iconUri, brandColor },
       settings
     )
   );
 
   if (equals(operationType, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
-    setVariableMetadata(manifest?.properties.iconUri as string, manifest?.properties.brandColor as string);
+    setVariableMetadata(iconUri, brandColor);
 
     const variables = getVariableDeclarations(nodeInputs);
     if (variables.length) {
@@ -255,3 +254,14 @@ export const addTokensAndVariables = (
 
   dispatch(initializeTokensAndVariables(tokensAndVariables));
 };
+
+const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): string => {
+  const operationType = operation.properties.operationType;
+  return !operationType
+    ? (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
+      ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
+      : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
+        ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
+        : Constants.NODE.TYPE.API_CONNECTION
+    : operationType;
+}
