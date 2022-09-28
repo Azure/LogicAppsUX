@@ -33,8 +33,8 @@ export enum ReactFlowNodeType {
   FunctionNode = 'functionNode',
 }
 
-export const inputPrefix = 'source-';
-export const outputPrefix = 'target-';
+export const sourcePrefix = 'source-';
+export const targetPrefix = 'target-';
 export const functionPrefix = 'function-';
 
 export const convertToReactFlowNodes = (
@@ -80,7 +80,7 @@ const convertInputToReactFlowParentAndChildNodes = (
 
   combinedNodes.forEach((sourceNode) => {
     reactFlowNodes.push({
-      id: `${inputPrefix}${sourceNode.key}`,
+      id: `${sourcePrefix}${sourceNode.key}`,
       data: {
         schemaNode: sourceNode,
         schemaType: SchemaTypes.Source,
@@ -117,7 +117,7 @@ export const convertToReactFlowParentAndChildNodes = (
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
   const rootX = schemaType === SchemaTypes.Source ? getInputX(viewportCoords) : getRootOutputX(viewportCoords);
-  const idPrefix = schemaType === SchemaTypes.Source ? inputPrefix : outputPrefix;
+  const idPrefix = schemaType === SchemaTypes.Source ? sourcePrefix : targetPrefix;
 
   reactFlowNodes.push({
     id: `${idPrefix}${parentSchemaNode.key}`,
