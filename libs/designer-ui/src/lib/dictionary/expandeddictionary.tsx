@@ -24,7 +24,7 @@ export interface ExpandedDictionaryProps {
 export const ExpandedDictionary = ({ items, isTrigger, GetTokenPicker, setItems }: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
-  const editorRef = useRef<HTMLDivElement>(null);
+  const editorRef = useRef<(HTMLDivElement | null)[]>([]);
 
   const [pickerOffset, setPickerOffset] = useState<ButtonOffSet>();
   const [currIndex, setCurrIndex] = useState<number>(0);
@@ -44,11 +44,13 @@ export const ExpandedDictionary = ({ items, isTrigger, GetTokenPicker, setItems 
   });
 
   const updateHeight = (index: number, type: ExpandedDictionaryEditorType) => {
-    const offset = editorRef.current?.offsetHeight;
-    const height = containerRef.current?.offsetHeight;
-    if (offset && height) {
+    if (containerRef.current && editorRef.current[index]) {
+      const containerBottomLoc = window.scrollY + containerRef.current.getBoundingClientRect().top + containerRef.current.offsetHeight;
+      let itemHeight = window.scrollY;
+      itemHeight += editorRef.current[index]?.getBoundingClientRect().top ?? 0;
+
       setPickerOffset({
-        heightOffset: height - offset * index,
+        heightOffset: containerBottomLoc - itemHeight,
         widthOffset:
           type === ExpandedDictionaryEditorType.KEY
             ? constants.EXPANDED_DICTIONARY_WIDTH_OFFSET.KEY_OFFSET
@@ -65,12 +67,13 @@ export const ExpandedDictionary = ({ items, isTrigger, GetTokenPicker, setItems 
       setItems([...items, { key: [], value: [] }]);
     }
   };
+
   return (
     <div className="msla-dictionary-container msla-dictionary-item-container" ref={containerRef}>
       {items.map((item, index) => {
         return (
           <div key={index} className="msla-dictionary-editor-item">
-            <div className="msla-dictionary-item-cell" ref={editorRef}>
+            <div className="msla-dictionary-item-cell" aria-label={`dict-item-${index}`} ref={(el) => (editorRef.current[index] = el)}>
               <BaseEditor
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={keyPlaceholder}
