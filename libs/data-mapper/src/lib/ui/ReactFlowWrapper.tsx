@@ -27,7 +27,7 @@ import type { FunctionData } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
-import { inputPrefix, outputPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
+import { sourcePrefix, targetPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -143,7 +143,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         const selectedSourceNode: SelectedSourceNode = {
           nodeType: NodeType.Source,
           name: node.data.schemaNode.name,
-          path: node.id.replace(inputPrefix, ''),
+          path: node.id.replace(sourcePrefix, ''),
           dataType: node.data.schemaNode.schemaNodeDataType,
         };
 
@@ -152,7 +152,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         const selectedTargetNode: SelectedTargetNode = {
           nodeType: NodeType.Target,
           name: node.data.schemaNode.name,
-          path: node.id.replace(outputPrefix, ''),
+          path: node.id.replace(targetPrefix, ''),
           dataType: node.data.schemaNode.schemaNodeDataType,
           defaultValue: '', // TODO: this property and below
           doNotGenerateIfNoValue: true,
