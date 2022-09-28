@@ -261,7 +261,7 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
     ? (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
       ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
       : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
-        ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
-        : Constants.NODE.TYPE.API_CONNECTION
+      ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
+      : Constants.NODE.TYPE.API_CONNECTION
     : operationType;
-}
+};

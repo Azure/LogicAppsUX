@@ -226,7 +226,7 @@ export class StandardOperationManifestService implements IOperationManifestServi
           description,
           iconUri,
           connection: equals(operationType, 'serviceprovider') ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
-          ...manifest
+          ...manifest,
         },
       };
 
