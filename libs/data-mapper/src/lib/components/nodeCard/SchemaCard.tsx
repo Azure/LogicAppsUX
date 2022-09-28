@@ -38,7 +38,6 @@ const useStyles = makeStyles({
   container: {
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     backgroundColor: tokens.colorNeutralBackground1,
-    //display: 'inline-block',
     display: 'flex',
     flexDirection: 'row',
     height: '48px',

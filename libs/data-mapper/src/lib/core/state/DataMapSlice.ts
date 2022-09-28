@@ -230,7 +230,6 @@ export const dataMapSlice = createSlice({
           case NodeType.Source: {
             const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== selectedNode.name);
 
-            // remove any connections related
             for (const connectionKey in state.curDataMapOperation.dataMapConnections) {
               if (state.curDataMapOperation.dataMapConnections[connectionKey].sourceValue === selectedNode.path) {
                 delete state.curDataMapOperation.dataMapConnections[connectionKey];
@@ -243,7 +242,13 @@ export const dataMapSlice = createSlice({
             const newFunctionsState = { ...state.curDataMapOperation.currentFunctionNodes };
             delete newFunctionsState[selectedNode.id];
             doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
-            // remove any connections danielle
+            for (const connectionKey in state.curDataMapOperation.dataMapConnections) {
+              const connection = state.curDataMapOperation.dataMapConnections[connectionKey];
+              if (selectedNode.id.endsWith(connection.sourceValue) || selectedNode.id.startsWith(connection.destination)) {
+                delete state.curDataMapOperation.dataMapConnections[connectionKey];
+              }
+            }
+
             break;
           }
           default:

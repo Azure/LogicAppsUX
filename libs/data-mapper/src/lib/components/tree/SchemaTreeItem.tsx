@@ -108,11 +108,8 @@ export const SchemaFastTreeItem: React.FunctionComponent<SchemaFastTreeItemProps
         }}
         onClick={(e) => {
           e.stopPropagation();
-          //if (!(e.target as any).expandCollapseButton) {
           onLeafNodeClick(childNode);
-          //}
         }}
-        onSelect={(e) => e.stopPropagation()}
       >
         <TreeItemContent node={childNode} isSelected={isNodeSelected}>
           {nameText}
