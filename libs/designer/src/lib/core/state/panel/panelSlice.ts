@@ -53,10 +53,10 @@ export const panelSlice = createSlice({
       state.selectedOperationGroupId = action.payload;
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
+      showDefaultTabs();
       state.selectedNode = action.payload;
       state.isDiscovery = false;
       state.selectedOperationGroupId = '';
-      showDefaultTabs();
     },
 
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {

@@ -1,15 +1,21 @@
 /* eslint-disable no-param-reassign */
 import type { HttpResponse } from '../common/exceptions/service';
-import type { ConnectionCreationInfo, ConnectionParametersMetadata, CreateConnectionResult, IConnectionService, ConnectorWithSwagger } from '../connection';
+import type {
+  ConnectionCreationInfo,
+  ConnectionParametersMetadata,
+  CreateConnectionResult,
+  IConnectionService,
+  ConnectorWithSwagger,
+} from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
-import type { IOAuthPopup } from '../oAuth';
-import { OAuthService } from '../oAuth';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
+import type { IOAuthPopup } from '../oAuth';
+import { OAuthService } from '../oAuth';
 import { azureFunctionConnectorId } from './operationmanifest';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft-logic-apps/utils';
-import { 
+import {
   getUniqueName,
   isIdentityAssociatedWithLogicApp,
   HTTP_METHODS,
@@ -467,7 +473,7 @@ export class StandardConnectionService implements IConnectionService {
     connectorId: string,
     connectionInfo: ConnectionCreationInfo
   ): Promise<CreateConnectionResult> {
-    const connection = await this.createConnectionInApiHub(connectionId, connectorId, connectionInfo);
+    const connection = await this.createConnection(connectionId, connectorId, connectionInfo);
     const oAuthService = OAuthService();
     let oAuthPopupInstance: IOAuthPopup | undefined;
 
