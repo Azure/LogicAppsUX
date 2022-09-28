@@ -123,8 +123,11 @@ const useStyles = makeStyles({
       outlineRadius: '5px',
     },
   }),
-  arrayBadge: {
+  inputArrayBadge: {
     marginLeft: '6px',
+  },
+  outputArrayBadge: {
+    marginRight: '6px',
   },
 });
 
@@ -185,6 +188,11 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
 
   return (
     <div className={classes.badgeContainer}>
+      {isNBadgeRequired && schemaType === SchemaTypes.Target && (
+        <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
+          N
+        </Badge>
+      )}
       <div className={containerStyle}>
         {displayHandle ? (
           <Handle
@@ -212,8 +220,8 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
           />
         )}
       </div>
-      {isNBadgeRequired && (
-        <Badge className={classes.arrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
+      {isNBadgeRequired && schemaType === SchemaTypes.Source && (
+        <Badge className={classes.inputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
           N
         </Badge>
       )}
