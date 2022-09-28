@@ -3,7 +3,8 @@ import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaTypes } from '../../models';
+import { SchemaTypes, SchemaNodeProperties } from '../../models';
+import type { Connection } from '../../models/Connection';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
@@ -30,7 +31,7 @@ export type SchemaCardProps = {
   displayHandle: boolean;
   isLeaf: boolean;
   isChild: boolean;
-  isConnectedArray: boolean;
+  relatedConnections: Connection[];
 } & CardProps;
 
 const useStyles = makeStyles({
@@ -152,7 +153,7 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 };
 
 export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, isConnectedArray } = props.data;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, relatedConnections } = props.data;
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
@@ -179,6 +180,8 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
   const outputChevronOnClick = (newCurrentSchemaNode: SchemaNodeExtended) => {
     dispatch(setCurrentTargetNode({ schemaNode: newCurrentSchemaNode, resetSelectedSourceNodes: true }));
   };
+
+  const isNBadgeRequired = relatedConnections.length > 0 && schemaNode.properties === SchemaNodeProperties.Repeating;
 
   return (
     <div className={classes.badgeContainer}>
@@ -209,7 +212,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
           />
         )}
       </div>
-      {isConnectedArray && (
+      {isNBadgeRequired && (
         <Badge className={classes.arrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
           N
         </Badge>
