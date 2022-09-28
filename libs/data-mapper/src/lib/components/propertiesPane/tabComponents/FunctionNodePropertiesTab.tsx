@@ -82,7 +82,7 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
           {currentNode.inputs.length > 0 ? (
             <>
               {currentNode.inputs.map((input) => (
-                <Stack horizontal verticalAlign="center" key={input.inputName}>
+                <Stack horizontal verticalAlign="center" key={input.displayName}>
                   <Input placeholder="Temporary placeholder" style={{ marginTop: 16 }} />
                   <Button icon={<Delete20Regular />} />
                 </Stack>
