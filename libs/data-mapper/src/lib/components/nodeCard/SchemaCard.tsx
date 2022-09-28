@@ -29,6 +29,7 @@ export type SchemaCardProps = {
   schemaNode: SchemaNodeExtended;
   schemaType: SchemaTypes;
   displayHandle: boolean;
+  displayChevron: boolean;
   isLeaf: boolean;
   isChild: boolean;
   relatedConnections: Connection[];
@@ -155,7 +156,8 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 };
 
 export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, relatedConnections } = props.data;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, relatedConnections } =
+    props.data;
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
@@ -174,7 +176,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
 
   const containerStyle = mergeClasses(...containerStyleClasses);
 
-  const showOutputChevron = schemaType === SchemaTypes.Target && !isLeaf;
+  const showOutputChevron = schemaType === SchemaTypes.Target && !isLeaf && displayChevron;
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType, schemaNode.properties);
