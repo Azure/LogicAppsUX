@@ -102,24 +102,6 @@ export default class DataMapperExt {
     this._panel.webview.html = html.replace(matchLinks, toUri);
   }
 
-  private saveDataMap(isDefinition: boolean, fileContents: string) {
-    if (!DataMapperExt.currentDataMapName) {
-      DataMapperExt.currentDataMapName = 'default';
-    }
-
-    const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? '.yml' : '.xslt'}`;
-    const folderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), isDefinition ? dataMapDefinitionsPath : dataMapsPath);
-    const filePath = path.join(folderPath, fileName);
-
-    // Mkdir as extra insurance that directory exists so file can be written
-    // - harmless if directory already exists
-    fs.mkdir(folderPath, { recursive: true })
-      .then(() => {
-        fs.writeFile(filePath, fileContents, 'utf8');
-      })
-      .catch(DataMapperExt.showError);
-  }
-
   private _handleWebviewMsg(msg: ReceivingMessageTypes) {
     switch (msg.command) {
       case 'addSchemaFromFile': {
@@ -137,11 +119,11 @@ export default class DataMapperExt {
         break;
       }
       case 'saveDataMapDefinition': {
-        this.saveDataMap(true, msg.data);
+        DataMapperExt.saveDataMap(true, msg.data);
         break;
       }
       case 'saveDataMapXslt': {
-        this.saveDataMap(false, msg.data);
+        DataMapperExt.saveDataMap(false, msg.data);
         break;
       }
     }
@@ -181,5 +163,23 @@ export default class DataMapperExt {
       DataMapperExt.showError('No VS Code folder/workspace found...');
       return undefined;
     }
+  }
+
+  public static saveDataMap(isDefinition: boolean, fileContents: string) {
+    if (!DataMapperExt.currentDataMapName) {
+      DataMapperExt.currentDataMapName = 'default';
+    }
+
+    const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? '.yml' : '.xslt'}`;
+    const folderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), isDefinition ? dataMapDefinitionsPath : dataMapsPath);
+    const filePath = path.join(folderPath, fileName);
+
+    // Mkdir as extra insurance that directory exists so file can be written
+    // - harmless if directory already exists
+    fs.mkdir(folderPath, { recursive: true })
+      .then(() => {
+        fs.writeFile(filePath, fileContents, 'utf8');
+      })
+      .catch(DataMapperExt.showError);
   }
 }
