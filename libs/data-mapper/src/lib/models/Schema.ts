@@ -9,8 +9,10 @@ export interface Schema {
 export interface SchemaNode {
   key: string;
   name: string;
+  fullName: string;
   namespacePrefix: string;
   namespaceUri: string;
+  normalizedDataType: NormalizedDataType;
   schemaNodeDataType: SchemaNodeDataType;
   properties: SchemaNodeProperties;
   optional?: boolean;
@@ -78,6 +80,18 @@ export enum SchemaNodeDataType {
   UnsignedLong = 'UnsignedLong',
   UnsignedShort = 'UnsignedShort',
   UntypedAtomic = 'UntypedAtomic',
+}
+
+export enum NormalizedDataType {
+  ComplexType = 'ComplexType',
+  Integer = 'Integer',
+  Decimal = 'Decimal',
+  Number = 'Number',
+  Binary = 'Binary',
+  Boolean = 'Bool',
+  String = 'String',
+  DateTime = 'DateTime',
+  Any = 'Any',
 }
 
 export interface SchemaExtended extends Schema {
