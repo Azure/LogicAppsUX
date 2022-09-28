@@ -4,13 +4,12 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
-  EditorLanguage,
-  ValueSegmentType,
-  CodeEditor, // HTMLEditor,
-  TokenPicker, // TokenType,
-  // DictionaryEditor,
-  // testTokenSegment,
-  SchemaEditor, // Combobox,
+  // EditorLanguage,
+  ValueSegmentType, // CodeEditor, // HTMLEditor,
+  TokenPicker,
+  TokenType,
+  DictionaryEditor,
+  testTokenSegment, // SchemaEditor, // Combobox,
   // ArrayEditor,
   Scratch, // StringEditor,
   // AuthenticationEditor,
@@ -47,7 +46,7 @@ export const ScratchTab = () => {
   const children = (): React.ReactNode => {
     return (
       <>
-        <CodeEditor
+        {/* <CodeEditor
           initialValue={[
             {
               type: ValueSegmentType.LITERAL,
@@ -71,7 +70,7 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
           language={EditorLanguage.javascript}
-        />
+        /> */}
         {/* <DropdownEditor
           multiSelect={true}
           initialValue={[
@@ -131,11 +130,11 @@ export const ScratchTab = () => {
           // readonly={true}
         /> */}
 
-        <SchemaEditor
+        {/* <SchemaEditor
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
-        />
-        {/* 
+        /> */}
+
         <DictionaryEditor
           initialItems={[
             {
@@ -203,8 +202,8 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         />
-        <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} />
-        <StringEditor
+        {/* <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} /> */}
+        {/* <StringEditor
           initialValue={[
             testTokenSegment,
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
