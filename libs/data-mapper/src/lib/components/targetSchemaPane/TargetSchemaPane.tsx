@@ -1,12 +1,13 @@
-import type { RootState } from '../../core/state/Store';
+import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
+import { outputPrefix } from '../../utils/ReactFlow.Util';
 import { TargetSchemaTree } from '../tree/TargetTree';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleRight20Regular, ChevronDoubleLeft20Regular } from '@fluentui/react-icons';
-import React from 'react';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   outputPane: {
@@ -33,7 +34,9 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   const intl = useIntl();
   const styles = useStyles();
 
+  const dispatch = useDispatch<AppDispatch>();
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
   const targetSchemaLoc = intl.formatMessage({
     defaultMessage: 'Target schema',
@@ -41,7 +44,18 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   });
 
   const handleItemClick = (schemaNode: SchemaNodeExtended) => {
-    console.log(schemaNode);
+    let pathToParentIdx: number;
+
+    if (schemaNode.pathToRoot.length === 1) {
+      // For nodes at the top/root level
+      pathToParentIdx = 0;
+    } else {
+      pathToParentIdx = schemaNode.pathToRoot.length - 2;
+    }
+
+    const parentSchemaNode = targetSchemaDictionary[`${outputPrefix}${schemaNode.pathToRoot[pathToParentIdx].key}`];
+
+    dispatch(setCurrentTargetNode({ schemaNode: parentSchemaNode, resetSelectedSourceNodes: true }));
   };
 
   return (
