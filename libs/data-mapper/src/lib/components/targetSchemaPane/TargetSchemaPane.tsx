@@ -1,7 +1,6 @@
 import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { targetPrefix } from '../../utils/ReactFlow.Util';
 import { TargetSchemaTree } from '../tree/TargetTree';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
@@ -36,7 +35,6 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
   const dispatch = useDispatch<AppDispatch>();
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
   const targetSchemaLoc = intl.formatMessage({
     defaultMessage: 'Target schema',
@@ -44,18 +42,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   });
 
   const handleItemClick = (schemaNode: SchemaNodeExtended) => {
-    let pathToParentIdx: number;
-
-    if (schemaNode.pathToRoot.length === 1) {
-      // For nodes at the top/root level
-      pathToParentIdx = 0;
-    } else {
-      pathToParentIdx = schemaNode.pathToRoot.length - 2;
-    }
-
-    const parentSchemaNode = targetSchemaDictionary[`${targetPrefix}${schemaNode.pathToRoot[pathToParentIdx].key}`];
-
-    dispatch(setCurrentTargetNode({ schemaNode: parentSchemaNode, resetSelectedSourceNodes: true }));
+    dispatch(setCurrentTargetNode({ schemaNode: schemaNode, resetSelectedSourceNodes: true }));
   };
 
   return (
