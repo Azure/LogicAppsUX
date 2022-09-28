@@ -19,8 +19,9 @@ const useStyles = makeStyles({
     ...typographyStyles.body1Strong,
   },
   editorStyle: {
-    ...shorthands.border('1px', 'solid', '#313131'),
-    ...shorthands.borderRadius('3px'),
+    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    ...shorthands.padding('10px'),
     height: '500px',
   },
 });
