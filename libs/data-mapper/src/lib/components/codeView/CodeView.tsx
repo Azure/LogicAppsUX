@@ -58,8 +58,10 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen 
           language={EditorLanguage.yaml}
           value={dataMapDefinition}
           lineNumbers="on"
-          scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
+          scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
           className={styles.editorStyle}
+          wordWrap="on"
+          readOnly
         />
       </div>
     </div>

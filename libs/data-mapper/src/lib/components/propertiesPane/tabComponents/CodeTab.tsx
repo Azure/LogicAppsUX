@@ -11,7 +11,8 @@ export const CodeTab = ({ code }: CodeTabProps) => {
       language={EditorLanguage.yaml}
       value={code}
       lineNumbers="on"
-      scrollbar={{ horizontal: 'hidden', vertical: 'hidden' }}
+      scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
+      wordWrap="on"
       minimapEnabled
       readOnly
     />
