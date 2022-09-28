@@ -11,6 +11,8 @@ export interface SchemaNode {
   name: string;
   namespacePrefix: string;
   namespaceUri: string;
+  // Optional until we get it in the system
+  parentDataType?: ParentDataType;
   schemaNodeDataType: SchemaNodeDataType;
   properties: SchemaNodeProperties;
   optional?: boolean;
@@ -78,6 +80,18 @@ export enum SchemaNodeDataType {
   UnsignedLong = 'UnsignedLong',
   UnsignedShort = 'UnsignedShort',
   UntypedAtomic = 'UntypedAtomic',
+}
+
+export enum ParentDataType {
+  Integer = 'Integer',
+  Decimal = 'Decimal',
+  Number = 'Number',
+  Binary = 'Binary',
+  Boolean = 'Bool',
+  String = 'String',
+  DateTime = 'DateTime',
+  Object = 'Object',
+  Any = 'Any',
 }
 
 export interface SchemaExtended extends Schema {

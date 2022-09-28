@@ -21,7 +21,7 @@ import { Handle, Position } from 'react-flow-renderer';
 
 export type FunctionCardProps = {
   functionName: string;
-  numberOfInputs: number;
+  maxNumberOfInputs: number;
   inputs: FunctionInput[];
   iconFileName?: string;
   functionBranding: FunctionGroupBranding;
@@ -92,23 +92,20 @@ const isValidConnection = (connection: ReactFlowConnection, inputs: FunctionInpu
 
     // For now just allow all function to function
     // TODO validate express to function connections
-    return (
-      !sourceNode ||
-      inputs.some((input) => input.acceptableInputTypes.some((acceptableType) => acceptableType === sourceNode.schemaNodeDataType))
-    );
+    return !sourceNode || inputs.some((input) => input.allowedTypes.some((acceptableType) => acceptableType === sourceNode.parentDataType));
   }
 
   return false;
 };
 
 export const FunctionCard: FunctionComponent<NodeProps<FunctionCardProps>> = (props: NodeProps<FunctionCardProps>) => {
-  const { functionName, numberOfInputs, inputs, disabled, error, functionBranding, iconFileName, displayHandle, onClick } = props.data;
+  const { functionName, maxNumberOfInputs, inputs, disabled, error, functionBranding, iconFileName, displayHandle, onClick } = props.data;
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   return (
     <div className={classes.container}>
-      {displayHandle && numberOfInputs !== 0 ? (
+      {displayHandle && maxNumberOfInputs !== 0 ? (
         <Handle
           type={'target'}
           position={Position.Left}

@@ -1,28 +1,30 @@
-import type { SchemaNodeDataType } from './Schema';
+import type { ParentDataType } from './Schema';
 
 export interface FunctionData {
-  name: string;
-  numberOfInputs: number;
+  key: string;
+  functionName: string;
   type: string;
-  userExpression?: string;
-  xsltExpression?: string;
-  isSequenceInputSupported: boolean;
-  isXsltOperatorExpression: boolean;
 
-  // Made up
+  maxNumberOfInputs: number; // -1 for unlimited
   inputs: FunctionInput[];
-  outputType: SchemaNodeDataType;
-  allowCustom: boolean;
+  outputValueType: ParentDataType;
 
-  functionCategory: FunctionCategory;
+  displayName: string;
+  category: FunctionCategory;
   iconFileName?: string;
-  detailedDescription: string;
+  description: string;
   tooltip: string;
 }
 
 export interface FunctionInput {
-  inputName: string;
-  acceptableInputTypes: SchemaNodeDataType[];
+  name: string;
+  allowedTypes: ParentDataType[];
+  isOptional: boolean;
+  allowCustomInput: boolean;
+
+  displayName: string;
+  tooltip: string;
+  placeholder: string;
 }
 
 export enum FunctionCategory {
