@@ -22,7 +22,9 @@ export const DictionaryDeleteButton = ({ items, index, setItems }: DictionaryDel
   });
 
   const handleDeleteItem = () => {
-    setItems(items.filter((_, i) => i !== index));
+    const newItems = items.filter((_, i) => i !== index);
+    console.log(newItems);
+    setItems(newItems);
   };
 
   return (

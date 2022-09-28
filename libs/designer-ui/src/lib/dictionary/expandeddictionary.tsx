@@ -3,7 +3,6 @@ import constants from '../constants';
 import { BaseEditor } from '../editor/base';
 import type { ButtonOffSet } from '../editor/base/plugins/TokenPickerButton';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
-import { DeleteDictionaryItem } from './plugins/DeleteDictionaryItem';
 import { SerializeExpandedDictionary } from './plugins/SerializeExpandedDictionary';
 import { isEmpty } from './util/helper';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
@@ -96,7 +95,6 @@ export const ExpandedDictionary = ({ items, isTrigger, readonly, GetTokenPicker,
                   type={ExpandedDictionaryEditorType.KEY}
                   setItems={setItems}
                 />
-                <DeleteDictionaryItem items={items} index={index} type={ExpandedDictionaryEditorType.KEY} />
               </BaseEditor>
             </div>
             <div className="msla-dictionary-item-cell">
@@ -121,7 +119,6 @@ export const ExpandedDictionary = ({ items, isTrigger, readonly, GetTokenPicker,
                   type={ExpandedDictionaryEditorType.VALUE}
                   setItems={setItems}
                 />
-                <DeleteDictionaryItem items={items} index={index} type={ExpandedDictionaryEditorType.VALUE} />
               </BaseEditor>
             </div>
             <DictionaryDeleteButton items={items} index={index} setItems={setItems} />
