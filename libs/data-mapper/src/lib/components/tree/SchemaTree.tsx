@@ -1,6 +1,6 @@
 import type { SchemaExtended, SchemaNodeExtended } from '../../models';
 import { convertToFastTreeItem } from './SchemaTreeItem';
-import { TreeHeader } from './treeHeader';
+import { TreeHeader } from './TreeHeader';
 import { fluentTreeView, provideFluentDesignSystem } from '@fluentui/web-components';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
 import React, { useMemo } from 'react';

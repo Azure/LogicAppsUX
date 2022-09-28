@@ -4,6 +4,7 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
+import { OutputPane } from '../components/outputPane/OutputPane';
 import {
   basePropPaneContentHeight,
   canvasAreaAndPropPaneMargin,
@@ -86,6 +87,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
+  const [isOutputPaneExpanded, setIsOutputPaneExpanded] = useState(false);
 
   const dataMapDefinition = useMemo((): string => {
     if (sourceSchema && targetSchema) {
@@ -152,50 +154,62 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     <DndProvider backend={HTML5Backend}>
       <div className={styles.dataMapperShell}>
         <EditorCommandBar onSaveClick={onSaveClick} onUndoClick={onUndoClick} onRedoClick={onRedoClick} onTestClick={onTestClick} />
-        <WarningModal />
-        <EditorConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
-        <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
 
-        <div id="centerView" style={{ minHeight: 400, flex: '1 1 1px' }}>
-          <div
-            style={{
-              height: getCanvasAreaHeight(),
-              marginBottom: getCanvasAreaAndPropPaneMargin(),
-              boxSizing: 'border-box',
-            }}
-          >
-            {sourceSchema && targetSchema ? (
-              <Stack horizontal style={{ height: '100%' }}>
-                <div
-                  className={styles.canvasWrapper}
-                  style={{
-                    width: isCodeViewOpen ? '75%' : '100%',
-                    marginRight: isCodeViewOpen ? '8px' : 0,
-                    backgroundColor: tokens.colorNeutralBackground4,
-                  }}
-                >
-                  <ReactFlowProvider>
-                    <ReactFlowWrapper sourceSchema={sourceSchema} />
-                  </ReactFlowProvider>
-                </div>
+        <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
+          <div id="centerViewWithBreadcrumb" style={{ display: 'flex', flexDirection: 'column', flex: '1 1 1px' }}>
+            <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
 
-                <CodeView dataMapDefinition={dataMapDefinition} isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
-              </Stack>
-            ) : (
-              <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
-            )}
+            <div id="centerView" style={{ minHeight: 400, flex: '1 1 1px' }}>
+              <div
+                style={{
+                  height: getCanvasAreaHeight(),
+                  marginBottom: getCanvasAreaAndPropPaneMargin(),
+                  boxSizing: 'border-box',
+                }}
+              >
+                {sourceSchema && targetSchema ? (
+                  <Stack horizontal style={{ height: '100%' }}>
+                    <div
+                      className={styles.canvasWrapper}
+                      style={{
+                        width: isCodeViewOpen ? '75%' : '100%',
+                        marginRight: isCodeViewOpen ? '8px' : 0,
+                        backgroundColor: tokens.colorNeutralBackground4,
+                      }}
+                    >
+                      <ReactFlowProvider>
+                        <ReactFlowWrapper sourceSchema={sourceSchema} />
+                      </ReactFlowProvider>
+                    </div>
+
+                    <CodeView
+                      dataMapDefinition={dataMapDefinition}
+                      isCodeViewOpen={isCodeViewOpen}
+                      setIsCodeViewOpen={setIsCodeViewOpen}
+                      canvasAreaHeight={getCanvasAreaHeight()}
+                    />
+                  </Stack>
+                ) : (
+                  <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
+                )}
+              </div>
+
+              <PropertiesPane
+                currentNode={currentlySelectedNode}
+                isExpanded={isPropPaneExpanded}
+                setIsExpanded={setIsPropPaneExpanded}
+                centerViewHeight={centerViewHeight}
+                contentHeight={propPaneExpandedHeight}
+                setContentHeight={setPropPaneExpandedHeight}
+              />
+            </div>
           </div>
 
-          <PropertiesPane
-            currentNode={currentlySelectedNode}
-            isExpanded={isPropPaneExpanded}
-            setIsExpanded={setIsPropPaneExpanded}
-            centerViewHeight={centerViewHeight}
-            contentHeight={propPaneExpandedHeight}
-            setContentHeight={setPropPaneExpandedHeight}
-          />
+          <OutputPane isExpanded={isOutputPaneExpanded} setIsExpanded={setIsOutputPaneExpanded} />
         </div>
 
+        <WarningModal />
+        <EditorConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
         <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setIsTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
