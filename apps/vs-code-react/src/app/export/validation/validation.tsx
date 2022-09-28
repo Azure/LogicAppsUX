@@ -21,6 +21,10 @@ export const Validation: React.FC = () => {
   const intl = useIntl();
 
   const intlText = {
+    WORKFLOW_GROUP_DISPLAY_NAME: intl.formatMessage({
+      defaultMessage: 'Workflow',
+      description: 'Review export status title',
+    }),
     REVIEW_TITLE: intl.formatMessage({
       defaultMessage: 'Review export status',
       description: 'Review export status title',
@@ -63,7 +67,7 @@ export const Validation: React.FC = () => {
   });
 
   const { validationItems = [], validationGroups = [] }: any =
-    isValidationLoading || !validationData ? {} : parseValidationData(validationData?.properties);
+    isValidationLoading || !validationData ? {} : parseValidationData(validationData?.properties, intlText.WORKFLOW_GROUP_DISPLAY_NAME);
 
   return (
     <div className="msla-export-validation">
