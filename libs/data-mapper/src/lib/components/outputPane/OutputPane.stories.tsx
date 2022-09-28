@@ -9,6 +9,10 @@ export default {
 } as ComponentMeta<typeof OutputPane>;
 
 export const Standard: ComponentStory<typeof OutputPane> = (args: OutputPaneProps) => <OutputPane {...args} />;
+
 Standard.args = {
-  isOpen: true,
+  isExpanded: true,
+  setIsExpanded: (_isExpanded: boolean) => {
+    return;
+  },
 };
