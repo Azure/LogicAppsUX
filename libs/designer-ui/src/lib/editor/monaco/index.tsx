@@ -15,6 +15,7 @@ export enum EditorLanguage {
   json = 'json',
   xml = 'xml',
   templateExpressionLanguage = 'TemplateExpressionLanguage',
+  yaml = 'yaml',
 }
 
 export interface MonacoProps extends MonacoOptions {
