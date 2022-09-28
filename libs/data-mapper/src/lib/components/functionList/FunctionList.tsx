@@ -4,7 +4,7 @@ import { FunctionCategory } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import { DMTooltip } from '../tooltip/tooltip';
-import { TreeHeader } from '../tree/treeHeader';
+import { TreeHeader } from '../tree/TreeHeader';
 import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { GroupedList } from '@fluentui/react';
 import { Button, Caption1, makeStyles, mergeClasses, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
