@@ -1,4 +1,4 @@
-import { ParentDataType } from '../models';
+import { NormalizedDataType } from '../models';
 import type { FunctionData } from '../models/Function';
 import { FunctionCategory } from '../models/Function';
 
@@ -8,11 +8,11 @@ export const functionMock: FunctionData[] = [
     maxNumberOfInputs: 2,
     type: 'TransformationFunction',
     functionName: 'max',
-    outputValueType: ParentDataType.Number,
+    outputValueType: NormalizedDataType.Number,
     inputs: [
       {
         name: 'value',
-        allowedTypes: [ParentDataType.Number, ParentDataType.Decimal, ParentDataType.Integer],
+        allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Decimal, NormalizedDataType.Integer],
         isOptional: false,
         allowCustomInput: false,
         displayName: 'Value',
@@ -21,7 +21,7 @@ export const functionMock: FunctionData[] = [
       },
       {
         name: 'scope',
-        allowedTypes: [ParentDataType.Any],
+        allowedTypes: [NormalizedDataType.Any],
         isOptional: true,
         allowCustomInput: false,
         displayName: 'Scope',
@@ -39,11 +39,11 @@ export const functionMock: FunctionData[] = [
     maxNumberOfInputs: 2,
     type: 'TransformationFunction',
     functionName: 'min',
-    outputValueType: ParentDataType.Number,
+    outputValueType: NormalizedDataType.Number,
     inputs: [
       {
         name: 'value',
-        allowedTypes: [ParentDataType.Number, ParentDataType.Decimal, ParentDataType.Integer],
+        allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Decimal, NormalizedDataType.Integer],
         isOptional: false,
         allowCustomInput: false,
         displayName: 'Value',
@@ -52,7 +52,7 @@ export const functionMock: FunctionData[] = [
       },
       {
         name: 'scope',
-        allowedTypes: [ParentDataType.Any],
+        allowedTypes: [NormalizedDataType.Any],
         isOptional: true,
         allowCustomInput: false,
         displayName: 'Scope',
@@ -71,11 +71,11 @@ export const functionMock: FunctionData[] = [
     maxNumberOfInputs: 2,
     type: 'TransformationFunction',
     functionName: 'avg',
-    outputValueType: ParentDataType.Number,
+    outputValueType: NormalizedDataType.Number,
     inputs: [
       {
         name: 'value',
-        allowedTypes: [ParentDataType.Number, ParentDataType.Decimal, ParentDataType.Integer],
+        allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Decimal, NormalizedDataType.Integer],
         isOptional: false,
         allowCustomInput: false,
         displayName: 'Value',
@@ -84,7 +84,7 @@ export const functionMock: FunctionData[] = [
       },
       {
         name: 'scope',
-        allowedTypes: [ParentDataType.Any],
+        allowedTypes: [NormalizedDataType.Any],
         isOptional: true,
         allowCustomInput: false,
         displayName: 'Scope',
@@ -102,11 +102,11 @@ export const functionMock: FunctionData[] = [
     maxNumberOfInputs: 2,
     type: 'TransformationControlFunction',
     functionName: '$for',
-    outputValueType: ParentDataType.Any,
+    outputValueType: NormalizedDataType.Any,
     inputs: [
       {
         name: 'collection',
-        allowedTypes: [ParentDataType.Any],
+        allowedTypes: [NormalizedDataType.Any],
         isOptional: false,
         allowCustomInput: false,
         displayName: 'Scope',
@@ -115,7 +115,7 @@ export const functionMock: FunctionData[] = [
       },
       {
         name: 'indexVariable',
-        allowedTypes: [ParentDataType.String],
+        allowedTypes: [NormalizedDataType.String],
         isOptional: true,
         allowCustomInput: true,
         displayName: 'Index',
@@ -133,11 +133,11 @@ export const functionMock: FunctionData[] = [
     maxNumberOfInputs: 1,
     type: 'TransformationControlFunction',
     functionName: '$if',
-    outputValueType: ParentDataType.Any,
+    outputValueType: NormalizedDataType.Any,
     inputs: [
       {
         name: 'condition',
-        allowedTypes: [ParentDataType.Boolean],
+        allowedTypes: [NormalizedDataType.Boolean],
         isOptional: false,
         allowCustomInput: true,
         displayName: 'Scope',
@@ -155,7 +155,7 @@ export const functionMock: FunctionData[] = [
     maxNumberOfInputs: 0,
     type: 'TransformationFunction',
     functionName: 'current-date',
-    outputValueType: ParentDataType.DateTime,
+    outputValueType: NormalizedDataType.DateTime,
     inputs: [],
     displayName: 'Current Date',
     category: FunctionCategory.DateTime,

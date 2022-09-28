@@ -92,7 +92,9 @@ const isValidConnection = (connection: ReactFlowConnection, inputs: FunctionInpu
 
     // For now just allow all function to function
     // TODO validate express to function connections
-    return !sourceNode || inputs.some((input) => input.allowedTypes.some((acceptableType) => acceptableType === sourceNode.parentDataType));
+    return (
+      !sourceNode || inputs.some((input) => input.allowedTypes.some((acceptableType) => acceptableType === sourceNode.normalizedDataType))
+    );
   }
 
   return false;

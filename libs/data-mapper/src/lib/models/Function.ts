@@ -1,4 +1,9 @@
-import type { ParentDataType } from './Schema';
+import type { NormalizedDataType } from './Schema';
+
+export interface FunctionManifest {
+  version: string;
+  transformFunctions: FunctionData[];
+}
 
 export interface FunctionData {
   key: string;
@@ -7,7 +12,7 @@ export interface FunctionData {
 
   maxNumberOfInputs: number; // -1 for unlimited
   inputs: FunctionInput[];
-  outputValueType: ParentDataType;
+  outputValueType: NormalizedDataType;
 
   displayName: string;
   category: FunctionCategory;
@@ -18,7 +23,7 @@ export interface FunctionData {
 
 export interface FunctionInput {
   name: string;
-  allowedTypes: ParentDataType[];
+  allowedTypes: NormalizedDataType[];
   isOptional: boolean;
   allowCustomInput: boolean;
 

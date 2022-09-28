@@ -9,10 +9,10 @@ export interface Schema {
 export interface SchemaNode {
   key: string;
   name: string;
+  fullName: string;
   namespacePrefix: string;
   namespaceUri: string;
-  // Optional until we get it in the system
-  parentDataType?: ParentDataType;
+  normalizedDataType: NormalizedDataType;
   schemaNodeDataType: SchemaNodeDataType;
   properties: SchemaNodeProperties;
   optional?: boolean;
@@ -82,7 +82,8 @@ export enum SchemaNodeDataType {
   UntypedAtomic = 'UntypedAtomic',
 }
 
-export enum ParentDataType {
+export enum NormalizedDataType {
+  ComplexType = 'ComplexType',
   Integer = 'Integer',
   Decimal = 'Decimal',
   Number = 'Number',
@@ -90,7 +91,6 @@ export enum ParentDataType {
   Boolean = 'Bool',
   String = 'String',
   DateTime = 'DateTime',
-  Object = 'Object',
   Any = 'Any',
 }
 
