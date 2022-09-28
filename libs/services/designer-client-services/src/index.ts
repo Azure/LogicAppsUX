@@ -15,4 +15,3 @@ export { StandardOAuthService } from './lib/standard/oAuth';
 export type { StandardOperationManifestServiceOptions } from './lib/standard/operationmanifest';
 export { StandardSearchService } from './lib/standard/search';
 export { frequencyValues } from './lib/standard/manifests/schedule';
-export { isBuiltInOperation } from './lib/standard/operationmanifest';

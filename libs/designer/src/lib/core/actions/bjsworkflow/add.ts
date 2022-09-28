@@ -20,7 +20,7 @@ import { setVariableMetadata, getVariableDeclarations } from '../../utils/variab
 import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import { getOperationSettings } from './settings';
-import { ConnectionService, isBuiltInOperation, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { DiscoveryOperation, DiscoveryResultTypes, SomeKindOfAzureOperationDiscovery } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -74,19 +74,13 @@ export const initializeOperationDetails = async (
   const { type, connectorId } = operationInfo;
   const operationManifestService = OperationManifestService();
 
+  dispatch(switchToOperationPanel(nodeId));
+  const manifest = await getOperationManifest(operationInfo);
+  const { iconUri, brandColor } = manifest.properties;
+
+  if (manifest.properties.connection?.required !== false) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+
   if (operationManifestService.isSupported(type)) {
-    const manifest = await getOperationManifest(operationInfo);
-    const { iconUri, brandColor } = manifest.properties;
-
-    dispatch(switchToOperationPanel(nodeId));
-    if (!isBuiltInOperation(operationInfo)) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
-
-    // if (isConnectionRequiredForOperation(manifest)) {
-    //   trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
-    // } else {
-    //   dispatch(switchToOperationPanel(nodeId));
-    // }
-
     const settings = getOperationSettings(isTrigger, operationInfo, manifest, /* swagger */ undefined);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
@@ -106,8 +100,6 @@ export const initializeOperationDetails = async (
       dispatch
     );
   } else {
-    dispatch(switchToOperationPanel(nodeId));
-    if (!isBuiltInOperation(operationInfo)) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);

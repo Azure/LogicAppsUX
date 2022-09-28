@@ -10,7 +10,6 @@ import { useOperationInfo, useOperationManifest } from '../../../core/state/sele
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
-import { getIdLeaf } from '@microsoft-logic-apps/utils';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useCallback, useMemo, useState } from 'react';
@@ -32,14 +31,7 @@ const CreateConnectionTab = () => {
 
   const applyNewConnection = useCallback(
     (newConnection: Connection, _newName: string) => {
-      const connectionId = getIdLeaf(newConnection?.id);
-      // const connectionReference: ConnectionReference = {
-      //   api: { id: connector?.id ?? '' },
-      //   connection: { id: connectionId },
-      //   connectionName: newName,
-      // };
-      dispatch(changeConnectionMapping({ nodeId, connectionId, connectorId: connector?.id ?? '' }));
-      // dispatch(addConnectionReference({ connectionId, connectionReference }));
+      dispatch(changeConnectionMapping({ nodeId, connectionId: newConnection?.id, connectorId: connector?.id ?? '' }));
     },
     [connector?.id, dispatch, nodeId]
   );

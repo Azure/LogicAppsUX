@@ -324,7 +324,7 @@ function isServiceProviderOperation(definition: any): boolean {
   return equals(definition.type, 'ServiceProvider');
 }
 
-export function isBuiltInOperation(definition: any): boolean {
+function isBuiltInOperation(definition: any): boolean {
   switch (definition?.type?.toLowerCase()) {
     case appendtoarrayvariable:
     case appendtostringvariable:
