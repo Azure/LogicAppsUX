@@ -8,6 +8,7 @@ const useStyles = makeStyles({
   containerStyle: {
     height: '100%',
     ...shorthands.overflow('hidden'),
+    minWidth: '320px',
     width: '25%',
     ...shorthands.padding('12px'),
     boxSizing: 'border-box',
