@@ -59,7 +59,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   };
 
   return (
-    <div className={styles.outputPane} style={{ flex: '0 1 1px' }}>
+    <div className={styles.outputPane} style={{ display: 'flex', flexDirection: 'column', flex: '0 1 1px' }}>
       <Stack
         horizontal={isExpanded}
         verticalAlign={isExpanded ? 'center' : undefined}
@@ -87,7 +87,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
       </Stack>
 
       {isExpanded && targetSchema && (
-        <div style={{ margin: 8, marginLeft: 40, width: 290, maxHeight: '90%', overflowY: 'auto' }}>
+        <div style={{ margin: 8, marginLeft: 40, width: 290, flex: '1 1 1px', overflowY: 'auto' }}>
           <TargetSchemaTree schema={targetSchema} currentlySelectedNodes={[]} onNodeClick={handleItemClick} />
         </div>
       )}
