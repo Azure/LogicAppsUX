@@ -144,7 +144,14 @@ export class ApiService implements IApiService {
     const response = await fetch(validationUri, { headers, method: 'POST', body: JSON.stringify(validationPayload) });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      let errorBody: any;
+      try {
+        errorBody = await response.json();
+      } catch (_ex) {
+        throw new Error(`${response.status} ${response.statusText}`);
+      }
+
+      throw new Error(errorBody.error.message);
     }
 
     const validationResponse: any = await response.json();
