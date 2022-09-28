@@ -15,15 +15,18 @@ export interface DictionaryEditorItemProps {
 export interface DictionaryEditorProps extends BaseEditorProps {
   disableToggle?: boolean;
   initialItems?: DictionaryEditorItemProps[];
-  type?: string;
-  readOnly?: boolean;
+  keyTitle?: string;
+  valueTitle?: string;
+  isTable?: boolean;
 }
 
 export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
-  readOnly = false,
   disableToggle = false,
   initialItems,
   initialValue,
+  // keyTitle,
+  // valueTitle,
+  isTable,
   GetTokenPicker,
   onChange,
   ...baseEditorProps
@@ -53,10 +56,11 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   return (
     <div className="msla-dictionary-editor-container">
-      {collapsed ? (
+      {collapsed && !isTable ? (
         <CollapsedDictionary
           isValid={isValid}
           isTrigger={baseEditorProps.isTrigger}
+          readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
           GetTokenPicker={GetTokenPicker}
           setItems={updateItems}
@@ -68,14 +72,15 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
         <ExpandedDictionary
           items={items ?? [{ key: [], value: [] }]}
           isTrigger={baseEditorProps.isTrigger}
+          readonly={baseEditorProps.readonly}
           setItems={updateItems}
           GetTokenPicker={GetTokenPicker}
         />
       )}
 
       <div className="msla-dictionary-commands">
-        {!disableToggle ? (
-          <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || readOnly} toggleCollapsed={toggleCollapsed} />
+        {!disableToggle && !isTable ? (
+          <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || baseEditorProps.readonly} toggleCollapsed={toggleCollapsed} />
         ) : null}
       </div>
     </div>

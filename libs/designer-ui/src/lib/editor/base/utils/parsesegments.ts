@@ -5,6 +5,7 @@ import type { ParagraphNode, RootNode } from 'lexical';
 import { $isParagraphNode, $createParagraphNode, $createTextNode, $getRoot } from 'lexical';
 
 export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): RootNode => {
+  console.log(value);
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
