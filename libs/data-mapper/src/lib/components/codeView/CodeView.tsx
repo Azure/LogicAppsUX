@@ -55,12 +55,11 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen 
 
       <div style={{ flex: '1 1 auto' }}>
         <MonacoEditor
-          language={EditorLanguage.templateExpressionLanguage}
+          language={EditorLanguage.yaml}
           value={dataMapDefinition}
           lineNumbers="on"
           scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
           className={styles.editorStyle}
-          readOnly
         />
       </div>
     </div>
