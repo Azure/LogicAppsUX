@@ -1,9 +1,15 @@
 /* eslint-disable no-param-reassign */
-import { MapDefinitionKeys, mapDefinitionVersion, MapNodeParams, YamlFormats } from '../constants/MapDefinitionConstants';
+import {
+  mapDefinitionVersion,
+  mapNodeParams,
+  reservedMapDefinitionKeys,
+  reservedMapDefinitionKeysArray,
+  yamlFormats,
+} from '../constants/MapDefinitionConstants';
 import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
 import type { ConnectionDictionary, LoopConnection } from '../models/Connection';
 import type { DataMap, MapNode } from '../models/DataMap';
-import type { SchemaExtended, SchemaNodeExtended } from '../models/Schema';
+import type { NamespaceDictionary, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
 import { inputPrefix, outputPrefix } from '../utils/ReactFlow.Util';
 import yaml from 'js-yaml';
 
@@ -27,29 +33,29 @@ export const convertToMapDefinition = (
 };
 
 const generateMapDefinitionHeader = (sourceSchema: SchemaExtended, targetSchema: SchemaExtended): string => {
-  let mapDefinitionHeader = `${MapDefinitionKeys.Version}: ${mapDefinitionVersion}${YamlFormats.newLine}`;
-  mapDefinitionHeader += `${MapDefinitionKeys.SourceFormat}: ${sourceSchema.type}${YamlFormats.newLine}`;
-  mapDefinitionHeader += `${MapDefinitionKeys.TargetFormat}: ${targetSchema.type}${YamlFormats.newLine}`;
-  mapDefinitionHeader += `${MapDefinitionKeys.SourceSchemaName}: ${targetSchema.name}${YamlFormats.newLine}`;
-  mapDefinitionHeader += `${MapDefinitionKeys.TargetSchemaName}: ${targetSchema.name}${YamlFormats.newLine}`;
+  let mapDefinitionHeader = `${reservedMapDefinitionKeys.version}: ${mapDefinitionVersion}${yamlFormats.newLine}`;
+  mapDefinitionHeader += `${reservedMapDefinitionKeys.sourceFormat}: ${sourceSchema.type}${yamlFormats.newLine}`;
+  mapDefinitionHeader += `${reservedMapDefinitionKeys.targetFormat}: ${targetSchema.type}${yamlFormats.newLine}`;
+  mapDefinitionHeader += `${reservedMapDefinitionKeys.sourceSchemaName}: ${sourceSchema.name}${yamlFormats.newLine}`;
+  mapDefinitionHeader += `${reservedMapDefinitionKeys.targetSchemaName}: ${targetSchema.name}${yamlFormats.newLine}`;
 
-  if (sourceSchema.namespaces && sourceSchema.namespaces.size > 0) {
-    mapDefinitionHeader += `${MapDefinitionKeys.SourceNamespaces}:${YamlFormats.newLine}`;
+  if (sourceSchema.namespaces && Object.keys(sourceSchema.namespaces).length > 0) {
+    mapDefinitionHeader += `${reservedMapDefinitionKeys.sourceNamespaces}:${yamlFormats.newLine}`;
     mapDefinitionHeader += generateNamespaceEntries(sourceSchema.namespaces);
   }
 
-  if (targetSchema.namespaces && targetSchema.namespaces.size > 0) {
-    mapDefinitionHeader += `${MapDefinitionKeys.TargetNamespaces}:${YamlFormats.newLine}`;
+  if (targetSchema.namespaces && Object.keys(targetSchema.namespaces).length > 0) {
+    mapDefinitionHeader += `${reservedMapDefinitionKeys.targetNamespaces}:${yamlFormats.newLine}`;
     mapDefinitionHeader += generateNamespaceEntries(targetSchema.namespaces);
   }
 
   return mapDefinitionHeader;
 };
 
-const generateNamespaceEntries = (namespaces: Map<string, string>): string => {
+const generateNamespaceEntries = (namespaces: NamespaceDictionary): string => {
   let results = '';
-  namespaces.forEach((value, key) => {
-    results += `${key}: ${value}${YamlFormats.newLine}`;
+  Object.entries(namespaces).forEach(([key, value]) => {
+    results += `${yamlFormats.indentGap}${key}: ${value}${yamlFormats.newLine}`;
   });
 
   return results;
@@ -62,26 +68,26 @@ const nodeToMapDefinition = (node: MapNode, initIndent: string): string => {
   let indent = initIndent;
 
   if (node.loopSource) {
-    mapDefinition = `${mapDefinition}${indent}${MapNodeParams.For}(${node.loopSource.loopSource}${
+    mapDefinition = `${mapDefinition}${indent}${mapNodeParams.for}(${node.loopSource.loopSource}${
       node.loopSource.loopIndex ? `, ${node.loopSource.loopIndex}` : ''
-    }):${YamlFormats.newLine}`;
-    indent += YamlFormats.indentGap;
+    }):${yamlFormats.newLine}`;
+    indent += yamlFormats.indentGap;
   }
 
   if (node.condition) {
-    mapDefinition = `${mapDefinition}${indent}${MapNodeParams.If}(${node.condition.condition}):${YamlFormats.newLine}`;
-    indent += YamlFormats.indentGap;
+    mapDefinition = `${mapDefinition}${indent}${mapNodeParams.if}(${node.condition.condition}):${yamlFormats.newLine}`;
+    indent += yamlFormats.indentGap;
   }
 
   mapDefinition = `${mapDefinition}${indent}${node.targetNodeKey}:`;
 
   if (node.children && node.children.length > 0 && node.children.some((childNode) => keepNode(childNode))) {
-    indent += YamlFormats.indentGap;
+    indent += yamlFormats.indentGap;
 
-    mapDefinition = `${mapDefinition}${YamlFormats.newLine}`;
+    mapDefinition = `${mapDefinition}${yamlFormats.newLine}`;
 
     if (node.targetValue) {
-      mapDefinition = `${mapDefinition}${indent}${MapNodeParams.Value}: ${node.targetValue.value}${YamlFormats.newLine}`;
+      mapDefinition = `${mapDefinition}${indent}${mapNodeParams.value}: ${node.targetValue.value}${yamlFormats.newLine}`;
     }
 
     for (const childNode of node.children) {
@@ -94,7 +100,7 @@ const nodeToMapDefinition = (node: MapNode, initIndent: string): string => {
       mapDefinition = `${mapDefinition} ${node.targetValue.value}`;
     }
 
-    mapDefinition = `${mapDefinition}${YamlFormats.newLine}`;
+    mapDefinition = `${mapDefinition}${yamlFormats.newLine}`;
   }
 
   return mapDefinition;
@@ -140,49 +146,46 @@ const keepNode = (node: MapNode): boolean => {
 
 export const convertFromMapDefinition = (mapDefinition: string): ConnectionDictionary => {
   const connections: ConnectionDictionary = {};
-  const formattedMapDefinition = mapDefinition.replaceAll('\t', YamlFormats.indentGap);
+  const formattedMapDefinition = mapDefinition.replaceAll('\t', yamlFormats.indentGap);
   const parsedYaml: any = yaml.load(formattedMapDefinition);
   const parsedYamlKeys: string[] = Object.keys(parsedYaml);
 
-  if (parsedYamlKeys[0] !== MapDefinitionKeys.SourceSchemaName || parsedYamlKeys[1] !== MapDefinitionKeys.TargetSchemaName) {
-    throw new InvalidFormatException(InvalidFormatExceptionCode.MISSING_SCHEMA_NAME, InvalidFormatExceptionCode.MISSING_SCHEMA_NAME);
-  }
+  const rootNodeKey = parsedYamlKeys.filter((key) => reservedMapDefinitionKeysArray.indexOf(key) < 0)[0];
 
-  const targetNodeKey: string = parsedYamlKeys[2];
-
-  if (targetNodeKey) {
-    parseMappingsJsonToNode(targetNodeKey, parsedYaml[targetNodeKey], targetNodeKey, connections);
+  if (rootNodeKey) {
+    parseMappingsJsonToNode(rootNodeKey, parsedYaml[rootNodeKey], rootNodeKey, connections);
   }
 
   return connections;
 };
 
 const parseMappingsJsonToNode = (
-  targetNodeKey: string,
-  targetNodeObject: string | object | any,
-  connectionKey: string,
+  sourceNodeKey: string,
+  sourceNodeObject: string | object | any,
+  targetKey: string,
   connections: ConnectionDictionary
 ) => {
   // Basic leaf node
-  if (typeof targetNodeObject === 'string') {
+  if (typeof sourceNodeObject === 'string') {
+    const connectionKey = generateConnectionKey(sourceNodeObject, targetKey);
     connections[connectionKey] = {
-      destination: connectionKey,
-      sourceValue: targetNodeObject,
+      destination: targetKey,
+      sourceValue: sourceNodeObject,
       loop: undefined,
       condition: undefined,
       // Needs to be addressed again once we have functions properly coded out in the designer
-      reactFlowSource: `${inputPrefix}${targetNodeObject}`,
-      reactFlowDestination: `${outputPrefix}${connectionKey}`,
+      reactFlowSource: `${inputPrefix}${sourceNodeObject}`,
+      reactFlowDestination: `${outputPrefix}${targetKey}`,
     };
 
     return;
   }
 
-  const startsWithFor = targetNodeKey.startsWith(MapNodeParams.For);
-  const startsWithIf = targetNodeKey.startsWith(MapNodeParams.If);
+  const startsWithFor = sourceNodeKey.startsWith(mapNodeParams.for);
+  const startsWithIf = sourceNodeKey.startsWith(mapNodeParams.if);
 
   if (startsWithFor || startsWithIf) {
-    const childrenKeys = Object.keys(targetNodeObject);
+    const childrenKeys = Object.keys(sourceNodeObject);
     if (childrenKeys.length !== 1) {
       throw new InvalidFormatException(
         InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM,
@@ -190,35 +193,37 @@ const parseMappingsJsonToNode = (
       );
     }
 
-    const newConnectionKey = `${connectionKey}/${childrenKeys[0]}`;
-    parseMappingsJsonToNode(`${childrenKeys[0]}`, targetNodeObject[childrenKeys[0]], newConnectionKey, connections);
+    const newTargetKey = `${targetKey}/${childrenKeys[0]}`;
+    parseMappingsJsonToNode(`${childrenKeys[0]}`, sourceNodeObject[childrenKeys[0]], newTargetKey, connections);
 
     // TODO (#15388621) revisit this once we've got loops and conditionals enabled in the designer to double check all the logic
+    const newConnectionKey = generateConnectionKey(sourceNodeKey, newTargetKey);
     if (connections[newConnectionKey]) {
-      connections[newConnectionKey].loop = startsWithFor ? parseLoopMapping(targetNodeKey) : undefined;
-      connections[newConnectionKey].condition = startsWithIf ? parseConditionalMapping(targetNodeKey) : undefined;
+      connections[newConnectionKey].loop = startsWithFor ? parseLoopMapping(sourceNodeKey) : undefined;
+      connections[newConnectionKey].condition = startsWithIf ? parseConditionalMapping(sourceNodeKey) : undefined;
     }
 
     return;
   }
 
-  const targetValue = targetNodeObject?.[MapNodeParams.Value];
+  const targetValue = sourceNodeObject?.[mapNodeParams.value];
 
-  for (const childKey in targetNodeObject) {
-    if (childKey !== MapNodeParams.Value) {
-      parseMappingsJsonToNode(childKey, targetNodeObject[childKey], `${connectionKey}/${childKey}`, connections);
+  for (const childKey in sourceNodeObject) {
+    if (childKey !== mapNodeParams.value) {
+      parseMappingsJsonToNode(childKey, sourceNodeObject[childKey], `${targetKey}/${childKey}`, connections);
     }
   }
 
   // TODO (#15388621) revisit this once we've got loops and conditionals enabled in the designer to double check all the logic
   if (targetValue) {
+    const connectionKey = generateConnectionKey(sourceNodeKey, targetKey);
     connections[connectionKey] = {
-      destination: connectionKey,
+      destination: targetKey,
       sourceValue: targetValue,
       loop: undefined,
       condition: undefined,
       reactFlowSource: `${inputPrefix}${targetValue}`,
-      reactFlowDestination: `${outputPrefix}${connectionKey}`,
+      reactFlowDestination: `${outputPrefix}${targetKey}`,
     };
   }
 };
@@ -238,3 +243,5 @@ export const parseLoopMapping = (line: string): LoopConnection => {
 export const parseConditionalMapping = (line: string): string => {
   return line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
 };
+
+export const generateConnectionKey = (sourceKey: string, targetKey: string): string => `${sourceKey}-to-${targetKey}`;

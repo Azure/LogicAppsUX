@@ -8,7 +8,7 @@ interface CodeTabProps {
 export const CodeTab = ({ code }: CodeTabProps) => {
   return (
     <MonacoEditor
-      language={EditorLanguage.templateExpressionLanguage}
+      language={EditorLanguage.yaml}
       value={code}
       lineNumbers="on"
       scrollbar={{ horizontal: 'hidden', vertical: 'hidden' }}

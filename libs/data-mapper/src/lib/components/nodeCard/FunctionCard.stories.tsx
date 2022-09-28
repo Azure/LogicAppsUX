@@ -7,7 +7,7 @@ import type { NodeProps } from 'react-flow-renderer';
 
 export default {
   component: FunctionCard,
-  title: 'Data Mapper/FunctionCard',
+  title: 'Data Mapper Components/Card/Function Card',
 } as ComponentMeta<typeof FunctionCard>;
 
 export const WithIcon: ComponentStory<typeof FunctionCard> = (args: NodeProps<FunctionCardProps>) => <FunctionCard {...args} />;

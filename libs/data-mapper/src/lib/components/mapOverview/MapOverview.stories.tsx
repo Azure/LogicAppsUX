@@ -7,21 +7,21 @@ import React from 'react';
 
 export default {
   component: MapOverview,
-  title: 'Data Mapper/MapOverview',
+  title: 'Data Mapper Component/Map Overview',
 } as ComponentMeta<typeof MapOverview>;
 
 const schema: SchemaExtended = {
   name: 'Sample',
   type: SchemaType.XML,
   targetNamespace: '',
-  namespaces: new Map<string, string>(),
+  namespaces: {},
   schemaTreeRoot: {
     key: 'root',
     name: 'Root',
     pathToRoot: [],
     namespacePrefix: '',
     namespaceUri: '',
-    schemaNodeDataType: SchemaNodeDataType.ComplexType,
+    schemaNodeDataType: SchemaNodeDataType.None,
     properties: SchemaNodeProperties.NotSpecified,
     children: [
       {

@@ -796,6 +796,12 @@
       "value": "選取目標結構描述"
     }
   ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Test map"
+    }
+  ],
   "6XR3FS": [
     {
       "type": 0,
@@ -1321,6 +1327,12 @@
       "value": "需要連線"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Replace existing schema"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1349,6 +1361,12 @@
     {
       "type": 0,
       "value": "必要。將移除其開頭及結尾空白字元的字串。"
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Paste from sample"
     }
   ],
   "DDIIAQ": [
@@ -2736,6 +2754,12 @@
       "value": "閱讀較少"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2941,7 +2965,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "應用程式內"
     }
   ],
   "VE3cxq": [
@@ -3086,12 +3110,6 @@
     {
       "type": 0,
       "value": "邏輯應用程式上未設定受控識別。"
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "取代現有結構描述。"
     }
   ],
   "X4gDhV": [
@@ -3797,7 +3815,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "共用"
+      "value": "已共用"
     }
   ],
   "esOQ5p": [
@@ -3839,7 +3857,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "連線的 Acl 建立失敗。正在刪除連線。"
     }
   ],
   "fGcSFd": [
@@ -4081,6 +4099,12 @@
     {
       "type": 0,
       "value": "非同步回應"
+    }
+  ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Provide input data to test the map with"
     }
   ],
   "i1cwra": [
@@ -5378,6 +5402,12 @@
       "value": "若要建立及使用 API 連線，您必須在此邏輯應用程式上設定受控識別。"
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5498,6 +5528,12 @@
     {
       "type": 0,
       "value": "回呼 URL:"
+    }
+  ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "x+6ccf": [

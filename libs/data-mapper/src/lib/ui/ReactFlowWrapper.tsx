@@ -72,7 +72,8 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { fitView, zoomIn, zoomOut, project } = useReactFlow();
 
-  const currentlySelectedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
+  const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
+  const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
@@ -115,7 +116,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
-    dispatch(setCurrentlySelectedNode(undefined));
+    if (currentlySelectedNode) {
+      dispatch(setCurrentlySelectedNode(undefined));
+    }
+
     setDisplayToolboxItem(undefined);
   };
 
@@ -129,7 +133,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         dispatch(toggleSourceNode(selectedNode));
       }
     } else {
-      if (allChildNodesSelected(selectedNode, currentlySelectedSourceNodes)) {
+      if (allChildNodesSelected(selectedNode, currentlyAddedSourceNodes)) {
         // TODO reconfirm this works for loops and conditionals
         const nodesToRemove = selectedNode.children.filter((childNodes) =>
           Object.values(currentConnections).some((currentConnection) => childNodes.key !== currentConnection.sourceValue)
@@ -334,7 +338,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const [nodes, edges] = useLayout(
     canvasViewportCoords,
-    currentlySelectedSourceNodes,
+    currentlyAddedSourceNodes,
     connectedSourceNodes,
     flattenedSourceSchema,
     allFunctionNodes,
@@ -386,24 +390,28 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onEdgeClick={onEdgeClick}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
+
       {displayToolboxItem === 'sourceSchemaTreePanel' && (
         <FloatingPanel {...toolboxPanelProps}>
           {sourceSchema && (
             <SchemaTree
               schema={sourceSchema}
-              currentlySelectedNodes={currentlySelectedSourceNodes}
+              currentlySelectedNodes={currentlyAddedSourceNodes}
               visibleConnectedNodes={connectedSourceNodes}
               onNodeClick={onToolboxItemClick}
             />
           )}
         </FloatingPanel>
       )}
+
       {displayToolboxItem === 'functionsPanel' && (
         <FloatingPanel {...toolboxPanelProps}>
-          <FunctionList sample="sample" onFunctionClick={onFunctionItemClick}></FunctionList>
+          <FunctionList onFunctionClick={onFunctionItemClick}></FunctionList>
         </FloatingPanel>
       )}
+
       <ButtonContainer {...mapControlsButtonContainerProps} />
+
       {displayMiniMap && (
         <MiniMap
           nodeStrokeColor={(node) => {
@@ -425,6 +433,19 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
           }}
         />
       )}
+
+      {/* Toast Placeholder
+        {notification.data &&
+          <Notification
+            msg={notification.data.msg}
+            intent={notification.data.intent}
+            icon={!notification.data.intent && <Delete20Regular />}
+            action={{ icon: <Dismiss20Regular /> }}
+            autoHideDuration={2000}
+            onClose={notificationSlice.actions.hideNotification}
+          />
+        }
+      */}
     </ReactFlow>
   );
 };

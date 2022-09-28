@@ -87,11 +87,13 @@ export const ScratchTab = () => {
         /> */}
         {/* <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} authProps={{}} /> */}
         {/* <ArrayEditor
+          type={ArrayType.SIMPLE}
+          itemSchema={'test'}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
             {
               key: 'test',
-              content: [
+              value: [
                 { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
                 testTokenSegment,
                 { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
@@ -99,7 +101,49 @@ export const ScratchTab = () => {
             },
             {
               key: 'test',
-              content: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' }],
+              value: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' }],
+            },
+          ]}
+          initialValue={[
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
+            testTokenSegment,
+            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n  "' },
+            testTokenSegment,
+            testTokenSegment,
+            { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
+          ]}
+          GetTokenPicker={GetTokenPicker}
+        /> */}
+
+        {/* <ArrayEditor
+          itemSchema={['Attachments Name', 'Attachments Content']}
+          type={ArrayType.COMPLEX}
+          labelProps={{ text: 'Input Array', isRequiredField: true }}
+          initialItems={[
+            {
+              key: 'test',
+              value: [
+                [
+                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
+                  testTokenSegment,
+                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
+                ],
+                [
+                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
+                  testTokenSegment,
+                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
+                ],
+              ],
+            },
+            {
+              key: 'test2',
+              value: [
+                [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' }],
+                [testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'HELLOOOO' }],
+              ],
             },
           ]}
           initialValue={[
@@ -134,7 +178,6 @@ export const ScratchTab = () => {
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
         /> */}
-
         <DictionaryEditor
           initialItems={[
             {
