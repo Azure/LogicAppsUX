@@ -4,13 +4,13 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
-import { OutputPane } from '../components/outputPane/OutputPane';
 import {
   basePropPaneContentHeight,
   canvasAreaAndPropPaneMargin,
   PropertiesPane,
   propPaneTopBarHeight,
 } from '../components/propertiesPane/PropertiesPane';
+import { TargetSchemaPane } from '../components/targetSchemaPane/TargetSchemaPane';
 import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
@@ -205,7 +205,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             </div>
           </div>
 
-          <OutputPane isExpanded={isOutputPaneExpanded} setIsExpanded={setIsOutputPaneExpanded} />
+          <TargetSchemaPane isExpanded={isOutputPaneExpanded} setIsExpanded={setIsOutputPaneExpanded} />
         </div>
 
         <WarningModal />

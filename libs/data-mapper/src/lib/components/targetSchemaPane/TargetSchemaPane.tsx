@@ -1,15 +1,18 @@
-import type { RootState } from '../../core/state/Store';
+import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
+import type { AppDispatch, RootState } from '../../core/state/Store';
+import type { SchemaNodeExtended } from '../../models';
+import { TargetSchemaTree } from '../tree/TargetTree';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleRight20Regular, ChevronDoubleLeft20Regular } from '@fluentui/react-icons';
-import React from 'react';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   outputPane: {
     backgroundColor: tokens.colorNeutralBackground4,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    height: '100%',
   },
   title: {
     ...typographyStyles.body1Strong,
@@ -21,15 +24,16 @@ const useStyles = makeStyles({
   },
 });
 
-export type OutputPaneProps = {
+export type TargetSchemaPaneProps = {
   isExpanded: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
 };
 
-export const OutputPane = ({ isExpanded, setIsExpanded }: OutputPaneProps) => {
+export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPaneProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
+  const dispatch = useDispatch<AppDispatch>();
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
 
   const targetSchemaLoc = intl.formatMessage({
@@ -37,8 +41,12 @@ export const OutputPane = ({ isExpanded, setIsExpanded }: OutputPaneProps) => {
     description: 'Target schema',
   });
 
+  const handleItemClick = (schemaNode: SchemaNodeExtended) => {
+    dispatch(setCurrentTargetNode({ schemaNode: schemaNode, resetSelectedSourceNodes: true }));
+  };
+
   return (
-    <div className={styles.outputPane} style={{ flex: '0 1 1px' }}>
+    <div className={styles.outputPane} style={{ display: 'flex', flexDirection: 'column', flex: '0 1 1px' }}>
       <Stack
         horizontal={isExpanded}
         verticalAlign={isExpanded ? 'center' : undefined}
@@ -58,14 +66,18 @@ export const OutputPane = ({ isExpanded, setIsExpanded }: OutputPaneProps) => {
           {targetSchemaLoc}
         </Text>
 
-        {isExpanded && (
+        {isExpanded && targetSchema && (
           <Text className={styles.subtitle} style={{ marginLeft: 4 }}>
-            {targetSchema?.name}
+            {targetSchema.name}
           </Text>
         )}
       </Stack>
 
-      {isExpanded && <div style={{ margin: 8, marginLeft: 40, width: 290 }}>Expanded content</div>}
+      {isExpanded && targetSchema && (
+        <div style={{ margin: 8, marginLeft: 40, width: 290, flex: '1 1 1px', overflowY: 'auto' }}>
+          <TargetSchemaTree schema={targetSchema} currentlySelectedNodes={[]} onNodeClick={handleItemClick} />
+        </div>
+      )}
     </div>
   );
 };
