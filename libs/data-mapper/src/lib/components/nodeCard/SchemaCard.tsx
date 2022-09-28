@@ -213,7 +213,10 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
         {showOutputChevron && (
           <Button
             className={classes.cardChevron}
-            onClick={() => outputChevronOnClick(schemaNode)}
+            onClick={(e) => {
+              e.stopPropagation();
+              outputChevronOnClick(schemaNode);
+            }}
             icon={<ChevronRight16Regular />}
             appearance={'transparent'}
           />
