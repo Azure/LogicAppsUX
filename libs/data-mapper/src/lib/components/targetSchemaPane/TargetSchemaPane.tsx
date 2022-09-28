@@ -1,4 +1,6 @@
 import type { RootState } from '../../core/state/Store';
+import type { SchemaNodeExtended } from '../../models';
+import { TargetSchemaTree } from '../tree/TargetTree';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleRight20Regular, ChevronDoubleLeft20Regular } from '@fluentui/react-icons';
@@ -10,6 +12,7 @@ const useStyles = makeStyles({
   outputPane: {
     backgroundColor: tokens.colorNeutralBackground4,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    height: '100%',
   },
   title: {
     ...typographyStyles.body1Strong,
@@ -21,12 +24,12 @@ const useStyles = makeStyles({
   },
 });
 
-export type OutputPaneProps = {
+export type TargetSchemaPaneProps = {
   isExpanded: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
 };
 
-export const OutputPane = ({ isExpanded, setIsExpanded }: OutputPaneProps) => {
+export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPaneProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -36,6 +39,10 @@ export const OutputPane = ({ isExpanded, setIsExpanded }: OutputPaneProps) => {
     defaultMessage: 'Target schema',
     description: 'Target schema',
   });
+
+  const handleItemClick = (schemaNode: SchemaNodeExtended) => {
+    console.log(schemaNode);
+  };
 
   return (
     <div className={styles.outputPane} style={{ flex: '0 1 1px' }}>
@@ -58,14 +65,18 @@ export const OutputPane = ({ isExpanded, setIsExpanded }: OutputPaneProps) => {
           {targetSchemaLoc}
         </Text>
 
-        {isExpanded && (
+        {isExpanded && targetSchema && (
           <Text className={styles.subtitle} style={{ marginLeft: 4 }}>
-            {targetSchema?.name}
+            {targetSchema.name}
           </Text>
         )}
       </Stack>
 
-      {isExpanded && <div style={{ margin: 8, marginLeft: 40, width: 290 }}>Expanded content</div>}
+      {isExpanded && targetSchema && (
+        <div style={{ margin: 8, marginLeft: 40, width: 290, maxHeight: '90%', overflowY: 'auto' }}>
+          <TargetSchemaTree schema={targetSchema} currentlySelectedNodes={[]} visibleConnectedNodes={[]} onNodeClick={handleItemClick} />
+        </div>
+      )}
     </div>
   );
 };
