@@ -17,11 +17,21 @@ export interface ExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
   isTrigger?: boolean;
   readonly?: boolean;
+  keyTitle?: string;
+  valueTitle?: string;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
 }
 
-export const ExpandedDictionary = ({ items, isTrigger, readonly, GetTokenPicker, setItems }: ExpandedDictionaryProps): JSX.Element => {
+export const ExpandedDictionary = ({
+  items,
+  isTrigger,
+  readonly,
+  keyTitle,
+  valueTitle,
+  GetTokenPicker,
+  setItems,
+}: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -48,13 +58,14 @@ export const ExpandedDictionary = ({ items, isTrigger, readonly, GetTokenPicker,
       const containerBottomLoc = window.scrollY + containerRef.current.getBoundingClientRect().top + containerRef.current.offsetHeight;
       let itemHeight = window.scrollY;
       itemHeight += editorRef.current[index]?.getBoundingClientRect().top ?? 0;
+      const itemWidth =
+        type === ExpandedDictionaryEditorType.KEY
+          ? editorRef.current[index]?.getBoundingClientRect().width ?? constants.EXPANDED_DICTIONARY_WIDTH_OFFSET.KEY_OFFSET
+          : 0;
 
       setPickerOffset({
         heightOffset: containerBottomLoc - itemHeight,
-        widthOffset:
-          type === ExpandedDictionaryEditorType.KEY
-            ? constants.EXPANDED_DICTIONARY_WIDTH_OFFSET.KEY_OFFSET
-            : constants.EXPANDED_DICTIONARY_WIDTH_OFFSET.VALUE_OFFSET,
+        widthOffset: constants.EXPANDED_DICTIONARY_WIDTH_OFFSET.VALUE_OFFSET - itemWidth,
       });
     }
   };
@@ -69,7 +80,11 @@ export const ExpandedDictionary = ({ items, isTrigger, readonly, GetTokenPicker,
   };
 
   return (
-    <div className="msla-dictionary-container msla-dictionary-item-container" ref={containerRef}>
+    <div className="msla-dictionary-container msla-dictionary-editor-expanded" ref={containerRef}>
+      <div className="msla-dictionary-editor-item">
+        <div className="msla-dictionary-item-header">{keyTitle}</div>
+        <div className="msla-dictionary-item-header">{valueTitle}</div>
+      </div>
       {items.map((item, index) => {
         return (
           <div key={index} className="msla-dictionary-editor-item">
@@ -97,7 +112,7 @@ export const ExpandedDictionary = ({ items, isTrigger, readonly, GetTokenPicker,
                 />
               </BaseEditor>
             </div>
-            <div className="msla-dictionary-item-cell">
+            <div className="msla-dictionary-item-cell" ref={(el) => (editorRef.current[index] = el)}>
               <BaseEditor
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={valuePlaceholder}

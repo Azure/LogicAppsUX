@@ -24,8 +24,8 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   disableToggle = false,
   initialItems,
   initialValue,
-  // keyTitle,
-  // valueTitle,
+  keyTitle,
+  valueTitle,
   isTable,
   GetTokenPicker,
   onChange,
@@ -73,6 +73,8 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           items={items ?? [{ key: [], value: [] }]}
           isTrigger={baseEditorProps.isTrigger}
           readonly={baseEditorProps.readonly}
+          keyTitle={keyTitle}
+          valueTitle={valueTitle}
           setItems={updateItems}
           GetTokenPicker={GetTokenPicker}
         />

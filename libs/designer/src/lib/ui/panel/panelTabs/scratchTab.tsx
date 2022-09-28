@@ -312,6 +312,8 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
           isTable={true}
+          keyTitle={'Header'}
+          valueTitle={'Value'}
         />
         {/* <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} /> */}
         {/* <StringEditor
