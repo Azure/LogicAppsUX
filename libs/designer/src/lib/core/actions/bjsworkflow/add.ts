@@ -52,7 +52,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
     operationId: operation.name,
     type: getOperationType(operation),
-    kind: operation.properties.operationKind ?? '',
+    kind: operation.properties.operationKind,
   };
 
   dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
@@ -104,8 +104,7 @@ export const initializeOperationDetails = async (
       dispatch
     );
   } else {
-    setDefaultConnectionForNode(nodeId, connectorId, dispatch);
-    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    const [, { connector, parsedSwagger }] = await Promise.all([ setDefaultConnectionForNode(nodeId, connectorId, dispatch), getConnectorWithSwagger(connectorId) ]);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
 
@@ -206,10 +205,11 @@ export const setDefaultConnectionForNode = async (nodeId: string, connectorId: s
   if (connections.length !== 0) {
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id, connectorId }));
     await ConnectionService().createConnectionAclIfNeeded(connections[0]);
-    dispatch(switchToOperationPanel(nodeId));
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
+
+  dispatch(switchToOperationPanel(nodeId));
 };
 
 const addTokensAndVariables = (
@@ -261,7 +261,7 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
     ? (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
       ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
       : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
-      ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
-      : Constants.NODE.TYPE.API_CONNECTION
+        ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
+        : Constants.NODE.TYPE.API_CONNECTION
     : operationType;
-};
+}

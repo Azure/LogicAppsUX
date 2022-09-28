@@ -205,10 +205,10 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const serializedType = equals(type, Constants.NODE.TYPE.API_CONNECTION)
     ? Constants.SERIALIZED_TYPE.API_CONNECTION
     : equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
-    ? Constants.SERIALIZED_TYPE.API_CONNECTION_NOTIFICATION
-    : equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK)
-    ? Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK
-    : type;
+      ? Constants.SERIALIZED_TYPE.API_CONNECTION_NOTIFICATION
+      : equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK)
+        ? Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK
+        : type;
 
   return {
     type: serializedType,
