@@ -4,7 +4,7 @@ import { FunctionCategory } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import { DMTooltip } from '../tooltip/tooltip';
-import { TreeHeader } from '../tree/treeHeader';
+import { TreeHeader } from '../tree/TreeHeader';
 import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { GroupedList } from '@fluentui/react';
 import { Button, Caption1, makeStyles, mergeClasses, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
@@ -41,52 +41,69 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
           threshold: 0.4,
           keys: [
             {
-              name: 'name',
+              name: 'key',
+            },
+            {
+              name: 'functionName',
+            },
+            {
+              name: 'displayName',
             },
           ],
         };
+
         const fuse = new Fuse(functionListData.data, options);
         const results = fuse.search(searchTerm);
+
         dataCopy = results.map((fuse) => {
           return { ...fuse.item, matchIndices: fuse.matches };
         });
+
         dataCopy.forEach((functionNode) => {
-          if (!categoriesArray.find((category) => category === functionNode.functionCategory))
-            categoriesArray.push(functionNode.functionCategory);
+          if (!categoriesArray.find((category) => category === functionNode.category)) categoriesArray.push(functionNode.category);
         });
-        newSortedFunctions = dataCopy.sort((a, b) => a.functionCategory.localeCompare(b.functionCategory));
+
+        newSortedFunctions = dataCopy.sort((a, b) => a.category.localeCompare(b.category));
       } else {
         dataCopy = functionListData.data;
+
         Object.values(FunctionCategory).forEach((category) => categoriesArray.push(category));
+
         newSortedFunctions = dataCopy.sort((a, b) => {
-          const categorySort = a.functionCategory.localeCompare(b.functionCategory);
+          const categorySort = a.category.localeCompare(b.category);
           if (categorySort !== 0) {
             return categorySort;
           } else {
-            return a.name.localeCompare(b.name);
+            return a.key.localeCompare(b.key);
           }
         });
       }
 
       setSortedFunctionsByCategory(newSortedFunctions);
       let startInd = 0;
-      const newGroups = categoriesArray.map((value): IGroup => {
-        let numInGroup = 0;
-        newSortedFunctions.forEach((functionNode) => {
-          if (functionNode.functionCategory === value) {
-            numInGroup++;
-          }
-        });
-        const group: IGroup = {
-          key: value,
-          startIndex: startInd,
-          name: getFunctionBrandingForCategory(value).displayName,
-          count: numInGroup,
-          data: functionListData.data[0],
-        };
-        startInd += numInGroup;
-        return group;
-      });
+
+      const newGroups = categoriesArray
+        .map((value): IGroup => {
+          let numInGroup = 0;
+          newSortedFunctions.forEach((functionNode) => {
+            if (functionNode.category === value) {
+              numInGroup++;
+            }
+          });
+
+          const group: IGroup = {
+            key: value,
+            startIndex: startInd,
+            name: getFunctionBrandingForCategory(value).displayName,
+            count: numInGroup,
+          };
+
+          startInd += numInGroup;
+
+          return group;
+        })
+        .filter((group) => group.count > 0);
+
       setGroups(newGroups);
     }
   }, [functionListData.data, searchTerm]);
@@ -170,14 +187,14 @@ const FunctionListCell: React.FC<FunctionListCellProps> = ({ functionData, onFun
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
   const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
-  const brand = getFunctionBrandingForCategory(functionData.functionCategory);
+  const brand = getFunctionBrandingForCategory(functionData.category);
 
   return (
     <Button
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
-      key={functionData.name}
-      alt-text={functionData.name}
+      key={functionData.key}
+      alt-text={functionData.displayName}
       className={isHover ? buttonHovered : cardStyle.button}
       onClick={() => {
         onFunctionClick(functionData);
@@ -192,14 +209,14 @@ const FunctionListCell: React.FC<FunctionListCellProps> = ({ functionData, onFun
         }}
       >
         <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1 }}>
-          {getIconForFunction(functionData.name, functionData.iconFileName, brand)}
+          {getIconForFunction(functionData.displayName, functionData.iconFileName, brand)}
         </div>
       </span>
       <Caption1 truncate block className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
-        {functionData.name}
+        {functionData.displayName}
       </Caption1>
       <span style={{ justifyContent: 'right' }}>
-        <DMTooltip text={functionData.detailedDescription}></DMTooltip>
+        <DMTooltip text={functionData.description}></DMTooltip>
       </span>
     </Button>
   );

@@ -8,6 +8,7 @@ const useStyles = makeStyles({
   containerStyle: {
     height: '100%',
     ...shorthands.overflow('hidden'),
+    minWidth: '320px',
     width: '25%',
     ...shorthands.padding('12px'),
     boxSizing: 'border-box',
@@ -19,9 +20,9 @@ const useStyles = makeStyles({
     ...typographyStyles.body1Strong,
   },
   editorStyle: {
-    ...shorthands.border('1px', 'solid', '#313131'),
-    ...shorthands.borderRadius('3px'),
-    height: '500px',
+    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
+    ...shorthands.borderRadius(tokens.borderRadiusMedium),
+    ...shorthands.padding('10px'),
   },
 });
 
@@ -29,9 +30,10 @@ export interface CodeViewProps {
   dataMapDefinition: string;
   isCodeViewOpen: boolean;
   setIsCodeViewOpen: (isOpen: boolean) => void;
+  canvasAreaHeight: number;
 }
 
-export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen }: CodeViewProps) => {
+export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen, canvasAreaHeight }: CodeViewProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -53,13 +55,15 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen 
         <Button icon={<Dismiss20Regular />} appearance="subtle" onClick={() => setIsCodeViewOpen(false)} />
       </Stack>
 
-      <div style={{ flex: '1 1 auto' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 auto' }}>
         <MonacoEditor
-          language={EditorLanguage.templateExpressionLanguage}
+          language={EditorLanguage.yaml}
           value={dataMapDefinition}
           lineNumbers="on"
-          scrollbar={{ horizontal: 'auto', vertical: 'auto' }}
+          scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
           className={styles.editorStyle}
+          height={`${Math.max(200, canvasAreaHeight - 75)}px`}
+          wordWrap="on"
           readOnly
         />
       </div>

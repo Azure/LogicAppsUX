@@ -28,7 +28,7 @@ import type { FunctionData } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
-import { inputPrefix, outputPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
+import { sourcePrefix, targetPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
 import { allChildNodesSelected, hasAConnectionAtCurrentTargetNode, isLeafNode } from '../utils/Schema.Utils';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { tokens } from '@fluentui/react-components';
@@ -47,10 +47,10 @@ import {
   ZoomOut20Filled,
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'react-flow-renderer';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
+import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -151,7 +151,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         const selectedSourceNode: SelectedSourceNode = {
           nodeType: NodeType.Source,
           name: node.data.schemaNode.name,
-          path: node.id.replace(inputPrefix, ''),
+          path: node.id.replace(sourcePrefix, ''),
           dataType: node.data.schemaNode.schemaNodeDataType,
         };
 
@@ -160,7 +160,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         const selectedTargetNode: SelectedTargetNode = {
           nodeType: NodeType.Target,
           name: node.data.schemaNode.name,
-          path: node.id.replace(outputPrefix, ''),
+          path: node.id.replace(targetPrefix, ''),
           dataType: node.data.schemaNode.schemaNodeDataType,
           defaultValue: '', // TODO: this property and below
           doNotGenerateIfNoValue: true,
