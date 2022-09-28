@@ -88,7 +88,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
       {isExpanded && targetSchema && (
         <div style={{ margin: 8, marginLeft: 40, width: 290, maxHeight: '90%', overflowY: 'auto' }}>
-          <TargetSchemaTree schema={targetSchema} currentlySelectedNodes={[]} visibleConnectedNodes={[]} onNodeClick={handleItemClick} />
+          <TargetSchemaTree schema={targetSchema} currentlySelectedNodes={[]} onNodeClick={handleItemClick} />
         </div>
       )}
     </div>
