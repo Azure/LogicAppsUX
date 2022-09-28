@@ -23,7 +23,6 @@ const useStyles = makeStyles({
     ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     ...shorthands.padding('10px'),
-    height: '500px',
   },
 });
 
@@ -31,9 +30,10 @@ export interface CodeViewProps {
   dataMapDefinition: string;
   isCodeViewOpen: boolean;
   setIsCodeViewOpen: (isOpen: boolean) => void;
+  canvasAreaHeight: number;
 }
 
-export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen }: CodeViewProps) => {
+export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen, canvasAreaHeight }: CodeViewProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -55,13 +55,14 @@ export const CodeView = ({ dataMapDefinition, isCodeViewOpen, setIsCodeViewOpen 
         <Button icon={<Dismiss20Regular />} appearance="subtle" onClick={() => setIsCodeViewOpen(false)} />
       </Stack>
 
-      <div style={{ flex: '1 1 auto' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', flex: '1 1 auto' }}>
         <MonacoEditor
           language={EditorLanguage.yaml}
           value={dataMapDefinition}
           lineNumbers="on"
           scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
           className={styles.editorStyle}
+          height={`${Math.max(200, canvasAreaHeight - 75)}px`}
           wordWrap="on"
           readOnly
         />
