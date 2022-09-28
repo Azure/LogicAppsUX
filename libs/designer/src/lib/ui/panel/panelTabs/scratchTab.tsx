@@ -4,13 +4,15 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
-  ArrayType, // EditorLanguage,
+  // EditorLanguage,
   ValueSegmentType, // CodeEditor, // HTMLEditor,
-  TokenPicker, // TokenType,
-  // DictionaryEditor,
+  TokenPicker,
+  TokenType,
+  DictionaryEditor,
   testTokenSegment, // SchemaEditor, // Combobox,
-  ArrayEditor,
-  Scratch, // StringEditor, // AuthenticationEditor,
+  // ArrayEditor,
+  Scratch, // StringEditor,
+  // AuthenticationEditor,
   // DropdownEditor,
   outputToken,
   outputToken2,
@@ -84,7 +86,7 @@ export const ScratchTab = () => {
           ]}
         /> */}
         {/* <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} authProps={{}} /> */}
-        <ArrayEditor
+        {/* <ArrayEditor
           type={ArrayType.SIMPLE}
           itemSchema={'test'}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
@@ -114,9 +116,9 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
           GetTokenPicker={GetTokenPicker}
-        />
+        /> */}
 
-        <ArrayEditor
+        {/* <ArrayEditor
           itemSchema={['Attachments Name', 'Attachments Content']}
           type={ArrayType.COMPLEX}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
@@ -156,7 +158,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
           GetTokenPicker={GetTokenPicker}
-        />
+        /> */}
 
         {/* <Combobox
           options={[
@@ -176,7 +178,6 @@ export const ScratchTab = () => {
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
         /> */}
-        {/* 
         <DictionaryEditor
           initialItems={[
             {
@@ -244,8 +245,8 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         />
-        <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} />
-        <StringEditor
+        {/* <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} /> */}
+        {/* <StringEditor
           initialValue={[
             testTokenSegment,
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
