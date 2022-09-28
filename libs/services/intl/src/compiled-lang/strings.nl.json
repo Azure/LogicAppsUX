@@ -823,6 +823,12 @@
       "value": "Een doelschema selecteren"
     }
   ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Test map"
+    }
+  ],
   "6XR3FS": [
     {
       "type": 0,
@@ -1391,6 +1397,12 @@
       "value": "Een verbinding is vereist"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Replace existing schema"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1419,6 +1431,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks waaruit u voorloopspaties en volgspaties wilt verwijderen."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Paste from sample"
     }
   ],
   "DDIIAQ": [
@@ -2891,6 +2909,12 @@
       "value": "Minder lezen"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3241,12 +3265,6 @@
     {
       "type": 0,
       "value": "Er is geen beheerde identiteit geconfigureerd in de logische app."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Vervang het bestaande schema."
     }
   ],
   "X4gDhV": [
@@ -4267,6 +4285,12 @@
     {
       "type": 0,
       "value": "Asynchroon antwoord"
+    }
+  ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Provide input data to test the map with"
     }
   ],
   "i1cwra": [
@@ -5599,6 +5623,12 @@
       "value": "Als u een API-verbinding wilt maken en gebruiken, moet u een beheerde identiteit hebben geconfigureerd voor deze logische app."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Discard"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5719,6 +5749,12 @@
     {
       "type": 0,
       "value": "Callback-URL:"
+    }
+  ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "x+6ccf": [
