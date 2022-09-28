@@ -6,7 +6,7 @@ import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
-import { SchemaTypes } from '../models/Schema';
+import { SchemaTypes, SchemaNodeProperties } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { useMemo } from 'react';
@@ -79,6 +79,8 @@ const convertInputToReactFlowParentAndChildNodes = (
   );
 
   combinedNodes.forEach((sourceNode) => {
+    const isConnectedArray = sourceNode.properties === SchemaNodeProperties.Repeating;
+
     reactFlowNodes.push({
       id: `${inputPrefix}${sourceNode.key}`,
       data: {
@@ -89,6 +91,7 @@ const convertInputToReactFlowParentAndChildNodes = (
         isChild: false,
         disabled: false,
         error: false,
+        isConnectedArray: isConnectedArray,
       },
       type: ReactFlowNodeType.SchemaNode,
       sourcePosition: Position.Right,
@@ -129,6 +132,7 @@ export const convertToReactFlowParentAndChildNodes = (
       isChild: false,
       disabled: false,
       error: false,
+      isConnectedArray: false,
     },
     type: ReactFlowNodeType.SchemaNode,
     targetPosition: !displayTargets ? undefined : SchemaTypes.Source ? Position.Right : Position.Left,
@@ -149,6 +153,7 @@ export const convertToReactFlowParentAndChildNodes = (
         isChild: true,
         disabled: false,
         error: false,
+        isConnectedArray: false,
       },
       type: ReactFlowNodeType.SchemaNode,
       targetPosition: !displayTargets ? undefined : SchemaTypes.Source ? Position.Right : Position.Left,

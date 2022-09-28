@@ -30,12 +30,14 @@ export type SchemaCardProps = {
   displayHandle: boolean;
   isLeaf: boolean;
   isChild: boolean;
+  isConnectedArray: boolean;
 } & CardProps;
 
 const useStyles = makeStyles({
   container: {
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     backgroundColor: tokens.colorNeutralBackground1,
+    //display: 'inline-block',
     display: 'flex',
     flexDirection: 'row',
     height: '48px',
@@ -62,11 +64,15 @@ const useStyles = makeStyles({
       boxShadow: tokens.shadow4,
     },
   },
-  badge: {
+  errorBadge: {
     position: 'absolute',
     top: '-7px',
     right: '-10px',
     zIndex: '1',
+  },
+  badgeContainer: {
+    display: 'flex',
+    alignItems: 'center',
   },
   contentButton: {
     height: '48px',
@@ -116,6 +122,9 @@ const useStyles = makeStyles({
       outlineRadius: '5px',
     },
   }),
+  arrayBadge: {
+    marginLeft: '6px',
+  },
 });
 
 const cardInputText = makeStyles({
@@ -143,7 +152,7 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 };
 
 export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle } = props.data;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, isConnectedArray } = props.data;
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
@@ -172,31 +181,38 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
   };
 
   return (
-    <div className={containerStyle}>
-      {displayHandle ? (
-        <Handle
-          type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
-          position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
-          style={handleStyle}
-          isValidConnection={isValidConnection}
-        />
-      ) : null}
-      {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.badge}></Badge>}{' '}
-      <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
-        <span className={classes.cardIcon}>
-          <BundledTypeIcon />
-        </span>
-        <Text className={schemaType === SchemaTypes.Target ? classes.cardText : mergedInputText} block={true} nowrap={true}>
-          {schemaNode.name}
-        </Text>
-      </Button>
-      {showOutputChevron && (
-        <Button
-          className={classes.cardChevron}
-          onClick={() => outputChevronOnClick(schemaNode)}
-          icon={<ChevronRight16Regular />}
-          appearance={'transparent'}
-        />
+    <div className={classes.badgeContainer}>
+      <div className={containerStyle}>
+        {displayHandle ? (
+          <Handle
+            type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
+            position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
+            style={handleStyle}
+            isValidConnection={isValidConnection}
+          />
+        ) : null}
+        {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
+        <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
+          <span className={classes.cardIcon}>
+            <BundledTypeIcon />
+          </span>
+          <Text className={schemaType === SchemaTypes.Target ? classes.cardText : mergedInputText} block={true} nowrap={true}>
+            {schemaNode.name}
+          </Text>
+        </Button>
+        {showOutputChevron && (
+          <Button
+            className={classes.cardChevron}
+            onClick={() => outputChevronOnClick(schemaNode)}
+            icon={<ChevronRight16Regular />}
+            appearance={'transparent'}
+          />
+        )}
+      </div>
+      {isConnectedArray && (
+        <Badge className={classes.arrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
+          N
+        </Badge>
       )}
     </div>
   );

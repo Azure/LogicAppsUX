@@ -120,7 +120,7 @@ export const DevToolbox: React.FC = () => {
               </div>
 
               {loadingMethod === 'file' ? (
-                <div>
+                <Stack horizontal>
                   <MessageBar>
                     The below dropdowns load mock objects (equivalent to what we expect from a data map definition or GET schemaTree)
                   </MessageBar>
@@ -145,7 +145,7 @@ export const DevToolbox: React.FC = () => {
                     placeholder="Select a target schema"
                     options={schemaDropdownOptions}
                   />
-                </div>
+                </Stack>
               ) : (
                 <>
                   <div>
