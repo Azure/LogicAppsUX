@@ -7,6 +7,10 @@ import { ExpandedDictionary } from './expandeddictionary';
 import { convertItemsToSegments } from './util/deserializecollapseddictionary';
 import { useState } from 'react';
 
+export enum DictionaryType {
+  DEFAULT = 'default',
+  TABLE = 'table',
+}
 export interface DictionaryEditorItemProps {
   key: ValueSegment[];
   value: ValueSegment[];
@@ -15,15 +19,18 @@ export interface DictionaryEditorItemProps {
 export interface DictionaryEditorProps extends BaseEditorProps {
   disableToggle?: boolean;
   initialItems?: DictionaryEditorItemProps[];
-  type?: string;
-  readOnly?: boolean;
+  keyTitle?: string;
+  valueTitle?: string;
+  dictionaryType?: DictionaryType;
 }
 
 export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
-  readOnly = false,
   disableToggle = false,
   initialItems,
   initialValue,
+  keyTitle,
+  valueTitle,
+  dictionaryType = DictionaryType.DEFAULT,
   GetTokenPicker,
   onChange,
   ...baseEditorProps
@@ -53,10 +60,11 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   return (
     <div className="msla-dictionary-editor-container">
-      {collapsed ? (
+      {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
           isValid={isValid}
           isTrigger={baseEditorProps.isTrigger}
+          readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
           GetTokenPicker={GetTokenPicker}
           setItems={updateItems}
@@ -68,14 +76,17 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
         <ExpandedDictionary
           items={items ?? [{ key: [], value: [] }]}
           isTrigger={baseEditorProps.isTrigger}
+          readonly={baseEditorProps.readonly}
+          keyTitle={keyTitle}
+          valueTitle={valueTitle}
           setItems={updateItems}
           GetTokenPicker={GetTokenPicker}
         />
       )}
 
       <div className="msla-dictionary-commands">
-        {!disableToggle ? (
-          <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || readOnly} toggleCollapsed={toggleCollapsed} />
+        {!disableToggle && !(dictionaryType === DictionaryType.TABLE) ? (
+          <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || baseEditorProps.readonly} toggleCollapsed={toggleCollapsed} />
         ) : null}
       </div>
     </div>

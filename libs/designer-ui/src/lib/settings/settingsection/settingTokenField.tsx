@@ -111,7 +111,7 @@ const TokenField = ({
       return (
         <DictionaryEditor
           placeholder={placeholder}
-          readOnly={readOnly}
+          readonly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
           isTrigger={isTrigger}
