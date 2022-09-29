@@ -60,7 +60,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   return (
     <div className="msla-dictionary-editor-container">
-      {collapsed && !dictionaryType ? (
+      {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
           isValid={isValid}
           isTrigger={baseEditorProps.isTrigger}
@@ -85,7 +85,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       )}
 
       <div className="msla-dictionary-commands">
-        {!disableToggle && !dictionaryType ? (
+        {!disableToggle && !(dictionaryType === DictionaryType.TABLE) ? (
           <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || baseEditorProps.readonly} toggleCollapsed={toggleCollapsed} />
         ) : null}
       </div>
