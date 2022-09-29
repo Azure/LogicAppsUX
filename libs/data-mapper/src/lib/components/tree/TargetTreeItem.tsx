@@ -11,12 +11,6 @@ import { renderToString } from 'react-dom/server';
 
 const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
 
-export type TargetSchemaFastTreeItemProps = {
-  childNode: SchemaNodeExtended;
-  currentlySelectedNodes: SchemaNodeExtended[];
-  onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
-};
-
 const useStyles = makeStyles({
   icon: {
     color: tokens.colorPaletteCranberryBorderActive,
@@ -30,13 +24,24 @@ const useStyles = makeStyles({
   },
 });
 
+export type TargetSchemaFastTreeItemProps = {
+  childNode: SchemaNodeExtended;
+  currentlySelectedNodes: SchemaNodeExtended[];
+  onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
+  isSelected?: boolean; // Leaf nodes only
+  status?: 'Completed' | 'NotStarted'; // Leaf nodes only
+};
+
 export const SchemaFastTreeItem: React.FunctionComponent<TargetSchemaFastTreeItemProps> = ({
   childNode,
   currentlySelectedNodes,
   onLeafNodeClick,
+  isSelected,
+  status,
 }) => {
   const styles = useStyles();
   const [isHover, setIsHover] = useState(false);
+
   const iconString = renderToString(<ChevronRight16Regular className={styles.icon} />);
   const positionRegionStyling = `  
   .positioning-region {
@@ -69,28 +74,61 @@ export const SchemaFastTreeItem: React.FunctionComponent<TargetSchemaFastTreeIte
     },
   };
   const FastTreeItem = wrap(fluentTreeItem(overrides));
-  const isNodeSelected = !!currentlySelectedNodes.find(
-    (currentlySelectedNode) => currentlySelectedNode && currentlySelectedNode.key === childNode.key
-  );
 
-  const onMouseEnterOrLeave = () => {
-    setIsHover(!isHover);
+  const isNodeSelected = (node: SchemaNodeExtended) =>
+    !!currentlySelectedNodes.find((currentlySelectedNode) => currentlySelectedNode && currentlySelectedNode.key === node.key);
+
+  const getParentStatus = (numChildrenToggled: number) => {
+    const numChildren = childNode.children.length;
+
+    if (numChildrenToggled === 0) {
+      return 'NotStarted';
+    } else if (numChildrenToggled === numChildren) {
+      return 'Completed';
+    } else {
+      return 'InProgress';
+    }
   };
 
   const nameText = isHover ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>;
   // TODO Handle object with values and attributes
-  if (childNode.schemaNodeDataType === 'None') {
+  if (childNode.schemaNodeDataType === 'None' && !isSelected && !status) {
+    const childrenToggledStatus: boolean[] = [];
+    let numChildrenToggled = 0;
+
+    childNode.children.forEach((child) => {
+      const toggledStatus = isNodeSelected(child);
+      childrenToggledStatus.push(toggledStatus);
+      if (toggledStatus) {
+        numChildrenToggled += 1;
+      }
+    });
+
     return (
       <FastTreeItem
         key={childNode.key}
-        onMouseLeave={() => onMouseEnterOrLeave()}
-        onMouseEnter={() => onMouseEnterOrLeave()}
-        className={isNodeSelected ? 'selected' : ''}
+        onMouseOut={() => setIsHover(false)}
+        onMouseEnter={() => setIsHover(true)}
+        className={isNodeSelected(childNode) ? 'selected' : ''}
       >
-        <TargetTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="InProgress">
+        <TargetTreeItemContent
+          nodeType={childNode.schemaNodeDataType}
+          isSelected={isNodeSelected(childNode)}
+          status={getParentStatus(numChildrenToggled)}
+        >
           {nameText}
         </TargetTreeItemContent>
-        {convertToFastTreeItem(childNode, currentlySelectedNodes, onLeafNodeClick)}
+
+        {childNode.children.map((childNodeChild, idx) => (
+          <SchemaFastTreeItem
+            key={childNodeChild.key}
+            childNode={childNodeChild}
+            currentlySelectedNodes={currentlySelectedNodes}
+            onLeafNodeClick={onLeafNodeClick}
+            isSelected={childrenToggledStatus[idx]}
+            status={childrenToggledStatus[idx] ? 'Completed' : 'NotStarted'}
+          />
+        ))}
       </FastTreeItem>
     );
   } else {
@@ -100,36 +138,15 @@ export const SchemaFastTreeItem: React.FunctionComponent<TargetSchemaFastTreeIte
         onClick={() => {
           onLeafNodeClick(childNode);
         }}
-        onMouseLeave={() => onMouseEnterOrLeave()}
-        onMouseEnter={() => onMouseEnterOrLeave()}
+        onMouseOut={() => setIsHover(false)}
+        onMouseEnter={() => setIsHover(true)}
       >
-        <TargetTreeItemContent
-          nodeType={childNode.schemaNodeDataType}
-          isSelected={isNodeSelected}
-          status={isNodeSelected ? 'Completed' : 'NotStarted'}
-        >
+        <TargetTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={!!isSelected} status={status ?? 'NotStarted'}>
           {nameText}
         </TargetTreeItemContent>
       </FastTreeItem>
     );
   }
-};
-
-export const convertToFastTreeItem = (
-  node: SchemaNodeExtended,
-  currentlySelectedNodes: SchemaNodeExtended[],
-  onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void
-) => {
-  return node.children.map((childNode) => {
-    return (
-      <SchemaFastTreeItem
-        key={childNode.key}
-        childNode={childNode}
-        currentlySelectedNodes={currentlySelectedNodes}
-        onLeafNodeClick={onLeafNodeClick}
-      ></SchemaFastTreeItem>
-    );
-  });
 };
 
 export interface SchemaNodeTreeItemContentProps {
