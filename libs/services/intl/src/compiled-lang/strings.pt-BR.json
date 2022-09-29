@@ -452,6 +452,12 @@
       "value": "Hora de término"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -2269,6 +2275,12 @@
     {
       "type": 0,
       "value": "Erro inesperado"
+    }
+  ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "N2CF0J": [
