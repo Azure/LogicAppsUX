@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 const themeOptions = ['Light', 'Dark'];
 
 export const mapFileOptions = ['SimpleCustomerOrder.json'];
-export const schemaFileOptions = ['SimpleInputOrderSchema.json', 'SimpleOutputOrderSchema.json'];
+export const schemaFileOptions = ['SimpleInputOrderSchema.json', 'SimpleOutputOrderSchema.json', 'DemoSchema.json'];
 
 export const DevToolbox: React.FC = () => {
   const { theme, resourcePath, armToken, loadingMethod } = useSelector((state: RootState) => {
@@ -120,7 +120,7 @@ export const DevToolbox: React.FC = () => {
               </div>
 
               {loadingMethod === 'file' ? (
-                <div>
+                <Stack horizontal>
                   <MessageBar>
                     The below dropdowns load mock objects (equivalent to what we expect from a data map definition or GET schemaTree)
                   </MessageBar>
@@ -145,7 +145,7 @@ export const DevToolbox: React.FC = () => {
                     placeholder="Select a target schema"
                     options={schemaDropdownOptions}
                   />
-                </div>
+                </Stack>
               ) : (
                 <>
                   <div>

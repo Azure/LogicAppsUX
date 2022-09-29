@@ -53,11 +53,11 @@ const LayeredReactFlow = ({ schema, isSourceSchema }: LayeredReactFlowProps) => 
 
     if (isSourceSchema) {
       reactFlowNodes.push(
-        ...convertToReactFlowParentAndChildNodes(viewportCoordsPlaceholder, schema.schemaTreeRoot, SchemaTypes.Source, false)
+        ...convertToReactFlowParentAndChildNodes(viewportCoordsPlaceholder, schema.schemaTreeRoot, SchemaTypes.Source, false, {})
       );
     } else {
       reactFlowNodes.push(
-        ...convertToReactFlowParentAndChildNodes(viewportCoordsPlaceholder, schema.schemaTreeRoot, SchemaTypes.Target, false)
+        ...convertToReactFlowParentAndChildNodes(viewportCoordsPlaceholder, schema.schemaTreeRoot, SchemaTypes.Target, false, {})
       );
     }
 

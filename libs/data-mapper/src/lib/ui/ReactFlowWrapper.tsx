@@ -19,7 +19,6 @@ import {
   removeSourceNodes,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
-  toggleSourceNode,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
@@ -29,7 +28,6 @@ import type { ViewportCoords } from '../models/ReactFlow';
 import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
 import { sourcePrefix, targetPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
-import { allChildNodesSelected, hasAConnectionAtCurrentTargetNode, isLeafNode } from '../utils/Schema.Utils';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -72,13 +70,13 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { fitView, zoomIn, zoomOut, project } = useReactFlow();
 
+  const currentlySelectedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
@@ -128,20 +126,14 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   };
 
   const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
-    if (isLeafNode(selectedNode)) {
-      if (currentTargetNode && !hasAConnectionAtCurrentTargetNode(selectedNode, currentTargetNode, currentConnections)) {
-        dispatch(toggleSourceNode(selectedNode));
-      }
+    if (
+      currentlySelectedSourceNodes.some((node) => {
+        return node.key === selectedNode.key;
+      })
+    ) {
+      dispatch(removeSourceNodes([selectedNode]));
     } else {
-      if (allChildNodesSelected(selectedNode, currentlyAddedSourceNodes)) {
-        // TODO reconfirm this works for loops and conditionals
-        const nodesToRemove = selectedNode.children.filter((childNodes) =>
-          Object.values(currentConnections).some((currentConnection) => childNodes.key !== currentConnection.sourceValue)
-        );
-        dispatch(removeSourceNodes(nodesToRemove));
-      } else {
-        dispatch(addSourceNodes(selectedNode.children));
-      }
+      dispatch(addSourceNodes([selectedNode]));
     }
   };
 
@@ -351,7 +343,9 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (selectedNode) {
       selectedNode.selected = !selectedNode.selected;
     }
-    dispatch(setCurrentlySelectedEdge(node.id));
+    if (node) {
+      dispatch(setCurrentlySelectedEdge(node.id));
+    }
   };
 
   const keyDownHandler2: KeyboardEventHandler<HTMLDivElement> = (event) => {

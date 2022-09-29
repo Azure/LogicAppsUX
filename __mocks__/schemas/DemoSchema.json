@@ -1,0 +1,746 @@
+{
+  "name": "demo-source.xsd",
+  "type": "XML",
+  "targetNamespace": "http://tempuri.org/source.xsd",
+  "namespaces": { "ns0": "http://tempuri.org/source.xsd", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "schemaTreeRoot": {
+    "key": "/ns0:Root",
+    "name": "Root",
+    "namespacePrefix": "ns0",
+    "namespaceUri": "http://tempuri.org/source.xsd",
+    "schemaNodeDataType": "None",
+    "properties": "NotSpecified",
+    "children": [
+      {
+        "key": "/ns0:Root/ns0:DirectTranslation",
+        "name": "DirectTranslation",
+        "namespacePrefix": "ns0",
+        "namespaceUri": "http://tempuri.org/source.xsd",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ns0:DirectTranslation/ns0:EmployeeID",
+            "name": "EmployeeID",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "Decimal",
+            "properties": "NotSpecified",
+            "parentKey": "/ns0:Root/ns0:DirectTranslation"
+          },
+          {
+            "key": "/ns0:Root/ns0:DirectTranslation/ns0:EmployeeName",
+            "name": "EmployeeName",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "String",
+            "properties": "NotSpecified",
+            "parentKey": "/ns0:Root/ns0:DirectTranslation"
+          }
+        ],
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ns0:DataTranslation",
+        "name": "DataTranslation",
+        "namespacePrefix": "ns0",
+        "namespaceUri": "http://tempuri.org/source.xsd",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ns0:DataTranslation/ns0:Employee",
+            "name": "Employee",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "None",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/ns0:DataTranslation/ns0:Employee/ns0:FirstName",
+                "name": "FirstName",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:DataTranslation/ns0:Employee"
+              },
+              {
+                "key": "/ns0:Root/ns0:DataTranslation/ns0:Employee/ns0:LastName",
+                "name": "LastName",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:DataTranslation/ns0:Employee"
+              },
+              {
+                "key": "/ns0:Root/ns0:DataTranslation/ns0:Employee/ns0:EmploymentStatus",
+                "name": "EmploymentStatus",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "Boolean",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:DataTranslation/ns0:Employee"
+              }
+            ],
+            "parentKey": "/ns0:Root/ns0:DataTranslation"
+          }
+        ],
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ns0:ContentEnrich",
+        "name": "ContentEnrich",
+        "namespacePrefix": "ns0",
+        "namespaceUri": "http://tempuri.org/source.xsd",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [],
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ns0:CumulativeExpression",
+        "name": "CumulativeExpression",
+        "namespacePrefix": "ns0",
+        "namespaceUri": "http://tempuri.org/source.xsd",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population",
+            "name": "Population",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "None",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State",
+                "name": "State",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "None",
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:Name",
+                    "name": "Name",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "String",
+                    "properties": "NotSpecified",
+                    "parentKey": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State"
+                  },
+                  {
+                    "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County",
+                    "name": "County",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "None",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Name",
+                        "name": "Name",
+                        "namespacePrefix": "ns0",
+                        "namespaceUri": "http://tempuri.org/source.xsd",
+                        "schemaNodeDataType": "String",
+                        "properties": "NotSpecified",
+                        "parentKey": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County"
+                      },
+                      {
+                        "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person",
+                        "name": "Person",
+                        "namespacePrefix": "ns0",
+                        "namespaceUri": "http://tempuri.org/source.xsd",
+                        "schemaNodeDataType": "None",
+                        "properties": "Repeating",
+                        "children": [
+                          {
+                            "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person/ns0:Name",
+                            "name": "Name",
+                            "namespacePrefix": "ns0",
+                            "namespaceUri": "http://tempuri.org/source.xsd",
+                            "schemaNodeDataType": "String",
+                            "properties": "NotSpecified",
+                            "parentKey": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person"
+                          },
+                          {
+                            "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person/ns0:Age",
+                            "name": "Age",
+                            "namespacePrefix": "ns0",
+                            "namespaceUri": "http://tempuri.org/source.xsd",
+                            "schemaNodeDataType": "String",
+                            "properties": "NotSpecified",
+                            "parentKey": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person"
+                          },
+                          {
+                            "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person/ns0:Sex",
+                            "name": "Sex",
+                            "namespacePrefix": "ns0",
+                            "namespaceUri": "http://tempuri.org/source.xsd",
+                            "schemaNodeDataType": "None",
+                            "properties": "NotSpecified",
+                            "children": [
+                              {
+                                "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person/ns0:Sex/ns0:Male",
+                                "name": "Male",
+                                "namespacePrefix": "ns0",
+                                "namespaceUri": "http://tempuri.org/source.xsd",
+                                "schemaNodeDataType": "Boolean",
+                                "properties": "NotSpecified",
+                                "parentKey": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person/ns0:Sex"
+                              },
+                              {
+                                "key": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person/ns0:Sex/ns0:Female",
+                                "name": "Female",
+                                "namespacePrefix": "ns0",
+                                "namespaceUri": "http://tempuri.org/source.xsd",
+                                "schemaNodeDataType": "Boolean",
+                                "properties": "NotSpecified",
+                                "parentKey": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person/ns0:Sex"
+                              }
+                            ],
+                            "parentKey": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County/ns0:Person"
+                          }
+                        ],
+                        "parentKey": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State/ns0:County"
+                      }
+                    ],
+                    "parentKey": "/ns0:Root/ns0:CumulativeExpression/ns0:Population/ns0:State"
+                  }
+                ],
+                "parentKey": "/ns0:Root/ns0:CumulativeExpression/ns0:Population"
+              }
+            ],
+            "parentKey": "/ns0:Root/ns0:CumulativeExpression"
+          }
+        ],
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ns0:ConditionalMapping",
+        "name": "ConditionalMapping",
+        "namespacePrefix": "ns0",
+        "namespaceUri": "http://tempuri.org/source.xsd",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ns0:ConditionalMapping/ns0:ItemPrice",
+            "name": "ItemPrice",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "Decimal",
+            "properties": "NotSpecified",
+            "parentKey": "/ns0:Root/ns0:ConditionalMapping"
+          },
+          {
+            "key": "/ns0:Root/ns0:ConditionalMapping/ns0:ItemQuantity",
+            "name": "ItemQuantity",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "Decimal",
+            "properties": "NotSpecified",
+            "parentKey": "/ns0:Root/ns0:ConditionalMapping"
+          }
+        ],
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ns0:Looping",
+        "name": "Looping",
+        "namespacePrefix": "ns0",
+        "namespaceUri": "http://tempuri.org/source.xsd",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ns0:Looping/ns0:Employee",
+            "name": "Employee",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "None",
+            "properties": "Repeating",
+            "children": [
+              {
+                "key": "/ns0:Root/ns0:Looping/ns0:Employee/ns0:TelephoneNumber",
+                "name": "TelephoneNumber",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:Looping/ns0:Employee"
+              },
+              {
+                "key": "/ns0:Root/ns0:Looping/ns0:Employee/ns0:Name",
+                "name": "Name",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:Looping/ns0:Employee"
+              },
+              {
+                "key": "/ns0:Root/ns0:Looping/ns0:Employee/ns0:Salary",
+                "name": "Salary",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "Decimal",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:Looping/ns0:Employee"
+              },
+              {
+                "key": "/ns0:Root/ns0:Looping/ns0:Employee/ns0:Country",
+                "name": "Country",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:Looping/ns0:Employee"
+              },
+              {
+                "key": "/ns0:Root/ns0:Looping/ns0:Employee/ns0:Dat_of_Birth",
+                "name": "Dat_of_Birth",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "Date",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:Looping/ns0:Employee"
+              },
+              {
+                "key": "/ns0:Root/ns0:Looping/ns0:Employee/ns0:Address",
+                "name": "Address",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:Looping/ns0:Employee"
+              }
+            ],
+            "parentKey": "/ns0:Root/ns0:Looping"
+          },
+          {
+            "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips",
+            "name": "VehicleTrips",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "None",
+            "properties": "Repeating",
+            "children": [
+              {
+                "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle",
+                "name": "Vehicle",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "None",
+                "properties": "NotSpecified",
+                "children": [
+                  {
+                    "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle/ns0:VehicleID",
+                    "name": "VehicleID",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "Item",
+                    "properties": "NotSpecified",
+                    "children": [
+                      {
+                        "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle/ns0:VehicleID/@<AnyAttribute>",
+                        "name": "<AnyAttribute>",
+                        "schemaNodeDataType": "Attribute",
+                        "properties": "Attribute",
+                        "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle/ns0:VehicleID"
+                      },
+                      {
+                        "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle/ns0:VehicleID/<AnyElement>",
+                        "name": "<AnyElement>",
+                        "schemaNodeDataType": "None",
+                        "properties": "Optional, Repeating",
+                        "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle/ns0:VehicleID"
+                      }
+                    ],
+                    "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle"
+                  },
+                  {
+                    "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle/ns0:VehicleRegistration",
+                    "name": "VehicleRegistration",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "Item",
+                    "properties": "NotSpecified",
+                    "children": [
+                      {
+                        "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle/ns0:VehicleRegistration/@<AnyAttribute>",
+                        "name": "<AnyAttribute>",
+                        "schemaNodeDataType": "Attribute",
+                        "properties": "Attribute",
+                        "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle/ns0:VehicleRegistration"
+                      },
+                      {
+                        "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle/ns0:VehicleRegistration/<AnyElement>",
+                        "name": "<AnyElement>",
+                        "schemaNodeDataType": "None",
+                        "properties": "Optional, Repeating",
+                        "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle/ns0:VehicleRegistration"
+                      }
+                    ],
+                    "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Vehicle"
+                  }
+                ],
+                "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips"
+              },
+              {
+                "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips",
+                "name": "Trips",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "None",
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:VehicleId",
+                    "name": "VehicleId",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "Item",
+                    "properties": "NotSpecified",
+                    "children": [
+                      {
+                        "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:VehicleId/@<AnyAttribute>",
+                        "name": "<AnyAttribute>",
+                        "schemaNodeDataType": "Attribute",
+                        "properties": "Attribute",
+                        "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:VehicleId"
+                      },
+                      {
+                        "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:VehicleId/<AnyElement>",
+                        "name": "<AnyElement>",
+                        "schemaNodeDataType": "None",
+                        "properties": "Optional, Repeating",
+                        "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:VehicleId"
+                      }
+                    ],
+                    "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips"
+                  },
+                  {
+                    "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:Distance",
+                    "name": "Distance",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "Item",
+                    "properties": "NotSpecified",
+                    "children": [
+                      {
+                        "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:Distance/@<AnyAttribute>",
+                        "name": "<AnyAttribute>",
+                        "schemaNodeDataType": "Attribute",
+                        "properties": "Attribute",
+                        "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:Distance"
+                      },
+                      {
+                        "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:Distance/<AnyElement>",
+                        "name": "<AnyElement>",
+                        "schemaNodeDataType": "None",
+                        "properties": "Optional, Repeating",
+                        "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:Distance"
+                      }
+                    ],
+                    "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips"
+                  },
+                  {
+                    "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:Duration",
+                    "name": "Duration",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "Item",
+                    "properties": "NotSpecified",
+                    "children": [
+                      {
+                        "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:Duration/@<AnyAttribute>",
+                        "name": "<AnyAttribute>",
+                        "schemaNodeDataType": "Attribute",
+                        "properties": "Attribute",
+                        "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:Duration"
+                      },
+                      {
+                        "key": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:Duration/<AnyElement>",
+                        "name": "<AnyElement>",
+                        "schemaNodeDataType": "None",
+                        "properties": "Optional, Repeating",
+                        "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips/ns0:Duration"
+                      }
+                    ],
+                    "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips/ns0:Trips"
+                  }
+                ],
+                "parentKey": "/ns0:Root/ns0:Looping/ns0:VehicleTrips"
+              }
+            ],
+            "parentKey": "/ns0:Root/ns0:Looping"
+          }
+        ],
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ns0:ConditionalLooping",
+        "name": "ConditionalLooping",
+        "namespacePrefix": "ns0",
+        "namespaceUri": "http://tempuri.org/source.xsd",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ns0:ConditionalLooping/ns0:FlatterCatalog",
+            "name": "FlatterCatalog",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "None",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/ns0:ConditionalLooping/ns0:FlatterCatalog/ns0:Product",
+                "name": "Product",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "None",
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/ns0:ConditionalLooping/ns0:FlatterCatalog/ns0:Product/ns0:Name",
+                    "name": "Name",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "String",
+                    "properties": "NotSpecified",
+                    "parentKey": "/ns0:Root/ns0:ConditionalLooping/ns0:FlatterCatalog/ns0:Product"
+                  },
+                  {
+                    "key": "/ns0:Root/ns0:ConditionalLooping/ns0:FlatterCatalog/ns0:Product/ns0:SKU",
+                    "name": "SKU",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "String",
+                    "properties": "NotSpecified",
+                    "parentKey": "/ns0:Root/ns0:ConditionalLooping/ns0:FlatterCatalog/ns0:Product"
+                  },
+                  {
+                    "key": "/ns0:Root/ns0:ConditionalLooping/ns0:FlatterCatalog/ns0:Product/ns0:Price",
+                    "name": "Price",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "String",
+                    "properties": "NotSpecified",
+                    "parentKey": "/ns0:Root/ns0:ConditionalLooping/ns0:FlatterCatalog/ns0:Product"
+                  }
+                ],
+                "parentKey": "/ns0:Root/ns0:ConditionalLooping/ns0:FlatterCatalog"
+              }
+            ],
+            "parentKey": "/ns0:Root/ns0:ConditionalLooping"
+          }
+        ],
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ns0:LoopingWithIndex",
+        "name": "LoopingWithIndex",
+        "namespacePrefix": "ns0",
+        "namespaceUri": "http://tempuri.org/source.xsd",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ns0:LoopingWithIndex/ns0:WeatherReport",
+            "name": "WeatherReport",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "None",
+            "properties": "Repeating",
+            "children": [
+              {
+                "key": "/ns0:Root/ns0:LoopingWithIndex/ns0:WeatherReport/@Pressure",
+                "name": "Pressure",
+                "schemaNodeDataType": "Decimal",
+                "properties": "Attribute",
+                "parentKey": "/ns0:Root/ns0:LoopingWithIndex/ns0:WeatherReport"
+              },
+              {
+                "key": "/ns0:Root/ns0:LoopingWithIndex/ns0:WeatherReport/@WindSpeed",
+                "name": "WindSpeed",
+                "schemaNodeDataType": "Decimal",
+                "properties": "Attribute",
+                "parentKey": "/ns0:Root/ns0:LoopingWithIndex/ns0:WeatherReport"
+              },
+              {
+                "key": "/ns0:Root/ns0:LoopingWithIndex/ns0:WeatherReport/@Temperature",
+                "name": "Temperature",
+                "schemaNodeDataType": "Decimal",
+                "properties": "Attribute",
+                "parentKey": "/ns0:Root/ns0:LoopingWithIndex/ns0:WeatherReport"
+              }
+            ],
+            "parentKey": "/ns0:Root/ns0:LoopingWithIndex"
+          }
+        ],
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ns0:NameValueTransforms",
+        "name": "NameValueTransforms",
+        "namespacePrefix": "ns0",
+        "namespaceUri": "http://tempuri.org/source.xsd",
+        "schemaNodeDataType": "None",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ns0:NameValueTransforms/ns0:Catalog",
+            "name": "Catalog",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "None",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/ns0:NameValueTransforms/ns0:Catalog/ns0:Product",
+                "name": "Product",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "None",
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/ns0:NameValueTransforms/ns0:Catalog/ns0:Product/ns0:Field",
+                    "name": "Field",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "None",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:Root/ns0:NameValueTransforms/ns0:Catalog/ns0:Product/ns0:Field/ns0:Name",
+                        "name": "Name",
+                        "namespacePrefix": "ns0",
+                        "namespaceUri": "http://tempuri.org/source.xsd",
+                        "schemaNodeDataType": "String",
+                        "properties": "NotSpecified",
+                        "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:Catalog/ns0:Product/ns0:Field"
+                      },
+                      {
+                        "key": "/ns0:Root/ns0:NameValueTransforms/ns0:Catalog/ns0:Product/ns0:Field/ns0:Value",
+                        "name": "Value",
+                        "namespacePrefix": "ns0",
+                        "namespaceUri": "http://tempuri.org/source.xsd",
+                        "schemaNodeDataType": "String",
+                        "properties": "NotSpecified",
+                        "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:Catalog/ns0:Product/ns0:Field"
+                      }
+                    ],
+                    "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:Catalog/ns0:Product"
+                  }
+                ],
+                "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:Catalog"
+              }
+            ],
+            "parentKey": "/ns0:Root/ns0:NameValueTransforms"
+          },
+          {
+            "key": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus",
+            "name": "PurchaseOrderStatus",
+            "namespacePrefix": "ns0",
+            "namespaceUri": "http://tempuri.org/source.xsd",
+            "schemaNodeDataType": "None",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:ShipperName",
+                "name": "ShipperName",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus"
+              },
+              {
+                "key": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:ServiceLevel",
+                "name": "ServiceLevel",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus"
+              },
+              {
+                "key": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:DateShipped",
+                "name": "DateShipped",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "String",
+                "properties": "NotSpecified",
+                "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus"
+              },
+              {
+                "key": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem",
+                "name": "LineItem",
+                "namespacePrefix": "ns0",
+                "namespaceUri": "http://tempuri.org/source.xsd",
+                "schemaNodeDataType": "None",
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem/ns0:ItemNumber",
+                    "name": "ItemNumber",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "String",
+                    "properties": "NotSpecified",
+                    "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem"
+                  },
+                  {
+                    "key": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem/ns0:QuantityOrdered",
+                    "name": "QuantityOrdered",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "String",
+                    "properties": "NotSpecified",
+                    "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem"
+                  },
+                  {
+                    "key": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem/ns0:QuantityShipped",
+                    "name": "QuantityShipped",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "String",
+                    "properties": "NotSpecified",
+                    "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem"
+                  },
+                  {
+                    "key": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem/ns0:QuantityBackordered",
+                    "name": "QuantityBackordered",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "String",
+                    "properties": "NotSpecified",
+                    "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem"
+                  },
+                  {
+                    "key": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem/ns0:QuantityCancelled",
+                    "name": "QuantityCancelled",
+                    "namespacePrefix": "ns0",
+                    "namespaceUri": "http://tempuri.org/source.xsd",
+                    "schemaNodeDataType": "String",
+                    "properties": "NotSpecified",
+                    "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus/ns0:LineItem"
+                  }
+                ],
+                "parentKey": "/ns0:Root/ns0:NameValueTransforms/ns0:PurchaseOrderStatus"
+              }
+            ],
+            "parentKey": "/ns0:Root/ns0:NameValueTransforms"
+          }
+        ],
+        "parentKey": "/ns0:Root"
+      }
+    ]
+  }
+}
