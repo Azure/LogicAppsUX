@@ -125,7 +125,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   return (
     <>
-      <div>
+      <div className="nopan">
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
           title={label}
