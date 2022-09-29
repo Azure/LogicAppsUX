@@ -321,8 +321,6 @@ export class StandardConnectionService implements IConnectionService {
         : this._getRequestForCreateConnection(connectorId, connectionName, connectionInfo),
     });
 
-    await this.testConnection(connection);
-
     try {
       await this.createConnectionAclIfNeeded(connection);
     } catch {
@@ -336,6 +334,8 @@ export class StandardConnectionService implements IConnectionService {
       );
       throw error;
     }
+
+    await this.testConnection(connection);
 
     return connection;
   }
@@ -490,13 +490,20 @@ export class StandardConnectionService implements IConnectionService {
         await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
       }
 
+      await this.createConnectionAclIfNeeded(connection);
+
       await this.testConnection(connection);
 
       const fetchedConnection = await this.getConnection(connection.id);
       return { connection: fetchedConnection };
     } catch (error: any) {
       this.deleteConnection(connectionId);
-      console.error('Failed to Authorize', error, error?.message);
+      const errorMessage = `Failed to create OAuth connection: ${this.tryParseErrorMessage(error)}`;
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'create oauth connection',
+        message: errorMessage,
+      });
       return { errorMessage: this.tryParseErrorMessage(error) };
     }
   }

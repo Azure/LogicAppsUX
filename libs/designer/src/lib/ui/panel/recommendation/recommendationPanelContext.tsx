@@ -5,6 +5,7 @@ import { BrowseView } from './browseView';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import { areApiIdsEqual } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
 import { useEffect, useState } from 'react';
@@ -26,7 +27,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     if (allOperations.data && selectedOperationGroupId) {
       const filteredOps = allOperations.data.filter((operation) => {
         const apiId = operation.properties.api.id;
-        return apiId.split('/').at(-1) === selectedOperationGroupId.split('/').at(-1);
+        return areApiIdsEqual(apiId, selectedOperationGroupId);
       });
       setAllOperationsForGroup(filteredOps);
     }

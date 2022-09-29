@@ -117,7 +117,7 @@ export async function getManifestBasedConnectionMapping(
 }
 
 export function isConnectionRequiredForOperation(manifest: OperationManifest): boolean {
-  return manifest.properties.connection?.required !== false;
+  return !!manifest.properties.connection?.required;
 }
 
 export function getConnectionMetadata(manifest?: OperationManifest) {

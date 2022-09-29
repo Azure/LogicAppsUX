@@ -37,7 +37,7 @@ export const SelectConnectionTab = () => {
     if (!connectionQuery.isLoading && connections.length === 0) createConnectionCallback();
   }, [connectionQuery.isLoading, connections, createConnectionCallback]);
 
-  // TODO: RILEY - RACE CONDITION HERE, if you are on select connection and you click another node, this fires off, and sets the old node's connection to the same as the new node's connection
+  // TODO: RILEY - WI# 15680356 - RACE CONDITION HERE, if you are on select connection and you click another node, this fires off, and sets the old node's connection to the same as the new node's connection
   // We really just need to make our own selection component here, using the 'DetailsList' component here is just really hacky and not the way it was intended to be used
   const saveSelectionCallback = useCallback(
     (connection?: Connection) => {
