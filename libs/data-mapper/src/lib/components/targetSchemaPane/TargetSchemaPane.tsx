@@ -1,7 +1,7 @@
 import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { TargetSchemaTree } from '../tree/TargetTree';
+import { SchemaTree } from '../tree/SchemaTree';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleRight20Regular, ChevronDoubleLeft20Regular } from '@fluentui/react-icons';
@@ -91,7 +91,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
       {isExpanded && targetSchema && (
         <div style={{ margin: 8, marginLeft: 40, width: 290, flex: '1 1 1px', overflowY: 'auto' }}>
-          <TargetSchemaTree schema={targetSchema} currentlySelectedNodes={targetNodesWithConnections} onNodeClick={handleItemClick} />
+          <SchemaTree schema={targetSchema} toggledNodes={targetNodesWithConnections} onNodeClick={handleItemClick} isTargetSchema />
         </div>
       )}
     </div>
