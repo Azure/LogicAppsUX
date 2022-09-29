@@ -7,8 +7,8 @@ import { useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@m
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useState } from 'react';
-import type { Edge, Node } from 'react-flow-renderer';
 import { useSelector } from 'react-redux';
+import type { Edge, Node } from 'reactflow';
 
 export const layerSpacing = {
   default: '64',

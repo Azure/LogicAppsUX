@@ -5,9 +5,9 @@ import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { guid } from '@microsoft-logic-apps/utils';
 import { AddActionCard, ADD_CARD_TYPE } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
-import { Handle, Position } from 'react-flow-renderer';
-import type { NodeProps } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
+import { Handle, Position } from 'reactflow';
+import type { NodeProps } from 'reactflow';
 
 const PlaceholderNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const dispatch = useDispatch<AppDispatch>();

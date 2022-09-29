@@ -9,9 +9,10 @@ import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useMemo } from 'react';
-import ReactFlow, { ReactFlowProvider } from 'react-flow-renderer';
-import type { Node as ReactFlowNode } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
+// eslint-disable-next-line import/no-named-as-default
+import ReactFlow, { ReactFlowProvider } from 'reactflow';
+import type { Node as ReactFlowNode, Viewport } from 'reactflow';
 
 const useStyles = makeStyles({
   mapOverviewStyles: {
@@ -64,6 +65,7 @@ const LayeredReactFlow = ({ schema, isSourceSchema }: LayeredReactFlowProps) => 
     return reactFlowNodes;
   }, [schema, isSourceSchema]);
 
+  const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
   return (
     <ReactFlow
       nodes={reactFlowNodes}
@@ -72,7 +74,7 @@ const LayeredReactFlow = ({ schema, isSourceSchema }: LayeredReactFlowProps) => 
       zoomOnDoubleClick={false}
       zoomOnPinch={false}
       zoomOnScroll={false}
-      defaultZoom={defaultCanvasZoom}
+      defaultViewport={defaultViewport}
       proOptions={{
         account: 'paid-sponsor',
         hideAttribution: true,

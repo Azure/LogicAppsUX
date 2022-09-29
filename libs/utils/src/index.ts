@@ -11,6 +11,7 @@ export * from './lib/helpers/guid';
 export * from './lib/helpers/stringFunctions';
 export * from './lib/helpers/hooks';
 export * from './lib/models';
+export * from './lib/helpers/flow-utils';
 
 export * from './lib/mocks/connectors';
 export * from './lib/mocks/connections';

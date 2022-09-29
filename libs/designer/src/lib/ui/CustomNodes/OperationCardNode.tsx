@@ -19,10 +19,10 @@ import type { MenuItemOption } from '@microsoft/designer-ui';
 import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
 import { memo, useCallback, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
-import { Handle, Position } from 'react-flow-renderer';
-import type { NodeProps } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { Handle, Position } from 'reactflow';
+import type { NodeProps } from 'reactflow';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();

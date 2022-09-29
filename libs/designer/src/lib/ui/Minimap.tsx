@@ -1,6 +1,6 @@
 import { useShowMinimap } from '../core/state/designerView/designerViewSelectors';
 import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
-import { MiniMap } from 'react-flow-renderer';
+import { MiniMap } from 'reactflow';
 
 const Minimap = () => {
   const showMinimap = useShowMinimap();

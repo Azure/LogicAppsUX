@@ -1,7 +1,7 @@
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';
-import { getSmoothStepPath } from 'react-flow-renderer';
-import type { EdgeProps } from 'react-flow-renderer';
+import { getSmoothStepPath } from 'reactflow';
+import type { EdgeProps } from 'reactflow';
 
 export interface LogicAppsEdgeProps {
   id: string;

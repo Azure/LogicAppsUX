@@ -3,7 +3,7 @@ import type { FunctionCardProps } from './FunctionCard';
 import { FunctionCard } from './FunctionCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import type { NodeProps } from 'react-flow-renderer';
+import type { NodeProps } from 'reactflow';
 
 export default {
   component: FunctionCard,

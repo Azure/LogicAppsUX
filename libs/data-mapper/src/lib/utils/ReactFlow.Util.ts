@@ -10,8 +10,8 @@ import { SchemaTypes } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { useMemo } from 'react';
-import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
-import { MarkerType, ConnectionLineType, Position } from 'react-flow-renderer';
+import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
+import { MarkerType, ConnectionLineType, Position } from 'reactflow';
 
 const getViewportWidth = (endX: number, startX: number) => endX - startX;
 

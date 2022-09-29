@@ -5,8 +5,8 @@ import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
 import { memo } from 'react';
-import { Handle, Position } from 'react-flow-renderer';
-import type { NodeProps } from 'react-flow-renderer';
+import { Handle, Position } from 'reactflow';
+import type { NodeProps } from 'reactflow';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {

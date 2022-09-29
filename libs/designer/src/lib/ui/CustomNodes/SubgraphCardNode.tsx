@@ -8,10 +8,10 @@ import { DropZone } from '../connections/dropzone';
 import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { SubgraphCard } from '@microsoft/designer-ui';
 import { memo, useCallback } from 'react';
-import { Handle, Position } from 'react-flow-renderer';
-import type { NodeProps } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { Handle, Position } from 'reactflow';
+import type { NodeProps } from 'reactflow';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {

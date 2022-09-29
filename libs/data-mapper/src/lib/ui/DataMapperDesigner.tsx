@@ -24,8 +24,8 @@ import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useLayoutEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
+import { ReactFlowProvider } from 'reactflow';
 
 const useCenterViewHeight = () => {
   const [centerViewHeight, setCenterViewHeight] = useState(0);

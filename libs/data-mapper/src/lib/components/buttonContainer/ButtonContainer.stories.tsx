@@ -19,7 +19,7 @@ import {
 } from '@fluentui/react-icons';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import ReactFlow, { MiniMap, ReactFlowProvider, useReactFlow } from 'react-flow-renderer';
+import ReactFlow, { MiniMap, ReactFlowProvider, useReactFlow } from 'reactflow';
 
 export default {
   component: ButtonContainer,

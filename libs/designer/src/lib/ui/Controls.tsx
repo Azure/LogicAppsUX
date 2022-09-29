@@ -1,9 +1,9 @@
 import { useShowMinimap } from '../core/state/designerView/designerViewSelectors';
 import { toggleMinimap } from '../core/state/designerView/designerViewSlice';
 import { Icon } from '@fluentui/react';
-import { ControlButton, Controls } from 'react-flow-renderer';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+import { ControlButton, Controls } from 'reactflow';
 
 const CustomControls = () => {
   const intl = useIntl();

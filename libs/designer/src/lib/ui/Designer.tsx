@@ -21,9 +21,9 @@ import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft-logic-apps/u
 import { useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import ReactFlow, { ReactFlowProvider, useNodes, useReactFlow, useStore } from 'react-flow-renderer';
-import type { NodeChange } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
+import ReactFlow, { ReactFlowProvider, useNodes, useReactFlow, useStore } from 'reactflow';
+import type { NodeChange } from 'reactflow';
 
 export interface DesignerProps {
   graphId?: string;
@@ -52,7 +52,7 @@ export const CanvasFinder = () => {
   const focusNode = useSelector((state: RootState) => state.workflow.focusedCanvasNodeId);
   const isEmpty = useIsGraphEmpty();
   const { setCenter, getZoom } = useReactFlow();
-  const { height } = useStore();
+  const height = useStore((state) => state.height);
 
   const isPanelCollapsed = useIsPanelCollapsed();
   const [firstLoad, setFirstLoad] = useState(true);
