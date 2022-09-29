@@ -7,6 +7,10 @@ import { ExpandedDictionary } from './expandeddictionary';
 import { convertItemsToSegments } from './util/deserializecollapseddictionary';
 import { useState } from 'react';
 
+export enum DictionaryType {
+  DEFAULT = 'default',
+  TABLE = 'table',
+}
 export interface DictionaryEditorItemProps {
   key: ValueSegment[];
   value: ValueSegment[];
@@ -17,7 +21,7 @@ export interface DictionaryEditorProps extends BaseEditorProps {
   initialItems?: DictionaryEditorItemProps[];
   keyTitle?: string;
   valueTitle?: string;
-  isTable?: boolean;
+  dictionaryType?: DictionaryType;
 }
 
 export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
@@ -26,7 +30,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   initialValue,
   keyTitle,
   valueTitle,
-  isTable,
+  dictionaryType,
   GetTokenPicker,
   onChange,
   ...baseEditorProps
@@ -56,7 +60,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   return (
     <div className="msla-dictionary-editor-container">
-      {collapsed && !isTable ? (
+      {collapsed && !dictionaryType ? (
         <CollapsedDictionary
           isValid={isValid}
           isTrigger={baseEditorProps.isTrigger}
@@ -81,7 +85,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
       )}
 
       <div className="msla-dictionary-commands">
-        {!disableToggle && !isTable ? (
+        {!disableToggle && !dictionaryType ? (
           <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || baseEditorProps.readonly} toggleCollapsed={toggleCollapsed} />
         ) : null}
       </div>

@@ -81,10 +81,12 @@ export const ExpandedDictionary = ({
 
   return (
     <div className="msla-dictionary-container msla-dictionary-editor-expanded" ref={containerRef}>
-      <div className="msla-dictionary-editor-item">
-        <div className="msla-dictionary-item-header">{keyTitle}</div>
-        <div className="msla-dictionary-item-header">{valueTitle}</div>
-      </div>
+      {keyTitle || valueTitle ? (
+        <div className="msla-dictionary-editor-item">
+          <div className="msla-dictionary-item-header">{keyTitle}</div>
+          <div className="msla-dictionary-item-header">{valueTitle}</div>
+        </div>
+      ) : null}
       {items.map((item, index) => {
         return (
           <div key={index} className="msla-dictionary-editor-item">

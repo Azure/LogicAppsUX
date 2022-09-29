@@ -4,7 +4,7 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
-  // EditorLanguage,
+  DictionaryType, // EditorLanguage,
   ValueSegmentType, // CodeEditor, // HTMLEditor,
   TokenPicker,
   TokenType,
@@ -311,7 +311,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
           GetTokenPicker={GetTokenPicker}
-          isTable={true}
+          dictionaryType={DictionaryType.TABLE}
           keyTitle={'Header'}
           valueTitle={'Value'}
         />
