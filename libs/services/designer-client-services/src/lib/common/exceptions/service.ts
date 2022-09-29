@@ -14,15 +14,13 @@ export enum ServiceExceptionCode {
   FETCH_SERVICE_BUS_CONNECTION_PARAMETERS_FAILED = 'FetchServiceBusConnectionParametersFailed',
   GET_CALL_FAILED = 'GetCallFailed',
   POST_CALL_FAILED = 'PostCallFailed',
-
-  ResponseBodyErrorNotDefined = 'ResponseBodyErrorNotDefined',
-  ResponseBodyErrorMessageNotDefined = 'ResponseBodyErrorMessageNotDefined',
-  ResponseBodyNotDefined = 'ResponseBodyNotDefined',
-  ResponseNotDefined = 'ResponseNotDefined',
+  RESPONSE_BODY_ERROR_NOT_DEFINED = 'ResponseBodyErrorNotDefined',
+  RESPONSE_BODY_ERROR_MESSAGE_NOT_DEFINED = 'ResponseBodyErrorMessageNotDefined',
+  RESPONSE_BODY_NOT_DEFINED = 'ResponseBodyNotDefined',
+  RESPONSE_NOT_DEFINED = 'ResponseNotDefined',
 }
 
 export class ServiceException extends BaseException {
-  // tslint:disable-next-line: no-any
   constructor(message: string, code?: string, data?: Record<string, any>) {
     super(ServiceExceptionName, message, code, data);
   }
@@ -38,23 +36,27 @@ export interface HttpResponse<T> {
 
 export const throwWhenNotOk = (response: HttpResponse<any>) => {
   if (!response) {
-    throw new ServiceException('Unexpected HTTP response', ServiceExceptionCode.ResponseNotDefined);
+    throw new ServiceException('Unexpected HTTP response', ServiceExceptionCode.RESPONSE_NOT_DEFINED);
   } else if (!response.ok) {
     const { body } = response;
     if (!body) {
-      throw new ServiceException(`Unexpected HTTP response: ${response.status}`, ServiceExceptionCode.ResponseBodyNotDefined);
+      throw new ServiceException(`Unexpected HTTP response: ${response.status}`, ServiceExceptionCode.RESPONSE_BODY_NOT_DEFINED);
     }
 
     const { error } = body;
     if (!error) {
-      throw new ServiceException(`Unexpected HTTP response: ${response.status}`, ServiceExceptionCode.ResponseBodyErrorNotDefined);
+      throw new ServiceException(`Unexpected HTTP response: ${response.status}`, ServiceExceptionCode.RESPONSE_BODY_ERROR_NOT_DEFINED);
     }
 
     const { message } = error;
     if (!message) {
-      throw new ServiceException(`Unexpected HTTP response: ${response.status}`, ServiceExceptionCode.ResponseBodyErrorMessageNotDefined, {
-        error,
-      });
+      throw new ServiceException(
+        `Unexpected HTTP response: ${response.status}`,
+        ServiceExceptionCode.RESPONSE_BODY_ERROR_MESSAGE_NOT_DEFINED,
+        {
+          error,
+        }
+      );
     }
 
     throw new ServiceException(message);

@@ -48,12 +48,9 @@ const oAuthService = new StandardOAuthService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
   httpClient,
-  apiHubServiceDetails: {
-    apiVersion: '2018-07-01-preview',
-    subscriptionId: '',
-    resourceGroup: '',
-    location: '',
-  },
+  subscriptionId: '',
+  resourceGroup: '',
+  location: '',
 });
 
 export const DesignerWrapper = () => {

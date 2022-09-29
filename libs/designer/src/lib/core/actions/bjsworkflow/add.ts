@@ -17,6 +17,7 @@ import { isRootNodeInGraph } from '../../utils/graph';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations } from '../../utils/variables';
+import { isConnectionRequiredForOperation } from './connections';
 import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import { getOperationSettings } from './settings';
@@ -75,12 +76,12 @@ export const initializeOperationDetails = async (
   const operationManifestService = OperationManifestService();
 
   dispatch(switchToOperationPanel(nodeId));
-  const manifest = await getOperationManifest(operationInfo);
-  const { iconUri, brandColor } = manifest.properties;
-
-  if (manifest.properties.connection?.required !== false) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
 
   if (operationManifestService.isSupported(type)) {
+    const manifest = await getOperationManifest(operationInfo);
+    if (isConnectionRequiredForOperation(manifest)) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+
+    const { iconUri, brandColor } = manifest.properties;
     const settings = getOperationSettings(isTrigger, operationInfo, manifest, /* swagger */ undefined);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
@@ -100,6 +101,7 @@ export const initializeOperationDetails = async (
       dispatch
     );
   } else {
+    await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);

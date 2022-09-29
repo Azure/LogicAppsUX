@@ -1,8 +1,8 @@
+import type { Connection, ConnectionStatus, ManagedIdentity } from '../models';
+import { ResourceIdentityType } from '../models';
 import { ConnectionParameterTypes } from '../models/connector';
 import type { Connector, ConnectionParameter } from '../models/connector';
 import { equals, hasProperty } from './functions';
-import type { ManagedIdentity} from '../models';
-import { ResourceIdentityType } from '../models';
 
 export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;
@@ -58,14 +58,6 @@ export const isSharedManagedConnector = (connectorId: string) => {
   if (!equals(fields[7], 'managedapis')) return false;
 
   return true;
-};
-
-export const getUniqueConnectionName = (connectorId: string, connectionNames: string[]): string => {
-  const connectorName = getConnectorName(connectorId).replace(/_/g, '-');
-  let num = connectionNames.length + 1;
-  let connectionName = `${connectorName}-${num}`;
-  while (connectionNames.includes(connectionName)) connectionName = `${connectorName}-${++num}`;
-  return connectionName;
 };
 
 export function getAuthRedirect(connector?: Connector): string | undefined {
@@ -164,6 +156,7 @@ function _connectorContainsAllServicePrinicipalConnectionParameters(connectionPa
 function _isConnectionParameterHidden(connectionParameter: ConnectionParameter): boolean {
   return connectionParameter?.uiDefinition?.constraints?.hidden === 'true';
 }
+
 export const getUniqueName = (keys: string[], prefix: string): { name: string; index: number } => {
   const set = new Set(keys.map((name) => name.split('::')[0]));
 
@@ -186,3 +179,7 @@ export const isIdentityAssociatedWithLogicApp = (managedIdentity: ManagedIdentit
         Object.keys(managedIdentity.userAssignedIdentities).length > 0))
   );
 };
+
+export function getConnectionErrors(connection: Connection): ConnectionStatus[] {
+  return (connection?.properties?.statuses ?? []).filter((status) => status.status === 'error');
+}

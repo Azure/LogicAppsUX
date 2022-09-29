@@ -8,7 +8,7 @@ import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
-import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
+import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
@@ -68,7 +68,6 @@ const CreateConnectionTab = () => {
         parametersMetadata
       );
 
-      // dispatch(applyNewConnection({ nodeId, connectionId: newConnection.id, connectorId }));
       applyNewConnection(newConnection, uniqueConnectionName);
       dispatch(showDefaultTabs());
       setIsLoading(false);
@@ -103,8 +102,12 @@ const CreateConnectionTab = () => {
         setErrorMessage(e);
       }
     } catch (error) {
-      // TODO: handle error
-      console.log(error);
+      const errorMessage = `Failed to create OAuth connection: ${error}`;
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'create connection tab',
+        message: errorMessage,
+      });
     }
     setIsLoading(false);
   }, [applyNewConnection, connector?.id, dispatch]);
@@ -114,7 +117,7 @@ const CreateConnectionTab = () => {
   }, [dispatch]);
 
   // By the time you get to this component, there should always be a connector associated
-  if (connector?.properties === undefined) return <p>{JSON.stringify(connector)}</p>;
+  if (connector?.properties === undefined) return <p></p>;
 
   return (
     <CreateConnection

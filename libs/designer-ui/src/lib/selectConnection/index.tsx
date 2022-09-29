@@ -1,4 +1,3 @@
-import { getConnectionErrors } from '../helper';
 import type { IColumn } from '@fluentui/react';
 import {
   MessageBar,
@@ -15,7 +14,7 @@ import {
   Selection,
 } from '@fluentui/react';
 import type { Connection } from '@microsoft-logic-apps/utils';
-import { getIdLeaf } from '@microsoft-logic-apps/utils';
+import { getConnectionErrors, getIdLeaf } from '@microsoft-logic-apps/utils';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 

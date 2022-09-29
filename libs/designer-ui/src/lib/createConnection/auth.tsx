@@ -9,7 +9,7 @@ interface ConnectionAuthProps {
   authClickCallback?: () => void;
   cancelCallback?: () => void;
   hideCancelButton?: boolean;
-  tosUrl?: string;
+  termsOfServiceUrl?: string;
 }
 
 export const ConnectionAuth = (props: ConnectionAuthProps) => {
@@ -20,7 +20,7 @@ export const ConnectionAuth = (props: ConnectionAuthProps) => {
     authClickCallback,
     cancelCallback,
     hideCancelButton = false,
-    tosUrl,
+    termsOfServiceUrl,
   } = props;
   const intl = useIntl();
 
@@ -69,7 +69,7 @@ export const ConnectionAuth = (props: ConnectionAuthProps) => {
     <div className="msla-create-connection-container">
       {errorMessage ? <MessageBar>{errorText}</MessageBar> : null}
       <div>{descriptionText}</div>
-      <IFrameTermsOfService url={tosUrl} />
+      <IFrameTermsOfService url={termsOfServiceUrl} />
 
       <div className="msla-create-connection-actions-container">
         <PrimaryButton

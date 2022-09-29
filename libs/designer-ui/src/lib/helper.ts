@@ -1,5 +1,3 @@
-import type { Connection, ConnectionStatus } from '@microsoft-logic-apps/utils';
-
 /**
  * Returns an "onDragStart" event handler to use on Firefox when draggable is set to false.
  * @return {React.DragEventHandler<HTMLElement> | undefined}
@@ -22,11 +20,4 @@ export function isFirefox(): boolean {
 
 export function isApple(): boolean {
   return /Mac|iPod|iPhone|iPad/.test(navigator.platform);
-}
-
-export function getConnectionErrors(connection: Connection): ConnectionStatus[] {
-  if (connection?.properties?.statuses) {
-    return connection.properties.statuses.filter((status) => status.status.toLowerCase() === 'error');
-  }
-  return [];
 }

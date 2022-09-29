@@ -117,7 +117,7 @@ export async function getManifestBasedConnectionMapping(
 }
 
 export function isConnectionRequiredForOperation(manifest: OperationManifest): boolean {
-  return !!manifest.properties.connection?.required;
+  return manifest.properties.connection?.required !== false;
 }
 
 export function getConnectionMetadata(manifest?: OperationManifest) {
@@ -236,6 +236,7 @@ export const SupportedServiceNames: Record<string, string> = {
   XSLTRANSFORM: 'xsltransform',
 };
 
+// TODO: Riley - This is temporary, be sure to update before use when implementing assisted connections
 export function isAssistedConnection(connector: Connector): boolean {
   if (isSharedManagedConnector(connector.id) || isManagedConnector(connector.id)) {
     const connectorName = getConnectorName(connector.id);

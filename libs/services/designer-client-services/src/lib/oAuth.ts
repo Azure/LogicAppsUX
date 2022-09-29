@@ -19,12 +19,9 @@ export interface IOAuthServiceOptions {
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
-  apiHubServiceDetails: {
-    apiVersion: string;
-    subscriptionId: string;
-    resourceGroup: string;
-    location: string;
-  };
+  subscriptionId: string;
+  resourceGroup: string;
+  location: string;
 }
 
 export interface IOAuthPopup {

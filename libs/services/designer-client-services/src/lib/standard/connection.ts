@@ -297,7 +297,7 @@ export class StandardConnectionService implements IConnectionService {
   ): Promise<Connection> {
     const {
       httpClient,
-      apiHubServiceDetails: { apiVersion, baseUrl, subscriptionId, resourceGroup },
+      apiHubServiceDetails: { apiVersion, baseUrl },
       workflowAppDetails,
     } = this.options;
     const intl = getIntl();
@@ -312,7 +312,7 @@ export class StandardConnectionService implements IConnectionService {
       );
     }
 
-    const connectionId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
+    const connectionId = this.getConnectionRequestPath(connectionName);
     const connection = await httpClient.put<any, Connection>({
       uri: `${baseUrl}${connectionId}`,
       queryParameters: { 'api-version': apiVersion },
@@ -321,17 +321,19 @@ export class StandardConnectionService implements IConnectionService {
         : this._getRequestForCreateConnection(connectorId, connectionName, connectionInfo),
     });
 
+    await this.testConnection(connection);
+
     try {
       await this.createConnectionAclIfNeeded(connection);
     } catch {
       // NOTE: Delete the connection created in this method if Acl creation failed.
+      this.deleteConnection(connectionId);
       const error = new Error(
         intl.formatMessage({
           defaultMessage: 'Acl creation failed for connection. Deleting the connection.',
           description: 'Error while creating acl',
         })
       );
-      await this.deleteConnection(connectionId);
       throw error;
     }
 
@@ -490,17 +492,11 @@ export class StandardConnectionService implements IConnectionService {
 
       await this.testConnection(connection);
 
-      // Do something to the exisiting connection
-      console.log('Connection created and authorized successfully', connection);
-      connection.properties.displayName = (connection.properties as any).authenticatedUser.name;
-
-      const fetchedConnection = await this.getConnection(connectionId);
-      console.log('Connection fetched successfully', fetchedConnection);
-
-      return { connection };
+      const fetchedConnection = await this.getConnection(connection.id);
+      return { connection: fetchedConnection };
     } catch (error: any) {
+      this.deleteConnection(connectionId);
       console.error('Failed to Authorize', error, error?.message);
-      await this.deleteConnection(connectionId);
       return { errorMessage: this.tryParseErrorMessage(error) };
     }
   }
@@ -654,36 +650,6 @@ export class StandardConnectionService implements IConnectionService {
     return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
   }
 
-  private getRequestForCreateConnection(
-    connectorId: string,
-    connectionName: string,
-    connectionInfo: ConnectionCreationInfo
-  ): HttpRequestOptions<any> {
-    const parameterValues = connectionInfo?.connectionParameters;
-    const parameterValueSet: Record<string, any> = connectionInfo?.connectionParametersSet?.values ?? {};
-    const displayName = connectionInfo?.displayName;
-    const {
-      apiHubServiceDetails: { location, apiVersion },
-    } = this.options;
-
-    return {
-      uri: this.getConnectionRequestPath(connectionName),
-      queryParameters: { 'api-version': apiVersion },
-      content: {
-        properties: {
-          api: {
-            id: connectorId,
-          },
-          parameterValues,
-          parameterValueSet,
-          displayName,
-        },
-        kind: 'V2',
-        location,
-      },
-    };
-  }
-
   async deleteConnection(connectionId: string): Promise<void> {
     const {
       httpClient,
@@ -710,8 +676,7 @@ export class StandardConnectionService implements IConnectionService {
     connectionName: string,
     i: number
   ): Promise<string> {
-    const { subscriptionId, resourceGroup } = this.options.apiHubServiceDetails;
-    const connectionId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
+    const connectionId = this.getConnectionRequestPath(connectionName);
     const isUnique = await this._testConnectionIdUniquenessInApiHub(connectionId);
 
     if (isUnique) {
