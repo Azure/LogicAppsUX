@@ -3,6 +3,7 @@ import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import type { ConnectorWithParsedSwagger } from '../../queries/connections';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeData, NodeInputs, NodeOutputs } from '../../state/operation/operationMetadataSlice';
@@ -27,7 +28,6 @@ import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../..
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
 import { getOperationSettings } from './settings';
-import type { ConnectorWithSwagger } from '@microsoft-logic-apps/designer-client-services';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { InputParameter, OutputParameter } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
@@ -104,9 +104,9 @@ export const initializeOperationMetadata = async (
   );
 };
 
-const initializeConnectorsForReferences = async (references: ConnectionReferences): Promise<ConnectorWithSwagger[]> => {
+const initializeConnectorsForReferences = async (references: ConnectionReferences): Promise<ConnectorWithParsedSwagger[]> => {
   const connectorIds = uniqueArray(Object.keys(references || {}).map((key) => references[key].api.id));
-  const connectorPromises: Promise<ConnectorWithSwagger | undefined>[] = [];
+  const connectorPromises: Promise<ConnectorWithParsedSwagger | undefined>[] = [];
 
   for (const connectorId of connectorIds) {
     if (isArmResourceId(connectorId)) {
@@ -119,7 +119,7 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
     }
   }
 
-  return (await Promise.all(connectorPromises)).filter((result) => !!result) as ConnectorWithSwagger[];
+  return (await Promise.all(connectorPromises)).filter((result) => !!result) as ConnectorWithParsedSwagger[];
 };
 
 const initializeOperationDetailsForManifest = async (

@@ -52,7 +52,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
     operationId: operation.name,
     type: getOperationType(operation),
-    kind: operation.properties.operationKind ?? '',
+    kind: operation.properties.operationKind,
   };
 
   dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
@@ -101,8 +101,10 @@ export const initializeOperationDetails = async (
       dispatch
     );
   } else {
-    await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
-    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    const [, { connector, parsedSwagger }] = await Promise.all([
+      trySetDefaultConnectionForNode(nodeId, connectorId, dispatch),
+      getConnectorWithSwagger(connectorId),
+    ]);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
 
@@ -206,6 +208,8 @@ export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
+
+  dispatch(switchToOperationPanel(nodeId));
 };
 
 const addTokensAndVariables = (
