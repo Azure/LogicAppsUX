@@ -15,7 +15,7 @@ export interface SchemaTreeProps {
 
 export const TargetSchemaTree: React.FC<SchemaTreeProps> = ({ schema, currentlySelectedNodes, onNodeClick }: SchemaTreeProps) => {
   const treeItems = useMemo<JSX.Element[]>(() => {
-    return convertToFastTreeItem(schema.schemaTreeRoot, [...currentlySelectedNodes], onNodeClick);
+    return convertToFastTreeItem(schema.schemaTreeRoot, currentlySelectedNodes, onNodeClick);
   }, [schema, currentlySelectedNodes, onNodeClick]);
 
   return <FastTreeView>{treeItems}</FastTreeView>;

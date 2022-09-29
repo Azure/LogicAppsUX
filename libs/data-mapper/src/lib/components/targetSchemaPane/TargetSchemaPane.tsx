@@ -5,6 +5,7 @@ import { TargetSchemaTree } from '../tree/TargetTree';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleRight20Regular, ChevronDoubleLeft20Regular } from '@fluentui/react-icons';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -35,11 +36,26 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
   const dispatch = useDispatch<AppDispatch>();
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const targetSchemaLoc = intl.formatMessage({
     defaultMessage: 'Target schema',
     description: 'Target schema',
   });
+
+  // For MVP - only checks for a connection, not its validity
+  const targetNodesWithConnections = useMemo(() => {
+    const nodesWithConnections: SchemaNodeExtended[] = [];
+
+    Object.entries(connectionDictionary).forEach(([_key, value]) => {
+      if (value.reactFlowDestination in targetSchemaDictionary) {
+        nodesWithConnections.push(targetSchemaDictionary[value.reactFlowDestination]);
+      }
+    });
+
+    return nodesWithConnections;
+  }, [connectionDictionary, targetSchemaDictionary]);
 
   const handleItemClick = (schemaNode: SchemaNodeExtended) => {
     dispatch(setCurrentTargetNode({ schemaNode: schemaNode, resetSelectedSourceNodes: true }));
@@ -75,7 +91,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
       {isExpanded && targetSchema && (
         <div style={{ margin: 8, marginLeft: 40, width: 290, flex: '1 1 1px', overflowY: 'auto' }}>
-          <TargetSchemaTree schema={targetSchema} currentlySelectedNodes={[]} onNodeClick={handleItemClick} />
+          <TargetSchemaTree schema={targetSchema} currentlySelectedNodes={targetNodesWithConnections} onNodeClick={handleItemClick} />
         </div>
       )}
     </div>

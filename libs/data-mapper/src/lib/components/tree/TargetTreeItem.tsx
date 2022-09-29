@@ -87,7 +87,7 @@ export const SchemaFastTreeItem: React.FunctionComponent<TargetSchemaFastTreeIte
         onMouseEnter={() => onMouseEnterOrLeave()}
         className={isNodeSelected ? 'selected' : ''}
       >
-        <TargetTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="Completed">
+        <TargetTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="InProgress">
           {nameText}
         </TargetTreeItemContent>
         {convertToFastTreeItem(childNode, currentlySelectedNodes, onLeafNodeClick)}
@@ -103,7 +103,11 @@ export const SchemaFastTreeItem: React.FunctionComponent<TargetSchemaFastTreeIte
         onMouseLeave={() => onMouseEnterOrLeave()}
         onMouseEnter={() => onMouseEnterOrLeave()}
       >
-        <TargetTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="InProgress">
+        <TargetTreeItemContent
+          nodeType={childNode.schemaNodeDataType}
+          isSelected={isNodeSelected}
+          status={isNodeSelected ? 'Completed' : 'NotStarted'}
+        >
           {nameText}
         </TargetTreeItemContent>
       </FastTreeItem>
