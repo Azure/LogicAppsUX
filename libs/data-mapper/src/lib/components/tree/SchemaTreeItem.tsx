@@ -57,22 +57,19 @@ export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const iconString = renderToString(<ChevronRight16Regular className={styles.icon} />);
-  const treeItemStyleOverrides = useMemo<OverrideFoundationElementDefinition<TreeItemOptions>>(
-    () => ({
-      expandCollapseGlyph: iconString,
-      baseName: 'tree-item',
-      styles: (ctx, def) => {
-        const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
-        const fastStyles = css`
-          ${baseStyles} ${isTargetSchemaItem ? targetFastTreeItemStyles : sourceFastTreeItemStyles}
-            ${expandButtonStyle}
-        `;
-        return fastStyles;
-      },
-    }),
-    [iconString, isTargetSchemaItem]
-  );
-  const FastTreeItem = wrap(fluentTreeItem(treeItemStyleOverrides));
+  const treeItemOverrideStyles: OverrideFoundationElementDefinition<TreeItemOptions> = {
+    expandCollapseGlyph: iconString,
+    baseName: 'tree-item',
+    styles: (ctx, def) => {
+      const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
+      const fastStyles = css`
+        ${baseStyles} ${isTargetSchemaItem ? targetFastTreeItemStyles : sourceFastTreeItemStyles}
+          ${expandButtonStyle}
+      `;
+      return fastStyles;
+    },
+  };
+  const FastTreeItem = wrap(fluentTreeItem(treeItemOverrideStyles));
 
   const isNodeSelected = useCallback(
     (node: SchemaNodeExtended) => !!toggledNodes.find((toggledNode) => toggledNode && toggledNode.key === node.key),
