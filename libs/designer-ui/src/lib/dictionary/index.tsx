@@ -30,7 +30,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   initialValue,
   keyTitle,
   valueTitle,
-  dictionaryType,
+  dictionaryType = DictionaryType.DEFAULT,
   GetTokenPicker,
   onChange,
   ...baseEditorProps
