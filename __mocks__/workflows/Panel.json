@@ -12,7 +12,7 @@
             "type": "SetVariable"
           }
         },
-        "foreach": "@triggerBody()['array']",
+        "foreach": "@triggerBody()",
         "runAfter": {
           "Parse_JSON": ["Succeeded"]
         },
