@@ -1,7 +1,7 @@
 import { baseUrl } from '../utils';
 import { test, expect } from '@playwright/test';
 
-test('Should be able to drag and drop operations', async ({ page }) => {
+test('Should serialize the workflow after deserializing it and match', async ({ page }) => {
   await page.goto(baseUrl);
 
   await page.locator('[aria-label="Close React Query Devtools"]').click();
