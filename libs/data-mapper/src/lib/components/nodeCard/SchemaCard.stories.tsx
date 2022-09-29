@@ -3,8 +3,8 @@ import type { SchemaCardProps } from './SchemaCard';
 import { SchemaCard } from './SchemaCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import type { NodeProps } from 'react-flow-renderer';
-import { ReactFlowProvider } from 'react-flow-renderer';
+import type { NodeProps } from 'reactflow';
+import { ReactFlowProvider } from 'reactflow';
 
 export default {
   component: SchemaCard,

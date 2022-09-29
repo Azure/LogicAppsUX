@@ -1,4 +1,4 @@
-import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 import { icon16ForSchemaNodeType } from '../../utils/Icon.Utils';
 import { sourceFastTreeItemStyles, SourceTreeItemContent } from './SourceSchemaTreeItem';
 import { ItemToggledState, targetFastTreeItemStyles, TargetTreeItemContent, type LeafItemToggledState } from './TargetSchemaTreeItem';
@@ -32,8 +32,8 @@ export const expandButtonStyle = `
   }
 `;
 
-export const SharedTreeItemContent = (nodeType: SchemaNodeDataType, isSelected: boolean): JSX.Element => {
-  const BundledTypeIcon = icon16ForSchemaNodeType(nodeType);
+export const SharedTreeItemContent = (node: SchemaNodeExtended, isSelected: boolean): JSX.Element => {
+  const BundledTypeIcon = icon16ForSchemaNodeType(node.schemaNodeDataType, node.properties);
   return (
     <span style={{ display: 'flex', paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} slot="start">
       <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={isSelected} />
