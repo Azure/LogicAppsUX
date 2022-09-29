@@ -9,7 +9,6 @@
               "name": "stringvar",
               "value": "fgfgfg"
             },
-            "runAfter": {},
             "type": "SetVariable"
           }
         },
