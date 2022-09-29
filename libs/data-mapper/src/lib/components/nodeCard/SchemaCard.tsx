@@ -21,9 +21,9 @@ import {
 } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
 import type { FunctionComponent } from 'react';
-import type { Connection as ReactFlowConnection, NodeProps } from 'react-flow-renderer';
-import { Handle, Position } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
+import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
+import { Handle, Position } from 'reactflow';
 
 export type SchemaCardProps = {
   schemaNode: SchemaNodeExtended;
