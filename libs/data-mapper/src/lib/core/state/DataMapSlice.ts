@@ -229,26 +229,35 @@ export const dataMapSlice = createSlice({
         switch (selectedNode.nodeType) {
           case NodeType.Source: {
             const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== selectedNode.name);
-
+            const newConnections = { ...state.curDataMapOperation.dataMapConnections };
             for (const connectionKey in state.curDataMapOperation.dataMapConnections) {
               if (state.curDataMapOperation.dataMapConnections[connectionKey].sourceValue === selectedNode.path) {
-                delete state.curDataMapOperation.dataMapConnections[connectionKey];
+                delete newConnections[connectionKey];
               }
             }
-            doDataMapOperation(state, { ...state.curDataMapOperation, currentSourceNodes: removedNodes });
+            doDataMapOperation(state, {
+              ...state.curDataMapOperation,
+              currentSourceNodes: removedNodes,
+              dataMapConnections: newConnections,
+            });
             break;
           }
           case NodeType.Function: {
+            const newConnections = { ...state.curDataMapOperation.dataMapConnections };
             const newFunctionsState = { ...state.curDataMapOperation.currentFunctionNodes };
             delete newFunctionsState[selectedNode.id];
             doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
-            for (const connectionKey in state.curDataMapOperation.dataMapConnections) {
+            for (const connectionKey in newConnections) {
               const connection = state.curDataMapOperation.dataMapConnections[connectionKey];
               if (selectedNode.id.endsWith(connection.sourceValue) || selectedNode.id.startsWith(connection.destination)) {
-                delete state.curDataMapOperation.dataMapConnections[connectionKey];
+                delete newConnections[connectionKey];
               }
             }
-
+            doDataMapOperation(state, {
+              ...state.curDataMapOperation,
+              currentFunctionNodes: newFunctionsState,
+              dataMapConnections: newConnections,
+            });
             break;
           }
           default:
