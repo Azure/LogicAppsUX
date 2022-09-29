@@ -1,4 +1,4 @@
-import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 import { SchemaTreeItem, SharedTreeItemContent } from './SchemaTreeItem';
 import { tokens } from '@fluentui/react-components';
 import { CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
@@ -37,18 +37,18 @@ export const SourceSchemaFastTreeItem = ({ childNode, toggledNodes, onLeafNodeCl
 };
 
 export interface SourceTreeItemContentProps {
-  nodeType: SchemaNodeDataType;
+  node: SchemaNodeExtended;
   isSelected: boolean;
   children?: React.ReactNode;
 }
 
-export const SourceTreeItemContent = ({ nodeType, isSelected, children }: SourceTreeItemContentProps) => {
+export const SourceTreeItemContent = ({ node, isSelected, children }: SourceTreeItemContentProps) => {
   const filledIcon = <CheckmarkCircle16Filled primaryFill={tokens.colorBrandForeground1} />;
   const restIcon = <Circle16Regular primaryFill={tokens.colorNeutralForeground3} />;
 
   return (
     <>
-      {SharedTreeItemContent(nodeType, isSelected)}
+      {SharedTreeItemContent(node, isSelected)}
       <span style={{ marginRight: '8px', width: '100%' }}>{children}</span>
       <span style={{ display: 'flex', marginRight: '4px' }} slot="end">
         {isSelected ? filledIcon : restIcon}

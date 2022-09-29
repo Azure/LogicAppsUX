@@ -135,12 +135,12 @@ export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
       }}
     >
       {!isTargetSchemaItem ? (
-        <SourceTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected(childNode)}>
+        <SourceTreeItemContent node={childNode} isSelected={isNodeSelected(childNode)}>
           {nameText}
         </SourceTreeItemContent>
       ) : (
         <TargetTreeItemContent
-          nodeType={childNode.schemaNodeDataType}
+          node={childNode}
           isSelected={isNodeSelected(childNode)}
           status={
             leafItemInfo

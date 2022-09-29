@@ -1,4 +1,4 @@
-import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 import { SchemaTreeItem, SharedTreeItemContent } from './SchemaTreeItem';
 import { tokens } from '@fluentui/react-components';
 import { CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular } from '@fluentui/react-icons';
@@ -43,13 +43,13 @@ export const TargetSchemaFastTreeItem = ({ childNode, toggledNodes, onLeafNodeCl
 };
 
 export interface TargetTreeItemContentProps {
-  nodeType: SchemaNodeDataType;
+  node: SchemaNodeExtended;
   isSelected: boolean;
   children?: React.ReactNode;
   status: ParentItemToggledState;
 }
 
-export const TargetTreeItemContent = ({ nodeType, isSelected, children, status }: TargetTreeItemContentProps) => {
+export const TargetTreeItemContent = ({ node, isSelected, children, status }: TargetTreeItemContentProps) => {
   const statusIcon = useMemo(() => {
     switch (status) {
       case ItemToggledState.Completed:
@@ -73,7 +73,7 @@ export const TargetTreeItemContent = ({ nodeType, isSelected, children, status }
       <span style={{ display: 'flex', marginRight: '4px', marginTop: '2px' }} slot="start">
         {statusIcon}
       </span>
-      {SharedTreeItemContent(nodeType, isSelected)}
+      {SharedTreeItemContent(node, isSelected)}
       <span style={{ marginRight: '8px', width: '100%' }}>{children}</span>
     </>
   );
