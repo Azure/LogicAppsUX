@@ -1,27 +1,33 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import type { ConnectorWithSwagger } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import { SwaggerParser } from '@microsoft-logic-apps/parsers';
+import type { Connector} from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 
 const connectionKey = 'connections';
-export interface ConnectorWithParsedSwagger extends ConnectorWithSwagger {
+export interface ConnectorWithParsedSwagger {
+  connector: Connector;
   parsedSwagger: SwaggerParser;
 }
 
 export const getConnectorWithSwagger = async (connectorId: string): Promise<ConnectorWithParsedSwagger> => {
-  return getReactQueryClient().fetchQuery(['apiWithSwaggers', { connectorId }], async () => {
+  const { connector, swagger } = await getReactQueryClient().fetchQuery(['apiWithSwaggers', connectorId.toLowerCase() ], async () => {
     const { connector, swagger } = await ConnectionService().getConnectorAndSwagger(connectorId);
-    return { connector, swagger, parsedSwagger: await SwaggerParser.parse(swagger) };
+    const parsedSwagger = await SwaggerParser.parse(swagger);
+    return { connector, swagger: parsedSwagger };
   });
+
+  return { connector, parsedSwagger: new SwaggerParser(swagger) };
 };
 
 export const getSwaggerFromEndpoint = async (uri: string): Promise<SwaggerParser> => {
-  return getReactQueryClient().fetchQuery(['swaggers', { uri }], async () => {
+  const swagger = await getReactQueryClient().fetchQuery(['swaggers', uri.toLowerCase() ], async () => {
     const swagger = await ConnectionService().getSwaggerFromUri(uri);
     return SwaggerParser.parse(swagger);
   });
+
+  return new SwaggerParser(swagger);
 };
 
 export const getConnectionsQuery = async (): Promise<void> => {
@@ -74,4 +80,10 @@ export const getConnectionsForConnector = (connectorId: string) => {
     const connectionService = ConnectionService();
     return connectionService.getConnections(connectorId);
   });
+};
+
+export const getUniqueConnectionName = async (connectorId: string): Promise<string> => {
+  const connectionNames = (await getConnectionsForConnector(connectorId)).map((connection) => connection.name);
+  const connectorName = connectorId.split('/').at(-1);
+  return ConnectionService().getUniqueConnectionName(connectorId, connectionNames, connectorName as string);
 };

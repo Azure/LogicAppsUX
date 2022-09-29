@@ -400,7 +400,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Každé spuštění po konfiguraci musí mít zaškrtnutý alespoň jeden stav."
     }
   ],
   "1ejxkP": [
@@ -436,7 +436,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Nahrajte nebo vyberte cílové schéma, které se použije pro vaši mapu."
     }
   ],
   "1zgFh1": [
@@ -485,6 +485,12 @@
     {
       "type": 0,
       "value": "Koncový čas"
+    }
+  ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Search"
     }
   ],
   "2NYPLt": [
@@ -784,7 +790,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Vyberte zdrojové schéma."
     }
   ],
   "5SAQOb": [
@@ -808,7 +814,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Přidat zdrojové schéma"
     }
   ],
   "5cPiWA": [
@@ -850,7 +856,13 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Vyberte cílové schéma."
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Test map"
     }
   ],
   "6XR3FS": [
@@ -1278,7 +1290,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Cílové schéma se nahradí a nebudete se moct vrátit k předchozím změnám. Chcete pokračovat ve změně cílového schématu?"
     }
   ],
   "B/JzwK": [
@@ -1439,6 +1451,12 @@
       "value": "Připojení je povinné"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Replace existing schema"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1467,6 +1485,12 @@
     {
       "type": 0,
       "value": "Povinné. Řetězec, z jehož začátku a konce se odeberou prázdné znaky."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Paste from sample"
     }
   ],
   "DDIIAQ": [
@@ -1502,7 +1526,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "Podmínka triggeru nemůže být prázdná."
     }
   ],
   "DuXV2M": [
@@ -1786,7 +1810,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Zdrojové schéma"
     }
   ],
   "GYvF54": [
@@ -1804,7 +1828,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Nahrajte nebo vyberte zdrojové schéma, které se použije pro vaši mapu."
     }
   ],
   "Gi72X5": [
@@ -1974,15 +1998,11 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Neplatná operace. Počet položek: "
     },
     {
       "type": 1,
       "value": "length"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "JErLDT": [
@@ -2397,6 +2417,12 @@
       "value": "Neočekávaná chyba"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Target schema"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2424,7 +2450,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Vstupní hodnota cesty operace je neplatná. Hodnota cesty: "
     },
     {
       "type": 1,
@@ -2432,11 +2458,15 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": ", šablona cesty: "
     },
     {
       "type": 1,
       "value": "pathTemplate"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "No6CS+": [
@@ -2542,7 +2572,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Tato funkce nevyžaduje žádný vstup."
     }
   ],
   "ORVfYZ": [
@@ -2560,7 +2590,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Vyberte schéma pro rozevírací nabídku"
     }
   ],
   "OVvieE": [
@@ -2668,7 +2698,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Uzel zdrojového schématu"
     }
   ],
   "PP63jY": [
@@ -2758,7 +2788,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Vyberte zdrojové schéma."
     }
   ],
   "QEp3C8": [
@@ -3013,6 +3043,12 @@
       "value": "Méně informací"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3070,7 +3106,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Neplatný počet stránkování"
     }
   ],
   "TUaunO": [
@@ -3182,7 +3218,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (název souboru)"
     }
   ],
   "Ur+wph": [
@@ -3213,6 +3249,12 @@
     {
       "type": 0,
       "value": "Zadejte platný kód JSON."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "V aplikaci"
     }
   ],
   "VE3cxq": [
@@ -3338,7 +3380,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Vyberte cílové schéma."
     }
   ],
   "WUe3DY": [
@@ -3353,10 +3395,10 @@
       "value": "Vrátí výsledek vynásobení daných dvou čísel."
     }
   ],
-  "Wy/bhW": [
+  "WnU9v0": [
     {
       "type": 0,
-      "value": "Nahraďte existující schéma."
+      "value": "Spravovaná identita není v aplikaci logiky nakonfigurovaná."
     }
   ],
   "X4gDhV": [
@@ -3516,7 +3558,15 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Typ výrazu "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": " je neplatný."
     }
   ],
   "Y9kBz5": [
@@ -3646,7 +3696,15 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Nepodporovaná hodnota in: "
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": " v parametru"
     }
   ],
   "a64zhX": [
@@ -4028,7 +4086,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Cílové schéma"
     }
   ],
   "eRvGw3": [
@@ -4049,16 +4107,16 @@
       "value": "Povinný parametr. Číslo, kterým se má dělit dělenec."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Předdefinované"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Vyžadováno. Index určující, kde začíná v parametru 1 podřetězec."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Sdíleno"
     }
   ],
   "esOQ5p": [
@@ -4097,10 +4155,16 @@
       "value": "Vrátí true, pokud je první argument větší nebo roven druhému."
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Vytvoření seznamu ACL pro připojení se nezdařilo. Odstraňuje se připojení."
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Počet stránkování překračuje maximální hodnotu."
     }
   ],
   "faSDuD": [
@@ -4338,7 +4402,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "Hodnota cesty operace se neshoduje se šablonou pro segment. Cesta: "
     },
     {
       "type": 1,
@@ -4346,11 +4410,15 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", šablona: "
     },
     {
       "type": 1,
       "value": "pathTemplate"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "hrbDu6": [
@@ -4368,7 +4436,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Zdrojové schéma se nahradí a nebudete se moct vrátit k předchozím změnám. Chcete pokračovat ve změně zdrojového schématu?"
     }
   ],
   "i/SguY": [
@@ -4381,6 +4449,12 @@
     {
       "type": 0,
       "value": "Asynchronní odpověď"
+    }
+  ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Provide input data to test the map with"
     }
   ],
   "i1cwra": [
@@ -4874,7 +4948,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Funkce"
     }
   ],
   "mx2IMJ": [
@@ -4929,12 +5003,6 @@
     {
       "type": 0,
       "value": "Povinné. Název vlastnosti, která se odebere"
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5668,7 +5736,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Každá akce musí mít jedno nebo více spuštění po konfiguraci."
     }
   ],
   "vD2lQy": [
@@ -5729,6 +5797,18 @@
     {
       "type": 0,
       "value": "vypršelo"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Pokud chcete vytvořit a použít připojení rozhraní API, musíte mít v této aplikaci logiky nakonfigurovanou spravovanou identitu."
+    }
+  ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Discard"
     }
   ],
   "vr70Gn": [
@@ -5851,6 +5931,12 @@
     {
       "type": 0,
       "value": "Adresa URL pro zpětné volání:"
+    }
+  ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "x+6ccf": [
@@ -5994,7 +6080,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Přidat cílové schéma"
     }
   ],
   "ysoumb": [
@@ -6066,7 +6152,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Uzel cílového schématu"
     }
   ],
   "zbtUQ/": [

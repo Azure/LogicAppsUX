@@ -414,15 +414,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";1ED/HW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Show all versions]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Alle Versionen anzeigen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";1Fn5n+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The URI encoded string.]]></Val>
@@ -546,6 +537,9 @@
       <Item ItemId=";1ZSzl6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Each run after configuration must have at least one status checked]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Für jede Ausführung nach der Konfiguration muss mindestens ein Status überprüft werden.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -590,6 +584,15 @@
           <Val><![CDATA[5]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[5]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";1yiiWM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Upload or select a target schema to be used for your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Laden Sie ein Zielschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -837,15 +840,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";3X/ZDK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Upload or select an output schema to be used for your map.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Laden Sie ein Ausgabeschema hoch, das für Ihre Zuordnung verwendet werden soll, oder wählen Sie eines aus.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";3Y8a6G" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required parameters {parameters} not set or invalid]]></Val>
@@ -1071,20 +1065,20 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";53PSgA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Input schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change input schema?]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Das Eingabeschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Eingabeschemas fortfahren?]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";5J7j9k" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The XPath expression to evaluate.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Erforderlich. Der XPath-Ausdruck, der ausgewertet werden soll.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";5P8UWJ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select a source schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Quellschema auswählen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1112,6 +1106,15 @@
           <Val><![CDATA[Returns true if an object, array, or string is empty]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gibt TRUE zurück, wenn ein Objekt, ein Array oder eine Zeichenfolge leer ist.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";5bE93I" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add Source Schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Quellschema hinzufügen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1167,6 +1170,21 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+08:45) Eucla]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";6Ld/c8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select a target schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zielschema auswählen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";6OSgRP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test map]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -1413,15 +1431,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";8JFxmV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Add Output Schema]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ausgabeschema hinzufügen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";8L+oIz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Cannot render designer due to multiple triggers in definition.]]></Val>
@@ -1490,15 +1499,6 @@
           <Val><![CDATA[(UTC+11:00) Norfolk Island]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC+11:00) Norfolkinsel]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";8to63i" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Input Schema]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Eingabeschema]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1629,15 +1629,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";9mWdNA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select an output schema]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ausgabeschema auswählen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";9pdXmX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna]]></Val>
@@ -1760,6 +1751,15 @@
           <Val><![CDATA[Required. The string to encode into base64 representation.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Erforderlich. Die Zeichenfolge, die als Base64-Darstellung codiert werden soll.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";AwwPJC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Das Zielschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Zielschemas fortfahren?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -1965,6 +1965,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";CSoHMf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Replace existing schema]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Ciol6I" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Output]]></Val>
@@ -2007,6 +2013,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Erforderlich. Die Zeichenfolge, aus der führende und nachstehende Leerzeichen entfernt werden sollen.]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";D5FIKL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Paste from sample]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2058,6 +2070,9 @@
       <Item ItemId=";DsPDVB" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Trigger condition cannot be empty]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Die Triggerbedingung darf nicht leer sein]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2433,6 +2448,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";GWpB4z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Source Schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Quellschema]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";GYvF54" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Referencing functions]]></Val>
@@ -2447,6 +2471,15 @@
           <Val><![CDATA[Returns true if the parameters are false]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gibt TRUE zurück, wenn die Parameter FALSE sind.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";GdnEhu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Upload or select a source schema to be used for your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Laden Sie ein Quellschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2640,15 +2673,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";IngtMG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select an input schema]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Eingabeschema auswählen]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";IooQu1" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Advanced options]]></Val>
@@ -2690,6 +2714,15 @@
           <Val><![CDATA[Converts a string to lowercase using the casing rules of the invariant culture]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Konvertiert eine Zeichenfolge anhand der Groß-/Kleinschreibregeln der invarianten Kultur in Kleinbuchstaben.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";J55HA9" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid operation. Number of items: {length}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ungültiger Vorgang. Anzahl der Elemente: {length}.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2816,15 +2849,6 @@
           <Val><![CDATA[Returns a subset of characters from a string]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Gibt eine Teilmenge von Zeichen aus einer Zeichenfolge zurück.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";KUw9iC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Output Schema]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ausgabeschema]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3273,6 +3297,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";NnD8gF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid operation path input value. Path value - {pathValue} Path template - {pathTemplate}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ungültiger Eingabewert für den Vorgangspfad. Pfadwert - {pathValue} Pfadvorlage - {pathTemplate}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";No6CS+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter tenant]]></Val>
@@ -3402,6 +3435,9 @@
       <Item ItemId=";OOUSLP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[This function doesn't require any input.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Diese Funktion erfordert keine Eingabe.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -3419,6 +3455,15 @@
           <Val><![CDATA[Comment]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Kommentar]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";OUS2wX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select the schema for dropdown]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Wählen Sie das Schema für die Dropdownliste aus.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3558,6 +3603,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";PMMNKR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Source schema node]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Quellschemaknoten]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";PP63jY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[more panels]]></Val>
@@ -3680,6 +3734,15 @@
           <Val><![CDATA[Discard]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Verwerfen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";QBOaAu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select a source schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Quellschema auswählen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4011,6 +4074,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Sz8KN3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Test]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Test]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";T0BFpC" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Set the tracking id for the run. For split-on this tracking id is for the initiating request.]]></Val>
@@ -4095,6 +4167,9 @@
       <Item ItemId=";TPV6j/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Paging count invalid]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Auslagerungsanzahl ist ungültig]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4251,6 +4326,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";UYRIS/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[{fileName} (file name)]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[{fileName} (Dateiname)]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Ur+wph" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Click to delete item]]></Val>
@@ -4292,6 +4376,15 @@
           <Val><![CDATA[Enter a valid JSON.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Geben Sie einen gültigen JSON-Wert ein.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";VA7M1u" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[In App]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[In-App]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4458,6 +4551,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";WTTJ89" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Select a target schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zielschema auswählen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";WUe3DY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Shorthand for trigger().outputs]]></Val>
@@ -4476,11 +4578,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";Wy/bhW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";WnU9v0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Replace existing schema.]]></Val>
+          <Val><![CDATA[A managed identity is not configured on the logic app.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Vorhandenes Schema ersetzen.]]></Val>
+            <Val><![CDATA[Eine verwaltete Identität ist in der Logik-App nicht konfiguriert.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4499,15 +4601,6 @@
           <Val><![CDATA[{days} days {hours} hours]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[{days} Tage {hours} Stunden]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";XBPhr0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select an output schema]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ausgabeschema auswählen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4679,6 +4772,15 @@
           <Val><![CDATA[More Info]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Weitere Informationen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Y7yyKD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Invalid expression type '{type}'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ungültiger Ausdruckstyp "{type}".]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -4863,11 +4965,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";a3QJzO" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";Zr0yTE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Output schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change output schema?]]></Val>
+          <Val><![CDATA[Unsupported 'in' value : '{value}' in Parameter]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Das Ausgabeschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Ausgabeschemas fortfahren?]]></Val>
+            <Val><![CDATA[Nicht unterstützter "in"-Wert: '{value}' im Parameter]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5412,11 +5514,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";eIlosa" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";eRoJ/H" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Output schema node]]></Val>
+          <Val><![CDATA[Target Schema]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ausgabeschemaknoten]]></Val>
+            <Val><![CDATA[Zielschema]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5448,15 +5550,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";eX84FI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Built-in]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Integriert]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";egLI8P" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The index of where the substring begins in parameter 1.]]></Val>
@@ -5466,11 +5559,11 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";er+4Cd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+      <Item ItemId=";epOMnV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
-          <Val><![CDATA[Select the schema for dropdown]]></Val>
+          <Val><![CDATA[Shared]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Wählen Sie das Schema für die Dropdownliste aus.]]></Val>
+            <Val><![CDATA[Freigegeben]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5529,9 +5622,21 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";fDisLL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Acl creation failed for connection. Deleting the connection.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Fehler bei der ACL-Erstellung für die Verbindung. Die Verbindung wird gelöscht.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";fGcSFd" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Paging count exceeds maximum value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Die Auslagerungsanzahl überschreitet den Maximalwert]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5826,6 +5931,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";hq1mk6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Operation path value does not match the template for segment. Path {pathValue}, Template {pathTemplate}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Der Wert für den Vorgangspfad entspricht nicht der Vorlage für das Segment. Pfad {pathValue}, Vorlage {pathTemplate}]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";hrbDu6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Duration]]></Val>
@@ -5840,6 +5954,15 @@
           <Val><![CDATA[Audience]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Benutzergruppe]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";hwngB3" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Das Quellschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Quellschemas fortfahren?]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -5859,6 +5982,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Asynchrone Antwort]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";i1Tufp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Provide input data to test the map with]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6182,15 +6311,6 @@
           <Val><![CDATA[Yes]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Ja]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";kBw1WQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Add Input Schema]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Eingabeschema hinzufügen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -6627,15 +6747,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";nXwBF7" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Azure]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Azure]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";nZ4nLn" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Suppress workflow headers]]></Val>
@@ -6947,15 +7058,6 @@
           <Val><![CDATA[Convert the parameter to a string]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Parameter in Zeichenfolge konvertieren]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";q5SkF5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Select an input schema]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Eingabeschema auswählen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7359,15 +7461,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";surdl/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Input schema node]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Eingabeschemaknoten]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";syiNc+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Browse]]></Val>
@@ -7382,15 +7475,6 @@
           <Val><![CDATA[Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Zielzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";t5CdhT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Upload or select an input schema to be used for your map.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Laden Sie ein Eingabeschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7677,6 +7761,9 @@
       <Item ItemId=";v7ipqH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Each action must have one or more run after configurations]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Jede Aktion muss mindestens eine Ausführung nach der Konfiguration aufweisen]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7766,6 +7853,24 @@
           <Val><![CDATA[has timed out]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[hat die Zeit überschritten]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vdtKjT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To create and use an API connection, you must have a managed identity configured on this logic app.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zum Erstellen und Verwenden einer API-Verbindung muss eine verwaltete Identität für diese Logik-App konfiguriert sein.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";vlDynP" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Discard]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Verwerfen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -7937,6 +8042,15 @@
           <Val><![CDATA[Callback URL:]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Rückruf-URL:]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";wzEneQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Close]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Schließen]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8148,6 +8262,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";yrWKLF" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Add Target Schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zielschema hinzufügen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";ysoumb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add field]]></Val>
@@ -8243,6 +8366,15 @@
           <Val><![CDATA[Clear custom value]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Benutzerdefinierten Wert löschen]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";zUs2yb" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Target schema node]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zielschemaknoten]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

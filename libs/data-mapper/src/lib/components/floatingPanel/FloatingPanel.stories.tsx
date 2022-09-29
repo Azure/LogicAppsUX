@@ -5,7 +5,7 @@ import React from 'react';
 
 export default {
   component: FloatingPanel,
-  title: 'Data Mapper/FloatingPanel',
+  title: 'Data Mapper Components/Floaties/Floating Panel',
 } as ComponentMeta<typeof FloatingPanel>;
 
 export const Standard: ComponentStory<typeof FloatingPanel> = (args: FloatingPanelProps) => <FloatingPanel {...args} />;

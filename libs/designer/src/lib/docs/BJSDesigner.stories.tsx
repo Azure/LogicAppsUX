@@ -11,6 +11,7 @@ import {
   StandardOperationManifestService,
   StandardSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
+import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
 
 export default {
   component: DesignerProvider,
@@ -27,6 +28,8 @@ const httpClient = {
   dispose: () => Promise.resolve({} as any),
   get: () => Promise.resolve({} as any),
   post: () => Promise.resolve({} as any),
+  put: () => Promise.resolve({} as any),
+  delete: () => Promise.resolve({} as any),
 };
 const RenderedComponent = (props: ComponentProps) => (
   <div style={{ height: '100vh' }}>
@@ -41,10 +44,12 @@ const RenderedComponent = (props: ComponentProps) => (
             httpClient,
             apiHubServiceDetails: {
               apiVersion: '2018-07-01-preview',
+              baseUrl: '/baseUrl',
               subscriptionId: '',
               resourceGroup: '',
               location: '',
             },
+            workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
             readConnections: () => Promise.resolve({}),
           }),
           operationManifestService: new StandardOperationManifestService({

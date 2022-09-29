@@ -1,4 +1,4 @@
-import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 import { expandButtonStyle, SharedTreeItemContent } from './SchemaTreeItem';
 import { Caption1, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronRight16Regular, CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular } from '@fluentui/react-icons';
@@ -78,7 +78,8 @@ export const SchemaFastTreeItem: React.FunctionComponent<TargetSchemaFastTreeIte
   };
 
   const nameText = isHover ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>;
-  if (childNode.schemaNodeDataType === 'ComplexType' || childNode.schemaNodeDataType === 'None') {
+  // TODO Handle object with values and attributes
+  if (childNode.schemaNodeDataType === 'None') {
     return (
       <FastTreeItem
         key={childNode.key}
@@ -86,7 +87,7 @@ export const SchemaFastTreeItem: React.FunctionComponent<TargetSchemaFastTreeIte
         onMouseEnter={() => onMouseEnterOrLeave()}
         className={isNodeSelected ? 'selected' : ''}
       >
-        <TargetTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="Completed">
+        <TargetTreeItemContent node={childNode} isSelected={isNodeSelected} status="Completed">
           {nameText}
         </TargetTreeItemContent>
         {convertToFastTreeItem(childNode, currentlySelectedNodes, onLeafNodeClick)}
@@ -102,7 +103,7 @@ export const SchemaFastTreeItem: React.FunctionComponent<TargetSchemaFastTreeIte
         onMouseLeave={() => onMouseEnterOrLeave()}
         onMouseEnter={() => onMouseEnterOrLeave()}
       >
-        <TargetTreeItemContent nodeType={childNode.schemaNodeDataType} isSelected={isNodeSelected} status="InProgress">
+        <TargetTreeItemContent node={childNode} isSelected={isNodeSelected} status="InProgress">
           {nameText}
         </TargetTreeItemContent>
       </FastTreeItem>
@@ -128,13 +129,13 @@ export const convertToFastTreeItem = (
 };
 
 export interface SchemaNodeTreeItemContentProps {
-  nodeType: SchemaNodeDataType;
+  node: SchemaNodeExtended;
   isSelected: boolean;
   children?: React.ReactNode;
   status: 'Completed' | 'InProgress' | 'NotStarted';
 }
 
-const TargetTreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeType, isSelected, children, status }) => {
+const TargetTreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ node, isSelected, children, status }) => {
   let statusIcon: JSX.Element;
   switch (status) {
     case 'Completed':
@@ -160,7 +161,7 @@ const TargetTreeItemContent: React.FC<SchemaNodeTreeItemContentProps> = ({ nodeT
       <span style={{ display: 'flex', marginRight: '4px', marginTop: '2px' }} slot="start">
         {statusIcon}
       </span>
-      {SharedTreeItemContent(nodeType, isSelected)}
+      {SharedTreeItemContent(node, isSelected)}
       <span style={{ marginRight: '8px', width: '100%' }}>{children}</span>
     </>
   );

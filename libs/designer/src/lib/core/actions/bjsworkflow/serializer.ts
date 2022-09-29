@@ -202,12 +202,19 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
   const hostInfo = { host: { connection: { referenceName: rootState.connections.connectionsMapping[operationId] ?? '' } } };
   const inputs = { ...hostInfo, ...inputPathValue, retryPolicy };
+  const serializedType = equals(type, Constants.NODE.TYPE.API_CONNECTION)
+    ? Constants.SERIALIZED_TYPE.API_CONNECTION
+    : equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
+      ? Constants.SERIALIZED_TYPE.API_CONNECTION_NOTIFICATION
+      : equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK)
+        ? Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK
+        : type;
 
   return {
-    type,
+    type: serializedType,
     ...optional('description', operationFromWorkflow.description),
     ...optional('kind', kind),
-    ...inputs,
+    ...optional('inputs', inputs),
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
     ...serializeSettings(operationId, nodeSettings, rootState),

@@ -2,21 +2,28 @@ import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childTargetNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
-import type { ConnectionDictionary } from '../models/Connection';
+import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
+import type { ViewportCoords } from '../models/ReactFlow';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { useMemo } from 'react';
-import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
-import { ConnectionLineType, Position } from 'react-flow-renderer';
+import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
+import { MarkerType, ConnectionLineType, Position } from 'reactflow';
 
-const inputX = 400;
-const rootOutputX = 1100;
+const getViewportWidth = (endX: number, startX: number) => endX - startX;
+
+const getInputX = (viewportCoords: ViewportCoords) => getViewportWidth(viewportCoords.endX, viewportCoords.startX) * 0.15;
+const getRightOfInputs = (viewportCoords: ViewportCoords) => getInputX(viewportCoords) + nodeCardWidth;
+
+const getFunctionX = (viewportCoords: ViewportCoords) =>
+  (getRootOutputX(viewportCoords) - getRightOfInputs(viewportCoords)) / 2 + getRightOfInputs(viewportCoords);
+
+// NOTE: Accounting for nodeCardWidth to get proper *expected/visual* positioning
+const getRootOutputX = (viewportCoords: ViewportCoords) => (viewportCoords.endX - viewportCoords.startX) * 0.85 - nodeCardWidth;
 const childXOffSet = childTargetNodeCardIndent;
-const rightOfInputs = inputX + nodeCardWidth;
-const functionX = (rootOutputX - rightOfInputs) / 2 + rightOfInputs;
 
 const rootY = 30;
 const rootYOffset = 60;
@@ -26,35 +33,44 @@ export enum ReactFlowNodeType {
   FunctionNode = 'functionNode',
 }
 
-export const inputPrefix = 'source-';
-export const outputPrefix = 'target-';
+export const sourcePrefix = 'source-';
+export const targetPrefix = 'target-';
 export const functionPrefix = 'function-';
 
 export const convertToReactFlowNodes = (
+  viewportCoords: ViewportCoords,
   currentlySelectedSourceNodes: SchemaNodeExtended[],
   connectedSourceNodes: SchemaNodeExtended[],
   allSourceNodes: SchemaNodeDictionary,
   allFunctionNodes: FunctionDictionary,
-  targetSchemaNode: SchemaNodeExtended
+  targetSchemaNode: SchemaNodeExtended,
+  connections: ConnectionDictionary
 ): ReactFlowNode<CardProps>[] => {
   const reactFlowNodes: ReactFlowNode<CardProps>[] = [];
 
   reactFlowNodes.push(
-    ...convertInputToReactFlowParentAndChildNodes(currentlySelectedSourceNodes, connectedSourceNodes, allSourceNodes),
-    ...convertOutputToReactFlowParentAndChildNodes(targetSchemaNode),
-    ...convertFunctionsToReactFlowParentAndChildNodes(allFunctionNodes)
+    ...convertInputToReactFlowParentAndChildNodes(
+      viewportCoords,
+      currentlySelectedSourceNodes,
+      connectedSourceNodes,
+      allSourceNodes,
+      connections
+    ),
+    ...convertOutputToReactFlowParentAndChildNodes(viewportCoords, targetSchemaNode, connections),
+    ...convertFunctionsToReactFlowParentAndChildNodes(viewportCoords, allFunctionNodes)
   );
 
   return reactFlowNodes;
 };
 
 const convertInputToReactFlowParentAndChildNodes = (
+  viewportCoords: ViewportCoords,
   currentlySelectedSourceNodes: SchemaNodeExtended[],
   connectedSourceNodes: SchemaNodeExtended[],
-  allSourceNodes: SchemaNodeDictionary
+  allSourceNodes: SchemaNodeDictionary,
+  connections: ConnectionDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
-
   const combinedNodes = [
     ...connectedSourceNodes,
     ...currentlySelectedSourceNodes.filter((selectedNode) => {
@@ -70,21 +86,25 @@ const convertInputToReactFlowParentAndChildNodes = (
   );
 
   combinedNodes.forEach((sourceNode) => {
+    const relatedConnections = getConnectionsForNode(connections, sourceNode.key, 'source');
+
     reactFlowNodes.push({
-      id: `${inputPrefix}${sourceNode.key}`,
+      id: `${sourcePrefix}${sourceNode.key}`,
       data: {
         schemaNode: sourceNode,
         schemaType: SchemaTypes.Source,
         displayHandle: true,
+        displayChevron: true,
         isLeaf: true,
         isChild: false,
         disabled: false,
         error: false,
+        relatedConnections: relatedConnections,
       },
       type: ReactFlowNodeType.SchemaNode,
       sourcePosition: Position.Right,
       position: {
-        x: inputX,
+        x: getInputX(viewportCoords),
         y: rootY + rootYOffset * reactFlowNodes.length,
       },
     });
@@ -93,18 +113,25 @@ const convertInputToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-const convertOutputToReactFlowParentAndChildNodes = (targetSchemaNode: SchemaNodeExtended): ReactFlowNode<SchemaCardProps>[] => {
-  return convertToReactFlowParentAndChildNodes(targetSchemaNode, SchemaTypes.Target, true);
+const convertOutputToReactFlowParentAndChildNodes = (
+  viewportCoords: ViewportCoords,
+  targetSchemaNode: SchemaNodeExtended,
+  connections: ConnectionDictionary
+): ReactFlowNode<SchemaCardProps>[] => {
+  return convertToReactFlowParentAndChildNodes(viewportCoords, targetSchemaNode, SchemaTypes.Target, true, connections);
 };
 
 export const convertToReactFlowParentAndChildNodes = (
+  viewportCoords: ViewportCoords,
   parentSchemaNode: SchemaNodeExtended,
   schemaType: SchemaTypes,
-  displayTargets: boolean
+  displayTargets: boolean,
+  connections: ConnectionDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
-  const rootX = schemaType === SchemaTypes.Source ? inputX : rootOutputX;
-  const idPrefix = schemaType === SchemaTypes.Source ? inputPrefix : outputPrefix;
+  const rootX = schemaType === SchemaTypes.Source ? getInputX(viewportCoords) : getRootOutputX(viewportCoords);
+  const idPrefix = schemaType === SchemaTypes.Source ? sourcePrefix : targetPrefix;
+  const relatedConnections = getConnectionsForNode(connections, parentSchemaNode.key, 'source');
 
   reactFlowNodes.push({
     id: `${idPrefix}${parentSchemaNode.key}`,
@@ -112,10 +139,12 @@ export const convertToReactFlowParentAndChildNodes = (
       schemaNode: parentSchemaNode,
       schemaType,
       displayHandle: displayTargets,
+      displayChevron: false,
       isLeaf: false,
       isChild: false,
       disabled: false,
       error: false,
+      relatedConnections: relatedConnections,
     },
     type: ReactFlowNodeType.SchemaNode,
     targetPosition: !displayTargets ? undefined : SchemaTypes.Source ? Position.Right : Position.Left,
@@ -132,10 +161,12 @@ export const convertToReactFlowParentAndChildNodes = (
         schemaNode: childNode,
         schemaType,
         displayHandle: displayTargets,
+        displayChevron: true,
         isLeaf: isLeafNode(childNode),
         isChild: true,
         disabled: false,
         error: false,
+        relatedConnections: [],
       },
       type: ReactFlowNodeType.SchemaNode,
       targetPosition: !displayTargets ? undefined : SchemaTypes.Source ? Position.Right : Position.Left,
@@ -149,25 +180,28 @@ export const convertToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-const convertFunctionsToReactFlowParentAndChildNodes = (allFunctionNodes: FunctionDictionary): ReactFlowNode<FunctionCardProps>[] => {
+const convertFunctionsToReactFlowParentAndChildNodes = (
+  viewportCoords: ViewportCoords,
+  allFunctionNodes: FunctionDictionary
+): ReactFlowNode<FunctionCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<FunctionCardProps>[] = [];
 
   Object.entries(allFunctionNodes).forEach(([functionKey, functionNode]) => {
     reactFlowNodes.push({
       id: functionKey,
       data: {
-        functionName: functionNode.name,
+        functionName: functionNode.functionName,
         displayHandle: true,
-        numberOfInputs: functionNode.numberOfInputs,
+        maxNumberOfInputs: functionNode.maxNumberOfInputs,
         inputs: functionNode.inputs,
-        functionBranding: getFunctionBrandingForCategory(functionNode.functionCategory),
+        functionBranding: getFunctionBrandingForCategory(functionNode.category),
         disabled: false,
         error: false,
       },
       type: ReactFlowNodeType.FunctionNode,
       sourcePosition: Position.Right,
       position: {
-        x: functionX,
+        x: getFunctionX(viewportCoords),
         y: rootY + rootYOffset * reactFlowNodes.length,
       },
     });
@@ -183,11 +217,17 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
       source: connection.reactFlowSource,
       target: connection.reactFlowDestination,
       type: ConnectionLineType.SmoothStep,
+      selected: connection.isSelected,
+      markerStart: {
+        type: MarkerType.Arrow,
+        width: 30,
+      },
     };
   });
 };
 
 export const useLayout = (
+  viewportCoords: ViewportCoords,
   currentlySelectedSourceNodes: SchemaNodeExtended[],
   connectedSourceNodes: SchemaNodeExtended[],
   allSourceNodes: SchemaNodeDictionary,
@@ -198,22 +238,34 @@ export const useLayout = (
   const reactFlowNodes = useMemo(() => {
     if (currentTargetNode) {
       return convertToReactFlowNodes(
+        viewportCoords,
         currentlySelectedSourceNodes,
         connectedSourceNodes,
         allSourceNodes,
         allFunctionNodes,
-        currentTargetNode
+        currentTargetNode,
+        connections
       );
     } else {
       return [];
     }
     // Explicitly ignoring connectedSourceNodes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentlySelectedSourceNodes, currentTargetNode, allFunctionNodes]);
+  }, [viewportCoords, currentlySelectedSourceNodes, currentTargetNode, allFunctionNodes]);
 
   const reactFlowEdges = useMemo(() => {
     return convertToReactFlowEdges(connections);
   }, [connections]);
 
   return [reactFlowNodes, reactFlowEdges];
+};
+
+const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: string, nodeType: 'source' | 'target'): Connection[] => {
+  const relatedConnections: Connection[] = [];
+  Object.keys(connections).forEach((key) => {
+    if ((nodeType === 'source' && key.startsWith(nodeKey)) || (nodeType === 'target' && key.endsWith(nodeKey))) {
+      relatedConnections.push(connections[key]);
+    }
+  });
+  return relatedConnections;
 };

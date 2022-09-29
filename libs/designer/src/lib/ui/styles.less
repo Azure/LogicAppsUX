@@ -1,6 +1,14 @@
 @import '../../../../designer-ui/src/styles.less';
 @import './settings/sections/runafterconfiguration/runafterconfiguration.less';
 @import './connections/runAfterIndicator/styles.less';
+@import (css) 'reactflow/dist/style.css';
+
+.react-flow__edge {
+  cursor: grab;
+  .react-flow__edge-path {
+    pointer-events: none;
+  }
+}
 
 .msla-theme-provider {
   height: 100%;

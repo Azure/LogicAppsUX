@@ -1,4 +1,4 @@
-import type { ArrayEditorItemProps } from '..';
+import type { SimpleArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
 import { parseSegments } from '../../editor/base/utils/parsesegments';
@@ -10,9 +10,9 @@ import { useState, useEffect } from 'react';
 
 interface updateStateProps {
   item: ValueSegment[];
-  items: ArrayEditorItemProps[];
+  items: SimpleArrayItem[];
   index: number;
-  setItems: (newItems: ArrayEditorItemProps[]) => void;
+  setItems: (newItems: SimpleArrayItem[]) => void;
 }
 
 export const EditorChange = ({ item, items, index, setItems }: updateStateProps) => {
@@ -33,7 +33,7 @@ export const EditorChange = ({ item, items, index, setItems }: updateStateProps)
     const newValue = serializeEditorState(editorState);
     if (notEqual(item, newValue)) {
       const newItems = [...items];
-      newItems[index] = { content: newValue };
+      newItems[index].value = newValue;
       setItems(newItems);
       editor.focus();
     }

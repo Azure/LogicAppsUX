@@ -3,6 +3,7 @@ import { Collection20Regular, StringCategory20Regular } from '../images/Category
 import {
   Any16Filled,
   Any16Regular,
+  Array16Regular,
   Binary16Filled,
   Binary16Regular,
   Decimal16Filled,
@@ -15,6 +16,7 @@ import {
 import {
   Any24Filled,
   Any24Regular,
+  Array24Regular,
   Binary24Filled,
   Binary24Regular,
   Decimal24Filled,
@@ -25,7 +27,7 @@ import {
   String24Regular,
 } from '../images/DataType24Icons';
 import { FunctionCategory } from '../models/Function';
-import { SchemaNodeDataType } from '../models/Schema';
+import { SchemaNodeDataType, SchemaNodeProperties } from '../models/Schema';
 import { Image } from '@fluentui/react-components';
 import {
   AddSubtractCircle16Filled,
@@ -53,7 +55,7 @@ import {
 
 export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return bundleIcon(NumberSymbol16Filled, NumberSymbol16Regular); // Number
     }
@@ -114,7 +116,6 @@ export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return bundleIcon(Array16Filled, Array16Regular); // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       return bundleIcon(Cube16Filled, Cube16Regular); // Object
@@ -132,9 +133,9 @@ export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   }
 };
 
-export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
+export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType, properties?: SchemaNodeProperties) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return bundleIcon(NumberSymbol16Filled, NumberSymbol16Regular); // Number
     }
@@ -190,15 +191,12 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
     case SchemaNodeDataType.Time: {
       return CalendarClock16Regular; // Date time
     }
-    /* Currently Unused
-    case SchemaNodeDataType: {
-      return Array16Regular; // Array
-    }
-    */
-    case SchemaNodeDataType.ComplexType:
-    case SchemaNodeDataType.Entity:
+    case SchemaNodeDataType.Entity: // danielle refactor this
     case SchemaNodeDataType.None: {
-      return Cube16Regular; // Object
+      if (properties === SchemaNodeProperties.Repeating) {
+        return Array16Regular;
+      }
+      return Cube16Regular;
     }
     case SchemaNodeDataType.AnyAtomicType:
     case SchemaNodeDataType.Item:
@@ -215,7 +213,7 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
 
 export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return bundleIcon(NumberSymbol24Filled, NumberSymbol24Regular); // Number
     }
@@ -276,7 +274,6 @@ export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return bundleIcon(Array24Filled, Array24Regular); // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       return bundleIcon(Cube24Filled, Cube24Regular); // Object
@@ -294,9 +291,9 @@ export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   }
 };
 
-export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
+export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType, properties?: SchemaNodeProperties) => {
   switch (nodeType) {
-    /* Currently Unused
+    /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
       return NumberSymbol24Regular; // Number
     }
@@ -357,10 +354,12 @@ export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
       return Array24Regular; // Array
     }
     */
-    case SchemaNodeDataType.ComplexType:
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
-      return Cube24Regular; // Object
+      if (properties === SchemaNodeProperties.Repeating) {
+        return Array24Regular;
+      }
+      return Cube24Regular;
     }
     case SchemaNodeDataType.AnyAtomicType:
     case SchemaNodeDataType.Item:

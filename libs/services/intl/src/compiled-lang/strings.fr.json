@@ -381,7 +381,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "Chaque exécution après configuration après doit avoir au moins un état sélectionné"
     }
   ],
   "1ejxkP": [
@@ -417,7 +417,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "Chargez ou sélectionnez un schéma cible à utiliser pour votre carte."
     }
   ],
   "1zgFh1": [
@@ -466,6 +466,12 @@
     {
       "type": 0,
       "value": "Heure de fin"
+    }
+  ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Search"
     }
   ],
   "2NYPLt": [
@@ -765,7 +771,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Sélectionner un schéma source"
     }
   ],
   "5SAQOb": [
@@ -789,7 +795,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "Ajouter un schéma source"
     }
   ],
   "5cPiWA": [
@@ -831,7 +837,13 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Sélectionnez un schéma cible"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Test map"
     }
   ],
   "6XR3FS": [
@@ -1263,7 +1275,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Le schéma cible sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma cible ?"
     }
   ],
   "B/JzwK": [
@@ -1413,6 +1425,12 @@
       "value": "Connexion obligatoire"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Replace existing schema"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1441,6 +1459,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne de laquelle supprimer les espaces à gauche et à droite."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Paste from sample"
     }
   ],
   "DDIIAQ": [
@@ -1476,7 +1500,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "La condition de déclencheur ne peut pas être vide"
     }
   ],
   "DuXV2M": [
@@ -1741,7 +1765,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "Schéma source"
     }
   ],
   "GYvF54": [
@@ -1759,7 +1783,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "Chargez ou sélectionnez un schéma source à utiliser pour votre carte."
     }
   ],
   "Gi72X5": [
@@ -1929,7 +1953,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "Opération non valide. Nombre d’éléments : "
     },
     {
       "type": 1,
@@ -2329,6 +2353,12 @@
       "value": "Erreur inattendue"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Target schema"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2356,7 +2386,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "Valeur d’entrée du chemin d’accès de l’opération non valide. Valeur du chemin d’accès - modèle de chemin d’accès "
     },
     {
       "type": 1,
@@ -2364,7 +2394,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " - "
     },
     {
       "type": 1,
@@ -2474,7 +2504,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "Cette fonction ne nécessite aucune entrée."
     }
   ],
   "ORVfYZ": [
@@ -2492,7 +2522,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "Sélectionner le schéma pour la liste déroulante"
     }
   ],
   "OVvieE": [
@@ -2600,7 +2630,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "Nœud du schéma source"
     }
   ],
   "PP63jY": [
@@ -2690,7 +2720,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "Sélectionner un schéma source"
     }
   ],
   "QEp3C8": [
@@ -2934,6 +2964,12 @@
       "value": "Moins d’infos"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2991,7 +3027,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "Nombre de paginations non valide"
     }
   ],
   "TUaunO": [
@@ -3103,7 +3139,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (nom de fichier)"
     }
   ],
   "Ur+wph": [
@@ -3134,6 +3170,12 @@
     {
       "type": 0,
       "value": "Entrez un JSON valide."
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "Dans l'application"
     }
   ],
   "VE3cxq": [
@@ -3259,7 +3301,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "Sélectionnez un schéma cible"
     }
   ],
   "WUe3DY": [
@@ -3274,10 +3316,10 @@
       "value": "Retourne le résultat de la multiplication de deux nombres"
     }
   ],
-  "Wy/bhW": [
+  "WnU9v0": [
     {
       "type": 0,
-      "value": "Remplacez le schéma existant."
+      "value": "Une identité managée n’est pas configurée sur l’application logique."
     }
   ],
   "X4gDhV": [
@@ -3437,7 +3479,7 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "Type d'expression non valide {type}."
     }
   ],
   "Y9kBz5": [
@@ -3567,7 +3609,7 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "Valeur 'in' non prise en charge : {value} dans Paramètre"
     }
   ],
   "a64zhX": [
@@ -3949,7 +3991,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "Schéma cible"
     }
   ],
   "eRvGw3": [
@@ -3970,16 +4012,16 @@
       "value": "Obligatoire. Nombre par lequel diviser le dividende."
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "Intégré"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "Obligatoire. Index d'où la sous-chaîne commence dans le paramètre 1."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Partagé"
     }
   ],
   "esOQ5p": [
@@ -4018,10 +4060,16 @@
       "value": "Retourne true si le premier argument est supérieur ou égal à la seconde"
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Échec de la création ACL pour la connexion. Suppression de la connexion."
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "Le nombre de paginations dépasse la valeur maximale"
     }
   ],
   "faSDuD": [
@@ -4244,7 +4292,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "La valeur de chemin d'accès de l'opération ne correspond pas au modèle de segment. Path "
     },
     {
       "type": 1,
@@ -4252,7 +4300,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": ", Modèle "
     },
     {
       "type": 1,
@@ -4274,7 +4322,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Le schéma source sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma source ?"
     }
   ],
   "i/SguY": [
@@ -4287,6 +4335,12 @@
     {
       "type": 0,
       "value": "Réponse asynchrone"
+    }
+  ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Provide input data to test the map with"
     }
   ],
   "i1cwra": [
@@ -4780,7 +4834,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "Fonction"
     }
   ],
   "mx2IMJ": [
@@ -4835,12 +4889,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la propriété à supprimer."
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5567,7 +5615,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "Chaque action doit avoir une ou plusieurs exécutions après les configurations"
     }
   ],
   "vD2lQy": [
@@ -5628,6 +5676,18 @@
     {
       "type": 0,
       "value": "a expiré"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Pour créer et utiliser une connexion d’API, vous devez avoir une identité managée configurée sur cette application logique."
+    }
+  ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Discard"
     }
   ],
   "vr70Gn": [
@@ -5750,6 +5810,12 @@
     {
       "type": 0,
       "value": "URL de rappel :"
+    }
+  ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "x+6ccf": [
@@ -5893,7 +5959,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "Ajouter un schéma cible"
     }
   ],
   "ysoumb": [
@@ -5965,7 +6031,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "Nœud du schéma cible"
     }
   ],
   "zbtUQ/": [

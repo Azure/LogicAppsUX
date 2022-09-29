@@ -17,23 +17,27 @@ interface SchemaFile {
 
 export const App = (): JSX.Element => {
   const vscode = useContext(VSCodeContext);
-  const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
+  // const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
 
   // TODO (After theming): set initial value back to getVscodeTheme()
-  const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(VsCodeThemeType.VsCodeLight);
+  const [vsCodeTheme, _setVsCodeTheme] = useState<VsCodeThemeType>(VsCodeThemeType.VsCodeLight);
 
   const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
   const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
 
+  /*
   // Monitor document.body for VS Code theme changes
   new MutationObserver(() => {
     setVsCodeTheme(getVscodeTheme());
   }).observe(document.body, { attributes: true });
+  */
 
-  const saveStateCall = (dataMapDefinition: string) => {
+  const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
     saveDataMapDefinition(dataMapDefinition);
+
+    saveDataMap(dataMapXslt);
   };
 
   const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
@@ -49,10 +53,18 @@ export const App = (): JSX.Element => {
     });
   }, [vscode]);
 
+  // TODO: May combine the below two functions - will revisit when touched on again in future
   const saveDataMapDefinition = (dataMapDefinition: string) => {
     vscode.postMessage({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,
+    });
+  };
+
+  const saveDataMap = (dataMapXslt: string) => {
+    vscode.postMessage({
+      command: 'saveDataMapXslt',
+      data: dataMapXslt,
     });
   };
 

@@ -13,7 +13,7 @@ import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-cli
 import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import type { NodeChange, NodeDimensionChange } from 'react-flow-renderer';
+import type { NodeChange, NodeDimensionChange } from 'reactflow';
 
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',

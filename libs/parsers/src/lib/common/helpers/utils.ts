@@ -157,9 +157,9 @@ export function getArrayOutputMetadata(schema: SchemaObject, required: boolean, 
       return !(excludeInternal && equals(property[Constants.ExtensionProperties.Visibility], Constants.Visibility.Internal));
     });
 
-    // TODO(psamband): Currently this method returns the array details of the output where the trigger needs to do splitOn.
+    // TODO: Currently this method returns the array details of the output where the trigger needs to do splitOn.
     // Ideally this should be done by the caller and response process should just return all top level array details.
-    // NOTE(johnwa): if the logic combining prefix changed,
+    // NOTE: if the logic combining prefix changed,
     // dynamicparametershelper.getSchemaProcessorOptionsForDynamicOutputs needs to update accordingly.
     if (keys.length === 1) {
       const firstKey = keys[0];

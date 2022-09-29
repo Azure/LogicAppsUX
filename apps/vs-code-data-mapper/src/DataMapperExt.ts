@@ -1,4 +1,4 @@
-import { dataMapDefinitionsPath, schemasPath, webviewTitle } from './extensionConfig';
+import { dataMapDefinitionsPath, dataMapsPath, schemasPath, webviewTitle } from './extensionConfig';
 import type { ChildProcess } from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
@@ -18,6 +18,10 @@ type ReceivingMessageTypes =
     }
   | {
       command: 'saveDataMapDefinition';
+      data: string;
+    }
+  | {
+      command: 'saveDataMapXslt';
       data: string;
     };
 
@@ -105,7 +109,7 @@ export default class DataMapperExt {
         break;
       }
       case 'readLocalFileOptions': {
-        const folderPath = DataMapperExt.getWorkspaceFolder(); // [WI 15419837] Find out how multi folder workspaces work
+        const folderPath = DataMapperExt.getWorkspaceFolderFsPath();
         fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
           DataMapperExt.currentPanel?.sendMsgToWebview({
             command: 'showAvailableSchemas',
@@ -115,9 +119,12 @@ export default class DataMapperExt {
         break;
       }
       case 'saveDataMapDefinition': {
-        const fileName = `${DataMapperExt.currentDataMapName}.yml`;
-        const filePath = path.join(DataMapperExt.getWorkspaceFolder(), dataMapDefinitionsPath, fileName);
-        fs.writeFile(filePath, msg.data, 'utf8');
+        DataMapperExt.saveDataMap(true, msg.data);
+        break;
+      }
+      case 'saveDataMapXslt': {
+        DataMapperExt.saveDataMap(false, msg.data);
+        break;
       }
     }
   }
@@ -127,7 +134,7 @@ export default class DataMapperExt {
     fs.readFile(filePath, 'utf16le').then((text: string) => {
       // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call
       const schemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
-      const expectedSchemaPath = path.join(DataMapperExt.getWorkspaceFolder(), schemasPath, schemaFileName);
+      const expectedSchemaPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, schemaFileName);
 
       if (!fileExists(expectedSchemaPath)) {
         fs.writeFile(expectedSchemaPath, text, 'utf16le').then(() => {
@@ -144,7 +151,35 @@ export default class DataMapperExt {
     DataMapperExt.outputChannel.show();
   }
 
-  public static getWorkspaceFolder() {
-    return workspace.workspaceFolders[0].uri.fsPath;
+  public static showError(errMsg: string) {
+    DataMapperExt.log(errMsg);
+    window.showErrorMessage(errMsg);
+  }
+
+  public static getWorkspaceFolderFsPath() {
+    if (workspace.workspaceFolders) {
+      return workspace.workspaceFolders[0].uri.fsPath;
+    } else {
+      DataMapperExt.showError('No VS Code folder/workspace found...');
+      return undefined;
+    }
+  }
+
+  public static saveDataMap(isDefinition: boolean, fileContents: string) {
+    if (!DataMapperExt.currentDataMapName) {
+      DataMapperExt.currentDataMapName = 'default';
+    }
+
+    const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? '.yml' : '.xslt'}`;
+    const folderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), isDefinition ? dataMapDefinitionsPath : dataMapsPath);
+    const filePath = path.join(folderPath, fileName);
+
+    // Mkdir as extra insurance that directory exists so file can be written
+    // - harmless if directory already exists
+    fs.mkdir(folderPath, { recursive: true })
+      .then(() => {
+        fs.writeFile(filePath, fileContents, 'utf8');
+      })
+      .catch(DataMapperExt.showError);
   }
 }

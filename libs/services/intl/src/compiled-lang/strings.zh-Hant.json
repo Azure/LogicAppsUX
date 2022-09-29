@@ -343,7 +343,7 @@
   "1ZSzl6": [
     {
       "type": 0,
-      "value": "Each run after configuration must have at least one status checked"
+      "value": "每次在組定之後執行都必須至少檢查一個狀態"
     }
   ],
   "1ejxkP": [
@@ -379,7 +379,7 @@
   "1yiiWM": [
     {
       "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
+      "value": "上傳或選取要用於對應的目標結構描述。"
     }
   ],
   "1zgFh1": [
@@ -428,6 +428,12 @@
     {
       "type": 0,
       "value": "結束時間"
+    }
+  ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Search"
     }
   ],
   "2NYPLt": [
@@ -727,7 +733,7 @@
   "5P8UWJ": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "選取來源結構描述"
     }
   ],
   "5SAQOb": [
@@ -751,7 +757,7 @@
   "5bE93I": [
     {
       "type": 0,
-      "value": "Add Source Schema"
+      "value": "新增來源結構描述"
     }
   ],
   "5cPiWA": [
@@ -793,7 +799,13 @@
   "6Ld/c8": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "選取目標結構描述"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Test map"
     }
   ],
   "6XR3FS": [
@@ -1193,7 +1205,7 @@
   "AwwPJC": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "將取代目標結構描述，而且您將無法回復到先前的變更。您要繼續變更目標結構描述嗎?"
     }
   ],
   "B/JzwK": [
@@ -1321,6 +1333,12 @@
       "value": "需要連線"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Replace existing schema"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1349,6 +1367,12 @@
     {
       "type": 0,
       "value": "必要。將移除其開頭及結尾空白字元的字串。"
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Paste from sample"
     }
   ],
   "DDIIAQ": [
@@ -1384,7 +1408,7 @@
   "DsPDVB": [
     {
       "type": 0,
-      "value": "Trigger condition cannot be empty"
+      "value": "觸發條件不可為空白"
     }
   ],
   "DuXV2M": [
@@ -1627,7 +1651,7 @@
   "GWpB4z": [
     {
       "type": 0,
-      "value": "Source Schema"
+      "value": "來源結構描述"
     }
   ],
   "GYvF54": [
@@ -1645,7 +1669,7 @@
   "GdnEhu": [
     {
       "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
+      "value": "上傳或選取要用於對應的來源結構描述。"
     }
   ],
   "Gi72X5": [
@@ -1807,7 +1831,7 @@
   "J55HA9": [
     {
       "type": 0,
-      "value": "Invalid operation. Number of items: "
+      "value": "操作無效。項目數目: "
     },
     {
       "type": 1,
@@ -1815,7 +1839,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "。"
     }
   ],
   "JErLDT": [
@@ -2169,6 +2193,12 @@
       "value": "未預期的錯誤"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Target schema"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2196,7 +2226,7 @@
   "NnD8gF": [
     {
       "type": 0,
-      "value": "Invalid operation path input value. Path value - "
+      "value": "不正確作業路徑輸入值。路徑值 - "
     },
     {
       "type": 1,
@@ -2204,7 +2234,7 @@
     },
     {
       "type": 0,
-      "value": " Path template - "
+      "value": " 路徑範本 - "
     },
     {
       "type": 1,
@@ -2298,7 +2328,7 @@
   "OOUSLP": [
     {
       "type": 0,
-      "value": "This function doesn't require any input."
+      "value": "此函數不需要任何輸入。"
     }
   ],
   "ORVfYZ": [
@@ -2316,7 +2346,7 @@
   "OUS2wX": [
     {
       "type": 0,
-      "value": "Select the schema for dropdown"
+      "value": "選取下拉式清單的結構描述"
     }
   ],
   "OVvieE": [
@@ -2424,7 +2454,7 @@
   "PMMNKR": [
     {
       "type": 0,
-      "value": "Source schema node"
+      "value": "來源結構描述節點"
     }
   ],
   "PP63jY": [
@@ -2514,7 +2544,7 @@
   "QBOaAu": [
     {
       "type": 0,
-      "value": "Select a source schema"
+      "value": "選取來源結構描述"
     }
   ],
   "QEp3C8": [
@@ -2736,6 +2766,12 @@
       "value": "閱讀較少"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2793,7 +2829,7 @@
   "TPV6j/": [
     {
       "type": 0,
-      "value": "Paging count invalid"
+      "value": "分頁計數無效"
     }
   ],
   "TUaunO": [
@@ -2905,7 +2941,7 @@
     },
     {
       "type": 0,
-      "value": " (file name)"
+      "value": " (檔案名稱)"
     }
   ],
   "Ur+wph": [
@@ -2936,6 +2972,12 @@
     {
       "type": 0,
       "value": "請輸入有效的 JSON。"
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "應用程式內"
     }
   ],
   "VE3cxq": [
@@ -3061,7 +3103,7 @@
   "WTTJ89": [
     {
       "type": 0,
-      "value": "Select a target schema"
+      "value": "選取目標結構描述"
     }
   ],
   "WUe3DY": [
@@ -3076,10 +3118,10 @@
       "value": "傳回兩個數字相乘的結果"
     }
   ],
-  "Wy/bhW": [
+  "WnU9v0": [
     {
       "type": 0,
-      "value": "取代現有結構描述。"
+      "value": "邏輯應用程式上未設定受控識別。"
     }
   ],
   "X4gDhV": [
@@ -3239,7 +3281,7 @@
   "Y7yyKD": [
     {
       "type": 0,
-      "value": "Invalid expression type {type}."
+      "value": "無效的運算式類型 {type}。"
     }
   ],
   "Y9kBz5": [
@@ -3369,7 +3411,7 @@
   "Zr0yTE": [
     {
       "type": 0,
-      "value": "Unsupported 'in' value : {value} in Parameter"
+      "value": "不支援的 'in' 值: 參數中的 {value}"
     }
   ],
   "a64zhX": [
@@ -3755,7 +3797,7 @@
   "eRoJ/H": [
     {
       "type": 0,
-      "value": "Target Schema"
+      "value": "目標結構描述"
     }
   ],
   "eRvGw3": [
@@ -3776,16 +3818,16 @@
       "value": "必要。要除以被除數的數字。"
     }
   ],
-  "eX84FI": [
-    {
-      "type": 0,
-      "value": "內建"
-    }
-  ],
   "egLI8P": [
     {
       "type": 0,
       "value": "必要。參數 1 中子字串起始處的索引。"
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "已共用"
     }
   ],
   "esOQ5p": [
@@ -3824,10 +3866,16 @@
       "value": "若第一個引數大於或等於第二個引數，則傳回 True"
     }
   ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "連線的 Acl 建立失敗。正在刪除連線。"
+    }
+  ],
   "fGcSFd": [
     {
       "type": 0,
-      "value": "Paging count exceeds maximum value"
+      "value": "分頁計數超過最大值"
     }
   ],
   "faSDuD": [
@@ -4020,7 +4068,7 @@
   "hq1mk6": [
     {
       "type": 0,
-      "value": "Operation path value does not match the template for segment. Path "
+      "value": "作業路徑值與區段的範本不符。路徑 - "
     },
     {
       "type": 1,
@@ -4028,7 +4076,7 @@
     },
     {
       "type": 0,
-      "value": ", Template "
+      "value": " 範本 - "
     },
     {
       "type": 1,
@@ -4050,7 +4098,7 @@
   "hwngB3": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "將取代來源結構描述，而且您將無法回復到先前的變更。您要繼續變更來源結構描述嗎?"
     }
   ],
   "i/SguY": [
@@ -4063,6 +4111,12 @@
     {
       "type": 0,
       "value": "非同步回應"
+    }
+  ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Provide input data to test the map with"
     }
   ],
   "i1cwra": [
@@ -4548,7 +4602,7 @@
   "mwEHSX": [
     {
       "type": 0,
-      "value": "Function"
+      "value": "函數"
     }
   ],
   "mx2IMJ": [
@@ -4603,12 +4657,6 @@
     {
       "type": 0,
       "value": "必要。要移除的屬性之名稱。"
-    }
-  ],
-  "nXwBF7": [
-    {
-      "type": 0,
-      "value": "Azure"
     }
   ],
   "nZ4nLn": [
@@ -5297,7 +5345,7 @@
   "v7ipqH": [
     {
       "type": 0,
-      "value": "Each action must have one or more run after configurations"
+      "value": "每個動作在設定之後必須執行一或多個"
     }
   ],
   "vD2lQy": [
@@ -5358,6 +5406,18 @@
     {
       "type": 0,
       "value": "已逾時"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "若要建立及使用 API 連線，您必須在此邏輯應用程式上設定受控識別。"
+    }
+  ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Discard"
     }
   ],
   "vr70Gn": [
@@ -5480,6 +5540,12 @@
     {
       "type": 0,
       "value": "回呼 URL:"
+    }
+  ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "x+6ccf": [
@@ -5623,7 +5689,7 @@
   "yrWKLF": [
     {
       "type": 0,
-      "value": "Add Target Schema"
+      "value": "新增目標結構描述"
     }
   ],
   "ysoumb": [
@@ -5695,7 +5761,7 @@
   "zUs2yb": [
     {
       "type": 0,
-      "value": "Target schema node"
+      "value": "目標結構描述節點"
     }
   ],
   "zbtUQ/": [
