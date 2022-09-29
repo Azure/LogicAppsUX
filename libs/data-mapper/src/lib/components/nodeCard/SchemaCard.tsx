@@ -21,6 +21,7 @@ import {
 } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
 import type { FunctionComponent } from 'react';
+import { useState } from 'react';
 import type { Connection as ReactFlowConnection, NodeProps } from 'react-flow-renderer';
 import { Handle, Position } from 'react-flow-renderer';
 import { useDispatch } from 'react-redux';
@@ -41,6 +42,7 @@ const useStyles = makeStyles({
     display: 'flex',
     flexDirection: 'row',
     height: '48px',
+    float: 'right',
     opacity: 1,
     width: `${nodeCardWidth}px`,
     alignItems: 'center',
@@ -73,6 +75,8 @@ const useStyles = makeStyles({
   badgeContainer: {
     display: 'flex',
     alignItems: 'center',
+    float: 'right',
+    width: '272px',
   },
   contentButton: {
     height: '48px',
@@ -127,6 +131,7 @@ const useStyles = makeStyles({
   },
   outputArrayBadge: {
     marginRight: '6px',
+    marginLeft: '-22px',
   },
 });
 
@@ -160,6 +165,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
+  const [isHover, setIsHover] = useState<boolean>(false);
 
   const isOutputChildNode = schemaType === SchemaTypes.Target && isChild;
 
@@ -183,16 +189,25 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
     dispatch(setCurrentTargetNode({ schemaNode: newCurrentSchemaNode, resetSelectedSourceNodes: true }));
   };
 
-  const isNBadgeRequired = relatedConnections.length > 0 && schemaNode.properties === SchemaNodeProperties.Repeating;
+  const onMouseEnter = () => {
+    setIsHover(true);
+  };
+  const onMouseLeave = () => {
+    setIsHover(false);
+  };
+
+  const isNBadgeRequired = relatedConnections.length > 0 && schemaNode.properties === SchemaNodeProperties.Repeating && !isHover;
 
   return (
     <div className={classes.badgeContainer}>
-      {isNBadgeRequired && schemaType === SchemaTypes.Target && (
+      {isNBadgeRequired && schemaType === SchemaTypes.Target ? (
         <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
           N
         </Badge>
+      ) : (
+        <div style={{ width: '0px' }}></div>
       )}
-      <div className={containerStyle}>
+      <div className={containerStyle} onMouseLeave={() => onMouseLeave()} onMouseEnter={() => onMouseEnter()}>
         {displayHandle ? (
           <Handle
             type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
