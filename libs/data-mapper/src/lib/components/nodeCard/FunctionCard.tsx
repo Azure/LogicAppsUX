@@ -16,8 +16,8 @@ import {
   Tooltip,
 } from '@fluentui/react-components';
 import type { FunctionComponent } from 'react';
-import type { Connection as ReactFlowConnection, NodeProps } from 'react-flow-renderer';
-import { Handle, Position } from 'react-flow-renderer';
+import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
+import { Handle, Position } from 'reactflow';
 
 export type FunctionCardProps = {
   functionName: string;
