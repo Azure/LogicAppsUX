@@ -2,7 +2,7 @@ import { dataMapDataLoaderSlice, loadDataMap, type ThemeType } from '../state/Da
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
-import { Checkbox, Dropdown, MessageBar, Stack, StackItem, TextField } from '@fluentui/react';
+import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, tokens } from '@fluentui/react-components';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -103,14 +103,7 @@ export const DevToolbox: React.FC = () => {
   const toolboxItems = [];
   if (loadingMethod === 'file') {
     toolboxItems.push(
-      <StackItem style={{ width: '250px' }}>
-        <MessageBar>
-          The below dropdowns load mock objects (equivalent to what we expect from a data map definition or GET schemaTree)
-        </MessageBar>
-      </StackItem>
-    );
-    toolboxItems.push(
-      <StackItem style={{ width: '250px' }}>
+      <StackItem key={'dataMapDropDown'} style={{ width: '250px' }}>
         <Dropdown
           label="Data Map"
           selectedKey={resourcePath}
@@ -121,7 +114,7 @@ export const DevToolbox: React.FC = () => {
       </StackItem>
     );
     toolboxItems.push(
-      <StackItem style={{ width: '250px' }}>
+      <StackItem key={'sourceSchemaDropDown'} style={{ width: '250px' }}>
         <Dropdown
           label="Source Schema"
           selectedKey={inputResourcePath}
@@ -132,7 +125,7 @@ export const DevToolbox: React.FC = () => {
       </StackItem>
     );
     toolboxItems.push(
-      <StackItem style={{ width: '250px' }}>
+      <StackItem key={'targetSchemaDropDown'} style={{ width: '250px' }}>
         <Dropdown
           label="Target Schema"
           selectedKey={outputResourcePath}
@@ -144,7 +137,7 @@ export const DevToolbox: React.FC = () => {
     );
   } else {
     toolboxItems.push(
-      <StackItem style={{ width: '250px' }}>
+      <StackItem key={'resourceUriTextField'} style={{ width: '250px' }}>
         <TextField
           label="Resource Uri"
           description="/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}"
@@ -154,7 +147,7 @@ export const DevToolbox: React.FC = () => {
       </StackItem>
     );
     toolboxItems.push(
-      <StackItem style={{ width: '250px' }}>
+      <StackItem key={'armTokenTextField'} style={{ width: '250px' }}>
         <TextField
           label="ARM Token"
           description="auth token: include 'bearer' when pasting"
@@ -164,7 +157,7 @@ export const DevToolbox: React.FC = () => {
       </StackItem>
     );
     toolboxItems.push(
-      <StackItem style={{ width: '250px' }}>
+      <StackItem key={'resetArmButton'} style={{ width: '250px' }}>
         <button onClick={resetToUseARM}>Set</button>
       </StackItem>
     );
@@ -177,7 +170,7 @@ export const DevToolbox: React.FC = () => {
           <AccordionHeader>Dev Toolbox</AccordionHeader>
           <AccordionPanel>
             <Stack horizontal horizontalAlign="space-around" tokens={{ childrenGap: '8px' }} style={{ width: '100%' }}>
-              <StackItem style={{ width: '250px' }}>
+              <StackItem key={'themeDropDown'} style={{ width: '250px' }}>
                 <Dropdown
                   label="Theme"
                   selectedKey={theme}
