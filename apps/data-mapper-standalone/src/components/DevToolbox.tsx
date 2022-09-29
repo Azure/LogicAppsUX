@@ -2,8 +2,8 @@ import { dataMapDataLoaderSlice, loadDataMap, type ThemeType } from '../state/Da
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
-import { Stack, Checkbox, Dropdown, TextField, MessageBar } from '@fluentui/react';
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel } from '@fluentui/react-components';
+import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
+import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, tokens } from '@fluentui/react-components';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -100,14 +100,77 @@ export const DevToolbox: React.FC = () => {
   const dataMapDropdownOptions = mapFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
   const schemaDropdownOptions = schemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
 
+  const toolboxItems = [];
+  if (loadingMethod === 'file') {
+    toolboxItems.push(
+      <StackItem key={'dataMapDropDown'} style={{ width: '250px' }}>
+        <Dropdown
+          label="Data Map"
+          selectedKey={resourcePath}
+          onChange={changeDataMapResourcePathDropdownCB}
+          placeholder="Select a data map"
+          options={dataMapDropdownOptions}
+        />
+      </StackItem>
+    );
+    toolboxItems.push(
+      <StackItem key={'sourceSchemaDropDown'} style={{ width: '250px' }}>
+        <Dropdown
+          label="Source Schema"
+          selectedKey={inputResourcePath}
+          onChange={changeSourceSchemaResourcePathDropdownCB}
+          placeholder="Select a source schema"
+          options={schemaDropdownOptions}
+        />
+      </StackItem>
+    );
+    toolboxItems.push(
+      <StackItem key={'targetSchemaDropDown'} style={{ width: '250px' }}>
+        <Dropdown
+          label="Target Schema"
+          selectedKey={outputResourcePath}
+          onChange={changeTargetSchemaResourcePathDropdownCB}
+          placeholder="Select a target schema"
+          options={schemaDropdownOptions}
+        />
+      </StackItem>
+    );
+  } else {
+    toolboxItems.push(
+      <StackItem key={'resourceUriTextField'} style={{ width: '250px' }}>
+        <TextField
+          label="Resource Uri"
+          description="/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}"
+          onChange={changeResourcePathCB}
+          value={resourcePath ?? ''}
+        />
+      </StackItem>
+    );
+    toolboxItems.push(
+      <StackItem key={'armTokenTextField'} style={{ width: '250px' }}>
+        <TextField
+          label="ARM Token"
+          description="auth token: include 'bearer' when pasting"
+          onChange={changeArmTokenCB}
+          value={armToken ?? ''}
+        />
+      </StackItem>
+    );
+    toolboxItems.push(
+      <StackItem key={'resetArmButton'} style={{ width: '250px' }}>
+        <button onClick={resetToUseARM}>Set</button>
+      </StackItem>
+    );
+  }
+
   return (
-    <div style={{ width: '50vw', marginBottom: '20px', backgroundColor: '#eaeaea', padding: 4 }}>
+    <div style={{ width: '50vw', marginBottom: '20px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
       <Accordion defaultOpenItems={'1'} collapsible>
         <AccordionItem value="1">
           <AccordionHeader>Dev Toolbox</AccordionHeader>
           <AccordionPanel>
-            <Stack horizontal horizontalAlign="space-around" style={{ width: '100%', marginBottom: 8 }}>
-              <div style={{ width: '250px', margin: '0px 8px' }}>
+            <Stack horizontal horizontalAlign="space-around" tokens={{ childrenGap: '8px' }} style={{ width: '100%' }}>
+              <StackItem key={'themeDropDown'} style={{ width: '250px' }}>
                 <Dropdown
                   label="Theme"
                   selectedKey={theme}
@@ -117,56 +180,8 @@ export const DevToolbox: React.FC = () => {
                   style={{ marginBottom: '12px' }}
                 />
                 <Checkbox label="Load From Arm" checked={loadingMethod === 'arm'} onChange={changeLoadingMethodCB} disabled />
-              </div>
-
-              {loadingMethod === 'file' ? (
-                <Stack horizontal>
-                  <MessageBar>
-                    The below dropdowns load mock objects (equivalent to what we expect from a data map definition or GET schemaTree)
-                  </MessageBar>
-                  <Dropdown
-                    label="Data Map"
-                    selectedKey={resourcePath}
-                    onChange={changeDataMapResourcePathDropdownCB}
-                    placeholder="Select a data map"
-                    options={dataMapDropdownOptions}
-                  />
-                  <Dropdown
-                    label="Source Schema"
-                    selectedKey={inputResourcePath}
-                    onChange={changeSourceSchemaResourcePathDropdownCB}
-                    placeholder="Select a source schema"
-                    options={schemaDropdownOptions}
-                  />
-                  <Dropdown
-                    label="Target Schema"
-                    selectedKey={outputResourcePath}
-                    onChange={changeTargetSchemaResourcePathDropdownCB}
-                    placeholder="Select a target schema"
-                    options={schemaDropdownOptions}
-                  />
-                </Stack>
-              ) : (
-                <>
-                  <div>
-                    <TextField
-                      label="Resource Uri"
-                      description="/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}"
-                      onChange={changeResourcePathCB}
-                      value={resourcePath ?? ''}
-                    />
-                  </div>
-                  <div>
-                    <TextField
-                      label="ARM Token"
-                      description="auth token: include 'bearer' when pasting"
-                      onChange={changeArmTokenCB}
-                      value={armToken ?? ''}
-                    />
-                  </div>
-                  <button onClick={resetToUseARM}>Set</button>
-                </>
-              )}
+              </StackItem>
+              {toolboxItems}
             </Stack>
           </AccordionPanel>
         </AccordionItem>
