@@ -72,7 +72,6 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
       // TODO: Sync w/ any type/expected-functionality updates
       if (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) {
-        console.log(`${schemaNode.name} children: ${numChildrenToggled} / ${schemaNode.children.length}`);
         // Is object parent
         if (numChildrenToggled === schemaNode.children.length) {
           newToggledStatesDictionary[schemaNode.key] = ItemToggledState.Completed;
