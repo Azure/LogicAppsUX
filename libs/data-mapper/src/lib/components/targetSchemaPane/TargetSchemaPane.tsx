@@ -6,7 +6,7 @@ import { ItemToggledState, type NodeToggledStateDictionary } from '../tree/Schem
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleRight20Regular, ChevronDoubleLeft20Regular } from '@fluentui/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -40,10 +40,16 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
+  const [toggledStatesDictionary, setToggledStatesDictionary] = useState<NodeToggledStateDictionary | undefined>({});
+
   const targetSchemaLoc = intl.formatMessage({
     defaultMessage: 'Target schema',
     description: 'Target schema',
   });
+
+  const handleItemClick = (schemaNode: SchemaNodeExtended) => {
+    dispatch(setCurrentTargetNode({ schemaNode: schemaNode, resetSelectedSourceNodes: true }));
+  };
 
   // For MVP - only checks for a connection, not its validity
   const targetNodesWithConnections = useMemo(() => {
@@ -58,50 +64,66 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     return nodesWithConnections;
   }, [connectionDictionary, targetSchemaDictionary]);
 
-  const toggledStatesDictionary = useMemo(() => {
-    if (!targetSchema || !connectionDictionary) return;
+  /*eslint no-param-reassign: ["error", { "props": false }]*/
+  const handleObjectParentToggledState = useCallback(
+    (stateDict: NodeToggledStateDictionary, nodeKey: string, nodeChildrenToggledAmt: number, nodeChildrenAmt: number) => {
+      if (nodeChildrenToggledAmt === nodeChildrenAmt) {
+        stateDict[nodeKey] = ItemToggledState.Completed;
+        return 1;
+      } else if (nodeChildrenToggledAmt === 0) {
+        stateDict[nodeKey] = ItemToggledState.NotStarted;
+      } else {
+        stateDict[nodeKey] = ItemToggledState.InProgress;
+      }
 
-    const newToggledStatesDictionary: NodeToggledStateDictionary = {};
+      return 0;
+    },
+    []
+  );
 
-    const checkNodeStatuses = (schemaNode: any) => {
+  const handleNodeWithValue = useCallback(
+    (stateDict: NodeToggledStateDictionary, nodeKey: string) => {
+      if (nodeKey in targetNodesWithConnections) {
+        stateDict[nodeKey] = ItemToggledState.Completed;
+        return 1;
+      } else {
+        stateDict[nodeKey] = ItemToggledState.NotStarted;
+      }
+
+      return 0;
+    },
+    [targetNodesWithConnections]
+  );
+
+  const checkNodeStatuses = useCallback(
+    (schemaNode: any, stateDict: NodeToggledStateDictionary) => {
       let numChildrenToggled = 0;
 
       schemaNode.children.forEach((child: any) => {
-        numChildrenToggled += checkNodeStatuses(child);
+        numChildrenToggled += checkNodeStatuses(child, stateDict);
       });
 
       // TODO: Sync w/ any type/expected-functionality updates
       if (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) {
         // Is object parent
-        if (numChildrenToggled === schemaNode.children.length) {
-          newToggledStatesDictionary[schemaNode.key] = ItemToggledState.Completed;
-          return 1;
-        } else if (numChildrenToggled === 0) {
-          newToggledStatesDictionary[schemaNode.key] = ItemToggledState.NotStarted;
-        } else {
-          newToggledStatesDictionary[schemaNode.key] = ItemToggledState.InProgress;
-        }
+        return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
       } else {
         // Is node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
-        if (schemaNode.key in targetNodesWithConnections) {
-          newToggledStatesDictionary[schemaNode.key] = ItemToggledState.Completed;
-          return 1;
-        } else {
-          newToggledStatesDictionary[schemaNode.key] = ItemToggledState.NotStarted;
-        }
+        return handleNodeWithValue(stateDict, schemaNode.key);
       }
+    },
+    [handleObjectParentToggledState, handleNodeWithValue]
+  );
 
-      return numChildrenToggled;
-    };
-
-    checkNodeStatuses(targetSchema.schemaTreeRoot);
-
-    return newToggledStatesDictionary;
-  }, [connectionDictionary, targetSchema, targetNodesWithConnections]);
-
-  const handleItemClick = (schemaNode: SchemaNodeExtended) => {
-    dispatch(setCurrentTargetNode({ schemaNode: schemaNode, resetSelectedSourceNodes: true }));
-  };
+  useEffect(() => {
+    if (!targetSchema || !connectionDictionary) {
+      setToggledStatesDictionary(undefined);
+    } else {
+      const newToggledStatesDictionary: NodeToggledStateDictionary = {};
+      checkNodeStatuses(targetSchema.schemaTreeRoot, newToggledStatesDictionary);
+      setToggledStatesDictionary(newToggledStatesDictionary);
+    }
+  }, [checkNodeStatuses, connectionDictionary, targetSchema, targetNodesWithConnections]);
 
   return (
     <div className={styles.outputPane} style={{ display: 'flex', flexDirection: 'column', flex: '0 1 1px' }}>
