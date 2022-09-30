@@ -4,7 +4,14 @@ import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperati
 import type { IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
 import type { ISearchService, SearchResult } from '../search';
-import type { Connector, DiscoveryOperation, DiscoveryResultTypes, SomeKindOfAzureOperationDiscovery } from '@microsoft-logic-apps/utils';
+import * as ClientOperationsData from './operations';
+import type {
+  BuiltInOperation,
+  Connector,
+  DiscoveryOperation,
+  DiscoveryResultTypes,
+  SomeKindOfAzureOperationDiscovery,
+} from '@microsoft-logic-apps/utils';
 import { ArgumentException, connectorsSearchResultsMock, MockSearchOperations } from '@microsoft-logic-apps/utils';
 
 interface ContinuationTokenResponse<T> {
@@ -25,6 +32,7 @@ interface StandardSearchServiceArgs {
     location: string;
   };
   httpClient: IHttpClient;
+  showStatefulOperations?: boolean;
   isDev?: boolean;
 }
 
@@ -59,18 +67,20 @@ export class StandardSearchService implements ISearchService {
     return [...(await this.getAllBuiltInOperations()), ...(await this.getAllAzureOperations())];
   }
 
+  // TODO - Need to add extra filtering for trigger/action
   private async getAllBuiltInOperations(): Promise<DiscoveryOpArray> {
     if (this._isDev) {
       return Promise.resolve([...almostAllBuiltInOperations]);
     }
-    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { apiVersion, baseUrl, httpClient, showStatefulOperations } = this.options;
     const uri = `${baseUrl}/operations`;
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
-      workflowKind: 'stateful',
+      workflowKind: showStatefulOperations ? 'Stateful' : 'Stateless',
     };
     const response = await httpClient.get<AzureOperationsFetchResponse>({ uri, queryParameters });
-    return response.value;
+
+    return [...response.value, ...getClientBuiltInOperations(showStatefulOperations)];
   }
 
   private async getAzureResourceByPage(uri: string, queryParams?: any, pageNumber = 0): Promise<{ value: any[]; hasMore: boolean }> {
@@ -151,17 +161,18 @@ export class StandardSearchService implements ISearchService {
     });
   }
 
+  // TODO - Need to add extra filtering for trigger/action
   private async getAllBuiltInConnectors(): Promise<Connector[]> {
     if (this._isDev) {
       return Promise.resolve(connectorsSearchResultsMock);
     }
-    const { apiVersion, baseUrl, httpClient } = this.options;
+    const { apiVersion, baseUrl, httpClient, showStatefulOperations } = this.options;
     const uri = `${baseUrl}/operationGroups`;
     const queryParameters: QueryParameters = {
       'api-version': apiVersion,
     };
     const response = await httpClient.get<{ value: Connector[] }>({ uri, queryParameters });
-    return response.value;
+    return [...response.value, ...getClientBuiltInConnectors(showStatefulOperations)];
   }
 
   private async getAllAzureConnectors(): Promise<Connector[]> {
@@ -190,4 +201,65 @@ export class StandardSearchService implements ISearchService {
     });
     return connectors;
   }
+}
+
+function getClientBuiltInOperations(showStatefulOperations = false): DiscoveryOperation<BuiltInOperation>[] {
+  const allOperations: DiscoveryOperation<BuiltInOperation>[] = [
+    ClientOperationsData.requestOperation,
+    ClientOperationsData.responseOperation,
+    ClientOperationsData.parseJsonOperation,
+    ClientOperationsData.csvTableOperation,
+    ClientOperationsData.htmlTableOperation,
+    ClientOperationsData.queryOperation,
+    ClientOperationsData.selectOperation,
+    ClientOperationsData.joinOperation,
+    ClientOperationsData.scopeOperation,
+    ClientOperationsData.terminateOperation,
+    ClientOperationsData.ifOperation,
+    ClientOperationsData.foreachOperation,
+    ClientOperationsData.untilOperation,
+    ClientOperationsData.switchOperation,
+    ClientOperationsData.recurrenceOperation,
+    ClientOperationsData.delayOperation,
+    ClientOperationsData.delayUntilOperation,
+    ClientOperationsData.httpActionOperation,
+    ClientOperationsData.httpTriggerOperation,
+    ClientOperationsData.httpWebhookActionOperation,
+    ClientOperationsData.httpWebhookTriggerOperation,
+    ClientOperationsData.initializeVariableOperation,
+    ClientOperationsData.setVariableOperation,
+    ClientOperationsData.incrementVariableOperation,
+    ClientOperationsData.decrementVariableOperation,
+    ClientOperationsData.appendStringVariableOperation,
+    ClientOperationsData.appendArrayVariableOperation,
+    ClientOperationsData.convertTimezoneOperation,
+    ClientOperationsData.addToTimeOperation,
+    ClientOperationsData.subtractFromTimeOperation,
+    ClientOperationsData.getFutureTimeOperation,
+    ClientOperationsData.getPastTimeOperation,
+    ClientOperationsData.currentTimeOperation,
+  ];
+  return allOperations.filter((operation) => filterStateful(operation, showStatefulOperations));
+}
+
+function getClientBuiltInConnectors(showStatefulOperations = false): Connector[] {
+  const allConnectors: any[] = [
+    ClientOperationsData.requestGroup,
+    ClientOperationsData.httpGroup,
+    ClientOperationsData.variableGroup,
+    ClientOperationsData.controlGroup,
+    ClientOperationsData.scheduleGroup,
+    ClientOperationsData.dateTimeGroup,
+  ];
+  return allConnectors.filter((connector) => filterStateful(connector, showStatefulOperations));
+}
+
+function filterStateful(operation: DiscoveryOperation<BuiltInOperation> | Connector, showStateful: boolean): boolean {
+  return showStateful
+    ? !operation.properties.capabilities ||
+        operation.properties.capabilities.includes('Stateful') ||
+        !operation.properties.capabilities.includes('Stateless')
+    : !operation.properties.capabilities ||
+        operation.properties.capabilities.includes('Stateless') ||
+        !operation.properties.capabilities.includes('Stateful');
 }

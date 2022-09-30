@@ -50,6 +50,7 @@ export const scheduleGroup = {
     description: 'Schedule operations',
     displayName: 'Schedule',
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/recurrence.svg',
+    capabilities: ['Stateful'],
   },
 };
 

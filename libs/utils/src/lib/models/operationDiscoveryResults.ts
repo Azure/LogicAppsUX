@@ -59,6 +59,7 @@ export interface BuiltInOperation {
   brandColor: string;
   visibility: string;
   iconUri: string;
+  capabilities?: string[];
 }
 
 export interface DiscoveryOperation<TData extends DiscoveryResultTypes> {
