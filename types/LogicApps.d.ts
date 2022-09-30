@@ -291,7 +291,7 @@ declare namespace LogicApps {
     count?: number;
     endTime?: string;
     frequency: string;
-    interval: number | string; // NOTE(lakshmia): String to support expressions/ARM template.
+    interval: number | string; // Note: String to support expressions/ARM template.
     schedule?: RecurrenceSchedule;
     startTime?: string;
     timeZone?: string;

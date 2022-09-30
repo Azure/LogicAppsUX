@@ -523,7 +523,7 @@ const getSplitOnValue = (
   } else {
     if (manifest) {
       if (equals(manifest.properties.trigger, Constants.BATCH_TRIGGER)) {
-        // TODO(3727460) - Consume top level required fields when available here.
+        // TODO - Consume top level required fields when available here.
         const { alias, propertyName, required } = getSplitOnArrayAliasMetadata(manifest.properties.outputs, /* propertyRequired */ true);
         const propertyPath = alias || propertyName;
         if (propertyPath) {
@@ -617,7 +617,7 @@ const getRequestOptions = (definition?: LogicApps.OperationDefinition | LogicApp
 };
 
 const areRequestOptionsSupported = (isTrigger: boolean, nodeType: string): boolean => {
-  // NOTE(andrewfowose) We currently only support request timout option for HTTP & HTTP + Swagger actions
+  // Note We currently only support request timout option for HTTP & HTTP + Swagger actions
   const supportedTypes = [Constants.NODE.TYPE.HTTP];
   return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
 };
