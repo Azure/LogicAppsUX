@@ -32,7 +32,7 @@ export type SchemaCardProps = {
   displayChevron: boolean;
   isLeaf: boolean;
   isChild: boolean;
-  relatedConnections: Connection[];
+  childArrayConnections: Connection[];
 } & CardProps;
 
 const useStyles = makeStyles({
@@ -156,7 +156,7 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 };
 
 export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, relatedConnections } =
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, childArrayConnections } =
     props.data;
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
@@ -185,7 +185,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
     dispatch(setCurrentTargetNode({ schemaNode: newCurrentSchemaNode, resetSelectedSourceNodes: true }));
   };
 
-  const isNBadgeRequired = relatedConnections.length > 0 && schemaNode.properties === SchemaNodeProperties.Repeating;
+  const isNBadgeRequired = childArrayConnections.length > 0 && schemaNode.properties === SchemaNodeProperties.Repeating;
 
   return (
     <div className={classes.badgeContainer}>
