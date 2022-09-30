@@ -17,6 +17,7 @@ import {
   mergeClasses,
   shorthands,
   tokens,
+  Tooltip,
   typographyStyles,
 } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
@@ -200,12 +201,12 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
 
   return (
     <div className={classes.badgeContainer}>
-      {isNBadgeRequired && schemaType === SchemaTypes.Target ? (
-        <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
-          N
-        </Badge>
-      ) : (
-        <div style={{ width: '0px' }}></div>
+      {true && (
+        <Tooltip content="Array Mapping" relationship="label">
+          <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
+            N
+          </Badge>
+        </Tooltip>
       )}
       <div className={containerStyle} onMouseLeave={() => onMouseLeave()} onMouseEnter={() => onMouseEnter()}>
         {displayHandle ? (
