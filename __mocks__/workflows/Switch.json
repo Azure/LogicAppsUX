@@ -32,7 +32,7 @@
             }
           }
         },
-        "expression": "test",
+        "expression": "@triggerBody()",
         "runAfter": {},
         "type": "Switch"
       },

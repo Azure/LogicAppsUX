@@ -9,11 +9,10 @@
               "name": "stringvar",
               "value": "fgfgfg"
             },
-            "runAfter": {},
             "type": "SetVariable"
           }
         },
-        "foreach": "@triggerBody()['array']",
+        "foreach": "@triggerBody()",
         "runAfter": {
           "Parse_JSON": ["Succeeded"]
         },
