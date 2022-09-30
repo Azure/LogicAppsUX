@@ -1,7 +1,8 @@
 import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
+import { NormalizedDataType, SchemaNodeDataType, type SchemaNodeExtended } from '../../models';
 import { SchemaTree } from '../tree/SchemaTree';
+import { ItemToggledState, type NodeToggledStateDictionary } from '../tree/SchemaTreeItem';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleRight20Regular, ChevronDoubleLeft20Regular } from '@fluentui/react-icons';
@@ -46,16 +47,57 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
   // For MVP - only checks for a connection, not its validity
   const targetNodesWithConnections = useMemo(() => {
-    const nodesWithConnections: SchemaNodeExtended[] = [];
+    const nodesWithConnections: { [key: string]: true } = {};
 
     Object.entries(connectionDictionary).forEach(([_key, value]) => {
       if (value.reactFlowDestination in targetSchemaDictionary) {
-        nodesWithConnections.push(targetSchemaDictionary[value.reactFlowDestination]);
+        nodesWithConnections[value.destination] = true; // targetSchemaDictionary[value.reactFlowDestination]
       }
     });
 
     return nodesWithConnections;
   }, [connectionDictionary, targetSchemaDictionary]);
+
+  const toggledStatesDictionary = useMemo(() => {
+    if (!targetSchema || !connectionDictionary) return;
+
+    const newToggledStatesDictionary: NodeToggledStateDictionary = {};
+
+    const checkNodeStatuses = (schemaNode: any) => {
+      let numChildrenToggled = 0;
+
+      schemaNode.children.forEach((child: any) => {
+        numChildrenToggled += checkNodeStatuses(child);
+      });
+
+      // TODO: Sync w/ any type/expected-functionality updates
+      if (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) {
+        // Is object parent
+        if (numChildrenToggled === schemaNode.children.length) {
+          newToggledStatesDictionary[schemaNode.key] = ItemToggledState.Completed;
+          numChildrenToggled += 1;
+        } else if (numChildrenToggled === 0) {
+          newToggledStatesDictionary[schemaNode.key] = ItemToggledState.NotStarted;
+        } else {
+          newToggledStatesDictionary[schemaNode.key] = ItemToggledState.InProgress;
+        }
+      } else {
+        // Is node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
+        if (schemaNode.key in targetNodesWithConnections) {
+          newToggledStatesDictionary[schemaNode.key] = ItemToggledState.Completed;
+          numChildrenToggled += 1;
+        } else {
+          newToggledStatesDictionary[schemaNode.key] = ItemToggledState.NotStarted;
+        }
+      }
+
+      return numChildrenToggled;
+    };
+
+    checkNodeStatuses(targetSchema.schemaTreeRoot);
+
+    return newToggledStatesDictionary;
+  }, [connectionDictionary, targetSchema, targetNodesWithConnections]);
 
   const handleItemClick = (schemaNode: SchemaNodeExtended) => {
     dispatch(setCurrentTargetNode({ schemaNode: schemaNode, resetSelectedSourceNodes: true }));
@@ -91,7 +133,12 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
       {isExpanded && targetSchema && (
         <div style={{ margin: 8, marginLeft: 40, width: 290, flex: '1 1 1px', overflowY: 'auto' }}>
-          <SchemaTree schema={targetSchema} toggledNodes={targetNodesWithConnections} onNodeClick={handleItemClick} isTargetSchema />
+          <SchemaTree
+            schema={targetSchema}
+            toggledStatesDictionary={toggledStatesDictionary}
+            onNodeClick={handleItemClick}
+            isTargetSchema
+          />
         </div>
       )}
     </div>

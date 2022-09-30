@@ -1,52 +1,24 @@
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaTreeItem, SharedTreeItemContent } from './SchemaTreeItem';
+import { ItemToggledState, type NodeToggledStateDictionary, SchemaTreeItem, SharedTreeItemContent } from './SchemaTreeItem';
 import { tokens } from '@fluentui/react-components';
 import { CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular } from '@fluentui/react-icons';
 import React, { useMemo } from 'react';
 
-export enum ItemToggledState {
-  Completed = 'Completed',
-  InProgress = 'InProgress',
-  NotStarted = 'NotStarted',
-}
-
-export type LeafItemToggledState = ItemToggledState.NotStarted | ItemToggledState.Completed;
-export type ParentItemToggledState = LeafItemToggledState | ItemToggledState.InProgress;
-
-export const targetFastTreeItemStyles = `
-  .positioning-region {
-      border-radius: ${tokens.borderRadiusMedium};
-      background-color: ${tokens.colorNeutralBackground4};
-      height: 28px;
-      padding: 4px 6px 4px 6px;
-  }
-  .content-region {
-      height: 16px;
-      color: ${tokens.colorNeutralForeground1};
-  }
-  :host(.nested) .expand-collapse-button:hover {
-      background: inherit;
-  }
-  :host(:not([disabled])).positioning-region:hover {
-      background: ${tokens.colorNeutralBackground4Hover};
-  }
-`;
-
 export type TargetSchemaFastTreeItemProps = {
   childNode: SchemaNodeExtended;
-  toggledNodes: SchemaNodeExtended[];
+  toggledStatesDictionary?: NodeToggledStateDictionary;
   onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
 };
 
-export const TargetSchemaFastTreeItem = ({ childNode, toggledNodes, onLeafNodeClick }: TargetSchemaFastTreeItemProps) => {
-  return <SchemaTreeItem childNode={childNode} toggledNodes={toggledNodes} onLeafNodeClick={onLeafNodeClick} isTargetSchemaItem />;
+export const TargetSchemaFastTreeItem = (props: TargetSchemaFastTreeItemProps) => {
+  return <SchemaTreeItem {...props} isTargetSchemaItem />;
 };
 
 export interface TargetTreeItemContentProps {
   node: SchemaNodeExtended;
   isSelected: boolean;
   children?: React.ReactNode;
-  status: ParentItemToggledState;
+  status: ItemToggledState;
 }
 
 export const TargetTreeItemContent = ({ node, isSelected, children, status }: TargetTreeItemContentProps) => {

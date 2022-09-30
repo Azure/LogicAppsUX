@@ -4,36 +4,14 @@ import { tokens } from '@fluentui/react-components';
 import { CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
 import React from 'react';
 
-export const sourceFastTreeItemStyles = `
-  .positioning-region {
-      border-radius: ${tokens.borderRadiusMedium};
-      background-color: ${tokens.colorNeutralBackground1};
-      height: 28px;
-      padding: 4px 6px 4px 6px;
-  }
-  .content-region {
-      height: 16px;
-      color: ${tokens.colorNeutralForeground1};
-  }
-  :host(:not([disabled])).positioning-region:hover {
-      background: ${tokens.colorNeutralBackground1Hover};
-  }
-  :host([selected])::after {
-      visibility: hidden;
-  }
-  :host(.nested) .expand-collapse-button:hover {
-      background: inherit;
-  }
-`;
-
 export type SourceSchemaFastTreeItemProps = {
   childNode: SchemaNodeExtended;
-  toggledNodes: SchemaNodeExtended[];
+  toggledNodes?: SchemaNodeExtended[];
   onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
 };
 
-export const SourceSchemaFastTreeItem = ({ childNode, toggledNodes, onLeafNodeClick }: SourceSchemaFastTreeItemProps) => {
-  return <SchemaTreeItem childNode={childNode} toggledNodes={toggledNodes} onLeafNodeClick={onLeafNodeClick} />;
+export const SourceSchemaFastTreeItem = (props: SourceSchemaFastTreeItemProps) => {
+  return <SchemaTreeItem {...props} />;
 };
 
 export interface SourceTreeItemContentProps {
