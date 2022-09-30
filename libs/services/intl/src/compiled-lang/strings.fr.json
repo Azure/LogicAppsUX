@@ -843,7 +843,7 @@
   "6OSgRP": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Tester le mappage"
     }
   ],
   "6XR3FS": [
@@ -1428,7 +1428,7 @@
   "CSoHMf": [
     {
       "type": 0,
-      "value": "Replace existing schema"
+      "value": "Remplacer le schéma existant"
     }
   ],
   "Ciol6I": [
@@ -1464,7 +1464,7 @@
   "D5FIKL": [
     {
       "type": 0,
-      "value": "Paste from sample"
+      "value": "Coller à partir de l’exemple"
     }
   ],
   "DDIIAQ": [
@@ -4340,7 +4340,7 @@
   "i1Tufp": [
     {
       "type": 0,
-      "value": "Provide input data to test the map with"
+      "value": "Fournir des données d’entrée avec lesquelles tester le mappage"
     }
   ],
   "i1cwra": [
@@ -5687,7 +5687,7 @@
   "vlDynP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Abandonner"
     }
   ],
   "vr70Gn": [
@@ -5815,7 +5815,7 @@
   "wzEneQ": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Fermer"
     }
   ],
   "x+6ccf": [

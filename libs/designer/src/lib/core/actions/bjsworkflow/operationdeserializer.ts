@@ -3,7 +3,7 @@ import Constants from '../../../common/constants';
 import type { ConnectionReferences } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import type { ConnectorWithParsedSwagger} from '../../queries/connections';
+import type { ConnectorWithParsedSwagger } from '../../queries/connections';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeData, NodeInputs, NodeOutputs } from '../../state/operation/operationMetadataSlice';
