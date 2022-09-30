@@ -15,7 +15,6 @@ const mockSchema = convertSchemaToSchemaExtended(JSON.parse(JSON.stringify(simpl
 export const Standard: ComponentStory<typeof SchemaTree> = (args: SchemaTreeProps) => <SchemaTree {...args} />;
 Standard.args = {
   schema: mockSchema,
-  currentlySelectedNodes: [],
-  visibleConnectedNodes: [],
+  toggledNodes: [],
   onNodeClick: (_schemaNode) => console.log('Clicked'),
 };
