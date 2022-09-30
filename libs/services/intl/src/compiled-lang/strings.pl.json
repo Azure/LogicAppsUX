@@ -495,6 +495,12 @@
       "value": "Godzina zakończenia"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -2421,6 +2427,12 @@
     {
       "type": 0,
       "value": "Nieoczekiwany błąd"
+    }
+  ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "N2CF0J": [
@@ -5816,7 +5828,7 @@
   "vlDynP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Odrzuć"
     }
   ],
   "vr70Gn": [
@@ -5944,7 +5956,7 @@
   "wzEneQ": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Zamknij"
     }
   ],
   "x+6ccf": [

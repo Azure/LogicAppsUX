@@ -441,6 +441,12 @@
       "value": "Bitiş zamanı"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -2229,6 +2235,12 @@
     {
       "type": 0,
       "value": "Beklenmeyen hata"
+    }
+  ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "N2CF0J": [
@@ -5470,7 +5482,7 @@
   "vlDynP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "At"
     }
   ],
   "vr70Gn": [
@@ -5594,7 +5606,7 @@
   "wzEneQ": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Kapat"
     }
   ],
   "x+6ccf": [

@@ -430,6 +430,12 @@
       "value": "Waktu berakhir"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -799,7 +805,7 @@
   "6OSgRP": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Uji peta"
     }
   ],
   "6XR3FS": [
@@ -1330,7 +1336,7 @@
   "CSoHMf": [
     {
       "type": 0,
-      "value": "Replace existing schema"
+      "value": "Ganti skema yang ada"
     }
   ],
   "Ciol6I": [
@@ -1366,7 +1372,7 @@
   "D5FIKL": [
     {
       "type": 0,
-      "value": "Paste from sample"
+      "value": "Tempel dari sampel"
     }
   ],
   "DDIIAQ": [
@@ -2187,6 +2193,12 @@
       "value": "Kesalahan tidak terduga"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Target schema"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2757,7 +2769,7 @@
   "Sz8KN3": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Uji"
     }
   ],
   "T0BFpC": [
@@ -4100,7 +4112,7 @@
   "i1Tufp": [
     {
       "type": 0,
-      "value": "Provide input data to test the map with"
+      "value": "Berikan data input untuk menguji peta"
     }
   ],
   "i1cwra": [
@@ -5401,7 +5413,7 @@
   "vlDynP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Buang"
     }
   ],
   "vr70Gn": [
@@ -5529,7 +5541,7 @@
   "wzEneQ": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Tutup"
     }
   ],
   "x+6ccf": [

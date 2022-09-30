@@ -45,12 +45,13 @@ import {
   ZoomOut20Filled,
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'react-flow-renderer';
-import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'reactflow';
+// eslint-disable-next-line import/no-named-as-default
+import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'reactflow';
 
 const toolboxPanelProps: FloatingPanelProps = {
   xPos: '16px',
@@ -354,6 +355,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     }
   };
 
+  const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
   return (
     <ReactFlow
       ref={reactFlowRef}
@@ -363,7 +365,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onConnect={onConnect}
       onPaneClick={onPaneClick}
       onNodeClick={onNodeSingleClick}
-      defaultZoom={defaultCanvasZoom}
+      defaultViewport={defaultViewport}
       nodesDraggable={false}
       fitView={false}
       connectionLineType={ConnectionLineType.SmoothStep}

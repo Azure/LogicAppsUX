@@ -430,6 +430,12 @@
       "value": "종료 시간"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -2187,6 +2193,12 @@
       "value": "예기치 않은 오류"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Target schema"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2757,7 +2769,7 @@
   "Sz8KN3": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "테스트"
     }
   ],
   "T0BFpC": [
@@ -5393,7 +5405,7 @@
   "vlDynP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "취소"
     }
   ],
   "vr70Gn": [
@@ -5517,7 +5529,7 @@
   "wzEneQ": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "닫기"
     }
   ],
   "x+6ccf": [

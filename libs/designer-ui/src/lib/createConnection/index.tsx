@@ -1,4 +1,5 @@
 import { filterRecord } from '../utils';
+import { ConnectionAuth } from './auth';
 import type { IDropdownOption } from '@fluentui/react';
 import { DefaultButton, Dropdown, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
 import type {
@@ -23,7 +24,10 @@ export interface CreateConnectionProps {
     parameterValues?: Record<string, any>
   ) => void;
   cancelCallback?: () => void;
+  authClickCallback?: () => void;
   hideCancelButton?: boolean;
+  needsAuth?: boolean;
+  errorMessage?: string;
 }
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
@@ -36,7 +40,10 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     isLoading,
     createConnectionCallback,
     cancelCallback,
+    authClickCallback,
     hideCancelButton = false,
+    needsAuth = false,
+    errorMessage,
   } = props;
 
   const intl = useIntl();
@@ -139,125 +146,21 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     );
   }, [createConnectionCallback, connectionDisplayName, connectionParameterSets?.values, selectedParamSetIndex, getVisibleParameterValues]);
 
-  if (Object.keys(singleAuthParams ?? {}).length > 0 || Object.keys(multiAuthParams ?? {}).length > 0) {
-    // Configurable connector component
+  // AuthorizedConnector Component
+  if (needsAuth)
     return (
-      <div className="msla-create-connection-container">
-        <div className="connection-params-container">
-          <div className="param-row">
-            <Label className="label" required htmlFor={'connection-display-name-input'} disabled={isLoading}>
-              {inputConnectionDisplayNameLabel}
-            </Label>
-            <TextField
-              id={'connection-display-name-input'}
-              className="connection-parameter-input"
-              disabled={isLoading}
-              autoComplete="off"
-              aria-label={inputConnectionDisplayNamePlaceholder}
-              placeholder={inputConnectionDisplayNamePlaceholder}
-              value={connectionDisplayName}
-              onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
-            />
-          </div>
-
-          {/* Authentication Selection */}
-          {Object.keys(multiAuthParams ?? {}).length > 0 && multiAuthParams && (
-            <div className="param-row">
-              <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
-                {connectionParameterSets?.uiDefinition?.displayName}
-              </Label>
-              <Dropdown
-                id="connection-param-set-select"
-                className="connection-parameter-input"
-                selectedKey={selectedParamSetIndex}
-                onChange={onAuthDropdownChange}
-                disabled={isLoading}
-                ariaLabel={connectionParameterSets?.uiDefinition?.description}
-                placeholder={connectionParameterSets?.uiDefinition?.description}
-                options={
-                  connectionParameterSets?.values.map((paramSet, index) => ({
-                    key: index,
-                    text: paramSet?.uiDefinition?.displayName,
-                  })) ?? []
-                }
-              />
-            </div>
-          )}
-
-          {/* Connector Parameters */}
-          {Object.entries(multiAuthParams ?? singleAuthParams ?? [])?.map(
-            ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
-              if (!isParamVisible(parameter)) return null;
-
-              const data = parameter?.uiDefinition;
-              let inputComponent = undefined;
-              if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {
-                // Dropdown Parameter
-                inputComponent = (
-                  <Dropdown
-                    id={`connection-param-${key}`}
-                    className="connection-parameter-input"
-                    selectedKey={data?.constraints?.allowedValues?.findIndex((value) => value.text === parameterValues[key])}
-                    onChange={(e: any, newVal?: IDropdownOption) => {
-                      setParameterValues({ ...parameterValues, [key]: newVal?.text });
-                    }}
-                    disabled={isLoading}
-                    ariaLabel={data?.description}
-                    placeholder={data?.description}
-                    options={(data?.constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
-                      key: index,
-                      text: allowedValue.text ?? '',
-                    }))}
-                  />
-                );
-              } else {
-                // Text Input Parameter
-                inputComponent = (
-                  <TextField
-                    id={key}
-                    className="connection-parameter-input"
-                    disabled={isLoading}
-                    autoComplete="off"
-                    // onNotifyValidationResult
-                    ariaLabel={data?.description}
-                    placeholder={data?.description}
-                    value={parameterValues[key]}
-                    onChange={(e: any, newVal?: string) => setParameterValues({ ...parameterValues, [key]: newVal })}
-                  />
-                );
-              }
-
-              return (
-                <div key={key} className="param-row">
-                  <Label className="label" required={data?.constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
-                    {data?.displayName}
-                    <TooltipHost content={data?.tooltip}>
-                      <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-                    </TooltipHost>
-                  </Label>
-                  {inputComponent}
-                </div>
-              );
-            }
-          )}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="msla-create-connection-actions-container">
-          <PrimaryButton
-            disabled={!canSubmit}
-            text={isLoading ? createButtonLoadingText : createButtonText}
-            ariaLabel={createButtonAria}
-            onClick={submitCallback}
-          />
-          {!hideCancelButton ? (
-            <DefaultButton disabled={isLoading} text={cancelButtonText} ariaLabel={cancelButtonAria} onClick={cancelCallback} />
-          ) : null}
-        </div>
-      </div>
+      <ConnectionAuth
+        connectorDisplayName={connectorDisplayName}
+        isLoading={isLoading}
+        authClickCallback={authClickCallback}
+        cancelCallback={cancelCallback}
+        hideCancelButton={hideCancelButton}
+        errorMessage={errorMessage}
+      />
     );
-  } else {
-    // Simple connector component
+
+  // SimpleConnector component
+  if (!(Object.keys(singleAuthParams ?? {}).length > 0 || Object.keys(multiAuthParams ?? {}).length > 0)) {
     return (
       <div className="msla-create-connection-container">
         <div>{componentSimpleDescription}</div>
@@ -273,4 +176,124 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       </div>
     );
   }
+
+  // AssistedConnector Component
+  // if (false) return <p>TODO:</p>
+
+  // Configurable connector component
+  return (
+    <div className="msla-create-connection-container">
+      <div className="connection-params-container">
+        <div className="param-row">
+          <Label className="label" required htmlFor={'connection-display-name-input'} disabled={isLoading}>
+            {inputConnectionDisplayNameLabel}
+          </Label>
+          <TextField
+            id={'connection-display-name-input'}
+            className="connection-parameter-input"
+            disabled={isLoading}
+            autoComplete="off"
+            aria-label={inputConnectionDisplayNamePlaceholder}
+            placeholder={inputConnectionDisplayNamePlaceholder}
+            value={connectionDisplayName}
+            onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
+          />
+        </div>
+
+        {/* Authentication Selection */}
+        {Object.keys(multiAuthParams ?? {}).length > 0 && multiAuthParams && (
+          <div className="param-row">
+            <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
+              {connectionParameterSets?.uiDefinition?.displayName}
+            </Label>
+            <Dropdown
+              id="connection-param-set-select"
+              className="connection-parameter-input"
+              selectedKey={selectedParamSetIndex}
+              onChange={onAuthDropdownChange}
+              disabled={isLoading}
+              ariaLabel={connectionParameterSets?.uiDefinition?.description}
+              placeholder={connectionParameterSets?.uiDefinition?.description}
+              options={
+                connectionParameterSets?.values.map((paramSet, index) => ({
+                  key: index,
+                  text: paramSet?.uiDefinition?.displayName,
+                })) ?? []
+              }
+            />
+          </div>
+        )}
+
+        {/* Connector Parameters */}
+        {Object.entries(multiAuthParams ?? singleAuthParams ?? [])?.map(
+          ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
+            if (!isParamVisible(parameter)) return null;
+
+            const data = parameter?.uiDefinition;
+            let inputComponent = undefined;
+            if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {
+              // Dropdown Parameter
+              inputComponent = (
+                <Dropdown
+                  id={`connection-param-${key}`}
+                  className="connection-parameter-input"
+                  selectedKey={data?.constraints?.allowedValues?.findIndex((value) => value.text === parameterValues[key])}
+                  onChange={(e: any, newVal?: IDropdownOption) => {
+                    setParameterValues({ ...parameterValues, [key]: newVal?.text });
+                  }}
+                  disabled={isLoading}
+                  ariaLabel={data?.description}
+                  placeholder={data?.description}
+                  options={(data?.constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
+                    key: index,
+                    text: allowedValue.text ?? '',
+                  }))}
+                />
+              );
+            } else {
+              // Text Input Parameter
+              inputComponent = (
+                <TextField
+                  id={key}
+                  className="connection-parameter-input"
+                  disabled={isLoading}
+                  autoComplete="off"
+                  // onNotifyValidationResult
+                  ariaLabel={data?.description}
+                  placeholder={data?.description}
+                  value={parameterValues[key]}
+                  onChange={(e: any, newVal?: string) => setParameterValues({ ...parameterValues, [key]: newVal })}
+                />
+              );
+            }
+
+            return (
+              <div key={key} className="param-row">
+                <Label className="label" required={data?.constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
+                  {data?.displayName}
+                  <TooltipHost content={data?.tooltip}>
+                    <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
+                  </TooltipHost>
+                </Label>
+                {inputComponent}
+              </div>
+            );
+          }
+        )}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="msla-create-connection-actions-container">
+        <PrimaryButton
+          disabled={!canSubmit}
+          text={isLoading ? createButtonLoadingText : createButtonText}
+          ariaLabel={createButtonAria}
+          onClick={submitCallback}
+        />
+        {!hideCancelButton ? (
+          <DefaultButton disabled={isLoading} text={cancelButtonText} ariaLabel={cancelButtonAria} onClick={cancelCallback} />
+        ) : null}
+      </div>
+    </div>
+  );
 };

@@ -457,6 +457,12 @@
       "value": "Befejezés időpontja"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Search"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -826,7 +832,7 @@
   "6OSgRP": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Leképezés tesztelése"
     }
   ],
   "6XR3FS": [
@@ -1400,7 +1406,7 @@
   "CSoHMf": [
     {
       "type": 0,
-      "value": "Replace existing schema"
+      "value": "Meglévő séma cseréje"
     }
   ],
   "Ciol6I": [
@@ -1436,7 +1442,7 @@
   "D5FIKL": [
     {
       "type": 0,
-      "value": "Paste from sample"
+      "value": "Beillesztés mintából"
     }
   ],
   "DDIIAQ": [
@@ -2319,6 +2325,12 @@
       "value": "Váratlan hiba"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Target schema"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2920,7 +2932,7 @@
   "Sz8KN3": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Tesztelés"
     }
   ],
   "T0BFpC": [
@@ -4310,7 +4322,7 @@
   "i1Tufp": [
     {
       "type": 0,
-      "value": "Provide input data to test the map with"
+      "value": "Adjon meg bemeneti adatokat a leképezés teszteléséhez"
     }
   ],
   "i1cwra": [
@@ -5650,7 +5662,7 @@
   "vlDynP": [
     {
       "type": 0,
-      "value": "Discard"
+      "value": "Elvetés"
     }
   ],
   "vr70Gn": [
@@ -5778,7 +5790,7 @@
   "wzEneQ": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Bezárás"
     }
   ],
   "x+6ccf": [

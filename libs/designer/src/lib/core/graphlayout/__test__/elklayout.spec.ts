@@ -4,7 +4,7 @@ import { exportForTesting } from '../elklayout';
 import type { WorkflowEdgeType } from '@microsoft-logic-apps/utils';
 import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
 import type { ElkNode } from 'elkjs/lib/elk-api';
-import type { Edge, Node } from 'react-flow-renderer';
+import type { Edge, Node } from 'reactflow';
 
 const createSharedEdge = (source: string, target: string, type?: WorkflowEdgeType) => ({
   ...createWorkflowEdge(source, target, type),

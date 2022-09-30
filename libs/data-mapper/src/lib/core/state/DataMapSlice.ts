@@ -282,7 +282,7 @@ export const dataMapSlice = createSlice({
         currentFunctionNodes: { ...state.curDataMapOperation.currentFunctionNodes },
       };
 
-      newState.currentFunctionNodes[`${functionData.name}-${guid()}`] = functionData;
+      newState.currentFunctionNodes[`${functionData.key}-${guid()}`] = functionData;
 
       doDataMapOperation(state, newState);
     },

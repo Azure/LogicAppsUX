@@ -3,7 +3,7 @@ import type { FunctionCardProps } from './FunctionCard';
 import { FunctionCard } from './FunctionCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
-import type { NodeProps } from 'react-flow-renderer';
+import type { NodeProps } from 'reactflow';
 
 export default {
   component: FunctionCard,
@@ -18,7 +18,7 @@ WithIcon.args = {
     },
     functionName: 'Function Name',
     inputs: [],
-    numberOfInputs: 0,
+    maxNumberOfInputs: 0,
     iconFileName: 'ChartYAngel.svg',
     functionBranding: logicalBranding,
     displayHandle: false,
@@ -35,7 +35,7 @@ WithoutIcon.args = {
     },
     functionName: 'Function Name',
     inputs: [],
-    numberOfInputs: 0,
+    maxNumberOfInputs: 0,
     iconFileName: '',
     functionBranding: logicalBranding,
     displayHandle: false,

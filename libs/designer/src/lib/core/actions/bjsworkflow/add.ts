@@ -6,7 +6,7 @@ import { changeConnectionMapping } from '../../state/connection/connectionSlice'
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
-import { switchToOperationPanel, isolateTab } from '../../state/panel/panelSlice';
+import { isolateTab, switchToOperationPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
@@ -52,7 +52,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
     operationId: operation.name,
     type: getOperationType(operation),
-    kind: operation.properties.operationKind ?? '',
+    kind: operation.properties.operationKind,
   };
 
   dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
@@ -75,16 +75,13 @@ export const initializeOperationDetails = async (
   const { type, connectorId } = operationInfo;
   const operationManifestService = OperationManifestService();
 
+  dispatch(switchToOperationPanel(nodeId));
+
   if (operationManifestService.isSupported(type)) {
     const manifest = await getOperationManifest(operationInfo);
+    if (isConnectionRequiredForOperation(manifest)) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+
     const { iconUri, brandColor } = manifest.properties;
-
-    if (isConnectionRequiredForOperation(manifest)) {
-      setDefaultConnectionForNode(nodeId, connectorId, dispatch);
-    } else {
-      dispatch(switchToOperationPanel(nodeId));
-    }
-
     const settings = getOperationSettings(isTrigger, operationInfo, manifest, /* swagger */ undefined);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
@@ -104,8 +101,10 @@ export const initializeOperationDetails = async (
       dispatch
     );
   } else {
-    setDefaultConnectionForNode(nodeId, connectorId, dispatch);
-    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    const [, { connector, parsedSwagger }] = await Promise.all([
+      trySetDefaultConnectionForNode(nodeId, connectorId, dispatch),
+      getConnectorWithSwagger(connectorId),
+    ]);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
 
@@ -201,15 +200,16 @@ export const reinitializeOperationDetails = async (
   }
 };
 
-export const setDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
+export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
   const connections = await getConnectionsForConnector(connectorId);
-  if (connections.length !== 0) {
+  if (connections.length > 0) {
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id, connectorId }));
     await ConnectionService().createConnectionAclIfNeeded(connections[0]);
-    dispatch(switchToOperationPanel(nodeId));
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
+
+  dispatch(switchToOperationPanel(nodeId));
 };
 
 const addTokensAndVariables = (
