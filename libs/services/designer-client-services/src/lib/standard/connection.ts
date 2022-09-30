@@ -1,15 +1,27 @@
 /* eslint-disable no-param-reassign */
-import type { ConnectionCreationInfo, ConnectionParametersMetadata, ConnectorWithSwagger, IConnectionService } from '../connection';
-import type { IHttpClient, QueryParameters } from '../httpClient';
+import type { HttpResponse } from '../common/exceptions/service';
+import type {
+  ConnectionCreationInfo,
+  ConnectionParametersMetadata,
+  CreateConnectionResult,
+  IConnectionService,
+  ConnectorWithSwagger,
+} from '../connection';
+import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import { LoggerService } from '../logger';
 import { LogEntryLevel } from '../logging/logEntry';
+import type { IOAuthPopup } from '../oAuth';
+import { OAuthService } from '../oAuth';
 import { azureFunctionConnectorId } from './operationmanifest';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft-logic-apps/utils';
 import {
-  isIdentityAssociatedWithLogicApp,
-  ResourceIdentityType,
   getUniqueName,
+  isIdentityAssociatedWithLogicApp,
+  HTTP_METHODS,
+  UserErrorCode,
+  UserException,
+  ResourceIdentityType,
   isArmResourceId,
   AssertionErrorCode,
   AssertionException,
@@ -83,6 +95,16 @@ interface StandardConnectionServiceArgs {
 }
 
 export type getAccessTokenType = () => Promise<string>;
+
+export interface ConsentLink {
+  link: string;
+  displayName?: string;
+  status?: string;
+}
+
+export interface LogicAppConsentResponse {
+  value: ConsentLink[];
+}
 
 interface ConnectionsData {
   managedApiConnections?: any;
@@ -275,7 +297,7 @@ export class StandardConnectionService implements IConnectionService {
   ): Promise<Connection> {
     const {
       httpClient,
-      apiHubServiceDetails: { apiVersion, baseUrl, subscriptionId, resourceGroup },
+      apiHubServiceDetails: { apiVersion, baseUrl },
       workflowAppDetails,
     } = this.options;
     const intl = getIntl();
@@ -290,7 +312,7 @@ export class StandardConnectionService implements IConnectionService {
       );
     }
 
-    const connectionId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
+    const connectionId = this.getConnectionRequestPath(connectionName);
     const connection = await httpClient.put<any, Connection>({
       uri: `${baseUrl}${connectionId}`,
       queryParameters: { 'api-version': apiVersion },
@@ -303,15 +325,17 @@ export class StandardConnectionService implements IConnectionService {
       await this.createConnectionAclIfNeeded(connection);
     } catch {
       // NOTE: Delete the connection created in this method if Acl creation failed.
+      this.deleteConnection(connectionId);
       const error = new Error(
         intl.formatMessage({
           defaultMessage: 'Acl creation failed for connection. Deleting the connection.',
           description: 'Error while creating acl',
         })
       );
-      httpClient.delete({ uri: connectionId, queryParameters: { 'api-version': apiVersion } });
       throw error;
     }
+
+    await this.testConnection(connection);
 
     return connection;
   }
@@ -446,6 +470,89 @@ export class StandardConnectionService implements IConnectionService {
     return connection;
   }
 
+  async createAndAuthorizeOAuthConnection(
+    connectionId: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo
+  ): Promise<CreateConnectionResult> {
+    const connection = await this.createConnection(connectionId, connectorId, connectionInfo);
+    const oAuthService = OAuthService();
+    let oAuthPopupInstance: IOAuthPopup | undefined;
+
+    try {
+      const consentUrl = await oAuthService.fetchConsentUrlForConnection(connectionId);
+      oAuthPopupInstance = oAuthService.openLoginPopup({ consentUrl });
+
+      const loginResponse = await oAuthPopupInstance.loginPromise;
+      if (loginResponse.error) {
+        throw new Error(atob(loginResponse.error));
+      } else if (loginResponse.code) {
+        await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
+      }
+
+      await this.createConnectionAclIfNeeded(connection);
+
+      await this.testConnection(connection);
+
+      const fetchedConnection = await this.getConnection(connection.id);
+      return { connection: fetchedConnection };
+    } catch (error: any) {
+      this.deleteConnection(connectionId);
+      const errorMessage = `Failed to create OAuth connection: ${this.tryParseErrorMessage(error)}`;
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'create oauth connection',
+        message: errorMessage,
+      });
+      return { errorMessage: this.tryParseErrorMessage(error) };
+    }
+  }
+
+  private async testConnection(connection: Connection): Promise<void> {
+    const testLinks = connection.properties.testLinks;
+    if (!testLinks || testLinks.length < 1) return Promise.resolve();
+
+    try {
+      const { httpClient } = this.options;
+      const { method: httpMethod, requestUri: uri } = testLinks[0];
+      const method = httpMethod.toUpperCase() as HTTP_METHODS;
+
+      let response: HttpResponse<any> | undefined = undefined;
+      const requestOptions: HttpRequestOptions<any> = { uri };
+      if (method === HTTP_METHODS.GET) response = await httpClient.get<any>(requestOptions);
+      else if (method === HTTP_METHODS.POST) response = await httpClient.post<any, any>(requestOptions);
+      else if (method === HTTP_METHODS.PUT) response = await httpClient.put<any, any>(requestOptions);
+      else if (method === HTTP_METHODS.DELETE) response = await httpClient.delete<any>(requestOptions);
+      // console.log('Test connection response', response);
+      // if (!response) throw new Error('Invalid test link method');
+
+      this.handleTestConnectionResponse(response);
+    } catch (error: any) {
+      console.error('Failed to test connection', this.tryParseErrorMessage(error));
+      Promise.reject(error);
+    }
+  }
+
+  private handleTestConnectionResponse(response?: HttpResponse<any>): void {
+    if (!response) return;
+    const defaultErrorResponse = 'Please check your account info and/or permissions and try again.';
+    if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+      let errorMessage = defaultErrorResponse;
+      if (response.body && typeof response.body === 'string') {
+        errorMessage = this.tryParseErrorMessage(JSON.parse(response.body), defaultErrorResponse);
+      }
+
+      const exception = new UserException(UserErrorCode.TEST_CONNECTION_FAILED, errorMessage);
+      throw exception;
+    }
+  }
+
+  private tryParseErrorMessage(error: any, defaultErrorMessage?: string): string {
+    if (error?.message) return error.message;
+    else if (error?.error?.message) error.error.message;
+    return defaultErrorMessage ?? 'Unknown error';
+  }
+
   private getConnectionsConfiguration(
     connectionName: string,
     connectionInfo: ConnectionCreationInfo,
@@ -543,6 +650,26 @@ export class StandardConnectionService implements IConnectionService {
     }
   }
 
+  private getConnectionRequestPath(connectionName: string): string {
+    const {
+      apiHubServiceDetails: { subscriptionId, resourceGroup },
+    } = this.options;
+    return `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
+  }
+
+  async deleteConnection(connectionId: string): Promise<void> {
+    const {
+      httpClient,
+      apiHubServiceDetails: { apiVersion },
+    } = this.options;
+    const request = {
+      uri: this.getConnectionRequestPath(connectionId),
+      queryParameters: { 'api-version': apiVersion },
+    };
+    await httpClient.delete<any>(request);
+    delete this._connections[connectionId];
+  }
+
   async getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string> {
     const { name: connectionName, index } = getUniqueName(connectionNames, connectorName);
     return isArmResourceId(connectorId)
@@ -556,8 +683,7 @@ export class StandardConnectionService implements IConnectionService {
     connectionName: string,
     i: number
   ): Promise<string> {
-    const { subscriptionId, resourceGroup } = this.options.apiHubServiceDetails;
-    const connectionId = `/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionName}`;
+    const connectionId = this.getConnectionRequestPath(connectionName);
     const isUnique = await this._testConnectionIdUniquenessInApiHub(connectionId);
 
     if (isUnique) {

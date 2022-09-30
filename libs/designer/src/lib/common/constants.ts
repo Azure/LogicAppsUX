@@ -665,18 +665,6 @@ export default {
     TIMEDOUT: 'TimedOut',
     WAITING: 'Waiting',
   },
-  SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS: {
-    TOKEN_CLIENT_ID: 'token:clientId',
-    TOKEN_CLIENT_SECRET: 'token:clientSecret',
-    TOKEN_RESOURCE_URI: 'token:resourceUri',
-    TOKEN_GRANT_TYPE: 'token:grantType',
-    TOKEN_TENANT_ID: 'token:tenantId',
-  },
-  SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS_PREFIX: 'token:',
-  SERVICE_PRINCIPLE_GRANT_TYPE_VALUES: {
-    CODE: 'code',
-    CLIENT_CREDENTIALS: 'client_credentials',
-  },
   SWAGGER_SOURCE: {
     WEBSITE: 'website',
     CUSTOM: 'custom',

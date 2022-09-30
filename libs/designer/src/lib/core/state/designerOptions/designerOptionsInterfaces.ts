@@ -4,6 +4,7 @@ import type {
   ILoggerService,
   IOperationManifestService,
   ISearchService,
+  IOAuthService,
 } from '@microsoft-logic-apps/designer-client-services';
 
 export interface DesignerOptionsState {
@@ -18,4 +19,5 @@ export interface ServiceOptions {
   searchService: ISearchService;
   connectorService?: IConnectorService;
   loggerService?: ILoggerService;
+  oAuthService: IOAuthService;
 }

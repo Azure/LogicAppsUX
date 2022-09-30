@@ -1,6 +1,6 @@
 import type { CreateConnectionProps } from '.';
 import { CreateConnection } from '.';
-import type { ConnectionParameterSet, Connector } from '@microsoft-logic-apps/utils';
+import type { Connector } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
@@ -8,13 +8,13 @@ export default {
   title: 'Components/CreateConnection',
 } as ComponentMeta<typeof CreateConnection>;
 
-const mockSingleAuthConnector: Connector = {
+const mockOAuthConnector: Connector = {
   id: '/providers/Microsoft.PowerApps/apis/arm',
   name: 'arm',
   type: '/providers/Microsoft.PowerApps/apis',
   properties: {
     capabilities: [],
-    displayName: 'Some External Service',
+    displayName: 'Single Auth Connector',
     environment: '',
     purpose: '',
     iconUri: '',
@@ -46,16 +46,16 @@ const mockSingleAuthConnector: Connector = {
   },
 };
 
-const createConnectionCallback = (newName: string, selectedParameterSet?: ConnectionParameterSet, values?: Record<string, any>) =>
-  alert(`Creating Single Auth connector: ${JSON.stringify(values)}`);
+const authClickCallback = () => alert(`Attempting connection to OAuth connector`);
 
-export const SingleAuthExample: ComponentStory<typeof CreateConnection> = (args: CreateConnectionProps) => <CreateConnection {...args} />;
+export const OAuthExample: ComponentStory<typeof CreateConnection> = (args: CreateConnectionProps) => <CreateConnection {...args} />;
 
-SingleAuthExample.args = {
-  connectorDisplayName: mockSingleAuthConnector.properties.displayName,
-  connectionParameters: mockSingleAuthConnector.properties.connectionParameters,
-  connectionParameterSets: mockSingleAuthConnector.properties.connectionParameterSets,
+OAuthExample.args = {
+  connectorDisplayName: mockOAuthConnector.properties.displayName,
+  connectionParameters: mockOAuthConnector.properties.connectionParameters,
+  connectionParameterSets: mockOAuthConnector.properties.connectionParameterSets,
   isLoading: false,
-  createConnectionCallback,
+  authClickCallback,
+  needsAuth: true,
   cancelCallback: () => alert('Cancelled'),
 };

@@ -53,7 +53,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     if (allOperations) {
       const fuse = new Fuse(allOperations, options);
       const searchResults = fuse.search(searchTerm);
-      setSearchResults(searchResults.length > 50 ? searchResults.slice(49) : fuse.search(searchTerm));
+      setSearchResults(searchResults.slice(0, 199));
     }
   }, [searchTerm, allOperations]);
 
