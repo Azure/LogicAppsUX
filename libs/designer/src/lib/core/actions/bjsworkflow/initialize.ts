@@ -22,14 +22,20 @@ import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens } from '../../utils/tokens';
 import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
 import type { Settings } from './settings';
-import type { IConnectionService, IOperationManifestService, ISearchService } from '@microsoft-logic-apps/designer-client-services';
+import type {
+  IConnectionService,
+  IOperationManifestService,
+  ISearchService,
+  IOAuthService,
+} from '@microsoft-logic-apps/designer-client-services';
 import {
-  OperationManifestService,
   InitConnectionService,
   InitOperationManifestService,
   InitSearchService,
+  InitOAuthService,
+  OperationManifestService,
 } from '@microsoft-logic-apps/designer-client-services';
-import type { InputParameter, SchemaProperty } from '@microsoft-logic-apps/parsers';
+import type { SchemaProperty, InputParameter } from '@microsoft-logic-apps/parsers';
 import {
   isDynamicListExtension,
   isDynamicPropertiesExtension,
@@ -48,12 +54,14 @@ export interface ServiceOptions {
   connectionService: IConnectionService;
   operationManifestService: IOperationManifestService;
   searchService: ISearchService;
+  oAuthService: IOAuthService;
 }
 
-export const InitializeServices = ({ connectionService, operationManifestService, searchService }: ServiceOptions) => {
+export const InitializeServices = ({ connectionService, operationManifestService, searchService, oAuthService }: ServiceOptions) => {
   InitConnectionService(connectionService);
   InitOperationManifestService(operationManifestService);
   InitSearchService(searchService);
+  InitOAuthService(oAuthService);
 };
 
 export const getInputParametersFromManifest = (
