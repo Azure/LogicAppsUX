@@ -70,7 +70,7 @@ export class StandardSearchService implements ISearchService {
   // TODO - Need to add extra filtering for trigger/action
   private async getAllBuiltInOperations(): Promise<DiscoveryOpArray> {
     if (this._isDev) {
-      return Promise.resolve([...almostAllBuiltInOperations]);
+      return Promise.resolve([...almostAllBuiltInOperations, ...getClientBuiltInOperations(this.options.showStatefulOperations)]);
     }
     const { apiVersion, baseUrl, httpClient, showStatefulOperations } = this.options;
     const uri = `${baseUrl}/operations`;
@@ -164,7 +164,7 @@ export class StandardSearchService implements ISearchService {
   // TODO - Need to add extra filtering for trigger/action
   private async getAllBuiltInConnectors(): Promise<Connector[]> {
     if (this._isDev) {
-      return Promise.resolve(connectorsSearchResultsMock);
+      return Promise.resolve([...connectorsSearchResultsMock, ...getClientBuiltInConnectors(this.options.showStatefulOperations)]);
     }
     const { apiVersion, baseUrl, httpClient, showStatefulOperations } = this.options;
     const uri = `${baseUrl}/operationGroups`;
