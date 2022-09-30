@@ -5,7 +5,8 @@ import type { Connector, OperationInfo, OperationManifest } from '@microsoft-log
 
 export const getOperationInfo = async (
   nodeId: string,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  isTrigger: boolean
 ): Promise<OperationInfo> => {
   const queryClient = getReactQueryClient();
   const operationManifestService = OperationManifestService();
@@ -13,7 +14,7 @@ export const getOperationInfo = async (
   nodeId = nodeId.toLowerCase();
   return queryClient.fetchQuery<OperationInfo>(['operationInfo', { nodeId }], () =>
     // this is sync
-    operationManifestService.getOperationInfo(operation)
+    operationManifestService.getOperationInfo(operation, isTrigger)
   );
 };
 
@@ -38,12 +39,4 @@ export const getOperationManifest = async ({ connectorId, operationId }: Operati
   return queryClient.fetchQuery(['manifest', { connectorId }, { operationId }], () =>
     operationManifestService.getOperationManifest(connectorId, operationId)
   );
-};
-
-export const getOperationManifestForNode = async (
-  nodeId: string,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
-): Promise<OperationManifest> => {
-  const operationInfo = await getOperationInfo(nodeId, operation);
-  return getOperationManifest(operationInfo);
 };

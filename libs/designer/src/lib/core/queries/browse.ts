@@ -1,11 +1,5 @@
-import { ConnectionService, SearchService } from '@microsoft-logic-apps/designer-client-services';
+import { SearchService } from '@microsoft-logic-apps/designer-client-services';
 import { useQuery } from 'react-query';
-
-export const getAllOperationsForGroup = (connectorId: string) => {
-  const connectionService = ConnectionService();
-  const operations = connectionService.getAllOperationsForGroup(connectorId);
-  return operations;
-};
 
 export const useAllOperations = () => {
   return useQuery(
