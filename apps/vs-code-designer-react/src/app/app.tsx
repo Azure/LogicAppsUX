@@ -2,6 +2,7 @@ import workflow from '../../../../__mocks__/workflows/Conditionals.json';
 import { HttpClient } from './httpClient';
 import {
   StandardConnectionService,
+  StandardOAuthService,
   StandardOperationManifestService,
   StandardSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
@@ -39,6 +40,14 @@ const searchService = new StandardSearchService({
   },
   isDev: true,
 });
+const oAuthService = new StandardOAuthService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  subscriptionId: '',
+  resourceGroup: '',
+  location: '',
+});
 export const App = () => {
   return (
     <DesignerProvider
@@ -48,6 +57,7 @@ export const App = () => {
           connectionService,
           operationManifestService,
           searchService,
+          oAuthService,
         },
       }}
     >

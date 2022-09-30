@@ -5,6 +5,7 @@ import { changeConnectionMapping } from '../../../core/state/connection/connecti
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connection } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
@@ -24,6 +25,7 @@ export const SelectConnectionTab = () => {
   }, [dispatch]);
 
   const createConnectionCallback = useCallback(() => {
+    // This is getting called and showing create tab after adding a new operation under certain circumstances
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }, [dispatch]);
 
@@ -32,9 +34,11 @@ export const SelectConnectionTab = () => {
   const connections = useMemo(() => connectionQuery.data ?? [], [connectionQuery]);
 
   useEffect(() => {
-    if (connections.length === 0) createConnectionCallback();
-  }, [connections, createConnectionCallback]);
+    if (!connectionQuery.isLoading && connections.length === 0) createConnectionCallback();
+  }, [connectionQuery.isLoading, connections, createConnectionCallback]);
 
+  // TODO: RILEY - WI# 15680356 - RACE CONDITION HERE, if you are on select connection and you click another node, this fires off, and sets the old node's connection to the same as the new node's connection
+  // We really just need to make our own selection component here, using the 'DetailsList' component here is just really hacky and not the way it was intended to be used
   const saveSelectionCallback = useCallback(
     (connection?: Connection) => {
       if (!connection) return;
@@ -50,6 +54,13 @@ export const SelectConnectionTab = () => {
   const cancelSelectionCallback = useCallback(() => {
     hideConnectionTabs();
   }, [hideConnectionTabs]);
+
+  if (connectionQuery.isLoading)
+    return (
+      <div className="msla-loading-container">
+        <Spinner size={SpinnerSize.large} />
+      </div>
+    );
 
   return (
     <SelectConnection

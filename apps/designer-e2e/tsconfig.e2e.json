@@ -4,6 +4,14 @@
     "sourceMap": false,
     "outDir": "../../dist/out-tsc",
     "allowJs": true,
+    "resolveJsonModule": true,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "types": ["jest", "node"]
   },
   "include": ["src/**/*.ts", "src/**/*.js"]

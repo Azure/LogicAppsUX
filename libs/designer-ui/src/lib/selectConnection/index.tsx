@@ -1,4 +1,3 @@
-import { getConnectionErrors } from '../helper';
 import type { IColumn } from '@fluentui/react';
 import {
   MessageBar,
@@ -15,7 +14,7 @@ import {
   Selection,
 } from '@fluentui/react';
 import type { Connection } from '@microsoft-logic-apps/utils';
-import { getIdLeaf } from '@microsoft-logic-apps/utils';
+import { getConnectionErrors, getIdLeaf } from '@microsoft-logic-apps/utils';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -48,13 +47,14 @@ export const SelectConnection = (props: SelectConnectionProps): JSX.Element => {
     return {
       ...connection,
       ...connection.properties,
-      invalid: errors.length ? (
-        <div className="msla-connection-error-icon-container">
-          <TooltipHost content={errors.map((error) => error.error?.message).join(', ')}>
-            <Icon iconName="Error" className="msla-connection-error-icon" />
-          </TooltipHost>
-        </div>
-      ) : null,
+      invalid:
+        errors.length > 0 ? (
+          <div className="msla-connection-error-icon-container">
+            <TooltipHost content={errors.map((error) => error.error?.message).join(', ')}>
+              <Icon iconName="Error" className="msla-connection-error-icon" styles={{ root: { color: '#e00202' } }} />
+            </TooltipHost>
+          </div>
+        ) : null,
     };
   });
 
