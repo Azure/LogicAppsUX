@@ -15,6 +15,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState<Record<string, string>>({});
   const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
 
   const [isGrouped, setIsGrouped] = useState(false);
@@ -54,6 +55,8 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         selectedGroupId={selectedOperationGroupId}
         onDismiss={onDismiss}
         navigateBack={navigateBack}
+        filters={filters}
+        setFilters={setFilters}
       />
       {selectedOperationGroupId ? (
         <OperationGroupDetailView groupOperations={allOperationsForGroup} />
@@ -63,9 +66,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
           allOperations={allOperations.data ?? []}
           groupByConnector={isGrouped}
           isLoading={allOperations.isLoading}
+          filters={filters}
         />
       ) : (
-        <BrowseView />
+        <BrowseView filters={filters} />
       )}
     </RecommendationPanel>
   );
