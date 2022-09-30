@@ -63,7 +63,7 @@ To run the VS Code extension (in debug mode):
 1. Once the Data Mapper extension has been run, wait until you see that 'func host start' has acquired a lease in the output log.
    This is so that the necessary path/folder get generated for us to change out the runtime. Close the VS Code window running the Data Mapper extension once this is complete.
 2. Download/Set-up the latest workflow extension bundle (https://msazure.visualstudio.com/One/_build?definitionId=161889&_a=summary&repositoryFilter=2318&branchFilter=1673047)
-   - Click the latest run -> Click on the 'artifacts' link under the 'build' stage -> Expand the '...Windows' dropdown -> Download the '...any-any.zip'
+   - Click the latest run -> Click 'Associated Pipelines' -> Click the latest run -> On the 'build' stage, click 'x artifacts' -> Expand the '...Windows' dropdown -> Download the '...any-any.zip'
    - Go to `yourRootUsernameFolder/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows`
    - Rename the current version folder (Ex: backup-1.1.16)
    - Replace it with the extracted folder you just downloaded (renaming it to the same version as the one you replaced)
