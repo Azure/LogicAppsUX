@@ -1,11 +1,11 @@
 import type { CreateConnectionProps } from '.';
 import { CreateConnection } from '.';
-import type { Connector } from '@microsoft-logic-apps/utils';
+import type { ConnectionParameterSet, Connector } from '@microsoft-logic-apps/utils';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
 export default {
   component: CreateConnection,
-  title: 'Components/CreateConnection/CreateConnection',
+  title: 'Components/CreateConnection',
 } as ComponentMeta<typeof CreateConnection>;
 
 const mockMultiAuthConnector: Connector = {
@@ -87,7 +87,7 @@ const mockMultiAuthConnector: Connector = {
   },
 };
 
-const createConnectionCallback = (values: Record<string, string | undefined>) =>
+const createConnectionCallback = (newName: string, selectedParameterSet?: ConnectionParameterSet, values?: Record<string, any>) =>
   alert(`Creating Multi Auth connector: ${JSON.stringify(values)}`);
 
 export const MultiAuthExample: ComponentStory<typeof CreateConnection> = (args: CreateConnectionProps) => <CreateConnection {...args} />;

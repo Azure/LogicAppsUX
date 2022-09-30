@@ -5,6 +5,7 @@ import {
   StandardConnectionService,
   StandardOperationManifestService,
   StandardSearchService,
+  StandardOAuthService,
 } from '@microsoft-logic-apps/designer-client-services';
 import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
@@ -42,10 +43,20 @@ const searchService = new StandardSearchService({
   },
   isDev: true,
 });
+
+const oAuthService = new StandardOAuthService({
+  apiVersion: '2018-11-01',
+  baseUrl: '/url',
+  httpClient,
+  subscriptionId: '',
+  resourceGroup: '',
+  location: '',
+});
+
 export const DesignerWrapper = () => {
   const { workflowDefinition, readOnly, monitoringView, connections } = useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
-    services: { connectionService, operationManifestService, searchService },
+    services: { connectionService, operationManifestService, searchService, oAuthService },
     readOnly,
     isMonitoringView: monitoringView,
   };
@@ -61,7 +72,7 @@ export const DesignerWrapper = () => {
               connectionReferences: connections,
             }}
           >
-            <Designer></Designer>
+            <Designer />
           </BJSWorkflowProvider>
         ) : null}
       </DesignerProvider>

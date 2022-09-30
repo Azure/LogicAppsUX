@@ -189,7 +189,7 @@ export class StandardOperationManifestService implements IOperationManifestServi
   }
 
   async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
-    if (isInBuiltOperation(definition)) {
+    if (isBuiltInOperation(definition)) {
       return getBuiltInOperationInfo(definition, isTrigger);
     } else if (isServiceProviderOperation(definition)) {
       return {
@@ -336,8 +336,8 @@ function isServiceProviderOperation(definition: any): boolean {
   return equals(definition.type, 'ServiceProvider');
 }
 
-function isInBuiltOperation(definition: any): boolean {
-  switch (definition.type.toLowerCase()) {
+function isBuiltInOperation(definition: any): boolean {
+  switch (definition?.type?.toLowerCase()) {
     case appendtoarrayvariable:
     case appendtostringvariable:
     case compose:

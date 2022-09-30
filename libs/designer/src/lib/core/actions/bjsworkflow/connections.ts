@@ -6,7 +6,15 @@ import type { RootState } from '../../store';
 import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { ConnectionParameter, Connector, OperationManifest } from '@microsoft-logic-apps/utils';
-import { ConnectionParameterTypes, hasProperty, equals, ConnectionReferenceKeyFormat } from '@microsoft-logic-apps/utils';
+import {
+  isHiddenConnectionParameter,
+  getConnectorName,
+  isManagedConnector,
+  isSharedManagedConnector,
+  ConnectionParameterTypes,
+  equals,
+  ConnectionReferenceKeyFormat,
+} from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
@@ -123,8 +131,28 @@ export function needsConnection(connector: Connector | undefined): boolean {
   );
 }
 
-export function needsAuth(connector: Connector): boolean {
+export function needsAuth(connector?: Connector): boolean {
+  if (!connector) return false;
   return getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]).length > 0;
+}
+
+export function getAuthRedirect(connector?: Connector): string | undefined {
+  if (!connector) return undefined;
+  const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]);
+  if (authParameters?.[0]) return authParameters?.[0].oAuthSettings?.redirectUrl;
+  return undefined;
+}
+
+export function isFirstPartyConnector(connector: Connector): boolean {
+  const oauthParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]);
+
+  return (
+    !!oauthParameters &&
+    oauthParameters.length > 0 &&
+    !!oauthParameters[0].oAuthSettings &&
+    !!oauthParameters[0].oAuthSettings.properties &&
+    equals(oauthParameters[0].oAuthSettings.properties.IsFirstParty, 'true')
+  );
 }
 
 export function getConnectionParametersWithType(connector: Connector, connectionParameterType: string): ConnectionParameter[] {
@@ -154,42 +182,6 @@ function _getConnectionParameterSetParametersUsingType(connector: Connector, par
   return {};
 }
 
-export function isHiddenConnectionParameter(
-  connectionParameters: Record<string, ConnectionParameter>,
-  connectionParameterKey: string
-): boolean {
-  return (
-    !(
-      _isServicePrinicipalConnectionParameter(connectionParameterKey) &&
-      _connectorContainsAllServicePrinicipalConnectionParameters(connectionParameters)
-    ) && _isConnectionParameterHidden(connectionParameters[connectionParameterKey])
-  );
-}
-
-function _isServicePrinicipalConnectionParameter(connectionParameterKey: string): boolean {
-  return (
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_ID) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_SECRET) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_RESOURCE_URI) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) ||
-    equals(connectionParameterKey, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
-  );
-}
-
-function _connectorContainsAllServicePrinicipalConnectionParameters(connectionParameters: Record<string, ConnectionParameter>): boolean {
-  return (
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_ID) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_CLIENT_SECRET) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_RESOURCE_URI) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_GRANT_TYPE) &&
-    hasProperty(connectionParameters, Constants.SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS.TOKEN_TENANT_ID)
-  );
-}
-
-function _isConnectionParameterHidden(connectionParameter: ConnectionParameter): boolean {
-  return connectionParameter?.uiDefinition?.constraints?.hidden === 'true';
-}
-
 export function hasPrerequisiteConnection(connector: Connector): boolean {
   return getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.connection]).length > 0;
 }
@@ -214,7 +206,7 @@ export function needsSimpleConnection(connector: Connector): boolean {
 }
 
 export function needsConfigConnection(connector: Connector): boolean {
-  if (connector && connector.properties && connector.properties.connectionParameters) {
+  if (connector?.properties?.connectionParameters) {
     const connectionParameters = connector.properties.connectionParameters;
     return Object.keys(connectionParameters)
       .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
@@ -224,6 +216,32 @@ export function needsConfigConnection(connector: Connector): boolean {
       });
   }
 
+  return false;
+}
+
+export const SupportedServiceNames: Record<string, string> = {
+  AS2: 'as2',
+  AZUREBLOB: 'azureblob',
+  AZURECOMMUNICATIONSERVICESSMS: 'azurecommunicationservicessms',
+  AZUREFILE: 'azurefile',
+  AZUREQUEUES: 'azurequeues',
+  AZURETABLES: 'azuretables',
+  DOCUMENTDB: 'documentdb',
+  EDIFACT: 'edifact',
+  EVENTHUBS: 'eventhubs',
+  IOTHUB: 'iothub',
+  SERVICEBUS: 'servicebus',
+  SQL: 'sql',
+  X12: 'x12',
+  XSLTRANSFORM: 'xsltransform',
+};
+
+// TODO: Riley - This is temporary, be sure to update before use when implementing assisted connections
+export function isAssistedConnection(connector: Connector): boolean {
+  if (isSharedManagedConnector(connector.id) || isManagedConnector(connector.id)) {
+    const connectorName = getConnectorName(connector.id);
+    return Object.keys(SupportedServiceNames).some((serviceKey) => equals(connectorName, SupportedServiceNames[serviceKey]));
+  }
   return false;
 }
 
