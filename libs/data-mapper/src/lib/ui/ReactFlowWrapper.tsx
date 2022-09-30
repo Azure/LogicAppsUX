@@ -8,7 +8,13 @@ import { FunctionList } from '../components/functionList/FunctionList';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { SchemaTree } from '../components/tree/SchemaTree';
-import { checkerboardBackgroundImage, defaultCanvasZoom } from '../constants/ReactFlowConstants';
+import {
+  checkerboardBackgroundImage,
+  defaultCanvasZoom,
+  ReactFlowNodeType,
+  sourcePrefix,
+  targetPrefix,
+} from '../constants/ReactFlowConstants';
 import {
   addFunctionNode,
   addSourceNodes,
@@ -27,7 +33,7 @@ import type { FunctionData } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
-import { sourcePrefix, targetPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
+import { useLayout } from '../utils/ReactFlow.Util';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';

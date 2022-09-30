@@ -1,7 +1,7 @@
+import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeDataType, SchemaTypes } from '../models/Schema';
-import { sourcePrefix, targetPrefix } from './ReactFlow.Util';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {

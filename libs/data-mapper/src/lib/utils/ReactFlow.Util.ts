@@ -2,6 +2,7 @@ import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childTargetNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
+import { ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
@@ -27,15 +28,6 @@ const childXOffSet = childTargetNodeCardIndent;
 
 const rootY = 30;
 const rootYOffset = 60;
-
-export enum ReactFlowNodeType {
-  SchemaNode = 'schemaNode',
-  FunctionNode = 'functionNode',
-}
-
-export const sourcePrefix = 'source-';
-export const targetPrefix = 'target-';
-export const functionPrefix = 'function-';
 
 export const convertToReactFlowNodes = (
   viewportCoords: ViewportCoords,

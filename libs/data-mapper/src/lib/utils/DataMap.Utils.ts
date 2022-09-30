@@ -5,11 +5,11 @@ import {
   reservedMapDefinitionKeys,
   reservedMapDefinitionKeysArray,
 } from '../constants/MapDefinitionConstants';
+import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
 import type { ConnectionDictionary, LoopConnection } from '../models/Connection';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { sourcePrefix, targetPrefix } from '../utils/ReactFlow.Util';
 import { createConnectionKey } from './DataMapIds.Utils';
 import { findNodeForKey } from './Schema.Utils';
 import yaml from 'js-yaml';
