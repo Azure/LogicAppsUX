@@ -6,7 +6,7 @@ import { Caption1, makeStyles, Text, tokens, typographyStyles } from '@fluentui/
 import { ChevronRight16Regular } from '@fluentui/react-icons';
 import { fluentTreeItem, provideFluentDesignSystem, treeItemStyles } from '@fluentui/web-components';
 import { css } from '@microsoft/fast-element';
-import type { OverrideFoundationElementDefinition, TreeItemOptions } from '@microsoft/fast-foundation';
+import type { TreeItemOptions } from '@microsoft/fast-foundation';
 import { provideReactWrapper } from '@microsoft/fast-react-wrapper';
 import React, { useMemo, useState } from 'react';
 import { renderToString } from 'react-dom/server';
@@ -18,44 +18,6 @@ export enum ItemToggledState {
 }
 
 export type NodeToggledStateDictionary = { [key: string]: ItemToggledState };
-
-const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
-
-const baseTreeItemStyles = `
-  .positioning-region {
-    height: 28px;
-    padding: 4px 6px 4px 6px;
-    border-radius: ${tokens.borderRadiusMedium};
-  }
-  .content-region {
-    height: 16px;
-    color: ${tokens.colorNeutralForeground1};
-  }
-  :host(.nested) .expand-collapse-button:hover {
-    background: inherit;
-  }
-`;
-
-const sourceFastTreeItemStyles = `
-  .positioning-region {
-    background-color: ${tokens.colorNeutralBackground1};
-  }
-  :host(:not([disabled])) .positioning-region:hover {
-    background: ${tokens.colorNeutralBackground1Hover};
-  }
-  :host([selected])::after {
-    visibility: hidden;
-  }
-`;
-
-const targetFastTreeItemStyles = `
-  .positioning-region {
-    background-color: ${tokens.colorNeutralBackground4};
-  }
-  :host(:not([disabled])) .positioning-region:hover {
-    background: ${tokens.colorNeutralBackground4Hover};
-  }
-`;
 
 const useStyles = makeStyles({
   icon: {
@@ -70,11 +32,59 @@ const useStyles = makeStyles({
   },
 });
 
-const expandButtonStyle = `
+const baseTreeItemStyles = `
+  .positioning-region {
+    height: 28px;
+    padding: 4px 6px 4px 6px;
+    border-radius: ${tokens.borderRadiusMedium};
+    background: none;
+  }
+  .content-region {
+    height: 16px;
+  }
+  :host(.nested) .expand-collapse-button:hover {
+    background: inherit;
+  }
   :host(.nested) .expand-collapse-button:hover {
     background: inherit;
   }
 `;
+
+const sourceFastTreeItemStyles = `
+  positioning-region .source {
+    background-color: ${tokens.colorNeutralBackground1};
+  }
+  :host(:not([disabled])) .positioning-region:hover {
+    background: ${tokens.colorNeutralBackground1Hover};
+  }
+  :host([selected])::after {
+    visibility: hidden;
+  }
+`;
+
+const targetFastTreeItemStyles = `
+  .positioning-region .target {
+    background-color: ${tokens.colorNeutralBackground4};
+  }
+  :host(:not([disabled])) .positioning-region .target:hover {
+    background: ${tokens.colorNeutralBackground4Hover};
+  }
+`;
+
+const { wrap } = provideReactWrapper(React, provideFluentDesignSystem());
+const FastTreeItem = wrap(
+  fluentTreeItem({
+    expandCollapseGlyph: renderToString(<ChevronRight16Regular />),
+    baseName: 'tree-item',
+    styles: (ctx, def) => {
+      const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
+      const fastStyles = css`
+        ${baseStyles} ${baseTreeItemStyles} ${sourceFastTreeItemStyles} ${targetFastTreeItemStyles}
+      `;
+      return fastStyles;
+    },
+  })
+);
 
 export const SharedTreeItemContent = (node: SchemaNodeExtended, isSelected: boolean): JSX.Element => {
   const BundledTypeIcon = icon16ForSchemaNodeType(node.schemaNodeDataType, node.properties);
@@ -99,32 +109,9 @@ export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
 
   const [isHovered, setIsHovered] = useState(false);
 
-  const iconString = renderToString(<ChevronRight16Regular className={styles.icon} />);
-  const treeItemOverrideStyles: OverrideFoundationElementDefinition<TreeItemOptions> = {
-    expandCollapseGlyph: iconString,
-    baseName: 'tree-item',
-    styles: (ctx, def) => {
-      const baseStyles = treeItemStyles(ctx, def as TreeItemOptions);
-      const fastStyles = css`
-        ${baseStyles} ${baseTreeItemStyles} ${sourceFastTreeItemStyles} ${targetFastTreeItemStyles}
-        ${expandButtonStyle}
-      `;
-      return fastStyles;
-    },
-  };
-
-  const FastTreeItem = wrap(fluentTreeItem(treeItemOverrideStyles));
-
-  // TODO: may be a better way to write this - not urgent
-  const nameText = isHovered ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>;
-
   const isNodeSelected = useMemo(() => {
-    if (childNode.children.length === 0) {
-      return false;
-    }
-
-    if (!isTargetSchemaItem && toggledNodes) {
-      return !!toggledNodes.find((toggledNode) => toggledNode.key === childNode.key);
+    if (!isTargetSchemaItem) {
+      return !!toggledNodes?.find((toggledNode) => toggledNode.key === childNode.key);
     } else if (toggledStatesDictionary) {
       return toggledStatesDictionary[childNode.key] === ItemToggledState.Completed;
     } else {
@@ -136,9 +123,9 @@ export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
   return (
     <FastTreeItem
       key={childNode.key}
-      onMouseOut={() => setIsHovered(false)}
+      onMouseLeave={() => setIsHovered(false)}
       onMouseEnter={() => setIsHovered(true)}
-      className={`${isNodeSelected ? 'selected' : ''} ${isTargetSchemaItem ? 'target' : 'source'}`}
+      className={`${isTargetSchemaItem ? 'target' : 'source'}`}
       onMouseDown={(e) => {
         e.stopPropagation();
       }}
@@ -151,13 +138,13 @@ export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
     >
       {!isTargetSchemaItem && (
         <SourceTreeItemContent node={childNode} isSelected={isNodeSelected}>
-          {nameText}
+          {isHovered ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>}
         </SourceTreeItemContent>
       )}
 
       {isTargetSchemaItem && toggledStatesDictionary && (
         <TargetTreeItemContent node={childNode} isSelected={isNodeSelected} status={toggledStatesDictionary[childNode.key]}>
-          {nameText}
+          {isHovered ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>}
         </TargetTreeItemContent>
       )}
 
