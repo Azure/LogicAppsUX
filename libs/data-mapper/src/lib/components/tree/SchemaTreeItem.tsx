@@ -46,12 +46,12 @@ interface SchemaTreeItemProps {
   toggledNodes: SchemaNodeExtended[];
   onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
   isTargetSchemaItem?: boolean;
-  isTargetLeafItemSelected?: boolean;
+  isTargetChildItemSelected?: boolean;
   targetLeafItemStatus?: LeafItemToggledState;
 }
 
 export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
-  const { childNode, toggledNodes, onLeafNodeClick, isTargetSchemaItem, isTargetLeafItemSelected, targetLeafItemStatus } = props;
+  const { childNode, toggledNodes, onLeafNodeClick, isTargetSchemaItem, isTargetChildItemSelected, targetLeafItemStatus } = props;
   const styles = useStyles();
 
   const [isHovered, setIsHovered] = useState(false);
@@ -71,6 +71,9 @@ export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
   };
   const FastTreeItem = wrap(fluentTreeItem(treeItemOverrideStyles));
 
+  // TODO: may be a better way to write this - not urgent
+  const nameText = isHovered ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>;
+
   const isNodeSelected = useCallback(
     (node: SchemaNodeExtended) => !!toggledNodes.find((toggledNode) => toggledNode && toggledNode.key === node.key),
     [toggledNodes]
@@ -88,15 +91,10 @@ export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
     }
   };
 
-  // TODO: may be a better way to write this - not urgent
-  const nameText = isHovered ? <Text className={styles.hoverText}>{childNode.name}</Text> : <Caption1>{childNode.name}</Caption1>;
+  const isLeafItem = childNode.children.length === 0;
+  const itemIsTargetParent = isTargetSchemaItem && !isLeafItem;
 
-  // TODO: Handle value objects with attribute children
-  const nodeIsObject = childNode.schemaNodeDataType === 'None';
-
-  const itemIsTargetParent = isTargetSchemaItem && nodeIsObject && !isTargetLeafItemSelected && !targetLeafItemStatus;
-
-  const leafItemInfo = useMemo(() => {
+  const parentChildrenInfo = useMemo(() => {
     if (itemIsTargetParent) {
       let numChildrenToggled = 0;
       const childrenToggledStatus: boolean[] = [];
@@ -120,13 +118,13 @@ export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
       key={childNode.key}
       onMouseOut={() => setIsHovered(false)}
       onMouseEnter={() => setIsHovered(true)}
-      className={nodeIsObject && isNodeSelected(childNode) ? 'selected' : ''}
+      className={!isLeafItem && isNodeSelected(childNode) ? 'selected' : ''}
       onMouseDown={(e) => {
         e.stopPropagation();
       }}
       onClick={(e) => {
         e.stopPropagation();
-        if (!nodeIsObject || !(e.target as any).expandCollapseButton) {
+        if (isLeafItem || !(e.target as any).expandCollapseButton) {
           onLeafNodeClick(childNode);
         }
       }}
@@ -138,20 +136,18 @@ export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
       ) : (
         <TargetTreeItemContent
           node={childNode}
-          isSelected={isNodeSelected(childNode)}
+          isSelected={isTargetChildItemSelected ?? isNodeSelected(childNode)}
           status={
-            leafItemInfo
-              ? getTargetParentStatus(leafItemInfo.numChildrenToggled)
-              : targetLeafItemStatus
-              ? targetLeafItemStatus
-              : ItemToggledState.InProgress
+            parentChildrenInfo
+              ? getTargetParentStatus(parentChildrenInfo.numChildrenToggled)
+              : targetLeafItemStatus ?? ItemToggledState.InProgress
           }
         >
           {nameText}
         </TargetTreeItemContent>
       )}
 
-      {nodeIsObject &&
+      {!isLeafItem &&
         childNode.children.map((childNodeChild, idx) => (
           <SchemaTreeItem
             key={childNodeChild.key}
@@ -159,10 +155,10 @@ export const SchemaTreeItem = (props: SchemaTreeItemProps) => {
             toggledNodes={toggledNodes}
             onLeafNodeClick={onLeafNodeClick}
             isTargetSchemaItem={isTargetSchemaItem}
-            isTargetLeafItemSelected={isTargetSchemaItem && leafItemInfo ? leafItemInfo.childrenToggledStatus[idx] : undefined}
+            isTargetChildItemSelected={isTargetSchemaItem && parentChildrenInfo ? parentChildrenInfo.childrenToggledStatus[idx] : undefined}
             targetLeafItemStatus={
-              isTargetSchemaItem && leafItemInfo
-                ? leafItemInfo.childrenToggledStatus[idx]
+              isTargetSchemaItem && parentChildrenInfo
+                ? parentChildrenInfo.childrenToggledStatus[idx]
                   ? ItemToggledState.Completed
                   : ItemToggledState.NotStarted
                 : undefined
