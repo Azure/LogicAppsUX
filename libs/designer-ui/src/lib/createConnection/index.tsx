@@ -8,6 +8,7 @@ import type {
   ConnectionParameterSet,
   ConnectionParameterSetParameter,
   ConnectionParameterSets,
+  Gateway,
 } from '@microsoft-logic-apps/utils';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
@@ -28,6 +29,7 @@ export interface CreateConnectionProps {
   hideCancelButton?: boolean;
   needsAuth?: boolean;
   errorMessage?: string;
+  availableGateways?: Gateway[];
 }
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
@@ -44,6 +46,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     hideCancelButton = false,
     needsAuth = false,
     errorMessage,
+    availableGateways,
   } = props;
 
   const intl = useIntl();
@@ -229,6 +232,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
           ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
             if (!isParamVisible(parameter)) return null;
 
+            console.log('parameter', parameter);
             const data = parameter?.uiDefinition;
             let inputComponent = undefined;
             if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {

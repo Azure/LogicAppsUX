@@ -36,7 +36,7 @@ export class StandardGatewayService implements IGatewayService {
     return this.fetchGatewaysList(connectorName);
   }
 
-  private fetchGatewaysList(apiName: string): Promise<Gateway[]> {
+  private async fetchGatewaysList(apiName: string): Promise<Gateway[]> {
     const filter = `apiName eq '${apiName}'`;
     const {
       apiVersion,
@@ -50,11 +50,11 @@ export class StandardGatewayService implements IGatewayService {
       },
     };
 
-    return this.options.httpClient
-      .get<ArmResources<Gateway>>(request)
-      .then((response) => response.value)
-      .catch((error) => {
-        throw new Error(error);
-      });
+    try {
+      const response = await this.options.httpClient.get<ArmResources<Gateway>>(request);
+      return response.value;
+    } catch (error) {
+      throw new Error(error as any);
+    }
   }
 }

@@ -2,6 +2,7 @@ import workflow from '../../../../__mocks__/workflows/Conditionals.json';
 import { HttpClient } from './httpClient';
 import {
   StandardConnectionService,
+  StandardGatewayService,
   StandardOAuthService,
   StandardOperationManifestService,
   StandardSearchService,
@@ -48,6 +49,18 @@ const oAuthService = new StandardOAuthService({
   resourceGroup: '',
   location: '',
 });
+const gatewayService = new StandardGatewayService({
+  baseUrl: '/url',
+  apiVersion: '2018-11-01',
+  httpClient,
+  apiHubServiceDetails: {
+    apiVersion: '2018-07-01-preview',
+    subscriptionId: '',
+    resourceGroup: '',
+    location: '',
+  }
+});
+
 export const App = () => {
   return (
     <DesignerProvider
@@ -58,6 +71,7 @@ export const App = () => {
           operationManifestService,
           searchService,
           oAuthService,
+          gatewayService,
         },
       }}
     >
