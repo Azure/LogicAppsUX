@@ -4,7 +4,6 @@ import type { FunctionData } from '../../../models/Function';
 export interface DataMapperApiServiceOptions {
   baseUrl: string;
   accessToken?: string;
-  resourceUrl?: string;
 }
 
 export class DataMapperApiService {
@@ -17,10 +16,6 @@ export class DataMapperApiService {
 
   public setAccessToken = (accessToken: string) => {
     this.options.accessToken = accessToken;
-  };
-
-  public setResourceURL = (resourceUrl: string) => {
-    this.options.resourceUrl = resourceUrl;
   };
 
   private getAccessTokenHeaders = () => {
@@ -45,7 +40,7 @@ export class DataMapperApiService {
   };
 
   private getSchemasUri = () => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/hostruntime/admin/vfs/Artifacts/Schemas?api-version=2018-11-01&relativepath=1`;
+    return `${this.options.baseUrl}/hostruntime/admin/vfs/Artifacts/Schemas?api-version=2018-11-01&relativepath=1`;
   };
 
   private getSchemaFileUri = (xmlName: string) => {
@@ -53,7 +48,7 @@ export class DataMapperApiService {
   };
 
   private getFunctionsManifestUri = () => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/transformations/getManifest?api-version=2019-10-01-edge-preview`;
+    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/transformations/getManifest?api-version=2019-10-01-edge-preview`;
   };
 
   private getGenerateXsltUri = () => {

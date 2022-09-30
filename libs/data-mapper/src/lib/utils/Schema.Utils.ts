@@ -13,7 +13,7 @@ export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended =>
 };
 
 const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPath: PathItem[]): SchemaNodeExtended => {
-  const pathToRoot: PathItem[] = [...parentPath, { key: schemaNode.key, name: schemaNode.name }];
+  const pathToRoot: PathItem[] = [...parentPath, { key: schemaNode.key, name: schemaNode.name, fullName: schemaNode.fullName }];
 
   const extendedSchemaNode: SchemaNodeExtended = {
     ...schemaNode,
@@ -65,10 +65,27 @@ export const hasAConnectionAtCurrentTargetNode = (
   connections: ConnectionDictionary
 ): boolean => {
   return Object.values(connections)
-    .filter((connection) => currentTargetNode.children.some((outputChild) => outputChild.key === connection.destination))
+    .filter((connection) => currentTargetNode.children.some((outputChild) => outputChild.key === connection.destination.key))
     .some(
       (connection) =>
         connection.reactFlowSource === `${sourcePrefix}${schemaNode.key}` ||
         connection.reactFlowDestination === `${targetPrefix}${schemaNode.key}`
     );
+};
+
+export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
+  if (schemaNode.key === nodeKey) {
+    return schemaNode;
+  }
+
+  let result: SchemaNodeExtended | undefined = undefined;
+  schemaNode.children.forEach((childNode) => {
+    const tempResult = findNodeForKey(nodeKey, childNode);
+
+    if (tempResult) {
+      result = tempResult;
+    }
+  });
+
+  return result;
 };

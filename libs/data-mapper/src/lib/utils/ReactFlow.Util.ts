@@ -11,7 +11,7 @@ import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { useMemo } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
-import { MarkerType, ConnectionLineType, Position } from 'reactflow';
+import { ConnectionLineType, MarkerType, Position } from 'reactflow';
 
 const getViewportWidth = (endX: number, startX: number) => endX - startX;
 
@@ -86,7 +86,7 @@ const convertInputToReactFlowParentAndChildNodes = (
   );
 
   combinedNodes.forEach((sourceNode) => {
-    const relatedConnections = getConnectionsForNode(connections, sourceNode.key, 'source');
+    const relatedConnections = getConnectionsForNode(connections, sourceNode.key, SchemaTypes.Source);
 
     reactFlowNodes.push({
       id: `${sourcePrefix}${sourceNode.key}`,
@@ -131,7 +131,7 @@ export const convertToReactFlowParentAndChildNodes = (
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
   const rootX = schemaType === SchemaTypes.Source ? getInputX(viewportCoords) : getRootOutputX(viewportCoords);
   const idPrefix = schemaType === SchemaTypes.Source ? sourcePrefix : targetPrefix;
-  const relatedConnections = getConnectionsForNode(connections, parentSchemaNode.key, 'source');
+  const relatedConnections = getConnectionsForNode(connections, parentSchemaNode.key, SchemaTypes.Source);
 
   reactFlowNodes.push({
     id: `${idPrefix}${parentSchemaNode.key}`,
@@ -260,10 +260,10 @@ export const useLayout = (
   return [reactFlowNodes, reactFlowEdges];
 };
 
-const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: string, nodeType: 'source' | 'target'): Connection[] => {
+const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: string, nodeType: SchemaTypes): Connection[] => {
   const relatedConnections: Connection[] = [];
   Object.keys(connections).forEach((key) => {
-    if ((nodeType === 'source' && key.startsWith(nodeKey)) || (nodeType === 'target' && key.endsWith(nodeKey))) {
+    if ((nodeType === SchemaTypes.Source && key.startsWith(nodeKey)) || (nodeType === SchemaTypes.Target && key.endsWith(nodeKey))) {
       relatedConnections.push(connections[key]);
     }
   });

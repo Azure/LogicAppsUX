@@ -162,4 +162,26 @@ export const functionMock: FunctionData[] = [
     description: 'Current date in the current time zone',
     tooltip: 'Current date',
   },
+  {
+    key: 'ToLower',
+    maxNumberOfInputs: 1,
+    type: 'TransformationFunction',
+    functionName: 'lower-case',
+    outputValueType: NormalizedDataType.String,
+    inputs: [
+      {
+        name: 'value',
+        allowedTypes: [NormalizedDataType.String],
+        isOptional: false,
+        allowCustomInput: true,
+        displayName: 'Value',
+        tooltip: 'The value to use',
+        placeholder: 'The value',
+      },
+    ],
+    displayName: 'To Lower',
+    category: FunctionCategory.String,
+    description: 'Sets a string to be all lower case',
+    tooltip: 'Lower case',
+  },
 ];

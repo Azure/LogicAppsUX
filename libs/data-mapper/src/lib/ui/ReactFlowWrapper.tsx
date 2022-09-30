@@ -76,6 +76,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
@@ -91,7 +92,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (currentTargetNode) {
       const connectionValues = Object.values(connections);
       const outputFilteredConnections = currentTargetNode.children.flatMap((childNode) => {
-        const foundConnection = connectionValues.find((connection) => connection.destination === childNode.key);
+        const foundConnection = connectionValues.find((connection) => connection.destination.key === childNode.key);
         return foundConnection ? [foundConnection] : [];
       });
 
@@ -181,7 +182,14 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onConnect = (connection: ReactFlowConnection) => {
     if (connection.target && connection.source) {
-      dispatch(makeConnection({ targetNodeKey: connection.target, value: connection.source }));
+      dispatch(
+        makeConnection({
+          destination: flattenedTargetSchema[connection.target],
+          source: flattenedSourceSchema[connection.source],
+          reactFlowDestination: connection.target,
+          reactFlowSource: connection.source,
+        })
+      );
     }
   };
 
@@ -193,10 +201,18 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     (oldEdge: ReactFlowEdge, newConnection: ReactFlowConnection) => {
       edgeUpdateSuccessful.current = true;
       if (newConnection.target && newConnection.source && oldEdge.target) {
-        dispatch(changeConnection({ targetNodeKey: newConnection.target, value: newConnection.source, oldConnectionKey: oldEdge.id }));
+        dispatch(
+          changeConnection({
+            destination: flattenedTargetSchema[newConnection.target],
+            source: flattenedSourceSchema[newConnection.source],
+            reactFlowDestination: newConnection.target,
+            reactFlowSource: newConnection.source,
+            oldConnectionKey: oldEdge.id,
+          })
+        );
       }
     },
-    [dispatch]
+    [dispatch, flattenedSourceSchema, flattenedTargetSchema]
   );
 
   const onEdgeUpdateEnd = useCallback(

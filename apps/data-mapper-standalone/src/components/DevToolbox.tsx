@@ -1,3 +1,4 @@
+import { simplePassthroughMapDefinition } from '../../../../__mocks__/mapDefinitions/TranscriptMapDefinitions';
 import { dataMapDataLoaderSlice, loadDataMap, type ThemeType } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -9,14 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 
 const themeOptions = ['Light', 'Dark'];
 
-export const mapFileOptions = ['SimpleCustomerOrder.json'];
-export const schemaFileOptions = ['SimpleInputOrderSchema.json', 'SimpleOutputOrderSchema.json', 'DemoSchema.json'];
+export const schemaFileOptions = ['SourceSchema.json', 'TargetSchema.json', 'SimpleInputOrderSchema.json', 'SimpleOutputOrderSchema.json'];
 
 export const DevToolbox: React.FC = () => {
-  const { theme, resourcePath, armToken, loadingMethod } = useSelector((state: RootState) => {
-    const { theme, resourcePath, armToken, loadingMethod } = state.dataMapDataLoader;
+  const { theme, rawDefinition, armToken, loadingMethod } = useSelector((state: RootState) => {
+    const { theme, rawDefinition, armToken, loadingMethod } = state.dataMapDataLoader;
 
-    return { theme, resourcePath, armToken, loadingMethod };
+    return { theme, rawDefinition, armToken, loadingMethod };
   });
 
   const { inputResourcePath, outputResourcePath } = useSelector((state: RootState) => {
@@ -29,7 +29,7 @@ export const DevToolbox: React.FC = () => {
 
   const changeResourcePathCB = useCallback(
     (_: unknown, newValue?: string) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeResourcePath(newValue ?? ''));
+      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(newValue ?? ''));
       dispatch(loadDataMap());
     },
     [dispatch]
@@ -37,15 +37,15 @@ export const DevToolbox: React.FC = () => {
 
   const resetToUseARM = useCallback(
     (_: unknown, newValue?: string) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeResourcePath(newValue ?? ''));
+      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(newValue ?? ''));
       dispatch(loadDataMap());
     },
     [dispatch]
   );
 
-  const changeDataMapResourcePathDropdownCB = useCallback(
+  const changeMapDefinitionResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeResourcePath((item?.key as string) ?? ''));
+      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition((item?.data as string) ?? ''));
       dispatch(loadDataMap());
     },
     [dispatch]
@@ -97,19 +97,21 @@ export const DevToolbox: React.FC = () => {
   );
 
   const themeDropdownOptions = themeOptions.map((theme) => ({ key: theme, text: theme }));
-  const dataMapDropdownOptions = mapFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
+  const mapDefinitionDropdownOptions: IDropdownOption<string>[] = [
+    { key: 'simplePassthroughMapDefinition', text: 'Simple Passthrough', data: simplePassthroughMapDefinition },
+  ];
   const schemaDropdownOptions = schemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
 
   const toolboxItems = [];
   if (loadingMethod === 'file') {
     toolboxItems.push(
-      <StackItem key={'dataMapDropDown'} style={{ width: '250px' }}>
+      <StackItem key={'mapDefinitionDropDown'} style={{ width: '250px' }}>
         <Dropdown
-          label="Data Map"
-          selectedKey={resourcePath}
-          onChange={changeDataMapResourcePathDropdownCB}
-          placeholder="Select a data map"
-          options={dataMapDropdownOptions}
+          label="Map Definition"
+          selectedKey={rawDefinition}
+          onChange={changeMapDefinitionResourcePathDropdownCB}
+          placeholder="Select a map definition"
+          options={mapDefinitionDropdownOptions}
         />
       </StackItem>
     );
@@ -142,7 +144,7 @@ export const DevToolbox: React.FC = () => {
           label="Resource Uri"
           description="/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}"
           onChange={changeResourcePathCB}
-          value={resourcePath ?? ''}
+          value={rawDefinition ?? ''}
         />
       </StackItem>
     );
