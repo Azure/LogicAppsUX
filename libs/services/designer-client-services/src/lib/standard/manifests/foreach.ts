@@ -20,7 +20,7 @@ export default {
         },
       },
     },
-    inputsLocation: ['inputs'],
+    inputsLocation: [],
     isInputsOptional: false,
 
     repetition: {

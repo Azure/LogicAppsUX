@@ -175,6 +175,7 @@ export const httpManifest = {
 export const httpTriggerManifest = {
   properties: {
     ...httpManifest.properties,
+    description: 'Trigger an event based on a select REST API.',
     recurrence: {
       type: RecurrenceType.Advanced,
     },
@@ -321,6 +322,31 @@ export const httpWithSwaggerManifest = {
     },
   },
 } as OperationManifest;
+
+export const httpWithSwaggerTriggerManifest = {
+  properties: {
+    ...httpWithSwaggerManifest.properties,
+
+    description: 'Trigger an event based on a select Swagger-enabled API.',
+
+    recurrence: {
+      type: RecurrenceType.Advanced,
+    },
+
+    settings: {
+      concurrency: {
+        scopes: [SettingScope.Trigger],
+      },
+      correlation: {
+        scopes: [SettingScope.Trigger],
+      },
+      retryPolicy: {
+        scopes: [SettingScope.Trigger],
+      },
+      secureData: {},
+    },
+  },
+};
 
 export const httpWebhookManifest = {
   properties: {
