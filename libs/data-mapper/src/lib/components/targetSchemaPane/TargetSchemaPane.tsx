@@ -72,10 +72,11 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
       // TODO: Sync w/ any type/expected-functionality updates
       if (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) {
+        console.log(`${schemaNode.name} children: ${numChildrenToggled} / ${schemaNode.children.length}`);
         // Is object parent
         if (numChildrenToggled === schemaNode.children.length) {
           newToggledStatesDictionary[schemaNode.key] = ItemToggledState.Completed;
-          numChildrenToggled += 1;
+          return 1;
         } else if (numChildrenToggled === 0) {
           newToggledStatesDictionary[schemaNode.key] = ItemToggledState.NotStarted;
         } else {
@@ -85,7 +86,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         // Is node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
         if (schemaNode.key in targetNodesWithConnections) {
           newToggledStatesDictionary[schemaNode.key] = ItemToggledState.Completed;
-          numChildrenToggled += 1;
+          return 1;
         } else {
           newToggledStatesDictionary[schemaNode.key] = ItemToggledState.NotStarted;
         }
