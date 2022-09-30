@@ -1,6 +1,6 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
-import { getConnectionMetadata } from '../../../core/actions/bjsworkflow/connections';
+import { getConnectionMetadata, needsAuth } from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
 import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
@@ -8,11 +8,11 @@ import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
-import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
-import type { ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
+import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft-logic-apps/designer-client-services';
+import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CreateConnectionTab = () => {
@@ -26,6 +26,15 @@ const CreateConnectionTab = () => {
   const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
+
+  const applyNewConnection = useCallback(
+    (newConnection: Connection, _newName: string) => {
+      dispatch(changeConnectionMapping({ nodeId, connectionId: newConnection?.id, connectorId: connector?.id ?? '' }));
+    },
+    [connector?.id, dispatch, nodeId]
+  );
 
   const createConnectionCallback = useCallback(
     async (displayName: string, selectedParameterSet?: ConnectionParameterSet, parameterValues: Record<string, any> = {}) => {
@@ -59,12 +68,49 @@ const CreateConnectionTab = () => {
         parametersMetadata
       );
 
-      dispatch(changeConnectionMapping({ nodeId, connectionId: newConnection.id, connectorId }));
+      applyNewConnection(newConnection, uniqueConnectionName);
       dispatch(showDefaultTabs());
       setIsLoading(false);
     },
-    [connectionMetadata, connector, dispatch, nodeId]
+    [applyNewConnection, connectionMetadata, connector, dispatch]
   );
+
+  const needsAuthentication = useMemo(() => needsAuth(connector), [connector]);
+  const authClickCallback = useCallback(async () => {
+    if (!connector?.id) return;
+
+    setIsLoading(true);
+    setErrorMessage(undefined);
+
+    const newName = await getUniqueConnectionName(connector.id);
+    const connectionInfo: ConnectionCreationInfo = {
+      displayName: newName,
+      connectionParametersSet: undefined,
+      connectionParameters: undefined,
+    };
+
+    try {
+      const { connection, errorMessage: e } = await ConnectionService().createAndAuthorizeOAuthConnection(
+        newName,
+        connector?.id ?? '',
+        connectionInfo
+      );
+      if (connection) {
+        applyNewConnection(connection, newName);
+        dispatch(showDefaultTabs());
+      } else if (e) {
+        setErrorMessage(e);
+      }
+    } catch (error) {
+      const errorMessage = `Failed to create OAuth connection: ${error}`;
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'create connection tab',
+        message: errorMessage,
+      });
+    }
+    setIsLoading(false);
+  }, [applyNewConnection, connector?.id, dispatch]);
 
   const cancelCallback = useCallback(() => {
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
@@ -82,6 +128,9 @@ const CreateConnectionTab = () => {
       isLoading={isLoading}
       cancelCallback={cancelCallback}
       hideCancelButton={!hasExistingConnection}
+      needsAuth={needsAuthentication}
+      authClickCallback={authClickCallback}
+      errorMessage={errorMessage}
     />
   );
 };
