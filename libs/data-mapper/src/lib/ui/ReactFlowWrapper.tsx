@@ -392,8 +392,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
           {sourceSchema && (
             <SchemaTree
               schema={sourceSchema}
-              currentlySelectedNodes={currentlyAddedSourceNodes}
-              visibleConnectedNodes={connectedSourceNodes}
+              toggledNodes={[...currentlyAddedSourceNodes, ...connectedSourceNodes]}
               onNodeClick={onToolboxItemClick}
             />
           )}
