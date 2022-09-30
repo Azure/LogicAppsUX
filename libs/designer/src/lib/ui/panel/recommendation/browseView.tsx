@@ -23,6 +23,11 @@ export const BrowseView = ({ filters }: { filters: Record<string, string> }) => 
           ret = !isBuiltInConnector(connector.id);
         }
       }
+      if (filters['actionType']) {
+        ret = ret
+          ? connector.properties.capabilities?.includes(filters['actionType'].toLowerCase()) ?? filters['actionType'] === 'actions'
+          : false;
+      }
       return ret;
     },
     [filters]

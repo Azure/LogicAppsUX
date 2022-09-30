@@ -42,6 +42,14 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
           ret = !isBuiltInConnector(searchResult.item.properties.api.id);
         }
       }
+      if (filters['actionType']) {
+        if (filters['actionType'] === 'actions') {
+          ret = ret ? !searchResult.item.properties.trigger : false;
+        } else {
+          ret = ret ? !!searchResult.item.properties.trigger : false;
+        }
+      }
+
       return ret;
     },
     [filters]

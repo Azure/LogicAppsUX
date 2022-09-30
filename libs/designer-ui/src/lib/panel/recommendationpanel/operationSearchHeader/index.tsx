@@ -44,6 +44,22 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
       key: 'runtime-shared',
       text: intl.formatMessage({ defaultMessage: 'Shared', description: 'Filter by Shared category of connectors' }),
     },
+    {
+      key: 'actionType',
+      text: intl.formatMessage({
+        defaultMessage: 'Action Type',
+        description: 'Filter by action type',
+      }),
+      itemType: DropdownMenuItemType.Header,
+    },
+    {
+      key: 'actionType-triggers',
+      text: intl.formatMessage({ defaultMessage: 'Triggers', description: 'Filter by Triggers category of connectors' }),
+    },
+    {
+      key: 'actionType-actions',
+      text: intl.formatMessage({ defaultMessage: 'Actions', description: 'Filter by Actions category of connectors' }),
+    },
   ];
   const searchResultsText = intl.formatMessage(
     {

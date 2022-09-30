@@ -1,5 +1,6 @@
+import type { RootState } from '../../../core';
 import { useAllOperations } from '../../../core/queries/browse';
-import { useSelectedOperationGroupId } from '../../../core/state/panel/panelSelectors';
+import { useSelectedNodeId, useSelectedOperationGroupId } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { BrowseView } from './browseView';
 import { OperationGroupDetailView } from './operationGroupDetailView';
@@ -9,13 +10,16 @@ import { areApiIdsEqual } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
-
+  const selectedNode = useSelectedNodeId();
+  const isNodeTrigger = useSelector((state: RootState) => !state.workflow.operations[selectedNode]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState<Record<string, string>>({});
+  const [filters, setFilters] = useState<Record<string, string>>({
+    actionType: isNodeTrigger ? 'triggers' : 'actions',
+  });
   const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
 
   const [isGrouped, setIsGrouped] = useState(false);
@@ -59,7 +63,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         setFilters={setFilters}
       />
       {selectedOperationGroupId ? (
-        <OperationGroupDetailView groupOperations={allOperationsForGroup} />
+        <OperationGroupDetailView groupOperations={allOperationsForGroup} filters={filters} />
       ) : searchTerm ? (
         <SearchView
           searchTerm={searchTerm}
