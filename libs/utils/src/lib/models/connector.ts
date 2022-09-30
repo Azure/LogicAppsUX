@@ -156,7 +156,7 @@ export interface ConnectionParameterSets {
 }
 
 export interface ConnectorProperty {
-  capabilities: string[];
+  capabilities?: string[];
   connectionDisplayName?: string;
   displayName: string;
   description?: string;
