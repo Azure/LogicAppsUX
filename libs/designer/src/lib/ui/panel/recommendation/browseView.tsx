@@ -24,9 +24,7 @@ export const BrowseView = ({ filters }: { filters: Record<string, string> }) => 
         }
       }
       if (filters['actionType']) {
-        ret = ret
-          ? connector.properties.capabilities?.includes(filters['actionType'].toLowerCase()) ?? filters['actionType'] === 'actions'
-          : false;
+        ret = ret ? connector.properties.capabilities?.includes(filters['actionType'].toLowerCase()) ?? true : false;
       }
       return ret;
     },
