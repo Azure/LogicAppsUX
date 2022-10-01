@@ -239,7 +239,7 @@ function getParametersForDynamicInvoke(referenceParameters: DynamicParameters, n
   const operationParameters: Record<string, any> = {};
 
   for (const [parameterName, parameter] of Object.entries(referenceParameters)) {
-    // TODO(trbaratc): <2337657> Verify nested dependency parameters work once dynamic values available on api.
+    // TODO: <2337657> Verify nested dependency parameters work once dynamic values available on api.
     const referencedParameter = getParameterFromName(nodeInputs, parameter.parameterReference);
 
     if (!referencedParameter) {

@@ -114,7 +114,7 @@ export const serializeOperation = async (
 ): Promise<LogicAppsV2.OperationDefinition | null> => {
   const operation = rootState.operations.operationInfo[operationId];
 
-  // TODO (Danielle): Add logic to identify if this operation is in Recommendation phase.
+  // TODO: Add logic to identify if this operation is in Recommendation phase.
   // If in recommendation phase then return null;
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
