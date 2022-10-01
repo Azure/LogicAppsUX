@@ -20,13 +20,34 @@ interface OperationSearchHeaderProps {
   selectedGroupId?: string;
   onDismiss: () => void;
   navigateBack: () => void;
+  isTriggerNode: boolean;
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
-  const { onSearch, onGroupToggleChange, isGrouped = false, searchTerm, selectedGroupId, onDismiss, navigateBack } = props;
+  const { onSearch, onGroupToggleChange, isGrouped = false, searchTerm, selectedGroupId, onDismiss, navigateBack, isTriggerNode } = props;
 
   const intl = useIntl();
 
+  const actionFilters = isTriggerNode
+    ? []
+    : [
+        {
+          key: 'actionType',
+          text: intl.formatMessage({
+            defaultMessage: 'Action Type',
+            description: 'Filter by action type',
+          }),
+          itemType: DropdownMenuItemType.Header,
+        },
+        {
+          key: 'actionType-triggers',
+          text: intl.formatMessage({ defaultMessage: 'Triggers', description: 'Filter by Triggers category of connectors' }),
+        },
+        {
+          key: 'actionType-actions',
+          text: intl.formatMessage({ defaultMessage: 'Actions', description: 'Filter by Actions category of connectors' }),
+        },
+      ];
   const DropdownControlledMultiExampleOptions = [
     {
       key: 'runtime',
@@ -44,22 +65,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
       key: 'runtime-shared',
       text: intl.formatMessage({ defaultMessage: 'Shared', description: 'Filter by Shared category of connectors' }),
     },
-    {
-      key: 'actionType',
-      text: intl.formatMessage({
-        defaultMessage: 'Action Type',
-        description: 'Filter by action type',
-      }),
-      itemType: DropdownMenuItemType.Header,
-    },
-    {
-      key: 'actionType-triggers',
-      text: intl.formatMessage({ defaultMessage: 'Triggers', description: 'Filter by Triggers category of connectors' }),
-    },
-    {
-      key: 'actionType-actions',
-      text: intl.formatMessage({ defaultMessage: 'Actions', description: 'Filter by Actions category of connectors' }),
-    },
+    ...actionFilters,
   ];
   const searchResultsText = intl.formatMessage(
     {

@@ -60,6 +60,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         navigateBack={navigateBack}
         filters={filters}
         setFilters={setFilters}
+        isTriggerNode={isNodeTrigger}
       />
       {selectedOperationGroupId ? (
         <OperationGroupDetailView groupOperations={allOperationsForGroup} filters={filters} />
