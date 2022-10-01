@@ -566,7 +566,7 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
     propertyPath = convertPathToBracketsFormat(name, optional);
   }
 
-  // Note for now.
+  // NOTE: If the token is inside array, instead of serialize to the wrong definition, we serialize to item() for now.
   // TODO.
   if (arrayDetails) {
     if (arrayDetails.loopSource) {

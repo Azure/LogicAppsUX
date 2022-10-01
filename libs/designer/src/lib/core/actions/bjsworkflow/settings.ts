@@ -523,7 +523,7 @@ const getSplitOnValue = (
   } else {
     if (manifest) {
       if (equals(manifest.properties.trigger, Constants.BATCH_TRIGGER)) {
-        // TODO - Consume top level required fields when available here.
+        // TODO (3727460) - Consume top level required fields when available here.
         const { alias, propertyName, required } = getSplitOnArrayAliasMetadata(manifest.properties.outputs, /* propertyRequired */ true);
         const propertyPath = alias || propertyName;
         if (propertyPath) {
