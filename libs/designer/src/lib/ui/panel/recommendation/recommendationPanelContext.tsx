@@ -1,6 +1,6 @@
 import type { RootState } from '../../../core';
 import { useAllOperations } from '../../../core/queries/browse';
-import { useSelectedNodeId, useSelectedOperationGroupId } from '../../../core/state/panel/panelSelectors';
+import { useSelectedOperationGroupId } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { BrowseView } from './browseView';
 import { OperationGroupDetailView } from './operationGroupDetailView';
@@ -14,8 +14,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
-  const selectedNode = useSelectedNodeId();
-  const isNodeTrigger = useSelector((state: RootState) => !state.workflow.operations[selectedNode]);
+  const isNodeTrigger = useSelector((state: RootState) => state.panel.addingTrigger);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Record<string, string>>({
     actionType: isNodeTrigger ? 'triggers' : 'actions',
