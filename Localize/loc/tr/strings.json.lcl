@@ -673,7 +673,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Search]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ara]]></Val>
+            <Val><![CDATA[Arama]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
