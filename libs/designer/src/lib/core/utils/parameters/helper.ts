@@ -567,7 +567,7 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
   }
 
   // NOTE: If the token is inside array, instead of serialize to the wrong definition, we serialize to item() for now.
-  // TODO.
+  // TODO: Need to have a full story for showing/hiding tokens that represent item().
   if (arrayDetails) {
     if (arrayDetails.loopSource) {
       return `@items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
