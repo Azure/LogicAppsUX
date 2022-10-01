@@ -644,7 +644,7 @@ const isPagingSupported = (
   swagger?: SwaggerParser,
   operationId?: string
 ): boolean => {
-  // TODO (andrewfowose): return false if isBranchNode
+  // TODO: return false if isBranchNode
   if (manifest) {
     const pagingSetting = getOperationSettingFromManifest(manifest, 'paging') as OperationManifestSetting<void> | undefined;
     return isSettingSupportedFromOperationManifest(pagingSetting, isTrigger);
@@ -774,7 +774,7 @@ const isInputsPropertySupportedInSecureDataSetting = (nodeType: string, manifest
     }
     return false;
   } else {
-    // TODO (andrewfowose) add else if to check if node is branch node and return false if so
+    // TODO add else if to check if node is branch node and return false if so
     const supportedTypes = [
       Constants.NODE.TYPE.API_CONNECTION,
       Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
@@ -796,7 +796,7 @@ const isOutputsPropertySupportedInSecureDataSetting = (nodeType: string, manifes
     }
     return false;
   } else {
-    // TODO (andrewfowose) add else if to check if node is branch node and return false if so
+    // TODO add else if to check if node is branch node and return false if so
     const supportedTypes = [
       Constants.NODE.TYPE.API_CONNECTION,
       Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
