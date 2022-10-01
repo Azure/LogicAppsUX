@@ -137,6 +137,18 @@
       "value": "Retorna os primeiros elementos de Contagem na matriz ou na cadeia de caracteres passada"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Shared"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -189,6 +201,12 @@
     {
       "type": 0,
       "value": "Recolher"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Select a filter"
     }
   ],
   "0ZlNtf": [
@@ -455,7 +473,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Pesquisar"
     }
   ],
   "2NYPLt": [
@@ -534,6 +552,12 @@
     {
       "type": 0,
       "value": "Adicionar conteúdo dinâmico"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Terms of Service"
     }
   ],
   "3FoqCK": [
@@ -744,6 +768,12 @@
     {
       "type": 0,
       "value": "14"
+    }
+  ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Action Type"
     }
   ],
   "5J7j9k": [
@@ -1469,6 +1499,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Signing in..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1503,6 +1539,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Sign in to create a connection to "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1846,6 +1896,12 @@
     {
       "type": 0,
       "value": "Converte uma cadeia de caracteres que o carimbo de data/hora passou de um UTC para um fuso horário de destino"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Action"
     }
   ],
   "IjZFjQ": [
@@ -2280,7 +2336,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Esquema de destino"
     }
   ],
   "N2CF0J": [
@@ -2347,6 +2403,12 @@
     {
       "type": 0,
       "value": "Terça-feira"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2485,6 +2547,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -3568,6 +3636,20 @@
       "value": "Função"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Failed with error: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Please sign in again."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3594,6 +3676,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "bS5DyV": [
@@ -4705,6 +4793,12 @@
       "value": "Necessário. A cadeia de caracteres a ser convertida em letras minúsculas. Se um caractere na cadeia de caracteres não tiver um equivalente em letras minúsculas, o caractere será incluído inalterado na cadeia de caracteres retornada."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Sign in to connector"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4899,6 +4993,12 @@
       "value": "Cabeçalhos"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-App"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -4957,6 +5057,12 @@
     {
       "type": 0,
       "value": "Retorna uma única matriz ou um único objeto que tem elementos comuns entre as matrizes ou os objetos passados. Os parâmetros para a função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura deles). Se houver dois objetos com o mesmo nome, o último objeto com esse nome aparecerá no objeto final."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Triggers"
     }
   ],
   "pozypE": [
@@ -5776,6 +5882,12 @@
     {
       "type": 0,
       "value": "Valor"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Sign in"
     }
   ],
   "y3AZQB": [
