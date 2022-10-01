@@ -16,7 +16,7 @@ export interface ParentPropertyInfo {
   groupName?: string;
 }
 
-// NOTE(tonytang): Below options are internal and should not be passed in except when called by the schema processor itself.
+// Note: Below options are internal and should not be passed in except when called by the schema processor itself.
 export interface InternalSchemaProcessorOptions {
   arrayOutputDepth?: number;
   isNested?: boolean;
@@ -92,7 +92,7 @@ export class SchemaProcessor {
         break;
 
       case SwaggerConstants.Types.Object:
-        // TODO(nimrodg): this condition will go away once Button trigger can fupport Object in the UI
+        // TODO: this condition will go away once Button trigger can fupport Object in the UI
         if (
           this.options.fileParameterAware &&
           schema.properties?.[SwaggerConstants.FILE_PARAMETER_KEYS.CONTENT] &&
@@ -116,7 +116,7 @@ export class SchemaProcessor {
     return this._sortProperties(properties);
   }
 
-  // TODO(uxteam): Might have to redo for handling primitive arrays
+  // TODO: Might have to redo for handling primitive arrays
   private _getArrayProperties(schema: SchemaObject, skipParent = false): SchemaProperty[] {
     const itemsSchema = (this._dereferenceRefSchema(schema.items as Schema) || {}) as SchemaObject;
     const itemsType = itemsSchema.type;
@@ -145,14 +145,14 @@ export class SchemaProcessor {
         };
       }
 
-      // NOTE(psamband): Reset the prefix only while expanding array properties for outputs.
+      // Note: Reset the prefix only while expanding array properties for outputs.
       if (!this.options.isInputSchema) {
         this.options.prefix = undefined;
       }
 
       const summary = schema[SwaggerConstants.ExtensionProperties.Summary];
       const intl = getIntl();
-      // NOTE(johnwa): always apply array name as prefix for input schema
+      // Note: always apply array name as prefix for input schema
       const title = this.options.isInputSchema
         ? schema.title ||
           (this.options.currentKey === ParameterKeyUtility.WildIndexSegment
@@ -196,7 +196,7 @@ export class SchemaProcessor {
     return arrayOutputs;
   }
 
-  // TODO(nimrodg): This should go away once Button ui supports Object type parameters. for now - convert the object to scalar and sets contentHint to FILE.
+  // TODO: This should go away once Button ui supports Object type parameters. for now - convert the object to scalar and sets contentHint to FILE.
   private _getFileProperties(schema: SchemaObject): SchemaProperty[] {
     const clonedSchema = clone(schema);
     clonedSchema.type = SwaggerConstants.Types.String;
@@ -431,7 +431,7 @@ export class SchemaProcessor {
       }
     }
 
-    // NOTE(psamband): Prefix is not well defined for items in array of primitive types. Hence explicitly setting the name.
+    // Note: Prefix is not well defined for items in array of primitive types. Hence explicitly setting the name.
     if (
       this.options.isInputSchema &&
       this.options.parentProperty &&

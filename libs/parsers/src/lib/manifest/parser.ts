@@ -123,7 +123,7 @@ export class ManifestParser {
     );
 
     /*
-     * NOTE(trbaratc): Filtering the object output parameter representing outputs because it is not currently handled properly during serialization, etc.
+     * Note: Filtering the object output parameter representing outputs because it is not currently handled properly during serialization, etc.
      * If we decide in the future we want to support an "outputs" token for open api, we can remove this and add handling for it.
      */
     const filteredOutputParameters = !this._operationManifest.properties.includeRootOutputs

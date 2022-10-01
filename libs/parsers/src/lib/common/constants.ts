@@ -138,7 +138,7 @@ export const OutputSource = {
   Outputs: 'outputs',
 };
 
-// NOTE(shimedh): Update _getTokenTitle method in tokeninputs when a new entry is added in OutputKeys
+// Note: Update _getTokenTitle method in tokeninputs when a new entry is added in OutputKeys
 export const OutputKeys = {
   Body: 'key-body-output',
   Headers: 'key-headers-output',

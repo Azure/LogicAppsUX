@@ -231,7 +231,7 @@ export class StandardOperationManifestService implements IOperationManifestServi
         properties: { brandColor, description, iconUri, manifest, operationType },
       } = response;
 
-      // TODO(psamband): Remove below patching of connection when backend api sends correct information for service providers
+      // TODO: Remove below patching of connection when backend api sends correct information for service providers
       const operationManifest = {
         properties: {
           brandColor,

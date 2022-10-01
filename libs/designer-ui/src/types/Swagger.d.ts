@@ -215,7 +215,7 @@ declare namespace Swagger {
     minProperties?: number;
     required?: string[];
     enum?: any[];
-    type?: string; // NOTE(psamband): We might need to add support for string[] here later.
+    type?: string; // Note: We might need to add support for string[] here later.
     items?: Schema;
     allOf?: Schema[];
     properties?: Record<string, Schema>;

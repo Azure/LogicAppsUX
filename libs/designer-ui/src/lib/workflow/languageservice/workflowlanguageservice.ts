@@ -363,7 +363,7 @@ function generateSignaturesForVariableParameters(
   return variableSignatures;
 }
 
-// TODO(psamband): The parse function currently does not handle wrongly entered syntax,
+// TODO: The parse function currently does not handle wrongly entered syntax,
 // Need to update for invalid functions like guid()))).
 function parseExpression(value: string, position: Position, templateFunctions: Record<string, FunctionDefinition>): ExpressionInfo | null {
   // parsing multi-line values
@@ -405,7 +405,7 @@ function parseExpression(value: string, position: Position, templateFunctions: R
       currentToken = scanner.getNextToken();
     }
   } catch {
-    // NOTE(psamband): Exceptions thrown by the scanner and proceed with recognized tokens.
+    // Note: Exceptions thrown by the scanner and proceed with recognized tokens.
   }
 
   if (!identifiersInfo.length) {

@@ -87,12 +87,12 @@ function getCastingTemplate(fromType: string, fromFormat: string, toType: string
   toType = toType ? toType.toLowerCase() : '';
   toFormat = toFormat ? toFormat.toLowerCase() : '';
 
-  // NOTE(shimedh): If toType is any, we should not add any casting function.
+  // Note: If toType is any, we should not add any casting function.
   if (toType === Constants.SWAGGER.TYPE.ANY) {
     return undefined;
   }
 
-  // NOTE(tonytang): Below code assumed the type is string, thus handle file type here.
+  // Note: Below code assumed the type is string, thus handle file type here.
   if (fromType === Constants.SWAGGER.TYPE.FILE || toType === Constants.SWAGGER.TYPE.FILE) {
     if (toType === Constants.SWAGGER.TYPE.FILE) {
       if (fromType === Constants.SWAGGER.TYPE.STRING) {

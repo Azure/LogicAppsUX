@@ -681,7 +681,7 @@ function processPathInputs(pathValue: string, pathTemplate: string): Record<stri
             throw new Error(errorMismatchSegments);
           }
 
-          // NOTE(johnwa): if the section contains more than one parameter, split the section by placeholder, then match each segment using prefix
+          // Note: if the section contains more than one parameter, split the section by placeholder, then match each segment using prefix
           let startPos = 0;
           let pos = templateSection.indexOf(operationPathDelimiter, startPos);
           while (pos > -1) {

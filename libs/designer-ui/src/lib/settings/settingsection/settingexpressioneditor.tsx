@@ -71,7 +71,7 @@ export const ExpressionsEditor = ({
     iconName: 'Add',
   };
 
-  // const expressionRef = useRef<typeof Expression & { focus: any }>(); //TODO(andrewfowose): implement focus
+  // const expressionRef = useRef<typeof Expression & { focus: any }>(); //TODO: implement focus
   const [expressions, setExpressions] = useState(initialExpressions);
 
   const handleAddClick = (): void => {

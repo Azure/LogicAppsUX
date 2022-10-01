@@ -31,7 +31,7 @@ export const ButtonPivot: React.FC<ButtonPivotProps> = ({
   const stackItems = buttons.map((buttonProps, index) => {
     const BundledIcon = bundleIcon(buttonProps.filledIcon, buttonProps.regularIcon);
 
-    // TODO (refortie) - Theme buttons on hover
+    // TODO - Theme buttons on hover
     return (
       <Tooltip key={index} content={buttonProps.tooltip} appearance="inverted" positioning="above-start" relationship="label">
         <Tab icon={<BundledIcon />} {...buttonProps} />

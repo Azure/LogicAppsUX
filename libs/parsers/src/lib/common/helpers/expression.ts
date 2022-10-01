@@ -7,7 +7,7 @@ export function isNumeric(ch: string) {
 }
 
 export function isWhitespace(ch: string) {
-  // NOTE(joechung): https://msdn.microsoft.com/en-us/library/system.char.iswhitespace.aspx
+  // Note: https://msdn.microsoft.com/en-us/library/system.char.iswhitespace.aspx
   switch (ch) {
     case '\u0020':
     case '\u1680':

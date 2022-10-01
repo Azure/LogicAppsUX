@@ -234,7 +234,7 @@ export default {
     VALUELINK: 'valuelink',
     VALUELIST: 'valuelist',
   },
-  // NOTE(johnwa): The resources string for category are matching with prefix: TEMPLATE_PICKER_CATEGORY_
+  // Note: The resources string for category are matching with prefix: TEMPLATE_PICKER_CATEGORY_
   TEMPLATE_CATEGORIES: ['BLOCKCHAIN', 'ENTERPRISE_INTEGRATION', 'GENERAL', 'PRODUCTIVITY', 'SCHEDULE', 'SECURITY', 'SOCIAL', 'SYNC'],
   TEMPLATE_PICKER_SORT: {
     CREATED_TIME: 'TEMPLATE_PICKER_SORT_CREATED_TIME',

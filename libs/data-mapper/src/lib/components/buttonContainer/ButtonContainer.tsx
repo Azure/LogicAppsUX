@@ -29,7 +29,7 @@ export const ButtonContainer: React.FC<ButtonContainerProps> = ({
   const stackItems = buttons.map((buttonProps, index) => {
     const BundledIcon = bundleIcon(buttonProps.filledIcon, buttonProps.regularIcon);
 
-    // TODO (refortie) - Theme buttons on hover
+    // TODO - Theme buttons on hover
     return (
       <StackItem key={index}>
         <Tooltip content={buttonProps.tooltip} relationship="label">

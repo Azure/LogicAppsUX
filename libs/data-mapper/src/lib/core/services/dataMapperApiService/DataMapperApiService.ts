@@ -8,7 +8,7 @@ export interface DataMapperApiServiceOptions {
 }
 
 export class DataMapperApiService {
-  // TODO (danielle): add back when questions answered
+  // TODO: add back when questions answered
   private options: DataMapperApiServiceOptions;
 
   constructor(options: DataMapperApiServiceOptions) {
@@ -49,7 +49,7 @@ export class DataMapperApiService {
   };
 
   private getSchemaFileUri = (xmlName: string) => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`; // TODO (danielle): to test
+    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`; // TODO: to test
   };
 
   private getFunctionsManifestUri = () => {

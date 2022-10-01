@@ -173,7 +173,7 @@ export interface OperationManifestProperties {
   recurrence?: RecurrenceSetting;
 
   inputs?: SwaggerSchema;
-  inputsLocation?: string[]; // NOTE(tonytang): If not specified, default value is [ 'inputs' ]
+  inputsLocation?: string[]; // Note: If not specified, default value is [ 'inputs' ]
   isInputsOptional?: boolean;
 
   outputs?: SwaggerSchema;
@@ -182,7 +182,7 @@ export interface OperationManifestProperties {
   };
 
   /*
-   * NOTE(trbaratc): Output resolution takes place as follows. If no payload outputs are present, then use outputs.
+   * Note: Output resolution takes place as follows. If no payload outputs are present, then use outputs.
    * If payload outputs are present then walk the path defined by alternativeOutputs.keyPath to find the outputsKey. If the outputsKey is not defined, use outputs.
    * If outputsKey is defined and specifically present inside of alternativeOutputs.schemas, use the corresponding schema from alternativeOutputs.schemas.
    * Else, if outputsKey is defined but not specifically considered, use alternativeOutputs.defaultSchema.

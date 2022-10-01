@@ -3,7 +3,7 @@ export interface Exception {
   code?: string;
   message: string;
   data?: Record<string, any>;
-  // NOTE(prshrest): any is used as a fallback in case it is not an Exception.
+  // Note: any is used as a fallback in case it is not an Exception.
   innerException?: Exception | any;
   stack?: string;
 }

@@ -455,7 +455,7 @@ export default {
     DESIGNER: 'designer:',
     INITIALIZE_NODES: 'designer:initializeNodes',
     INITIALIZE_TOPOLOGY: 'designer:initializeTopology',
-    // TODO(psamband): Prefix the existing profiling events to have this key
+    // TODO: Prefix the existing profiling events to have this key
     NODEID: 'nodeId:',
     PRE_INITIALIZE_NODES: 'designer:preInitializeNodes',
     POST_INITIALIZE_NODES: 'designer:postInitializeNodes',
@@ -477,7 +477,7 @@ export default {
     VALUE_TITLE: 'value-title',
   },
   RAW: 'Raw',
-  // NOTE(johnwa): DEFAULT_RECURRENCE frequency should same with RECURRENCE_FREQUENCY_VALUES value
+  // Note: DEFAULT_RECURRENCE frequency should same with RECURRENCE_FREQUENCY_VALUES value
   DEFAULT_RECURRENCE: {
     FREE: {
       interval: 1,
@@ -502,7 +502,7 @@ export default {
     WEEKDAYS: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
     HOURS: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
   },
-  // NOTE(ramacfar): The order of these entries must match the order of the resource strings in resources.resjson.
+  // Note: The order of these entries must match the order of the resource strings in resources.resjson.
   RECURRENCE_TIMEZONE_VALUES: [
     'Dateline Standard Time',
     'UTC-11',
