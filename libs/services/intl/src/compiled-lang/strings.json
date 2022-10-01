@@ -1505,6 +1505,12 @@
       "value": "Response"
     }
   ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
+    }
+  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -1747,6 +1753,12 @@
     {
       "type": 0,
       "value": "Returns true if the parameters are false"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "GdnEhu": [
@@ -3637,6 +3649,12 @@
       "value": "Actions"
     }
   ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -4377,6 +4395,12 @@
       "value": "Test"
     }
   ],
+  "inn/0k": [
+    {
+      "type": 0,
+      "value": "Move down"
+    }
+  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4637,6 +4661,12 @@
     {
       "type": 0,
       "value": "Back"
+    }
+  ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
     }
   ],
   "lcVG4C": [
@@ -5749,10 +5779,22 @@
       "value": "Ctrl + Z"
     }
   ],
+  "xFQdSb": [
+    {
+      "type": 0,
+      "value": "Move up"
+    }
+  ],
   "xJ6vjn": [
     {
       "type": 0,
       "value": "Returns a string representation of a URI encoded string"
+    }
+  ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
     }
   ],
   "xN3GEX": [
@@ -5855,6 +5897,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [

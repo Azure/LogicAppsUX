@@ -47,6 +47,7 @@ export * from './modals';
 export * from './monitoring';
 export * from './monitoring/statuspill/images';
 export * from './overview';
+export * from './querybuilder';
 export * from './pager';
 export * from './peek';
 export * from './panel/panelcontainer';

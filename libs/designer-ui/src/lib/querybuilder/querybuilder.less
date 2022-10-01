@@ -1,0 +1,82 @@
+@import (reference) '../variables.less';
+
+.msla-querybuilder-group-dropdown-container {
+  width: 70px;
+}
+
+.msla-querybuilder-row-container {
+  height: 32px;
+  border-left: 1px solid @brandColor;
+  margin-left: 35px;
+  display: flex;
+  align-items: center;
+
+  .msla-querybuilder-row-gutter-hook {
+    width: 30px;
+    border-bottom: 1px solid @brandColor;
+  }
+  .msla-querybuilder-row-checkbox {
+    padding: 0 10px;
+  }
+  .msla-querybuilder-row-content {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    .msla-querybuilder-row-value-input {
+      width: 100%;
+      border-radius: 2px;
+      position: relative;
+      .editor-input {
+        outline: 1px solid @panel-mode-panel-border-color;
+        margin: 1px;
+        resize: none;
+        font-size: 12px;
+        tab-size: 1;
+        min-height: 24px;
+        line-height: 24px;
+        caret-color: #444;
+        padding-inline-start: 5px;
+      }
+      .editor-placeholder {
+        color: #696969;
+        overflow: hidden;
+        position: absolute;
+        text-overflow: ellipsis;
+        margin-top: -22px;
+        margin-left: 7px;
+        font-size: 12px;
+        user-select: none;
+        display: inline-block;
+        pointer-events: none;
+      }
+    }
+    .msla-querybuilder-row-dropdown-container {
+      outline: 1px solid @panel-mode-panel-border-color;
+      margin: 1px;
+    }
+  }
+}
+
+.msla-querybuilder-row-add-container {
+  height: 32px;
+  border-left: 1px solid @brandColor;
+  margin-left: 35px;
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  .msla-querybuilder-row-gutter-hook {
+    width: 70px;
+    border-bottom: 1px solid @brandColor;
+  }
+}
+.msla-querybuilder-row-add-container:after {
+  content: '';
+  width: 1.1px;
+  height: 50%;
+  background-color: white;
+  position: absolute;
+  left: -1px;
+  top: 16px;
+}

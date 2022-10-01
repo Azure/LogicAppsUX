@@ -83,8 +83,8 @@ export const BaseEditor = ({
   tokenPickerButtonProps,
   isTrigger,
   GetTokenPicker,
-  onBlur,
   onFocus,
+  onBlur,
 }: BaseEditorProps) => {
   const intl = useIntl();
   const editorId = useId('msla-tokenpicker-callout-location');
@@ -119,6 +119,7 @@ export const BaseEditor = ({
     setInTokenPicker(false);
     onFocus?.();
   };
+
   const handleBlur = () => {
     if (tokens && !getInTokenPicker()) {
       setInTokenPicker(false);

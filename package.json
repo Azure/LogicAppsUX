@@ -88,6 +88,7 @@
     "react-intl": "6.0.8",
     "react-markdown": "8.0.3",
     "react-query": "3.39.2",
+    "react-querybuilder": "^4.5.3",
     "react-redux": "8.0.2",
     "react-remark": "2.1.0",
     "react-router-dom": "6.3.0",

@@ -146,7 +146,7 @@ const TokenField = ({
           isTrigger={isTrigger}
           initialValue={value}
           GetTokenPicker={GetTokenPicker}
-          onChange={onValueChange}
+          editorBlur={onValueChange}
         />
       );
   }

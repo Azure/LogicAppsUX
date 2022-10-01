@@ -6,29 +6,13 @@ import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
-const dropdownStyles: Partial<IDropdownStyles> = {
-  root: {
-    minHeight: '30px',
-    fontSize: '14px',
-  },
-  dropdown: {
-    minHeight: '30px',
-  },
-  title: {
-    height: '30px',
-    fontSize: '14px',
-    lineHeight: '30px',
-  },
-  caretDownWrapper: {
-    paddingTop: '4px',
-  },
-};
-
 interface DropdownEditorProps {
   multiSelect?: boolean;
   initialValue: ValueSegment[];
   options: DropdownItem[];
   readonly?: boolean;
+  height?: number;
+  fontSize?: number;
   onChange?: ChangeHandler;
 }
 
@@ -40,10 +24,35 @@ export interface DropdownItem {
   type?: string;
 }
 
-export const DropdownEditor = ({ multiSelect = false, initialValue, readonly, options }: DropdownEditorProps): JSX.Element => {
+export const DropdownEditor = ({
+  multiSelect = false,
+  initialValue,
+  readonly,
+  options,
+  height,
+  fontSize,
+}: DropdownEditorProps): JSX.Element => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? getSelectedKeys(options, initialValue) : undefined);
   const [dropdownOptions] = useState<IDropdownOption[]>(getOptions(options));
+
+  const dropdownStyles: Partial<IDropdownStyles> = {
+    root: {
+      minHeight: height ?? '30px',
+      fontSize: fontSize ?? '14px',
+    },
+    dropdown: {
+      minHeight: height ?? '30px',
+    },
+    title: {
+      height: height ?? '30px',
+      fontSize: fontSize ?? '14px',
+      lineHeight: height ?? '30px',
+    },
+    caretDownWrapper: {
+      paddingTop: '4px',
+    },
+  };
 
   const handleOptionSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option) {

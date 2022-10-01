@@ -4,12 +4,11 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
-  DictionaryType, // EditorLanguage,
-  ValueSegmentType, // CodeEditor, // HTMLEditor,
-  TokenPicker,
-  TokenType,
-  DictionaryEditor,
-  testTokenSegment, // SchemaEditor, // Combobox,
+  QueryBuilderEditor, // DictionaryType, // EditorLanguage,
+  // ValueSegmentType, // CodeEditor, // HTMLEditor,
+  TokenPicker, // TokenType,
+  // DictionaryEditor,
+  // testTokenSegment, // SchemaEditor, // Combobox,
   // ArrayEditor,
   Scratch, // StringEditor,
   // AuthenticationEditor,
@@ -46,6 +45,7 @@ export const ScratchTab = () => {
   const children = (): React.ReactNode => {
     return (
       <>
+        <QueryBuilderEditor GetTokenPicker={GetTokenPicker} readonly={false} />
         {/* <CodeEditor
           initialValue={[
             {
@@ -245,7 +245,7 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         /> */}
-        <DictionaryEditor
+        {/* <DictionaryEditor
           initialItems={[
             {
               key: [
@@ -314,7 +314,7 @@ export const ScratchTab = () => {
           dictionaryType={DictionaryType.TABLE}
           keyTitle={'Header'}
           valueTitle={'Value'}
-        />
+        /> */}
         {/* <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} /> */}
         {/* <StringEditor
           initialValue={[
