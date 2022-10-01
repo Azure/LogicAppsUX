@@ -1528,7 +1528,7 @@ export function updateTokenMetadata(
     } else if (equals(nodeType, Constants.NODE.TYPE.COMPOSE)) {
       token.title = 'Outputs';
     } else if (token.tokenType === TokenType.ITEM) {
-      // TODO is removed.
+      // TODO: Remove this and other parts in this method when the Feature flag (foreach tokens) is removed.
       token.title = 'Current item';
       token.type = Constants.SWAGGER.TYPE.ANY;
     } else {
