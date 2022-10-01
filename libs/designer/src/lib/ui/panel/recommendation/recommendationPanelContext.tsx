@@ -1,3 +1,4 @@
+import type { RootState } from '../../../core';
 import { useAllOperations } from '../../../core/queries/browse';
 import { useSelectedOperationGroupId } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
@@ -9,12 +10,15 @@ import { areApiIdsEqual } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
 import { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const dispatch = useDispatch();
-
+  const isNodeTrigger = useSelector((state: RootState) => state.panel.addingTrigger);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState<Record<string, string>>({
+    actionType: isNodeTrigger ? 'triggers' : 'actions',
+  });
   const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
 
   const [isGrouped, setIsGrouped] = useState(false);
@@ -54,18 +58,22 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         selectedGroupId={selectedOperationGroupId}
         onDismiss={onDismiss}
         navigateBack={navigateBack}
+        filters={filters}
+        setFilters={setFilters}
+        isTriggerNode={isNodeTrigger}
       />
       {selectedOperationGroupId ? (
-        <OperationGroupDetailView groupOperations={allOperationsForGroup} />
+        <OperationGroupDetailView groupOperations={allOperationsForGroup} filters={filters} />
       ) : searchTerm ? (
         <SearchView
           searchTerm={searchTerm}
           allOperations={allOperations.data ?? []}
           groupByConnector={isGrouped}
           isLoading={allOperations.isLoading}
+          filters={filters}
         />
       ) : (
-        <BrowseView />
+        <BrowseView filters={filters} />
       )}
     </RecommendationPanel>
   );

@@ -207,7 +207,7 @@ export const PanelRoot = (): JSX.Element => {
   const togglePanel = (): void => (!collapsed ? collapse() : expand());
 
   return isDiscovery ? (
-    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width} />
+    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width} key={selectedNode} />
   ) : (
     <PanelContainer
       cardIcon={iconUriResult.result}

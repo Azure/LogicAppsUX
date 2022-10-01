@@ -17,7 +17,7 @@ const PlaceholderNode = ({ targetPosition = Position.Top, sourcePosition = Posit
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId: 'root' };
-    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
+    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, addingTrigger: true }));
   }, [dispatch]);
 
   return (

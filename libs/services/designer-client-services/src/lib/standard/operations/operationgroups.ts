@@ -5,6 +5,7 @@ export const controlGroup = {
     brandColor: '#8C3900',
     description: 'Control operations',
     displayName: 'Control',
+    capabilities: ['actions'],
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/control.svg',
   },
 };
@@ -16,6 +17,7 @@ export const dateTimeGroup = {
     brandColor: '#1F85FF',
     description: 'Date Time operations',
     displayName: 'Date Time',
+    capabilities: ['actions'],
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/recurrence.svg',
   },
 };
@@ -27,6 +29,7 @@ export const httpGroup = {
     brandColor: '#709727',
     description: 'All Http operations',
     displayName: 'HTTP',
+    capabilities: ['actions'],
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/http.svg',
   },
 };
@@ -39,6 +42,7 @@ export const requestGroup = {
     description: 'Operations to handle inbound request to workflow and send workflow response',
     displayName: 'Request',
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/request.svg',
+    capabilities: ['actions', 'triggers'],
   },
 };
 
@@ -62,5 +66,6 @@ export const variableGroup = {
     description: 'All variable operations',
     displayName: 'Variables',
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/variable.svg',
+    capabilities: ['actions'],
   },
 };

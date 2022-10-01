@@ -7,4 +7,5 @@ export interface OperationActionData {
   connectorName?: string;
   brandColor?: string;
   iconUri?: string;
+  isTrigger: boolean;
 }

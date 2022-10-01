@@ -9,6 +9,7 @@ export interface PanelState {
   registeredTabs: Record<string, PanelTab>;
   selectedTabName: string | undefined;
   selectedOperationGroupId: string;
+  addingTrigger: boolean;
 }
 
 export interface RelationshipIds {

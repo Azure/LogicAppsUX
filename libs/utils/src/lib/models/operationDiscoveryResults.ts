@@ -59,6 +59,7 @@ export interface BuiltInOperation {
   brandColor: string;
   visibility: string;
   iconUri: string;
+  trigger?: string;
   capabilities?: string[];
 }
 
