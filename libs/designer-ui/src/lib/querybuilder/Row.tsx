@@ -22,6 +22,9 @@ const menuIconProps: IIconProps = {
 interface RowProps {
   checked?: boolean;
   rowMenuItems: IOverflowSetItemProps[];
+  keyValue?: ValueSegment[];
+  valueValue?: ValueSegment[];
+  dropdownValue?: string;
   GetTokenPicker: (
     editorId: string,
     labelId: string,
@@ -30,7 +33,7 @@ interface RowProps {
   ) => JSX.Element;
 }
 
-export const Row = ({ checked = false, rowMenuItems, GetTokenPicker }: RowProps) => {
+export const Row = ({ checked = false, rowMenuItems, keyValue = [], valueValue = [], dropdownValue, GetTokenPicker }: RowProps) => {
   const intl = useIntl();
   const [key, setKey] = useState<string>('');
 
@@ -74,7 +77,7 @@ export const Row = ({ checked = false, rowMenuItems, GetTokenPicker }: RowProps)
       <div className="msla-querybuilder-row-content">
         <StringEditor
           className={'msla-querybuilder-row-value-input'}
-          initialValue={[]}
+          initialValue={keyValue}
           placeholder={rowValueInputPlaceholder}
           singleLine={true}
           // remove
@@ -82,10 +85,10 @@ export const Row = ({ checked = false, rowMenuItems, GetTokenPicker }: RowProps)
           onChange={updateKey}
           GetTokenPicker={GetTokenPicker}
         />
-        <RowDropdown disabled={key.length === 0} />
+        <RowDropdown disabled={key.length === 0} selectedOption={dropdownValue} />
         <StringEditor
           className={'msla-querybuilder-row-value-input'}
-          initialValue={[]}
+          initialValue={valueValue}
           placeholder={rowValueInputPlaceholder}
           // remove
           BasePlugins={{ tokens: false }}

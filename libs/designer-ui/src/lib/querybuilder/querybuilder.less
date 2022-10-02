@@ -64,6 +64,11 @@
   display: inline-flex;
   align-items: center;
 
+  &.firstGroup {
+    margin-left: 0px;
+    border-left: none;
+  }
+
   .msla-querybuilder-group-gutter-hook {
     width: 55px;
     border-bottom: 1px solid @brandColor;
@@ -76,16 +81,24 @@
     align-items: center;
     min-width: 550px;
     position: relative;
+    margin: 10px 0px;
 
     &.collapsed {
       min-width: 0px;
-      width: 125px;
+      width: 130px;
       min-height: 50px;
+      margin: 0px;
+      margin-right: 320px;
+    }
+
+    &.firstGroup {
+      width: 550px;
+      background-color: inherit;
     }
 
     .msla-querybuilder-row-section {
       display: block;
-      width: 100%;
+      width: 550px;
     }
 
     .msla-querybuilder-group-checkbox {
@@ -113,7 +126,7 @@
   position: relative;
 
   .msla-querybuilder-row-gutter-hook {
-    width: 70px;
+    width: 50px;
     border-bottom: 1px solid @brandColor;
   }
 }

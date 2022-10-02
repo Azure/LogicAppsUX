@@ -45,7 +45,25 @@ export const ScratchTab = () => {
   const children = (): React.ReactNode => {
     return (
       <>
-        <QueryBuilderEditor GetTokenPicker={GetTokenPicker} readonly={false} />
+        <QueryBuilderEditor
+          GetTokenPicker={GetTokenPicker}
+          readonly={false}
+          groupProps={{
+            type: 'group',
+            checked: false,
+            selectedOption: 'or',
+            items: [
+              { type: 'row', checked: true },
+              { type: 'row' },
+              { type: 'group', checked: false, items: [{ type: 'row' }] },
+              {
+                type: 'group',
+                checked: true,
+                items: [{ type: 'row' }, { type: 'group', checked: false, items: [{ type: 'row' }] }],
+              },
+            ],
+          }}
+        />
         {/* <CodeEditor
           initialValue={[
             {

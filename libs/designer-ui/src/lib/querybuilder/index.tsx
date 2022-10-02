@@ -1,13 +1,26 @@
 import type { ValueSegment } from '../editor';
-import { AddSection } from './AddSection';
 import { Group } from './Group';
-import { GroupDropdown } from './GroupDropdown';
-import { Row } from './Row';
 import type { IOverflowSetItemProps } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
+type GroupItems = GroupItemProps | RowItemProps;
+
+export interface RowItemProps {
+  type: 'row';
+  checked?: boolean;
+  key?: ValueSegment[];
+  dropdownVal?: string;
+  value?: ValueSegment[];
+}
+export interface GroupItemProps {
+  type: 'group';
+  checked?: boolean;
+  selectedOption?: 'and' | 'or';
+  items: GroupItems[];
+}
 export interface QueryBuilderProps {
   readonly?: boolean;
+  groupProps: GroupItemProps;
   GetTokenPicker: (
     editorId: string,
     labelId: string,
@@ -16,7 +29,7 @@ export interface QueryBuilderProps {
   ) => JSX.Element;
 }
 
-export const QueryBuilderEditor = ({ GetTokenPicker }: QueryBuilderProps) => {
+export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderProps) => {
   const intl = useIntl();
 
   const deleteButton = intl.formatMessage({
@@ -103,11 +116,18 @@ export const QueryBuilderEditor = ({ GetTokenPicker }: QueryBuilderProps) => {
 
   return (
     <>
-      <GroupDropdown />
+      {/* <GroupDropdown />
       <Row GetTokenPicker={GetTokenPicker} rowMenuItems={rowMenuItems} />
       <Row GetTokenPicker={GetTokenPicker} rowMenuItems={rowMenuItems} />
       <Group GetTokenPicker={GetTokenPicker} groupMenuItems={groupMenuItems} rowMenuItems={rowMenuItems} />
-      <AddSection />
+      <AddSection /> */}
+      <Group
+        GetTokenPicker={GetTokenPicker}
+        groupMenuItems={groupMenuItems}
+        rowMenuItems={rowMenuItems}
+        groupProps={groupProps}
+        isFirstGroup={true}
+      />
     </>
   );
 };
