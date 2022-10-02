@@ -1,16 +1,15 @@
 import { Checkbox } from '../checkbox';
 import type { ValueSegment } from '../editor';
-import type { ChangeState } from '../editor/base';
-import { StringEditor } from '../editor/string';
-import { RowDropdown } from './RowDropdown';
+import { GroupDropdown } from './GroupDropdown';
+import { Row } from './Row';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
-import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
+import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const overflowStyle: Partial<IOverflowSetStyles> = {
   root: {
-    height: '100%',
+    height: '32px',
     backgroundColor: 'transparent',
   },
 };
@@ -19,8 +18,13 @@ const menuIconProps: IIconProps = {
   iconName: 'More',
 };
 
-interface RowProps {
+const calloutProps: ICalloutProps = {
+  directionalHint: DirectionalHint.leftCenter,
+};
+
+interface GroupProps {
   checked?: boolean;
+  groupMenuItems: IOverflowSetItemProps[];
   rowMenuItems: IOverflowSetItemProps[];
   GetTokenPicker: (
     editorId: string,
@@ -30,78 +34,72 @@ interface RowProps {
   ) => JSX.Element;
 }
 
-export const Row = ({ checked = false, rowMenuItems, GetTokenPicker }: RowProps) => {
+export const Group = ({ checked = false, groupMenuItems, rowMenuItems, GetTokenPicker }: GroupProps) => {
   const intl = useIntl();
-  const [key, setKey] = useState<string>('');
-
-  const updateKey = (newState: ChangeState) => {
-    if (newState?.value[0]?.value) {
-      setKey(newState.value[0].value);
-    } else {
-      setKey('');
-    }
-  };
+  const [collapsed, setCollapsed] = useState(false);
 
   const onRenderOverflowButton = (): JSX.Element => {
-    const calloutProps: ICalloutProps = {
-      directionalHint: DirectionalHint.leftCenter,
-    };
-
-    const rowCommands = intl.formatMessage({
+    const groupCommands = intl.formatMessage({
       defaultMessage: 'More commands',
       description: 'Label for commands in row',
     });
     return (
-      <TooltipHost calloutProps={calloutProps} content={rowCommands}>
+      <TooltipHost calloutProps={calloutProps} content={groupCommands}>
         <IconButton
-          ariaLabel={rowCommands}
+          ariaLabel={groupCommands}
           styles={overflowStyle}
           menuIconProps={menuIconProps}
-          menuProps={rowMenuItems && { items: rowMenuItems }}
+          menuProps={groupMenuItems && { items: groupMenuItems }}
         />
       </TooltipHost>
     );
   };
 
-  const rowValueInputPlaceholder = intl.formatMessage({
-    defaultMessage: 'Choose a value',
-    description: 'placeholder text for row values',
+  const collapseLabel = intl.formatMessage({
+    defaultMessage: 'Collapse',
+    description: 'Label for collapsing group',
   });
+
+  const collapseIconProps: IIconProps = {
+    iconName: collapsed ? 'FullScreen' : 'BackToWindow',
+  };
+
   return (
-    <div className="msla-querybuilder-row-container">
-      <div className="msla-querybuilder-row-gutter-hook" />
-      <Checkbox className="msla-querybuilder-row-checkbox" initialChecked={checked} />
-      <div className="msla-querybuilder-row-content">
-        <StringEditor
-          className={'msla-querybuilder-row-value-input'}
-          initialValue={[]}
-          placeholder={rowValueInputPlaceholder}
-          singleLine={true}
-          // remove
-          BasePlugins={{ tokens: false }}
-          onChange={updateKey}
-          GetTokenPicker={GetTokenPicker}
-        />
-        <RowDropdown disabled={key.length === 0} />
-        <StringEditor
-          className={'msla-querybuilder-row-value-input'}
-          initialValue={[]}
-          placeholder={rowValueInputPlaceholder}
-          // remove
-          BasePlugins={{ tokens: false }}
-          GetTokenPicker={GetTokenPicker}
-        />
+    <div className="msla-querybuilder-group-container">
+      <div className="msla-querybuilder-group-gutter-hook" />
+      <div className={css('msla-querybuilder-group-content', collapsed && 'collapsed')}>
+        {!collapsed ? (
+          <>
+            <Checkbox className="msla-querybuilder-group-checkbox" initialChecked={checked} />
+            <div className="msla-querybuilder-row-section">
+              <GroupDropdown />
+              <Row rowMenuItems={rowMenuItems} GetTokenPicker={GetTokenPicker} />
+            </div>
+          </>
+        ) : (
+          <GroupDropdown />
+        )}
+        <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
+          <TooltipHost calloutProps={calloutProps} content={collapseLabel}>
+            <IconButton
+              ariaLabel={collapseLabel}
+              styles={overflowStyle}
+              menuIconProps={collapseIconProps}
+              onClick={() => setCollapsed(!collapsed)}
+            />
+          </TooltipHost>
+          <OverflowSet
+            className="msla-querybuilder-group-more"
+            styles={overflowStyle}
+            items={[]}
+            overflowItems={groupMenuItems}
+            onRenderOverflowButton={onRenderOverflowButton}
+            onRenderItem={function (_item: IOverflowSetItemProps) {
+              throw new Error('No items in overflowset');
+            }}
+          />
+        </div>
       </div>
-      <OverflowSet
-        className="msla-querybuilder-row-more"
-        styles={overflowStyle}
-        items={[]}
-        overflowItems={rowMenuItems}
-        onRenderOverflowButton={onRenderOverflowButton}
-        onRenderItem={function (_item: IOverflowSetItemProps) {
-          throw new Error('No items in overflowset');
-        }}
-      />
     </div>
   );
 };

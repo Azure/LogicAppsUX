@@ -58,6 +58,52 @@
   }
 }
 
+.msla-querybuilder-group-container {
+  border-left: 1px solid @brandColor;
+  margin-left: 35px;
+  display: inline-flex;
+  align-items: center;
+
+  .msla-querybuilder-group-gutter-hook {
+    width: 55px;
+    border-bottom: 1px solid @brandColor;
+  }
+
+  .msla-querybuilder-group-content {
+    min-height: 125px;
+    background-color: @scopev2-background-color;
+    display: inherit;
+    align-items: center;
+    min-width: 550px;
+    position: relative;
+
+    &.collapsed {
+      min-width: 0px;
+      width: 125px;
+      min-height: 50px;
+    }
+
+    .msla-querybuilder-row-section {
+      display: block;
+      width: 100%;
+    }
+
+    .msla-querybuilder-group-checkbox {
+      padding: 0 10px;
+    }
+    .msla-querybuilder-group-controlbar {
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      display: flex;
+
+      &.collapsed {
+        position: relative;
+      }
+    }
+  }
+}
+
 .msla-querybuilder-row-add-container {
   height: 32px;
   border-left: 1px solid @brandColor;

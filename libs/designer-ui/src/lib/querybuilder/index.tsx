@@ -1,5 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { AddSection } from './AddSection';
+import { Group } from './Group';
 import { GroupDropdown } from './GroupDropdown';
 import { Row } from './Row';
 import type { IOverflowSetItemProps } from '@fluentui/react';
@@ -35,9 +36,15 @@ export const QueryBuilderEditor = ({ GetTokenPicker }: QueryBuilderProps) => {
     description: 'Make group button',
   });
 
+  const unGroupButton = intl.formatMessage({
+    defaultMessage: 'Ungroup',
+    description: 'Ungroup button',
+  });
+
   const handleDelete = () => {
     console.log('delete');
   };
+
   const rowMenuItems: IOverflowSetItemProps[] = [
     {
       key: deleteButton,
@@ -80,12 +87,26 @@ export const QueryBuilderEditor = ({ GetTokenPicker }: QueryBuilderProps) => {
       onClick: handleDelete,
     },
   ];
+  const groupMenuItems: IOverflowSetItemProps[] = [
+    ...rowMenuItems,
+    {
+      key: unGroupButton,
+      disabled: false,
+      iconProps: {
+        iconName: 'ViewAll2',
+      },
+      iconOnly: true,
+      name: unGroupButton,
+      onClick: handleDelete,
+    },
+  ];
 
   return (
     <>
       <GroupDropdown />
       <Row GetTokenPicker={GetTokenPicker} rowMenuItems={rowMenuItems} />
       <Row GetTokenPicker={GetTokenPicker} rowMenuItems={rowMenuItems} />
+      <Group GetTokenPicker={GetTokenPicker} groupMenuItems={groupMenuItems} rowMenuItems={rowMenuItems} />
       <AddSection />
     </>
   );

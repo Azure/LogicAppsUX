@@ -1361,6 +1361,12 @@
       "value": "State type:"
     }
   ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "BuYrD3": [
     {
       "type": 0,
@@ -2477,6 +2483,12 @@
     {
       "type": 0,
       "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
