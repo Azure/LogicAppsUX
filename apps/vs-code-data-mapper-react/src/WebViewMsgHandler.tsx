@@ -1,6 +1,6 @@
 import { dataMapDataLoaderSlice } from './state/DataMapDataLoader';
 import type { AppDispatch } from './state/Store';
-import type { Schema, DataMap } from '@microsoft/logic-apps-data-mapper';
+import type { MapDefinitionEntry, Schema } from '@microsoft/logic-apps-data-mapper';
 import { getSelectedSchema } from '@microsoft/logic-apps-data-mapper';
 import React, { createContext, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
@@ -8,8 +8,8 @@ import type { WebviewApi } from 'vscode-webview';
 
 type ReceivingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: 'source' | 'target' } }
-  | { command: 'loadNewDataMap'; data: DataMap }
-  | { command: 'loadDataMap'; data: { dataMap: DataMap; sourceSchemaFileName: string; targetSchemaFileName: string } }
+  | { command: 'loadNewDataMap'; data: MapDefinitionEntry }
+  | { command: 'loadDataMap'; data: { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string } }
   | { command: 'showAvailableSchemas'; data: string[] };
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
@@ -34,12 +34,12 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         });
         break;
       case 'loadNewDataMap':
-        changeDataMapCB(msg.data);
+        changeMapDefinitionCB(msg.data);
         break;
       case 'loadDataMap':
         Promise.all([getSelectedSchema(msg.data.sourceSchemaFileName), getSelectedSchema(msg.data.targetSchemaFileName)]).then((values) => {
           setSchemasBeforeSettingDataMap(values[0], values[1]).then(() => {
-            changeDataMapCB(msg.data.dataMap);
+            changeMapDefinitionCB(msg.data.mapDefinition);
           });
         });
         break;
@@ -65,9 +65,9 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
     [dispatch]
   );
 
-  const changeDataMapCB = useCallback(
-    (newDataMap: DataMap) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeDataMap(newDataMap));
+  const changeMapDefinitionCB = useCallback(
+    (newMapDefinition: MapDefinitionEntry) => {
+      dispatch(dataMapDataLoaderSlice.actions.changeMapDefinition(newMapDefinition));
     },
     [dispatch]
   );
