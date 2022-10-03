@@ -6,6 +6,7 @@ export interface IDataMapperApiService {
   getSchemas(): Promise<SchemaInfoProperties[]>;
   getSchemaFile(schemaName: string): Promise<any>;
   generateDataMapXslt(dataMapDefinition: string): Promise<any>;
+  testDataMap(dataMapXsltFilename: string, schemaInputValue: string): Promise<any>;
 }
 
 export interface SchemaInfoProperties {
