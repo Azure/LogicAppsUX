@@ -34,7 +34,7 @@ export type SchemaCardProps = {
   displayChevron: boolean;
   isLeaf: boolean;
   isChild: boolean;
-  relatedConnections: Connection[];
+  childArrayConnections: Connection[];
 } & CardProps;
 
 const useStyles = makeStyles({
@@ -162,13 +162,13 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 };
 
 export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, relatedConnections } =
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, childArrayConnections } =
     props.data;
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
-  const [isHover, setIsHover] = useState<boolean>(false);
+  const [_isHover, setIsHover] = useState<boolean>(false);
 
   const isOutputChildNode = schemaType === SchemaTypes.Target && isChild;
 
@@ -199,7 +199,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
     setIsHover(false);
   };
 
-  const isNBadgeRequired = relatedConnections.length > 0 && schemaNode.properties === SchemaNodeProperties.Repeating && !isHover;
+  const isNBadgeRequired = childArrayConnections.length > 0 && schemaNode.properties === SchemaNodeProperties.Repeating;
 
   return (
     <div className={classes.badgeContainer}>
