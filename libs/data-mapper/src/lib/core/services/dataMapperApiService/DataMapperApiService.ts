@@ -52,11 +52,11 @@ export class DataMapperApiService {
   };
 
   private getGenerateXsltUri = () => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/generateXslt?api-version=2019-10-01-edge-preview`;
+    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/generateXslt?api-version=2019-10-01-edge-preview`;
   };
 
   private getTestMapUri = (xsltFilename: string) => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=2019-10-01-edge-preview`;
+    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=2019-10-01-edge-preview`;
   };
 
   async getFunctionsManifest(): Promise<FunctionData[]> {
