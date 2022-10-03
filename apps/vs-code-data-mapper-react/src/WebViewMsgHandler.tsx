@@ -10,7 +10,8 @@ type ReceivingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: 'source' | 'target' } }
   | { command: 'loadNewDataMap'; data: MapDefinitionEntry }
   | { command: 'loadDataMap'; data: { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string } }
-  | { command: 'showAvailableSchemas'; data: string[] };
+  | { command: 'showAvailableSchemas'; data: string[] }
+  | { command: 'setXsltFilename'; data: string };
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = createContext(vscode);
@@ -46,6 +47,9 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
       case 'showAvailableSchemas':
         showAvailableSchemas(msg.data);
         break;
+      case 'setXsltFilename':
+        changeXsltFilenameCB(msg.data);
+        break;
       default:
         console.error(`Unexpected message received: ${msg}`);
     }
@@ -61,6 +65,13 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
   const changeTargetSchemaCB = useCallback(
     (newSchema: Schema) => {
       dispatch(dataMapDataLoaderSlice.actions.changeTargetSchema(newSchema));
+    },
+    [dispatch]
+  );
+
+  const changeXsltFilenameCB = useCallback(
+    (newFilename: string) => {
+      dispatch(dataMapDataLoaderSlice.actions.changeXsltFilename(newFilename));
     },
     [dispatch]
   );

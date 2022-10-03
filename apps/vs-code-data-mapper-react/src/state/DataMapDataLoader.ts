@@ -9,10 +9,12 @@ export interface DataMapLoadingState {
   sourceSchema?: Schema;
   targetSchema?: Schema;
   schemaFileList?: string[];
+  xsltFilename: string;
 }
 
 const initialState: DataMapLoadingState = {
   loadingMethod: 'file',
+  xsltFilename: '',
 };
 
 export const dataMapDataLoaderSlice = createSlice({
@@ -24,6 +26,9 @@ export const dataMapDataLoaderSlice = createSlice({
     },
     changeLoadingMethod: (state, action: PayloadAction<'file' | 'arm'>) => {
       state.loadingMethod = action.payload;
+    },
+    changeXsltFilename: (state, action: PayloadAction<string>) => {
+      state.xsltFilename = action.payload;
     },
     changeMapDefinition: (state, action: PayloadAction<MapDefinitionEntry>) => {
       state.mapDefinition = action.payload;

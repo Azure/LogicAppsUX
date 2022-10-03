@@ -4,13 +4,14 @@ import { SchemaTypes } from '../models/Schema';
 import { convertFromMapDefinition } from '../utils/DataMap.Utils';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
-import { setInitialDataMap, setInitialSchema } from './state/DataMapSlice';
+import { setInitialDataMap, setInitialSchema, setXsltFilename } from './state/DataMapSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
 import React, { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 export interface DataMapDataProviderProps {
+  xsltFilename?: string;
   mapDefinition?: MapDefinitionEntry;
   sourceSchema?: Schema;
   targetSchema?: Schema;
@@ -19,6 +20,7 @@ export interface DataMapDataProviderProps {
 }
 
 const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
+  xsltFilename,
   mapDefinition,
   sourceSchema,
   targetSchema,
@@ -28,6 +30,10 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const extendedSourceSchema = useMemo(() => sourceSchema && convertSchemaToSchemaExtended(sourceSchema), [sourceSchema]);
   const extendedTargetSchema = useMemo(() => targetSchema && convertSchemaToSchemaExtended(targetSchema), [targetSchema]);
+
+  useEffect(() => {
+    dispatch(setXsltFilename(xsltFilename ?? ''));
+  }, [dispatch, xsltFilename]);
 
   useEffect(() => {
     if (mapDefinition && extendedSourceSchema && extendedTargetSchema) {
