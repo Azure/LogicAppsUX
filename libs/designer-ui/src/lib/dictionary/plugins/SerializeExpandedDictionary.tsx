@@ -58,7 +58,7 @@ export const SerializeExpandedDictionary = ({ items, initialItem, index, type, s
   return <OnChangePlugin onChange={onChange} />;
 };
 
-const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
+export const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
   if (a.length !== b.length) {
     return true;
   }

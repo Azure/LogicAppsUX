@@ -1,10 +1,17 @@
+import type { GroupItemProps, RowItemProps } from '.';
 import type { IContextualMenuProps, IIconProps } from '@fluentui/react';
 import { DefaultButton } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 const addIcon: IIconProps = { iconName: 'Add' };
 
-export const AddSection = () => {
+interface AddSectionProps {
+  handleUpdateParent: (newProps: GroupItemProps | RowItemProps, index: number) => void;
+  index: number;
+  isEmpty: boolean;
+}
+
+export const AddSection = ({ handleUpdateParent, index, isEmpty }: AddSectionProps) => {
   const intl = useIntl();
   const addRowText = intl.formatMessage({
     defaultMessage: 'Add Row',
@@ -16,19 +23,33 @@ export const AddSection = () => {
     description: 'Button to add group',
   });
 
+  const handleAddRow = () => {
+    if (isEmpty) {
+      handleUpdateParent({ type: 'row' }, index);
+    }
+    handleUpdateParent({ type: 'row' }, index + 1);
+  };
+
+  const handleAddGroup = () => {
+    if (isEmpty) {
+      handleUpdateParent({ type: 'row' }, index);
+    }
+    handleUpdateParent({ type: 'group', items: [] }, index + 1);
+  };
+
   const menuProps: IContextualMenuProps = {
     items: [
       {
         key: 'addRow',
         text: addRowText,
         iconProps: { iconName: 'CirclePlus' },
-        onClick: () => console.log('yo'),
+        onClick: () => handleAddRow(),
       },
       {
         key: 'addGroup',
         text: addGroupText,
         iconProps: { iconName: 'List' },
-        onClick: () => console.log('yo'),
+        onClick: () => handleAddGroup(),
       },
     ],
     directionalHintFixed: true,

@@ -56,7 +56,7 @@ export const ScratchTab = () => {
             items: [
               { type: 'row', checked: true },
               { type: 'row', key: [testTokenSegment], dropdownVal: 'islessthanorequal', value: [testTokenSegment] },
-              { type: 'group', checked: false, items: [{ type: 'row' }] },
+              { type: 'group', checked: false, items: [] },
               {
                 type: 'group',
                 checked: true,

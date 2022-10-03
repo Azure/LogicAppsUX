@@ -38,19 +38,16 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerOffset, setContainerOffset] = useState(0);
 
-  const [rootProp, setRootProp] = useState(groupProps);
+  const [rootProp, setRootProp] = useState<GroupItemProps | RowItemProps>(groupProps);
 
   useEffect(() => {
     console.log(rootProp);
-  }, [rootProp]);
-
-  useEffect(() => {
     if (containerRef.current) {
-      setContainerOffset(window.scrollY + containerRef.current.getBoundingClientRect().top + containerRef.current.offsetHeight);
+      setContainerOffset(containerRef.current.getBoundingClientRect().bottom);
     }
-  }, [containerRef, groupProps]);
+  }, [containerRef, rootProp]);
 
-  const handleUpdateParent = (newProps: GroupItemProps) => {
+  const handleUpdateParent = (newProps: GroupItemProps | RowItemProps) => {
     setRootProp(newProps);
   };
 
@@ -143,7 +140,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
         GetTokenPicker={GetTokenPicker}
         groupMenuItems={groupMenuItems}
         rowMenuItems={rowMenuItems}
-        groupProps={rootProp}
+        groupProps={rootProp as GroupItemProps}
         isFirstGroup={true}
         index={0}
         handleUpdateParent={handleUpdateParent}

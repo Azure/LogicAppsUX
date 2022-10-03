@@ -1,11 +1,13 @@
 import type { DropdownItem } from '../dropdown';
 import { DropdownEditor } from '../dropdown';
 import { ValueSegmentType } from '../editor';
+import type { ChangeHandler } from '../editor/base';
 import { guid } from '@microsoft-logic-apps/utils';
 
 interface RowDropdownProps {
   selectedOption?: string;
   disabled: boolean;
+  onChange: ChangeHandler;
 }
 
 const items: DropdownItem[] = [
@@ -23,7 +25,7 @@ const items: DropdownItem[] = [
   { key: 'doesnotendwith', displayName: 'does not end with', value: 'doesnotendwith' },
 ];
 
-export const RowDropdown = ({ selectedOption, disabled }: RowDropdownProps) => {
+export const RowDropdown = ({ selectedOption, disabled, onChange }: RowDropdownProps) => {
   return (
     <div className="msla-querybuilder-row-dropdown-container">
       <DropdownEditor
@@ -33,6 +35,7 @@ export const RowDropdown = ({ selectedOption, disabled }: RowDropdownProps) => {
             ? [{ id: guid(), type: ValueSegmentType.LITERAL, value: selectedOption }]
             : [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'isequalto' }]
         }
+        onChange={onChange}
         options={items}
         height={24}
         fontSize={12}

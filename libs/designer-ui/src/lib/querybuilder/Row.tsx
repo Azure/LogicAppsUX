@@ -1,4 +1,6 @@
+import type { RowItemProps } from '.';
 import { Checkbox } from '../checkbox';
+import { notEqual } from '../dictionary/plugins/SerializeExpandedDictionary';
 import type { ValueSegment } from '../editor';
 import type { ChangeState } from '../editor/base';
 import type { ButtonOffSet } from '../editor/base/plugins/TokenPickerButton';
@@ -6,7 +8,7 @@ import { StringEditor } from '../editor/string';
 import { RowDropdown } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
-import { useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const overflowStyle: Partial<IOverflowSetStyles> = {
@@ -20,18 +22,15 @@ const menuIconProps: IIconProps = {
   iconName: 'More',
 };
 
-enum EditorType {
-  KEY = 'key',
-  VALUE = 'value',
-}
-
 interface RowProps {
   checked?: boolean;
   rowMenuItems: IOverflowSetItemProps[];
   keyValue?: ValueSegment[];
   valueValue?: ValueSegment[];
   dropdownValue?: string;
+  index: number;
   containerOffset: number;
+  handleUpdateParent: (newProps: RowItemProps, index: number) => void;
   GetTokenPicker: (
     editorId: string,
     labelId: string,
@@ -46,32 +45,53 @@ export const Row = ({
   keyValue = [],
   valueValue = [],
   dropdownValue,
+  index,
   containerOffset,
+  handleUpdateParent,
   GetTokenPicker,
 }: RowProps) => {
   const intl = useIntl();
   const keyEditorRef = useRef<HTMLDivElement | null>(null);
   const valueEditorRef = useRef<HTMLDivElement | null>(null);
-  const [key, setKey] = useState(keyValue);
+  const [key, setKey] = useState<ValueSegment[]>(keyValue);
   const [pickerOffset, setPickerOffset] = useState<ButtonOffSet>();
 
-  const updateKey = (newState: ChangeState) => {
-    if (newState.value) {
+  const updatePickerHeight = useCallback(() => {
+    let itemHeight = 0;
+    if (keyEditorRef.current && valueEditorRef.current) {
+      const keyHeight = keyEditorRef.current.getBoundingClientRect().top;
+      const valueHeight = valueEditorRef.current.getBoundingClientRect().top;
+      itemHeight += Math.min(keyHeight, valueHeight);
+    }
+    setPickerOffset({ heightOffset: containerOffset - itemHeight });
+  }, [containerOffset]);
+
+  useEffect(() => {
+    updatePickerHeight();
+  }, [containerOffset, updatePickerHeight]);
+
+  const handleKeyChange = (newState: ChangeState) => {
+    if (notEqual(keyValue, newState.value)) {
       setKey(newState.value);
-    } else {
+      handleUpdateParent({ type: 'row', checked: checked, key: newState.value, dropdownVal: dropdownValue, value: valueValue }, index);
+    }
+    if (newState.value.length === 0) {
       setKey([]);
     }
   };
 
-  const updateTokenPickerLocation = (type: EditorType) => {
-    console.log(containerOffset);
-    let itemHeight = window.scrollY;
-    if (type === EditorType.KEY && keyEditorRef.current) {
-      itemHeight += keyEditorRef.current.getBoundingClientRect().top ?? 0;
-    } else if (type === EditorType.VALUE && valueEditorRef.current) {
-      itemHeight += valueEditorRef.current.getBoundingClientRect().top ?? 0;
+  const handleSelectedOption = (newState: ChangeState) => {
+    handleUpdateParent({ type: 'row', checked: checked, key: keyValue, dropdownVal: newState.value[0].value, value: valueValue }, index);
+  };
+
+  const handleValueChange = (newState: ChangeState) => {
+    if (notEqual(valueValue, newState.value)) {
+      handleUpdateParent({ type: 'row', checked: checked, key: keyValue, dropdownVal: dropdownValue, value: newState.value }, index);
     }
-    setPickerOffset({ heightOffset: containerOffset - itemHeight });
+  };
+
+  const handleCheckbox = () => {
+    handleUpdateParent({ type: 'row', checked: !checked, key: keyValue, dropdownVal: dropdownValue, value: valueValue }, index);
   };
 
   const onRenderOverflowButton = (): JSX.Element => {
@@ -102,7 +122,7 @@ export const Row = ({
   return (
     <div className="msla-querybuilder-row-container">
       <div className="msla-querybuilder-row-gutter-hook" />
-      <Checkbox className="msla-querybuilder-row-checkbox" initialChecked={checked} />
+      <Checkbox className="msla-querybuilder-row-checkbox" initialChecked={checked} onChange={handleCheckbox} />
       <div className="msla-querybuilder-row-content">
         <div ref={keyEditorRef}>
           <StringEditor
@@ -110,13 +130,12 @@ export const Row = ({
             initialValue={keyValue}
             placeholder={rowValueInputPlaceholder}
             singleLine={true}
-            onFocus={() => updateTokenPickerLocation(EditorType.KEY)}
-            onChange={updateKey}
+            onChange={handleKeyChange}
             GetTokenPicker={GetTokenPicker}
             tokenPickerButtonProps={{ buttonOffset: pickerOffset }}
           />
         </div>
-        <RowDropdown disabled={key.length === 0} selectedOption={dropdownValue} />
+        <RowDropdown disabled={key.length === 0} selectedOption={dropdownValue} onChange={handleSelectedOption} />
         <div ref={valueEditorRef}>
           <StringEditor
             className={'msla-querybuilder-row-value-input'}
@@ -124,7 +143,7 @@ export const Row = ({
             placeholder={rowValueInputPlaceholder}
             singleLine={true}
             GetTokenPicker={GetTokenPicker}
-            onFocus={() => updateTokenPickerLocation(EditorType.VALUE)}
+            onChange={handleValueChange}
             tokenPickerButtonProps={{ buttonOffset: pickerOffset }}
           />
         </div>

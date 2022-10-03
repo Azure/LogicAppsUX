@@ -1,4 +1,4 @@
-import type { GroupItemProps } from '.';
+import type { GroupItemProps, RowItemProps } from '.';
 import { Checkbox } from '../checkbox';
 import type { ValueSegment } from '../editor';
 import type { ChangeState } from '../editor/base';
@@ -34,7 +34,7 @@ interface GroupProps {
   isFirstGroup?: boolean;
   containerOffset: number;
   index: number;
-  handleUpdateParent: (newProps: GroupItemProps, index: number) => void;
+  handleUpdateParent: (newProps: GroupItemProps | RowItemProps, index: number) => void;
   GetTokenPicker: (
     editorId: string,
     labelId: string,
@@ -62,7 +62,7 @@ export const Group = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currProps]);
 
-  const handleUpdateNewParent = (newState: GroupItemProps, index: number) => {
+  const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, index: number) => {
     const newItems = { ...currProps };
     newItems.items[index] = newState;
     setCurrProps(newItems);
@@ -116,18 +116,20 @@ export const Group = ({
               {groupProps.items.map((item, currIndex) => {
                 return item.type === 'row' ? (
                   <Row
-                    key={currIndex}
+                    key={`row ${currIndex}`}
                     rowMenuItems={rowMenuItems}
                     checked={item.checked}
                     keyValue={item.key}
                     dropdownValue={item.dropdownVal}
                     valueValue={item.value}
                     containerOffset={containerOffset}
+                    index={currIndex}
+                    handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
                   />
                 ) : (
                   <Group
-                    key={currIndex}
+                    key={`group ${currIndex}`}
                     groupMenuItems={groupMenuItems}
                     rowMenuItems={rowMenuItems}
                     containerOffset={containerOffset}
@@ -146,9 +148,19 @@ export const Group = ({
               {
                 <>
                   {groupProps.items.length === 0 && (
-                    <Row rowMenuItems={rowMenuItems} containerOffset={containerOffset} GetTokenPicker={GetTokenPicker} />
+                    <Row
+                      index={0}
+                      rowMenuItems={rowMenuItems}
+                      containerOffset={containerOffset}
+                      GetTokenPicker={GetTokenPicker}
+                      handleUpdateParent={handleUpdateNewParent}
+                    />
                   )}
-                  <AddSection />
+                  <AddSection
+                    handleUpdateParent={handleUpdateNewParent}
+                    index={groupProps.items.length + 1}
+                    isEmpty={groupProps.items.length === 0}
+                  />
                 </>
               }
             </div>
