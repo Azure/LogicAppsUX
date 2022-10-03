@@ -77,6 +77,8 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
       return;
     }
 
+    console.log(testMapInput);
+
     const testMapResponse = await testDataMap('CheckAvailability', testMapInput);
 
     console.log(testMapResponse);
