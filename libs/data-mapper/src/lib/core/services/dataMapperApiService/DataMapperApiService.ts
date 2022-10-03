@@ -56,6 +56,14 @@ export class DataMapperApiService {
     return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/transformations/getManifest?api-version=2019-10-01-edge-preview`;
   };
 
+  private getGenerateXsltUri = () => {
+    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/generateXslt?api-version=2019-10-01-edge-preview`;
+  };
+
+  private getTestMapUri = (xsltFilename: string) => {
+    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=2019-10-01-edge-preview`;
+  };
+
   async getFunctionsManifest(): Promise<FunctionData[]> {
     const uri = this.getFunctionsManifestUri();
     const response = await fetch(uri, { method: 'GET' });
@@ -65,10 +73,6 @@ export class DataMapperApiService {
     const functions: FunctionData[] = await response.json();
     return functions;
   }
-
-  private getGenerateXsltUri = () => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/maps/generateXslt?api-version=2019-10-01-edge-preview`;
-  };
 
   async getSchemas(): Promise<SchemaInfoProperties[]> {
     const headers = this.getHeaders();
@@ -115,5 +119,34 @@ export class DataMapperApiService {
     const dataMapXsltResponse = await response.json();
 
     return dataMapXsltResponse.xsltContent;
+  }
+
+  async testDataMap(dataMapXsltFilename: string, schemaInputValue: string): Promise<any> {
+    const base64EncodedSchemaInputValue = Buffer.from(schemaInputValue).toString('base64');
+
+    const response = await fetch(this.getTestMapUri(dataMapXsltFilename), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        InputInstanceMessage: {
+          '$content-type': 'application/xml',
+          $content: base64EncodedSchemaInputValue,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const testMapResponse = await response.json();
+
+    // NOTE: In future, may need to use testMapResponse.OutputInstance.$content-type
+    // Decode base64 response content
+    testMapResponse.OutputInstance.$content = Buffer.from(testMapResponse.OutputInstance.$content).toString('utf-8');
+
+    return testMapResponse;
   }
 }
