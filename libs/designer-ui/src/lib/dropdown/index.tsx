@@ -3,6 +3,7 @@ import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
@@ -31,6 +32,7 @@ export const DropdownEditor = ({
   options,
   height,
   fontSize,
+  onChange,
 }: DropdownEditorProps): JSX.Element => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? getSelectedKeys(options, initialValue) : undefined);
@@ -57,12 +59,19 @@ export const DropdownEditor = ({
   const handleOptionSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option) {
       setSelectedKey(option.key as string);
+      onChange?.({ value: [{ id: guid(), value: getSelectedValue(options, option.key as string), type: ValueSegmentType.LITERAL }] });
     }
   };
 
   const handleOptionMultiSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option && selectedKeys) {
-      setSelectedKeys(option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key));
+      const newKeys = option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key);
+      setSelectedKeys(newKeys);
+      onChange?.({
+        value: newKeys.map((key) => {
+          return { id: guid(), value: getSelectedValue(options, key as string), type: ValueSegmentType.LITERAL };
+        }),
+      });
     }
   };
 
@@ -120,4 +129,10 @@ const getSelectedKeys = (options: DropdownItem[], initialValue?: ValueSegment[])
     }
   });
   return returnVal;
+};
+
+const getSelectedValue = (options: DropdownItem[], key: string): any => {
+  return options.find((option) => {
+    return option.key === key;
+  })?.value;
 };

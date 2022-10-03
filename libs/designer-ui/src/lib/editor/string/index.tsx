@@ -28,6 +28,7 @@ export const StringEditor = ({ singleLine, initialValue, editorBlur, onChange, .
       initialValue={value}
       BasePlugins={{ tokens: baseEditorProps.BasePlugins?.tokens ?? true }}
       onBlur={handleBlur}
+      onFocus={baseEditorProps.onFocus}
       readonly={baseEditorProps.readonly}
       isTrigger={baseEditorProps.isTrigger}
       GetTokenPicker={baseEditorProps.GetTokenPicker}

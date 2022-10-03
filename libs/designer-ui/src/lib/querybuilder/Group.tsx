@@ -1,12 +1,14 @@
 import type { GroupItemProps } from '.';
 import { Checkbox } from '../checkbox';
 import type { ValueSegment } from '../editor';
+import type { ChangeState } from '../editor/base';
 import { AddSection } from './AddSection';
+import type { GroupDropdownOptions } from './GroupDropdown';
 import { GroupDropdown } from './GroupDropdown';
 import { Row } from './Row';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const overflowStyle: Partial<IOverflowSetStyles> = {
@@ -30,6 +32,9 @@ interface GroupProps {
   rowMenuItems: IOverflowSetItemProps[];
   groupProps: GroupItemProps;
   isFirstGroup?: boolean;
+  containerOffset: number;
+  index: number;
+  handleUpdateParent: (newProps: GroupItemProps, index: number) => void;
   GetTokenPicker: (
     editorId: string,
     labelId: string,
@@ -38,9 +43,30 @@ interface GroupProps {
   ) => JSX.Element;
 }
 
-export const Group = ({ groupMenuItems, rowMenuItems, groupProps, isFirstGroup, GetTokenPicker }: GroupProps) => {
+export const Group = ({
+  groupMenuItems,
+  rowMenuItems,
+  groupProps,
+  isFirstGroup,
+  containerOffset,
+  index,
+  handleUpdateParent,
+  GetTokenPicker,
+}: GroupProps) => {
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
+  const [currProps, setCurrProps] = useState<GroupItemProps>(groupProps);
+
+  useEffect(() => {
+    handleUpdateParent(currProps, index);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currProps]);
+
+  const handleUpdateNewParent = (newState: GroupItemProps, index: number) => {
+    const newItems = { ...currProps };
+    newItems.items[index] = newState;
+    setCurrProps(newItems);
+  };
 
   const onRenderOverflowButton = (): JSX.Element => {
     const groupCommands = intl.formatMessage({
@@ -59,6 +85,14 @@ export const Group = ({ groupMenuItems, rowMenuItems, groupProps, isFirstGroup, 
     );
   };
 
+  const handleCheckbox = () => {
+    setCurrProps({ ...groupProps, checked: !groupProps.checked });
+  };
+
+  const handleSelectedOption = (newState: ChangeState) => {
+    setCurrProps({ ...groupProps, selectedOption: newState.value[0].value as GroupDropdownOptions });
+  };
+
   const collapseLabel = intl.formatMessage({
     defaultMessage: 'Collapse',
     description: 'Label for collapsing group',
@@ -74,37 +108,53 @@ export const Group = ({ groupMenuItems, rowMenuItems, groupProps, isFirstGroup, 
       <div className={css('msla-querybuilder-group-content', collapsed && 'collapsed', isFirstGroup && 'firstGroup')}>
         {!collapsed ? (
           <>
-            {!isFirstGroup ? <Checkbox className="msla-querybuilder-group-checkbox" initialChecked={groupProps.checked} /> : null}
+            {!isFirstGroup ? (
+              <Checkbox className="msla-querybuilder-group-checkbox" initialChecked={groupProps.checked} onChange={handleCheckbox} />
+            ) : null}
             <div className="msla-querybuilder-row-section">
-              <GroupDropdown selectedOption={groupProps.selectedOption} />
-              {groupProps.items.map((item, index) => {
+              <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} />
+              {groupProps.items.map((item, currIndex) => {
                 return item.type === 'row' ? (
-                  <Row key={index} rowMenuItems={rowMenuItems} checked={item.checked} GetTokenPicker={GetTokenPicker} />
+                  <Row
+                    key={currIndex}
+                    rowMenuItems={rowMenuItems}
+                    checked={item.checked}
+                    keyValue={item.key}
+                    dropdownValue={item.dropdownVal}
+                    valueValue={item.value}
+                    containerOffset={containerOffset}
+                    GetTokenPicker={GetTokenPicker}
+                  />
                 ) : (
                   <Group
-                    key={index}
+                    key={currIndex}
                     groupMenuItems={groupMenuItems}
                     rowMenuItems={rowMenuItems}
+                    containerOffset={containerOffset}
                     groupProps={{
                       type: 'group',
                       items: item.items,
                       selectedOption: item.selectedOption,
                       checked: item.checked,
                     }}
+                    index={currIndex}
+                    handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
                   />
                 );
               })}
               {
                 <>
-                  {groupProps.items.length === 0 && <Row rowMenuItems={rowMenuItems} GetTokenPicker={GetTokenPicker} />}
+                  {groupProps.items.length === 0 && (
+                    <Row rowMenuItems={rowMenuItems} containerOffset={containerOffset} GetTokenPicker={GetTokenPicker} />
+                  )}
                   <AddSection />
                 </>
               }
             </div>
           </>
         ) : (
-          <GroupDropdown selectedOption={groupProps.selectedOption} />
+          <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} />
         )}
         <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
           {!isFirstGroup ? (

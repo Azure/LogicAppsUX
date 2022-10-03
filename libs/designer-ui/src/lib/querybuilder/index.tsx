@@ -1,7 +1,11 @@
 import type { ValueSegment } from '../editor';
 import { Group } from './Group';
+import { GroupDropdownOptions } from './GroupDropdown';
 import type { IOverflowSetItemProps } from '@fluentui/react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+
+export { GroupDropdownOptions };
 
 type GroupItems = GroupItemProps | RowItemProps;
 
@@ -15,7 +19,7 @@ export interface RowItemProps {
 export interface GroupItemProps {
   type: 'group';
   checked?: boolean;
-  selectedOption?: 'and' | 'or';
+  selectedOption?: GroupDropdownOptions;
   items: GroupItems[];
 }
 export interface QueryBuilderProps {
@@ -31,6 +35,24 @@ export interface QueryBuilderProps {
 
 export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderProps) => {
   const intl = useIntl();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerOffset, setContainerOffset] = useState(0);
+
+  const [rootProp, setRootProp] = useState(groupProps);
+
+  useEffect(() => {
+    console.log(rootProp);
+  }, [rootProp]);
+
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerOffset(window.scrollY + containerRef.current.getBoundingClientRect().top + containerRef.current.offsetHeight);
+    }
+  }, [containerRef, groupProps]);
+
+  const handleUpdateParent = (newProps: GroupItemProps) => {
+    setRootProp(newProps);
+  };
 
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
@@ -115,19 +137,17 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   ];
 
   return (
-    <>
-      {/* <GroupDropdown />
-      <Row GetTokenPicker={GetTokenPicker} rowMenuItems={rowMenuItems} />
-      <Row GetTokenPicker={GetTokenPicker} rowMenuItems={rowMenuItems} />
-      <Group GetTokenPicker={GetTokenPicker} groupMenuItems={groupMenuItems} rowMenuItems={rowMenuItems} />
-      <AddSection /> */}
+    <div className="msla-querybuilder-container" ref={containerRef}>
       <Group
+        containerOffset={containerOffset}
         GetTokenPicker={GetTokenPicker}
         groupMenuItems={groupMenuItems}
         rowMenuItems={rowMenuItems}
-        groupProps={groupProps}
+        groupProps={rootProp}
         isFirstGroup={true}
+        index={0}
+        handleUpdateParent={handleUpdateParent}
       />
-    </>
+    </div>
   );
 };

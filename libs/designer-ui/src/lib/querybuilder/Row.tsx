@@ -1,11 +1,12 @@
 import { Checkbox } from '../checkbox';
 import type { ValueSegment } from '../editor';
 import type { ChangeState } from '../editor/base';
+import type { ButtonOffSet } from '../editor/base/plugins/TokenPickerButton';
 import { StringEditor } from '../editor/string';
 import { RowDropdown } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const overflowStyle: Partial<IOverflowSetStyles> = {
@@ -19,12 +20,18 @@ const menuIconProps: IIconProps = {
   iconName: 'More',
 };
 
+enum EditorType {
+  KEY = 'key',
+  VALUE = 'value',
+}
+
 interface RowProps {
   checked?: boolean;
   rowMenuItems: IOverflowSetItemProps[];
   keyValue?: ValueSegment[];
   valueValue?: ValueSegment[];
   dropdownValue?: string;
+  containerOffset: number;
   GetTokenPicker: (
     editorId: string,
     labelId: string,
@@ -33,16 +40,38 @@ interface RowProps {
   ) => JSX.Element;
 }
 
-export const Row = ({ checked = false, rowMenuItems, keyValue = [], valueValue = [], dropdownValue, GetTokenPicker }: RowProps) => {
+export const Row = ({
+  checked = false,
+  rowMenuItems,
+  keyValue = [],
+  valueValue = [],
+  dropdownValue,
+  containerOffset,
+  GetTokenPicker,
+}: RowProps) => {
   const intl = useIntl();
-  const [key, setKey] = useState<string>('');
+  const keyEditorRef = useRef<HTMLDivElement | null>(null);
+  const valueEditorRef = useRef<HTMLDivElement | null>(null);
+  const [key, setKey] = useState(keyValue);
+  const [pickerOffset, setPickerOffset] = useState<ButtonOffSet>();
 
   const updateKey = (newState: ChangeState) => {
-    if (newState?.value[0]?.value) {
-      setKey(newState.value[0].value);
+    if (newState.value) {
+      setKey(newState.value);
     } else {
-      setKey('');
+      setKey([]);
     }
+  };
+
+  const updateTokenPickerLocation = (type: EditorType) => {
+    console.log(containerOffset);
+    let itemHeight = window.scrollY;
+    if (type === EditorType.KEY && keyEditorRef.current) {
+      itemHeight += keyEditorRef.current.getBoundingClientRect().top ?? 0;
+    } else if (type === EditorType.VALUE && valueEditorRef.current) {
+      itemHeight += valueEditorRef.current.getBoundingClientRect().top ?? 0;
+    }
+    setPickerOffset({ heightOffset: containerOffset - itemHeight });
   };
 
   const onRenderOverflowButton = (): JSX.Element => {
@@ -75,25 +104,30 @@ export const Row = ({ checked = false, rowMenuItems, keyValue = [], valueValue =
       <div className="msla-querybuilder-row-gutter-hook" />
       <Checkbox className="msla-querybuilder-row-checkbox" initialChecked={checked} />
       <div className="msla-querybuilder-row-content">
-        <StringEditor
-          className={'msla-querybuilder-row-value-input'}
-          initialValue={keyValue}
-          placeholder={rowValueInputPlaceholder}
-          singleLine={true}
-          // remove
-          BasePlugins={{ tokens: false }}
-          onChange={updateKey}
-          GetTokenPicker={GetTokenPicker}
-        />
+        <div ref={keyEditorRef}>
+          <StringEditor
+            className={'msla-querybuilder-row-value-input'}
+            initialValue={keyValue}
+            placeholder={rowValueInputPlaceholder}
+            singleLine={true}
+            onFocus={() => updateTokenPickerLocation(EditorType.KEY)}
+            onChange={updateKey}
+            GetTokenPicker={GetTokenPicker}
+            tokenPickerButtonProps={{ buttonOffset: pickerOffset }}
+          />
+        </div>
         <RowDropdown disabled={key.length === 0} selectedOption={dropdownValue} />
-        <StringEditor
-          className={'msla-querybuilder-row-value-input'}
-          initialValue={valueValue}
-          placeholder={rowValueInputPlaceholder}
-          // remove
-          BasePlugins={{ tokens: false }}
-          GetTokenPicker={GetTokenPicker}
-        />
+        <div ref={valueEditorRef}>
+          <StringEditor
+            className={'msla-querybuilder-row-value-input'}
+            initialValue={valueValue}
+            placeholder={rowValueInputPlaceholder}
+            singleLine={true}
+            GetTokenPicker={GetTokenPicker}
+            onFocus={() => updateTokenPickerLocation(EditorType.VALUE)}
+            tokenPickerButtonProps={{ buttonOffset: pickerOffset }}
+          />
+        </div>
       </div>
       <OverflowSet
         className="msla-querybuilder-row-more"

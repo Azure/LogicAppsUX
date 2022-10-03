@@ -4,11 +4,12 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
+  GroupDropdownOptions,
   QueryBuilderEditor, // DictionaryType, // EditorLanguage,
   // ValueSegmentType, // CodeEditor, // HTMLEditor,
   TokenPicker, // TokenType,
   // DictionaryEditor,
-  // testTokenSegment, // SchemaEditor, // Combobox,
+  testTokenSegment, // SchemaEditor, // Combobox,
   // ArrayEditor,
   Scratch, // StringEditor,
   // AuthenticationEditor,
@@ -51,10 +52,10 @@ export const ScratchTab = () => {
           groupProps={{
             type: 'group',
             checked: false,
-            selectedOption: 'or',
+            selectedOption: GroupDropdownOptions.OR,
             items: [
               { type: 'row', checked: true },
-              { type: 'row' },
+              { type: 'row', key: [testTokenSegment], dropdownVal: 'islessthanorequal', value: [testTokenSegment] },
               { type: 'group', checked: false, items: [{ type: 'row' }] },
               {
                 type: 'group',
