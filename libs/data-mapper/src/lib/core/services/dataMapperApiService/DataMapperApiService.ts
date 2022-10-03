@@ -44,7 +44,7 @@ export class DataMapperApiService {
   };
 
   private getSchemaFileUri = (xmlName: string) => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`; // TODO: to test
+    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`;
   };
 
   private getFunctionsManifestUri = () => {
