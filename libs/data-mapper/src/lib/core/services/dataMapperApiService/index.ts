@@ -21,7 +21,6 @@ export interface SchemaInfoProperties {
 
 export const defaultDataMapperApiServiceOptions = {
   baseUrl: 'http://localhost:7071',
-  resourceUrl: '',
   accessToken: '',
 };
 

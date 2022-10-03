@@ -1,8 +1,11 @@
+import type { FunctionData } from './Function';
+import type { SchemaNodeExtended } from './Schema';
+
 export type ConnectionDictionary = { [key: string]: Connection };
 
 export interface Connection {
-  destination: string;
-  sourceValue: string;
+  destination: SchemaNodeExtended | FunctionData;
+  source: SchemaNodeExtended | FunctionData;
   loop?: LoopConnection;
   condition?: string;
   isSelected?: boolean;

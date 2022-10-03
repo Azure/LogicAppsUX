@@ -1,56 +1,64 @@
-import type { DataMap } from '../models/DataMap';
+import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { Schema } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
+import { convertFromMapDefinition } from '../utils/DataMap.Utils';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { setInitialDataMap, setInitialSchema } from './state/DataMapSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 export interface DataMapDataProviderProps {
-  dataMap?: DataMap;
+  mapDefinition?: MapDefinitionEntry;
   sourceSchema?: Schema;
   targetSchema?: Schema;
   availableSchemas?: string[];
   children?: React.ReactNode;
 }
 
-const DataProviderInner: React.FC<DataMapDataProviderProps> = ({ dataMap, sourceSchema, targetSchema, availableSchemas, children }) => {
+const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
+  mapDefinition,
+  sourceSchema,
+  targetSchema,
+  availableSchemas,
+  children,
+}) => {
   const dispatch = useDispatch<AppDispatch>();
+  const extendedSourceSchema = useMemo(() => sourceSchema && convertSchemaToSchemaExtended(sourceSchema), [sourceSchema]);
+  const extendedTargetSchema = useMemo(() => targetSchema && convertSchemaToSchemaExtended(targetSchema), [targetSchema]);
 
   useEffect(() => {
-    if (sourceSchema && targetSchema && dataMap) {
-      dispatch(setInitialDataMap(dataMap));
+    if (mapDefinition && extendedSourceSchema && extendedTargetSchema) {
+      const connections = convertFromMapDefinition(mapDefinition, extendedSourceSchema, extendedTargetSchema);
+      dispatch(setInitialDataMap(connections));
     }
-  }, [dispatch, dataMap, sourceSchema, targetSchema]);
+  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema]);
 
   useEffect(() => {
-    if (sourceSchema) {
-      const extendedSchema = convertSchemaToSchemaExtended(sourceSchema);
+    if (extendedSourceSchema) {
       dispatch(
         setInitialSchema({
-          schema: extendedSchema,
+          schema: extendedSourceSchema,
           schemaType: SchemaTypes.Source,
-          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Source),
+          flattenedSchema: flattenSchema(extendedSourceSchema, SchemaTypes.Source),
         })
       );
     }
-  }, [dispatch, sourceSchema]);
+  }, [dispatch, extendedSourceSchema]);
 
   useEffect(() => {
-    if (targetSchema) {
-      const extendedSchema = convertSchemaToSchemaExtended(targetSchema);
+    if (extendedTargetSchema) {
       dispatch(
         setInitialSchema({
-          schema: extendedSchema,
+          schema: extendedTargetSchema,
           schemaType: SchemaTypes.Target,
-          flattenedSchema: flattenSchema(extendedSchema, SchemaTypes.Target),
+          flattenedSchema: flattenSchema(extendedTargetSchema, SchemaTypes.Target),
         })
       );
     }
-  }, [dispatch, targetSchema]);
+  }, [dispatch, extendedTargetSchema]);
 
   useEffect(() => {
     if (availableSchemas) {

@@ -22,7 +22,7 @@ export const App = (): JSX.Element => {
   // TODO (After theming): set initial value back to getVscodeTheme()
   const [vsCodeTheme, _setVsCodeTheme] = useState<VsCodeThemeType>(VsCodeThemeType.VsCodeLight);
 
-  const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
+  const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
   const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
@@ -70,7 +70,12 @@ export const App = (): JSX.Element => {
 
   return (
     <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>
-      <DataMapDataProvider dataMap={dataMap} sourceSchema={sourceSchema} targetSchema={targetSchema} availableSchemas={schemaFileList}>
+      <DataMapDataProvider
+        mapDefinition={mapDefinition}
+        sourceSchema={sourceSchema}
+        targetSchema={targetSchema}
+        availableSchemas={schemaFileList}
+      >
         <DataMapperDesigner
           saveStateCall={saveStateCall}
           addSchemaFromFile={addSchemaFromFile}
