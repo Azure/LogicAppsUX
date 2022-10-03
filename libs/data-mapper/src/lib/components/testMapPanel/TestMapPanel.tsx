@@ -1,6 +1,20 @@
-import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, TextField } from '@fluentui/react';
+import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton } from '@fluentui/react';
+import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
+
+// NOTE: Fluent V9 tokens don't work w/ certain V8 controls/surfaces
+const useStyles = makeStyles({
+  editorStyle: {
+    marginTop: '12px',
+    ...shorthands.border('1px', 'solid', tokens.colorNeutralStroke1),
+    ...shorthands.borderRadius('3px'),
+    ...shorthands.padding('10px'),
+  },
+});
+
+const defaultStartingXmlInputValue = `<?xml version="1.0" encoding="utf-8"?>`;
 
 export interface TestMapPanelProps {
   isOpen: boolean;
@@ -10,8 +24,11 @@ export interface TestMapPanelProps {
 export const TestMapPanel = (props: TestMapPanelProps) => {
   const { isOpen, onClose } = props;
   const intl = useIntl();
+  const styles = useStyles();
 
   const [selectedInputOption, setSelectedInputOption] = useState<string | undefined>('pasteSample');
+  const [testMapInput, setTestMapInput] = useState<string | undefined>(defaultStartingXmlInputValue);
+  const [testMapResponse, _setTestMapResponse] = useState<any>({});
 
   const testMapLoc = intl.formatMessage({
     defaultMessage: 'Test map',
@@ -90,22 +107,28 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
             onChange={(_, option) => setSelectedInputOption(option?.key)}
           />
 
-          <TextField
-            multiline
-            resizable={false}
-            placeholder="Input helper text"
-            style={{ height: 500 }}
-            styles={{ root: { marginTop: 12 } }}
+          <MonacoEditor
+            language={EditorLanguage.xml}
+            value={testMapInput}
+            onContentChanged={(e) => setTestMapInput(e.value)}
+            lineNumbers="on"
+            scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
+            className={styles.editorStyle}
+            height={`500px`}
+            wordWrap="on"
           />
         </PivotItem>
 
         <PivotItem headerText={outputLoc} style={{ marginTop: 12 }}>
-          <TextField
-            multiline
-            resizable={false}
-            placeholder="Output helper text"
-            style={{ height: 500 }}
-            styles={{ root: { marginTop: 12 } }}
+          <MonacoEditor
+            language={EditorLanguage.xml}
+            value={testMapResponse.value ?? ''}
+            lineNumbers="on"
+            scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
+            className={styles.editorStyle}
+            height={`500px`}
+            wordWrap="on"
+            readOnly
           />
         </PivotItem>
       </Pivot>
