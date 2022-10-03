@@ -57,6 +57,29 @@ export const Group = ({
   const [collapsed, setCollapsed] = useState(false);
   const [currProps, setCurrProps] = useState<GroupItemProps>(groupProps);
 
+  const deleteButton = intl.formatMessage({
+    defaultMessage: 'Delete',
+    description: 'delete button',
+  });
+
+  const handleDeleteGroup = () => {
+    console.log('delete group');
+  };
+
+  const moreGroupMenuItems = [
+    {
+      key: deleteButton,
+      disabled: false,
+      iconProps: {
+        iconName: 'Delete',
+      },
+      iconOnly: true,
+      name: deleteButton,
+      onClick: handleDeleteGroup,
+    },
+    ...groupMenuItems,
+  ];
+
   useEffect(() => {
     handleUpdateParent(currProps, index);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,7 +102,7 @@ export const Group = ({
           ariaLabel={groupCommands}
           styles={overflowStyle}
           menuIconProps={menuIconProps}
-          menuProps={groupMenuItems && { items: groupMenuItems }}
+          menuProps={moreGroupMenuItems && { items: moreGroupMenuItems }}
         />
       </TooltipHost>
     );
@@ -183,7 +206,7 @@ export const Group = ({
                 className="msla-querybuilder-group-more"
                 styles={overflowStyle}
                 items={[]}
-                overflowItems={groupMenuItems}
+                overflowItems={moreGroupMenuItems}
                 onRenderOverflowButton={onRenderOverflowButton}
                 onRenderItem={function (_item: IOverflowSetItemProps) {
                   throw new Error('No items in overflowset');

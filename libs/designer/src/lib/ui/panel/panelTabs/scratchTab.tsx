@@ -51,7 +51,6 @@ export const ScratchTab = () => {
           readonly={false}
           groupProps={{
             type: 'group',
-            checked: false,
             selectedOption: GroupDropdownOptions.OR,
             items: [
               { type: 'row', checked: true },

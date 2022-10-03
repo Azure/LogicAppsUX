@@ -51,10 +51,6 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
     setRootProp(newProps);
   };
 
-  const deleteButton = intl.formatMessage({
-    defaultMessage: 'Delete',
-    description: 'delete button',
-  });
   const moveUpButton = intl.formatMessage({
     defaultMessage: 'Move up',
     description: 'Move up button',
@@ -73,21 +69,11 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
     description: 'Ungroup button',
   });
 
-  const handleDelete = () => {
-    console.log('delete');
+  const handleGroup = () => {
+    console.log('group');
   };
 
   const rowMenuItems: IOverflowSetItemProps[] = [
-    {
-      key: deleteButton,
-      disabled: false,
-      iconProps: {
-        iconName: 'Delete',
-      },
-      iconOnly: true,
-      name: deleteButton,
-      onClick: handleDelete,
-    },
     {
       key: moveUpButton,
       disabled: false,
@@ -96,7 +82,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
       },
       iconOnly: true,
       name: moveUpButton,
-      onClick: handleDelete,
+      onClick: handleGroup,
     },
     {
       key: moveDownButton,
@@ -106,7 +92,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
       },
       iconOnly: true,
       name: moveDownButton,
-      onClick: handleDelete,
+      onClick: handleGroup,
     },
     {
       key: makeGroupButton,
@@ -116,7 +102,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
       },
       iconOnly: true,
       name: makeGroupButton,
-      onClick: handleDelete,
+      onClick: handleGroup,
     },
   ];
   const groupMenuItems: IOverflowSetItemProps[] = [
@@ -129,7 +115,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
       },
       iconOnly: true,
       name: unGroupButton,
-      onClick: handleDelete,
+      onClick: handleGroup,
     },
   ];
 
