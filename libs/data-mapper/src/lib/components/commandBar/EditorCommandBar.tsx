@@ -85,6 +85,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
   const isDiscardConfirmed = useSelector(
     (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
   );
+  const xsltFilename = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltFilename);
 
   useEffect(() => {
     if (isDiscardConfirmed) {
@@ -197,6 +198,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       ariaLabel: Resources.RUN_TEST,
       iconProps: { iconName: 'Play' },
       onClick: onTestClick,
+      disabled: !xsltFilename,
       buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
