@@ -281,6 +281,7 @@ export enum ValidationStatus {
 
 export interface IWorkflowValidation {
   validationState: string;
+  details: any;
   workflowOperations: Record<string, any>;
   connections: Record<string, any>;
   parameters: Record<string, any>;
@@ -312,12 +313,14 @@ export enum WorkflowPart {
   workflowOperations = 'workflowOperations',
   connections = 'connections',
   parameters = 'parameters',
+  workflow = 'details',
 }
 
 export enum StyledWorkflowPart {
   workflowOperations = 'Operations',
   connections = 'Connections',
   parameters = 'Parameters',
+  workflow = 'Workflow',
 }
 
 export interface InjectValuesMessage {
