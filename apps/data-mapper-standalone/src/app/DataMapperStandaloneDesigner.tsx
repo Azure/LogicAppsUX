@@ -15,6 +15,7 @@ const workflowSchemaFilenames = ['Source.xsd', 'Target.xsd'];
 export const DataMapperStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.dataMapDataLoader.theme);
 
+  const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
   const sourceSchema = useSelector((state: RootState) => state.schemaDataLoader.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.schemaDataLoader.targetSchema);
@@ -42,6 +43,7 @@ export const DataMapperStandaloneDesigner = () => {
       <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
         <DataMapperDesignerProvider locale="en-US" theme={theme === 'Light' ? 'light' : 'dark'} options={{}}>
           <DataMapDataProvider
+            xsltFilename={xsltFilename}
             mapDefinition={mapDefinition}
             sourceSchema={sourceSchema}
             targetSchema={targetSchema}

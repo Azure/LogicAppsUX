@@ -12,6 +12,7 @@ export interface DataMapLoadingState {
   rawDefinition: string;
   loadingMethod: 'file' | 'arm';
   mapDefinition: MapDefinitionEntry;
+  xsltFilename: string;
 }
 
 const initialState: DataMapLoadingState = {
@@ -19,6 +20,7 @@ const initialState: DataMapLoadingState = {
   loadingMethod: 'file',
   rawDefinition: '',
   mapDefinition: {},
+  xsltFilename: '',
 };
 
 export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunkAPI) => {
@@ -52,6 +54,9 @@ export const dataMapDataLoaderSlice = createSlice({
     },
     changeLoadingMethod: (state, action: PayloadAction<'file' | 'arm'>) => {
       state.loadingMethod = action.payload;
+    },
+    changeXsltFilename: (state, action: PayloadAction<string>) => {
+      state.xsltFilename = action.payload;
     },
   },
   extraReducers: (builder) => {

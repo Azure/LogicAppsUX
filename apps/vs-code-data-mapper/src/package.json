@@ -73,7 +73,7 @@
     "onCommand:azureDataMapper.openDataMapper",
     "workspaceContains:host.json",
     "workspaceContains:**/.xsd",
-    "workspaceContains:**/.xslt",
+    "workspaceContains:**/.xsl",
     "onView:azDataMapper",
     "onDebugInitialConfigurations"
   ],

@@ -27,6 +27,7 @@ export interface DataMapOperationState {
   currentTargetNode?: SchemaNodeExtended;
   currentFunctionNodes: FunctionDictionary;
   currentlySelectedNode?: SelectedNode;
+  xsltFilename: string;
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -35,6 +36,7 @@ const emptyPristineState: DataMapOperationState = {
   currentFunctionNodes: {},
   flattenedSourceSchema: {},
   flattenedTargetSchema: {},
+  xsltFilename: '',
 };
 
 const initialState: DataMapState = {
@@ -63,6 +65,11 @@ export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
+    setXsltFilename: (state, action: PayloadAction<string>) => {
+      state.curDataMapOperation.xsltFilename = action.payload;
+      state.pristineDataMap.xsltFilename = action.payload;
+    },
+
     setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
       if (action.payload.schemaType === SchemaTypes.Source) {
         state.curDataMapOperation.sourceSchema = action.payload.schema;
@@ -407,6 +414,7 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
+  setXsltFilename,
   setInitialSchema,
   setInitialDataMap,
   changeSourceSchema,

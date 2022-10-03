@@ -170,7 +170,7 @@ export default class DataMapperExt {
       DataMapperExt.currentDataMapName = 'default';
     }
 
-    const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? '.yml' : '.xslt'}`;
+    const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? '.yml' : '.xsl'}`;
     const folderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), isDefinition ? dataMapDefinitionsPath : dataMapsPath);
     const filePath = path.join(folderPath, fileName);
 
