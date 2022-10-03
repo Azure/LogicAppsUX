@@ -2170,7 +2170,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Signing in...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Aanmelden...]]></Val>
+            <Val><![CDATA[Bezig met aanmelden]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2232,6 +2232,9 @@
       <Item ItemId=";EiRMD4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in to create a connection to {connectorDisplayName}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Meld u aan om een verbinding te maken met {connectorDisplayName}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5163,6 +5166,9 @@
       <Item ItemId=";aRKDWL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed with error: {errorMessage}. Please sign in again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mislukt met de volgende fout: {errorMessage}. Meld u opnieuw aan.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6765,6 +6771,9 @@
       <Item ItemId=";mca3Ml" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in to connector]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aanmelden bij connector]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7050,6 +7059,9 @@
       <Item ItemId=";p1Qtm5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[In-App]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[In-app]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

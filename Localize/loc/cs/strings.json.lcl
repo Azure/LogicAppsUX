@@ -2182,7 +2182,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Signing in...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Přihlašování...]]></Val>
+            <Val><![CDATA[Přihlašování…]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2244,6 +2244,9 @@
       <Item ItemId=";EiRMD4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in to create a connection to {connectorDisplayName}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Přihlaste se a vytvořte připojení ke konektoru {connectorDisplayName}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5193,6 +5196,9 @@
       <Item ItemId=";aRKDWL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed with error: {errorMessage}. Please sign in again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Selhalo s chybou: {errorMessage}. Přihlaste se prosím znovu.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6801,6 +6807,9 @@
       <Item ItemId=";mca3Ml" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in to connector]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Přihlásit se ke konektoru]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7086,6 +7095,9 @@
       <Item ItemId=";p1Qtm5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[In-App]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[V aplikaci]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7183,7 +7195,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Triggers]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Aktivační události]]></Val>
+            <Val><![CDATA[Triggery]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

@@ -220,7 +220,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Shared]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Condivisa]]></Val>
+            <Val><![CDATA[Condiviso]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -829,7 +829,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Terms of Service]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Condizioni per l'utilizzo del servizio]]></Val>
+            <Val><![CDATA[Condizioni d'uso]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2176,7 +2176,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Signing in...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Accesso in corso...]]></Val>
+            <Val><![CDATA[Accesso...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2238,6 +2238,9 @@
       <Item ItemId=";EiRMD4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in to create a connection to {connectorDisplayName}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Eseguire l'accesso per creare una connessione a {connectorDisplayName}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5178,6 +5181,9 @@
       <Item ItemId=";aRKDWL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed with error: {errorMessage}. Please sign in again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Operazione non riuscita con errore: {errorMessage}. Eseguire di nuovo l'accesso.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6783,6 +6789,9 @@
       <Item ItemId=";mca3Ml" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in to connector]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Accedere al connettore]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7068,6 +7077,9 @@
       <Item ItemId=";p1Qtm5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[In-App]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[In-app]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

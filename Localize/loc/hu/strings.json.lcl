@@ -2232,6 +2232,9 @@
       <Item ItemId=";EiRMD4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in to create a connection to {connectorDisplayName}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A következővel való kapcsolat létrehozásához jelentkezzen be: {connectorDisplayName}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5163,6 +5166,9 @@
       <Item ItemId=";aRKDWL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed with error: {errorMessage}. Please sign in again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A következő hiba történt: {errorMessage}. Jelentkezzen be újra.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6765,6 +6771,9 @@
       <Item ItemId=";mca3Ml" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in to connector]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Bejelentkezés az összekötőbe]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7050,6 +7059,9 @@
       <Item ItemId=";p1Qtm5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[In-App]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Alkalmazáson belüli termék]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

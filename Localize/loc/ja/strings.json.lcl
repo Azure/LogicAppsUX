@@ -826,7 +826,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Terms of Service]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[サービス条件]]></Val>
+            <Val><![CDATA[サービス使用条件]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2170,7 +2170,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Signing in...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[サインインしています...]]></Val>
+            <Val><![CDATA[サインイン中...]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2232,6 +2232,9 @@
       <Item ItemId=";EiRMD4" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in to create a connection to {connectorDisplayName}.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[サインインして {connectorDisplayName} への接続を作成します。]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5163,6 +5166,9 @@
       <Item ItemId=";aRKDWL" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Failed with error: {errorMessage}. Please sign in again.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[次のエラーで失敗しました: {errorMessage}。もう一度サインインしてください。]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6765,6 +6771,9 @@
       <Item ItemId=";mca3Ml" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Sign in to connector]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[コネクタにサインイン]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7050,6 +7059,9 @@
       <Item ItemId=";p1Qtm5" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[In-App]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[アプリ内]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
