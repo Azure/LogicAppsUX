@@ -140,13 +140,13 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Compartilhado"
     }
   ],
   "02vyBk": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "Disparar"
     }
   ],
   "07ZsoY": [
@@ -206,7 +206,7 @@
   "0Wr7qp": [
     {
       "type": 0,
-      "value": "Select a filter"
+      "value": "Selecione um filtro"
     }
   ],
   "0ZlNtf": [
@@ -557,7 +557,7 @@
   "3ERi+E": [
     {
       "type": 0,
-      "value": "Terms of Service"
+      "value": "Termos de Serviço"
     }
   ],
   "3FoqCK": [
@@ -773,7 +773,7 @@
   "4yC+4g": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "Tipo de Ação"
     }
   ],
   "5J7j9k": [
@@ -1502,7 +1502,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Signing in..."
+      "value": "Entrando..."
     }
   ],
   "E9OS+9": [
@@ -1544,7 +1544,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "Entre para criar uma conexão com "
     },
     {
       "type": 1,
@@ -1901,7 +1901,7 @@
   "IgNz8Y": [
     {
       "type": 0,
-      "value": "Action"
+      "value": "Ação"
     }
   ],
   "IjZFjQ": [
@@ -2552,7 +2552,7 @@
   "P+na99": [
     {
       "type": 0,
-      "value": "Filter"
+      "value": "Filtrar"
     }
   ],
   "P2A5dB": [
@@ -3639,7 +3639,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "Falha com o erro: "
     },
     {
       "type": 1,
@@ -3647,7 +3647,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": ". Entre novamente."
     }
   ],
   "ahsVI/": [
@@ -3681,7 +3681,7 @@
   "bG9rjv": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Ações"
     }
   ],
   "bS5DyV": [
@@ -4796,7 +4796,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "Entrar no conector"
     }
   ],
   "mjS/k1": [
@@ -4996,7 +4996,7 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "No aplicativo"
     }
   ],
   "p5tz8/": [
@@ -5062,7 +5062,7 @@
   "piaRy6": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Disparadores"
     }
   ],
   "pozypE": [
@@ -5887,7 +5887,7 @@
   "y1e9yw": [
     {
       "type": 0,
-      "value": "Sign in"
+      "value": "Entrar"
     }
   ],
   "y3AZQB": [

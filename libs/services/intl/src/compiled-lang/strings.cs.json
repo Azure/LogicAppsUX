@@ -152,7 +152,7 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Sdíleno"
     }
   ],
   "02vyBk": [
@@ -218,7 +218,7 @@
   "0Wr7qp": [
     {
       "type": 0,
-      "value": "Select a filter"
+      "value": "Vyberte filtr."
     }
   ],
   "0ZlNtf": [
@@ -592,7 +592,7 @@
   "3ERi+E": [
     {
       "type": 0,
-      "value": "Terms of Service"
+      "value": "Podmínky služby"
     }
   ],
   "3FoqCK": [
@@ -808,7 +808,7 @@
   "4yC+4g": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "Typ akce"
     }
   ],
   "5J7j9k": [
@@ -1580,7 +1580,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Signing in..."
+      "value": "Přihlašování..."
     }
   ],
   "E9OS+9": [
@@ -2006,7 +2006,7 @@
   "IgNz8Y": [
     {
       "type": 0,
-      "value": "Action"
+      "value": "Akce"
     }
   ],
   "IjZFjQ": [
@@ -2552,7 +2552,7 @@
   "NvmZVi": [
     {
       "type": 0,
-      "value": "Runtime"
+      "value": "Modul runtime"
     }
   ],
   "O+8vRv": [
@@ -2712,7 +2712,7 @@
   "P+na99": [
     {
       "type": 0,
-      "value": "Filter"
+      "value": "Filtr"
     }
   ],
   "P2A5dB": [
@@ -3868,7 +3868,7 @@
   "bG9rjv": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Akce"
     }
   ],
   "bS5DyV": [
@@ -5284,7 +5284,7 @@
   "piaRy6": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Aktivační události"
     }
   ],
   "pozypE": [
@@ -6132,7 +6132,7 @@
   "y1e9yw": [
     {
       "type": 0,
-      "value": "Sign in"
+      "value": "Přihlásit se"
     }
   ],
   "y3AZQB": [

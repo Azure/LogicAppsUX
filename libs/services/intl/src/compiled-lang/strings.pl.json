@@ -156,13 +156,13 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Udostępnione"
     }
   ],
   "02vyBk": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "Wyzwalacz"
     }
   ],
   "07ZsoY": [
@@ -222,7 +222,7 @@
   "0Wr7qp": [
     {
       "type": 0,
-      "value": "Select a filter"
+      "value": "Wybierz filtr"
     }
   ],
   "0ZlNtf": [
@@ -600,7 +600,7 @@
   "3ERi+E": [
     {
       "type": 0,
-      "value": "Terms of Service"
+      "value": "Warunki świadczenia usługi"
     }
   ],
   "3FoqCK": [
@@ -816,7 +816,7 @@
   "4yC+4g": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "Typ akcji"
     }
   ],
   "5J7j9k": [
@@ -1592,7 +1592,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Signing in..."
+      "value": "Trwa logowanie..."
     }
   ],
   "E9OS+9": [
@@ -2018,7 +2018,7 @@
   "IgNz8Y": [
     {
       "type": 0,
-      "value": "Action"
+      "value": "Akcja"
     }
   ],
   "IjZFjQ": [
@@ -2560,7 +2560,7 @@
   "NvmZVi": [
     {
       "type": 0,
-      "value": "Runtime"
+      "value": "Środowisko uruchomieniowe"
     }
   ],
   "O+8vRv": [
@@ -2720,7 +2720,7 @@
   "P+na99": [
     {
       "type": 0,
-      "value": "Filter"
+      "value": "Filtruj"
     }
   ],
   "P2A5dB": [
@@ -3876,7 +3876,7 @@
   "bG9rjv": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Akcje"
     }
   ],
   "bS5DyV": [
@@ -5300,7 +5300,7 @@
   "piaRy6": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Wyzwalacze"
     }
   ],
   "pozypE": [
@@ -6152,7 +6152,7 @@
   "y1e9yw": [
     {
       "type": 0,
-      "value": "Sign in"
+      "value": "Zaloguj"
     }
   ],
   "y3AZQB": [
