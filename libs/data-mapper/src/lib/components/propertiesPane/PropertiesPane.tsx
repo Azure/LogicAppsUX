@@ -96,10 +96,10 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     description: 'Label for code tab',
   });
 
-  const testLoc = intl.formatMessage({
+  /*const testLoc = intl.formatMessage({
     defaultMessage: 'Test',
     description: 'Label for test tab',
-  });
+  });*/
 
   const selectElementLoc = intl.formatMessage({
     defaultMessage: 'Select an element to start configuring',
@@ -224,7 +224,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
         <Tab value={TABS.CODE}>{codeLoc}</Tab>
-        {currentNode?.nodeType === NodeType.Target && <Tab value={TABS.TEST}>{testLoc}</Tab>}
+        {/*currentNode?.nodeType === NodeType.Target && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
       </TabList>
     </>
   );
