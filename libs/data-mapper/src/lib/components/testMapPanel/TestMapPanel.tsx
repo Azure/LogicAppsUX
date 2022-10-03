@@ -1,10 +1,10 @@
+import { testDataMap } from '../../core/queries/datamap';
 import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-// NOTE: Fluent V9 tokens don't work w/ certain V8 controls/surfaces
 const useStyles = makeStyles({
   editorStyle: {
     marginTop: '12px',
@@ -72,14 +72,20 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
 
   const inputDataOptions = [{ key: 'pasteSample', text: pasteFromSampleLoc }];
 
-  const testMap = () => {
-    // TODO: Call testMap API once we get it
+  const testMap = async () => {
+    if (!testMapInput) {
+      return;
+    }
+
+    const testMapResponse = await testDataMap('CheckAvailability', testMapInput);
+
+    console.log(testMapResponse);
   };
 
   const getFooterContent = () => {
     return (
       <div>
-        <PrimaryButton onClick={testMap} style={{ marginRight: 8 }}>
+        <PrimaryButton onClick={testMap} style={{ marginRight: 8 }} disabled={!testMapInput}>
           {testLoc}
         </PrimaryButton>
         <DefaultButton onClick={onClose}>{discardLoc}</DefaultButton>
