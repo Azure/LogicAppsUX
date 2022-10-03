@@ -140,13 +140,13 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Paylaşılan"
     }
   ],
   "02vyBk": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "Tetikleyici"
     }
   ],
   "07ZsoY": [
@@ -206,7 +206,7 @@
   "0Wr7qp": [
     {
       "type": 0,
-      "value": "Select a filter"
+      "value": "Filtre seçin"
     }
   ],
   "0ZlNtf": [
@@ -546,7 +546,7 @@
   "3ERi+E": [
     {
       "type": 0,
-      "value": "Terms of Service"
+      "value": "Hizmet Koşulları"
     }
   ],
   "3FoqCK": [
@@ -762,7 +762,7 @@
   "4yC+4g": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "Eylem Türü"
     }
   ],
   "5J7j9k": [
@@ -1484,7 +1484,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Signing in..."
+      "value": "Oturum açılıyor..."
     }
   ],
   "E9OS+9": [
@@ -1872,7 +1872,7 @@
   "IgNz8Y": [
     {
       "type": 0,
-      "value": "Action"
+      "value": "Eylem"
     }
   ],
   "IjZFjQ": [
@@ -2368,7 +2368,7 @@
   "NvmZVi": [
     {
       "type": 0,
-      "value": "Runtime"
+      "value": "Çalışma zamanı"
     }
   ],
   "O+8vRv": [
@@ -2512,7 +2512,7 @@
   "P+na99": [
     {
       "type": 0,
-      "value": "Filter"
+      "value": "Filtre"
     }
   ],
   "P2A5dB": [
@@ -3630,7 +3630,7 @@
   "bG9rjv": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Eylemler"
     }
   ],
   "bS5DyV": [
@@ -4992,7 +4992,7 @@
   "piaRy6": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Tetikleyiciler"
     }
   ],
   "pozypE": [
@@ -5802,7 +5802,7 @@
   "y1e9yw": [
     {
       "type": 0,
-      "value": "Sign in"
+      "value": "Oturum aç"
     }
   ],
   "y3AZQB": [

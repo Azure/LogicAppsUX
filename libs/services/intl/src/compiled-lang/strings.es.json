@@ -156,13 +156,13 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Compartido"
     }
   ],
   "02vyBk": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "Desencadenador"
     }
   ],
   "07ZsoY": [
@@ -222,7 +222,7 @@
   "0Wr7qp": [
     {
       "type": 0,
-      "value": "Select a filter"
+      "value": "Seleccionar un filtro"
     }
   ],
   "0ZlNtf": [
@@ -573,7 +573,7 @@
   "3ERi+E": [
     {
       "type": 0,
-      "value": "Terms of Service"
+      "value": "Términos del servicio"
     }
   ],
   "3FoqCK": [
@@ -789,7 +789,7 @@
   "4yC+4g": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "Tipo de acción"
     }
   ],
   "5J7j9k": [
@@ -1554,7 +1554,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Signing in..."
+      "value": "Iniciando sesión..."
     }
   ],
   "E9OS+9": [
@@ -1596,7 +1596,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "Inicie sesión para crear una conexión a "
     },
     {
       "type": 1,
@@ -1961,7 +1961,7 @@
   "IgNz8Y": [
     {
       "type": 0,
-      "value": "Action"
+      "value": "Acción"
     }
   ],
   "IjZFjQ": [
@@ -2644,7 +2644,7 @@
   "P+na99": [
     {
       "type": 0,
-      "value": "Filter"
+      "value": "Filtrar"
     }
   ],
   "P2A5dB": [
@@ -3739,7 +3739,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "Error: "
     },
     {
       "type": 1,
@@ -3747,7 +3747,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": ". Vuelva a iniciar sesión."
     }
   ],
   "ahsVI/": [
@@ -3781,7 +3781,7 @@
   "bG9rjv": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Acciones"
     }
   ],
   "bS5DyV": [
@@ -4920,7 +4920,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "Iniciar sesión en el conector"
     }
   ],
   "mjS/k1": [
@@ -5120,7 +5120,7 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "Desde la aplicación"
     }
   ],
   "p5tz8/": [
@@ -5186,7 +5186,7 @@
   "piaRy6": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Desencadenadores"
     }
   ],
   "pozypE": [
@@ -6027,7 +6027,7 @@
   "y1e9yw": [
     {
       "type": 0,
-      "value": "Sign in"
+      "value": "Iniciar sesión"
     }
   ],
   "y3AZQB": [

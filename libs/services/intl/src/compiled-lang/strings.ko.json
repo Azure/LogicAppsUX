@@ -140,13 +140,13 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "공유"
     }
   ],
   "02vyBk": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "트리거"
     }
   ],
   "07ZsoY": [
@@ -206,7 +206,7 @@
   "0Wr7qp": [
     {
       "type": 0,
-      "value": "Select a filter"
+      "value": "필터 선택"
     }
   ],
   "0ZlNtf": [
@@ -535,7 +535,7 @@
   "3ERi+E": [
     {
       "type": 0,
-      "value": "Terms of Service"
+      "value": "서비스 약관"
     }
   ],
   "3FoqCK": [
@@ -751,7 +751,7 @@
   "4yC+4g": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "동작 유형"
     }
   ],
   "5J7j9k": [
@@ -1462,7 +1462,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Signing in..."
+      "value": "로그인 중..."
     }
   ],
   "E9OS+9": [
@@ -1839,7 +1839,7 @@
   "IgNz8Y": [
     {
       "type": 0,
-      "value": "Action"
+      "value": "작업"
     }
   ],
   "IjZFjQ": [
@@ -2324,7 +2324,7 @@
   "NvmZVi": [
     {
       "type": 0,
-      "value": "Runtime"
+      "value": "런타임"
     }
   ],
   "O+8vRv": [
@@ -2468,7 +2468,7 @@
   "P+na99": [
     {
       "type": 0,
-      "value": "Filter"
+      "value": "필터"
     }
   ],
   "P2A5dB": [
@@ -3575,7 +3575,7 @@
   "bG9rjv": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "작업"
     }
   ],
   "bS5DyV": [
@@ -4926,7 +4926,7 @@
   "piaRy6": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "트리거"
     }
   ],
   "pozypE": [
@@ -5725,7 +5725,7 @@
   "y1e9yw": [
     {
       "type": 0,
-      "value": "Sign in"
+      "value": "로그인"
     }
   ],
   "y3AZQB": [
