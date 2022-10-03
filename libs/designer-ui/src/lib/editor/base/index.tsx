@@ -20,7 +20,6 @@ import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { TableCellNode, TableNode, TableRowNode } from '@lexical/table';
 import { useFunctionalState } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -96,7 +95,7 @@ export const BaseEditor = ({
     theme: EditorTheme,
     onError,
     readOnly: readonly,
-    nodes: [TableCellNode, TableNode, TableRowNode, AutoLinkNode, LinkNode, TokenNode],
+    nodes: [AutoLinkNode, LinkNode, TokenNode],
     namespace: 'editor',
     editorState:
       initialValue &&
