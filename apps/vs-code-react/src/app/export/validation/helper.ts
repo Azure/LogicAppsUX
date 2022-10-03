@@ -35,6 +35,9 @@ const getGroupName = (groupName: string): string => {
     case WorkflowPart.parameters: {
       return StyledWorkflowPart.parameters;
     }
+    case WorkflowPart.workflow: {
+      return StyledWorkflowPart.workflow;
+    }
     default: {
       return groupName;
     }
@@ -105,7 +108,7 @@ const getIndexStart = (workflowsGroups: Array<IGroupedGroup>, children: Array<IG
   return indexStart;
 };
 
-export const parseValidationData = (validationData: IValidationData | undefined) => {
+export const parseValidationData = (validationData: IValidationData | undefined, workflowGroupDisplayName?: string) => {
   const workflowsSchema: Record<string, IWorkflowValidation> = validationData?.workflows ?? {};
   const workflowsGroups: Array<IGroupedGroup> = [];
   const workflowsItems: Array<IGroupedItem> = [];
@@ -117,24 +120,27 @@ export const parseValidationData = (validationData: IValidationData | undefined)
     let detailsCount = 0;
     const children: Array<IGroupedGroup> = [];
 
+    if (workflowSchema.details) {
+      workflowsItems.push({ action: workflowId, status: workflowSchema.validationState, message: workflowSchema.details.error?.message });
+      children.push(
+        getValidationGroup(workflowSchema, workflowGroupDisplayName ?? workflowId, 1, getIndexStart(workflowsGroups, [], 0), 1, [])
+      );
+      detailsCount += 1;
+    }
+
     Object.keys(workflowSchema).forEach((workflowSchemaKey: string, index: number) => {
+      if (workflowSchemaKey === 'validationState' || workflowSchemaKey === 'details') {
+        return;
+      }
+
       const indexStart = getIndexStart(workflowsGroups, children, index);
       const action = workflowSchema[workflowSchemaKey as keyof IWorkflowValidation];
 
       const { items = [], validationGroups = [] } = index === 0 ? {} : getItemsValidation(action, indexStart);
       detailsCount += items.length;
 
-      if (index !== 0) {
-        const innerValidationGroup = getValidationGroup(
-          action,
-          workflowSchemaKey,
-          1,
-          indexStart,
-          validationGroups.length,
-          validationGroups
-        );
-        children.push(innerValidationGroup);
-      }
+      const innerValidationGroup = getValidationGroup(action, workflowSchemaKey, 1, indexStart, validationGroups.length, validationGroups);
+      children.push(innerValidationGroup);
 
       workflowsItems.push(...items);
     });

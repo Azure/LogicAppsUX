@@ -137,6 +137,18 @@
       "value": "전달된 배열 또는 문자열의 첫 번째 Count 요소를 반환합니다."
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "공유"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "트리거"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -189,6 +201,12 @@
     {
       "type": 0,
       "value": "축소"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "필터 선택"
     }
   ],
   "0ZlNtf": [
@@ -433,7 +451,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "검색"
     }
   ],
   "2NYPLt": [
@@ -512,6 +530,12 @@
     {
       "type": 0,
       "value": "동적 콘텐츠 추가"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "서비스 약관"
     }
   ],
   "3FoqCK": [
@@ -724,6 +748,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "동작 유형"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -805,7 +835,7 @@
   "6OSgRP": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "테스트 맵"
     }
   ],
   "6XR3FS": [
@@ -1336,7 +1366,7 @@
   "CSoHMf": [
     {
       "type": 0,
-      "value": "Replace existing schema"
+      "value": "기존 스키마 바꾸기"
     }
   ],
   "Ciol6I": [
@@ -1372,7 +1402,7 @@
   "D5FIKL": [
     {
       "type": 0,
-      "value": "Paste from sample"
+      "value": "샘플에서 붙여넣기"
     }
   ],
   "DDIIAQ": [
@@ -1429,6 +1459,12 @@
       "value": "Ctrl+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "로그인 중..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1463,6 +1499,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Sign in to create a connection to "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1784,6 +1834,12 @@
     {
       "type": 0,
       "value": "전달된 문자열 타임스탬프를 UTC에서 대상 표준 시간대로 변환합니다."
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "작업"
     }
   ],
   "IjZFjQ": [
@@ -2196,7 +2252,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "대상 스키마"
     }
   ],
   "N2CF0J": [
@@ -2263,6 +2319,12 @@
     {
       "type": 0,
       "value": "화요일"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "런타임"
     }
   ],
   "O+8vRv": [
@@ -2401,6 +2463,12 @@
     {
       "type": 0,
       "value": "PFX"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "필터"
     }
   ],
   "P2A5dB": [
@@ -3462,6 +3530,20 @@
       "value": "함수"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Failed with error: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Please sign in again."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3488,6 +3570,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "작업"
     }
   ],
   "bS5DyV": [
@@ -4108,7 +4196,7 @@
   "i1Tufp": [
     {
       "type": 0,
-      "value": "Provide input data to test the map with"
+      "value": "맵을 테스트할 입력 데이터 제공"
     }
   ],
   "i1cwra": [
@@ -4569,6 +4657,12 @@
       "value": "필수 항목으로, 소문자로 변환할 문자열입니다. 문자열의 문자에 해당하는 소문자가 없는 경우 해당 문자는 변경되지 않은 상태로 반환된 문자열에 포함됩니다."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Sign in to connector"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4763,6 +4857,12 @@
       "value": "헤더"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-App"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -4821,6 +4921,12 @@
     {
       "type": 0,
       "value": "전달되는 배열 또는 개체 간에 공통된 요소가 있는 단일 배열 또는 개체를 반환합니다. 이 함수에 대한 매개 변수는 개체 집합 또는 배열 집합(둘 중 하나만 포함)일 수 있습니다. 이름이 같은 두 개체가 있는 경우 해당 이름의 마지막 개체가 최종 개체로 나타납니다."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "트리거"
     }
   ],
   "pozypE": [
@@ -5614,6 +5720,12 @@
     {
       "type": 0,
       "value": "값"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "로그인"
     }
   ],
   "y3AZQB": [

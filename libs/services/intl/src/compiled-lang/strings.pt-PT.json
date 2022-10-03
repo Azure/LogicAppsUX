@@ -153,6 +153,18 @@
       "value": "Devolve os primeiros elementos de Contagem da matriz ou da cadeia transmitida"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Partilhado"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Acionador"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Fechar"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Selecionar um filtro"
     }
   ],
   "0ZlNtf": [
@@ -471,7 +489,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Pesquisar"
     }
   ],
   "2NYPLt": [
@@ -550,6 +568,12 @@
     {
       "type": 0,
       "value": "Adicionar conteúdo dinâmico"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Termos do Serviço"
     }
   ],
   "3FoqCK": [
@@ -760,6 +784,12 @@
     {
       "type": 0,
       "value": "14"
+    }
+  ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Tipo de Ação"
     }
   ],
   "5J7j9k": [
@@ -1521,6 +1551,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "A iniciar sessão..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1555,6 +1591,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Inicie sessão para criar uma ligação para "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1914,6 +1964,12 @@
     {
       "type": 0,
       "value": "Converte um carimbo de data/hora de cadeia transmitido de um UTC para um fuso horário de destino"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Ação"
     }
   ],
   "IjZFjQ": [
@@ -2372,7 +2428,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Esquema de destino"
     }
   ],
   "N2CF0J": [
@@ -2439,6 +2495,12 @@
     {
       "type": 0,
       "value": "Terça-feira"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2593,6 +2655,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtrar"
     }
   ],
   "P2A5dB": [
@@ -3692,6 +3760,20 @@
       "value": "Função"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Falha com o erro: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Inicie sessão novamente."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3718,6 +3800,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Ações"
     }
   ],
   "bS5DyV": [
@@ -4861,6 +4949,12 @@
       "value": "Obrigatório. A cadeia a converter em minúsculas. Se um caráter na cadeia não tiver um equivalente em minúsculas, o caráter é incluído inalterado na cadeia devolvida."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Iniciar sessão no conector"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -5055,6 +5149,12 @@
       "value": "Cabeçalhos"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "Na Aplicação"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -5113,6 +5213,12 @@
     {
       "type": 0,
       "value": "Devolve uma matriz ou um objeto únicos que tem elementos comuns entre matrizes ou objetos transmitidos. Os parâmetros da função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura de ambos). Se existirem dois objetos com o mesmo nome, o último objeto com esse nome aparece no objeto final."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Acionadores"
     }
   ],
   "pozypE": [
@@ -5948,6 +6054,12 @@
     {
       "type": 0,
       "value": "Valor"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Iniciar sessão"
     }
   ],
   "y3AZQB": [

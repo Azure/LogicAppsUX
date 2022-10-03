@@ -1,5 +1,5 @@
-import { simpleMockSchema } from '../../__mocks__';
 import type { Schema } from '../../models/Schema';
+import { simpleMockSchema } from '../../models/__mocks__';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';
@@ -69,12 +69,7 @@ export const MappingToolbox: ComponentStory<typeof ButtonPivot> = (args: ButtonP
       <ButtonPivot {...updatedArgs} />
       {showToolboxPane === 'toolbox' && (
         <FloatingPanel {...ToolboxPanelProps}>
-          <SchemaTree
-            schema={extendedSchema}
-            currentlySelectedNodes={[]}
-            visibleConnectedNodes={[]}
-            onNodeClick={() => console.log('Node clicked')}
-          />
+          <SchemaTree schema={extendedSchema} toggledNodes={[]} onNodeClick={() => console.log('Node clicked')} />
         </FloatingPanel>
       )}
       {showToolboxPane === 'functions' && (

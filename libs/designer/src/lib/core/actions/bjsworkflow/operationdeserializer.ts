@@ -129,7 +129,7 @@ const initializeOperationDetailsForManifest = async (
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
-    const operationInfo = await getOperationInfo(nodeId, operation);
+    const operationInfo = await getOperationInfo(nodeId, operation, isTrigger);
 
     if (operationInfo) {
       const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };

@@ -137,6 +137,18 @@
       "value": "Geçirilen dizi veya dizeden ilk Count öğelerini döndürür"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Paylaşılan"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Tetikleyici"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -189,6 +201,12 @@
     {
       "type": 0,
       "value": "Daralt"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Filtre seçin"
     }
   ],
   "0ZlNtf": [
@@ -444,7 +462,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Arama"
     }
   ],
   "2NYPLt": [
@@ -523,6 +541,12 @@
     {
       "type": 0,
       "value": "Dinamik içerik ekle"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Hizmet Koşulları"
     }
   ],
   "3FoqCK": [
@@ -735,6 +759,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Eylem Türü"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -816,7 +846,7 @@
   "6OSgRP": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Eşlemeyi test et"
     }
   ],
   "6XR3FS": [
@@ -1358,7 +1388,7 @@
   "CSoHMf": [
     {
       "type": 0,
-      "value": "Replace existing schema"
+      "value": "Mevcut şemayı değiştir"
     }
   ],
   "Ciol6I": [
@@ -1394,7 +1424,7 @@
   "D5FIKL": [
     {
       "type": 0,
-      "value": "Paste from sample"
+      "value": "Örnekten yapıştır"
     }
   ],
   "DDIIAQ": [
@@ -1451,6 +1481,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Oturum açılıyor..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1485,6 +1521,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Sign in to create a connection to "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1817,6 +1867,12 @@
     {
       "type": 0,
       "value": "Geçirilen bir dize zaman damgasını UTC'den hedef saat dilimine dönüştürür"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Eylem"
     }
   ],
   "IjZFjQ": [
@@ -2240,7 +2296,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Hedef şema"
     }
   ],
   "N2CF0J": [
@@ -2307,6 +2363,12 @@
     {
       "type": 0,
       "value": "Salı"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Çalışma zamanı"
     }
   ],
   "O+8vRv": [
@@ -2445,6 +2507,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtre"
     }
   ],
   "P2A5dB": [
@@ -2824,7 +2892,7 @@
   "Sz8KN3": [
     {
       "type": 0,
-      "value": "Test"
+      "value": "Test et"
     }
   ],
   "T0BFpC": [
@@ -3517,6 +3585,20 @@
       "value": "İşlev"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Failed with error: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Please sign in again."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3543,6 +3625,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Eylemler"
     }
   ],
   "bS5DyV": [
@@ -4174,7 +4262,7 @@
   "i1Tufp": [
     {
       "type": 0,
-      "value": "Provide input data to test the map with"
+      "value": "Eşlemenin test edileceği giriş verilerini belirtin"
     }
   ],
   "i1cwra": [
@@ -4635,6 +4723,12 @@
       "value": "Gerekli. Küçük harfe dönüştürülecek dize. Dizedeki bir karakterin küçük harf eşdeğeri yoksa, karakter, döndürülen dizeye değiştirilmeden eklenir."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Sign in to connector"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4829,6 +4923,12 @@
       "value": "Üstbilgiler"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-App"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -4887,6 +4987,12 @@
     {
       "type": 0,
       "value": "Geçirilen dizi veya nesneler arasında ortak öğeleri olan tek bir dizi veya nesneyi döndürür. İşlevin parametreleri bir nesne kümesi ya da bir dizi kümesi olabilir (ikisinin karışımı olamaz). Aynı ada sahip iki nesne varsa, son nesnede bu ada sahip son nesne görünür."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Tetikleyiciler"
     }
   ],
   "pozypE": [
@@ -5691,6 +5797,12 @@
     {
       "type": 0,
       "value": "Değer"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Oturum aç"
     }
   ],
   "y3AZQB": [

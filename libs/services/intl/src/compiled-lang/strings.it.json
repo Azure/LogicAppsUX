@@ -137,6 +137,18 @@
       "value": "Restituisce i primi elementi Count dalla matrice o dalla stringa passata"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Condivisa"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -189,6 +201,12 @@
     {
       "type": 0,
       "value": "Comprimi"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Seleziona un filtro"
     }
   ],
   "0ZlNtf": [
@@ -455,7 +473,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Cerca"
     }
   ],
   "2NYPLt": [
@@ -534,6 +552,12 @@
     {
       "type": 0,
       "value": "Aggiungi contenuto dinamico"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Condizioni per l'utilizzo del servizio"
     }
   ],
   "3FoqCK": [
@@ -746,6 +770,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Tipo di azione"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -827,7 +857,7 @@
   "6OSgRP": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Test mappa"
     }
   ],
   "6XR3FS": [
@@ -1380,7 +1410,7 @@
   "CSoHMf": [
     {
       "type": 0,
-      "value": "Replace existing schema"
+      "value": "Sostituisci lo schema esistente"
     }
   ],
   "Ciol6I": [
@@ -1416,7 +1446,7 @@
   "D5FIKL": [
     {
       "type": 0,
-      "value": "Paste from sample"
+      "value": "Incolla dall'esempio"
     }
   ],
   "DDIIAQ": [
@@ -1473,6 +1503,12 @@
       "value": "CTRL+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Accesso in corso..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1507,6 +1543,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Sign in to create a connection to "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1850,6 +1900,12 @@
     {
       "type": 0,
       "value": "Converte il timestamp in formato stringa passato da UTIC al fuso orario di destinazione"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Azione"
     }
   ],
   "IjZFjQ": [
@@ -2284,7 +2340,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Schema di destinazione"
     }
   ],
   "N2CF0J": [
@@ -2351,6 +2407,12 @@
     {
       "type": 0,
       "value": "Martedì"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2497,6 +2559,12 @@
     {
       "type": 0,
       "value": "PFX"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtro"
     }
   ],
   "P2A5dB": [
@@ -3580,6 +3648,20 @@
       "value": "Funzione"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Failed with error: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Please sign in again."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3606,6 +3688,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Azioni"
     }
   ],
   "bS5DyV": [
@@ -4252,7 +4340,7 @@
   "i1Tufp": [
     {
       "type": 0,
-      "value": "Provide input data to test the map with"
+      "value": "Fornire i dati di input con cui testare la mappa"
     }
   ],
   "i1cwra": [
@@ -4717,6 +4805,12 @@
       "value": "Obbligatorio. Stringa da convertire in lettere minuscole. Se un carattere nella stringa non ha un equivalente in lettere minuscole, il carattere verrà riportato invariato nella stringa restituita."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Sign in to connector"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4911,6 +5005,12 @@
       "value": "Intestazioni"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-App"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -4969,6 +5069,12 @@
     {
       "type": 0,
       "value": "Restituisce una singola matrice o oggetto contenente elementi comuni tra le matrici o gli oggetti passati. I parametri per la funzione possono essere costituiti da un set di oggetti o un set di matrici, ma non da una combinazione di entrambi. Se sono presenti due oggetti con lo stesso nome, nell'oggetto finale sarà visualizzato l'ultimo oggetto con tale nome."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "pozypE": [
@@ -5788,6 +5894,12 @@
     {
       "type": 0,
       "value": "Valore"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Accedi"
     }
   ],
   "y3AZQB": [

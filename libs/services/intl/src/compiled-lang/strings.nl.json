@@ -153,6 +153,18 @@
       "value": "De eerste Count-elementen van de ingevoerde matrix of tekenreeks worden geretourneerd"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Gedeeld"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Samenvouwen"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Een filter selecteren"
     }
   ],
   "0ZlNtf": [
@@ -460,7 +478,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Zoeken"
     }
   ],
   "2NYPLt": [
@@ -539,6 +557,12 @@
     {
       "type": 0,
       "value": "Dynamische inhoud toevoegen"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Servicevoorwaarden"
     }
   ],
   "3FoqCK": [
@@ -751,6 +775,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Actietype"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -832,7 +862,7 @@
   "6OSgRP": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Testkaart"
     }
   ],
   "6XR3FS": [
@@ -1406,7 +1436,7 @@
   "CSoHMf": [
     {
       "type": 0,
-      "value": "Replace existing schema"
+      "value": "Bestaand schema vervangen"
     }
   ],
   "Ciol6I": [
@@ -1442,7 +1472,7 @@
   "D5FIKL": [
     {
       "type": 0,
-      "value": "Paste from sample"
+      "value": "Plakken uit voorbeeld"
     }
   ],
   "DDIIAQ": [
@@ -1499,6 +1529,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Aanmelden..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1533,6 +1569,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Sign in to create a connection to "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1881,6 +1931,12 @@
     {
       "type": 0,
       "value": "Hiermee wordt een tekenreekstijdstempel die is ingevoerd vanuit een UTC-tijdzone geconverteerd naar een doeltijdzone"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Actie"
     }
   ],
   "IjZFjQ": [
@@ -2324,7 +2380,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Doelschema"
     }
   ],
   "N2CF0J": [
@@ -2391,6 +2447,12 @@
     {
       "type": 0,
       "value": "Dinsdag"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2541,6 +2603,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -3625,6 +3693,20 @@
       "value": "Functie"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Failed with error: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Please sign in again."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3651,6 +3733,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Acties"
     }
   ],
   "bS5DyV": [
@@ -4302,7 +4390,7 @@
   "i1Tufp": [
     {
       "type": 0,
-      "value": "Provide input data to test the map with"
+      "value": "Invoergegevens opgeven om de kaart mee te testen"
     }
   ],
   "i1cwra": [
@@ -4775,6 +4863,12 @@
       "value": "Vereist. De tekenreeks die moet worden geconverteerd naar kleine letters. Als een teken in de tekenreeks geen equivalent voor kleine letters heeft, wordt het teken ongewijzigd opgenomen in de geretourneerde tekenreeks."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Sign in to connector"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4969,6 +5063,12 @@
       "value": "Kopteksten"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-App"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -5027,6 +5127,12 @@
     {
       "type": 0,
       "value": "Hiermee wordt één matrix of één object opgehaald dat gemeenschappelijke elementen bevat met matrices of objecten die zijn ingevoerd. De parameters voor de functie kunnen een set objecten zijn of een set matrices (niet een combinatie). Als er twee objecten met dezelfde naam zijn, wordt het laatste object met de betreffende naam weergegeven in het uiteindelijke object."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Triggers"
     }
   ],
   "pozypE": [
@@ -5638,7 +5744,7 @@
   "vlDynP": [
     {
       "type": 0,
-      "value": "Negeren"
+      "value": "Verwijderen"
     }
   ],
   "vr70Gn": [
@@ -5851,6 +5957,12 @@
     {
       "type": 0,
       "value": "Waarde"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Aanmelden"
     }
   ],
   "y3AZQB": [

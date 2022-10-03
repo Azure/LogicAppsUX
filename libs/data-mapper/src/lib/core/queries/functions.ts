@@ -1,5 +1,5 @@
-import { functionMock } from '../../__mocks__/functions';
 import type { FunctionData } from '../../models/Function';
+import { functionMock } from '../../models/Function';
 
 // import { SchemaSelectionServiceInstance } from '../services';
 

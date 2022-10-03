@@ -153,6 +153,18 @@
       "value": "Retourne les premiers éléments Count du tableau ou de la chaîne transmis(e)"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Partagé"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Déclencheur"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Réduire"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Sélectionner un filtre"
     }
   ],
   "0ZlNtf": [
@@ -471,7 +489,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Rechercher"
     }
   ],
   "2NYPLt": [
@@ -550,6 +568,12 @@
     {
       "type": 0,
       "value": "Ajouter du contenu dynamique"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Conditions d’utilisation du service"
     }
   ],
   "3FoqCK": [
@@ -760,6 +784,12 @@
     {
       "type": 0,
       "value": "14"
+    }
+  ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Type d'action"
     }
   ],
   "5J7j9k": [
@@ -1521,6 +1551,12 @@
       "value": "Ctrl+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Connexion en cours..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1555,6 +1591,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Connectez-vous pour créer une connexion à "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1906,6 +1956,12 @@
     {
       "type": 0,
       "value": "Convertit un horodateur de chaîne transmis d'une heure UTC à un fuseau horaire cible"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Action"
     }
   ],
   "IjZFjQ": [
@@ -2356,7 +2412,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Schéma cible"
     }
   ],
   "N2CF0J": [
@@ -2423,6 +2479,12 @@
     {
       "type": 0,
       "value": "Mardi"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2577,6 +2639,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtre"
     }
   ],
   "P2A5dB": [
@@ -3660,6 +3728,20 @@
       "value": "Fonction"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Échec avec l'erreur : "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Reconnectez-vous."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3686,6 +3768,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "bS5DyV": [
@@ -4813,6 +4901,12 @@
       "value": "Obligatoire. Chaîne à convertir en minuscules. Si un caractère de la chaîne n'a pas d'équivalent en minuscules, le caractère reste inchangé dans la chaîne retournée."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Se connecter au connecteur"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -5007,6 +5101,12 @@
       "value": "En-têtes"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "Dans l'application"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -5065,6 +5165,12 @@
     {
       "type": 0,
       "value": "Retourne un unique tableau ou objet qui a des éléments communs avec les objets ou tableaux transmis. Les paramètres de la fonction peuvent être un ensemble d'objets ou de tableaux (et non un mélange des deux). Si deux objets portent le même nom, le dernier objet avec ce nom s'affiche dans l'objet final."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Déclencheurs"
     }
   ],
   "pozypE": [
@@ -5900,6 +6006,12 @@
     {
       "type": 0,
       "value": "Valeur"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Se connecter"
     }
   ],
   "y3AZQB": [
