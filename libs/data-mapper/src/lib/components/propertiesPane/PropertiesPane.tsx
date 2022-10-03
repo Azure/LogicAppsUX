@@ -91,12 +91,12 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     description: 'Label for properties tab',
   });
 
-  const codeLoc = intl.formatMessage({
+  /*const codeLoc = intl.formatMessage({
     defaultMessage: 'Code',
     description: 'Label for code tab',
   });
 
-  /*const testLoc = intl.formatMessage({
+  const testLoc = intl.formatMessage({
     defaultMessage: 'Test',
     description: 'Label for test tab',
   });*/
@@ -223,7 +223,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <Divider vertical style={{ maxWidth: 24 }} />
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
-        <Tab value={TABS.CODE}>{codeLoc}</Tab>
+        {/*<Tab value={TABS.CODE}>{codeLoc}</Tab>*/}
         {/*currentNode?.nodeType === NodeType.Target && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
       </TabList>
     </>
