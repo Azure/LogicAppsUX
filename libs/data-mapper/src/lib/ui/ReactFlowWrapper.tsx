@@ -8,7 +8,13 @@ import { FunctionList } from '../components/functionList/FunctionList';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { SchemaTree } from '../components/tree/SchemaTree';
-import { checkerboardBackgroundImage, defaultCanvasZoom } from '../constants/ReactFlowConstants';
+import {
+  checkerboardBackgroundImage,
+  defaultCanvasZoom,
+  ReactFlowNodeType,
+  sourcePrefix,
+  targetPrefix,
+} from '../constants/ReactFlowConstants';
 import {
   addFunctionNode,
   addSourceNodes,
@@ -27,7 +33,7 @@ import type { FunctionData } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
-import { sourcePrefix, targetPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
+import { useLayout } from '../utils/ReactFlow.Util';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -76,6 +82,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
@@ -91,7 +98,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (currentTargetNode) {
       const connectionValues = Object.values(connections);
       const outputFilteredConnections = currentTargetNode.children.flatMap((childNode) => {
-        const foundConnection = connectionValues.find((connection) => connection.destination === childNode.key);
+        const foundConnection = connectionValues.find((connection) => connection.destination.key === childNode.key);
         return foundConnection ? [foundConnection] : [];
       });
 
@@ -181,7 +188,14 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onConnect = (connection: ReactFlowConnection) => {
     if (connection.target && connection.source) {
-      dispatch(makeConnection({ targetNodeKey: connection.target, value: connection.source }));
+      dispatch(
+        makeConnection({
+          destination: flattenedTargetSchema[connection.target],
+          source: flattenedSourceSchema[connection.source],
+          reactFlowDestination: connection.target,
+          reactFlowSource: connection.source,
+        })
+      );
     }
   };
 
@@ -193,10 +207,18 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     (oldEdge: ReactFlowEdge, newConnection: ReactFlowConnection) => {
       edgeUpdateSuccessful.current = true;
       if (newConnection.target && newConnection.source && oldEdge.target) {
-        dispatch(changeConnection({ targetNodeKey: newConnection.target, value: newConnection.source, oldConnectionKey: oldEdge.id }));
+        dispatch(
+          changeConnection({
+            destination: flattenedTargetSchema[newConnection.target],
+            source: flattenedSourceSchema[newConnection.source],
+            reactFlowDestination: newConnection.target,
+            reactFlowSource: newConnection.source,
+            oldConnectionKey: oldEdge.id,
+          })
+        );
       }
     },
-    [dispatch]
+    [dispatch, flattenedSourceSchema, flattenedTargetSchema]
   );
 
   const onEdgeUpdateEnd = useCallback(
