@@ -25,8 +25,6 @@ export const convertToMapDefinition = (
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
 
-    console.log(yaml.dump(mapDefinition));
-
     return yaml.dump(mapDefinition);
   }
 
@@ -74,7 +72,6 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, path
   }
 };
 
-// XXX
 export const convertFromMapDefinition = (
   mapDefinition: MapDefinitionEntry,
   sourceSchema: SchemaExtended,
