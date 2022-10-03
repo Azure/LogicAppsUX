@@ -156,13 +156,13 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "共享"
     }
   ],
   "02vyBk": [
     {
       "type": 0,
-      "value": "Trigger"
+      "value": "触发器"
     }
   ],
   "07ZsoY": [
@@ -222,7 +222,7 @@
   "0Wr7qp": [
     {
       "type": 0,
-      "value": "Select a filter"
+      "value": "选择筛选器"
     }
   ],
   "0ZlNtf": [
@@ -555,7 +555,7 @@
   "3ERi+E": [
     {
       "type": 0,
-      "value": "Terms of Service"
+      "value": "服务条款"
     }
   ],
   "3FoqCK": [
@@ -771,7 +771,7 @@
   "4yC+4g": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "操作类型"
     }
   ],
   "5J7j9k": [
@@ -1514,7 +1514,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Signing in..."
+      "value": "正在登录..."
     }
   ],
   "E9OS+9": [
@@ -1899,7 +1899,7 @@
   "IgNz8Y": [
     {
       "type": 0,
-      "value": "Action"
+      "value": "操作"
     }
   ],
   "IjZFjQ": [
@@ -2404,7 +2404,7 @@
   "NvmZVi": [
     {
       "type": 0,
-      "value": "Runtime"
+      "value": "运行时"
     }
   ],
   "O+8vRv": [
@@ -2564,7 +2564,7 @@
   "P+na99": [
     {
       "type": 0,
-      "value": "Filter"
+      "value": "筛选"
     }
   ],
   "P2A5dB": [
@@ -3691,7 +3691,7 @@
   "bG9rjv": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "操作"
     }
   ],
   "bS5DyV": [
@@ -5090,7 +5090,7 @@
   "piaRy6": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "触发器"
     }
   ],
   "pozypE": [
@@ -5909,7 +5909,7 @@
   "y1e9yw": [
     {
       "type": 0,
-      "value": "Sign in"
+      "value": "登录"
     }
   ],
   "y3AZQB": [

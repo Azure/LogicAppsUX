@@ -140,7 +140,7 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "Shared"
+      "value": "Condivisa"
     }
   ],
   "02vyBk": [
@@ -206,7 +206,7 @@
   "0Wr7qp": [
     {
       "type": 0,
-      "value": "Select a filter"
+      "value": "Seleziona un filtro"
     }
   ],
   "0ZlNtf": [
@@ -557,7 +557,7 @@
   "3ERi+E": [
     {
       "type": 0,
-      "value": "Terms of Service"
+      "value": "Condizioni per l'utilizzo del servizio"
     }
   ],
   "3FoqCK": [
@@ -773,7 +773,7 @@
   "4yC+4g": [
     {
       "type": 0,
-      "value": "Action Type"
+      "value": "Tipo di azione"
     }
   ],
   "5J7j9k": [
@@ -1506,7 +1506,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Signing in..."
+      "value": "Accesso in corso..."
     }
   ],
   "E9OS+9": [
@@ -1905,7 +1905,7 @@
   "IgNz8Y": [
     {
       "type": 0,
-      "value": "Action"
+      "value": "Azione"
     }
   ],
   "IjZFjQ": [
@@ -2564,7 +2564,7 @@
   "P+na99": [
     {
       "type": 0,
-      "value": "Filter"
+      "value": "Filtro"
     }
   ],
   "P2A5dB": [
@@ -3693,7 +3693,7 @@
   "bG9rjv": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Azioni"
     }
   ],
   "bS5DyV": [
@@ -5074,7 +5074,7 @@
   "piaRy6": [
     {
       "type": 0,
-      "value": "Triggers"
+      "value": "Trigger"
     }
   ],
   "pozypE": [
@@ -5899,7 +5899,7 @@
   "y1e9yw": [
     {
       "type": 0,
-      "value": "Sign in"
+      "value": "Accedi"
     }
   ],
   "y3AZQB": [
