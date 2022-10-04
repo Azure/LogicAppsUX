@@ -75,6 +75,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         stateDict[nodeKey] = ItemToggledState.NotStarted;
       } else {
         stateDict[nodeKey] = ItemToggledState.InProgress;
+        return 0.5;
       }
 
       return 0;
