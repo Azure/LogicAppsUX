@@ -203,18 +203,20 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 };
 
 export const convertToReactFlowEdges = (connections: ConnectionDictionary): ReactFlowEdge[] => {
-  return Object.entries(connections).map(([connectionKey, connection]) => {
-    return {
-      id: connectionKey,
-      source: connection.reactFlowSource,
-      target: connection.reactFlowDestination,
-      type: ConnectionLineType.SmoothStep,
-      selected: connection.isSelected,
-      markerStart: {
-        type: MarkerType.Arrow,
-        width: 30,
-      },
-    };
+  return Object.values(connections).flatMap((connection) => {
+    return connection.sources.map((source) => {
+      return {
+        id: createReactFlowId(source.reactFlowKey, connection.destination.reactFlowKey),
+        source: source.reactFlowKey,
+        target: connection.destination.reactFlowKey,
+        type: ConnectionLineType.SmoothStep,
+        selected: connection.isSelected,
+        markerStart: {
+          type: MarkerType.Arrow,
+          width: 30,
+        },
+      };
+    });
   });
 };
 
@@ -261,3 +263,11 @@ const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: strin
   });
   return relatedConnections;
 };
+
+export const createReactFlowId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
+
+export const addReactFlowPrefix = (key: string, type: SchemaTypes) => `${type}-${key}`;
+
+export const getSourceIdFromReactFlowId = (reactFlowId: string): string => reactFlowId.split('-to-')[0];
+
+export const getDestinationIdFromReactFlowId = (reactFlowId: string): string => reactFlowId.split('-to-')[1];

@@ -56,9 +56,9 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   const targetNodesWithConnections = useMemo(() => {
     const nodesWithConnections: { [key: string]: true } = {};
 
-    Object.entries(connectionDictionary).forEach(([_key, value]) => {
-      if (value.reactFlowDestination in targetSchemaDictionary) {
-        nodesWithConnections[value.destination.key] = true; // targetSchemaDictionary[value.reactFlowDestination]
+    Object.values(connectionDictionary).forEach((connection) => {
+      if (connection.destination.reactFlowKey in targetSchemaDictionary) {
+        nodesWithConnections[connection.destination.node.key] = true; // targetSchemaDictionary[value.reactFlowDestination]
       }
     });
 
