@@ -86,13 +86,15 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, path
 };
 
 const collectValueForFunction = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
-  const inputValues = currentConnection.sources.flatMap((source) => {
-    if (isSchemaNodeExtended(source.node)) {
-      return source.node.fullName.startsWith('@') ? `$${source.node.fullName}` : source.node.fullName;
-    } else {
-      return collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
-    }
-  });
+  const inputValues = currentConnection
+    ? currentConnection.sources.flatMap((source) => {
+        if (isSchemaNodeExtended(source.node)) {
+          return source.node.fullName.startsWith('@') ? `$${source.node.fullName}` : source.node.fullName;
+        } else {
+          return collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
+        }
+      })
+    : [];
 
   return combineFunctionAndInputs(node, inputValues);
 };
@@ -101,6 +103,48 @@ const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]):
   return `${functionData.functionName}(${inputs.join(', ')})`;
 };
 
+export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
+  // All functions connections must eventually terminate into the source
+  const connectionsArray = Object.entries(connections);
+  if (
+    !connectionsArray
+      .filter(([key, _connection]) => key.startsWith(targetPrefix))
+      .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections))
+  ) {
+    return false;
+  }
+
+  // Is valid to generate the map definition
+  return true;
+};
+
+const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {
+  if (!currentConnection) {
+    return false;
+  }
+
+  // Put 0 input, content enricher functions in the node bucket
+  const functionSources = currentConnection.sources.filter((source) => isFunctionData(source.node) && source.node.maxNumberOfInputs !== 0);
+  const nodeSources = currentConnection.sources.filter(
+    (source) => isSchemaNodeExtended(source.node) || source.node.maxNumberOfInputs === 0
+  );
+
+  // All the sources are input nodes
+  if (nodeSources.length === currentConnection.sources.length) {
+    return true;
+  } else {
+    // Still have traversing to do
+    if (functionSources.length > 0) {
+      return functionSources.every((functionSource) => {
+        return nodeHasSourceNodeEventually(connections[functionSource.reactFlowKey], connections);
+      });
+    } else {
+      return false;
+    }
+  }
+};
+
+/* Deserialize yml */
 export const convertFromMapDefinition = (
   mapDefinition: MapDefinitionEntry,
   sourceSchema: SchemaExtended,
@@ -227,43 +271,4 @@ export const parseLoopMapping = (line: string): LoopConnection => {
 // Exported for testing purposes only
 export const parseConditionalMapping = (line: string): string => {
   return line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
-};
-
-export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
-  // All functions connections must eventually terminate into the source
-  const connectionsArray = Object.entries(connections);
-  if (
-    !connectionsArray
-      .filter(([key, _connection]) => key.startsWith(targetPrefix))
-      .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections))
-  ) {
-    return false;
-  }
-
-  // Is valid to generate the map definition
-  return true;
-};
-
-// TODO Handle content enrichment functions
-const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {
-  if (!currentConnection) {
-    return false;
-  }
-
-  const functionSources = currentConnection.sources.filter((source) => isFunctionData(source.node));
-  const nodeSources = currentConnection.sources.filter((source) => isSchemaNodeExtended(source.node));
-
-  // All the sources are input nodes
-  if (nodeSources.length === currentConnection.sources.length) {
-    return true;
-  } else {
-    // Still have traversing to do
-    if (functionSources.length > 0) {
-      return functionSources.every((functionSource) => {
-        return nodeHasSourceNodeEventually(connections[functionSource.reactFlowKey], connections);
-      });
-    } else {
-      return false;
-    }
-  }
 };
