@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { getSmoothStepPath } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
@@ -7,7 +7,10 @@ const foreignObjectSize = 40;
 export const ConnectionEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, markerEnd } = props;
 
-  const [edgePath, labelX, labelY] = getSmoothStepPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition });
+  const [edgePath, labelX, labelY] = useMemo(
+    () => getSmoothStepPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition }),
+    [sourcePosition, sourceX, sourceY, targetX, targetY, targetPosition]
+  );
 
   const onEdgeClick = (event: React.MouseEvent) => {
     event.stopPropagation();
