@@ -52,6 +52,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
     setRootProp(newProps);
   };
 
+  // TODO Functionality
   const moveUpButton = intl.formatMessage({
     defaultMessage: 'Move up',
     description: 'Move up button',
@@ -75,9 +76,10 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   };
 
   const rowMenuItems: IOverflowSetItemProps[] = [
+    // TODO functinoality of Move/Group
     {
       key: moveUpButton,
-      disabled: false,
+      disabled: true,
       iconProps: {
         iconName: 'Up',
       },
@@ -87,7 +89,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
     },
     {
       key: moveDownButton,
-      disabled: false,
+      disabled: true,
       iconProps: {
         iconName: 'Down',
       },
@@ -97,7 +99,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
     },
     {
       key: makeGroupButton,
-      disabled: false,
+      disabled: true,
       iconProps: {
         iconName: 'ViewAll',
       },
@@ -106,11 +108,13 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
       onClick: handleGroup,
     },
   ];
+
   const groupMenuItems: IOverflowSetItemProps[] = [
     ...rowMenuItems,
+    // TODO functinoality of Move/Group
     {
       key: unGroupButton,
-      disabled: false,
+      disabled: true,
       iconProps: {
         iconName: 'ViewAll2',
       },
