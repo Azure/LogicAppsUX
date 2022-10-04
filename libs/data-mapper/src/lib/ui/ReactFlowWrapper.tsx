@@ -2,6 +2,7 @@ import type { ButtonContainerProps } from '../components/buttonContainer/ButtonC
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import type { ButtonPivotProps } from '../components/buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
+import { ConnectionEdge } from '../components/edge/ConnectionEdge';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { FunctionList } from '../components/functionList/FunctionList';
@@ -59,7 +60,10 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'reactflow';
+import ReactFlow, { MiniMap, useReactFlow, ConnectionLineType } from 'reactflow';
+
+const nodeTypes = { schemaNode: SchemaCard, functionNode: FunctionCard };
+const edgeTypes = { connectionEdge: ConnectionEdge };
 
 const toolboxPanelProps: FloatingPanelProps = {
   xPos: '16px',
@@ -95,7 +99,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const edgeUpdateSuccessful = useRef(true);
-  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard, functionNode: FunctionCard }), []);
 
   // TODO update to support input nodes connected to an function, connected to an output node
   const connectedSourceNodes = useMemo(() => {
@@ -383,7 +386,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     }
   };
 
-  const keyDownHandler2: KeyboardEventHandler<HTMLDivElement> = (event) => {
+  const keyDownHandler: KeyboardEventHandler<HTMLDivElement> = (event) => {
     if (event.key === 'Delete' || event.key === 'Backspace') {
       dispatch(deleteCurrentlySelectedItem());
     }
@@ -393,7 +396,9 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   return (
     <ReactFlow
       ref={reactFlowRef}
-      onKeyDown={keyDownHandler2}
+      onKeyDown={keyDownHandler}
+      nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
       nodes={nodes}
       edges={edges}
       onConnect={onConnect}
@@ -402,6 +407,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       defaultViewport={defaultViewport}
       nodesDraggable={false}
       fitView={false}
+      // With custom edge component, only affects appearance when drawing edge
       connectionLineType={ConnectionLineType.SmoothStep}
       proOptions={{
         account: 'paid-sponsor',
@@ -413,7 +419,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         backgroundSize: '22px 22px',
         borderRadius: tokens.borderRadiusMedium,
       }}
-      nodeTypes={nodeTypes}
       onEdgeUpdate={onEdgeUpdate}
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}

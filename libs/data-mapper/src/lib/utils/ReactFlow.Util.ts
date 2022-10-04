@@ -12,7 +12,7 @@ import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { useMemo } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
-import { ConnectionLineType, Position } from 'reactflow';
+import { Position } from 'reactflow';
 
 const getViewportWidth = (endX: number, startX: number) => endX - startX;
 
@@ -209,7 +209,7 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
         id: createReactFlowId(source.reactFlowKey, connection.destination.reactFlowKey),
         source: source.reactFlowKey,
         target: connection.destination.reactFlowKey,
-        type: ConnectionLineType.SmoothStep,
+        type: 'connectionEdge',
         selected: connection.isSelected,
       };
     });
