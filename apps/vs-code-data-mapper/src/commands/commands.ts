@@ -20,17 +20,22 @@ const openDataMapperCmd = async (context: ExtensionContext) => {
   DataMapperExt.createOrShow(context);
 };
 
-const createNewDataMapCmd = async (context: ExtensionContext) => {
+const createNewDataMapCmd = (context: ExtensionContext) => {
   // TODO: Data map name validation
-  window.showInputBox({ prompt: 'Data Map name: ' }).then((newDatamapName) => {
+  window.showInputBox({ prompt: 'Data Map name: ' }).then(async (newDatamapName) => {
     if (!newDatamapName) {
       return;
     }
 
     DataMapperExt.currentDataMapName = newDatamapName;
 
-    openDataMapperCmd(context).then(() => {
-      DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'loadNewDataMap', data: {} });
+    await openDataMapperCmd(context);
+
+    DataMapperExt.currentPanel.sendMsgToWebview({ command: 'loadNewDataMap', data: {} });
+
+    DataMapperExt.currentPanel.sendMsgToWebview({
+      command: 'setXsltFilename',
+      data: DataMapperExt.currentDataMapName,
     });
   });
 };
@@ -68,5 +73,10 @@ const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
       sourceSchemaFileName: path.basename(srcSchemaPath),
       targetSchemaFileName: path.basename(tgtSchemaPath),
     },
+  });
+
+  DataMapperExt.currentPanel.sendMsgToWebview({
+    command: 'setXsltFilename',
+    data: DataMapperExt.currentDataMapName,
   });
 };
