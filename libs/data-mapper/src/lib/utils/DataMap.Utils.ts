@@ -8,6 +8,7 @@ import {
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
 import type { Connection, ConnectionDictionary, LoopConnection } from '../models/Connection';
+import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended } from '../models/Schema';
 import { isFunctionData } from './Function.Utils';
@@ -56,7 +57,12 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
     connection.sources.forEach((source) => {
       // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
       if (isSchemaNodeExtended(connection.destination.node)) {
-        applyValueAtPath(source.node.key, mapDefinition, connection.destination.node.pathToRoot);
+        if (isSchemaNodeExtended(source.node)) {
+          applyValueAtPath(source.node.fullName, mapDefinition, connection.destination.node.pathToRoot);
+        } else {
+          const value = collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
+          applyValueAtPath(value, mapDefinition, connection.destination.node.pathToRoot);
+        }
       }
     });
   });
@@ -73,11 +79,70 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, path
       applyValueAtPath(value, mapDefinition[pathLocation] as MapDefinitionEntry, path.slice(1));
     }
   } else {
-    // TODO Update to support wrapping in functions
-    mapDefinition[pathLocation] = value;
+    mapDefinition[pathLocation] = value.startsWith('@') ? `$${value}` : value;
   }
 };
 
+const collectValueForFunction = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
+  const inputValues = currentConnection
+    ? currentConnection.sources.flatMap((source) => {
+        if (isSchemaNodeExtended(source.node)) {
+          return source.node.fullName.startsWith('@') ? `$${source.node.fullName}` : source.node.fullName;
+        } else {
+          return collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
+        }
+      })
+    : [];
+
+  return combineFunctionAndInputs(node, inputValues);
+};
+
+const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]): string => {
+  return `${functionData.functionName}(${inputs.join(', ')})`;
+};
+
+export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
+  // All functions connections must eventually terminate into the source
+  const connectionsArray = Object.entries(connections);
+  if (
+    !connectionsArray
+      .filter(([key, _connection]) => key.startsWith(targetPrefix))
+      .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections))
+  ) {
+    return false;
+  }
+
+  // Is valid to generate the map definition
+  return true;
+};
+
+const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {
+  if (!currentConnection) {
+    return false;
+  }
+
+  // Put 0 input, content enricher functions in the node bucket
+  const functionSources = currentConnection.sources.filter((source) => isFunctionData(source.node) && source.node.maxNumberOfInputs !== 0);
+  const nodeSources = currentConnection.sources.filter(
+    (source) => isSchemaNodeExtended(source.node) || source.node.maxNumberOfInputs === 0
+  );
+
+  // All the sources are input nodes
+  if (nodeSources.length === currentConnection.sources.length) {
+    return true;
+  } else {
+    // Still have traversing to do
+    if (functionSources.length > 0) {
+      return functionSources.every((functionSource) => {
+        return nodeHasSourceNodeEventually(connections[functionSource.reactFlowKey], connections);
+      });
+    } else {
+      return false;
+    }
+  }
+};
+
+/* Deserialize yml */
 export const convertFromMapDefinition = (
   mapDefinition: MapDefinitionEntry,
   sourceSchema: SchemaExtended,
@@ -204,42 +269,4 @@ export const parseLoopMapping = (line: string): LoopConnection => {
 // Exported for testing purposes only
 export const parseConditionalMapping = (line: string): string => {
   return line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
-};
-
-export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
-  // All functions connections must eventually terminate into the source
-  const connectionsArray = Object.entries(connections);
-  if (
-    !connectionsArray
-      .filter(([key, _connection]) => key.startsWith(targetPrefix))
-      .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections))
-  ) {
-    return false;
-  }
-
-  // Is valid to generate the map definition
-  return true;
-};
-
-const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {
-  if (!currentConnection) {
-    return false;
-  }
-
-  const functionSources = currentConnection.sources.filter((source) => isFunctionData(source.node));
-  const nodeSources = currentConnection.sources.filter((source) => isSchemaNodeExtended(source.node));
-
-  // All the sources are input nodes
-  if (nodeSources.length === currentConnection.sources.length) {
-    return true;
-  } else {
-    // Still have traversing to do
-    if (functionSources.length > 0) {
-      return functionSources.every((functionSource) => {
-        return nodeHasSourceNodeEventually(connections[functionSource.reactFlowKey], connections);
-      });
-    } else {
-      return false;
-    }
-  }
 };
