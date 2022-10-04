@@ -102,13 +102,13 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (currentTargetNode) {
       const connectionValues = Object.values(connections);
       const outputFilteredConnections = currentTargetNode.children.flatMap((childNode) => {
-        const foundConnection = connectionValues.find((connection) => connection.destination.key === childNode.key);
+        const foundConnection = connectionValues.find((connection) => connection.destination.node.key === childNode.key);
         return foundConnection ? [foundConnection] : [];
       });
 
       return outputFilteredConnections
-        .map((connection) => {
-          return flattenedSourceSchema[connection.reactFlowSource];
+        .flatMap((connection) => {
+          return connection.sources.map((source) => flattenedSourceSchema[source.node.key]);
         })
         .filter((connection) => connection !== undefined);
     } else {
@@ -192,10 +192,17 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onConnect = (connection: ReactFlowConnection) => {
     if (connection.target && connection.source) {
+      const source = connection.source.startsWith(sourcePrefix)
+        ? flattenedSourceSchema[connection.source]
+        : allFunctionNodes[connection.source];
+      const destination = connection.target.startsWith(targetPrefix)
+        ? flattenedTargetSchema[connection.target]
+        : allFunctionNodes[connection.target];
+
       dispatch(
         makeConnection({
-          destination: flattenedTargetSchema[connection.target],
-          source: flattenedSourceSchema[connection.source],
+          source,
+          destination,
           reactFlowDestination: connection.target,
           reactFlowSource: connection.source,
         })
@@ -217,7 +224,8 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
             source: flattenedSourceSchema[newConnection.source],
             reactFlowDestination: newConnection.target,
             reactFlowSource: newConnection.source,
-            oldConnectionKey: oldEdge.id,
+            connectionKey: oldEdge.target,
+            inputKey: oldEdge.source,
           })
         );
       }
@@ -229,7 +237,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     (_: any, edge: ReactFlowEdge) => {
       if (!edgeUpdateSuccessful.current) {
         if (edge.target) {
-          dispatch(deleteConnection(edge.id));
+          dispatch(deleteConnection({ connectionKey: edge.target, inputKey: edge.source }));
         }
       }
 
