@@ -26,6 +26,7 @@ import {
   hideNotification,
   makeConnection,
   removeSourceNodes,
+  setConnectionHovered,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
 } from '../core/state/DataMapSlice';
@@ -249,6 +250,28 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     [dispatch]
   );
 
+  const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
+    const selectedNode = edges.find((edge) => edge.id === node.id);
+    if (selectedNode) {
+      selectedNode.selected = !selectedNode.selected;
+    }
+    if (node) {
+      dispatch(setCurrentlySelectedEdge(node.target));
+    }
+  };
+
+  const handleEdgeMouseHover = (edge: ReactFlowEdge, isEntering: boolean) => {
+    if (edge) {
+      dispatch(setConnectionHovered({ connectionId: edge.target, isHovered: isEntering }));
+    }
+  };
+
+  const keyDownHandler: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      dispatch(deleteCurrentlySelectedItem());
+    }
+  };
+
   const toolboxLoc = intl.formatMessage({
     defaultMessage: 'Toolbox',
     description: 'Label to open the input toolbox card',
@@ -376,22 +399,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     connections
   );
 
-  const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
-    const selectedNode = edges.find((edge) => edge.id === node.id);
-    if (selectedNode) {
-      selectedNode.selected = !selectedNode.selected;
-    }
-    if (node) {
-      dispatch(setCurrentlySelectedEdge(node.target));
-    }
-  };
-
-  const keyDownHandler: KeyboardEventHandler<HTMLDivElement> = (event) => {
-    if (event.key === 'Delete' || event.key === 'Backspace') {
-      dispatch(deleteCurrentlySelectedItem());
-    }
-  };
-
   const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
   return (
     <ReactFlow
@@ -423,6 +430,8 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}
       onEdgeClick={onEdgeClick}
+      onEdgeMouseEnter={(_e, edge) => handleEdgeMouseHover(edge, true)}
+      onEdgeMouseLeave={(_e, edge) => handleEdgeMouseHover(edge, false)}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
 

@@ -1,38 +1,35 @@
+import { Button } from '@fluentui/react-components';
+import { AddCircle20Regular } from '@fluentui/react-icons';
 import React, { useMemo } from 'react';
-import { getSmoothStepPath } from 'reactflow';
+import { BaseEdge, getSmoothStepPath } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
-const foreignObjectSize = 40;
+const addFunctionBtnSize = 32;
 
 export const ConnectionEdge = (props: EdgeProps) => {
-  const { id, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, markerEnd } = props;
+  const { id, data, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition } = props;
 
   const [edgePath, labelX, labelY] = useMemo(
     () => getSmoothStepPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition }),
     [sourcePosition, sourceX, sourceY, targetX, targetY, targetPosition]
   );
 
-  const onEdgeClick = (event: React.MouseEvent) => {
+  const onAddFunctionClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     console.log(id);
   };
 
   return (
     <>
-      <path id={id} className="react-flow__edge-path" d={edgePath} markerEnd={markerEnd} />
+      <BaseEdge path={edgePath} labelX={labelX} labelY={labelY} {...props} />
+
       <foreignObject
-        width={foreignObjectSize}
-        height={foreignObjectSize}
-        x={labelX - foreignObjectSize / 2}
-        y={labelY - foreignObjectSize / 2}
-        className="edgebutton-foreignobject"
-        requiredExtensions="http://www.w3.org/1999/xhtml"
+        width={addFunctionBtnSize}
+        height={addFunctionBtnSize}
+        x={labelX - addFunctionBtnSize / 2}
+        y={labelY - addFunctionBtnSize / 2}
       >
-        <body>
-          <button className="edgebutton" onClick={onEdgeClick}>
-            ×
-          </button>
-        </body>
+        {data?.isHovered && <Button appearance="transparent" icon={<AddCircle20Regular />} onClick={onAddFunctionClick} />}
       </foreignObject>
     </>
   );
