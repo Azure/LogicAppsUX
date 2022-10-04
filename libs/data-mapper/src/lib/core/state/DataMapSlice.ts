@@ -1,3 +1,4 @@
+import { type NotificationData, NotificationTypes } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
@@ -16,6 +17,7 @@ export interface DataMapState {
   isDirty: boolean;
   undoStack: DataMapOperationState[];
   redoStack: DataMapOperationState[];
+  notificationData?: NotificationData;
 }
 
 export interface DataMapOperationState {
@@ -247,12 +249,18 @@ export const dataMapSlice = createSlice({
           case NodeType.Source: {
             const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== selectedNode.name);
 
-            Object.values(state.curDataMapOperation.dataMapConnections).forEach((connection) => {
-              // eslint-disable-next-line no-param-reassign
-              connection.sources = connection.sources.filter((source) => source.node.key !== selectedNode.path);
-            });
+            const srcNodeHasConnections = Object.values(state.curDataMapOperation.dataMapConnections).some((connection) =>
+              connection.sources.some((source) => source.node.key === selectedNode.path)
+            );
+
+            if (srcNodeHasConnections) {
+              state.notificationData = { type: NotificationTypes.SourceNodeRemoveFailed, msgParam: selectedNode.name };
+              return;
+            }
 
             doDataMapOperation(state, { ...state.curDataMapOperation, currentSourceNodes: removedNodes });
+
+            state.notificationData = { type: NotificationTypes.SourceNodeRemoved };
             break;
           }
           case NodeType.Function: {
@@ -270,6 +278,7 @@ export const dataMapSlice = createSlice({
             }
 
             doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
+            state.notificationData = { type: NotificationTypes.FunctionNodeDeleted };
             break;
           }
           default:
@@ -397,6 +406,7 @@ export const dataMapSlice = createSlice({
       }
 
       doDataMapOperation(state, newState);
+      state.notificationData = { type: NotificationTypes.ConnectionDeleted };
     },
 
     undoDataMapOperation: (state) => {
@@ -437,6 +447,14 @@ export const dataMapSlice = createSlice({
       state.redoStack = [];
       state.isDirty = false;
     },
+
+    showNotification: (state, action: PayloadAction<NotificationData>) => {
+      state.notificationData = action.payload;
+    },
+
+    hideNotification: (state) => {
+      state.notificationData = undefined;
+    },
   },
 });
 
@@ -462,6 +480,8 @@ export const {
   discardDataMap,
   deleteCurrentlySelectedItem,
   setCurrentlySelectedEdge,
+  showNotification,
+  hideNotification,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
