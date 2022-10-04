@@ -63,14 +63,14 @@ const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
 
   DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
 
-  openDataMapperCmd(context).then(() => {
-    DataMapperExt.currentPanel.sendMsgToWebview({
-      command: 'loadDataMap',
-      data: {
-        dataMap: dataMap,
-        sourceSchemaFileName: path.basename(srcSchemaPath),
-        targetSchemaFileName: path.basename(tgtSchemaPath),
-      },
-    });
+  await openDataMapperCmd(context);
+
+  DataMapperExt.currentPanel.sendMsgToWebview({
+    command: 'loadDataMap',
+    data: {
+      dataMap: dataMap,
+      sourceSchemaFileName: path.basename(srcSchemaPath),
+      targetSchemaFileName: path.basename(tgtSchemaPath),
+    },
   });
 };
