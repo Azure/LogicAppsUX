@@ -20,6 +20,7 @@ export interface GroupItemProps {
   type: 'group';
   checked?: boolean;
   selectedOption?: GroupDropdownOptions;
+  hideEmptyRow?: boolean;
   items: GroupItems[];
 }
 export interface QueryBuilderProps {

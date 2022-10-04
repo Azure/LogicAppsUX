@@ -8,10 +8,10 @@ const addIcon: IIconProps = { iconName: 'Add' };
 interface AddSectionProps {
   handleUpdateParent: (newProps: GroupItemProps | RowItemProps, index: number) => void;
   index: number;
-  isEmpty: boolean;
+  addEmptyRow: boolean;
 }
 
-export const AddSection = ({ handleUpdateParent, index, isEmpty }: AddSectionProps) => {
+export const AddSection = ({ handleUpdateParent, index, addEmptyRow }: AddSectionProps) => {
   const intl = useIntl();
   const addRowText = intl.formatMessage({
     defaultMessage: 'Add Row',
@@ -24,14 +24,14 @@ export const AddSection = ({ handleUpdateParent, index, isEmpty }: AddSectionPro
   });
 
   const handleAddRow = () => {
-    if (isEmpty) {
+    if (addEmptyRow) {
       handleUpdateParent({ type: 'row' }, index);
     }
     handleUpdateParent({ type: 'row' }, index + 1);
   };
 
   const handleAddGroup = () => {
-    if (isEmpty) {
+    if (addEmptyRow) {
       handleUpdateParent({ type: 'row' }, index);
     }
     handleUpdateParent({ type: 'group', items: [] }, index + 1);

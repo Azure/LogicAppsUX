@@ -30,6 +30,7 @@ interface RowProps {
   dropdownValue?: string;
   index: number;
   containerOffset: number;
+  handleDeleteChild?: (indexToDelete: number) => void;
   handleUpdateParent: (newProps: RowItemProps, index: number) => void;
   GetTokenPicker: (
     editorId: string,
@@ -47,6 +48,7 @@ export const Row = ({
   dropdownValue,
   index,
   containerOffset,
+  handleDeleteChild,
   handleUpdateParent,
   GetTokenPicker,
 }: RowProps) => {
@@ -55,6 +57,25 @@ export const Row = ({
   const valueEditorRef = useRef<HTMLDivElement | null>(null);
   const [key, setKey] = useState<ValueSegment[]>(keyValue);
   const [pickerOffset, setPickerOffset] = useState<ButtonOffSet>();
+
+  const deleteButton = intl.formatMessage({
+    defaultMessage: 'Delete',
+    description: 'delete button',
+  });
+
+  const moreRowMenuItems = [
+    {
+      key: deleteButton,
+      disabled: false,
+      iconProps: {
+        iconName: 'Delete',
+      },
+      iconOnly: true,
+      name: deleteButton,
+      onClick: handleDeleteChild,
+    },
+    ...rowMenuItems,
+  ];
 
   const updatePickerHeight = useCallback(() => {
     let itemHeight = 0;
@@ -109,7 +130,7 @@ export const Row = ({
           ariaLabel={rowCommands}
           styles={overflowStyle}
           menuIconProps={menuIconProps}
-          menuProps={rowMenuItems && { items: rowMenuItems }}
+          menuProps={moreRowMenuItems && { items: moreRowMenuItems }}
         />
       </TooltipHost>
     );

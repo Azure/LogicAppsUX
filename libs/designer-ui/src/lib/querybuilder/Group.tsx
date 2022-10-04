@@ -58,6 +58,10 @@ export const Group = ({
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
   const [currProps, setCurrProps] = useState<GroupItemProps>(groupProps);
+  useEffect(() => {
+    handleUpdateParent(currProps, index);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currProps]);
 
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
@@ -67,6 +71,7 @@ export const Group = ({
   const handleDelete = (indexToDelete: number) => {
     const newItems = { ...currProps };
     newItems.items.splice(indexToDelete, 1);
+    newItems.hideEmptyRow = true;
     setCurrProps(newItems);
   };
 
@@ -84,15 +89,15 @@ export const Group = ({
     ...groupMenuItems,
   ];
 
-  useEffect(() => {
-    handleUpdateParent(currProps, index);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currProps]);
-
   const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, index: number) => {
     const newItems = { ...currProps };
     newItems.items[index] = newState;
     setCurrProps(newItems);
+  };
+
+  const handleDeleteEmptyRow = () => {
+    console.log(groupProps);
+    setCurrProps({ ...groupProps, hideEmptyRow: true });
   };
 
   const onRenderOverflowButton = (): JSX.Element => {
@@ -136,11 +141,11 @@ export const Group = ({
         {!collapsed ? (
           <>
             {!isFirstGroup ? (
-              <Checkbox className="msla-querybuilder-group-checkbox" initialChecked={groupProps.checked} onChange={handleCheckbox} />
+              <Checkbox className="msla-querybuilder-group-checkbox" initialChecked={currProps.checked} onChange={handleCheckbox} />
             ) : null}
             <div className="msla-querybuilder-row-section">
-              <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} />
-              {groupProps.items.map((item, currIndex) => {
+              <GroupDropdown selectedOption={currProps.selectedOption} onChange={handleSelectedOption} />
+              {currProps.items.map((item, currIndex) => {
                 return item.type === 'row' ? (
                   <Row
                     key={`row ${currIndex}`}
@@ -151,6 +156,7 @@ export const Group = ({
                     valueValue={item.value}
                     containerOffset={containerOffset}
                     index={currIndex}
+                    handleDeleteChild={() => handleDelete(currIndex)}
                     handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
                   />
@@ -175,26 +181,27 @@ export const Group = ({
               })}
               {
                 <>
-                  {groupProps.items.length === 0 && (
+                  {currProps.items.length === 0 && !currProps.hideEmptyRow ? (
                     <Row
                       index={0}
                       rowMenuItems={rowMenuItems}
                       containerOffset={containerOffset}
                       GetTokenPicker={GetTokenPicker}
+                      handleDeleteChild={handleDeleteEmptyRow}
                       handleUpdateParent={handleUpdateNewParent}
                     />
-                  )}
+                  ) : null}
                   <AddSection
                     handleUpdateParent={handleUpdateNewParent}
-                    index={groupProps.items.length + 1}
-                    isEmpty={groupProps.items.length === 0}
+                    index={currProps.items.length + 1}
+                    addEmptyRow={currProps.items.length === 0 && !currProps.hideEmptyRow}
                   />
                 </>
               }
             </div>
           </>
         ) : (
-          <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} />
+          <GroupDropdown selectedOption={currProps.selectedOption} onChange={handleSelectedOption} />
         )}
         <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
           {!isFirstGroup ? (
