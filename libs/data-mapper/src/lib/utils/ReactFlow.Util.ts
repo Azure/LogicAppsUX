@@ -2,7 +2,7 @@ import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childTargetNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
-import { ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
@@ -209,7 +209,7 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
         id: createReactFlowId(source.reactFlowKey, connection.destination.reactFlowKey),
         source: source.reactFlowKey,
         target: connection.destination.reactFlowKey,
-        type: 'connectionEdge',
+        type: ReactFlowEdgeType.ConnectionEdge,
         selected: connection.isSelected,
         data: {
           isHovered: connection.isHovered,

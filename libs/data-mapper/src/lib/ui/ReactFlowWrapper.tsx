@@ -13,6 +13,7 @@ import { SchemaTree } from '../components/tree/SchemaTree';
 import {
   checkerboardBackgroundImage,
   defaultCanvasZoom,
+  ReactFlowEdgeType,
   ReactFlowNodeType,
   sourcePrefix,
   targetPrefix,
@@ -63,8 +64,8 @@ import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as 
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { MiniMap, useReactFlow, ConnectionLineType } from 'reactflow';
 
-const nodeTypes = { schemaNode: SchemaCard, functionNode: FunctionCard };
-const edgeTypes = { connectionEdge: ConnectionEdge };
+const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
+const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
 
 const toolboxPanelProps: FloatingPanelProps = {
   xPos: '16px',
