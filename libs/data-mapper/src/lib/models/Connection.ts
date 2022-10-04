@@ -4,15 +4,16 @@ import type { SchemaNodeExtended } from './Schema';
 export type ConnectionDictionary = { [key: string]: Connection };
 
 export interface Connection {
-  destination: SchemaNodeExtended | FunctionData;
-  source: SchemaNodeExtended | FunctionData;
+  destination: ConnectionUnit;
+  sources: ConnectionUnit[];
   loop?: LoopConnection;
   condition?: string;
   isSelected?: boolean;
+}
 
-  //Only used to display edges
-  reactFlowSource: string;
-  reactFlowDestination: string;
+export interface ConnectionUnit {
+  node: SchemaNodeExtended | FunctionData;
+  reactFlowKey: string;
 }
 
 export interface LoopConnection {
