@@ -34,6 +34,7 @@ interface GroupProps {
   isFirstGroup?: boolean;
   containerOffset: number;
   index: number;
+  handleDeleteChild?: (indexToDelete: number) => void;
   handleUpdateParent: (newProps: GroupItemProps | RowItemProps, index: number) => void;
   GetTokenPicker: (
     editorId: string,
@@ -50,6 +51,7 @@ export const Group = ({
   isFirstGroup,
   containerOffset,
   index,
+  handleDeleteChild,
   handleUpdateParent,
   GetTokenPicker,
 }: GroupProps) => {
@@ -62,8 +64,10 @@ export const Group = ({
     description: 'delete button',
   });
 
-  const handleDeleteGroup = () => {
-    console.log('delete group');
+  const handleDelete = (indexToDelete: number) => {
+    const newItems = { ...currProps };
+    newItems.items.splice(indexToDelete, 1);
+    setCurrProps(newItems);
   };
 
   const moreGroupMenuItems = [
@@ -75,7 +79,7 @@ export const Group = ({
       },
       iconOnly: true,
       name: deleteButton,
-      onClick: handleDeleteGroup,
+      onClick: handleDeleteChild,
     },
     ...groupMenuItems,
   ];
@@ -163,6 +167,7 @@ export const Group = ({
                       checked: item.checked,
                     }}
                     index={currIndex}
+                    handleDeleteChild={() => handleDelete(currIndex)}
                     handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
                   />
