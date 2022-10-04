@@ -1,27 +1,33 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import type { ConnectorWithSwagger } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import { SwaggerParser } from '@microsoft-logic-apps/parsers';
-import { equals } from '@microsoft-logic-apps/utils';
+import { equals, getConnectionErrors } from '@microsoft-logic-apps/utils';
+import type { Connector } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 
 const connectionKey = 'connections';
-export interface ConnectorWithParsedSwagger extends ConnectorWithSwagger {
+export interface ConnectorWithParsedSwagger {
+  connector: Connector;
   parsedSwagger: SwaggerParser;
 }
 
 export const getConnectorWithSwagger = async (connectorId: string): Promise<ConnectorWithParsedSwagger> => {
-  return getReactQueryClient().fetchQuery(['apiWithSwaggers', { connectorId }], async () => {
+  const { connector, swagger } = await getReactQueryClient().fetchQuery(['apiWithSwaggers', connectorId.toLowerCase()], async () => {
     const { connector, swagger } = await ConnectionService().getConnectorAndSwagger(connectorId);
-    return { connector, swagger, parsedSwagger: await SwaggerParser.parse(swagger) };
+    const parsedSwagger = await SwaggerParser.parse(swagger);
+    return { connector, swagger: parsedSwagger };
   });
+
+  return { connector, parsedSwagger: new SwaggerParser(swagger) };
 };
 
 export const getSwaggerFromEndpoint = async (uri: string): Promise<SwaggerParser> => {
-  return getReactQueryClient().fetchQuery(['swaggers', { uri }], async () => {
+  const swagger = await getReactQueryClient().fetchQuery(['swaggers', uri.toLowerCase()], async () => {
     const swagger = await ConnectionService().getSwaggerFromUri(uri);
     return SwaggerParser.parse(swagger);
   });
+
+  return new SwaggerParser(swagger);
 };
 
 export const getConnectionsQuery = async (): Promise<void> => {
@@ -68,11 +74,11 @@ export const useConnectionsForConnector = (connectorId: string) => {
   );
 };
 
-export const getConnectionsForConnector = (connectorId: string) => {
+export const getConnectionsForConnector = async (connectorId: string) => {
   const queryClient = getReactQueryClient();
   return queryClient.fetchQuery([connectionKey, connectorId?.toLowerCase()], async () => {
-    const connectionService = ConnectionService();
-    return connectionService.getConnections(connectorId);
+    const connections = await ConnectionService().getConnections(connectorId);
+    return connections.filter((connection) => getConnectionErrors(connection).length === 0);
   });
 };
 

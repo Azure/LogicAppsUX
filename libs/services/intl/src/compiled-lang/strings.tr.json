@@ -137,6 +137,18 @@
       "value": "Geçirilen dizi veya dizeden ilk Count öğelerini döndürür"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Paylaşılan"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Tetikleyici"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -189,6 +201,12 @@
     {
       "type": 0,
       "value": "Daralt"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Filtre seçin"
     }
   ],
   "0ZlNtf": [
@@ -441,6 +459,12 @@
       "value": "Bitiş zamanı"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Arama"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -517,6 +541,12 @@
     {
       "type": 0,
       "value": "Dinamik içerik ekle"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Hizmet Koşulları"
     }
   ],
   "3FoqCK": [
@@ -729,6 +759,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Eylem Türü"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -805,6 +841,12 @@
     {
       "type": 0,
       "value": "Hedef şema seçin"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Eşlemeyi test et"
     }
   ],
   "6XR3FS": [
@@ -1343,6 +1385,12 @@
       "value": "Bağlantı gerekli"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Mevcut şemayı değiştir"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1371,6 +1419,12 @@
     {
       "type": 0,
       "value": "Gerekli. Baştaki ve sondaki boşluğun kaldırılacağı dize."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Örnekten yapıştır"
     }
   ],
   "DDIIAQ": [
@@ -1427,6 +1481,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Oturum açılıyor..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1461,6 +1521,16 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": " bağlantısı oluşturmak için oturum açın."
     }
   ],
   "EjXdAm": [
@@ -1793,6 +1863,12 @@
     {
       "type": 0,
       "value": "Geçirilen bir dize zaman damgasını UTC'den hedef saat dilimine dönüştürür"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Eylem"
     }
   ],
   "IjZFjQ": [
@@ -2213,6 +2289,12 @@
       "value": "Beklenmeyen hata"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Hedef şema"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2277,6 +2359,12 @@
     {
       "type": 0,
       "value": "Salı"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Çalışma zamanı"
     }
   ],
   "O+8vRv": [
@@ -2415,6 +2503,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtre"
     }
   ],
   "P2A5dB": [
@@ -2791,6 +2885,12 @@
       "value": "Daha azını oku"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test et"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -2996,7 +3096,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "Uygulama İçi"
     }
   ],
   "VE3cxq": [
@@ -3141,12 +3241,6 @@
     {
       "type": 0,
       "value": "Mantıksal uygulamada yapılandırılmış bir yönetilen kimlik yok."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Mevcut şemayı değiştir."
     }
   ],
   "X4gDhV": [
@@ -3487,6 +3581,20 @@
       "value": "İşlev"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Şu hatayla başarısız oldu: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Lütfen yeniden oturum açın."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3513,6 +3621,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Eylemler"
     }
   ],
   "bS5DyV": [
@@ -3844,7 +3958,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Paylaşıldı"
+      "value": "Paylaşılan"
     }
   ],
   "esOQ5p": [
@@ -3886,7 +4000,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Bağlantı için ACL oluşturulamadı. Bağlantı siliniyor."
     }
   ],
   "fGcSFd": [
@@ -4141,6 +4255,12 @@
       "value": "Zaman Uyumsuz Yanıt"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Eşlemenin test edileceği giriş verilerini belirtin"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4233,12 +4353,6 @@
     {
       "type": 0,
       "value": "Özellikler"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4599,6 +4713,12 @@
       "value": "Gerekli. Küçük harfe dönüştürülecek dize. Dizedeki bir karakterin küçük harf eşdeğeri yoksa, karakter, döndürülen dizeye değiştirilmeden eklenir."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Bağlayıcıda oturum açın"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4793,6 +4913,12 @@
       "value": "Üstbilgiler"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "Uygulama İçi"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -4851,6 +4977,12 @@
     {
       "type": 0,
       "value": "Geçirilen dizi veya nesneler arasında ortak öğeleri olan tek bir dizi veya nesneyi döndürür. İşlevin parametreleri bir nesne kümesi ya da bir dizi kümesi olabilir (ikisinin karışımı olamaz). Aynı ada sahip iki nesne varsa, son nesnede bu ada sahip son nesne görünür."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Tetikleyiciler"
     }
   ],
   "pozypE": [
@@ -5443,6 +5575,12 @@
       "value": "Bir API bağlantısı oluşturmak ve kullanmak için bu mantıksal uygulamada yapılandırılmış bir yönetilen kimliğe sahip olmanız gerekir."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "At"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 1,
@@ -5561,6 +5699,12 @@
       "value": "Geri çağırma URL’si:"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Kapat"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5609,12 +5753,6 @@
       "value": "Gerekli. Yeni veya mevcut özelliğin adı."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kod"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5643,6 +5781,12 @@
     {
       "type": 0,
       "value": "Değer"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Oturum aç"
     }
   ],
   "y3AZQB": [

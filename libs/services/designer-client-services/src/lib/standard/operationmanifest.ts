@@ -12,7 +12,14 @@ import {
 } from './manifests/datetime';
 import foreachManifest from './manifests/foreach';
 import htmlManifest from './manifests/htmltable';
-import { httpTriggerManifest, httpWithSwaggerManifest, httpWebhookManifest } from './manifests/http';
+import {
+  httpManifest,
+  httpTriggerManifest,
+  httpWithSwaggerManifest,
+  httpWithSwaggerTriggerManifest,
+  httpWebhookManifest,
+  httpWebhookTriggerManifest,
+} from './manifests/http';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
@@ -39,6 +46,7 @@ import {
   AssertionErrorCode,
   AssertionException,
   clone,
+  ConnectionType,
   equals,
   format,
   UnsupportedException,
@@ -89,7 +97,12 @@ const delay = 'delay';
 const delayuntil = 'delayuntil';
 const http = 'http';
 const httpwebhook = 'httpwebhook';
-const httpwithswagger = 'httpwithswagger';
+const httpaction = 'httpaction';
+const httptrigger = 'httptrigger';
+const httpswaggeraction = 'httpswaggeraction';
+const httpswaggertrigger = 'httpswaggertrigger';
+const httpwebhookaction = 'httpwebhookaction';
+const httpwebhooktrigger = 'httpwebhooktrigger';
 const initializevariable = 'initializevariable';
 const setvariable = 'setvariable';
 const incrementvariable = 'incrementvariable';
@@ -167,7 +180,6 @@ export class StandardOperationManifestService implements IOperationManifestServi
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   isSupported(operationType: string, _operationKind?: string): boolean {
     const { supportedTypes } = this.options;
     const normalizedOperationType = operationType.toLowerCase();
@@ -176,9 +188,9 @@ export class StandardOperationManifestService implements IOperationManifestServi
       : supportedManifestTypes.indexOf(normalizedOperationType) > -1;
   }
 
-  async getOperationInfo(definition: any): Promise<OperationInfo> {
-    if (isInBuiltOperation(definition)) {
-      return getBuiltInOperationInfo(definition);
+  async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {
+    if (isBuiltInOperation(definition)) {
+      return getBuiltInOperationInfo(definition, isTrigger);
     } else if (isServiceProviderOperation(definition)) {
       return {
         connectorId: definition.inputs.serviceProviderConfiguration.serviceProviderId,
@@ -216,11 +228,18 @@ export class StandardOperationManifestService implements IOperationManifestServi
       });
 
       const {
-        properties: { brandColor, description, iconUri, manifest },
+        properties: { brandColor, description, iconUri, manifest, operationType },
       } = response;
 
+      // TODO: Remove below patching of connection when backend api sends correct information for service providers
       const operationManifest = {
-        properties: { brandColor, description, iconUri, ...manifest },
+        properties: {
+          brandColor,
+          description,
+          iconUri,
+          connection: equals(operationType, 'serviceprovider') ? { required: true, type: ConnectionType.ServiceProvider } : undefined,
+          ...manifest,
+        },
       };
 
       return operationManifest;
@@ -317,8 +336,8 @@ function isServiceProviderOperation(definition: any): boolean {
   return equals(definition.type, 'ServiceProvider');
 }
 
-function isInBuiltOperation(definition: any): boolean {
-  switch (definition.type.toLowerCase()) {
+function isBuiltInOperation(definition: any): boolean {
+  switch (definition?.type?.toLowerCase()) {
     case appendtoarrayvariable:
     case appendtostringvariable:
     case compose:
@@ -363,7 +382,7 @@ function isInBuiltOperation(definition: any): boolean {
   }
 }
 
-function getBuiltInOperationInfo(definition: any): OperationInfo {
+function getBuiltInOperationInfo(definition: any, isTrigger: boolean): OperationInfo {
   const normalizedOperationType = definition.type.toLowerCase();
   const kind = definition.kind ? definition.kind.toLowerCase() : undefined;
 
@@ -398,10 +417,15 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
         connectorId: httpConnectorId,
         operationId:
           definition.inputs?.metadata?.apiDefinitionUrl && equals(definition.inputs?.metadata?.swaggerSource, 'custom')
-            ? httpwithswagger
-            : http,
+            ? isTrigger
+              ? httpswaggertrigger
+              : httpswaggeraction
+            : isTrigger
+            ? httptrigger
+            : httpaction,
       };
-
+    case httpwebhook:
+      return { connectorId: httpConnectorId, operationId: isTrigger ? httpwebhooktrigger : httpwebhookaction };
     case liquid:
       switch (kind) {
         case 'jsontojson':
@@ -432,7 +456,7 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
         case 'http':
           return {
             connectorId: 'connectionProviders/request',
-            operationId: 'request',
+            operationId: request,
           };
         default:
           throw new UnsupportedException(`Unsupported operation kind ${kind} for request type`);
@@ -442,7 +466,7 @@ function getBuiltInOperationInfo(definition: any): OperationInfo {
         case 'http':
           return {
             connectorId: 'connectionProviders/request',
-            operationId: 'response',
+            operationId: response,
           };
         default:
           throw new UnsupportedException(`Unsupported operation kind ${kind} for response type`);
@@ -504,10 +528,6 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
   [function_]: {
     connectorId: azureFunctionConnectorId,
     operationId: 'azureFunction',
-  },
-  [httpwebhook]: {
-    connectorId: httpConnectorId,
-    operationId: httpwebhook,
   },
   [initializevariable]: {
     connectorId: variableConnectorId,
@@ -614,9 +634,12 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [getfuturetime, getFutureTimeManifest],
   [getpasttime, getPastTimeManifest],
   [htmltable, htmlManifest],
-  [http, httpTriggerManifest],
-  [httpwebhook, httpWebhookManifest],
-  [httpwithswagger, httpWithSwaggerManifest],
+  [httpaction, httpManifest],
+  [httptrigger, httpTriggerManifest],
+  [httpswaggeraction, httpWithSwaggerManifest],
+  [httpswaggertrigger, httpWithSwaggerTriggerManifest],
+  [httpwebhookaction, httpWebhookManifest],
+  [httpwebhooktrigger, httpWebhookTriggerManifest],
   [incrementvariable, incrementManifest],
   [initializevariable, initializeManifest],
   [join, joinManifest],

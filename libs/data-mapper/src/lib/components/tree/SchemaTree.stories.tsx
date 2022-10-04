@@ -1,4 +1,4 @@
-import { simpleMockSchema } from '../../__mocks__';
+import { simpleMockSchema } from '../../models/__mocks__';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { SchemaTreeProps } from './SchemaTree';
 import { SchemaTree } from './SchemaTree';
@@ -7,7 +7,7 @@ import React from 'react';
 
 export default {
   component: SchemaTree,
-  title: 'Data Mapper/SchemaTree',
+  title: 'Data Mapper Components/Tree/Schema Tree',
 } as ComponentMeta<typeof SchemaTree>;
 
 const mockSchema = convertSchemaToSchemaExtended(JSON.parse(JSON.stringify(simpleMockSchema)));
@@ -15,7 +15,6 @@ const mockSchema = convertSchemaToSchemaExtended(JSON.parse(JSON.stringify(simpl
 export const Standard: ComponentStory<typeof SchemaTree> = (args: SchemaTreeProps) => <SchemaTree {...args} />;
 Standard.args = {
   schema: mockSchema,
-  currentlySelectedNodes: [],
-  visibleConnectedNodes: [],
+  toggledNodes: [],
   onNodeClick: (_schemaNode) => console.log('Clicked'),
 };

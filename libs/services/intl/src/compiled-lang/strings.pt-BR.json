@@ -137,6 +137,18 @@
       "value": "Retorna os primeiros elementos de Contagem na matriz ou na cadeia de caracteres passada"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Compartilhado"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Disparar"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -189,6 +201,12 @@
     {
       "type": 0,
       "value": "Recolher"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Selecione um filtro"
     }
   ],
   "0ZlNtf": [
@@ -452,6 +470,12 @@
       "value": "Hora de término"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Pesquisar"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -528,6 +552,12 @@
     {
       "type": 0,
       "value": "Adicionar conteúdo dinâmico"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Termos de Serviço"
     }
   ],
   "3FoqCK": [
@@ -740,6 +770,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Tipo de Ação"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -816,6 +852,12 @@
     {
       "type": 0,
       "value": "Selecionar um esquema de destino"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Mapeamento de teste"
     }
   ],
   "6XR3FS": [
@@ -1361,6 +1403,12 @@
       "value": "Conexão exigida"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Substituir o esquema existente"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1389,6 +1437,12 @@
     {
       "type": 0,
       "value": "Necessário. A cadeia de caracteres da qual deseja remover os espaços em branco à esquerda e à direita."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Colar da amostra"
     }
   ],
   "DDIIAQ": [
@@ -1445,6 +1499,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Entrando..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1479,6 +1539,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Entre para criar uma conexão com "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1822,6 +1896,12 @@
     {
       "type": 0,
       "value": "Converte uma cadeia de caracteres que o carimbo de data/hora passou de um UTC para um fuso horário de destino"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Ação"
     }
   ],
   "IjZFjQ": [
@@ -2253,6 +2333,12 @@
       "value": "Erro inesperado"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Esquema de destino"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2317,6 +2403,12 @@
     {
       "type": 0,
       "value": "Terça-feira"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2455,6 +2547,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtrar"
     }
   ],
   "P2A5dB": [
@@ -2842,6 +2940,12 @@
       "value": "Ler menos"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Testar"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3047,7 +3151,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "No aplicativo"
     }
   ],
   "VE3cxq": [
@@ -3192,12 +3296,6 @@
     {
       "type": 0,
       "value": "Uma identidade gerenciada não está configurada no aplicativo lógico."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Substituir esquema existente."
     }
   ],
   "X4gDhV": [
@@ -3538,6 +3636,20 @@
       "value": "Função"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Falha com o erro: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Entre novamente."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3564,6 +3676,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Ações"
     }
   ],
   "bS5DyV": [
@@ -3941,7 +4059,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Falha na criação da ACL para conexão. Excluindo a conexão."
     }
   ],
   "fGcSFd": [
@@ -4207,6 +4325,12 @@
       "value": "Resposta Assíncrona"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Forneça dados de entrada para testar o mapa com"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4303,12 +4427,6 @@
     {
       "type": 0,
       "value": "Propriedades"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Testar"
     }
   ],
   "iq+tiv": [
@@ -4669,6 +4787,12 @@
       "value": "Necessário. A cadeia de caracteres a ser convertida em letras minúsculas. Se um caractere na cadeia de caracteres não tiver um equivalente em letras minúsculas, o caractere será incluído inalterado na cadeia de caracteres retornada."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Entrar no conector"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4863,6 +4987,12 @@
       "value": "Cabeçalhos"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "No aplicativo"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -4921,6 +5051,12 @@
     {
       "type": 0,
       "value": "Retorna uma única matriz ou um único objeto que tem elementos comuns entre as matrizes ou os objetos passados. Os parâmetros para a função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura deles). Se houver dois objetos com o mesmo nome, o último objeto com esse nome aparecerá no objeto final."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Disparadores"
     }
   ],
   "pozypE": [
@@ -5524,6 +5660,12 @@
       "value": "Para criar e usar uma conexão de API, você deve ter uma identidade gerenciada configurada neste aplicativo lógico."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Descartar"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5646,6 +5788,12 @@
       "value": "URL de Retorno de Chamada:"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5694,12 +5842,6 @@
       "value": "Necessário. O nome da propriedade nova ou existente."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Código"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5728,6 +5870,12 @@
     {
       "type": 0,
       "value": "Valor"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Entrar"
     }
   ],
   "y3AZQB": [

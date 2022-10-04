@@ -81,7 +81,7 @@ export class UncastingUtility {
       return null;
     }
 
-    // NOTE(tonytang): Continue to uncast if the result is only one expression.
+    // Note: Continue to uncast if the result is only one expression.
     while (result.length === 1) {
       const nextResult = this._uncastOnce(result[0].expression);
       if (nextResult === null) {
@@ -95,7 +95,7 @@ export class UncastingUtility {
   }
 
   private _uncastOnce(expression: Expression): UncastResult[] | null {
-    // TODO(psamband): Remove decodebase64 and encodebase64 functions once all existing definitions are updated.
+    // TODO: Remove decodebase64 and encodebase64 functions once all existing definitions are updated.
     if (isFunction(expression)) {
       switch (expression.name.toUpperCase()) {
         case 'BASE64':

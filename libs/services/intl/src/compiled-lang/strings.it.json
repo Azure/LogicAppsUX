@@ -137,6 +137,18 @@
       "value": "Restituisce i primi elementi Count dalla matrice o dalla stringa passata"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Condiviso"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -189,6 +201,12 @@
     {
       "type": 0,
       "value": "Comprimi"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Seleziona un filtro"
     }
   ],
   "0ZlNtf": [
@@ -452,6 +470,12 @@
       "value": "Ora di fine"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Cerca"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -528,6 +552,12 @@
     {
       "type": 0,
       "value": "Aggiungi contenuto dinamico"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Condizioni d'uso"
     }
   ],
   "3FoqCK": [
@@ -740,6 +770,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Tipo di azione"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -816,6 +852,12 @@
     {
       "type": 0,
       "value": "Selezionare uno schema di destinazione"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Test mappa"
     }
   ],
   "6XR3FS": [
@@ -1365,6 +1407,12 @@
       "value": "Connessione richiesta"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Sostituisci lo schema esistente"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1393,6 +1441,12 @@
     {
       "type": 0,
       "value": "Obbligatorio. Stringa da cui rimuovere lo spazio vuoto iniziale e finale."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Incolla dall'esempio"
     }
   ],
   "DDIIAQ": [
@@ -1449,6 +1503,12 @@
       "value": "CTRL+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Accesso..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1483,6 +1543,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Eseguire l'accesso per creare una connessione a "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1826,6 +1900,12 @@
     {
       "type": 0,
       "value": "Converte il timestamp in formato stringa passato da UTIC al fuso orario di destinazione"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Azione"
     }
   ],
   "IjZFjQ": [
@@ -2257,6 +2337,12 @@
       "value": "Errore imprevisto"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Schema di destinazione"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2321,6 +2407,12 @@
     {
       "type": 0,
       "value": "Martedì"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2467,6 +2559,12 @@
     {
       "type": 0,
       "value": "PFX"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtro"
     }
   ],
   "P2A5dB": [
@@ -2854,6 +2952,12 @@
       "value": "Meno informazioni"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3206,12 +3310,6 @@
       "value": "Un'identità gestita non è configurata nell'app per la logica."
     }
   ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Sostituisci lo schema esistente."
-    }
-  ],
   "X4gDhV": [
     {
       "type": 0,
@@ -3550,6 +3648,20 @@
       "value": "Funzione"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Operazione non riuscita con errore: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Eseguire di nuovo l'accesso."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3576,6 +3688,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Azioni"
     }
   ],
   "bS5DyV": [
@@ -4219,6 +4337,12 @@
       "value": "Risposta asincrona"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Fornire i dati di input con cui testare la mappa"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4315,12 +4439,6 @@
     {
       "type": 0,
       "value": "Proprietà"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4681,6 +4799,12 @@
       "value": "Obbligatorio. Stringa da convertire in lettere minuscole. Se un carattere nella stringa non ha un equivalente in lettere minuscole, il carattere verrà riportato invariato nella stringa restituita."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Accedere al connettore"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4875,6 +4999,12 @@
       "value": "Intestazioni"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-app"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -4933,6 +5063,12 @@
     {
       "type": 0,
       "value": "Restituisce una singola matrice o oggetto contenente elementi comuni tra le matrici o gli oggetti passati. I parametri per la funzione possono essere costituiti da un set di oggetti o un set di matrici, ma non da una combinazione di entrambi. Se sono presenti due oggetti con lo stesso nome, nell'oggetto finale sarà visualizzato l'ultimo oggetto con tale nome."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "pozypE": [
@@ -5536,6 +5672,12 @@
       "value": "Per creare e usare una connessione API, è necessario configurare un'identità gestita in questa app per la logica."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Rimuovi"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5658,6 +5800,12 @@
       "value": "URL callback:"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Chiudi"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5706,12 +5854,6 @@
       "value": "Obbligatorio. Nome della proprietà nuova o esistente."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Codice"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5740,6 +5882,12 @@
     {
       "type": 0,
       "value": "Valore"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Accedi"
     }
   ],
   "y3AZQB": [

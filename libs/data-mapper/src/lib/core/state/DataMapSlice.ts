@@ -1,14 +1,13 @@
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
-import { SchemaTypes } from '../../models';
+import { SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
-import { convertFromMapDefinition } from '../../utils/DataMap.Utils';
+import { addReactFlowPrefix, createConnectionKey } from '../../utils/DataMapIds.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import * as yaml from 'js-yaml';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -28,6 +27,7 @@ export interface DataMapOperationState {
   currentTargetNode?: SchemaNodeExtended;
   currentFunctionNodes: FunctionDictionary;
   currentlySelectedNode?: SelectedNode;
+  xsltFilename: string;
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -36,7 +36,9 @@ const emptyPristineState: DataMapOperationState = {
   currentFunctionNodes: {},
   flattenedSourceSchema: {},
   flattenedTargetSchema: {},
+  xsltFilename: '',
 };
+
 const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
@@ -45,23 +47,30 @@ const initialState: DataMapState = {
   redoStack: [],
 };
 
+export interface InitialSchemaAction {
+  schema: SchemaExtended;
+  schemaType: SchemaTypes.Source | SchemaTypes.Target;
+  flattenedSchema: SchemaNodeDictionary;
+}
+
 export interface ConnectionAction {
-  targetNodeKey: string;
-  value: string;
+  source: SchemaNodeExtended;
+  destination: SchemaNodeExtended;
+
+  reactFlowSource: string;
+  reactFlowDestination: string;
 }
 
 export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
   reducers: {
-    setInitialSchema: (
-      state,
-      action: PayloadAction<{
-        schema: SchemaExtended;
-        schemaType: SchemaTypes.Source | SchemaTypes.Target;
-        flattenedSchema: SchemaNodeDictionary;
-      }>
-    ) => {
+    setXsltFilename: (state, action: PayloadAction<string>) => {
+      state.curDataMapOperation.xsltFilename = action.payload;
+      state.pristineDataMap.xsltFilename = action.payload;
+    },
+
+    setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
       if (action.payload.schemaType === SchemaTypes.Source) {
         state.curDataMapOperation.sourceSchema = action.payload.schema;
         state.curDataMapOperation.flattenedSourceSchema = action.payload.flattenedSchema;
@@ -77,9 +86,8 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    // TODO: See if possible to set a better type for PayloadAction below (dataMapDefinition obj)
-    setInitialDataMap: (state, action: PayloadAction<any | undefined>) => {
-      const incomingDataMap = action.payload;
+    setInitialDataMap: (state, action: PayloadAction<ConnectionDictionary | undefined>) => {
+      const incomingConnections = action.payload;
       const currentState = state.curDataMapOperation;
 
       if (currentState.sourceSchema && currentState.targetSchema) {
@@ -90,19 +98,20 @@ export const dataMapSlice = createSlice({
           currentTargetNode: currentState.targetSchema.schemaTreeRoot,
         };
 
-        if (incomingDataMap) {
-          const loadedConnections = convertFromMapDefinition(yaml.dump(incomingDataMap));
+        if (incomingConnections) {
           const topLevelSourceNodes: SchemaNodeExtended[] = [];
 
-          Object.entries(loadedConnections).forEach(([_key, con]) => {
-            // TODO: Only push source nodes at TOP-LEVEL of target
-            topLevelSourceNodes.push(currentState.flattenedSourceSchema[con.reactFlowSource]);
+          Object.values(incomingConnections).forEach((connection) => {
+            // TODO change to support functions
+            if ((connection.source as SchemaNodeExtended).pathToRoot.length < 2) {
+              topLevelSourceNodes.push(currentState.flattenedSourceSchema[connection.reactFlowSource]);
+            }
           });
 
           newState = {
             ...currentState,
             currentSourceNodes: topLevelSourceNodes,
-            dataMapConnections: loadedConnections,
+            dataMapConnections: incomingConnections,
           };
         }
 
@@ -228,26 +237,46 @@ export const dataMapSlice = createSlice({
         switch (selectedNode.nodeType) {
           case NodeType.Source: {
             const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== selectedNode.name);
+
+            for (const connectionKey in state.curDataMapOperation.dataMapConnections) {
+              if (state.curDataMapOperation.dataMapConnections[connectionKey].source.key === selectedNode.path) {
+                delete state.curDataMapOperation.dataMapConnections[connectionKey];
+              }
+            }
+
             doDataMapOperation(state, { ...state.curDataMapOperation, currentSourceNodes: removedNodes });
             break;
           }
           case NodeType.Function: {
             const newFunctionsState = { ...state.curDataMapOperation.currentFunctionNodes };
             delete newFunctionsState[selectedNode.id];
+
             doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
+
+            for (const connectionKey in state.curDataMapOperation.dataMapConnections) {
+              const connection = state.curDataMapOperation.dataMapConnections[connectionKey];
+
+              if (selectedNode.id.endsWith(connection.source.key) || selectedNode.id.startsWith(connection.destination.key)) {
+                delete state.curDataMapOperation.dataMapConnections[connectionKey];
+              }
+            }
+
             break;
           }
           default:
             break;
         }
+
         state.curDataMapOperation.currentlySelectedNode = undefined;
       } else {
         const connections = state.curDataMapOperation.dataMapConnections;
+
         for (const key in connections) {
           if (connections[key].isSelected) {
             delete connections[key];
           }
         }
+
         doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: connections });
       }
     },
@@ -259,7 +288,7 @@ export const dataMapSlice = createSlice({
         currentFunctionNodes: { ...state.curDataMapOperation.currentFunctionNodes },
       };
 
-      newState.currentFunctionNodes[`${functionData.name}-${guid()}`] = functionData;
+      newState.currentFunctionNodes[`${functionData.key}-${guid()}`] = functionData;
 
       doDataMapOperation(state, newState);
     },
@@ -283,15 +312,35 @@ export const dataMapSlice = createSlice({
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
-      const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
-
-      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
-        destination: trimmedKey,
-        sourceValue: trimmedValue,
-        reactFlowSource: action.payload.value,
-        reactFlowDestination: action.payload.targetNodeKey,
+      newState.dataMapConnections[createConnectionKey(action.payload.source.key, action.payload.destination.key)] = {
+        ...action.payload,
       };
+
+      const targetParentNode = state.curDataMapOperation.currentTargetNode;
+
+      if (targetParentNode?.properties === SchemaNodeProperties.Repeating) {
+        // only add parent source node and connection if parent node & parent node repeating
+        action.payload.source.pathToRoot.forEach((parentKey) => {
+          // danielle refactor
+          const sourceParent = state.curDataMapOperation.flattenedSourceSchema[addReactFlowPrefix(parentKey.key, 'source')];
+
+          if (sourceParent.properties === SchemaNodeProperties.Repeating) {
+            if (state.curDataMapOperation.currentSourceNodes.find((node) => node.key !== sourceParent.key)) {
+              newState.currentSourceNodes.push(sourceParent);
+            }
+
+            if (state.curDataMapOperation.dataMapConnections[createConnectionKey(sourceParent.key, targetParentNode.key)] === undefined) {
+              // danielle test undo!!!
+              newState.dataMapConnections[createConnectionKey(sourceParent.key, targetParentNode.key)] = {
+                destination: targetParentNode,
+                source: sourceParent,
+                reactFlowSource: addReactFlowPrefix(sourceParent.key, 'source'),
+                reactFlowDestination: addReactFlowPrefix(targetParentNode.key, 'target'),
+              };
+            }
+          }
+        });
+      }
 
       doDataMapOperation(state, newState);
     },
@@ -304,14 +353,9 @@ export const dataMapSlice = createSlice({
 
       delete newState.dataMapConnections[action.payload.oldConnectionKey];
 
-      const trimmedKey = action.payload.targetNodeKey.substring(action.payload.targetNodeKey.indexOf('-') + 1);
-      const trimmedValue = action.payload.value.substring(action.payload.value.indexOf('-') + 1);
-
-      newState.dataMapConnections[`${trimmedValue}-to-${trimmedKey}`] = {
-        destination: trimmedKey,
-        sourceValue: trimmedValue,
-        reactFlowSource: action.payload.value,
-        reactFlowDestination: action.payload.targetNodeKey,
+      // danielle what happens when connection changes from one array to another
+      newState.dataMapConnections[createConnectionKey(action.payload.source.key, action.payload.destination.key)] = {
+        ...action.payload,
       };
 
       doDataMapOperation(state, newState);
@@ -370,6 +414,7 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
+  setXsltFilename,
   setInitialSchema,
   setInitialDataMap,
   changeSourceSchema,

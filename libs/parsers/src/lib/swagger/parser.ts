@@ -69,9 +69,8 @@ const ApiNotificationConstants = {
 };
 
 export class SwaggerParser {
-  static parse = async (swagger: OpenAPIV2.Document): Promise<SwaggerParser> => {
-    const api = await APIParser.validate(swagger);
-    return new SwaggerParser(api as any);
+  static parse = async (swagger: OpenAPIV2.Document): Promise<OpenAPIV2.Document> => {
+    return APIParser.validate(swagger, { dereference: { circular: 'ignore' } });
   };
 
   constructor(public api: OpenAPIV2.Document) {}
@@ -296,13 +295,13 @@ export class SwaggerParser {
     return getPropertyValue(this._getResponses(), operationId)?.notification?.operationId;
   }
 
-  // TODO - To be implemented
-  getOutputMetadata(_operationId: string): OutputMetadata {
-    return {};
+  getOutputMetadata(operationId: string): OutputMetadata {
+    const processor = this._getResponsesProcessor(operationId);
+    return processor.getOutputMetadata();
   }
 
-  operationIsWebhook(_operationName: string): boolean {
-    return false;
+  operationIsWebhook(operationName: string): boolean {
+    return getPropertyValue(this._getResponses(), operationName)?.notificationContent;
   }
 
   private _getOperations(options: GetOperationsOptions): OpenAPIV2.OperationObject[] {

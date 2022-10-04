@@ -8,7 +8,13 @@ import { FunctionList } from '../components/functionList/FunctionList';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { SchemaTree } from '../components/tree/SchemaTree';
-import { checkerboardBackgroundImage, defaultCanvasZoom } from '../constants/ReactFlowConstants';
+import {
+  checkerboardBackgroundImage,
+  defaultCanvasZoom,
+  ReactFlowNodeType,
+  sourcePrefix,
+  targetPrefix,
+} from '../constants/ReactFlowConstants';
 import {
   addFunctionNode,
   addSourceNodes,
@@ -19,7 +25,6 @@ import {
   removeSourceNodes,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
-  toggleSourceNode,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
@@ -28,8 +33,7 @@ import type { FunctionData } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
-import { inputPrefix, outputPrefix, ReactFlowNodeType, useLayout } from '../utils/ReactFlow.Util';
-import { allChildNodesSelected, hasAConnectionAtCurrentTargetNode, isLeafNode } from '../utils/Schema.Utils';
+import { useLayout } from '../utils/ReactFlow.Util';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -47,12 +51,13 @@ import {
   ZoomOut20Filled,
   ZoomOut20Regular,
 } from '@fluentui/react-icons';
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'react-flow-renderer';
-import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode } from 'react-flow-renderer';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'reactflow';
+// eslint-disable-next-line import/no-named-as-default
+import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'reactflow';
 
 const toolboxPanelProps: FloatingPanelProps = {
   xPos: '16px',
@@ -73,11 +78,13 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const { fitView, zoomIn, zoomOut, project } = useReactFlow();
 
   const currentlySelectedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
+  const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
+  const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
@@ -91,7 +98,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (currentTargetNode) {
       const connectionValues = Object.values(connections);
       const outputFilteredConnections = currentTargetNode.children.flatMap((childNode) => {
-        const foundConnection = connectionValues.find((connection) => connection.destination === childNode.key);
+        const foundConnection = connectionValues.find((connection) => connection.destination.key === childNode.key);
         return foundConnection ? [foundConnection] : [];
       });
 
@@ -115,7 +122,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
-    dispatch(setCurrentlySelectedNode(undefined));
+    if (currentlySelectedNode) {
+      dispatch(setCurrentlySelectedNode(undefined));
+    }
+
     setDisplayToolboxItem(undefined);
   };
 
@@ -124,20 +134,14 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   };
 
   const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
-    if (isLeafNode(selectedNode)) {
-      if (currentTargetNode && !hasAConnectionAtCurrentTargetNode(selectedNode, currentTargetNode, currentConnections)) {
-        dispatch(toggleSourceNode(selectedNode));
-      }
+    if (
+      currentlySelectedSourceNodes.some((node) => {
+        return node.key === selectedNode.key;
+      })
+    ) {
+      dispatch(removeSourceNodes([selectedNode]));
     } else {
-      if (allChildNodesSelected(selectedNode, currentlySelectedSourceNodes)) {
-        // TODO reconfirm this works for loops and conditionals
-        const nodesToRemove = selectedNode.children.filter((childNodes) =>
-          Object.values(currentConnections).some((currentConnection) => childNodes.key !== currentConnection.sourceValue)
-        );
-        dispatch(removeSourceNodes(nodesToRemove));
-      } else {
-        dispatch(addSourceNodes(selectedNode.children));
-      }
+      dispatch(addSourceNodes([selectedNode]));
     }
   };
 
@@ -147,7 +151,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         const selectedSourceNode: SelectedSourceNode = {
           nodeType: NodeType.Source,
           name: node.data.schemaNode.name,
-          path: node.id.replace(inputPrefix, ''),
+          path: node.id.replace(sourcePrefix, ''),
           dataType: node.data.schemaNode.schemaNodeDataType,
         };
 
@@ -156,7 +160,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         const selectedTargetNode: SelectedTargetNode = {
           nodeType: NodeType.Target,
           name: node.data.schemaNode.name,
-          path: node.id.replace(outputPrefix, ''),
+          path: node.id.replace(targetPrefix, ''),
           dataType: node.data.schemaNode.schemaNodeDataType,
           defaultValue: '', // TODO: this property and below
           doNotGenerateIfNoValue: true,
@@ -184,7 +188,14 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onConnect = (connection: ReactFlowConnection) => {
     if (connection.target && connection.source) {
-      dispatch(makeConnection({ targetNodeKey: connection.target, value: connection.source }));
+      dispatch(
+        makeConnection({
+          destination: flattenedTargetSchema[connection.target],
+          source: flattenedSourceSchema[connection.source],
+          reactFlowDestination: connection.target,
+          reactFlowSource: connection.source,
+        })
+      );
     }
   };
 
@@ -196,10 +207,18 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     (oldEdge: ReactFlowEdge, newConnection: ReactFlowConnection) => {
       edgeUpdateSuccessful.current = true;
       if (newConnection.target && newConnection.source && oldEdge.target) {
-        dispatch(changeConnection({ targetNodeKey: newConnection.target, value: newConnection.source, oldConnectionKey: oldEdge.id }));
+        dispatch(
+          changeConnection({
+            destination: flattenedTargetSchema[newConnection.target],
+            source: flattenedSourceSchema[newConnection.source],
+            reactFlowDestination: newConnection.target,
+            reactFlowSource: newConnection.source,
+            oldConnectionKey: oldEdge.id,
+          })
+        );
       }
     },
-    [dispatch]
+    [dispatch, flattenedSourceSchema, flattenedTargetSchema]
   );
 
   const onEdgeUpdateEnd = useCallback(
@@ -334,7 +353,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const [nodes, edges] = useLayout(
     canvasViewportCoords,
-    currentlySelectedSourceNodes,
+    currentlyAddedSourceNodes,
     connectedSourceNodes,
     flattenedSourceSchema,
     allFunctionNodes,
@@ -347,7 +366,9 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (selectedNode) {
       selectedNode.selected = !selectedNode.selected;
     }
-    dispatch(setCurrentlySelectedEdge(node.id));
+    if (node) {
+      dispatch(setCurrentlySelectedEdge(node.id));
+    }
   };
 
   const keyDownHandler2: KeyboardEventHandler<HTMLDivElement> = (event) => {
@@ -356,6 +377,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     }
   };
 
+  const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
   return (
     <ReactFlow
       ref={reactFlowRef}
@@ -365,7 +387,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onConnect={onConnect}
       onPaneClick={onPaneClick}
       onNodeClick={onNodeSingleClick}
-      defaultZoom={defaultCanvasZoom}
+      defaultViewport={defaultViewport}
       nodesDraggable={false}
       fitView={false}
       connectionLineType={ConnectionLineType.SmoothStep}
@@ -386,24 +408,27 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onEdgeClick={onEdgeClick}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
+
       {displayToolboxItem === 'sourceSchemaTreePanel' && (
         <FloatingPanel {...toolboxPanelProps}>
           {sourceSchema && (
             <SchemaTree
               schema={sourceSchema}
-              currentlySelectedNodes={currentlySelectedSourceNodes}
-              visibleConnectedNodes={connectedSourceNodes}
+              toggledNodes={[...currentlyAddedSourceNodes, ...connectedSourceNodes]}
               onNodeClick={onToolboxItemClick}
             />
           )}
         </FloatingPanel>
       )}
+
       {displayToolboxItem === 'functionsPanel' && (
         <FloatingPanel {...toolboxPanelProps}>
-          <FunctionList sample="sample" onFunctionClick={onFunctionItemClick}></FunctionList>
+          <FunctionList onFunctionClick={onFunctionItemClick}></FunctionList>
         </FloatingPanel>
       )}
+
       <ButtonContainer {...mapControlsButtonContainerProps} />
+
       {displayMiniMap && (
         <MiniMap
           nodeStrokeColor={(node) => {
@@ -425,6 +450,19 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
           }}
         />
       )}
+
+      {/* Toast Placeholder
+        {notification.data &&
+          <Notification
+            msg={notification.data.msg}
+            intent={notification.data.intent}
+            icon={!notification.data.intent && <Delete20Regular />}
+            action={{ icon: <Dismiss20Regular /> }}
+            autoHideDuration={2000}
+            onClose={notificationSlice.actions.hideNotification}
+          />
+        }
+      */}
     </ReactFlow>
   );
 };

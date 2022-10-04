@@ -5,6 +5,8 @@ import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/ut
 export interface IDataMapperApiService {
   getSchemas(): Promise<SchemaInfoProperties[]>;
   getSchemaFile(schemaName: string): Promise<any>;
+  generateDataMapXslt(dataMapDefinition: string): Promise<any>;
+  testDataMap(dataMapXsltFilename: string, schemaInputValue: string): Promise<any>;
 }
 
 export interface SchemaInfoProperties {
@@ -19,7 +21,6 @@ export interface SchemaInfoProperties {
 
 export const defaultDataMapperApiServiceOptions = {
   baseUrl: 'http://localhost:7071',
-  resourceUrl: '',
   accessToken: '',
 };
 

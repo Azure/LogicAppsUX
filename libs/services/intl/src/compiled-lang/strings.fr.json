@@ -153,6 +153,18 @@
       "value": "Retourne les premiers éléments Count du tableau ou de la chaîne transmis(e)"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Partagé"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Déclencheur"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Réduire"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Sélectionner un filtre"
     }
   ],
   "0ZlNtf": [
@@ -468,6 +486,12 @@
       "value": "Heure de fin"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Rechercher"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -544,6 +568,12 @@
     {
       "type": 0,
       "value": "Ajouter du contenu dynamique"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Conditions d’utilisation du service"
     }
   ],
   "3FoqCK": [
@@ -756,6 +786,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Type d'action"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -832,6 +868,12 @@
     {
       "type": 0,
       "value": "Sélectionnez un schéma cible"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Tester le mappage"
     }
   ],
   "6XR3FS": [
@@ -1413,6 +1455,12 @@
       "value": "Connexion obligatoire"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Remplacer le schéma existant"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1441,6 +1489,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne de laquelle supprimer les espaces à gauche et à droite."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Coller à partir de l’exemple"
     }
   ],
   "DDIIAQ": [
@@ -1497,6 +1551,12 @@
       "value": "Ctrl+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Connexion en cours..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1531,6 +1591,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Connectez-vous pour créer une connexion à "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1882,6 +1956,12 @@
     {
       "type": 0,
       "value": "Convertit un horodateur de chaîne transmis d'une heure UTC à un fuseau horaire cible"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Action"
     }
   ],
   "IjZFjQ": [
@@ -2329,6 +2409,12 @@
       "value": "Erreur inattendue"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Schéma cible"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2393,6 +2479,12 @@
     {
       "type": 0,
       "value": "Mardi"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2547,6 +2639,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtre"
     }
   ],
   "P2A5dB": [
@@ -2934,6 +3032,12 @@
       "value": "Moins d’infos"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3139,7 +3243,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "Dans l'application"
     }
   ],
   "VE3cxq": [
@@ -3284,12 +3388,6 @@
     {
       "type": 0,
       "value": "Une identité managée n’est pas configurée sur l’application logique."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Remplacez le schéma existant."
     }
   ],
   "X4gDhV": [
@@ -3630,6 +3728,20 @@
       "value": "Fonction"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Échec avec l'erreur : "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Reconnectez-vous."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3656,6 +3768,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "bS5DyV": [
@@ -4033,7 +4151,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Échec de la création ACL pour la connexion. Suppression de la connexion."
     }
   ],
   "fGcSFd": [
@@ -4307,6 +4425,12 @@
       "value": "Réponse asynchrone"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Fournir des données d’entrée avec lesquelles tester le mappage"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4411,12 +4535,6 @@
     {
       "type": 0,
       "value": "Propriétés"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4777,6 +4895,12 @@
       "value": "Obligatoire. Chaîne à convertir en minuscules. Si un caractère de la chaîne n'a pas d'équivalent en minuscules, le caractère reste inchangé dans la chaîne retournée."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Se connecter au connecteur"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4971,6 +5095,12 @@
       "value": "En-têtes"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "Dans l'application"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -5029,6 +5159,12 @@
     {
       "type": 0,
       "value": "Retourne un unique tableau ou objet qui a des éléments communs avec les objets ou tableaux transmis. Les paramètres de la fonction peuvent être un ensemble d'objets ou de tableaux (et non un mélange des deux). Si deux objets portent le même nom, le dernier objet avec ce nom s'affiche dans l'objet final."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Déclencheurs"
     }
   ],
   "pozypE": [
@@ -5648,6 +5784,12 @@
       "value": "Pour créer et utiliser une connexion d’API, vous devez avoir une identité managée configurée sur cette application logique."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Abandonner"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5770,6 +5912,12 @@
       "value": "URL de rappel :"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Fermer"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5818,12 +5966,6 @@
       "value": "Obligatoire. Nom de la propriété nouvelle ou existante."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Code"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5852,6 +5994,12 @@
     {
       "type": 0,
       "value": "Valeur"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Se connecter"
     }
   ],
   "y3AZQB": [

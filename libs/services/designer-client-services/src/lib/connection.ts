@@ -28,6 +28,11 @@ export interface ConnectionParametersMetadata {
   connectionType: ConnectionType;
 }
 
+export interface CreateConnectionResult {
+  connection?: Connection;
+  errorMessage?: string;
+}
+
 export interface IConnectionService {
   [x: string]: any;
   dispose(): void;
@@ -42,6 +47,11 @@ export interface IConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<Connection>;
+  createAndAuthorizeOAuthConnection(
+    connectionId: string,
+    connectorId: string,
+    connectionInfo: ConnectionCreationInfo
+  ): Promise<CreateConnectionResult>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
 }
 

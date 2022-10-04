@@ -1,7 +1,7 @@
+import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeDataType, SchemaTypes } from '../models/Schema';
-import { inputPrefix, outputPrefix } from './ReactFlow.Util';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
@@ -13,7 +13,7 @@ export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended =>
 };
 
 const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPath: PathItem[]): SchemaNodeExtended => {
-  const pathToRoot: PathItem[] = [...parentPath, { key: schemaNode.key, name: schemaNode.name }];
+  const pathToRoot: PathItem[] = [...parentPath, { key: schemaNode.key, name: schemaNode.name, fullName: schemaNode.fullName }];
 
   const extendedSchemaNode: SchemaNodeExtended = {
     ...schemaNode,
@@ -26,7 +26,7 @@ const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPat
 
 export const flattenSchema = (schema: SchemaExtended, schemaType: SchemaTypes): SchemaNodeDictionary => {
   const result: SchemaNodeDictionary = {};
-  const idPrefix = schemaType === SchemaTypes.Source ? inputPrefix : outputPrefix;
+  const idPrefix = schemaType === SchemaTypes.Source ? sourcePrefix : targetPrefix;
   const schemaNodeArray = flattenSchemaNode(schema.schemaTreeRoot);
 
   schemaNodeArray.reduce((dict, node) => {
@@ -54,8 +54,8 @@ export const allChildNodesSelected = (schemaNode: SchemaNodeExtended, selectedNo
 export const hasAConnection = (schemaNode: SchemaNodeExtended, connections: ConnectionDictionary): boolean => {
   return Object.values(connections).some(
     (connection) =>
-      connection.reactFlowSource === `${inputPrefix}${schemaNode.key}` ||
-      connection.reactFlowDestination === `${outputPrefix}${schemaNode.key}`
+      connection.reactFlowSource === `${sourcePrefix}${schemaNode.key}` ||
+      connection.reactFlowDestination === `${targetPrefix}${schemaNode.key}`
   );
 };
 
@@ -65,10 +65,27 @@ export const hasAConnectionAtCurrentTargetNode = (
   connections: ConnectionDictionary
 ): boolean => {
   return Object.values(connections)
-    .filter((connection) => currentTargetNode.children.some((outputChild) => outputChild.key === connection.destination))
+    .filter((connection) => currentTargetNode.children.some((outputChild) => outputChild.key === connection.destination.key))
     .some(
       (connection) =>
-        connection.reactFlowSource === `${inputPrefix}${schemaNode.key}` ||
-        connection.reactFlowDestination === `${outputPrefix}${schemaNode.key}`
+        connection.reactFlowSource === `${sourcePrefix}${schemaNode.key}` ||
+        connection.reactFlowDestination === `${targetPrefix}${schemaNode.key}`
     );
+};
+
+export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
+  if (schemaNode.key === nodeKey) {
+    return schemaNode;
+  }
+
+  let result: SchemaNodeExtended | undefined = undefined;
+  schemaNode.children.forEach((childNode) => {
+    const tempResult = findNodeForKey(nodeKey, childNode);
+
+    if (tempResult) {
+      result = tempResult;
+    }
+  });
+
+  return result;
 };

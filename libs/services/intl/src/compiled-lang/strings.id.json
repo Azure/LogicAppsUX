@@ -137,6 +137,18 @@
       "value": "Menampilkan elemen Count pertama dari array atau string yang diberikan"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Dibagikan"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Pemicu"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -189,6 +201,12 @@
     {
       "type": 0,
       "value": "Ciutkan"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Pilih filter"
     }
   ],
   "0ZlNtf": [
@@ -430,6 +448,12 @@
       "value": "Waktu berakhir"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Cari"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -506,6 +530,12 @@
     {
       "type": 0,
       "value": "Tambahkan konten dinamis"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Ketentuan Layanan"
     }
   ],
   "3FoqCK": [
@@ -718,6 +748,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Tipe Tindakan"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -794,6 +830,12 @@
     {
       "type": 0,
       "value": "Pilih skema target"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Uji peta"
     }
   ],
   "6XR3FS": [
@@ -1321,6 +1363,12 @@
       "value": "Koneksi diperlukan"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Ganti skema yang ada"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1349,6 +1397,12 @@
     {
       "type": 0,
       "value": "Diperlukan. String untuk menghapus spasi awal dan akhir."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Tempel dari sampel"
     }
   ],
   "DDIIAQ": [
@@ -1405,6 +1459,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Masuk..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1439,6 +1499,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Masuk untuk membuat koneksi ke "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1760,6 +1834,12 @@
     {
       "type": 0,
       "value": "Mengonversi tanda waktu string yang diberikan dari UTC ke zona waktu target"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Tindakan"
     }
   ],
   "IjZFjQ": [
@@ -2169,6 +2249,12 @@
       "value": "Kesalahan tidak terduga"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Skema target"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2233,6 +2319,12 @@
     {
       "type": 0,
       "value": "Selasa"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2371,6 +2463,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -2736,6 +2834,12 @@
       "value": "Baca lebih sedikit"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Uji"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3088,12 +3192,6 @@
       "value": "Identitas terkelola tidak dikonfigurasi di aplikasi logika."
     }
   ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Ganti skema yang ada."
-    }
-  ],
   "X4gDhV": [
     {
       "type": 0,
@@ -3432,6 +3530,20 @@
       "value": "Fungsi"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Gagal dengan kesalahan: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Silakan masuk lagi."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3458,6 +3570,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Tindakan"
     }
   ],
   "bS5DyV": [
@@ -4079,6 +4197,12 @@
       "value": "Respons Asinkron"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Berikan data input untuk menguji peta"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4175,12 +4299,6 @@
     {
       "type": 0,
       "value": "Properti"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Uji"
     }
   ],
   "iq+tiv": [
@@ -4541,6 +4659,12 @@
       "value": "Harus diisi. String untuk dikonversi ke huruf kecil. Jika karakter dalam string tidak memiliki huruf kecil yang ekuivalen, karakter meliputi string yang tidak berubah dalam string yang belum dikembalikan."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Masuk ke konektor"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4735,6 +4859,12 @@
       "value": "Header"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "Dalam Aplikasi"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -4793,6 +4923,12 @@
     {
       "type": 0,
       "value": "Mengembalikan array tunggal atau objek tunggal yang memiliki elemen umum di antara array atau objek yang dilewati. Parameter untuk fungsi dapat berupa sekumpulan objek atau sekumpulan susunan (bukan gabungan keduanya). Jika ada dua objek dengan nama yang sama, objek terakhir dengan nama tersebut muncul di objek akhir."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Pemicu"
     }
   ],
   "pozypE": [
@@ -5374,6 +5510,12 @@
       "value": "Untuk membuat dan menggunakan koneksi API, Anda harus memiliki identitas terkelola yang dikonfigurasi di aplikasi logika ini."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Buang"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5496,6 +5638,12 @@
       "value": "URL Panggilan Balik:"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Tutup"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5544,12 +5692,6 @@
       "value": "Diperlukan. Nama properti baru atau yang sudah ada."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kode"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5578,6 +5720,12 @@
     {
       "type": 0,
       "value": "Nilai"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Masuk"
     }
   ],
   "y3AZQB": [

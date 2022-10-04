@@ -7,7 +7,7 @@ export const supportedSchemaFileExts = ['.xsd'];
 const artifactsPath = '/Artifacts/';
 export const schemasPath = `${artifactsPath}/Schemas`;
 export const dataMapsPath = `${artifactsPath}/Maps`;
-export const dataMapDefinitionsPath = `${artifactsPath}/MapDefinition`;
+export const dataMapDefinitionsPath = `${artifactsPath}/MapDefinitions`;
 
 export const hostFileName = 'host.json';
 export const settingsFileName = 'local.settings.json';
@@ -29,7 +29,7 @@ export const settingsFileContent = {
   IsEncrypted: false,
   Values: {
     AzureWebJobsSecretStorageType: 'Files',
-    FUNCTIONS_WORKER_RUNTIME: 'node',
+    FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated',
   },
 };
 

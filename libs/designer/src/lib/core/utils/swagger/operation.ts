@@ -15,7 +15,7 @@ import { getConnectorWithSwagger } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../card';
-import { toOutputInfo } from '../outputs';
+import { toOutputInfo, updateOutputsForBatchingTrigger } from '../outputs';
 import {
   addRecurrenceParametersInGroup,
   getDependentParameters,
@@ -72,10 +72,10 @@ export const initializeOperationDetailsForSwagger = async (
         operation
       );
       const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
-        nodeId,
         parsedSwagger,
         nodeOperationInfo,
-        nodeInputs
+        nodeInputs,
+        settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -198,10 +198,10 @@ export const getInputParametersFromSwagger = (
 };
 
 export const getOutputParametersFromSwagger = (
-  nodeId: string,
   swagger: SwaggerParser,
   operationInfo: NodeOperation,
-  nodeInputs: NodeInputs
+  nodeInputs: NodeInputs,
+  splitOnValue?: string
 ): NodeOutputsWithDependencies => {
   const { operationId, connectorId } = operationInfo;
   const operationOutputs = swagger.getOutputParameters(operationId, {
@@ -213,9 +213,10 @@ export const getOutputParametersFromSwagger = (
     throw new Error(`Failed to parse operation outputs from swagger for connector - ${connectorId}`);
   }
 
+  const updatedOutputs = updateOutputsForBatchingTrigger(operationOutputs, splitOnValue);
   const nodeOutputs: Record<string, OutputInfo> = {};
   let dynamicOutput: OutputParameter | undefined;
-  for (const [key, output] of Object.entries(operationOutputs)) {
+  for (const [key, output] of Object.entries(updatedOutputs)) {
     if (!output.dynamicSchema) {
       nodeOutputs[key] = toOutputInfo(output);
     } else if (!dynamicOutput) {
@@ -374,7 +375,7 @@ function extractPathFromUri(baseUri: string, path: string): string {
     throw new Error(`Basepath specified in swagger '${basePath}' is not according to swagger specs. It does not start with '/'`);
   }
 
-  // NOTE(ramacfar): Protocol should always be added while saving HTTP+Swagger, some older workflows may not have had it. Backcompat.
+  // Note: Protocol should always be added while saving HTTP+Swagger, some older workflows may not have had it. Backcompat.
   if (!/^\s*(?:https?|wss?):/i.test(uri)) {
     uri = `https://${uri}`;
   }

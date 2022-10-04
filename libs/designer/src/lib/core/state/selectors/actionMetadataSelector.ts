@@ -21,6 +21,10 @@ export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   // else case needs to be implemented: work item 14936435
 };
 
+export const useAllowUserToChangeConnection = (op: NodeOperation) => {
+  return useIsConnectionRequired(op);
+};
+
 export const useNodeConnectionId = (nodeId: string): string =>
   useSelector((state: RootState) => getConnectionId(state.connections, nodeId));
 

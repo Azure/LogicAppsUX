@@ -1,12 +1,12 @@
-import { simpleMockSchema } from '../../__mocks__';
 import { setCurrentTargetNode, setInitialSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { SchemaTypes } from '../../models/Schema';
+import { simpleMockSchema } from '../../models/__mocks__';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { EditorBreadcrumb } from './EditorBreadcrumb';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
+import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 
 interface MockStoreData {
@@ -16,18 +16,19 @@ interface MockStoreData {
 
 const MockStore = ({ mockState, children }) => {
   store.dispatch(setInitialSchema({ schema: mockState.schema, schemaType: SchemaTypes.Target, flattenedSchema: {} }));
-  store.dispatch(setCurrentTargetNode(mockState.currentNode));
+  store.dispatch(setCurrentTargetNode({ schemaNode: mockState.currentNode, resetSelectedSourceNodes: true }));
 
   return <Provider store={store}>{children}</Provider>;
 };
 
 export default {
   component: EditorBreadcrumb,
-  title: 'Data Mapper/Breadcrumb',
+  title: 'Data Mapper Components/Breadcrumb',
 } as ComponentMeta<typeof EditorBreadcrumb>;
 
 const Template: ComponentStory<typeof EditorBreadcrumb> = () => {
-  return <EditorBreadcrumb />;
+  const [isCodeViewOpen, setIsCodeViewOpen] = useState<boolean>(false);
+  return <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />;
 };
 
 export const Standard = Template.bind({});

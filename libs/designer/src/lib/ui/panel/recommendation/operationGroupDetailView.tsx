@@ -5,14 +5,16 @@ import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-
 import { guid } from '@microsoft-logic-apps/utils';
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationActionDataFromOperation, OperationGroupDetailsPage } from '@microsoft/designer-ui';
+import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 type OperationGroupDetailViewProps = {
   groupOperations: DiscoveryOperation<DiscoveryResultTypes>[];
+  filters: Record<string, string>;
 };
 
 export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) => {
-  const { groupOperations } = props;
+  const { groupOperations, filters } = props;
 
   const relationshipIds = useRelationshipIds();
   const isParallelBranch = useIsParallelBranch();
@@ -23,7 +25,25 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch }));
   };
 
-  const operationGroupActions: OperationActionData[] = groupOperations.map((operation) => OperationActionDataFromOperation(operation));
+  const filterItems = useCallback(
+    (data: OperationActionData): boolean => {
+      let ret = true;
+      if (filters['actionType']) {
+        if (filters['actionType'] === 'actions') {
+          ret = ret ? !data.isTrigger : false;
+        } else {
+          ret = ret ? data.isTrigger : false;
+        }
+      }
+
+      return ret;
+    },
+    [filters]
+  );
+
+  const operationGroupActions: OperationActionData[] = groupOperations
+    .map((operation) => OperationActionDataFromOperation(operation))
+    .filter(filterItems);
 
   return groupOperations.length > 0 ? (
     <OperationGroupDetailsPage

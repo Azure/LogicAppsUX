@@ -36,7 +36,7 @@ export class OutputsProcessor {
     let allheaderOutputParameters: OutputParameter[] = [];
     Object.keys(headers).forEach((key) => {
       const processorOption = { ...this._options, keyPrefix: ParameterKeyUtility.create(['$', key]) };
-      const childProcessor = new SchemaProcessor(processorOption); // TODO(tonytang): header object is not schema. Use HeadersProcessor to process it.
+      const childProcessor = new SchemaProcessor(processorOption); // TODO: header object is not schema. Use HeadersProcessor to process it.
       const headerSchemaProperties = childProcessor.getSchemaProperties(headers[key]);
       const headerOutputParameters = headerSchemaProperties.map((schemaProperty) => {
         return OutputsProcessor.convertSchemaPropertyToOutputParameter(
@@ -58,7 +58,7 @@ export class OutputsProcessor {
     return getArrayOutputMetadata(response.schema || {}, /* required */ true, this._options.excludeInternal as boolean);
   }
 
-  // TODO(johnwa): this method should move to some utility class.
+  // TODO: this method should move to some utility class.
   public static convertSchemaPropertyToOutputParameter(
     schemaProperty: SchemaProperty,
     outputSource: string,
@@ -68,7 +68,7 @@ export class OutputsProcessor {
     const outputParameter = { ...schemaProperty };
 
     outputParameter.source = outputSource;
-    outputParameter.key = `${parameterLocation}.${schemaProperty.key}`; // TODO(tonytang): Use ParameterKeyUtility to create the key.
+    outputParameter.key = `${parameterLocation}.${schemaProperty.key}`; // TODO: Use ParameterKeyUtility to create the key.
 
     if (name) {
       outputParameter.name = name;
@@ -83,7 +83,7 @@ export class OutputsProcessor {
     const responsesLength = responseCodes.length;
     const responseCode = responsesLength > 0 ? responseCodes[0] : '';
 
-    // NOTE(shimedh): If only one response is defined in the swagger and if it is any of the assigned success response codes or default, then we return the response.
+    // NOTE: If only one response is defined in the swagger and if it is any of the assigned success response codes or default, then we return the response.
     //       Else if more than one responses defined in the swagger, then, we keep the current behavior (if 200, else if default, else empty)
     if (
       responsesLength === 1 &&

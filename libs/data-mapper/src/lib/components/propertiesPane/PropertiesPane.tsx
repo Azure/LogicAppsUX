@@ -1,3 +1,5 @@
+import { deleteCurrentlySelectedItem } from '../../core/state/DataMapSlice';
+import type { AppDispatch } from '../../core/state/Store';
 import { NodeType } from '../../models/SelectedNode';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { CodeTab } from './tabComponents/CodeTab';
@@ -9,6 +11,7 @@ import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, ty
 import { ChevronDoubleDown20Regular, ChevronDoubleUp20Regular, Delete20Regular } from '@fluentui/react-icons';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 enum TABS {
   PROPERTIES = 1,
@@ -59,8 +62,9 @@ export interface PropertiesPaneProps {
 }
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
-  const intl = useIntl();
   const { currentNode, isExpanded, setIsExpanded, centerViewHeight, contentHeight, setContentHeight } = props;
+  const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
 
   const styles = useStyles();
   const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
@@ -87,7 +91,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     description: 'Label for properties tab',
   });
 
-  const codeLoc = intl.formatMessage({
+  /*const codeLoc = intl.formatMessage({
     defaultMessage: 'Code',
     description: 'Label for code tab',
   });
@@ -95,7 +99,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const testLoc = intl.formatMessage({
     defaultMessage: 'Test',
     description: 'Label for test tab',
-  });
+  });*/
 
   const selectElementLoc = intl.formatMessage({
     defaultMessage: 'Select an element to start configuring',
@@ -118,7 +122,9 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   });
 
   const removeCurrentNode = () => {
-    // TODO: Hook this up once Reid gets to handling removing nodes
+    // NOTE: UX only shows delete button for this to happen when source
+    // or function node is selected (not connections even though below method supports it)
+    dispatch(deleteCurrentlySelectedItem());
   };
 
   const onSelectTab = (tab: TABS) => {
@@ -217,8 +223,8 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <Divider vertical style={{ maxWidth: 24 }} />
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
-        <Tab value={TABS.CODE}>{codeLoc}</Tab>
-        {currentNode?.nodeType === NodeType.Target && <Tab value={TABS.TEST}>{testLoc}</Tab>}
+        {/*<Tab value={TABS.CODE}>{codeLoc}</Tab>*/}
+        {/*currentNode?.nodeType === NodeType.Target && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
       </TabList>
     </>
   );

@@ -455,7 +455,7 @@ export default {
     DESIGNER: 'designer:',
     INITIALIZE_NODES: 'designer:initializeNodes',
     INITIALIZE_TOPOLOGY: 'designer:initializeTopology',
-    // TODO(psamband): Prefix the existing profiling events to have this key
+    // TODO: Prefix the existing profiling events to have this key
     NODEID: 'nodeId:',
     PRE_INITIALIZE_NODES: 'designer:preInitializeNodes',
     POST_INITIALIZE_NODES: 'designer:postInitializeNodes',
@@ -477,7 +477,7 @@ export default {
     VALUE_TITLE: 'value-title',
   },
   RAW: 'Raw',
-  // NOTE(johnwa): DEFAULT_RECURRENCE frequency should same with RECURRENCE_FREQUENCY_VALUES value
+  // Note: DEFAULT_RECURRENCE frequency should same with RECURRENCE_FREQUENCY_VALUES value
   DEFAULT_RECURRENCE: {
     FREE: {
       interval: 1,
@@ -502,7 +502,7 @@ export default {
     WEEKDAYS: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
     HOURS: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
   },
-  // NOTE(ramacfar): The order of these entries must match the order of the resource strings in resources.resjson.
+  // Note: The order of these entries must match the order of the resource strings in resources.resjson.
   RECURRENCE_TIMEZONE_VALUES: [
     'Dateline Standard Time',
     'UTC-11',
@@ -664,18 +664,6 @@ export default {
     SUSPENDED: 'Suspended',
     TIMEDOUT: 'TimedOut',
     WAITING: 'Waiting',
-  },
-  SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS: {
-    TOKEN_CLIENT_ID: 'token:clientId',
-    TOKEN_CLIENT_SECRET: 'token:clientSecret',
-    TOKEN_RESOURCE_URI: 'token:resourceUri',
-    TOKEN_GRANT_TYPE: 'token:grantType',
-    TOKEN_TENANT_ID: 'token:tenantId',
-  },
-  SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS_PREFIX: 'token:',
-  SERVICE_PRINCIPLE_GRANT_TYPE_VALUES: {
-    CODE: 'code',
-    CLIENT_CREDENTIALS: 'client_credentials',
   },
   SWAGGER_SOURCE: {
     WEBSITE: 'website',

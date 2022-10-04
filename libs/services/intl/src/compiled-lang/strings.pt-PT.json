@@ -153,6 +153,18 @@
       "value": "Devolve os primeiros elementos de Contagem da matriz ou da cadeia transmitida"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Partilhado"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Acionador"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Fechar"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Selecionar um filtro"
     }
   ],
   "0ZlNtf": [
@@ -468,6 +486,12 @@
       "value": "Hora de fim"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Pesquisar"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -544,6 +568,12 @@
     {
       "type": 0,
       "value": "Adicionar conteúdo dinâmico"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Termos do Serviço"
     }
   ],
   "3FoqCK": [
@@ -756,6 +786,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Tipo de Ação"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -832,6 +868,12 @@
     {
       "type": 0,
       "value": "Selecionar um esquema de destino"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Testar mapa"
     }
   ],
   "6XR3FS": [
@@ -1413,6 +1455,12 @@
       "value": "Ligação necessária"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Substituir esquema existente"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1441,6 +1489,12 @@
     {
       "type": 0,
       "value": "Necessário. A cadeia a partir da qual pretende remover os espaços em branco à esquerda e à direita."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Colar a partir de exemplo"
     }
   ],
   "DDIIAQ": [
@@ -1497,6 +1551,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "A iniciar sessão..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1531,6 +1591,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Inicie sessão para criar uma ligação para "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1890,6 +1964,12 @@
     {
       "type": 0,
       "value": "Converte um carimbo de data/hora de cadeia transmitido de um UTC para um fuso horário de destino"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Ação"
     }
   ],
   "IjZFjQ": [
@@ -2345,6 +2425,12 @@
       "value": "Erro inesperado"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Esquema de destino"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2409,6 +2495,12 @@
     {
       "type": 0,
       "value": "Terça-feira"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2563,6 +2655,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtrar"
     }
   ],
   "P2A5dB": [
@@ -2950,6 +3048,12 @@
       "value": "Ler menos"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Testar"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3300,12 +3404,6 @@
     {
       "type": 0,
       "value": "Uma identidade gerida não está configurada na aplicação lógica."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Substituir esquema existente."
     }
   ],
   "X4gDhV": [
@@ -3662,6 +3760,20 @@
       "value": "Função"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Falha com o erro: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Inicie sessão novamente."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3688,6 +3800,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Ações"
     }
   ],
   "bS5DyV": [
@@ -4347,6 +4465,12 @@
       "value": "Resposta Assíncrona"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Forneça dados de entrada para testar o mapa com"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4451,12 +4575,6 @@
     {
       "type": 0,
       "value": "Propriedades"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Testar"
     }
   ],
   "iq+tiv": [
@@ -4825,6 +4943,12 @@
       "value": "Obrigatório. A cadeia a converter em minúsculas. Se um caráter na cadeia não tiver um equivalente em minúsculas, o caráter é incluído inalterado na cadeia devolvida."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Iniciar sessão no conector"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -5019,6 +5143,12 @@
       "value": "Cabeçalhos"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "Na Aplicação"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -5077,6 +5207,12 @@
     {
       "type": 0,
       "value": "Devolve uma matriz ou um objeto únicos que tem elementos comuns entre matrizes ou objetos transmitidos. Os parâmetros da função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura de ambos). Se existirem dois objetos com o mesmo nome, o último objeto com esse nome aparece no objeto final."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Acionadores"
     }
   ],
   "pozypE": [
@@ -5696,6 +5832,12 @@
       "value": "Para criar e utilizar uma ligação à API, tem de ter uma identidade gerida configurada nesta aplicação lógica."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Descartar"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5818,6 +5960,12 @@
       "value": "URL de retorno:"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5866,12 +6014,6 @@
       "value": "Necessário. O nome da propriedade nova ou existente."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Código"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5900,6 +6042,12 @@
     {
       "type": 0,
       "value": "Valor"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Iniciar sessão"
     }
   ],
   "y3AZQB": [

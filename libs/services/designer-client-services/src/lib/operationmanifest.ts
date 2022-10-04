@@ -16,9 +16,10 @@ export interface IOperationManifestService {
   /**
    * Gets the operation info.
    * @arg {any} definition - The operation definition.
+   * @arg {boolean} isTrigger - Flag to determine if the definition is of a trigger operation.
    * @return {Promise<OperationInfo>}
    */
-  getOperationInfo(definition: any): Promise<OperationInfo>;
+  getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo>;
 
   /**
    * Gets the operation manifest for an operation.

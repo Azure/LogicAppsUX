@@ -149,6 +149,18 @@
       "value": "Vrátí prvních Count prvků z předaného pole nebo řetězce."
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Sdíleno"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -201,6 +213,12 @@
     {
       "type": 0,
       "value": "Sbalit"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Vyberte filtr."
     }
   ],
   "0ZlNtf": [
@@ -487,6 +505,12 @@
       "value": "Koncový čas"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Hledat"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -563,6 +587,12 @@
     {
       "type": 0,
       "value": "Přidat dynamický obsah"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Podmínky služby"
     }
   ],
   "3FoqCK": [
@@ -775,6 +805,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Typ akce"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -851,6 +887,12 @@
     {
       "type": 0,
       "value": "Vyberte cílové schéma."
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Otestovat mapu"
     }
   ],
   "6XR3FS": [
@@ -1439,6 +1481,12 @@
       "value": "Připojení je povinné"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Nahradit existující schéma"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1467,6 +1515,12 @@
     {
       "type": 0,
       "value": "Povinné. Řetězec, z jehož začátku a konce se odeberou prázdné znaky."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Vložit z ukázky"
     }
   ],
   "DDIIAQ": [
@@ -1523,6 +1577,12 @@
       "value": "Ctrl+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Přihlašování…"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1557,6 +1617,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Přihlaste se a vytvořte připojení ke konektoru "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1927,6 +2001,12 @@
     {
       "type": 0,
       "value": "Převede předané řetězcové časové razítko z formátu UTC na cílové časové pásmo."
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Akce"
     }
   ],
   "IjZFjQ": [
@@ -2393,6 +2473,12 @@
       "value": "Neočekávaná chyba"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Cílové schéma"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2461,6 +2547,12 @@
     {
       "type": 0,
       "value": "Úterý"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Modul runtime"
     }
   ],
   "O+8vRv": [
@@ -2615,6 +2707,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtr"
     }
   ],
   "P2A5dB": [
@@ -3013,6 +3111,12 @@
       "value": "Méně informací"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3363,12 +3467,6 @@
     {
       "type": 0,
       "value": "Spravovaná identita není v aplikaci logiky nakonfigurovaná."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Nahraďte existující schéma."
     }
   ],
   "X4gDhV": [
@@ -3725,6 +3823,20 @@
       "value": "Funkce"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Selhalo s chybou: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Přihlaste se prosím znovu."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3751,6 +3863,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Akce"
     }
   ],
   "bS5DyV": [
@@ -4421,6 +4539,12 @@
       "value": "Asynchronní odpověď"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Zadejte vstupní data k otestování mapy přes"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4521,12 +4645,6 @@
     {
       "type": 0,
       "value": "Vlastnosti"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4891,6 +5009,12 @@
       "value": "Vyžadováno. Řetězec, který se má převést na malá písmena. Pokud některý znak v řetězci nemá odpovídající znak malé abecedy, zůstane ve vráceném řetězci beze změny."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Přihlásit se ke konektoru"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -5085,6 +5209,12 @@
       "value": "Záhlaví"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "V aplikaci"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -5143,6 +5273,12 @@
     {
       "type": 0,
       "value": "Vrátí jedno pole nebo objekt, který má mezi předávanými poli nebo objekty společné prvky. Parametry pro tuto funkci můžou být buď sada objektů, nebo sada polí (ne kombinace obou). Pokud se vyskytnou dva objekty se stejným názvem, zahrne se do konečného objektu poslední objekt s tímto názvem."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Triggery"
     }
   ],
   "pozypE": [
@@ -5769,6 +5905,12 @@
       "value": "Pokud chcete vytvořit a použít připojení rozhraní API, musíte mít v této aplikaci logiky nakonfigurovanou spravovanou identitu."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Zahodit"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5891,6 +6033,12 @@
       "value": "Adresa URL pro zpětné volání:"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Zavřít"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5939,12 +6087,6 @@
       "value": "Povinné. Název nové nebo stávající vlastnosti"
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kód"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5973,6 +6115,12 @@
     {
       "type": 0,
       "value": "Hodnota"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Přihlásit se"
     }
   ],
   "y3AZQB": [

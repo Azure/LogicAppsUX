@@ -153,6 +153,18 @@
       "value": "Returnerar de första Count-elementen i den matris eller sträng som har skickats in"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Delat"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Utlösare"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Dölj"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Välj ett filter"
     }
   ],
   "0ZlNtf": [
@@ -457,6 +475,12 @@
       "value": "Sluttid"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Sök"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -533,6 +557,12 @@
     {
       "type": 0,
       "value": "Lägg till dynamiskt innehåll"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Användningsvillkor"
     }
   ],
   "3FoqCK": [
@@ -745,6 +775,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Åtgärdstyp"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -821,6 +857,12 @@
     {
       "type": 0,
       "value": "Välj ett målschema"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Testa karta"
     }
   ],
   "6XR3FS": [
@@ -1391,6 +1433,12 @@
       "value": "Anslutning krävs"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Ersätt befintligt schema."
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1419,6 +1467,12 @@
     {
       "type": 0,
       "value": "Krävs. Den sträng som du vill ta bort inledande och efterföljande blanksteg från."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Skapa från exempel"
     }
   ],
   "DDIIAQ": [
@@ -1475,6 +1529,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Loggar in …"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1509,6 +1569,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Logga in för att skapa en anslutning till "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1857,6 +1931,12 @@
     {
       "type": 0,
       "value": "Konverterar en inskickad tidsstämpelsträng från en UTC till en måltidszon"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Åtgärd"
     }
   ],
   "IjZFjQ": [
@@ -2297,6 +2377,12 @@
       "value": "Oväntat fel"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Målschema"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2361,6 +2447,12 @@
     {
       "type": 0,
       "value": "Tisdag"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Körning"
     }
   ],
   "O+8vRv": [
@@ -2511,6 +2603,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -2891,6 +2989,12 @@
       "value": "Läs mindre"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3096,7 +3200,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "I appen"
     }
   ],
   "VE3cxq": [
@@ -3241,12 +3345,6 @@
     {
       "type": 0,
       "value": "Någon hanterad identitet har inte ställts in i logikappen."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Ersätt befintligt schema."
     }
   ],
   "X4gDhV": [
@@ -3599,6 +3697,20 @@
       "value": "Funktion"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Misslyckades med felet "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Logga in igen."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3625,6 +3737,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Åtgärder"
     }
   ],
   "bS5DyV": [
@@ -3960,7 +4078,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Delad"
+      "value": "Delat"
     }
   ],
   "esOQ5p": [
@@ -4002,7 +4120,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Det gick inte att skapa ACL för anslutningen. Tar bort anslutningen."
     }
   ],
   "fGcSFd": [
@@ -4269,6 +4387,12 @@
       "value": "Asynkront svar"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Ange indata som kartan ska testas med"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4373,12 +4497,6 @@
     {
       "type": 0,
       "value": "Egenskaper"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4743,6 +4861,12 @@
       "value": "Obligatoriskt. Den sträng som ska konverteras till gemener. Om ett tecken i strängen inte har någon gemen motsvarighet, så inkluderas tecknet oförändrat i den returnerade strängen."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Logga in på anslutningsprogram"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4937,6 +5061,12 @@
       "value": "Rubriker"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "I appen"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -4995,6 +5125,12 @@
     {
       "type": 0,
       "value": "Returnerar en enskild matris eller ett objekt som har gemensamma element med matriser eller objekt som har passats in. Funktionens parametrar kan antingen vara en uppsättning objekt eller en uppsättning matriser (inte en blandning av båda). Om det finns två objekt med samma namn, så visas det sista objektet med det namnet i det slutliga objektet."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Utlösare"
     }
   ],
   "pozypE": [
@@ -5603,6 +5739,12 @@
       "value": "Om du vill skapa och använda en API-anslutning måste du ha konfigurerat en hanterad identitet på den här logikappen."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Ignorera"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5725,6 +5867,12 @@
       "value": "Motringningsadress:"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Stäng"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5773,12 +5921,6 @@
       "value": "Obligatoriskt. Den nya eller befintliga egenskapens namn."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kod"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5807,6 +5949,12 @@
     {
       "type": 0,
       "value": "Värde"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Logga in"
     }
   ],
   "y3AZQB": [

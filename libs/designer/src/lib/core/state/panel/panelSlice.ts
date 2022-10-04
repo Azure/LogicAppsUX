@@ -15,6 +15,7 @@ const initialState: PanelState = {
   registeredTabs: {},
   selectedTabName: undefined,
   selectedOperationGroupId: '',
+  addingTrigger: false,
 };
 
 export const panelSlice = createSlice({
@@ -41,18 +42,20 @@ export const panelSlice = createSlice({
     },
     expandDiscoveryPanel: (
       state,
-      action: PayloadAction<{ relationshipIds: RelationshipIds; nodeId: string; isParallelBranch?: boolean }>
+      action: PayloadAction<{ relationshipIds: RelationshipIds; nodeId: string; isParallelBranch?: boolean; addingTrigger?: boolean }>
     ) => {
       state.collapsed = false;
       state.isDiscovery = true;
       state.relationshipIds = action.payload.relationshipIds;
       state.selectedNode = action.payload.nodeId;
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
+      state.addingTrigger = !!action.payload?.addingTrigger;
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.selectedOperationGroupId = action.payload;
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
+      showDefaultTabs();
       state.selectedNode = action.payload;
       state.isDiscovery = false;
       state.selectedOperationGroupId = '';

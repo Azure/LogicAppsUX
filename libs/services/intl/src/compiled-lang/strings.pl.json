@@ -153,6 +153,18 @@
       "value": "Zwraca liczbę Count pierwszych elementów z przekazanej tablicy lub ciągu"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Udostępnione"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Wyzwalacz"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Zwiń"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Wybierz filtr"
     }
   ],
   "0ZlNtf": [
@@ -495,6 +513,12 @@
       "value": "Godzina zakończenia"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Wyszukaj"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -571,6 +595,12 @@
     {
       "type": 0,
       "value": "Dodaj zawartość dynamiczną"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Warunki świadczenia usługi"
     }
   ],
   "3FoqCK": [
@@ -783,6 +813,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Typ akcji"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -859,6 +895,12 @@
     {
       "type": 0,
       "value": "Wybierz schemat docelowy"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Mapa testu"
     }
   ],
   "6XR3FS": [
@@ -1451,6 +1493,12 @@
       "value": "Wymagane połączenie"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Zamień istniejący schemat."
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1479,6 +1527,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg, z którego ma zostać usunięty odstęp wiodący i końcowy."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Wklej z próbki"
     }
   ],
   "DDIIAQ": [
@@ -1535,6 +1589,12 @@
       "value": "Ctrl+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Trwa logowanie..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1569,6 +1629,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Zaloguj się, aby utworzyć połączenie z łącznikiem "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1939,6 +2013,12 @@
     {
       "type": 0,
       "value": "Konwertuje przekazaną sygnaturę czasową ciągu z formatu UTC na docelową strefę czasową"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Akcja"
     }
   ],
   "IjZFjQ": [
@@ -2405,6 +2485,12 @@
       "value": "Nieoczekiwany błąd"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Schemat docelowy"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2469,6 +2555,12 @@
     {
       "type": 0,
       "value": "Wtorek"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Środowisko uruchomieniowe"
     }
   ],
   "O+8vRv": [
@@ -2623,6 +2715,12 @@
     {
       "type": 0,
       "value": "Certyfikat PFX"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtruj"
     }
   ],
   "P2A5dB": [
@@ -3021,6 +3119,12 @@
       "value": "Mniej informacji"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3226,7 +3330,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "W aplikacji"
     }
   ],
   "VE3cxq": [
@@ -3371,12 +3475,6 @@
     {
       "type": 0,
       "value": "Tożsamość zarządzana nie jest skonfigurowana w aplikacji logiki."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Zamień istniejący schemat."
     }
   ],
   "X4gDhV": [
@@ -3733,6 +3831,20 @@
       "value": "Funkcja"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Niepowodzenie z powodu błędu: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Zaloguj się ponownie."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3759,6 +3871,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Akcje"
     }
   ],
   "bS5DyV": [
@@ -4094,7 +4212,7 @@
   "epOMnV": [
     {
       "type": 0,
-      "value": "Udostępniono"
+      "value": "Udostępnione"
     }
   ],
   "esOQ5p": [
@@ -4136,7 +4254,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Tworzenie listy ACL dla połączenia nie powiodło się. Usuwanie połączenia."
     }
   ],
   "fGcSFd": [
@@ -4429,6 +4547,12 @@
       "value": "Odpowiedź asynchroniczna"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Podaj dane wejściowe do przetestowania mapy za pomocą"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4533,12 +4657,6 @@
     {
       "type": 0,
       "value": "Właściwości"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4907,6 +5025,12 @@
       "value": "Parametr wymagany. Ciąg do przekonwertowania na małe litery. Jeśli znak w ciągu nie ma odpowiadającej małej litery, w zwróconym ciągu zostanie on uwzględniony jako niezmieniony."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Zaloguj się do łącznika"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -5101,6 +5225,12 @@
       "value": "Nagłówki"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "W aplikacji"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -5159,6 +5289,12 @@
     {
       "type": 0,
       "value": "Zwraca pojedynczą tablicę lub obiekt z elementami wspólnymi między przekazanymi tablicami lub obiektami. Parametry funkcji mogą być zestawem obiektów lub zestawem tablic (nie ich kombinacją). Jeśli istnieją dwa obiekty o tej samej nazwie, ostatni obiekt o danej nazwie jest wyświetlany w obiekcie końcowym."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Wyzwalacze"
     }
   ],
   "pozypE": [
@@ -5789,6 +5925,12 @@
       "value": "Aby utworzyć i użyć połączenia interfejsu API, musisz mieć skonfigurowaną tożsamość zarządzaną w tej aplikacji logiki."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Odrzuć"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5911,6 +6053,12 @@
       "value": "Adres URL wywołania zwrotnego:"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Zamknij"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5959,12 +6107,6 @@
       "value": "Wymagane. Nazwa nowej lub istniejącej właściwości."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kod"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5993,6 +6135,12 @@
     {
       "type": 0,
       "value": "Wartość"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Zaloguj"
     }
   ],
   "y3AZQB": [

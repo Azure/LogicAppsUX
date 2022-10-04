@@ -6,7 +6,7 @@ import { updateValidationState } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { ReviewList } from '../../components/reviewList/reviewList';
 import { getOverallValidationStatus, parseValidationData } from './helper';
-import { Text } from '@fluentui/react';
+import { Label, Text } from '@fluentui/react';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -21,6 +21,10 @@ export const Validation: React.FC = () => {
   const intl = useIntl();
 
   const intlText = {
+    WORKFLOW_GROUP_DISPLAY_NAME: intl.formatMessage({
+      defaultMessage: 'Workflow',
+      description: 'Review export status title',
+    }),
     REVIEW_TITLE: intl.formatMessage({
       defaultMessage: 'Review export status',
       description: 'Review export status title',
@@ -52,17 +56,18 @@ export const Validation: React.FC = () => {
     );
   };
 
-  const { data: validationData, isLoading: isValidationLoading } = useQuery<any>(
-    [QueryKeys.validation, { selectedWorkflows: selectedWorkflows }],
-    validateWorkflows,
-    {
-      refetchOnWindowFocus: false,
-      onSuccess: onValidationSuccess,
-    }
-  );
+  const {
+    data: validationData,
+    isLoading: isValidationLoading,
+    error,
+    status,
+  } = useQuery<any>([QueryKeys.validation, { selectedWorkflows: selectedWorkflows }], validateWorkflows, {
+    refetchOnWindowFocus: false,
+    onSuccess: onValidationSuccess,
+  });
 
   const { validationItems = [], validationGroups = [] }: any =
-    isValidationLoading || !validationData ? {} : parseValidationData(validationData?.properties);
+    isValidationLoading || !validationData ? {} : parseValidationData(validationData?.properties, intlText.WORKFLOW_GROUP_DISPLAY_NAME);
 
   return (
     <div className="msla-export-validation">
@@ -74,6 +79,7 @@ export const Validation: React.FC = () => {
       </Text>
       <div className="msla-export-validation-list">
         <ReviewList isValidationLoading={isValidationLoading} validationItems={validationItems} validationGroups={validationGroups} />
+        <Label>{status === 'error' ? (error as any)?.message : ''}</Label>
       </div>
     </div>
   );

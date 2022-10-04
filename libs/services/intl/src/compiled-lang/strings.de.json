@@ -153,6 +153,18 @@
       "value": "Gibt die ersten Count Elemente aus dem übergebenen Array oder aus der übergebenen Zeichenfolge zurück."
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Freigegeben"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Reduzieren"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Filter auswählen"
     }
   ],
   "0ZlNtf": [
@@ -457,6 +475,12 @@
       "value": "Endzeit"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Suchen"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -533,6 +557,12 @@
     {
       "type": 0,
       "value": "Dynamischen Inhalt hinzufügen"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Vertragsbedingungen"
     }
   ],
   "3FoqCK": [
@@ -745,6 +775,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Aktionstyp"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -821,6 +857,12 @@
     {
       "type": 0,
       "value": "Zielschema auswählen"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Zuordnung testen"
     }
   ],
   "6XR3FS": [
@@ -1391,6 +1433,12 @@
       "value": "Verbindung erforderlich"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Vorhandenes Schema ersetzen."
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1419,6 +1467,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, aus der führende und nachstehende Leerzeichen entfernt werden sollen."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Aus Beispiel einfügen"
     }
   ],
   "DDIIAQ": [
@@ -1475,6 +1529,12 @@
       "value": "STRG+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Anmeldung läuft…"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1509,6 +1569,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Melden Sie sich an, um eine Verbindung mit "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": " zu erstellen."
     }
   ],
   "EjXdAm": [
@@ -1857,6 +1931,12 @@
     {
       "type": 0,
       "value": "Hiermit wird ein aus einem UTC-Wert übergebener Zeichenfolgen-Zeitstempel in eine Zielzeitzone konvertiert."
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Aktion"
     }
   ],
   "IjZFjQ": [
@@ -2301,6 +2381,12 @@
       "value": "Unerwarteter Fehler"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Zielschema"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2365,6 +2451,12 @@
     {
       "type": 0,
       "value": "Dienstag"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2519,6 +2611,12 @@
     {
       "type": 0,
       "value": "PFX"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtern"
     }
   ],
   "P2A5dB": [
@@ -2899,6 +2997,12 @@
       "value": "Weniger Informationen"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3104,7 +3208,7 @@
   "VA7M1u": [
     {
       "type": 0,
-      "value": "In App"
+      "value": "In-App"
     }
   ],
   "VE3cxq": [
@@ -3249,12 +3353,6 @@
     {
       "type": 0,
       "value": "Eine verwaltete Identität ist in der Logik-App nicht konfiguriert."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Vorhandenes Schema ersetzen."
     }
   ],
   "X4gDhV": [
@@ -3603,6 +3701,20 @@
       "value": "Funktion"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Fehlgeschlagen mit Fehler: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Bitte melden Sie sich erneut an."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3629,6 +3741,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Aktionen"
     }
   ],
   "bS5DyV": [
@@ -4010,7 +4128,7 @@
   "fDisLL": [
     {
       "type": 0,
-      "value": "Acl creation failed for connection. Deleting the connection."
+      "value": "Fehler bei der ACL-Erstellung für die Verbindung. Die Verbindung wird gelöscht."
     }
   ],
   "fGcSFd": [
@@ -4273,6 +4391,12 @@
       "value": "Asynchrone Antwort"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Bereitstellen von Eingabedaten zum Testen der Zuordnung mit"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4377,12 +4501,6 @@
     {
       "type": 0,
       "value": "Eigenschaften"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4751,6 +4869,12 @@
       "value": "Erforderlich. Die Zeichenfolge, die in Kleinbuchstaben konvertiert werden soll. Wenn für ein Zeichen in der Zeichenfolge keine Entsprechung in Kleinbuchstaben vorhanden ist, wird das Zeichen unverändert in die zurückgegebene Zeichenfolge übernommen."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Beim Connector anmelden"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4945,6 +5069,12 @@
       "value": "Header"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-App"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -5003,6 +5133,12 @@
     {
       "type": 0,
       "value": "Gibt ein einzelnes Array oder Objekt zurück, das gemeinsame Elemente zwischen übergebenen Arrays oder Objekten aufweist. Bei den Parametern für die Funktion kann es sich entweder um einen Satz von Objekten oder um einen Satz von Arrays handeln (keine Mischung aus beidem). Wenn zwei Objekte mit dem gleichen Namen vorhanden sind, wird das letzte Objekt mit diesem Namen in das endgültige Objekt aufgenommen."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Trigger"
     }
   ],
   "pozypE": [
@@ -5595,6 +5731,12 @@
       "value": "Zum Erstellen und Verwenden einer API-Verbindung muss eine verwaltete Identität für diese Logik-App konfiguriert sein."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Verwerfen"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5717,6 +5859,12 @@
       "value": "Rückruf-URL:"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Schließen"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5765,12 +5913,6 @@
       "value": "Erforderlich. Der Name der neuen oder vorhandenen Eigenschaft."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Code"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5799,6 +5941,12 @@
     {
       "type": 0,
       "value": "Wert"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Anmelden"
     }
   ],
   "y3AZQB": [

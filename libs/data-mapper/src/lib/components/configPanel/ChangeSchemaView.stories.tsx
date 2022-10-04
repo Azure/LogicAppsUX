@@ -1,8 +1,8 @@
-import { noChildrenMockSchema, simpleMockSchema } from '../../__mocks__';
 import { setAvailableSchemas } from '../../core/state/SchemaSlice';
 import { store } from '../../core/state/Store';
 import type { Schema } from '../../models/Schema';
 import { SchemaTypes } from '../../models/Schema';
+import { noChildrenMockSchema, simpleMockSchema } from '../../models/__mocks__';
 import type { ChangeSchemaViewProps } from './ChangeSchemaView';
 import { ChangeSchemaView } from './ChangeSchemaView';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -21,7 +21,7 @@ const MockStore = ({ mockState, children }) => {
 
 export default {
   component: ChangeSchemaView,
-  title: 'Data Mapper/ChangeSchemaView',
+  title: 'Data Mapper Components/Panel/ChangeSchemaView',
 } as ComponentMeta<typeof ChangeSchemaView>;
 
 const Template: ComponentStory<typeof ChangeSchemaView> = (args: ChangeSchemaViewProps) => {

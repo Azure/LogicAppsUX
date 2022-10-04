@@ -22,7 +22,8 @@ export const App = (): JSX.Element => {
   // TODO (After theming): set initial value back to getVscodeTheme()
   const [vsCodeTheme, _setVsCodeTheme] = useState<VsCodeThemeType>(VsCodeThemeType.VsCodeLight);
 
-  const dataMap = useSelector((state: RootState) => state.dataMapDataLoader.dataMap);
+  const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
+  const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
   const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
@@ -34,8 +35,10 @@ export const App = (): JSX.Element => {
   }).observe(document.body, { attributes: true });
   */
 
-  const saveStateCall = (dataMapDefinition: string) => {
+  const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
     saveDataMapDefinition(dataMapDefinition);
+
+    saveDataMap(dataMapXslt);
   };
 
   const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
@@ -51,6 +54,7 @@ export const App = (): JSX.Element => {
     });
   }, [vscode]);
 
+  // TODO: May combine the below two functions - will revisit when touched on again in future
   const saveDataMapDefinition = (dataMapDefinition: string) => {
     vscode.postMessage({
       command: 'saveDataMapDefinition',
@@ -58,9 +62,22 @@ export const App = (): JSX.Element => {
     });
   };
 
+  const saveDataMap = (dataMapXslt: string) => {
+    vscode.postMessage({
+      command: 'saveDataMapXslt',
+      data: dataMapXslt,
+    });
+  };
+
   return (
     <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>
-      <DataMapDataProvider dataMap={dataMap} sourceSchema={sourceSchema} targetSchema={targetSchema} availableSchemas={schemaFileList}>
+      <DataMapDataProvider
+        xsltFilename={xsltFilename}
+        mapDefinition={mapDefinition}
+        sourceSchema={sourceSchema}
+        targetSchema={targetSchema}
+        availableSchemas={schemaFileList}
+      >
         <DataMapperDesigner
           saveStateCall={saveStateCall}
           addSchemaFromFile={addSchemaFromFile}

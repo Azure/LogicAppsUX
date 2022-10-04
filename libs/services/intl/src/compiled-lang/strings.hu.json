@@ -153,6 +153,18 @@
       "value": "Az átadott tömb vagy sztring első Count elemeit adja vissza."
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Közös"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Aktiválás"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Összecsukás"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Válasszon szűrőt"
     }
   ],
   "0ZlNtf": [
@@ -457,6 +475,12 @@
       "value": "Befejezés időpontja"
     }
   ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Keresés"
+    }
+  ],
   "2NYPLt": [
     {
       "type": 0,
@@ -533,6 +557,12 @@
     {
       "type": 0,
       "value": "Dinamikus tartalom hozzáadása"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Szolgáltatási feltételek"
     }
   ],
   "3FoqCK": [
@@ -745,6 +775,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Művelet típusa"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -821,6 +857,12 @@
     {
       "type": 0,
       "value": "Válasszon célsémát"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Leképezés tesztelése"
     }
   ],
   "6XR3FS": [
@@ -1391,6 +1433,12 @@
       "value": "Kapcsolat szükséges"
     }
   ],
+  "CSoHMf": [
+    {
+      "type": 0,
+      "value": "Meglévő séma cseréje"
+    }
+  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1419,6 +1467,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az a sztring, amelyből el kell távolítani a kezdő és záró szóközöket."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Beillesztés mintából"
     }
   ],
   "DDIIAQ": [
@@ -1475,6 +1529,12 @@
       "value": "Ctrl+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Bejelentkezés..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1509,6 +1569,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "A következővel való kapcsolat létrehozásához jelentkezzen be: "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1857,6 +1931,12 @@
     {
       "type": 0,
       "value": "Egy UTC formátumban átadott sztring típusú időbélyeg konvertálása egy célidőzónára"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Művelet"
     }
   ],
   "IjZFjQ": [
@@ -2301,6 +2381,12 @@
       "value": "Váratlan hiba"
     }
   ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Célséma"
+    }
+  ],
   "N2CF0J": [
     {
       "type": 0,
@@ -2365,6 +2451,12 @@
     {
       "type": 0,
       "value": "Kedd"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Futtatókörnyezet"
     }
   ],
   "O+8vRv": [
@@ -2519,6 +2611,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Szűrés"
     }
   ],
   "P2A5dB": [
@@ -2899,6 +2997,12 @@
       "value": "Kevesebb információ"
     }
   ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Tesztelés"
+    }
+  ],
   "T0BFpC": [
     {
       "type": 0,
@@ -3249,12 +3353,6 @@
     {
       "type": 0,
       "value": "Egy felügyelt identitás nincs konfigurálva a logikai alkalmazásban."
-    }
-  ],
-  "Wy/bhW": [
-    {
-      "type": 0,
-      "value": "Meglévő séma cseréje."
     }
   ],
   "X4gDhV": [
@@ -3611,6 +3709,20 @@
       "value": "Függvény"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "A következő hiba történt: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Jelentkezzen be újra."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3637,6 +3749,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Műveletek"
     }
   ],
   "bS5DyV": [
@@ -4289,6 +4407,12 @@
       "value": "Aszinkron válasz"
     }
   ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Adjon meg bemeneti adatokat a leképezés teszteléséhez"
+    }
+  ],
   "i1cwra": [
     {
       "type": 0,
@@ -4393,12 +4517,6 @@
     {
       "type": 0,
       "value": "Tulajdonságok"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Tesztelés"
     }
   ],
   "iq+tiv": [
@@ -4763,6 +4881,12 @@
       "value": "Kötelező megadni. A kisbetűssé alakítandó sztring. A sztring azon karakterei, melyeknek nincs kisbetűs megfelelője, változatlanul fognak szerepelni a visszaadott sztringben."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Bejelentkezés az összekötőbe"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4957,6 +5081,12 @@
       "value": "Fejlécek"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "Alkalmazáson belüli termék"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -5015,6 +5145,12 @@
     {
       "type": 0,
       "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely az átadott tömbök vagy objektumok közös elemeit tartalmazza. A függvény paramétereit egy objektumhalmazban vagy egy tömbökből álló halmazban (a kettő kombinációjával viszont nem) lehet megadni. Két egyforma nevű objektum szereplése esetén a végső objektumban az utolsó adott nevű objektum fog megjelenni."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Triggerek"
     }
   ],
   "pozypE": [
@@ -5623,6 +5759,12 @@
       "value": "API-kapcsolat létrehozásához és használatához konfigurálni kell egy felügyelt identitást ebben a logikai alkalmazásban."
     }
   ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Elvetés"
+    }
+  ],
   "vr70Gn": [
     {
       "type": 0,
@@ -5745,6 +5887,12 @@
       "value": "Visszahívási URL:"
     }
   ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Bezárás"
+    }
+  ],
   "x+6ccf": [
     {
       "type": 0,
@@ -5793,12 +5941,6 @@
       "value": "Kötelező megadni. Az új vagy meglévő tulajdonság neve."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kód"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5827,6 +5969,12 @@
     {
       "type": 0,
       "value": "Érték"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Bejelentkezés"
     }
   ],
   "y3AZQB": [

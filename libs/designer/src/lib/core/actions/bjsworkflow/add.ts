@@ -6,7 +6,7 @@ import { changeConnectionMapping } from '../../state/connection/connectionSlice'
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
-import { switchToOperationPanel, isolateTab } from '../../state/panel/panelSlice';
+import { isolateTab, switchToOperationPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
@@ -22,7 +22,7 @@ import { getInputParametersFromManifest, getOutputParametersFromManifest } from 
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import type { DiscoveryOperation, DiscoveryResultTypes, SomeKindOfAzureOperationDiscovery } from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -51,8 +51,8 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   const nodeOperationInfo = {
     connectorId: operation.properties.api.id, // 'api' could be different based on type, could be 'function' or 'config' see old designer 'connectionOperation.ts' this is still pending for danielle
     operationId: operation.name,
-    type: operation.properties.operationType ?? '',
-    kind: operation.properties.operationKind ?? '',
+    type: getOperationType(operation),
+    kind: operation.properties.operationKind,
   };
 
   dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
@@ -75,23 +75,20 @@ export const initializeOperationDetails = async (
   const { type, connectorId } = operationInfo;
   const operationManifestService = OperationManifestService();
 
+  dispatch(switchToOperationPanel(nodeId));
+
   if (operationManifestService.isSupported(type)) {
     const manifest = await getOperationManifest(operationInfo);
+    if (isConnectionRequiredForOperation(manifest)) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+
     const { iconUri, brandColor } = manifest.properties;
-
-    if (isConnectionRequiredForOperation(manifest)) {
-      setDefaultConnectionForNode(nodeId, connectorId, dispatch);
-    } else {
-      dispatch(switchToOperationPanel(nodeId));
-    }
-
     const settings = getOperationSettings(isTrigger, operationInfo, manifest, /* swagger */ undefined);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       manifest,
       isTrigger,
       nodeInputs,
-      settings.splitOn?.value?.value
+      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -104,8 +101,10 @@ export const initializeOperationDetails = async (
       dispatch
     );
   } else {
-    setDefaultConnectionForNode(nodeId, connectorId, dispatch);
-    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    const [, { connector, parsedSwagger }] = await Promise.all([
+      trySetDefaultConnectionForNode(nodeId, connectorId, dispatch),
+      getConnectorWithSwagger(connectorId),
+    ]);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
 
@@ -117,10 +116,10 @@ export const initializeOperationDetails = async (
       operationInfo
     );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
-      nodeId,
       parsedSwagger,
       operationInfo,
-      nodeInputs
+      nodeInputs,
+      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -156,7 +155,7 @@ export const reinitializeOperationDetails = async (
       manifest,
       isTrigger,
       nodeInputs,
-      settings.splitOn?.value?.value
+      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -183,10 +182,10 @@ export const reinitializeOperationDetails = async (
       definition
     );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
-      nodeId,
       parsedSwagger,
       operationInfo,
-      nodeInputs
+      nodeInputs,
+      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
 
@@ -201,19 +200,19 @@ export const reinitializeOperationDetails = async (
   }
 };
 
-export const setDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
+export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
   const connections = await getConnectionsForConnector(connectorId);
-  if (connections.length !== 0) {
+  if (connections.length > 0) {
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id, connectorId }));
-    ConnectionService().createConnectionAclIfNeeded(connections[0]);
+    await ConnectionService().createConnectionAclIfNeeded(connections[0]);
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
+
   dispatch(switchToOperationPanel(nodeId));
 };
 
-// TODO - Figure out whether this is manifest or swagger
-export const addTokensAndVariables = (
+const addTokensAndVariables = (
   nodeId: string,
   operationType: string,
   nodeData: NodeDataWithOperationMetadata,
@@ -221,7 +220,7 @@ export const addTokensAndVariables = (
   dispatch: Dispatch
 ): void => {
   const { graph, nodesMetadata, operations } = workflowState;
-  const { nodeInputs, nodeOutputs, settings, manifest } = nodeData;
+  const { nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest } = nodeData;
   const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {
     [nodeId]: nodeId,
   });
@@ -239,13 +238,13 @@ export const addTokensAndVariables = (
       isRootNodeInGraph(nodeId, 'root', nodesMetadata) ? undefined : nodeId,
       operationType,
       nodeOutputs.outputs ?? {},
-      { iconUri: manifest?.properties.iconUri as string, brandColor: manifest?.properties.brandColor as string },
+      { iconUri, brandColor },
       settings
     )
   );
 
   if (equals(operationType, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
-    setVariableMetadata(manifest?.properties.iconUri as string, manifest?.properties.brandColor as string);
+    setVariableMetadata(iconUri, brandColor);
 
     const variables = getVariableDeclarations(nodeInputs);
     if (variables.length) {
@@ -254,4 +253,15 @@ export const addTokensAndVariables = (
   }
 
   dispatch(initializeTokensAndVariables(tokensAndVariables));
+};
+
+const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): string => {
+  const operationType = operation.properties.operationType;
+  return !operationType
+    ? (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
+      ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
+      : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
+      ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
+      : Constants.NODE.TYPE.API_CONNECTION
+    : operationType;
 };
