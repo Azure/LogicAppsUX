@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 export interface NotificationData {
   intent?: 'error';
-  msg?: string;
+  msg: string;
+  msgBody?: string;
 }
 
 export interface NotificationState {

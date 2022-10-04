@@ -7,6 +7,7 @@ import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { FunctionList } from '../components/functionList/FunctionList';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
+import { Notification } from '../components/notification/Notification';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import {
   checkerboardBackgroundImage,
@@ -26,6 +27,7 @@ import {
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
 } from '../core/state/DataMapSlice';
+import { hideNotification } from '../core/state/NotificationSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
@@ -84,6 +86,8 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
+  const notificationData = useSelector((state: RootState) => state.notification.data);
+
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
@@ -451,18 +455,14 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         />
       )}
 
-      {/* Toast Placeholder
-        {notification.data &&
-          <Notification
-            msg={notification.data.msg}
-            intent={notification.data.intent}
-            icon={!notification.data.intent && <Delete20Regular />}
-            action={{ icon: <Dismiss20Regular /> }}
-            autoHideDuration={2000}
-            onClose={notificationSlice.actions.hideNotification}
-          />
-        }
-      */}
+      {notificationData && (
+        <Notification
+          msg={notificationData.msg}
+          msgBody={notificationData.msgBody}
+          intent={notificationData.intent}
+          onClose={() => dispatch(hideNotification)}
+        />
+      )}
     </ReactFlow>
   );
 };
