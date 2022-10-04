@@ -1574,7 +1574,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "A következővel való kapcsolat létrehozásához jelentkezzen be: "
     },
     {
       "type": 1,
@@ -3712,7 +3712,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "A következő hiba történt: "
     },
     {
       "type": 1,
@@ -3720,7 +3720,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": ". Jelentkezzen be újra."
     }
   ],
   "ahsVI/": [
@@ -4519,12 +4519,6 @@
       "value": "Tulajdonságok"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Tesztelés"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4890,7 +4884,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "Bejelentkezés az összekötőbe"
     }
   ],
   "mjS/k1": [
@@ -5090,7 +5084,7 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "Alkalmazáson belüli termék"
     }
   ],
   "p5tz8/": [
@@ -5945,12 +5939,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Az új vagy meglévő tulajdonság neve."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kód"
     }
   ],
   "xYyPR8": [

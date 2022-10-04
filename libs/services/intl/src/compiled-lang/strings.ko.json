@@ -1504,7 +1504,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "로그인하여 "
     },
     {
       "type": 1,
@@ -1512,7 +1512,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "에 대한 연결을 만듭니다."
     }
   ],
   "EjXdAm": [
@@ -3533,7 +3533,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "오류 "
     },
     {
       "type": 1,
@@ -3541,7 +3541,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": "과(와) 함께 실패했습니다. 다시 로그인하세요."
     }
   ],
   "ahsVI/": [
@@ -4293,12 +4293,6 @@
       "value": "속성"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "테스트"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4660,7 +4654,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "커넥터에 로그인"
     }
   ],
   "mjS/k1": [
@@ -4860,7 +4854,7 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "앱 내"
     }
   ],
   "p5tz8/": [
@@ -5684,12 +5678,6 @@
     {
       "type": 0,
       "value": "필수 항목으로, 기존 또는 새 속성의 이름입니다."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "코드"
     }
   ],
   "xYyPR8": [

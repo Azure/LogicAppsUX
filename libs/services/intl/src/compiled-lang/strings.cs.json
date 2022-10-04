@@ -1580,7 +1580,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Přihlašování..."
+      "value": "Přihlašování…"
     }
   ],
   "E9OS+9": [
@@ -1622,7 +1622,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "Přihlaste se a vytvořte připojení ke konektoru "
     },
     {
       "type": 1,
@@ -3826,7 +3826,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "Selhalo s chybou: "
     },
     {
       "type": 1,
@@ -3834,7 +3834,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": ". Přihlaste se prosím znovu."
     }
   ],
   "ahsVI/": [
@@ -4647,12 +4647,6 @@
       "value": "Vlastnosti"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -5018,7 +5012,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "Přihlásit se ke konektoru"
     }
   ],
   "mjS/k1": [
@@ -5218,7 +5212,7 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "V aplikaci"
     }
   ],
   "p5tz8/": [
@@ -5284,7 +5278,7 @@
   "piaRy6": [
     {
       "type": 0,
-      "value": "Aktivační události"
+      "value": "Triggery"
     }
   ],
   "pozypE": [
@@ -6091,12 +6085,6 @@
     {
       "type": 0,
       "value": "Povinné. Název nové nebo stávající vlastnosti"
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kód"
     }
   ],
   "xYyPR8": [

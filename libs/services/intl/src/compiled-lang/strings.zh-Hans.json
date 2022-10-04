@@ -156,7 +156,7 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "共享"
+      "value": "已共享"
     }
   ],
   "02vyBk": [
@@ -1556,7 +1556,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "登录以创建与 "
     },
     {
       "type": 1,
@@ -1564,7 +1564,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " 的连接。"
     }
   ],
   "EjXdAm": [
@@ -3649,7 +3649,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "失败，出现错误: "
     },
     {
       "type": 1,
@@ -3657,7 +3657,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": "。请重新登录。"
     }
   ],
   "ahsVI/": [
@@ -4441,12 +4441,6 @@
       "value": "属性"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "测试"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4816,7 +4810,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "登录到连接器"
     }
   ],
   "mjS/k1": [
@@ -5024,7 +5018,7 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "应用内"
     }
   ],
   "p5tz8/": [
@@ -5868,12 +5862,6 @@
     {
       "type": 0,
       "value": "必填。新属性或现有属性的名称。"
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "代码"
     }
   ],
   "xYyPR8": [
