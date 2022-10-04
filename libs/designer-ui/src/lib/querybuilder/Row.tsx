@@ -94,10 +94,16 @@ export const Row = ({
   const handleKeyChange = (newState: ChangeState) => {
     if (notEqual(keyValue, newState.value)) {
       setKey(newState.value);
-      handleUpdateParent({ type: 'row', checked: checked, key: newState.value, dropdownVal: dropdownValue, value: valueValue }, index);
     }
     if (newState.value.length === 0) {
       setKey([]);
+    }
+  };
+
+  const handleKeySave = (newState: ChangeState) => {
+    if (notEqual(keyValue, newState.value)) {
+      setKey(newState.value);
+      handleUpdateParent({ type: 'row', checked: checked, key: newState.value, dropdownVal: dropdownValue, value: valueValue }, index);
     }
   };
 
@@ -105,7 +111,7 @@ export const Row = ({
     handleUpdateParent({ type: 'row', checked: checked, key: keyValue, dropdownVal: newState.value[0].value, value: valueValue }, index);
   };
 
-  const handleValueChange = (newState: ChangeState) => {
+  const handleValueSave = (newState: ChangeState) => {
     if (notEqual(valueValue, newState.value)) {
       handleUpdateParent({ type: 'row', checked: checked, key: keyValue, dropdownVal: dropdownValue, value: newState.value }, index);
     }
@@ -152,6 +158,7 @@ export const Row = ({
             placeholder={rowValueInputPlaceholder}
             singleLine={true}
             onChange={handleKeyChange}
+            editorBlur={handleKeySave}
             GetTokenPicker={GetTokenPicker}
             tokenPickerButtonProps={{ buttonOffset: pickerOffset }}
           />
@@ -164,7 +171,7 @@ export const Row = ({
             placeholder={rowValueInputPlaceholder}
             singleLine={true}
             GetTokenPicker={GetTokenPicker}
-            onChange={handleValueChange}
+            editorBlur={handleValueSave}
             tokenPickerButtonProps={{ buttonOffset: pickerOffset }}
           />
         </div>
