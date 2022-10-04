@@ -10,7 +10,7 @@ export interface SchemaNode {
   key: string;
   name: string;
   fullName: string;
-  namespacePrefix: string;
+  namespacePrefix?: string;
   namespaceUri: string;
   normalizedDataType: NormalizedDataType;
   schemaNodeDataType: SchemaNodeDataType;
@@ -107,6 +107,7 @@ export interface SchemaNodeExtended extends SchemaNode {
 export interface PathItem {
   key: string;
   name: string;
+  fullName: string;
 }
 
 export enum SchemaTypes {

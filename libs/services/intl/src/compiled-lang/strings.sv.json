@@ -4499,12 +4499,6 @@
       "value": "Egenskaper"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -5925,12 +5919,6 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den nya eller befintliga egenskapens namn."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kod"
     }
   ],
   "xYyPR8": [

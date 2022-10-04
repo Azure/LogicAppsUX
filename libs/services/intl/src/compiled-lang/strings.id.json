@@ -1504,7 +1504,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "Masuk untuk membuat koneksi ke "
     },
     {
       "type": 1,
@@ -3533,7 +3533,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "Gagal dengan kesalahan: "
     },
     {
       "type": 1,
@@ -3541,7 +3541,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": ". Silakan masuk lagi."
     }
   ],
   "ahsVI/": [
@@ -4301,12 +4301,6 @@
       "value": "Properti"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Uji"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4668,7 +4662,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "Masuk ke konektor"
     }
   ],
   "mjS/k1": [
@@ -4868,7 +4862,7 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "Dalam Aplikasi"
     }
   ],
   "p5tz8/": [
@@ -5696,12 +5690,6 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama properti baru atau yang sudah ada."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kode"
     }
   ],
   "xYyPR8": [

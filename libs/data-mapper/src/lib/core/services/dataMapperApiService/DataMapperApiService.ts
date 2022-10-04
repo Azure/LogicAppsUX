@@ -4,7 +4,6 @@ import type { FunctionData } from '../../../models/Function';
 export interface DataMapperApiServiceOptions {
   baseUrl: string;
   accessToken?: string;
-  resourceUrl?: string;
 }
 
 export class DataMapperApiService {
@@ -17,10 +16,6 @@ export class DataMapperApiService {
 
   public setAccessToken = (accessToken: string) => {
     this.options.accessToken = accessToken;
-  };
-
-  public setResourceURL = (resourceUrl: string) => {
-    this.options.resourceUrl = resourceUrl;
   };
 
   private getAccessTokenHeaders = () => {
@@ -45,15 +40,23 @@ export class DataMapperApiService {
   };
 
   private getSchemasUri = () => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/hostruntime/admin/vfs/Artifacts/Schemas?api-version=2018-11-01&relativepath=1`;
+    return `${this.options.baseUrl}/hostruntime/admin/vfs/Artifacts/Schemas?api-version=2018-11-01&relativepath=1`;
   };
 
   private getSchemaFileUri = (xmlName: string) => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`; // TODO: to test
+    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`;
   };
 
   private getFunctionsManifestUri = () => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/transformations/getManifest?api-version=2019-10-01-edge-preview`;
+    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/transformations/getManifest?api-version=2019-10-01-edge-preview`;
+  };
+
+  private getGenerateXsltUri = () => {
+    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/generateXslt?api-version=2019-10-01-edge-preview`;
+  };
+
+  private getTestMapUri = (xsltFilename: string) => {
+    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=2019-10-01-edge-preview`;
   };
 
   async getFunctionsManifest(): Promise<FunctionData[]> {
@@ -65,10 +68,6 @@ export class DataMapperApiService {
     const functions: FunctionData[] = await response.json();
     return functions;
   }
-
-  private getGenerateXsltUri = () => {
-    return `${this.options.baseUrl}${this.options.resourceUrl}/runtime/webhooks/workflow/api/management/maps/generateXslt?api-version=2019-10-01-edge-preview`;
-  };
 
   async getSchemas(): Promise<SchemaInfoProperties[]> {
     const headers = this.getHeaders();
@@ -115,5 +114,34 @@ export class DataMapperApiService {
     const dataMapXsltResponse = await response.json();
 
     return dataMapXsltResponse.xsltContent;
+  }
+
+  async testDataMap(dataMapXsltFilename: string, schemaInputValue: string): Promise<any> {
+    const base64EncodedSchemaInputValue = Buffer.from(schemaInputValue).toString('base64');
+
+    const response = await fetch(this.getTestMapUri(dataMapXsltFilename), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        InputInstanceMessage: {
+          '$content-type': 'application/xml',
+          $content: base64EncodedSchemaInputValue,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    const testMapResponse = await response.json();
+
+    // NOTE: In future, may need to use testMapResponse.OutputInstance.$content-type
+    // Decode base64 response content
+    testMapResponse.OutputInstance.$content = Buffer.from(testMapResponse.OutputInstance.$content).toString('utf-8');
+
+    return testMapResponse;
   }
 }
