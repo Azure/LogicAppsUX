@@ -106,8 +106,8 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onSaveClick = () => {
-    try {
-      generateDataMapXslt(dataMapDefinition).then((xsltStr) => {
+    generateDataMapXslt(dataMapDefinition)
+      .then((xsltStr) => {
         saveStateCall(dataMapDefinition, xsltStr);
 
         dispatch(
@@ -116,10 +116,10 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
             targetSchemaExtended: targetSchema,
           })
         );
+      })
+      .catch((error: Error) => {
+        dispatch(showNotification({ type: NotificationTypes.SaveFailed, msgBody: error.message }));
       });
-    } catch (error: any) {
-      dispatch(showNotification({ type: NotificationTypes.SaveFailed, msgBody: error }));
-    }
   };
 
   const onUndoClick = () => {
