@@ -52,7 +52,7 @@ export const placeholderTextFieldStyles: Partial<ITextFieldStyles> = {
   },
 };
 
-// NOTE(joechung): Fabric puts a red asterisk after required, label-less text fields which we do not want.
+// Note: Fabric puts a red asterisk after required, label-less text fields which we do not want.
 export const commonTextFieldStyles: Partial<ITextFieldStyles> = mergeStyleSets(placeholderTextFieldStyles, {
   field: {
     height: 26, // @parameter-inputbox-height
@@ -102,7 +102,7 @@ export const singleLineTextFieldStyles: Partial<ITextFieldStyles> = mergeStyleSe
 
 export const caretDownButtonStyles: IButtonStyles = {
   icon: {
-    /* NOTE(joechung): Fabric defaults as of 6.187.0 are 14px/16px. 12px/14px most closely emulates the 14px/16px ratio between font size and line height. */
+    /* Note: Fabric defaults as of 6.187.0 are 14px/16px. 12px/14px most closely emulates the 14px/16px ratio between font size and line height. */
     lineHeight: 14,
   },
 };
@@ -137,7 +137,7 @@ export const dropdownStyles: Partial<IDropdownStyles> = {
     fontSize: FontSizes.small,
     marginBottom: 0,
     selectors: {
-      // NOTE(joechung): Remove duplicate asterisk from required dropdowns.
+      // Note: Remove duplicate asterisk from required dropdowns.
       ':before': {
         display: 'none',
       },

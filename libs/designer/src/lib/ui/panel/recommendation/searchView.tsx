@@ -4,10 +4,10 @@ import { useRelationshipIds, useIsParallelBranch } from '../../../core/state/pan
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { guid } from '@microsoft-logic-apps/utils';
+import { isBuiltInConnector, guid } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -16,12 +16,13 @@ type SearchViewProps = {
   allOperations: DiscoveryOperation<DiscoveryResultTypes>[];
   groupByConnector: boolean;
   isLoading: boolean;
+  filters: Record<string, string>;
 };
-
-type SearchResults = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>[];
+type SearchResult = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>;
+type SearchResults = SearchResult[];
 
 export const SearchView: React.FC<SearchViewProps> = (props) => {
-  const { searchTerm, allOperations, groupByConnector, isLoading } = props;
+  const { searchTerm, allOperations, groupByConnector, isLoading, filters } = props;
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -30,6 +31,29 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
   const isParallelBranch = useIsParallelBranch();
 
   const [searchResults, setSearchResults] = useState<SearchResults>([]);
+
+  const filterItems = useCallback(
+    (searchResult: SearchResult): boolean => {
+      let ret = true;
+      if (filters['runtime']) {
+        if (filters['runtime'] === 'inapp') {
+          ret = isBuiltInConnector(searchResult.item.properties.api.id);
+        } else {
+          ret = !isBuiltInConnector(searchResult.item.properties.api.id);
+        }
+      }
+      if (filters['actionType']) {
+        if (filters['actionType'] === 'actions') {
+          ret = ret ? !searchResult.item.properties.trigger : false;
+        } else {
+          ret = ret ? !!searchResult.item.properties.trigger : false;
+        }
+      }
+
+      return ret;
+    },
+    [filters]
+  );
 
   useEffect(() => {
     if (!allOperations) return;
@@ -48,14 +72,21 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
           },
           weight: 2,
         },
+        {
+          name: 'description', // Connector 'description'
+          getFn: (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
+            return operation.properties.api.description ?? '';
+          },
+          weight: 1.9,
+        },
       ],
     };
     if (allOperations) {
       const fuse = new Fuse(allOperations, options);
-      const searchResults = fuse.search(searchTerm);
+      const searchResults = fuse.search(searchTerm).filter(filterItems);
       setSearchResults(searchResults.slice(0, 199));
     }
-  }, [searchTerm, allOperations]);
+  }, [searchTerm, allOperations, filterItems]);
 
   const onConnectorClick = (connectorId: string) => {
     dispatch(selectOperationGroupId(connectorId));

@@ -523,7 +523,7 @@ const getSplitOnValue = (
   } else {
     if (manifest) {
       if (equals(manifest.properties.trigger, Constants.BATCH_TRIGGER)) {
-        // TODO(3727460) - Consume top level required fields when available here.
+        // TODO (3727460) - Consume top level required fields when available here.
         const { alias, propertyName, required } = getSplitOnArrayAliasMetadata(manifest.properties.outputs, /* propertyRequired */ true);
         const propertyPath = alias || propertyName;
         if (propertyPath) {
@@ -617,7 +617,7 @@ const getRequestOptions = (definition?: LogicApps.OperationDefinition | LogicApp
 };
 
 const areRequestOptionsSupported = (isTrigger: boolean, nodeType: string): boolean => {
-  // NOTE(andrewfowose) We currently only support request timout option for HTTP & HTTP + Swagger actions
+  // Note We currently only support request timout option for HTTP & HTTP + Swagger actions
   const supportedTypes = [Constants.NODE.TYPE.HTTP];
   return !isTrigger && supportedTypes.indexOf(nodeType.toLowerCase()) > -1;
 };
@@ -644,7 +644,7 @@ const isPagingSupported = (
   swagger?: SwaggerParser,
   operationId?: string
 ): boolean => {
-  // TODO (andrewfowose): return false if isBranchNode
+  // TODO: return false if isBranchNode
   if (manifest) {
     const pagingSetting = getOperationSettingFromManifest(manifest, 'paging') as OperationManifestSetting<void> | undefined;
     return isSettingSupportedFromOperationManifest(pagingSetting, isTrigger);
@@ -774,7 +774,7 @@ const isInputsPropertySupportedInSecureDataSetting = (nodeType: string, manifest
     }
     return false;
   } else {
-    // TODO (andrewfowose) add else if to check if node is branch node and return false if so
+    // TODO add else if to check if node is branch node and return false if so
     const supportedTypes = [
       Constants.NODE.TYPE.API_CONNECTION,
       Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,
@@ -796,7 +796,7 @@ const isOutputsPropertySupportedInSecureDataSetting = (nodeType: string, manifes
     }
     return false;
   } else {
-    // TODO (andrewfowose) add else if to check if node is branch node and return false if so
+    // TODO add else if to check if node is branch node and return false if so
     const supportedTypes = [
       Constants.NODE.TYPE.API_CONNECTION,
       Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION,

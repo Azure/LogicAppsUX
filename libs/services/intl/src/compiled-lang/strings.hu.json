@@ -153,6 +153,18 @@
       "value": "Az átadott tömb vagy sztring első Count elemeit adja vissza."
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Közös"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Aktiválás"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Összecsukás"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Válasszon szűrőt"
     }
   ],
   "0ZlNtf": [
@@ -460,7 +478,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Keresés"
     }
   ],
   "2NYPLt": [
@@ -539,6 +557,12 @@
     {
       "type": 0,
       "value": "Dinamikus tartalom hozzáadása"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Szolgáltatási feltételek"
     }
   ],
   "3FoqCK": [
@@ -749,6 +773,12 @@
     {
       "type": 0,
       "value": "14"
+    }
+  ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Művelet típusa"
     }
   ],
   "5J7j9k": [
@@ -1499,6 +1529,12 @@
       "value": "Ctrl+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Bejelentkezés..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1533,6 +1569,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Sign in to create a connection to "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1881,6 +1931,12 @@
     {
       "type": 0,
       "value": "Egy UTC formátumban átadott sztring típusú időbélyeg konvertálása egy célidőzónára"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Művelet"
     }
   ],
   "IjZFjQ": [
@@ -2328,7 +2384,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Célséma"
     }
   ],
   "N2CF0J": [
@@ -2395,6 +2451,12 @@
     {
       "type": 0,
       "value": "Kedd"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Futtatókörnyezet"
     }
   ],
   "O+8vRv": [
@@ -2549,6 +2611,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Szűrés"
     }
   ],
   "P2A5dB": [
@@ -3641,6 +3709,20 @@
       "value": "Függvény"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Failed with error: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Please sign in again."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3667,6 +3749,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Műveletek"
     }
   ],
   "bS5DyV": [
@@ -4799,6 +4887,12 @@
       "value": "Kötelező megadni. A kisbetűssé alakítandó sztring. A sztring azon karakterei, melyeknek nincs kisbetűs megfelelője, változatlanul fognak szerepelni a visszaadott sztringben."
     }
   ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Sign in to connector"
+    }
+  ],
   "mjS/k1": [
     {
       "type": 0,
@@ -4993,6 +5087,12 @@
       "value": "Fejlécek"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-App"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
@@ -5051,6 +5151,12 @@
     {
       "type": 0,
       "value": "Egyetlen olyan tömböt vagy objektumot ad vissza, amely az átadott tömbök vagy objektumok közös elemeit tartalmazza. A függvény paramétereit egy objektumhalmazban vagy egy tömbökből álló halmazban (a kettő kombinációjával viszont nem) lehet megadni. Két egyforma nevű objektum szereplése esetén a végső objektumban az utolsó adott nevű objektum fog megjelenni."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Triggerek"
     }
   ],
   "pozypE": [
@@ -5875,6 +5981,12 @@
     {
       "type": 0,
       "value": "Érték"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Bejelentkezés"
     }
   ],
   "y3AZQB": [

@@ -9,7 +9,7 @@ export function isArmResourceId(resourceId: string): boolean {
 }
 
 export const isBuiltInConnector = (connectorId: string) => {
-  // NOTE(lakshmia): connectorId format: connectionProviders/{connector}
+  // Note: connectorId format: connectionProviders/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 3) return false;
   return equals(fields[1], 'serviceProviders');
@@ -18,7 +18,7 @@ export const isBuiltInConnector = (connectorId: string) => {
 export const getConnectorName = (connectorId: string): string => connectorId?.split('/').at(-1) ?? '';
 
 export const isCustomConnector = (connectorId: string) => {
-  // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Web/customApis/{connector}
+  // Note: connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Web/customApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 9) return false;
 
@@ -32,7 +32,7 @@ export const isCustomConnector = (connectorId: string) => {
 };
 
 export const isManagedConnector = (connectorId: string) => {
-  // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Logic/integrationServiceEnvironments/{ise}/managedApis/{connector}
+  // Note: connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Logic/integrationServiceEnvironments/{ise}/managedApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 11) return false;
 
@@ -47,7 +47,7 @@ export const isManagedConnector = (connectorId: string) => {
 };
 
 export const isSharedManagedConnector = (connectorId: string) => {
-  // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/providers/Microsoft.Web/locations/{location}/managedApis/{connector}
+  // Note: connectorId format: /subscriptions/{sub}/providers/Microsoft.Web/locations/{location}/managedApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 9) return false;
 

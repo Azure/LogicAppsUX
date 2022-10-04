@@ -1,0 +1,17 @@
+{
+  "name": "Source.xsd",
+  "type": "XML",
+  "targetNamespace": "http://tempuri.org/source.xsd",
+  "namespaces": { "ns0": "http://tempuri.org/source.xsd", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "schemaTreeRoot": {
+    "key": "/ns0:Root",
+    "name": "Root",
+    "namespacePrefix": "ns0",
+    "namespaceUri": "http://tempuri.org/source.xsd",
+    "schemaNodeDataType": "None",
+    "normalizedDataType": "ComplexType",
+    "properties": "NotSpecified",
+    "children": [],
+    "fullName": "ns0:Root"
+  }
+}

@@ -768,7 +768,7 @@ declare namespace LogicAppsV2 {
   /* If scope types */
 
   interface IfAction extends ScopeAction {
-    // NOTE(joechung): When did Record<string, any> become a valid value for an If scope's expression?
+    // Note: When did Record<string, any> become a valid value for an If scope's expression?
     expression: string | Record<string, any>;
     else?: ActionsNode;
   }

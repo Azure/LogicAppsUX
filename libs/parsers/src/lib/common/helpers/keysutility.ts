@@ -6,7 +6,7 @@ const _separator = '.';
 const _escapeCharacter = '~';
 const _encodedEscapeCharacter = '~0';
 
-// NOTE(psamband): All characters added here should be able to generate the correct
+// Note: All characters added here should be able to generate the correct
 // decoded string using the replaceCharacter method.
 const _codeBook = [
   ['.', '~1'],
@@ -168,7 +168,7 @@ function _isIndexSegment(segment: string): boolean {
   return segment.length > 2 && segment[0] === '[' && segment[segment.length - 1] === ']';
 }
 
-// NOTE(psamband): All characted used in this function should be correctly replaced to the intended character,
+// Note: All characted used in this function should be correctly replaced to the intended character,
 // after applying the regex with escaping using \\.
 function _replaceCharacter(value: string, charToReplace: string, replacedChar: string): string {
   return value.replace(new RegExp(`\\${charToReplace}`, 'g'), replacedChar);
