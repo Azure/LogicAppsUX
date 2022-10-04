@@ -73,12 +73,11 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         return 1;
       } else if (nodeChildrenToggledAmt === 0) {
         stateDict[nodeKey] = ItemToggledState.NotStarted;
+        return 0;
       } else {
         stateDict[nodeKey] = ItemToggledState.InProgress;
         return 0.5;
       }
-
-      return 0;
     },
     []
   );
@@ -90,9 +89,8 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         return 1;
       } else {
         stateDict[nodeKey] = ItemToggledState.NotStarted;
+        return 0;
       }
-
-      return 0;
     },
     [targetNodesWithConnections]
   );
