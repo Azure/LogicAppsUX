@@ -21,14 +21,6 @@ const openDataMapperCmd = async (context: ExtensionContext) => {
 };
 
 const createNewDataMapCmd = async (context: ExtensionContext) => {
-  const newDataMapTemplate = yaml.dump({
-    $sourceSchema: '',
-    $targetSchema: '',
-    mappings: {
-      targetNodeKey: '',
-    },
-  });
-
   // TODO: Data map name validation
   window.showInputBox({ prompt: 'Data Map name: ' }).then((newDatamapName) => {
     if (!newDatamapName) {
@@ -38,18 +30,22 @@ const createNewDataMapCmd = async (context: ExtensionContext) => {
     DataMapperExt.currentDataMapName = newDatamapName;
 
     openDataMapperCmd(context).then(() => {
-      DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'loadNewDataMap', data: newDataMapTemplate });
+      DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'loadNewDataMap', data: {} });
     });
   });
 };
 
 const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
-  const dataMap = yaml.load(await fs.readFile(uri.fsPath, 'utf-8')) as { $sourceSchema: string; $targetSchema: string; [key: string]: any };
+  const mapDefinition = yaml.load(await fs.readFile(uri.fsPath, 'utf-8')) as {
+    $sourceSchema: string;
+    $targetSchema: string;
+    [key: string]: any;
+  };
 
   // Attempt to load schema files if specified
   const schemasFolder = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath);
-  const srcSchemaPath = path.join(schemasFolder, dataMap.$sourceSchema);
-  const tgtSchemaPath = path.join(schemasFolder, dataMap.$targetSchema);
+  const srcSchemaPath = path.join(schemasFolder, mapDefinition.$sourceSchema);
+  const tgtSchemaPath = path.join(schemasFolder, mapDefinition.$targetSchema);
 
   if (!fileExists(srcSchemaPath)) {
     DataMapperExt.showError('Loading data map definition failed: the defined source schema file was not found in the Schemas folder!');
@@ -68,7 +64,7 @@ const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
   DataMapperExt.currentPanel.sendMsgToWebview({
     command: 'loadDataMap',
     data: {
-      dataMap: dataMap,
+      mapDefinition: mapDefinition,
       sourceSchemaFileName: path.basename(srcSchemaPath),
       targetSchemaFileName: path.basename(tgtSchemaPath),
     },

@@ -6,10 +6,12 @@ import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ExtensionContext, OutputChannel } from 'vscode';
 
 type SchemaType = 'source' | 'target';
+type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string };
 
 type SendingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: SchemaType } }
-  | { command: 'loadDataMap' | 'loadNewDataMap'; data: any }
+  | { command: 'loadNewDataMap'; data: MapDefinitionEntry }
+  | { command: 'loadDataMap'; data: { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string } }
   | { command: 'showAvailableSchemas'; data: string[] };
 type ReceivingMessageTypes =
   | {
