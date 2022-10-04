@@ -26,8 +26,6 @@ export const convertToMapDefinition = (
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
 
-    console.log(yaml.dump(mapDefinition));
-
     return yaml.dump(mapDefinition);
   }
 

@@ -9,6 +9,7 @@ export interface Connection {
   loop?: LoopConnection;
   condition?: string;
   isSelected?: boolean;
+  isHovered?: boolean;
 }
 
 export interface ConnectionUnit {

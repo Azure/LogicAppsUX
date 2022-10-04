@@ -2,7 +2,7 @@ import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childTargetNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
-import { ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
@@ -12,7 +12,7 @@ import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { useMemo } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
-import { ConnectionLineType, Position } from 'reactflow';
+import { Position } from 'reactflow';
 
 const getViewportWidth = (endX: number, startX: number) => endX - startX;
 
@@ -209,8 +209,11 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
         id: createReactFlowId(source.reactFlowKey, connection.destination.reactFlowKey),
         source: source.reactFlowKey,
         target: connection.destination.reactFlowKey,
-        type: ConnectionLineType.SmoothStep,
+        type: ReactFlowEdgeType.ConnectionEdge,
         selected: connection.isSelected,
+        data: {
+          isHovered: connection.isHovered,
+        },
       };
     });
   });

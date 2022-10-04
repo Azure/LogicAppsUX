@@ -2,6 +2,7 @@ import type { ButtonContainerProps } from '../components/buttonContainer/ButtonC
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import type { ButtonPivotProps } from '../components/buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
+import { ConnectionEdge } from '../components/edge/ConnectionEdge';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { FunctionList } from '../components/functionList/FunctionList';
@@ -12,6 +13,7 @@ import { SchemaTree } from '../components/tree/SchemaTree';
 import {
   checkerboardBackgroundImage,
   defaultCanvasZoom,
+  ReactFlowEdgeType,
   ReactFlowNodeType,
   sourcePrefix,
   targetPrefix,
@@ -25,6 +27,7 @@ import {
   hideNotification,
   makeConnection,
   removeSourceNodes,
+  setConnectionHovered,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
 } from '../core/state/DataMapSlice';
@@ -59,7 +62,10 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'reactflow';
+import ReactFlow, { MiniMap, useReactFlow, ConnectionLineType } from 'reactflow';
+
+const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
+const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
 
 const toolboxPanelProps: FloatingPanelProps = {
   xPos: '16px',
@@ -95,7 +101,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const edgeUpdateSuccessful = useRef(true);
-  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard, functionNode: FunctionCard }), []);
 
   // TODO update to support input nodes connected to an function, connected to an output node
   const connectedSourceNodes = useMemo(() => {
@@ -246,6 +251,28 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     [dispatch]
   );
 
+  const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
+    const selectedNode = edges.find((edge) => edge.id === node.id);
+    if (selectedNode) {
+      selectedNode.selected = !selectedNode.selected;
+    }
+    if (node) {
+      dispatch(setCurrentlySelectedEdge(node.target));
+    }
+  };
+
+  const handleEdgeMouseHover = (edge: ReactFlowEdge, isEntering: boolean) => {
+    if (edge) {
+      dispatch(setConnectionHovered({ connectionId: edge.target, isHovered: isEntering }));
+    }
+  };
+
+  const keyDownHandler: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      dispatch(deleteCurrentlySelectedItem());
+    }
+  };
+
   const toolboxLoc = intl.formatMessage({
     defaultMessage: 'Toolbox',
     description: 'Label to open the input toolbox card',
@@ -373,27 +400,13 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     connections
   );
 
-  const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
-    const selectedNode = edges.find((edge) => edge.id === node.id);
-    if (selectedNode) {
-      selectedNode.selected = !selectedNode.selected;
-    }
-    if (node) {
-      dispatch(setCurrentlySelectedEdge(node.target));
-    }
-  };
-
-  const keyDownHandler2: KeyboardEventHandler<HTMLDivElement> = (event) => {
-    if (event.key === 'Delete' || event.key === 'Backspace') {
-      dispatch(deleteCurrentlySelectedItem());
-    }
-  };
-
   const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
   return (
     <ReactFlow
       ref={reactFlowRef}
-      onKeyDown={keyDownHandler2}
+      onKeyDown={keyDownHandler}
+      nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
       nodes={nodes}
       edges={edges}
       onConnect={onConnect}
@@ -402,6 +415,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       defaultViewport={defaultViewport}
       nodesDraggable={false}
       fitView={false}
+      // With custom edge component, only affects appearance when drawing edge
       connectionLineType={ConnectionLineType.SmoothStep}
       proOptions={{
         account: 'paid-sponsor',
@@ -413,11 +427,12 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         backgroundSize: '22px 22px',
         borderRadius: tokens.borderRadiusMedium,
       }}
-      nodeTypes={nodeTypes}
       onEdgeUpdate={onEdgeUpdate}
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}
       onEdgeClick={onEdgeClick}
+      onEdgeMouseEnter={(_e, edge) => handleEdgeMouseHover(edge, true)}
+      onEdgeMouseLeave={(_e, edge) => handleEdgeMouseHover(edge, false)}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
 
