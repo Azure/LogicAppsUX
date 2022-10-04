@@ -1,3 +1,4 @@
+import { type NotificationData, NotificationTypes } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
@@ -15,6 +16,7 @@ export interface DataMapState {
   isDirty: boolean;
   undoStack: DataMapOperationState[];
   redoStack: DataMapOperationState[];
+  notificationData?: NotificationData;
 }
 
 export interface DataMapOperationState {
@@ -240,11 +242,14 @@ export const dataMapSlice = createSlice({
 
             for (const connectionKey in state.curDataMapOperation.dataMapConnections) {
               if (state.curDataMapOperation.dataMapConnections[connectionKey].source.key === selectedNode.path) {
-                delete state.curDataMapOperation.dataMapConnections[connectionKey];
+                state.notificationData = { type: NotificationTypes.SourceNodeRemoveFailed, msgParam: selectedNode.name };
+                return;
               }
             }
 
             doDataMapOperation(state, { ...state.curDataMapOperation, currentSourceNodes: removedNodes });
+
+            state.notificationData = { type: NotificationTypes.SourceNodeRemoved };
             break;
           }
           case NodeType.Function: {
@@ -260,6 +265,8 @@ export const dataMapSlice = createSlice({
                 delete state.curDataMapOperation.dataMapConnections[connectionKey];
               }
             }
+
+            state.notificationData = { type: NotificationTypes.FunctionNodeDeleted };
 
             break;
           }
@@ -304,6 +311,7 @@ export const dataMapSlice = createSlice({
       delete newState.dataMapConnections[functionKey];
 
       doDataMapOperation(state, newState);
+      state.notificationData = { type: NotificationTypes.FunctionNodeDeleted };
     },
 
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
@@ -370,6 +378,7 @@ export const dataMapSlice = createSlice({
       delete newState.dataMapConnections[action.payload];
 
       doDataMapOperation(state, newState);
+      state.notificationData = { type: NotificationTypes.ConnectionDeleted };
     },
 
     undoDataMapOperation: (state) => {
@@ -410,6 +419,14 @@ export const dataMapSlice = createSlice({
       state.redoStack = [];
       state.isDirty = false;
     },
+
+    showNotification: (state, action: PayloadAction<NotificationData>) => {
+      state.notificationData = action.payload;
+    },
+
+    hideNotification: (state) => {
+      state.notificationData = undefined;
+    },
   },
 });
 
@@ -436,6 +453,8 @@ export const {
   discardDataMap,
   deleteCurrentlySelectedItem,
   setCurrentlySelectedEdge,
+  showNotification,
+  hideNotification,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

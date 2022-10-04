@@ -1397,6 +1397,12 @@
       "value": "Output"
     }
   ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -3615,6 +3621,20 @@
       "value": "Add"
     }
   ],
+  "aogN3J": [
+    {
+      "type": 0,
+      "value": "Remove all references to node "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " before you remove the node."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -3819,6 +3839,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Harare, Pretoria"
+    }
+  ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
     }
   ],
   "dDYCuU": [
@@ -4685,6 +4711,12 @@
     {
       "type": 0,
       "value": "Add an action"
+    }
+  ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
     }
   ],
   "mGUdCO": [

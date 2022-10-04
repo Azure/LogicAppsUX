@@ -22,12 +22,12 @@ import {
   changeConnection,
   deleteConnection,
   deleteCurrentlySelectedItem,
+  hideNotification,
   makeConnection,
   removeSourceNodes,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
 } from '../core/state/DataMapSlice';
-import { hideNotification } from '../core/state/NotificationSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
@@ -86,7 +86,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
-  const notificationData = useSelector((state: RootState) => state.notification.data);
+  const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
 
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
@@ -457,10 +457,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
       {notificationData && (
         <Notification
-          msg={notificationData.msg}
+          type={notificationData.type}
+          msgParam={notificationData.msgParam}
           msgBody={notificationData.msgBody}
-          intent={notificationData.intent}
-          onClose={() => dispatch(hideNotification)}
+          onClose={() => dispatch(hideNotification())}
         />
       )}
     </ReactFlow>

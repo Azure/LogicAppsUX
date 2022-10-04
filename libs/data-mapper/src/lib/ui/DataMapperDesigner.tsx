@@ -4,6 +4,7 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
+import { NotificationTypes } from '../components/notification/Notification';
 import {
   basePropPaneContentHeight,
   canvasAreaAndPropPaneMargin,
@@ -14,8 +15,7 @@ import { TargetSchemaPane } from '../components/targetSchemaPane/TargetSchemaPan
 import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
-import { redoDataMapOperation, saveDataMap, undoDataMapOperation } from '../core/state/DataMapSlice';
-import { showNotification } from '../core/state/NotificationSlice';
+import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import './ReactFlowStyleOverrides.css';
@@ -25,7 +25,6 @@ import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useLayoutEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactFlowProvider } from 'reactflow';
 
@@ -78,7 +77,6 @@ export interface DataMapperDesignerProps {
 export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }) => {
   const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
-  const intl = useIntl();
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
@@ -91,11 +89,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isOutputPaneExpanded, setIsOutputPaneExpanded] = useState(false);
-
-  const saveFailedLoc = intl.formatMessage({
-    defaultMessage: 'Failed to save',
-    description: 'Message on failed save',
-  });
 
   const dataMapDefinition = useMemo((): string => {
     if (sourceSchema && targetSchema) {
@@ -125,7 +118,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         );
       });
     } catch (error: any) {
-      dispatch(showNotification({ intent: 'error', msg: saveFailedLoc, msgBody: error }));
+      dispatch(showNotification({ type: NotificationTypes.SaveFailed, msgBody: error }));
     }
   };
 
