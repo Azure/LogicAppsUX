@@ -1525,16 +1525,12 @@
   ],
   "EiRMD4": [
     {
-      "type": 0,
-      "value": "Sign in to create a connection to "
-    },
-    {
       "type": 1,
       "value": "connectorDisplayName"
     },
     {
       "type": 0,
-      "value": "."
+      "value": " bağlantısı oluşturmak için oturum açın."
     }
   ],
   "EjXdAm": [
@@ -3588,7 +3584,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "Şu hatayla başarısız oldu: "
     },
     {
       "type": 1,
@@ -3596,7 +3592,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": ". Lütfen yeniden oturum açın."
     }
   ],
   "ahsVI/": [
@@ -4359,12 +4355,6 @@
       "value": "Özellikler"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4726,7 +4716,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "Bağlayıcıda oturum açın"
     }
   ],
   "mjS/k1": [
@@ -4926,7 +4916,7 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "Uygulama İçi"
     }
   ],
   "p5tz8/": [
@@ -5761,12 +5751,6 @@
     {
       "type": 0,
       "value": "Gerekli. Yeni veya mevcut özelliğin adı."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kod"
     }
   ],
   "xYyPR8": [

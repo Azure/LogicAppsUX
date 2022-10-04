@@ -56,9 +56,9 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   const targetNodesWithConnections = useMemo(() => {
     const nodesWithConnections: { [key: string]: true } = {};
 
-    Object.entries(connectionDictionary).forEach(([_key, value]) => {
-      if (value.reactFlowDestination in targetSchemaDictionary) {
-        nodesWithConnections[value.destination.key] = true; // targetSchemaDictionary[value.reactFlowDestination]
+    Object.values(connectionDictionary).forEach((connection) => {
+      if (connection.destination.reactFlowKey in targetSchemaDictionary) {
+        nodesWithConnections[connection.destination.node.key] = true; // targetSchemaDictionary[value.reactFlowDestination]
       }
     });
 
@@ -73,11 +73,11 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         return 1;
       } else if (nodeChildrenToggledAmt === 0) {
         stateDict[nodeKey] = ItemToggledState.NotStarted;
+        return 0;
       } else {
         stateDict[nodeKey] = ItemToggledState.InProgress;
+        return 0.5;
       }
-
-      return 0;
     },
     []
   );
@@ -89,9 +89,8 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         return 1;
       } else {
         stateDict[nodeKey] = ItemToggledState.NotStarted;
+        return 0;
       }
-
-      return 0;
     },
     [targetNodesWithConnections]
   );

@@ -4537,12 +4537,6 @@
       "value": "Propriétés"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -5970,12 +5964,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la propriété nouvelle ou existante."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Code"
     }
   ],
   "xYyPR8": [

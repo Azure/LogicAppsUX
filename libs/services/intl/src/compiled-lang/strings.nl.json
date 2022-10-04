@@ -1532,7 +1532,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Aanmelden..."
+      "value": "Bezig met aanmelden"
     }
   ],
   "E9OS+9": [
@@ -1574,7 +1574,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "Meld u aan om een verbinding te maken met "
     },
     {
       "type": 1,
@@ -3696,7 +3696,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "Mislukt met de volgende fout: "
     },
     {
       "type": 1,
@@ -3704,7 +3704,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": ". Meld u opnieuw aan."
     }
   ],
   "ahsVI/": [
@@ -4499,12 +4499,6 @@
       "value": "Eigenschappen"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Testen"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4866,7 +4860,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "Aanmelden bij connector"
     }
   ],
   "mjS/k1": [
@@ -5066,7 +5060,7 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "In-app"
     }
   ],
   "p5tz8/": [
@@ -5921,12 +5915,6 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de nieuwe of bestaande eigenschap."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Code"
     }
   ],
   "xYyPR8": [

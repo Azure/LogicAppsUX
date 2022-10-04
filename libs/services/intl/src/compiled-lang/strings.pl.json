@@ -1634,7 +1634,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "Zaloguj się, aby utworzyć połączenie z łącznikiem "
     },
     {
       "type": 1,
@@ -3834,7 +3834,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "Niepowodzenie z powodu błędu: "
     },
     {
       "type": 1,
@@ -3842,7 +3842,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": ". Zaloguj się ponownie."
     }
   ],
   "ahsVI/": [
@@ -4659,12 +4659,6 @@
       "value": "Właściwości"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -5034,7 +5028,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "Zaloguj się do łącznika"
     }
   ],
   "mjS/k1": [
@@ -5234,7 +5228,7 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "W aplikacji"
     }
   ],
   "p5tz8/": [
@@ -6111,12 +6105,6 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa nowej lub istniejącej właściwości."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kod"
     }
   ],
   "xYyPR8": [

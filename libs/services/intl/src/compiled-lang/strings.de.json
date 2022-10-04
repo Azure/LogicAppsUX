@@ -1532,7 +1532,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Anmeldung läuft …"
+      "value": "Anmeldung läuft…"
     }
   ],
   "E9OS+9": [
@@ -1574,7 +1574,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "Melden Sie sich an, um eine Verbindung mit "
     },
     {
       "type": 1,
@@ -1582,7 +1582,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " zu erstellen."
     }
   ],
   "EjXdAm": [
@@ -3704,7 +3704,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "Fehlgeschlagen mit Fehler: "
     },
     {
       "type": 1,
@@ -3712,7 +3712,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": ". Bitte melden Sie sich erneut an."
     }
   ],
   "ahsVI/": [
@@ -4503,12 +4503,6 @@
       "value": "Eigenschaften"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4878,7 +4872,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "Beim Connector anmelden"
     }
   ],
   "mjS/k1": [
@@ -5917,12 +5911,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der neuen oder vorhandenen Eigenschaft."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Code"
     }
   ],
   "xYyPR8": [
