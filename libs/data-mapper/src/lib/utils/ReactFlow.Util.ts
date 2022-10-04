@@ -204,7 +204,6 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 
 export const convertToReactFlowEdges = (connections: ConnectionDictionary): ReactFlowEdge[] => {
   return Object.values(connections).flatMap((connection) => {
-    console.log(connection);
     return connection.sources.map((source) => {
       return {
         id: createReactFlowId(source.reactFlowKey, connection.destination.reactFlowKey),
