@@ -8,6 +8,7 @@ import {
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
 import type { Connection, ConnectionDictionary, LoopConnection } from '../models/Connection';
+import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended } from '../models/Schema';
 import { isFunctionData } from './Function.Utils';
@@ -58,7 +59,12 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
     connection.sources.forEach((source) => {
       // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
       if (isSchemaNodeExtended(connection.destination.node)) {
-        applyValueAtPath(source.node.key, mapDefinition, connection.destination.node.pathToRoot);
+        if (isSchemaNodeExtended(source.node)) {
+          applyValueAtPath(source.node.fullName, mapDefinition, connection.destination.node.pathToRoot);
+        } else {
+          const value = collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
+          applyValueAtPath(value, mapDefinition, connection.destination.node.pathToRoot);
+        }
       }
     });
   });
@@ -75,9 +81,24 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, path
       applyValueAtPath(value, mapDefinition[pathLocation] as MapDefinitionEntry, path.slice(1));
     }
   } else {
-    // TODO Update to support wrapping in functions
-    mapDefinition[pathLocation] = value;
+    mapDefinition[pathLocation] = value.startsWith('@') ? `$${value}` : value;
   }
+};
+
+const collectValueForFunction = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
+  const inputValues = currentConnection.sources.flatMap((source) => {
+    if (isSchemaNodeExtended(source.node)) {
+      return source.node.fullName.startsWith('@') ? `$${source.node.fullName}` : source.node.fullName;
+    } else {
+      return collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
+    }
+  });
+
+  return combineFunctionAndInputs(node, inputValues);
+};
+
+const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]): string => {
+  return `${functionData.functionName}(${inputs.join(', ')})`;
 };
 
 export const convertFromMapDefinition = (
@@ -223,6 +244,7 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
   return true;
 };
 
+// TODO Handle content enrichment functions
 const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {
   if (!currentConnection) {
     return false;
