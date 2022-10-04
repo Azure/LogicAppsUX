@@ -189,8 +189,32 @@ export default class DataMapperExt {
     // - harmless if directory already exists
     fs.mkdir(folderPath, { recursive: true })
       .then(() => {
-        fs.writeFile(filePath, fileContents, 'utf8');
+        fs.writeFile(filePath, fileContents, 'utf8').then(() => {
+          if (!isDefinition) {
+            // If XSLT, re-check/set xslt filename
+            DataMapperExt.checkForAndSetXsltFilename();
+          }
+        });
       })
       .catch(DataMapperExt.showError);
+  }
+
+  public static checkForAndSetXsltFilename() {
+    const expectedXsltPath = path.join(
+      DataMapperExt.getWorkspaceFolderFsPath(),
+      dataMapsPath,
+      `${DataMapperExt.currentDataMapName}${mapXsltExtension}`
+    );
+
+    if (fileExists(expectedXsltPath)) {
+      DataMapperExt.currentPanel.sendMsgToWebview({
+        command: 'setXsltFilename',
+        data: DataMapperExt.currentDataMapName,
+      });
+    } else {
+      DataMapperExt.showError(
+        `XSLT data map file not detected for ${DataMapperExt.currentDataMapName} - save your data map to generate it`
+      );
+    }
   }
 }

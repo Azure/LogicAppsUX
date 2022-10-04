@@ -32,11 +32,7 @@ const createNewDataMapCmd = (context: ExtensionContext) => {
     await openDataMapperCmd(context);
 
     DataMapperExt.currentPanel.sendMsgToWebview({ command: 'loadNewDataMap', data: {} });
-
-    DataMapperExt.currentPanel.sendMsgToWebview({
-      command: 'setXsltFilename',
-      data: DataMapperExt.currentDataMapName,
-    });
+    DataMapperExt.checkForAndSetXsltFilename();
   });
 };
 
@@ -74,9 +70,5 @@ const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
       targetSchemaFileName: path.basename(tgtSchemaPath),
     },
   });
-
-  DataMapperExt.currentPanel.sendMsgToWebview({
-    command: 'setXsltFilename',
-    data: DataMapperExt.currentDataMapName,
-  });
+  DataMapperExt.checkForAndSetXsltFilename();
 };
