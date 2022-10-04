@@ -375,7 +375,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       selectedNode.selected = !selectedNode.selected;
     }
     if (node) {
-      dispatch(setCurrentlySelectedEdge(node.id));
+      dispatch(setCurrentlySelectedEdge(node.target));
     }
   };
 
