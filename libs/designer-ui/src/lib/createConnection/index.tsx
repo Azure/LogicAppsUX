@@ -1,7 +1,7 @@
 import { filterRecord } from '../utils';
 import { ConnectionAuth } from './auth';
 import type { IDropdownOption } from '@fluentui/react';
-import { DefaultButton, Dropdown, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
+import { Checkbox, DefaultButton, Dropdown, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
 import type {
   ConnectionParameter,
   ConnectionParameterAllowedValue,
@@ -9,7 +9,9 @@ import type {
   ConnectionParameterSetParameter,
   ConnectionParameterSets,
   Gateway,
+  Subscription,
 } from '@microsoft-logic-apps/utils';
+import { ConnectionParameterTypes } from '@microsoft-logic-apps/utils';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -29,6 +31,9 @@ export interface CreateConnectionProps {
   hideCancelButton?: boolean;
   needsAuth?: boolean;
   errorMessage?: string;
+  selectSubscriptionCallback?: (subscriptionId: string) => void;
+  selectedSubscriptionId?: string;
+  availableSubscriptions?: Subscription[];
   availableGateways?: Gateway[];
 }
 
@@ -46,6 +51,9 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     hideCancelButton = false,
     needsAuth = false,
     errorMessage,
+    selectSubscriptionCallback,
+    selectedSubscriptionId,
+    availableSubscriptions,
     availableGateways,
   } = props;
 
@@ -136,6 +144,16 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
       connectorName: connectorDisplayName,
     }
   );
+
+  const subscriptionDropdownLabel = intl.formatMessage({
+    defaultMessage: 'Subscription',
+    description: 'Subscription dropdown label',
+  });
+
+  const gatewayDropdownLabel = intl.formatMessage({
+    defaultMessage: 'Gateway',
+    description: 'Gateway dropdown label',
+  });
 
   const getVisibleParameterValues = useCallback(() => {
     return filterRecord(parameterValues, ([key]) => isParamVisible(parameters[key]));
@@ -235,8 +253,81 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             console.log('parameter', parameter);
             const data = parameter?.uiDefinition;
             let inputComponent = undefined;
-            if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {
-              // Dropdown Parameter
+
+            // Gateway setting parameter
+            if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.gatewaySetting]) {
+              const newGatewayUrl = 'http://aka.ms/logicapps-installgateway';
+              const newGatwayOptionKey = 'msla-newGatewayOption';
+              const newGatewayOption: IDropdownOption<any> = {
+                key: newGatwayOptionKey,
+                text: intl.formatMessage(
+                  {
+                    defaultMessage: '{addIcon} Install Gateway',
+                    description: 'Option to install a new gateway, links to new page',
+                  },
+                  { addIcon: '+ ' }
+                ),
+              };
+              inputComponent = (
+                <div>
+                  <Dropdown
+                    id={`connection-param-${key}-subscriptions`}
+                    label={subscriptionDropdownLabel}
+                    className="connection-parameter-input"
+                    selectedKey={selectedSubscriptionId}
+                    onChange={(e: any, newVal?: IDropdownOption) => selectSubscriptionCallback?.(newVal?.key as string)}
+                    disabled={isLoading}
+                    ariaLabel={subscriptionDropdownLabel}
+                    placeholder={subscriptionDropdownLabel}
+                    options={(availableSubscriptions ?? []).map((subscription: Subscription) => ({
+                      key: subscription.id,
+                      text: subscription.displayName,
+                    }))}
+                  />
+                  <Dropdown
+                    id={`connection-param-${key}-gateways`}
+                    label={gatewayDropdownLabel}
+                    className="connection-parameter-input"
+                    selectedKey={availableGateways?.findIndex((value) => value.id === parameterValues[key])}
+                    onChange={(e: any, newVal?: IDropdownOption) => {
+                      if (newVal?.key === newGatwayOptionKey) {
+                        window.open(newGatewayUrl, '_blank');
+                      } else {
+                        setParameterValues({ ...parameterValues, [key]: newVal?.data });
+                      }
+                    }}
+                    disabled={isLoading || !selectedSubscriptionId}
+                    ariaLabel={gatewayDropdownLabel}
+                    placeholder={gatewayDropdownLabel}
+                    options={[
+                      ...(availableGateways ?? [])
+                        .filter((gateway) => gateway)
+                        .map((gateway: Gateway) => ({
+                          key: gateway.id,
+                          text: gateway.name ?? '',
+                          data: gateway.id,
+                        })),
+                      newGatewayOption,
+                    ]}
+                  />
+                </div>
+              );
+            }
+
+            // Boolean parameter
+            else if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.bool]) {
+              inputComponent = (
+                <Checkbox
+                  checked={parameterValues[key] === 'true'}
+                  onChange={(e: any, checked?: boolean) => {
+                    setParameterValues({ ...parameterValues, [key]: checked?.toString() });
+                  }}
+                />
+              );
+            }
+
+            // Dropdown Parameter
+            else if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {
               inputComponent = (
                 <Dropdown
                   id={`connection-param-${key}`}
@@ -254,8 +345,10 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
                   }))}
                 />
               );
-            } else {
-              // Text Input Parameter
+            }
+
+            // Text Input Parameter
+            else {
               inputComponent = (
                 <TextField
                   id={key}

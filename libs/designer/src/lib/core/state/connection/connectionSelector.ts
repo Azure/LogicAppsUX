@@ -20,11 +20,20 @@ export const useConnector = (connectorId: string) => {
   );
 };
 
-export const useGateways = (connectorName: string) => {
+export const useGateways = (subscriptionId: string, connectorName: string) => {
   const gatewayService = GatewayService();
-  return useQuery(['gateways', { connectorName }], async () => gatewayService.getGateways(connectorName), {
-    enabled: !!connectorName,
-  });
+  return useQuery(
+    ['gateways', { subscriptionId }, { connectorName }],
+    async () => gatewayService.getGateways(subscriptionId, connectorName),
+    {
+      enabled: !!connectorName,
+    }
+  );
+};
+
+export const useSubscriptions = () => {
+  const gatewayService = GatewayService();
+  return useQuery('subscriptions', async () => gatewayService.getSubscriptions());
 };
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {

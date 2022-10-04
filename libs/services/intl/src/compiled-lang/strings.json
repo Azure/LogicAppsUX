@@ -1809,6 +1809,16 @@
       "value": "Please select a card to see the content"
     }
   ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Install Gateway"
+    }
+  ],
   "HzS2gJ": [
     {
       "type": 0,
@@ -3589,6 +3599,12 @@
       "value": "controls"
     }
   ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Subscription"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -4433,6 +4449,12 @@
     {
       "type": 0,
       "value": "Duration"
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
     }
   ],
   "k/oqFL": [

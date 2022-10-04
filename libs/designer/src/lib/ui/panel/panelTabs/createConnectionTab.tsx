@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { getConnectionMetadata, needsAuth } from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
-import { useConnectorByNodeId, useGateways } from '../../../core/state/connection/connectionSelector';
+import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
@@ -12,7 +12,7 @@ import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft-logi
 import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CreateConnectionTab = () => {
@@ -25,12 +25,11 @@ const CreateConnectionTab = () => {
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
 
-  const gatewaysQuery = useGateways(connector?.id ?? '');
-  const availableGateways = useMemo(() => !gatewaysQuery.isLoading ? gatewaysQuery.data : undefined, [gatewaysQuery]);
-
-  useEffect(() => {
-    console.log("availableGateways", availableGateways);
-  }, [availableGateways])
+  const subscriptionsQuery = useSubscriptions();
+  const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
+  const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
+  const availableGateways = useMemo(() => (!gatewaysQuery.isLoading ? gatewaysQuery.data : undefined), [gatewaysQuery]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -138,6 +137,9 @@ const CreateConnectionTab = () => {
       needsAuth={needsAuthentication}
       authClickCallback={authClickCallback}
       errorMessage={errorMessage}
+      selectSubscriptionCallback={(subscriptionId: string) => setSelectedSubscriptionId(subscriptionId)}
+      selectedSubscriptionId={selectedSubscriptionId}
+      availableSubscriptions={subscriptions}
       availableGateways={availableGateways}
     />
   );
