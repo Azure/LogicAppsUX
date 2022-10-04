@@ -21,13 +21,14 @@ export interface NotificationData {
 const useStyles = makeStyles({
   toastStyles: {
     position: 'absolute',
-    bottom: '50%',
+    bottom: '16px',
     left: '50%',
+    transform: 'translate(-50%, 0)',
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     boxShadow: tokens.shadow16,
     backgroundColor: tokens.colorNeutralBackground1,
     ...shorthands.padding('12px'),
-    minHeight: '44px',
+    zIndex: 10,
   },
   msgTitleStyles: {
     ...typographyStyles.body1Strong,
@@ -53,16 +54,16 @@ export const Notification = (props: NotificationProps) => {
     switch (type) {
       case NotificationTypes.SaveFailed:
       case NotificationTypes.SourceNodeRemoveFailed:
-        return <DismissCircle20Filled />;
+        return <DismissCircle20Filled style={{ color: tokens.colorPaletteRedBackground3, marginRight: 8 }} />;
 
       default:
-        return <Delete20Regular />;
+        return <Delete20Regular style={{ color: tokens.colorNeutralForeground1, marginRight: 8 }} />;
     }
   }, [type]);
 
   const notificationMsg = useMemo(() => {
     const saveFailedLoc = intl.formatMessage({
-      defaultMessage: 'Failed to save',
+      defaultMessage: 'Failed to save.',
       description: 'Message on failed save',
     });
 
@@ -73,7 +74,7 @@ export const Notification = (props: NotificationProps) => {
 
     const sourceNodeRemoveFailedLoc = intl.formatMessage(
       {
-        defaultMessage: `Remove all references to node {nodeName} before you remove the node.`,
+        defaultMessage: `Remove all references to node ' {nodeName} ' before you remove the node.`,
         description: 'Message on failure to remove source node',
       },
       {
@@ -116,15 +117,20 @@ export const Notification = (props: NotificationProps) => {
 
   return (
     <div className={styles.toastStyles}>
-      <Stack horizontal verticalAlign="center">
+      <Stack horizontal verticalAlign="start">
         {notificationIcon}
 
-        <Text>{notificationMsg}</Text>
+        <Stack style={{ marginRight: 12 }}>
+          <Text className={styles.msgTitleStyles}>{notificationMsg}</Text>
+          {msgBody && (
+            <Text className={styles.msgBodyStyles} style={{ marginTop: 4 }}>
+              {msgBody}
+            </Text>
+          )}
+        </Stack>
 
-        <Dismiss20Regular style={{ marginLeft: 'auto' }} onClick={onClose} />
+        <Dismiss20Regular style={{ marginLeft: 'auto', cursor: 'pointer' }} onClick={onClose} />
       </Stack>
-
-      {msgBody && <Text style={{ marginLeft: 'auto', marginRight: 'auto' }}>{msgBody}</Text>}
     </div>
   );
 };
