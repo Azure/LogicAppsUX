@@ -392,6 +392,10 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    setConnectionHovered: (state, action: PayloadAction<{ connectionId: string; isHovered: boolean }>) => {
+      state.curDataMapOperation.dataMapConnections[action.payload.connectionId].isHovered = action.payload.isHovered;
+    },
+
     deleteConnection: (state, action: PayloadAction<DeleteConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -473,6 +477,7 @@ export const {
   addFunctionNode,
   makeConnection,
   changeConnection,
+  setConnectionHovered,
   deleteConnection,
   undoDataMapOperation,
   redoDataMapOperation,
