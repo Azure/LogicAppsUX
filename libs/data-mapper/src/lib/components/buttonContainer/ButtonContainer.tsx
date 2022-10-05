@@ -1,6 +1,7 @@
 import { Stack, StackItem } from '@fluentui/react';
 import { Button, Tooltip } from '@fluentui/react-components';
 import { bundleIcon } from '@fluentui/react-icons';
+import { useMemo } from 'react';
 import type { IconType } from 'react-icons/lib';
 
 export interface ButtonContainerProps {
@@ -26,23 +27,25 @@ export const ButtonContainer: React.FC<ButtonContainerProps> = ({
   yPos,
   anchorToBottom,
 }: ButtonContainerProps) => {
-  const stackItems = buttons.map((buttonProps, index) => {
-    const BundledIcon = bundleIcon(buttonProps.filledIcon, buttonProps.regularIcon);
+  const stackItems = useMemo(() => {
+    return buttons.map((buttonProps, index) => {
+      const BundledIcon = bundleIcon(buttonProps.filledIcon, buttonProps.regularIcon);
 
-    // TODO - Theme buttons on hover
-    return (
-      <StackItem key={index}>
-        <Tooltip content={buttonProps.tooltip} relationship="label">
-          <Button
-            style={{ border: '0px', borderRadius: '0px' }}
-            // filled must be either true or undefined or error is thrown as native element can't have false as value
-            icon={<BundledIcon filled={buttonProps.filled ? buttonProps.filled : undefined} />}
-            {...buttonProps}
-          />
-        </Tooltip>
-      </StackItem>
-    );
-  });
+      // TODO - Theme buttons on hover
+      return (
+        <StackItem key={index}>
+          <Tooltip content={buttonProps.tooltip} relationship="label">
+            <Button
+              style={{ border: '0px', borderRadius: '0px' }}
+              // True/undefined below to stop errors about native elements having boolean values until FluentUI fixes
+              icon={<BundledIcon filled={buttonProps.filled ? true : undefined} />}
+              onClick={buttonProps.onClick}
+            />
+          </Tooltip>
+        </StackItem>
+      );
+    });
+  }, [buttons]);
 
   const stackStyle: React.CSSProperties = {
     position: 'absolute',
