@@ -2,10 +2,11 @@ import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { NormalizedDataType, SchemaNodeDataType, type SchemaNodeExtended } from '../../models';
 import { SchemaTree } from '../tree/SchemaTree';
-import { ItemToggledState, type NodeToggledStateDictionary } from '../tree/SchemaTreeItem';
+import type { NodeToggledStateDictionary } from '../tree/SchemaTreeItem';
+import { ItemToggledState } from '../tree/SchemaTreeItem';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { ChevronDoubleRight20Regular, ChevronDoubleLeft20Regular } from '@fluentui/react-icons';
+import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular } from '@fluentui/react-icons';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -55,9 +56,9 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   const targetNodesWithConnections = useMemo(() => {
     const nodesWithConnections: { [key: string]: true } = {};
 
-    Object.entries(connectionDictionary).forEach(([_key, value]) => {
-      if (value.reactFlowDestination in targetSchemaDictionary) {
-        nodesWithConnections[value.destination] = true; // targetSchemaDictionary[value.reactFlowDestination]
+    Object.values(connectionDictionary).forEach((connection) => {
+      if (connection.destination.reactFlowKey in targetSchemaDictionary) {
+        nodesWithConnections[connection.destination.node.key] = true; // targetSchemaDictionary[value.reactFlowDestination]
       }
     });
 
@@ -72,11 +73,11 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         return 1;
       } else if (nodeChildrenToggledAmt === 0) {
         stateDict[nodeKey] = ItemToggledState.NotStarted;
+        return 0;
       } else {
         stateDict[nodeKey] = ItemToggledState.InProgress;
+        return 0.5;
       }
-
-      return 0;
     },
     []
   );
@@ -88,9 +89,8 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         return 1;
       } else {
         stateDict[nodeKey] = ItemToggledState.NotStarted;
+        return 0;
       }
-
-      return 0;
     },
     [targetNodesWithConnections]
   );

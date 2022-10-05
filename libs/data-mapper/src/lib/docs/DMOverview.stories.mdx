@@ -19,20 +19,26 @@ From a fresh start, the data we handle translates/transforms in the following fl
 
 ## Backend
 
+### Testing values
+
+The testing values for just about any variation of data used within data mapper can be found in the following repo: https://msazure.visualstudio.com/One/_git/AzureUX-BPM?path=/src/DataMapper&version=GBmaster
+
 ### API
 
 #### Schema Translation - GET schemaTree
 
 Translates any supported schema format into JSON consumed by the Data Mapper frontend
 
-Example Endpoint: http://localhost:7071/runtime/webhooks/workflow/api/management/schemas/CBRSourceSchema/contents/schemaTree?api-version=2019-10-01-edge-preview
+Endpoint: http://{localhost:7071}/runtime/webhooks/workflow/api/management/schemas/CBRSourceSchema/contents/schemaTree?api-version=2019-10-01-edge-preview
 
 #### Data Map XSLT generation - POST generateXslt
 
 Formats a data map with all of its connections into the XSLT (.xslt) Formats
 
-Example Endpoint: http://localhost:7071/runtime/webhooks/workflow/api/management/maps/generateXslt
+Endpoint: http://{localhost:7071}/runtime/webhooks/workflow/api/management/generateXslt
 
-#### Test Mappings/Connections - IN PROGRESS
+#### Test Mappings/Connections - POST testMap
 
-Tests connections to ensure that certain inputs produce the expected outputs
+Tests data map and its connections to ensure that a specified input schema value produces the expected output schema value
+
+Endpoint: http://{localhost:7071}/runtime/webhooks/workflow/api/management/maps/{mapXsltFilename}/testMap

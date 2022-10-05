@@ -9,7 +9,7 @@ export function isArmResourceId(resourceId: string): boolean {
 }
 
 export const isBuiltInConnector = (connectorId: string) => {
-  // NOTE(lakshmia): connectorId format: connectionProviders/{connector}
+  // Note: connectorId format: connectionProviders/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 3) return false;
   return equals(fields[1], 'serviceProviders');
@@ -18,7 +18,7 @@ export const isBuiltInConnector = (connectorId: string) => {
 export const getConnectorName = (connectorId: string): string => connectorId?.split('/').at(-1) ?? '';
 
 export const isCustomConnector = (connectorId: string) => {
-  // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Web/customApis/{connector}
+  // Note: connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Web/customApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 9) return false;
 
@@ -32,7 +32,7 @@ export const isCustomConnector = (connectorId: string) => {
 };
 
 export const isManagedConnector = (connectorId: string) => {
-  // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Logic/integrationServiceEnvironments/{ise}/managedApis/{connector}
+  // Note: connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Logic/integrationServiceEnvironments/{ise}/managedApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 11) return false;
 
@@ -47,7 +47,7 @@ export const isManagedConnector = (connectorId: string) => {
 };
 
 export const isSharedManagedConnector = (connectorId: string) => {
-  // NOTE(lakshmia): connectorId format: /subscriptions/{sub}/providers/Microsoft.Web/locations/{location}/managedApis/{connector}
+  // Note: connectorId format: /subscriptions/{sub}/providers/Microsoft.Web/locations/{location}/managedApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 9) return false;
 
@@ -119,6 +119,9 @@ export function isHiddenConnectionParameter(
 }
 
 const Constants = {
+  PARAMETER_VALUE_TYPE: {
+    ALTERNATIVE: 'Alternative',
+  },
   SERVICE_PRINCIPLE_CONFIG_ITEM_KEYS: {
     TOKEN_CLIENT_ID: 'token:clientId',
     TOKEN_CLIENT_SECRET: 'token:clientSecret',
@@ -182,4 +185,36 @@ export const isIdentityAssociatedWithLogicApp = (managedIdentity: ManagedIdentit
 
 export function getConnectionErrors(connection: Connection): ConnectionStatus[] {
   return (connection?.properties?.statuses ?? []).filter((status) => status.status === 'error');
+}
+
+// NOTE: This method is specifically for Multi-Auth type connectors.
+export function isConnectionMultiAuthManagedIdentityType(connection: Connection, connector: Connector): boolean {
+  const connectionParameterValueSet = (connection?.properties as any)?.parameterValueSet;
+  const connectorConnectionParameterSets = connector?.properties?.connectionParameterSets;
+
+  if (connectorConnectionParameterSets && connectionParameterValueSet) {
+    /* NOTE: Look into the parameterValueSet from the connector manifest that has the same name as the parameterValueSet of the connection to see if
+          it has a managedIdentity type parameter. */
+    const parameterValueSetWithSameName = connectorConnectionParameterSets.values?.filter(
+      (value) => value.name === connectionParameterValueSet.name
+    )[0];
+    const parameters = parameterValueSetWithSameName?.parameters || {};
+    for (const parameter of Object.keys(parameters)) {
+      if (parameters[parameter].type === ConnectionParameterTypes[ConnectionParameterTypes.managedIdentity]) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+// NOTE: This method is specifically for Single-Auth type connectors.
+export function isConnectionSingleAuthManagedIdentityType(connection: Connection): boolean {
+  return (
+    !!(connection?.properties?.parameterValueType === Constants.PARAMETER_VALUE_TYPE.ALTERNATIVE) && !isMultiAuthConnection(connection)
+  );
+}
+
+function isMultiAuthConnection(connection: Connection | undefined): boolean {
+  return connection !== undefined && (connection.properties as any).parameterValueSet !== undefined;
 }

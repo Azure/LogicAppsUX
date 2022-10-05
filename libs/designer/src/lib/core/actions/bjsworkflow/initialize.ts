@@ -119,7 +119,7 @@ export const getInputParametersFromManifest = (
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
   const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
-  // TODO(14490585)- Initialize editor view models for array
+  // TODO (14490585)- Initialize editor view models for array
 
   const defaultParameterGroup = {
     id: ParameterGroupKeys.DEFAULT,

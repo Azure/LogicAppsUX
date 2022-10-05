@@ -1,6 +1,5 @@
 import dataMapReducer from './DataMapSlice';
 import modalReducer from './ModalSlice';
-import notificationReducer from './NotificationSlice';
 import panelReducer from './PanelSlice';
 import schemaReducer from './SchemaSlice';
 import { configureStore } from '@reduxjs/toolkit';
@@ -11,7 +10,6 @@ export const store = configureStore({
     panel: panelReducer,
     modal: modalReducer,
     dataMap: dataMapReducer,
-    notification: notificationReducer,
   },
 });
 

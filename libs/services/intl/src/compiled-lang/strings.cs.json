@@ -149,6 +149,18 @@
       "value": "Vrátí prvních Count prvků z předaného pole nebo řetězce."
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Sdíleno"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -201,6 +213,12 @@
     {
       "type": 0,
       "value": "Sbalit"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Vyberte filtr."
     }
   ],
   "0ZlNtf": [
@@ -490,7 +508,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Hledat"
     }
   ],
   "2NYPLt": [
@@ -569,6 +587,12 @@
     {
       "type": 0,
       "value": "Přidat dynamický obsah"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Podmínky služby"
     }
   ],
   "3FoqCK": [
@@ -781,6 +805,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Typ akce"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -862,7 +892,7 @@
   "6OSgRP": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Otestovat mapu"
     }
   ],
   "6XR3FS": [
@@ -1454,13 +1484,19 @@
   "CSoHMf": [
     {
       "type": 0,
-      "value": "Replace existing schema"
+      "value": "Nahradit existující schéma"
     }
   ],
   "Ciol6I": [
     {
       "type": 0,
       "value": "Výstup"
+    }
+  ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
     }
   ],
   "CsPY74": [
@@ -1490,7 +1526,7 @@
   "D5FIKL": [
     {
       "type": 0,
-      "value": "Paste from sample"
+      "value": "Vložit z ukázky"
     }
   ],
   "DDIIAQ": [
@@ -1547,6 +1583,12 @@
       "value": "Ctrl+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Přihlašování…"
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1565,6 +1607,12 @@
       "value": "Odpověď"
     }
   ],
+  "EV9iRu": [
+    {
+      "type": 0,
+      "value": "Failed to save."
+    }
+  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -1581,6 +1629,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Přihlaste se a vytvořte připojení ke konektoru "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1951,6 +2013,12 @@
     {
       "type": 0,
       "value": "Převede předané řetězcové časové razítko z formátu UTC na cílové časové pásmo."
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Akce"
     }
   ],
   "IjZFjQ": [
@@ -2420,7 +2488,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Cílové schéma"
     }
   ],
   "N2CF0J": [
@@ -2481,6 +2549,20 @@
       "value": "Vyberte prosím identitu."
     }
   ],
+  "NtY1mD": [
+    {
+      "type": 0,
+      "value": "Remove all references to node ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the node."
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2491,6 +2573,12 @@
     {
       "type": 0,
       "value": "Úterý"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Modul runtime"
     }
   ],
   "O+8vRv": [
@@ -2645,6 +2733,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtr"
     }
   ],
   "P2A5dB": [
@@ -3755,6 +3849,20 @@
       "value": "Funkce"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Selhalo s chybou: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Přihlaste se prosím znovu."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3781,6 +3889,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Akce"
     }
   ],
   "bS5DyV": [
@@ -3965,6 +4079,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Harare, Pretoria"
+    }
+  ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
     }
   ],
   "dDYCuU": [
@@ -4454,7 +4574,7 @@
   "i1Tufp": [
     {
       "type": 0,
-      "value": "Provide input data to test the map with"
+      "value": "Zadejte vstupní data k otestování mapy přes"
     }
   ],
   "i1cwra": [
@@ -4557,12 +4677,6 @@
     {
       "type": 0,
       "value": "Vlastnosti"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
     }
   ],
   "iq+tiv": [
@@ -4885,6 +4999,12 @@
       "value": "Přidat akci"
     }
   ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -4925,6 +5045,12 @@
     {
       "type": 0,
       "value": "Vyžadováno. Řetězec, který se má převést na malá písmena. Pokud některý znak v řetězci nemá odpovídající znak malé abecedy, zůstane ve vráceném řetězci beze změny."
+    }
+  ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Přihlásit se ke konektoru"
     }
   ],
   "mjS/k1": [
@@ -5121,10 +5247,22 @@
       "value": "Záhlaví"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "V aplikaci"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
     }
   ],
   "pC2nr2": [
@@ -5179,6 +5317,12 @@
     {
       "type": 0,
       "value": "Vrátí jedno pole nebo objekt, který má mezi předávanými poli nebo objekty společné prvky. Parametry pro tuto funkci můžou být buď sada objektů, nebo sada polí (ne kombinace obou). Pokud se vyskytnou dva objekty se stejným názvem, zahrne se do konečného objektu poslední objekt s tímto názvem."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Triggery"
     }
   ],
   "pozypE": [
@@ -5987,12 +6131,6 @@
       "value": "Povinné. Název nové nebo stávající vlastnosti"
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Kód"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -6021,6 +6159,12 @@
     {
       "type": 0,
       "value": "Hodnota"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Přihlásit se"
     }
   ],
   "y3AZQB": [

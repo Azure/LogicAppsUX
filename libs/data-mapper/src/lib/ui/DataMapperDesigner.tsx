@@ -4,6 +4,7 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
 import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
+import { NotificationTypes } from '../components/notification/Notification';
 import {
   basePropPaneContentHeight,
   canvasAreaAndPropPaneMargin,
@@ -14,7 +15,7 @@ import { TargetSchemaPane } from '../components/targetSchemaPane/TargetSchemaPan
 import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
-import { redoDataMapOperation, saveDataMap, undoDataMapOperation } from '../core/state/DataMapSlice';
+import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import './ReactFlowStyleOverrides.css';
@@ -105,16 +106,20 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const onSaveClick = () => {
-    generateDataMapXslt(dataMapDefinition).then((xsltStr) => {
-      saveStateCall(dataMapDefinition, xsltStr);
+    generateDataMapXslt(dataMapDefinition)
+      .then((xsltStr) => {
+        saveStateCall(dataMapDefinition, xsltStr);
 
-      dispatch(
-        saveDataMap({
-          sourceSchemaExtended: sourceSchema,
-          targetSchemaExtended: targetSchema,
-        })
-      );
-    });
+        dispatch(
+          saveDataMap({
+            sourceSchemaExtended: sourceSchema,
+            targetSchemaExtended: targetSchema,
+          })
+        );
+      })
+      .catch((error: Error) => {
+        dispatch(showNotification({ type: NotificationTypes.SaveFailed, msgBody: error.message }));
+      });
   };
 
   const onUndoClick = () => {

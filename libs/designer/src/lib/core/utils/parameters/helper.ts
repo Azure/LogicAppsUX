@@ -1,7 +1,6 @@
 import Constants from '../../../common/constants';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
-import { getOperationManifest } from '../../queries/operation';
 import type {
   DependencyInfo,
   NodeDependencies,
@@ -46,10 +45,12 @@ import type {
   ExpressionFunction,
   ExpressionLiteral,
   InputParameter,
+  OutputParameter,
   ResolvedParameter,
   SchemaProcessorOptions,
   SchemaProperty,
   Segment,
+  SwaggerParser,
 } from '@microsoft-logic-apps/parsers';
 import {
   isLegacyDynamicValuesExtension,
@@ -69,7 +70,7 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft-logic-apps/parsers';
-import type { Exception, OperationInfo, OperationManifest, RecurrenceSetting } from '@microsoft-logic-apps/utils';
+import type { Exception, OperationManifest, RecurrenceSetting } from '@microsoft-logic-apps/utils';
 import {
   isUndefinedOrEmptyString,
   aggregate,
@@ -566,8 +567,8 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
     propertyPath = convertPathToBracketsFormat(name, optional);
   }
 
-  // NOTE(tonytang): If the token is inside array, instead of serialize to the wrong definition, we serialize to item() for now.
-  // TODO(tonytang): Need to have a full story for showing/hiding tokens that represent item().
+  // NOTE: If the token is inside array, instead of serialize to the wrong definition, we serialize to item() for now.
+  // TODO: Need to have a full story for showing/hiding tokens that represent item().
   if (arrayDetails) {
     if (arrayDetails.loopSource) {
       return `@items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
@@ -599,7 +600,7 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
       expressionValue = `${Constants.TRIGGER_BODY_OUTPUT}${propertyPath}`;
     }
   } else {
-    // NOTE(psamband): We escape the characters in step name to convert it to string literal for generating the expression.
+    // Note: We escape the characters in step name to convert it to string literal for generating the expression.
     const stepName = convertToStringLiteral(actionName);
     if (propertyInQueries) {
       expressionValue = `${Constants.OUTPUTS}(${stepName})['${Constants.OUTPUT_LOCATIONS.QUERIES}']${propertyPath}`;
@@ -1214,7 +1215,7 @@ export async function loadDynamicData(
 async function loadDynamicContentForInputsInNode(
   nodeId: string,
   inputDependencies: Record<string, DependencyInfo>,
-  operationInfo: OperationInfo,
+  operationInfo: NodeOperation,
   connectionId: string,
   allInputs: NodeInputs,
   variables: VariableDeclaration[],
@@ -1228,16 +1229,17 @@ async function loadDynamicContentForInputsInNode(
 
       if (isDynamicDataReadyToLoad(info)) {
         const inputSchema = await getDynamicSchema(info, allInputs, connectionId, operationInfo, variables);
-        const manifest = await getOperationManifest(operationInfo);
         const allInputParameters = getAllInputParameters(allInputs);
         const allInputKeys = allInputParameters.map((param) => param.parameterKey);
-        const schemaInputs = getDynamicInputsFromSchema(
-          inputSchema,
-          info.parameter as InputParameter,
-          manifest,
-          allInputKeys,
-          operationDefinition
-        );
+        const schemaInputs = inputSchema
+          ? await getDynamicInputsFromSchema(
+              inputSchema,
+              info.parameter as InputParameter,
+              operationInfo,
+              allInputKeys,
+              operationDefinition
+            )
+          : [];
         const inputParameters = schemaInputs.map((input) => ({
           ...createParameterInfo(input),
           schema: input,
@@ -1528,7 +1530,7 @@ export function updateTokenMetadata(
     } else if (equals(nodeType, Constants.NODE.TYPE.COMPOSE)) {
       token.title = 'Outputs';
     } else if (token.tokenType === TokenType.ITEM) {
-      // TODO(lakshmia): Remove this and other parts in this method when the Feature flag (foreach tokens) is removed.
+      // TODO: Remove this and other parts in this method when the Feature flag (foreach tokens) is removed.
       token.title = 'Current item';
       token.type = Constants.SWAGGER.TYPE.ANY;
     } else {
@@ -1748,7 +1750,7 @@ export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitio
 
   const segmentsAfterCasting = parameterInfo.suppressCasting ? value : castTokenSegmentsInValue(value, parameterType, parameterFormat);
 
-  // NOTE(psamband): Path parameter values are always enclosed inside encodeComponent function if specified.
+  // Note: Path parameter values are always enclosed inside encodeComponent function if specified.
   if (isPathParameter && isDefinitionValue) {
     const segmentValues = segmentsAfterCasting.map((segment) => {
       if (!isTokenValueSegment(segment)) {
@@ -1770,7 +1772,7 @@ export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitio
           expressionValue = parameterType === Constants.SWAGGER.TYPE.STRING ? `@{${expressionValue}}` : `@${expressionValue}`;
         } else {
           if (!isUndefinedOrEmptyString(expressionValue)) {
-            // NOTE(psamband): Token segment should be auto casted using interpolation if token type is
+            // Note: Token segment should be auto casted using interpolation if token type is
             // non string and referred in a string parameter.
             expressionValue =
               !parameterInfo.suppressCasting && parameterType === 'string' && segment.token?.type !== 'string'
@@ -1802,7 +1804,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
     let tokenExpression: string = expression.value;
 
     if (isTokenValueSegment(expression)) {
-      // NOTE(joechung): Stringify the token expression to escape double quotes and other characters which must be escaped in JSON.
+      // Note: Stringify the token expression to escape double quotes and other characters which must be escaped in JSON.
       if (shouldInterpolate) {
         if (applyCasting) {
           tokenExpression = addCastToExpression(
@@ -2038,4 +2040,20 @@ export function getEncodeValue(value: string): number {
     default:
       return 1;
   }
+}
+
+export function getArrayTypeForOutputs(parsedSwagger: SwaggerParser, operationId: string): string {
+  const outputs = parsedSwagger.getOutputParameters(operationId, { excludeInternalOperations: false });
+  const outputKeys = Object.keys(outputs);
+
+  let itemKeyOutputParameter: OutputParameter | undefined = undefined;
+  for (const key of outputKeys) {
+    const output: OutputParameter = getPropertyValue(outputs, key);
+    if (output.name === OutputKeys.Item) {
+      itemKeyOutputParameter = output;
+      break;
+    }
+  }
+
+  return itemKeyOutputParameter?.type ?? '';
 }

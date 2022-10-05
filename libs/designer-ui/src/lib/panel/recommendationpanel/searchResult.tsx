@@ -99,4 +99,5 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   iconUri: operation.properties.api.iconUri,
   connectorName: operation.properties.api.displayName,
   category: getConnectorCategoryString(operation.properties.api.id),
+  isTrigger: !!operation.properties.trigger,
 });

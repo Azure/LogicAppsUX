@@ -202,7 +202,7 @@ export function getPropertyValue(object: Record<string, any> | null | undefined,
   object = object || {};
 
   if (propertyName === '__proto__' || propertyName === 'constructor') throw new Error('attempting to access protected properties');
-  // NOTE(tonytang): This is an optimization for when property name matches case sensitively.
+  // Note: This is an optimization for when property name matches case sensitively.
   const value = (object as any)[propertyName];
   if (value !== undefined) {
     return value;
@@ -797,7 +797,7 @@ export function parsePathnameAndQueryKeyFromUri(uri: string): { pathname: string
   el.href = uri;
 
   const { pathname, search } = el;
-  // NOTE(johnwa): enforce add prefx /, which is not included in IE, and remove the original / to pathname if it contains any,
+  // Note: enforce add prefx /, which is not included in IE, and remove the original / to pathname if it contains any,
   // to make sure it return the same path cross browsers
   return {
     pathname: `/${decodeURIComponent(pathname.replace(/(^\/+)/g, ''))}`,

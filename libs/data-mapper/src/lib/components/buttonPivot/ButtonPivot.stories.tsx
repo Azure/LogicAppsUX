@@ -1,5 +1,5 @@
-import { simpleMockSchema } from '../../__mocks__';
 import type { Schema } from '../../models/Schema';
+import { simpleMockSchema } from '../../models/__mocks__';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';

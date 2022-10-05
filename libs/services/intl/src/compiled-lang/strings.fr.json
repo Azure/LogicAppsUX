@@ -153,6 +153,18 @@
       "value": "Retourne les premiers éléments Count du tableau ou de la chaîne transmis(e)"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Partagé"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Déclencheur"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Réduire"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Sélectionner un filtre"
     }
   ],
   "0ZlNtf": [
@@ -471,7 +489,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Rechercher"
     }
   ],
   "2NYPLt": [
@@ -550,6 +568,12 @@
     {
       "type": 0,
       "value": "Ajouter du contenu dynamique"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Conditions d’utilisation du service"
     }
   ],
   "3FoqCK": [
@@ -760,6 +784,12 @@
     {
       "type": 0,
       "value": "14"
+    }
+  ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Type d'action"
     }
   ],
   "5J7j9k": [
@@ -1437,6 +1467,12 @@
       "value": "Sortie"
     }
   ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1521,6 +1557,12 @@
       "value": "Ctrl+Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Connexion en cours..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1539,6 +1581,12 @@
       "value": "Réponse"
     }
   ],
+  "EV9iRu": [
+    {
+      "type": 0,
+      "value": "Failed to save."
+    }
+  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -1555,6 +1603,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Connectez-vous pour créer une connexion à "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1906,6 +1968,12 @@
     {
       "type": 0,
       "value": "Convertit un horodateur de chaîne transmis d'une heure UTC à un fuseau horaire cible"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Action"
     }
   ],
   "IjZFjQ": [
@@ -2356,7 +2424,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Schéma cible"
     }
   ],
   "N2CF0J": [
@@ -2413,6 +2481,20 @@
       "value": "Sélectionnez une identité"
     }
   ],
+  "NtY1mD": [
+    {
+      "type": 0,
+      "value": "Remove all references to node ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the node."
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2423,6 +2505,12 @@
     {
       "type": 0,
       "value": "Mardi"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2577,6 +2665,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtre"
     }
   ],
   "P2A5dB": [
@@ -3660,6 +3754,20 @@
       "value": "Fonction"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Échec avec l'erreur : "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Reconnectez-vous."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3686,6 +3794,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "bS5DyV": [
@@ -3870,6 +3984,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Harare, Pretoria"
+    }
+  ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
     }
   ],
   "dDYCuU": [
@@ -4449,12 +4569,6 @@
       "value": "Propriétés"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4771,6 +4885,12 @@
       "value": "Ajouter une action"
     }
   ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -4811,6 +4931,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne à convertir en minuscules. Si un caractère de la chaîne n'a pas d'équivalent en minuscules, le caractère reste inchangé dans la chaîne retournée."
+    }
+  ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Se connecter au connecteur"
     }
   ],
   "mjS/k1": [
@@ -5007,10 +5133,22 @@
       "value": "En-têtes"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "Dans l'application"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
     }
   ],
   "pC2nr2": [
@@ -5065,6 +5203,12 @@
     {
       "type": 0,
       "value": "Retourne un unique tableau ou objet qui a des éléments communs avec les objets ou tableaux transmis. Les paramètres de la fonction peuvent être un ensemble d'objets ou de tableaux (et non un mélange des deux). Si deux objets portent le même nom, le dernier objet avec ce nom s'affiche dans l'objet final."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Déclencheurs"
     }
   ],
   "pozypE": [
@@ -5866,12 +6010,6 @@
       "value": "Obligatoire. Nom de la propriété nouvelle ou existante."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Code"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5900,6 +6038,12 @@
     {
       "type": 0,
       "value": "Valeur"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Se connecter"
     }
   ],
   "y3AZQB": [

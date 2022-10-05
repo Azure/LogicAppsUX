@@ -64,7 +64,16 @@ export const tokensSlice = createSlice({
     addDynamicTokens: (state, action: PayloadAction<AddDynamicTokensPayload>) => {
       const { nodeId, tokens } = action.payload;
       if (state.outputTokens[nodeId]) {
-        state.outputTokens[nodeId].tokens = [...state.outputTokens[nodeId].tokens, ...tokens];
+        const newTokens = [...state.outputTokens[nodeId].tokens];
+        for (const token of tokens) {
+          const index = newTokens.findIndex((t) => t.key === token.key);
+          if (index > -1) {
+            newTokens.splice(index, 1, token);
+          } else {
+            newTokens.push(token);
+          }
+        }
+        state.outputTokens[nodeId].tokens = newTokens;
       }
     },
   },

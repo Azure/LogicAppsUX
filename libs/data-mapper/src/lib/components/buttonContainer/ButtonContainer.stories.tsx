@@ -19,6 +19,7 @@ import {
 } from '@fluentui/react-icons';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
+// eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { MiniMap, ReactFlowProvider, useReactFlow } from 'reactflow';
 
 export default {

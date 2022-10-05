@@ -137,6 +137,18 @@
       "value": "Returns the first Count elements from the array or string passed in"
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Shared"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -189,6 +201,12 @@
     {
       "type": 0,
       "value": "Collapse"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Select a filter"
     }
   ],
   "0ZlNtf": [
@@ -739,6 +757,12 @@
     {
       "type": 0,
       "value": "14"
+    }
+  ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Action Type"
     }
   ],
   "5J7j9k": [
@@ -1373,6 +1397,12 @@
       "value": "Output"
     }
   ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1479,6 +1509,12 @@
     {
       "type": 0,
       "value": "Response"
+    }
+  ],
+  "EV9iRu": [
+    {
+      "type": 0,
+      "value": "Failed to save."
     }
   ],
   "EYqGxA": [
@@ -1853,6 +1889,12 @@
     {
       "type": 0,
       "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Action"
     }
   ],
   "IjZFjQ": [
@@ -2333,6 +2375,20 @@
       "value": "Please select an identity"
     }
   ],
+  "NtY1mD": [
+    {
+      "type": 0,
+      "value": "Remove all references to node ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the node."
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2343,6 +2399,12 @@
     {
       "type": 0,
       "value": "Tuesday"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2481,6 +2543,12 @@
     {
       "type": 0,
       "value": "Pfx"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filter"
     }
   ],
   "P2A5dB": [
@@ -3599,6 +3667,12 @@
       "value": "controls"
     }
   ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "bIyTi7": [
     {
       "type": 0,
@@ -3787,6 +3861,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Harare, Pretoria"
+    }
+  ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
     }
   ],
   "dDYCuU": [
@@ -4339,12 +4419,6 @@
       "value": "Properties"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4667,6 +4741,12 @@
       "value": "Add an action"
     }
   ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -4909,10 +4989,22 @@
       "value": "Headers"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-App"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
     }
   ],
   "pC2nr2": [
@@ -4967,6 +5059,12 @@
     {
       "type": 0,
       "value": "Returns a single array or object that has common elements between arrays or objects passed in. The parameters for the function can either be a set of objects or a set of arrays (not a mixture of both). If there are two objects with the same name, the last object with that name appears in the final object."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Triggers"
     }
   ],
   "pozypE": [
@@ -5739,12 +5837,6 @@
     {
       "type": 0,
       "value": "Required. The name of the new or existing property."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Code"
     }
   ],
   "xYyPR8": [

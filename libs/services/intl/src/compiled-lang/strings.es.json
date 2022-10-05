@@ -153,6 +153,18 @@
       "value": "Devuelve los primeros elementos de recuento de la matriz o la cadena pasada."
     }
   ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Compartido"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Desencadenador"
+    }
+  ],
   "07ZsoY": [
     {
       "type": 0,
@@ -205,6 +217,12 @@
     {
       "type": 0,
       "value": "Contraer"
+    }
+  ],
+  "0Wr7qp": [
+    {
+      "type": 0,
+      "value": "Seleccionar un filtro"
     }
   ],
   "0ZlNtf": [
@@ -471,7 +489,7 @@
   "2NXYYu": [
     {
       "type": 0,
-      "value": "Search"
+      "value": "Buscar"
     }
   ],
   "2NYPLt": [
@@ -550,6 +568,12 @@
     {
       "type": 0,
       "value": "Agregar contenido dinámico"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Términos del servicio"
     }
   ],
   "3FoqCK": [
@@ -762,6 +786,12 @@
       "value": "14"
     }
   ],
+  "4yC+4g": [
+    {
+      "type": 0,
+      "value": "Tipo de acción"
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -843,7 +873,7 @@
   "6OSgRP": [
     {
       "type": 0,
-      "value": "Test map"
+      "value": "Comprobar asignación"
     }
   ],
   "6XR3FS": [
@@ -1428,13 +1458,19 @@
   "CSoHMf": [
     {
       "type": 0,
-      "value": "Replace existing schema"
+      "value": "Reemplazar esquema existente"
     }
   ],
   "Ciol6I": [
     {
       "type": 0,
       "value": "Salida"
+    }
+  ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
     }
   ],
   "CsPY74": [
@@ -1464,7 +1500,7 @@
   "D5FIKL": [
     {
       "type": 0,
-      "value": "Paste from sample"
+      "value": "Pegar desde la muestra"
     }
   ],
   "DDIIAQ": [
@@ -1521,6 +1557,12 @@
       "value": "Ctrl + Y"
     }
   ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Iniciando sesión..."
+    }
+  ],
   "E9OS+9": [
     {
       "type": 0,
@@ -1539,6 +1581,12 @@
       "value": "Respuesta"
     }
   ],
+  "EV9iRu": [
+    {
+      "type": 0,
+      "value": "Failed to save."
+    }
+  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -1555,6 +1603,20 @@
     {
       "type": 0,
       "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Inicie sesión para crear una conexión a "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "EjXdAm": [
@@ -1906,6 +1968,12 @@
     {
       "type": 0,
       "value": "Convierte una marca de tiempo de una cadena pasada de una hora UTC a una zona horaria de destino."
+    }
+  ],
+  "IgNz8Y": [
+    {
+      "type": 0,
+      "value": "Acción"
     }
   ],
   "IjZFjQ": [
@@ -2356,7 +2424,7 @@
   "N0pS6Y": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Esquema de destino"
     }
   ],
   "N2CF0J": [
@@ -2413,6 +2481,20 @@
       "value": "Seleccione una identidad"
     }
   ],
+  "NtY1mD": [
+    {
+      "type": 0,
+      "value": "Remove all references to node ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the node."
+    }
+  ],
   "NvANon": [
     {
       "type": 0,
@@ -2423,6 +2505,12 @@
     {
       "type": 0,
       "value": "Martes"
+    }
+  ],
+  "NvmZVi": [
+    {
+      "type": 0,
+      "value": "Runtime"
     }
   ],
   "O+8vRv": [
@@ -2577,6 +2665,12 @@
     {
       "type": 0,
       "value": "Archivo PFX"
+    }
+  ],
+  "P+na99": [
+    {
+      "type": 0,
+      "value": "Filtrar"
     }
   ],
   "P2A5dB": [
@@ -2967,7 +3061,7 @@
   "Sz8KN3": [
     {
       "type": 0,
-      "value": "Prueba"
+      "value": "Probar"
     }
   ],
   "T0BFpC": [
@@ -3668,6 +3762,20 @@
       "value": "Función"
     }
   ],
+  "aRKDWL": [
+    {
+      "type": 0,
+      "value": "Error: "
+    },
+    {
+      "type": 1,
+      "value": "errorMessage"
+    },
+    {
+      "type": 0,
+      "value": ". Vuelva a iniciar sesión."
+    }
+  ],
   "ahsVI/": [
     {
       "type": 0,
@@ -3694,6 +3802,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Acciones"
     }
   ],
   "bS5DyV": [
@@ -3878,6 +3992,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Harare, Pretoria"
+    }
+  ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
     }
   ],
   "dDYCuU": [
@@ -4348,7 +4468,7 @@
   "i1Tufp": [
     {
       "type": 0,
-      "value": "Provide input data to test the map with"
+      "value": "Proporcionar datos de entrada con los que probar la asignación"
     }
   ],
   "i1cwra": [
@@ -4455,12 +4575,6 @@
     {
       "type": 0,
       "value": "Propiedades"
-    }
-  ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Prueba"
     }
   ],
   "iq+tiv": [
@@ -4787,6 +4901,12 @@
       "value": "Agregar una acción"
     }
   ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -4827,6 +4947,12 @@
     {
       "type": 0,
       "value": "Obligatorio. La cadena que se convertirá en minúsculas. Si un carácter de la cadena no tiene un equivalente en minúsculas, este carácter se incluye sin cambios en la cadena que se devuelve."
+    }
+  ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Iniciar sesión en el conector"
     }
   ],
   "mjS/k1": [
@@ -5023,10 +5149,22 @@
       "value": "Encabezados"
     }
   ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "Desde la aplicación"
+    }
+  ],
   "p5tz8/": [
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
     }
   ],
   "pC2nr2": [
@@ -5081,6 +5219,12 @@
     {
       "type": 0,
       "value": "Devuelve una matriz o un objeto simple que tiene elementos comunes entre matrices u objetos pasados. Los parámetros de la función pueden ser un conjunto de objetos o un conjunto de matrices (y no una combinación de ambos). Si hay dos objetos con el mismo nombre, el último objeto con ese nombre es el que aparecerá en el objeto final."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Desencadenadores"
     }
   ],
   "pozypE": [
@@ -5882,12 +6026,6 @@
       "value": "Obligatorio. Nombre de la propiedad nueva o existente."
     }
   ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Código"
-    }
-  ],
   "xYyPR8": [
     {
       "type": 0,
@@ -5916,6 +6054,12 @@
     {
       "type": 0,
       "value": "Valor"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Iniciar sesión"
     }
   ],
   "y3AZQB": [

@@ -375,7 +375,7 @@ function extractPathFromUri(baseUri: string, path: string): string {
     throw new Error(`Basepath specified in swagger '${basePath}' is not according to swagger specs. It does not start with '/'`);
   }
 
-  // NOTE(ramacfar): Protocol should always be added while saving HTTP+Swagger, some older workflows may not have had it. Backcompat.
+  // Note: Protocol should always be added while saving HTTP+Swagger, some older workflows may not have had it. Backcompat.
   if (!/^\s*(?:https?|wss?):/i.test(uri)) {
     uri = `https://${uri}`;
   }

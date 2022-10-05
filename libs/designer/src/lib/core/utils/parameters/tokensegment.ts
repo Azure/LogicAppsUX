@@ -238,7 +238,7 @@ export class TokenSegmentConvertor {
         break;
     }
 
-    // TODO(tonytang): Please fix the below logic, it seems redundant to check and return the same output source.
+    // TODO: Please fix the below logic, it seems redundant to check and return the same output source.
     if (dereferences.length >= 1) {
       const dereferenceExpression = dereferences[0].expression;
       if (isStringLiteral(dereferenceExpression)) {
