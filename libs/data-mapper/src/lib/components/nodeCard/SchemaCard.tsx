@@ -162,8 +162,7 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 };
 
 export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, childArrayConnections } =
-    props.data;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron } = props.data;
   const dispatch = useDispatch<AppDispatch>();
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
@@ -199,7 +198,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
     setIsHover(false);
   };
 
-  const isNBadgeRequired = childArrayConnections.length > 0 && schemaNode.properties === SchemaNodeProperties.Repeating;
+  const isNBadgeRequired = schemaNode.properties === SchemaNodeProperties.Repeating; // danielle only if child conn.
 
   return (
     <div className={classes.badgeContainer}>
