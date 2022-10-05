@@ -282,7 +282,7 @@ export class SwaggerParser {
   }
 
   getOperationByOperationId(operationId: string): Operation {
-    const operations = this.getOperations({ unsorted: true });
+    const operations = this.getOperations({ unsorted: true, excludeInternalOperations: false });
     return getPropertyValue(operations, operationId);
   }
 

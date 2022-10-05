@@ -4979,6 +4979,12 @@
       "value": "(UTC+13:00) Samoa"
     }
   ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
+    }
+  ],
   "pC2nr2": [
     {
       "type": 0,
