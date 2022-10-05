@@ -33,7 +33,12 @@ export const ButtonContainer: React.FC<ButtonContainerProps> = ({
     return (
       <StackItem key={index}>
         <Tooltip content={buttonProps.tooltip} relationship="label">
-          <Button style={{ border: '0px', borderRadius: '0px' }} icon={<BundledIcon filled={buttonProps.filled} />} {...buttonProps} />
+          <Button
+            style={{ border: '0px', borderRadius: '0px' }}
+            // filled must be either true or undefined or error is thrown as native element can't have false as value
+            icon={<BundledIcon filled={buttonProps.filled ? buttonProps.filled : undefined} />}
+            {...buttonProps}
+          />
         </Tooltip>
       </StackItem>
     );
