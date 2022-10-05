@@ -90,7 +90,7 @@ export const SharedTreeItemContent = (node: SchemaNodeExtended, isSelected: bool
   const BundledTypeIcon = icon16ForSchemaNodeType(node.schemaNodeDataType, node.properties);
   return (
     <span style={{ display: 'flex', paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} slot="start">
-      <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={isSelected} />
+      <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={isSelected ? isSelected : undefined} />
     </span>
   );
 };
