@@ -335,41 +335,35 @@ export const updateDynamicDataInNodes = async (
     const connectionId = getConnectionId(rootState.connections, nodeId);
     const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
     const nodeOperationInfo = operationInfo[nodeId];
-    const isManifestBased = nodeOperationInfo
-      ? OperationManifestService().isSupported(nodeOperationInfo.type, nodeOperationInfo.kind)
-      : false;
 
-    // TODO - The below if check should be removed once swagger based operations are correctly implemented
-    if (isManifestBased) {
-      loadDynamicData(
-        nodeId,
-        isTrigger,
-        nodeOperationInfo,
-        connectionId,
-        nodeDependencies,
-        nodeInputs,
-        nodeSettings,
-        getAllVariables(variables),
-        dispatch,
-        operation
-      );
+    loadDynamicData(
+      nodeId,
+      isTrigger,
+      nodeOperationInfo,
+      connectionId,
+      nodeDependencies,
+      nodeInputs,
+      nodeSettings,
+      getAllVariables(variables),
+      dispatch,
+      operation
+    );
 
-      for (const parameterKey of Object.keys(nodeDependencies.inputs)) {
-        const dependencyInfo = nodeDependencies.inputs[parameterKey];
-        if (dependencyInfo.dependencyType === 'ListValues') {
-          const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
-          if (details) {
-            loadDynamicValuesForParameter(
-              nodeId,
-              details.groupId,
-              details.parameter.id,
-              nodeOperationInfo,
-              connectionId,
-              nodeInputs,
-              nodeDependencies,
-              dispatch
-            );
-          }
+    for (const parameterKey of Object.keys(nodeDependencies.inputs)) {
+      const dependencyInfo = nodeDependencies.inputs[parameterKey];
+      if (dependencyInfo.dependencyType === 'ListValues') {
+        const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
+        if (details) {
+          loadDynamicValuesForParameter(
+            nodeId,
+            details.groupId,
+            details.parameter.id,
+            nodeOperationInfo,
+            connectionId,
+            nodeInputs,
+            nodeDependencies,
+            dispatch
+          );
         }
       }
     }
