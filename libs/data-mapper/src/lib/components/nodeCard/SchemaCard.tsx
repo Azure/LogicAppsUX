@@ -203,7 +203,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
 
   return (
     <div className={classes.badgeContainer}>
-      {true && (
+      {isNBadgeRequired && schemaType === SchemaTypes.Target && (
         <Tooltip content="Array Mapping" relationship="label">
           <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
             N

@@ -280,6 +280,7 @@ export const dataMapSlice = createSlice({
         for (const key in connections) {
           if (connections[key].isSelected) {
             delete connections[key];
+            // delete child if necessary
           }
         }
 

@@ -248,7 +248,7 @@ export const useLayout = (
   return [reactFlowNodes, reactFlowEdges];
 };
 
-const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: string, nodeType: SchemaTypes): Connection[] => {
+export const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: string, nodeType: SchemaTypes): Connection[] => {
   const connectionsForNode: Connection[] = [];
   Object.keys(connections).forEach((key) => {
     if ((nodeType === SchemaTypes.Source && key.startsWith(nodeKey)) || (nodeType === SchemaTypes.Target && key.endsWith(nodeKey))) {
