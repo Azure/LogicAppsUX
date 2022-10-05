@@ -58,7 +58,7 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
       // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
       if (isSchemaNodeExtended(connection.destination.node)) {
         if (isSchemaNodeExtended(source.node)) {
-          applyValueAtPath(source.node.name, mapDefinition, connection.destination.node.pathToRoot);
+          applyValueAtPath(source.node.fullName, mapDefinition, connection.destination.node.pathToRoot);
         } else {
           const value = collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
           applyValueAtPath(value, mapDefinition, connection.destination.node.pathToRoot);
