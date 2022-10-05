@@ -245,17 +245,19 @@ export const dataMapSlice = createSlice({
     deleteCurrentlySelectedItem: (state) => {
       const selectedNode = state.curDataMapOperation.currentlySelectedNode;
 
-      if (selectedNode && selectedNode.nodeType !== NodeType.Target) {
-        switch (selectedNode.nodeType) {
+      if (selectedNode && selectedNode.type !== NodeType.Target) {
+        switch (selectedNode.type) {
           case NodeType.Source: {
-            const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== selectedNode.name);
+            const sourceNode = state.curDataMapOperation.flattenedSourceSchema[selectedNode.id];
+
+            const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== sourceNode.name);
 
             const srcNodeHasConnections = Object.values(state.curDataMapOperation.dataMapConnections).some((connection) =>
-              connection.sources.some((source) => source.node.key === selectedNode.path)
+              connection.sources.some((source) => source.node.key === sourceNode.key)
             );
 
             if (srcNodeHasConnections) {
-              state.notificationData = { type: NotificationTypes.SourceNodeRemoveFailed, msgParam: selectedNode.name };
+              state.notificationData = { type: NotificationTypes.SourceNodeRemoveFailed, msgParam: sourceNode.name };
               return;
             }
 
