@@ -19,12 +19,12 @@ const useStyles = makeStyles({
   addFnBtn: {
     color: tokens.colorCompoundBrandForeground1,
     backgroundColor: tokens.colorNeutralBackground1,
-    boxShadow: tokens.shadow4,
+    //boxShadow: tokens.shadow4,
 
     ':hover': {
       color: tokens.colorCompoundBrandForeground1Hover,
       backgroundColor: tokens.colorNeutralBackground1Hover,
-      boxShadow: tokens.shadow8,
+      //boxShadow: tokens.shadow8,
     },
   },
   addFnPlaceholder: {
@@ -76,12 +76,17 @@ export const ConnectionEdge = (props: EdgeProps) => {
       >
         {data?.isHovered && (
           <Tooltip relationship="label" content={insertFnLoc}>
-            <Button shape="circular" icon={<Add20Filled />} onClick={onAddFunctionClick} className={styles.addFnBtn} />
+            <Button
+              shape="circular"
+              icon={<Add20Filled style={{ height: 16, width: 16 }} />}
+              onClick={onAddFunctionClick}
+              className={styles.addFnBtn}
+            />
           </Tooltip>
         )}
 
         {false && ( // TODO: Hook up this condition (actually adding Fn)
-          <Button shape="circular" icon={<Add20Filled />} className={styles.addFnPlaceholder} />
+          <Button shape="circular" icon={<Add20Filled />} className={styles.addFnPlaceholder} disabled />
         )}
       </foreignObject>
     </>
