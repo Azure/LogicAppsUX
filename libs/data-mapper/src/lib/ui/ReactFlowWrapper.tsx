@@ -96,7 +96,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
-  const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
+  const [displayToolboxItem, setDisplayToolboxItem] = useState<string>('');
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
 
   const reactFlowRef = useRef<HTMLDivElement>(null);
@@ -123,7 +123,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
     if (data.value === displayToolboxItem) {
-      setDisplayToolboxItem(undefined);
+      setDisplayToolboxItem('');
     } else {
       setDisplayToolboxItem(data.value as string);
     }
@@ -135,7 +135,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       dispatch(setCurrentlySelectedNode(undefined));
     }
 
-    setDisplayToolboxItem(undefined);
+    setDisplayToolboxItem('');
   };
 
   const onFunctionItemClick = (selectedFunction: FunctionData) => {
