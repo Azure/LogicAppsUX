@@ -25,6 +25,7 @@
     "build:designer-client-services": "nx run services-designer-client-services:build",
     "build:parsers": "nx run parsers:build",
     "build:vscode-react": "nx run vs-code-react:build",
+    "build:vscode-designer": "nx run vs-code-designer:build",
     "build:utils": "nx run utils:build",
     "bump": "standard-version --no-verify",
     "vscode:designer:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package",
