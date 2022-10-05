@@ -1,4 +1,4 @@
-import type { IIse, ISubscription, IDropDownOption } from '../../../run-service';
+import type { IIse, IRegion, ISubscription, IDropDownOption } from '../../../run-service';
 
 export const parseSubscriptionsData = (subscriptionsData: { subscriptions: Array<ISubscription> }): Array<IDropDownOption> => {
   const { subscriptions } = subscriptionsData;
@@ -9,11 +9,16 @@ export const parseSubscriptionsData = (subscriptionsData: { subscriptions: Array
 };
 
 export const parseIseData = (iseData: { ise: Array<IIse> }): Array<IDropDownOption> => {
-  const { ise } = iseData;
-  return ise.map((iseInstance: IIse) => {
-    return { key: iseInstance.id, text: iseInstance.iseName, data: iseInstance.location };
+  return iseData.ise.map((iseInstance: IIse) => {
+    return { key: `ise:${iseInstance.id}`, text: iseInstance.iseName, data: iseInstance.location };
   });
 };
+
+export function parseRegionData(regionData: Array<IRegion>): Array<IDropDownOption> {
+  return regionData.map((region: IRegion) => {
+    return { key: `region:${region.name}`, text: `${region.displayName}`, data: region.name };
+  });
+}
 
 export const getDropdownPlaceholder = (
   isLoading: boolean,

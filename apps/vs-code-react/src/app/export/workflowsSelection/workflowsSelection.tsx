@@ -1,13 +1,13 @@
 import WarningIcon from '../../../resources/Caution.svg';
 import { QueryKeys } from '../../../run-service';
-import type { WorkflowsList, SelectedWorkflowsList, Workflow } from '../../../run-service';
+import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service';
 import { ApiService } from '../../../run-service/export/index';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { updateSelectedWorkFlows } from '../../../state/vscodeSlice';
 import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { AdvancedOptions } from './advancedOptions';
 import { Filters } from './filters';
-import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups, parseWorkflowData, updateSelectedItems } from './helper';
+import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups, updateSelectedItems } from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
@@ -19,7 +19,7 @@ import { useDispatch, useSelector } from 'react-redux';
 export const WorkflowsSelection: React.FC = () => {
   const vscodeState = useSelector((state: RootState) => state.vscode);
   const { baseUrl, accessToken, exportData } = vscodeState as InitializedVscodeState;
-  const { selectedSubscription, selectedIse, selectedWorkflows } = exportData;
+  const { selectedSubscription, selectedIse, selectedWorkflows, location } = exportData;
 
   const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList> | null>(null);
   const [resourceGroups, setResourceGroups] = useState<IDropdownOption[]>([]);
@@ -77,22 +77,21 @@ export const WorkflowsSelection: React.FC = () => {
   }, [accessToken, baseUrl]);
 
   const loadWorkflows = () => {
-    return apiService.getWorkflows(selectedSubscription, selectedIse);
+    return apiService.getWorkflows(selectedSubscription, selectedIse, location);
   };
 
-  const onWorkflowsSuccess = (workflows: Workflow[]) => {
-    const workflowItems: Array<WorkflowsList> = !workflows ? [] : parseWorkflowData(workflows);
-    const resourceGroups: IDropdownOption[] = !workflows ? [] : parseResourceGroups(workflowItems);
+  const onWorkflowsSuccess = (workflows: WorkflowsList[]) => {
+    const resourceGroups: IDropdownOption[] = !workflows ? [] : parseResourceGroups(workflows);
 
-    setRenderWorkflows(workflowItems);
+    setRenderWorkflows(workflows);
     setResourceGroups(resourceGroups);
-    allWorkflows.current = workflowItems;
-    allItemsSelected.current = workflowItems.map((workflow) => {
+    allWorkflows.current = workflows;
+    allItemsSelected.current = workflows.map((workflow) => {
       return { ...workflow, selected: false, rendered: true };
     });
   };
 
-  const { isLoading: isWorkflowsLoading } = useQuery<any>([QueryKeys.workflowsData, { iseId: selectedIse }], loadWorkflows, {
+  const { isLoading: isWorkflowsLoading } = useQuery<any>([QueryKeys.workflowsData, { location, iseId: selectedIse }], loadWorkflows, {
     refetchOnWindowFocus: false,
     onSuccess: onWorkflowsSuccess,
   });
