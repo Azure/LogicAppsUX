@@ -27,10 +27,10 @@ const useStyles = makeStyles({
 });
 
 interface FunctionNodePropertiesTabProps {
-  fnNodeKey: string;
+  nodeKey: string;
 }
 
-export const FunctionNodePropertiesTab = ({ fnNodeKey }: FunctionNodePropertiesTabProps): JSX.Element => {
+export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -56,7 +56,7 @@ export const FunctionNodePropertiesTab = ({ fnNodeKey }: FunctionNodePropertiesT
     description: `Function doesn't have or require inputs`,
   });
 
-  const functionNode = useMemo(() => functionNodeDictionary[fnNodeKey], [fnNodeKey, functionNodeDictionary]);
+  const functionNode = useMemo(() => functionNodeDictionary[nodeKey], [nodeKey, functionNodeDictionary]);
 
   const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionNode.category), [functionNode]);
 

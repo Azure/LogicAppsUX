@@ -20,10 +20,10 @@ const useStyles = makeStyles({
 });
 
 interface SchemaNodePropertiesTabProps {
-  currentSchemaNode: SelectedNode;
+  currentNode: SelectedNode;
 }
 
-export const SchemaNodePropertiesTab = ({ currentSchemaNode }: SchemaNodePropertiesTabProps): JSX.Element => {
+export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -70,15 +70,15 @@ export const SchemaNodePropertiesTab = ({ currentSchemaNode }: SchemaNodePropert
     description: 'Default value',
   });
 
-  const isTargetSchemaNode = useMemo(() => currentSchemaNode.type === NodeType.Target, [currentSchemaNode]);
+  const isTargetSchemaNode = useMemo(() => currentNode.type === NodeType.Target, [currentNode]);
 
   const schemaNode = useMemo(() => {
     if (isTargetSchemaNode) {
-      return targetSchemaDictionary[currentSchemaNode.id];
+      return targetSchemaDictionary[currentNode.id];
     } else {
-      return sourceSchemaDictionary[currentSchemaNode.id];
+      return sourceSchemaDictionary[currentNode.id];
     }
-  }, [currentSchemaNode, isTargetSchemaNode, sourceSchemaDictionary, targetSchemaDictionary]);
+  }, [currentNode, isTargetSchemaNode, sourceSchemaDictionary, targetSchemaDictionary]);
 
   const DataTypeIcon = icon16ForSchemaNodeType(schemaNode.schemaNodeDataType);
 

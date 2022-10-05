@@ -199,9 +199,9 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
         if (currentNode.type === NodeType.Function) {
-          return <FunctionNodePropertiesTab fnNodeKey={currentNode.id} />;
+          return <FunctionNodePropertiesTab nodeKey={currentNode.id} />;
         } else {
-          return <SchemaNodePropertiesTab currentSchemaNode={currentNode} />;
+          return <SchemaNodePropertiesTab currentNode={currentNode} />;
         }
       case TABS.CODE:
         return <CodeTab />;
