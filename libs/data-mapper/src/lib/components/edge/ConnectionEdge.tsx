@@ -1,11 +1,19 @@
 import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
-import { Add24Filled } from '@fluentui/react-icons';
+import { Add20Filled } from '@fluentui/react-icons';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { BaseEdge, getSmoothStepPath } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
 const addFunctionBtnSize = 32;
+
+const getLineColor = (isSelected: boolean, isHovered: boolean) => {
+  if (isSelected) {
+    return tokens.colorCompoundBrandStroke;
+  } else {
+    return isHovered ? tokens.colorNeutralStroke1Hover : tokens.colorNeutralStroke1;
+  }
+};
 
 const useStyles = makeStyles({
   addFnBtn: {
@@ -27,7 +35,7 @@ const useStyles = makeStyles({
 });
 
 export const ConnectionEdge = (props: EdgeProps) => {
-  const { id, data, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition } = props;
+  const { id, data, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, selected } = props;
   const intl = useIntl();
   const styles = useStyles();
 
@@ -49,7 +57,16 @@ export const ConnectionEdge = (props: EdgeProps) => {
 
   return (
     <>
-      <BaseEdge path={edgePath} labelX={labelX} labelY={labelY} {...props} />
+      <BaseEdge
+        path={edgePath}
+        labelX={labelX}
+        labelY={labelY}
+        {...props}
+        style={{
+          strokeWidth: tokens.strokeWidthThick,
+          color: getLineColor(!!selected, !!data?.isHovered),
+        }}
+      />
 
       <foreignObject
         width={addFunctionBtnSize}
@@ -59,12 +76,12 @@ export const ConnectionEdge = (props: EdgeProps) => {
       >
         {data?.isHovered && (
           <Tooltip relationship="label" content={insertFnLoc}>
-            <Button shape="circular" icon={<Add24Filled />} onClick={onAddFunctionClick} className={styles.addFnBtn} />
+            <Button shape="circular" icon={<Add20Filled />} onClick={onAddFunctionClick} className={styles.addFnBtn} />
           </Tooltip>
         )}
 
         {false && ( // TODO: Hook up this condition (actually adding Fn)
-          <Button shape="circular" icon={<Add24Filled />} className={styles.addFnPlaceholder} />
+          <Button shape="circular" icon={<Add20Filled />} className={styles.addFnPlaceholder} />
         )}
       </foreignObject>
     </>

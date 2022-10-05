@@ -296,6 +296,7 @@ export const dataMapSlice = createSlice({
         }
 
         doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: connections });
+        state.notificationData = { type: NotificationTypes.ConnectionDeleted };
       }
     },
 

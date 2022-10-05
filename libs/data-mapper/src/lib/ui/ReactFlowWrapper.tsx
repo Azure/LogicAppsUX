@@ -252,10 +252,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   );
 
   const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
-    const selectedNode = edges.find((edge) => edge.id === node.id);
-    if (selectedNode) {
-      selectedNode.selected = !selectedNode.selected;
-    }
     if (node) {
       dispatch(setCurrentlySelectedEdge(node.target));
     }
