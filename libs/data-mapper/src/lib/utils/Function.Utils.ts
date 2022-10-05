@@ -37,4 +37,22 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
   }
 };
 
+/* XXX
+export const findFunctionForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
+  if (schemaNode.key === nodeKey) {
+    return schemaNode;
+  }
+
+  let result: SchemaNodeExtended | undefined = undefined;
+  schemaNode.children.forEach((childNode) => {
+    const tempResult = findNodeForKey(nodeKey, childNode);
+
+    if (tempResult) {
+      result = tempResult;
+    }
+  });
+
+  return result;
+}; */
+
 export const isFunctionData = (node: SchemaNodeExtended | FunctionData): node is FunctionData => 'functionName' in node;

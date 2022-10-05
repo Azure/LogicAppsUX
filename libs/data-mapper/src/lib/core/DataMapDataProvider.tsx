@@ -4,7 +4,9 @@ import { SchemaTypes } from '../models/Schema';
 import { convertFromMapDefinition } from '../utils/DataMap.Utils';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
+import { getFunctions } from './queries/functions';
 import { setInitialDataMap, setInitialSchema, setXsltFilename } from './state/DataMapSlice';
+import { loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
 import React, { useContext, useEffect, useMemo } from 'react';
@@ -71,6 +73,14 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
       dispatch(setAvailableSchemas(availableSchemas));
     }
   }, [dispatch, availableSchemas]);
+
+  useEffect(() => {
+    async function fetchFunctions() {
+      dispatch(loadFunctions(await getFunctions()));
+    }
+
+    fetchFunctions();
+  }, [dispatch]);
 
   return <>{children}</>;
 };

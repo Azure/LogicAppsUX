@@ -85,9 +85,9 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { fitView, zoomIn, zoomOut, project } = useReactFlow();
 
+  const selectedFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
-  const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
@@ -173,10 +173,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (connection.target && connection.source) {
       const source = connection.source.startsWith(sourcePrefix)
         ? flattenedSourceSchema[connection.source]
-        : allFunctionNodes[connection.source];
+        : selectedFunctionNodes[connection.source];
       const destination = connection.target.startsWith(targetPrefix)
         ? flattenedTargetSchema[connection.target]
-        : allFunctionNodes[connection.target];
+        : selectedFunctionNodes[connection.target];
 
       dispatch(
         makeConnection({
@@ -359,7 +359,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     currentlyAddedSourceNodes,
     connectedSourceNodes,
     flattenedSourceSchema,
-    allFunctionNodes,
+    selectedFunctionNodes,
     currentTargetNode,
     connections
   );

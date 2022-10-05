@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 export interface FunctionListProps {
+  //  functionData: FunctionData[];
   onFunctionClick: (functionNode: FunctionData) => void;
 }
 
@@ -24,6 +25,7 @@ const buttonHoverStyles = makeStyles({
 });
 
 export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListProps) => {
+  //  const functionListData = useQuery<FunctionData[]>(['functions'], () => props.functionData);
   const functionListData = useQuery<FunctionData[]>(['functions'], () => getFunctions());
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortedFunctionsByCategory, setSortedFunctionsByCategory] = useState<FunctionData[]>([]);
@@ -66,8 +68,6 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
 
         newSortedFunctions = dataCopy.sort((a, b) => a.category.localeCompare(b.category));
       } else {
-        dataCopy = functionListData.data;
-
         Object.values(FunctionCategory).forEach((category) => categoriesArray.push(category));
 
         newSortedFunctions = dataCopy.sort((a, b) => {

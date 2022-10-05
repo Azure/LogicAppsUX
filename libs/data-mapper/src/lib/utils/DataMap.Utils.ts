@@ -10,7 +10,7 @@ import { InvalidFormatException, InvalidFormatExceptionCode } from '../exception
 import type { Connection, ConnectionDictionary, LoopConnection } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
-import type { PathItem, SchemaExtended } from '../models/Schema';
+import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
 import { isFunctionData } from './Function.Utils';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import yaml from 'js-yaml';
@@ -25,6 +25,9 @@ export const convertToMapDefinition = (
 
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
+
+    console.log(yaml.dump(mapDefinition));
+    // const temp = convertFromMapDefinition(mapDefinition, sourceSchema, targetSchema);
 
     return yaml.dump(mapDefinition);
   }
@@ -171,7 +174,13 @@ const parseDefinitionToConnection = (
   // Basic leaf node
   if (typeof sourceNodeObject === 'string') {
     const destinationNode = findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
-    const sourceNode = findNodeForKey(sourceNodeObject, sourceSchema.schemaTreeRoot);
+
+    let sourceNode: SchemaNodeExtended | FunctionData | undefined;
+    if (sourceNodeKey.indexOf('(')) {
+      sourceNode = undefined; // XXX findFunctionForKey(sourceNodeObject, sourceSchema.schemaTreeRoot);
+    } else {
+      sourceNode = findNodeForKey(sourceNodeObject, sourceSchema.schemaTreeRoot);
+    }
 
     if (sourceNode && destinationNode) {
       if (!connections[targetKey]) {
