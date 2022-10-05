@@ -1,21 +1,49 @@
-import { Button } from '@fluentui/react-components';
-import { AddCircle20Regular } from '@fluentui/react-icons';
+import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
+import { Add24Filled } from '@fluentui/react-icons';
 import React, { useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import { BaseEdge, getSmoothStepPath } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
 const addFunctionBtnSize = 32;
 
+const useStyles = makeStyles({
+  addFnBtn: {
+    color: tokens.colorCompoundBrandForeground1,
+    backgroundColor: tokens.colorNeutralBackground1,
+    boxShadow: tokens.shadow4,
+
+    ':hover': {
+      color: tokens.colorCompoundBrandForeground1Hover,
+      backgroundColor: tokens.colorNeutralBackground1Hover,
+      boxShadow: tokens.shadow8,
+    },
+  },
+  addFnPlaceholder: {
+    color: tokens.colorCompoundBrandForeground1,
+    backgroundColor: tokens.colorBrandBackground2,
+    ...shorthands.border('1px', 'dashed', tokens.colorCompoundBrandStroke),
+  },
+});
+
 export const ConnectionEdge = (props: EdgeProps) => {
   const { id, data, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition } = props;
+  const intl = useIntl();
+  const styles = useStyles();
 
   const [edgePath, labelX, labelY] = useMemo(
     () => getSmoothStepPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition }),
     [sourcePosition, sourceX, sourceY, targetX, targetY, targetPosition]
   );
 
+  const insertFnLoc = intl.formatMessage({
+    defaultMessage: 'Insert function',
+    description: 'Message to insert function',
+  });
+
   const onAddFunctionClick = (event: React.MouseEvent) => {
     event.stopPropagation();
+
     console.log(id);
   };
 
@@ -29,7 +57,15 @@ export const ConnectionEdge = (props: EdgeProps) => {
         x={labelX - addFunctionBtnSize / 2}
         y={labelY - addFunctionBtnSize / 2}
       >
-        {data?.isHovered && <Button appearance="transparent" icon={<AddCircle20Regular />} onClick={onAddFunctionClick} />}
+        {data?.isHovered && (
+          <Tooltip relationship="label" content={insertFnLoc}>
+            <Button shape="circular" icon={<Add24Filled />} onClick={onAddFunctionClick} className={styles.addFnBtn} />
+          </Tooltip>
+        )}
+
+        {false && ( // TODO: Hook up this condition (actually adding Fn)
+          <Button shape="circular" icon={<Add24Filled />} className={styles.addFnPlaceholder} />
+        )}
       </foreignObject>
     </>
   );
