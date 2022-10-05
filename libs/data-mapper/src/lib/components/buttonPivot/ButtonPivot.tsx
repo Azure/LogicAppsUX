@@ -8,7 +8,7 @@ export interface ButtonPivotProps {
   yPos: string;
   buttons: ButtonPivotButtonProps[];
   horizontal: boolean;
-  selectedValue: string | undefined;
+  selectedValue: string;
   onTabSelect?: (_event: SelectTabEvent, data: SelectTabData) => void;
 }
 

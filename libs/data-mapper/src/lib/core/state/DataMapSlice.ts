@@ -232,13 +232,14 @@ export const dataMapSlice = createSlice({
       edge.isSelected = !edge.isSelected;
     },
 
-    setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
-      const newState: DataMapOperationState = {
-        ...state.curDataMapOperation,
-        currentlySelectedNode: action.payload,
-      };
+    unsetSelectedEdges: (state) => {
+      Object.keys(state.curDataMapOperation.dataMapConnections).forEach((key: string) => {
+        state.curDataMapOperation.dataMapConnections[key].isSelected = false;
+      });
+    },
 
-      doDataMapOperation(state, newState);
+    setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
+      state.curDataMapOperation.currentlySelectedNode = action.payload;
     },
 
     deleteCurrentlySelectedItem: (state) => {
@@ -296,6 +297,7 @@ export const dataMapSlice = createSlice({
         }
 
         doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: connections });
+        state.notificationData = { type: NotificationTypes.ConnectionDeleted };
       }
     },
 
@@ -485,6 +487,7 @@ export const {
   discardDataMap,
   deleteCurrentlySelectedItem,
   setCurrentlySelectedEdge,
+  unsetSelectedEdges,
   showNotification,
   hideNotification,
 } = dataMapSlice.actions;
