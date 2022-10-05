@@ -68,7 +68,7 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
             </div>
           </span>
 
-          <Text style={{ marginLeft: '8px' }}>{currentNode.name}</Text>
+          <Text style={{ marginLeft: '8px' }}>{currentNode.branding.displayName}</Text>
         </Stack>
 
         <Text style={{ marginTop: '8px' }}>{currentNode.description}</Text>

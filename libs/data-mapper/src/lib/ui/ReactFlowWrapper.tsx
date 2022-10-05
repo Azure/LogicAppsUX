@@ -159,12 +159,13 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   };
 
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
+    console.log(node);
     if (node.type === ReactFlowNodeType.SchemaNode) {
       if (node.data.schemaType === SchemaTypes.Source) {
         const selectedSourceNode: SelectedSourceNode = {
           nodeType: NodeType.Source,
           name: node.data.schemaNode.name,
-          path: node.id.replace(sourcePrefix, ''),
+          path: node.data.schemaNode.key,
           dataType: node.data.schemaNode.schemaNodeDataType,
         };
 
@@ -173,7 +174,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         const selectedTargetNode: SelectedTargetNode = {
           nodeType: NodeType.Target,
           name: node.data.schemaNode.name,
-          path: node.id.replace(targetPrefix, ''),
+          path: node.data.schemaNode.key,
           dataType: node.data.schemaNode.schemaNodeDataType,
           defaultValue: '', // TODO: this property and below
           doNotGenerateIfNoValue: true,
