@@ -1467,6 +1467,12 @@
       "value": "Sortie"
     }
   ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1573,6 +1579,12 @@
     {
       "type": 0,
       "value": "Réponse"
+    }
+  ],
+  "EV9iRu": [
+    {
+      "type": 0,
+      "value": "Failed to save."
     }
   ],
   "EYqGxA": [
@@ -2467,6 +2479,20 @@
     {
       "type": 0,
       "value": "Sélectionnez une identité"
+    }
+  ],
+  "NtY1mD": [
+    {
+      "type": 0,
+      "value": "Remove all references to node ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the node."
     }
   ],
   "NvANon": [
@@ -3960,6 +3986,12 @@
       "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -4853,6 +4885,12 @@
       "value": "Ajouter une action"
     }
   ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -5105,6 +5143,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
     }
   ],
   "pC2nr2": [

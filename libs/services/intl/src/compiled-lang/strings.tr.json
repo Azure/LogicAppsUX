@@ -1397,6 +1397,12 @@
       "value": "Çıkış"
     }
   ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1503,6 +1509,12 @@
     {
       "type": 0,
       "value": "Yanıt"
+    }
+  ],
+  "EV9iRu": [
+    {
+      "type": 0,
+      "value": "Failed to save."
     }
   ],
   "EYqGxA": [
@@ -2347,6 +2359,20 @@
     {
       "type": 0,
       "value": "Lütfen kimlik seçin"
+    }
+  ],
+  "NtY1mD": [
+    {
+      "type": 0,
+      "value": "Remove all references to node ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the node."
     }
   ],
   "NvANon": [
@@ -3813,6 +3839,12 @@
       "value": "(UTC+02:00) Harare, Pretoria"
     }
   ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
+    }
+  ],
   "dDYCuU": [
     {
       "type": 0,
@@ -4671,6 +4703,12 @@
       "value": "Eylem ekle"
     }
   ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -4923,6 +4961,12 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
     }
   ],
   "pC2nr2": [
