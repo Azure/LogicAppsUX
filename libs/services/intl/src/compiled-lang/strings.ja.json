@@ -535,7 +535,7 @@
   "3ERi+E": [
     {
       "type": 0,
-      "value": "サービス条件"
+      "value": "サービス使用条件"
     }
   ],
   "3FoqCK": [
@@ -1375,6 +1375,12 @@
       "value": "出力"
     }
   ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1462,7 +1468,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "サインインしています..."
+      "value": "サインイン中..."
     }
   ],
   "E9OS+9": [
@@ -1481,6 +1487,12 @@
     {
       "type": 0,
       "value": "応答"
+    }
+  ],
+  "EV9iRu": [
+    {
+      "type": 0,
+      "value": "Failed to save."
     }
   ],
   "EYqGxA": [
@@ -1504,7 +1516,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "サインインして "
     },
     {
       "type": 1,
@@ -1512,7 +1524,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " への接続を作成します。"
     }
   ],
   "EjXdAm": [
@@ -2307,6 +2319,20 @@
     {
       "type": 0,
       "value": "ID を選択してください"
+    }
+  ],
+  "NtY1mD": [
+    {
+      "type": 0,
+      "value": "Remove all references to node ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the node."
     }
   ],
   "NvANon": [
@@ -3533,7 +3559,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "次のエラーで失敗しました: "
     },
     {
       "type": 1,
@@ -3541,7 +3567,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": "。もう一度サインインしてください。"
     }
   ],
   "ahsVI/": [
@@ -3760,6 +3786,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) ハラーレ、プレトリア"
+    }
+  ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
     }
   ],
   "dDYCuU": [
@@ -4293,12 +4325,6 @@
       "value": "プロパティ"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "テスト"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4615,6 +4641,12 @@
       "value": "アクションの追加"
     }
   ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -4660,7 +4692,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "コネクタにサインイン"
     }
   ],
   "mjS/k1": [
@@ -4860,13 +4892,19 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "アプリ内"
     }
   ],
   "p5tz8/": [
     {
       "type": 0,
       "value": "(UTC+13:00) サモア"
+    }
+  ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
     }
   ],
   "pC2nr2": [
@@ -5684,12 +5722,6 @@
     {
       "type": 0,
       "value": "必須。新規または既存のプロパティの名前。"
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "コード"
     }
   ],
   "xYyPR8": [

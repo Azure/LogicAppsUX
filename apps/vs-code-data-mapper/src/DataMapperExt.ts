@@ -1,4 +1,12 @@
-import { dataMapDefinitionsPath, dataMapsPath, schemasPath, webviewTitle } from './extensionConfig';
+import {
+  dataMapDefinitionsPath,
+  dataMapsPath,
+  defaultDatamapFilename,
+  mapDefinitionExtension,
+  mapXsltExtension,
+  schemasPath,
+  webviewTitle,
+} from './extensionConfig';
 import type { ChildProcess } from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
@@ -6,11 +14,14 @@ import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ExtensionContext, OutputChannel } from 'vscode';
 
 type SchemaType = 'source' | 'target';
+type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string };
 
 type SendingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: SchemaType } }
-  | { command: 'loadDataMap' | 'loadNewDataMap'; data: any }
-  | { command: 'showAvailableSchemas'; data: string[] };
+  | { command: 'loadNewDataMap'; data: MapDefinitionEntry }
+  | { command: 'loadDataMap'; data: { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string } }
+  | { command: 'showAvailableSchemas'; data: string[] }
+  | { command: 'setXsltFilename'; data: string };
 type ReceivingMessageTypes =
   | {
       command: 'addSchemaFromFile' | 'readLocalFileOptions';
@@ -167,10 +178,10 @@ export default class DataMapperExt {
 
   public static saveDataMap(isDefinition: boolean, fileContents: string) {
     if (!DataMapperExt.currentDataMapName) {
-      DataMapperExt.currentDataMapName = 'default';
+      DataMapperExt.currentDataMapName = defaultDatamapFilename;
     }
 
-    const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? '.yml' : '.xsl'}`;
+    const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? mapDefinitionExtension : mapXsltExtension}`;
     const folderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), isDefinition ? dataMapDefinitionsPath : dataMapsPath);
     const filePath = path.join(folderPath, fileName);
 
@@ -178,8 +189,32 @@ export default class DataMapperExt {
     // - harmless if directory already exists
     fs.mkdir(folderPath, { recursive: true })
       .then(() => {
-        fs.writeFile(filePath, fileContents, 'utf8');
+        fs.writeFile(filePath, fileContents, 'utf8').then(() => {
+          if (!isDefinition) {
+            // If XSLT, re-check/set xslt filename
+            DataMapperExt.checkForAndSetXsltFilename();
+          }
+        });
       })
       .catch(DataMapperExt.showError);
+  }
+
+  public static checkForAndSetXsltFilename() {
+    const expectedXsltPath = path.join(
+      DataMapperExt.getWorkspaceFolderFsPath(),
+      dataMapsPath,
+      `${DataMapperExt.currentDataMapName}${mapXsltExtension}`
+    );
+
+    if (fileExists(expectedXsltPath)) {
+      DataMapperExt.currentPanel.sendMsgToWebview({
+        command: 'setXsltFilename',
+        data: DataMapperExt.currentDataMapName,
+      });
+    } else {
+      DataMapperExt.showError(
+        `XSLT data map file not detected for ${DataMapperExt.currentDataMapName} - save your data map to generate it`
+      );
+    }
   }
 }

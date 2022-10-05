@@ -9,6 +9,10 @@ export const schemasPath = `${artifactsPath}/Schemas`;
 export const dataMapsPath = `${artifactsPath}/Maps`;
 export const dataMapDefinitionsPath = `${artifactsPath}/MapDefinitions`;
 
+export const defaultDatamapFilename = 'default';
+export const mapDefinitionExtension = '.yml';
+export const mapXsltExtension = '.xslt';
+
 export const hostFileName = 'host.json';
 export const settingsFileName = 'local.settings.json';
 export const hostFileContent = {
@@ -29,7 +33,7 @@ export const settingsFileContent = {
   IsEncrypted: false,
   Values: {
     AzureWebJobsSecretStorageType: 'Files',
-    FUNCTIONS_WORKER_RUNTIME: 'node',
+    FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated',
   },
 };
 

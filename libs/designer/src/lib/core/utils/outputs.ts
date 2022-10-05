@@ -1,13 +1,16 @@
 import Constants from '../../common/constants';
 import { updateOutputsAndTokens } from '../actions/bjsworkflow/initialize';
 import type { Settings } from '../actions/bjsworkflow/settings';
+import { getConnectorWithSwagger } from '../queries/connections';
 import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokensSlice';
+import { getBrandColorFromConnector, getIconUriFromConnector } from './card';
 import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dynamicdata';
 import { getAllInputParameters, getTokenExpressionValue, isDynamicDataReadyToLoad } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
+import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { Expression, ExpressionFunction, ExpressionLiteral, OutputParameter, OutputParameters } from '@microsoft-logic-apps/parsers';
 import {
@@ -313,7 +316,6 @@ export const loadDynamicOutputsInNode = async (
   settings: Settings,
   dispatch: Dispatch
 ): Promise<void> => {
-  const manifest = await getOperationManifest(operationInfo);
   for (const outputKey of Object.keys(outputDependencies)) {
     const info = outputDependencies[outputKey];
     dispatch(clearDynamicOutputs(nodeId));
@@ -323,7 +325,7 @@ export const loadDynamicOutputsInNode = async (
         updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
       } else {
         const outputSchema = await getDynamicSchema(info, nodeInputs, connectionId, operationInfo);
-        let schemaOutputs = getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter);
+        let schemaOutputs = outputSchema ? getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter) : {};
 
         if (settings.splitOn?.value?.enabled) {
           schemaOutputs = updateOutputsForBatchingTrigger(schemaOutputs, settings.splitOn?.value?.value);
@@ -335,16 +337,22 @@ export const loadDynamicOutputsInNode = async (
         }, {});
 
         dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
+
+        let iconUri: string, brandColor: string;
+        if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
+          const manifest = await getOperationManifest(operationInfo);
+          iconUri = manifest.properties.iconUri;
+          brandColor = manifest.properties.brandColor;
+        } else {
+          const { connector } = await getConnectorWithSwagger(operationInfo.connectorId);
+          iconUri = getIconUriFromConnector(connector);
+          brandColor = getBrandColorFromConnector(connector);
+        }
+
         dispatch(
           addDynamicTokens({
             nodeId,
-            tokens: convertOutputsToTokens(
-              nodeId,
-              operationInfo.type,
-              dynamicOutputs,
-              { iconUri: manifest?.properties.iconUri, brandColor: manifest?.properties.brandColor },
-              settings
-            ),
+            tokens: convertOutputsToTokens(nodeId, operationInfo.type, dynamicOutputs, { iconUri, brandColor }, settings),
           })
         );
       }

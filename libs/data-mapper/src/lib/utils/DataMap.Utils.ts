@@ -7,11 +7,12 @@ import {
 } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
-import type { ConnectionDictionary, LoopConnection } from '../models/Connection';
+import type { Connection, ConnectionDictionary, LoopConnection } from '../models/Connection';
+import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
-import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { createConnectionKey } from './DataMapIds.Utils';
-import { findNodeForKey } from './Schema.Utils';
+import type { PathItem, SchemaExtended } from '../models/Schema';
+import { isFunctionData } from './Function.Utils';
+import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import yaml from 'js-yaml';
 
 export const convertToMapDefinition = (
@@ -19,7 +20,7 @@ export const convertToMapDefinition = (
   sourceSchema?: SchemaExtended,
   targetSchema?: SchemaExtended
 ): string => {
-  if (sourceSchema && targetSchema) {
+  if (sourceSchema && targetSchema && isValidToMakeMapDefinition(connections)) {
     const mapDefinition: MapDefinitionEntry = {};
 
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
@@ -53,7 +54,17 @@ const generateMapDefinitionHeader = (
 
 const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
   Object.values(connections).forEach((connection) => {
-    applyValueAtPath(connection.source.key, mapDefinition, (connection.destination as SchemaNodeExtended).pathToRoot);
+    connection.sources.forEach((source) => {
+      // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
+      if (isSchemaNodeExtended(connection.destination.node)) {
+        if (isSchemaNodeExtended(source.node)) {
+          applyValueAtPath(source.node.fullName, mapDefinition, connection.destination.node.pathToRoot);
+        } else {
+          const value = collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
+          applyValueAtPath(value, mapDefinition, connection.destination.node.pathToRoot);
+        }
+      }
+    });
   });
 };
 
@@ -68,10 +79,70 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, path
       applyValueAtPath(value, mapDefinition[pathLocation] as MapDefinitionEntry, path.slice(1));
     }
   } else {
-    mapDefinition[pathLocation] = value;
+    mapDefinition[pathLocation] = value.startsWith('@') ? `$${value}` : value;
   }
 };
 
+const collectValueForFunction = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
+  const inputValues = currentConnection
+    ? currentConnection.sources.flatMap((source) => {
+        if (isSchemaNodeExtended(source.node)) {
+          return source.node.fullName.startsWith('@') ? `$${source.node.fullName}` : source.node.fullName;
+        } else {
+          return collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
+        }
+      })
+    : [];
+
+  return combineFunctionAndInputs(node, inputValues);
+};
+
+const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]): string => {
+  return `${functionData.functionName}(${inputs.join(', ')})`;
+};
+
+export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
+  // All functions connections must eventually terminate into the source
+  const connectionsArray = Object.entries(connections);
+  if (
+    !connectionsArray
+      .filter(([key, _connection]) => key.startsWith(targetPrefix))
+      .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections))
+  ) {
+    return false;
+  }
+
+  // Is valid to generate the map definition
+  return true;
+};
+
+const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {
+  if (!currentConnection) {
+    return false;
+  }
+
+  // Put 0 input, content enricher functions in the node bucket
+  const functionSources = currentConnection.sources.filter((source) => isFunctionData(source.node) && source.node.maxNumberOfInputs !== 0);
+  const nodeSources = currentConnection.sources.filter(
+    (source) => isSchemaNodeExtended(source.node) || source.node.maxNumberOfInputs === 0
+  );
+
+  // All the sources are input nodes
+  if (nodeSources.length === currentConnection.sources.length) {
+    return true;
+  } else {
+    // Still have traversing to do
+    if (functionSources.length > 0) {
+      return functionSources.every((functionSource) => {
+        return nodeHasSourceNodeEventually(connections[functionSource.reactFlowKey], connections);
+      });
+    } else {
+      return false;
+    }
+  }
+};
+
+/* Deserialize yml */
 export const convertFromMapDefinition = (
   mapDefinition: MapDefinitionEntry,
   sourceSchema: SchemaExtended,
@@ -103,16 +174,16 @@ const parseDefinitionToConnection = (
     const sourceNode = findNodeForKey(sourceNodeObject, sourceSchema.schemaTreeRoot);
 
     if (sourceNode && destinationNode) {
-      const connectionKey = createConnectionKey(sourceNodeObject, targetKey);
-      connections[connectionKey] = {
-        destination: destinationNode,
-        source: sourceNode,
-        loop: undefined,
-        condition: undefined,
-        // Needs to be addressed again once we have functions properly coded out in the designer
-        reactFlowSource: `${sourcePrefix}${sourceNodeObject}`,
-        reactFlowDestination: `${targetPrefix}${targetKey}`,
-      };
+      if (!connections[targetKey]) {
+        connections[targetKey] = {
+          destination: { node: destinationNode, reactFlowKey: `${targetPrefix}${targetKey}` },
+          sources: [{ node: sourceNode, reactFlowKey: `${sourcePrefix}${sourceNodeObject}` }],
+          loop: undefined,
+          condition: undefined,
+        };
+      } else {
+        connections[targetKey].sources.push({ node: sourceNode, reactFlowKey: `${sourcePrefix}${sourceNodeObject}` });
+      }
     }
 
     return;
@@ -141,10 +212,9 @@ const parseDefinitionToConnection = (
     );
 
     // TODO (#15388621) revisit this once we've got loops and conditionals enabled in the designer to double check all the logic
-    const newConnectionKey = createConnectionKey(sourceNodeKey, newTargetKey);
-    if (connections[newConnectionKey]) {
-      connections[newConnectionKey].loop = startsWithFor ? parseLoopMapping(sourceNodeKey) : undefined;
-      connections[newConnectionKey].condition = startsWithIf ? parseConditionalMapping(sourceNodeKey) : undefined;
+    if (connections[newTargetKey]) {
+      connections[newTargetKey].loop = startsWithFor ? parseLoopMapping(sourceNodeKey) : undefined;
+      connections[newTargetKey].condition = startsWithIf ? parseConditionalMapping(sourceNodeKey) : undefined;
     }
 
     return;
@@ -167,19 +237,20 @@ const parseDefinitionToConnection = (
 
   // TODO (#15388621) revisit this once we've got loops and conditionals enabled in the designer to double check all the logic
   if (targetValue) {
-    const connectionKey = createConnectionKey(sourceNodeKey, targetKey);
     const destinationNode = findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
     const sourceNode = findNodeForKey(sourceNodeKey, sourceSchema.schemaTreeRoot);
 
     if (sourceNode && destinationNode) {
-      connections[connectionKey] = {
-        destination: destinationNode,
-        source: sourceNode,
-        loop: undefined,
-        condition: undefined,
-        reactFlowSource: `${sourcePrefix}${targetValue}`,
-        reactFlowDestination: `${targetPrefix}${targetKey}`,
-      };
+      if (!connections[targetKey]) {
+        connections[targetKey] = {
+          destination: { node: destinationNode, reactFlowKey: `${targetPrefix}${targetKey}` },
+          sources: [{ node: sourceNode, reactFlowKey: `${sourcePrefix}${targetValue}` }],
+          loop: undefined,
+          condition: undefined,
+        };
+      } else {
+        connections[targetKey].sources.push({ node: sourceNode, reactFlowKey: `${sourcePrefix}${targetValue}` });
+      }
     }
   }
 };

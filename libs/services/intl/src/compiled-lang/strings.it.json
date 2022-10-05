@@ -140,7 +140,7 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "Condivisa"
+      "value": "Condiviso"
     }
   ],
   "02vyBk": [
@@ -557,7 +557,7 @@
   "3ERi+E": [
     {
       "type": 0,
-      "value": "Condizioni per l'utilizzo del servizio"
+      "value": "Condizioni d'uso"
     }
   ],
   "3FoqCK": [
@@ -1419,6 +1419,12 @@
       "value": "Output"
     }
   ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1506,7 +1512,7 @@
   "E+HsWF": [
     {
       "type": 0,
-      "value": "Accesso in corso..."
+      "value": "Accesso..."
     }
   ],
   "E9OS+9": [
@@ -1525,6 +1531,12 @@
     {
       "type": 0,
       "value": "Risposta"
+    }
+  ],
+  "EV9iRu": [
+    {
+      "type": 0,
+      "value": "Failed to save."
     }
   ],
   "EYqGxA": [
@@ -1548,7 +1560,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "Eseguire l'accesso per creare una connessione a "
     },
     {
       "type": 1,
@@ -2395,6 +2407,20 @@
     {
       "type": 0,
       "value": "Selezionare un'identità"
+    }
+  ],
+  "NtY1mD": [
+    {
+      "type": 0,
+      "value": "Remove all references to node ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the node."
     }
   ],
   "NvANon": [
@@ -3651,7 +3677,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "Operazione non riuscita con errore: "
     },
     {
       "type": 1,
@@ -3659,7 +3685,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": ". Eseguire di nuovo l'accesso."
     }
   ],
   "ahsVI/": [
@@ -3878,6 +3904,12 @@
     {
       "type": 0,
       "value": "(UTC+2.00) Harare, Pretoria"
+    }
+  ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
     }
   ],
   "dDYCuU": [
@@ -4441,12 +4473,6 @@
       "value": "Proprietà"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "Test"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4763,6 +4789,12 @@
       "value": "Aggiungi un'azione"
     }
   ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -4808,7 +4840,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "Accedere al connettore"
     }
   ],
   "mjS/k1": [
@@ -5008,13 +5040,19 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "In-app"
     }
   ],
   "p5tz8/": [
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
     }
   ],
   "pC2nr2": [
@@ -5858,12 +5896,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Nome della proprietà nuova o esistente."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "Codice"
     }
   ],
   "xYyPR8": [

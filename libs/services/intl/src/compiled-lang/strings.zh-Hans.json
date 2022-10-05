@@ -156,7 +156,7 @@
   "00xlpa": [
     {
       "type": 0,
-      "value": "共享"
+      "value": "已共享"
     }
   ],
   "02vyBk": [
@@ -1427,6 +1427,12 @@
       "value": "输出"
     }
   ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1535,6 +1541,12 @@
       "value": "响应"
     }
   ],
+  "EV9iRu": [
+    {
+      "type": 0,
+      "value": "Failed to save."
+    }
+  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -1556,7 +1568,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "登录以创建与 "
     },
     {
       "type": 1,
@@ -1564,7 +1576,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": " 的连接。"
     }
   ],
   "EjXdAm": [
@@ -2387,6 +2399,20 @@
     {
       "type": 0,
       "value": "请选择一个标识"
+    }
+  ],
+  "NtY1mD": [
+    {
+      "type": 0,
+      "value": "Remove all references to node ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the node."
     }
   ],
   "NvANon": [
@@ -3649,7 +3675,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "失败，出现错误: "
     },
     {
       "type": 1,
@@ -3657,7 +3683,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": "。请重新登录。"
     }
   ],
   "ahsVI/": [
@@ -3880,6 +3906,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00)哈拉雷，比勒陀利亚"
+    }
+  ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
     }
   ],
   "dDYCuU": [
@@ -4441,12 +4473,6 @@
       "value": "属性"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "测试"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4771,6 +4797,12 @@
       "value": "添加操作"
     }
   ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -4816,7 +4848,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "登录到连接器"
     }
   ],
   "mjS/k1": [
@@ -5024,13 +5056,19 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "应用内"
     }
   ],
   "p5tz8/": [
     {
       "type": 0,
       "value": "(UTC+13:00)萨摩亚"
+    }
+  ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
     }
   ],
   "pC2nr2": [
@@ -5868,12 +5906,6 @@
     {
       "type": 0,
       "value": "必填。新属性或现有属性的名称。"
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "代码"
     }
   ],
   "xYyPR8": [

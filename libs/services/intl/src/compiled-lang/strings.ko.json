@@ -1375,6 +1375,12 @@
       "value": "출력"
     }
   ],
+  "CkfIxl": [
+    {
+      "type": 0,
+      "value": "Source node removed from view."
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1483,6 +1489,12 @@
       "value": "응답"
     }
   ],
+  "EV9iRu": [
+    {
+      "type": 0,
+      "value": "Failed to save."
+    }
+  ],
   "EYqGxA": [
     {
       "type": 0,
@@ -1504,7 +1516,7 @@
   "EiRMD4": [
     {
       "type": 0,
-      "value": "Sign in to create a connection to "
+      "value": "로그인하여 "
     },
     {
       "type": 1,
@@ -1512,7 +1524,7 @@
     },
     {
       "type": 0,
-      "value": "."
+      "value": "에 대한 연결을 만듭니다."
     }
   ],
   "EjXdAm": [
@@ -2307,6 +2319,20 @@
     {
       "type": 0,
       "value": "ID를 선택하세요."
+    }
+  ],
+  "NtY1mD": [
+    {
+      "type": 0,
+      "value": "Remove all references to node ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the node."
     }
   ],
   "NvANon": [
@@ -3533,7 +3559,7 @@
   "aRKDWL": [
     {
       "type": 0,
-      "value": "Failed with error: "
+      "value": "오류 "
     },
     {
       "type": 1,
@@ -3541,7 +3567,7 @@
     },
     {
       "type": 0,
-      "value": ". Please sign in again."
+      "value": "과(와) 함께 실패했습니다. 다시 로그인하세요."
     }
   ],
   "ahsVI/": [
@@ -3760,6 +3786,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) 하라레, 프리토리아"
+    }
+  ],
+  "dA6SUc": [
+    {
+      "type": 0,
+      "value": "Connection deleted."
     }
   ],
   "dDYCuU": [
@@ -4293,12 +4325,6 @@
       "value": "속성"
     }
   ],
-  "ifLn0+": [
-    {
-      "type": 0,
-      "value": "테스트"
-    }
-  ],
   "iq+tiv": [
     {
       "type": 0,
@@ -4615,6 +4641,12 @@
       "value": "작업 추가"
     }
   ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Function deleted."
+    }
+  ],
   "mGUdCO": [
     {
       "type": 0,
@@ -4660,7 +4692,7 @@
   "mca3Ml": [
     {
       "type": 0,
-      "value": "Sign in to connector"
+      "value": "커넥터에 로그인"
     }
   ],
   "mjS/k1": [
@@ -4860,13 +4892,19 @@
   "p1Qtm5": [
     {
       "type": 0,
-      "value": "In-App"
+      "value": "앱 내"
     }
   ],
   "p5tz8/": [
     {
       "type": 0,
       "value": "(UTC+13:00) 사모아"
+    }
+  ],
+  "p7YGxW": [
+    {
+      "type": 0,
+      "value": "Error executing the api {parameters}."
     }
   ],
   "pC2nr2": [
@@ -5684,12 +5722,6 @@
     {
       "type": 0,
       "value": "필수 항목으로, 기존 또는 새 속성의 이름입니다."
-    }
-  ],
-  "xV4Koe": [
-    {
-      "type": 0,
-      "value": "코드"
     }
   ],
   "xYyPR8": [
