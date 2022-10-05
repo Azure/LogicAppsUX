@@ -60,15 +60,13 @@ export const Group = ({
   const [collapsed, setCollapsed] = useState(false);
   const [getCurrProps, setCurrProps] = useFunctionalState<GroupItemProps>(groupProps);
 
+  // Update current props whenever parentProps changes
   useEffect(() => {
     if (JSON.stringify(groupProps) !== JSON.stringify(getCurrProps())) {
       setCurrProps(groupProps);
     }
-  }, [getCurrProps, groupProps, setCurrProps]);
-  useEffect(() => {
-    handleUpdateParent(getCurrProps(), index);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getCurrProps()]);
+  }, [groupProps]);
 
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
@@ -96,15 +94,14 @@ export const Group = ({
     ...groupMenuItems,
   ];
 
-  const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, index: number) => {
-    const newItems = { ...getCurrProps() };
-    newItems.items[index] = newState;
-    setCurrProps(newItems);
+  const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, currIndex: number) => {
+    const newItems = { ...groupProps };
+    newItems.items[currIndex] = newState;
+    handleUpdateParent(newItems, index);
   };
 
   const handleDeleteEmptyRow = () => {
-    console.log(groupProps);
-    setCurrProps({ ...groupProps, hideEmptyRow: true });
+    handleUpdateParent({ ...groupProps, hideEmptyRow: true }, index);
   };
 
   const onRenderOverflowButton = (): JSX.Element => {
@@ -125,11 +122,11 @@ export const Group = ({
   };
 
   const handleCheckbox = () => {
-    setCurrProps({ ...groupProps, checked: !groupProps.checked });
+    handleUpdateParent({ ...groupProps, checked: !groupProps.checked }, index);
   };
 
   const handleSelectedOption = (newState: ChangeState) => {
-    setCurrProps({ ...groupProps, selectedOption: newState.value[0].value as GroupDropdownOptions });
+    handleUpdateParent({ ...groupProps, selectedOption: newState.value[0].value as GroupDropdownOptions }, index);
   };
 
   const collapseLabel = intl.formatMessage({
@@ -178,6 +175,7 @@ export const Group = ({
                       items: item.items,
                       selectedOption: item.selectedOption,
                       checked: item.checked,
+                      hideEmptyRow: item.hideEmptyRow,
                     }}
                     index={currIndex}
                     handleDeleteChild={() => handleDelete(currIndex)}
