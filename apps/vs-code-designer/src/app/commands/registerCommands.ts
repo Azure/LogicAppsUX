@@ -8,5 +8,5 @@ import type { ExtensionContext } from 'vscode';
 
 export function registerCommands(context: ExtensionContext): void {
   // Register command "start"
-  commands.registerCommand('logicAppsExtension.start', async () => openDesigner(context));
+  commands.registerCommand('logicAppsExtension.openDesigner', async () => openDesigner(context));
 }

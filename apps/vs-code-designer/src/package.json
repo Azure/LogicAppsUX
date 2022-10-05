@@ -8,7 +8,7 @@
   "contributes": {
     "commands": [
       {
-        "command": "logicAppsExtension.start",
+        "command": "logicAppsExtension.openDesigner",
         "title": "Open New Designer"
       }
     ]
@@ -17,7 +17,7 @@
     "ms-vscode.azure-account"
   ],
   "activationEvents": [
-    "onCommand:logicAppsExtension.start"
+    "onCommand:logicAppsExtension.openDesigner"
   ],
   "galleryBanner": {
     "color": "#015cda",

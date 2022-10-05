@@ -15,7 +15,7 @@ export async function openDesigner(context: ExtensionContext): Promise<void> {
     { enableScripts: true }
   );
 
-  const indexPath = join(context.extensionPath, '../designer-standalone/index.html');
+  const indexPath = join(context.extensionPath, 'webview/index.html');
   const html = await fs.readFile(indexPath, 'utf-8');
   // 1. Get all link prefixed by href or src
   const matchLinks = /(href|src)="([^"]*)"/g;
