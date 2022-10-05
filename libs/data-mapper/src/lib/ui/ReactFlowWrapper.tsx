@@ -30,6 +30,7 @@ import {
   setConnectionHovered,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
+  unsetSelectedEdges,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
@@ -134,6 +135,9 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (currentlySelectedNode) {
       dispatch(setCurrentlySelectedNode(undefined));
     }
+
+    // Unselect all edges/lines
+    dispatch(unsetSelectedEdges());
 
     setDisplayToolboxItem('');
   };

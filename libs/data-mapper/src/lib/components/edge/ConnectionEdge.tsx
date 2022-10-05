@@ -64,7 +64,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
         {...props}
         style={{
           strokeWidth: tokens.strokeWidthThick,
-          color: getLineColor(!!selected, !!data?.isHovered),
+          stroke: getLineColor(!!selected, !!data?.isHovered),
         }}
       />
 
