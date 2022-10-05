@@ -1,7 +1,6 @@
 import Constants from '../../../common/constants';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
-import { getOperationManifest } from '../../queries/operation';
 import type {
   DependencyInfo,
   NodeDependencies,
@@ -46,10 +45,12 @@ import type {
   ExpressionFunction,
   ExpressionLiteral,
   InputParameter,
+  OutputParameter,
   ResolvedParameter,
   SchemaProcessorOptions,
   SchemaProperty,
   Segment,
+  SwaggerParser,
 } from '@microsoft-logic-apps/parsers';
 import {
   isLegacyDynamicValuesExtension,
@@ -69,7 +70,7 @@ import {
   SegmentType,
   Visibility,
 } from '@microsoft-logic-apps/parsers';
-import type { Exception, OperationInfo, OperationManifest, RecurrenceSetting } from '@microsoft-logic-apps/utils';
+import type { Exception, OperationManifest, RecurrenceSetting } from '@microsoft-logic-apps/utils';
 import {
   isUndefinedOrEmptyString,
   aggregate,
@@ -1214,7 +1215,7 @@ export async function loadDynamicData(
 async function loadDynamicContentForInputsInNode(
   nodeId: string,
   inputDependencies: Record<string, DependencyInfo>,
-  operationInfo: OperationInfo,
+  operationInfo: NodeOperation,
   connectionId: string,
   allInputs: NodeInputs,
   variables: VariableDeclaration[],
@@ -1228,16 +1229,17 @@ async function loadDynamicContentForInputsInNode(
 
       if (isDynamicDataReadyToLoad(info)) {
         const inputSchema = await getDynamicSchema(info, allInputs, connectionId, operationInfo, variables);
-        const manifest = await getOperationManifest(operationInfo);
         const allInputParameters = getAllInputParameters(allInputs);
         const allInputKeys = allInputParameters.map((param) => param.parameterKey);
-        const schemaInputs = getDynamicInputsFromSchema(
-          inputSchema,
-          info.parameter as InputParameter,
-          manifest,
-          allInputKeys,
-          operationDefinition
-        );
+        const schemaInputs = inputSchema
+          ? await getDynamicInputsFromSchema(
+              inputSchema,
+              info.parameter as InputParameter,
+              operationInfo,
+              allInputKeys,
+              operationDefinition
+            )
+          : [];
         const inputParameters = schemaInputs.map((input) => ({
           ...createParameterInfo(input),
           schema: input,
@@ -2038,4 +2040,20 @@ export function getEncodeValue(value: string): number {
     default:
       return 1;
   }
+}
+
+export function getArrayTypeForOutputs(parsedSwagger: SwaggerParser, operationId: string): string {
+  const outputs = parsedSwagger.getOutputParameters(operationId, { excludeInternalOperations: false });
+  const outputKeys = Object.keys(outputs);
+
+  let itemKeyOutputParameter: OutputParameter | undefined = undefined;
+  for (const key of outputKeys) {
+    const output: OutputParameter = getPropertyValue(outputs, key);
+    if (output.name === OutputKeys.Item) {
+      itemKeyOutputParameter = output;
+      break;
+    }
+  }
+
+  return itemKeyOutputParameter?.type ?? '';
 }

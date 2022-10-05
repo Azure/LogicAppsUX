@@ -4,19 +4,16 @@
     "actions": {
       "Get_rows": {
         "inputs": {
-          "host": {
-            "connection": {
-              "referenceName": "googlesheet"
+          "variables": [
+            {
+              "name": "t1",
+              "type": "string",
+              "value": "abc"
             }
-          },
-          "method": "get",
-          "path": "/datasets/@{encodeURIComponent(encodeURIComponent('1FMEmoAsFhVD_gyDJ7eOQYU0Ly_gCqGAfleVtdhvZp3A'))}/tables/@{encodeURIComponent(encodeURIComponent('170475114'))}/items"
-        },
-        "metadata": {
-          "1FMEmoAsFhVD_gyDJ7eOQYU0Ly_gCqGAfleVtdhvZp3A": "/BETA2 - Zenith Community Master Balance Sheet"
+          ]
         },
         "runAfter": {},
-        "type": "ApiConnection"
+        "type": "InitializeVariable"
       },
       "Increment_variable": {
         "inputs": {
