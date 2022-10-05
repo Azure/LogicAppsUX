@@ -64,8 +64,8 @@ import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as 
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { MiniMap, useReactFlow, ConnectionLineType } from 'reactflow';
 
-const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
-const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
+export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
+export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
 
 const toolboxPanelProps: FloatingPanelProps = {
   xPos: '16px',
