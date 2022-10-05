@@ -37,7 +37,7 @@ import type { SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
 import type { FunctionData } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
-import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
+import type { SelectedNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
 import { useLayout } from '../utils/ReactFlow.Util';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
@@ -159,45 +159,20 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   };
 
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
-    console.log(node);
+    const newSelectedNode = {} as SelectedNode;
+    newSelectedNode.id = node.id;
+
     if (node.type === ReactFlowNodeType.SchemaNode) {
       if (node.data.schemaType === SchemaTypes.Source) {
-        const selectedSourceNode: SelectedSourceNode = {
-          nodeType: NodeType.Source,
-          name: node.data.schemaNode.name,
-          path: node.data.schemaNode.key,
-          dataType: node.data.schemaNode.schemaNodeDataType,
-        };
-
-        dispatch(setCurrentlySelectedNode(selectedSourceNode));
+        newSelectedNode.type = NodeType.Source;
       } else if (node.data.schemaType === SchemaTypes.Target) {
-        const selectedTargetNode: SelectedTargetNode = {
-          nodeType: NodeType.Target,
-          name: node.data.schemaNode.name,
-          path: node.data.schemaNode.key,
-          dataType: node.data.schemaNode.schemaNodeDataType,
-          defaultValue: '', // TODO: this property and below
-          doNotGenerateIfNoValue: true,
-          nullable: true,
-          inputIds: [],
-        };
-
-        dispatch(setCurrentlySelectedNode(selectedTargetNode));
+        newSelectedNode.type = NodeType.Target;
       }
     } else if (node.type === ReactFlowNodeType.FunctionNode) {
-      const selectedFunctionNode: SelectedFunctionNode = {
-        nodeType: NodeType.Function,
-        id: node.id,
-        name: node.data.functionName,
-        inputs: node.data.inputs,
-        branding: node.data.functionBranding,
-        description: '', // TODO: this property and below
-        codeEx: '',
-        outputId: '',
-      };
-
-      dispatch(setCurrentlySelectedNode(selectedFunctionNode));
+      newSelectedNode.type = NodeType.Function;
     }
+
+    dispatch(setCurrentlySelectedNode(newSelectedNode));
   };
 
   const onConnect = (connection: ReactFlowConnection) => {

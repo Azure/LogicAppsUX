@@ -177,7 +177,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   };
 
   const getPaneTitle = (): string | undefined => {
-    switch (currentNode?.nodeType) {
+    switch (currentNode?.type) {
       case NodeType.Source:
         return sourceSchemaNodeLoc;
       case NodeType.Target:
@@ -198,16 +198,16 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        if (currentNode.nodeType === NodeType.Function) {
-          return <FunctionNodePropertiesTab currentNode={currentNode} />;
+        if (currentNode.type === NodeType.Function) {
+          return <FunctionNodePropertiesTab fnNodeKey={currentNode.id} />;
         } else {
-          return <SchemaNodePropertiesTab currentNode={currentNode} />;
+          return <SchemaNodePropertiesTab currentSchemaNode={currentNode} />;
         }
       case TABS.CODE:
         return <CodeTab />;
       case TABS.TEST:
-        if (currentNode.nodeType === NodeType.Target) {
-          return <TestTab currentNode={currentNode} />;
+        if (currentNode.type === NodeType.Target) {
+          return <TestTab currentTargetNodeKey={currentNode.id} />;
         } else {
           return null;
         }
@@ -255,7 +255,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
-          {(currentNode?.nodeType === NodeType.Source || currentNode?.nodeType === NodeType.Function) && (
+          {(currentNode?.type === NodeType.Source || currentNode?.type === NodeType.Function) && (
             <Button
               appearance="subtle"
               size="medium"
@@ -286,3 +286,82 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     </div>
   );
 };
+
+/*
+import type { FunctionGroupBranding } from '../constants/FunctionConstants';
+import type { FunctionInput } from './Function';
+import type { SchemaNodeDataType } from './Schema';
+
+
+
+export type SelectedNode = SelectedSchemaNode | SelectedFunctionNode;
+export type SelectedSchemaNode = SelectedSourceNode | SelectedTargetNode;
+
+export interface SelectedSourceNode {
+  nodeType: NodeType.Source;
+  name: string;
+  path: string;
+  dataType: SchemaNodeDataType;
+}
+
+export interface SelectedTargetNode extends Omit<SelectedSourceNode, 'nodeType'> {
+  nodeType: NodeType.Target;
+  inputIds: string[];
+  defaultValue: string;
+  doNotGenerateIfNoValue: boolean;
+  nullable: boolean;
+}
+
+export interface SelectedFunctionNode {
+  nodeType: NodeType.Function;
+  name: string;
+  id: string;
+  branding: FunctionGroupBranding;
+  description: string;
+  codeEx: string;
+  inputs: FunctionInput[];
+  outputId: string;
+}
+
+
+if (node.type === ReactFlowNodeType.SchemaNode) {
+      if (node.data.schemaType === SchemaTypes.Source) {
+        const selectedSourceNode: SelectedSourceNode = {
+          nodeType: NodeType.Source,
+          name: node.data.schemaNode.name,
+          path: node.data.schemaNode.key,
+          dataType: node.data.schemaNode.schemaNodeDataType,
+        };
+
+        dispatch(setCurrentlySelectedNode(selectedSourceNode));
+      } else if (node.data.schemaType === SchemaTypes.Target) {
+        const selectedTargetNode: SelectedTargetNode = {
+          nodeType: NodeType.Target,
+          name: node.data.schemaNode.name,
+          path: node.data.schemaNode.key,
+          dataType: node.data.schemaNode.schemaNodeDataType,
+          defaultValue: '', // TODO: this property and below
+          doNotGenerateIfNoValue: true,
+          nullable: true,
+          inputIds: [],
+        };
+
+        dispatch(setCurrentlySelectedNode(selectedTargetNode));
+      }
+    } else if (node.type === ReactFlowNodeType.FunctionNode) {
+      const selectedFunctionNode: SelectedFunctionNode = {
+        nodeType: NodeType.Function,
+        id: node.id,
+        name: node.data.functionName,
+        inputs: node.data.inputs,
+        branding: node.data.functionBranding,
+        description: '', // TODO: this property and below
+        codeEx: '',
+        outputId: '',
+      };
+
+      dispatch(setCurrentlySelectedNode(selectedFunctionNode));
+    }
+
+
+*/

@@ -1,4 +1,3 @@
-import type { SelectedTargetNode } from '../../../models/SelectedNode';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, Input, makeStyles, Text, Textarea, tokens, typographyStyles } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
@@ -27,10 +26,10 @@ const useStyles = makeStyles({
 });
 
 interface TestTabProps {
-  currentNode: SelectedTargetNode;
+  currentTargetNodeKey: string;
 }
 
-export const TestTab = ({ currentNode }: TestTabProps) => {
+export const TestTab = ({ currentTargetNodeKey }: TestTabProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -59,6 +58,8 @@ export const TestTab = ({ currentNode }: TestTabProps) => {
     description: 'Reset',
   });
 
+  console.log(currentTargetNodeKey);
+
   return (
     <div className={styles.testTabDivStyle}>
       <Text>{provideParamsLoc}</Text>
@@ -67,17 +68,7 @@ export const TestTab = ({ currentNode }: TestTabProps) => {
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{inputLoc}</Text>
 
-          {currentNode.inputIds.length > 0 ? (
-            currentNode.inputIds.map((inputId) => (
-              <Input placeholder="Temporary placeholder" className={styles.inputStyle} style={{ marginTop: 16 }} key={inputId} />
-            ))
-          ) : (
-            <>
-              {/* TODO: Inputs are visual placeholders for now, will swap w/ 'No inputs' type msg */}
-              <Input placeholder="Temporary placeholder" className={styles.inputStyle} style={{ marginTop: 16 }} />
-              <Input placeholder="Temporary placeholder" className={styles.inputStyle} style={{ marginTop: 16 }} />
-            </>
-          )}
+          <Input placeholder="Temporary placeholder" className={styles.inputStyle} style={{ marginTop: 16 }} />
 
           <Stack horizontal verticalAlign="center" className={styles.buttonContainerStyle} style={{ marginTop: 16 }}>
             <Button appearance="primary">{runTestLoc}</Button>
