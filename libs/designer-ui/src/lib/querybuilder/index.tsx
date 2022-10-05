@@ -2,6 +2,7 @@ import type { ValueSegment } from '../editor';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
 import type { IOverflowSetItemProps } from '@fluentui/react';
+import { useFunctionalState } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -39,14 +40,15 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerOffset, setContainerOffset] = useState(0);
 
-  const [rootProp, setRootProp] = useState<GroupItemProps | RowItemProps>(groupProps);
+  const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps | RowItemProps>(groupProps);
 
   useEffect(() => {
-    console.log(rootProp);
+    console.log(getRootProp());
     if (containerRef.current) {
       setContainerOffset(containerRef.current.getBoundingClientRect().bottom);
     }
-  }, [containerRef, rootProp]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [containerRef, getRootProp()]);
 
   const handleUpdateParent = (newProps: GroupItemProps | RowItemProps) => {
     setRootProp(newProps);
@@ -131,7 +133,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
         GetTokenPicker={GetTokenPicker}
         groupMenuItems={groupMenuItems}
         rowMenuItems={rowMenuItems}
-        groupProps={rootProp as GroupItemProps}
+        groupProps={getRootProp() as GroupItemProps}
         isFirstGroup={true}
         index={0}
         handleUpdateParent={handleUpdateParent}
