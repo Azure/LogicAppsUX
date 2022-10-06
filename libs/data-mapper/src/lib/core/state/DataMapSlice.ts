@@ -5,6 +5,7 @@ import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
+import { getEdgeForSource } from '../../utils/DataMap.Utils';
 import { addReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -228,9 +229,12 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
-    setCurrentlySelectedEdge: (state, action: PayloadAction<string>) => {
-      const edge = state.curDataMapOperation.dataMapConnections[action.payload];
-      edge.isSelected = !edge.isSelected;
+    setCurrentlySelectedEdge: (state, action: PayloadAction<{ source: string; target: string }>) => {
+      // danielle de-select other edges?
+      const edge = getEdgeForSource(state.curDataMapOperation.dataMapConnections[action.payload.target], action.payload.source);
+      if (edge) {
+        edge.isSelected = !edge.isSelected;
+      }
     },
 
     setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
@@ -290,11 +294,19 @@ export const dataMapSlice = createSlice({
       } else {
         const connections = state.curDataMapOperation.dataMapConnections;
 
-        for (const key in connections) {
-          if (connections[key].isSelected) {
-            delete connections[key];
-            // delete child if necessary
-          }
+        for (const targetKey in connections) {
+          connections[targetKey].sources = connections[targetKey].sources.filter((connection) => {
+            console.log('connection ' + connection.reactFlowKey + ' ' + connection.isSelected);
+            return connection.isSelected;
+          });
+          // for (const sourceKey in connections[targetKey].sources) {
+          //   const edge = getEdgeForSource(connections[targetKey], sourceKey);
+          //   console.log(edge?.toString());
+          //   if (edge?.isSelected) {
+          //     delete connections[targetKey];
+          //     // delete child if necessary
+          //   }
+          // }
         }
 
         doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: connections });

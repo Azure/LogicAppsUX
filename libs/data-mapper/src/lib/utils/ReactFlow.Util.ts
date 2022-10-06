@@ -8,6 +8,7 @@ import type { FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
+import { getEdgeForSource } from './DataMap.Utils';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { useMemo } from 'react';
@@ -210,7 +211,7 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
         source: source.reactFlowKey,
         target: connection.destination.reactFlowKey,
         type: ReactFlowEdgeType.ConnectionEdge,
-        selected: connection.isSelected,
+        selected: getEdgeForSource(connection, source.reactFlowKey)?.isSelected,
         data: {
           isHovered: connection.isHovered,
         },

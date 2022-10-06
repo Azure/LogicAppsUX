@@ -8,13 +8,13 @@ export interface Connection {
   sources: ConnectionUnit[];
   loop?: LoopConnection;
   condition?: string;
-  isSelected?: boolean;
   isHovered?: boolean;
 }
 
 export interface ConnectionUnit {
   node: SchemaNodeExtended | FunctionData;
   reactFlowKey: string;
+  isSelected?: boolean;
 }
 
 export interface LoopConnection {
