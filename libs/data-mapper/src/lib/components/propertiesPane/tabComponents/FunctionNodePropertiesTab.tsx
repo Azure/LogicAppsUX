@@ -2,22 +2,21 @@ import type { RootState } from '../../../core/state/Store';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, Input, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, Divider, Input, Label, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   inputOutputContentStyle: {
-    height: '100%',
+    display: 'flex',
     marginTop: '16px',
   },
   inputOutputStackStyle: {
     width: '100%',
   },
   dividerStyle: {
-    height: '100%',
     maxWidth: '12px',
     color: tokens.colorNeutralStroke2,
   },
@@ -44,6 +43,8 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
   const styles = useStyles();
 
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+
+  const [unboundedInputs, _setUnboundedInputs] = useState([]);
 
   const addFieldLoc = intl.formatMessage({
     defaultMessage: 'Add field',
@@ -101,11 +102,32 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{inputLoc}</Text>
 
-          {functionNode.maxNumberOfInputs > 0 ? (
+          {functionNode.maxNumberOfInputs === 0 && <Text style={{ marginTop: '16px' }}>{functionNoReqInputLoc}</Text>}
+
+          {functionNode.maxNumberOfInputs > 0 && (
+            <Stack>
+              {functionNode.inputs.map((input, idx) => (
+                <div key={idx}>
+                  <Label htmlFor={`nodeInput-${idx}`}>{input.displayName}</Label>
+                  <Tooltip relationship="label" content={input.tooltip}>
+                    <Input id={`nodeInput-${idx}`} placeholder={input.placeholder} style={{ marginTop: 16 }} />
+                  </Tooltip>
+                </div>
+              ))}
+            </Stack>
+          )}
+
+          {functionNode.maxNumberOfInputs === -1 && (
             <>
-              {functionNode.inputs.map((input) => (
-                <Stack horizontal verticalAlign="center" key={input.displayName}>
-                  <Input placeholder="Temporary placeholder" style={{ marginTop: 16 }} />
+              {unboundedInputs.map((input, idx) => (
+                <Stack key={idx} horizontal verticalAlign="center">
+                  <div>
+                    <Label htmlFor={`nodeInput-${idx}`}>{functionNode.inputs[0].displayName}</Label>
+                    <Tooltip relationship="label" content={functionNode.inputs[0].tooltip}>
+                      <Input id={`nodeInput-${idx}`} placeholder={functionNode.inputs[0].placeholder} style={{ marginTop: 16 }} />
+                    </Tooltip>
+                  </div>
+
                   <Button icon={<Delete20Regular />} />
                 </Stack>
               ))}
@@ -114,12 +136,14 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
                 {addFieldLoc}
               </Button>
             </>
-          ) : (
-            <Text style={{ marginTop: '16px' }}>{functionNoReqInputLoc}</Text>
           )}
         </Stack>
 
-        <Divider vertical className={styles.dividerStyle} style={{ margin: '0 16px 0 16px', paddingTop: 12, paddingBottom: 12 }} />
+        <Divider
+          vertical
+          className={styles.dividerStyle}
+          style={{ margin: '0 16px 0 16px', paddingTop: 12, paddingBottom: 12, flex: '1 1 1px' }}
+        />
 
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{outputLoc}</Text>
