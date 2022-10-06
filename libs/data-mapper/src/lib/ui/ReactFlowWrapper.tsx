@@ -92,8 +92,8 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
   const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
-
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string>('');
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
