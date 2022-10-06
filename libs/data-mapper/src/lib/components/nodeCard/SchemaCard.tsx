@@ -25,6 +25,7 @@ import {
 import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
 import type { FunctionComponent } from 'react';
 import { useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
@@ -172,6 +173,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
   const sharedStyles = getStylesForSharedState();
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
   const [_isHover, setIsHover] = useState<boolean>(false);
+  const intl = useIntl();
   const isNodeConnected = useSelector((state: RootState) => {
     const connections = state.dataMap.curDataMapOperation.dataMapConnections;
     if (schemaType === SchemaTypes.Target) {
@@ -220,11 +222,16 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
     setIsHover(false);
   };
 
+  const arrayMappingTooltip = intl.formatMessage({
+    defaultMessage: 'Array Mapping',
+    description: 'Label for array connection',
+  });
+
   return (
     <div className={classes.badgeContainer}>
       {isNBadgeRequired && schemaType === SchemaTypes.Target && (
         <div>
-          <Tooltip content="Array Mapping" relationship="label">
+          <Tooltip content={arrayMappingTooltip} relationship="label">
             <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
               N
             </Badge>
