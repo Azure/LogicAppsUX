@@ -74,10 +74,14 @@ export const Group = ({
   });
 
   const handleDelete = (indexToDelete: number) => {
-    const newItems = { ...getCurrProps() };
-    newItems.items.splice(indexToDelete, 1);
-    newItems.hideEmptyRow = true;
-    setCurrProps(newItems);
+    if (getCurrProps().items.length <= 1) {
+      handleDeleteChild?.(index);
+    } else {
+      const newItems = { ...getCurrProps() };
+      newItems.items.splice(indexToDelete, 1);
+      newItems.hideEmptyRow = true;
+      setCurrProps(newItems);
+    }
   };
 
   const moreGroupMenuItems = [
@@ -98,10 +102,6 @@ export const Group = ({
     const newItems = { ...groupProps };
     newItems.items[currIndex] = newState;
     handleUpdateParent(newItems, index);
-  };
-
-  const handleDeleteEmptyRow = () => {
-    handleUpdateParent({ ...groupProps, hideEmptyRow: true }, index);
   };
 
   const onRenderOverflowButton = (): JSX.Element => {
@@ -192,7 +192,7 @@ export const Group = ({
                       rowMenuItems={rowMenuItems}
                       containerOffset={containerOffset}
                       GetTokenPicker={GetTokenPicker}
-                      handleDeleteChild={handleDeleteEmptyRow}
+                      handleDeleteChild={handleDeleteChild}
                       handleUpdateParent={handleUpdateNewParent}
                     />
                   ) : null}
