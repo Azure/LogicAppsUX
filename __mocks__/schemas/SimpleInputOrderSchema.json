@@ -1,65 +1,167 @@
 {
-  "name": "SourceSchema.xsd",
+  "name": "BasicSourceSchema.xsd",
   "type": "XML",
-  "targetNamespace": "http://SourceSchema",
-  "namespaces": { "ns0": "http://SourceSchema", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "targetNamespace": "http://tempuri.org/source.xsd",
+  "namespaces": { "ns0": "http://tempuri.org/source.xsd", "xs": "http://www.w3.org/2001/XMLSchema" },
   "schemaTreeRoot": {
     "key": "/ns0:InputRecord",
     "name": "InputRecord",
     "namespacePrefix": "ns0",
-    "namespaceUri": "http://SourceSchema",
+    "namespaceUri": "http://tempuri.org/source.xsd",
     "schemaNodeDataType": "None",
+    "normalizedDataType": "ComplexType",
     "properties": "NotSpecified",
     "children": [
       {
         "key": "/ns0:InputRecord/Identity",
         "name": "Identity",
         "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
-          { "key": "/ns0:InputRecord/Identity/UserID", "name": "UserID", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          {
+            "key": "/ns0:InputRecord/Identity/DrinksCoffee",
+            "name": "DrinksCoffee",
+            "schemaNodeDataType": "Boolean",
+            "normalizedDataType": "Bool",
+            "properties": "NotSpecified",
+            "fullName": "DrinksCoffee",
+            "parentKey": "/ns0:InputRecord/Identity"
+          },
+          {
+            "key": "/ns0:InputRecord/Identity/NumCoffees",
+            "name": "NumCoffees",
+            "schemaNodeDataType": "Integer",
+            "normalizedDataType": "Integer",
+            "properties": "NotSpecified",
+            "fullName": "NumCoffees",
+            "parentKey": "/ns0:InputRecord/Identity"
+          },
+          {
+            "key": "/ns0:InputRecord/Identity/NumCoffeesButAsADecimal",
+            "name": "NumCoffeesButAsADecimal",
+            "schemaNodeDataType": "Decimal",
+            "normalizedDataType": "Decimal",
+            "properties": "NotSpecified",
+            "fullName": "NumCoffeesButAsADecimal",
+            "parentKey": "/ns0:InputRecord/Identity"
+          },
+          {
+            "key": "/ns0:InputRecord/Identity/UserID",
+            "name": "UserID",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "UserID",
+            "parentKey": "/ns0:InputRecord/Identity"
+          },
           {
             "key": "/ns0:InputRecord/Identity/LastName",
             "name": "LastName",
             "schemaNodeDataType": "String",
-            "properties": "NotSpecified"
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "LastName",
+            "parentKey": "/ns0:InputRecord/Identity"
           },
           {
             "key": "/ns0:InputRecord/Identity/FirstName",
             "name": "FirstName",
             "schemaNodeDataType": "String",
-            "properties": "NotSpecified"
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "FirstName",
+            "parentKey": "/ns0:InputRecord/Identity"
           },
-          { "key": "/ns0:InputRecord/Identity/Initial", "name": "Initial", "schemaNodeDataType": "String", "properties": "NotSpecified" }
+          {
+            "key": "/ns0:InputRecord/Identity/Initials",
+            "name": "Initials",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "Initial",
+            "parentKey": "/ns0:InputRecord/Identity"
+          },
+          {
+            "key": "/ns0:InputRecord/Identity/Birthday",
+            "name": "Birthday",
+            "schemaNodeDataType": "Date",
+            "normalizedDataType": "DateTime",
+            "properties": "NotSpecified",
+            "fullName": "Birthday",
+            "parentKey": "/ns0:InputRecord/Identity"
+          }
         ]
       },
       {
         "key": "/ns0:InputRecord/Address",
         "name": "Address",
         "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
             "key": "/ns0:InputRecord/Address/AddressLine1",
             "name": "AddressLine1",
             "schemaNodeDataType": "String",
-            "properties": "NotSpecified"
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "AddressLine1",
+            "parentKey": "/ns0:InputRecord/Address"
           },
           {
             "key": "/ns0:InputRecord/Address/AddressLine2",
             "name": "AddressLine2",
             "schemaNodeDataType": "String",
-            "properties": "NotSpecified"
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "AddressLine2",
+            "parentKey": "/ns0:InputRecord/Address"
           },
-          { "key": "/ns0:InputRecord/Address/City", "name": "City", "schemaNodeDataType": "String", "properties": "NotSpecified" },
-          { "key": "/ns0:InputRecord/Address/State", "name": "State", "schemaNodeDataType": "String", "properties": "NotSpecified" },
-          { "key": "/ns0:InputRecord/Address/ZipCode", "name": "ZipCode", "schemaNodeDataType": "String", "properties": "NotSpecified" },
-          { "key": "/ns0:InputRecord/Address/Country", "name": "Country", "schemaNodeDataType": "String", "properties": "NotSpecified" },
+          {
+            "key": "/ns0:InputRecord/Address/City",
+            "name": "City",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "City",
+            "parentKey": "/ns0:InputRecord/Address"
+          },
+          {
+            "key": "/ns0:InputRecord/Address/State",
+            "name": "State",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "State",
+            "parentKey": "/ns0:InputRecord/Address"
+          },
+          {
+            "key": "/ns0:InputRecord/Address/ZipCode",
+            "name": "ZipCode",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "ZipCode",
+            "parentKey": "/ns0:InputRecord/Address"
+          },
+          {
+            "key": "/ns0:InputRecord/Address/Country",
+            "name": "Country",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "Country",
+            "parentKey": "/ns0:InputRecord/Address"
+          },
           {
             "key": "/ns0:InputRecord/Address/CountryCode",
             "name": "CountryCode",
             "schemaNodeDataType": "Integer",
-            "properties": "NotSpecified"
+            "normalizedDataType": "TODO",
+            "properties": "NotSpecified",
+            "fullName": "CountryCode",
+            "parentKey": "/ns0:InputRecord/Address"
           }
         ]
       },
@@ -67,25 +169,35 @@
         "key": "/ns0:InputRecord/ContactInfo",
         "name": "ContactInfo",
         "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
             "key": "/ns0:InputRecord/ContactInfo/HomePhone",
             "name": "HomePhone",
             "schemaNodeDataType": "String",
-            "properties": "NotSpecified"
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "HomePhone",
+            "parentKey": "/ns0:InputRecord/ContactInfo"
           },
           {
             "key": "/ns0:InputRecord/ContactInfo/WorkPhone",
             "name": "WorkPhone",
             "schemaNodeDataType": "String",
-            "properties": "NotSpecified"
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "WorkPhone",
+            "parentKey": "/ns0:InputRecord/ContactInfo"
           },
           {
             "key": "/ns0:InputRecord/ContactInfo/CellPhone",
             "name": "CellPhone",
             "schemaNodeDataType": "String",
-            "properties": "NotSpecified"
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "CellPhone",
+            "parentKey": "/ns0:InputRecord/ContactInfo"
           }
         ]
       }

@@ -177,7 +177,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   };
 
   const getPaneTitle = (): string | undefined => {
-    switch (currentNode?.nodeType) {
+    switch (currentNode?.type) {
       case NodeType.Source:
         return sourceSchemaNodeLoc;
       case NodeType.Target:
@@ -198,16 +198,16 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        if (currentNode.nodeType === NodeType.Function) {
-          return <FunctionNodePropertiesTab currentNode={currentNode} />;
+        if (currentNode.type === NodeType.Function) {
+          return <FunctionNodePropertiesTab nodeKey={currentNode.id} />;
         } else {
           return <SchemaNodePropertiesTab currentNode={currentNode} />;
         }
       case TABS.CODE:
         return <CodeTab />;
       case TABS.TEST:
-        if (currentNode.nodeType === NodeType.Target) {
-          return <TestTab currentNode={currentNode} />;
+        if (currentNode.type === NodeType.Target) {
+          return <TestTab currentTargetNodeKey={currentNode.id} />;
         } else {
           return null;
         }
@@ -255,7 +255,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
-          {(currentNode?.nodeType === NodeType.Source || currentNode?.nodeType === NodeType.Function) && (
+          {(currentNode?.type === NodeType.Source || currentNode?.type === NodeType.Function) && (
             <Button
               appearance="subtle"
               size="medium"
