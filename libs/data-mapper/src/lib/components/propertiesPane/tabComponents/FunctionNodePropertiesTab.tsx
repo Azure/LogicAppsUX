@@ -63,7 +63,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
   return (
     <div style={{ height: '100%' }}>
       <div>
-        <Stack horizontal verticalAlign="center">
+        <Stack horizontal verticalAlign="center" style={{ marginBottom: '12px' }}>
           <span
             style={{
               backgroundColor: functionBranding.colorLight,
@@ -77,10 +77,12 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
             </div>
           </span>
 
-          <Text style={{ marginLeft: '8px' }}>{functionNode.displayName}</Text>
+          <Text className={styles.titleStyle} style={{ marginLeft: '8px' }}>
+            {functionNode.displayName}
+          </Text>
         </Stack>
 
-        <Text style={{ marginTop: '8px' }}>{functionNode.description}</Text>
+        <Text>{functionNode.description}</Text>
         <Text style={{ marginTop: '8px' }}>{/* TODO: Code example of Function */}</Text>
       </div>
 
