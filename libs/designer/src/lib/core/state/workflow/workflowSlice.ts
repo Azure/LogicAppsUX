@@ -1,6 +1,6 @@
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
+import { addSwitchCaseToWorkflow, addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -120,6 +120,14 @@ export const workflowSlice = createSlice({
       if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
       else state.collapsedGraphIds[action.payload] = true;
     },
+    addSwitchCase: (state: WorkflowState, action: PayloadAction<{ nodeId: string }>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const node = getWorkflowNodeFromGraphState(state, state.nodesMetadata[action.payload.nodeId].graphId);
+      if (!node) throw new Error('node not set');
+      addSwitchCaseToWorkflow(node, state.nodesMetadata, state);
+    },
     discardAllChanges: (_state: WorkflowState) => {
       // Will implement later, currently here to test host dispatch
       LoggerService().log({
@@ -238,6 +246,7 @@ export const {
   setNodeDescription,
   setCollapsedGraphIds,
   toggleCollapsedGraphId,
+  addSwitchCase,
   discardAllChanges,
   buildEdgeIdsBySource,
   updateRunAfter,

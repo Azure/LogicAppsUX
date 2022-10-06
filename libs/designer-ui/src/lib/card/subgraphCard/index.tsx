@@ -16,7 +16,7 @@ interface SubgraphCardProps {
   handleCollapse?: (event: { currentTarget: any }) => void;
   selected?: boolean;
   readOnly?: boolean;
-  onClick?(id: string): void;
+  onClick?(id?: string): void;
   showAddButton?: boolean;
   contextMenuOptions?: MenuItemOption[];
 }
@@ -41,7 +41,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     if (readOnly) return null;
     return (
       <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
-        <ActionButtonV2 title={'Add Case'} />
+        <ActionButtonV2 title={'Add Case'} onClick={() => onClick?.()} />
       </div>
     );
   }

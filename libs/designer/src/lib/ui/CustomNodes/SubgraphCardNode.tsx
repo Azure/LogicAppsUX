@@ -3,7 +3,7 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode } from '../../core/state/panel/panelSlice';
 import { useIsGraphCollapsed, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
-import { toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { addSwitchCase, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { DropZone } from '../connections/dropzone';
 import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { SubgraphCard } from '@microsoft/designer-ui';
@@ -27,7 +27,13 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
-  const subgraphClick = useCallback((_id: string) => dispatch(changePanelNode(_id)), [dispatch]);
+  const subgraphClick = useCallback(
+    (_id: string) => {
+      if (isAddCase) dispatch(addSwitchCase({ nodeId: subgraphId }));
+      else dispatch(changePanelNode(_id));
+    },
+    [dispatch, isAddCase, subgraphId]
+  );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);
   const handleGraphCollapse = useCallback(() => {

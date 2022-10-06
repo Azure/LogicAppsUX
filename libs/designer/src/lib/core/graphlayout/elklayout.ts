@@ -31,7 +31,9 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.default,
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
   // This option allows the first layer children of a graph to be laid out in order of appearance in manifest. This is useful for subgraph ordering, like in Switch nodes.
-  'elk.layered.crossingMinimization.semiInteractive': 'true',
+  // 'elk.layered.crossingMinimization.semiInteractive': 'true',
+  'elk.layered.crossingMinimization.forceNodeModelOrder': 'false',
+  'elk.layered.considerModelOrder.strategy': 'NODES_AND_EDGES',
 };
 
 const readOnlyOptions: Record<string, string> = {
@@ -126,6 +128,7 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
           'elk.layered.nodePlacement.strategy': 'SIMPLE',
           'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,
           'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.onlyEdge,
+          'elk.layered.crossingMinimization.forceNodeModelOrder': 'true',
         }),
         ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
           'elk.padding': '[top=0,left=16,bottom=0,right=16]',
