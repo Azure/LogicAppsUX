@@ -24,7 +24,7 @@ const menuIconProps: IIconProps = {
 
 interface RowProps {
   checked?: boolean;
-  rowMenuItems: IOverflowSetItemProps[];
+  menuItems: IOverflowSetItemProps[];
   keyValue?: ValueSegment[];
   valueValue?: ValueSegment[];
   dropdownValue?: string;
@@ -43,7 +43,7 @@ interface RowProps {
 
 export const Row = ({
   checked = false,
-  rowMenuItems,
+  menuItems,
   keyValue = [],
   valueValue = [],
   dropdownValue,
@@ -65,7 +65,7 @@ export const Row = ({
     description: 'delete button',
   });
 
-  const moreRowMenuItems = [
+  const rowMenuItems = [
     {
       key: deleteButton,
       disabled: !!showDisabledDelete,
@@ -76,7 +76,7 @@ export const Row = ({
       name: deleteButton,
       onClick: handleDeleteChild,
     },
-    ...rowMenuItems,
+    ...menuItems,
   ];
 
   const updatePickerHeight = useCallback(() => {
@@ -138,7 +138,7 @@ export const Row = ({
           ariaLabel={rowCommands}
           styles={overflowStyle}
           menuIconProps={menuIconProps}
-          menuProps={moreRowMenuItems && { items: moreRowMenuItems }}
+          menuProps={rowMenuItems && { items: rowMenuItems }}
         />
       </TooltipHost>
     );

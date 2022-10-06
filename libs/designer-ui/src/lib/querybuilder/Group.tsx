@@ -29,14 +29,14 @@ const calloutProps: ICalloutProps = {
 
 interface GroupProps {
   checked?: boolean;
-  groupMenuItems: IOverflowSetItemProps[];
-  rowMenuItems: IOverflowSetItemProps[];
+  menuItems: IOverflowSetItemProps[];
   groupProps: GroupItemProps;
   isFirstGroup?: boolean;
   containerOffset: number;
   index: number;
   mustHaveItem?: boolean;
   handleDeleteChild?: (indexToDelete: number) => void;
+  handleUngroupChild?: (indexToInsertAt: number) => void;
   handleUpdateParent: (newProps: GroupItemProps | RowItemProps, index: number) => void;
   GetTokenPicker: (
     editorId: string,
@@ -47,14 +47,14 @@ interface GroupProps {
 }
 
 export const Group = ({
-  groupMenuItems,
-  rowMenuItems,
+  menuItems,
   groupProps,
   isFirstGroup,
   containerOffset,
   index,
   mustHaveItem,
   handleDeleteChild,
+  handleUngroupChild,
   handleUpdateParent,
   GetTokenPicker,
 }: GroupProps) => {
@@ -72,7 +72,6 @@ export const Group = ({
 
   const handleDelete = (indexToDelete: number) => {
     if (getCurrProps().items.length <= 1) {
-      console.log(isFirstGroup);
       handleDeleteChild?.(index);
     } else {
       const newItems = { ...getCurrProps() };
@@ -81,12 +80,27 @@ export const Group = ({
     }
   };
 
+  const handleUngroup = (indexToAddAt: number, items: (GroupItemProps | RowItemProps)[]) => {
+    let itemsToInsert = items;
+    if (items.length === 0) {
+      itemsToInsert = [{ type: 'row' }];
+    }
+    const newItems = { ...getCurrProps() };
+    newItems.items.splice(indexToAddAt, 1, ...itemsToInsert);
+    setCurrProps(newItems);
+  };
+
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
     description: 'delete button',
   });
 
-  const moreGroupMenuItems = [
+  const unGroupButton = intl.formatMessage({
+    defaultMessage: 'Ungroup',
+    description: 'Ungroup button',
+  });
+
+  const groupMenuItems = [
     {
       key: deleteButton,
       disabled: getCurrProps().items.length <= 1 && mustHaveItem,
@@ -97,13 +111,22 @@ export const Group = ({
       name: deleteButton,
       onClick: handleDeleteChild,
     },
-    ...groupMenuItems,
+    ...menuItems,
+    {
+      key: unGroupButton,
+      disabled: isFirstGroup,
+      iconProps: {
+        iconName: 'ViewAll2',
+      },
+      iconOnly: true,
+      name: unGroupButton,
+      onClick: handleUngroupChild,
+    },
   ];
 
   const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, currIndex: number) => {
     const newItems = { ...groupProps };
     newItems.items[currIndex] = newState;
-    console.log(newItems);
     handleUpdateParent(newItems, index);
   };
 
@@ -118,7 +141,7 @@ export const Group = ({
           ariaLabel={groupCommands}
           styles={overflowStyle}
           menuIconProps={menuIconProps}
-          menuProps={moreGroupMenuItems && { items: moreGroupMenuItems }}
+          menuProps={groupMenuItems && { items: groupMenuItems }}
         />
       </TooltipHost>
     );
@@ -156,7 +179,7 @@ export const Group = ({
                 return item.type === 'row' ? (
                   <Row
                     key={`row ${currIndex}`}
-                    rowMenuItems={rowMenuItems}
+                    menuItems={menuItems}
                     checked={item.checked}
                     keyValue={item.key}
                     dropdownValue={item.dropdownVal}
@@ -171,8 +194,7 @@ export const Group = ({
                 ) : (
                   <Group
                     key={`group ${currIndex}`}
-                    groupMenuItems={groupMenuItems}
-                    rowMenuItems={rowMenuItems}
+                    menuItems={menuItems}
                     containerOffset={containerOffset}
                     groupProps={{
                       type: 'group',
@@ -183,6 +205,7 @@ export const Group = ({
                     index={currIndex}
                     mustHaveItem={getCurrProps().items.length <= 1 && mustHaveItem}
                     handleDeleteChild={() => handleDelete(currIndex)}
+                    handleUngroupChild={() => handleUngroup(currIndex, item.items)}
                     handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
                   />
@@ -193,7 +216,7 @@ export const Group = ({
                   {getCurrProps().items.length === 0 ? (
                     <Row
                       index={0}
-                      rowMenuItems={rowMenuItems}
+                      menuItems={menuItems}
                       containerOffset={containerOffset}
                       showDisabledDelete={getCurrProps().items.length <= 1 && mustHaveItem}
                       GetTokenPicker={GetTokenPicker}
@@ -228,7 +251,7 @@ export const Group = ({
                 className="msla-querybuilder-group-more"
                 styles={overflowStyle}
                 items={[]}
-                overflowItems={moreGroupMenuItems}
+                overflowItems={groupMenuItems}
                 onRenderOverflowButton={onRenderOverflowButton}
                 onRenderItem={function (_item: IOverflowSetItemProps) {
                   throw new Error('No items in overflowset');

@@ -67,16 +67,11 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
     description: 'Make group button',
   });
 
-  const unGroupButton = intl.formatMessage({
-    defaultMessage: 'Ungroup',
-    description: 'Ungroup button',
-  });
-
   const handleGroup = () => {
     console.log('group');
   };
 
-  const rowMenuItems: IOverflowSetItemProps[] = [
+  const menuItems: IOverflowSetItemProps[] = [
     // TODO functinoality of Move/Group
     {
       key: moveUpButton,
@@ -110,28 +105,12 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
     },
   ];
 
-  const groupMenuItems: IOverflowSetItemProps[] = [
-    ...rowMenuItems,
-    // TODO functinoality of Move/Group
-    {
-      key: unGroupButton,
-      disabled: true,
-      iconProps: {
-        iconName: 'ViewAll2',
-      },
-      iconOnly: true,
-      name: unGroupButton,
-      onClick: handleGroup,
-    },
-  ];
-
   return (
     <div className="msla-querybuilder-container" ref={containerRef}>
       <Group
         containerOffset={containerOffset}
         GetTokenPicker={GetTokenPicker}
-        groupMenuItems={groupMenuItems}
-        rowMenuItems={rowMenuItems}
+        menuItems={menuItems}
         groupProps={getRootProp() as GroupItemProps}
         isFirstGroup={true}
         index={0}
