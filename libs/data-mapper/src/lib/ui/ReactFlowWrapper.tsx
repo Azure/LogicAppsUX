@@ -85,7 +85,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { fitView, zoomIn, zoomOut, project } = useReactFlow();
 
-  const currentlySelectedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
@@ -147,7 +146,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
     if (
-      currentlySelectedSourceNodes.some((node) => {
+      currentlyAddedSourceNodes.some((node) => {
         return node.key === selectedNode.key;
       })
     ) {
