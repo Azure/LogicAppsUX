@@ -9,9 +9,32 @@
     "commands": [
       {
         "command": "logicAppsExtension.openDesigner",
-        "title": "Open New Designer"
+        "title": "Open New Designer",
+        "category": "Azure Logic Apps"
       }
-    ]
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "azureLogicAppsStandard.openDesigner",
+          "when": "view == azLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "group": "1@2"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "azureLogicAppsStandard.openDesigner",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@3"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "azureLogicAppsStandard.openDesigner",
+          "when": "resourceFilename==workflow.json"
+        }
+      ]
+    }
   },
   "extensionDependencies": [
     "ms-vscode.azure-account"
@@ -41,6 +64,8 @@
   "publisher": "ms-azuretools",
   "icon": "assets/logicapp.png",
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "^2.0.0",
+    "@microsoft/vscode-azext-utils": "^0.3.12",
+    "request-promise": "^4.2.4"
   }
 }

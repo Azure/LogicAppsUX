@@ -7,7 +7,11 @@ import { join } from 'path';
 import type { ExtensionContext } from 'vscode';
 import { window, ViewColumn, Uri } from 'vscode';
 
-export async function openDesigner(context: ExtensionContext): Promise<void> {
+export async function openDesigner(context: ExtensionContext, node: Uri | undefined): Promise<void> {
+  if (node instanceof Uri) {
+    console.log('local');
+  }
+
   const panel = window.createWebviewPanel(
     'webview', // Key used to reference the panel
     'webview', // Title display in the tab
