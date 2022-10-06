@@ -30,6 +30,7 @@ interface RowProps {
   dropdownValue?: string;
   index: number;
   containerOffset: number;
+  showDisabledDelete?: boolean;
   handleDeleteChild?: (indexToDelete: number) => void;
   handleUpdateParent: (newProps: RowItemProps, index: number) => void;
   GetTokenPicker: (
@@ -48,6 +49,7 @@ export const Row = ({
   dropdownValue,
   index,
   containerOffset,
+  showDisabledDelete,
   handleDeleteChild,
   handleUpdateParent,
   GetTokenPicker,
@@ -66,7 +68,7 @@ export const Row = ({
   const moreRowMenuItems = [
     {
       key: deleteButton,
-      disabled: false,
+      disabled: !!showDisabledDelete,
       iconProps: {
         iconName: 'Delete',
       },

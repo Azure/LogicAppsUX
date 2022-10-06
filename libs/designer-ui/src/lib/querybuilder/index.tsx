@@ -135,6 +135,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
         groupProps={getRootProp() as GroupItemProps}
         isFirstGroup={true}
         index={0}
+        mustHaveItem={true}
         handleUpdateParent={handleUpdateParent}
       />
     </div>

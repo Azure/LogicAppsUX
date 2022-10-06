@@ -35,6 +35,7 @@ interface GroupProps {
   isFirstGroup?: boolean;
   containerOffset: number;
   index: number;
+  mustHaveItem?: boolean;
   handleDeleteChild?: (indexToDelete: number) => void;
   handleUpdateParent: (newProps: GroupItemProps | RowItemProps, index: number) => void;
   GetTokenPicker: (
@@ -52,6 +53,7 @@ export const Group = ({
   isFirstGroup,
   containerOffset,
   index,
+  mustHaveItem,
   handleDeleteChild,
   handleUpdateParent,
   GetTokenPicker,
@@ -68,13 +70,9 @@ export const Group = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [groupProps]);
 
-  const deleteButton = intl.formatMessage({
-    defaultMessage: 'Delete',
-    description: 'delete button',
-  });
-
   const handleDelete = (indexToDelete: number) => {
     if (getCurrProps().items.length <= 1) {
+      console.log(isFirstGroup);
       handleDeleteChild?.(index);
     } else {
       const newItems = { ...getCurrProps() };
@@ -83,10 +81,15 @@ export const Group = ({
     }
   };
 
+  const deleteButton = intl.formatMessage({
+    defaultMessage: 'Delete',
+    description: 'delete button',
+  });
+
   const moreGroupMenuItems = [
     {
       key: deleteButton,
-      disabled: false,
+      disabled: getCurrProps().items.length <= 1 && mustHaveItem,
       iconProps: {
         iconName: 'Delete',
       },
@@ -160,6 +163,7 @@ export const Group = ({
                     valueValue={item.value}
                     containerOffset={containerOffset}
                     index={currIndex}
+                    showDisabledDelete={getCurrProps().items.length <= 1 && mustHaveItem}
                     handleDeleteChild={() => handleDelete(currIndex)}
                     handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
@@ -177,6 +181,7 @@ export const Group = ({
                       checked: item.checked,
                     }}
                     index={currIndex}
+                    mustHaveItem={getCurrProps().items.length <= 1 && mustHaveItem}
                     handleDeleteChild={() => handleDelete(currIndex)}
                     handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
@@ -190,6 +195,7 @@ export const Group = ({
                       index={0}
                       rowMenuItems={rowMenuItems}
                       containerOffset={containerOffset}
+                      showDisabledDelete={getCurrProps().items.length <= 1 && mustHaveItem}
                       GetTokenPicker={GetTokenPicker}
                       handleDeleteChild={handleDeleteChild}
                       handleUpdateParent={handleUpdateNewParent}
