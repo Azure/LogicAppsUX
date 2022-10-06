@@ -1,11 +1,13 @@
 import { childTargetNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
 import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
-import type { AppDispatch } from '../../core/state/Store';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaTypes, SchemaNodeProperties } from '../../models';
 import type { Connection } from '../../models/Connection';
+import { getEdgeForSource } from '../../utils/DataMap.Utils';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
+import { addReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
 import { Text } from '@fluentui/react';
@@ -23,7 +25,7 @@ import {
 import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
 import type { FunctionComponent } from 'react';
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
 
@@ -170,6 +172,22 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
   const sharedStyles = getStylesForSharedState();
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
   const [_isHover, setIsHover] = useState<boolean>(false);
+  const isNodeConnected = useSelector((state: RootState) => {
+    const connections = state.dataMap.curDataMapOperation.dataMapConnections;
+    if (schemaType === SchemaTypes.Target) {
+      const targetConnections = connections[addReactFlowPrefix(schemaNode.key, SchemaTypes.Target)];
+      return targetConnections ? true : false;
+    } else {
+      let edge;
+      Object.values(connections).forEach((connection) => {
+        const tempEdge = getEdgeForSource(connection, addReactFlowPrefix(schemaNode.key, SchemaTypes.Source));
+        if (tempEdge) {
+          edge = tempEdge;
+        }
+      });
+      return edge ? true : false;
+    }
+  });
 
   const isOutputChildNode = schemaType === SchemaTypes.Target && isChild;
 
@@ -193,7 +211,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
     dispatch(setCurrentTargetNode({ schemaNode: newCurrentSchemaNode, resetSelectedSourceNodes: true }));
   };
 
-  const isNBadgeRequired = schemaNode.properties === SchemaNodeProperties.Repeating;
+  const isNBadgeRequired = isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating;
 
   const onMouseEnter = () => {
     setIsHover(true);
