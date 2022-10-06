@@ -79,7 +79,6 @@ export const Group = ({
     } else {
       const newItems = { ...getCurrProps() };
       newItems.items.splice(indexToDelete, 1);
-      newItems.hideEmptyRow = true;
       setCurrProps(newItems);
     }
   };
@@ -101,6 +100,7 @@ export const Group = ({
   const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, currIndex: number) => {
     const newItems = { ...groupProps };
     newItems.items[currIndex] = newState;
+    console.log(newItems);
     handleUpdateParent(newItems, index);
   };
 
@@ -175,7 +175,6 @@ export const Group = ({
                       items: item.items,
                       selectedOption: item.selectedOption,
                       checked: item.checked,
-                      hideEmptyRow: item.hideEmptyRow,
                     }}
                     index={currIndex}
                     handleDeleteChild={() => handleDelete(currIndex)}
@@ -186,7 +185,7 @@ export const Group = ({
               })}
               {
                 <>
-                  {getCurrProps().items.length === 0 && !getCurrProps().hideEmptyRow ? (
+                  {getCurrProps().items.length === 0 ? (
                     <Row
                       index={0}
                       rowMenuItems={rowMenuItems}
@@ -198,8 +197,8 @@ export const Group = ({
                   ) : null}
                   <AddSection
                     handleUpdateParent={handleUpdateNewParent}
-                    index={getCurrProps().items.length + 1}
-                    addEmptyRow={getCurrProps().items.length === 0 && !getCurrProps().hideEmptyRow}
+                    index={getCurrProps().items.length}
+                    addEmptyRow={getCurrProps().items.length === 0}
                   />
                 </>
               }

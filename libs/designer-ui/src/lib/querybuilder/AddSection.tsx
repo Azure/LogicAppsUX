@@ -27,14 +27,14 @@ export const AddSection = ({ handleUpdateParent, index, addEmptyRow }: AddSectio
     if (addEmptyRow) {
       handleUpdateParent({ type: 'row' }, index);
     }
-    handleUpdateParent({ type: 'row' }, index + 1);
+    handleUpdateParent({ type: 'row' }, index + (addEmptyRow ? 1 : 0));
   };
 
   const handleAddGroup = () => {
     if (addEmptyRow) {
       handleUpdateParent({ type: 'row' }, index);
     }
-    handleUpdateParent({ type: 'group', items: [] }, index + 1);
+    handleUpdateParent({ type: 'group', items: [] }, index + (addEmptyRow ? 1 : 0));
   };
 
   const menuProps: IContextualMenuProps = {
