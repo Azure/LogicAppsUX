@@ -211,9 +211,6 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
         target: connection.destination.reactFlowKey,
         type: ReactFlowEdgeType.ConnectionEdge,
         selected: connection.isSelected,
-        data: {
-          isHovered: connection.isHovered,
-        },
       };
     });
   });

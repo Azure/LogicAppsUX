@@ -27,7 +27,6 @@ import {
   hideNotification,
   makeConnection,
   removeSourceNodes,
-  setConnectionHovered,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
   unsetSelectedEdges,
@@ -86,7 +85,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { fitView, zoomIn, zoomOut, project } = useReactFlow();
 
-  const currentlySelectedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
@@ -94,8 +92,8 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
   const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
-
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
   const [displayToolboxItem, setDisplayToolboxItem] = useState<string>('');
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
@@ -148,7 +146,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
     if (
-      currentlySelectedSourceNodes.some((node) => {
+      currentlyAddedSourceNodes.some((node) => {
         return node.key === selectedNode.key;
       })
     ) {
@@ -230,12 +228,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
     if (node) {
       dispatch(setCurrentlySelectedEdge(node.target));
-    }
-  };
-
-  const handleEdgeMouseHover = (edge: ReactFlowEdge, isEntering: boolean) => {
-    if (edge) {
-      dispatch(setConnectionHovered({ connectionId: edge.target, isHovered: isEntering }));
     }
   };
 
@@ -403,8 +395,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}
       onEdgeClick={onEdgeClick}
-      onEdgeMouseEnter={(_e, edge) => handleEdgeMouseHover(edge, true)}
-      onEdgeMouseLeave={(_e, edge) => handleEdgeMouseHover(edge, false)}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
 
