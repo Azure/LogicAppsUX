@@ -4,27 +4,22 @@ import type { Gateway, ArmResources, Subscription, SubscriptionsResponse } from 
 import { ArgumentException } from '@microsoft-logic-apps/utils';
 
 interface StandardGatewayServiceArgs {
-  apiVersion: string;
   baseUrl: string;
   locale?: string;
-  apiHubServiceDetails: {
-    apiVersion: string;
-    subscriptionId: string;
-    resourceGroup: string;
-    location: string;
-  };
   httpClient: IHttpClient;
+  apiVersions: {
+    subscription: string;
+    gateway: string;
+  };
 }
 
 export class StandardGatewayService implements IGatewayService {
   constructor(public readonly options: StandardGatewayServiceArgs) {
-    const { apiHubServiceDetails, apiVersion, baseUrl } = options;
+    const { baseUrl, apiVersions } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!apiVersion) {
-      throw new ArgumentException('apiVersion required');
-    } else if (!apiHubServiceDetails) {
-      throw new ArgumentException('apiHubServiceDetails required for workflow app');
+    } else if (!apiVersions) {
+      throw new ArgumentException('apiVersions required');
     }
   }
 
@@ -33,16 +28,17 @@ export class StandardGatewayService implements IGatewayService {
   }
 
   public getGateways(subscriptionId: string, connectorName: string): Promise<Gateway[]> {
+    if (!subscriptionId || !connectorName) return Promise.resolve([]);
     return this.fetchGatewaysList(subscriptionId, connectorName);
   }
 
   private async fetchGatewaysList(subscriptionId: string, apiName: string): Promise<Gateway[]> {
     const filter = `apiName eq '${apiName}'`;
-    const { apiVersion } = this.options;
+    const { apiVersions } = this.options;
     const request: HttpRequestOptions<any> = {
-      uri: `/subscriptions/${subscriptionId}/providers/Microsoft.Web/connectionGateways`,
+      uri: `${subscriptionId}/providers/Microsoft.Web/connectionGateways`,
       queryParameters: {
-        'api-version': apiVersion,
+        'api-version': apiVersions.gateway,
         $filter: filter,
       },
     };
@@ -60,11 +56,11 @@ export class StandardGatewayService implements IGatewayService {
   }
 
   private async fetchSubscriptions(): Promise<Subscription[]> {
-    const { apiVersion } = this.options;
+    const { apiVersions } = this.options;
     const request: HttpRequestOptions<SubscriptionsResponse> = {
       uri: '/subscriptions',
       queryParameters: {
-        'api-version': apiVersion,
+        'api-version': apiVersions.subscription,
       },
     };
 

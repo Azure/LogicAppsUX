@@ -57,13 +57,10 @@ const oAuthService = new StandardOAuthService({
 
 const gatewayService = new StandardGatewayService({
   baseUrl: '/url',
-  apiVersion: '2018-11-01',
   httpClient,
-  apiHubServiceDetails: {
-    apiVersion: '2018-07-01-preview',
-    subscriptionId: '',
-    resourceGroup: '',
-    location: '',
+  apiVersions: {
+    subscription: '2018-11-01',
+    gateway: '2016-06-01',
   },
 });
 

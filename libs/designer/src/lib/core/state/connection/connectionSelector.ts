@@ -7,11 +7,10 @@ import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 export const useConnector = (connectorId: string) => {
-  const connectionService = ConnectionService();
   return useQuery(
     ['apiWithSwaggers', { connectorId }],
     async () => {
-      const { connector } = await connectionService.getConnectorAndSwagger(connectorId);
+      const { connector } = await ConnectionService().getConnectorAndSwagger(connectorId);
       return connector;
     },
     {
@@ -21,10 +20,9 @@ export const useConnector = (connectorId: string) => {
 };
 
 export const useGateways = (subscriptionId: string, connectorName: string) => {
-  const gatewayService = GatewayService();
   return useQuery(
     ['gateways', { subscriptionId }, { connectorName }],
-    async () => gatewayService.getGateways(subscriptionId, connectorName),
+    async () => GatewayService().getGateways(subscriptionId, connectorName),
     {
       enabled: !!connectorName,
     }
@@ -32,8 +30,7 @@ export const useGateways = (subscriptionId: string, connectorName: string) => {
 };
 
 export const useSubscriptions = () => {
-  const gatewayService = GatewayService();
-  return useQuery('subscriptions', async () => gatewayService.getSubscriptions());
+  return useQuery('subscriptions', async () => GatewayService().getSubscriptions());
 };
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {

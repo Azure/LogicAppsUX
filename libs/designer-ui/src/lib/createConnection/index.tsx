@@ -1,7 +1,18 @@
 import { filterRecord } from '../utils';
 import { ConnectionAuth } from './auth';
 import type { IDropdownOption } from '@fluentui/react';
-import { Checkbox, DefaultButton, Dropdown, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
+import {
+  MessageBarType,
+  MessageBar,
+  Checkbox,
+  DefaultButton,
+  Dropdown,
+  Icon,
+  Label,
+  PrimaryButton,
+  TextField,
+  TooltipHost,
+} from '@fluentui/react';
 import type {
   ConnectionParameter,
   ConnectionParameterAllowedValue,
@@ -31,6 +42,7 @@ export interface CreateConnectionProps {
   hideCancelButton?: boolean;
   needsAuth?: boolean;
   errorMessage?: string;
+  clearErrorCallback?: () => void;
   selectSubscriptionCallback?: (subscriptionId: string) => void;
   selectedSubscriptionId?: string;
   availableSubscriptions?: Subscription[];
@@ -51,6 +63,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     hideCancelButton = false,
     needsAuth = false,
     errorMessage,
+    clearErrorCallback,
     selectSubscriptionCallback,
     selectedSubscriptionId,
     availableSubscriptions,
@@ -78,13 +91,13 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const parameters = useMemo(() => multiAuthParams ?? singleAuthParams ?? {}, [multiAuthParams, singleAuthParams]);
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
-  const [parameterValues, setParameterValues] = useState<Record<string, string | undefined>>({});
+  const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
 
   const isParamVisible = useCallback(
     (parameter: ParamType) => {
-      const data = parameter?.uiDefinition;
-      if (data?.constraints?.hidden || data?.constraints?.hideInUI) return false;
-      const dependencyParam = data?.constraints?.dependentParameter;
+      const constraints = parameter?.uiDefinition?.constraints;
+      if (constraints?.hidden || constraints?.hideInUI) return false;
+      const dependencyParam = constraints?.dependentParameter;
       if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
       return true;
     },
@@ -155,6 +168,11 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     description: 'Gateway dropdown label',
   });
 
+  const closeErrorButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close',
+    description: 'Close button aria label',
+  });
+
   const getVisibleParameterValues = useCallback(() => {
     return filterRecord(parameterValues, ([key]) => isParamVisible(parameters[key]));
   }, [isParamVisible, parameterValues, parameters]);
@@ -204,6 +222,16 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   // Configurable connector component
   return (
     <div className="msla-create-connection-container">
+      {errorMessage && (
+        <MessageBar
+          messageBarType={MessageBarType.error}
+          isMultiline={true}
+          onDismiss={clearErrorCallback}
+          dismissButtonAriaLabel={closeErrorButtonAriaLabel}
+        >
+          {errorMessage}
+        </MessageBar>
+      )}
       <div className="connection-params-container">
         <div className="param-row">
           <Label className="label" required htmlFor={'connection-display-name-input'} disabled={isLoading}>
@@ -250,16 +278,15 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
           ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
             if (!isParamVisible(parameter)) return null;
 
-            console.log('parameter', parameter);
             const data = parameter?.uiDefinition;
+            const constraints = parameter?.uiDefinition?.constraints;
             let inputComponent = undefined;
 
             // Gateway setting parameter
             if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.gatewaySetting]) {
               const newGatewayUrl = 'http://aka.ms/logicapps-installgateway';
-              const newGatwayOptionKey = 'msla-newGatewayOption';
               const newGatewayOption: IDropdownOption<any> = {
-                key: newGatwayOptionKey,
+                key: newGatewayUrl,
                 text: intl.formatMessage(
                   {
                     defaultMessage: '{addIcon} Install Gateway',
@@ -268,8 +295,19 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
                   { addIcon: '+ ' }
                 ),
               };
+
+              const gatewayOptions = [
+                ...(availableGateways ?? [])
+                  .map((gateway: Gateway) => ({
+                    key: gateway.id,
+                    text: gateway.properties.displayName ?? '',
+                  }))
+                  .sort((a, b) => a.text.localeCompare(b.text)),
+                newGatewayOption,
+              ];
+
               inputComponent = (
-                <div>
+                <div style={{ width: 'inherit' }}>
                   <Dropdown
                     id={`connection-param-${key}-subscriptions`}
                     label={subscriptionDropdownLabel}
@@ -279,36 +317,31 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
                     disabled={isLoading}
                     ariaLabel={subscriptionDropdownLabel}
                     placeholder={subscriptionDropdownLabel}
-                    options={(availableSubscriptions ?? []).map((subscription: Subscription) => ({
-                      key: subscription.id,
-                      text: subscription.displayName,
-                    }))}
+                    options={(availableSubscriptions ?? [])
+                      .map((subscription: Subscription) => ({
+                        key: subscription.id,
+                        text: subscription.displayName,
+                      }))
+                      .sort((a, b) => a.text.localeCompare(b.text))}
+                    styles={{ callout: { maxHeight: 300 } }}
                   />
                   <Dropdown
                     id={`connection-param-${key}-gateways`}
                     label={gatewayDropdownLabel}
                     className="connection-parameter-input"
-                    selectedKey={availableGateways?.findIndex((value) => value.id === parameterValues[key])}
+                    selectedKey={parameterValues[key]?.id}
                     onChange={(e: any, newVal?: IDropdownOption) => {
-                      if (newVal?.key === newGatwayOptionKey) {
+                      if (newVal?.key === newGatewayUrl) {
                         window.open(newGatewayUrl, '_blank');
                       } else {
-                        setParameterValues({ ...parameterValues, [key]: newVal?.data });
+                        setParameterValues({ ...parameterValues, [key]: { id: newVal?.key.toString() } });
                       }
                     }}
                     disabled={isLoading || !selectedSubscriptionId}
                     ariaLabel={gatewayDropdownLabel}
                     placeholder={gatewayDropdownLabel}
-                    options={[
-                      ...(availableGateways ?? [])
-                        .filter((gateway) => gateway)
-                        .map((gateway: Gateway) => ({
-                          key: gateway.id,
-                          text: gateway.name ?? '',
-                          data: gateway.id,
-                        })),
-                      newGatewayOption,
-                    ]}
+                    options={gatewayOptions}
+                    styles={{ callout: { maxHeight: 300 } }}
                   />
                 </div>
               );
@@ -318,28 +351,29 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
             else if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.bool]) {
               inputComponent = (
                 <Checkbox
-                  checked={parameterValues[key] === 'true'}
+                  checked={parameterValues[key]}
                   onChange={(e: any, checked?: boolean) => {
-                    setParameterValues({ ...parameterValues, [key]: checked?.toString() });
+                    setParameterValues({ ...parameterValues, [key]: checked });
                   }}
+                  label={data?.description}
                 />
               );
             }
 
             // Dropdown Parameter
-            else if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {
+            else if ((constraints?.allowedValues?.length ?? 0) > 0) {
               inputComponent = (
                 <Dropdown
                   id={`connection-param-${key}`}
                   className="connection-parameter-input"
-                  selectedKey={data?.constraints?.allowedValues?.findIndex((value) => value.text === parameterValues[key])}
+                  selectedKey={constraints?.allowedValues?.findIndex((value) => value.text === parameterValues[key])}
                   onChange={(e: any, newVal?: IDropdownOption) => {
                     setParameterValues({ ...parameterValues, [key]: newVal?.text });
                   }}
                   disabled={isLoading}
                   ariaLabel={data?.description}
                   placeholder={data?.description}
-                  options={(data?.constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
+                  options={(constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
                     key: index,
                     text: allowedValue.text ?? '',
                   }))}
@@ -349,13 +383,17 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
             // Text Input Parameter
             else {
+              const isSecure = parameter.type === 'securestring' && !constraints?.clearText;
+              const type = isSecure ? 'password' : 'text';
+
               inputComponent = (
                 <TextField
                   id={key}
                   className="connection-parameter-input"
                   disabled={isLoading}
                   autoComplete="off"
-                  // onNotifyValidationResult
+                  type={type}
+                  canRevealPassword
                   ariaLabel={data?.description}
                   placeholder={data?.description}
                   value={parameterValues[key]}
@@ -366,7 +404,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
 
             return (
               <div key={key} className="param-row">
-                <Label className="label" required={data?.constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
+                <Label className="label" required={constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
                   {data?.displayName}
                   <TooltipHost content={data?.tooltip}>
                     <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
