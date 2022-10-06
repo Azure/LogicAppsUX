@@ -38,22 +38,27 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerOffset, setContainerOffset] = useState(0);
+  const [heights, setHeights] = useState<number[]>([]);
+  // const [isGroupable, setIsGroupable] = useState(true);
 
-  const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps | RowItemProps>(groupProps);
+  const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
   useEffect(() => {
-    console.log(getRootProp());
+    setHeights(checkHeights(getRootProp(), [], 0));
     if (containerRef.current) {
       setContainerOffset(containerRef.current.getBoundingClientRect().bottom);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [containerRef, getRootProp()]);
 
-  const handleUpdateParent = (newProps: GroupItemProps | RowItemProps) => {
+  useEffect(() => {
+    console.log(heights);
+  }, [heights]);
+
+  const handleUpdateParent = (newProps: GroupItemProps) => {
     setRootProp(newProps);
   };
 
-  // TODO Functionality
   const moveUpButton = intl.formatMessage({
     defaultMessage: 'Move up',
     description: 'Move up button',
@@ -111,7 +116,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
         containerOffset={containerOffset}
         GetTokenPicker={GetTokenPicker}
         menuItems={menuItems}
-        groupProps={getRootProp() as GroupItemProps}
+        groupProps={getRootProp()}
         isFirstGroup={true}
         index={0}
         mustHaveItem={true}
@@ -119,4 +124,15 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
       />
     </div>
   );
+};
+
+// should i make this bfs instead of dfs?
+const checkHeights = (item: GroupItemProps | RowItemProps, returnVal: number[], height: number): number[] => {
+  if (item.checked) {
+    returnVal.push(height);
+  }
+  if (item.type === 'group') {
+    item.items.map((childItem) => checkHeights(childItem, returnVal, height + 1));
+  }
+  return returnVal;
 };

@@ -37,7 +37,7 @@ interface GroupProps {
   mustHaveItem?: boolean;
   handleDeleteChild?: (indexToDelete: number) => void;
   handleUngroupChild?: (indexToInsertAt: number) => void;
-  handleUpdateParent: (newProps: GroupItemProps | RowItemProps, index: number) => void;
+  handleUpdateParent: (newProps: GroupItemProps, index: number) => void;
   GetTokenPicker: (
     editorId: string,
     labelId: string,
