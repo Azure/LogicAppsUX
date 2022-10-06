@@ -24,6 +24,15 @@ const useStyles = makeStyles({
   titleStyle: {
     ...typographyStyles.body1Strong,
   },
+  codeExStyle: {
+    marginTop: '8px',
+    display: 'block',
+    fontFamily: tokens.fontFamilyMonospace,
+  },
+  fnNameStyle: {
+    color: tokens.colorBrandForeground2,
+    fontFamily: tokens.fontFamilyMonospace,
+  },
 });
 
 interface FunctionNodePropertiesTabProps {
@@ -83,7 +92,9 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
         </Stack>
 
         <Text>{functionNode.description}</Text>
-        <Text style={{ marginTop: '8px' }}>{/* TODO: Code example of Function */}</Text>
+        <Text className={styles.codeExStyle}>
+          <Text className={styles.fnNameStyle}>{functionNode.functionName}</Text>()
+        </Text>
       </div>
 
       <Stack horizontal className={styles.inputOutputContentStyle}>
