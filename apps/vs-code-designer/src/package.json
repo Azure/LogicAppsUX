@@ -64,8 +64,6 @@
   "publisher": "ms-azuretools",
   "icon": "assets/logicapp.png",
   "dependencies": {
-    "tslib": "^2.0.0",
-    "@microsoft/vscode-azext-utils": "^0.3.12",
-    "request-promise": "^4.2.4"
+    "tslib": "^2.0.0"
   }
 }
