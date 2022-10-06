@@ -1,4 +1,5 @@
 import type { RootState } from '../../../core/state/Store';
+import { NormalizedDataType } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
@@ -82,7 +83,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
     const newInputValues = [...inputValues];
 
     // NOTE: Should be safe to leave values out of connection.inputs[] if
-    // they're empty strings (which will always be the case here)
+    // they're empty strings (which will always be the case here) ?
 
     newInputValues.push('');
 
@@ -99,8 +100,13 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
     setInputValues(newInputValues);
   };
 
-  const validateAndCreateConnection = () => {
+  const validateAndCreateConnection = (option?: IComboBoxOption) => {
+    if (!option) {
+      return;
+    }
+
     // TODO: onChange, set connection stuff
+    console.log(option);
   };
 
   const functionNode = useMemo(() => functionNodeDictionary[nodeKey], [nodeKey, functionNodeDictionary]);
@@ -122,13 +128,13 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
       });
     });
 
-    Object.values(functionNodeDictionary).forEach((node) => {
+    Object.entries(functionNodeDictionary).forEach(([key, node]) => {
       if (!newPossibleInputOptionsDictionary[node.outputValueType]) {
         newPossibleInputOptionsDictionary[node.outputValueType] = [];
       }
 
       newPossibleInputOptionsDictionary[node.outputValueType].push({
-        nodeKey: node.key,
+        nodeKey: key,
         nodeName: node.functionName,
         isFunctionNode: true,
       });
@@ -144,19 +150,33 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
       newInputOptions.push([]);
 
       input.allowedTypes.forEach((type) => {
-        if (!possibleInputOptions[type]) {
-          return;
-        }
-
-        possibleInputOptions[type].forEach((possibleOption) => {
-          newInputOptions[idx].push({
-            key: possibleOption.nodeKey,
-            text: possibleOption.nodeName,
-            data: {
-              isFunction: possibleOption.isFunctionNode,
-            },
+        if (type === NormalizedDataType.Any) {
+          Object.values(possibleInputOptions).forEach((typeEntry) => {
+            typeEntry.forEach((possibleOption) => {
+              newInputOptions[idx].push({
+                key: possibleOption.nodeKey,
+                text: possibleOption.nodeName,
+                data: {
+                  isFunction: possibleOption.isFunctionNode,
+                },
+              });
+            });
           });
-        });
+        } else {
+          if (!possibleInputOptions[type]) {
+            return;
+          }
+
+          possibleInputOptions[type].forEach((possibleOption) => {
+            newInputOptions[idx].push({
+              key: possibleOption.nodeKey,
+              text: possibleOption.nodeName,
+              data: {
+                isFunction: possibleOption.isFunctionNode,
+              },
+            });
+          });
+        }
       });
     });
 
@@ -165,7 +185,8 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
 
   const connection = useMemo<Connection | undefined>(() => connectionDictionary[nodeKey], [connectionDictionary, nodeKey]);
 
-  const outputValue = useMemo(() => {
+  // TODO: Figure out input-ids not being *displayed* properly
+  const getOutputValue = () => {
     let outputValue = `${functionNode.functionName}(`;
 
     inputValues.forEach((input, idx) => {
@@ -173,7 +194,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
     });
 
     return `${outputValue})`;
-  }, [functionNode, inputValues]);
+  };
 
   useEffect(() => {
     const newInputValues: string[] = [];
@@ -247,7 +268,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
                       placeholder={input.placeholder}
                       options={inputOptions[idx]}
                       selectedKey={inputValues[idx]}
-                      onChange={validateAndCreateConnection}
+                      onChange={(_e, option) => validateAndCreateConnection(option)}
                       allowFreeform={false}
                     />
                   </Tooltip>
@@ -266,7 +287,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
                       placeholder={functionNode.inputs[0].placeholder}
                       options={inputOptions[idx]}
                       selectedKey={inputValues[idx]}
-                      onChange={validateAndCreateConnection}
+                      onChange={(_e, option) => validateAndCreateConnection(option)}
                       allowFreeform={false}
                     />
                   </Tooltip>
@@ -296,7 +317,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{outputLoc}</Text>
 
-          <Input defaultValue={outputValue} style={{ marginTop: 16 }} readOnly />
+          <Input defaultValue={getOutputValue()} style={{ marginTop: 16 }} readOnly />
         </Stack>
       </Stack>
     </div>
