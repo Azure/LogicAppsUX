@@ -30,13 +30,14 @@ import {
   setConnectionHovered,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
+  unsetSelectedEdges,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
 import type { FunctionData } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
-import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
+import type { SelectedNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
 import { useLayout } from '../utils/ReactFlow.Util';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
@@ -64,8 +65,8 @@ import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as 
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { MiniMap, useReactFlow, ConnectionLineType } from 'reactflow';
 
-const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
-const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
+export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
+export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
 
 const toolboxPanelProps: FloatingPanelProps = {
   xPos: '16px',
@@ -96,7 +97,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
-  const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
+  const [displayToolboxItem, setDisplayToolboxItem] = useState<string>('');
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
 
   const reactFlowRef = useRef<HTMLDivElement>(null);
@@ -123,7 +124,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
     if (data.value === displayToolboxItem) {
-      setDisplayToolboxItem(undefined);
+      setDisplayToolboxItem('');
     } else {
       setDisplayToolboxItem(data.value as string);
     }
@@ -135,7 +136,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       dispatch(setCurrentlySelectedNode(undefined));
     }
 
-    setDisplayToolboxItem(undefined);
+    // Unselect all edges/lines
+    dispatch(unsetSelectedEdges());
+
+    setDisplayToolboxItem('');
   };
 
   const onFunctionItemClick = (selectedFunction: FunctionData) => {
@@ -155,44 +159,16 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   };
 
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
+    const newSelectedNode: SelectedNode = {
+      id: node.id,
+      type: NodeType.Function,
+    };
+
     if (node.type === ReactFlowNodeType.SchemaNode) {
-      if (node.data.schemaType === SchemaTypes.Source) {
-        const selectedSourceNode: SelectedSourceNode = {
-          nodeType: NodeType.Source,
-          name: node.data.schemaNode.name,
-          path: node.id.replace(sourcePrefix, ''),
-          dataType: node.data.schemaNode.schemaNodeDataType,
-        };
-
-        dispatch(setCurrentlySelectedNode(selectedSourceNode));
-      } else if (node.data.schemaType === SchemaTypes.Target) {
-        const selectedTargetNode: SelectedTargetNode = {
-          nodeType: NodeType.Target,
-          name: node.data.schemaNode.name,
-          path: node.id.replace(targetPrefix, ''),
-          dataType: node.data.schemaNode.schemaNodeDataType,
-          defaultValue: '', // TODO: this property and below
-          doNotGenerateIfNoValue: true,
-          nullable: true,
-          inputIds: [],
-        };
-
-        dispatch(setCurrentlySelectedNode(selectedTargetNode));
-      }
-    } else if (node.type === ReactFlowNodeType.FunctionNode) {
-      const selectedFunctionNode: SelectedFunctionNode = {
-        nodeType: NodeType.Function,
-        id: node.id,
-        name: node.data.functionName,
-        inputs: node.data.inputs,
-        branding: node.data.functionBranding,
-        description: '', // TODO: this property and below
-        codeEx: '',
-        outputId: '',
-      };
-
-      dispatch(setCurrentlySelectedNode(selectedFunctionNode));
+      newSelectedNode.type = node.data.schemaType === SchemaTypes.Source ? NodeType.Source : NodeType.Target;
     }
+
+    dispatch(setCurrentlySelectedNode(newSelectedNode));
   };
 
   const onConnect = (connection: ReactFlowConnection) => {
@@ -252,10 +228,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   );
 
   const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
-    const selectedNode = edges.find((edge) => edge.id === node.id);
-    if (selectedNode) {
-      selectedNode.selected = !selectedNode.selected;
-    }
     if (node) {
       dispatch(setCurrentlySelectedEdge(node.target));
     }

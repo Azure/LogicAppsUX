@@ -232,29 +232,32 @@ export const dataMapSlice = createSlice({
       edge.isSelected = !edge.isSelected;
     },
 
-    setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
-      const newState: DataMapOperationState = {
-        ...state.curDataMapOperation,
-        currentlySelectedNode: action.payload,
-      };
+    unsetSelectedEdges: (state) => {
+      Object.keys(state.curDataMapOperation.dataMapConnections).forEach((key: string) => {
+        state.curDataMapOperation.dataMapConnections[key].isSelected = false;
+      });
+    },
 
-      doDataMapOperation(state, newState);
+    setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
+      state.curDataMapOperation.currentlySelectedNode = action.payload;
     },
 
     deleteCurrentlySelectedItem: (state) => {
       const selectedNode = state.curDataMapOperation.currentlySelectedNode;
 
-      if (selectedNode && selectedNode.nodeType !== NodeType.Target) {
-        switch (selectedNode.nodeType) {
+      if (selectedNode && selectedNode.type !== NodeType.Target) {
+        switch (selectedNode.type) {
           case NodeType.Source: {
-            const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== selectedNode.name);
+            const sourceNode = state.curDataMapOperation.flattenedSourceSchema[selectedNode.id];
+
+            const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== sourceNode.name);
 
             const srcNodeHasConnections = Object.values(state.curDataMapOperation.dataMapConnections).some((connection) =>
-              connection.sources.some((source) => source.node.key === selectedNode.path)
+              connection.sources.some((source) => source.node.key === sourceNode.key)
             );
 
             if (srcNodeHasConnections) {
-              state.notificationData = { type: NotificationTypes.SourceNodeRemoveFailed, msgParam: selectedNode.name };
+              state.notificationData = { type: NotificationTypes.SourceNodeRemoveFailed, msgParam: sourceNode.name };
               return;
             }
 
@@ -296,6 +299,7 @@ export const dataMapSlice = createSlice({
         }
 
         doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: connections });
+        state.notificationData = { type: NotificationTypes.ConnectionDeleted };
       }
     },
 
@@ -485,6 +489,7 @@ export const {
   discardDataMap,
   deleteCurrentlySelectedItem,
   setCurrentlySelectedEdge,
+  unsetSelectedEdges,
   showNotification,
   hideNotification,
 } = dataMapSlice.actions;
