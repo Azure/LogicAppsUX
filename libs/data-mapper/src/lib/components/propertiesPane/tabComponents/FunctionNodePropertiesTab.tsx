@@ -1,12 +1,21 @@
 import type { RootState } from '../../../core/state/Store';
+import type { Connection } from '../../../models/Connection';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
-import { Stack } from '@fluentui/react';
-import { Button, Divider, Input, Label, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
+import { ComboBox, type IComboBoxOption, Stack } from '@fluentui/react';
+import { Button, Divider, Input, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+
+type InputOptions = {
+  [key: string]: {
+    nodeKey: string;
+    nodeName: string;
+    isFunctionNode?: boolean;
+  }[];
+};
 
 const useStyles = makeStyles({
   inputOutputContentStyle: {
@@ -43,9 +52,11 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
   const intl = useIntl();
   const styles = useStyles();
 
+  const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
-  const [unboundedInputValues, setUnboundedInputValues] = useState<string[]>([]);
+  const [inputValues, setInputValues] = useState<string[]>([]);
 
   const addFieldLoc = intl.formatMessage({
     defaultMessage: 'Add field',
@@ -68,24 +79,129 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
   });
 
   const addUnboundedInput = () => {
-    const newUnboundedInputValues = [...unboundedInputValues];
+    const newInputValues = [...inputValues];
 
-    newUnboundedInputValues.push('');
+    // NOTE: Should be safe to leave values out of connection.inputs[] if
+    // they're empty strings (which will always be the case here)
 
-    setUnboundedInputValues(newUnboundedInputValues);
+    newInputValues.push('');
+
+    setInputValues(newInputValues);
   };
 
   const removeUnboundedInput = (index: number) => {
-    const newUnboundedInputValues = [...unboundedInputValues];
+    const newInputValues = [...inputValues];
 
-    newUnboundedInputValues.splice(index, 1);
+    // TODO: Need to remove value from connection inputs[] if there
 
-    setUnboundedInputValues(newUnboundedInputValues);
+    newInputValues.splice(index, 1);
+
+    setInputValues(newInputValues);
+  };
+
+  const validateAndCreateConnection = () => {
+    // TODO: onChange, set connection stuff
   };
 
   const functionNode = useMemo(() => functionNodeDictionary[nodeKey], [nodeKey, functionNodeDictionary]);
 
   const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionNode.category), [functionNode]);
+
+  const possibleInputOptions = useMemo<InputOptions>(() => {
+    const newPossibleInputOptionsDictionary = {} as InputOptions;
+
+    currentSourceNodes.forEach((srcNode) => {
+      if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
+        newPossibleInputOptionsDictionary[srcNode.normalizedDataType] = [];
+      }
+
+      newPossibleInputOptionsDictionary[srcNode.normalizedDataType].push({
+        nodeKey: srcNode.key,
+        nodeName: srcNode.name,
+        isFunctionNode: false,
+      });
+    });
+
+    Object.values(functionNodeDictionary).forEach((node) => {
+      if (!newPossibleInputOptionsDictionary[node.outputValueType]) {
+        newPossibleInputOptionsDictionary[node.outputValueType] = [];
+      }
+
+      newPossibleInputOptionsDictionary[node.outputValueType].push({
+        nodeKey: node.key,
+        nodeName: node.functionName,
+        isFunctionNode: true,
+      });
+    });
+
+    return newPossibleInputOptionsDictionary;
+  }, [currentSourceNodes, functionNodeDictionary]);
+
+  const inputOptions = useMemo<IComboBoxOption[][]>(() => {
+    const newInputOptions: IComboBoxOption[][] = [];
+
+    functionNode.inputs.forEach((input, idx) => {
+      newInputOptions.push([]);
+
+      input.allowedTypes.forEach((type) => {
+        if (!possibleInputOptions[type]) {
+          return;
+        }
+
+        possibleInputOptions[type].forEach((possibleOption) => {
+          newInputOptions[idx].push({
+            key: possibleOption.nodeKey,
+            text: possibleOption.nodeName,
+            data: {
+              isFunction: possibleOption.isFunctionNode,
+            },
+          });
+        });
+      });
+    });
+
+    return newInputOptions;
+  }, [possibleInputOptions, functionNode]);
+
+  const connection = useMemo<Connection | undefined>(() => connectionDictionary[nodeKey], [connectionDictionary, nodeKey]);
+
+  const outputValue = useMemo(() => {
+    let outputValue = `${functionNode.functionName}(`;
+
+    inputValues.forEach((input, idx) => {
+      outputValue += `${input}${idx === inputValues.length - 1 ? '' : ', '}`;
+    });
+
+    return `${outputValue})`;
+  }, [functionNode, inputValues]);
+
+  useEffect(() => {
+    const newInputValues: string[] = [];
+
+    if (functionNode.maxNumberOfInputs === 0) {
+      return;
+    }
+
+    if (functionNode.maxNumberOfInputs === -1) {
+      if (connection) {
+        connection.sources.forEach((src) => {
+          newInputValues.push(src.node.key);
+        });
+      }
+    } else {
+      functionNode.inputs.forEach((_input) => {
+        newInputValues.push('');
+      });
+
+      if (connection) {
+        connection.sources.forEach((src, idx) => {
+          newInputValues[idx] = src.node.key;
+        });
+      }
+    }
+
+    setInputValues(newInputValues);
+  }, [functionNode, connection]);
 
   return (
     <div style={{ height: '100%' }}>
@@ -125,11 +241,15 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
             <Stack>
               {functionNode.inputs.map((input, idx) => (
                 <div key={idx} style={{ marginTop: 8 }}>
-                  <Label htmlFor={`nodeInput-${idx}`} style={{ display: 'block' }}>
-                    {input.displayName}
-                  </Label>
                   <Tooltip relationship="label" content={input.tooltip}>
-                    <Input id={`nodeInput-${idx}`} placeholder={input.placeholder} />
+                    <ComboBox
+                      label={input.displayName}
+                      placeholder={input.placeholder}
+                      options={inputOptions[idx]}
+                      selectedKey={inputValues[idx]}
+                      onChange={validateAndCreateConnection}
+                      allowFreeform={false}
+                    />
                   </Tooltip>
                 </div>
               ))}
@@ -138,25 +258,26 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
 
           {functionNode.maxNumberOfInputs === -1 && (
             <>
-              {unboundedInputValues.map((_value, idx) => (
-                <div key={idx} style={{ marginTop: 8 }}>
-                  <Label htmlFor={`nodeInput-${idx}`} style={{ display: 'block' }}>
-                    {functionNode.inputs[0].displayName}
-                  </Label>
-
-                  <Stack horizontal verticalAlign="center" style={{ marginTop: 2 }}>
-                    <Tooltip relationship="label" content={functionNode.inputs[0].tooltip}>
-                      <Input id={`nodeInput-${idx}`} placeholder={functionNode.inputs[0].placeholder} />
-                    </Tooltip>
-
-                    <Button
-                      appearance="subtle"
-                      icon={<Delete20Regular />}
-                      onClick={() => removeUnboundedInput(idx)}
-                      style={{ marginLeft: '16px' }}
+              {inputValues.map((_value, idx) => (
+                <Stack key={idx} horizontal verticalAlign="center" style={{ marginTop: 8 }}>
+                  <Tooltip relationship="label" content={functionNode.inputs[0].tooltip}>
+                    <ComboBox
+                      label={functionNode.inputs[0].displayName}
+                      placeholder={functionNode.inputs[0].placeholder}
+                      options={inputOptions[idx]}
+                      selectedKey={inputValues[idx]}
+                      onChange={validateAndCreateConnection}
+                      allowFreeform={false}
                     />
-                  </Stack>
-                </div>
+                  </Tooltip>
+
+                  <Button
+                    appearance="subtle"
+                    icon={<Delete20Regular />}
+                    onClick={() => removeUnboundedInput(idx)}
+                    style={{ marginLeft: '16px' }}
+                  />
+                </Stack>
               ))}
 
               <Button appearance="subtle" icon={<Add20Regular />} onClick={addUnboundedInput} style={{ width: '72px', marginTop: 12 }}>
@@ -175,7 +296,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{outputLoc}</Text>
 
-          <Input placeholder="Temporary placeholder" style={{ marginTop: 16 }} />
+          <Input defaultValue={outputValue} style={{ marginTop: 16 }} readOnly />
         </Stack>
       </Stack>
     </div>
