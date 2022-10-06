@@ -27,7 +27,6 @@ import {
   hideNotification,
   makeConnection,
   removeSourceNodes,
-  setConnectionHovered,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
   unsetSelectedEdges,
@@ -233,12 +232,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     }
   };
 
-  const handleEdgeMouseHover = (edge: ReactFlowEdge, isEntering: boolean) => {
-    if (edge) {
-      dispatch(setConnectionHovered({ connectionId: edge.target, isHovered: isEntering }));
-    }
-  };
-
   const keyDownHandler: KeyboardEventHandler<HTMLDivElement> = (event) => {
     if (event.key === 'Delete' || event.key === 'Backspace') {
       dispatch(deleteCurrentlySelectedItem());
@@ -403,8 +396,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}
       onEdgeClick={onEdgeClick}
-      onEdgeMouseEnter={(_e, edge) => handleEdgeMouseHover(edge, true)}
-      onEdgeMouseLeave={(_e, edge) => handleEdgeMouseHover(edge, false)}
     >
       <ButtonPivot {...toolboxButtonPivotProps} />
 
