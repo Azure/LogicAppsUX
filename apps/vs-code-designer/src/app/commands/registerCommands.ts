@@ -4,9 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { openDesigner } from './workflows/openDesigner';
 import { commands } from 'vscode';
-import type { ExtensionContext } from 'vscode';
 
-export function registerCommands(context: ExtensionContext): void {
+export function registerCommands(): void {
   // Register command "start"
-  commands.registerCommand('logicAppsExtension.openDesigner', async () => openDesigner(context));
+  commands.registerCommand('logicAppsExtension.openDesigner', openDesigner);
 }
