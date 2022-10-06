@@ -11,7 +11,8 @@ import { useSelector } from 'react-redux';
 const useStyles = makeStyles({
   inputOutputContentStyle: {
     display: 'flex',
-    marginTop: '16px',
+    paddingTop: '16px',
+    paddingBottom: '16px',
   },
   inputOutputStackStyle: {
     width: '100%',
@@ -44,7 +45,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
 
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
 
-  const [unboundedInputs, _setUnboundedInputs] = useState([]);
+  const [unboundedInputValues, setUnboundedInputValues] = useState<string[]>([]);
 
   const addFieldLoc = intl.formatMessage({
     defaultMessage: 'Add field',
@@ -65,6 +66,22 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
     defaultMessage: `This function doesn't require any input.`,
     description: `Function doesn't have or require inputs`,
   });
+
+  const addUnboundedInput = () => {
+    const newUnboundedInputValues = [...unboundedInputValues];
+
+    newUnboundedInputValues.push('');
+
+    setUnboundedInputValues(newUnboundedInputValues);
+  };
+
+  const removeUnboundedInput = (index: number) => {
+    const newUnboundedInputValues = [...unboundedInputValues];
+
+    newUnboundedInputValues.splice(index, 1);
+
+    setUnboundedInputValues(newUnboundedInputValues);
+  };
 
   const functionNode = useMemo(() => functionNodeDictionary[nodeKey], [nodeKey, functionNodeDictionary]);
 
@@ -107,10 +124,12 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
           {functionNode.maxNumberOfInputs > 0 && (
             <Stack>
               {functionNode.inputs.map((input, idx) => (
-                <div key={idx}>
-                  <Label htmlFor={`nodeInput-${idx}`}>{input.displayName}</Label>
+                <div key={idx} style={{ marginTop: 8 }}>
+                  <Label htmlFor={`nodeInput-${idx}`} style={{ display: 'block' }}>
+                    {input.displayName}
+                  </Label>
                   <Tooltip relationship="label" content={input.tooltip}>
-                    <Input id={`nodeInput-${idx}`} placeholder={input.placeholder} style={{ marginTop: 16 }} />
+                    <Input id={`nodeInput-${idx}`} placeholder={input.placeholder} />
                   </Tooltip>
                 </div>
               ))}
@@ -119,20 +138,28 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
 
           {functionNode.maxNumberOfInputs === -1 && (
             <>
-              {unboundedInputs.map((input, idx) => (
-                <Stack key={idx} horizontal verticalAlign="center">
-                  <div>
-                    <Label htmlFor={`nodeInput-${idx}`}>{functionNode.inputs[0].displayName}</Label>
-                    <Tooltip relationship="label" content={functionNode.inputs[0].tooltip}>
-                      <Input id={`nodeInput-${idx}`} placeholder={functionNode.inputs[0].placeholder} style={{ marginTop: 16 }} />
-                    </Tooltip>
-                  </div>
+              {unboundedInputValues.map((_value, idx) => (
+                <div key={idx} style={{ marginTop: 8 }}>
+                  <Label htmlFor={`nodeInput-${idx}`} style={{ display: 'block' }}>
+                    {functionNode.inputs[0].displayName}
+                  </Label>
 
-                  <Button icon={<Delete20Regular />} />
-                </Stack>
+                  <Stack horizontal verticalAlign="center" style={{ marginTop: 2 }}>
+                    <Tooltip relationship="label" content={functionNode.inputs[0].tooltip}>
+                      <Input id={`nodeInput-${idx}`} placeholder={functionNode.inputs[0].placeholder} />
+                    </Tooltip>
+
+                    <Button
+                      appearance="subtle"
+                      icon={<Delete20Regular />}
+                      onClick={() => removeUnboundedInput(idx)}
+                      style={{ marginLeft: '16px' }}
+                    />
+                  </Stack>
+                </div>
               ))}
 
-              <Button appearance="subtle" icon={<Add20Regular />}>
+              <Button appearance="subtle" icon={<Add20Regular />} onClick={addUnboundedInput} style={{ width: '72px', marginTop: 12 }}>
                 {addFieldLoc}
               </Button>
             </>
