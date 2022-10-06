@@ -17,8 +17,8 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  margin-top: 16px;
+  gap: 24px;
+  margin: 16px 0px;
 
   .connection-params-container {
     width: 100%;
@@ -30,7 +30,7 @@
       width: 100%;
       display: flex;
       flex-direction: row;
-      align-items: center;
+      align-items: baseline;
       gap: 8px;
 
       .label {
@@ -40,6 +40,10 @@
 
       .connection-parameter-input {
         flex-grow: 1;
+      }
+
+      .ms-TextField-reveal {
+        height: auto;
       }
     }
   }

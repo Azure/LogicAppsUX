@@ -5,6 +5,7 @@ import {
   DevLogger,
   InitConnectionService,
   InitConnectorService,
+  InitGatewayService,
   InitOperationManifestService,
   InitSearchService,
   InitOAuthService,
@@ -20,7 +21,15 @@ const initialState: DesignerOptionsState = {
 
 export const initializeServices = createAsyncThunk(
   'initializeDesignerServices',
-  async ({ connectionService, operationManifestService, searchService, oAuthService, connectorService, loggerService }: ServiceOptions) => {
+  async ({
+    connectionService,
+    operationManifestService,
+    searchService,
+    connectorService,
+    oAuthService,
+    gatewayService,
+    loggerService,
+  }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
       loggerServices.push(loggerService);
@@ -36,6 +45,10 @@ export const initializeServices = createAsyncThunk(
 
     if (connectorService) {
       InitConnectorService(connectorService);
+    }
+
+    if (gatewayService) {
+      InitGatewayService(gatewayService);
     }
 
     return true;

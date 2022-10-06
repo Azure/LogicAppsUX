@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { getConnectionMetadata, needsAuth } from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
-import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
+import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
@@ -25,6 +25,12 @@ const CreateConnectionTab = () => {
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
 
+  const subscriptionsQuery = useSubscriptions();
+  const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
+  const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
+  const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
@@ -38,6 +44,9 @@ const CreateConnectionTab = () => {
 
   const createConnectionCallback = useCallback(
     async (displayName: string, selectedParameterSet?: ConnectionParameterSet, parameterValues: Record<string, any> = {}) => {
+      setErrorMessage(undefined);
+      setIsLoading(true);
+
       const connectionParameterSetValues: ConnectionParameterSetValues = {
         name: selectedParameterSet?.name ?? '',
         values: Object.keys(parameterValues).reduce((acc: any, key) => {
@@ -58,21 +67,29 @@ const CreateConnectionTab = () => {
         connectionParameters: selectedParameterSet?.parameters ?? connector?.properties.connectionParameters,
       };
 
-      setIsLoading(true);
-      const connectorId = connector?.id as string;
-      const uniqueConnectionName = await getUniqueConnectionName(connectorId);
-      const newConnection = await ConnectionService().createConnection(
-        uniqueConnectionName,
-        connectorId,
-        connectionInfo,
-        parametersMetadata
-      );
-
-      applyNewConnection(newConnection, uniqueConnectionName);
-      dispatch(showDefaultTabs());
+      try {
+        const connectorId = connector?.id as string;
+        const uniqueConnectionName = await getUniqueConnectionName(connectorId);
+        const newConnection = await ConnectionService().createConnection(
+          uniqueConnectionName,
+          connectorId,
+          connectionInfo,
+          parametersMetadata
+        );
+        applyNewConnection(newConnection, uniqueConnectionName);
+        dispatch(showDefaultTabs());
+      } catch (error: any) {
+        setErrorMessage(error.responseText);
+        const errorMessage = `Unable to create connection for operation - ${nodeId}. Error details - ${JSON.stringify(error)}`;
+        LoggerService().log({
+          level: LogEntryLevel.Error,
+          area: 'create connection tab',
+          message: errorMessage,
+        });
+      }
       setIsLoading(false);
     },
-    [applyNewConnection, connectionMetadata, connector, dispatch]
+    [applyNewConnection, connectionMetadata?.type, connector?.id, connector?.properties.connectionParameters, dispatch, nodeId]
   );
 
   const needsAuthentication = useMemo(() => needsAuth(connector), [connector]);
@@ -101,7 +118,8 @@ const CreateConnectionTab = () => {
       } else if (e) {
         setErrorMessage(e);
       }
-    } catch (error) {
+    } catch (error: any) {
+      setErrorMessage(error.responseText);
       const errorMessage = `Failed to create OAuth connection: ${error}`;
       LoggerService().log({
         level: LogEntryLevel.Error,
@@ -131,6 +149,13 @@ const CreateConnectionTab = () => {
       needsAuth={needsAuthentication}
       authClickCallback={authClickCallback}
       errorMessage={errorMessage}
+      clearErrorCallback={() => setErrorMessage(undefined)}
+      selectSubscriptionCallback={(subscriptionId: string) => {
+        setSelectedSubscriptionId(subscriptionId);
+      }}
+      selectedSubscriptionId={selectedSubscriptionId}
+      availableSubscriptions={subscriptions}
+      availableGateways={availableGateways}
     />
   );
 };
