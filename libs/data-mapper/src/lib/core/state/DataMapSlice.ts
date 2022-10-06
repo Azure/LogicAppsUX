@@ -5,7 +5,6 @@ import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
-import { getEdgeForSource } from '../../utils/DataMap.Utils';
 import { addReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -32,6 +31,7 @@ export interface DataMapOperationState {
   currentTargetNode?: SchemaNodeExtended;
   currentFunctionNodes: FunctionDictionary;
   currentlySelectedNode?: SelectedNode;
+  currentlySelectedEdge?: [string, string]; // input node, output node
   xsltFilename: string;
 }
 
@@ -230,21 +230,23 @@ export const dataMapSlice = createSlice({
     },
 
     setCurrentlySelectedEdge: (state, action: PayloadAction<{ source: string; target: string }>) => {
-      // danielle de-select other edges?
-      const edge = getEdgeForSource(state.curDataMapOperation.dataMapConnections[action.payload.target], action.payload.source);
-      if (edge) {
-        edge.isSelected = !edge.isSelected;
-      }
+      state.curDataMapOperation.currentlySelectedEdge = [action.payload.source, action.payload.target];
+      state.curDataMapOperation.currentlySelectedNode = undefined;
     },
 
     unsetSelectedEdges: (state) => {
-      Object.keys(state.curDataMapOperation.dataMapConnections).forEach((key: string) => {
-        state.curDataMapOperation.dataMapConnections[key].isSelected = false;
+      Object.keys(state.curDataMapOperation.dataMapConnections).forEach((_key: string) => {
+        // state.curDataMapOperation.dataMapConnections[key].isSelected = false;
       });
     },
-
     setCurrentlySelectedNode: (state, action: PayloadAction<SelectedNode | undefined>) => {
-      state.curDataMapOperation.currentlySelectedNode = action.payload;
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        currentlySelectedNode: action.payload,
+        currentlySelectedEdge: undefined,
+      };
+
+      doDataMapOperation(state, newState);
     },
 
     deleteCurrentlySelectedItem: (state) => {
@@ -296,22 +298,11 @@ export const dataMapSlice = createSlice({
         state.curDataMapOperation.currentlySelectedNode = undefined;
       } else {
         const connections = state.curDataMapOperation.dataMapConnections;
-
-        for (const targetKey in connections) {
-          connections[targetKey].sources = connections[targetKey].sources.filter((connection) => {
-            console.log('connection ' + connection.reactFlowKey + ' ' + connection.isSelected);
-            return connection.isSelected;
-          });
-          // for (const sourceKey in connections[targetKey].sources) {
-          //   const edge = getEdgeForSource(connections[targetKey], sourceKey);
-          //   console.log(edge?.toString());
-          //   if (edge?.isSelected) {
-          //     delete connections[targetKey];
-          //     // delete child if necessary
-          //   }
-          // }
+        const selectedConnection = state.curDataMapOperation.currentlySelectedEdge;
+        if (selectedConnection) {
+          const targetConn = connections[selectedConnection[1]];
+          targetConn.sources = targetConn.sources.filter((conn) => conn.reactFlowKey === selectedConnection[0]);
         }
-
         doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: connections });
         state.notificationData = { type: NotificationTypes.ConnectionDeleted };
       }
