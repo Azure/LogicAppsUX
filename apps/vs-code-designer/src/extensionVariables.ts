@@ -18,4 +18,8 @@ export namespace ext {
     designerAzure: {},
     export: {},
   };
+
+  export enum webViewKey {
+    designerLocal = 'designerLocal',
+  }
 }
