@@ -4,8 +4,8 @@ import { localize } from '../../../../localize';
 import { cacheWebviewPanel, getCodelessAppData, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getConnectionsFromFile, getFunctionProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
-import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '../../../utils/codeless/types';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';
+import type { IDesignerPanelMetadata, AzureConnectorDetails, Parameter } from '@microsoft-logic-apps/utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs, readFileSync } from 'fs';
 import * as path from 'path';
@@ -81,8 +81,7 @@ export default class OpenDesignerForLocalProject {
     };
     this.panel.webview.html = html.replace(matchLinks, toUri);
 
-    // Handle messages from the webview (Data Mapper component)
-    this.panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, ext.context.subscriptions);
+    this.panel.webview.onDidReceiveMessage(async (message) => this._handleWebviewMsg(message), ext.context.subscriptions);
 
     this.panel.onDidDispose(
       () => {

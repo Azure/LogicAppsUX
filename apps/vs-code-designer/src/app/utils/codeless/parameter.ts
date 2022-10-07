@@ -1,7 +1,7 @@
 import { parametersFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { parseJson } from '../parseJson';
-import type { Parameter } from './types';
+import type { Parameter } from '@microsoft-logic-apps/utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';

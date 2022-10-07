@@ -1,5 +1,6 @@
 import { ext } from '../../../extensionVariables';
-import type { CodelessApp, Parameter, WorkflowParameter } from './types';
+import type { WorkflowParameter } from './types';
+import type { Parameter, CodelessApp } from '@microsoft-logic-apps/utils';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';

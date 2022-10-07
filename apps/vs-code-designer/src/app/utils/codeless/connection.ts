@@ -2,7 +2,7 @@ import { connectionsFileName } from '../../../constants';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getParametersJson } from './parameter';
-import type { Parameter } from './types';
+import type { Parameter } from '@microsoft-logic-apps/utils';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';

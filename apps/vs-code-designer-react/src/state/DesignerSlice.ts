@@ -13,10 +13,11 @@ export const designerSlice = createSlice({
   name: 'designer',
   initialState,
   reducers: {
-    updateWorkflow: (state, action: PayloadAction<any>) => {
-      state.workflow = action.payload;
+    updateMetaData: (state, action: PayloadAction<any>) => {
+      const { codelessApp } = action.payload.panelMetadata;
+      state.workflow = codelessApp;
     },
   },
 });
 
-export const { updateWorkflow } = designerSlice.actions;
+export const { updateMetaData } = designerSlice.actions;

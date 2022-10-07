@@ -1,4 +1,4 @@
-import workflow from '../../../../__mocks__/workflows/Conditionals.json';
+import type { RootState } from '../state/Store';
 import { HttpClient } from './httpClient';
 import {
   StandardConnectionService,
@@ -8,6 +8,7 @@ import {
 } from '@microsoft-logic-apps/designer-client-services';
 import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
 const connectionService = new StandardConnectionService({
@@ -49,6 +50,9 @@ const oAuthService = new StandardOAuthService({
   location: '',
 });
 export const App = () => {
+  const vscodeState = useSelector((state: RootState) => state.designer);
+  const { workflow } = vscodeState;
+
   return (
     <DesignerProvider
       locale="en-US"

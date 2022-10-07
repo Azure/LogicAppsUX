@@ -1,4 +1,4 @@
-import { updateWorkflow } from './state/DesignerSlice';
+import { updateMetaData } from './state/DesignerSlice';
 import type { AppDispatch } from './state/Store';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import useEventListener from '@use-it/event-listener';
@@ -18,7 +18,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
     const message = event.data;
     switch (message.command) {
       case ExtensionCommand.initialize_frame:
-        dispatch(updateWorkflow(message.data));
+        dispatch(updateMetaData(message.data));
         break;
       default:
         break;
