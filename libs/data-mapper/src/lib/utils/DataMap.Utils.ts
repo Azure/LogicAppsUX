@@ -270,3 +270,7 @@ export const parseLoopMapping = (line: string): LoopConnection => {
 export const parseConditionalMapping = (line: string): string => {
   return line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
 };
+
+export const getEdgeForSource = (connection: Connection, source: string) => {
+  return connection.sources.find((conn) => conn.reactFlowKey === source);
+};

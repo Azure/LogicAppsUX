@@ -10,6 +10,7 @@ import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import type { WritableDraft } from 'immer/dist/internal';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -316,50 +317,13 @@ export const dataMapSlice = createSlice({
     },
 
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
-      const source = action.payload.source;
-      const destination = action.payload.destination;
-
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
       };
 
-      if (!newState.dataMapConnections[action.payload.reactFlowDestination]) {
-        newState.dataMapConnections[action.payload.reactFlowDestination] = {
-          sources: [{ node: source, reactFlowKey: action.payload.reactFlowSource }],
-          destination: { node: destination, reactFlowKey: action.payload.reactFlowDestination },
-        };
-      } else {
-        newState.dataMapConnections[action.payload.reactFlowDestination].sources.push({
-          node: source,
-          reactFlowKey: action.payload.reactFlowSource,
-        });
-      }
-
-      const targetParentNode = state.curDataMapOperation.currentTargetNode;
-
-      if (targetParentNode?.properties === SchemaNodeProperties.Repeating && isSchemaNodeExtended(source)) {
-        // only add parent source node and connection if parent node & parent node repeating
-        source.pathToRoot.forEach((parentKey) => {
-          // danielle refactor
-          const sourceParent = state.curDataMapOperation.flattenedSourceSchema[addReactFlowPrefix(parentKey.key, SchemaTypes.Source)];
-
-          if (sourceParent.properties === SchemaNodeProperties.Repeating) {
-            if (state.curDataMapOperation.currentSourceNodes.find((node) => node.key !== sourceParent.key)) {
-              newState.currentSourceNodes.push(sourceParent);
-            }
-
-            // TODO Confirm this is still correct after connections change
-            if (!state.curDataMapOperation.dataMapConnections[targetParentNode.key]) {
-              // danielle test undo!!!
-              newState.dataMapConnections[targetParentNode.key] = {
-                sources: [{ node: sourceParent, reactFlowKey: addReactFlowPrefix(sourceParent.key, SchemaTypes.Source) }],
-                destination: { node: targetParentNode, reactFlowKey: addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target) },
-              };
-            }
-          }
-        });
-      }
+      addConnection(newState.dataMapConnections, action.payload);
+      addParentConnectionForRepeatingNode(newState, action.payload, state);
 
       doDataMapOperation(state, newState);
     },
@@ -497,4 +461,49 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperati
   state.curDataMapOperation = newCurrentState;
   state.redoStack = [];
   state.isDirty = true;
+};
+
+const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAction): void => {
+  if (!newConnections[nodes.reactFlowDestination]) {
+    // eslint-disable-next-line no-param-reassign
+    newConnections[nodes.reactFlowDestination] = {
+      sources: [{ node: nodes.source, reactFlowKey: nodes.reactFlowSource }],
+      destination: { node: nodes.destination, reactFlowKey: nodes.reactFlowDestination },
+    };
+  } else {
+    newConnections[nodes.reactFlowDestination].sources.push({
+      node: nodes.source,
+      reactFlowKey: nodes.reactFlowSource,
+    });
+  }
+};
+
+const addParentConnectionForRepeatingNode = (
+  mapState: DataMapOperationState,
+  nodes: ConnectionAction,
+  state: WritableDraft<DataMapState>
+): void => {
+  const targetParentNode = mapState.currentTargetNode;
+  const source = nodes.source;
+  // eslint-disable-next-line no-param-reassign
+
+  if (targetParentNode?.properties === SchemaNodeProperties.Repeating && isSchemaNodeExtended(source)) {
+    source.pathToRoot.forEach((parentKey) => {
+      const sourceParent = mapState.flattenedSourceSchema[addReactFlowPrefix(parentKey.key, SchemaTypes.Source)];
+
+      if (sourceParent.properties === SchemaNodeProperties.Repeating) {
+        if (mapState.currentSourceNodes.find((node) => node.key !== sourceParent.key)) {
+          mapState.currentSourceNodes.push(sourceParent);
+        }
+        if (!mapState.dataMapConnections[addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target)]) {
+          // eslint-disable-next-line no-param-reassign
+          mapState.dataMapConnections[addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target)] = {
+            sources: [{ node: sourceParent, reactFlowKey: addReactFlowPrefix(sourceParent.key, SchemaTypes.Source) }],
+            destination: { node: targetParentNode, reactFlowKey: addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target) },
+          };
+          state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+        }
+      }
+    });
+  }
 };
