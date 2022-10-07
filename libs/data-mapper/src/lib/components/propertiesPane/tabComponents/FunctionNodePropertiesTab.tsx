@@ -1,3 +1,4 @@
+import { customTokens } from '../../../core';
 import type { RootState } from '../../../core/state/Store';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
@@ -66,7 +67,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
         <Stack horizontal verticalAlign="center">
           <span
             style={{
-              backgroundColor: functionBranding.colorLight,
+              backgroundColor: customTokens[functionBranding.colorTokenName],
               height: '28px',
               width: '28px',
               borderRadius: '14px',

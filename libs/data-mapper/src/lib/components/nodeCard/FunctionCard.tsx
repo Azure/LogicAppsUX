@@ -1,4 +1,5 @@
 import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
+import { customTokens } from '../../core';
 import { store } from '../../core/state/Store';
 import type { FunctionInput } from '../../models/Function';
 import { getIconForFunction } from '../../utils/Icon.Utils';
@@ -123,8 +124,7 @@ export const FunctionCard: FunctionComponent<NodeProps<FunctionCardProps>> = (pr
         }}
         relationship="label"
       >
-        {/* TODO light vs dark theming on function branding */}
-        <Button onClick={onClick} color={functionBranding.colorLight} className={mergedClasses} disabled={!!disabled}>
+        <Button onClick={onClick} color={customTokens[functionBranding.colorTokenName]} className={mergedClasses} disabled={!!disabled}>
           {getIconForFunction(functionName, iconFileName, functionBranding)}
         </Button>
       </Tooltip>
