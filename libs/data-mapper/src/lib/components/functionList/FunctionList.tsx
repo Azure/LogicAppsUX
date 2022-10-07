@@ -93,6 +93,7 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
             startIndex: startInd,
             name: getFunctionBrandingForCategory(value).displayName,
             count: numInGroup,
+            isCollapsed: true,
           };
 
           startInd += numInGroup;
@@ -142,7 +143,7 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
 
   return (
     <>
-      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Function"></TreeHeader>
+      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Function" />
       <div>
         <GroupedList
           onShouldVirtualize={() => false}
@@ -151,7 +152,7 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
           items={sortedFunctionsByCategory}
           onRenderCell={(depth, item) => cell(item, props.onFunctionClick)}
           selectionMode={0}
-        ></GroupedList>
+        />
       </div>
     </>
   );
