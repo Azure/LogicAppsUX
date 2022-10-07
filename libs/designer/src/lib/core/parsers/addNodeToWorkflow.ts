@@ -89,7 +89,7 @@ const createSubgraphNode = (
     subgraphType,
     actionCount: 0,
   };
-  addChildEdge(parent, createWorkflowEdge(`${parent.id}-#scope`, graphHeading.id, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+  addChildEdge(parent, createWorkflowEdge(`${parent.id}-#scope`, node.id, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 };
 
 const handleExtraScopeNodeSetup = (
@@ -135,7 +135,7 @@ const handleExtraScopeNodeSetup = (
       subgraphType: SUBGRAPH_TYPES.SWITCH_ADD_CASE as any,
       actionCount: 0,
     };
-    const addCaseEdge = createWorkflowEdge(scopeHeadingId, addCaseGraphHeading.id, WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
+    const addCaseEdge = createWorkflowEdge(scopeHeadingId, addCaseGraphId, WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
     addChildEdge(node, addCaseEdge);
 
     // DEFAULT GRAPH
@@ -169,7 +169,7 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
     subgraphType: SUBGRAPH_TYPES.SWITCH_CASE,
     actionCount: 0,
   };
-  addChildEdge(switchNode, createWorkflowEdge(`${switchNode.id}-#scope`, caseHeading.id, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+  addChildEdge(switchNode, createWorkflowEdge(`${switchNode.id}-#scope`, caseId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 
   // Add Case to Switch operation data
   (state.operations[switchNode.id] as any).cases[caseId] = { actions: {}, case: '' };

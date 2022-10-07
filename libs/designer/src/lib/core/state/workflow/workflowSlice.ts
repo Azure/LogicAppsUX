@@ -81,6 +81,9 @@ export const workflowSlice = createSlice({
         args: [action.payload],
       });
     },
+    deleteSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
+      delete (state.operations?.[action.payload.nodeId] as any).cases?.[action.payload.caseId];
+    },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.focusedCanvasNodeId = action.payload;
     },
@@ -243,6 +246,7 @@ export const {
   addNode,
   moveNode,
   deleteNode,
+  deleteSwitchCase,
   updateNodeSizes,
   setNodeDescription,
   setCollapsedGraphIds,

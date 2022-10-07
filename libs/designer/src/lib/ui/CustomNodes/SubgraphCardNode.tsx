@@ -15,7 +15,7 @@ import {
   useNodeMetadata,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
-import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { addSwitchCase, deleteSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { DropZone } from '../connections/dropzone';
 import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption } from '@microsoft/designer-ui';
@@ -83,7 +83,12 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteClick = () => setShowDeleteModal(true);
-  const handleDelete = () => subgraphNode && dispatch(deleteGraphNode({ graphId: subgraphId, graphNode: subgraphNode }));
+  const handleDelete = () => {
+    if (subgraphNode) {
+      dispatch(deleteGraphNode({ graphId: subgraphId, graphNode: subgraphNode }));
+      dispatch(deleteSwitchCase({ caseId: subgraphId, nodeId: graphId }));
+    }
+  };
 
   const getDeleteMenuItem = () => {
     const deleteDescription = intl.formatMessage({
@@ -93,7 +98,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
 
     return {
       key: deleteDescription,
-      disabled: readOnly || true, // TODO: This is disabled right now because delete does not work 100% correctly
+      disabled: readOnly,
       iconName: 'Delete',
       title: deleteDescription,
       type: MenuItemType.Advanced,
