@@ -1,13 +1,12 @@
-import { type NotificationData, NotificationTypes } from '../../components/notification/Notification';
+import { NotificationTypes, type NotificationData } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
-import { addReactFlowPrefix } from '../../utils/ReactFlow.Util';
+import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
-import { guid } from '@microsoft-logic-apps/utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
@@ -311,7 +310,7 @@ export const dataMapSlice = createSlice({
         currentFunctionNodes: { ...state.curDataMapOperation.currentFunctionNodes },
       };
 
-      newState.currentFunctionNodes[`${functionData.key}-${guid()}`] = functionData;
+      newState.currentFunctionNodes[createReactFlowFunctionKey(functionData)] = functionData;
 
       doDataMapOperation(state, newState);
     },

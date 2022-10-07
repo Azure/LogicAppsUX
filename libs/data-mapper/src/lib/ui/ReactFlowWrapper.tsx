@@ -62,7 +62,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { MiniMap, useReactFlow, ConnectionLineType } from 'reactflow';
+import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'reactflow';
 
 export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
 export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
@@ -85,9 +85,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { fitView, zoomIn, zoomOut, project } = useReactFlow();
 
+  const functionData = useSelector((state: RootState) => state.function.availableFunctions);
+  const addedFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
-  const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
@@ -173,10 +174,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (connection.target && connection.source) {
       const source = connection.source.startsWith(sourcePrefix)
         ? flattenedSourceSchema[connection.source]
-        : allFunctionNodes[connection.source];
+        : addedFunctionNodes[connection.source];
       const destination = connection.target.startsWith(targetPrefix)
         ? flattenedTargetSchema[connection.target]
-        : allFunctionNodes[connection.target];
+        : addedFunctionNodes[connection.target];
 
       dispatch(
         makeConnection({
@@ -197,10 +198,17 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     (oldEdge: ReactFlowEdge, newConnection: ReactFlowConnection) => {
       edgeUpdateSuccessful.current = true;
       if (newConnection.target && newConnection.source && oldEdge.target) {
+        const source = newConnection.source.startsWith(sourcePrefix)
+          ? flattenedSourceSchema[newConnection.source]
+          : addedFunctionNodes[newConnection.source];
+        const destination = newConnection.target.startsWith(targetPrefix)
+          ? flattenedTargetSchema[newConnection.target]
+          : addedFunctionNodes[newConnection.target];
+
         dispatch(
           changeConnection({
-            destination: flattenedTargetSchema[newConnection.target],
-            source: flattenedSourceSchema[newConnection.source],
+            destination,
+            source,
             reactFlowDestination: newConnection.target,
             reactFlowSource: newConnection.source,
             connectionKey: oldEdge.target,
@@ -209,7 +217,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         );
       }
     },
-    [dispatch, flattenedSourceSchema, flattenedTargetSchema]
+    [dispatch, flattenedSourceSchema, flattenedTargetSchema, addedFunctionNodes]
   );
 
   const onEdgeUpdateEnd = useCallback(
@@ -359,7 +367,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     currentlyAddedSourceNodes,
     connectedSourceNodes,
     flattenedSourceSchema,
-    allFunctionNodes,
+    addedFunctionNodes,
     currentTargetNode,
     connections
   );
@@ -412,7 +420,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
       {displayToolboxItem === 'functionsPanel' && (
         <FloatingPanel {...toolboxPanelProps}>
-          <FunctionList onFunctionClick={onFunctionItemClick}></FunctionList>
+          <FunctionList functionData={functionData} onFunctionClick={onFunctionItemClick}></FunctionList>
         </FloatingPanel>
       )}
 
