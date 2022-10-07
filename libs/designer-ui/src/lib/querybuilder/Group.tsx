@@ -32,6 +32,8 @@ interface GroupProps {
   menuItems: IOverflowSetItemProps[];
   groupProps: GroupItemProps;
   isFirstGroup?: boolean;
+  isGroupable: boolean;
+  groupedItems: (GroupItemProps | RowItemProps)[];
   containerOffset: number;
   index: number;
   mustHaveItem?: boolean;
@@ -50,6 +52,8 @@ export const Group = ({
   menuItems,
   groupProps,
   isFirstGroup,
+  isGroupable,
+  groupedItems,
   containerOffset,
   index,
   mustHaveItem,
@@ -80,6 +84,10 @@ export const Group = ({
     }
   };
 
+  const handleGroup = () => {
+    handleUpdateParent({ type: 'group', checked: false, items: groupedItems }, index);
+  };
+
   const handleUngroup = (indexToAddAt: number, items: (GroupItemProps | RowItemProps)[]) => {
     let itemsToInsert = items;
     if (items.length === 0) {
@@ -100,6 +108,11 @@ export const Group = ({
     description: 'Ungroup button',
   });
 
+  const makeGroupButton = intl.formatMessage({
+    defaultMessage: 'Make Group',
+    description: 'Make group button',
+  });
+
   const groupMenuItems = [
     {
       key: deleteButton,
@@ -113,6 +126,16 @@ export const Group = ({
     },
     ...menuItems,
     {
+      key: makeGroupButton,
+      disabled: !(isGroupable && getCurrProps().checked),
+      iconProps: {
+        iconName: 'ViewAll',
+      },
+      iconOnly: true,
+      name: makeGroupButton,
+      onClick: handleGroup,
+    },
+    {
       key: unGroupButton,
       disabled: isFirstGroup,
       iconProps: {
@@ -125,7 +148,7 @@ export const Group = ({
   ];
 
   const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, currIndex: number) => {
-    const newItems = { ...groupProps };
+    const newItems = { ...getCurrProps() };
     newItems.items[currIndex] = newState;
     handleUpdateParent(newItems, index);
   };
@@ -186,6 +209,7 @@ export const Group = ({
                     valueValue={item.value}
                     containerOffset={containerOffset}
                     index={currIndex}
+                    isGroupable={isGroupable}
                     showDisabledDelete={getCurrProps().items.length <= 1 && mustHaveItem}
                     handleDeleteChild={() => handleDelete(currIndex)}
                     handleUpdateParent={handleUpdateNewParent}
@@ -203,6 +227,8 @@ export const Group = ({
                       checked: item.checked,
                     }}
                     index={currIndex}
+                    isGroupable={isGroupable}
+                    groupedItems={groupedItems}
                     mustHaveItem={getCurrProps().items.length <= 1 && mustHaveItem}
                     handleDeleteChild={() => handleDelete(currIndex)}
                     handleUngroupChild={() => handleUngroup(currIndex, item.items)}
@@ -218,6 +244,7 @@ export const Group = ({
                       index={0}
                       menuItems={menuItems}
                       containerOffset={containerOffset}
+                      isGroupable={isGroupable}
                       showDisabledDelete={getCurrProps().items.length <= 1 && mustHaveItem}
                       GetTokenPicker={GetTokenPicker}
                       handleDeleteChild={handleDeleteChild}

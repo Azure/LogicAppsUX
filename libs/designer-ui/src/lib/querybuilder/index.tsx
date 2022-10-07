@@ -39,7 +39,8 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerOffset, setContainerOffset] = useState(0);
   const [heights, setHeights] = useState<number[]>([]);
-  // const [isGroupable, setIsGroupable] = useState(true);
+  const [groupedItems, setGroupedItems] = useState<(GroupItemProps | RowItemProps)[]>([]);
+  const [isGroupable, setIsGroupable] = useState(true);
 
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
@@ -52,8 +53,18 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   }, [containerRef, getRootProp()]);
 
   useEffect(() => {
-    console.log(heights);
-  }, [heights]);
+    console.log(getRootProp());
+    if (new Set(heights).size === 1) {
+      setIsGroupable(true);
+      setGroupedItems(getGroupedItems(getRootProp(), []));
+    } else {
+      setIsGroupable(false);
+    }
+  }, [getRootProp, heights]);
+
+  useEffect(() => {
+    console.log(groupedItems);
+  }, [groupedItems]);
 
   const handleUpdateParent = (newProps: GroupItemProps) => {
     setRootProp(newProps);
@@ -66,10 +77,6 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   const moveDownButton = intl.formatMessage({
     defaultMessage: 'Move down',
     description: 'Move down button',
-  });
-  const makeGroupButton = intl.formatMessage({
-    defaultMessage: 'Make Group',
-    description: 'Make group button',
   });
 
   const handleGroup = () => {
@@ -98,16 +105,6 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
       name: moveDownButton,
       onClick: handleGroup,
     },
-    {
-      key: makeGroupButton,
-      disabled: true,
-      iconProps: {
-        iconName: 'ViewAll',
-      },
-      iconOnly: true,
-      name: makeGroupButton,
-      onClick: handleGroup,
-    },
   ];
 
   return (
@@ -118,6 +115,8 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
         menuItems={menuItems}
         groupProps={getRootProp()}
         isFirstGroup={true}
+        isGroupable={isGroupable}
+        groupedItems={groupedItems}
         index={0}
         mustHaveItem={true}
         handleUpdateParent={handleUpdateParent}
@@ -133,6 +132,19 @@ const checkHeights = (item: GroupItemProps | RowItemProps, returnVal: number[], 
   }
   if (item.type === 'group') {
     item.items.map((childItem) => checkHeights(childItem, returnVal, height + 1));
+  }
+  return returnVal;
+};
+
+const getGroupedItems = (
+  item: GroupItemProps | RowItemProps,
+  returnVal: (GroupItemProps | RowItemProps)[]
+): (GroupItemProps | RowItemProps)[] => {
+  if (item.checked) {
+    returnVal.push({ ...item, checked: false });
+  }
+  if (item.type === 'group') {
+    item.items.map((childItem) => getGroupedItems(childItem, returnVal));
   }
   return returnVal;
 };

@@ -31,6 +31,7 @@ interface RowProps {
   index: number;
   containerOffset: number;
   showDisabledDelete?: boolean;
+  isGroupable?: boolean;
   handleDeleteChild?: (indexToDelete: number) => void;
   handleUpdateParent: (newProps: RowItemProps, index: number) => void;
   GetTokenPicker: (
@@ -50,6 +51,7 @@ export const Row = ({
   index,
   containerOffset,
   showDisabledDelete,
+  isGroupable,
   handleDeleteChild,
   handleUpdateParent,
   GetTokenPicker,
@@ -60,9 +62,18 @@ export const Row = ({
   const [key, setKey] = useState<ValueSegment[]>(keyValue);
   const [pickerOffset, setPickerOffset] = useState<ButtonOffSet>();
 
+  const handleGroup = () => {
+    console.log('group');
+  };
+
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
     description: 'delete button',
+  });
+
+  const makeGroupButton = intl.formatMessage({
+    defaultMessage: 'Make Group',
+    description: 'Make group button',
   });
 
   const rowMenuItems = [
@@ -77,6 +88,16 @@ export const Row = ({
       onClick: handleDeleteChild,
     },
     ...menuItems,
+    {
+      key: makeGroupButton,
+      disabled: !(isGroupable && checked),
+      iconProps: {
+        iconName: 'ViewAll',
+      },
+      iconOnly: true,
+      name: makeGroupButton,
+      onClick: handleGroup,
+    },
   ];
 
   const updatePickerHeight = useCallback(() => {
