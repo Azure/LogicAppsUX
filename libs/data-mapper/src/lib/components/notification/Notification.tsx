@@ -10,6 +10,7 @@ export enum NotificationTypes {
   SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
   FunctionNodeDeleted = 'functionNodeDeleted',
   ConnectionDeleted = 'connectionDeleted',
+  ArrayConnectionAdded = 'arrayConnectionAdded',
 }
 
 export interface NotificationData {
@@ -92,6 +93,11 @@ export const Notification = (props: NotificationProps) => {
       description: 'Message on deleting connection',
     });
 
+    const arrayConnectionAddedLoc = intl.formatMessage({
+      defaultMessage: 'A line between array elements is automatically created to indicate looping elements.',
+      description: 'Describes connection being added',
+    });
+
     switch (type) {
       case NotificationTypes.SaveFailed:
         return saveFailedLoc;
@@ -103,7 +109,8 @@ export const Notification = (props: NotificationProps) => {
         return functionNodeDeletedLoc;
       case NotificationTypes.ConnectionDeleted:
         return connectionDeletedLoc;
-
+      case NotificationTypes.ArrayConnectionAdded:
+        return arrayConnectionAddedLoc;
       default:
         return null;
     }
