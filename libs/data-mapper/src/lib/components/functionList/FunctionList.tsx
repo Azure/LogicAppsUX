@@ -1,5 +1,4 @@
 import { customTokens } from '../../core';
-import { getFunctions } from '../../core/queries/functions';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
@@ -11,10 +10,9 @@ import { GroupedList } from '@fluentui/react';
 import { Button, Caption1, makeStyles, mergeClasses, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import Fuse from 'fuse.js';
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
 
 export interface FunctionListProps {
-  //  functionData: FunctionData[];
+  functionData: FunctionData[];
   onFunctionClick: (functionNode: FunctionData) => void;
 }
 
@@ -25,17 +23,15 @@ const buttonHoverStyles = makeStyles({
 });
 
 export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListProps) => {
-  //  const functionListData = useQuery<FunctionData[]>(['functions'], () => props.functionData);
-  const functionListData = useQuery<FunctionData[]>(['functions'], () => getFunctions());
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortedFunctionsByCategory, setSortedFunctionsByCategory] = useState<FunctionData[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
 
   useEffect(() => {
-    if (functionListData.data) {
+    if (props.functionData) {
       const categoriesArray: FunctionCategory[] = [];
       let newSortedFunctions: FunctionData[] = [];
-      let dataCopy = functionListData.data;
+      let dataCopy = [...props.functionData];
       if (searchTerm) {
         const options: Fuse.IFuseOptions<FunctionData> = {
           includeScore: true,
@@ -55,7 +51,7 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
           ],
         };
 
-        const fuse = new Fuse(functionListData.data, options);
+        const fuse = new Fuse(props.functionData, options);
         const results = fuse.search(searchTerm);
 
         dataCopy = results.map((fuse) => {
@@ -107,7 +103,7 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
 
       setGroups(newGroups);
     }
-  }, [functionListData.data, searchTerm]);
+  }, [props.functionData, searchTerm]);
 
   const cell = (functionNode: FunctionData, onFunctionClick: (functionNode: FunctionData) => void) => {
     return <FunctionListCell functionData={functionNode} onFunctionClick={onFunctionClick}></FunctionListCell>;
