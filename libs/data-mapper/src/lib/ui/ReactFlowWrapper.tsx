@@ -86,7 +86,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const { fitView, zoomIn, zoomOut, project } = useReactFlow();
 
   const functionData = useSelector((state: RootState) => state.function.availableFunctions);
-  const selectedFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const addedFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
@@ -174,10 +174,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     if (connection.target && connection.source) {
       const source = connection.source.startsWith(sourcePrefix)
         ? flattenedSourceSchema[connection.source]
-        : selectedFunctionNodes[connection.source];
+        : addedFunctionNodes[connection.source];
       const destination = connection.target.startsWith(targetPrefix)
         ? flattenedTargetSchema[connection.target]
-        : selectedFunctionNodes[connection.target];
+        : addedFunctionNodes[connection.target];
 
       dispatch(
         makeConnection({
@@ -200,10 +200,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       if (newConnection.target && newConnection.source && oldEdge.target) {
         const source = newConnection.source.startsWith(sourcePrefix)
           ? flattenedSourceSchema[newConnection.source]
-          : selectedFunctionNodes[newConnection.source];
+          : addedFunctionNodes[newConnection.source];
         const destination = newConnection.target.startsWith(targetPrefix)
           ? flattenedTargetSchema[newConnection.target]
-          : selectedFunctionNodes[newConnection.target];
+          : addedFunctionNodes[newConnection.target];
 
         dispatch(
           changeConnection({
@@ -217,7 +217,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         );
       }
     },
-    [dispatch, flattenedSourceSchema, flattenedTargetSchema, selectedFunctionNodes]
+    [dispatch, flattenedSourceSchema, flattenedTargetSchema, addedFunctionNodes]
   );
 
   const onEdgeUpdateEnd = useCallback(
@@ -367,7 +367,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     currentlyAddedSourceNodes,
     connectedSourceNodes,
     flattenedSourceSchema,
-    selectedFunctionNodes,
+    addedFunctionNodes,
     currentTargetNode,
     connections
   );

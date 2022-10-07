@@ -207,7 +207,7 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
   return Object.values(connections).flatMap((connection) => {
     return connection.sources.map((source) => {
       return {
-        id: createReactFlowId(source.reactFlowKey, connection.destination.reactFlowKey),
+        id: createReactFlowConnectionId(source.reactFlowKey, connection.destination.reactFlowKey),
         source: source.reactFlowKey,
         target: connection.destination.reactFlowKey,
         type: ReactFlowEdgeType.ConnectionEdge,
@@ -263,7 +263,7 @@ const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: strin
 
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
 
-export const createReactFlowId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
+export const createReactFlowConnectionId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
 
 export const addReactFlowPrefix = (key: string, type: SchemaTypes) => `${type}-${key}`;
 
