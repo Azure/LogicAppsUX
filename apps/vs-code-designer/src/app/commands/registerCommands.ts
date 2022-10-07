@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { openDesigner } from './workflows/openDesigner/openDesigner';
-import { commands } from 'vscode';
+import { registerCommand } from '@microsoft/vscode-azext-utils';
 
 export function registerCommands(): void {
-  commands.registerCommand('logicAppsExtension.openDesigner', openDesigner);
+  registerCommand('logicAppsExtension.openDesigner', openDesigner);
 }

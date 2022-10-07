@@ -161,7 +161,6 @@ function startDesignTimeProcess(
 }
 
 // tslint:disable-next-line: no-suspicious-comment
-//TODO(vikanand): Rwfactor code for better child process management.
 export function stopDesignTimeApi(): void {
   if (ext.workflowDesignChildProcess === null || ext.workflowDesignChildProcess === undefined) {
     return;

@@ -1,6 +1,8 @@
 {
   "name": "microsoft-logic-app-vscode-extension",
+  "displayName": "Azure Logic Apps (Standard)",
   "version": "0.1.24",
+  "aiKey": "2fc394da-7c11-4c1c-b776-17763031415d",
   "main": "main.js",
   "engines": {
     "vscode": "^1.64.0"
