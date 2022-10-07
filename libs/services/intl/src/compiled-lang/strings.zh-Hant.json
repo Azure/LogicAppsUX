@@ -1124,6 +1124,12 @@
       "value": "取消"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1378,7 +1384,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "已從檢視移除來源節點。"
     }
   ],
   "CsPY74": [
@@ -1492,7 +1498,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "無法儲存。"
     }
   ],
   "EYqGxA": [
@@ -1810,6 +1816,16 @@
     {
       "type": 0,
       "value": "請選取卡片以查看內容"
+    }
+  ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Install Gateway"
     }
   ],
   "HzS2gJ": [
@@ -2330,15 +2346,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " ' before you remove the node."
+      "value": "在移除節點之前，請先移除節點 {nodeName} 的所有參考。"
     }
   ],
   "NvANon": [
@@ -3610,6 +3618,12 @@
       "value": "動作"
     }
   ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Subscription"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -3801,7 +3815,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "連線已刪除。"
     }
   ],
   "dDYCuU": [
@@ -4449,6 +4463,12 @@
       "value": "持續時間"
     }
   ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -4662,7 +4682,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "已刪除函式。"
     }
   ],
   "mGUdCO": [
@@ -4922,7 +4942,7 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "執行 api {parameters} 時發生錯誤。"
     }
   ],
   "pC2nr2": [

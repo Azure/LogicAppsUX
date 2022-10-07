@@ -1135,6 +1135,12 @@
       "value": "İptal"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1839,6 +1845,16 @@
     {
       "type": 0,
       "value": "İçeriği görmek için lütfen bir kart seçin"
+    }
+  ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Install Gateway"
     }
   ],
   "HzS2gJ": [
@@ -3661,6 +3677,12 @@
       "value": "Eylemler"
     }
   ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Subscription"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -4497,6 +4519,12 @@
     {
       "type": 0,
       "value": "Süre"
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
     }
   ],
   "k/oqFL": [

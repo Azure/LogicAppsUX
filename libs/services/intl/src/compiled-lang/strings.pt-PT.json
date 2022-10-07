@@ -1178,6 +1178,12 @@
       "value": "Cancelar"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1470,7 +1476,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Nó de origem removido da vista."
     }
   ],
   "CsPY74": [
@@ -1584,7 +1590,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "Falha ao guardar."
     }
   ],
   "EYqGxA": [
@@ -1940,6 +1946,16 @@
     {
       "type": 0,
       "value": "Selecione um cartão para ver o conteúdo"
+    }
+  ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Install Gateway"
     }
   ],
   "HzS2gJ": [
@@ -2506,7 +2522,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
+      "value": "Remova todas as referências ao nó \""
     },
     {
       "type": 1,
@@ -2514,7 +2530,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the node."
+      "value": "\" antes de remover o nó."
     }
   ],
   "NvANon": [
@@ -3840,6 +3856,12 @@
       "value": "Ações"
     }
   ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Subscription"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -4027,7 +4049,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "Ligação eliminada."
     }
   ],
   "dDYCuU": [
@@ -4729,6 +4751,12 @@
       "value": "Duração"
     }
   ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -4942,7 +4970,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "Função eliminada."
     }
   ],
   "mGUdCO": [
@@ -5202,7 +5230,15 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Erro ao executar a api \""
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "pC2nr2": [

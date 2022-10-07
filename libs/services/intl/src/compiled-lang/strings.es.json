@@ -1178,6 +1178,12 @@
       "value": "Cancelar"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1470,7 +1476,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Nodo de origen quitado de la vista."
     }
   ],
   "CsPY74": [
@@ -1584,7 +1590,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "No se pudo guardar."
     }
   ],
   "EYqGxA": [
@@ -1932,6 +1938,16 @@
     {
       "type": 0,
       "value": "Seleccione una tarjeta para ver el contenido."
+    }
+  ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Install Gateway"
     }
   ],
   "HzS2gJ": [
@@ -2490,15 +2506,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " ' before you remove the node."
+      "value": "Quite todas las referencias al nodo {nodeName} antes de quitar el nodo."
     }
   ],
   "NvANon": [
@@ -3816,6 +3824,12 @@
       "value": "Acciones"
     }
   ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Subscription"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -4003,7 +4017,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "Conexión eliminada."
     }
   ],
   "dDYCuU": [
@@ -4697,6 +4711,12 @@
       "value": "Duración"
     }
   ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
   "k/oqFL": [
     {
       "type": 0,
@@ -4910,7 +4930,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "Función eliminada."
     }
   ],
   "mGUdCO": [
@@ -5170,7 +5190,7 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Error al ejecutar la API {parameters}."
     }
   ],
   "pC2nr2": [
