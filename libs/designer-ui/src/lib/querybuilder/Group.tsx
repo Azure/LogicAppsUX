@@ -8,8 +8,7 @@ import { GroupDropdown } from './GroupDropdown';
 import { Row } from './Row';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
-import { useFunctionalState } from '@react-hookz/web';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const overflowStyle: Partial<IOverflowSetStyles> = {
@@ -64,23 +63,14 @@ export const Group = ({
 }: GroupProps) => {
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
-  const [getCurrProps, setCurrProps] = useFunctionalState<GroupItemProps>(groupProps);
-
-  // Update current props whenever parentProps changes
-  useEffect(() => {
-    if (JSON.stringify(groupProps) !== JSON.stringify(getCurrProps())) {
-      setCurrProps(groupProps);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groupProps]);
 
   const handleDelete = (indexToDelete: number) => {
-    if (getCurrProps().items.length <= 1) {
+    if (groupProps.items.length <= 1) {
       handleDeleteChild?.(index);
     } else {
-      const newItems = { ...getCurrProps() };
+      const newItems = { ...groupProps };
       newItems.items.splice(indexToDelete, 1);
-      setCurrProps(newItems);
+      handleUpdateParent(newItems, index);
     }
   };
 
@@ -93,9 +83,9 @@ export const Group = ({
     if (items.length === 0) {
       itemsToInsert = [{ type: 'row' }];
     }
-    const newItems = { ...getCurrProps() };
+    const newItems = { ...groupProps };
     newItems.items.splice(indexToAddAt, 1, ...itemsToInsert);
-    setCurrProps(newItems);
+    handleUpdateParent(newItems, index);
   };
 
   const deleteButton = intl.formatMessage({
@@ -116,7 +106,7 @@ export const Group = ({
   const groupMenuItems = [
     {
       key: deleteButton,
-      disabled: getCurrProps().items.length <= 1 && mustHaveItem,
+      disabled: groupProps.items.length <= 1 && mustHaveItem,
       iconProps: {
         iconName: 'Delete',
       },
@@ -127,7 +117,7 @@ export const Group = ({
     ...menuItems,
     {
       key: makeGroupButton,
-      disabled: !(isGroupable && getCurrProps().checked),
+      disabled: !(isGroupable && groupProps.checked),
       iconProps: {
         iconName: 'ViewAll',
       },
@@ -148,7 +138,7 @@ export const Group = ({
   ];
 
   const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, currIndex: number) => {
-    const newItems = { ...getCurrProps() };
+    const newItems = { ...groupProps };
     newItems.items[currIndex] = newState;
     handleUpdateParent(newItems, index);
   };
@@ -194,14 +184,14 @@ export const Group = ({
         {!collapsed ? (
           <>
             {!isFirstGroup ? (
-              <Checkbox className="msla-querybuilder-group-checkbox" initialChecked={getCurrProps().checked} onChange={handleCheckbox} />
+              <Checkbox className="msla-querybuilder-group-checkbox" initialChecked={groupProps.checked} onChange={handleCheckbox} />
             ) : null}
             <div className="msla-querybuilder-row-section">
-              <GroupDropdown selectedOption={getCurrProps().selectedOption} onChange={handleSelectedOption} />
-              {getCurrProps().items.map((item, currIndex) => {
+              <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} />
+              {groupProps.items.map((item, currIndex) => {
                 return item.type === 'row' ? (
                   <Row
-                    key={`row ${currIndex}`}
+                    key={`row ${currIndex + JSON.stringify(item)}`}
                     menuItems={menuItems}
                     checked={item.checked}
                     keyValue={item.key}
@@ -210,14 +200,14 @@ export const Group = ({
                     containerOffset={containerOffset}
                     index={currIndex}
                     isGroupable={isGroupable}
-                    showDisabledDelete={getCurrProps().items.length <= 1 && mustHaveItem}
+                    showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
                     handleDeleteChild={() => handleDelete(currIndex)}
                     handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
                   />
                 ) : (
                   <Group
-                    key={`group ${currIndex}`}
+                    key={`group ${currIndex + JSON.stringify(item.items)}`}
                     menuItems={menuItems}
                     containerOffset={containerOffset}
                     groupProps={{
@@ -229,7 +219,7 @@ export const Group = ({
                     index={currIndex}
                     isGroupable={isGroupable}
                     groupedItems={groupedItems}
-                    mustHaveItem={getCurrProps().items.length <= 1 && mustHaveItem}
+                    mustHaveItem={groupProps.items.length <= 1 && mustHaveItem}
                     handleDeleteChild={() => handleDelete(currIndex)}
                     handleUngroupChild={() => handleUngroup(currIndex, item.items)}
                     handleUpdateParent={handleUpdateNewParent}
@@ -239,13 +229,13 @@ export const Group = ({
               })}
               {
                 <>
-                  {getCurrProps().items.length === 0 ? (
+                  {groupProps.items.length === 0 ? (
                     <Row
                       index={0}
                       menuItems={menuItems}
                       containerOffset={containerOffset}
                       isGroupable={isGroupable}
-                      showDisabledDelete={getCurrProps().items.length <= 1 && mustHaveItem}
+                      showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
                       GetTokenPicker={GetTokenPicker}
                       handleDeleteChild={handleDeleteChild}
                       handleUpdateParent={handleUpdateNewParent}
@@ -253,15 +243,15 @@ export const Group = ({
                   ) : null}
                   <AddSection
                     handleUpdateParent={handleUpdateNewParent}
-                    index={getCurrProps().items.length}
-                    addEmptyRow={getCurrProps().items.length === 0}
+                    index={groupProps.items.length}
+                    addEmptyRow={groupProps.items.length === 0}
                   />
                 </>
               }
             </div>
           </>
         ) : (
-          <GroupDropdown selectedOption={getCurrProps().selectedOption} onChange={handleSelectedOption} />
+          <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} />
         )}
         <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
           {!isFirstGroup ? (

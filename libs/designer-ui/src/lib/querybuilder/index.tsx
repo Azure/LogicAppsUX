@@ -62,10 +62,6 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
     }
   }, [getRootProp, heights]);
 
-  useEffect(() => {
-    console.log(groupedItems);
-  }, [groupedItems]);
-
   const handleUpdateParent = (newProps: GroupItemProps) => {
     setRootProp(newProps);
   };

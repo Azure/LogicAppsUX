@@ -59,7 +59,7 @@ export const ScratchTab = () => {
               {
                 type: 'group',
                 checked: true,
-                items: [{ type: 'row' }, { type: 'group', checked: false, items: [{ type: 'row' }] }],
+                items: [{ type: 'row' }, { type: 'group', checked: false, items: [{ type: 'row', key: [testTokenSegment] }] }],
               },
             ],
           }}
