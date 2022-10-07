@@ -157,14 +157,7 @@ const handleExtraScopeNodeSetup = (
   }
 };
 
-export const addSwitchCaseToWorkflow = (switchNode: WorkflowNode, nodesMetadata: NodesMetadata, state: WorkflowState) => {
-  let caseId = 'Case';
-  let caseCount = 1;
-  // eslint-disable-next-line no-loop-func
-  while ((switchNode.children ?? []).some((child) => child.id === caseId)) {
-    caseCount++;
-    caseId = `Case ${caseCount}`;
-  }
+export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode, nodesMetadata: NodesMetadata, state: WorkflowState) => {
   const caseNode = createWorkflowNode(caseId, WORKFLOW_NODE_TYPES.SUBGRAPH_NODE);
   caseNode.subGraphLocation = 'cases';
   // addChildNode(switchNode, caseNode);
