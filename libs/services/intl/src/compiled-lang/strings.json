@@ -167,6 +167,12 @@
       "value": "(UTC+04:00) Baku"
     }
   ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "0FzNJV": [
     {
       "type": 0,
@@ -405,12 +411,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Upload or select a target schema to be used for your map."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -481,6 +481,12 @@
     {
       "type": 0,
       "value": "Managed identity"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Select existing"
     }
   ],
   "2b1yD3": [
@@ -577,6 +583,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Chisinau"
+    }
+  ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
     }
   ],
   "3TD2V5": [
@@ -795,12 +807,6 @@
       "value": "Returns true if an object, array, or string is empty"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Add Source Schema"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -847,6 +853,12 @@
     {
       "type": 0,
       "value": "Test map"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "6XR3FS": [
@@ -1391,12 +1403,6 @@
       "value": "Connection required"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Replace existing schema"
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1719,6 +1725,12 @@
       "value": "Status"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Update target schema"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1749,12 +1761,6 @@
       "value": "Required. The object to find inside the Within collection."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Source Schema"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1765,12 +1771,6 @@
     {
       "type": 0,
       "value": "Returns true if the parameters are false"
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Upload or select a source schema to be used for your map."
     }
   ],
   "Gi72X5": [
@@ -1895,6 +1895,12 @@
     {
       "type": 0,
       "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "IgNz8Y": [
@@ -3523,12 +3529,6 @@
       "value": "Zoom out"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Configuration"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3587,12 +3587,6 @@
     {
       "type": 0,
       "value": "Unsupported 'in' value : {value} in Parameter"
-    }
-  ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Discard"
     }
   ],
   "a7j3gS": [
@@ -3657,10 +3651,10 @@
       "value": "Enter Pfx"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Add"
+      "value": "Add or select a source schema to use for your map."
     }
   ],
   "b9/1dK": [
@@ -3819,6 +3813,12 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
     }
   ],
   "cgq/+y": [
@@ -3985,6 +3985,12 @@
       "value": "Not specified"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -3995,12 +4001,6 @@
     {
       "type": 0,
       "value": "Required. The name of the variable whose value you want."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Target Schema"
     }
   ],
   "eRvGw3": [
@@ -4079,6 +4079,12 @@
     {
       "type": 0,
       "value": "Paging count exceeds maximum value"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "faSDuD": [
@@ -4469,6 +4475,12 @@
     {
       "type": 0,
       "value": "Returns the value of the variable specified."
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Add or select a target schema to use for your map."
     }
   ],
   "jHHF/u": [
@@ -5303,6 +5315,12 @@
       "value": "(UTC-06:00) Central Time (US & Canada)"
     }
   ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Add new"
+    }
+  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -5941,12 +5959,6 @@
       "value": "Date and time functions"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Add Target Schema"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5993,6 +6005,12 @@
     {
       "type": 0,
       "value": "Enter value"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "zIDVd9": [
