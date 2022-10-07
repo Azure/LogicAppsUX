@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -675,6 +669,12 @@
       "value": "(UTC+04:00) Yerevan"
     }
   ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Discard changes"
+    }
+  ],
   "45ubha": [
     {
       "type": 0,
@@ -1249,12 +1249,6 @@
       "value": "Required. The string to encode into base64 representation."
     }
   ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
-    }
-  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -1815,6 +1809,12 @@
       "value": "Required. The string to slice."
     }
   ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+    }
+  ],
   "H8bEUn": [
     {
       "type": 0,
@@ -2129,12 +2129,6 @@
     {
       "type": 0,
       "value": "Delete Workflow Graph"
-    }
-  ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Warning"
     }
   ],
   "LJmfmK": [
@@ -2509,12 +2503,6 @@
       "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
     }
   ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "All unsaved work will be gone. Do you want to proceed to discard everything?"
-    }
-  ],
   "Oib1mL": [
     {
       "type": 1,
@@ -2863,6 +2851,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "S8P4N5": [
@@ -3441,6 +3435,12 @@
       "value": "Required. The name of the action whose body outputs you want."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3861,6 +3861,12 @@
     {
       "type": 0,
       "value": "Required. The collection to skip the first Count objects from."
+    }
+  ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Warning"
     }
   ],
   "d3bSQA": [
@@ -4307,12 +4313,6 @@
     {
       "type": 0,
       "value": "Audience"
-    }
-  ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
     }
   ],
   "i/SguY": [
