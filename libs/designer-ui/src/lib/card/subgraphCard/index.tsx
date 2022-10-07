@@ -108,6 +108,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         <button
           className="msla-subgraph-title"
           onClick={handleTitleClick}
+          onContextMenu={contextMenu.handle}
           onKeyDown={keyboardInteraction.keyUp}
           onKeyUp={keyboardInteraction.keyDown}
         >

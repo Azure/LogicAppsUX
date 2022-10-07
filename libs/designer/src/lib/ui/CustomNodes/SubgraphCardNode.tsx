@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+import type { AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
+import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
@@ -14,9 +16,10 @@ import {
 } from '../../core/state/workflow/workflowSelectors';
 import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { DropZone } from '../connections/dropzone';
-import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
-import { SubgraphCard } from '@microsoft/designer-ui';
-import { memo, useCallback, useMemo } from 'react';
+import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
+import type { MenuItemOption } from '@microsoft/designer-ui';
+import { DeleteNodeModal, MenuItemType, SubgraphCard } from '@microsoft/designer-ui';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { Handle, Position } from 'reactflow';
@@ -28,13 +31,14 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
 
   const intl = useIntl();
   const readOnly = useReadOnly();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const selected = useIsNodeSelected(subgraphId);
   const isLeaf = useIsLeafNode(id);
   const metadata = useNodeMetadata(subgraphId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
-  const node = useWorkflowNode(graphId);
+  const graphNode = useWorkflowNode(graphId);
+  const subgraphNode = useWorkflowNode(subgraphId);
   const operationInfo = useOperationInfo(graphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
@@ -42,7 +46,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const newCaseId = useNewSwitchCaseId();
   const subgraphClick = useCallback(
     async (_id: string) => {
-      if (isAddCase && node) {
+      if (isAddCase && graphNode) {
         dispatch(addSwitchCase({ caseId: newCaseId, nodeId: subgraphId }));
         const rootManifest = await getOperationManifest(operationInfo);
         if (!rootManifest?.properties?.subGraphDetails) return;
@@ -55,7 +59,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
         dispatch(changePanelNode(_id));
       }
     },
-    [dispatch, isAddCase, newCaseId, node, operationInfo, subgraphId]
+    [dispatch, isAddCase, newCaseId, graphNode, operationInfo, subgraphId]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);
@@ -74,6 +78,29 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
     { actionCount }
   );
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const handleDeleteClick = () => setShowDeleteModal(true);
+  const handleDelete = () => subgraphNode && dispatch(deleteGraphNode({ graphId: subgraphId, graphNode: subgraphNode }));
+
+  const getDeleteMenuItem = () => {
+    const deleteDescription = intl.formatMessage({
+      defaultMessage: 'Delete',
+      description: 'Delete text',
+    });
+
+    return {
+      key: deleteDescription,
+      disabled: readOnly || true, // TODO: This is disabled right now because delete does not work 100% correctly
+      iconName: 'Delete',
+      title: deleteDescription,
+      type: MenuItemType.Advanced,
+      onClick: handleDeleteClick,
+    };
+  };
+
+  const contextMenuOptions: MenuItemOption[] = [];
+  if (metadata?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE']) contextMenuOptions.push(getDeleteMenuItem());
+
   return (
     <div>
       <div style={{ minHeight: '40px', display: 'flex', alignItems: 'center' }}>
@@ -89,7 +116,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
               onClick={subgraphClick}
               collapsed={graphCollapsed}
               handleCollapse={handleGraphCollapse}
-              contextMenuOptions={[]}
+              contextMenuOptions={contextMenuOptions}
             />
           ) : null}
           <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
@@ -105,6 +132,15 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
           <p className="no-actions-text">No Actions</p>
         )
       ) : null}
+      <DeleteNodeModal
+        nodeId={id}
+        // nodeIcon={iconUriResult.result}
+        // brandColor={brandColor}
+        nodeType={WORKFLOW_NODE_TYPES.SUBGRAPH_NODE}
+        isOpen={showDeleteModal}
+        onDismiss={() => setShowDeleteModal(false)}
+        onConfirm={handleDelete}
+      />
     </div>
   );
 };
