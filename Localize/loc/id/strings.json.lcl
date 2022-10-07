@@ -2043,6 +2043,9 @@
       <Item ItemId=";CkfIxl" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Source node removed from view.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Node sumber dihapus dari tampilan.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2212,7 +2215,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Failed to save.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Gagal untuk menyimpan.]]></Val>
+            <Val><![CDATA[Gagal menyimpan.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -3366,6 +3369,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";MnThTq" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Insert function]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";N0pS6Y" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Target schema]]></Val>
@@ -3441,6 +3450,9 @@
       <Item ItemId=";NtY1mD" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Remove all references to node ' {nodeName} ' before you remove the node.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Hapus semua referensi ke node ' {nodeName} ' sebelum Anda menghapus node.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5511,6 +5523,9 @@
       <Item ItemId=";dA6SUc" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Connection deleted.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Koneksi dihapus.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6726,6 +6741,9 @@
       <Item ItemId=";mE7w9G" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Function deleted.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Fungsi dihapus.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7101,6 +7119,9 @@
       <Item ItemId=";p7YGxW" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Error executing the api '{parameters}'.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Kesalahan saat menjalankan api '{parameters}'.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
