@@ -2791,6 +2791,12 @@
       "value": "Triggers cannot be deleted."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "A line between array elements is automatically created to indicate looping elements."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -3677,6 +3683,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Array Mapping"
     }
   ],
   "bG9rjv": [
