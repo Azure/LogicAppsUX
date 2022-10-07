@@ -1,3 +1,4 @@
+import { customTokens } from '../../../core';
 import type { RootState } from '../../../core/state/Store';
 import { NormalizedDataType } from '../../../models';
 import type { Connection } from '../../../models/Connection';
@@ -230,7 +231,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
         <Stack horizontal verticalAlign="center" style={{ marginBottom: '12px' }}>
           <span
             style={{
-              backgroundColor: functionBranding.colorLight,
+              backgroundColor: customTokens[functionBranding.colorTokenName],
               height: '28px',
               width: '28px',
               borderRadius: '14px',

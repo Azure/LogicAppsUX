@@ -90,7 +90,9 @@
             "fullName": "Birthday",
             "parentKey": "/ns0:InputRecord/Identity"
           }
-        ]
+        ],
+        "fullName": "Identity",
+        "parentKey": "/ns0:OutputRecord"
       },
       {
         "key": "/ns0:InputRecord/Address",
@@ -162,7 +164,9 @@
             "fullName": "CountryCode",
             "parentKey": "/ns0:InputRecord/Address"
           }
-        ]
+        ],
+        "fullName": "Address",
+        "parentKey": "/ns0:OutputRecord"
       },
       {
         "key": "/ns0:InputRecord/ContactInfo",
@@ -198,8 +202,11 @@
             "fullName": "CellPhone",
             "parentKey": "/ns0:InputRecord/ContactInfo"
           }
-        ]
+        ],
+        "fullName": "ContactInfo",
+        "parentKey": "/ns0:OutputRecord"
       }
-    ]
+    ],
+    "fullName": "ns0:OutputRecord"
   }
 }
