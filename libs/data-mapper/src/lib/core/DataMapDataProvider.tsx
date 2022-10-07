@@ -4,11 +4,13 @@ import { SchemaTypes } from '../models/Schema';
 import { convertFromMapDefinition } from '../utils/DataMap.Utils';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
+import { getFunctions } from './queries/functions';
 import { setInitialDataMap, setInitialSchema, setXsltFilename } from './state/DataMapSlice';
+import { loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
-import type { AppDispatch } from './state/Store';
+import type { AppDispatch, RootState } from './state/Store';
 import React, { useContext, useEffect, useMemo } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export interface DataMapDataProviderProps {
   xsltFilename?: string;
@@ -30,6 +32,7 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
   const dispatch = useDispatch<AppDispatch>();
   const extendedSourceSchema = useMemo(() => sourceSchema && convertSchemaToSchemaExtended(sourceSchema), [sourceSchema]);
   const extendedTargetSchema = useMemo(() => targetSchema && convertSchemaToSchemaExtended(targetSchema), [targetSchema]);
+  const functions = useSelector((state: RootState) => state.function.availableFunctions);
 
   useEffect(() => {
     dispatch(setXsltFilename(xsltFilename ?? ''));
@@ -37,10 +40,10 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
 
   useEffect(() => {
     if (mapDefinition && extendedSourceSchema && extendedTargetSchema) {
-      const connections = convertFromMapDefinition(mapDefinition, extendedSourceSchema, extendedTargetSchema);
+      const connections = convertFromMapDefinition(mapDefinition, extendedSourceSchema, extendedTargetSchema, functions);
       dispatch(setInitialDataMap(connections));
     }
-  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema]);
+  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, functions]);
 
   useEffect(() => {
     if (extendedSourceSchema) {
@@ -71,6 +74,14 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
       dispatch(setAvailableSchemas(availableSchemas));
     }
   }, [dispatch, availableSchemas]);
+
+  useEffect(() => {
+    async function fetchFunctions() {
+      dispatch(loadFunctions(await getFunctions()));
+    }
+
+    fetchFunctions();
+  }, [dispatch]);
 
   return <>{children}</>;
 };
