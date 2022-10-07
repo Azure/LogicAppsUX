@@ -5,12 +5,13 @@ import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
 import type { MenuItemOption } from '../types';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
-import { labelCase, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
+import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 interface SubgraphCardProps {
   id: string;
   parentId: string;
+  title: string;
   subgraphType: SubgraphType;
   collapsed?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
@@ -24,6 +25,7 @@ interface SubgraphCardProps {
 export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   id,
   parentId,
+  title,
   subgraphType,
   collapsed,
   handleCollapse,
@@ -67,7 +69,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     },
     SWITCH_CASE: {
       color: '#484F58',
-      title: labelCase(id),
+      title: title,
       size: 'large',
       id: id,
     },

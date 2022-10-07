@@ -11,6 +11,7 @@ import {
   useIsGraphCollapsed,
   useIsLeafNode,
   useNewSwitchCaseId,
+  useNodeDisplayName,
   useNodeMetadata,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
@@ -40,6 +41,8 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const graphNode = useWorkflowNode(graphId);
   const subgraphNode = useWorkflowNode(subgraphId);
   const operationInfo = useOperationInfo(graphId);
+
+  const label = useNodeDisplayName(subgraphId);
 
   const isAddCase = metadata?.subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
 
@@ -111,6 +114,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
               id={subgraphId}
               parentId={metadata?.graphId}
               subgraphType={metadata.subgraphType}
+              title={label}
               selected={selected}
               readOnly={readOnly}
               onClick={subgraphClick}
