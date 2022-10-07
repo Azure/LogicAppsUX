@@ -95,7 +95,7 @@ const useStyles = makeStyles({
     width: '48px',
     borderStartStartRadius: tokens.borderRadiusMedium,
     borderEndStartRadius: tokens.borderRadiusMedium,
-    color: tokens.colorBrandForeground1,
+    color: tokens.colorBrandForeground2,
     fontSize: '24px',
     lineHeight: '48px',
     textAlign: 'center',
