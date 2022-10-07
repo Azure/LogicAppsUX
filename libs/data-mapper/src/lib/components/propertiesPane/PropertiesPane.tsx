@@ -38,9 +38,6 @@ const useStyles = makeStyles({
   title: {
     ...typographyStyles.body1Strong,
   },
-  chevron: {
-    ...shorthands.margin('15px'),
-  },
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
     ...shorthands.overflow('hidden', 'auto'),
@@ -270,7 +267,6 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
             size="medium"
             icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
             onClick={() => setIsExpanded(!isExpanded)}
-            className={styles.chevron}
             disabled={!currentNode}
             title={!isExpanded ? expandLoc : collapseLoc}
             aria-label={!isExpanded ? expandLoc : collapseLoc}
