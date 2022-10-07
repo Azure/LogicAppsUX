@@ -54,7 +54,7 @@ export const ButtonPivot: React.FC<ButtonPivotProps> = ({
       vertical={!horizontal}
       style={tabListStyle}
       appearance="subtle"
-      size="medium"
+      size="small"
       onTabSelect={onTabSelect}
       selectedValue={selectedValue}
     >
