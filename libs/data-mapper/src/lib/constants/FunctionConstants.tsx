@@ -4,49 +4,42 @@ import { AddSubtractCircle20Filled, CalendarClock20Regular, Cube20Regular, MathS
 
 export interface FunctionGroupBranding {
   displayName: string;
-  colorLight: string;
-  colorDark: string;
+  colorTokenName: string;
   icon: IconProps;
 }
 
 export const collectionBranding: FunctionGroupBranding = {
   displayName: 'Collection',
-  colorLight: '#ae8c00',
-  colorDark: '#c9a618',
+  colorTokenName: 'colorFnCategoryCollection',
   icon: <Collection20Regular />,
 };
 
 export const dateTimeBranding: FunctionGroupBranding = {
   displayName: 'Date and time',
-  colorLight: '#4f6bed',
-  colorDark: '#93a4f4',
+  colorTokenName: 'colorFnCategoryDateTime',
   icon: <CalendarClock20Regular />,
 };
 
 export const logicalBranding: FunctionGroupBranding = {
   displayName: 'Logical comparison',
-  colorLight: '#038387',
-  colorDark: '#4bb4b7',
+  colorTokenName: 'colorFnCategoryLogical',
   icon: <AddSubtractCircle20Filled />,
 };
 
 export const mathBranding: FunctionGroupBranding = {
   displayName: 'Math',
-  colorLight: '#004e8c',
-  colorDark: '#286ea8',
+  colorTokenName: 'colorFnCategoryMath',
   icon: <MathSymbols20Regular />,
 };
 
 export const stringBranding: FunctionGroupBranding = {
   displayName: 'String',
-  colorLight: '#e43ba6',
-  colorDark: '#ef85cb',
+  colorTokenName: 'colorFnCategoryString',
   icon: <Cube20Regular />,
 };
 
 export const utilityBranding: FunctionGroupBranding = {
   displayName: 'Utility',
-  colorLight: '#8764b8',
-  colorDark: '#a083c9',
+  colorTokenName: 'colorFnCategoryUtility',
   icon: <StringCategory20Regular />,
 };

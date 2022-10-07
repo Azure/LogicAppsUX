@@ -1,3 +1,4 @@
+import { customTokens } from '../../core';
 import { getFunctions } from '../../core/queries/functions';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
@@ -202,7 +203,7 @@ const FunctionListCell: React.FC<FunctionListCellProps> = ({ functionData, onFun
     >
       <span
         style={{
-          backgroundColor: brand.colorLight /* need to add this to theme task no. 15544832*/,
+          backgroundColor: customTokens[brand.colorTokenName],
           height: '28px',
           width: '28px',
           borderRadius: '14px',

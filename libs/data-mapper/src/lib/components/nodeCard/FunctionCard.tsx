@@ -1,4 +1,5 @@
 import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
+import { customTokens } from '../../core';
 import { store } from '../../core/state/Store';
 import type { FunctionInput } from '../../models/Function';
 import { getIconForFunction } from '../../utils/Icon.Utils';
@@ -15,22 +16,20 @@ import {
   tokens,
   Tooltip,
 } from '@fluentui/react-components';
-import type { FunctionComponent } from 'react';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
 
-export type FunctionCardProps = {
+export interface FunctionCardProps extends CardProps {
   functionName: string;
   maxNumberOfInputs: number;
   inputs: FunctionInput[];
   iconFileName?: string;
   functionBranding: FunctionGroupBranding;
-} & CardProps;
+}
 
 const useStyles = makeStyles({
   root: {
     ...shorthands.borderRadius(tokens.borderRadiusCircular),
-    backgroundColor: '#8764b8',
     color: tokens.colorNeutralForegroundInverted,
     fontSize: '20px',
     height: '32px',
@@ -44,18 +43,15 @@ const useStyles = makeStyles({
 
     '&:disabled': {
       '&:hover': {
-        backgroundColor: '#8764b8',
         color: tokens.colorNeutralForegroundInverted,
       },
     },
 
     '&:enabled': {
       '&:hover': {
-        backgroundColor: '#8764b8',
         color: 'white',
       },
       '&:focus': {
-        backgroundColor: '#8764b8',
         color: 'white',
       },
     },
@@ -100,21 +96,21 @@ const isValidConnection = (connection: ReactFlowConnection, inputs: FunctionInpu
   return false;
 };
 
-export const FunctionCard: FunctionComponent<NodeProps<FunctionCardProps>> = (props: NodeProps<FunctionCardProps>) => {
+export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const { functionName, maxNumberOfInputs, inputs, disabled, error, functionBranding, iconFileName, displayHandle, onClick } = props.data;
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
   return (
     <div className={classes.container}>
-      {displayHandle && maxNumberOfInputs !== 0 ? (
+      {displayHandle && maxNumberOfInputs !== 0 && (
         <Handle
           type={'target'}
           position={Position.Left}
           style={handleStyle}
           isValidConnection={(connection) => isValidConnection(connection, inputs)}
         />
-      ) : null}
+      )}
 
       {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge}></PresenceBadge>}
       <Tooltip
@@ -123,8 +119,12 @@ export const FunctionCard: FunctionComponent<NodeProps<FunctionCardProps>> = (pr
         }}
         relationship="label"
       >
-        {/* TODO light vs dark theming on function branding */}
-        <Button onClick={onClick} color={functionBranding.colorLight} className={mergedClasses} disabled={!!disabled}>
+        <Button
+          onClick={onClick}
+          className={mergedClasses}
+          style={{ backgroundColor: customTokens[functionBranding.colorTokenName] }}
+          disabled={!!disabled}
+        >
           {getIconForFunction(functionName, iconFileName, functionBranding)}
         </Button>
       </Tooltip>
