@@ -1,6 +1,6 @@
 import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { BaseEdge, getSmoothStepPath } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
@@ -47,12 +47,14 @@ const useStyles = makeStyles({
 });
 
 export const ConnectionEdge = (props: EdgeProps) => {
-  const { id, data, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, selected } = props;
+  const { id, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, selected } = props;
   const intl = useIntl();
   const styles = useStyles();
 
+  const [isHovered, setIsHovered] = useState(false);
+
   const [edgePath, labelX, labelY] = useMemo(
-    () => getSmoothStepPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition }),
+    () => getSmoothStepPath({ sourceX: sourceX + 10, sourceY, sourcePosition, targetX: targetX - 10, targetY, targetPosition }),
     [sourcePosition, sourceX, sourceY, targetX, targetY, targetPosition]
   );
 
@@ -68,7 +70,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
   };
 
   return (
-    <>
+    <svg onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       <BaseEdge
         path={edgePath}
         labelX={labelX}
@@ -76,7 +78,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
         {...props}
         style={{
           strokeWidth: tokens.strokeWidthThick,
-          stroke: getLineColor(!!selected, !!data?.isHovered),
+          stroke: getLineColor(!!selected, isHovered),
         }}
       />
 
@@ -90,7 +92,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
           padding: parentPadding,
         }}
       >
-        {data?.isHovered && (
+        {isHovered && (
           <Tooltip relationship="label" content={insertFnLoc}>
             <Button
               shape="circular"
@@ -106,6 +108,6 @@ export const ConnectionEdge = (props: EdgeProps) => {
           <Button shape="circular" icon={<Add20Filled />} className={styles.addFnPlaceholder} style={btnStyles} disabled />
         )}
       </foreignObject>
-    </>
+    </svg>
   );
 };

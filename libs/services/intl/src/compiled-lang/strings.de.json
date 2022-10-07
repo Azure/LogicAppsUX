@@ -1167,6 +1167,12 @@
       "value": "Abbrechen"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Close"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1907,6 +1913,16 @@
     {
       "type": 0,
       "value": "Wählen Sie eine Karte aus, um den Inhalt anzuzeigen."
+    }
+  ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Install Gateway"
     }
   ],
   "HzS2gJ": [
@@ -3781,6 +3797,12 @@
       "value": "Aktionen"
     }
   ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Subscription"
+    }
+  ],
   "bS5DyV": [
     {
       "type": 0,
@@ -4653,6 +4675,12 @@
     {
       "type": 0,
       "value": "Dauer"
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
     }
   ],
   "k/oqFL": [

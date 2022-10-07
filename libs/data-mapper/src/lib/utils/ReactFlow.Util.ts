@@ -4,12 +4,13 @@ import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childTargetNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
-import type { FunctionDictionary } from '../models/Function';
+import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
+import { guid } from '@microsoft-logic-apps/utils';
 import { useMemo } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 import { Position } from 'reactflow';
@@ -206,14 +207,11 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary): Reac
   return Object.values(connections).flatMap((connection) => {
     return connection.sources.map((source) => {
       return {
-        id: createReactFlowId(source.reactFlowKey, connection.destination.reactFlowKey),
+        id: createReactFlowConnectionId(source.reactFlowKey, connection.destination.reactFlowKey),
         source: source.reactFlowKey,
         target: connection.destination.reactFlowKey,
         type: ReactFlowEdgeType.ConnectionEdge,
         selected: connection.isSelected,
-        data: {
-          isHovered: connection.isHovered,
-        },
       };
     });
   });
@@ -263,7 +261,9 @@ const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: strin
   return relatedConnections;
 };
 
-export const createReactFlowId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
+export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
+
+export const createReactFlowConnectionId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
 
 export const addReactFlowPrefix = (key: string, type: SchemaTypes) => `${type}-${key}`;
 
