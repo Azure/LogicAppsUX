@@ -1,4 +1,5 @@
 # Logic Apps Designer
+### [0.1.26](https://github.com/Azure/logic_apps_designer/compare/v0.1.25...v0.1.26) (2022-10-07)
 
 ### [0.1.25](https://github.com/Azure/logic_apps_designer/compare/v0.1.24...v0.1.25) (2022-10-06)
 
