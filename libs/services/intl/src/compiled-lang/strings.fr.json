@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -181,6 +175,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Bakou"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "0FzNJV": [
@@ -432,12 +432,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Chargez ou sélectionnez un schéma cible à utiliser pour votre carte."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -508,6 +502,12 @@
     {
       "type": 0,
       "value": "Identité managée"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Select existing"
     }
   ],
   "2b1yD3": [
@@ -606,6 +606,12 @@
       "value": "(UTC+02:00) Chisinau"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -700,6 +706,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Erevan"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Discard changes"
     }
   ],
   "45ubha": [
@@ -822,12 +834,6 @@
       "value": "Retourne true si un objet, un tableau ou une chaîne est vide"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Ajouter un schéma source"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -874,6 +880,12 @@
     {
       "type": 0,
       "value": "Tester le mappage"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "6XR3FS": [
@@ -1308,12 +1320,6 @@
       "value": "Obligatoire. Chaîne à encoder dans une représentation en base64."
     }
   ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "Le schéma cible sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma cible ?"
-    }
-  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -1459,12 +1465,6 @@
     {
       "type": 0,
       "value": "Connexion obligatoire"
-    }
-  ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Remplacer le schéma existant"
     }
   ],
   "Ciol6I": [
@@ -1800,6 +1800,12 @@
       "value": "État"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Update target schema"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1830,12 +1836,6 @@
       "value": "Obligatoire. Objet à trouver dans la collection Within."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Schéma source"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1846,12 +1846,6 @@
     {
       "type": 0,
       "value": "Retourne true si les paramètres ont la valeur false"
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Chargez ou sélectionnez un schéma source à utiliser pour votre carte."
     }
   ],
   "Gi72X5": [
@@ -1894,6 +1888,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Chaîne à découper."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
     }
   ],
   "H8bEUn": [
@@ -1984,6 +1984,12 @@
     {
       "type": 0,
       "value": "Convertit un horodateur de chaîne transmis d'une heure UTC à un fuseau horaire cible"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "IgNz8Y": [
@@ -2231,12 +2237,6 @@
       "value": "Supprimer le graphique de flux de travail"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Avertissement"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2440,7 +2440,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "Insérer une fonction"
     }
   ],
   "N0pS6Y": [
@@ -2639,12 +2639,6 @@
     {
       "type": 0,
       "value": "Retourne les résultats des actions de niveau supérieur dans l'action délimitée spécifiée, par exemple, une action For_each, Until ou Scope."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "Tous les travaux non enregistrés seront supprimés. Voulez-vous tout abandonner ?"
     }
   ],
   "Oib1mL": [
@@ -2931,6 +2925,12 @@
       "value": "Les déclencheurs ne peuvent pas être supprimés."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "A line between array elements is automatically created to indicate looping elements."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -3002,6 +3002,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "S8P4N5": [
@@ -3580,6 +3586,12 @@
       "value": "Obligatoire. Nom de l'action dont vous voulez obtenir les sorties de corps."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3662,12 +3674,6 @@
       "value": "Zoom arrière"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Configuration"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3726,12 +3732,6 @@
     {
       "type": 0,
       "value": "Valeur 'in' non prise en charge : {value} dans Paramètre"
-    }
-  ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Abandonner"
     }
   ],
   "a7j3gS": [
@@ -3796,10 +3796,10 @@
       "value": "Entrer Pfx"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Ajouter"
+      "value": "Add or select a source schema to use for your map."
     }
   ],
   "b9/1dK": [
@@ -3816,6 +3816,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Array Mapping"
     }
   ],
   "bG9rjv": [
@@ -3960,6 +3966,12 @@
       "value": "(UTC+02:00) Tripoli"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -4000,6 +4012,12 @@
     {
       "type": 0,
       "value": "Obligatoire. Collection dans laquelle ignorer les premiers objets Count."
+    }
+  ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Warning"
     }
   ],
   "d3bSQA": [
@@ -4124,6 +4142,12 @@
       "value": "Non spécifié"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4134,12 +4158,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Nom de la variable dont vous voulez la valeur."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Schéma cible"
     }
   ],
   "eRvGw3": [
@@ -4218,6 +4236,12 @@
     {
       "type": 0,
       "value": "Le nombre de paginations dépasse la valeur maximale"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "faSDuD": [
@@ -4467,12 +4491,6 @@
       "value": "Audience"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "Le schéma source sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma source ?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4635,6 +4653,12 @@
     {
       "type": 0,
       "value": "Renvoie la valeur de la variable spécifiée."
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Add or select a target schema to use for your map."
     }
   ],
   "jHHF/u": [
@@ -5496,6 +5520,12 @@
       "value": "(UTC-06:00) Centre (É.-U. et Canada)"
     }
   ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Add new"
+    }
+  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -6134,12 +6164,6 @@
       "value": "Fonctions de date et heure"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Ajouter un schéma cible"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -6186,6 +6210,12 @@
     {
       "type": 0,
       "value": "Entrer une valeur"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "zIDVd9": [

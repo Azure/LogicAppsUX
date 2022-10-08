@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "확인"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -165,6 +159,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) 바쿠"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "0FzNJV": [
@@ -394,12 +394,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "맵에 사용할 대상 스키마를 업로드하거나 선택합니다."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -470,6 +464,12 @@
     {
       "type": 0,
       "value": "관리 ID"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Select existing"
     }
   ],
   "2b1yD3": [
@@ -568,6 +568,12 @@
       "value": "(UTC+02:00) 키시네프"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -662,6 +668,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) 예레반"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Discard changes"
     }
   ],
   "45ubha": [
@@ -784,12 +796,6 @@
       "value": "개체, 배열 또는 문자열이 비어 있는 경우 true를 반환합니다."
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "원본 스키마 추가"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -836,6 +842,12 @@
     {
       "type": 0,
       "value": "테스트 맵"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "6XR3FS": [
@@ -1238,12 +1250,6 @@
       "value": "필수 사항으로, base64 표현으로 인코딩할 문자열입니다."
     }
   ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "대상 스키마가 대체되며 이전 변경 내용으로 돌아갈 수 없습니다. 대상 스키마 변경을 계속하시겠습니까?"
-    }
-  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -1367,12 +1373,6 @@
     {
       "type": 0,
       "value": "연결 필요"
-    }
-  ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "기존 스키마 바꾸기"
     }
   ],
   "Ciol6I": [
@@ -1686,6 +1686,12 @@
       "value": "상태"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Update target schema"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1716,12 +1722,6 @@
       "value": "필수 항목으로, Within 컬렉션 내에서 찾을 개체입니다."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "원본 스키마"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1732,12 +1732,6 @@
     {
       "type": 0,
       "value": "매개 변수가 false인 경우 true를 반환합니다."
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "맵에 사용할 원본 스키마를 업로드하거나 선택하세요."
     }
   ],
   "Gi72X5": [
@@ -1780,6 +1774,12 @@
     {
       "type": 0,
       "value": "필수 항목. 슬라이스할 문자열입니다."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
     }
   ],
   "H8bEUn": [
@@ -1862,6 +1862,12 @@
     {
       "type": 0,
       "value": "전달된 문자열 타임스탬프를 UTC에서 대상 표준 시간대로 변환합니다."
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "IgNz8Y": [
@@ -2087,12 +2093,6 @@
       "value": "워크플로 그래프 삭제"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "경고"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2280,7 +2280,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "함수 삽입"
     }
   ],
   "N0pS6Y": [
@@ -2455,12 +2455,6 @@
     {
       "type": 0,
       "value": "지정된 범위 작업(예: For_each, Until 또는 Scope 작업)에서 최상위 작업의 결과를 반환합니다."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "저장하지 않은 모든 작업이 사라집니다. 계속해서 모든 것을 버리시겠습니까?"
     }
   ],
   "Oib1mL": [
@@ -2747,6 +2741,12 @@
       "value": "트리거를 삭제할 수 없습니다."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "A line between array elements is automatically created to indicate looping elements."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2796,6 +2796,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "S8P4N5": [
@@ -3374,6 +3380,12 @@
       "value": "필수 사항으로, 본문 출력을 원하는 작업의 이름입니다."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3456,12 +3468,6 @@
       "value": "축소"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "구성"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3520,12 +3526,6 @@
     {
       "type": 0,
       "value": "지원되지 않는 'in' 값: 매개변수의 {value}"
-    }
-  ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "취소"
     }
   ],
   "a7j3gS": [
@@ -3590,10 +3590,10 @@
       "value": "PFX 입력"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "추가"
+      "value": "Add or select a source schema to use for your map."
     }
   ],
   "b9/1dK": [
@@ -3610,6 +3610,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Array Mapping"
     }
   ],
   "bG9rjv": [
@@ -3754,6 +3760,12 @@
       "value": "(UTC+02:00) 트리폴리"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3794,6 +3806,12 @@
     {
       "type": 0,
       "value": "필수 항목으로, 첫 번째 Count 개체를 건너뛸 컬렉션입니다."
+    }
+  ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Warning"
     }
   ],
   "d3bSQA": [
@@ -3914,6 +3932,12 @@
       "value": "지정되지 않음"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -3924,12 +3948,6 @@
     {
       "type": 0,
       "value": "필수 사항으로, 원하는 값의 변수 이름입니다."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "대상 스키마"
     }
   ],
   "eRvGw3": [
@@ -4008,6 +4026,12 @@
     {
       "type": 0,
       "value": "페이징 수가 최대값을 초과합니다."
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "faSDuD": [
@@ -4227,12 +4251,6 @@
       "value": "대상"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "원본 스키마가 교체되며 이전 변경 내용으로 돌아갈 수 없습니다. 원본 스키마 변경을 계속하시겠습니까?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4383,6 +4401,12 @@
     {
       "type": 0,
       "value": "지정된 변수의 값을 반환합니다."
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Add or select a target schema to use for your map."
     }
   ],
   "jHHF/u": [
@@ -5206,6 +5230,12 @@
       "value": "(UTC-06:00) 중부 표준시(미국과 캐나다)"
     }
   ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Add new"
+    }
+  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -5840,12 +5870,6 @@
       "value": "날짜 및 시간 함수"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "대상 스키마 추가"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5892,6 +5916,12 @@
     {
       "type": 0,
       "value": "값 입력"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "zIDVd9": [
