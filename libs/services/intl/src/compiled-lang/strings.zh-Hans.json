@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "确定"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -181,6 +175,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00)巴库"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Save"
     }
   ],
   "0FzNJV": [
@@ -414,12 +414,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "上传或选择要用于地图的目标架构。"
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -490,6 +484,12 @@
     {
       "type": 0,
       "value": "托管标识"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Select existing"
     }
   ],
   "2b1yD3": [
@@ -588,6 +588,12 @@
       "value": "(UTC+02:00)基希讷乌"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -682,6 +688,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00)耶烈万"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Discard changes"
     }
   ],
   "45ubha": [
@@ -804,12 +816,6 @@
       "value": "如果对象、数组或字符串为空，则返回 true"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "添加源架构"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -856,6 +862,12 @@
     {
       "type": 0,
       "value": "测试映射"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Cancel"
     }
   ],
   "6XR3FS": [
@@ -1290,12 +1302,6 @@
       "value": "必需。要编码为 base64 表示形式的字符串。"
     }
   ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "目标架构将被替换，并且你将无法返回到以前的更改。是否要继续更改目标架构?"
-    }
-  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -1421,12 +1427,6 @@
       "value": "需要连接"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "替换现有架构"
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1436,7 +1436,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "已从视图中删除源节点。"
     }
   ],
   "CsPY74": [
@@ -1550,7 +1550,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "未能保存。"
     }
   ],
   "EYqGxA": [
@@ -1738,6 +1738,12 @@
       "value": "状态"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Update target schema"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1768,12 +1774,6 @@
       "value": "必需。要在“包含”集合中查找的对象。"
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "源架构"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1784,12 +1784,6 @@
     {
       "type": 0,
       "value": "如果参数为 false，则返回 true"
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "上传或选择要用于地图的源架构。"
     }
   ],
   "Gi72X5": [
@@ -1832,6 +1826,12 @@
     {
       "type": 0,
       "value": "必填。要切片的字符串。"
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
     }
   ],
   "H8bEUn": [
@@ -1922,6 +1922,12 @@
     {
       "type": 0,
       "value": "将传入的字符串时间戳从 UTC 转换为目标时区"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "IgNz8Y": [
@@ -2145,12 +2151,6 @@
     {
       "type": 0,
       "value": "删除工作流图"
-    }
-  ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "警告"
     }
   ],
   "LJmfmK": [
@@ -2426,7 +2426,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
+      "value": "在移除节点之前，请移除对节点“"
     },
     {
       "type": 1,
@@ -2434,7 +2434,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the node."
+      "value": "”的所有引用。"
     }
   ],
   "NvANon": [
@@ -2559,12 +2559,6 @@
     {
       "type": 0,
       "value": "返回指定范围内操作中的顶级操作结果，如 For_each、Until 或 Scope 操作。"
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "所有未保存的工作都将消失。是否要继续放弃所有内容?"
     }
   ],
   "Oib1mL": [
@@ -2851,6 +2845,12 @@
       "value": "无法删除触发器。"
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "A line between array elements is automatically created to indicate looping elements."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2900,6 +2900,12 @@
     {
       "type": 0,
       "value": "6 "
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "S8P4N5": [
@@ -3482,6 +3488,12 @@
       "value": "必需。需要获取其正文输出的操作的名称。"
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3572,12 +3584,6 @@
       "value": "缩小"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "配置"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3646,12 +3652,6 @@
       "value": "\""
     }
   ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "放弃"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -3714,10 +3714,10 @@
       "value": "输入 Pfx"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "添加"
+      "value": "Add or select a source schema to use for your map."
     }
   ],
   "b9/1dK": [
@@ -3734,6 +3734,12 @@
     {
       "type": 1,
       "value": "controls"
+    }
+  ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Array Mapping"
     }
   ],
   "bG9rjv": [
@@ -3882,6 +3888,12 @@
       "value": "(UTC+02:00)的黎波里"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3924,6 +3936,12 @@
       "value": "必需。要从中跳过第一批计数对象的集合。"
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Warning"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -3939,7 +3957,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "已删除连接。"
     }
   ],
   "dDYCuU": [
@@ -4046,6 +4064,12 @@
       "value": "未指定"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4056,12 +4080,6 @@
     {
       "type": 0,
       "value": "必需。需要获取其值的变量的名称。"
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "目标架构"
     }
   ],
   "eRvGw3": [
@@ -4140,6 +4158,12 @@
     {
       "type": 0,
       "value": "分页计数超过最大值"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "faSDuD": [
@@ -4371,12 +4395,6 @@
       "value": "受众"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "源架构将被替换，并且你将无法返回到以前的更改。是否要继续更改源架构?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4539,6 +4557,12 @@
     {
       "type": 0,
       "value": "返回指定变量的值。"
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Add or select a target schema to use for your map."
     }
   ],
   "jHHF/u": [
@@ -4834,7 +4858,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "已删除函数。"
     }
   ],
   "mGUdCO": [
@@ -5102,7 +5126,15 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "执行 API“"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "”时出错。"
     }
   ],
   "pC2nr2": [
@@ -5392,6 +5424,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00)中部时间(美国和加拿大)"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Add new"
     }
   ],
   "s5RV9B": [
@@ -6032,12 +6070,6 @@
       "value": "日期和时间函数"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "添加目标架构"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -6084,6 +6116,12 @@
     {
       "type": 0,
       "value": "输入值"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "zIDVd9": [
