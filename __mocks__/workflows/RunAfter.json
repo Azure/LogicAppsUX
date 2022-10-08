@@ -18,8 +18,8 @@
       "Compose": {
         "inputs": "a",
         "runAfter": {
-          "Init_all": ["Succeeded"],
-          "Http": ["Succeeded"]
+          "Init_all": ["SUCCEEDED"],
+          "Http": ["SUCCEEDED"]
         },
         "type": "Compose"
       },
@@ -28,7 +28,7 @@
           "a": "A"
         },
         "runAfter": {
-          "Init_all": ["Succeeded"]
+          "Init_all": ["SUCCEEDED"]
         },
         "type": "Compose"
       },
@@ -43,7 +43,7 @@
           ]
         },
         "runAfter": {
-          "Init_all": ["Succeeded"]
+          "Init_all": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       },
@@ -56,9 +56,9 @@
           "body": "@outputs('Execute_a_navigation_plan')?['outputParameters']?['balance']"
         },
         "runAfter": {
-          "Compose": ["Succeeded"],
-          "Initialize_test_var": ["Succeeded", "Skipped"],
-          "Execute_a_navigation_plan": ["Succeeded", "TimedOut", "Skipped"]
+          "Compose": ["SUCCEEDED"],
+          "Initialize_test_var": ["SUCCEEDED", "Skipped"],
+          "Execute_a_navigation_plan": ["SUCCEEDED", "TimedOut", "Skipped"]
         },
         "operationOptions": "Asynchronous",
         "runtimeConfiguration": {
@@ -80,7 +80,7 @@
         },
         "runAfter": {
           "Response": ["Failed"],
-          "Initialize_test_var": ["Succeeded", "Skipped"]
+          "Initialize_test_var": ["SUCCEEDED", "Skipped"]
         },
         "type": "Terminate"
       }
