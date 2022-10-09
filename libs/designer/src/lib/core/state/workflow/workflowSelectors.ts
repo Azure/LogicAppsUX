@@ -116,3 +116,18 @@ export const useIsGraphEmpty = () => {
 };
 
 export const useIsLeafNode = (nodeId: string): boolean => useNodeEdgeTargets(nodeId).length === 0;
+
+export const useNewSwitchCaseId = () =>
+  useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      let caseId = 'Case';
+      let caseCount = 1;
+      const idList = Object.keys(state.nodesMetadata);
+      // eslint-disable-next-line no-loop-func
+      while (idList.some((id) => id === caseId)) {
+        caseCount++;
+        caseId = `Case ${caseCount}`;
+      }
+      return caseId;
+    })
+  );

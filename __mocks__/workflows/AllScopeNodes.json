@@ -10,7 +10,7 @@
                 "actions": {
                   "Terminate": {
                     "inputs": {
-                      "runStatus": "Succeeded"
+                      "runStatus": "SUCCEEDED"
                     },
                     "runAfter": {},
                     "type": "Terminate"
@@ -76,14 +76,14 @@
                           "value": 1
                         },
                         "runAfter": {
-                          "ForEach_Action_2": ["Succeeded"]
+                          "ForEach_Action_2": ["SUCCEEDED"]
                         },
                         "type": "IncrementVariable"
                       }
                     },
                     "foreach": "@item()",
                     "runAfter": {
-                      "ForEach_Action_1": ["Succeeded"]
+                      "ForEach_Action_1": ["SUCCEEDED"]
                     },
                     "runtimeConfiguration": {
                       "concurrency": {
@@ -96,7 +96,7 @@
                     "actions": {},
                     "foreach": "@item()",
                     "runAfter": {
-                      "ForEach_nested": ["Succeeded"]
+                      "ForEach_nested": ["SUCCEEDED"]
                     },
                     "type": "Foreach"
                   }
@@ -134,7 +134,7 @@
                       "value": 1
                     },
                     "runAfter": {
-                      "Scope_Action_1": ["Succeeded"]
+                      "Scope_Action_1": ["SUCCEEDED"]
                     },
                     "type": "IncrementVariable"
                   },
@@ -150,14 +150,14 @@
                       }
                     },
                     "runAfter": {
-                      "Scope_Action_2": ["Succeeded"]
+                      "Scope_Action_2": ["SUCCEEDED"]
                     },
                     "type": "Scope"
                   },
                   "Scope_empty": {
                     "actions": {},
                     "runAfter": {
-                      "Scope_nested": ["Succeeded"]
+                      "Scope_nested": ["SUCCEEDED"]
                     },
                     "type": "Scope"
                   }
@@ -185,7 +185,7 @@
                       "value": 1
                     },
                     "runAfter": {
-                      "Until_Action_1": ["Succeeded"]
+                      "Until_Action_1": ["SUCCEEDED"]
                     },
                     "type": "IncrementVariable"
                   },
@@ -206,7 +206,7 @@
                       "timeout": "PT1H"
                     },
                     "runAfter": {
-                      "Until_Action_2": ["Succeeded"]
+                      "Until_Action_2": ["SUCCEEDED"]
                     },
                     "type": "Until"
                   }
@@ -246,7 +246,7 @@
           ]
         },
         "runAfter": {
-          "Switch": ["Succeeded"]
+          "Switch": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       }
