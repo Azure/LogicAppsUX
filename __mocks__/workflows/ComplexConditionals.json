@@ -21,7 +21,7 @@
           }
         },
         "runAfter": {
-          "Initialize_note": ["Succeeded"]
+          "Initialize_note": ["SUCCEEDED"]
         },
         "type": "ApiConnection"
       },
@@ -45,7 +45,7 @@
           }
         },
         "runAfter": {
-          "Create_a_goal": ["Succeeded"]
+          "Create_a_goal": ["SUCCEEDED"]
         },
         "type": "ApiConnection"
       },
@@ -62,7 +62,7 @@
         },
         "foreach": "@body('Get_a_goal_check-in')?['notes']",
         "runAfter": {
-          "Initialize_actual_note": ["Succeeded"]
+          "Initialize_actual_note": ["SUCCEEDED"]
         },
         "type": "Foreach"
       },
@@ -81,7 +81,7 @@
           }
         },
         "runAfter": {
-          "Create_a_goal_check-in": ["Succeeded"]
+          "Create_a_goal_check-in": ["SUCCEEDED"]
         },
         "type": "ApiConnection"
       },
@@ -95,7 +95,7 @@
           ]
         },
         "runAfter": {
-          "Verify_Check-in_Properties": ["Succeeded"]
+          "Verify_Check-in_Properties": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       },
@@ -110,7 +110,7 @@
           ]
         },
         "runAfter": {
-          "Initialize_check-in_day": ["Succeeded"]
+          "Initialize_check-in_day": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       },
@@ -125,7 +125,7 @@
           ]
         },
         "runAfter": {
-          "Initialize_check-in_month": ["Succeeded"]
+          "Initialize_check-in_month": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       },
@@ -140,7 +140,7 @@
           ]
         },
         "runAfter": {
-          "Initialize_check-in_value": ["Succeeded"]
+          "Initialize_check-in_value": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       },
@@ -168,7 +168,7 @@
           ]
         },
         "runAfter": {
-          "Initialize_check-in_date": ["Succeeded"]
+          "Initialize_check-in_date": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       },
@@ -202,7 +202,7 @@
           ]
         },
         "runAfter": {
-          "Get_a_goal_check-in": ["Succeeded"]
+          "Get_a_goal_check-in": ["SUCCEEDED"]
         },
         "type": "If"
       },
@@ -230,7 +230,7 @@
           ]
         },
         "runAfter": {
-          "For_each_note": ["Succeeded"]
+          "For_each_note": ["SUCCEEDED"]
         },
         "type": "If"
       }

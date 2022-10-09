@@ -14,7 +14,7 @@
         },
         "foreach": "@triggerBody()",
         "runAfter": {
-          "Parse_JSON": ["Succeeded"]
+          "Parse_JSON": ["SUCCEEDED"]
         },
         "type": "Foreach"
       },
@@ -42,7 +42,7 @@
           ]
         },
         "runAfter": {
-          "Initialize_variable": ["Succeeded"]
+          "Initialize_variable": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       },
@@ -52,7 +52,7 @@
           "joinWith": "111"
         },
         "runAfter": {
-          "Parse_JSON": ["Succeeded"]
+          "Parse_JSON": ["SUCCEEDED"]
         },
         "type": "Join"
       },
@@ -72,7 +72,7 @@
           }
         },
         "runAfter": {
-          "Initialize_variable_1": ["Succeeded"]
+          "Initialize_variable_1": ["SUCCEEDED"]
         },
         "runtimeConfiguration": {
           "secureData": {
@@ -88,7 +88,7 @@
         },
         "kind": "http",
         "runAfter": {
-          "Join": ["Succeeded"]
+          "Join": ["SUCCEEDED"]
         },
         "type": "Response"
       }

@@ -51,7 +51,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   return (
     <RecommendationPanel placeholder={''} {...props}>
       <OperationSearchHeader
-        onSearch={setSearchTerm}
+        searchCallback={setSearchTerm}
         onGroupToggleChange={() => setIsGrouped(!isGrouped)}
         isGrouped={isGrouped}
         searchTerm={searchTerm}

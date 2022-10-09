@@ -11,7 +11,7 @@ import { useIntl } from 'react-intl';
 const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 
 interface OperationSearchHeaderProps {
-  onSearch: (s: string) => void;
+  searchCallback: (s: string) => void;
   onGroupToggleChange: (ev?: React.FormEvent<HTMLElement | HTMLInputElement> | undefined, checked?: boolean | undefined) => void;
   isGrouped?: boolean;
   searchTerm?: string;
@@ -24,7 +24,16 @@ interface OperationSearchHeaderProps {
 }
 
 export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
-  const { onSearch, onGroupToggleChange, isGrouped = false, searchTerm, selectedGroupId, onDismiss, navigateBack, isTriggerNode } = props;
+  const {
+    searchCallback,
+    onGroupToggleChange,
+    isGrouped = false,
+    searchTerm,
+    selectedGroupId,
+    onDismiss,
+    navigateBack,
+    isTriggerNode,
+  } = props;
 
   const intl = useIntl();
 
@@ -131,7 +140,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
       <Navigation />
       {!selectedGroupId ? (
         <>
-          <DesignerSearchBox onSearch={onSearch} />
+          <DesignerSearchBox searchCallback={searchCallback} />
           <Dropdown
             placeholder={intl.formatMessage({ defaultMessage: 'Select a filter', description: 'Select a filter placeholder' })}
             label={intl.formatMessage({ defaultMessage: 'Filter', description: 'Filter by label' })}

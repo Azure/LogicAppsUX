@@ -137,8 +137,8 @@ export const expectedScopedWorkflowDefinitionOutput: { graph: WorkflowNode; acti
           },
         ],
         edges: [
-          createWorkflowEdge('ActionIf-#scope', 'ActionIf-actions-#subgraph', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
-          createWorkflowEdge('ActionIf-#scope', 'ActionIf-elseActions-#subgraph', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+          createWorkflowEdge('ActionIf-#scope', 'ActionIf-actions', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
+          createWorkflowEdge('ActionIf-#scope', 'ActionIf-elseActions', WORKFLOW_EDGE_TYPES.ONLY_EDGE),
         ],
       },
       {

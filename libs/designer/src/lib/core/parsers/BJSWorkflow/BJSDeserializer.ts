@@ -191,7 +191,7 @@ const processScopeActions = (
     if (isAddCase) graph.type = WORKFLOW_NODE_TYPES.HIDDEN_NODE;
 
     // Connect graph header to subgraph node
-    edges.push(createWorkflowEdge(headerId, rootId, isAddCase ? WORKFLOW_EDGE_TYPES.HIDDEN_EDGE : WORKFLOW_EDGE_TYPES.ONLY_EDGE));
+    edges.push(createWorkflowEdge(headerId, subgraphId, isAddCase ? WORKFLOW_EDGE_TYPES.HIDDEN_EDGE : WORKFLOW_EDGE_TYPES.ONLY_EDGE));
     // Connect subgraph node to all top level nodes
     for (const child of graph.children ?? []) {
       if (metadata[child.id]?.isRoot) graph.edges.push(createWorkflowEdge(rootId, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));

@@ -22,7 +22,12 @@ import { getInputParametersFromManifest, getOutputParametersFromManifest } from 
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
-import type { DiscoveryOperation, DiscoveryResultTypes, SomeKindOfAzureOperationDiscovery } from '@microsoft-logic-apps/utils';
+import type {
+  DiscoveryOperation,
+  DiscoveryResultTypes,
+  OperationManifest,
+  SomeKindOfAzureOperationDiscovery,
+} from '@microsoft-logic-apps/utils';
 import { equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -91,15 +96,9 @@ export const initializeOperationDetails = async (
       settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-
-    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
-    addTokensAndVariables(
-      nodeId,
-      type,
-      { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest, nodeDependencies },
-      workflowState,
-      dispatch
-    );
+    const initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings };
+    dispatch(initializeNodes([initData]));
+    addTokensAndVariables(nodeId, type, { ...initData, iconUri, brandColor, manifest }, workflowState, dispatch);
   } else {
     const [, { connector, parsedSwagger }] = await Promise.all([
       trySetDefaultConnectionForNode(nodeId, connectorId, dispatch),
@@ -132,6 +131,19 @@ export const initializeOperationDetails = async (
       dispatch
     );
   }
+};
+
+export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
+  const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(id, manifest);
+  const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+    manifest,
+    false,
+    nodeInputs,
+    undefined
+  );
+  const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+  const initData = { id, nodeInputs, nodeOutputs, nodeDependencies };
+  dispatch(initializeNodes([initData]));
 };
 
 // TODO: Riley - this is very similar to the init function, but we might want to alter it to not overwrite some data

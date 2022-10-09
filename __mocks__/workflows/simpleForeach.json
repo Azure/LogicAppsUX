@@ -24,7 +24,7 @@
         },
         "kind": "http",
         "runAfter": {
-          "Foreach": ["Succeeded"]
+          "Foreach": ["SUCCEEDED"]
         },
         "type": "Response"
       },
@@ -44,7 +44,7 @@
               "value": 1
             },
             "runAfter": {
-              "Increment_variable_2": ["Succeeded"]
+              "Increment_variable_2": ["SUCCEEDED"]
             },
             "type": "IncrementVariable"
           },
@@ -64,14 +64,14 @@
                   "value": 1
                 },
                 "runAfter": {
-                  "Increment_variable_4": ["Succeeded"]
+                  "Increment_variable_4": ["SUCCEEDED"]
                 },
                 "type": "IncrementVariable"
               }
             },
             "foreach": "@item()",
             "runAfter": {
-              "Increment_variable_3": ["Succeeded"]
+              "Increment_variable_3": ["SUCCEEDED"]
             },
             "runtimeConfiguration": {
               "concurrency": {
@@ -83,7 +83,7 @@
         },
         "foreach": "@triggerBody()",
         "runAfter": {
-          "Initialize_variable": ["Succeeded"]
+          "Initialize_variable": ["SUCCEEDED"]
         },
         "runtimeConfiguration": {
           "concurrency": {
@@ -98,7 +98,7 @@
       "Foreach_empty": {
         "actions": {},
         "runAfter": {
-          "Foreach": ["Succeeded"]
+          "Foreach": ["SUCCEEDED"]
         },
         "foreach": "@triggerBody()",
         "type": "Foreach"
