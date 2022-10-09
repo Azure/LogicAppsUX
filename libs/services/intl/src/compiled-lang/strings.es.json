@@ -1193,7 +1193,7 @@
   "9IDWMU": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Cerrar"
     }
   ],
   "9JuvQ4": [
@@ -1947,7 +1947,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " Instalar puerta de enlace"
     }
   ],
   "HzS2gJ": [
@@ -2440,7 +2440,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "Insertar función"
     }
   ],
   "N0pS6Y": [
@@ -3833,7 +3833,7 @@
   "bIyTi7": [
     {
       "type": 0,
-      "value": "Subscription"
+      "value": "Suscripción"
     }
   ],
   "bS5DyV": [
@@ -4738,7 +4738,7 @@
   "juvF+0": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "Puerta de enlace"
     }
   ],
   "k/oqFL": [
