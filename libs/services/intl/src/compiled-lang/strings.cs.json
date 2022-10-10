@@ -176,7 +176,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Uložit"
     }
   ],
   "0FzNJV": [
@@ -526,7 +526,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Vybrat stávající"
     }
   ],
   "2b1yD3": [
@@ -730,7 +730,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Zahodit změny"
     }
   ],
   "45ubha": [
@@ -904,7 +904,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Zrušit"
     }
   ],
   "6XR3FS": [
@@ -1938,7 +1938,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Cílové schéma se nahradí a nebudete se moct vrátit k předchozím změnám. Chcete pokračovat ve změně cílového schématu?"
     }
   ],
   "H8bEUn": [
@@ -1992,7 +1992,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " Nainstalovat bránu"
     }
   ],
   "HzS2gJ": [
@@ -2034,7 +2034,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Nakonfigurovat"
     }
   ],
   "IgNz8Y": [
@@ -3668,7 +3668,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Zdrojové schéma se nahradí a nebudete se moct vrátit k předchozím změnám. Chcete pokračovat ve změně zdrojového schématu?"
     }
   ],
   "Y/bcmG": [
@@ -4112,7 +4112,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Upozornění"
     }
   ],
   "d3bSQA": [
@@ -4336,7 +4336,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Zdrojové schéma"
     }
   ],
   "faSDuD": [
@@ -5652,7 +5652,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Přidat nový"
     }
   ],
   "s5RV9B": [
@@ -6344,7 +6344,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Cílové schéma"
     }
   ],
   "zIDVd9": [

@@ -180,7 +180,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Speichern"
     }
   ],
   "0FzNJV": [
@@ -496,7 +496,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Vorhandene auswählen"
     }
   ],
   "2b1yD3": [
@@ -598,7 +598,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Das Ersetzen eines vorhandenen Schemas durch ein inkompatibles Schema kann zu Fehlern in Ihrer Zuordnung führen."
     }
   ],
   "3TD2V5": [
@@ -700,7 +700,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Änderungen verwerfen"
     }
   ],
   "45ubha": [
@@ -874,7 +874,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Abbrechen"
     }
   ],
   "6XR3FS": [
@@ -1770,7 +1770,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Zielschema aktualisieren"
     }
   ],
   "G/CC5/": [
@@ -1868,7 +1868,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Das Zielschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Zielschemas fortfahren?"
     }
   ],
   "H8bEUn": [
@@ -1922,7 +1922,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " Gateway installieren"
     }
   ],
   "HzS2gJ": [
@@ -1964,7 +1964,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Konfigurieren"
     }
   ],
   "IgNz8Y": [
@@ -2904,7 +2904,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "Eine Linie zwischen Arrayelementen wird automatisch erstellt, um Elemente in einer Schleife anzuzeigen."
     }
   ],
   "RFjYpH": [
@@ -2972,7 +2972,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Möchten Sie alle nicht gespeicherten Änderungen verwerfen?"
     }
   ],
   "S8P4N5": [
@@ -3554,7 +3554,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Das Quellschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Quellschemas fortfahren?"
     }
   ],
   "Y/bcmG": [
@@ -3772,7 +3772,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Fügen Sie ein Quellschema hinzu, oder wählen Sie eines aus, das für Ihre Zuordnung verwendet werden soll."
     }
   ],
   "b9/1dK": [
@@ -3794,7 +3794,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Array-Mapping"
     }
   ],
   "bG9rjv": [
@@ -3946,7 +3946,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Fügen Sie Ihre Schemas hinzu, oder ersetzen Sie diese."
     }
   ],
   "cgq/+y": [
@@ -3994,7 +3994,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Warnung"
     }
   ],
   "d3bSQA": [
@@ -4122,7 +4122,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Quellschema aktualisieren"
     }
   ],
   "eGa1Wa": [
@@ -4218,7 +4218,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Quellschema"
     }
   ],
   "faSDuD": [
@@ -4624,7 +4624,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Fügen Sie ein Zielschema hinzu, oder wählen Sie eines aus, das für Ihre Zuordnung verwendet werden soll."
     }
   ],
   "jHHF/u": [
@@ -5478,7 +5478,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Neu hinzufügen"
     }
   ],
   "s5RV9B": [
@@ -6170,7 +6170,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Zielschema"
     }
   ],
   "zIDVd9": [

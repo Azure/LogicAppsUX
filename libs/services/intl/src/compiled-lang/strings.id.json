@@ -164,7 +164,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Simpan"
     }
   ],
   "0FzNJV": [
@@ -469,7 +469,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Pilih yang ada"
     }
   ],
   "2b1yD3": [
@@ -571,7 +571,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Mengganti skema yang ada dengan skema yang tidak kompatibel dapat membuat kesalahan di dalam peta Anda."
     }
   ],
   "3TD2V5": [
@@ -673,7 +673,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Buang perubahan"
     }
   ],
   "45ubha": [
@@ -847,7 +847,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Batal"
     }
   ],
   "6XR3FS": [
@@ -1689,7 +1689,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Perbarui skema target"
     }
   ],
   "G/CC5/": [
@@ -1779,7 +1779,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Skema target akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema target?"
     }
   ],
   "H8bEUn": [
@@ -1867,7 +1867,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Konfigurasikan"
     }
   ],
   "IgNz8Y": [
@@ -2752,7 +2752,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "Garis di antara elemen array dibuat secara otomatis untuk menunjukkan elemen pengulangan."
     }
   ],
   "RFjYpH": [
@@ -2809,7 +2809,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Apakah Anda ingin membuang semua perubahan yang tidak disimpan?"
     }
   ],
   "S8P4N5": [
@@ -3391,7 +3391,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Skema sumber akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema sumber?"
     }
   ],
   "Y/bcmG": [
@@ -3601,7 +3601,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Tambahkan atau pilih skema sumber yang akan digunakan untuk peta Anda."
     }
   ],
   "b9/1dK": [
@@ -3623,7 +3623,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Pemetaan Array"
     }
   ],
   "bG9rjv": [
@@ -3771,7 +3771,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Tambahkan atau ganti skema Anda."
     }
   ],
   "cgq/+y": [
@@ -3819,7 +3819,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Peringatan"
     }
   ],
   "d3bSQA": [
@@ -3947,7 +3947,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Perbarui skema sumber"
     }
   ],
   "eGa1Wa": [
@@ -4043,7 +4043,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Skema sumber"
     }
   ],
   "faSDuD": [
@@ -4422,7 +4422,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Tambahkan atau pilih skema target yang akan digunakan untuk peta Anda."
     }
   ],
   "jHHF/u": [
@@ -5249,7 +5249,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Tambah baru"
     }
   ],
   "s5RV9B": [
@@ -5941,7 +5941,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Skema target"
     }
   ],
   "zIDVd9": [

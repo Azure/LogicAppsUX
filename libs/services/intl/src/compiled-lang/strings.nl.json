@@ -180,7 +180,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Opslaan"
     }
   ],
   "0FzNJV": [
@@ -496,7 +496,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Bestaande selecteren"
     }
   ],
   "2b1yD3": [
@@ -700,7 +700,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Wijzigingen negeren"
     }
   ],
   "45ubha": [
@@ -874,7 +874,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Annuleren"
     }
   ],
   "6XR3FS": [
@@ -1868,7 +1868,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Het doelschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het doelschema?"
     }
   ],
   "H8bEUn": [
@@ -1964,7 +1964,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Configureren"
     }
   ],
   "IgNz8Y": [
@@ -3546,7 +3546,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Het bronschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het bronschema?"
     }
   ],
   "Y/bcmG": [
@@ -3982,7 +3982,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Waarschuwing"
     }
   ],
   "d3bSQA": [
@@ -4206,7 +4206,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Bronschema"
     }
   ],
   "faSDuD": [
@@ -5482,7 +5482,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Nieuwe toevoegen"
     }
   ],
   "s5RV9B": [
@@ -6174,7 +6174,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Doelschema"
     }
   ],
   "zIDVd9": [

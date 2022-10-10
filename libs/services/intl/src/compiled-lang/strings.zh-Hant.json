@@ -164,7 +164,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "儲存"
     }
   ],
   "0FzNJV": [
@@ -469,7 +469,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "選取現有的"
     }
   ],
   "2b1yD3": [
@@ -571,7 +571,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "以不相容的架構取代現有的結構描述可能會在您的對應中產生錯誤。"
     }
   ],
   "3TD2V5": [
@@ -673,7 +673,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "捨棄變更"
     }
   ],
   "45ubha": [
@@ -847,7 +847,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "6XR3FS": [
@@ -1689,7 +1689,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "更新目標結構描述"
     }
   ],
   "G/CC5/": [
@@ -1779,7 +1779,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "將取代目標結構描述，而且您將無法回復到先前的變更。您要繼續變更目標結構描述嗎?"
     }
   ],
   "H8bEUn": [
@@ -1867,7 +1867,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "設定"
     }
   ],
   "IgNz8Y": [
@@ -2744,7 +2744,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "會自動建立陣列元素之間的線條以指示迴圈元素。"
     }
   ],
   "RFjYpH": [
@@ -2801,7 +2801,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "要捨棄所有未儲存的變更嗎?"
     }
   ],
   "S8P4N5": [
@@ -3383,7 +3383,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "將取代來源結構描述，而且您將無法回復到先前的變更。您要繼續變更來源結構描述嗎?"
     }
   ],
   "Y/bcmG": [
@@ -3593,7 +3593,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "新增或選取要用於對應的來源結構描述。"
     }
   ],
   "b9/1dK": [
@@ -3615,7 +3615,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "陣列對應"
     }
   ],
   "bG9rjv": [
@@ -3767,7 +3767,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "新增或取代您的結構描述。"
     }
   ],
   "cgq/+y": [
@@ -3815,7 +3815,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "警告"
     }
   ],
   "d3bSQA": [
@@ -3943,7 +3943,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "更新來源結構描述"
     }
   ],
   "eGa1Wa": [
@@ -4039,7 +4039,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "來源結構描述"
     }
   ],
   "faSDuD": [
@@ -4418,7 +4418,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "新增或選取要用於對應的目標結構描述。"
     }
   ],
   "jHHF/u": [
@@ -5245,7 +5245,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "新增"
     }
   ],
   "s5RV9B": [
@@ -5937,7 +5937,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "目標結構描述"
     }
   ],
   "zIDVd9": [

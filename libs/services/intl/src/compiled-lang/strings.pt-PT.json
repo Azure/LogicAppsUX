@@ -180,7 +180,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Guardar"
     }
   ],
   "0FzNJV": [
@@ -507,7 +507,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Selecionar existente"
     }
   ],
   "2b1yD3": [
@@ -609,7 +609,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Substituir um esquema existente por um esquema incompatível pode criar erros no seu mapa."
     }
   ],
   "3TD2V5": [
@@ -711,7 +711,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Eliminar alterações"
     }
   ],
   "45ubha": [
@@ -885,7 +885,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Cancelar"
     }
   ],
   "6XR3FS": [
@@ -1803,7 +1803,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Atualizar esquema de destino"
     }
   ],
   "G/CC5/": [
@@ -1901,7 +1901,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "O esquema de destino será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de saída?"
     }
   ],
   "H8bEUn": [
@@ -1997,7 +1997,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Configurar"
     }
   ],
   "IgNz8Y": [
@@ -2944,7 +2944,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "É criada automaticamente uma linha entre elementos de matriz para indicar elementos em ciclo."
     }
   ],
   "RFjYpH": [
@@ -3023,7 +3023,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Pretende eliminar todas as alterações não guardadas?"
     }
   ],
   "S8P4N5": [
@@ -3605,7 +3605,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "O esquema de origem será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de saída?"
     }
   ],
   "Y/bcmG": [
@@ -3831,7 +3831,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Adicione ou selecione um esquema de origem a utilizar para o seu mapa."
     }
   ],
   "b9/1dK": [
@@ -3853,7 +3853,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Mapeamento da Matriz"
     }
   ],
   "bG9rjv": [
@@ -4001,7 +4001,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Adicione ou substitua os seus esquemas."
     }
   ],
   "cgq/+y": [
@@ -4049,7 +4049,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Aviso"
     }
   ],
   "d3bSQA": [
@@ -4177,7 +4177,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Atualizar esquema de origem"
     }
   ],
   "eGa1Wa": [
@@ -4273,7 +4273,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Esquema de origem"
     }
   ],
   "faSDuD": [
@@ -4698,7 +4698,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Adicione ou selecione um esquema de destino a utilizar para o seu mapa."
     }
   ],
   "jHHF/u": [
@@ -5579,7 +5579,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Adicionar novo"
     }
   ],
   "s5RV9B": [
@@ -6271,7 +6271,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Esquema de destino"
     }
   ],
   "zIDVd9": [

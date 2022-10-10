@@ -180,7 +180,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Spara"
     }
   ],
   "0FzNJV": [
@@ -496,7 +496,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Välj befintligt"
     }
   ],
   "2b1yD3": [
@@ -700,7 +700,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Åsidosätt ändringarna"
     }
   ],
   "45ubha": [
@@ -874,7 +874,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Avbryt"
     }
   ],
   "6XR3FS": [
@@ -1868,7 +1868,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Målschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra målschemat?"
     }
   ],
   "H8bEUn": [
@@ -1964,7 +1964,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Konfigurera"
     }
   ],
   "IgNz8Y": [
@@ -3546,7 +3546,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Källschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra källschemat?"
     }
   ],
   "Y/bcmG": [
@@ -3986,7 +3986,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Varning"
     }
   ],
   "d3bSQA": [
@@ -4210,7 +4210,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Källschema"
     }
   ],
   "faSDuD": [
@@ -5482,7 +5482,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Lägg till nytt"
     }
   ],
   "s5RV9B": [
@@ -6174,7 +6174,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Målschema"
     }
   ],
   "zIDVd9": [
