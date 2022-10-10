@@ -1,4 +1,5 @@
 import type { ConnectionDictionary } from '../../models/Connection';
+import { hasEventualTarget } from '../DataMap.Utils';
 
 describe('Data Map utils', () => {
   const dict: ConnectionDictionary = {
@@ -6,7 +7,6 @@ describe('Data Map utils', () => {
       sources: [
         {
           node: {
-            namespaceUri: '',
             key: '/ns0:Root/DirectTranslation/EmployeeName',
             name: 'EmployeeName',
             schemaNodeDataType: 'String',
@@ -38,7 +38,6 @@ describe('Data Map utils', () => {
       ],
       destination: {
         node: {
-          namespaceUri: '',
           key: '/ns0:Root/Looping/Person/Name',
           name: 'Name',
           schemaNodeDataType: 'String',
@@ -77,7 +76,6 @@ describe('Data Map utils', () => {
       sources: [
         {
           node: {
-            namespaceUri: '',
             key: '/ns0:Root/Looping/Employee/Country',
             name: 'Country',
             schemaNodeDataType: 'String',
@@ -114,7 +112,6 @@ describe('Data Map utils', () => {
       ],
       destination: {
         node: {
-          namespaceUri: '',
           key: '/ns0:Root/Looping/Person/Address',
           name: 'Address',
           schemaNodeDataType: 'String',
@@ -153,7 +150,6 @@ describe('Data Map utils', () => {
       sources: [
         {
           node: {
-            namespaceUri: '',
             key: '/ns0:Root/Looping/Employee',
             name: 'Employee',
             schemaNodeDataType: 'None',
@@ -163,7 +159,7 @@ describe('Data Map utils', () => {
               {
                 key: '/ns0:Root/Looping/Employee/TelephoneNumber',
                 name: 'TelephoneNumber',
-                namespaceUri: '',
+
                 schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
@@ -198,7 +194,7 @@ describe('Data Map utils', () => {
                 name: 'Name',
                 schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
-                namespaceUri: '',
+
                 properties: 'NotSpecified',
                 fullName: 'Name',
                 parentKey: '/ns0:Root/Looping/Employee',
@@ -233,7 +229,7 @@ describe('Data Map utils', () => {
                 normalizedDataType: 'Decimal',
                 properties: 'NotSpecified',
                 fullName: 'Salary',
-                namespaceUri: '',
+
                 parentKey: '/ns0:Root/Looping/Employee',
                 children: [],
                 pathToRoot: [
@@ -262,7 +258,7 @@ describe('Data Map utils', () => {
               {
                 key: '/ns0:Root/Looping/Employee/Country',
                 name: 'Country',
-                namespaceUri: '',
+
                 schemaNodeDataType: 'String',
                 normalizedDataType: 'String',
                 properties: 'NotSpecified',
@@ -301,7 +297,7 @@ describe('Data Map utils', () => {
                 fullName: 'Dat_of_Birth',
                 parentKey: '/ns0:Root/Looping/Employee',
                 children: [],
-                namespaceUri: '',
+
                 pathToRoot: [
                   {
                     key: '/ns0:Root',
@@ -326,7 +322,6 @@ describe('Data Map utils', () => {
                 ],
               },
               {
-                namespaceUri: '',
                 key: '/ns0:Root/Looping/Employee/Address',
                 name: 'Address',
                 schemaNodeDataType: 'String',
@@ -384,7 +379,6 @@ describe('Data Map utils', () => {
       ],
       destination: {
         node: {
-          namespaceUri: '',
           key: '/ns0:Root/Looping/Person',
           name: 'Person',
           schemaNodeDataType: 'None',
@@ -392,7 +386,6 @@ describe('Data Map utils', () => {
           properties: 'Repeating',
           children: [
             {
-              namespaceUri: '',
               key: '/ns0:Root/Looping/Person/Name',
               name: 'Name',
               schemaNodeDataType: 'String',
@@ -432,7 +425,7 @@ describe('Data Map utils', () => {
               properties: 'NotSpecified',
               fullName: 'Address',
               parentKey: '/ns0:Root/Looping/Person',
-              namespaceUri: '',
+
               children: [],
               pathToRoot: [
                 {
@@ -466,7 +459,7 @@ describe('Data Map utils', () => {
               fullName: 'Other',
               parentKey: '/ns0:Root/Looping/Person',
               children: [],
-              namespaceUri: '',
+
               pathToRoot: [
                 {
                   key: '/ns0:Root',
@@ -517,5 +510,6 @@ describe('Data Map utils', () => {
   };
   it('determines if a node has a connection for a source', () => {
     console.log(dict);
+    expect(hasEventualTarget('source-/ns0:Root/Looping/Employee/Country', dict)).toEqual(true);
   });
 });

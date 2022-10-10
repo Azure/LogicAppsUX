@@ -7,27 +7,26 @@ import {
   utilityBranding,
 } from '../constants/FunctionConstants';
 import type { SchemaNodeExtended } from '../models';
-import type { FunctionData } from '../models/Function';
-import { FunctionCategory } from '../models/Function';
+import type { FunctionCategory, FunctionData } from '../models/Function';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {
-    case FunctionCategory.Collection: {
+    case 'collection': {
       return collectionBranding;
     }
-    case FunctionCategory.DateTime: {
+    case 'dateTime': {
       return dateTimeBranding;
     }
-    case FunctionCategory.Logical: {
+    case 'logical': {
       return logicalBranding;
     }
-    case FunctionCategory.Math: {
+    case 'math': {
       return mathBranding;
     }
-    case FunctionCategory.String: {
+    case 'string': {
       return stringBranding;
     }
-    case FunctionCategory.Utility: {
+    case 'utility': {
       return utilityBranding;
     }
     default: {

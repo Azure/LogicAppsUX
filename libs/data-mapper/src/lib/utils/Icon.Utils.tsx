@@ -26,7 +26,7 @@ import {
   String24Filled,
   String24Regular,
 } from '../images/DataType24Icons';
-import { FunctionCategory } from '../models/Function';
+import type { FunctionCategory } from '../models/Function';
 import type { TypeofSchemaNodeDataType, TypeofSchemaNodeProperties } from '../models/Schema';
 import { SchemaNodeDataType, SchemaNodeProperties } from '../models/Schema';
 import { Image } from '@fluentui/react-components';
@@ -134,7 +134,7 @@ export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   }
 };
 
-export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType, properties?: SchemaNodeProperties) => {
+export const icon16ForSchemaNodeType = (nodeType: TypeofSchemaNodeDataType, properties?: TypeofSchemaNodeProperties) => {
   switch (nodeType) {
     /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
@@ -377,22 +377,22 @@ export const icon24ForSchemaNodeType = (nodeType: TypeofSchemaNodeDataType, prop
 
 export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {
-    case FunctionCategory.Collection: {
+    case 'collection': {
       return Collection20Regular;
     }
-    case FunctionCategory.DateTime: {
+    case 'dateTime': {
       return CalendarClock20Regular;
     }
-    case FunctionCategory.Logical: {
+    case 'logical': {
       return AddSubtractCircle20Filled;
     }
-    case FunctionCategory.Math: {
+    case 'math': {
       return MathSymbols20Regular;
     }
-    case FunctionCategory.String: {
+    case 'string': {
       return StringCategory20Regular;
     }
-    case FunctionCategory.Utility: {
+    case 'utility': {
       return Wrench20Regular;
     }
     default: {

@@ -1,3 +1,4 @@
+import type { TypeofNormalizedDataType } from './Schema';
 import { NormalizedDataType } from './Schema';
 
 export interface FunctionManifest {
@@ -12,7 +13,7 @@ export interface FunctionData {
 
   maxNumberOfInputs: number; // -1 for unlimited
   inputs: FunctionInput[];
-  outputValueType: NormalizedDataType;
+  outputValueType: TypeofNormalizedDataType;
 
   displayName: string;
   category: FunctionCategory;
@@ -23,7 +24,7 @@ export interface FunctionData {
 
 export interface FunctionInput {
   name: string;
-  allowedTypes: NormalizedDataType[];
+  allowedTypes: TypeofNormalizedDataType[];
   isOptional: boolean;
   allowCustomInput: boolean;
 
@@ -32,14 +33,9 @@ export interface FunctionInput {
   placeholder: string;
 }
 
-export enum FunctionCategory {
-  Collection = 'collection',
-  DateTime = 'dateTime',
-  Logical = 'logical',
-  Math = 'math',
-  String = 'string',
-  Utility = 'utility',
-}
+export const FunctionCategories: FunctionCategory[] = ['collection', 'dateTime', 'logical', 'math', 'string', 'utility'];
+
+export type FunctionCategory = 'collection' | 'dateTime' | 'logical' | 'math' | 'string' | 'utility';
 
 export type FunctionDictionary = { [key: string]: FunctionData };
 
@@ -72,7 +68,7 @@ export const functionMock: FunctionData[] = [
       },
     ],
     displayName: 'Max',
-    category: FunctionCategory.Math,
+    category: 'math',
     description: 'The max between two values',
     tooltip: 'Max between two values',
   },
@@ -103,7 +99,7 @@ export const functionMock: FunctionData[] = [
       },
     ],
     displayName: 'Min',
-    category: FunctionCategory.Math,
+    category: 'math',
     iconFileName: '',
     description: 'The min between 2 numbers',
     tooltip: 'The min',
@@ -135,7 +131,7 @@ export const functionMock: FunctionData[] = [
       },
     ],
     displayName: 'Average',
-    category: FunctionCategory.Math,
+    category: 'math',
     description: 'The average between two numbers',
     tooltip: 'The average',
   },
@@ -166,7 +162,7 @@ export const functionMock: FunctionData[] = [
       },
     ],
     displayName: 'For Each',
-    category: FunctionCategory.Utility,
+    category: 'utility',
     description: 'Step through your loop',
     tooltip: 'A basic For Each',
   },
@@ -179,7 +175,7 @@ export const functionMock: FunctionData[] = [
     inputs: [
       {
         name: 'condition',
-        allowedTypes: [NormalizedDataType.Boolean],
+        allowedTypes: ['Boolean'],
         isOptional: false,
         allowCustomInput: true,
         displayName: 'Scope',
@@ -188,7 +184,7 @@ export const functionMock: FunctionData[] = [
       },
     ],
     displayName: 'Condition',
-    category: FunctionCategory.Utility,
+    category: 'utility',
     description: 'The condition to evaluate',
     tooltip: 'Input condition',
   },
@@ -200,7 +196,7 @@ export const functionMock: FunctionData[] = [
     outputValueType: NormalizedDataType.DateTime,
     inputs: [],
     displayName: 'Current Date',
-    category: FunctionCategory.DateTime,
+    category: 'dateTime',
     description: 'Current date in the current time zone',
     tooltip: 'Current date',
   },
@@ -222,7 +218,7 @@ export const functionMock: FunctionData[] = [
       },
     ],
     displayName: 'To Lower',
-    category: FunctionCategory.String,
+    category: 'string',
     description: 'Sets a string to be all lower case',
     tooltip: 'Lower case',
   },
@@ -244,7 +240,7 @@ export const functionMock: FunctionData[] = [
       },
     ],
     displayName: 'Concatenate',
-    category: FunctionCategory.String,
+    category: 'string',
     description: 'Combines multiple strings together',
     tooltip: 'Combine strings',
   },
@@ -266,7 +262,7 @@ export const functionMock: FunctionData[] = [
       },
     ],
     displayName: 'To String',
-    category: FunctionCategory.String,
+    category: 'string',
     description: 'Converts the input into a string',
     tooltip: 'Converts to string',
   },

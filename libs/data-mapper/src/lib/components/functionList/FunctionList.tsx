@@ -1,6 +1,6 @@
 import { getFunctions } from '../../core/queries/functions';
-import type { FunctionData } from '../../models/Function';
-import { FunctionCategory } from '../../models/Function';
+import { FunctionCategories } from '../../models/Function';
+import type { FunctionCategory, FunctionData } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import { DMTooltip } from '../tooltip/tooltip';
@@ -67,7 +67,7 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
       } else {
         dataCopy = functionListData.data;
 
-        Object.values(FunctionCategory).forEach((category) => categoriesArray.push(category));
+        Object.values(FunctionCategories).forEach((category) => categoriesArray.push(category));
 
         newSortedFunctions = dataCopy.sort((a, b) => {
           const categorySort = a.category.localeCompare(b.category);

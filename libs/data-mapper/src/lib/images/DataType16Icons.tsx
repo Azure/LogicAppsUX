@@ -166,6 +166,8 @@ const Binary16RegularIcon = (props: IconProps) => {
 
 export const Binary16Regular = wrapIcon(Binary16RegularIcon, 'Binary16Regular');
 
+// what if this was like a dictionary of the functions, and passes in the size???? like idk this is a lot, and the Icon.Utils stuff is not ideal
+
 const Binary16FilledIcon = (props: IconProps) => {
   const { fill: primaryFill = 'currentColor', className } = props;
   return React.createElement(

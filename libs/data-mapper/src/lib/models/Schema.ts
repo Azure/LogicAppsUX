@@ -16,7 +16,7 @@ export interface SchemaNode {
   fullName: string;
   namespacePrefix?: string;
   parentKey?: string;
-  namespaceUri: string;
+  namespaceUri?: string;
   normalizedDataType: TypeofNormalizedDataType;
   schemaNodeDataType: TypeofSchemaNodeDataType;
   properties: TypeofSchemaNodeProperties;

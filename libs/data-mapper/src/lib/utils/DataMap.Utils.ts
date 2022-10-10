@@ -325,8 +325,8 @@ export const hasEventualTarget = (dest: string, dict: ConnectionDictionary): boo
   if (nextEdges.length === 0) {
     return false;
   }
-  nextEdges.find((edge) => {
-    return hasEventualTarget(edge.reactFlowKey, dict);
-  });
+  // nextEdges.find((edge) => {
+  //   return hasEventualTarget(edge.reactFlowKey, dict);
+  // });
   return true;
 };
