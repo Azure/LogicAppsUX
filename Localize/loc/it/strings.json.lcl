@@ -882,6 +882,9 @@
       <Item ItemId=";3QXY3z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Replacing an existing schema with an incompatible schema might create errors in your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[La sostituzione di uno schema esistente con uno schema incompatibile potrebbe causare errori nella mappa.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -997,7 +1000,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Discard changes]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Rimuovi modifiche]]></Val>
+            <Val><![CDATA[Rimuovere le modifiche]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -2520,6 +2523,9 @@
       <Item ItemId=";FuXqJI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Update target schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiorna schema di destinazione]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4044,6 +4050,9 @@
       <Item ItemId=";R7v2iQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[A line between array elements is automatically created to indicate looping elements.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Viene creata automaticamente una linea tra gli elementi della matrice per indicare gli elementi di ciclo.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4146,6 +4155,9 @@
       <Item ItemId=";Rno87I" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Do you want to discard all unsaved changes?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Annullare tutte le modifiche non salvate?]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5241,6 +5253,9 @@
       <Item ItemId=";auUI93" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add or select a source schema to use for your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiungere o selezionare uno schema di origine da usare per la mappa.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5265,6 +5280,9 @@
       <Item ItemId=";bCQ6JT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Array Mapping]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mapping matrice]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5478,6 +5496,9 @@
       <Item ItemId=";cbL6Gv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add or replace your schemas.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiungere o sostituire gli schemi.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5727,6 +5748,9 @@
       <Item ItemId=";eCkaMR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Update source schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiorna schema di origine]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6414,6 +6438,9 @@
       <Item ItemId=";jA6Wrp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add or select a target schema to use for your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aggiungere o selezionare uno schema di destinazione da usare per la mappa.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

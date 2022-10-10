@@ -879,6 +879,9 @@
       <Item ItemId=";3QXY3z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Replacing an existing schema with an incompatible schema might create errors in your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A meglévő sémák inkompatibilis sémával való lecserélése hibákat okozhat a leképezésben.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2511,6 +2514,9 @@
       <Item ItemId=";FuXqJI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Update target schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Célséma frissítése]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4032,6 +4038,9 @@
       <Item ItemId=";R7v2iQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[A line between array elements is automatically created to indicate looping elements.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[A rendszer automatikusan létrehoz egy vonalat a tömbelemek között, hogy a hurkolt elemeket jelezze.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4131,6 +4140,9 @@
       <Item ItemId=";Rno87I" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Do you want to discard all unsaved changes?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Biztosan elveti az összes nem mentett módosítást?]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5226,6 +5238,9 @@
       <Item ItemId=";auUI93" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add or select a source schema to use for your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Töltse fel vagy válassza ki a leképezéshez használni kívánt forrássémát.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5250,6 +5265,9 @@
       <Item ItemId=";bCQ6JT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Array Mapping]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Tömbleképezés]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5463,6 +5481,9 @@
       <Item ItemId=";cbL6Gv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add or replace your schemas.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Sémák hozzáadása vagy cseréje.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5712,6 +5733,9 @@
       <Item ItemId=";eCkaMR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Update source schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Forrásséma frissítése]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6396,6 +6420,9 @@
       <Item ItemId=";jA6Wrp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add or select a target schema to use for your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Töltse fel vagy válassza ki a leképezéshez használni kívánt célsémát.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

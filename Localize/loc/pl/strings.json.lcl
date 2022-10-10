@@ -733,7 +733,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Select existing]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Wybierz istniejące]]></Val>
+            <Val><![CDATA[Wybierz istniejący]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -885,6 +885,9 @@
       <Item ItemId=";3QXY3z" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Replacing an existing schema with an incompatible schema might create errors in your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Zastąpienie istniejącego schematu przy użyciu niezgodnego schematu może spowodować wystąpienie błędów na mapie.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2529,6 +2532,9 @@
       <Item ItemId=";FuXqJI" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Update target schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aktualizuj schemat docelowy]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4056,6 +4062,9 @@
       <Item ItemId=";R7v2iQ" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[A line between array elements is automatically created to indicate looping elements.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Linia między elementami tablicy jest automatycznie tworzona w celu wskazania elementów zapętlenia.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4161,6 +4170,9 @@
       <Item ItemId=";Rno87I" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Do you want to discard all unsaved changes?]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Czy na pewno chcesz odrzucić wszystkie niezapisane zmiany?]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5256,6 +5268,9 @@
       <Item ItemId=";auUI93" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add or select a source schema to use for your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dodaj lub wybierz schemat źródłowy, który ma być używany dla mapy.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5280,6 +5295,9 @@
       <Item ItemId=";bCQ6JT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Array Mapping]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Mapowanie tablicy]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5493,6 +5511,9 @@
       <Item ItemId=";cbL6Gv" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add or replace your schemas.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dodaj lub zamień schematy.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5742,6 +5763,9 @@
       <Item ItemId=";eCkaMR" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Update source schema]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aktualizuj schemat źródłowy]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6432,6 +6456,9 @@
       <Item ItemId=";jA6Wrp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Add or select a target schema to use for your map.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Dodaj lub wybierz schemat docelowy, który ma być używany dla mapy.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7645,7 +7672,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Add new]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Dodaj nowe]]></Val>
+            <Val><![CDATA[Dodaj nowy]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
