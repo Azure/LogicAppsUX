@@ -164,7 +164,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Kaydet"
     }
   ],
   "0FzNJV": [
@@ -480,7 +480,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Mevcut olanı seç"
     }
   ],
   "2b1yD3": [
@@ -684,7 +684,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Değişiklikleri at"
     }
   ],
   "45ubha": [
@@ -858,7 +858,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "İptal"
     }
   ],
   "6XR3FS": [
@@ -1808,7 +1808,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Hedef şema değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Hedef şemayı değiştirmeye devam etmek istiyor musunuz?"
     }
   ],
   "H8bEUn": [
@@ -1896,7 +1896,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Yapılandır"
     }
   ],
   "IgNz8Y": [
@@ -3434,7 +3434,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Kaynak şema değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Kaynak şemayı değiştirmeye devam etmek istiyor musunuz?"
     }
   ],
   "Y/bcmG": [
@@ -3862,7 +3862,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Uyarı"
     }
   ],
   "d3bSQA": [
@@ -4082,7 +4082,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Kaynak şeması"
     }
   ],
   "faSDuD": [
@@ -5306,7 +5306,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Yeni ekle"
     }
   ],
   "s5RV9B": [
@@ -5994,7 +5994,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Hedef şema"
     }
   ],
   "zIDVd9": [

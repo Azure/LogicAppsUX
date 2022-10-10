@@ -180,7 +180,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Mentés"
     }
   ],
   "0FzNJV": [
@@ -496,7 +496,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Meglévő kiválasztása"
     }
   ],
   "2b1yD3": [
@@ -700,7 +700,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Módosítások elvetése"
     }
   ],
   "45ubha": [
@@ -874,7 +874,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Mégse"
     }
   ],
   "6XR3FS": [
@@ -1868,7 +1868,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "A célsémát a rendszer lecseréli, Ön pedig nem tud majd visszatérni a korábbi módosításokhoz. Folytatja a célséma módosítását?"
     }
   ],
   "H8bEUn": [
@@ -1922,7 +1922,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " Átjáró telepítése"
     }
   ],
   "HzS2gJ": [
@@ -1964,7 +1964,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Konfigurálás"
     }
   ],
   "IgNz8Y": [
@@ -3554,7 +3554,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "A forrássémát a rendszer lecseréli, Ön pedig nem tud majd visszatérni a korábbi módosításokhoz. Folytatja a forrásséma módosítását?"
     }
   ],
   "Y/bcmG": [
@@ -4002,7 +4002,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Figyelmeztetés"
     }
   ],
   "d3bSQA": [
@@ -4226,7 +4226,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Forrásséma"
     }
   ],
   "faSDuD": [
@@ -5506,7 +5506,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Új hozzáadása"
     }
   ],
   "s5RV9B": [
@@ -6198,7 +6198,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Célséma"
     }
   ],
   "zIDVd9": [

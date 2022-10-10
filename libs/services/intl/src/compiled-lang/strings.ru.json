@@ -180,7 +180,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Сохранить"
     }
   ],
   "0FzNJV": [
@@ -518,7 +518,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Выбрать существующую"
     }
   ],
   "2b1yD3": [
@@ -620,7 +620,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Замена существующей схемы несовместимой схемой может привести к ошибкам в карте."
     }
   ],
   "3TD2V5": [
@@ -722,7 +722,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Отменить изменения"
     }
   ],
   "45ubha": [
@@ -896,7 +896,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Отмена"
     }
   ],
   "6XR3FS": [
@@ -1836,7 +1836,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Обновить целевую схему"
     }
   ],
   "G/CC5/": [
@@ -1934,7 +1934,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Целевая схема будет заменена, и вы не сможете вернуться к предыдущим изменениям. Продолжить изменение целевой схемы?"
     }
   ],
   "H8bEUn": [
@@ -2030,7 +2030,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Настроить"
     }
   ],
   "IgNz8Y": [
@@ -2988,7 +2988,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "Линия между элементами массива автоматически создается для обозначения элементов цикла."
     }
   ],
   "RFjYpH": [
@@ -3078,7 +3078,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Вы хотите отменить все несохраненные изменения?"
     }
   ],
   "S8P4N5": [
@@ -3660,7 +3660,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Исходная схема будет заменена, и вы не сможете вернуться к предыдущим изменениям. Продолжить изменение исходной схемы?"
     }
   ],
   "Y/bcmG": [
@@ -3886,7 +3886,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Добавьте или выберите исходную схему, которая будет применяться для вашей карты."
     }
   ],
   "b9/1dK": [
@@ -3908,7 +3908,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Сопоставление массива"
     }
   ],
   "bG9rjv": [
@@ -4056,7 +4056,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Добавьте или замените схемы."
     }
   ],
   "cgq/+y": [
@@ -4104,7 +4104,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Предупреждение"
     }
   ],
   "d3bSQA": [
@@ -4232,7 +4232,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Обновить исходную схему"
     }
   ],
   "eGa1Wa": [
@@ -4328,7 +4328,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Исходная схема"
     }
   ],
   "faSDuD": [
@@ -4768,7 +4768,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Добавьте или выберите целевую схему, которая будет применяться для вашей карты."
     }
   ],
   "jHHF/u": [
@@ -5660,7 +5660,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Добавить"
     }
   ],
   "s5RV9B": [
@@ -6352,7 +6352,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Целевая схема"
     }
   ],
   "zIDVd9": [

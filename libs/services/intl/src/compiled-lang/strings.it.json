@@ -164,7 +164,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Salva"
     }
   ],
   "0FzNJV": [
@@ -491,7 +491,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Seleziona esistente"
     }
   ],
   "2b1yD3": [
@@ -695,7 +695,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Rimuovi modifiche"
     }
   ],
   "45ubha": [
@@ -869,7 +869,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Annulla"
     }
   ],
   "6XR3FS": [
@@ -1845,7 +1845,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Lo schema di destinazione verrà sostituito e non sarà possibile tornare alle modifiche precedenti. Procedere con la modifica dello schema di destinazione?"
     }
   ],
   "H8bEUn": [
@@ -1891,7 +1891,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " Installa gateway"
     }
   ],
   "HzS2gJ": [
@@ -1933,7 +1933,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Configura"
     }
   ],
   "IgNz8Y": [
@@ -3501,7 +3501,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Lo schema di origine verrà sostituito e non sarà possibile tornare alle modifiche precedenti. Procedere con la modifica dello schema di origine?"
     }
   ],
   "Y/bcmG": [
@@ -3929,7 +3929,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Avviso"
     }
   ],
   "d3bSQA": [
@@ -4153,7 +4153,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Schema di origine"
     }
   ],
   "faSDuD": [
@@ -5403,7 +5403,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Aggiungi nuovo"
     }
   ],
   "s5RV9B": [
@@ -6095,7 +6095,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Schema di destinazione"
     }
   ],
   "zIDVd9": [

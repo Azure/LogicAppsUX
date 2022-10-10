@@ -164,7 +164,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "저장"
     }
   ],
   "0FzNJV": [
@@ -469,7 +469,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "기존 항목 선택"
     }
   ],
   "2b1yD3": [
@@ -571,7 +571,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "기존 스키마를 호환되지 않는 스키마로 바꾸면 맵에 오류가 발생할 수 있습니다."
     }
   ],
   "3TD2V5": [
@@ -673,7 +673,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "변경 내용 취소"
     }
   ],
   "45ubha": [
@@ -847,7 +847,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "취소"
     }
   ],
   "6XR3FS": [
@@ -1689,7 +1689,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "대상 스키마 업데이트"
     }
   ],
   "G/CC5/": [
@@ -1779,7 +1779,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "대상 스키마가 대체되며 이전 변경 내용으로 돌아갈 수 없습니다. 대상 스키마 변경을 계속하시겠습니까?"
     }
   ],
   "H8bEUn": [
@@ -1867,7 +1867,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "구성"
     }
   ],
   "IgNz8Y": [
@@ -2744,7 +2744,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "배열 요소 사이의 선은 반복 요소를 나타내기 위해 자동으로 만들어집니다."
     }
   ],
   "RFjYpH": [
@@ -2801,7 +2801,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "저장되지 않은 모든 변경 내용을 삭제하시겠습니까?"
     }
   ],
   "S8P4N5": [
@@ -3383,7 +3383,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "원본 스키마가 교체되며 이전 변경 내용으로 돌아갈 수 없습니다. 원본 스키마 변경을 계속하시겠습니까?"
     }
   ],
   "Y/bcmG": [
@@ -3593,7 +3593,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "맵에 사용할 원본 스키마를 추가하거나 선택합니다."
     }
   ],
   "b9/1dK": [
@@ -3615,7 +3615,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "배열 매핑"
     }
   ],
   "bG9rjv": [
@@ -3763,7 +3763,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "스키마를 추가하거나 교체합니다."
     }
   ],
   "cgq/+y": [
@@ -3811,7 +3811,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "경고"
     }
   ],
   "d3bSQA": [
@@ -3935,7 +3935,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "원본 스키마 업데이트"
     }
   ],
   "eGa1Wa": [
@@ -4031,7 +4031,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "원본 스키마"
     }
   ],
   "faSDuD": [
@@ -4406,7 +4406,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "맵에 사용할 대상 스키마를 추가하거나 선택합니다."
     }
   ],
   "jHHF/u": [
@@ -5233,7 +5233,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "새로 추가"
     }
   ],
   "s5RV9B": [
@@ -5921,7 +5921,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "대상 스키마"
     }
   ],
   "zIDVd9": [

@@ -180,7 +180,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "保存"
     }
   ],
   "0FzNJV": [
@@ -489,7 +489,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "选择现有"
     }
   ],
   "2b1yD3": [
@@ -591,7 +591,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "将现有架构替换为不兼容的架构可能会在映射中产生错误。"
     }
   ],
   "3TD2V5": [
@@ -693,7 +693,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "放弃更改"
     }
   ],
   "45ubha": [
@@ -867,7 +867,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "取消"
     }
   ],
   "6XR3FS": [
@@ -1741,7 +1741,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "更新目标架构"
     }
   ],
   "G/CC5/": [
@@ -1831,7 +1831,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "目标架构将被替换，并且你将无法返回到以前的更改。是否要继续更改目标架构?"
     }
   ],
   "H8bEUn": [
@@ -1885,7 +1885,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " 安装网关"
     }
   ],
   "HzS2gJ": [
@@ -1927,7 +1927,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "配置"
     }
   ],
   "IgNz8Y": [
@@ -2848,7 +2848,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "自动创建数组元素之间的线路以指示循环元素。"
     }
   ],
   "RFjYpH": [
@@ -2905,7 +2905,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "是否要放弃所有未保存的更改?"
     }
   ],
   "S8P4N5": [
@@ -3491,7 +3491,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "源架构将被替换，并且你将无法返回到以前的更改。是否要继续更改源架构?"
     }
   ],
   "Y/bcmG": [
@@ -3717,7 +3717,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "添加或选择要用于映射的源架构。"
     }
   ],
   "b9/1dK": [
@@ -3739,7 +3739,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "数组映射"
     }
   ],
   "bG9rjv": [
@@ -3891,7 +3891,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "添加或替换架构。"
     }
   ],
   "cgq/+y": [
@@ -3939,7 +3939,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "警告"
     }
   ],
   "d3bSQA": [
@@ -4067,7 +4067,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "更新源架构"
     }
   ],
   "eGa1Wa": [
@@ -4163,7 +4163,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "源架构"
     }
   ],
   "faSDuD": [
@@ -4562,7 +4562,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "添加或选择要用于映射的目标架构。"
     }
   ],
   "jHHF/u": [
@@ -5429,7 +5429,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "新增"
     }
   ],
   "s5RV9B": [
@@ -6121,7 +6121,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "目标架构"
     }
   ],
   "zIDVd9": [

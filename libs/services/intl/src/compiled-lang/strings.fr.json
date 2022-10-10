@@ -180,7 +180,7 @@
   "0CvRZW": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Enregistrer"
     }
   ],
   "0FzNJV": [
@@ -507,7 +507,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Select existing"
+      "value": "Sélectionner un schéma existant"
     }
   ],
   "2b1yD3": [
@@ -609,7 +609,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Le remplacement d’un schéma existant par un schéma incompatible peut créer des erreurs dans votre mappage."
     }
   ],
   "3TD2V5": [
@@ -711,7 +711,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Discard changes"
+      "value": "Abandonner les changements"
     }
   ],
   "45ubha": [
@@ -885,7 +885,7 @@
   "6PdOcy": [
     {
       "type": 0,
-      "value": "Cancel"
+      "value": "Annuler"
     }
   ],
   "6XR3FS": [
@@ -1803,7 +1803,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Mettre à jour le schéma cible"
     }
   ],
   "G/CC5/": [
@@ -1893,7 +1893,7 @@
   "H7t3Pm": [
     {
       "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
+      "value": "Le schéma cible sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma cible ?"
     }
   ],
   "H8bEUn": [
@@ -1989,7 +1989,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "Configure"
+      "value": "Configurer"
     }
   ],
   "IgNz8Y": [
@@ -2928,7 +2928,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "Une ligne entre des éléments de tableau est automatiquement créée pour indiquer des éléments en boucle."
     }
   ],
   "RFjYpH": [
@@ -3007,7 +3007,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Voulez-vous ignorer les modifications non enregistrées ?"
     }
   ],
   "S8P4N5": [
@@ -3589,7 +3589,7 @@
   "XylNMU": [
     {
       "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
+      "value": "Le schéma source sera remplacé et vous ne pourrez pas revenir aux modifications précédentes. Voulez-vous continuer à modifier le schéma source ?"
     }
   ],
   "Y/bcmG": [
@@ -3799,7 +3799,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Ajoutez ou sélectionnez un schéma source à utiliser pour votre mappage."
     }
   ],
   "b9/1dK": [
@@ -3821,7 +3821,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Mappage de tableaux"
     }
   ],
   "bG9rjv": [
@@ -3969,7 +3969,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Ajoutez ou remplacez vos schémas."
     }
   ],
   "cgq/+y": [
@@ -4017,7 +4017,7 @@
   "d32jcW": [
     {
       "type": 0,
-      "value": "Warning"
+      "value": "Avertissement"
     }
   ],
   "d3bSQA": [
@@ -4145,7 +4145,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Mettre à jour le schéma source"
     }
   ],
   "eGa1Wa": [
@@ -4241,7 +4241,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Source schema"
+      "value": "Schéma source"
     }
   ],
   "faSDuD": [
@@ -4658,7 +4658,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Ajoutez ou sélectionnez un schéma cible à utiliser pour votre mappage."
     }
   ],
   "jHHF/u": [
@@ -5523,7 +5523,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Add new"
+      "value": "Ajouter"
     }
   ],
   "s5RV9B": [
@@ -6215,7 +6215,7 @@
   "zGRgUE": [
     {
       "type": 0,
-      "value": "Target schema"
+      "value": "Schéma cible"
     }
   ],
   "zIDVd9": [
