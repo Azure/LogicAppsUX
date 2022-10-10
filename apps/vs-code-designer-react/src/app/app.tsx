@@ -51,7 +51,8 @@ const oAuthService = new StandardOAuthService({
 });
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const { workflow } = vscodeState;
+  const { panelMetaData, connectionReferences } = vscodeState;
+  const codelessApp = panelMetaData?.codelessApp;
 
   return (
     <DesignerProvider
@@ -65,8 +66,8 @@ export const App = () => {
         },
       }}
     >
-      {workflow ? (
-        <BJSWorkflowProvider workflow={{ definition: workflow.definition, connectionReferences: {} }}>
+      {codelessApp ? (
+        <BJSWorkflowProvider workflow={{ definition: codelessApp.definition, connectionReferences: connectionReferences }}>
           <Designer></Designer>
         </BJSWorkflowProvider>
       ) : null}

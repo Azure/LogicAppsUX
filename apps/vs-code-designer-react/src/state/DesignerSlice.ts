@@ -1,12 +1,16 @@
+import type { IDesignerPanelMetadata } from '@microsoft-logic-apps/utils';
+import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface designerState {
-  workflow?: Record<string, any> | null;
+  panelMetaData: IDesignerPanelMetadata | null;
+  connectionReferences: ConnectionReferences;
 }
 
 const initialState: designerState = {
-  workflow: null,
+  panelMetaData: null,
+  connectionReferences: {},
 };
 
 export const designerSlice = createSlice({
@@ -14,8 +18,8 @@ export const designerSlice = createSlice({
   initialState,
   reducers: {
     updateMetaData: (state, action: PayloadAction<any>) => {
-      const { codelessApp } = action.payload.panelMetadata;
-      state.workflow = codelessApp;
+      const { panelMetaData } = action.payload;
+      state.panelMetaData = panelMetaData;
     },
   },
 });
