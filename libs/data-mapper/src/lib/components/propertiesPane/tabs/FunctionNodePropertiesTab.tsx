@@ -6,14 +6,14 @@ import { NormalizedDataType } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
-import { ComboBox, type IComboBoxOption, Stack, type ISelectableOption } from '@fluentui/react';
+import { ComboBox, Stack, type ISelectableOption } from '@fluentui/react';
 import { Button, Divider, Input, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-type InputOptions = {
+export type InputOptions = {
   [key: string]: {
     nodeKey: string;
     nodeName: string;
@@ -21,7 +21,7 @@ type InputOptions = {
   }[];
 };
 
-interface OptionData {
+export interface InputOptionData {
   isFunction: boolean;
 }
 
@@ -62,10 +62,11 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
   const dispatch = useDispatch<AppDispatch>();
 
   const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
-  const sourceSchemaNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
+  // Consists of node names/ids and constant values
   const [inputValues, setInputValues] = useState<string[]>([]);
 
   const addFieldLoc = intl.formatMessage({
@@ -109,7 +110,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
     setInputValues(newInputValues);
   };
 
-  const validateAndCreateConnection = (inputIdx: number, option?: ISelectableOption<OptionData>) => {
+  const validateAndCreateConnection = (inputIdx: number, option?: ISelectableOption<InputOptionData>) => {
     if (!option?.data) {
       return;
     }
@@ -129,11 +130,11 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
 
     // Create new connection
 
-    const selectedNodeKey = option.key as string;
+    const selectedNodeKey = option.key as string; // TODO: constant values
     const isFunction = option.data.isFunction;
 
     const sourceKey = isFunction ? selectedNodeKey : `${sourcePrefix}${selectedNodeKey}`;
-    const source = isFunction ? functionNodeDictionary[sourceKey] : sourceSchemaNodeDictionary[sourceKey];
+    const source = isFunction ? functionNodeDictionary[sourceKey] : sourceSchemaDictionary[sourceKey];
     const destination = functionNodeDictionary[nodeKey];
 
     dispatch(
@@ -180,8 +181,8 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
     return newPossibleInputOptionsDictionary;
   }, [currentSourceNodes, functionNodeDictionary]);
 
-  const inputOptions = useMemo<IComboBoxOption[][]>(() => {
-    const newInputOptions: ISelectableOption<OptionData>[][] = [];
+  const inputOptions = useMemo<ISelectableOption<InputOptionData>[][]>(() => {
+    const newInputOptions: ISelectableOption<InputOptionData>[][] = [];
 
     functionNode.inputs.forEach((input, idx) => {
       newInputOptions.push([]);

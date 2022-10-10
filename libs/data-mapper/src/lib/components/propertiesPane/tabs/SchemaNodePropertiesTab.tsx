@@ -1,12 +1,17 @@
-import type { RootState } from '../../../core/state/Store';
+import { sourcePrefix } from '../../../constants/ReactFlowConstants';
+import { makeConnection } from '../../../core/state/DataMapSlice';
+import type { AppDispatch, RootState } from '../../../core/state/Store';
+import { NormalizedDataType } from '../../../models';
+import type { Connection } from '../../../models/Connection';
 import { NodeType } from '../../../models/SelectedNode';
 import type { SelectedNode } from '../../../models/SelectedNode';
 import { icon16ForSchemaNodeType } from '../../../utils/Icon.Utils';
-import { Stack } from '@fluentui/react';
+import type { InputOptionData, InputOptions } from './FunctionNodePropertiesTab';
+import { type ISelectableOption, Stack, ComboBox } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Checkbox, Input, makeStyles, Text } from '@fluentui/react-components';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   nodeInfoGridContainer: {
@@ -26,9 +31,16 @@ interface SchemaNodePropertiesTabProps {
 export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
+  const dispatch = useDispatch<AppDispatch>();
 
+  const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+
+  // Can be a node name/id or a constant value - only one input per target schema node
+  const [inputValue, setInputValue] = useState<string>('');
 
   const nameLoc = intl.formatMessage({
     defaultMessage: 'Name',
@@ -70,6 +82,45 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Default value',
   });
 
+  const validateAndCreateConnection = (option?: ISelectableOption<InputOptionData>) => {
+    if (!option?.data) {
+      return;
+    }
+
+    // Don't do anything if same value
+    if (option.key === inputValue) {
+      return;
+    }
+
+    // Remove current connection if it exists
+
+    // TODO
+
+    // Create new connection
+
+    const selectedNodeKey = option.key as string; // TODO: constant values
+    const isFunction = option.data.isFunction;
+
+    const sourceKey = isFunction ? selectedNodeKey : `${sourcePrefix}${selectedNodeKey}`;
+    const source = isFunction ? functionNodeDictionary[sourceKey] : sourceSchemaDictionary[sourceKey];
+    const destinationKey = currentNode.id;
+    const destination = targetSchemaDictionary[destinationKey];
+
+    console.log(sourceKey);
+    console.log(source);
+    console.log(destinationKey);
+    console.log(destination);
+
+    dispatch(
+      makeConnection({
+        source,
+        destination,
+        reactFlowDestination: destinationKey,
+        reactFlowSource: sourceKey,
+      })
+    );
+  };
+
   const isTargetSchemaNode = useMemo(() => currentNode.type === NodeType.Target, [currentNode]);
 
   const schemaNode = useMemo(() => {
@@ -81,6 +132,82 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   }, [currentNode, isTargetSchemaNode, sourceSchemaDictionary, targetSchemaDictionary]);
 
   const DataTypeIcon = icon16ForSchemaNodeType(schemaNode.schemaNodeDataType);
+
+  const possibleInputOptions = useMemo<InputOptions>(() => {
+    const newPossibleInputOptionsDictionary = {} as InputOptions;
+
+    currentSourceNodes.forEach((srcNode) => {
+      if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
+        newPossibleInputOptionsDictionary[srcNode.normalizedDataType] = [];
+      }
+
+      newPossibleInputOptionsDictionary[srcNode.normalizedDataType].push({
+        nodeKey: srcNode.key,
+        nodeName: srcNode.name,
+        isFunctionNode: false,
+      });
+    });
+
+    Object.entries(functionNodeDictionary).forEach(([key, node]) => {
+      if (!newPossibleInputOptionsDictionary[node.outputValueType]) {
+        newPossibleInputOptionsDictionary[node.outputValueType] = [];
+      }
+
+      newPossibleInputOptionsDictionary[node.outputValueType].push({
+        nodeKey: key,
+        nodeName: node.functionName,
+        isFunctionNode: true,
+      });
+    });
+
+    return newPossibleInputOptionsDictionary;
+  }, [currentSourceNodes, functionNodeDictionary]);
+
+  const inputOptions = useMemo<ISelectableOption<InputOptionData>[] | undefined>(() => {
+    const newInputOptions: ISelectableOption<InputOptionData>[] = [];
+
+    if (schemaNode.normalizedDataType === NormalizedDataType.Any) {
+      Object.values(possibleInputOptions).forEach((typeEntry) => {
+        typeEntry.forEach((possibleOption) => {
+          newInputOptions.push({
+            key: possibleOption.nodeKey,
+            text: possibleOption.nodeName,
+            data: {
+              isFunction: !!possibleOption.isFunctionNode,
+            },
+          });
+        });
+      });
+    } else {
+      if (!possibleInputOptions[schemaNode.normalizedDataType]) {
+        return;
+      }
+
+      possibleInputOptions[schemaNode.normalizedDataType].forEach((possibleOption) => {
+        newInputOptions.push({
+          key: possibleOption.nodeKey,
+          text: possibleOption.nodeName,
+          data: {
+            isFunction: !!possibleOption.isFunctionNode,
+          },
+        });
+      });
+    }
+
+    return newInputOptions;
+  }, [possibleInputOptions, schemaNode]);
+
+  const connection = useMemo<Connection | undefined>(() => connectionDictionary[currentNode.id], [connectionDictionary, currentNode]);
+
+  useEffect(() => {
+    let newInputValue = '';
+
+    if (connection && connection.sources.length === 1) {
+      newInputValue = connection.sources[0].node.key;
+    }
+
+    setInputValue(newInputValue);
+  }, [connection]);
 
   return (
     <div>
@@ -102,7 +229,13 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
         <div>
           <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
             <Text style={{ gridColumn: '1 / span 2' }}>{inputLoc}</Text>
-            <Input placeholder="Temporary placeholder" />
+            <ComboBox
+              options={inputOptions ?? []}
+              selectedKey={inputValue}
+              onChange={(_e, option) => validateAndCreateConnection(option)}
+              allowFreeform={false}
+              style={{ marginTop: 8 }}
+            />
           </div>
 
           <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px' }}>
@@ -111,7 +244,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
               <AccordionPanel>
                 <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
                   <Text style={{ gridColumn: '1 / span 2' }}>{defValLoc}</Text>
-                  <Input placeholder="Temporary placeholder" />
+                  <Input />
                 </div>
 
                 <Stack>
