@@ -98,18 +98,13 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
     // Create new connection
 
-    const selectedNodeKey = option.key as string; // TODO: constant values
+    const selectedNodeKey = option.key as string; // TODO: constant value support
     const isFunction = option.data.isFunction;
 
     const sourceKey = isFunction ? selectedNodeKey : `${sourcePrefix}${selectedNodeKey}`;
     const source = isFunction ? functionNodeDictionary[sourceKey] : sourceSchemaDictionary[sourceKey];
     const destinationKey = currentNode.id;
     const destination = targetSchemaDictionary[destinationKey];
-
-    console.log(sourceKey);
-    console.log(source);
-    console.log(destinationKey);
-    console.log(destination);
 
     dispatch(
       makeConnection({
