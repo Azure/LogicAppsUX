@@ -42,21 +42,21 @@ export const convertToReactFlowNodes = (
   const reactFlowNodes: ReactFlowNode<CardProps>[] = [];
 
   reactFlowNodes.push(
-    ...convertInputToReactFlowParentAndChildNodes(
+    ...convertSourceToReactFlowParentAndChildNodes(
       viewportCoords,
       currentlySelectedSourceNodes,
       connectedSourceNodes,
       allSourceNodes,
       connections
     ),
-    ...convertOutputToReactFlowParentAndChildNodes(viewportCoords, targetSchemaNode, connections),
+    ...convertTargetToReactFlowParentAndChildNodes(viewportCoords, targetSchemaNode, connections),
     ...convertFunctionsToReactFlowParentAndChildNodes(viewportCoords, allFunctionNodes)
   );
 
   return reactFlowNodes;
 };
 
-const convertInputToReactFlowParentAndChildNodes = (
+const convertSourceToReactFlowParentAndChildNodes = (
   viewportCoords: ViewportCoords,
   currentlySelectedSourceNodes: SchemaNodeExtended[],
   connectedSourceNodes: SchemaNodeExtended[],
@@ -106,7 +106,7 @@ const convertInputToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-const convertOutputToReactFlowParentAndChildNodes = (
+const convertTargetToReactFlowParentAndChildNodes = (
   viewportCoords: ViewportCoords,
   targetSchemaNode: SchemaNodeExtended,
   connections: ConnectionDictionary
