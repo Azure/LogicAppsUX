@@ -7,7 +7,7 @@ import {
 } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
-import type { Connection, ConnectionDictionary, ConnectionUnit, LoopConnection } from '../models/Connection';
+import type { Connection, ConnectionDictionary, LoopConnection } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
@@ -277,6 +277,11 @@ export const getEdgeForSource = (connection: Connection, source: string) => {
   return connection.sources.find((conn) => conn.reactFlowKey === source);
 };
 
+export const getEdgeForTarget = (connections: ConnectionDictionary, target: string) => {
+  const key = Object.keys(connections).find((id) => id.includes(target));
+  return key ? connections[key] : undefined;
+};
+
 export const getEdgeForSourceFromAllConnections = (connections: ConnectionDictionary, source: string) => {
   let edge;
   Object.values(connections).forEach((connection) => {
@@ -299,12 +304,12 @@ export const hasEdgeFromSource = (connectionDict: ConnectionDictionary, source: 
   return firstConnection ? true : false;
 };
 
-export const getEdgeForSourcesFromAllEdges = (connectionDict: ConnectionDictionary, source: string): ConnectionUnit[] => {
-  const edges: ConnectionUnit[] = [];
+export const getEdgeForSourcesFromAllEdges = (connectionDict: ConnectionDictionary, source: string): Connection[] => {
+  const edges: Connection[] = [];
   Object.values(connectionDict).forEach((connection) => {
-    const tempEdge = getEdgeForSource(connection, addReactFlowPrefix(source, SchemaTypes.Source));
+    const tempEdge = getEdgeForSource(connection, source);
     if (tempEdge) {
-      edges.push(tempEdge);
+      edges.push(connection);
     }
   });
   return edges;
@@ -313,20 +318,42 @@ export const getEdgeForSourcesFromAllEdges = (connectionDict: ConnectionDictiona
 // eslint-disable-next-line no-prototype-builtins
 export const isNodeSchema = (node: SchemaNodeExtended | FunctionData): boolean => node.hasOwnProperty('schemaNodeDataType');
 
-export const eventuallyConnectsToSourceAndTarget = (): boolean => {
-  // need to trace forwards and backwards lol
-  return true;
+export const eventuallyConnectsToSourceAndTarget = (source: string, destination: string, dict: ConnectionDictionary): boolean => {
+  const hasTarget = hasEventualTarget(destination, dict);
+  const hasSource = hasEventualSource(source, dict);
+  return hasTarget && hasSource;
 };
 
 export const hasEventualTarget = (dest: string, dict: ConnectionDictionary): boolean => {
-  // eventually refactor to work with source?
-  //const dest = connection.destination.reactFlowKey; // destination becomes future source
+  // destination becomes future source
   const nextEdges = getEdgeForSourcesFromAllEdges(dict, dest);
   if (nextEdges.length === 0) {
+    if (dest.includes('target')) {
+      return true;
+    }
     return false;
   }
-  // nextEdges.find((edge) => {
-  //   return hasEventualTarget(edge.reactFlowKey, dict);
-  // });
+  nextEdges.find((edge) => {
+    return hasEventualTarget(edge.destination.reactFlowKey, dict);
+  });
   return true;
+};
+
+export const hasEventualSource = (source: string, dict: ConnectionDictionary): boolean => {
+  if (source.includes('source')) {
+    return true;
+  }
+  // source becomes needed destination
+  const nextEdges = getEdgeForTarget(dict, source);
+  if (nextEdges) {
+    const sourceNode = nextEdges.sources.find((source) => source.reactFlowKey.includes('source'));
+    if (sourceNode) {
+      return true;
+    } else {
+      nextEdges.sources.find((source) => {
+        return hasEventualSource(source.reactFlowKey, dict);
+      });
+    }
+  }
+  return false;
 };

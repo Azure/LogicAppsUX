@@ -487,8 +487,13 @@ const addParentConnectionForRepeatingNode = (
   const targetParentNode = mapState.currentTargetNode;
   const source = nodes.source;
 
+  if (eventuallyConnectsToSourceAndTarget(nodes.reactFlowSource, nodes.reactFlowDestination, mapState.dataMapConnections)) {
+    // if parent is "repeating"
+    console.log('is a connection parent stuff');
+  }
+
   if (targetParentNode?.properties === SchemaNodeProperties.Repeating && isSchemaNodeExtended(source)) {
-    if (isNodeSchema(nodes.destination) || eventuallyConnectsToSourceAndTarget()) {
+    if (isNodeSchema(nodes.destination)) {
       source.pathToRoot.forEach((parentKey) => {
         const sourceParent = mapState.flattenedSourceSchema[addReactFlowPrefix(parentKey.key, SchemaTypes.Source)];
         if (sourceParent.properties === SchemaNodeProperties.Repeating) {
