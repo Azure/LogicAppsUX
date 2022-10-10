@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -181,6 +175,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Baku"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Zapisz"
     }
   ],
   "0FzNJV": [
@@ -459,12 +459,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Przekaż lub wybierz schemat docelowy, który ma być używany dla mapy."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -535,6 +529,12 @@
     {
       "type": 0,
       "value": "Tożsamość zarządzana"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Wybierz istniejące"
     }
   ],
   "2b1yD3": [
@@ -633,6 +633,12 @@
       "value": "(UTC+02:00) Kiszyniów"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -727,6 +733,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Erywań"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Odrzuć zmiany"
     }
   ],
   "45ubha": [
@@ -849,12 +861,6 @@
       "value": "Zwraca wartość true, jeśli obiekt, tablica lub ciąg jest pusty"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Dodaj schemat źródłowy"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -901,6 +907,12 @@
     {
       "type": 0,
       "value": "Mapa testu"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Anuluj"
     }
   ],
   "6XR3FS": [
@@ -1208,7 +1220,7 @@
   "9IDWMU": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Zamknij"
     }
   ],
   "9JuvQ4": [
@@ -1333,12 +1345,6 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg do zakodowania do reprezentacji base64."
-    }
-  ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "Schemat docelowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat docelowy?"
     }
   ],
   "B/JzwK": [
@@ -1499,12 +1505,6 @@
       "value": "Wymagane połączenie"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Zamień istniejący schemat."
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1514,7 +1514,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Węzeł źródłowy został usunięty z widoku."
     }
   ],
   "CsPY74": [
@@ -1628,7 +1628,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "Nie można zapisać."
     }
   ],
   "EYqGxA": [
@@ -1849,6 +1849,12 @@
       "value": "Stan"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Update target schema"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1887,12 +1893,6 @@
       "value": "Parametr wymagany. Obiekt do wyszukiwania wewnątrz kolekcji typu W zakresie."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Schemat źródłowy"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1903,12 +1903,6 @@
     {
       "type": 0,
       "value": "Zwraca wartość true, jeśli parametry mają wartość false"
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Przekaż lub wybierz schemat źródłowy, który ma być używany dla mapy."
     }
   ],
   "Gi72X5": [
@@ -1951,6 +1945,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg do wycięcia."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "Schemat docelowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat docelowy?"
     }
   ],
   "H8bEUn": [
@@ -2004,7 +2004,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " Zainstaluj bramę"
     }
   ],
   "HzS2gJ": [
@@ -2041,6 +2041,12 @@
     {
       "type": 0,
       "value": "Konwertuje przekazaną sygnaturę czasową ciągu z formatu UTC na docelową strefę czasową"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Konfiguruj"
     }
   ],
   "IgNz8Y": [
@@ -2299,12 +2305,6 @@
       "value": "Usuń wykres przepływu pracy"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Ostrzeżenie"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2516,7 +2516,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "Wstaw funkcję"
     }
   ],
   "N0pS6Y": [
@@ -2582,7 +2582,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
+      "value": "Przed usunięciem węzła „"
     },
     {
       "type": 1,
@@ -2590,7 +2590,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the node."
+      "value": "” usuń wszystkie odwołania do niego."
     }
   ],
   "NvANon": [
@@ -2715,12 +2715,6 @@
     {
       "type": 0,
       "value": "Zwraca wyniki z akcji najwyższego poziomu w podanej akcji o określonym zakresie takiej jak For_each, Until lub Scope."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "Cała niezapisana praca zostanie usunięta. Czy chcesz nadal wszystko odrzucić?"
     }
   ],
   "Oib1mL": [
@@ -3007,6 +3001,12 @@
       "value": "Nie można usunąć wyzwalaczy."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "A line between array elements is automatically created to indicate looping elements."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -3089,6 +3089,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "S8P4N5": [
@@ -3667,6 +3673,12 @@
       "value": "Wymagane. Nazwa akcji z żądanymi danymi wyjściowymi treści."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "Schemat źródłowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat źródłowy?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3757,12 +3769,6 @@
       "value": "Pomniejsz"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Konfiguracja"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3831,12 +3837,6 @@
       "value": "” w parametrze"
     }
   ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Odrzuć"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -3899,10 +3899,10 @@
       "value": "Wprowadź certyfikat PFX"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Dodaj"
+      "value": "Add or select a source schema to use for your map."
     }
   ],
   "b9/1dK": [
@@ -3921,6 +3921,12 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Array Mapping"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
@@ -3930,7 +3936,7 @@
   "bIyTi7": [
     {
       "type": 0,
-      "value": "Subscription"
+      "value": "Subskrypcja"
     }
   ],
   "bS5DyV": [
@@ -4063,6 +4069,12 @@
       "value": "(UTC+02:00) Trypolis"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -4105,6 +4117,12 @@
       "value": "Parametr wymagany. Kolekcja, w której należy pominąć pierwsze obiekty (liczba)."
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Ostrzeżenie"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -4120,7 +4138,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "Usunięto połączenie."
     }
   ],
   "dDYCuU": [
@@ -4227,6 +4245,12 @@
       "value": "Nie określono"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4237,12 +4261,6 @@
     {
       "type": 0,
       "value": "Wymagane. Nazwa zmiennej z żądanymi wartościami."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Schemat docelowy"
     }
   ],
   "eRvGw3": [
@@ -4321,6 +4339,12 @@
     {
       "type": 0,
       "value": "Liczba stronicowania przekracza wartość maksymalną"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Schemat źródłowy"
     }
   ],
   "faSDuD": [
@@ -4589,12 +4613,6 @@
       "value": "Odbiorcy"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "Schemat źródłowy zostanie zastąpiony i nie będzie można wrócić do poprzednich zmian. Czy chcesz nadal zmienić schemat źródłowy?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4759,6 +4777,12 @@
       "value": "Zwraca wartość określonej zmiennej."
     }
   ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Add or select a target schema to use for your map."
+    }
+  ],
   "jHHF/u": [
     {
       "type": 0,
@@ -4836,7 +4860,7 @@
   "juvF+0": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "Brama"
     }
   ],
   "k/oqFL": [
@@ -5052,7 +5076,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "Usunięto funkcję."
     }
   ],
   "mGUdCO": [
@@ -5312,7 +5336,15 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Błąd podczas wykonywania interfejsu API „"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "pC2nr2": [
@@ -5635,6 +5667,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Stany Zjednoczone i Kanada (czas środkowy)"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Dodaj nowe"
     }
   ],
   "s5RV9B": [
@@ -6275,12 +6313,6 @@
       "value": "Funkcje daty i godziny"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Dodaj schemat docelowy"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -6327,6 +6359,12 @@
     {
       "type": 0,
       "value": "Wprowadź wartość"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Schemat docelowy"
     }
   ],
   "zIDVd9": [

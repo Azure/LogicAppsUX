@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -181,6 +175,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Baku"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Mentés"
     }
   ],
   "0FzNJV": [
@@ -421,12 +421,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt célsémát."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -497,6 +491,12 @@
     {
       "type": 0,
       "value": "Felügyelt identitás"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Meglévő kiválasztása"
     }
   ],
   "2b1yD3": [
@@ -595,6 +595,12 @@
       "value": "(UTC+02:00) Chisinau"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -689,6 +695,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Jereván"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Módosítások elvetése"
     }
   ],
   "45ubha": [
@@ -811,12 +823,6 @@
       "value": "Igaz értéket ad vissza, ha egy objektum, tömb vagy sztring üres."
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Forrásséma hozzáadása"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -863,6 +869,12 @@
     {
       "type": 0,
       "value": "Leképezés tesztelése"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Mégse"
     }
   ],
   "6XR3FS": [
@@ -1170,7 +1182,7 @@
   "9IDWMU": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Bezárás"
     }
   ],
   "9JuvQ4": [
@@ -1295,12 +1307,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A Base64-ábrázolással kódolandó sztring."
-    }
-  ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "A célsémát a rendszer lecseréli, Ön pedig nem tud majd visszatérni a korábbi módosításokhoz. Folytatja a célséma módosítását?"
     }
   ],
   "B/JzwK": [
@@ -1439,12 +1445,6 @@
       "value": "Kapcsolat szükséges"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Meglévő séma cseréje"
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1454,7 +1454,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "A forráscsomópont el lett távolítva a nézetből."
     }
   ],
   "CsPY74": [
@@ -1568,7 +1568,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "A mentés nem sikerült."
     }
   ],
   "EYqGxA": [
@@ -1767,6 +1767,12 @@
       "value": "Állapot"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Update target schema"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1805,12 +1811,6 @@
       "value": "Kötelező megadni. A tartalmazó gyűjteményben keresendő objektum."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Forrásséma"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1821,12 +1821,6 @@
     {
       "type": 0,
       "value": "Igaz értéket ad vissza, ha a paraméterek hamisak."
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt forrássémát."
     }
   ],
   "Gi72X5": [
@@ -1869,6 +1863,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A szeletelni kívánt sztring."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "A célsémát a rendszer lecseréli, Ön pedig nem tud majd visszatérni a korábbi módosításokhoz. Folytatja a célséma módosítását?"
     }
   ],
   "H8bEUn": [
@@ -1922,7 +1922,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " Átjáró telepítése"
     }
   ],
   "HzS2gJ": [
@@ -1959,6 +1959,12 @@
     {
       "type": 0,
       "value": "Egy UTC formátumban átadott sztring típusú időbélyeg konvertálása egy célidőzónára"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Konfigurálás"
     }
   ],
   "IgNz8Y": [
@@ -2195,12 +2201,6 @@
       "value": "Munkafolyamatgráf törlése"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Figyelmeztetés"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2412,7 +2412,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "Függvény beszúrása"
     }
   ],
   "N0pS6Y": [
@@ -2478,7 +2478,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
+      "value": "A csomópont eltávolítása előtt távolítsa el a(z) „"
     },
     {
       "type": 1,
@@ -2486,7 +2486,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the node."
+      "value": "” csomópontra mutató összes hivatkozást."
     }
   ],
   "NvANon": [
@@ -2611,12 +2611,6 @@
     {
       "type": 0,
       "value": "A legfelső szintű hatóköri műveletek eredményeit adja vissza a megadott hatóköri műveletben, például „For_each”, „Until” vagy „Scope action”."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "Minden nem mentett munka el fog veszni. Folytatja minden elvetését?"
     }
   ],
   "Oib1mL": [
@@ -2907,6 +2901,12 @@
       "value": "Az eseményindítók nem törölhetők."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "A line between array elements is automatically created to indicate looping elements."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2967,6 +2967,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "S8P4N5": [
@@ -3545,6 +3551,12 @@
       "value": "Kötelező megadni. Azon művelet neve, melynek törzskimenetei szükségesek."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "A forrássémát a rendszer lecseréli, Ön pedig nem tud majd visszatérni a korábbi módosításokhoz. Folytatja a forrásséma módosítását?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3635,12 +3647,6 @@
       "value": "Kicsinyítés"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Konfiguráció"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3709,12 +3715,6 @@
       "value": "” a paraméterben"
     }
   ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Elvetés"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -3777,10 +3777,10 @@
       "value": "Adja meg a PFX-fájlt"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Hozzáadás"
+      "value": "Add or select a source schema to use for your map."
     }
   ],
   "b9/1dK": [
@@ -3799,6 +3799,12 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Array Mapping"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
@@ -3808,7 +3814,7 @@
   "bIyTi7": [
     {
       "type": 0,
-      "value": "Subscription"
+      "value": "Előfizetés"
     }
   ],
   "bS5DyV": [
@@ -3945,6 +3951,12 @@
       "value": "(UTC+02:00) Tripoli"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3987,6 +3999,12 @@
       "value": "Kötelező megadni. A gyűjtemény, melynek első Count objektumait ki kell hagyni."
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Figyelmeztetés"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -4002,7 +4020,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "A kapcsolat törölve."
     }
   ],
   "dDYCuU": [
@@ -4109,6 +4127,12 @@
       "value": "Nincs megadva"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4119,12 +4143,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Célséma"
     }
   ],
   "eRvGw3": [
@@ -4203,6 +4221,12 @@
     {
       "type": 0,
       "value": "A lapozások száma meghaladja a maximális értéket"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Forrásséma"
     }
   ],
   "faSDuD": [
@@ -4449,12 +4473,6 @@
       "value": "Célközönség"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "A forrássémát a rendszer lecseréli, Ön pedig nem tud majd visszatérni a korábbi módosításokhoz. Folytatja a forrásséma módosítását?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4619,6 +4637,12 @@
       "value": "A megadott változó értékének visszaadása."
     }
   ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Add or select a target schema to use for your map."
+    }
+  ],
   "jHHF/u": [
     {
       "type": 0,
@@ -4692,7 +4716,7 @@
   "juvF+0": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "Átjáró"
     }
   ],
   "k/oqFL": [
@@ -4908,7 +4932,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "A függvény törölve."
     }
   ],
   "mGUdCO": [
@@ -5168,7 +5192,15 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Hiba történt az API „"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "” paraméterekkel való végrehajtása közben."
     }
   ],
   "pC2nr2": [
@@ -5469,6 +5501,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Amerikai középidő (Amerikai Egyesült Államok és Kanada)"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Új hozzáadása"
     }
   ],
   "s5RV9B": [
@@ -6109,12 +6147,6 @@
       "value": "Dátum- és időfüggvények"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Célséma hozzáadása"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -6161,6 +6193,12 @@
     {
       "type": 0,
       "value": "Adjon meg egy értéket"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Célséma"
     }
   ],
   "zIDVd9": [

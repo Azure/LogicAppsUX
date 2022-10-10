@@ -3,7 +3,7 @@
     "waitEndTime": "2022-02-16T21:48:41.2522897Z",
     "startTime": "2022-02-16T21:48:41.2522897Z",
     "endTime": "2022-02-16T21:48:42.7970632Z",
-    "status": "Succeeded",
+    "status": "SUCCEEDED",
     "correlation": {
       "clientTrackingId": "08585565587643197854783809524CU00"
     },
@@ -28,7 +28,7 @@
       "correlation": {
         "clientTrackingId": "08585565587643197854783809524CU00"
       },
-      "status": "Succeeded"
+      "status": "SUCCEEDED"
     },
     "outputs": {},
     "response": {
@@ -43,7 +43,7 @@
         "clientTrackingId": "08585565587643197854783809524CU00"
       },
       "code": "OK",
-      "status": "Succeeded"
+      "status": "SUCCEEDED"
     }
   },
   "id": "/workflows/run/runs/08585565587643197854783809524CU00",

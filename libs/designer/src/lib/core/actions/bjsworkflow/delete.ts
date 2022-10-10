@@ -44,7 +44,7 @@ export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayl
   // DELETE GRAPH
   const recursiveGraphDelete = (graph: WorkflowNode) => {
     graph.children?.forEach((child) => {
-      if (child.type === WORKFLOW_NODE_TYPES.GRAPH_NODE) {
+      if (child.type === WORKFLOW_NODE_TYPES.GRAPH_NODE || child.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) {
         recursiveGraphDelete(child);
       } else {
         dispatch(deleteOperation({ nodeId: child.id }));

@@ -1,6 +1,6 @@
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
+import { addSwitchCaseToWorkflow, addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
 import { deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -69,7 +69,7 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const graphId = state.nodesMetadata[action.payload.nodeId].graphId;
+      const graphId = state.nodesMetadata[action.payload.nodeId]?.graphId;
       const graph = getWorkflowNodeFromGraphState(state, graphId);
       if (!graph) throw new Error('graph not set');
 
@@ -80,6 +80,9 @@ export const workflowSlice = createSlice({
         message: 'Action Node Deleted',
         args: [action.payload],
       });
+    },
+    deleteSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
+      delete (state.operations?.[action.payload.nodeId] as any).cases?.[action.payload.caseId];
     },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.focusedCanvasNodeId = action.payload;
@@ -119,6 +122,15 @@ export const workflowSlice = createSlice({
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
       if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
       else state.collapsedGraphIds[action.payload] = true;
+    },
+    addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { caseId, nodeId } = action.payload;
+      const node = getWorkflowNodeFromGraphState(state, state.nodesMetadata[nodeId].graphId);
+      if (!node) throw new Error('node not set');
+      addSwitchCaseToWorkflow(caseId, node, state.nodesMetadata, state);
     },
     discardAllChanges: (_state: WorkflowState) => {
       // Will implement later, currently here to test host dispatch
@@ -234,10 +246,12 @@ export const {
   addNode,
   moveNode,
   deleteNode,
+  deleteSwitchCase,
   updateNodeSizes,
   setNodeDescription,
   setCollapsedGraphIds,
   toggleCollapsedGraphId,
+  addSwitchCase,
   discardAllChanges,
   buildEdgeIdsBySource,
   updateRunAfter,

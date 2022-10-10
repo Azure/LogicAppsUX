@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -181,6 +175,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Baku"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Spara"
     }
   ],
   "0FzNJV": [
@@ -421,12 +421,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Ladda upp eller välj ett målschema som ska användas för kartan."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -497,6 +491,12 @@
     {
       "type": 0,
       "value": "Hanterad identitet"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Välj befintligt"
     }
   ],
   "2b1yD3": [
@@ -595,6 +595,12 @@
       "value": "(UTC+02:00) Chisinau"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -689,6 +695,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Jerevan"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Åsidosätt ändringarna"
     }
   ],
   "45ubha": [
@@ -811,12 +823,6 @@
       "value": "Returnerar sant om ett objekt, en matris eller en sträng är tom"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Lägg till källschema"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -863,6 +869,12 @@
     {
       "type": 0,
       "value": "Testa karta"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Avbryt"
     }
   ],
   "6XR3FS": [
@@ -1170,7 +1182,7 @@
   "9IDWMU": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Stäng"
     }
   ],
   "9JuvQ4": [
@@ -1295,12 +1307,6 @@
     {
       "type": 0,
       "value": "Krävs. Strängen som ska kodas till base64-representation."
-    }
-  ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "Målschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra målschemat?"
     }
   ],
   "B/JzwK": [
@@ -1439,12 +1445,6 @@
       "value": "Anslutning krävs"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Ersätt befintligt schema."
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1454,7 +1454,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Källnoden har tagits bort från vyn."
     }
   ],
   "CsPY74": [
@@ -1568,7 +1568,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "Det gick inte att spara."
     }
   ],
   "EYqGxA": [
@@ -1767,6 +1767,12 @@
       "value": "Status"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Update target schema"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1805,12 +1811,6 @@
       "value": "Obligatoriskt. Det objekt det ska sökas efter i Within-samlingen."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Källschema"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1821,12 +1821,6 @@
     {
       "type": 0,
       "value": "Returnerar sant om båda parametrarna är falsk"
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Ladda upp eller välj ett källschema som ska användas för kartan."
     }
   ],
   "Gi72X5": [
@@ -1869,6 +1863,12 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Strängen som ska segmenteras."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "Målschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra målschemat?"
     }
   ],
   "H8bEUn": [
@@ -1959,6 +1959,12 @@
     {
       "type": 0,
       "value": "Konverterar en inskickad tidsstämpelsträng från en UTC till en måltidszon"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Konfigurera"
     }
   ],
   "IgNz8Y": [
@@ -2195,12 +2201,6 @@
       "value": "Ta bort arbetsflödesdiagram"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Varning"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2408,7 +2408,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "Infoga funktion"
     }
   ],
   "N0pS6Y": [
@@ -2474,7 +2474,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
+      "value": "Ta bort alla referenser till noden "
     },
     {
       "type": 1,
@@ -2482,7 +2482,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the node."
+      "value": " innan du tar bort noden."
     }
   ],
   "NvANon": [
@@ -2603,12 +2603,6 @@
     {
       "type": 0,
       "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "Allt arbete som inte har sparats kommer att försvinna. Vill du ta bort allt?"
     }
   ],
   "Oib1mL": [
@@ -2899,6 +2893,12 @@
       "value": "Det går inte att ta bort utlösare."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "A line between array elements is automatically created to indicate looping elements."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2959,6 +2959,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "S8P4N5": [
@@ -3537,6 +3543,12 @@
       "value": "Krävs. Namnet på åtgärden vars brödtextutdata du vill ha."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "Källschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra källschemat?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3623,12 +3635,6 @@
       "value": "Zooma ut"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Konfiguration"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3697,12 +3703,6 @@
       "value": " i parameter"
     }
   ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Ignorera"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -3765,10 +3765,10 @@
       "value": "Ange PFX"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Lägg till"
+      "value": "Add or select a source schema to use for your map."
     }
   ],
   "b9/1dK": [
@@ -3787,6 +3787,12 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Array Mapping"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
@@ -3796,7 +3802,7 @@
   "bIyTi7": [
     {
       "type": 0,
-      "value": "Subscription"
+      "value": "Prenumeration"
     }
   ],
   "bS5DyV": [
@@ -3929,6 +3935,12 @@
       "value": "(UTC+02:00) Tripoli"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3971,6 +3983,12 @@
       "value": "Obligatoriskt. Den samling som från vilken de första Count-objekten ska hoppas över."
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Varning"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -3986,7 +4004,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "Anslutningen har tagits bort."
     }
   ],
   "dDYCuU": [
@@ -4093,6 +4111,12 @@
       "value": "Inte angivet"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4103,12 +4127,6 @@
     {
       "type": 0,
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Målschema"
     }
   ],
   "eRvGw3": [
@@ -4187,6 +4205,12 @@
     {
       "type": 0,
       "value": "Växlingsantalet överskrider maxvärdet"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Källschema"
     }
   ],
   "faSDuD": [
@@ -4429,12 +4453,6 @@
       "value": "Målgrupp"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "Källschemat ersätts och du kommer inte att kunna gå tillbaka till tidigare ändringar. Vill du fortsätta med att ändra källschemat?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4597,6 +4615,12 @@
     {
       "type": 0,
       "value": "Returnerar värdet för den angivna variabeln."
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Add or select a target schema to use for your map."
     }
   ],
   "jHHF/u": [
@@ -4888,7 +4912,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "Funktionen har tagits bort."
     }
   ],
   "mGUdCO": [
@@ -5148,7 +5172,11 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Fel vid körning av API "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
     }
   ],
   "pC2nr2": [
@@ -5449,6 +5477,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Central Time (USA och Kanada)"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Lägg till nytt"
     }
   ],
   "s5RV9B": [
@@ -6089,12 +6123,6 @@
       "value": "Datum- och tidsfunktioner"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Lägg till målschema"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -6141,6 +6169,12 @@
     {
       "type": 0,
       "value": "Ange värde"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Målschema"
     }
   ],
   "zIDVd9": [

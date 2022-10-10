@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -165,6 +159,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) バクー"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "保存"
     }
   ],
   "0FzNJV": [
@@ -394,12 +394,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "マップに使用するターゲット スキーマをアップロードまたは選択します。"
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -470,6 +464,12 @@
     {
       "type": 0,
       "value": "マネージド ID"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "既存のものを選択"
     }
   ],
   "2b1yD3": [
@@ -568,6 +568,12 @@
       "value": "(UTC+02:00) キシナウ"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -662,6 +668,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) エレバン"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "変更の破棄"
     }
   ],
   "45ubha": [
@@ -784,12 +796,6 @@
       "value": "オブジェクト、アレイ、または文字列が空の場合は true を返します"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "ソース スキーマの追加"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -836,6 +842,12 @@
     {
       "type": 0,
       "value": "マップのテスト"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "キャンセル"
     }
   ],
   "6XR3FS": [
@@ -1127,7 +1139,7 @@
   "9IDWMU": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "閉じる"
     }
   ],
   "9JuvQ4": [
@@ -1236,12 +1248,6 @@
     {
       "type": 0,
       "value": "必須。base64 表現にエンコードする文字列。"
-    }
-  ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "ターゲット スキーマが置き換えられ、以前の変更に戻ることはできなくなります。ターゲット スキーマの変更を続行しますか?"
     }
   ],
   "B/JzwK": [
@@ -1367,12 +1373,6 @@
     {
       "type": 0,
       "value": "接続が必要"
-    }
-  ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "既存のスキーマの置き換え"
     }
   ],
   "Ciol6I": [
@@ -1686,6 +1686,12 @@
       "value": "状態"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Update target schema"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1716,12 +1722,6 @@
       "value": "必須。Within collection 内で検索するオブジェクト。"
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "ソース スキーマ"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1732,12 +1732,6 @@
     {
       "type": 0,
       "value": "パラメーターが false の場合は true を返します"
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "マップに使用するソース スキーマをアップロードまたは選択します。"
     }
   ],
   "Gi72X5": [
@@ -1780,6 +1774,12 @@
     {
       "type": 0,
       "value": "必須。スライスする文字列。"
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "ターゲット スキーマが置き換えられ、以前の変更に戻ることはできなくなります。ターゲット スキーマの変更を続行しますか?"
     }
   ],
   "H8bEUn": [
@@ -1825,7 +1825,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " ゲートウェイのインストール"
     }
   ],
   "HzS2gJ": [
@@ -1862,6 +1862,12 @@
     {
       "type": 0,
       "value": "渡される文字列タイムスタンプを UTC からターゲット タイム ゾーンに変換します"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "構成する"
     }
   ],
   "IgNz8Y": [
@@ -2087,12 +2093,6 @@
       "value": "WorkflowGraphの削除"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "警告"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2280,7 +2280,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "関数の挿入"
     }
   ],
   "N0pS6Y": [
@@ -2455,12 +2455,6 @@
     {
       "type": 0,
       "value": "指定されたスコープ アクション内のトップレベルのアクション (For_each、Until、Scope のアクションなど) の結果を返します。"
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "未保存の作業はすべて失われます。すべて破棄する操作を続行しますか?"
     }
   ],
   "Oib1mL": [
@@ -2747,6 +2741,12 @@
       "value": "トリガーを削除できません。"
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "A line between array elements is automatically created to indicate looping elements."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2796,6 +2796,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "S8P4N5": [
@@ -3374,6 +3380,12 @@
       "value": "必須。本文出力を求める対象のアクションの名前。"
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "ソース スキーマが置き換えられ、以前の変更に戻ることはできなくなります。ソース スキーマの変更を続行しますか?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3456,12 +3468,6 @@
       "value": "縮小"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "構成"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3520,12 +3526,6 @@
     {
       "type": 0,
       "value": "パラメーターでサポートされていない 'in' 値: {value}"
-    }
-  ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "破棄"
     }
   ],
   "a7j3gS": [
@@ -3590,10 +3590,10 @@
       "value": "PFX を入力"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "追加"
+      "value": "Add or select a source schema to use for your map."
     }
   ],
   "b9/1dK": [
@@ -3612,6 +3612,12 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Array Mapping"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
@@ -3621,7 +3627,7 @@
   "bIyTi7": [
     {
       "type": 0,
-      "value": "Subscription"
+      "value": "サブスクリプション"
     }
   ],
   "bS5DyV": [
@@ -3754,6 +3760,12 @@
       "value": "(UTC+02:00) トリポリ"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3794,6 +3806,12 @@
     {
       "type": 0,
       "value": "必須。最初の Count 個のオブジェクトをスキップするコレクション。"
+    }
+  ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "警告"
     }
   ],
   "d3bSQA": [
@@ -3914,6 +3932,12 @@
       "value": "指定なし"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -3924,12 +3948,6 @@
     {
       "type": 0,
       "value": "必須。値を求める対象の変数の名前。"
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "ターゲット スキーマ"
     }
   ],
   "eRvGw3": [
@@ -4008,6 +4026,12 @@
     {
       "type": 0,
       "value": "ページング数が最大値を超えています"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "送信元スキーマ"
     }
   ],
   "faSDuD": [
@@ -4227,12 +4251,6 @@
       "value": "対象ユーザー"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "ソース スキーマが置き換えられ、以前の変更に戻ることはできなくなります。ソース スキーマの変更を続行しますか?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4385,6 +4403,12 @@
       "value": "指定された変数の値を返します。"
     }
   ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Add or select a target schema to use for your map."
+    }
+  ],
   "jHHF/u": [
     {
       "type": 0,
@@ -4454,7 +4478,7 @@
   "juvF+0": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "ゲートウェイ"
     }
   ],
   "k/oqFL": [
@@ -5206,6 +5230,12 @@
       "value": "(UTC-06:00) 中部標準時 (米国およびカナダ)"
     }
   ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "新規追加"
+    }
+  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -5840,12 +5870,6 @@
       "value": "日付と時刻関数"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "ターゲット スキーマの追加"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5892,6 +5916,12 @@
     {
       "type": 0,
       "value": "値の入力"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "ターゲット スキーマ"
     }
   ],
   "zIDVd9": [

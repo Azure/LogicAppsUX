@@ -19,6 +19,6 @@ export interface WorkflowEdge {
 }
 
 export const isWorkflowNode = (node: WorkflowNode) =>
-  node.type !== WORKFLOW_NODE_TYPES.GRAPH_NODE && node.type !== WORKFLOW_NODE_TYPES.SUBGRAPH_NODE;
+  node?.type && node.type !== WORKFLOW_NODE_TYPES.GRAPH_NODE && node.type !== WORKFLOW_NODE_TYPES.SUBGRAPH_NODE;
 
 export const isWorkflowGraph = (node: WorkflowNode) => !isWorkflowNode(node);
