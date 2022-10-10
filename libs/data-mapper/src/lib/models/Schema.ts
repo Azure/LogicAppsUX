@@ -6,15 +6,20 @@ export interface Schema {
   schemaTreeRoot: SchemaNode;
 }
 
+export type TypeofSchemaNodeDataType = keyof typeof SchemaNodeDataType;
+export type TypeofNormalizedDataType = keyof typeof NormalizedDataType;
+export type TypeofSchemaNodeProperties = keyof typeof SchemaNodeProperties;
+
 export interface SchemaNode {
   key: string;
   name: string;
   fullName: string;
   namespacePrefix?: string;
+  parentKey?: string;
   namespaceUri: string;
-  normalizedDataType: NormalizedDataType;
-  schemaNodeDataType: SchemaNodeDataType;
-  properties: SchemaNodeProperties;
+  normalizedDataType: TypeofNormalizedDataType;
+  schemaNodeDataType: TypeofSchemaNodeDataType;
+  properties: TypeofSchemaNodeProperties;
   optional?: boolean;
   repeating?: boolean;
   attribute?: boolean;
@@ -34,7 +39,7 @@ export enum SchemaNodeProperties {
   Attribute = 'Attribute',
 }
 
-export enum SchemaNodeDataType {
+export const enum SchemaNodeDataType {
   AnyAtomicType = 'AnyAtomicType',
   AnyUri = 'AnyUri',
   Base64Binary = 'Base64Binary',

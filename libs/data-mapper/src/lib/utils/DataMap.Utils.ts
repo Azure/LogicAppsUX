@@ -7,11 +7,13 @@ import {
 } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
-import type { Connection, ConnectionDictionary, LoopConnection } from '../models/Connection';
+import type { Connection, ConnectionDictionary, ConnectionUnit, LoopConnection } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
-import type { PathItem, SchemaExtended } from '../models/Schema';
+import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
+import { SchemaTypes } from '../models/Schema';
 import { isFunctionData } from './Function.Utils';
+import { addReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import yaml from 'js-yaml';
 
@@ -273,4 +275,58 @@ export const parseConditionalMapping = (line: string): string => {
 
 export const getEdgeForSource = (connection: Connection, source: string) => {
   return connection.sources.find((conn) => conn.reactFlowKey === source);
+};
+
+export const getEdgeForSourceFromAllConnections = (connections: ConnectionDictionary, source: string) => {
+  let edge;
+  Object.values(connections).forEach((connection) => {
+    const tempEdge = getEdgeForSource(connection, addReactFlowPrefix(source, SchemaTypes.Source));
+    if (tempEdge) {
+      edge = tempEdge;
+    }
+  });
+  return edge;
+};
+
+export const hasEdgeFromSource = (connectionDict: ConnectionDictionary, source: string): boolean => {
+  const firstConnection = Object.values(connectionDict).find((connection) => {
+    const tempEdge = getEdgeForSource(connection, addReactFlowPrefix(source, SchemaTypes.Source));
+    if (tempEdge) {
+      return true;
+    }
+    return false;
+  });
+  return firstConnection ? true : false;
+};
+
+export const getEdgeForSourcesFromAllEdges = (connectionDict: ConnectionDictionary, source: string): ConnectionUnit[] => {
+  const edges: ConnectionUnit[] = [];
+  Object.values(connectionDict).forEach((connection) => {
+    const tempEdge = getEdgeForSource(connection, addReactFlowPrefix(source, SchemaTypes.Source));
+    if (tempEdge) {
+      edges.push(tempEdge);
+    }
+  });
+  return edges;
+};
+
+// eslint-disable-next-line no-prototype-builtins
+export const isNodeSchema = (node: SchemaNodeExtended | FunctionData): boolean => node.hasOwnProperty('schemaNodeDataType');
+
+export const eventuallyConnectsToSourceAndTarget = (): boolean => {
+  // need to trace forwards and backwards lol
+  return true;
+};
+
+export const hasEventualTarget = (dest: string, dict: ConnectionDictionary): boolean => {
+  // eventually refactor to work with source?
+  //const dest = connection.destination.reactFlowKey; // destination becomes future source
+  const nextEdges = getEdgeForSourcesFromAllEdges(dict, dest);
+  if (nextEdges.length === 0) {
+    return false;
+  }
+  nextEdges.find((edge) => {
+    return hasEventualTarget(edge.reactFlowKey, dict);
+  });
+  return true;
 };

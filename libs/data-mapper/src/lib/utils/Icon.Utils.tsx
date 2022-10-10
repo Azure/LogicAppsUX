@@ -27,6 +27,7 @@ import {
   String24Regular,
 } from '../images/DataType24Icons';
 import { FunctionCategory } from '../models/Function';
+import type { TypeofSchemaNodeDataType, TypeofSchemaNodeProperties } from '../models/Schema';
 import { SchemaNodeDataType, SchemaNodeProperties } from '../models/Schema';
 import { Image } from '@fluentui/react-components';
 import {
@@ -291,7 +292,7 @@ export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
   }
 };
 
-export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType, properties?: SchemaNodeProperties) => {
+export const icon24ForSchemaNodeType = (nodeType: TypeofSchemaNodeDataType, properties?: TypeofSchemaNodeProperties) => {
   switch (nodeType) {
     /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {

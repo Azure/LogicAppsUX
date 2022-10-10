@@ -5,6 +5,7 @@ import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
+import { eventuallyConnectsToSourceAndTarget, isNodeSchema } from '../../utils/DataMap.Utils';
 import { addReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -485,25 +486,25 @@ const addParentConnectionForRepeatingNode = (
 ): void => {
   const targetParentNode = mapState.currentTargetNode;
   const source = nodes.source;
-  // eslint-disable-next-line no-param-reassign
 
   if (targetParentNode?.properties === SchemaNodeProperties.Repeating && isSchemaNodeExtended(source)) {
-    source.pathToRoot.forEach((parentKey) => {
-      const sourceParent = mapState.flattenedSourceSchema[addReactFlowPrefix(parentKey.key, SchemaTypes.Source)];
-
-      if (sourceParent.properties === SchemaNodeProperties.Repeating) {
-        if (mapState.currentSourceNodes.find((node) => node.key !== sourceParent.key)) {
-          mapState.currentSourceNodes.push(sourceParent);
+    if (isNodeSchema(nodes.destination) || eventuallyConnectsToSourceAndTarget()) {
+      source.pathToRoot.forEach((parentKey) => {
+        const sourceParent = mapState.flattenedSourceSchema[addReactFlowPrefix(parentKey.key, SchemaTypes.Source)];
+        if (sourceParent.properties === SchemaNodeProperties.Repeating) {
+          if (mapState.currentSourceNodes.find((node) => node.key !== sourceParent.key)) {
+            mapState.currentSourceNodes.push(sourceParent);
+          }
+          if (!mapState.dataMapConnections[addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target)]) {
+            // eslint-disable-next-line no-param-reassign
+            mapState.dataMapConnections[addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target)] = {
+              sources: [{ node: sourceParent, reactFlowKey: addReactFlowPrefix(sourceParent.key, SchemaTypes.Source) }],
+              destination: { node: targetParentNode, reactFlowKey: addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target) },
+            };
+            state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+          }
         }
-        if (!mapState.dataMapConnections[addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target)]) {
-          // eslint-disable-next-line no-param-reassign
-          mapState.dataMapConnections[addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target)] = {
-            sources: [{ node: sourceParent, reactFlowKey: addReactFlowPrefix(sourceParent.key, SchemaTypes.Source) }],
-            destination: { node: targetParentNode, reactFlowKey: addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target) },
-          };
-          state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
-        }
-      }
-    });
+      });
+    }
   }
 };

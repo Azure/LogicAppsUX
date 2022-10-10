@@ -5,7 +5,7 @@ import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaTypes, SchemaNodeProperties } from '../../models';
 import type { Connection } from '../../models/Connection';
-import { getEdgeForSource } from '../../utils/DataMap.Utils';
+import { hasEdgeFromSource } from '../../utils/DataMap.Utils';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
 import { addReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import type { CardProps } from './NodeCard';
@@ -180,14 +180,8 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
       const targetConnections = connections[addReactFlowPrefix(schemaNode.key, SchemaTypes.Target)];
       return targetConnections ? true : false;
     } else {
-      let edge;
-      Object.values(connections).forEach((connection) => {
-        const tempEdge = getEdgeForSource(connection, addReactFlowPrefix(schemaNode.key, SchemaTypes.Source));
-        if (tempEdge) {
-          edge = tempEdge;
-        }
-      });
-      return edge ? true : false;
+      const hasEdge = hasEdgeFromSource(connections, schemaNode.key);
+      return hasEdge;
     }
   });
 
