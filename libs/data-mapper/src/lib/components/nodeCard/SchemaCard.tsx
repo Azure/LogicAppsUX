@@ -3,7 +3,7 @@ import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaTypes, SchemaNodeProperties } from '../../models';
+import { SchemaNodeDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { getEdgeForSource } from '../../utils/DataMap.Utils';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
@@ -168,12 +168,16 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 
 export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
   const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron } = props.data;
+  const intl = useIntl();
+  const [_isHover, setIsHover] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
+
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
-  const [_isHover, setIsHover] = useState<boolean>(false);
-  const intl = useIntl();
+
+  const showHandle = displayHandle && (schemaType === SchemaTypes.Source || schemaNode.schemaNodeDataType !== SchemaNodeDataType.None);
+
   const isNodeConnected = useSelector((state: RootState) => {
     const connections = state.dataMap.curDataMapOperation.dataMapConnections;
     if (schemaType === SchemaTypes.Target) {
@@ -239,7 +243,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
         </div>
       )}
       <div className={containerStyle} onMouseLeave={() => onMouseLeave()} onMouseEnter={() => onMouseEnter()}>
-        {displayHandle ? (
+        {showHandle ? (
           <Handle
             type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
             position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}

@@ -10,6 +10,7 @@ import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
+import { SchemaNodeProperties } from '../models/Schema';
 import { findFunctionForFunctionName, findFunctionForKey, isFunctionData } from './Function.Utils';
 import { createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
@@ -55,21 +56,22 @@ const generateMapDefinitionHeader = (
 
 const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
   Object.values(connections).forEach((connection) => {
+    const destinationNode = connection.destination.node;
     connection.sources.forEach((source) => {
       // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
-      if (isSchemaNodeExtended(connection.destination.node)) {
+      if (isSchemaNodeExtended(destinationNode)) {
         if (isSchemaNodeExtended(source.node)) {
-          applyValueAtPath(source.node.fullName, mapDefinition, connection.destination.node.pathToRoot);
+          applyValueAtPath(source.node.fullName, mapDefinition, destinationNode, destinationNode.pathToRoot);
         } else {
           const value = collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
-          applyValueAtPath(value, mapDefinition, connection.destination.node.pathToRoot);
+          applyValueAtPath(value, mapDefinition, destinationNode, destinationNode.pathToRoot);
         }
       }
     });
   });
 };
 
-const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, path: PathItem[]) => {
+const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, destinationNode: SchemaNodeExtended, path: PathItem[]) => {
   const pathLocation = path[0].fullName;
   const formattedPathLocation = pathLocation.startsWith('@') ? `$${pathLocation}` : pathLocation;
 
@@ -79,10 +81,20 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, path
     }
 
     if (typeof mapDefinition[formattedPathLocation] !== 'string') {
-      applyValueAtPath(value, mapDefinition[formattedPathLocation] as MapDefinitionEntry, path.slice(1));
+      applyValueAtPath(value, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1));
     }
   } else {
-    mapDefinition[formattedPathLocation] = value;
+    if (destinationNode.properties === SchemaNodeProperties.ComplexTypeSimpleContent) {
+      if (!mapDefinition[formattedPathLocation]) {
+        mapDefinition[formattedPathLocation] = {
+          [mapNodeParams.value]: value,
+        };
+      } else {
+        (mapDefinition[formattedPathLocation] as MapDefinitionEntry)[mapNodeParams.value] = value;
+      }
+    } else {
+      mapDefinition[formattedPathLocation] = value;
+    }
   }
 };
 
