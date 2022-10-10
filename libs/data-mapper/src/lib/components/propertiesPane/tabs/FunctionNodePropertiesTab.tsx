@@ -25,6 +25,8 @@ export interface InputOptionData {
   isFunction: boolean;
 }
 
+const fnIconContainerSize = 28;
+
 const useStyles = makeStyles({
   inputOutputContentStyle: {
     display: 'flex',
@@ -173,7 +175,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
 
       newPossibleInputOptionsDictionary[node.outputValueType].push({
         nodeKey: key,
-        nodeName: node.functionName,
+        nodeName: node.functionName, // TODO: use output value of fn node here instead
         isFunctionNode: true,
       });
     });
@@ -270,9 +272,9 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
           <span
             style={{
               backgroundColor: customTokens[functionBranding.colorTokenName],
-              height: '28px',
-              width: '28px',
-              borderRadius: '14px',
+              height: fnIconContainerSize,
+              width: fnIconContainerSize,
+              borderRadius: '50%',
             }}
           >
             <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1, textAlign: 'center' }}>
