@@ -1,15 +1,17 @@
+import { sourcePrefix } from '../../../constants/ReactFlowConstants';
 import { customTokens } from '../../../core';
-import type { RootState } from '../../../core/state/Store';
+import { makeConnection } from '../../../core/state/DataMapSlice';
+import type { AppDispatch, RootState } from '../../../core/state/Store';
 import { NormalizedDataType } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
-import { ComboBox, type IComboBoxOption, Stack } from '@fluentui/react';
+import { ComboBox, type IComboBoxOption, Stack, type ISelectableOption } from '@fluentui/react';
 import { Button, Divider, Input, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 type InputOptions = {
   [key: string]: {
@@ -18,6 +20,10 @@ type InputOptions = {
     isFunctionNode?: boolean;
   }[];
 };
+
+interface OptionData {
+  isFunction: boolean;
+}
 
 const useStyles = makeStyles({
   inputOutputContentStyle: {
@@ -53,8 +59,10 @@ interface FunctionNodePropertiesTabProps {
 export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
+  const dispatch = useDispatch<AppDispatch>();
 
   const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
+  const sourceSchemaNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
@@ -101,13 +109,41 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
     setInputValues(newInputValues);
   };
 
-  const validateAndCreateConnection = (option?: IComboBoxOption) => {
-    if (!option) {
+  const validateAndCreateConnection = (inputIdx: number, option?: ISelectableOption<OptionData>) => {
+    if (!option?.data) {
       return;
     }
 
-    // TODO: onChange, set connection stuff
-    console.log(option);
+    // Don't do anything if same value
+    if (option.key === inputValues[inputIdx]) {
+      return;
+    }
+
+    // Ensure that new connection won't create loop/circular-logic
+
+    // TODO
+
+    // Remove current connection if it exists
+
+    // TODO
+
+    // Create new connection
+
+    const selectedNodeKey = option.key as string;
+    const isFunction = option.data.isFunction;
+
+    const sourceKey = isFunction ? selectedNodeKey : `${sourcePrefix}${selectedNodeKey}`;
+    const source = isFunction ? functionNodeDictionary[sourceKey] : sourceSchemaNodeDictionary[sourceKey];
+    const destination = functionNodeDictionary[nodeKey];
+
+    dispatch(
+      makeConnection({
+        source,
+        destination,
+        reactFlowDestination: nodeKey,
+        reactFlowSource: sourceKey,
+      })
+    );
   };
 
   const functionNode = useMemo(() => functionNodeDictionary[nodeKey], [nodeKey, functionNodeDictionary]);
@@ -145,7 +181,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
   }, [currentSourceNodes, functionNodeDictionary]);
 
   const inputOptions = useMemo<IComboBoxOption[][]>(() => {
-    const newInputOptions: IComboBoxOption[][] = [];
+    const newInputOptions: ISelectableOption<OptionData>[][] = [];
 
     functionNode.inputs.forEach((input, idx) => {
       newInputOptions.push([]);
@@ -158,7 +194,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
                 key: possibleOption.nodeKey,
                 text: possibleOption.nodeName,
                 data: {
-                  isFunction: possibleOption.isFunctionNode,
+                  isFunction: !!possibleOption.isFunctionNode,
                 },
               });
             });
@@ -173,7 +209,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
               key: possibleOption.nodeKey,
               text: possibleOption.nodeName,
               data: {
-                isFunction: possibleOption.isFunctionNode,
+                isFunction: !!possibleOption.isFunctionNode,
               },
             });
           });
@@ -269,7 +305,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
                       placeholder={input.placeholder}
                       options={inputOptions[idx]}
                       selectedKey={inputValues[idx]}
-                      onChange={(_e, option) => validateAndCreateConnection(option)}
+                      onChange={(_e, option) => validateAndCreateConnection(idx, option)}
                       allowFreeform={false}
                     />
                   </Tooltip>
@@ -288,7 +324,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
                       placeholder={functionNode.inputs[0].placeholder}
                       options={inputOptions[idx]}
                       selectedKey={inputValues[idx]}
-                      onChange={(_e, option) => validateAndCreateConnection(option)}
+                      onChange={(_e, option) => validateAndCreateConnection(idx, option)}
                       allowFreeform={false}
                     />
                   </Tooltip>
