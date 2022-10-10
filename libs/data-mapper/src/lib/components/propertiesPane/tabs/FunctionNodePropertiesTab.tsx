@@ -223,16 +223,17 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
 
   const connection = useMemo<Connection | undefined>(() => connectionDictionary[nodeKey], [connectionDictionary, nodeKey]);
 
-  // TODO: Figure out input-ids not being *displayed* properly
-  const getOutputValue = () => {
+  const outputValue = useMemo(() => {
     let outputValue = `${functionNode.functionName}(`;
 
     inputValues.forEach((input, idx) => {
-      outputValue += `${input}${idx === inputValues.length - 1 ? '' : ', '}`;
+      if (input) {
+        outputValue += `${idx === 0 ? '' : ', '}${input}`;
+      }
     });
 
     return `${outputValue})`;
-  };
+  }, [inputValues, functionNode]);
 
   useEffect(() => {
     const newInputValues: string[] = [];
@@ -355,7 +356,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{outputLoc}</Text>
 
-          <Input defaultValue={getOutputValue()} style={{ marginTop: 16 }} readOnly />
+          <Input value={outputValue} style={{ marginTop: 16 }} readOnly />
         </Stack>
       </Stack>
     </div>
