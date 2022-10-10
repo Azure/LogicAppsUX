@@ -13,6 +13,5 @@ export async function openDesigner(context: IActionContext, node: Uri | undefine
     openDesignerObj = new OpenDesignerForLocalProject(context, node);
   }
 
-  // tslint:disable-next-line: no-unnecessary-type-assertion
   await openDesignerObj?.createPanel();
 }

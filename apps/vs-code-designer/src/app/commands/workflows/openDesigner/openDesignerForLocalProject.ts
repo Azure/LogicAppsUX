@@ -8,6 +8,8 @@ import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import type { IDesignerPanelMetadata, AzureConnectorDetails, Parameter } from '@microsoft-logic-apps/utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs, readFileSync } from 'fs';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { ResolutionService } from 'libs/parsers/src/lib/resolution-service/resolution-service';
 import * as path from 'path';
 import { join } from 'path';
 import * as requestP from 'request-promise';
@@ -25,6 +27,7 @@ export default class OpenDesignerForLocalProject {
   private readonly context: IActionContext;
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
+  private connectionReferences: any;
 
   constructor(context: IActionContext, node: Uri) {
     this.panelGroupKey = ext.webViewKey.designerLocal;
@@ -62,6 +65,19 @@ export default class OpenDesignerForLocalProject {
     );
     this._migrationOptions = await this._getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this.getDesignerPanelMetadata(this._migrationOptions);
+
+    const connectionsData = this.getInterpolateConnectionData(this.panelMetadata.connectionsData);
+
+    const parameters = {};
+
+    Object.keys(this.panelMetadata.parametersData).forEach((key) => {
+      parameters[key] = this.panelMetadata.parametersData[key].value;
+    });
+
+    const parametersResolutionService = new ResolutionService(parameters, this.panelMetadata.localSettings);
+    const resolvedConnections = parametersResolutionService.resolve(connectionsData);
+
+    this.connectionReferences = this.getConnectionReferences(resolvedConnections);
 
     // Get webview content, converting links to VS Code URIs
     const indexPath = join(ext.context.extensionPath, 'webview/index.html');
@@ -106,6 +122,7 @@ export default class OpenDesignerForLocalProject {
           command: ExtensionCommand.initialize_frame,
           data: {
             panelMetadata: this.panelMetadata,
+            connectionReferences: this.connectionReferences,
           },
         });
         break;
@@ -245,5 +262,86 @@ export default class OpenDesignerForLocalProject {
       azureDetails,
       workflowContent,
     };
+  }
+
+  private getConnectionReferences(connectionsData) {
+    const references = {};
+    const connectionReferences = connectionsData?.managedApiConnections || {};
+    const functionConnections = connectionsData?.functionConnections || {};
+    const serviceProviderConnections = connectionsData?.serviceProviderConnections || {};
+
+    for (const connectionReferenceKey of Object.keys(connectionReferences)) {
+      const { connection, api } = connectionReferences[connectionReferenceKey];
+      references[connectionReferenceKey] = {
+        connectionId: connection ? connection.id : '',
+        connectionName: connection && connection.id ? connection.id.split('/').slice(-1)[0] : '',
+        id: api ? api.id : '',
+      };
+    }
+
+    for (const connectionKey of Object.keys(functionConnections)) {
+      references[connectionKey] = {
+        connectionId: '/' + connectionKey,
+        connectionName: connectionKey,
+        id: '/connectionProviders/azureFunctionOperation',
+      };
+    }
+
+    for (const connectionKey of Object.keys(serviceProviderConnections)) {
+      references[connectionKey] = {
+        connectionId: '/' + connectionKey,
+        connectionName: connectionKey,
+        id: serviceProviderConnections[connectionKey].serviceProvider.id,
+      };
+    }
+
+    return references;
+  }
+
+  private addCurlyBraces(root: string) {
+    let interpolationString = root;
+    let stringLength = interpolationString.length;
+    let resolvedString = '';
+
+    for (let i = 0; i < stringLength; i++) {
+      const canHavekeyWord = i + 12 <= stringLength;
+
+      if (interpolationString[i] === '@' && canHavekeyWord && this.haveKeyWord(interpolationString.substring(i, i + 12))) {
+        resolvedString += interpolationString[i] + '{';
+        const closeTagIndex = interpolationString.indexOf(')', i);
+        interpolationString =
+          interpolationString.substring(0, closeTagIndex + 1) +
+          '}' +
+          interpolationString.substring(closeTagIndex + 1, interpolationString.length);
+        stringLength = interpolationString.length;
+      } else {
+        resolvedString += interpolationString[i];
+      }
+    }
+    return resolvedString;
+  }
+
+  private haveKeyWord(keyword: string): boolean {
+    return keyword === '@parameters(' || keyword === '@appsetting(';
+  }
+
+  private getInterpolateConnectionData(connectionsData: string) {
+    if (!connectionsData) {
+      return connectionsData;
+    }
+    const parseConnectionsData = JSON.parse(connectionsData);
+    const managedApiConnections = Object.keys(parseConnectionsData?.managedApiConnections ?? {});
+
+    managedApiConnections?.forEach((apiConnection: any) => {
+      const connectionValue = parseConnectionsData?.managedApiConnections[apiConnection] as any;
+      if (connectionValue.api && connectionValue.api.id) {
+        connectionValue.api.id = this.addCurlyBraces(connectionValue.api.id);
+      }
+      if (connectionValue.connection && connectionValue.connection.id) {
+        connectionValue.connection.id = this.addCurlyBraces(connectionValue.connection.id);
+      }
+    });
+
+    return JSON.stringify(parseConnectionsData);
   }
 }
