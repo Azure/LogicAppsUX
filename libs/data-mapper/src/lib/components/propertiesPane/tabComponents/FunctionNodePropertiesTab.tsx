@@ -1,9 +1,13 @@
-import type { SelectedFunctionNode } from '../../../models/SelectedNode';
+import { customTokens } from '../../../core';
+import type { RootState } from '../../../core/state/Store';
+import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, Input, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   inputOutputContentStyle: {
@@ -24,12 +28,14 @@ const useStyles = makeStyles({
 });
 
 interface FunctionNodePropertiesTabProps {
-  currentNode: SelectedFunctionNode;
+  nodeKey: string;
 }
 
-export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertiesTabProps): JSX.Element => {
+export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
+
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
 
   const addFieldLoc = intl.formatMessage({
     defaultMessage: 'Add field',
@@ -51,37 +57,41 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
     description: `Function doesn't have or require inputs`,
   });
 
+  const functionNode = useMemo(() => functionNodeDictionary[nodeKey], [nodeKey, functionNodeDictionary]);
+
+  const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionNode.category), [functionNode]);
+
   return (
     <div style={{ height: '100%' }}>
       <div>
         <Stack horizontal verticalAlign="center">
           <span
             style={{
-              backgroundColor: currentNode.branding.colorLight,
+              backgroundColor: customTokens[functionBranding.colorTokenName],
               height: '28px',
               width: '28px',
               borderRadius: '14px',
             }}
           >
             <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1, textAlign: 'center' }}>
-              {getIconForFunction(currentNode.name, undefined, currentNode.branding)}
+              {getIconForFunction(functionNode.functionName, undefined, functionBranding)}
             </div>
           </span>
 
-          <Text style={{ marginLeft: '8px' }}>{currentNode.name}</Text>
+          <Text style={{ marginLeft: '8px' }}>{functionNode.displayName}</Text>
         </Stack>
 
-        <Text style={{ marginTop: '8px' }}>{currentNode.description}</Text>
-        <Text style={{ marginTop: '8px' }}>{currentNode.codeEx}</Text>
+        <Text style={{ marginTop: '8px' }}>{functionNode.description}</Text>
+        <Text style={{ marginTop: '8px' }}>{/* TODO: Code example of Function */}</Text>
       </div>
 
       <Stack horizontal className={styles.inputOutputContentStyle}>
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{inputLoc}</Text>
 
-          {currentNode.inputs.length > 0 ? (
+          {functionNode.maxNumberOfInputs > 0 ? (
             <>
-              {currentNode.inputs.map((input) => (
+              {functionNode.inputs.map((input) => (
                 <Stack horizontal verticalAlign="center" key={input.displayName}>
                   <Input placeholder="Temporary placeholder" style={{ marginTop: 16 }} />
                   <Button icon={<Delete20Regular />} />

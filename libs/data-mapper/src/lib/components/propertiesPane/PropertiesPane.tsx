@@ -38,9 +38,6 @@ const useStyles = makeStyles({
   title: {
     ...typographyStyles.body1Strong,
   },
-  chevron: {
-    ...shorthands.margin('15px'),
-  },
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
     ...shorthands.overflow('hidden', 'auto'),
@@ -177,7 +174,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   };
 
   const getPaneTitle = (): string | undefined => {
-    switch (currentNode?.nodeType) {
+    switch (currentNode?.type) {
       case NodeType.Source:
         return sourceSchemaNodeLoc;
       case NodeType.Target:
@@ -198,16 +195,16 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        if (currentNode.nodeType === NodeType.Function) {
-          return <FunctionNodePropertiesTab currentNode={currentNode} />;
+        if (currentNode.type === NodeType.Function) {
+          return <FunctionNodePropertiesTab nodeKey={currentNode.id} />;
         } else {
           return <SchemaNodePropertiesTab currentNode={currentNode} />;
         }
       case TABS.CODE:
         return <CodeTab />;
       case TABS.TEST:
-        if (currentNode.nodeType === NodeType.Target) {
-          return <TestTab currentNode={currentNode} />;
+        if (currentNode.type === NodeType.Target) {
+          return <TestTab currentTargetNodeKey={currentNode.id} />;
         } else {
           return null;
         }
@@ -255,7 +252,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
-          {(currentNode?.nodeType === NodeType.Source || currentNode?.nodeType === NodeType.Function) && (
+          {(currentNode?.type === NodeType.Source || currentNode?.type === NodeType.Function) && (
             <Button
               appearance="subtle"
               size="medium"
@@ -270,7 +267,6 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
             size="medium"
             icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
             onClick={() => setIsExpanded(!isExpanded)}
-            className={styles.chevron}
             disabled={!currentNode}
             title={!isExpanded ? expandLoc : collapseLoc}
             aria-label={!isExpanded ? expandLoc : collapseLoc}

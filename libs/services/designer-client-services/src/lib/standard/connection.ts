@@ -413,8 +413,7 @@ export class StandardConnectionService implements IConnectionService {
     return {
       properties: {
         api: { id: connectorId },
-        parameterValues,
-        parameterValueSet,
+        ...(parameterValueSet ? { parameterValueSet } : { parameterValues }),
         displayName,
       },
       kind: 'V2',

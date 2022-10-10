@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -165,6 +159,12 @@
     {
       "type": 0,
       "value": "(UTC+04.00) Baku"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Simpan"
     }
   ],
   "0FzNJV": [
@@ -394,12 +394,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Unggah atau pilih skema target yang akan digunakan untuk peta Anda."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -470,6 +464,12 @@
     {
       "type": 0,
       "value": "Identitas terkelola"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Pilih yang ada"
     }
   ],
   "2b1yD3": [
@@ -568,6 +568,12 @@
       "value": "(UTC+02.00) Chisinau"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Mengganti skema yang ada dengan skema yang tidak kompatibel dapat membuat kesalahan di dalam peta Anda."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -662,6 +668,12 @@
     {
       "type": 0,
       "value": "(UTC+04.00) Yerevan"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Buang perubahan"
     }
   ],
   "45ubha": [
@@ -784,12 +796,6 @@
       "value": "Menampilkan true jika objek, array, atau string kosong"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Tambahkan Skema Sumber"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -836,6 +842,12 @@
     {
       "type": 0,
       "value": "Uji peta"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Batal"
     }
   ],
   "6XR3FS": [
@@ -1124,6 +1136,12 @@
       "value": "Batalkan"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Tutup"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1230,12 +1248,6 @@
     {
       "type": 0,
       "value": "Wajib. String yang dikodekan menjadi representasi base64."
-    }
-  ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "Skema target akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema target?"
     }
   ],
   "B/JzwK": [
@@ -1363,12 +1375,6 @@
       "value": "Koneksi diperlukan"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Ganti skema yang ada"
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1378,7 +1384,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Node sumber dihapus dari tampilan."
     }
   ],
   "CsPY74": [
@@ -1492,7 +1498,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "Gagal menyimpan."
     }
   ],
   "EYqGxA": [
@@ -1680,6 +1686,12 @@
       "value": "Status"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Perbarui skema target"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1710,12 +1722,6 @@
       "value": "Harus diisi. Objek untuk dicari Di dalam koleksi."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Skema Sumber"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1726,12 +1732,6 @@
     {
       "type": 0,
       "value": "Menampilkan true jika parameter salah"
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Unggah atau pilih skema sumber yang akan digunakan untuk peta Anda."
     }
   ],
   "Gi72X5": [
@@ -1776,6 +1776,12 @@
       "value": "Wajib. String yang akan diiris."
     }
   ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "Skema target akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema target?"
+    }
+  ],
   "H8bEUn": [
     {
       "type": 0,
@@ -1812,6 +1818,16 @@
       "value": "Pilih kartu untuk melihat konten"
     }
   ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Instal Gateway"
+    }
+  ],
   "HzS2gJ": [
     {
       "type": 0,
@@ -1846,6 +1862,12 @@
     {
       "type": 0,
       "value": "Mengonversi tanda waktu string yang diberikan dari UTC ke zona waktu target"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Konfigurasikan"
     }
   ],
   "IgNz8Y": [
@@ -2071,12 +2093,6 @@
       "value": "Hapus Grafik Alur Kerja"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Peringatan"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2261,6 +2277,12 @@
       "value": "Kesalahan tidak terduga"
     }
   ],
+  "MnThTq": [
+    {
+      "type": 0,
+      "value": "Sisipkan fungsi"
+    }
+  ],
   "N0pS6Y": [
     {
       "type": 0,
@@ -2324,7 +2346,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
+      "value": "Hapus semua referensi ke node ' "
     },
     {
       "type": 1,
@@ -2332,7 +2354,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the node."
+      "value": " ' sebelum Anda menghapus node."
     }
   ],
   "NvANon": [
@@ -2441,12 +2463,6 @@
     {
       "type": 0,
       "value": "Menghasilkan hasil dari tindakan tingkat atas dalam tindakan tercakup yang ditentukan, seperti tindakan For_each, Until, atau Scope."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "Semua pekerjaan yang belum disimpan akan hilang. Ingin melanjutkan untuk membuang semuanya?"
     }
   ],
   "Oib1mL": [
@@ -2733,6 +2749,12 @@
       "value": "Pemicu tidak dapat dihapus."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "Garis di antara elemen array dibuat secara otomatis untuk menunjukkan elemen pengulangan."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2782,6 +2804,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Apakah Anda ingin membuang semua perubahan yang tidak disimpan?"
     }
   ],
   "S8P4N5": [
@@ -3360,6 +3388,12 @@
       "value": "Wajib. Nama tindakan yang tubuh output isinya Anda inginkan."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "Skema sumber akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema sumber?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3442,12 +3476,6 @@
       "value": "Perkecil tampilan"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Konfigurasi"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3506,12 +3534,6 @@
     {
       "type": 0,
       "value": "Nilai 'in' yang tidak didukung: {value} dalam Parameter"
-    }
-  ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Buang"
     }
   ],
   "a7j3gS": [
@@ -3576,10 +3598,10 @@
       "value": "Masukkan Pfx"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Tambahkan"
+      "value": "Tambahkan atau pilih skema sumber yang akan digunakan untuk peta Anda."
     }
   ],
   "b9/1dK": [
@@ -3598,10 +3620,22 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Pemetaan Array"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
       "value": "Tindakan"
+    }
+  ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Langganan"
     }
   ],
   "bS5DyV": [
@@ -3734,6 +3768,12 @@
       "value": "(UTC+02.00) Tripoli"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Tambahkan atau ganti skema Anda."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3776,6 +3816,12 @@
       "value": "Harus diisi. Koleksi untuk melompati objek Hitungan pertama."
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Peringatan"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -3791,7 +3837,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "Koneksi dihapus."
     }
   ],
   "dDYCuU": [
@@ -3898,6 +3944,12 @@
       "value": "Tidak ditentukan"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Perbarui skema sumber"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -3908,12 +3960,6 @@
     {
       "type": 0,
       "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Skema Target"
     }
   ],
   "eRvGw3": [
@@ -3992,6 +4038,12 @@
     {
       "type": 0,
       "value": "Jumlah halaman melebihi nilai maksimum"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Skema sumber"
     }
   ],
   "faSDuD": [
@@ -4211,12 +4263,6 @@
       "value": "Audiens"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "Skema sumber akan diganti dan Anda tidak akan dapat kembali ke perubahan sebelumnya. Ingin melanjutkan untuk mengubah skema sumber?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4373,6 +4419,12 @@
       "value": "Menghasilkan nilai variabel yang ditetapkan."
     }
   ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Tambahkan atau pilih skema target yang akan digunakan untuk peta Anda."
+    }
+  ],
   "jHHF/u": [
     {
       "type": 0,
@@ -4437,6 +4489,12 @@
     {
       "type": 0,
       "value": "Durasi"
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
     }
   ],
   "k/oqFL": [
@@ -4652,7 +4710,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "Fungsi dihapus."
     }
   ],
   "mGUdCO": [
@@ -4912,7 +4970,7 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Kesalahan saat menjalankan api {parameters}."
     }
   ],
   "pC2nr2": [
@@ -5186,6 +5244,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Central Time (AS & Kanada)"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Tambah baru"
     }
   ],
   "s5RV9B": [
@@ -5826,12 +5890,6 @@
       "value": "Fungsi tanggal dan waktu"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Tambahkan Skema Target"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5878,6 +5936,12 @@
     {
       "type": 0,
       "value": "Masukkan nilai"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Skema target"
     }
   ],
   "zIDVd9": [

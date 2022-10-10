@@ -3,8 +3,8 @@ import { openSourceSchemaPanel, openTargetSchemaPanel } from '../../core/state/P
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
 import { SchemaTypes } from '../../models/';
+import { nodeTypes } from '../../ui/ReactFlowWrapper';
 import { convertToReactFlowParentAndChildNodes } from '../../utils/ReactFlow.Util';
-import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
@@ -13,6 +13,8 @@ import { useDispatch } from 'react-redux';
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { ReactFlowProvider } from 'reactflow';
 import type { Node as ReactFlowNode, Viewport } from 'reactflow';
+
+const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
 
 const useStyles = makeStyles({
   mapOverviewStyles: {
@@ -43,8 +45,6 @@ interface LayeredReactFlowProps {
 }
 
 const LayeredReactFlow = ({ schema, isSourceSchema }: LayeredReactFlowProps) => {
-  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard }), []);
-
   const reactFlowNodes = useMemo(() => {
     const reactFlowNodes: ReactFlowNode[] = [];
 
@@ -65,7 +65,6 @@ const LayeredReactFlow = ({ schema, isSourceSchema }: LayeredReactFlowProps) => 
     return reactFlowNodes;
   }, [schema, isSourceSchema]);
 
-  const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
   return (
     <ReactFlow
       nodes={reactFlowNodes}
@@ -82,7 +81,7 @@ const LayeredReactFlow = ({ schema, isSourceSchema }: LayeredReactFlowProps) => 
       nodeTypes={nodeTypes}
       style={reactFlowStyle}
       fitView
-    ></ReactFlow>
+    />
   );
 };
 

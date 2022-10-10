@@ -1,9 +1,12 @@
+import type { RootState } from '../../../core/state/Store';
 import { NodeType } from '../../../models/SelectedNode';
-import type { SelectedSchemaNode } from '../../../models/SelectedNode';
+import type { SelectedNode } from '../../../models/SelectedNode';
 import { icon16ForSchemaNodeType } from '../../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Checkbox, Input, makeStyles, Text } from '@fluentui/react-components';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   nodeInfoGridContainer: {
@@ -17,14 +20,15 @@ const useStyles = makeStyles({
 });
 
 interface SchemaNodePropertiesTabProps {
-  currentNode: SelectedSchemaNode;
+  currentNode: SelectedNode;
 }
 
 export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
 
-  const DataTypeIcon = icon16ForSchemaNodeType(currentNode.dataType);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
   const nameLoc = intl.formatMessage({
     defaultMessage: 'Name',
@@ -66,58 +70,59 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Default value',
   });
 
-  // Base info shared by source/target nodes
-  const NodeInfo = () => {
-    return (
+  const isTargetSchemaNode = useMemo(() => currentNode.type === NodeType.Target, [currentNode]);
+
+  const schemaNode = useMemo(() => {
+    if (isTargetSchemaNode) {
+      return targetSchemaDictionary[currentNode.id];
+    } else {
+      return sourceSchemaDictionary[currentNode.id];
+    }
+  }, [currentNode, isTargetSchemaNode, sourceSchemaDictionary, targetSchemaDictionary]);
+
+  const DataTypeIcon = icon16ForSchemaNodeType(schemaNode.schemaNodeDataType);
+
+  return (
+    <div>
       <div className={styles.nodeInfoGridContainer}>
         <Text style={{ gridColumn: '1 / span 2' }}>{nameLoc}</Text>
-        <Text>{currentNode.name}</Text>
+        <Text>{schemaNode?.name}</Text>
 
         <Text style={{ gridColumn: '1 / span 2' }}>{fullPathLoc}</Text>
-        <Text>{currentNode.path}</Text>
+        <Text>{schemaNode?.key}</Text>
 
         <Text style={{ gridColumn: '1 / span 2' }}>{dataTypeLoc}</Text>
         <Stack horizontal verticalAlign="center">
           <DataTypeIcon style={{ marginRight: '5px' }} />
-          <Text>{currentNode.dataType}</Text>
+          <Text>{schemaNode?.schemaNodeDataType}</Text>
         </Stack>
       </div>
-    );
-  };
 
-  const AdditionalTargetNodeProperties = () => {
-    return (
-      <div>
-        <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-          <Text style={{ gridColumn: '1 / span 2' }}>{inputLoc}</Text>
-          <Input placeholder="Temporary placeholder" />
+      {isTargetSchemaNode && (
+        <div>
+          <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
+            <Text style={{ gridColumn: '1 / span 2' }}>{inputLoc}</Text>
+            <Input placeholder="Temporary placeholder" />
+          </div>
+
+          <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px' }}>
+            <AccordionItem value="1">
+              <AccordionHeader>{advOptLoc}</AccordionHeader>
+              <AccordionPanel>
+                <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
+                  <Text style={{ gridColumn: '1 / span 2' }}>{defValLoc}</Text>
+                  <Input placeholder="Temporary placeholder" />
+                </div>
+
+                <Stack>
+                  <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
+                  <Checkbox label={nullableLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
+                </Stack>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
         </div>
-
-        <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px' }}>
-          <AccordionItem value="1">
-            <AccordionHeader>{advOptLoc}</AccordionHeader>
-            <AccordionPanel>
-              <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-                <Text style={{ gridColumn: '1 / span 2' }}>{defValLoc}</Text>
-                <Input placeholder="Temporary placeholder" />
-              </div>
-
-              <Stack>
-                <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
-                <Checkbox label={nullableLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
-              </Stack>
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
-      </div>
-    );
-  };
-
-  return (
-    <div>
-      <NodeInfo />
-
-      {currentNode.nodeType === NodeType.Target && <AdditionalTargetNodeProperties />}
+      )}
     </div>
   );
 };
