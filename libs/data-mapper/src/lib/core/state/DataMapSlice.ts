@@ -1,10 +1,11 @@
 import { NotificationTypes, type NotificationData } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperties, SchemaTypes } from '../../models';
-import type { ConnectionDictionary } from '../../models/Connection';
+import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
+import { isCustomValue } from '../../utils/DataMap.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -111,9 +112,13 @@ export const dataMapSlice = createSlice({
 
           Object.values(incomingConnections).forEach((connection) => {
             // TODO change to support functions
-            connection.sources.forEach((source) => {
-              if (isSchemaNodeExtended(source.node) && source.node.pathToRoot.length < 2) {
-                topLevelSourceNodes.push(currentState.flattenedSourceSchema[source.reactFlowKey]);
+            connection.inputs.forEach((input) => {
+              if (!input || isCustomValue(input)) {
+                return;
+              }
+
+              if (isSchemaNodeExtended(input.node) && input.node.pathToRoot.length < 2) {
+                topLevelSourceNodes.push(currentState.flattenedSourceSchema[input.reactFlowKey]);
               }
             });
           });
@@ -252,9 +257,10 @@ export const dataMapSlice = createSlice({
 
             const removedNodes = state.curDataMapOperation.currentSourceNodes.filter((node) => node.name !== sourceNode.name);
 
-            const srcNodeHasConnections = Object.values(state.curDataMapOperation.dataMapConnections).some((connection) =>
-              connection.sources.some((source) => source.node.key === sourceNode.key)
-            );
+            const srcNodeHasConnections = Object.values(state.curDataMapOperation.dataMapConnections).some((connection) => {
+              const nodeInputs = connection.inputs.filter((input) => !!input && !isCustomValue(input)) as ConnectionUnit[];
+              return nodeInputs.some((input) => input.node.key === sourceNode.key);
+            });
 
             if (srcNodeHasConnections) {
               state.notificationData = { type: NotificationTypes.SourceNodeRemoveFailed, msgParam: sourceNode.name };
@@ -272,12 +278,22 @@ export const dataMapSlice = createSlice({
 
             Object.values(state.curDataMapOperation.dataMapConnections).forEach((connection) => {
               // eslint-disable-next-line no-param-reassign
-              connection.sources = connection.sources.filter((source) => source.reactFlowKey !== selectedNode.id);
+              connection.inputs = connection.inputs.filter((input) => {
+                if (!input) {
+                  return true;
+                } else if (isCustomValue(input)) {
+                  return true;
+                } else if (input.reactFlowKey !== selectedNode.id) {
+                  return true;
+                }
+
+                return false;
+              });
             });
 
             // Only need to remove connections if we've actually persisted some for the function
             if (state.curDataMapOperation.dataMapConnections[selectedNode.id]) {
-              state.curDataMapOperation.dataMapConnections[selectedNode.id].sources = [];
+              state.curDataMapOperation.dataMapConnections[selectedNode.id].inputs = [];
             }
 
             doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
@@ -340,17 +356,27 @@ export const dataMapSlice = createSlice({
         (connection) => connection.destination.reactFlowKey === action.payload.connectionKey
       );
       if (oldDestination) {
-        oldDestination.sources = oldDestination.sources.filter((source) => source.reactFlowKey !== action.payload.inputKey);
+        oldDestination.inputs = oldDestination.inputs.filter((input) => {
+          if (!input) {
+            return true;
+          } else if (isCustomValue(input)) {
+            return true;
+          } else if (input.reactFlowKey !== action.payload.inputKey) {
+            return true;
+          }
+
+          return false;
+        });
       }
 
       // danielle what happens when connection changes from one array to another
       if (!newState.dataMapConnections[action.payload.reactFlowDestination]) {
         newState.dataMapConnections[action.payload.reactFlowDestination] = {
-          sources: [{ node: source, reactFlowKey: action.payload.reactFlowSource }],
+          inputs: [{ node: source, reactFlowKey: action.payload.reactFlowSource }],
           destination: { node: destination, reactFlowKey: action.payload.reactFlowDestination },
         };
       } else {
-        newState.dataMapConnections[action.payload.reactFlowDestination].sources.push({
+        newState.dataMapConnections[action.payload.reactFlowDestination].inputs.push({
           node: source,
           reactFlowKey: action.payload.reactFlowSource,
         });
@@ -369,7 +395,17 @@ export const dataMapSlice = createSlice({
         (connection) => connection.destination.reactFlowKey === action.payload.connectionKey
       );
       if (destination) {
-        destination.sources = destination.sources.filter((source) => source.reactFlowKey !== action.payload.inputKey);
+        destination.inputs = destination.inputs.filter((input) => {
+          if (!input) {
+            return true;
+          } else if (isCustomValue(input)) {
+            return true;
+          } else if (input.reactFlowKey !== action.payload.inputKey) {
+            return true;
+          }
+
+          return false;
+        });
       }
 
       doDataMapOperation(state, newState);
@@ -466,11 +502,11 @@ const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAc
   if (!newConnections[nodes.reactFlowDestination]) {
     // eslint-disable-next-line no-param-reassign
     newConnections[nodes.reactFlowDestination] = {
-      sources: [{ node: nodes.source, reactFlowKey: nodes.reactFlowSource }],
+      inputs: [{ node: nodes.source, reactFlowKey: nodes.reactFlowSource }],
       destination: { node: nodes.destination, reactFlowKey: nodes.reactFlowDestination },
     };
   } else {
-    newConnections[nodes.reactFlowDestination].sources.push({
+    newConnections[nodes.reactFlowDestination].inputs.push({
       node: nodes.source,
       reactFlowKey: nodes.reactFlowSource,
     });
@@ -497,7 +533,7 @@ const addParentConnectionForRepeatingNode = (
         if (!mapState.dataMapConnections[addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target)]) {
           // eslint-disable-next-line no-param-reassign
           mapState.dataMapConnections[addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target)] = {
-            sources: [{ node: sourceParent, reactFlowKey: addReactFlowPrefix(sourceParent.key, SchemaTypes.Source) }],
+            inputs: [{ node: sourceParent, reactFlowKey: addReactFlowPrefix(sourceParent.key, SchemaTypes.Source) }],
             destination: { node: targetParentNode, reactFlowKey: addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target) },
           };
           state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
