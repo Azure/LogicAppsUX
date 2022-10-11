@@ -1,6 +1,7 @@
 import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { NormalizedDataType, SchemaNodeDataType, type SchemaNodeExtended } from '../../models';
+import { NormalizedDataType, SchemaNodeDataType } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 import { SchemaTree } from '../tree/SchemaTree';
 import type { NodeToggledStateDictionary } from '../tree/SchemaTreeItem';
 import { ItemToggledState } from '../tree/SchemaTreeItem';

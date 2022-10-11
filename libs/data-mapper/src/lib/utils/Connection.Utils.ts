@@ -1,4 +1,5 @@
-import { NormalizedDataType, type SchemaNodeDataType } from '../models';
+import { NormalizedDataType } from '../models';
+import type { SchemaNodeDataType } from '../models';
 import type { Connection } from '../models/Connection';
 import type { FunctionInput } from '../models/Function';
 

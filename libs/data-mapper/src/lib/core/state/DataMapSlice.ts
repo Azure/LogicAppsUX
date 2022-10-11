@@ -1,4 +1,5 @@
-import { NotificationTypes, type NotificationData } from '../../components/notification/Notification';
+import { NotificationTypes } from '../../components/notification/Notification';
+import type { NotificationData } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { NormalizedDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { ConnectionDictionary, ConnectionInput, ConnectionUnit } from '../../models/Connection';
