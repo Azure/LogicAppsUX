@@ -92,7 +92,7 @@ const ParameterSection = ({
       settings: state.operations.settings[nodeId],
       upstreamNodeIds: state.tokens.outputTokens[nodeId]?.upstreamNodeIds,
       variables: state.tokens.variables,
-      operationDefinition: state.workflow.operations[nodeId],
+      operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
       connectionReference: getConnectionReference(state.connections, nodeId),
     };
   });

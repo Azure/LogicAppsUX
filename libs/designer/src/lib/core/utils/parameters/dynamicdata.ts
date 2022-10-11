@@ -139,7 +139,6 @@ export async function getDynamicSchema(
   variables: VariableDeclaration[] = []
 ): Promise<OpenAPIV2.SchemaObject | null> {
   const { parameter, definition } = dependencyInfo;
-  const { id: connectionId } = connectionReference.connection;
   const emptySchema = {
     [ExtensionProperties.Alias]: parameter?.alias,
     title: parameter?.title,
@@ -162,7 +161,7 @@ export async function getDynamicSchema(
           break;
         default:
           schema = await getDynamicSchemaProperties(
-            connectionId,
+            connectionReference.connection.id,
             operationInfo.connectorId,
             operationInfo.operationId,
             parameter?.alias,
@@ -186,6 +185,7 @@ export async function getDynamicSchema(
         /* encodePathComponents */ true,
         method
       );
+      const connectionId = connectionReference.connection.id;
       const connection = (await getConnection(connectionId, connectorId)) as Connection;
       const isManagedIdentityTypeConnection =
         isConnectionSingleAuthManagedIdentityType(connection) || isConnectionMultiAuthManagedIdentityType(connection, connector);
