@@ -65,8 +65,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       { enableScripts: true }
     );
     this._migrationOptions = await this._getMigrationOptions(this.baseUrl);
-    this.panelMetadata = await this.getDesignerPanelMetadata(this._migrationOptions);
-
+    this.panelMetadata = await this._getDesignerPanelMetadata(this._migrationOptions);
     const connectionsData = this.getInterpolateConnectionData(this.panelMetadata.connectionsData);
 
     const parameters = {};
@@ -233,7 +232,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     );
   }
 
-  private async getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<any> {
+  private async _getDesignerPanelMetadata(migrationOptions: Record<string, any> = {}): Promise<any> {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this._migrate(workflowContent, migrationOptions);
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
@@ -293,52 +292,5 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     }
 
     return references;
-  }
-
-  private addCurlyBraces(root: string) {
-    let interpolationString = root;
-    let stringLength = interpolationString.length;
-    let resolvedString = '';
-
-    for (let i = 0; i < stringLength; i++) {
-      const canHavekeyWord = i + 12 <= stringLength;
-
-      if (interpolationString[i] === '@' && canHavekeyWord && this.haveKeyWord(interpolationString.substring(i, i + 12))) {
-        resolvedString += interpolationString[i] + '{';
-        const closeTagIndex = interpolationString.indexOf(')', i);
-        interpolationString =
-          interpolationString.substring(0, closeTagIndex + 1) +
-          '}' +
-          interpolationString.substring(closeTagIndex + 1, interpolationString.length);
-        stringLength = interpolationString.length;
-      } else {
-        resolvedString += interpolationString[i];
-      }
-    }
-    return resolvedString;
-  }
-
-  private haveKeyWord(keyword: string): boolean {
-    return keyword === '@parameters(' || keyword === '@appsetting(';
-  }
-
-  private getInterpolateConnectionData(connectionsData: string) {
-    if (!connectionsData) {
-      return connectionsData;
-    }
-    const parseConnectionsData = JSON.parse(connectionsData);
-    const managedApiConnections = Object.keys(parseConnectionsData?.managedApiConnections ?? {});
-
-    managedApiConnections?.forEach((apiConnection: any) => {
-      const connectionValue = parseConnectionsData?.managedApiConnections[apiConnection] as any;
-      if (connectionValue.api && connectionValue.api.id) {
-        connectionValue.api.id = this.addCurlyBraces(connectionValue.api.id);
-      }
-      if (connectionValue.connection && connectionValue.connection.id) {
-        connectionValue.connection.id = this.addCurlyBraces(connectionValue.connection.id);
-      }
-    });
-
-    return JSON.stringify(parseConnectionsData);
   }
 }
