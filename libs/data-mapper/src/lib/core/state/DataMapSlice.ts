@@ -279,11 +279,7 @@ export const dataMapSlice = createSlice({
             Object.values(state.curDataMapOperation.dataMapConnections).forEach((connection) => {
               // eslint-disable-next-line no-param-reassign
               connection.inputs = connection.inputs.filter((input) => {
-                if (!input) {
-                  return true;
-                } else if (isCustomValue(input)) {
-                  return true;
-                } else if (input.reactFlowKey !== selectedNode.id) {
+                if (!input || isCustomValue(input) || input.reactFlowKey !== selectedNode.id) {
                   return true;
                 }
 
@@ -357,11 +353,7 @@ export const dataMapSlice = createSlice({
       );
       if (oldDestination) {
         oldDestination.inputs = oldDestination.inputs.filter((input) => {
-          if (!input) {
-            return true;
-          } else if (isCustomValue(input)) {
-            return true;
-          } else if (input.reactFlowKey !== action.payload.inputKey) {
+          if (!input || isCustomValue(input) || input.reactFlowKey !== action.payload.inputKey) {
             return true;
           }
 
@@ -396,11 +388,7 @@ export const dataMapSlice = createSlice({
       );
       if (destination) {
         destination.inputs = destination.inputs.filter((input) => {
-          if (!input) {
-            return true;
-          } else if (isCustomValue(input)) {
-            return true;
-          } else if (input.reactFlowKey !== action.payload.inputKey) {
+          if (!input || isCustomValue(input) || input.reactFlowKey !== action.payload.inputKey) {
             return true;
           }
 

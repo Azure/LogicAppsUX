@@ -147,10 +147,9 @@ const nodeHasSourceNodeEventually = (currentConnection: Connection, connections:
   }
 
   // Put 0 input, content enricher functions in the node bucket
-  const definedInputs = currentConnection.inputs.filter((input) => !!input);
-  const nonCustomValueInputs = definedInputs.filter((input) => !isCustomValue(input)) as ConnectionUnit[];
-  const functionInputs = nonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node.maxNumberOfInputs !== 0);
-  const nodeInputs = nonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node.maxNumberOfInputs === 0);
+  const definedNonCustomValueInputs = currentConnection.inputs.filter((input) => !!input && !isCustomValue(input)) as ConnectionUnit[];
+  const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node.maxNumberOfInputs !== 0);
+  const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node.maxNumberOfInputs === 0);
 
   // All the sources are input nodes
   if (nodeInputs.length === currentConnection.inputs.length) {
