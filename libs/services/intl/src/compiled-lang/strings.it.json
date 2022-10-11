@@ -593,7 +593,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "La sostituzione di uno schema esistente con uno schema incompatibile potrebbe causare errori nella mappa."
     }
   ],
   "3TD2V5": [
@@ -695,7 +695,7 @@
   "438H98": [
     {
       "type": 0,
-      "value": "Rimuovi modifiche"
+      "value": "Rimuovere le modifiche"
     }
   ],
   "45ubha": [
@@ -1755,7 +1755,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Aggiorna schema di destinazione"
     }
   ],
   "G/CC5/": [
@@ -2840,7 +2840,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "Viene creata automaticamente una linea tra gli elementi della matrice per indicare gli elementi di ciclo."
     }
   ],
   "RFjYpH": [
@@ -2919,7 +2919,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Annullare tutte le modifiche non salvate?"
     }
   ],
   "S8P4N5": [
@@ -3711,7 +3711,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Aggiungere o selezionare uno schema di origine da usare per la mappa."
     }
   ],
   "b9/1dK": [
@@ -3733,7 +3733,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Mapping matrice"
     }
   ],
   "bG9rjv": [
@@ -3881,7 +3881,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Aggiungere o sostituire gli schemi."
     }
   ],
   "cgq/+y": [
@@ -4057,7 +4057,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Aggiorna schema di origine"
     }
   ],
   "eGa1Wa": [
@@ -4554,7 +4554,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Aggiungere o selezionare uno schema di destinazione da usare per la mappa."
     }
   ],
   "jHHF/u": [

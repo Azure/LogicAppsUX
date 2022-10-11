@@ -598,7 +598,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "A meglévő sémák inkompatibilis sémával való lecserélése hibákat okozhat a leképezésben."
     }
   ],
   "3TD2V5": [
@@ -1770,7 +1770,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Célséma frissítése"
     }
   ],
   "G/CC5/": [
@@ -2904,7 +2904,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "A rendszer automatikusan létrehoz egy vonalat a tömbelemek között, hogy a hurkolt elemeket jelezze."
     }
   ],
   "RFjYpH": [
@@ -2972,7 +2972,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Biztosan elveti az összes nem mentett módosítást?"
     }
   ],
   "S8P4N5": [
@@ -3780,7 +3780,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt forrássémát."
     }
   ],
   "b9/1dK": [
@@ -3802,7 +3802,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Tömbleképezés"
     }
   ],
   "bG9rjv": [
@@ -3954,7 +3954,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Sémák hozzáadása vagy cseréje."
     }
   ],
   "cgq/+y": [
@@ -4130,7 +4130,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Forrásséma frissítése"
     }
   ],
   "eGa1Wa": [
@@ -4640,7 +4640,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt célsémát."
     }
   ],
   "jHHF/u": [

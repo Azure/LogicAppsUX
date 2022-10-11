@@ -582,7 +582,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Mevcut şemanın uyumlu olamayan bir şemayla değiştirilmesi eşlemenizde hatalar oluşturabilir."
     }
   ],
   "3TD2V5": [
@@ -1718,7 +1718,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Hedef şemayı güncelleştir"
     }
   ],
   "G/CC5/": [
@@ -2784,7 +2784,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "Döngü öğelerini göstermek için dizi öğeleri arasında otomatik olarak bir satır oluşturulur."
     }
   ],
   "RFjYpH": [
@@ -2852,7 +2852,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Kaydedilmeyen tüm değişiklikleri atmak istiyor musunuz?"
     }
   ],
   "S8P4N5": [
@@ -3644,7 +3644,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Eşlemeniz için kullanmak üzere bir kaynak şema ekleyin veya seçin."
     }
   ],
   "b9/1dK": [
@@ -3666,7 +3666,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Dizi Eşlemesi"
     }
   ],
   "bG9rjv": [
@@ -3814,7 +3814,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Şemalarınızı ekleyin veya değiştirin."
     }
   ],
   "cgq/+y": [
@@ -3986,7 +3986,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Kaynak şemayı güncelleştir"
     }
   ],
   "eGa1Wa": [
@@ -4082,7 +4082,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "Kaynak şeması"
+      "value": "Kaynak şema"
     }
   ],
   "faSDuD": [
@@ -4468,7 +4468,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Eşlemeniz için kullanmak üzere bir hedef şema ekleyin veya seçin."
     }
   ],
   "jHHF/u": [

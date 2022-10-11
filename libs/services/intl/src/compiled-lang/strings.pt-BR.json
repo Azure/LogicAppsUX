@@ -593,7 +593,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Substituir um esquema existente por um esquema incompatível pode criar erros em seu mapa."
     }
   ],
   "3TD2V5": [
@@ -1751,7 +1751,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Atualizar esquema de destino"
     }
   ],
   "G/CC5/": [
@@ -2828,7 +2828,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "Uma linha entre os elementos da matriz é criada automaticamente para indicar os elementos de loop."
     }
   ],
   "RFjYpH": [
@@ -2907,7 +2907,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Deseja descartar todas as alterações não salvas?"
     }
   ],
   "S8P4N5": [
@@ -3699,7 +3699,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Adicione ou selecione um esquema de origem para usar em seu mapa."
     }
   ],
   "b9/1dK": [
@@ -3721,7 +3721,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Mapeamento de Matriz"
     }
   ],
   "bG9rjv": [
@@ -3869,7 +3869,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Adicione ou substitua seus esquemas."
     }
   ],
   "cgq/+y": [
@@ -4045,7 +4045,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Atualizar esquema de origem"
     }
   ],
   "eGa1Wa": [
@@ -4542,7 +4542,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Adicione ou selecione um esquema de destino para usar em seu mapa."
     }
   ],
   "jHHF/u": [

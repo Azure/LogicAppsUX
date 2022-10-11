@@ -598,7 +598,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Als u een bestaand schema vervangt door een incompatibel schema, kunnen er fouten in uw kaart worden veroorzaakt."
     }
   ],
   "3TD2V5": [
@@ -1770,7 +1770,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Doelschema bijwerken"
     }
   ],
   "G/CC5/": [
@@ -2896,7 +2896,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "Er wordt automatisch een lijn tussen matrixelementen gemaakt om luselementen aan te geven."
     }
   ],
   "RFjYpH": [
@@ -2964,7 +2964,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Wilt u alle niet-opgeslagen wijzigingen negeren?"
     }
   ],
   "S8P4N5": [
@@ -3764,7 +3764,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Voeg een bronschema toe of selecteer dit om te gebruiken voor uw kaart."
     }
   ],
   "b9/1dK": [
@@ -3786,7 +3786,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Matrixtoewijzing"
     }
   ],
   "bG9rjv": [
@@ -3934,7 +3934,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Uw schema's toevoegen of vervangen."
     }
   ],
   "cgq/+y": [
@@ -4110,7 +4110,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Bronschema bijwerken"
     }
   ],
   "eGa1Wa": [
@@ -4620,7 +4620,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Voeg een doelschema toe of selecteer dit om te gebruiken voor uw kaart."
     }
   ],
   "jHHF/u": [

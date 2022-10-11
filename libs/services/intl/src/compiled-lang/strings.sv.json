@@ -598,7 +598,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Om du ersätter ett befintligt schema med ett inkompatibelt schema kan det skapa fel i kartan."
     }
   ],
   "3TD2V5": [
@@ -1770,7 +1770,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Uppdatera målschema"
     }
   ],
   "G/CC5/": [
@@ -1922,7 +1922,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " Installera gateway"
     }
   ],
   "HzS2gJ": [
@@ -2896,7 +2896,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "En linje mellan matriselement skapas automatiskt för att visa loopelement."
     }
   ],
   "RFjYpH": [
@@ -2964,7 +2964,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Vill du ta bort alla ändringar som inte har sparats?"
     }
   ],
   "S8P4N5": [
@@ -3768,7 +3768,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Lägg till eller välj ett källschema som ska användas för kartan."
     }
   ],
   "b9/1dK": [
@@ -3790,7 +3790,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Matrismappning"
     }
   ],
   "bG9rjv": [
@@ -3938,7 +3938,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Lägg till eller ersätt dina scheman."
     }
   ],
   "cgq/+y": [
@@ -4114,7 +4114,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Uppdatera källschema"
     }
   ],
   "eGa1Wa": [
@@ -4620,7 +4620,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Ladda upp eller välj ett målschema som ska användas för kartan."
     }
   ],
   "jHHF/u": [

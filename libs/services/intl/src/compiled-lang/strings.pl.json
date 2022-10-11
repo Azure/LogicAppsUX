@@ -534,7 +534,7 @@
   "2ZfzaY": [
     {
       "type": 0,
-      "value": "Wybierz istniejące"
+      "value": "Wybierz istniejący"
     }
   ],
   "2b1yD3": [
@@ -636,7 +636,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Zastąpienie istniejącego schematu przy użyciu niezgodnego schematu może spowodować wystąpienie błędów na mapie."
     }
   ],
   "3TD2V5": [
@@ -1852,7 +1852,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Aktualizuj schemat docelowy"
     }
   ],
   "G/CC5/": [
@@ -3004,7 +3004,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "Linia między elementami tablicy jest automatycznie tworzona w celu wskazania elementów zapętlenia."
     }
   ],
   "RFjYpH": [
@@ -3094,7 +3094,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Czy na pewno chcesz odrzucić wszystkie niezapisane zmiany?"
     }
   ],
   "S8P4N5": [
@@ -3902,7 +3902,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Dodaj lub wybierz schemat źródłowy, który ma być używany dla mapy."
     }
   ],
   "b9/1dK": [
@@ -3924,7 +3924,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Mapowanie tablicy"
     }
   ],
   "bG9rjv": [
@@ -4072,7 +4072,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Dodaj lub zamień schematy."
     }
   ],
   "cgq/+y": [
@@ -4248,7 +4248,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Aktualizuj schemat źródłowy"
     }
   ],
   "eGa1Wa": [
@@ -4780,7 +4780,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Dodaj lub wybierz schemat docelowy, który ma być używany dla mapy."
     }
   ],
   "jHHF/u": [
@@ -5672,7 +5672,7 @@
   "rv0Pn+": [
     {
       "type": 0,
-      "value": "Dodaj nowe"
+      "value": "Dodaj nowy"
     }
   ],
   "s5RV9B": [
