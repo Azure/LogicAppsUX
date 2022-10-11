@@ -318,7 +318,7 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
 };
 
 export const getEdgeForSource = (connection: Connection, source: string) => {
-  return connection.inputs.find((conn) => conn && typeof conn !== 'string' && conn.reactFlowKey === source);
+  return connection.inputs.find((conn) => !!conn && !isCustomValue(conn) && conn.reactFlowKey === source);
 };
 
 export const isCustomValue = (connectionInput: ConnectionInput): connectionInput is string => typeof connectionInput === 'string';
