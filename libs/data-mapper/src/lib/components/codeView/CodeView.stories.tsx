@@ -1,4 +1,5 @@
-import { CodeView, type CodeViewProps } from './CodeView';
+import { CodeView } from './CodeView';
+import type { CodeViewProps } from './CodeView';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
