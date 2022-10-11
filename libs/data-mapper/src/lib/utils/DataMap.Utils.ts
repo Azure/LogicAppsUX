@@ -6,21 +6,21 @@ import {
   reservedMapDefinitionKeysArray,
 } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import { InvalidFormatException, InvalidFormatExceptionCode } from '../exceptions/MapDefinitionExceptions';
-import type { Connection, ConnectionDictionary, LoopConnection } from '../models/Connection';
+import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { SchemaTypes } from '../models/Schema';
-import { isFunctionData } from './Function.Utils';
-import { addReactFlowPrefix } from './ReactFlow.Util';
+import { SchemaNodeProperties, SchemaTypes } from '../models/Schema';
+import { findFunctionForFunctionName, findFunctionForKey, isFunctionData } from './Function.Utils';
+import { addReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
+import { isAGuid } from '@microsoft-logic-apps/utils';
 import yaml from 'js-yaml';
 
 export const convertToMapDefinition = (
   connections: ConnectionDictionary,
-  sourceSchema?: SchemaExtended,
-  targetSchema?: SchemaExtended
+  sourceSchema: SchemaExtended | undefined,
+  targetSchema: SchemaExtended | undefined
 ): string => {
   if (sourceSchema && targetSchema && isValidToMakeMapDefinition(connections)) {
     const mapDefinition: MapDefinitionEntry = {};
@@ -56,32 +56,45 @@ const generateMapDefinitionHeader = (
 
 const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
   Object.values(connections).forEach((connection) => {
+    const destinationNode = connection.destination.node;
     connection.sources.forEach((source) => {
       // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
-      if (isSchemaNodeExtended(connection.destination.node)) {
+      if (isSchemaNodeExtended(destinationNode)) {
         if (isSchemaNodeExtended(source.node)) {
-          applyValueAtPath(source.node.fullName, mapDefinition, connection.destination.node.pathToRoot);
+          applyValueAtPath(source.node.fullName, mapDefinition, destinationNode, destinationNode.pathToRoot);
         } else {
           const value = collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
-          applyValueAtPath(value, mapDefinition, connection.destination.node.pathToRoot);
+          applyValueAtPath(value, mapDefinition, destinationNode, destinationNode.pathToRoot);
         }
       }
     });
   });
 };
 
-const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, path: PathItem[]) => {
+const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, destinationNode: SchemaNodeExtended, path: PathItem[]) => {
   const pathLocation = path[0].fullName;
+  const formattedPathLocation = pathLocation.startsWith('@') ? `$${pathLocation}` : pathLocation;
+
   if (path.length > 1) {
-    if (!mapDefinition[pathLocation]) {
-      mapDefinition[pathLocation] = {};
+    if (!mapDefinition[formattedPathLocation]) {
+      mapDefinition[formattedPathLocation] = {};
     }
 
-    if (typeof mapDefinition[pathLocation] !== 'string') {
-      applyValueAtPath(value, mapDefinition[pathLocation] as MapDefinitionEntry, path.slice(1));
+    if (typeof mapDefinition[formattedPathLocation] !== 'string') {
+      applyValueAtPath(value, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1));
     }
   } else {
-    mapDefinition[pathLocation] = value.startsWith('@') ? `$${value}` : value;
+    if (destinationNode.properties === SchemaNodeProperties.ComplexTypeSimpleContent) {
+      if (!mapDefinition[formattedPathLocation]) {
+        mapDefinition[formattedPathLocation] = {
+          [mapNodeParams.value]: value,
+        };
+      } else {
+        (mapDefinition[formattedPathLocation] as MapDefinitionEntry)[mapNodeParams.value] = value;
+      }
+    } else {
+      mapDefinition[formattedPathLocation] = value;
+    }
   }
 };
 
@@ -148,7 +161,8 @@ const nodeHasSourceNodeEventually = (currentConnection: Connection, connections:
 export const convertFromMapDefinition = (
   mapDefinition: MapDefinitionEntry,
   sourceSchema: SchemaExtended,
-  targetSchema: SchemaExtended
+  targetSchema: SchemaExtended,
+  functions: FunctionData[]
 ): ConnectionDictionary => {
   const connections: ConnectionDictionary = {};
   const parsedYamlKeys: string[] = Object.keys(mapDefinition);
@@ -156,121 +170,141 @@ export const convertFromMapDefinition = (
   const rootNodeKey = parsedYamlKeys.filter((key) => reservedMapDefinitionKeysArray.indexOf(key) < 0)[0];
 
   if (rootNodeKey) {
-    parseDefinitionToConnection(rootNodeKey, mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, sourceSchema, targetSchema);
+    parseDefinitionToConnection(mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, {}, sourceSchema, targetSchema, functions);
   }
 
   return connections;
 };
 
 const parseDefinitionToConnection = (
-  sourceNodeKey: string,
   sourceNodeObject: string | object | any,
   targetKey: string,
   connections: ConnectionDictionary,
+  createdNodes: { [completeFunction: string]: string },
   sourceSchema: SchemaExtended,
-  targetSchema: SchemaExtended
+  targetSchema: SchemaExtended,
+  functions: FunctionData[]
 ) => {
-  // Basic leaf node
   if (typeof sourceNodeObject === 'string') {
-    const destinationNode = findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
-    const sourceNode = findNodeForKey(sourceNodeObject, sourceSchema.schemaTreeRoot);
+    const sourceEndOfFunction = sourceNodeObject.indexOf('(');
+    const sourceNode =
+      sourceEndOfFunction > -1
+        ? findFunctionForFunctionName(sourceNodeObject.substring(0, sourceEndOfFunction), functions)
+        : findNodeForKey(sourceNodeObject, sourceSchema.schemaTreeRoot);
+    const sourceKey =
+      sourceNode && isFunctionData(sourceNode)
+        ? createdNodes[sourceNodeObject]
+          ? createdNodes[sourceNodeObject]
+          : createReactFlowFunctionKey(sourceNode)
+        : `${sourcePrefix}${sourceNodeObject}`;
+    createdNodes[sourceNodeObject] = sourceKey;
+
+    const destinationFunctionKey = targetKey.slice(0, targetKey.indexOf('-'));
+    const destinationFunctionGuid = targetKey.slice(targetKey.indexOf('-') + 1);
+    const destinationNode = isAGuid(destinationFunctionGuid)
+      ? findFunctionForKey(destinationFunctionKey, functions)
+      : findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
+    const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${targetKey}`;
 
     if (sourceNode && destinationNode) {
-      if (!connections[targetKey]) {
-        connections[targetKey] = {
-          destination: { node: destinationNode, reactFlowKey: `${targetPrefix}${targetKey}` },
-          sources: [{ node: sourceNode, reactFlowKey: `${sourcePrefix}${sourceNodeObject}` }],
-          loop: undefined,
-          condition: undefined,
-        };
-      } else {
-        connections[targetKey].sources.push({ node: sourceNode, reactFlowKey: `${sourcePrefix}${sourceNodeObject}` });
-      }
+      addNodeToConnections(connections, sourceNode, sourceKey, destinationNode, destinationKey);
+    }
+
+    // Need to extract and create connections for nested functions
+    if (sourceEndOfFunction > -1) {
+      const childFunctions = splitKeyIntoChildren(sourceNodeObject);
+
+      childFunctions.forEach((childFunction) => {
+        parseDefinitionToConnection(childFunction, sourceKey, connections, createdNodes, sourceSchema, targetSchema, functions);
+      });
     }
 
     return;
   }
-
-  const startsWithFor = sourceNodeKey.startsWith(mapNodeParams.for);
-  const startsWithIf = sourceNodeKey.startsWith(mapNodeParams.if);
-
-  if (startsWithFor || startsWithIf) {
-    const childrenKeys = Object.keys(sourceNodeObject);
-    if (childrenKeys.length !== 1) {
-      throw new InvalidFormatException(
-        InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM,
-        InvalidFormatExceptionCode.MISSING_MAPPINGS_PARAM
-      );
-    }
-
-    const newTargetKey = `${targetKey}/${childrenKeys[0]}`;
-    parseDefinitionToConnection(
-      `${childrenKeys[0]}`,
-      sourceNodeObject[childrenKeys[0]],
-      newTargetKey,
-      connections,
-      sourceSchema,
-      targetSchema
-    );
-
-    // TODO (#15388621) revisit this once we've got loops and conditionals enabled in the designer to double check all the logic
-    if (connections[newTargetKey]) {
-      connections[newTargetKey].loop = startsWithFor ? parseLoopMapping(sourceNodeKey) : undefined;
-      connections[newTargetKey].condition = startsWithIf ? parseConditionalMapping(sourceNodeKey) : undefined;
-    }
-
-    return;
-  }
-
-  const targetValue = sourceNodeObject?.[mapNodeParams.value];
 
   for (const childKey in sourceNodeObject) {
     if (childKey !== mapNodeParams.value) {
       parseDefinitionToConnection(
-        childKey,
         sourceNodeObject[childKey],
         `${targetKey}/${childKey}`,
         connections,
+        createdNodes,
         sourceSchema,
-        targetSchema
+        targetSchema,
+        functions
       );
     }
   }
+};
 
-  // TODO (#15388621) revisit this once we've got loops and conditionals enabled in the designer to double check all the logic
-  if (targetValue) {
-    const destinationNode = findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
-    const sourceNode = findNodeForKey(sourceNodeKey, sourceSchema.schemaTreeRoot);
-
-    if (sourceNode && destinationNode) {
-      if (!connections[targetKey]) {
-        connections[targetKey] = {
-          destination: { node: destinationNode, reactFlowKey: `${targetPrefix}${targetKey}` },
-          sources: [{ node: sourceNode, reactFlowKey: `${sourcePrefix}${targetValue}` }],
-          loop: undefined,
-          condition: undefined,
-        };
-      } else {
-        connections[targetKey].sources.push({ node: sourceNode, reactFlowKey: `${sourcePrefix}${targetValue}` });
-      }
+const addNodeToConnections = (
+  connections: ConnectionDictionary,
+  sourceNode: SchemaNodeExtended | FunctionData,
+  sourceReactFlowKey: string,
+  destinationNode: SchemaNodeExtended | FunctionData,
+  destinationReactFlowKey: string
+) => {
+  if (sourceNode && destinationNode) {
+    if (!connections[destinationReactFlowKey]) {
+      connections[destinationReactFlowKey] = {
+        destination: { node: destinationNode, reactFlowKey: destinationReactFlowKey },
+        sources: [{ node: sourceNode, reactFlowKey: sourceReactFlowKey }],
+      };
+    } else {
+      connections[destinationReactFlowKey].sources.push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
     }
   }
 };
 
 // Exported for testing purposes only
-export const parseLoopMapping = (line: string): LoopConnection => {
-  const formattedLine = line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
-  const functionSplitOnComma = formattedLine.split(',');
+export const splitKeyIntoChildren = (sourceKey: string): string[] => {
+  const functionParams = sourceKey.substring(sourceKey.indexOf('(') + 1, sourceKey.lastIndexOf(')'));
 
-  return {
-    loopSource: functionSplitOnComma[0].trim(),
-    loopIndex: functionSplitOnComma[1]?.trim(),
-  };
-};
+  let openParenthesis = 0;
+  let isCustom = false;
+  let currentWord = '';
+  const results: string[] = [];
+  for (let index = 0; index < functionParams.length; index++) {
+    const element = functionParams[index];
+    if (!isCustom) {
+      if (element === '(') {
+        openParenthesis++;
+        currentWord += element;
+      } else if (element === ')') {
+        openParenthesis--;
+        currentWord += element;
+      } else if (element === ',' && openParenthesis === 0) {
+        results.push(currentWord.trim());
+        currentWord = '';
+      } else if (element === '"') {
+        isCustom = true;
+        currentWord += element;
+      } else {
+        currentWord += element;
+      }
+    } else {
+      if (element === '"') {
+        currentWord += element;
+        if (functionParams[index + 1] && functionParams[index + 1] === ',') {
+          results.push(currentWord.trim());
+          currentWord = '';
 
-// Exported for testing purposes only
-export const parseConditionalMapping = (line: string): string => {
-  return line.substring(line.indexOf('(') + 1, line.lastIndexOf(')')).trim();
+          // Skip the next comma
+          index++;
+        }
+
+        isCustom = false;
+      } else {
+        currentWord += element;
+      }
+    }
+  }
+
+  if (currentWord) {
+    results.push(currentWord.trim());
+  }
+
+  return results;
 };
 
 export const getEdgeForSource = (connection: Connection, source: string) => {

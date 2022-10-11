@@ -36,4 +36,10 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
   }
 };
 
+export const findFunctionForFunctionName = (nodeKey: string, functions: FunctionData[]): FunctionData | undefined =>
+  functions.find((functionData) => functionData.functionName === nodeKey);
+
+export const findFunctionForKey = (nodeKey: string, functions: FunctionData[]): FunctionData | undefined =>
+  functions.find((functionData) => functionData.key === nodeKey);
+
 export const isFunctionData = (node: SchemaNodeExtended | FunctionData): node is FunctionData => 'functionName' in node;

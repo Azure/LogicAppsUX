@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -165,6 +159,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Baku"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Salvar"
     }
   ],
   "0FzNJV": [
@@ -416,12 +416,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Carregue ou selecione um esquema de destino a ser usado para seu mapa."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -492,6 +486,12 @@
     {
       "type": 0,
       "value": "Identidade gerenciada"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Selecionar existente"
     }
   ],
   "2b1yD3": [
@@ -590,6 +590,12 @@
       "value": "(UTC+02:00) Chisinau"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -684,6 +690,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Ierevan"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Descartar alterações"
     }
   ],
   "45ubha": [
@@ -806,12 +818,6 @@
       "value": "Retornará true se um objeto, uma matriz ou uma cadeia de caracteres estiver vazia"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Adicionar Esquema de Origem"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -858,6 +864,12 @@
     {
       "type": 0,
       "value": "Mapeamento de teste"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "6XR3FS": [
@@ -1142,6 +1154,12 @@
       "value": "Cancelar"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1248,12 +1266,6 @@
     {
       "type": 0,
       "value": "Necessário. A cadeia de caracteres a ser codificada em representação base64."
-    }
-  ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "O esquema de destino será substituído e você não poderá voltar às alterações anteriores. Deseja prosseguir para alterar o esquema de destino?"
     }
   ],
   "B/JzwK": [
@@ -1403,12 +1415,6 @@
       "value": "Conexão exigida"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Substituir o esquema existente"
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1418,7 +1424,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Nó de origem removido da exibição."
     }
   ],
   "CsPY74": [
@@ -1532,7 +1538,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "Falha ao salvar."
     }
   ],
   "EYqGxA": [
@@ -1742,6 +1748,12 @@
       "value": "Status"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Update target schema"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1772,12 +1784,6 @@
       "value": "Necessário. O objeto a ser localizado na coleção Within."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Esquema de Origem"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1788,12 +1794,6 @@
     {
       "type": 0,
       "value": "Retornará true se os parâmetros forem false"
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Carregue ou selecione um esquema de origem a ser usado para seu mapa."
     }
   ],
   "Gi72X5": [
@@ -1838,6 +1838,12 @@
       "value": "Obrigatório. A cadeia de caracteres que será fatiada."
     }
   ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "O esquema de destino será substituído e você não poderá voltar às alterações anteriores. Deseja prosseguir para alterar o esquema de destino?"
+    }
+  ],
   "H8bEUn": [
     {
       "type": 0,
@@ -1874,6 +1880,16 @@
       "value": "Selecione um cartão para ver o conteúdo"
     }
   ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Instalar Gateway"
+    }
+  ],
   "HzS2gJ": [
     {
       "type": 0,
@@ -1908,6 +1924,12 @@
     {
       "type": 0,
       "value": "Converte uma cadeia de caracteres que o carimbo de data/hora passou de um UTC para um fuso horário de destino"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Configurar"
     }
   ],
   "IgNz8Y": [
@@ -2155,12 +2177,6 @@
       "value": "Excluir Graph do Fluxo de Trabalho"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Aviso"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2348,7 +2364,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "Inserir função"
     }
   ],
   "N0pS6Y": [
@@ -2414,15 +2430,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " ' before you remove the node."
+      "value": "Remova todas as referências ao nó {nodeName} antes de remover o nó."
     }
   ],
   "NvANon": [
@@ -2531,12 +2539,6 @@
     {
       "type": 0,
       "value": "Retorna os resultados das ações de nível superior na ação com escopo especificada, como uma ação For_each, Until ou Scope."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "Todo o trabalho não salvo desaparecerá. Deseja prosseguir para descartar tudo?"
     }
   ],
   "Oib1mL": [
@@ -2823,6 +2825,12 @@
       "value": "Os gatilhos não podem ser excluídos."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "A line between array elements is automatically created to indicate looping elements."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2894,6 +2902,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "S8P4N5": [
@@ -3472,6 +3486,12 @@
       "value": "Necessário. O nome da ação cujas saídas do corpo você deseja."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "O esquema de origem será substituído e você não poderá voltar às alterações anteriores. Deseja prosseguir para alterar o esquema de origem?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3554,12 +3574,6 @@
       "value": "Reduzir"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Configuração"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3618,12 +3632,6 @@
     {
       "type": 0,
       "value": "Valor 'in' não suportado: {value} no parâmetro"
-    }
-  ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Descartar"
     }
   ],
   "a7j3gS": [
@@ -3688,10 +3696,10 @@
       "value": "Inserir Pfx"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Adicionar"
+      "value": "Add or select a source schema to use for your map."
     }
   ],
   "b9/1dK": [
@@ -3710,10 +3718,22 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Array Mapping"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
       "value": "Ações"
+    }
+  ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Assinatura"
     }
   ],
   "bS5DyV": [
@@ -3846,6 +3866,12 @@
       "value": "(UTC +02:00) Trípoli"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3888,6 +3914,12 @@
       "value": "Necessário. A coleção da qual ignorar os primeiros objetos de Contagem."
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Aviso"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -3903,7 +3935,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "Conexão excluída."
     }
   ],
   "dDYCuU": [
@@ -4010,6 +4042,12 @@
       "value": "Não especificado"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4020,12 +4058,6 @@
     {
       "type": 0,
       "value": "Obrigatório. O nome da variável cujo valor você deseja."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Esquema de Destino"
     }
   ],
   "eRvGw3": [
@@ -4104,6 +4136,12 @@
     {
       "type": 0,
       "value": "A contagem de paginação excede o valor máximo"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Esquema de origem"
     }
   ],
   "faSDuD": [
@@ -4345,12 +4383,6 @@
       "value": "Audiência"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "O esquema de origem será substituído e você não poderá voltar às alterações anteriores. Deseja prosseguir para alterar o esquema de origem?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4507,6 +4539,12 @@
       "value": "Retorna o valor da variável especificada."
     }
   ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Add or select a target schema to use for your map."
+    }
+  ],
   "jHHF/u": [
     {
       "type": 0,
@@ -4571,6 +4609,12 @@
     {
       "type": 0,
       "value": "Duração"
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
     }
   ],
   "k/oqFL": [
@@ -4786,7 +4830,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "Função excluída."
     }
   ],
   "mGUdCO": [
@@ -5046,7 +5090,7 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Erro ao executar a API {parameters}."
     }
   ],
   "pC2nr2": [
@@ -5342,6 +5386,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Hora Central (EUA e Canadá)"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Adicionar novo"
     }
   ],
   "s5RV9B": [
@@ -5982,12 +6032,6 @@
       "value": "Funções de data e hora"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Adicionar Esquema de Destino"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -6034,6 +6078,12 @@
     {
       "type": 0,
       "value": "Inserir valor"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Esquema de destino"
     }
   ],
   "zIDVd9": [

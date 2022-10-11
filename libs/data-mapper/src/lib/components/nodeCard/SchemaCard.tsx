@@ -3,7 +3,7 @@ import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaTypes, SchemaNodeProperties } from '../../models';
+import { SchemaNodeDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { hasEdgeFromSource } from '../../utils/DataMap.Utils';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
@@ -95,7 +95,7 @@ const useStyles = makeStyles({
     width: '48px',
     borderStartStartRadius: tokens.borderRadiusMedium,
     borderEndStartRadius: tokens.borderRadiusMedium,
-    color: tokens.colorBrandForeground1,
+    color: tokens.colorBrandForeground2,
     fontSize: '24px',
     lineHeight: '48px',
     textAlign: 'center',
@@ -169,6 +169,7 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
   const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron } = props.data;
   const dispatch = useDispatch<AppDispatch>();
+
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
@@ -184,6 +185,8 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
       return hasEdge;
     }
   });
+
+  const showHandle = displayHandle && (schemaType === SchemaTypes.Source || schemaNode.schemaNodeDataType !== SchemaNodeDataType.None);
 
   const isOutputChildNode = schemaType === SchemaTypes.Target && isChild;
 
@@ -233,7 +236,7 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
         </div>
       )}
       <div className={containerStyle} onMouseLeave={() => onMouseLeave()} onMouseEnter={() => onMouseEnter()}>
-        {displayHandle ? (
+        {showHandle ? (
           <Handle
             type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
             position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}

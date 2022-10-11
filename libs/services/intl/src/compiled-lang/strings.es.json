@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "Aceptar"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -181,6 +175,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Bakú"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Guardar"
     }
   ],
   "0FzNJV": [
@@ -432,12 +432,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Cargue o seleccione un esquema de destino que se usará para la asignación."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -508,6 +502,12 @@
     {
       "type": 0,
       "value": "Identidad administrada"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Seleccionar existente"
     }
   ],
   "2b1yD3": [
@@ -606,6 +606,12 @@
       "value": "(UTC+02:00) Chisinau"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Reemplazar un esquema existente por un esquema incompatible podría crear errores en la asignación."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -700,6 +706,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Ereván"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Descartar cambios"
     }
   ],
   "45ubha": [
@@ -822,12 +834,6 @@
       "value": "Devuelve true si un objeto, una matriz o una cadena están vacíos."
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Agregar esquema de origen"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -874,6 +880,12 @@
     {
       "type": 0,
       "value": "Comprobar asignación"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "6XR3FS": [
@@ -1178,6 +1190,12 @@
       "value": "Cancelar"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Cerrar"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1300,12 +1318,6 @@
     {
       "type": 0,
       "value": "Obligatorio. La cadena que se codificará como representación en Base64."
-    }
-  ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "El esquema de destino se reemplazará y no podrá volver a los cambios anteriores. ¿Desea continuar para cambiar el esquema de destino?"
     }
   ],
   "B/JzwK": [
@@ -1455,12 +1467,6 @@
       "value": "Conexión obligatoria"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Reemplazar esquema existente"
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1470,7 +1476,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Nodo de origen quitado de la vista."
     }
   ],
   "CsPY74": [
@@ -1584,7 +1590,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "No se pudo guardar."
     }
   ],
   "EYqGxA": [
@@ -1794,6 +1800,12 @@
       "value": "Estado"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Actualizar esquema de destino"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1824,12 +1836,6 @@
       "value": "Obligatorio. El objeto que se buscará dentro de la colección."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Esquema de origen"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1840,12 +1846,6 @@
     {
       "type": 0,
       "value": "Devuelve true si los parámetros son falsos."
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Cargue o seleccione un esquema de origen que se usará para la asignación."
     }
   ],
   "Gi72X5": [
@@ -1888,6 +1888,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Cadena que se va a segmentar."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "El esquema de destino se reemplazará y no podrá volver a los cambios anteriores. ¿Desea continuar para cambiar el esquema de destino?"
     }
   ],
   "H8bEUn": [
@@ -1934,6 +1940,16 @@
       "value": "Seleccione una tarjeta para ver el contenido."
     }
   ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Instalar puerta de enlace"
+    }
+  ],
   "HzS2gJ": [
     {
       "type": 0,
@@ -1968,6 +1984,12 @@
     {
       "type": 0,
       "value": "Convierte una marca de tiempo de una cadena pasada de una hora UTC a una zona horaria de destino."
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Configurar"
     }
   ],
   "IgNz8Y": [
@@ -2215,12 +2237,6 @@
       "value": "Eliminar gráfico de flujo de trabajo"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Advertencia"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2424,7 +2440,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "Insertar función"
     }
   ],
   "N0pS6Y": [
@@ -2490,15 +2506,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " ' before you remove the node."
+      "value": "Quite todas las referencias al nodo {nodeName} antes de quitar el nodo."
     }
   ],
   "NvANon": [
@@ -2623,12 +2631,6 @@
     {
       "type": 0,
       "value": "Devuelve los resultados de las acciones de nivel superior en la acción con ámbito especificada, como una acción For_each, Until o Scope."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "Todo el trabajo no guardado desaparecerá. ¿Desea continuar para descartarlo todo?"
     }
   ],
   "Oib1mL": [
@@ -2915,6 +2917,12 @@
       "value": "No se pueden eliminar los desencadenadores."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "Se crea automáticamente una línea entre los elementos de matriz para indicar elementos de bucle."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2986,6 +2994,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "¿Quiere descartar todos los cambios no guardados?"
     }
   ],
   "S8P4N5": [
@@ -3564,6 +3578,12 @@
       "value": "Necesario. Nombre de la acción cuyo cuerpo contiene las salidas que desea."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "El esquema de origen se reemplazará y no podrá volver a los cambios anteriores. ¿Desea continuar para cambiar el esquema de origen?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3646,12 +3666,6 @@
       "value": "Alejar"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Configuración"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3720,12 +3734,6 @@
       "value": "\" en el parámetro"
     }
   ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Descartar"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -3788,10 +3796,10 @@
       "value": "Especificar el archivo PFX"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Agregar"
+      "value": "Agregue o seleccione un esquema de origen para usarlo en la asignación."
     }
   ],
   "b9/1dK": [
@@ -3810,10 +3818,22 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Asignación de matriz"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
       "value": "Acciones"
+    }
+  ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Suscripción"
     }
   ],
   "bS5DyV": [
@@ -3946,6 +3966,12 @@
       "value": "(UTC+02:00) Trípoli"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Agregue o reemplace los esquemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3988,6 +4014,12 @@
       "value": "Obligatorio. La colección desde la cual se omiten los primeros objetos de recuento."
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Advertencia"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -4003,7 +4035,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "Conexión eliminada."
     }
   ],
   "dDYCuU": [
@@ -4110,6 +4142,12 @@
       "value": "Sin especificar"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Actualizar esquema de origen"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4120,12 +4158,6 @@
     {
       "type": 0,
       "value": "Obligatorio. El nombre de la variable de la que quiere el valor."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Esquema de destino"
     }
   ],
   "eRvGw3": [
@@ -4204,6 +4236,12 @@
     {
       "type": 0,
       "value": "El recuento de paginación supera el valor máximo"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Esquema de origen"
     }
   ],
   "faSDuD": [
@@ -4453,12 +4491,6 @@
       "value": "Audiencia"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "El esquema de origen se reemplazará y no podrá volver a los cambios anteriores. ¿Desea continuar para cambiar el esquema de origen?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4623,6 +4655,12 @@
       "value": "Devuelve el valor de la variable especificada."
     }
   ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Agregue o seleccione un esquema de destino para usarlo en la asignación."
+    }
+  ],
   "jHHF/u": [
     {
       "type": 0,
@@ -4695,6 +4733,12 @@
     {
       "type": 0,
       "value": "Duración"
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Puerta de enlace"
     }
   ],
   "k/oqFL": [
@@ -4910,7 +4954,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "Función eliminada."
     }
   ],
   "mGUdCO": [
@@ -5170,7 +5214,7 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Error al ejecutar la API {parameters}."
     }
   ],
   "pC2nr2": [
@@ -5482,6 +5526,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Hora central (EE. UU. y Canadá)"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Agregar nuevo"
     }
   ],
   "s5RV9B": [
@@ -6122,12 +6172,6 @@
       "value": "Funciones de fecha y hora"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Agregar esquema de destino"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -6174,6 +6218,12 @@
     {
       "type": 0,
       "value": "Escribir valor"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Esquema de destino"
     }
   ],
   "zIDVd9": [

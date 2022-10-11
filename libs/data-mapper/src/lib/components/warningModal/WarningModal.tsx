@@ -7,42 +7,53 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const WarningModal: FunctionComponent = () => {
+  const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
   const isWarningModalOpen = useSelector((state: RootState) => state.modal.isWarningModalOpen);
   const warningModalType = useSelector((state: RootState) => state.modal.warningModalType);
 
-  const dispatch = useDispatch<AppDispatch>();
-  const intl = useIntl();
-
   const warningHeader = intl.formatMessage({
     defaultMessage: 'Warning',
-    description: 'Header text for warning the user for not being allowed to go back to make changes',
+    description: 'Header text for warning modal',
   });
-  const warningMessage =
-    warningModalType === WarningModalState.DiscardWarning
-      ? intl.formatMessage({
-          defaultMessage: 'All unsaved work will be gone. Do you want to proceed to discard everything?',
-          description:
-            'Message to inform users that they will not be able to revert back to previous changes and to ask if they want to proceed.',
-        })
-      : warningModalType === WarningModalState.ChangeSourceWarning
-      ? intl.formatMessage({
-          defaultMessage:
-            'Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?',
-          description:
-            'Message to inform users that they will not be able to revert back to previous changes after changing source schema and to ask if they still want to proceed',
-        })
-      : warningModalType === WarningModalState.ChangeTargetWarning
-      ? intl.formatMessage({
-          defaultMessage:
-            'Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?',
-          description:
-            'Message to inform users that they will not be able to revert back to previous changes after changing target schema and to ask if they still want to proceed',
-        })
-      : '';
-  const okMessage = intl.formatMessage({
-    defaultMessage: 'OK',
-    description: 'Button text for OK to proceed with agreeing to the warning displayed',
+
+  const discardChangesHeader = intl.formatMessage({
+    defaultMessage: 'Discard changes',
+    description: 'Header text for discard modal',
   });
+
+  let warningMessage: string;
+
+  switch (warningModalType) {
+    case WarningModalState.DiscardWarning:
+      warningMessage = intl.formatMessage({
+        defaultMessage: 'Do you want to discard all unsaved changes?',
+        description: 'Discard warning text',
+      });
+      break;
+    case WarningModalState.ChangeSourceWarning:
+      warningMessage = intl.formatMessage({
+        defaultMessage:
+          'Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?',
+        description: 'Change source schema warning text',
+      });
+      break;
+    case WarningModalState.ChangeTargetWarning:
+      warningMessage = intl.formatMessage({
+        defaultMessage:
+          'Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?',
+        description: 'Change target schema text',
+      });
+      break;
+    default:
+      warningMessage = '';
+  }
+
+  const discardMessage = intl.formatMessage({
+    defaultMessage: 'Discard',
+    description: 'Discard',
+  });
+
   const cancelMessage = intl.formatMessage({
     defaultMessage: 'Cancel',
     description: 'Button text for Cancel to stop proceeding by reading the warning displayed',
@@ -53,7 +64,7 @@ export const WarningModal: FunctionComponent = () => {
   }, [dispatch]);
 
   const dialogContentProps = {
-    title: warningHeader,
+    title: warningModalType === WarningModalState.DiscardWarning ? discardChangesHeader : warningHeader,
     subText: warningMessage,
   };
 
@@ -70,7 +81,7 @@ export const WarningModal: FunctionComponent = () => {
             onClick={() => {
               dispatch(setOkClicked());
             }}
-            text={okMessage}
+            text={discardMessage}
           />
           <DefaultButton onClick={closeWarningModal} text={cancelMessage} />
         </DialogFooter>

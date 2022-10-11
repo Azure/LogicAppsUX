@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -181,6 +175,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Baku"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Guardar"
     }
   ],
   "0FzNJV": [
@@ -432,12 +432,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Carregue ou selecione um esquema de destino a utilizar para o seu mapa."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -508,6 +502,12 @@
     {
       "type": 0,
       "value": "Identidade gerida"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Selecionar existente"
     }
   ],
   "2b1yD3": [
@@ -606,6 +606,12 @@
       "value": "(UTC+02:00) Chisinau"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Substituir um esquema existente por um esquema incompatível pode criar erros no seu mapa."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -700,6 +706,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Erevan"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Eliminar alterações"
     }
   ],
   "45ubha": [
@@ -822,12 +834,6 @@
       "value": "Devolve verdadeiro se um objeto, uma matriz ou uma cadeia estiver vazia"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Adicionar Esquema de Origem"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -874,6 +880,12 @@
     {
       "type": 0,
       "value": "Testar mapa"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "6XR3FS": [
@@ -1178,6 +1190,12 @@
       "value": "Cancelar"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1300,12 +1318,6 @@
     {
       "type": 0,
       "value": "Obrigatório. A cadeia a codificar numa representação base64."
-    }
-  ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "O esquema de destino será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de saída?"
     }
   ],
   "B/JzwK": [
@@ -1455,12 +1467,6 @@
       "value": "Ligação necessária"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Substituir esquema existente"
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1470,7 +1476,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Nó de origem removido da vista."
     }
   ],
   "CsPY74": [
@@ -1584,7 +1590,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "Falha ao guardar."
     }
   ],
   "EYqGxA": [
@@ -1794,6 +1800,12 @@
       "value": "Estado"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Atualizar esquema de destino"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1832,12 +1844,6 @@
       "value": "Obrigatório. O objeto a encontrar na coleção Dentro."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Esquema de origem"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1848,12 +1854,6 @@
     {
       "type": 0,
       "value": "Devolve verdadeiro se os parâmetros forem falsos"
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Carregue ou selecione um esquema de origem a utilizar para o seu mapa."
     }
   ],
   "Gi72X5": [
@@ -1896,6 +1896,12 @@
     {
       "type": 0,
       "value": "Necessário. A cadeia a dividir."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "O esquema de destino será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de saída?"
     }
   ],
   "H8bEUn": [
@@ -1942,6 +1948,16 @@
       "value": "Selecione um cartão para ver o conteúdo"
     }
   ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Instalar Gateway"
+    }
+  ],
   "HzS2gJ": [
     {
       "type": 0,
@@ -1976,6 +1992,12 @@
     {
       "type": 0,
       "value": "Converte um carimbo de data/hora de cadeia transmitido de um UTC para um fuso horário de destino"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Configurar"
     }
   ],
   "IgNz8Y": [
@@ -2223,12 +2245,6 @@
       "value": "Eliminar Grafo de Fluxo de Trabalho"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Aviso"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2440,7 +2456,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "Inserir função"
     }
   ],
   "N0pS6Y": [
@@ -2506,7 +2522,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
+      "value": "Remova todas as referências ao nó \""
     },
     {
       "type": 1,
@@ -2514,7 +2530,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the node."
+      "value": "\" antes de remover o nó."
     }
   ],
   "NvANon": [
@@ -2639,12 +2655,6 @@
     {
       "type": 0,
       "value": "Devolve os resultados das ações de nível superior na ação com âmbito especificada, como uma ação For_each, Até ou Âmbito."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "Todo o trabalho não guardado será perdido. Pretende continuar para eliminar tudo?"
     }
   ],
   "Oib1mL": [
@@ -2931,6 +2941,12 @@
       "value": "Os acionadores não podem ser eliminados."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "É criada automaticamente uma linha entre elementos de matriz para indicar elementos em ciclo."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -3002,6 +3018,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Pretende eliminar todas as alterações não guardadas?"
     }
   ],
   "S8P4N5": [
@@ -3580,6 +3602,12 @@
       "value": "Obrigatório. O nome da ação cujas saídas do corpo quer."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "O esquema de origem será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de saída?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3670,12 +3698,6 @@
       "value": "Reduzir"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Configuração"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3744,12 +3766,6 @@
       "value": "\" no Parâmetro"
     }
   ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Eliminar"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -3812,10 +3828,10 @@
       "value": "Introduzir Pfx"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Adicionar"
+      "value": "Adicione ou selecione um esquema de origem a utilizar para o seu mapa."
     }
   ],
   "b9/1dK": [
@@ -3834,10 +3850,22 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Mapeamento da Matriz"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
       "value": "Ações"
+    }
+  ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Subscrição"
     }
   ],
   "bS5DyV": [
@@ -3970,6 +3998,12 @@
       "value": "(UTC+02:00) Trípoli"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Adicione ou substitua os seus esquemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -4012,6 +4046,12 @@
       "value": "Obrigatório. A coleção a partir da qual se deve ignorar os primeiros objetos de Contagem."
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Aviso"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -4027,7 +4067,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "Ligação eliminada."
     }
   ],
   "dDYCuU": [
@@ -4134,6 +4174,12 @@
       "value": "Não especificado"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Atualizar esquema de origem"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4144,12 +4190,6 @@
     {
       "type": 0,
       "value": "Obrigatório. O nome da variável do valor que pretende."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Esquema de Destino"
     }
   ],
   "eRvGw3": [
@@ -4228,6 +4268,12 @@
     {
       "type": 0,
       "value": "A contagem de paginação excede o valor máximo"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Esquema de origem"
     }
   ],
   "faSDuD": [
@@ -4485,12 +4531,6 @@
       "value": "Audiência"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "O esquema de origem será substituído e não poderá voltar às alterações anteriores. Pretende continuar a alterar o esquema de saída?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4655,6 +4695,12 @@
       "value": "Devolve o valor da variável especificada."
     }
   ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Adicione ou selecione um esquema de destino a utilizar para o seu mapa."
+    }
+  ],
   "jHHF/u": [
     {
       "type": 0,
@@ -4727,6 +4773,12 @@
     {
       "type": 0,
       "value": "Duração"
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
     }
   ],
   "k/oqFL": [
@@ -4942,7 +4994,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "Função eliminada."
     }
   ],
   "mGUdCO": [
@@ -5202,7 +5254,15 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Erro ao executar a api \""
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "\"."
     }
   ],
   "pC2nr2": [
@@ -5514,6 +5574,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Hora Central (E.U.A. e Canadá)"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Adicionar novo"
     }
   ],
   "s5RV9B": [
@@ -6154,12 +6220,6 @@
       "value": "Funções de data e hora"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Adicionar Esquema de Destino"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -6206,6 +6266,12 @@
     {
       "type": 0,
       "value": "Introduzir valor"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Esquema de destino"
     }
   ],
   "zIDVd9": [

@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -181,6 +175,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Baku"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Speichern"
     }
   ],
   "0FzNJV": [
@@ -421,12 +421,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Laden Sie ein Zielschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -497,6 +491,12 @@
     {
       "type": 0,
       "value": "Verwaltete Identität"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Vorhandene auswählen"
     }
   ],
   "2b1yD3": [
@@ -595,6 +595,12 @@
       "value": "(UTC+02:00) Chișinău"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Das Ersetzen eines vorhandenen Schemas durch ein inkompatibles Schema kann zu Fehlern in Ihrer Zuordnung führen."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -689,6 +695,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Eriwan"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Änderungen verwerfen"
     }
   ],
   "45ubha": [
@@ -811,12 +823,6 @@
       "value": "Gibt TRUE zurück, wenn ein Objekt, ein Array oder eine Zeichenfolge leer ist."
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Quellschema hinzufügen"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -863,6 +869,12 @@
     {
       "type": 0,
       "value": "Zuordnung testen"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
     }
   ],
   "6XR3FS": [
@@ -1167,6 +1179,12 @@
       "value": "Abbrechen"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Schließen"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1289,12 +1307,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Zeichenfolge, die als Base64-Darstellung codiert werden soll."
-    }
-  ],
-  "AwwPJC": [
-    {
-      "type": 0,
-      "value": "Das Zielschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Zielschemas fortfahren?"
     }
   ],
   "B/JzwK": [
@@ -1433,12 +1445,6 @@
       "value": "Verbindung erforderlich"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Vorhandenes Schema ersetzen."
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1448,7 +1454,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Der Quellknoten wurde aus der Ansicht entfernt."
     }
   ],
   "CsPY74": [
@@ -1562,7 +1568,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "Fehler beim Speichern."
     }
   ],
   "EYqGxA": [
@@ -1761,6 +1767,12 @@
       "value": "Status"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Zielschema aktualisieren"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1799,12 +1811,6 @@
       "value": "Erforderlich. Das Objekt, das in der Within-Sammlung gesucht werden soll."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Quellschema"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1815,12 +1821,6 @@
     {
       "type": 0,
       "value": "Gibt TRUE zurück, wenn die Parameter FALSE sind."
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Laden Sie ein Quellschema hoch, das für Ihre Karte verwendet werden soll, oder wählen Sie eines aus."
     }
   ],
   "Gi72X5": [
@@ -1863,6 +1863,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Die zu segmentierende Zeichenfolge."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "Das Zielschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Zielschemas fortfahren?"
     }
   ],
   "H8bEUn": [
@@ -1909,6 +1915,16 @@
       "value": "Wählen Sie eine Karte aus, um den Inhalt anzuzeigen."
     }
   ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Gateway installieren"
+    }
+  ],
   "HzS2gJ": [
     {
       "type": 0,
@@ -1943,6 +1959,12 @@
     {
       "type": 0,
       "value": "Hiermit wird ein aus einem UTC-Wert übergebener Zeichenfolgen-Zeitstempel in eine Zielzeitzone konvertiert."
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Konfigurieren"
     }
   ],
   "IgNz8Y": [
@@ -2179,12 +2201,6 @@
       "value": "Workflowdiagramm löschen"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Warnung"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2396,7 +2412,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "Funktion einfügen"
     }
   ],
   "N0pS6Y": [
@@ -2462,7 +2478,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
+      "value": "Entfernen Sie alle Verweise auf den Knoten „"
     },
     {
       "type": 1,
@@ -2470,7 +2486,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the node."
+      "value": "“, bevor Sie den Knoten entfernen."
     }
   ],
   "NvANon": [
@@ -2595,12 +2611,6 @@
     {
       "type": 0,
       "value": "Hiermit werden die Ergebnisse der Aktionen der obersten Ebene in der angegebenen bereichsbezogenen Aktion zurückgegeben, z. B. eine for_each-, Until- oder Scope-Aktion."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "Alle nicht geretteten Arbeiten werden weg sein. Möchten Sie fortfahren, alles zu verwerfen?"
     }
   ],
   "Oib1mL": [
@@ -2891,6 +2901,12 @@
       "value": "Trigger können nicht gelöscht werden."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "Eine Linie zwischen Arrayelementen wird automatisch erstellt, um Elemente in einer Schleife anzuzeigen."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2951,6 +2967,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Möchten Sie alle nicht gespeicherten Änderungen verwerfen?"
     }
   ],
   "S8P4N5": [
@@ -3529,6 +3551,12 @@
       "value": "Erforderlich. Der Name der Aktion, deren Textausgaben Sie erhalten möchten."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "Das Quellschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Quellschemas fortfahren?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3619,12 +3647,6 @@
       "value": "Verkleinern"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Konfiguration"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3683,12 +3705,6 @@
     {
       "type": 0,
       "value": "Nicht unterstützter \"in\"-Wert: {value} im Parameter"
-    }
-  ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Verwerfen"
     }
   ],
   "a7j3gS": [
@@ -3753,10 +3769,10 @@
       "value": "PFX eingeben"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Hinzufügen"
+      "value": "Fügen Sie ein Quellschema hinzu, oder wählen Sie eines aus, das für Ihre Zuordnung verwendet werden soll."
     }
   ],
   "b9/1dK": [
@@ -3775,10 +3791,22 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Array-Mapping"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
       "value": "Aktionen"
+    }
+  ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Abonnement"
     }
   ],
   "bS5DyV": [
@@ -3915,6 +3943,12 @@
       "value": "(UTC+02:00) Tripolis"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Fügen Sie Ihre Schemas hinzu, oder ersetzen Sie diese."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3957,6 +3991,12 @@
       "value": "Erforderlich. Die Sammlung, in der die ersten Count-Objekte übersprungen werden sollen."
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Warnung"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -3972,7 +4012,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "Verbindung wurde gelöscht."
     }
   ],
   "dDYCuU": [
@@ -4079,6 +4119,12 @@
       "value": "Nicht angegeben"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Quellschema aktualisieren"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4089,12 +4135,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Zielschema"
     }
   ],
   "eRvGw3": [
@@ -4173,6 +4213,12 @@
     {
       "type": 0,
       "value": "Die Auslagerungsanzahl überschreitet den Maximalwert"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Quellschema"
     }
   ],
   "faSDuD": [
@@ -4411,12 +4457,6 @@
       "value": "Benutzergruppe"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "Das Quellschema wird ersetzt und Sie können nicht mehr zu früheren Änderungen zurückgehen. Möchten Sie mit der Änderung des Quellschemas fortfahren?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4581,6 +4621,12 @@
       "value": "Gibt den Wert der angegebenen Variablen zurück."
     }
   ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Fügen Sie ein Zielschema hinzu, oder wählen Sie eines aus, das für Ihre Zuordnung verwendet werden soll."
+    }
+  ],
   "jHHF/u": [
     {
       "type": 0,
@@ -4653,6 +4699,12 @@
     {
       "type": 0,
       "value": "Dauer"
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
     }
   ],
   "k/oqFL": [
@@ -4868,7 +4920,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "Funktion gelöscht."
     }
   ],
   "mGUdCO": [
@@ -5128,7 +5180,15 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Fehler beim Ausführen der API „"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "“."
     }
   ],
   "pC2nr2": [
@@ -5413,6 +5473,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Central Time (USA und Kanada)"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Neu hinzufügen"
     }
   ],
   "s5RV9B": [
@@ -6053,12 +6119,6 @@
       "value": "Datums- und Uhrzeitfunktionen"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Zielschema hinzufügen"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -6105,6 +6165,12 @@
     {
       "type": 0,
       "value": "Wert eingeben"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Zielschema"
     }
   ],
   "zIDVd9": [

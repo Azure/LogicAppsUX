@@ -37,6 +37,7 @@ export enum SchemaNodeProperties {
   Optional = 'Optional',
   Repeating = 'Repeating',
   Attribute = 'Attribute',
+  ComplexTypeSimpleContent = 'ComplexTypeSimpleContent',
 }
 
 export const enum SchemaNodeDataType {

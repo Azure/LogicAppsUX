@@ -36,9 +36,9 @@
           "body": "@outputs('Execute_a_navigation_plan')?['outputParameters']?['balance']"
         },
         "runAfter": {
-          "Compose": ["Succeeded"],
-          "Initialize_test_var": ["Succeeded", "Skipped"],
-          "Execute_a_navigation_plan": ["Succeeded", "TimedOut", "Skipped"]
+          "Compose": ["SUCCEEDED"],
+          "Initialize_test_var": ["SUCCEEDED", "Skipped"],
+          "Execute_a_navigation_plan": ["SUCCEEDED", "TimedOut", "Skipped"]
         },
         "operationOptions": "Asynchronous",
         "runtimeConfiguration": {
