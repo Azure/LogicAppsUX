@@ -1,6 +1,8 @@
 import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
 import { customTokens } from '../../core';
-import { store } from '../../core/state/Store';
+import type { RootState } from '../../core/state/Store';
+import { NormalizedDataType } from '../../models';
+import type { Connection } from '../../models/Connection';
 import type { FunctionInput } from '../../models/Function';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
@@ -16,6 +18,8 @@ import {
   tokens,
   Tooltip,
 } from '@fluentui/react-components';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
 
@@ -80,39 +84,91 @@ const useStyles = makeStyles({
 
 const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
 
-const isValidConnection = (connection: ReactFlowConnection, inputs: FunctionInput[]): boolean => {
-  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
-
-  if (connection.source && connection.target && flattenedSourceSchema) {
-    const sourceNode = flattenedSourceSchema[connection.source];
-
-    // For now just allow all function to function
-    // TODO validate express to function connections
-    return (
-      !sourceNode || inputs.some((input) => input.allowedTypes.some((acceptableType) => acceptableType === sourceNode.normalizedDataType))
-    );
-  }
-
-  return false;
-};
-
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const { functionName, maxNumberOfInputs, inputs, disabled, error, functionBranding, iconFileName, displayHandle, onClick } = props.data;
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
+  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const functionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+
+  const isTypeSupported = useCallback(
+    (inputNodeType: NormalizedDataType) => {
+      return inputs.some((input) =>
+        input.allowedTypes.some((allowedType) => allowedType === NormalizedDataType.Any || allowedType === inputNodeType)
+      );
+    },
+    [inputs]
+  );
+
+  const isTypeSupportedAndAvailable = useCallback(
+    (curCon: Connection | undefined, inputNodeType: NormalizedDataType) => {
+      if (curCon) {
+        if (curCon.inputs.length === 0 && isTypeSupported(inputNodeType)) {
+          return true;
+        }
+
+        let supportedTypeInputIsAvailable = false;
+        curCon.inputs.forEach((input, idx) => {
+          if (!input) {
+            if (inputs[idx].allowedTypes.some((allowedType) => allowedType === inputNodeType)) {
+              supportedTypeInputIsAvailable = true;
+            }
+          }
+        });
+
+        return supportedTypeInputIsAvailable;
+      } else {
+        if (isTypeSupported(inputNodeType)) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+    [inputs, isTypeSupported]
+  );
+
+  const isValidConnection = useCallback(
+    (connection: ReactFlowConnection): boolean => {
+      if (connection.source && connection.target) {
+        const currentNodeConnection = connectionDictionary[connection.target];
+        const inputSourceSchemaNode = flattenedSourceSchema[connection.source];
+        const inputFunctionNode = functionDictionary[connection.source];
+
+        // Make sure there's available inputs
+        if (currentNodeConnection) {
+          const numInputsWithValue = currentNodeConnection.inputs.filter((input) => !!input).length;
+          if (numInputsWithValue === maxNumberOfInputs) {
+            return false;
+          }
+        }
+
+        // If source schema node, validate type against Function inputs
+        if (inputSourceSchemaNode) {
+          return isTypeSupportedAndAvailable(currentNodeConnection, inputSourceSchemaNode.normalizedDataType);
+        } else if (inputFunctionNode) {
+          // If function node, validate output type against Function inputs
+          return isTypeSupportedAndAvailable(currentNodeConnection, inputFunctionNode.outputValueType);
+        }
+
+        return false;
+      }
+
+      return false;
+    },
+    [isTypeSupportedAndAvailable, maxNumberOfInputs, flattenedSourceSchema, functionDictionary, connectionDictionary]
+  );
+
   return (
     <div className={classes.container}>
       {displayHandle && maxNumberOfInputs !== 0 && (
-        <Handle
-          type={'target'}
-          position={Position.Left}
-          style={handleStyle}
-          isValidConnection={(connection) => isValidConnection(connection, inputs)}
-        />
+        <Handle type="target" position={Position.Left} style={handleStyle} isValidConnection={isValidConnection} />
       )}
 
-      {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge}></PresenceBadge>}
+      {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge} />}
+
       <Tooltip
         content={{
           children: <Text size={200}>{functionName}</Text>,
@@ -128,7 +184,8 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
           {getIconForFunction(functionName, iconFileName, functionBranding)}
         </Button>
       </Tooltip>
-      {displayHandle ? <Handle type={'source'} position={Position.Right} style={handleStyle} /> : null}
+
+      {displayHandle && <Handle type="source" position={Position.Right} style={handleStyle} />}
     </div>
   );
 };
