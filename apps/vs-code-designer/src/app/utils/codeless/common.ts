@@ -166,7 +166,7 @@ export async function getAzureConnectorDetailsForLocalProject(
   let credentials: ServiceClientCredentials;
 
   // Set default for customers who created Logic Apps before sovereign cloud support was added.
-  let workflowManagementBaseUrl = localSettings.Values![workflowManagementBaseURIKey] ?? 'https://management.azure.com/';
+  let workflowManagementBaseUrl = localSettings.Values[workflowManagementBaseURIKey] ?? 'https://management.azure.com/';
 
   if (subscriptionId === undefined) {
     const wizard = createAzureWizard(connectorsContext, projectPath);
@@ -185,7 +185,7 @@ export async function getAzureConnectorDetailsForLocalProject(
 
   return {
     enabled,
-    accessToken: enabled ? await getAuthorizationToken(credentials!, tenantId) : undefined,
+    accessToken: enabled ? await getAuthorizationToken(credentials, tenantId) : undefined,
     subscriptionId: enabled ? subscriptionId : undefined,
     resourceGroupName: enabled ? resourceGroupName : undefined,
     location: enabled ? location : undefined,

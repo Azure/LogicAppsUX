@@ -160,7 +160,6 @@ function startDesignTimeProcess(
   });
 }
 
-// tslint:disable-next-line: no-suspicious-comment
 export function stopDesignTimeApi(): void {
   if (ext.workflowDesignChildProcess === null || ext.workflowDesignChildProcess === undefined) {
     return;
