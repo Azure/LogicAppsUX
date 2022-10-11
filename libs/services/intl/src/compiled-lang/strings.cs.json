@@ -628,7 +628,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "Nahrazení existujícího schématu nekompatibilním schématem může způsobit chyby v mapě."
     }
   ],
   "3TD2V5": [
@@ -1840,7 +1840,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "Aktualizovat cílové schéma"
     }
   ],
   "G/CC5/": [
@@ -2996,7 +2996,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "Automaticky se vytvoří čára mezi prvky pole, která indikuje prvky smyčky."
     }
   ],
   "RFjYpH": [
@@ -3086,7 +3086,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "Chcete zahodit všechny neuložené změny?"
     }
   ],
   "S8P4N5": [
@@ -3894,7 +3894,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "Přidejte nebo vyberte zdrojové schéma, které se použije pro vaši mapu."
     }
   ],
   "b9/1dK": [
@@ -3916,7 +3916,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "Mapování pole"
     }
   ],
   "bG9rjv": [
@@ -4064,7 +4064,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "Přidejte nebo nahraďte schémata."
     }
   ],
   "cgq/+y": [
@@ -4240,7 +4240,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "Aktualizovat zdrojové schéma"
     }
   ],
   "eGa1Wa": [
@@ -4768,7 +4768,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "Přidejte nebo vyberte cílové schéma, které se použije pro vaši mapu."
     }
   ],
   "jHHF/u": [
