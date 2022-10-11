@@ -14,20 +14,14 @@ const httpClient = new HttpClient();
 
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const { panelMetaData, connectionReferences, baseUrl } = vscodeState;
+  const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails } = vscodeState;
   const codelessApp = panelMetaData?.codelessApp;
 
   const connectionService = new StandardConnectionService({
     baseUrl,
     apiVersion: '2018-11-01',
     httpClient,
-    apiHubServiceDetails: {
-      apiVersion: '2018-07-01-preview',
-      baseUrl: '/baseUrl',
-      subscriptionId: '',
-      resourceGroup: '',
-      location: '',
-    },
+    apiHubServiceDetails: apiHubServiceDetails,
     workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
     readConnections: () => Promise.resolve({}),
   });

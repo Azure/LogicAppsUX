@@ -8,7 +8,7 @@ export * from './lib/common/exceptions';
 export * from './lib/logger';
 export * from './lib/logging/devLogger';
 export * from './lib/logging/logEntry';
-export { StandardConnectionService } from './lib/standard/connection';
+export { StandardConnectionService, IApiHubServiceDetails } from './lib/standard/connection';
 export { StandardConnectorService } from './lib/standard/connector';
 export { StandardOperationManifestService } from './lib/standard/operationmanifest';
 export { StandardOAuthService } from './lib/standard/oAuth';

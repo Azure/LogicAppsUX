@@ -1,6 +1,6 @@
 import { ext } from '../../../../extensionVariables';
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
-import type { Artifacts, Parameter } from '@microsoft-logic-apps/utils';
+import type { Artifacts, AzureConnectorDetails, Parameter } from '@microsoft-logic-apps/utils';
 import { promises as fs } from 'fs';
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { ResolutionService } from 'libs/parsers/src/lib/resolution-service/resolution-service';
@@ -14,6 +14,7 @@ export interface IDesingerOptions {
   parametersData: Record<string, Parameter>;
   localSettings: { [key: string]: string };
   artifacts: Artifacts;
+  azureDetails: AzureConnectorDetails;
 }
 
 export abstract class OpenDesignerBase {
@@ -24,6 +25,7 @@ export abstract class OpenDesignerBase {
   protected baseUrl: string;
   protected connectionReferences: any;
   protected panel: WebviewPanel;
+  protected apiHubServiceDetails: Record<string, any>;
 
   protected constructor(workflowName: string, panelName: string, apiVersion: string, panelGroupKey: string) {
     this.workflowName = workflowName;
@@ -39,7 +41,8 @@ export abstract class OpenDesignerBase {
   }
 
   protected async getWebviewContent(options: IDesingerOptions): Promise<string> {
-    const { parametersData, localSettings, artifacts } = options;
+    const { parametersData, localSettings, artifacts, azureDetails } = options;
+
     let { connectionsData } = options;
 
     const mapArtifacts = {};
@@ -63,6 +66,7 @@ export abstract class OpenDesignerBase {
     const resolvedConnections = parametersResolutionService.resolve(connectionsData);
 
     this.connectionReferences = this.getConnectionReferences(resolvedConnections);
+    this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails);
 
     // Get webview content, converting links to VS Code URIs
     const indexPath = join(ext.context.extensionPath, 'webview/index.html');
@@ -163,5 +167,21 @@ export abstract class OpenDesignerBase {
     });
 
     return JSON.stringify(parseConnectionsData);
+  }
+
+  protected getApiHubServiceDetails(azureDetails: AzureConnectorDetails) {
+    const isApiHubEnabled = azureDetails.enabled;
+
+    return isApiHubEnabled
+      ? {
+          apiVersion: '2018-07-01-preview',
+          baseUrl: this.baseUrl,
+          subscriptionId: azureDetails.subscriptionId,
+          location: azureDetails.location,
+          resourceGroup: azureDetails.resourceGroupName,
+          tenantId: azureDetails.tenantId,
+          getAccessToken: () => Promise.resolve(azureDetails.accessToken),
+        }
+      : undefined;
   }
 }

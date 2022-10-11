@@ -22,7 +22,7 @@ import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel } from 'vscode';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
-  private _migrationOptions: Record<string, any>;
+  private migrationOptions: Record<string, any>;
   private readonly workflowFilePath: string;
   private readonly context: IActionContext;
   private projectPath: string | undefined;
@@ -65,14 +65,15 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       ViewColumn.Active, // Editor column to show the new webview panel in.
       { enableScripts: true }
     );
-    this._migrationOptions = await this._getMigrationOptions(this.baseUrl);
-    this.panelMetadata = await this._getDesignerPanelMetadata(this._migrationOptions);
+    this.migrationOptions = await this._getMigrationOptions(this.baseUrl);
+    this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
 
     this.panel.webview.html = await this.getWebviewContent({
       connectionsData: this.panelMetadata.connectionsData,
       parametersData: this.panelMetadata.parametersData || {},
       localSettings: this.panelMetadata.localSettings,
       artifacts: this.panelMetadata.artifacts,
+      azureDetails: this.panelMetadata.azureDetails,
     });
 
     this.panel.webview.onDidReceiveMessage(async (message) => this._handleWebviewMsg(message), ext.context.subscriptions);
@@ -102,6 +103,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             panelMetadata: this.panelMetadata,
             connectionReferences: this.connectionReferences,
             baseUrl: this.baseUrl,
+            apiHubServiceDetails: this.apiHubServiceDetails,
           },
         });
         break;
