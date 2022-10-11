@@ -1,4 +1,4 @@
-import type { RowItemProps } from '.';
+import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
 import { Checkbox } from '../checkbox';
 import { notEqual } from '../dictionary/plugins/SerializeExpandedDictionary';
 import type { ValueSegment } from '../editor';
@@ -32,8 +32,9 @@ interface RowProps {
   containerOffset: number;
   showDisabledDelete?: boolean;
   isGroupable?: boolean;
-  handleDeleteChild?: (indexToDelete: number) => void;
-  handleUpdateParent: (newProps: RowItemProps, index: number) => void;
+  groupedItems: GroupedItems[];
+  handleDeleteChild?: (indexToDelete: number | number[]) => void;
+  handleUpdateParent: (newProps: RowItemProps | GroupItemProps, index: number) => void;
   GetTokenPicker: (
     editorId: string,
     labelId: string,
@@ -52,6 +53,7 @@ export const Row = ({
   containerOffset,
   showDisabledDelete,
   isGroupable,
+  groupedItems,
   handleDeleteChild,
   handleUpdateParent,
   GetTokenPicker,
@@ -63,7 +65,19 @@ export const Row = ({
   const [pickerOffset, setPickerOffset] = useState<ButtonOffSet>();
 
   const handleGroup = () => {
-    console.log('group');
+    handleUpdateParent(
+      {
+        type: 'group',
+        checked: false,
+        items: groupedItems.map((groupedItem) => {
+          return groupedItem.item;
+        }),
+      },
+      index
+    );
+
+    // Delete groupedItems not including currentItem
+    handleDeleteChild?.(groupedItems.filter((item) => item.index !== index).map((item) => item.index));
   };
 
   const deleteButton = intl.formatMessage({

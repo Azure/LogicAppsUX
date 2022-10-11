@@ -122,9 +122,9 @@ export const BaseEditor = ({
   const handleBlur = () => {
     if (tokens && !getInTokenPicker()) {
       setInTokenPicker(false);
+      onBlur?.();
     }
     setShowTokenPickerButton(false);
-    onBlur?.();
   };
 
   const handleShowTokenPicker = () => {

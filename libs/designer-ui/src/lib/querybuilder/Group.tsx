@@ -1,4 +1,4 @@
-import type { GroupItemProps, RowItemProps } from '.';
+import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
 import { Checkbox } from '../checkbox';
 import type { ValueSegment } from '../editor';
 import type { ChangeState } from '../editor/base';
@@ -32,11 +32,11 @@ interface GroupProps {
   groupProps: GroupItemProps;
   isFirstGroup?: boolean;
   isGroupable: boolean;
-  groupedItems: (GroupItemProps | RowItemProps)[];
+  groupedItems: GroupedItems[];
   containerOffset: number;
   index: number;
   mustHaveItem?: boolean;
-  handleDeleteChild?: (indexToDelete: number) => void;
+  handleDeleteChild?: (indexToDelete: number | number[]) => void;
   handleUngroupChild?: (indexToInsertAt: number) => void;
   handleUpdateParent: (newProps: GroupItemProps, index: number) => void;
   GetTokenPicker: (
@@ -64,18 +64,43 @@ export const Group = ({
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
 
-  const handleDelete = (indexToDelete: number) => {
-    if (groupProps.items.length <= 1) {
-      handleDeleteChild?.(index);
+  const handleDelete = (indicesToDelete: number | number[]) => {
+    // Is an array of indices to delete
+    if (Array.isArray(indicesToDelete)) {
+      if (indicesToDelete.length === groupProps.items.length) {
+        handleDeleteChild?.(index);
+      } else {
+        const newItems = { ...groupProps };
+        for (let i = indicesToDelete.length - 1; i >= 0; i--) {
+          newItems.items.splice(indicesToDelete[i], 1);
+        }
+        handleUpdateParent(newItems, index);
+      }
     } else {
-      const newItems = { ...groupProps };
-      newItems.items.splice(indexToDelete, 1);
-      handleUpdateParent(newItems, index);
+      if (groupProps.items.length <= 1) {
+        handleDeleteChild?.(index);
+      } else {
+        const newItems = { ...groupProps };
+        newItems.items.splice(indicesToDelete, 1);
+        handleUpdateParent(newItems, index);
+      }
     }
   };
 
   const handleGroup = () => {
-    handleUpdateParent({ type: 'group', checked: false, items: groupedItems }, index);
+    handleUpdateParent(
+      {
+        type: 'group',
+        checked: false,
+        items: groupedItems.map((groupedItem) => {
+          return groupedItem.item;
+        }),
+      },
+      index
+    );
+
+    // Delete groupedItems not including currentItem
+    handleDeleteChild?.(groupedItems.filter((item) => item.index !== index).map((item) => item.index));
   };
 
   const handleUngroup = (indexToAddAt: number, items: (GroupItemProps | RowItemProps)[]) => {
@@ -112,7 +137,7 @@ export const Group = ({
       },
       iconOnly: true,
       name: deleteButton,
-      onClick: handleDeleteChild,
+      onClick: () => handleDeleteChild?.(index),
     },
     ...menuItems,
     {
@@ -201,7 +226,8 @@ export const Group = ({
                     index={currIndex}
                     isGroupable={isGroupable}
                     showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
-                    handleDeleteChild={() => handleDelete(currIndex)}
+                    groupedItems={groupedItems}
+                    handleDeleteChild={handleDelete}
                     handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
                   />
@@ -220,7 +246,7 @@ export const Group = ({
                     isGroupable={isGroupable}
                     groupedItems={groupedItems}
                     mustHaveItem={groupProps.items.length <= 1 && mustHaveItem}
-                    handleDeleteChild={() => handleDelete(currIndex)}
+                    handleDeleteChild={handleDelete}
                     handleUngroupChild={() => handleUngroup(currIndex, item.items)}
                     handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
@@ -236,6 +262,7 @@ export const Group = ({
                       containerOffset={containerOffset}
                       isGroupable={isGroupable}
                       showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
+                      groupedItems={groupedItems}
                       GetTokenPicker={GetTokenPicker}
                       handleDeleteChild={handleDeleteChild}
                       handleUpdateParent={handleUpdateNewParent}

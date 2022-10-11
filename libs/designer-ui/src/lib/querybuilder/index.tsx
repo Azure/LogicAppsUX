@@ -8,6 +8,11 @@ import { useIntl } from 'react-intl';
 
 export { GroupDropdownOptions };
 
+export interface GroupedItems {
+  index: number;
+  item: GroupItemProps | RowItemProps;
+}
+
 type GroupItems = GroupItemProps | RowItemProps;
 
 export interface RowItemProps {
@@ -39,7 +44,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerOffset, setContainerOffset] = useState(0);
   const [heights, setHeights] = useState<number[]>([]);
-  const [groupedItems, setGroupedItems] = useState<(GroupItemProps | RowItemProps)[]>([]);
+  const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
   const [isGroupable, setIsGroupable] = useState(true);
 
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
@@ -56,7 +61,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
     console.log(getRootProp());
     if (new Set(heights).size === 1) {
       setIsGroupable(true);
-      setGroupedItems(getGroupedItems(getRootProp(), []));
+      setGroupedItems(getGroupedItems(getRootProp(), [], 0));
     } else {
       setIsGroupable(false);
     }
@@ -121,7 +126,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   );
 };
 
-// should i make this bfs instead of dfs?
+// should i make this bfs instead of dfs?🤔
 const checkHeights = (item: GroupItemProps | RowItemProps, returnVal: number[], height: number): number[] => {
   if (item.checked) {
     returnVal.push(height);
@@ -132,15 +137,12 @@ const checkHeights = (item: GroupItemProps | RowItemProps, returnVal: number[], 
   return returnVal;
 };
 
-const getGroupedItems = (
-  item: GroupItemProps | RowItemProps,
-  returnVal: (GroupItemProps | RowItemProps)[]
-): (GroupItemProps | RowItemProps)[] => {
+const getGroupedItems = (item: GroupItemProps | RowItemProps, returnVal: GroupedItems[], index: number): GroupedItems[] => {
   if (item.checked) {
-    returnVal.push({ ...item, checked: false });
+    returnVal.push({ item: { ...item, checked: false }, index: index });
   }
   if (item.type === 'group') {
-    item.items.map((childItem) => getGroupedItems(childItem, returnVal));
+    item.items.map((childItem, index) => getGroupedItems(childItem, returnVal, index));
   }
   return returnVal;
 };
