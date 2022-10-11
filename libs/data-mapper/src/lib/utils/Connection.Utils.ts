@@ -13,6 +13,11 @@ export const isValidInputToFunctionNode = (
   tgtMaxNumInputs: number,
   tgtInputs: FunctionInput[]
 ) => {
+  // If Function has unbounded inputs, just check if type matches
+  if (tgtMaxNumInputs === -1) {
+    return isFunctionTypeSupported(srcNodeType, tgtInputs);
+  }
+
   // Make sure there's available inputs
   if (currentNodeConnection) {
     const numInputsWithValue = currentNodeConnection.inputs.filter((input) => !!input).length;
@@ -21,19 +26,25 @@ export const isValidInputToFunctionNode = (
     }
   }
 
-  return isTypeSupportedAndAvailable(srcNodeType, currentNodeConnection, tgtInputs);
+  return isFunctionTypeSupportedAndAvailable(srcNodeType, currentNodeConnection, tgtInputs);
 };
 
-const isTypeSupportedAndAvailable = (inputNodeType: NormalizedDataType, curCon: Connection | undefined, tgtInputs: FunctionInput[]) => {
+const isFunctionTypeSupportedAndAvailable = (
+  inputNodeType: NormalizedDataType,
+  curCon: Connection | undefined,
+  tgtInputs: FunctionInput[]
+) => {
   if (curCon) {
-    if (curCon.inputs.length === 0 && isTypeSupported(inputNodeType, tgtInputs)) {
+    // No inputs, so just verify type
+    if (curCon.inputs.length === 0 && isFunctionTypeSupported(inputNodeType, tgtInputs)) {
       return true;
     }
 
+    // If inputs, verify that there's an open/undefined spot that matches type
     let supportedTypeInputIsAvailable = false;
     curCon.inputs.forEach((input, idx) => {
       if (!input) {
-        if (tgtInputs[idx].allowedTypes.some((allowedType) => allowedType === inputNodeType)) {
+        if (tgtInputs[idx].allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)) {
           supportedTypeInputIsAvailable = true;
         }
       }
@@ -41,7 +52,8 @@ const isTypeSupportedAndAvailable = (inputNodeType: NormalizedDataType, curCon: 
 
     return supportedTypeInputIsAvailable;
   } else {
-    if (isTypeSupported(inputNodeType, tgtInputs)) {
+    // No existing connection, so just make sure (bounded) inputs have a matching type
+    if (isFunctionTypeSupported(inputNodeType, tgtInputs)) {
       return true;
     }
   }
@@ -49,7 +61,8 @@ const isTypeSupportedAndAvailable = (inputNodeType: NormalizedDataType, curCon: 
   return false;
 };
 
-const isTypeSupported = (inputNodeType: NormalizedDataType, tgtInputs: FunctionInput[]) => {
+// Iterate through each input's supported types for a match
+const isFunctionTypeSupported = (inputNodeType: NormalizedDataType, tgtInputs: FunctionInput[]) => {
   return tgtInputs.some((input) =>
     input.allowedTypes.some((allowedType) => allowedType === NormalizedDataType.Any || allowedType === inputNodeType)
   );
