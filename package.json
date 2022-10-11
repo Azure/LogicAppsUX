@@ -30,7 +30,8 @@
     "vscode:designer:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package",
     "vscode:data-mapper:pack": "cd ./dist/apps/vs-code-data-mapper && npm install && vsce package",
     "fixLineEndings": "prettier --write \"**/*.json\"",
-    "testgen": "playwright codegen https://localhost:4200"
+    "testgen": "playwright codegen https://localhost:4200",
+    "postinstall": "node init.js"
   },
   "engines": {
     "node": "16",
