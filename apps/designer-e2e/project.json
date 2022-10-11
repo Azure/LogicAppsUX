@@ -7,7 +7,7 @@
       "executor": "@microsoft/nx-playwright:run-tests",
       "options": {
         "e2eFolder": "apps/designer-e2e",
-        "devServerTarget": "designer-standalone:serve",
+        "devServerTarget": "designer-standalone:serve:citest",
         "packageRunner": "npx"
       },
       "configurations": {
