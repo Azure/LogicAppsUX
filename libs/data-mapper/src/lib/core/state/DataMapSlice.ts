@@ -494,7 +494,7 @@ const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAc
 
     // Initialize inputs array according to Function node inputs
     if (isFunctionData(nodes.destination)) {
-      const fnNode = nodes.destination as FunctionData;
+      const fnNode = nodes.destination;
       const srcType = isFunctionData(nodes.source) ? nodes.source.outputValueType : nodes.source.normalizedDataType;
 
       if (fnNode.maxNumberOfInputs === 0) {
@@ -524,7 +524,7 @@ const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAc
   } else {
     // Find the first available input spot that matches type based on Function node inputs
     if (isFunctionData(nodes.destination)) {
-      const fnNode = nodes.destination as FunctionData;
+      const fnNode = nodes.destination;
       const srcType = isFunctionData(nodes.source) ? nodes.source.outputValueType : nodes.source.normalizedDataType;
 
       if (fnNode.maxNumberOfInputs === 0) {
