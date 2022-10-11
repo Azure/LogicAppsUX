@@ -1,31 +1,30 @@
 import { managementApiPrefix } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import { cacheWebviewPanel, getCodelessAppData, removeWebviewPanelFromCache } from '../../../utils/codeless/common';
+import {
+  cacheWebviewPanel,
+  getArtifactsInLocalProject,
+  getCodelessAppData,
+  removeWebviewPanelFromCache,
+} from '../../../utils/codeless/common';
 import { getConnectionsFromFile, getFunctionProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
 import { OpenDesignerBase } from './openDesignerBase';
 import { ExtensionCommand } from '@microsoft-logic-apps/utils';
 import type { IDesignerPanelMetadata, AzureConnectorDetails, Parameter } from '@microsoft-logic-apps/utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { promises as fs, readFileSync } from 'fs';
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { ResolutionService } from 'libs/parsers/src/lib/resolution-service/resolution-service';
+import { readFileSync } from 'fs';
 import * as path from 'path';
-import { join } from 'path';
 import * as requestP from 'request-promise';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel } from 'vscode';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
-  private panel: WebviewPanel;
   private _migrationOptions: Record<string, any>;
-  private baseUrl: string;
   private readonly workflowFilePath: string;
   private readonly context: IActionContext;
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
-  private connectionReferences: any;
 
   constructor(context: IActionContext, node: Uri) {
     const workflowName = path.basename(path.dirname(node.fsPath));
@@ -66,36 +65,13 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     );
     this._migrationOptions = await this._getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this._getDesignerPanelMetadata(this._migrationOptions);
-    const connectionsData = this.getInterpolateConnectionData(this.panelMetadata.connectionsData);
 
-    const parameters = {};
-
-    Object.keys(this.panelMetadata.parametersData).forEach((key) => {
-      parameters[key] = this.panelMetadata.parametersData[key].value;
+    this.panel.webview.html = await this.getWebviewContent({
+      connectionsData: this.panelMetadata.connectionsData,
+      parametersData: this.panelMetadata.parametersData || {},
+      localSettings: this.panelMetadata.localSettings,
+      artifacts: this.panelMetadata.artifacts,
     });
-
-    const parametersResolutionService = new ResolutionService(parameters, this.panelMetadata.localSettings);
-    const resolvedConnections = parametersResolutionService.resolve(connectionsData);
-
-    this.connectionReferences = this.getConnectionReferences(resolvedConnections);
-
-    // Get webview content, converting links to VS Code URIs
-    const indexPath = join(ext.context.extensionPath, 'webview/index.html');
-    const html = await fs.readFile(indexPath, 'utf-8');
-    // 1. Get all link prefixed by href or src
-    const matchLinks = /(href|src)="([^"]*)"/g;
-    // 2. Transform the result of the regex into a vscode's URI format
-    const toUri = (_, prefix: 'href' | 'src', link: string) => {
-      // For
-      if (link === '#') {
-        return `${prefix}="${link}"`;
-      }
-      // For scripts & links
-      const path = join(ext.context.extensionPath, 'webview', link);
-      const uri = Uri.file(path);
-      return `${prefix}="${this.panel.webview.asWebviewUri(uri)}"`;
-    };
-    this.panel.webview.html = html.replace(matchLinks, toUri);
 
     this.panel.webview.onDidReceiveMessage(async (message) => this._handleWebviewMsg(message), ext.context.subscriptions);
 
@@ -257,40 +233,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       localSettings,
       azureDetails,
       workflowContent,
+      artifacts: await getArtifactsInLocalProject(projectPath),
     };
-  }
-
-  private getConnectionReferences(connectionsData) {
-    const references = {};
-    const connectionReferences = connectionsData?.managedApiConnections || {};
-    const functionConnections = connectionsData?.functionConnections || {};
-    const serviceProviderConnections = connectionsData?.serviceProviderConnections || {};
-
-    for (const connectionReferenceKey of Object.keys(connectionReferences)) {
-      const { connection, api } = connectionReferences[connectionReferenceKey];
-      references[connectionReferenceKey] = {
-        connectionId: connection ? connection.id : '',
-        connectionName: connection && connection.id ? connection.id.split('/').slice(-1)[0] : '',
-        id: api ? api.id : '',
-      };
-    }
-
-    for (const connectionKey of Object.keys(functionConnections)) {
-      references[connectionKey] = {
-        connectionId: '/' + connectionKey,
-        connectionName: connectionKey,
-        id: '/connectionProviders/azureFunctionOperation',
-      };
-    }
-
-    for (const connectionKey of Object.keys(serviceProviderConnections)) {
-      references[connectionKey] = {
-        connectionId: '/' + connectionKey,
-        connectionName: connectionKey,
-        id: serviceProviderConnections[connectionKey].serviceProvider.id,
-      };
-    }
-
-    return references;
   }
 }

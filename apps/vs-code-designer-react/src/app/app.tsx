@@ -52,6 +52,7 @@ const oAuthService = new StandardOAuthService({
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
   const { panelMetaData, connectionReferences } = vscodeState;
+  console.log('charlie', panelMetaData);
   const codelessApp = panelMetaData?.codelessApp;
 
   return (

@@ -17,11 +17,14 @@ export const designerSlice = createSlice({
   name: 'designer',
   initialState,
   reducers: {
-    updateMetaData: (state, action: PayloadAction<any>) => {
-      const { panelMetaData } = action.payload;
-      state.panelMetaData = panelMetaData;
+    initializeDesigner: (state, action: PayloadAction<any>) => {
+      const metaData = action.payload.panelMetadata;
+      const references = action.payload.connectionReferences;
+
+      state.panelMetaData = metaData;
+      state.connectionReferences = references;
     },
   },
 });
 
-export const { updateMetaData } = designerSlice.actions;
+export const { initializeDesigner } = designerSlice.actions;

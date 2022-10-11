@@ -1,6 +1,6 @@
 import { ext } from '../../../extensionVariables';
 import type { WorkflowParameter } from './types';
-import type { Parameter, CodelessApp } from '@microsoft-logic-apps/utils';
+import type { Parameter, CodelessApp, Artifacts } from '@microsoft-logic-apps/utils';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -83,4 +83,57 @@ export async function updateFuncIgnore(projectPath: string, variables: string[])
   }
 
   await fse.writeFile(funcIgnorePath, funcIgnoreContents);
+}
+
+export async function getArtifactsInLocalProject(projectPath: string): Promise<Artifacts> {
+  const artifacts: Artifacts = {
+    maps: {},
+    schemas: [],
+  };
+  const artifactsPath = path.join(projectPath, 'Artifacts');
+  const mapsPath = path.join(projectPath, 'Artifacts', 'Maps');
+  const schemasPath = path.join(projectPath, 'Artifacts', 'Schemas');
+
+  if (!(await fse.pathExists(projectPath)) || !(await fse.pathExists(artifactsPath))) {
+    return artifacts;
+  }
+
+  if (await fse.pathExists(mapsPath)) {
+    const subPaths: string[] = await fse.readdir(mapsPath);
+
+    for (const subPath of subPaths) {
+      const fullPath: string = path.join(mapsPath, subPath);
+      const fileStats = await fse.lstat(fullPath);
+
+      if (fileStats.isFile()) {
+        const extensionName = path.extname(subPath);
+        const name = path.basename(subPath, extensionName);
+        const normalizedExtensionName = extensionName.toLowerCase();
+
+        if (!artifacts.maps[normalizedExtensionName]) {
+          artifacts.maps[normalizedExtensionName] = [];
+        }
+
+        artifacts.maps[normalizedExtensionName].push({ name, fileName: subPath, relativePath: path.join('Artifacts', 'Maps', subPath) });
+      }
+    }
+  }
+
+  if (await fse.pathExists(schemasPath)) {
+    const subPaths: string[] = await fse.readdir(schemasPath);
+
+    for (const subPath of subPaths) {
+      const fullPath: string = path.join(schemasPath, subPath);
+      const fileStats = await fse.lstat(fullPath);
+
+      if (fileStats.isFile()) {
+        const extensionName = path.extname(subPath);
+        const name = path.basename(subPath, extensionName);
+
+        artifacts.schemas.push({ name, fileName: subPath, relativePath: path.join('Artifacts', 'Schemas', subPath) });
+      }
+    }
+  }
+
+  return artifacts;
 }
