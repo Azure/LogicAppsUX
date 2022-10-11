@@ -5,6 +5,7 @@ import { NormalizedDataType } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { NodeType } from '../../../models/SelectedNode';
 import type { SelectedNode } from '../../../models/SelectedNode';
+import { isCustomValue } from '../../../utils/DataMap.Utils';
 import { icon16ForSchemaNodeType } from '../../../utils/Icon.Utils';
 import type { InputOptionData, InputOptions } from './FunctionNodePropertiesTab';
 import { type ISelectableOption, Stack, ComboBox } from '@fluentui/react';
@@ -197,8 +198,9 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   useEffect(() => {
     let newInputValue = '';
 
-    if (connection && connection.sources.length === 1) {
-      newInputValue = connection.sources[0].node.key;
+    if (connection && connection.inputs.length === 1) {
+      const input = connection.inputs[0];
+      newInputValue = !input ? '' : isCustomValue(input) ? input : input.node.key;
     }
 
     setInputValue(newInputValue);

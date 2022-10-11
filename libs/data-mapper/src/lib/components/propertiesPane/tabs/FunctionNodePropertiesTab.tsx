@@ -4,6 +4,7 @@ import { makeConnection } from '../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import { NormalizedDataType } from '../../../models';
 import type { Connection } from '../../../models/Connection';
+import { isCustomValue } from '../../../utils/DataMap.Utils';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
 import { ComboBox, Stack, type ISelectableOption } from '@fluentui/react';
@@ -246,8 +247,8 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
 
     if (functionNode.maxNumberOfInputs === -1) {
       if (connection) {
-        connection.sources.forEach((src) => {
-          newInputValues.push(src.node.key);
+        connection.inputs.forEach((input) => {
+          newInputValues.push(!input ? '' : isCustomValue(input) ? input : input.node.key);
         });
       }
     } else {
@@ -256,8 +257,8 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
       });
 
       if (connection) {
-        connection.sources.forEach((src, idx) => {
-          newInputValues[idx] = src.node.key;
+        connection.inputs.forEach((input, idx) => {
+          newInputValues[idx] = !input ? '' : isCustomValue(input) ? input : input.node.key;
         });
       }
     }
