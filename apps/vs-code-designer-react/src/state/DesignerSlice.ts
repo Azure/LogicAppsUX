@@ -6,10 +6,12 @@ import { createSlice } from '@reduxjs/toolkit';
 export interface designerState {
   panelMetaData: IDesignerPanelMetadata | null;
   connectionReferences: ConnectionReferences;
+  baseUrl: string;
 }
 
 const initialState: designerState = {
   panelMetaData: null,
+  baseUrl: '/url',
   connectionReferences: {},
 };
 
@@ -18,11 +20,11 @@ export const designerSlice = createSlice({
   initialState,
   reducers: {
     initializeDesigner: (state, action: PayloadAction<any>) => {
-      const metaData = action.payload.panelMetadata;
-      const references = action.payload.connectionReferences;
+      const { panelMetadata, connectionReferences, baseUrl } = action.payload;
 
-      state.panelMetaData = metaData;
-      state.connectionReferences = references;
+      state.panelMetaData = panelMetadata;
+      state.connectionReferences = connectionReferences;
+      state.baseUrl = baseUrl;
     },
   },
 });

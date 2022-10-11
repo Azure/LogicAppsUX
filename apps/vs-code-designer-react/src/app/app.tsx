@@ -25,35 +25,39 @@ const connectionService = new StandardConnectionService({
   workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
   readConnections: () => Promise.resolve({}),
 });
-const operationManifestService = new StandardOperationManifestService({
-  apiVersion: '2018-11-01',
-  baseUrl: 'url',
-  httpClient,
-});
-const searchService = new StandardSearchService({
-  baseUrl: '/url',
-  apiVersion: '2018-11-01',
-  httpClient,
-  apiHubServiceDetails: {
-    apiVersion: '2018-07-01-preview',
-    subscriptionId: '',
-    location: '',
-  },
-  isDev: true,
-});
-const oAuthService = new StandardOAuthService({
-  baseUrl: '/url',
-  apiVersion: '2018-11-01',
-  httpClient,
-  subscriptionId: '',
-  resourceGroup: '',
-  location: '',
-});
+
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const { panelMetaData, connectionReferences } = vscodeState;
-  console.log('charlie', panelMetaData);
+  const { panelMetaData, connectionReferences, baseUrl } = vscodeState;
   const codelessApp = panelMetaData?.codelessApp;
+  console.log('charlie', baseUrl);
+
+  const searchService = new StandardSearchService({
+    baseUrl,
+    apiVersion: '2018-11-01',
+    httpClient,
+    apiHubServiceDetails: {
+      apiVersion: '2018-07-01-preview',
+      subscriptionId: '',
+      location: '',
+    },
+    isDev: true,
+  });
+
+  const operationManifestService = new StandardOperationManifestService({
+    apiVersion: '2018-11-01',
+    baseUrl,
+    httpClient,
+  });
+
+  const oAuthService = new StandardOAuthService({
+    baseUrl,
+    apiVersion: '2018-11-01',
+    httpClient,
+    subscriptionId: '',
+    resourceGroup: '',
+    location: '',
+  });
 
   return (
     <DesignerProvider

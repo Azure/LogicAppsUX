@@ -99,6 +99,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           data: {
             panelMetadata: this.panelMetadata,
             connectionReferences: this.connectionReferences,
+            baseUrl: this.baseUrl,
           },
         });
         break;
