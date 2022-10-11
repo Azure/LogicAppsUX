@@ -105,7 +105,9 @@
     "web-worker": "1.2.0",
     "@microsoft/vscode-azext-utils": "^0.3.12",
     "request-promise": "^4.2.4",
-    "vscode-nls": "^4.1.1"
+    "vscode-nls": "^4.1.1",
+    "@azure/ms-rest-js": "^2.2.1",
+    "@microsoft/vscode-azext-azureutils": "^0.3.5"
   },
   "devDependencies": {
     "@babel/core": "7.18.13",

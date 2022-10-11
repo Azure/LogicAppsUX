@@ -1,9 +1,11 @@
-import { managementApiPrefix } from '../../../../constants';
+import { localSettingsFileName, managementApiPrefix } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
+import { getLocalSettingsJson } from '../../../funcConfig/local.settings';
 import {
   cacheWebviewPanel,
   getArtifactsInLocalProject,
+  getAzureConnectorDetailsForLocalProject,
   getCodelessAppData,
   removeWebviewPanelFromCache,
 } from '../../../utils/codeless/common';
@@ -219,8 +221,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     let azureDetails: AzureConnectorDetails;
 
     if (projectPath) {
-      azureDetails = {} as AzureConnectorDetails;
-      localSettings = {} as Record<string, string>;
+      azureDetails = await getAzureConnectorDetailsForLocalProject(this.context, projectPath);
+      localSettings = (await getLocalSettingsJson(this.context, path.join(projectPath, localSettingsFileName))).Values;
     } else {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }

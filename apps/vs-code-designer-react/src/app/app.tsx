@@ -11,26 +11,26 @@ import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logi
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
-const connectionService = new StandardConnectionService({
-  baseUrl: '/url',
-  apiVersion: '2018-11-01',
-  httpClient,
-  apiHubServiceDetails: {
-    apiVersion: '2018-07-01-preview',
-    baseUrl: '/baseUrl',
-    subscriptionId: '',
-    resourceGroup: '',
-    location: '',
-  },
-  workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
-  readConnections: () => Promise.resolve({}),
-});
 
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
   const { panelMetaData, connectionReferences, baseUrl } = vscodeState;
   const codelessApp = panelMetaData?.codelessApp;
-  console.log('charlie', baseUrl);
+
+  const connectionService = new StandardConnectionService({
+    baseUrl,
+    apiVersion: '2018-11-01',
+    httpClient,
+    apiHubServiceDetails: {
+      apiVersion: '2018-07-01-preview',
+      baseUrl: '/baseUrl',
+      subscriptionId: '',
+      resourceGroup: '',
+      location: '',
+    },
+    workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
+    readConnections: () => Promise.resolve({}),
+  });
 
   const searchService = new StandardSearchService({
     baseUrl,

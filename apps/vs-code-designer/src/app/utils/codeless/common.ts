@@ -1,6 +1,20 @@
+import {
+  localSettingsFileName,
+  workflowTenantIdKey,
+  workflowSubscriptionIdKey,
+  workflowResourceGroupNameKey,
+  workflowLocationKey,
+  workflowManagementBaseURIKey,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
+import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
+import { getLocalSettingsJson } from '../../funcConfig/local.settings';
+import { getAuthorizationToken } from './getAuthorizationToken';
 import type { WorkflowParameter } from './types';
-import type { Parameter, CodelessApp, Artifacts } from '@microsoft-logic-apps/utils';
+import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import type { Parameter, CodelessApp, Artifacts, AzureConnectorDetails } from '@microsoft-logic-apps/utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -136,4 +150,46 @@ export async function getArtifactsInLocalProject(projectPath: string): Promise<A
   }
 
   return artifacts;
+}
+
+export async function getAzureConnectorDetailsForLocalProject(
+  context: IActionContext,
+  projectPath: string
+): Promise<AzureConnectorDetails> {
+  const localSettingsFilePath = path.join(projectPath, localSettingsFileName);
+  const connectorsContext = context as IAzureConnectorsContext;
+  const localSettings = await getLocalSettingsJson(context, localSettingsFilePath);
+  let tenantId = localSettings.Values[workflowTenantIdKey];
+  let subscriptionId = localSettings.Values[workflowSubscriptionIdKey];
+  let resourceGroupName = localSettings.Values[workflowResourceGroupNameKey];
+  let location = localSettings.Values[workflowLocationKey];
+  let credentials: ServiceClientCredentials;
+
+  // Set default for customers who created Logic Apps before sovereign cloud support was added.
+  let workflowManagementBaseUrl = localSettings.Values![workflowManagementBaseURIKey] ?? 'https://management.azure.com/';
+
+  if (subscriptionId === undefined) {
+    const wizard = createAzureWizard(connectorsContext, projectPath);
+    await wizard.prompt();
+    await wizard.execute();
+
+    tenantId = connectorsContext.tenantId;
+    subscriptionId = connectorsContext.subscriptionId;
+    resourceGroupName = connectorsContext.resourceGroup?.name || '';
+    location = connectorsContext.resourceGroup?.location || '';
+    credentials = connectorsContext.credentials;
+    workflowManagementBaseUrl = connectorsContext.environment?.resourceManagerEndpointUrl;
+  }
+
+  const enabled = !!subscriptionId;
+
+  return {
+    enabled,
+    accessToken: enabled ? await getAuthorizationToken(credentials!, tenantId) : undefined,
+    subscriptionId: enabled ? subscriptionId : undefined,
+    resourceGroupName: enabled ? resourceGroupName : undefined,
+    location: enabled ? location : undefined,
+    tenantId: enabled ? tenantId : undefined,
+    workflowManagementBaseUrl: enabled ? workflowManagementBaseUrl : undefined,
+  };
 }
