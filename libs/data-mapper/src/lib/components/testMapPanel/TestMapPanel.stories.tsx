@@ -1,4 +1,5 @@
-import { TestMapPanel, type TestMapPanelProps } from './TestMapPanel';
+import { TestMapPanel } from './TestMapPanel';
+import type { TestMapPanelProps } from './TestMapPanel';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 

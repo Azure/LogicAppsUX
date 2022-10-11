@@ -5,9 +5,11 @@ export type ConnectionDictionary = { [key: string]: Connection }; // key= "{(tar
 
 export interface Connection {
   destination: ConnectionUnit;
-  sources: ConnectionUnit[];
+  inputs: ConnectionInput[];
   isSelected?: boolean;
 }
+
+export type ConnectionInput = ConnectionUnit | string | undefined;
 
 export interface ConnectionUnit {
   node: SchemaNodeExtended | FunctionData;

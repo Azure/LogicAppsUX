@@ -5,6 +5,7 @@ import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { Connection } from '../../models/Connection';
+import { isValidInputToFunctionNode, isValidSourceSchemaNodeToTargetSchemaNodeConnection } from '../../utils/Connection.Utils';
 import { getEdgeForSource } from '../../utils/DataMap.Utils';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
 import { addReactFlowPrefix } from '../../utils/ReactFlow.Util';
@@ -23,22 +24,11 @@ import {
   typographyStyles,
 } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
-import type { FunctionComponent } from 'react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
-
-export type SchemaCardProps = {
-  schemaNode: SchemaNodeExtended;
-  schemaType: SchemaTypes;
-  displayHandle: boolean;
-  displayChevron: boolean;
-  isLeaf: boolean;
-  isChild: boolean;
-  relatedConnections: Connection[];
-} & CardProps;
 
 const useStyles = makeStyles({
   container: {
@@ -150,23 +140,49 @@ const cardInputText = makeStyles({
 
 const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px', display: 'hidden' };
 
+export interface SchemaCardProps extends CardProps {
+  schemaNode: SchemaNodeExtended;
+  schemaType: SchemaTypes;
+  displayHandle: boolean;
+  displayChevron: boolean;
+  isLeaf: boolean;
+  isChild: boolean;
+  relatedConnections: Connection[];
+}
+
 const isValidConnection = (connection: ReactFlowConnection): boolean => {
   const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
+  const functionDictionary = store.getState().dataMap.curDataMapOperation.currentFunctionNodes;
   const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
+  const connectionDictionary = store.getState().dataMap.curDataMapOperation.dataMapConnections;
 
-  if (connection.source && connection.target && flattenedSourceSchema && flattenedTargetSchema) {
-    const sourceNode = flattenedSourceSchema[connection.source];
-    const targetNode = flattenedTargetSchema[connection.target];
+  if (connection.source && connection.target && flattenedSourceSchema && flattenedTargetSchema && functionDictionary) {
+    const sourceSchemaNode = flattenedSourceSchema[connection.source];
+    // Target is either a function, or target schema, node
+    const targetFunctionNode = functionDictionary[connection.target];
+    const targetSchemaNode = flattenedTargetSchema[connection.target];
+    const currentTargetConnection = connectionDictionary[connection.target];
 
-    // If we have no targetNode that means it's an function and just allow the connection for now
-    // TODO validate function allowed input types
-    return !targetNode || sourceNode.schemaNodeDataType === targetNode.schemaNodeDataType;
+    if (targetFunctionNode) {
+      return isValidInputToFunctionNode(
+        sourceSchemaNode.normalizedDataType,
+        currentTargetConnection,
+        targetFunctionNode.maxNumberOfInputs,
+        targetFunctionNode.inputs
+      );
+    }
+
+    if (targetSchemaNode) {
+      return isValidSourceSchemaNodeToTargetSchemaNodeConnection(sourceSchemaNode.schemaNodeDataType, targetSchemaNode.schemaNodeDataType);
+    }
+
+    return false;
   }
 
   return false;
 };
 
-export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
+export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron } = props.data;
   const intl = useIntl();
   const [_isHover, setIsHover] = useState<boolean>(false);
@@ -243,14 +259,14 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
         </div>
       )}
       <div className={containerStyle} onMouseLeave={() => onMouseLeave()} onMouseEnter={() => onMouseEnter()}>
-        {showHandle ? (
+        {showHandle && (
           <Handle
             type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
             position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
             style={handleStyle}
-            isValidConnection={isValidConnection}
+            isValidConnection={schemaType === SchemaTypes.Source ? isValidConnection : () => false}
           />
-        ) : null}
+        )}
         {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>

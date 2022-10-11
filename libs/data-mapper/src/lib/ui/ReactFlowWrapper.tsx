@@ -34,10 +34,12 @@ import {
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
+import type { ConnectionUnit } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SelectedNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
+import { isCustomValue } from '../utils/DataMap.Utils';
 import { useLayout } from '../utils/ReactFlow.Util';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { tokens } from '@fluentui/react-components';
@@ -113,7 +115,8 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
       return outputFilteredConnections
         .flatMap((connection) => {
-          return connection.sources.map((source) => flattenedSourceSchema[source.node.key]);
+          const potentialSourceSchemaNodes = connection.inputs.filter((input) => !!input && !isCustomValue(input)) as ConnectionUnit[];
+          return potentialSourceSchemaNodes.map((input) => flattenedSourceSchema[input.node.key]);
         })
         .filter((connection) => connection !== undefined);
     } else {
