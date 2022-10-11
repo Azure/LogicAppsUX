@@ -1,11 +1,12 @@
 import { NotificationTypes, type NotificationData } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
-import { SchemaNodeProperties, SchemaTypes } from '../../models';
-import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
+import { NormalizedDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
+import type { ConnectionDictionary, ConnectionInput, ConnectionUnit } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
 import { isCustomValue } from '../../utils/DataMap.Utils';
+import { isFunctionData } from '../../utils/Function.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -488,16 +489,73 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperati
 
 const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAction): void => {
   if (!newConnections[nodes.reactFlowDestination]) {
+    const inputsArr: ConnectionInput[] = [];
+
+    // Initialize inputs array according to Function node inputs
+    if (isFunctionData(nodes.destination)) {
+      const fnNode = nodes.destination as FunctionData;
+      const srcType = isFunctionData(nodes.source) ? nodes.source.outputValueType : nodes.source.normalizedDataType;
+
+      if (fnNode.maxNumberOfInputs === 0) {
+        console.error('Hey! You somehow attempted to make a connection to a Function with 0 inputs...no!');
+      } else if (fnNode.maxNumberOfInputs === -1) {
+        inputsArr.push({ node: nodes.source, reactFlowKey: nodes.reactFlowSource });
+      } else {
+        let isSrcPlaced = false;
+        fnNode.inputs.forEach((input) => {
+          if (!isSrcPlaced && input.allowedTypes.some((type) => type === NormalizedDataType.Any || type === srcType)) {
+            inputsArr.push({ node: nodes.source, reactFlowKey: nodes.reactFlowSource });
+            isSrcPlaced = true;
+          } else {
+            inputsArr.push(undefined);
+          }
+        });
+      }
+    } else {
+      inputsArr.push({ node: nodes.source, reactFlowKey: nodes.reactFlowSource });
+    }
+
     // eslint-disable-next-line no-param-reassign
     newConnections[nodes.reactFlowDestination] = {
-      inputs: [{ node: nodes.source, reactFlowKey: nodes.reactFlowSource }],
+      inputs: inputsArr,
       destination: { node: nodes.destination, reactFlowKey: nodes.reactFlowDestination },
     };
   } else {
-    newConnections[nodes.reactFlowDestination].inputs.push({
-      node: nodes.source,
-      reactFlowKey: nodes.reactFlowSource,
-    });
+    // Find the first available input spot that matches type based on Function node inputs
+    if (isFunctionData(nodes.destination)) {
+      const fnNode = nodes.destination as FunctionData;
+      const srcType = isFunctionData(nodes.source) ? nodes.source.outputValueType : nodes.source.normalizedDataType;
+
+      if (fnNode.maxNumberOfInputs === 0) {
+        console.error('Hey! You somehow attempted to make a connection to a Function with 0 inputs...no!');
+      } else if (fnNode.maxNumberOfInputs === -1) {
+        newConnections[nodes.reactFlowDestination].inputs.forEach((input, idx) => {
+          if (!input) {
+            // eslint-disable-next-line no-param-reassign
+            newConnections[nodes.reactFlowDestination].inputs[idx] = { node: nodes.source, reactFlowKey: nodes.reactFlowSource };
+          }
+        });
+      } else {
+        let isSrcPlaced = false;
+        newConnections[nodes.reactFlowDestination].inputs.forEach((input, idx) => {
+          // Check if undefined input spot matches type and set it if so
+          if (
+            !isSrcPlaced &&
+            !input &&
+            fnNode.inputs[idx].allowedTypes.some((type) => type === NormalizedDataType.Any || type === srcType)
+          ) {
+            // eslint-disable-next-line no-param-reassign
+            newConnections[nodes.reactFlowDestination].inputs[idx] = { node: nodes.source, reactFlowKey: nodes.reactFlowSource };
+            isSrcPlaced = true;
+          }
+        });
+      }
+    } else {
+      newConnections[nodes.reactFlowDestination].inputs.push({
+        node: nodes.source,
+        reactFlowKey: nodes.reactFlowSource,
+      });
+    }
   }
 };
 
