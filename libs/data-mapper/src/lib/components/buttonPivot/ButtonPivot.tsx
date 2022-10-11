@@ -8,7 +8,7 @@ export interface ButtonPivotProps {
   yPos: string;
   buttons: ButtonPivotButtonProps[];
   horizontal: boolean;
-  selectedValue: string | undefined;
+  selectedValue: string;
   onTabSelect?: (_event: SelectTabEvent, data: SelectTabData) => void;
 }
 
@@ -54,7 +54,7 @@ export const ButtonPivot: React.FC<ButtonPivotProps> = ({
       vertical={!horizontal}
       style={tabListStyle}
       appearance="subtle"
-      size="medium"
+      size="small"
       onTabSelect={onTabSelect}
       selectedValue={selectedValue}
     >

@@ -1,6 +1,7 @@
 import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
+import type { SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
+import { findNodeForKey } from '../../utils/Schema.Utils';
 import type { IBreadcrumbItem } from '@fluentui/react';
 import { Breadcrumb } from '@fluentui/react';
 import { Button, tokens } from '@fluentui/react-components';
@@ -80,7 +81,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
 };
 
 const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended, currentNode?: SchemaNodeExtended) => {
-  const rootItem = {
+  const rootItem: IBreadcrumbItem = {
     key: schema.name,
     text: schema.name,
     // TODO (14748905): Click root to view map overview, not top node
@@ -96,25 +97,20 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
       breadcrumbItems.push({
         key: pathItem.key,
         text: pathItem.name,
-        onClick: () => {
-          const destinationNode = findChildNode(schema.schemaTreeRoot, [...currentNode.pathToRoot]);
-          dispatch(setCurrentTargetNode({ schemaNode: destinationNode, resetSelectedSourceNodes: true }));
+        onClick: (_event, item) => {
+          if (item) {
+            const newNode = findNodeForKey(item.key, schema.schemaTreeRoot);
+            if (newNode) {
+              dispatch(setCurrentTargetNode({ schemaNode: newNode, resetSelectedSourceNodes: true }));
+              return;
+            }
+          }
+
+          dispatch(setCurrentTargetNode({ schemaNode: schema.schemaTreeRoot, resetSelectedSourceNodes: true }));
         },
       });
     });
   }
 
   return breadcrumbItems;
-};
-
-const findChildNode = (schemaNode: SchemaNodeExtended, pathItems: PathItem[]): SchemaNodeExtended => {
-  if (pathItems.length > 1) {
-    const nextPathItem = pathItems.shift();
-    const nextChild = schemaNode.children.find((child) => child.key === nextPathItem?.key);
-    if (nextChild) {
-      return findChildNode(nextChild, pathItems);
-    }
-  }
-
-  return schemaNode;
 };

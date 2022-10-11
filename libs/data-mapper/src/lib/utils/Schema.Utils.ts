@@ -1,7 +1,7 @@
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { ConnectionDictionary } from '../models/Connection';
+import type { FunctionData } from '../models/Function';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
-import { SchemaNodeDataType, SchemaTypes } from '../models/Schema';
+import { SchemaTypes } from '../models/Schema';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
@@ -45,33 +45,7 @@ const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[]
   return childArray;
 };
 
-// TODO Handle values with attributes
-export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.schemaNodeDataType !== SchemaNodeDataType.None;
-
-export const allChildNodesSelected = (schemaNode: SchemaNodeExtended, selectedNodes: SchemaNodeExtended[]): boolean =>
-  schemaNode.children.every((childNode) => selectedNodes.some((selectedNode) => selectedNode.key === childNode.key));
-
-export const hasAConnection = (schemaNode: SchemaNodeExtended, connections: ConnectionDictionary): boolean => {
-  return Object.values(connections).some(
-    (connection) =>
-      connection.reactFlowSource === `${sourcePrefix}${schemaNode.key}` ||
-      connection.reactFlowDestination === `${targetPrefix}${schemaNode.key}`
-  );
-};
-
-export const hasAConnectionAtCurrentTargetNode = (
-  schemaNode: SchemaNodeExtended,
-  currentTargetNode: SchemaNodeExtended,
-  connections: ConnectionDictionary
-): boolean => {
-  return Object.values(connections)
-    .filter((connection) => currentTargetNode.children.some((outputChild) => outputChild.key === connection.destination.key))
-    .some(
-      (connection) =>
-        connection.reactFlowSource === `${sourcePrefix}${schemaNode.key}` ||
-        connection.reactFlowDestination === `${targetPrefix}${schemaNode.key}`
-    );
-};
+export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;
 
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
   if (schemaNode.key === nodeKey) {
@@ -89,3 +63,5 @@ export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended):
 
   return result;
 };
+
+export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended => 'pathToRoot' in node;

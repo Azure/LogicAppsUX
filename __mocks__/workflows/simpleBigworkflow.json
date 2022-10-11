@@ -4,19 +4,16 @@
     "actions": {
       "Get_rows": {
         "inputs": {
-          "host": {
-            "connection": {
-              "referenceName": "googlesheet"
+          "variables": [
+            {
+              "name": "t1",
+              "type": "string",
+              "value": "abc"
             }
-          },
-          "method": "get",
-          "path": "/datasets/@{encodeURIComponent(encodeURIComponent('1FMEmoAsFhVD_gyDJ7eOQYU0Ly_gCqGAfleVtdhvZp3A'))}/tables/@{encodeURIComponent(encodeURIComponent('170475114'))}/items"
-        },
-        "metadata": {
-          "1FMEmoAsFhVD_gyDJ7eOQYU0Ly_gCqGAfleVtdhvZp3A": "/BETA2 - Zenith Community Master Balance Sheet"
+          ]
         },
         "runAfter": {},
-        "type": "ApiConnection"
+        "type": "InitializeVariable"
       },
       "Increment_variable": {
         "inputs": {
@@ -24,7 +21,7 @@
           "value": 1
         },
         "runAfter": {
-          "Initialize_variable": ["Succeeded"]
+          "Initialize_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -34,7 +31,7 @@
           "value": 1
         },
         "runAfter": {
-          "Initialize_variable": ["Succeeded"]
+          "Initialize_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -44,7 +41,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_3": ["Succeeded"]
+          "Increment_variable_3": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -54,7 +51,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_10": ["Succeeded"]
+          "Increment_variable_10": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -64,7 +61,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -74,7 +71,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -84,7 +81,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -94,7 +91,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -104,7 +101,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -114,7 +111,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -124,7 +121,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -134,7 +131,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -144,7 +141,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -154,7 +151,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -164,7 +161,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -174,7 +171,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -184,7 +181,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -194,7 +191,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -204,7 +201,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -214,7 +211,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -224,7 +221,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -234,7 +231,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -244,7 +241,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -254,7 +251,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -264,7 +261,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -274,7 +271,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -284,7 +281,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -294,7 +291,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -304,7 +301,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -314,7 +311,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable_461": ["Succeeded"]
+          "Increment_variable_461": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -324,7 +321,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -334,7 +331,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -344,7 +341,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -354,7 +351,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -364,7 +361,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -374,7 +371,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -384,7 +381,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -394,7 +391,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -404,7 +401,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -414,7 +411,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -424,7 +421,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -434,7 +431,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -444,7 +441,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -454,7 +451,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -464,7 +461,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -474,7 +471,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -484,7 +481,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -494,7 +491,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -504,7 +501,7 @@
           "value": 1
         },
         "runAfter": {
-          "Increment_variable": ["Succeeded"]
+          "Increment_variable": ["SUCCEEDED"]
         },
         "type": "IncrementVariable"
       },
@@ -519,7 +516,7 @@
           ]
         },
         "runAfter": {
-          "Response": ["Succeeded"]
+          "Response": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       },
@@ -529,7 +526,7 @@
         },
         "kind": "http",
         "runAfter": {
-          "Get_rows": ["Succeeded"]
+          "Get_rows": ["SUCCEEDED"]
         },
         "type": "Response"
       }

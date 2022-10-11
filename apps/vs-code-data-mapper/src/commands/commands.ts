@@ -20,36 +20,33 @@ const openDataMapperCmd = async (context: ExtensionContext) => {
   DataMapperExt.createOrShow(context);
 };
 
-const createNewDataMapCmd = async (context: ExtensionContext) => {
-  const newDataMapTemplate = yaml.dump({
-    $sourceSchema: '',
-    $targetSchema: '',
-    mappings: {
-      targetNodeKey: '',
-    },
-  });
-
+const createNewDataMapCmd = (context: ExtensionContext) => {
   // TODO: Data map name validation
-  window.showInputBox({ prompt: 'Data Map name: ' }).then((newDatamapName) => {
+  window.showInputBox({ prompt: 'Data Map name: ' }).then(async (newDatamapName) => {
     if (!newDatamapName) {
       return;
     }
 
     DataMapperExt.currentDataMapName = newDatamapName;
 
-    openDataMapperCmd(context).then(() => {
-      DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'loadNewDataMap', data: newDataMapTemplate });
-    });
+    await openDataMapperCmd(context);
+
+    DataMapperExt.currentPanel.sendMsgToWebview({ command: 'loadNewDataMap', data: {} });
+    DataMapperExt.checkForAndSetXsltFilename();
   });
 };
 
 const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
-  const dataMap = yaml.load(await fs.readFile(uri.fsPath, 'utf-8')) as { $sourceSchema: string; $targetSchema: string; [key: string]: any };
+  const mapDefinition = yaml.load(await fs.readFile(uri.fsPath, 'utf-8')) as {
+    $sourceSchema: string;
+    $targetSchema: string;
+    [key: string]: any;
+  };
 
   // Attempt to load schema files if specified
   const schemasFolder = path.join(workspace.workspaceFolders[0].uri.fsPath, schemasPath);
-  const srcSchemaPath = path.join(schemasFolder, dataMap.$sourceSchema);
-  const tgtSchemaPath = path.join(schemasFolder, dataMap.$targetSchema);
+  const srcSchemaPath = path.join(schemasFolder, mapDefinition.$sourceSchema);
+  const tgtSchemaPath = path.join(schemasFolder, mapDefinition.$targetSchema);
 
   if (!fileExists(srcSchemaPath)) {
     DataMapperExt.showError('Loading data map definition failed: the defined source schema file was not found in the Schemas folder!');
@@ -63,14 +60,15 @@ const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
 
   DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
 
-  openDataMapperCmd(context).then(() => {
-    DataMapperExt.currentPanel.sendMsgToWebview({
-      command: 'loadDataMap',
-      data: {
-        dataMap: dataMap,
-        sourceSchemaFileName: path.basename(srcSchemaPath),
-        targetSchemaFileName: path.basename(tgtSchemaPath),
-      },
-    });
+  await openDataMapperCmd(context);
+
+  DataMapperExt.currentPanel.sendMsgToWebview({
+    command: 'loadDataMap',
+    data: {
+      mapDefinition: mapDefinition,
+      sourceSchemaFileName: path.basename(srcSchemaPath),
+      targetSchemaFileName: path.basename(tgtSchemaPath),
+    },
   });
+  DataMapperExt.checkForAndSetXsltFilename();
 };

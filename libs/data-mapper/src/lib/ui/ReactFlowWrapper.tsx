@@ -2,15 +2,18 @@ import type { ButtonContainerProps } from '../components/buttonContainer/ButtonC
 import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
 import type { ButtonPivotProps } from '../components/buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
+import { ConnectionEdge } from '../components/edge/ConnectionEdge';
 import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
 import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
 import { FunctionList } from '../components/functionList/FunctionList';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
+import { Notification } from '../components/notification/Notification';
 import { SchemaTree } from '../components/tree/SchemaTree';
 import {
   checkerboardBackgroundImage,
   defaultCanvasZoom,
+  ReactFlowEdgeType,
   ReactFlowNodeType,
   sourcePrefix,
   targetPrefix,
@@ -21,17 +24,19 @@ import {
   changeConnection,
   deleteConnection,
   deleteCurrentlySelectedItem,
+  hideNotification,
   makeConnection,
   removeSourceNodes,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
+  unsetSelectedEdges,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
 import type { FunctionData } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
-import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../models/SelectedNode';
+import type { SelectedNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
 import { useLayout } from '../utils/ReactFlow.Util';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
@@ -59,6 +64,9 @@ import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as 
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'reactflow';
 
+export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
+export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
+
 const toolboxPanelProps: FloatingPanelProps = {
   xPos: '16px',
   yPos: '76px',
@@ -77,34 +85,35 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const { fitView, zoomIn, zoomOut, project } = useReactFlow();
 
-  const currentlySelectedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
+  const functionData = useSelector((state: RootState) => state.function.availableFunctions);
+  const addedFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
-  const allFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
+  const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
-  const [displayToolboxItem, setDisplayToolboxItem] = useState<string | undefined>();
+  const [displayToolboxItem, setDisplayToolboxItem] = useState<string>('');
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
 
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const edgeUpdateSuccessful = useRef(true);
-  const nodeTypes = useMemo(() => ({ schemaNode: SchemaCard, functionNode: FunctionCard }), []);
 
   // TODO update to support input nodes connected to an function, connected to an output node
   const connectedSourceNodes = useMemo(() => {
     if (currentTargetNode) {
       const connectionValues = Object.values(connections);
       const outputFilteredConnections = currentTargetNode.children.flatMap((childNode) => {
-        const foundConnection = connectionValues.find((connection) => connection.destination.key === childNode.key);
+        const foundConnection = connectionValues.find((connection) => connection.destination.node.key === childNode.key);
         return foundConnection ? [foundConnection] : [];
       });
 
       return outputFilteredConnections
-        .map((connection) => {
-          return flattenedSourceSchema[connection.reactFlowSource];
+        .flatMap((connection) => {
+          return connection.sources.map((source) => flattenedSourceSchema[source.node.key]);
         })
         .filter((connection) => connection !== undefined);
     } else {
@@ -114,7 +123,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
     if (data.value === displayToolboxItem) {
-      setDisplayToolboxItem(undefined);
+      setDisplayToolboxItem('');
     } else {
       setDisplayToolboxItem(data.value as string);
     }
@@ -126,7 +135,10 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       dispatch(setCurrentlySelectedNode(undefined));
     }
 
-    setDisplayToolboxItem(undefined);
+    // Unselect all edges/lines
+    dispatch(unsetSelectedEdges());
+
+    setDisplayToolboxItem('');
   };
 
   const onFunctionItemClick = (selectedFunction: FunctionData) => {
@@ -135,7 +147,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
   const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
     if (
-      currentlySelectedSourceNodes.some((node) => {
+      currentlyAddedSourceNodes.some((node) => {
         return node.key === selectedNode.key;
       })
     ) {
@@ -146,52 +158,31 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   };
 
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
+    const newSelectedNode: SelectedNode = {
+      id: node.id,
+      type: NodeType.Function,
+    };
+
     if (node.type === ReactFlowNodeType.SchemaNode) {
-      if (node.data.schemaType === SchemaTypes.Source) {
-        const selectedSourceNode: SelectedSourceNode = {
-          nodeType: NodeType.Source,
-          name: node.data.schemaNode.name,
-          path: node.id.replace(sourcePrefix, ''),
-          dataType: node.data.schemaNode.schemaNodeDataType,
-        };
-
-        dispatch(setCurrentlySelectedNode(selectedSourceNode));
-      } else if (node.data.schemaType === SchemaTypes.Target) {
-        const selectedTargetNode: SelectedTargetNode = {
-          nodeType: NodeType.Target,
-          name: node.data.schemaNode.name,
-          path: node.id.replace(targetPrefix, ''),
-          dataType: node.data.schemaNode.schemaNodeDataType,
-          defaultValue: '', // TODO: this property and below
-          doNotGenerateIfNoValue: true,
-          nullable: true,
-          inputIds: [],
-        };
-
-        dispatch(setCurrentlySelectedNode(selectedTargetNode));
-      }
-    } else if (node.type === ReactFlowNodeType.FunctionNode) {
-      const selectedFunctionNode: SelectedFunctionNode = {
-        nodeType: NodeType.Function,
-        id: node.id,
-        name: node.data.functionName,
-        inputs: node.data.inputs,
-        branding: node.data.functionBranding,
-        description: '', // TODO: this property and below
-        codeEx: '',
-        outputId: '',
-      };
-
-      dispatch(setCurrentlySelectedNode(selectedFunctionNode));
+      newSelectedNode.type = node.data.schemaType === SchemaTypes.Source ? NodeType.Source : NodeType.Target;
     }
+
+    dispatch(setCurrentlySelectedNode(newSelectedNode));
   };
 
   const onConnect = (connection: ReactFlowConnection) => {
     if (connection.target && connection.source) {
+      const source = connection.source.startsWith(sourcePrefix)
+        ? flattenedSourceSchema[connection.source]
+        : addedFunctionNodes[connection.source];
+      const destination = connection.target.startsWith(targetPrefix)
+        ? flattenedTargetSchema[connection.target]
+        : addedFunctionNodes[connection.target];
+
       dispatch(
         makeConnection({
-          destination: flattenedTargetSchema[connection.target],
-          source: flattenedSourceSchema[connection.source],
+          source,
+          destination,
           reactFlowDestination: connection.target,
           reactFlowSource: connection.source,
         })
@@ -207,25 +198,33 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     (oldEdge: ReactFlowEdge, newConnection: ReactFlowConnection) => {
       edgeUpdateSuccessful.current = true;
       if (newConnection.target && newConnection.source && oldEdge.target) {
+        const source = newConnection.source.startsWith(sourcePrefix)
+          ? flattenedSourceSchema[newConnection.source]
+          : addedFunctionNodes[newConnection.source];
+        const destination = newConnection.target.startsWith(targetPrefix)
+          ? flattenedTargetSchema[newConnection.target]
+          : addedFunctionNodes[newConnection.target];
+
         dispatch(
           changeConnection({
-            destination: flattenedTargetSchema[newConnection.target],
-            source: flattenedSourceSchema[newConnection.source],
+            destination,
+            source,
             reactFlowDestination: newConnection.target,
             reactFlowSource: newConnection.source,
-            oldConnectionKey: oldEdge.id,
+            connectionKey: oldEdge.target,
+            inputKey: oldEdge.source,
           })
         );
       }
     },
-    [dispatch, flattenedSourceSchema, flattenedTargetSchema]
+    [dispatch, flattenedSourceSchema, flattenedTargetSchema, addedFunctionNodes]
   );
 
   const onEdgeUpdateEnd = useCallback(
     (_: any, edge: ReactFlowEdge) => {
       if (!edgeUpdateSuccessful.current) {
         if (edge.target) {
-          dispatch(deleteConnection(edge.id));
+          dispatch(deleteConnection({ connectionKey: edge.target, inputKey: edge.source }));
         }
       }
 
@@ -233,6 +232,18 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     },
     [dispatch]
   );
+
+  const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
+    if (node) {
+      dispatch(setCurrentlySelectedEdge(node.target));
+    }
+  };
+
+  const keyDownHandler: KeyboardEventHandler<HTMLDivElement> = (event) => {
+    if (event.key === 'Delete' || event.key === 'Backspace') {
+      dispatch(deleteCurrentlySelectedItem());
+    }
+  };
 
   const toolboxLoc = intl.formatMessage({
     defaultMessage: 'Toolbox',
@@ -356,32 +367,18 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     currentlyAddedSourceNodes,
     connectedSourceNodes,
     flattenedSourceSchema,
-    allFunctionNodes,
+    addedFunctionNodes,
     currentTargetNode,
     connections
   );
-
-  const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
-    const selectedNode = edges.find((edge) => edge.id === node.id);
-    if (selectedNode) {
-      selectedNode.selected = !selectedNode.selected;
-    }
-    if (node) {
-      dispatch(setCurrentlySelectedEdge(node.id));
-    }
-  };
-
-  const keyDownHandler2: KeyboardEventHandler<HTMLDivElement> = (event) => {
-    if (event.key === 'Delete' || event.key === 'Backspace') {
-      dispatch(deleteCurrentlySelectedItem());
-    }
-  };
 
   const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
   return (
     <ReactFlow
       ref={reactFlowRef}
-      onKeyDown={keyDownHandler2}
+      onKeyDown={keyDownHandler}
+      nodeTypes={nodeTypes}
+      edgeTypes={edgeTypes}
       nodes={nodes}
       edges={edges}
       onConnect={onConnect}
@@ -390,6 +387,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       defaultViewport={defaultViewport}
       nodesDraggable={false}
       fitView={false}
+      // With custom edge component, only affects appearance when drawing edge
       connectionLineType={ConnectionLineType.SmoothStep}
       proOptions={{
         account: 'paid-sponsor',
@@ -401,7 +399,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         backgroundSize: '22px 22px',
         borderRadius: tokens.borderRadiusMedium,
       }}
-      nodeTypes={nodeTypes}
       onEdgeUpdate={onEdgeUpdate}
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}
@@ -423,7 +420,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
       {displayToolboxItem === 'functionsPanel' && (
         <FloatingPanel {...toolboxPanelProps}>
-          <FunctionList onFunctionClick={onFunctionItemClick}></FunctionList>
+          <FunctionList functionData={functionData} onFunctionClick={onFunctionItemClick}></FunctionList>
         </FloatingPanel>
       )}
 
@@ -451,18 +448,14 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
         />
       )}
 
-      {/* Toast Placeholder
-        {notification.data &&
-          <Notification
-            msg={notification.data.msg}
-            intent={notification.data.intent}
-            icon={!notification.data.intent && <Delete20Regular />}
-            action={{ icon: <Dismiss20Regular /> }}
-            autoHideDuration={2000}
-            onClose={notificationSlice.actions.hideNotification}
-          />
-        }
-      */}
+      {notificationData && (
+        <Notification
+          type={notificationData.type}
+          msgParam={notificationData.msgParam}
+          msgBody={notificationData.msgBody}
+          onClose={() => dispatch(hideNotification())}
+        />
+      )}
     </ReactFlow>
   );
 };

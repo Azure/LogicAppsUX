@@ -9,6 +9,10 @@ export enum ReactFlowNodeType {
   FunctionNode = 'functionNode',
 }
 
+export enum ReactFlowEdgeType {
+  ConnectionEdge = 'connectionEdge',
+}
+
 export const sourcePrefix = 'source-';
 export const targetPrefix = 'target-';
 export const functionPrefix = 'function-';

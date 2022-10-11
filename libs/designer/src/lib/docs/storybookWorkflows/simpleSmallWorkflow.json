@@ -29,7 +29,7 @@
           ]
         },
         "runAfter": {
-          "Response": ["Succeeded"]
+          "Response": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       },
@@ -39,7 +39,7 @@
         },
         "kind": "http",
         "runAfter": {
-          "Get_rows": ["Succeeded"]
+          "Get_rows": ["SUCCEEDED"]
         },
         "type": "Response"
       }

@@ -1,21 +1,15 @@
 import type { FunctionData } from './Function';
 import type { SchemaNodeExtended } from './Schema';
 
-export type ConnectionDictionary = { [key: string]: Connection };
+export type ConnectionDictionary = { [key: string]: Connection }; // key= "{(target)||(source)}-{nodeId}"
 
 export interface Connection {
-  destination: SchemaNodeExtended | FunctionData;
-  source: SchemaNodeExtended | FunctionData;
-  loop?: LoopConnection;
-  condition?: string;
+  destination: ConnectionUnit;
+  sources: ConnectionUnit[];
   isSelected?: boolean;
-
-  //Only used to display edges
-  reactFlowSource: string;
-  reactFlowDestination: string;
 }
 
-export interface LoopConnection {
-  loopSource: string;
-  loopIndex?: string;
+export interface ConnectionUnit {
+  node: SchemaNodeExtended | FunctionData;
+  reactFlowKey: string;
 }

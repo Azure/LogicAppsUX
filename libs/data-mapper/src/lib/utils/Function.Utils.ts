@@ -6,6 +6,8 @@ import {
   stringBranding,
   utilityBranding,
 } from '../constants/FunctionConstants';
+import type { SchemaNodeExtended } from '../models';
+import type { FunctionData } from '../models/Function';
 import { FunctionCategory } from '../models/Function';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
@@ -34,3 +36,11 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
     }
   }
 };
+
+export const findFunctionForFunctionName = (nodeKey: string, functions: FunctionData[]): FunctionData | undefined =>
+  functions.find((functionData) => functionData.functionName === nodeKey);
+
+export const findFunctionForKey = (nodeKey: string, functions: FunctionData[]): FunctionData | undefined =>
+  functions.find((functionData) => functionData.key === nodeKey);
+
+export const isFunctionData = (node: SchemaNodeExtended | FunctionData): node is FunctionData => 'functionName' in node;

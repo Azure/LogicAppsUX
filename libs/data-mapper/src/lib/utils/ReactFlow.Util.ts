@@ -2,17 +2,18 @@ import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childTargetNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
-import { ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
-import type { FunctionDictionary } from '../models/Function';
+import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
+import { guid } from '@microsoft-logic-apps/utils';
 import { useMemo } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
-import { ConnectionLineType, MarkerType, Position } from 'reactflow';
+import { Position } from 'reactflow';
 
 const getViewportWidth = (endX: number, startX: number) => endX - startX;
 
@@ -41,21 +42,21 @@ export const convertToReactFlowNodes = (
   const reactFlowNodes: ReactFlowNode<CardProps>[] = [];
 
   reactFlowNodes.push(
-    ...convertInputToReactFlowParentAndChildNodes(
+    ...convertSourceToReactFlowParentAndChildNodes(
       viewportCoords,
       currentlySelectedSourceNodes,
       connectedSourceNodes,
       allSourceNodes,
       connections
     ),
-    ...convertOutputToReactFlowParentAndChildNodes(viewportCoords, targetSchemaNode, connections),
+    ...convertTargetToReactFlowParentAndChildNodes(viewportCoords, targetSchemaNode, connections),
     ...convertFunctionsToReactFlowParentAndChildNodes(viewportCoords, allFunctionNodes)
   );
 
   return reactFlowNodes;
 };
 
-const convertInputToReactFlowParentAndChildNodes = (
+const convertSourceToReactFlowParentAndChildNodes = (
   viewportCoords: ViewportCoords,
   currentlySelectedSourceNodes: SchemaNodeExtended[],
   connectedSourceNodes: SchemaNodeExtended[],
@@ -105,7 +106,7 @@ const convertInputToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-const convertOutputToReactFlowParentAndChildNodes = (
+const convertTargetToReactFlowParentAndChildNodes = (
   viewportCoords: ViewportCoords,
   targetSchemaNode: SchemaNodeExtended,
   connections: ConnectionDictionary
@@ -203,18 +204,16 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 };
 
 export const convertToReactFlowEdges = (connections: ConnectionDictionary): ReactFlowEdge[] => {
-  return Object.entries(connections).map(([connectionKey, connection]) => {
-    return {
-      id: connectionKey,
-      source: connection.reactFlowSource,
-      target: connection.reactFlowDestination,
-      type: ConnectionLineType.SmoothStep,
-      selected: connection.isSelected,
-      markerStart: {
-        type: MarkerType.Arrow,
-        width: 30,
-      },
-    };
+  return Object.values(connections).flatMap((connection) => {
+    return connection.sources.map((source) => {
+      return {
+        id: createReactFlowConnectionId(source.reactFlowKey, connection.destination.reactFlowKey),
+        source: source.reactFlowKey,
+        target: connection.destination.reactFlowKey,
+        type: ReactFlowEdgeType.ConnectionEdge,
+        selected: connection.isSelected,
+      };
+    });
   });
 };
 
@@ -261,3 +260,13 @@ const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: strin
   });
   return relatedConnections;
 };
+
+export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
+
+export const createReactFlowConnectionId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
+
+export const addReactFlowPrefix = (key: string, type: SchemaTypes) => `${type}-${key}`;
+
+export const getSourceIdFromReactFlowId = (reactFlowId: string): string => reactFlowId.split('-to-')[0];
+
+export const getDestinationIdFromReactFlowId = (reactFlowId: string): string => reactFlowId.split('-to-')[1];
