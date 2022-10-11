@@ -521,7 +521,7 @@ function normalizeTemplate(template: string): string {
 
   if (pathKeys) {
     for (const pathKey of pathKeys) {
-      updatedTemplate = template.replace(pathKey, pathKey.toUpperCase());
+      updatedTemplate = updatedTemplate.replace(pathKey, pathKey.toUpperCase());
     }
   }
 

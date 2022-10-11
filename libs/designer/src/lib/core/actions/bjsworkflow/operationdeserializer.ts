@@ -13,7 +13,7 @@ import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
-import { getConnectionId } from '../../utils/connectors/connections';
+import { getConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
 import {
   getAllInputParameters,
@@ -327,20 +327,21 @@ export const updateDynamicDataInNodes = async (
     workflow: { nodesMetadata, operations },
     operations: { inputParameters, settings, dependencies, operationInfo },
     tokens: { variables },
+    connections,
   } = rootState;
   for (const [nodeId, operation] of Object.entries(operations)) {
     const nodeDependencies = dependencies[nodeId];
     const nodeInputs = inputParameters[nodeId];
     const nodeSettings = settings[nodeId];
-    const connectionId = getConnectionId(rootState.connections, nodeId);
     const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
     const nodeOperationInfo = operationInfo[nodeId];
+    const connectionReference = getConnectionReference(connections, nodeId);
 
     loadDynamicData(
       nodeId,
       isTrigger,
       nodeOperationInfo,
-      connectionId,
+      connectionReference,
       nodeDependencies,
       nodeInputs,
       nodeSettings,
@@ -359,7 +360,7 @@ export const updateDynamicDataInNodes = async (
             details.groupId,
             details.parameter.id,
             nodeOperationInfo,
-            connectionId,
+            connectionReference,
             nodeInputs,
             nodeDependencies,
             dispatch
