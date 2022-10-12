@@ -49,3 +49,4 @@ __azurite_db_queue_extent__.json
 **/test-results
 **/playwright-report
 **/playwright/.cache
+*.pem

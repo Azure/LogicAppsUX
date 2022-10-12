@@ -62,6 +62,10 @@
       "options": {
         "uiFramework": "@storybook/react",
         "port": 4400,
+        "host": "localhost",
+        "https": true,
+        "sslKey": "local-key.pem",
+        "sslCert": "local-cert.pem",
         "config": {
           "configFolder": "libs/designer/.storybook"
         }

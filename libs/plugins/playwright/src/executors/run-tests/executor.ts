@@ -37,7 +37,6 @@ const runPlaywright = async (baseUrl: string, options: PlaywrightExecutorSchema)
   }
 };
 export default async function executor(options: PlaywrightExecutorSchema, context: ExecutorContext) {
-  await startDevServer(options, context);
   let success;
   for await (const baseUrl of startDevServer(options, context)) {
     try {
