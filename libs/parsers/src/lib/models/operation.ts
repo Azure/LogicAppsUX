@@ -43,7 +43,8 @@ export interface Operation {
 export type DynamicParameters = Record<string, DynamicParameter>;
 
 export interface DynamicParameter {
-  parameterReference: string;
+  parameterReference?: string;
+  parameter?: string;
   required: boolean;
 }
 

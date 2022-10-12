@@ -9,10 +9,7 @@ export function isArmResourceId(resourceId: string): boolean {
 }
 
 export const isBuiltInConnector = (connectorId: string) => {
-  // Note: connectorId format: connectionProviders/{connector}
-  const fields = connectorId.split('/');
-  if (fields.length !== 3) return false;
-  return equals(fields[1], 'serviceProviders');
+  return !isArmResourceId(connectorId);
 };
 
 export const getConnectorName = (connectorId: string): string => connectorId?.split('/').at(-1) ?? '';

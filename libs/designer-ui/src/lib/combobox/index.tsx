@@ -15,8 +15,9 @@ import type {
 import { IconButton, TooltipHost, SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { guid } from '@microsoft-logic-apps/utils';
-import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import { useRef, useState, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useUpdateEffect } from '@react-hookz/web';
 
 enum Mode {
   Default,
@@ -115,7 +116,7 @@ export const Combobox = ({
     return getOptions(options);
   }, [intl, options, searchValue, useOption]);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     onChange?.({
       value:
         mode === Mode.Custom

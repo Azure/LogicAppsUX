@@ -23,6 +23,7 @@ export const initialWorkflowState: WorkflowState = {
   collapsedGraphIds: {},
   edgeIdsBySource: {},
   idReplacements: {},
+  newlyAddedOperations: {}
 };
 
 export const workflowSlice = createSlice({

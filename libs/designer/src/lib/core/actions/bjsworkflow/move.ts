@@ -14,8 +14,7 @@ export const moveOperation = createAsyncThunk('moveOperation', async (movePayloa
   const { nodeId } = movePayload;
   const operation = (getState() as RootState).operations.operationInfo[nodeId];
 
-  const newWorkflowState = (getState() as RootState).workflow;
-  reinitializeOperationDetails(nodeId, operation, newWorkflowState, dispatch);
+  reinitializeOperationDetails(nodeId, operation, getState() as RootState, dispatch);
 
   // Update settings for children + parents
 

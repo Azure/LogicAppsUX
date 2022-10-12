@@ -1,4 +1,5 @@
 import Constants from '../../common/constants';
+import type { ConnectionReference } from '../../common/models/workflow';
 import { updateOutputsAndTokens } from '../actions/bjsworkflow/initialize';
 import type { Settings } from '../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../queries/connections';
@@ -310,7 +311,7 @@ export const loadDynamicOutputsInNode = async (
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
-  connectionId: string,
+  connectionReference: ConnectionReference,
   outputDependencies: Record<string, DependencyInfo>,
   nodeInputs: NodeInputs,
   settings: Settings,
@@ -324,7 +325,7 @@ export const loadDynamicOutputsInNode = async (
       if (info.dependencyType === 'StaticSchema') {
         updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
       } else {
-        const outputSchema = await getDynamicSchema(info, nodeInputs, connectionId, operationInfo);
+        const outputSchema = await getDynamicSchema(info, nodeInputs, operationInfo, connectionReference);
         let schemaOutputs = outputSchema ? getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter) : {};
 
         if (settings.splitOn?.value?.enabled) {
