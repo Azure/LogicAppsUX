@@ -1,30 +1,20 @@
-import { sourcePrefix } from '../../../constants/ReactFlowConstants';
 import { customTokens } from '../../../core';
-import { makeConnection } from '../../../core/state/DataMapSlice';
-import type { AppDispatch, RootState } from '../../../core/state/Store';
+import type { RootState } from '../../../core/state/Store';
 import { NormalizedDataType } from '../../../models';
 import type { Connection } from '../../../models/Connection';
+import type { SelectedNode } from '../../../models/SelectedNode';
 import { isCustomValue } from '../../../utils/DataMap.Utils';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
-import { ComboBox, Stack, type ISelectableOption } from '@fluentui/react';
+import { InputDropdown } from '../../inputDropdown/InputDropdown';
+import type { InputOptions, InputOptionData } from '../../inputDropdown/InputDropdown';
+import { Stack } from '@fluentui/react';
+import type { IDropdownOption } from '@fluentui/react';
 import { Button, Divider, Input, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
-
-export type InputOptions = {
-  [key: string]: {
-    nodeKey: string;
-    nodeName: string;
-    isFunctionNode?: boolean;
-  }[];
-};
-
-export interface InputOptionData {
-  isFunction: boolean;
-}
+import { useSelector } from 'react-redux';
 
 const fnIconContainerSize = 28;
 
@@ -56,16 +46,14 @@ const useStyles = makeStyles({
 });
 
 interface FunctionNodePropertiesTabProps {
-  nodeKey: string;
+  currentNode: SelectedNode;
 }
 
-export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTabProps): JSX.Element => {
+export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
-  const dispatch = useDispatch<AppDispatch>();
 
   const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
@@ -113,44 +101,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
     setInputValues(newInputValues);
   };
 
-  const validateAndCreateConnection = (inputIdx: number, option?: ISelectableOption<InputOptionData>) => {
-    if (!option?.data) {
-      return;
-    }
-
-    // Don't do anything if same value
-    if (option.key === inputValues[inputIdx]) {
-      return;
-    }
-
-    // Ensure that new connection won't create loop/circular-logic
-
-    // TODO
-
-    // Remove current connection if it exists
-
-    // TODO
-
-    // Create new connection
-
-    const selectedNodeKey = option.key as string; // TODO: constant value support
-    const isFunction = option.data.isFunction;
-
-    const sourceKey = isFunction ? selectedNodeKey : `${sourcePrefix}${selectedNodeKey}`;
-    const source = isFunction ? functionNodeDictionary[sourceKey] : sourceSchemaDictionary[sourceKey];
-    const destination = functionNodeDictionary[nodeKey];
-
-    dispatch(
-      makeConnection({
-        source,
-        destination,
-        reactFlowDestination: nodeKey,
-        reactFlowSource: sourceKey,
-      })
-    );
-  };
-
-  const functionNode = useMemo(() => functionNodeDictionary[nodeKey], [nodeKey, functionNodeDictionary]);
+  const functionNode = useMemo(() => functionNodeDictionary[currentNode.id], [currentNode.id, functionNodeDictionary]);
 
   const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionNode.category), [functionNode]);
 
@@ -184,8 +135,8 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
     return newPossibleInputOptionsDictionary;
   }, [currentSourceNodes, functionNodeDictionary]);
 
-  const inputOptions = useMemo<ISelectableOption<InputOptionData>[][]>(() => {
-    const newInputOptions: ISelectableOption<InputOptionData>[][] = [];
+  const inputOptions = useMemo<IDropdownOption<InputOptionData>[][]>(() => {
+    const newInputOptions: IDropdownOption<InputOptionData>[][] = [];
 
     functionNode.inputs.forEach((input, idx) => {
       newInputOptions.push([]);
@@ -224,7 +175,7 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
     return newInputOptions;
   }, [possibleInputOptions, functionNode]);
 
-  const connection = useMemo<Connection | undefined>(() => connectionDictionary[nodeKey], [connectionDictionary, nodeKey]);
+  const connection = useMemo<Connection | undefined>(() => connectionDictionary[currentNode.id], [connectionDictionary, currentNode.id]);
 
   const outputValue = useMemo(() => {
     let outputValue = `${functionNode.functionName}(`;
@@ -305,13 +256,13 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
               {functionNode.inputs.map((input, idx) => (
                 <div key={idx} style={{ marginTop: 8 }}>
                   <Tooltip relationship="label" content={input.tooltip}>
-                    <ComboBox
+                    <InputDropdown
+                      currentNode={currentNode}
                       label={input.displayName}
                       placeholder={input.placeholder}
-                      options={inputOptions[idx]}
-                      selectedKey={inputValues[idx]}
-                      onChange={(_e, option) => validateAndCreateConnection(idx, option)}
-                      allowFreeform={false}
+                      typeMatchedOptions={inputOptions[idx]}
+                      inputValue={inputValues[idx]}
+                      inputIndex={idx}
                     />
                   </Tooltip>
                 </div>
@@ -324,13 +275,13 @@ export const FunctionNodePropertiesTab = ({ nodeKey }: FunctionNodePropertiesTab
               {inputValues.map((_value, idx) => (
                 <Stack key={idx} horizontal verticalAlign="center" style={{ marginTop: 8 }}>
                   <Tooltip relationship="label" content={functionNode.inputs[0].tooltip}>
-                    <ComboBox
+                    <InputDropdown
+                      currentNode={currentNode}
                       label={functionNode.inputs[0].displayName}
                       placeholder={functionNode.inputs[0].placeholder}
-                      options={inputOptions[idx]}
-                      selectedKey={inputValues[idx]}
-                      onChange={(_e, option) => validateAndCreateConnection(idx, option)}
-                      allowFreeform={false}
+                      typeMatchedOptions={inputOptions[idx]}
+                      inputValue={inputValues[idx]}
+                      inputIndex={0}
                     />
                   </Tooltip>
 

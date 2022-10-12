@@ -1,18 +1,18 @@
-import { sourcePrefix } from '../../../constants/ReactFlowConstants';
-import { makeConnection } from '../../../core/state/DataMapSlice';
-import type { AppDispatch, RootState } from '../../../core/state/Store';
+import type { RootState } from '../../../core/state/Store';
 import { NormalizedDataType } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { NodeType } from '../../../models/SelectedNode';
 import type { SelectedNode } from '../../../models/SelectedNode';
 import { isCustomValue } from '../../../utils/DataMap.Utils';
 import { icon16ForSchemaNodeType } from '../../../utils/Icon.Utils';
-import type { InputOptionData, InputOptions } from './FunctionNodePropertiesTab';
-import { type ISelectableOption, Stack, ComboBox } from '@fluentui/react';
+import { InputDropdown } from '../../inputDropdown/InputDropdown';
+import type { InputOptions, InputOptionData } from '../../inputDropdown/InputDropdown';
+import { Stack } from '@fluentui/react';
+import type { IDropdownOption } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Checkbox, Input, makeStyles, Text } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   nodeInfoGridContainer: {
@@ -32,7 +32,6 @@ interface SchemaNodePropertiesTabProps {
 export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
-  const dispatch = useDispatch<AppDispatch>();
 
   const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
@@ -83,40 +82,6 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Default value',
   });
 
-  const validateAndCreateConnection = (option?: ISelectableOption<InputOptionData>) => {
-    if (!option?.data) {
-      return;
-    }
-
-    // Don't do anything if same value
-    if (option.key === inputValue) {
-      return;
-    }
-
-    // Remove current connection if it exists
-
-    // TODO
-
-    // Create new connection
-
-    const selectedNodeKey = option.key as string; // TODO: constant value support
-    const isFunction = option.data.isFunction;
-
-    const sourceKey = isFunction ? selectedNodeKey : `${sourcePrefix}${selectedNodeKey}`;
-    const source = isFunction ? functionNodeDictionary[sourceKey] : sourceSchemaDictionary[sourceKey];
-    const destinationKey = currentNode.id;
-    const destination = targetSchemaDictionary[destinationKey];
-
-    dispatch(
-      makeConnection({
-        source,
-        destination,
-        reactFlowDestination: destinationKey,
-        reactFlowSource: sourceKey,
-      })
-    );
-  };
-
   const isTargetSchemaNode = useMemo(() => currentNode.type === NodeType.Target, [currentNode]);
 
   const schemaNode = useMemo(() => {
@@ -159,8 +124,8 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     return newPossibleInputOptionsDictionary;
   }, [currentSourceNodes, functionNodeDictionary]);
 
-  const inputOptions = useMemo<ISelectableOption<InputOptionData>[] | undefined>(() => {
-    const newInputOptions: ISelectableOption<InputOptionData>[] = [];
+  const inputOptions = useMemo<IDropdownOption<InputOptionData>[] | undefined>(() => {
+    const newInputOptions: IDropdownOption<InputOptionData>[] = [];
 
     if (schemaNode.normalizedDataType === NormalizedDataType.Any) {
       Object.values(possibleInputOptions).forEach((typeEntry) => {
@@ -226,12 +191,12 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
         <div>
           <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
             <Text style={{ gridColumn: '1 / span 2' }}>{inputLoc}</Text>
-            <ComboBox
-              options={inputOptions ?? []}
-              selectedKey={inputValue}
-              onChange={(_e, option) => validateAndCreateConnection(option)}
-              allowFreeform={false}
-              style={{ marginTop: 8 }}
+            <InputDropdown
+              currentNode={currentNode}
+              typeMatchedOptions={inputOptions}
+              inputValue={inputValue}
+              dropdownStyle={{ marginTop: 8 }}
+              inputIndex={0}
             />
           </div>
 
