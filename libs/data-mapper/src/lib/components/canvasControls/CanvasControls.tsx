@@ -1,5 +1,8 @@
+import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
+import { customTokens } from '../../core';
 import { ButtonContainer } from '../buttonContainer/ButtonContainer';
 import type { ButtonContainerProps } from '../buttonContainer/ButtonContainer';
+import { tokens } from '@fluentui/react-components';
 import {
   Map20Filled,
   Map20Regular,
@@ -16,9 +19,12 @@ import { MiniMap, useReactFlow } from 'reactflow';
 import type { Node } from 'reactflow';
 
 const miniMapStyles: React.CSSProperties = {
-  left: 16,
-  bottom: 56,
-  // TODO resize smaller to match the width of the buttons (128px wide)
+  backgroundColor: tokens.colorNeutralBackground1,
+  borderRadius: tokens.borderRadiusMedium,
+  height: 77,
+  width: 128,
+  left: 0,
+  bottom: 40,
 };
 
 export interface CanvasControlsProps {
@@ -88,26 +94,21 @@ export const CanvasControls = ({ displayMiniMap, toggleDisplayMiniMap }: CanvasC
   );
 
   const getNodeColor = (node: Node) => {
-    if (node.style?.backgroundColor) {
-      return node.style.backgroundColor;
+    switch (node.type) {
+      case ReactFlowNodeType.SchemaNode:
+        return tokens.colorNeutralBackground4;
+      case ReactFlowNodeType.FunctionNode:
+        return customTokens[node.data.functionBranding.colorTokenName];
+      default:
+        return tokens.colorNeutralBackground4;
     }
-
-    return '#F3F2F1';
-  };
-
-  const getNodeStrokeColor = (node: Node) => {
-    if (node.style?.backgroundColor) {
-      return node.style.backgroundColor;
-    }
-
-    return '#F3F2F1';
   };
 
   return (
     <>
       <ButtonContainer {...mapControlsButtonContainerProps} />
 
-      {displayMiniMap && <MiniMap nodeColor={getNodeColor} nodeStrokeColor={getNodeStrokeColor} style={miniMapStyles} />}
+      {displayMiniMap && <MiniMap nodeColor={getNodeColor} nodeStrokeColor={getNodeColor} style={miniMapStyles} />}
     </>
   );
 };
