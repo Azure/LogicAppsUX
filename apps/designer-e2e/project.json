@@ -12,7 +12,7 @@
       },
       "configurations": {
         "production": {
-          "devServerTarget": "designer-standalone:serve:production"
+          "devServerTarget": "designer-standalone:serve:citest"
         }
       }
     },

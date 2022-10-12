@@ -59,6 +59,7 @@
           "hmr": false
         },
         "citest": {
+          "buildTarget": "designer-standalone:build:development",
           "hmr": false,
           "host": "localhost",
           "ssl": true,
