@@ -26,16 +26,23 @@ const calloutProps: ICalloutProps = {
   directionalHint: DirectionalHint.leftCenter,
 };
 
+export enum MoveOption {
+  UP = 'up',
+  DOWN = 'down',
+}
+
 interface GroupProps {
   checked?: boolean;
-  menuItems: IOverflowSetItemProps[];
   groupProps: GroupItemProps;
-  isFirstGroup?: boolean;
+  isRootGroup?: boolean;
   isGroupable: boolean;
   groupedItems: GroupedItems[];
   containerOffset: number;
   index: number;
   mustHaveItem?: boolean;
+  isTop: boolean;
+  isBottom: boolean;
+  handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   handleUngroupChild?: (indexToInsertAt: number) => void;
   handleUpdateParent: (newProps: GroupItemProps, index: number) => void;
@@ -48,14 +55,16 @@ interface GroupProps {
 }
 
 export const Group = ({
-  menuItems,
   groupProps,
-  isFirstGroup,
+  isRootGroup,
   isGroupable,
   groupedItems,
   containerOffset,
   index,
   mustHaveItem,
+  isTop,
+  isBottom,
+  handleMove,
   handleDeleteChild,
   handleUngroupChild,
   handleUpdateParent,
@@ -63,29 +72,6 @@ export const Group = ({
 }: GroupProps) => {
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
-
-  const handleDelete = (indicesToDelete: number | number[]) => {
-    // Is an array of indices to delete
-    if (Array.isArray(indicesToDelete)) {
-      if (indicesToDelete.length === groupProps.items.length) {
-        handleDeleteChild?.(index);
-      } else {
-        const newItems = { ...groupProps };
-        for (let i = indicesToDelete.length - 1; i >= 0; i--) {
-          newItems.items.splice(indicesToDelete[i], 1);
-        }
-        handleUpdateParent(newItems, index);
-      }
-    } else {
-      if (groupProps.items.length <= 1) {
-        handleDeleteChild?.(index);
-      } else {
-        const newItems = { ...groupProps };
-        newItems.items.splice(indicesToDelete, 1);
-        handleUpdateParent(newItems, index);
-      }
-    }
-  };
 
   const handleGroup = () => {
     handleUpdateParent(
@@ -118,9 +104,14 @@ export const Group = ({
     description: 'delete button',
   });
 
-  const unGroupButton = intl.formatMessage({
-    defaultMessage: 'Ungroup',
-    description: 'Ungroup button',
+  const moveUpButton = intl.formatMessage({
+    defaultMessage: 'Move up',
+    description: 'Move up button',
+  });
+
+  const moveDownButton = intl.formatMessage({
+    defaultMessage: 'Move down',
+    description: 'Move down button',
   });
 
   const makeGroupButton = intl.formatMessage({
@@ -128,7 +119,12 @@ export const Group = ({
     description: 'Make group button',
   });
 
-  const groupMenuItems = [
+  const unGroupButton = intl.formatMessage({
+    defaultMessage: 'Ungroup',
+    description: 'Ungroup button',
+  });
+
+  const groupMenuItems: IOverflowSetItemProps[] = [
     {
       key: deleteButton,
       disabled: groupProps.items.length <= 1 && mustHaveItem,
@@ -139,7 +135,26 @@ export const Group = ({
       name: deleteButton,
       onClick: () => handleDeleteChild?.(index),
     },
-    ...menuItems,
+    {
+      key: moveUpButton,
+      disabled: isTop,
+      iconProps: {
+        iconName: 'Up',
+      },
+      iconOnly: true,
+      name: moveUpButton,
+      onClick: () => handleMove?.(index, MoveOption.UP),
+    },
+    {
+      key: moveDownButton,
+      disabled: isBottom,
+      iconProps: {
+        iconName: 'Down',
+      },
+      iconOnly: true,
+      name: moveDownButton,
+      onClick: () => handleMove?.(index, MoveOption.DOWN),
+    },
     {
       key: makeGroupButton,
       disabled: !(isGroupable && groupProps.checked),
@@ -152,7 +167,7 @@ export const Group = ({
     },
     {
       key: unGroupButton,
-      disabled: isFirstGroup,
+      disabled: isRootGroup,
       iconProps: {
         iconName: 'ViewAll2',
       },
@@ -166,6 +181,45 @@ export const Group = ({
     const newItems = { ...groupProps };
     newItems.items[currIndex] = newState;
     handleUpdateParent(newItems, index);
+  };
+
+  const handleDelete = (indicesToDelete: number | number[]) => {
+    // Is an array of indices to delete
+    if (Array.isArray(indicesToDelete)) {
+      if (indicesToDelete.length === groupProps.items.length) {
+        handleDeleteChild?.(index);
+      } else {
+        const newItems = { ...groupProps };
+        for (let i = indicesToDelete.length - 1; i >= 0; i--) {
+          newItems.items.splice(indicesToDelete[i], 1);
+        }
+        handleUpdateParent(newItems, index);
+      }
+    } else {
+      if (groupProps.items.length <= 1) {
+        handleDeleteChild?.(index);
+      } else {
+        const newItems = { ...groupProps };
+        newItems.items.splice(indicesToDelete, 1);
+        handleUpdateParent(newItems, index);
+      }
+    }
+  };
+
+  const handleMoveChild = (childIndex: number, moveOption: MoveOption) => {
+    console.log(childIndex);
+    if (childIndex <= 0 && moveOption === MoveOption.UP) {
+      const newItems = { ...groupProps };
+      console.log(newItems);
+    } else if (childIndex >= groupProps.items.length - 1 && moveOption === MoveOption.DOWN) {
+      // come back
+    } else {
+      const newItems = { ...groupProps };
+      const child = newItems.items[childIndex];
+      newItems.items[childIndex] = newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)];
+      newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)] = child;
+      handleUpdateParent(newItems, index);
+    }
   };
 
   const onRenderOverflowButton = (): JSX.Element => {
@@ -203,12 +257,12 @@ export const Group = ({
   };
 
   return (
-    <div className={css('msla-querybuilder-group-container', isFirstGroup && 'firstGroup')}>
-      {!isFirstGroup ? <div className="msla-querybuilder-group-gutter-hook" /> : null}
-      <div className={css('msla-querybuilder-group-content', collapsed && 'collapsed', isFirstGroup && 'firstGroup')}>
+    <div className={css('msla-querybuilder-group-container', isRootGroup && 'firstGroup')}>
+      {!isRootGroup ? <div className="msla-querybuilder-group-gutter-hook" /> : null}
+      <div className={css('msla-querybuilder-group-content', collapsed && 'collapsed', isRootGroup && 'firstGroup')}>
         {!collapsed ? (
           <>
-            {!isFirstGroup ? (
+            {!isRootGroup ? (
               <Checkbox className="msla-querybuilder-group-checkbox" initialChecked={groupProps.checked} onChange={handleCheckbox} />
             ) : null}
             <div className="msla-querybuilder-row-section">
@@ -217,7 +271,6 @@ export const Group = ({
                 return item.type === 'row' ? (
                   <Row
                     key={`row ${currIndex + JSON.stringify(item)}`}
-                    menuItems={menuItems}
                     checked={item.checked}
                     keyValue={item.key}
                     dropdownValue={item.dropdownVal}
@@ -227,6 +280,9 @@ export const Group = ({
                     isGroupable={isGroupable}
                     showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
                     groupedItems={groupedItems}
+                    isTop={isTop && currIndex === 0 && !!isRootGroup}
+                    isBottom={isBottom && index === groupProps.items.length - 1 && !!isRootGroup}
+                    handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUpdateParent={handleUpdateNewParent}
                     GetTokenPicker={GetTokenPicker}
@@ -234,7 +290,6 @@ export const Group = ({
                 ) : (
                   <Group
                     key={`group ${currIndex + JSON.stringify(item.items)}`}
-                    menuItems={menuItems}
                     containerOffset={containerOffset}
                     groupProps={{
                       type: 'group',
@@ -246,6 +301,9 @@ export const Group = ({
                     isGroupable={isGroupable}
                     groupedItems={groupedItems}
                     mustHaveItem={groupProps.items.length <= 1 && mustHaveItem}
+                    isTop={isTop && currIndex === 0}
+                    isBottom={isBottom && currIndex === groupProps.items.length - 1}
+                    handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUngroupChild={() => handleUngroup(currIndex, item.items)}
                     handleUpdateParent={handleUpdateNewParent}
@@ -258,11 +316,13 @@ export const Group = ({
                   {groupProps.items.length === 0 ? (
                     <Row
                       index={0}
-                      menuItems={menuItems}
                       containerOffset={containerOffset}
                       isGroupable={isGroupable}
                       showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
+                      isTop={isTop && !!isRootGroup}
+                      isBottom={isBottom && !!isRootGroup}
                       groupedItems={groupedItems}
+                      handleMove={handleMoveChild}
                       GetTokenPicker={GetTokenPicker}
                       handleDeleteChild={handleDeleteChild}
                       handleUpdateParent={handleUpdateNewParent}
@@ -281,7 +341,7 @@ export const Group = ({
           <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} />
         )}
         <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
-          {!isFirstGroup ? (
+          {!isRootGroup ? (
             <>
               <TooltipHost calloutProps={calloutProps} content={collapseLabel}>
                 <IconButton

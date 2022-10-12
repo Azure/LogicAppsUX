@@ -1,10 +1,8 @@
 import type { ValueSegment } from '../editor';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
-import type { IOverflowSetItemProps } from '@fluentui/react';
 import { useFunctionalState } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
 
 export { GroupDropdownOptions };
 
@@ -40,7 +38,6 @@ export interface QueryBuilderProps {
 }
 
 export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderProps) => {
-  const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerOffset, setContainerOffset] = useState(0);
   const [heights, setHeights] = useState<number[]>([]);
@@ -71,51 +68,15 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
     setRootProp(newProps);
   };
 
-  const moveUpButton = intl.formatMessage({
-    defaultMessage: 'Move up',
-    description: 'Move up button',
-  });
-  const moveDownButton = intl.formatMessage({
-    defaultMessage: 'Move down',
-    description: 'Move down button',
-  });
-
-  const handleGroup = () => {
-    console.log('group');
-  };
-
-  const menuItems: IOverflowSetItemProps[] = [
-    // TODO functinoality of Move/Group
-    {
-      key: moveUpButton,
-      disabled: true,
-      iconProps: {
-        iconName: 'Up',
-      },
-      iconOnly: true,
-      name: moveUpButton,
-      onClick: handleGroup,
-    },
-    {
-      key: moveDownButton,
-      disabled: true,
-      iconProps: {
-        iconName: 'Down',
-      },
-      iconOnly: true,
-      name: moveDownButton,
-      onClick: handleGroup,
-    },
-  ];
-
   return (
     <div className="msla-querybuilder-container" ref={containerRef}>
       <Group
+        isTop={true}
+        isBottom={true}
         containerOffset={containerOffset}
         GetTokenPicker={GetTokenPicker}
-        menuItems={menuItems}
         groupProps={getRootProp()}
-        isFirstGroup={true}
+        isRootGroup={true}
         isGroupable={isGroupable}
         groupedItems={groupedItems}
         index={0}
@@ -126,7 +87,6 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   );
 };
 
-// should i make this bfs instead of dfs?🤔
 const checkHeights = (item: GroupItemProps | RowItemProps, returnVal: number[], height: number): number[] => {
   if (item.checked) {
     returnVal.push(height);

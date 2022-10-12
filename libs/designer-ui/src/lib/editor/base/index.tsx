@@ -8,12 +8,13 @@ import DeleteTokenNode from './plugins/DeleteTokenNode';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
+import { ReadOnly } from './plugins/ReadOnly';
 import type { TokenPickerButtonProps } from './plugins/TokenPickerButton';
 import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
 import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
-import { DirectionalHint, TooltipHost } from '@fluentui/react';
+import { css, DirectionalHint, TooltipHost } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -93,8 +94,8 @@ export const BaseEditor = ({
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const initialConfig = {
     theme: EditorTheme,
+    editable: !readonly,
     onError,
-    readOnly: readonly,
     nodes: [AutoLinkNode, LinkNode, TokenNode],
     namespace: 'editor',
     editorState:
@@ -143,7 +144,7 @@ export const BaseEditor = ({
       <div className={className ?? 'msla-editor-container'} id={editorId}>
         {toolBar ? <Toolbar /> : null}
         <RichTextPlugin
-          contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
+          contentEditable={<ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabel={editorInputLabel} />}
           placeholder={<span className="editor-placeholder"> {createPlaceholder(placeholder)} </span>}
         />
         {treeView ? <TreeView /> : null}
@@ -166,6 +167,7 @@ export const BaseEditor = ({
           : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
+        <ReadOnly readonly={readonly} />
         {tokens ? <InsertTokenNode /> : null}
         {tokens ? <DeleteTokenNode /> : null}
         {children}

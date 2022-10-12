@@ -5,6 +5,7 @@ import type { ValueSegment } from '../editor';
 import type { ChangeState } from '../editor/base';
 import type { ButtonOffSet } from '../editor/base/plugins/TokenPickerButton';
 import { StringEditor } from '../editor/string';
+import { MoveOption } from './Group';
 import { RowDropdown } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
@@ -24,7 +25,6 @@ const menuIconProps: IIconProps = {
 
 interface RowProps {
   checked?: boolean;
-  menuItems: IOverflowSetItemProps[];
   keyValue?: ValueSegment[];
   valueValue?: ValueSegment[];
   dropdownValue?: string;
@@ -33,6 +33,9 @@ interface RowProps {
   showDisabledDelete?: boolean;
   isGroupable?: boolean;
   groupedItems: GroupedItems[];
+  isTop: boolean;
+  isBottom: boolean;
+  handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   handleUpdateParent: (newProps: RowItemProps | GroupItemProps, index: number) => void;
   GetTokenPicker: (
@@ -45,7 +48,6 @@ interface RowProps {
 
 export const Row = ({
   checked = false,
-  menuItems,
   keyValue = [],
   valueValue = [],
   dropdownValue,
@@ -54,6 +56,9 @@ export const Row = ({
   showDisabledDelete,
   isGroupable,
   groupedItems,
+  isTop,
+  isBottom,
+  handleMove,
   handleDeleteChild,
   handleUpdateParent,
   GetTokenPicker,
@@ -76,7 +81,7 @@ export const Row = ({
       index
     );
 
-    // Delete groupedItems not including currentItem
+    // Delete groupedItems not including current item
     handleDeleteChild?.(groupedItems.filter((item) => item.index !== index).map((item) => item.index));
   };
 
@@ -85,12 +90,22 @@ export const Row = ({
     description: 'delete button',
   });
 
+  const moveUpButton = intl.formatMessage({
+    defaultMessage: 'Move up',
+    description: 'Move up button',
+  });
+
+  const moveDownButton = intl.formatMessage({
+    defaultMessage: 'Move down',
+    description: 'Move down button',
+  });
+
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make Group',
     description: 'Make group button',
   });
 
-  const rowMenuItems = [
+  const rowMenuItems: IOverflowSetItemProps[] = [
     {
       key: deleteButton,
       disabled: !!showDisabledDelete,
@@ -101,7 +116,26 @@ export const Row = ({
       name: deleteButton,
       onClick: handleDeleteChild,
     },
-    ...menuItems,
+    {
+      key: moveUpButton,
+      disabled: isTop,
+      iconProps: {
+        iconName: 'Up',
+      },
+      iconOnly: true,
+      name: moveUpButton,
+      onClick: () => handleMove?.(index, MoveOption.UP),
+    },
+    {
+      key: moveDownButton,
+      disabled: isBottom,
+      iconProps: {
+        iconName: 'Down',
+      },
+      iconOnly: true,
+      name: moveDownButton,
+      onClick: () => handleMove?.(index, MoveOption.DOWN),
+    },
     {
       key: makeGroupButton,
       disabled: !(isGroupable && checked),
@@ -203,6 +237,7 @@ export const Row = ({
         <RowDropdown disabled={key.length === 0} selectedOption={dropdownValue} onChange={handleSelectedOption} />
         <div ref={valueEditorRef}>
           <StringEditor
+            readonly={key.length === 0}
             className={'msla-querybuilder-row-value-input'}
             initialValue={valueValue}
             placeholder={rowValueInputPlaceholder}
