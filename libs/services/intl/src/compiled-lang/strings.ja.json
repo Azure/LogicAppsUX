@@ -571,7 +571,7 @@
   "3QXY3z": [
     {
       "type": 0,
-      "value": "Replacing an existing schema with an incompatible schema might create errors in your map."
+      "value": "既存のスキーマを互換性のないスキーマに置き換えると、マップにエラーが発生する可能性があります。"
     }
   ],
   "3TD2V5": [
@@ -1689,7 +1689,7 @@
   "FuXqJI": [
     {
       "type": 0,
-      "value": "Update target schema"
+      "value": "ターゲット スキーマの更新"
     }
   ],
   "G/CC5/": [
@@ -1867,7 +1867,7 @@
   "Ie4sUt": [
     {
       "type": 0,
-      "value": "構成する"
+      "value": "構成"
     }
   ],
   "IgNz8Y": [
@@ -2744,7 +2744,7 @@
   "R7v2iQ": [
     {
       "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
+      "value": "ループ要素を示すために、配列要素間の線が自動的に作成されます。"
     }
   ],
   "RFjYpH": [
@@ -2801,7 +2801,7 @@
   "Rno87I": [
     {
       "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
+      "value": "保存されていないすべての変更を破棄しますか?"
     }
   ],
   "S8P4N5": [
@@ -3593,7 +3593,7 @@
   "auUI93": [
     {
       "type": 0,
-      "value": "Add or select a source schema to use for your map."
+      "value": "マップに使用するソース スキーマを追加または選択します。"
     }
   ],
   "b9/1dK": [
@@ -3615,7 +3615,7 @@
   "bCQ6JT": [
     {
       "type": 0,
-      "value": "Array Mapping"
+      "value": "配列マッピング"
     }
   ],
   "bG9rjv": [
@@ -3763,7 +3763,7 @@
   "cbL6Gv": [
     {
       "type": 0,
-      "value": "Add or replace your schemas."
+      "value": "スキーマを追加または置換します。"
     }
   ],
   "cgq/+y": [
@@ -3935,7 +3935,7 @@
   "eCkaMR": [
     {
       "type": 0,
-      "value": "Update source schema"
+      "value": "ソース スキーマの更新"
     }
   ],
   "eGa1Wa": [
@@ -4031,7 +4031,7 @@
   "fLSetk": [
     {
       "type": 0,
-      "value": "送信元スキーマ"
+      "value": "ソース スキーマ"
     }
   ],
   "faSDuD": [
@@ -4406,7 +4406,7 @@
   "jA6Wrp": [
     {
       "type": 0,
-      "value": "Add or select a target schema to use for your map."
+      "value": "マップに使用するターゲット スキーマを追加または選択します。"
     }
   ],
   "jHHF/u": [

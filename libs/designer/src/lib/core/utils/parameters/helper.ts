@@ -1,4 +1,5 @@
 import Constants from '../../../common/constants';
+import type { ConnectionReference } from '../../../common/models/workflow';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type {
@@ -1083,7 +1084,7 @@ export async function updateParameterAndDependencies(
   properties: Partial<ParameterInfo>,
   isTrigger: boolean,
   operationInfo: NodeOperation,
-  connectionId: string,
+  connectionReference: ConnectionReference,
   nodeInputs: NodeInputs,
   dependencies: NodeDependencies,
   variables: VariableDeclaration[],
@@ -1135,7 +1136,7 @@ export async function updateParameterAndDependencies(
       nodeId,
       isTrigger,
       operationInfo,
-      connectionId,
+      connectionReference,
       dependenciesToUpdate,
       updateNodeInputsWithParameter(nodeInputs, parameterId, groupId, properties),
       settings,
@@ -1160,9 +1161,10 @@ function getDependenciesToUpdate(
   for (const inputKey of Object.keys(dependencies.inputs)) {
     if (dependencies.inputs[inputKey].dependentParameters[parameterId]) {
       if (!dependenciesToUpdate) {
-        dependenciesToUpdate = clone(dependencies);
+        dependenciesToUpdate = { inputs: {}, outputs: {} };
       }
 
+      dependenciesToUpdate.inputs[inputKey] = clone(dependencies.inputs[inputKey]);
       dependenciesToUpdate.inputs[inputKey].dependentParameters[parameterId].isValid =
         dependencies.inputs[inputKey].dependencyType === 'StaticSchema' ? hasParameterValue : isParameterValidForDynamicCall;
     }
@@ -1171,9 +1173,10 @@ function getDependenciesToUpdate(
   for (const outputKey of Object.keys(dependencies.outputs)) {
     if (dependencies.outputs[outputKey].dependentParameters[parameterId]) {
       if (!dependenciesToUpdate) {
-        dependenciesToUpdate = clone(dependencies);
+        dependenciesToUpdate = { inputs: {}, outputs: {} };
       }
 
+      dependenciesToUpdate.outputs[outputKey] = clone(dependencies.outputs[outputKey]);
       dependenciesToUpdate.outputs[outputKey].dependentParameters[parameterId].isValid =
         dependencies.outputs[outputKey].dependencyType === 'StaticSchema' ? hasParameterValue : isParameterValidForDynamicCall;
     }
@@ -1186,7 +1189,7 @@ export async function loadDynamicData(
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
-  connectionId: string,
+  connectionReference: ConnectionReference,
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
   settings: Settings,
@@ -1195,7 +1198,7 @@ export async function loadDynamicData(
   operationDefinition?: any
 ): Promise<void> {
   if (Object.keys(dependencies.outputs).length) {
-    loadDynamicOutputsInNode(nodeId, isTrigger, operationInfo, connectionId, dependencies.outputs, nodeInputs, settings, dispatch);
+    loadDynamicOutputsInNode(nodeId, isTrigger, operationInfo, connectionReference, dependencies.outputs, nodeInputs, settings, dispatch);
   }
 
   if (Object.keys(dependencies.inputs).length) {
@@ -1203,7 +1206,7 @@ export async function loadDynamicData(
       nodeId,
       dependencies.inputs,
       operationInfo,
-      connectionId,
+      connectionReference,
       nodeInputs,
       variables,
       dispatch,
@@ -1216,7 +1219,7 @@ async function loadDynamicContentForInputsInNode(
   nodeId: string,
   inputDependencies: Record<string, DependencyInfo>,
   operationInfo: NodeOperation,
-  connectionId: string,
+  connectionReference: ConnectionReference,
   allInputs: NodeInputs,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
@@ -1228,7 +1231,7 @@ async function loadDynamicContentForInputsInNode(
       dispatch(clearDynamicInputs(nodeId));
 
       if (isDynamicDataReadyToLoad(info)) {
-        const inputSchema = await getDynamicSchema(info, allInputs, connectionId, operationInfo, variables);
+        const inputSchema = await getDynamicSchema(info, allInputs, operationInfo, connectionReference, variables);
         const allInputParameters = getAllInputParameters(allInputs);
         const allInputKeys = allInputParameters.map((param) => param.parameterKey);
         const schemaInputs = inputSchema
@@ -1256,7 +1259,7 @@ export async function loadDynamicValuesForParameter(
   groupId: string,
   parameterId: string,
   operationInfo: NodeOperation,
-  connectionId: string,
+  connectionReference: ConnectionReference,
   nodeInputs: NodeInputs,
   dependencies: NodeDependencies,
   dispatch: Dispatch
@@ -1284,7 +1287,7 @@ export async function loadDynamicValuesForParameter(
       );
 
       try {
-        const dynamicValues = await getDynamicValues(dependencyInfo, nodeInputs, connectionId, operationInfo);
+        const dynamicValues = await getDynamicValues(dependencyInfo, nodeInputs, operationInfo, connectionReference);
 
         dispatch(
           updateNodeParameters({

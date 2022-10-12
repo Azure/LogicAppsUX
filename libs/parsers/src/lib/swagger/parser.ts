@@ -526,7 +526,7 @@ function includePathItemParameters(pathItem: OpenAPIV2.PathItemObject): OpenAPIV
         !operation.parameters.find((operationParameter: OpenAPIV2.Parameter) => equals(operationParameter.name, pathParameter.name))
     );
 
-    return { ...operation, parameters: [...operation.parameters, ...parametersToAdd] };
+    return { ...operation, parameters: [...(operation.parameters ?? []), ...parametersToAdd] };
   });
 }
 
