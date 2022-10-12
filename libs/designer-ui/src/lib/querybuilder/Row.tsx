@@ -5,7 +5,7 @@ import type { ValueSegment } from '../editor';
 import type { ChangeState } from '../editor/base';
 import type { ButtonOffSet } from '../editor/base/plugins/TokenPickerButton';
 import { StringEditor } from '../editor/string';
-import { MoveOption } from './Group';
+import type { MoveOption } from './Group';
 import { RowDropdown } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
@@ -56,9 +56,9 @@ export const Row = ({
   showDisabledDelete,
   isGroupable,
   groupedItems,
-  isTop,
-  isBottom,
-  handleMove,
+  // isTop,
+  // isBottom,
+  // handleMove,
   handleDeleteChild,
   handleUpdateParent,
   GetTokenPicker,
@@ -90,15 +90,15 @@ export const Row = ({
     description: 'delete button',
   });
 
-  const moveUpButton = intl.formatMessage({
-    defaultMessage: 'Move up',
-    description: 'Move up button',
-  });
+  // const moveUpButton = intl.formatMessage({
+  //   defaultMessage: 'Move up',
+  //   description: 'Move up button',
+  // });
 
-  const moveDownButton = intl.formatMessage({
-    defaultMessage: 'Move down',
-    description: 'Move down button',
-  });
+  // const moveDownButton = intl.formatMessage({
+  //   defaultMessage: 'Move down',
+  //   description: 'Move down button',
+  // });
 
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make Group',
@@ -116,26 +116,28 @@ export const Row = ({
       name: deleteButton,
       onClick: handleDeleteChild,
     },
-    {
-      key: moveUpButton,
-      disabled: isTop,
-      iconProps: {
-        iconName: 'Up',
-      },
-      iconOnly: true,
-      name: moveUpButton,
-      onClick: () => handleMove?.(index, MoveOption.UP),
-    },
-    {
-      key: moveDownButton,
-      disabled: isBottom,
-      iconProps: {
-        iconName: 'Down',
-      },
-      iconOnly: true,
-      name: moveDownButton,
-      onClick: () => handleMove?.(index, MoveOption.DOWN),
-    },
+    // TODO: Allow Moving of Rows in querybuilder
+    // {
+    //   key: moveUpButton,
+    //   disabled: true, //isTop,
+    //   iconProps: {
+    //     iconName: 'Up',
+    //   },
+    //   iconOnly: true,
+    //   name: moveUpButton,
+    //   onClick: () => handleMove?.(index, MoveOption.UP),
+    // },
+    // TODO: Allow Moving of Rows in querybuilder
+    // {
+    //   key: moveDownButton,
+    //   disabled: true, //isBottom,
+    //   iconProps: {
+    //     iconName: 'Down',
+    //   },
+    //   iconOnly: true,
+    //   name: moveDownButton,
+    //   onClick: () => handleMove?.(index, MoveOption.DOWN),
+    // },
     {
       key: makeGroupButton,
       disabled: !(isGroupable && checked),

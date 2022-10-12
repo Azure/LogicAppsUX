@@ -64,7 +64,7 @@ export const Group = ({
   mustHaveItem,
   isTop,
   isBottom,
-  handleMove,
+  // handleMove,
   handleDeleteChild,
   handleUngroupChild,
   handleUpdateParent,
@@ -104,15 +104,15 @@ export const Group = ({
     description: 'delete button',
   });
 
-  const moveUpButton = intl.formatMessage({
-    defaultMessage: 'Move up',
-    description: 'Move up button',
-  });
+  // const moveUpButton = intl.formatMessage({
+  //   defaultMessage: 'Move up',
+  //   description: 'Move up button',
+  // });
 
-  const moveDownButton = intl.formatMessage({
-    defaultMessage: 'Move down',
-    description: 'Move down button',
-  });
+  // const moveDownButton = intl.formatMessage({
+  //   defaultMessage: 'Move down',
+  //   description: 'Move down button',
+  // });
 
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make Group',
@@ -135,26 +135,29 @@ export const Group = ({
       name: deleteButton,
       onClick: () => handleDeleteChild?.(index),
     },
-    {
-      key: moveUpButton,
-      disabled: isTop,
-      iconProps: {
-        iconName: 'Up',
-      },
-      iconOnly: true,
-      name: moveUpButton,
-      onClick: () => handleMove?.(index, MoveOption.UP),
-    },
-    {
-      key: moveDownButton,
-      disabled: isBottom,
-      iconProps: {
-        iconName: 'Down',
-      },
-      iconOnly: true,
-      name: moveDownButton,
-      onClick: () => handleMove?.(index, MoveOption.DOWN),
-    },
+    // TODO: Allow Moving of Groups in querybuilder
+    // {
+    //   key: moveUpButton,
+    //   disabled: true, //isTop,
+    //   iconProps: {
+    //     iconName: 'Up',
+    //   },
+    //   iconOnly: true,
+    //   name: moveUpButton,
+    //   onClick: () => handleMove?.(index, MoveOption.UP),
+    // },
+
+    // TODO: Allow Moving of Groups in querybuilder
+    // {
+    //   key: moveDownButton,
+    //   disabled: true, //isBottom,
+    //   iconProps: {
+    //     iconName: 'Down',
+    //   },
+    //   iconOnly: true,
+    //   name: moveDownButton,
+    //   onClick: () => handleMove?.(index, MoveOption.DOWN),
+    // },
     {
       key: makeGroupButton,
       disabled: !(isGroupable && groupProps.checked),
