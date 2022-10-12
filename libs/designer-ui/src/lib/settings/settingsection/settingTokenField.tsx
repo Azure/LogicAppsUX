@@ -2,13 +2,14 @@ import { ArrayEditor, ArrayType } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
 import { Combobox } from '../../combobox';
-import { DictionaryEditor, DictionaryType } from '../../dictionary';
+import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, ChangeHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { SchemaEditor } from '../../schemaeditor';
+import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
@@ -123,14 +124,14 @@ const TokenField = ({
 
     case 'table':
       return (
-        <DictionaryEditor
-          keyTitle=""
-          valueTitle=""
-          dictionaryType={DictionaryType.TABLE}
-          placeholder={placeholder}
+        <TableEditor
           readonly={readOnly}
           initialValue={value}
           initialItems={editorViewModel.items}
+          columnMode={editorViewModel.columnMode}
+          columns={editorOptions.columns.count}
+          titles={editorOptions.columns.titles}
+          keys={editorOptions.columns.keys}
           isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
