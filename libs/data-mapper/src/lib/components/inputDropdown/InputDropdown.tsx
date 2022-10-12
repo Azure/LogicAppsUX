@@ -5,6 +5,8 @@ import { NodeType } from '../../models/SelectedNode';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { Dropdown, SelectableOptionMenuItemType, TextField } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
+import { Button, Tooltip } from '@fluentui/react-components';
+import { Dismiss20Regular } from '@fluentui/react-icons';
 import { useDebouncedCallback } from '@react-hookz/web';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -49,6 +51,11 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const customValueOptionLoc = intl.formatMessage({
     defaultMessage: 'Enter custom value',
     description: 'Label for dropdown option to enter custom value',
+  });
+
+  const clearCustomValueLoc = intl.formatMessage({
+    defaultMessage: 'Clear custom value and reselect',
+    description: 'Tooltip content for clearing custom value',
   });
 
   const onRenderOption = (item?: IDropdownOption) => {
@@ -98,7 +105,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
     // Create new connection
 
-    const selectedNodeKey = option.key as string; // TODO: constant value support
+    const selectedNodeKey = option.key as string;
     const isFunction = option.data.isFunction;
 
     const sourceKey = isFunction ? selectedNodeKey : `${sourcePrefix}${selectedNodeKey}`;
@@ -128,7 +135,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
     customValueDebounceDelay
   );
 
-  // TODO: onClearCustomValue -> set that input to undefined (should have some shared functionality w/ validateAnd...)
+  const onClearCustomValue = () => {
+    // TODO: set input to undefined
+  };
 
   useEffect(() => {
     // Check if inputValue is defined, and if it's a node reference or a custom value
@@ -178,7 +187,22 @@ export const InputDropdown = (props: InputDropdownProps) => {
           onRenderOption={onRenderOption}
         />
       ) : (
-        <TextField value={inputValue} onChange={(_e, newValue) => onChangeCustomValue(newValue)} label={label} placeholder={placeholder} />
+        <div style={{ position: 'relative' }}>
+          <TextField
+            value={inputValue}
+            onChange={(_e, newValue) => onChangeCustomValue(newValue)}
+            label={label}
+            placeholder={placeholder}
+          />
+          <Tooltip relationship="label" content={clearCustomValueLoc}>
+            <Button
+              appearance="transparent"
+              icon={<Dismiss20Regular />}
+              onClick={onClearCustomValue}
+              style={{ position: 'absolute', top: '50%', right: 0, transform: 'translate(0, -50%)' }}
+            />
+          </Tooltip>
+        </div>
       )}
     </>
   );
