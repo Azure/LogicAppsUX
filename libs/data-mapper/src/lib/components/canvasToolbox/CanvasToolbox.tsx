@@ -27,7 +27,7 @@ const toolboxPanelProps: FloatingPanelProps = {
   maxHeight: '450px',
 };
 
-interface CanvasToolboxProps {
+export interface CanvasToolboxProps {
   toolboxTabToDisplay: ToolboxPanelTabs | '';
   setToolboxTabToDisplay: (newTab: ToolboxPanelTabs | '') => void;
   connectedSourceNodes: SchemaNodeExtended[];
