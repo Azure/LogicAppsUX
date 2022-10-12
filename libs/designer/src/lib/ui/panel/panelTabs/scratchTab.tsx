@@ -10,7 +10,8 @@ import {
   TokenType,
   DictionaryEditor,
   testTokenSegment, // SchemaEditor, // Combobox,
-  // ArrayEditor,
+  ArrayEditor,
+  ArrayType,
   Scratch, // StringEditor,
   // AuthenticationEditor,
   // DropdownEditor,
@@ -118,7 +119,7 @@ export const ScratchTab = () => {
           GetTokenPicker={GetTokenPicker}
         /> */}
 
-        {/* <ArrayEditor
+        <ArrayEditor
           itemSchema={['Attachments Name', 'Attachments Content']}
           type={ArrayType.COMPLEX}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
@@ -158,7 +159,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
           GetTokenPicker={GetTokenPicker}
-        /> */}
+        />
 
         {/* <Combobox
           options={[

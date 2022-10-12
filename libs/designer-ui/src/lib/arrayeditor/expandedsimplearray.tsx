@@ -101,7 +101,7 @@ export const renderLabel = (index: number, labelProps: LabelProps, labelName?: s
   const { text, isRequiredField } = labelProps as LabelProps;
   return (
     <div className="msla-array-editor-label">
-      <Label text={(labelName ?? text) + ' - ' + (index + 1)} isRequiredField={isRequiredField} />
+      <Label text={(labelName ? labelName : text) + ' - ' + (index + 1)} isRequiredField={isRequiredField} />
     </div>
   );
 };

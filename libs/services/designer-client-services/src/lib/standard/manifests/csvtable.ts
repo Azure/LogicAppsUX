@@ -27,11 +27,18 @@ export default {
         columns: {
           type: 'array',
           title: 'Columns',
-          required: true,
           'x-ms-editor': 'table',
+          'x-ms-editor-options': {
+            columns: {
+              count: 2,
+              titles: ['Header', 'Value'],
+              keys: ['header', 'value'],
+              types: ['string', 'string'],
+            },
+          },
         },
       },
-      required: ['from', 'format', 'columns'],
+      required: ['from', 'format'],
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,

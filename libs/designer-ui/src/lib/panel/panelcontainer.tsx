@@ -84,7 +84,7 @@ export const PanelContainer = ({
   };
 
   const defaultRenderHeader = useCallback(
-    (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string): JSX.Element => {
+    (_props?: IPanelProps, _defaultrender?: IPanelHeaderRenderer, headerTextId?: string): JSX.Element => {
       return (
         <PanelHeader
           cardIcon={cardIcon ?? constants.PANEL.DEFAULT_ICON}
