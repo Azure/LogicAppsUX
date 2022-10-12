@@ -183,7 +183,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                       }}
                     >
                       <ReactFlowProvider>
-                        <ReactFlowWrapper sourceSchema={sourceSchema} />
+                        <ReactFlowWrapper />
                       </ReactFlowProvider>
                     </div>
 
