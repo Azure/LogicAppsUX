@@ -1,40 +1,24 @@
-import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
-import { SchemaNodeDataType } from '../../models';
-import type { SelectedFunctionNode, SelectedSourceNode, SelectedTargetNode } from '../../models/SelectedNode';
 import { NodeType } from '../../models/SelectedNode';
+import type { SelectedNode } from '../../models/SelectedNode';
 import type { PropertiesPaneProps } from './PropertiesPane';
 import { PropertiesPane } from './PropertiesPane';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
-const exSourceNode: SelectedSourceNode = {
-  nodeType: NodeType.Source,
-  name: 'ExSourceNode',
-  path: '/path/to/ExSourceNode',
-  dataType: SchemaNodeDataType.String,
+const exSourceSchemaNode: SelectedNode = {
+  type: NodeType.Source,
+  id: 'srcSchemaNodeId',
 };
-const exTargetNode: SelectedTargetNode = {
-  nodeType: NodeType.Target,
-  name: 'ExTargetNode',
-  path: '/path/to/ExTargetNode',
-  dataType: SchemaNodeDataType.Int,
-  defaultValue: 'Default value',
-  doNotGenerateIfNoValue: true,
-  nullable: true,
-  inputIds: ['miscInputId'],
+const exTargetSchemaNode: SelectedNode = {
+  type: NodeType.Target,
+  id: 'tgtSchemaNodeId',
 };
-const exFunctionNode: SelectedFunctionNode = {
+const exFunctionNode: SelectedNode = {
+  type: NodeType.Function,
   id: 'functionId',
-  nodeType: NodeType.Function,
-  name: 'ExFunctionNode',
-  branding: {} as FunctionGroupBranding,
-  description: '',
-  codeEx: '',
-  inputs: [],
-  outputId: '',
 };
 
-const nodeOptions = { noneSelected: undefined, exSourceNode, exTargetNode, exFunctionNode };
+const nodeOptions = { noneSelected: undefined, exSourceSchemaNode, exTargetSchemaNode, exFunctionNode };
 
 export default {
   component: PropertiesPane,
@@ -48,8 +32,8 @@ export default {
         type: 'select',
         labels: {
           noneSelected: 'No node selected',
-          exSourceNode: 'Input node',
-          exTargetNode: 'Output node',
+          exSourceNode: 'Source schema node',
+          exTargetNode: 'Target schema node',
           exFunctionNode: 'Function node',
         },
       },
