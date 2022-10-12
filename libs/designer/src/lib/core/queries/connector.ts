@@ -1,5 +1,5 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import type { ListDynamicValue } from '@microsoft-logic-apps/designer-client-services';
+import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectorService } from '@microsoft-logic-apps/designer-client-services';
 import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft-logic-apps/parsers';
 
@@ -10,7 +10,7 @@ export const getLegacyDynamicValues = async (
   extension: LegacyDynamicValuesExtension,
   parameterArrayType: string,
   isManagedIdentityTypeConnection?: boolean,
-  data?: any
+  managedIdentityProperties?: ManagedIdentityRequestProperties
 ): Promise<ListDynamicValue[]> => {
   const queryClient = getReactQueryClient();
   const service = ConnectorService();
@@ -31,7 +31,7 @@ export const getLegacyDynamicValues = async (
         extension,
         parameterArrayType,
         isManagedIdentityTypeConnection,
-        data
+        managedIdentityProperties
       )
   );
 };
@@ -64,7 +64,7 @@ export const getLegacyDynamicSchema = async (
   parameters: Record<string, any>,
   extension: LegacyDynamicSchemaExtension,
   isManagedIdentityTypeConnection?: boolean,
-  data?: any
+  managedIdentityProperties?: ManagedIdentityRequestProperties
 ): Promise<OpenAPIV2.SchemaObject | null> => {
   const queryClient = getReactQueryClient();
   const service = ConnectorService();
@@ -77,7 +77,15 @@ export const getLegacyDynamicSchema = async (
       extension.operationId?.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),
     ],
-    () => service.getLegacyDynamicSchema(connectionId, connectorId, parameters, extension, isManagedIdentityTypeConnection, data)
+    () =>
+      service.getLegacyDynamicSchema(
+        connectionId,
+        connectorId,
+        parameters,
+        extension,
+        isManagedIdentityTypeConnection,
+        managedIdentityProperties
+      )
   );
 };
 

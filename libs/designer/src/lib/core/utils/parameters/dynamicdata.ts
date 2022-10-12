@@ -1,4 +1,5 @@
 import Constants from '../../../common/constants';
+import type { ConnectionReference } from '../../../common/models/workflow';
 import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { getConnection, getConnectorWithSwagger } from '../../queries/connections';
 import { getDynamicSchemaProperties, getLegacyDynamicSchema, getLegacyDynamicValues, getListDynamicValues } from '../../queries/connector';
@@ -15,7 +16,7 @@ import {
   parameterValueToString,
   tryConvertStringToExpression,
 } from './helper';
-import type { ListDynamicValue } from '@microsoft-logic-apps/designer-client-services';
+import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@microsoft-logic-apps/designer-client-services';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type {
@@ -72,10 +73,11 @@ import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
-  connectionId: string,
-  operationInfo: OperationInfo
+  operationInfo: OperationInfo,
+  connectionReference: ConnectionReference
 ): Promise<ListDynamicValue[]> {
   const { definition, parameter } = dependencyInfo;
+  const { id: connectionId } = connectionReference.connection;
   if (isDynamicListExtension(definition)) {
     const { dynamicState, parameters } = definition.extension;
     const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs);
@@ -103,10 +105,16 @@ export async function getDynamicValues(
     const connection = (await getConnection(connectionId, connectorId)) as Connection;
     const isManagedIdentityTypeConnection =
       isConnectionSingleAuthManagedIdentityType(connection) || isConnectionMultiAuthManagedIdentityType(connection, connector);
-    let data = undefined;
+    let managedIdentityRequestProperties: ManagedIdentityRequestProperties | undefined;
+
     // TODO - Update this when support for Managed identity is added.
     if (isManagedIdentityTypeConnection) {
-      data = { connection: { id: connection.id }, connectionRuntimeUrl: connection.properties.connectionRuntimeUrl };
+      managedIdentityRequestProperties = {
+        connection: { id: connection.id },
+        connectionRuntimeUrl: connection.properties.connectionRuntimeUrl as string,
+        connectionProperties: connectionReference.connectionProperties as Record<string, any>,
+        authentication: connectionReference.authentication as any,
+      };
     }
 
     return getLegacyDynamicValues(
@@ -116,7 +124,7 @@ export async function getDynamicValues(
       definition.extension,
       getArrayTypeForOutputs(parsedSwagger, operationId as string),
       isManagedIdentityTypeConnection,
-      data
+      managedIdentityRequestProperties
     );
   }
 
@@ -126,8 +134,8 @@ export async function getDynamicValues(
 export async function getDynamicSchema(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
-  connectionId: string,
   operationInfo: OperationInfo,
+  connectionReference: ConnectionReference,
   variables: VariableDeclaration[] = []
 ): Promise<OpenAPIV2.SchemaObject | null> {
   const { parameter, definition } = dependencyInfo;
@@ -153,7 +161,7 @@ export async function getDynamicSchema(
           break;
         default:
           schema = await getDynamicSchemaProperties(
-            connectionId,
+            connectionReference.connection.id,
             operationInfo.connectorId,
             operationInfo.operationId,
             parameter?.alias,
@@ -177,15 +185,31 @@ export async function getDynamicSchema(
         /* encodePathComponents */ true,
         method
       );
+      const connectionId = connectionReference.connection.id;
       const connection = (await getConnection(connectionId, connectorId)) as Connection;
       const isManagedIdentityTypeConnection =
         isConnectionSingleAuthManagedIdentityType(connection) || isConnectionMultiAuthManagedIdentityType(connection, connector);
-      let data = undefined;
+
+      let managedIdentityRequestProperties: ManagedIdentityRequestProperties | undefined;
+
       // TODO - Update this when support for Managed identity is added.
       if (isManagedIdentityTypeConnection) {
-        data = { connection: { id: connection.id }, connectionRuntimeUrl: connection.properties.connectionRuntimeUrl };
+        managedIdentityRequestProperties = {
+          connection: { id: connection.id },
+          connectionRuntimeUrl: connection.properties.connectionRuntimeUrl as string,
+          connectionProperties: connectionReference.connectionProperties as Record<string, any>,
+          authentication: connectionReference.authentication as any,
+        };
       }
-      return getLegacyDynamicSchema(connectionId, connectorId, inputs, definition.extension, isManagedIdentityTypeConnection, data);
+
+      return getLegacyDynamicSchema(
+        connectionId,
+        connectorId,
+        inputs,
+        definition.extension,
+        isManagedIdentityTypeConnection,
+        managedIdentityRequestProperties
+      );
     }
   } catch (error: any) {
     if (
@@ -252,6 +276,7 @@ export async function getDynamicInputsFromSchema(
   let dynamicInputs: InputParameter[] = schemaProperties.map((schemaProperty) => ({
     ...toInputParameter(schemaProperty),
     isDynamic: true,
+    in: dynamicParameter.in
   }));
 
   if (!operationDefinition) {
@@ -283,9 +308,10 @@ function getParametersForDynamicInvoke(referenceParameters: DynamicParameters, n
   const intl = getIntl();
   const operationParameters: SerializedParameter[] = [];
 
-  for (const [parameterName, parameter] of Object.entries(referenceParameters)) {
+  for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
     // TODO: <2337657> Verify nested dependency parameters work once dynamic values available on api.
-    const referencedParameter = getParameterFromName(nodeInputs, parameter.parameterReference);
+    const referenceParameterName = (parameter.parameterReference ?? parameter.parameter) as string;
+    const referencedParameter = getParameterFromName(nodeInputs, referenceParameterName);
 
     if (!referencedParameter) {
       throw new AssertionException(
@@ -295,7 +321,7 @@ function getParametersForDynamicInvoke(referenceParameters: DynamicParameters, n
             defaultMessage: 'Parameter "{parameterName}" cannot be found for this operation',
             description: 'Error message to show in dropdown when dependent parameter is not found',
           },
-          { parameterName: parameter.parameterReference }
+          { parameterName: referenceParameterName }
         )
       );
     }
