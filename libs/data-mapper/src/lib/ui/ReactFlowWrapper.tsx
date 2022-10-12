@@ -1,5 +1,4 @@
-import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
-import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
+import { CanvasControls } from '../components/canvasControls/CanvasControls';
 import { CanvasToolbox } from '../components/canvasToolbox/CanvasToolbox';
 import type { ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
@@ -34,31 +33,19 @@ import { isCustomValue } from '../utils/DataMap.Utils';
 import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
-import {
-  Map20Filled,
-  Map20Regular,
-  PageFit20Filled,
-  PageFit20Regular,
-  ZoomIn20Filled,
-  ZoomIn20Regular,
-  ZoomOut20Filled,
-  ZoomOut20Regular,
-} from '@fluentui/react-icons';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'reactflow';
+import ReactFlow, { ConnectionLineType, useReactFlow } from 'reactflow';
 
 export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
 export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
 
 export const ReactFlowWrapper = () => {
-  const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const { fitView, zoomIn, zoomOut, project } = useReactFlow();
+  const { project } = useReactFlow();
 
   const addedFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
@@ -196,60 +183,6 @@ export const ReactFlowWrapper = () => {
     }
   };
 
-  const zoomOutLoc = intl.formatMessage({
-    defaultMessage: 'Zoom out',
-    description: 'Label to zoom the canvas out',
-  });
-
-  const zoomInLoc = intl.formatMessage({
-    defaultMessage: 'Zoom in',
-    description: 'Label to zoom the canvas in',
-  });
-
-  const fitViewLoc = intl.formatMessage({
-    defaultMessage: 'Page fit',
-    description: 'Label to fit the whole canvas in view',
-  });
-
-  const displayMiniMapLoc = intl.formatMessage({
-    defaultMessage: 'Display mini map',
-    description: 'Label to toggle the mini map',
-  });
-
-  const mapControlsButtonContainerProps: ButtonContainerProps = {
-    buttons: [
-      {
-        tooltip: zoomOutLoc,
-        regularIcon: ZoomOut20Regular,
-        filledIcon: ZoomOut20Filled,
-        onClick: zoomOut,
-      },
-      {
-        tooltip: zoomInLoc,
-        regularIcon: ZoomIn20Regular,
-        filledIcon: ZoomIn20Filled,
-        onClick: zoomIn,
-      },
-      {
-        tooltip: fitViewLoc,
-        regularIcon: PageFit20Regular,
-        filledIcon: PageFit20Filled,
-        onClick: fitView,
-      },
-      {
-        tooltip: displayMiniMapLoc,
-        regularIcon: Map20Regular,
-        filledIcon: Map20Filled,
-        filled: displayMiniMap,
-        onClick: toggleDisplayMiniMap,
-      },
-    ],
-    horizontal: true,
-    xPos: '16px',
-    yPos: '16px',
-    anchorToBottom: true,
-  };
-
   useLayoutEffect(() => {
     const handleCanvasViewportCoords = () => {
       if (reactFlowRef.current) {
@@ -329,29 +262,7 @@ export const ReactFlowWrapper = () => {
         connectedSourceNodes={connectedSourceNodes}
       />
 
-      <ButtonContainer {...mapControlsButtonContainerProps} />
-
-      {displayMiniMap && (
-        <MiniMap
-          nodeStrokeColor={(node) => {
-            if (node.style?.backgroundColor) {
-              return node.style.backgroundColor;
-            }
-            return '#F3F2F1';
-          }}
-          nodeColor={(node) => {
-            if (node.style?.backgroundColor) {
-              return node.style.backgroundColor;
-            }
-            return '#F3F2F1';
-          }}
-          style={{
-            left: '16px',
-            bottom: '56px',
-            // TODO resize smaller to match the width of the buttons (128px wide)
-          }}
-        />
-      )}
+      <CanvasControls displayMiniMap={displayMiniMap} toggleDisplayMiniMap={toggleDisplayMiniMap} />
 
       {notificationData && (
         <Notification

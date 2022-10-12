@@ -57,13 +57,9 @@ export const ButtonContainer = (props: ButtonContainerProps) => {
 
   const stackStyle: React.CSSProperties = {
     left: xPos,
+    bottom: anchorToBottom ? yPos : undefined,
+    top: anchorToBottom ? undefined : yPos,
   };
-
-  if (anchorToBottom) {
-    stackStyle.bottom = yPos;
-  } else {
-    stackStyle.top = yPos;
-  }
 
   return (
     <Stack horizontal={horizontal} className={styles.btnContainer} style={stackStyle}>
