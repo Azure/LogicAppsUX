@@ -276,6 +276,7 @@ export async function getDynamicInputsFromSchema(
   let dynamicInputs: InputParameter[] = schemaProperties.map((schemaProperty) => ({
     ...toInputParameter(schemaProperty),
     isDynamic: true,
+    in: dynamicParameter.in
   }));
 
   if (!operationDefinition) {
