@@ -91,8 +91,15 @@ import {
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft-logic-apps/utils';
-import type { DictionaryEditorItemProps, OutputToken, ParameterInfo, Token as SegmentToken, ValueSegment } from '@microsoft/designer-ui';
-import { DynamicCallStatus, ValueSegmentType, TokenType } from '@microsoft/designer-ui';
+import type {
+  AuthProps,
+  DictionaryEditorItemProps,
+  OutputToken,
+  ParameterInfo,
+  Token as SegmentToken,
+  ValueSegment,
+} from '@microsoft/designer-ui';
+import { AuthenticationType, ColumnMode, DynamicCallStatus, ValueSegmentType, TokenType } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';
@@ -276,6 +283,7 @@ export function createParameterInfo(
   return parameterInfo;
 }
 
+// TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor
 export function getParameterEditorProps(inputParameter: InputParameter, shouldIgnoreDefaultValue = false): ParameterEditorProps {
   let type = inputParameter.editor;
   let editorViewModel;
@@ -291,8 +299,12 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
     type = Constants.EDITOR.ARRAY;
     editorViewModel = initializeArrayViewModel(inputParameter, shouldIgnoreDefaultValue);
     schema = { ...schema, ...{ 'x-ms-editor': Constants.EDITOR.ARRAY } };
-  } else if (type === 'dictionary') {
+  } else if (type === Constants.EDITOR.DICTIONARY) {
     editorViewModel = toDictionaryViewModel(inputParameter.value);
+  } else if (type === Constants.EDITOR.TABLE) {
+    editorViewModel = toTableViewModel(inputParameter.value, inputParameter.editorOptions);
+  } else if (type === Constants.EDITOR.AUTHENTICATION) {
+    editorViewModel = toAuthenticationViewModel(inputParameter.value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     type = undefined;
   }
@@ -327,6 +339,95 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
   }
 
   return { items };
+}
+
+function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[]; columnMode: ColumnMode } {
+  const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')] };
+  if (Array.isArray(value)) {
+    const keys = editorOptions.columns.keys;
+    const items: DictionaryEditorItemProps[] = [];
+    for (const item of value) {
+      items.push({
+        key: loadParameterValue({ value: item[keys[0]] } as any),
+        value: loadParameterValue({ value: item[keys[1]] } as any),
+      });
+    }
+
+    return { items: !value.length ? [placeholderItem] : items, columnMode: ColumnMode.Custom };
+  }
+
+  return { items: [placeholderItem], columnMode: ColumnMode.Automatic };
+}
+
+function toAuthenticationViewModel(value: any): { type: AuthenticationType; authenticationValue: AuthProps } {
+  const emptyValue = { type: AuthenticationType.NONE, authenticationValue: {} };
+
+  if (value && isObject(value)) {
+    switch (value.type) {
+      case AuthenticationType.BASIC:
+        return {
+          type: value.type,
+          authenticationValue: {
+            basic: {
+              basicUsername: loadParameterValue({ value: value.username } as any),
+              basicPassword: loadParameterValue({ value: value.password } as any),
+            },
+          },
+        };
+      case AuthenticationType.CERTIFICATE:
+        return {
+          type: value.type,
+          authenticationValue: {
+            clientCertificate: {
+              clientCertificatePfx: loadParameterValue({ value: value.pfx } as any),
+              clientCertificatePassword: loadParameterValue({ value: value.password } as any),
+            },
+          },
+        };
+
+      case AuthenticationType.OAUTH:
+        return {
+          type: value.type,
+          authenticationValue: {
+            aadOAuth: {
+              oauthAuthority: loadParameterValue({ value: value.authority } as any),
+              oauthTenant: loadParameterValue({ value: value.tenant } as any),
+              oauthAudience: loadParameterValue({ value: value.audience } as any),
+              oauthClientId: loadParameterValue({ value: value.clientId } as any),
+              oauthTypeSecret: loadParameterValue({ value: value.secret } as any),
+              oauthTypeCertificatePfx: loadParameterValue({ value: value.pfx } as any),
+              oauthTypeCertificatePassword: loadParameterValue({ value: value.password } as any),
+            },
+          },
+        };
+
+      case AuthenticationType.RAW:
+        return {
+          type: value.type,
+          authenticationValue: {
+            raw: {
+              rawValue: loadParameterValue({ value: value.value } as any),
+            },
+          },
+        };
+
+      case AuthenticationType.MSI:
+        return {
+          type: value.type,
+          authenticationValue: {
+            msi: {
+              msiAudience: loadParameterValue({ value: value.audience } as any),
+              msiIdentity: value.identity,
+            },
+          },
+        };
+
+      default:
+        throw new Error(`Cannot fetch authentication editor details. Invalid authentication type '${value.type}'`);
+    }
+  }
+
+  return emptyValue;
 }
 
 interface ParameterEditorProps {
@@ -1359,6 +1460,33 @@ export function isDynamicDataReadyToLoad({ dependentParameters }: DependencyInfo
   return Object.keys(dependentParameters).every((key) => dependentParameters[key].isValid);
 }
 
+function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefinitionValue: boolean): string | undefined {
+  const { editor, editorOptions, editorViewModel } = parameter;
+  switch (editor?.toLowerCase()) {
+    case Constants.EDITOR.TABLE:
+      if (editorViewModel?.columnMode === ColumnMode.Custom && editorOptions?.columns) {
+        const { keys, types } = editorOptions.columns;
+        const value: any = [];
+        const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
+
+        // We do not parse here, since the type is string for table columns [assumed currently may change later]
+        for (const item of editorViewModel.items) {
+          const keyValue = parameterValueToString({ type: types[0], value: item.key, ...commonProperties } as any, isDefinitionValue);
+          const valueValue = parameterValueToString({ type: types[1], value: item.value, ...commonProperties } as any, isDefinitionValue);
+
+          if (keyValue || valueValue) {
+            value.push({ [keys[0]]: keyValue, [keys[1]]: valueValue });
+          }
+        }
+
+        return JSON.stringify(value);
+      }
+      return undefined;
+    default:
+      return undefined;
+  }
+}
+
 function updateNodeInputsWithParameter(
   nodeInputs: NodeInputs,
   parameterId: string,
@@ -1716,6 +1844,11 @@ export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitio
       default:
         return JSON.stringify(preservedValue);
     }
+  }
+
+  const valueFromEditor = getStringifiedValueFromEditorViewModel(parameterInfo, isDefinitionValue);
+  if (valueFromEditor !== undefined) {
+    return valueFromEditor;
   }
 
   const parameter = { ...parameterInfo };

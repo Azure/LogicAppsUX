@@ -16,7 +16,7 @@ export const RawAuthentication = ({ rawProps, GetTokenPicker, setCurrentProps }:
   const updateRawValue = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      rawProps: { ...prevState.rawProps, rawValue: newState.value },
+      raw: { ...prevState.raw, rawValue: newState.value },
     }));
   };
 

@@ -308,29 +308,29 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
   const values: CollapsedAuthEditorItems[] = [];
   switch (authType) {
     case AuthenticationType.BASIC:
-      updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_USERNAME, items.basicProps?.basicUsername);
-      updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_PASSWORD, items.basicProps?.basicPassword);
+      updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_USERNAME, items.basic?.basicUsername);
+      updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_PASSWORD, items.basic?.basicPassword);
       break;
     case AuthenticationType.CERTIFICATE:
-      updateValues(values, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, items.clientCertificateProps?.clientCertificatePfx);
-      updateValues(values, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD, items.clientCertificateProps?.clientCertificatePassword);
+      updateValues(values, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, items.clientCertificate?.clientCertificatePfx);
+      updateValues(values, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD, items.clientCertificate?.clientCertificatePassword);
       break;
     case AuthenticationType.RAW:
-      updateValues(values, AUTHENTICATION_PROPERTIES.RAW_VALUE, items.rawProps?.rawValue);
+      updateValues(values, AUTHENTICATION_PROPERTIES.RAW_VALUE, items.raw?.rawValue);
       break;
     case AuthenticationType.MSI:
-      updateValues(values, AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, items.msiProps?.MSIAudience);
+      updateValues(values, AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, items.msi?.msiAudience);
       break;
     case AuthenticationType.OAUTH:
-      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY, items.aadOAuthProps?.OAuthAuthority);
-      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT, items.aadOAuthProps?.OAuthTenant);
-      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE, items.aadOAuthProps?.OAuthAudience);
-      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_CLIENT_ID, items.aadOAuthProps?.OAuthClientId);
-      if (items.aadOAuthProps?.OAuthType === AuthenticationOAuthType.CERTIFICATE) {
-        updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PFX, items.aadOAuthProps?.OAuthTypeCertificatePfx);
-        updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD, items.aadOAuthProps?.OAuthTypeCertificatePassword);
+      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY, items.aadOAuth?.oauthAuthority);
+      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT, items.aadOAuth?.oauthTenant);
+      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE, items.aadOAuth?.oauthAudience);
+      updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_CLIENT_ID, items.aadOAuth?.oauthClientId);
+      if (items.aadOAuth?.oauthType === AuthenticationOAuthType.CERTIFICATE) {
+        updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PFX, items.aadOAuth?.oauthTypeCertificatePfx);
+        updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD, items.aadOAuth?.oauthTypeCertificatePassword);
       } else {
-        updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET, items.aadOAuthProps?.OAuthTypeSecret);
+        updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET, items.aadOAuth?.oauthTypeSecret);
       }
       break;
   }
@@ -357,7 +357,7 @@ const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty
 export const serializeAuthentication = (
   editor: LexicalEditor,
   setCurrentProps: (items: AuthProps) => void,
-  setOption: (s: string) => void
+  setOption: (s: AuthenticationType) => void
 ) => {
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
@@ -369,45 +369,45 @@ export const serializeAuthentication = (
       console.log(e);
     }
     const returnItems: AuthProps = {};
-    setOption(jsonEditor.type as string);
+    setOption(jsonEditor.type);
     switch (jsonEditor.type) {
       case AuthenticationType.BASIC:
-        returnItems.basicProps = {
+        returnItems.basic = {
           basicUsername: convertStringToSegments(jsonEditor.username, true, nodeMap),
           basicPassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
         };
         break;
       case AuthenticationType.CERTIFICATE:
-        returnItems.clientCertificateProps = {
+        returnItems.clientCertificate = {
           clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, true, nodeMap),
           clientCertificatePassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
         };
         break;
       case AuthenticationType.RAW:
-        returnItems.rawProps = {
+        returnItems.raw = {
           rawValue: convertStringToSegments(jsonEditor.value, true, nodeMap),
         };
         break;
       case AuthenticationType.MSI:
-        returnItems.msiProps = {
-          MSIAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
+        returnItems.msi = {
+          msiAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
         };
         break;
       case AuthenticationType.OAUTH:
-        returnItems.aadOAuthProps = {
-          OAuthTenant: convertStringToSegments(jsonEditor.tenant, true, nodeMap),
-          OAuthAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
-          OAuthClientId: convertStringToSegments(jsonEditor.clientId, true, nodeMap),
+        returnItems.aadOAuth = {
+          oauthTenant: convertStringToSegments(jsonEditor.tenant, true, nodeMap),
+          oauthAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
+          oauthClientId: convertStringToSegments(jsonEditor.clientId, true, nodeMap),
         };
         if (jsonEditor.authority) {
-          returnItems.aadOAuthProps.OAuthAuthority = convertStringToSegments(jsonEditor.authority, true, nodeMap);
+          returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, true, nodeMap);
         }
         if (jsonEditor.secret) {
-          returnItems.aadOAuthProps.OAuthTypeSecret = convertStringToSegments(jsonEditor.secret, true, nodeMap);
+          returnItems.aadOAuth.oauthTypeSecret = convertStringToSegments(jsonEditor.secret, true, nodeMap);
         }
         if (jsonEditor.pfx && jsonEditor.password) {
-          returnItems.aadOAuthProps.OAuthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, true, nodeMap);
-          returnItems.aadOAuthProps.OAuthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
+          returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, true, nodeMap);
+          returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
         }
         break;
     }
