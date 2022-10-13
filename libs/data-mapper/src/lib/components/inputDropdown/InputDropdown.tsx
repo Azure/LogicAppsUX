@@ -154,7 +154,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
       setIsCustomValue(!srcSchemaNode && !functionNode);
     } else {
-      setIsCustomValue(true);
+      setIsCustomValue(false);
     }
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
 
