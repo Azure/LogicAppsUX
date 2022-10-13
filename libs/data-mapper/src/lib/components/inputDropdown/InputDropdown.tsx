@@ -4,8 +4,8 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import { NodeType } from '../../models/SelectedNode';
 import type { SelectedNode } from '../../models/SelectedNode';
 import { Dropdown, SelectableOptionMenuItemType, TextField } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react';
-import { Button, Tooltip } from '@fluentui/react-components';
+import type { IDropdownOption, IRawStyle } from '@fluentui/react';
+import { Button, makeStyles, Tooltip } from '@fluentui/react-components';
 import { Dismiss20Regular } from '@fluentui/react-icons';
 import { useDebouncedCallback } from '@react-hookz/web';
 import { useEffect, useMemo, useState } from 'react';
@@ -27,20 +27,27 @@ export interface InputOptionData {
   isFunction: boolean;
 }
 
+const useStyles = makeStyles({
+  inputStyles: {
+    width: '100%',
+  },
+});
+
 export interface InputDropdownProps {
   currentNode: SelectedNode;
   typeMatchedOptions?: IDropdownOption<InputOptionData>[];
   inputValue?: string; // undefined, Node ID, or custom value (string)
   inputIndex: number;
-  dropdownStyle?: React.CSSProperties;
+  inputStyles?: IRawStyle;
   label?: string;
   placeholder?: string;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, typeMatchedOptions, inputValue, inputIndex, dropdownStyle, label, placeholder } = props;
+  const { currentNode, typeMatchedOptions, inputValue, inputIndex, inputStyles, label, placeholder } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
+  const styles = useStyles();
 
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
@@ -147,7 +154,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
       setIsCustomValue(!srcSchemaNode && !functionNode);
     } else {
-      setIsCustomValue(false);
+      setIsCustomValue(true);
     }
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
 
@@ -183,7 +190,8 @@ export const InputDropdown = (props: InputDropdownProps) => {
           onChange={(_e, option) => onSelectOption(option)}
           label={label}
           placeholder={placeholder}
-          style={dropdownStyle}
+          className={styles.inputStyles}
+          styles={{ root: { ...inputStyles } }}
           onRenderOption={onRenderOption}
         />
       ) : (
@@ -193,13 +201,21 @@ export const InputDropdown = (props: InputDropdownProps) => {
             onChange={(_e, newValue) => onChangeCustomValue(newValue)}
             label={label}
             placeholder={placeholder}
+            className={styles.inputStyles}
+            styles={{ root: { ...inputStyles } }}
           />
           <Tooltip relationship="label" content={clearCustomValueLoc}>
             <Button
               appearance="transparent"
               icon={<Dismiss20Regular />}
               onClick={onClearCustomValue}
-              style={{ position: 'absolute', top: '50%', right: 0, transform: 'translate(0, -50%)' }}
+              style={{
+                boxSizing: 'border-box',
+                position: 'absolute',
+                top: label ? '76%' : '50%',
+                right: 0,
+                transform: 'translate(0, -50%)',
+              }}
             />
           </Tooltip>
         </div>

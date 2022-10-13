@@ -14,14 +14,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
+const gridColumnSpan1 = '1 / span 1';
+const gridColumnSpan2 = '2 / span 2';
+
 const useStyles = makeStyles({
   nodeInfoGridContainer: {
     display: 'grid',
-    width: '50%',
+    width: '100%',
     rowGap: '16px',
     columnGap: '12px',
-    gridTemplateColumns: 'auto auto auto auto auto auto',
-    alignItems: 'center',
+    gridTemplateColumns: 'repeat(6, 1fr)',
+    alignContent: 'center',
+    justifyContent: 'start',
   },
 });
 
@@ -174,14 +178,14 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   return (
     <div>
       <div className={styles.nodeInfoGridContainer}>
-        <Text style={{ gridColumn: '1 / span 2' }}>{nameLoc}</Text>
-        <Text>{schemaNode?.name}</Text>
+        <Text style={{ gridColumn: gridColumnSpan1 }}>{nameLoc}</Text>
+        <Text style={{ gridColumn: gridColumnSpan2 }}>{schemaNode?.name}</Text>
 
-        <Text style={{ gridColumn: '1 / span 2' }}>{fullPathLoc}</Text>
-        <Text>{schemaNode?.key}</Text>
+        <Text style={{ gridColumn: gridColumnSpan1 }}>{fullPathLoc}</Text>
+        <Text style={{ gridColumn: gridColumnSpan2 }}>{schemaNode?.key}</Text>
 
-        <Text style={{ gridColumn: '1 / span 2' }}>{dataTypeLoc}</Text>
-        <Stack horizontal verticalAlign="center">
+        <Text style={{ gridColumn: gridColumnSpan1 }}>{dataTypeLoc}</Text>
+        <Stack horizontal verticalAlign="center" style={{ gridColumn: gridColumnSpan2 }}>
           <DataTypeIcon style={{ marginRight: '5px' }} />
           <Text>{schemaNode?.schemaNodeDataType}</Text>
         </Stack>
@@ -190,12 +194,12 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
       {isTargetSchemaNode && (
         <div>
           <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-            <Text style={{ gridColumn: '1 / span 2' }}>{inputLoc}</Text>
+            <Text style={{ gridColumn: gridColumnSpan1 }}>{inputLoc}</Text>
             <InputDropdown
               currentNode={currentNode}
               typeMatchedOptions={inputOptions}
               inputValue={inputValue}
-              dropdownStyle={{ marginTop: 8 }}
+              inputStyles={{ gridColumn: gridColumnSpan2 }}
               inputIndex={0}
             />
           </div>
@@ -205,8 +209,8 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
               <AccordionHeader>{advOptLoc}</AccordionHeader>
               <AccordionPanel>
                 <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-                  <Text style={{ gridColumn: '1 / span 2' }}>{defValLoc}</Text>
-                  <Input />
+                  <Text style={{ gridColumn: gridColumnSpan1 }}>{defValLoc}</Text>
+                  <Input style={{ gridColumn: gridColumnSpan2 }} />
                 </div>
 
                 <Stack>
