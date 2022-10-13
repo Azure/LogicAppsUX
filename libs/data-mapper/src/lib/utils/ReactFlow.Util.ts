@@ -3,12 +3,12 @@ import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childTargetNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary, ConnectionUnit } from '../models/Connection';
+import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
-import { isCustomValue } from './DataMap.Utils';
+import { flattenInputs, isConnectionUnit } from './Connection.Utils';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -204,16 +204,18 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-export const convertToReactFlowEdges = (connections: ConnectionDictionary): ReactFlowEdge[] => {
+export const convertToReactFlowEdges = (connections: ConnectionDictionary, selectedItemKey: string | undefined): ReactFlowEdge[] => {
   return Object.values(connections).flatMap((connection) => {
-    const nodeInputs = connection.inputs.filter((input) => !!input && !isCustomValue(input)) as ConnectionUnit[];
+    const nodeInputs = flattenInputs(connection.inputs).filter(isConnectionUnit);
+
     return nodeInputs.map((input) => {
+      const id = createReactFlowConnectionId(input.reactFlowKey, connection.self.reactFlowKey);
       return {
-        id: createReactFlowConnectionId(input.reactFlowKey, connection.destination.reactFlowKey),
+        id,
         source: input.reactFlowKey,
-        target: connection.destination.reactFlowKey,
+        target: connection.self.reactFlowKey,
         type: ReactFlowEdgeType.ConnectionEdge,
-        selected: connection.isSelected,
+        selected: selectedItemKey === id,
       };
     });
   });
@@ -226,7 +228,8 @@ export const useLayout = (
   allSourceNodes: SchemaNodeDictionary,
   allFunctionNodes: FunctionDictionary,
   currentTargetNode: SchemaNodeExtended | undefined,
-  connections: ConnectionDictionary
+  connections: ConnectionDictionary,
+  selectedItemKey: string | undefined
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
     if (currentTargetNode) {
@@ -247,8 +250,8 @@ export const useLayout = (
   }, [viewportCoords, currentlySelectedSourceNodes, currentTargetNode, allFunctionNodes]);
 
   const reactFlowEdges = useMemo(() => {
-    return convertToReactFlowEdges(connections);
-  }, [connections]);
+    return convertToReactFlowEdges(connections, selectedItemKey);
+  }, [connections, selectedItemKey]);
 
   return [reactFlowNodes, reactFlowEdges];
 };

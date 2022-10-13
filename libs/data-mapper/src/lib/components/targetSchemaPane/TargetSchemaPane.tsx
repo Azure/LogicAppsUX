@@ -58,8 +58,8 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     const nodesWithConnections: { [key: string]: true } = {};
 
     Object.values(connectionDictionary).forEach((connection) => {
-      if (connection.destination.reactFlowKey in targetSchemaDictionary) {
-        nodesWithConnections[connection.destination.node.key] = true; // targetSchemaDictionary[value.reactFlowDestination]
+      if (connection.self.reactFlowKey in targetSchemaDictionary) {
+        nodesWithConnections[connection.self.node.key] = true; // targetSchemaDictionary[value.reactFlowDestination]
       }
     });
 

@@ -1,0 +1,96 @@
+{
+  "name": "Source.xsd",
+  "type": "XML",
+  "targetNamespace": "http://tempuri.org/source.xsd",
+  "namespaces": { "ns0": "http://tempuri.org/source.xsd", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "schemaTreeRoot": {
+    "key": "/ns0:Root",
+    "name": "Root",
+    "namespacePrefix": "ns0",
+    "namespaceUri": "http://tempuri.org/source.xsd",
+    "schemaNodeDataType": "None",
+    "normalizedDataType": "ComplexType",
+    "properties": "NotSpecified",
+    "children": [
+      {
+        "key": "/ns0:Root/DirectTranslation",
+        "name": "DirectTranslation",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/DirectTranslation/EmployeeID",
+            "name": "EmployeeID",
+            "schemaNodeDataType": "Decimal",
+            "normalizedDataType": "Decimal",
+            "properties": "NotSpecified",
+            "fullName": "EmployeeID",
+            "parentKey": "/ns0:Root/DirectTranslation"
+          },
+          {
+            "key": "/ns0:Root/DirectTranslation/EmployeeName",
+            "name": "EmployeeName",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "NotSpecified",
+            "fullName": "EmployeeName",
+            "parentKey": "/ns0:Root/DirectTranslation"
+          }
+        ],
+        "fullName": "DirectTranslation",
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/DataTranslation",
+        "name": "DataTranslation",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/DataTranslation/Employee",
+            "name": "Employee",
+            "schemaNodeDataType": "None",
+            "normalizedDataType": "ComplexType",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/DataTranslation/Employee/FirstName",
+                "name": "FirstName",
+                "schemaNodeDataType": "String",
+                "normalizedDataType": "String",
+                "properties": "NotSpecified",
+                "fullName": "FirstName",
+                "parentKey": "/ns0:Root/DataTranslation/Employee"
+              },
+              {
+                "key": "/ns0:Root/DataTranslation/Employee/LastName",
+                "name": "LastName",
+                "schemaNodeDataType": "String",
+                "normalizedDataType": "String",
+                "properties": "NotSpecified",
+                "fullName": "LastName",
+                "parentKey": "/ns0:Root/DataTranslation/Employee"
+              },
+              {
+                "key": "/ns0:Root/DataTranslation/Employee/EmploymentStatus",
+                "name": "EmploymentStatus",
+                "schemaNodeDataType": "Boolean",
+                "normalizedDataType": "Bool",
+                "properties": "NotSpecified",
+                "fullName": "EmploymentStatus",
+                "parentKey": "/ns0:Root/DataTranslation/Employee"
+              }
+            ],
+            "fullName": "Employee",
+            "parentKey": "/ns0:Root/DataTranslation"
+          }
+        ],
+        "fullName": "DataTranslation",
+        "parentKey": "/ns0:Root"
+      }
+    ],
+    "fullName": "ns0:Root"
+  }
+}
