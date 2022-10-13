@@ -1,15 +1,10 @@
-import type { ButtonContainerProps } from '../components/buttonContainer/ButtonContainer';
-import { ButtonContainer } from '../components/buttonContainer/ButtonContainer';
-import type { ButtonPivotProps } from '../components/buttonPivot/ButtonPivot';
-import { ButtonPivot } from '../components/buttonPivot/ButtonPivot';
+import { CanvasControls } from '../components/canvasControls/CanvasControls';
+import { CanvasToolbox } from '../components/canvasToolbox/CanvasToolbox';
+import type { ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
-import type { FloatingPanelProps } from '../components/floatingPanel/FloatingPanel';
-import { FloatingPanel } from '../components/floatingPanel/FloatingPanel';
-import { FunctionList } from '../components/functionList/FunctionList';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { Notification } from '../components/notification/Notification';
-import { SchemaTree } from '../components/tree/SchemaTree';
 import {
   checkerboardBackgroundImage,
   defaultCanvasZoom,
@@ -19,73 +14,39 @@ import {
   targetPrefix,
 } from '../constants/ReactFlowConstants';
 import {
-  addFunctionNode,
-  addSourceNodes,
   changeConnection,
   deleteConnection,
   deleteCurrentlySelectedItem,
   hideNotification,
   makeConnection,
-  removeSourceNodes,
   setCurrentlySelectedEdge,
   setCurrentlySelectedNode,
   unsetSelectedEdges,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import type { SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaTypes } from '../models';
-import type { FunctionData } from '../models/Function';
+import type { ConnectionUnit } from '../models/Connection';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SelectedNode } from '../models/SelectedNode';
 import { NodeType } from '../models/SelectedNode';
+import { isCustomValue } from '../utils/DataMap.Utils';
 import { useLayout } from '../utils/ReactFlow.Util';
-import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
-import {
-  CubeTree20Filled,
-  CubeTree20Regular,
-  Map20Filled,
-  Map20Regular,
-  MathFormula20Filled,
-  MathFormula20Regular,
-  PageFit20Filled,
-  PageFit20Regular,
-  ZoomIn20Filled,
-  ZoomIn20Regular,
-  ZoomOut20Filled,
-  ZoomOut20Regular,
-} from '@fluentui/react-icons';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ConnectionLineType, MiniMap, useReactFlow } from 'reactflow';
+import ReactFlow, { ConnectionLineType, useReactFlow } from 'reactflow';
 
 export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
 export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
 
-const toolboxPanelProps: FloatingPanelProps = {
-  xPos: '16px',
-  yPos: '76px',
-  width: '250px',
-  minHeight: '450px',
-  maxHeight: '450px',
-};
-
-interface ReactFlowWrapperProps {
-  sourceSchema: SchemaExtended;
-}
-
-// ReactFlow must be wrapped if we want to access the internal state of ReactFlow
-export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
-  const intl = useIntl();
+export const ReactFlowWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { fitView, zoomIn, zoomOut, project } = useReactFlow();
+  const { project } = useReactFlow();
 
-  const functionData = useSelector((state: RootState) => state.function.availableFunctions);
   const addedFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
@@ -96,13 +57,13 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
-  const [displayToolboxItem, setDisplayToolboxItem] = useState<string>('');
+  const [toolboxTabToDisplay, setToolboxTabToDisplay] = useState<ToolboxPanelTabs | ''>('');
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
 
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const edgeUpdateSuccessful = useRef(true);
 
-  // TODO update to support input nodes connected to an function, connected to an output node
+  // TODO update to support input nodes connected to a function, connected to an output node
   const connectedSourceNodes = useMemo(() => {
     if (currentTargetNode) {
       const connectionValues = Object.values(connections);
@@ -113,21 +74,14 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
 
       return outputFilteredConnections
         .flatMap((connection) => {
-          return connection.sources.map((source) => flattenedSourceSchema[source.node.key]);
+          const potentialSourceSchemaNodes = connection.inputs.filter((input) => !!input && !isCustomValue(input)) as ConnectionUnit[];
+          return potentialSourceSchemaNodes.map((input) => flattenedSourceSchema[input.node.key]);
         })
         .filter((connection) => connection !== undefined);
     } else {
       return [];
     }
   }, [flattenedSourceSchema, currentTargetNode, connections]);
-
-  const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
-    if (data.value === displayToolboxItem) {
-      setDisplayToolboxItem('');
-    } else {
-      setDisplayToolboxItem(data.value as string);
-    }
-  };
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
@@ -138,23 +92,7 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     // Unselect all edges/lines
     dispatch(unsetSelectedEdges());
 
-    setDisplayToolboxItem('');
-  };
-
-  const onFunctionItemClick = (selectedFunction: FunctionData) => {
-    dispatch(addFunctionNode(selectedFunction));
-  };
-
-  const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
-    if (
-      currentlyAddedSourceNodes.some((node) => {
-        return node.key === selectedNode.key;
-      })
-    ) {
-      dispatch(removeSourceNodes([selectedNode]));
-    } else {
-      dispatch(addSourceNodes([selectedNode]));
-    }
+    setToolboxTabToDisplay('');
   };
 
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
@@ -245,92 +183,6 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
     }
   };
 
-  const toolboxLoc = intl.formatMessage({
-    defaultMessage: 'Toolbox',
-    description: 'Label to open the input toolbox card',
-  });
-
-  const functionLoc = intl.formatMessage({
-    defaultMessage: 'Function',
-    description: 'Label to open the Function card',
-  });
-
-  const zoomOutLoc = intl.formatMessage({
-    defaultMessage: 'Zoom out',
-    description: 'Label to zoom the canvas out',
-  });
-
-  const zoomInLoc = intl.formatMessage({
-    defaultMessage: 'Zoom in',
-    description: 'Label to zoom the canvas in',
-  });
-
-  const fitViewLoc = intl.formatMessage({
-    defaultMessage: 'Page fit',
-    description: 'Label to fit the whole canvas in view',
-  });
-
-  const displayMiniMapLoc = intl.formatMessage({
-    defaultMessage: 'Display mini map',
-    description: 'Label to toggle the mini map',
-  });
-
-  const mapControlsButtonContainerProps: ButtonContainerProps = {
-    buttons: [
-      {
-        tooltip: zoomOutLoc,
-        regularIcon: ZoomOut20Regular,
-        filledIcon: ZoomOut20Filled,
-        onClick: zoomOut,
-      },
-      {
-        tooltip: zoomInLoc,
-        regularIcon: ZoomIn20Regular,
-        filledIcon: ZoomIn20Filled,
-        onClick: zoomIn,
-      },
-      {
-        tooltip: fitViewLoc,
-        regularIcon: PageFit20Regular,
-        filledIcon: PageFit20Filled,
-        onClick: fitView,
-      },
-      {
-        tooltip: displayMiniMapLoc,
-        regularIcon: Map20Regular,
-        filledIcon: Map20Filled,
-        filled: displayMiniMap,
-        onClick: toggleDisplayMiniMap,
-      },
-    ],
-    horizontal: true,
-    xPos: '16px',
-    yPos: '16px',
-    anchorToBottom: true,
-  };
-
-  const toolboxButtonPivotProps: ButtonPivotProps = {
-    buttons: [
-      {
-        tooltip: toolboxLoc,
-        regularIcon: CubeTree20Regular,
-        filledIcon: CubeTree20Filled,
-        value: 'sourceSchemaTreePanel',
-      },
-      {
-        tooltip: functionLoc,
-        regularIcon: MathFormula20Regular,
-        filledIcon: MathFormula20Filled,
-        value: 'functionsPanel',
-      },
-    ],
-    horizontal: true,
-    xPos: '16px',
-    yPos: '16px',
-    selectedValue: displayToolboxItem,
-    onTabSelect: onTabSelect,
-  };
-
   useLayoutEffect(() => {
     const handleCanvasViewportCoords = () => {
       if (reactFlowRef.current) {
@@ -404,49 +256,13 @@ export const ReactFlowWrapper = ({ sourceSchema }: ReactFlowWrapperProps) => {
       onEdgeUpdateEnd={onEdgeUpdateEnd}
       onEdgeClick={onEdgeClick}
     >
-      <ButtonPivot {...toolboxButtonPivotProps} />
+      <CanvasToolbox
+        toolboxTabToDisplay={toolboxTabToDisplay}
+        setToolboxTabToDisplay={setToolboxTabToDisplay}
+        connectedSourceNodes={connectedSourceNodes}
+      />
 
-      {displayToolboxItem === 'sourceSchemaTreePanel' && (
-        <FloatingPanel {...toolboxPanelProps}>
-          {sourceSchema && (
-            <SchemaTree
-              schema={sourceSchema}
-              toggledNodes={[...currentlyAddedSourceNodes, ...connectedSourceNodes]}
-              onNodeClick={onToolboxItemClick}
-            />
-          )}
-        </FloatingPanel>
-      )}
-
-      {displayToolboxItem === 'functionsPanel' && (
-        <FloatingPanel {...toolboxPanelProps}>
-          <FunctionList functionData={functionData} onFunctionClick={onFunctionItemClick}></FunctionList>
-        </FloatingPanel>
-      )}
-
-      <ButtonContainer {...mapControlsButtonContainerProps} />
-
-      {displayMiniMap && (
-        <MiniMap
-          nodeStrokeColor={(node) => {
-            if (node.style?.backgroundColor) {
-              return node.style.backgroundColor;
-            }
-            return '#F3F2F1';
-          }}
-          nodeColor={(node) => {
-            if (node.style?.backgroundColor) {
-              return node.style.backgroundColor;
-            }
-            return '#F3F2F1';
-          }}
-          style={{
-            left: '16px',
-            bottom: '56px',
-            // TODO resize smaller to match the width of the buttons (128px wide)
-          }}
-        />
-      )}
+      <CanvasControls displayMiniMap={displayMiniMap} toggleDisplayMiniMap={toggleDisplayMiniMap} />
 
       {notificationData && (
         <Notification

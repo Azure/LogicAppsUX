@@ -3,11 +3,12 @@ import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childTargetNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary } from '../models/Connection';
+import type { Connection, ConnectionDictionary, ConnectionUnit } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
+import { isCustomValue } from './DataMap.Utils';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -42,21 +43,21 @@ export const convertToReactFlowNodes = (
   const reactFlowNodes: ReactFlowNode<CardProps>[] = [];
 
   reactFlowNodes.push(
-    ...convertInputToReactFlowParentAndChildNodes(
+    ...convertSourceToReactFlowParentAndChildNodes(
       viewportCoords,
       currentlySelectedSourceNodes,
       connectedSourceNodes,
       allSourceNodes,
       connections
     ),
-    ...convertOutputToReactFlowParentAndChildNodes(viewportCoords, targetSchemaNode, connections),
+    ...convertTargetToReactFlowParentAndChildNodes(viewportCoords, targetSchemaNode, connections),
     ...convertFunctionsToReactFlowParentAndChildNodes(viewportCoords, allFunctionNodes)
   );
 
   return reactFlowNodes;
 };
 
-const convertInputToReactFlowParentAndChildNodes = (
+const convertSourceToReactFlowParentAndChildNodes = (
   viewportCoords: ViewportCoords,
   currentlySelectedSourceNodes: SchemaNodeExtended[],
   connectedSourceNodes: SchemaNodeExtended[],
@@ -106,7 +107,7 @@ const convertInputToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-const convertOutputToReactFlowParentAndChildNodes = (
+const convertTargetToReactFlowParentAndChildNodes = (
   viewportCoords: ViewportCoords,
   targetSchemaNode: SchemaNodeExtended,
   connections: ConnectionDictionary
@@ -205,10 +206,11 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 
 export const convertToReactFlowEdges = (connections: ConnectionDictionary): ReactFlowEdge[] => {
   return Object.values(connections).flatMap((connection) => {
-    return connection.sources.map((source) => {
+    const nodeInputs = connection.inputs.filter((input) => !!input && !isCustomValue(input)) as ConnectionUnit[];
+    return nodeInputs.map((input) => {
       return {
-        id: createReactFlowConnectionId(source.reactFlowKey, connection.destination.reactFlowKey),
-        source: source.reactFlowKey,
+        id: createReactFlowConnectionId(input.reactFlowKey, connection.destination.reactFlowKey),
+        source: input.reactFlowKey,
         target: connection.destination.reactFlowKey,
         type: ReactFlowEdgeType.ConnectionEdge,
         selected: connection.isSelected,

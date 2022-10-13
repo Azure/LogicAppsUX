@@ -1,7 +1,8 @@
 import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
 import { customTokens } from '../../core';
-import { store } from '../../core/state/Store';
+import type { RootState } from '../../core/state/Store';
 import type { FunctionInput } from '../../models/Function';
+import { isValidFunctionNodeToTargetSchemaNodeConnection, isValidInputToFunctionNode } from '../../utils/Connection.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
@@ -16,16 +17,10 @@ import {
   tokens,
   Tooltip,
 } from '@fluentui/react-components';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
-
-export interface FunctionCardProps extends CardProps {
-  functionName: string;
-  maxNumberOfInputs: number;
-  inputs: FunctionInput[];
-  iconFileName?: string;
-  functionBranding: FunctionGroupBranding;
-}
 
 const useStyles = makeStyles({
   root: {
@@ -80,39 +75,56 @@ const useStyles = makeStyles({
 
 const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
 
-const isValidConnection = (connection: ReactFlowConnection, inputs: FunctionInput[]): boolean => {
-  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
-
-  if (connection.source && connection.target && flattenedSourceSchema) {
-    const sourceNode = flattenedSourceSchema[connection.source];
-
-    // For now just allow all function to function
-    // TODO validate express to function connections
-    return (
-      !sourceNode || inputs.some((input) => input.allowedTypes.some((acceptableType) => acceptableType === sourceNode.normalizedDataType))
-    );
-  }
-
-  return false;
-};
+export interface FunctionCardProps extends CardProps {
+  functionName: string;
+  maxNumberOfInputs: number;
+  inputs: FunctionInput[];
+  iconFileName?: string;
+  functionBranding: FunctionGroupBranding;
+}
 
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const { functionName, maxNumberOfInputs, inputs, disabled, error, functionBranding, iconFileName, displayHandle, onClick } = props.data;
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
+  const functionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+
+  const isValidConnection = useCallback(
+    (connection: ReactFlowConnection) => {
+      if (connection.source && connection.target) {
+        const sourceFunctionNode = functionDictionary[connection.source];
+        // Target is either a function, or target schema, node
+        const targetFunctionNode = functionDictionary[connection.target];
+        const targetSchemaNode = flattenedTargetSchema[connection.target];
+        const targetNodeConnection = connectionDictionary[connection.target];
+
+        if (targetSchemaNode) {
+          return isValidFunctionNodeToTargetSchemaNodeConnection(sourceFunctionNode.outputValueType, targetSchemaNode.normalizedDataType);
+        }
+
+        if (targetFunctionNode) {
+          return isValidInputToFunctionNode(sourceFunctionNode.outputValueType, targetNodeConnection, maxNumberOfInputs, inputs);
+        }
+
+        return false;
+      }
+
+      return false;
+    },
+    [maxNumberOfInputs, inputs, functionDictionary, flattenedTargetSchema, connectionDictionary]
+  );
+
   return (
     <div className={classes.container}>
       {displayHandle && maxNumberOfInputs !== 0 && (
-        <Handle
-          type={'target'}
-          position={Position.Left}
-          style={handleStyle}
-          isValidConnection={(connection) => isValidConnection(connection, inputs)}
-        />
+        <Handle type="target" position={Position.Left} style={handleStyle} isValidConnection={() => false} />
       )}
 
-      {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge}></PresenceBadge>}
+      {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge} />}
+
       <Tooltip
         content={{
           children: <Text size={200}>{functionName}</Text>,
@@ -128,7 +140,15 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
           {getIconForFunction(functionName, iconFileName, functionBranding)}
         </Button>
       </Tooltip>
-      {displayHandle ? <Handle type={'source'} position={Position.Right} style={handleStyle} /> : null}
+
+      {displayHandle && (
+        <Handle
+          type="source"
+          position={Position.Right}
+          style={handleStyle}
+          isValidConnection={(connection) => isValidConnection(connection)}
+        />
+      )}
     </div>
   );
 };

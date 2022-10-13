@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-apps",
-  "version": "0.1.29",
+  "version": "0.1.33",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -30,7 +30,8 @@
     "vscode:designer:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package",
     "vscode:data-mapper:pack": "cd ./dist/apps/vs-code-data-mapper && npm install && vsce package",
     "fixLineEndings": "prettier --write \"**/*.json\"",
-    "testgen": "playwright codegen https://localhost:4200"
+    "testgen": "playwright codegen https://localhost:4200",
+    "postinstall": "node init.js"
   },
   "engines": {
     "node": "16",
@@ -126,7 +127,7 @@
     "@nrwl/tao": "14.5.10",
     "@nrwl/web": "14.5.10",
     "@nrwl/workspace": "14.5.10",
-    "@playwright/test": "1.25.1",
+    "@playwright/test": "1.27.0",
     "@storybook/addon-a11y": "6.5.10",
     "@storybook/addon-essentials": "6.5.10",
     "@storybook/addon-links": "6.5.10",
@@ -175,7 +176,7 @@
     "jsonc-eslint-parser": "^2.1.0",
     "less-loader": "11.0.0",
     "lexical": "^0.5.0",
-    "playwright": "1.25.1",
+    "playwright": "1.27.0",
     "prettier": "2.7.1",
     "react-test-renderer": "18.2.0",
     "rollup-plugin-peer-deps-external": "2.2.4",

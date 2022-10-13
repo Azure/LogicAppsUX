@@ -1,10 +1,11 @@
-import type { IConnectorService, ListDynamicValue } from '../connector';
+import type { IConnectorService, ListDynamicValue, ManagedIdentityRequestProperties } from '../connector';
 import type { IHttpClient } from '../httpClient';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft-logic-apps/parsers';
 import { Types } from '@microsoft-logic-apps/parsers';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
 import {
+  UnsupportedException,
   getJSONValue,
   getObjectPropertyValue,
   isArmResourceId,
@@ -62,16 +63,22 @@ export class StandardConnectorService implements IConnectorService {
     extension: LegacyDynamicValuesExtension,
     parameterArrayType: string,
     isManagedIdentityTypeConnection?: boolean,
-    data?: any
+    managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<ListDynamicValue[]> {
-    const response = await this._executeAzureDynamicApi(connectionId, connectorId, parameters, isManagedIdentityTypeConnection, data);
+    const response = await this._executeAzureDynamicApi(
+      connectionId,
+      connectorId,
+      parameters,
+      isManagedIdentityTypeConnection,
+      managedIdentityProperties
+    );
     const values = getObjectPropertyValue(response, extension['value-collection'] ? extension['value-collection'].split('/') : []);
     if (values && values.length) {
       return values.map((property: any) => {
         let value: any, displayName: any;
         let isSelectable = true;
 
-        if (parameterArrayType !== Types.Object) {
+        if (parameterArrayType && parameterArrayType !== Types.Object) {
           displayName = value = getJSONValue(property);
         } else {
           value = getObjectPropertyValue(property, extension['value-path'].split('/'));
@@ -129,9 +136,15 @@ export class StandardConnectorService implements IConnectorService {
     parameters: Record<string, any>,
     extension: LegacyDynamicSchemaExtension,
     isManagedIdentityTypeConnection?: boolean,
-    data?: any
+    managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<OpenAPIV2.SchemaObject | null> {
-    const response = await this._executeAzureDynamicApi(connectionId, connectorId, parameters, isManagedIdentityTypeConnection, data);
+    const response = await this._executeAzureDynamicApi(
+      connectionId,
+      connectorId,
+      parameters,
+      isManagedIdentityTypeConnection,
+      managedIdentityProperties
+    );
 
     if (!response) {
       return null;
@@ -260,57 +273,105 @@ export class StandardConnectorService implements IConnectorService {
     connectorId: string,
     parameters: Record<string, any>,
     isManagedIdentityTypeConnection?: boolean,
-    data?: any
+    managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<any> {
-    const { baseUrl, apiHubServiceDetails, httpClient, workflowReferenceId } = this.options;
+    const { baseUrl, apiHubServiceDetails, httpClient } = this.options;
+    const intl = getIntl();
     const method = parameters['method'];
     const uri = isManagedIdentityTypeConnection
       ? `${baseUrl}/dynamicInvoke`
       : isArmResourceId(connectorId)
-      ? `${apiHubServiceDetails.baseUrl}/${connectionId}/extensions/proxy`
-      : `${baseUrl}/${connectionId}/extensions/proxy`;
-    const request = {
-      method,
-      path: parameters['path'],
-      body: parameters['body'],
-      queries: parameters['queries'],
-      headers: parameters['headers'],
-    };
-    const requestBody = isManagedIdentityTypeConnection
-      ? { request, properties: { workflowReference: { id: workflowReferenceId } } }
-      : { request };
-    let response: any;
-    try {
-      response = await httpClient.post({
-        uri,
-        queryParameters: { 'api-version': apiHubServiceDetails.apiVersion },
-        content: requestBody,
-      });
-    } catch (ex: any) {
-      const intl = getIntl();
-      throw new ConnectorServiceException(
-        ConnectorServiceErrorCode.API_EXECUTION_FAILED,
-        ex && ex.message
-          ? ex.message
-          : intl.formatMessage(
-              {
-                defaultMessage: `Error executing the api '{parameters}'.`,
-                description: 'Error message when execute dynamic api in managed connector',
-              },
-              { parameters: parameters['path'] }
-            ),
-        {
-          requestMethod: method,
-          uri,
-          inputPath: parameters['path'],
-          data,
-        },
-        ex
-      );
-    }
+      ? pathCombine(`${apiHubServiceDetails.baseUrl}/${connectionId}/extensions/proxy`, parameters['path'])
+      : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']);
 
-    return this._getResponseFromDynamicApi(response, uri);
+    if (isManagedIdentityTypeConnection) {
+      const request = {
+        method,
+        path: parameters['path'],
+        body: parameters['body'],
+        queries: parameters['queries'],
+        headers: parameters['headers'],
+      };
+
+      try {
+        const response = await httpClient.post({
+          uri,
+          queryParameters: { 'api-version': apiHubServiceDetails.apiVersion },
+          content: { request, properties: managedIdentityProperties },
+        });
+
+        return this._getResponseFromDynamicApi(response, uri);
+      } catch (ex: any) {
+        throw new ConnectorServiceException(
+          ConnectorServiceErrorCode.API_EXECUTION_FAILED,
+          ex && ex.message
+            ? ex.message
+            : intl.formatMessage(
+                {
+                  defaultMessage: `Error executing the api '{parameters}'.`,
+                  description: 'Error message when execute dynamic api in managed connector',
+                },
+                { parameters: parameters['path'] }
+              ),
+          {
+            requestMethod: method,
+            uri,
+            inputPath: parameters['path'],
+          },
+          ex
+        );
+      }
+    } else {
+      try {
+        const options = {
+          uri,
+          queryParameters: { 'api-version': apiHubServiceDetails.apiVersion, ...parameters['queries'] },
+          headers: parameters['headers'],
+        };
+        const bodyContent = parameters['body'];
+        switch (method.toLowerCase()) {
+          case 'get':
+            return httpClient.get(options);
+          case 'post':
+            return httpClient.post(bodyContent ? { ...options, content: bodyContent } : options);
+          case 'put':
+            return httpClient.put(bodyContent ? { ...options, content: bodyContent } : options);
+          default:
+            throw new UnsupportedException(`Unsupported dynamic call connector method - '${method}'`);
+        }
+      } catch (ex: any) {
+        throw new ConnectorServiceException(
+          ConnectorServiceErrorCode.API_EXECUTION_FAILED,
+          ex && ex.message
+            ? ex.message
+            : intl.formatMessage(
+                {
+                  defaultMessage: `Error executing the api '{parameters}'.`,
+                  description: 'Error message when execute dynamic api in managed connector',
+                },
+                { parameters: parameters['path'] }
+              ),
+          {
+            requestMethod: method,
+            uri,
+            inputPath: parameters['path'],
+          },
+          ex
+        );
+      }
+    }
   }
+}
+
+function pathCombine(url: string, path: string): string {
+  let pathUrl: string;
+
+  if (!url || !path) {
+    pathUrl = url || path;
+    return pathUrl;
+  }
+
+  return `${trimUrl(url)}/${trimUrl(path)}`;
 }
 
 function getClientRequestIdFromHeaders(headers: Headers | Record<string, string>): string {
@@ -319,4 +380,17 @@ function getClientRequestIdFromHeaders(headers: Headers | Record<string, string>
   }
 
   return '';
+}
+
+function trimUrl(url: string): string {
+  let updatedUrl = url;
+  if (updatedUrl[0] === '/') {
+    updatedUrl = updatedUrl.substring(1, updatedUrl.length);
+  }
+
+  if (updatedUrl[updatedUrl.length - 1] === '/') {
+    updatedUrl = updatedUrl.substring(0, updatedUrl.length - 1);
+  }
+
+  return updatedUrl;
 }

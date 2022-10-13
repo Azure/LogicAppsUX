@@ -1,7 +1,7 @@
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData } from '../models/Function';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
-import { SchemaNodeDataType, SchemaTypes } from '../models/Schema';
+import { SchemaTypes } from '../models/Schema';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
@@ -45,8 +45,7 @@ const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[]
   return childArray;
 };
 
-// TODO Handle values with attributes
-export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.schemaNodeDataType !== SchemaNodeDataType.None;
+export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;
 
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
   if (schemaNode.key === nodeKey) {

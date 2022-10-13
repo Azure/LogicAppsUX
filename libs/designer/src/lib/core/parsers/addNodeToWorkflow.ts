@@ -38,6 +38,7 @@ export const addNodeToWorkflow = (
   nodesMetadata[newNodeId] = { graphId, parentNodeId, ...(isRoot && { isRoot }) };
 
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
+  state.newlyAddedOperations[newNodeId] = newNodeId;
 
   // Parallel Branch creation, just add the singular node
   if (payload.isParallelBranch && parentId) {
