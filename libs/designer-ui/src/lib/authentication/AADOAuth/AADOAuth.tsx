@@ -27,43 +27,43 @@ export const ActiveDirectoryAuthentication = ({
 }: ActiveDirectoryAuthenticationProps): JSX.Element => {
   const intl = useIntl();
   const {
-    OAuthTenant,
-    OAuthAudience,
-    OAuthAuthority,
-    OAuthClientId,
-    OAuthType = AuthenticationOAuthType.SECRET,
-    OAuthTypeSecret,
-    OAuthTypeCertificatePfx,
-    OAuthTypeCertificatePassword,
+    oauthTenant,
+    oauthAudience,
+    oauthAuthority,
+    oauthClientId,
+    oauthType = AuthenticationOAuthType.SECRET,
+    oauthTypeSecret,
+    oauthTypeCertificatePfx,
+    oauthTypeCertificatePassword,
   } = OauthProps;
 
-  const [oauthType, setOauthType] = useState<string | number>(OAuthType);
+  const [type, setOauthType] = useState<string | number>(oauthType);
 
   const updateOAuthAuthority = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthAuthority: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthAuthority: newState.value },
     }));
   };
 
   const updateOAuthTenant = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthTenant: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthTenant: newState.value },
     }));
   };
 
   const updateOAuthAudience = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthAudience: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthAudience: newState.value },
     }));
   };
 
   const updateOAuthClientId = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthClientId: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthClientId: newState.value },
     }));
   };
 
@@ -78,7 +78,7 @@ export const ActiveDirectoryAuthentication = ({
       setOauthType(newKey);
       setCurrentProps((prevState: AuthProps) => ({
         ...prevState,
-        aadOAuthProps: { ...prevState.aadOAuthProps, OAuthType: item.key as AuthenticationOAuthType },
+        aadOAuth: { ...prevState.aadOAuth, oauthType: item.key as AuthenticationOAuthType },
       }));
     }
   };
@@ -100,39 +100,39 @@ export const ActiveDirectoryAuthentication = ({
   return (
     <div className="msla-authentication-editor-OAuth-container">
       <AuthenticationProperty
-        initialValue={OAuthAuthority}
+        initialValue={oauthAuthority}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY}
         GetTokenPicker={GetTokenPicker}
         onBlur={updateOAuthAuthority}
       />
       <AuthenticationProperty
-        initialValue={OAuthTenant}
+        initialValue={oauthTenant}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT}
         GetTokenPicker={GetTokenPicker}
         onBlur={updateOAuthTenant}
       />
       <AuthenticationProperty
-        initialValue={OAuthAudience}
+        initialValue={oauthAudience}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE}
         GetTokenPicker={GetTokenPicker}
         onBlur={updateOAuthAudience}
       />
       <AuthenticationProperty
-        initialValue={OAuthClientId}
+        initialValue={oauthClientId}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_CLIENT_ID}
         GetTokenPicker={GetTokenPicker}
         onBlur={updateOAuthClientId}
       />
       <AuthenticationDropdown
         dropdownLabel={oAuthTypeLabel}
-        selectedKey={oauthType as string}
+        selectedKey={type as string}
         options={aadOAuthCredentialTypes}
         onChange={onAuthenticationTypeDropdownChange}
       />
       <AadOAuthCredentials
-        selectedCredTypeKey={oauthType as string}
-        secret={OAuthTypeSecret}
-        clientCertificateProps={{ clientCertificatePfx: OAuthTypeCertificatePfx, clientCertificatePassword: OAuthTypeCertificatePassword }}
+        selectedCredTypeKey={type as string}
+        secret={oauthTypeSecret}
+        clientCertificateProps={{ clientCertificatePfx: oauthTypeCertificatePfx, clientCertificatePassword: oauthTypeCertificatePassword }}
         GetTokenPicker={GetTokenPicker}
         setCurrentProps={setCurrentProps}
       />

@@ -33,7 +33,7 @@ export const MSIAuthentication = ({
   const updateMsiAudience = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      msiProps: { ...prevState.msiProps, MSIAudience: newState.value },
+      msi: { ...prevState.msi, msiAudience: newState.value },
     }));
   };
 
@@ -59,8 +59,8 @@ export const MSIAuthentication = ({
     description: 'Placehodler text for dropdown',
   });
 
-  const selectedManagedIdentityKey = msiProps.MSIIdentity;
-  const { MSIAudience } = msiProps;
+  const selectedManagedIdentityKey = msiProps.msiIdentity;
+  const { msiAudience } = msiProps;
 
   if (identity?.type) {
     const userAssignedIdentities = containsUserAssignedIdentities(identity) ? getUserAssignedIdentities(identity) : undefined;
@@ -116,7 +116,7 @@ export const MSIAuthentication = ({
             onChange={onManagedIdentityChange}
           />
           <AuthenticationProperty
-            initialValue={MSIAudience}
+            initialValue={msiAudience}
             AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
             GetTokenPicker={GetTokenPicker}
             onBlur={updateMsiAudience}

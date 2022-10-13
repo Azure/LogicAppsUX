@@ -1,4 +1,4 @@
-import type { AuthProps } from '..';
+import type { AuthenticationType, AuthProps } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
@@ -20,7 +20,7 @@ export interface CollapsedAuthenticationValidationProps {
   setCollapsedValue: (value: ValueSegment[]) => void;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
   setIsValid: (b: boolean) => void;
-  setOption: (s: string) => void;
+  setOption: (s: AuthenticationType) => void;
 }
 
 export const CollapsedAuthenticationValidation = ({

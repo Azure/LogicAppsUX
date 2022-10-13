@@ -158,8 +158,9 @@ const TokenField = ({
       return (
         <AuthenticationEditor
           initialValue={value}
-          AuthenticationEditorOptions={{}}
-          authProps={{}}
+          options={editorOptions}
+          type={editorViewModel.type}
+          authenticationValue={editorViewModel.authenticationValue}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />

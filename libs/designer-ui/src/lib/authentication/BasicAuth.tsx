@@ -16,14 +16,14 @@ export const BasicAuthentication = ({ basicProps, GetTokenPicker, setCurrentProp
   const updateBasicUserName = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      basicProps: { ...prevState.basicProps, basicUsername: newState.value },
+      basic: { ...prevState.basic, basicUsername: newState.value },
     }));
   };
 
   const updateBasicPassword = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      basicProps: { ...prevState.basicProps, basicPassword: newState.value },
+      basic: { ...prevState.basic, basicPassword: newState.value },
     }));
   };
 

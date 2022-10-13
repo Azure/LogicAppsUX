@@ -1,4 +1,4 @@
-import type { AuthProps } from '.';
+import type { AuthenticationType, AuthProps } from '.';
 import type { ValueSegment } from '../editor';
 import { BaseEditor } from '../editor/base';
 import { CollapsedAuthenticationValidation } from './plugins/CollapsedAuthenticationValidation';
@@ -11,7 +11,7 @@ interface CollapsedAuthenticationProps {
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
   setIsValid: (b: boolean) => void;
   GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
-  setOption: (s: string) => void;
+  setOption: (s: AuthenticationType) => void;
 }
 
 export const CollapsedAuthentication = ({

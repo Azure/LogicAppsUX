@@ -91,8 +91,15 @@ import {
   ValidationErrorCode,
   ValidationException,
 } from '@microsoft-logic-apps/utils';
-import type { DictionaryEditorItemProps, OutputToken, ParameterInfo, Token as SegmentToken, ValueSegment } from '@microsoft/designer-ui';
-import { ColumnMode, DynamicCallStatus, ValueSegmentType, TokenType } from '@microsoft/designer-ui';
+import type {
+  AuthProps,
+  DictionaryEditorItemProps,
+  OutputToken,
+  ParameterInfo,
+  Token as SegmentToken,
+  ValueSegment,
+} from '@microsoft/designer-ui';
+import { AuthenticationType, ColumnMode, DynamicCallStatus, ValueSegmentType, TokenType } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';
@@ -276,6 +283,7 @@ export function createParameterInfo(
   return parameterInfo;
 }
 
+// TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor
 export function getParameterEditorProps(inputParameter: InputParameter, shouldIgnoreDefaultValue = false): ParameterEditorProps {
   let type = inputParameter.editor;
   let editorViewModel;
@@ -291,10 +299,12 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
     type = Constants.EDITOR.ARRAY;
     editorViewModel = initializeArrayViewModel(inputParameter, shouldIgnoreDefaultValue);
     schema = { ...schema, ...{ 'x-ms-editor': Constants.EDITOR.ARRAY } };
-  } else if (type === 'dictionary') {
+  } else if (type === Constants.EDITOR.DICTIONARY) {
     editorViewModel = toDictionaryViewModel(inputParameter.value);
-  } else if (type === 'table') {
+  } else if (type === Constants.EDITOR.TABLE) {
     editorViewModel = toTableViewModel(inputParameter.value, inputParameter.editorOptions);
+  } else if (type === Constants.EDITOR.AUTHENTICATION) {
+    editorViewModel = toAuthenticationViewModel(inputParameter.value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     type = undefined;
   }
@@ -347,6 +357,77 @@ function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEd
   }
 
   return { items: [placeholderItem], columnMode: ColumnMode.Automatic };
+}
+
+function toAuthenticationViewModel(value: any): { type: AuthenticationType; authenticationValue: AuthProps } {
+  const emptyValue = { type: AuthenticationType.NONE, authenticationValue: {} };
+
+  if (value && isObject(value)) {
+    switch (value.type) {
+      case AuthenticationType.BASIC:
+        return {
+          type: value.type,
+          authenticationValue: {
+            basic: {
+              basicUsername: loadParameterValue({ value: value.username } as any),
+              basicPassword: loadParameterValue({ value: value.password } as any),
+            },
+          },
+        };
+      case AuthenticationType.CERTIFICATE:
+        return {
+          type: value.type,
+          authenticationValue: {
+            clientCertificate: {
+              clientCertificatePfx: loadParameterValue({ value: value.pfx } as any),
+              clientCertificatePassword: loadParameterValue({ value: value.password } as any),
+            },
+          },
+        };
+
+      case AuthenticationType.OAUTH:
+        return {
+          type: value.type,
+          authenticationValue: {
+            aadOAuth: {
+              oauthAuthority: loadParameterValue({ value: value.authority } as any),
+              oauthTenant: loadParameterValue({ value: value.tenant } as any),
+              oauthAudience: loadParameterValue({ value: value.audience } as any),
+              oauthClientId: loadParameterValue({ value: value.clientId } as any),
+              oauthTypeSecret: loadParameterValue({ value: value.secret } as any),
+              oauthTypeCertificatePfx: loadParameterValue({ value: value.pfx } as any),
+              oauthTypeCertificatePassword: loadParameterValue({ value: value.password } as any),
+            },
+          },
+        };
+
+      case AuthenticationType.RAW:
+        return {
+          type: value.type,
+          authenticationValue: {
+            raw: {
+              rawValue: loadParameterValue({ value: value.value } as any),
+            },
+          },
+        };
+
+      case AuthenticationType.MSI:
+        return {
+          type: value.type,
+          authenticationValue: {
+            msi: {
+              msiAudience: loadParameterValue({ value: value.audience } as any),
+              msiIdentity: value.identity,
+            },
+          },
+        };
+
+      default:
+        throw new Error(`Cannot fetch authentication editor details. Invalid authentication type '${value.type}'`);
+    }
+  }
+
+  return emptyValue;
 }
 
 interface ParameterEditorProps {

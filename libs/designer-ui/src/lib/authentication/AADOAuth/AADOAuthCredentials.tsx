@@ -26,7 +26,7 @@ export const AadOAuthCredentials = ({
   const updateOAuthTypeSecret = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthTypeSecret: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthTypeSecret: newState.value },
     }));
   };
 

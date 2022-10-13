@@ -113,7 +113,7 @@ export const httpManifest = {
           description: 'Enter JSON object of authentication parameter',
           'x-ms-editor': 'authentication',
           'x-ms-editor-options': {
-            legacy: true,
+            supportedAuthTypes: ['None', 'Basic', 'ClientCertificate', 'ActiveDirectoryOAuth', 'Raw', 'ManagedServiceIdentity'],
           },
         },
       },
