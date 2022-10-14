@@ -1309,6 +1309,12 @@
       "value": "Vereist. De tekenreeks die moet worden gecodeerd naar de Base 64-indeling."
     }
   ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -3127,6 +3133,12 @@
       "value": "Naam"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Raw"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -3137,6 +3149,12 @@
     {
       "type": 0,
       "value": "Tags"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "ToPmjE": [
@@ -4553,6 +4571,12 @@
       "value": "Voor deze actie zijn tests geconfigureerd."
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -5005,6 +5029,12 @@
     {
       "type": 0,
       "value": "Vereist. De waarde die wordt geconverteerd naar een drijvend-kommagetal."
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
     }
   ],
   "n7wxxN": [
@@ -5575,6 +5605,12 @@
       "value": "Bladeren"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Client Certificate"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5639,6 +5675,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
     }
   ],
   "tZj2Xn": [

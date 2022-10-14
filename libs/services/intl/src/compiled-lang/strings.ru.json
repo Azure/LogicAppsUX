@@ -1331,6 +1331,12 @@
       "value": "Требуется. Строка, которая кодируется в представление base64."
     }
   ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -3241,6 +3247,12 @@
       "value": "Имя"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Raw"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -3251,6 +3263,12 @@
     {
       "type": 0,
       "value": "Теги"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "ToPmjE": [
@@ -4701,6 +4719,12 @@
       "value": "Для этого действия настроено тестирование."
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -5161,6 +5185,12 @@
     {
       "type": 0,
       "value": "Обязательное поле. Значение, которое необходимо преобразовать в число с плавающей точкой."
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
     }
   ],
   "n7wxxN": [
@@ -5753,6 +5783,12 @@
       "value": "Обзор"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Client Certificate"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5817,6 +5853,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Новосибирск"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
     }
   ],
   "tZj2Xn": [

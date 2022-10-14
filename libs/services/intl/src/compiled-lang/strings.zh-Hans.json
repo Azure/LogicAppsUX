@@ -1302,6 +1302,12 @@
       "value": "必需。要编码为 base64 表示形式的字符串。"
     }
   ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -3068,6 +3074,12 @@
       "value": "名称"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Raw"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -3078,6 +3090,12 @@
     {
       "type": 0,
       "value": "标记"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "ToPmjE": [
@@ -4495,6 +4513,12 @@
       "value": "此操作已配置测试。"
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -4955,6 +4979,12 @@
     {
       "type": 0,
       "value": "必需。转换为浮点数的值。"
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
     }
   ],
   "n7wxxN": [
@@ -5522,6 +5552,12 @@
       "value": "浏览"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Client Certificate"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5586,6 +5622,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) 新西伯利亚"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
     }
   ],
   "tZj2Xn": [

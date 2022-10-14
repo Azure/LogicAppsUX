@@ -1309,6 +1309,12 @@
       "value": "Kötelező megadni. A Base64-ábrázolással kódolandó sztring."
     }
   ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -3135,6 +3141,12 @@
       "value": "Név"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Raw"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -3145,6 +3157,12 @@
     {
       "type": 0,
       "value": "Címkék"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "ToPmjE": [
@@ -4573,6 +4591,12 @@
       "value": "A Művelet tesztelése konfigurálva van."
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -5029,6 +5053,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A lebegőpontos számmá alakítandó érték."
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
     }
   ],
   "n7wxxN": [
@@ -5599,6 +5629,12 @@
       "value": "Tallózás"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Client Certificate"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5663,6 +5699,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novoszibirszk"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
     }
   ],
   "tZj2Xn": [
