@@ -15,7 +15,16 @@ jobs:
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
           fetch-depth: 0
+          
+      - task: ComponentGovernanceComponentDetection@0
+        displayName: Component Detection
 
+      - task: notice@0
+        displayName: Generate NOTICE file
+        inputs:
+          outputfile: NOTICE
+          outputformat: text
+          
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
