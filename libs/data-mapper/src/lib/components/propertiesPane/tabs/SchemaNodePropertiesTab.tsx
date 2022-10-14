@@ -24,7 +24,7 @@ const useStyles = makeStyles({
     rowGap: '16px',
     columnGap: '12px',
     gridTemplateColumns: 'repeat(6, 1fr)',
-    alignContent: 'center',
+    alignItems: 'center',
     justifyContent: 'start',
   },
 });
@@ -64,11 +64,6 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   const noValueLabelLoc = intl.formatMessage({
     defaultMessage: 'Do not generate if no value',
     description: 'Checkbox label to not generate if no value',
-  });
-
-  const nullableLabelLoc = intl.formatMessage({
-    defaultMessage: 'Nullable',
-    description: 'Checkbox label for nullable',
   });
 
   const inputLoc = intl.formatMessage({
@@ -215,7 +210,6 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
                 <Stack>
                   <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
-                  <Checkbox label={nullableLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
                 </Stack>
               </AccordionPanel>
             </AccordionItem>
