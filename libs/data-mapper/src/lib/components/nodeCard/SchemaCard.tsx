@@ -5,10 +5,8 @@ import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { Connection } from '../../models/Connection';
-import { isValidInputToFunctionNode, isValidSourceSchemaNodeToTargetSchemaNodeConnection } from '../../utils/Connection.Utils';
-import { getEdgeForSource } from '../../utils/DataMap.Utils';
+import { flattenInputs, isValidInputToFunctionNode, isValidSchemaNodeToSchemaNodeConnection } from '../../utils/Connection.Utils';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
-import { addReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
 import { Text } from '@fluentui/react';
@@ -173,7 +171,7 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
     }
 
     if (targetSchemaNode) {
-      return isValidSourceSchemaNodeToTargetSchemaNodeConnection(sourceSchemaNode.schemaNodeDataType, targetSchemaNode.schemaNodeDataType);
+      return isValidSchemaNodeToSchemaNodeConnection(sourceSchemaNode.schemaNodeDataType, targetSchemaNode.schemaNodeDataType);
     }
 
     return false;
@@ -183,9 +181,12 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 };
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
+  const reactFlowId = props.id;
   const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron } = props.data;
+
   const intl = useIntl();
   const [_isHover, setIsHover] = useState<boolean>(false);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const dispatch = useDispatch<AppDispatch>();
 
   const classes = useStyles();
@@ -194,22 +195,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const showHandle = displayHandle && (schemaType === SchemaTypes.Source || schemaNode.schemaNodeDataType !== SchemaNodeDataType.None);
 
-  const isNodeConnected = useSelector((state: RootState) => {
-    const connections = state.dataMap.curDataMapOperation.dataMapConnections;
-    if (schemaType === SchemaTypes.Target) {
-      const targetConnections = connections[addReactFlowPrefix(schemaNode.key, SchemaTypes.Target)];
-      return targetConnections ? true : false;
-    } else {
-      let edge;
-      Object.values(connections).forEach((connection) => {
-        const tempEdge = getEdgeForSource(connection, addReactFlowPrefix(schemaNode.key, SchemaTypes.Source));
-        if (tempEdge) {
-          edge = tempEdge;
-        }
-      });
-      return edge ? true : false;
-    }
-  });
+  const isNodeConnected =
+    connections[reactFlowId] && (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0);
 
   const isOutputChildNode = schemaType === SchemaTypes.Target && isChild;
 

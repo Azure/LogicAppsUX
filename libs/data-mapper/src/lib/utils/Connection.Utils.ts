@@ -1,11 +1,81 @@
+/* eslint-disable no-param-reassign */
+import type { SchemaNodeDataType, SchemaNodeExtended } from '../models';
 import { NormalizedDataType } from '../models';
-import type { SchemaNodeDataType } from '../models';
-import type { Connection } from '../models/Connection';
-import type { FunctionInput } from '../models/Function';
+import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
+import type { FunctionData, FunctionInput } from '../models/Function';
+import { isFunctionData } from './Function.Utils';
+import { isSchemaNodeExtended } from './Schema.Utils';
 
-export const isValidSourceSchemaNodeToTargetSchemaNodeConnection = (srcDataType: SchemaNodeDataType, tgtDataType: SchemaNodeDataType) =>
+export const createConnectionEntryIfNeeded = (
+  connections: ConnectionDictionary,
+  node: SchemaNodeExtended | FunctionData,
+  reactFlowKey: string
+) => {
+  if (!connections[reactFlowKey]) {
+    connections[reactFlowKey] = {
+      self: { node: node, reactFlowKey: reactFlowKey },
+      inputs: {},
+      outputs: [],
+    };
+
+    if (isFunctionData(node) && node.maxNumberOfInputs !== -1) {
+      for (let index = 0; index <= node.maxNumberOfInputs; index++) {
+        connections[reactFlowKey].inputs[index] = [];
+      }
+    } else {
+      connections[reactFlowKey].inputs[0] = [];
+    }
+  }
+};
+
+export const addNodeToConnections = (
+  connections: ConnectionDictionary,
+  sourceNode: SchemaNodeExtended | FunctionData,
+  sourceReactFlowKey: string,
+  self: SchemaNodeExtended | FunctionData,
+  selfReactFlowKey: string,
+  desiredInput?: string
+) => {
+  if (sourceNode && self) {
+    createConnectionEntryIfNeeded(connections, self, selfReactFlowKey);
+    const currentConnectionInputs = connections[selfReactFlowKey].inputs;
+
+    // Nodes can only ever have 1 input
+    if (isSchemaNodeExtended(self)) {
+      currentConnectionInputs[0] = [{ node: sourceNode, reactFlowKey: sourceReactFlowKey }];
+    } else {
+      // If the destination has unlimited inputs, all should go on the first input
+      if (self.maxNumberOfInputs === -1) {
+        currentConnectionInputs[0].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+      } else {
+        if (desiredInput) {
+          if (currentConnectionInputs[desiredInput].length < 1) {
+            currentConnectionInputs[desiredInput].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+          } else {
+            console.error('Input already filled. Failed to add');
+            return;
+          }
+        } else {
+          let added = false;
+          Object.entries(currentConnectionInputs).forEach(([key, value]) => {
+            if (!added && value.length < 1) {
+              currentConnectionInputs[key].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+              added = true;
+            }
+          });
+        }
+      }
+    }
+
+    createConnectionEntryIfNeeded(connections, sourceNode, sourceReactFlowKey);
+    connections[sourceReactFlowKey].outputs.push({ node: self, reactFlowKey: selfReactFlowKey });
+    connections[sourceReactFlowKey].outputs = connections[sourceReactFlowKey].outputs.filter(onlyUniqueConnections);
+  }
+};
+
+export const isValidSchemaNodeToSchemaNodeConnection = (srcDataType: SchemaNodeDataType, tgtDataType: SchemaNodeDataType) =>
   srcDataType === tgtDataType;
-export const isValidFunctionNodeToTargetSchemaNodeConnection = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) =>
+export const isValidFunctionNodeToSchemaNodeConnection = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) =>
   srcDataType === tgtDataType;
 
 export const isValidInputToFunctionNode = (
@@ -21,8 +91,7 @@ export const isValidInputToFunctionNode = (
 
   // Make sure there's available inputs
   if (currentNodeConnection) {
-    const numInputsWithValue = currentNodeConnection.inputs.filter((input) => !!input).length;
-    if (numInputsWithValue === tgtMaxNumInputs) {
+    if (flattenInputs(currentNodeConnection.inputs).length === tgtMaxNumInputs) {
       return false;
     }
   }
@@ -32,20 +101,20 @@ export const isValidInputToFunctionNode = (
 
 const isFunctionTypeSupportedAndAvailable = (
   inputNodeType: NormalizedDataType,
-  curCon: Connection | undefined,
+  connection: Connection | undefined,
   tgtInputs: FunctionInput[]
 ) => {
-  if (curCon) {
+  if (connection) {
     // No inputs, so just verify type
-    if (curCon.inputs.length === 0 && isFunctionTypeSupported(inputNodeType, tgtInputs)) {
+    if (Object.keys(connection.inputs).length === 0 && isFunctionTypeSupported(inputNodeType, tgtInputs)) {
       return true;
     }
 
     // If inputs, verify that there's an open/undefined spot that matches type
     let supportedTypeInputIsAvailable = false;
-    curCon.inputs.forEach((input, idx) => {
-      if (!input) {
-        if (tgtInputs[idx].allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)) {
+    tgtInputs.forEach((targetInput, index) => {
+      if (targetInput.allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)) {
+        if (connection.inputs[index].length < 1) {
           supportedTypeInputIsAvailable = true;
         }
       }
@@ -67,4 +136,49 @@ const isFunctionTypeSupported = (inputNodeType: NormalizedDataType, tgtInputs: F
   return tgtInputs.some((input) =>
     input.allowedTypes.some((allowedType) => allowedType === NormalizedDataType.Any || allowedType === inputNodeType)
   );
+};
+
+export const flattenInputs = (inputs: InputConnectionDictionary): InputConnection[] => Object.values(inputs).flatMap((value) => value);
+
+export const isCustomValue = (connectionInput: InputConnection): connectionInput is string => typeof connectionInput === 'string';
+export const isConnectionUnit = (connectionInput: InputConnection): connectionInput is ConnectionUnit =>
+  typeof connectionInput !== 'string';
+
+const onlyUniqueConnections = (value: ConnectionUnit, index: number, self: ConnectionUnit[]) => {
+  return self.findIndex((selfValue) => selfValue.reactFlowKey === value.reactFlowKey) === index;
+};
+
+export const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {
+  if (!currentConnection) {
+    return false;
+  }
+
+  // Put 0 input, content enricher functions in the node bucket
+  const flattenedInputs = flattenInputs(currentConnection.inputs);
+  const definedNonCustomValueInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
+  const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node.maxNumberOfInputs !== 0);
+  const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node.maxNumberOfInputs === 0);
+
+  // All the sources are input nodes
+  if (nodeInputs.length === flattenedInputs.length) {
+    return true;
+  } else {
+    // Still have traversing to do
+    if (functionInputs.length > 0) {
+      return functionInputs.every((functionInput) => {
+        return nodeHasSourceNodeEventually(connections[functionInput.reactFlowKey], connections);
+      });
+    } else {
+      return false;
+    }
+  }
+};
+
+export const collectNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
+  const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
+  if (connectionUnits.length > 0) {
+    return connectionUnits.flatMap((input) => collectNodesForConnectionChain(connections[input.reactFlowKey], connections));
+  }
+
+  return [currentFunction.self];
 };

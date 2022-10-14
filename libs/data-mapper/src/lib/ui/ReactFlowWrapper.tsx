@@ -1,6 +1,6 @@
 import { CanvasControls } from '../components/canvasControls/CanvasControls';
-import { CanvasToolbox } from '../components/canvasToolbox/CanvasToolbox';
 import type { ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
+import { CanvasToolbox } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
@@ -19,18 +19,13 @@ import {
   deleteCurrentlySelectedItem,
   hideNotification,
   makeConnection,
-  setCurrentlySelectedEdge,
-  setCurrentlySelectedNode,
-  unsetSelectedEdges,
+  setSelectedItem,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { SchemaTypes } from '../models';
-import type { ConnectionUnit } from '../models/Connection';
 import type { ViewportCoords } from '../models/ReactFlow';
-import type { SelectedNode } from '../models/SelectedNode';
-import { NodeType } from '../models/SelectedNode';
-import { isCustomValue } from '../utils/DataMap.Utils';
+import { collectNodesForConnectionChain, flattenInputs } from '../utils/Connection.Utils';
 import { useLayout } from '../utils/ReactFlow.Util';
+import { isSchemaNodeExtended } from '../utils/Schema.Utils';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
@@ -48,7 +43,7 @@ export const ReactFlowWrapper = () => {
   const { project } = useReactFlow();
 
   const addedFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
-  const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
@@ -63,49 +58,51 @@ export const ReactFlowWrapper = () => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const edgeUpdateSuccessful = useRef(true);
 
-  // TODO update to support input nodes connected to a function, connected to an output node
-  const connectedSourceNodes = useMemo(() => {
+  const connectedTargetNodes = useMemo(() => {
     if (currentTargetNode) {
       const connectionValues = Object.values(connections);
       const outputFilteredConnections = currentTargetNode.children.flatMap((childNode) => {
-        const foundConnection = connectionValues.find((connection) => connection.destination.node.key === childNode.key);
+        const foundConnection = connectionValues.find(
+          (connection) => connection.self.node.key === childNode.key && flattenInputs(connection.inputs).length > 0
+        );
         return foundConnection ? [foundConnection] : [];
       });
 
-      return outputFilteredConnections
-        .flatMap((connection) => {
-          const potentialSourceSchemaNodes = connection.inputs.filter((input) => !!input && !isCustomValue(input)) as ConnectionUnit[];
-          return potentialSourceSchemaNodes.map((input) => flattenedSourceSchema[input.node.key]);
-        })
-        .filter((connection) => connection !== undefined);
-    } else {
-      return [];
+      if (connections[currentTargetNode.key] && flattenInputs(connections[currentTargetNode.key].inputs).length > 0) {
+        outputFilteredConnections.push(connections[currentTargetNode.key]);
+      }
+
+      return outputFilteredConnections;
     }
-  }, [flattenedSourceSchema, currentTargetNode, connections]);
+
+    return [];
+  }, [currentTargetNode, connections]);
+
+  /* TODO populate function nodes
+  const connectedFunctions = useMemo(() => {
+    return connectedTargetNodes
+      .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
+      .map((connectedNode) => connectedNode.node)
+      .filter(isFunctionData);
+  }, [connectedTargetNodes, connections]);
+  */
+
+  const connectedSourceNodes = useMemo(() => {
+    return connectedTargetNodes
+      .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
+      .map((connectedNode) => connectedNode.node)
+      .filter(isSchemaNodeExtended);
+  }, [connectedTargetNodes, connections]);
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
-    if (currentlySelectedNode) {
-      dispatch(setCurrentlySelectedNode(undefined));
-    }
-
-    // Unselect all edges/lines
-    dispatch(unsetSelectedEdges());
+    dispatch(setSelectedItem(undefined));
 
     setToolboxTabToDisplay('');
   };
 
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
-    const newSelectedNode: SelectedNode = {
-      id: node.id,
-      type: NodeType.Function,
-    };
-
-    if (node.type === ReactFlowNodeType.SchemaNode) {
-      newSelectedNode.type = node.data.schemaType === SchemaTypes.Source ? NodeType.Source : NodeType.Target;
-    }
-
-    dispatch(setCurrentlySelectedNode(newSelectedNode));
+    dispatch(setSelectedItem(node.id));
   };
 
   const onConnect = (connection: ReactFlowConnection) => {
@@ -172,9 +169,7 @@ export const ReactFlowWrapper = () => {
   );
 
   const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
-    if (node) {
-      dispatch(setCurrentlySelectedEdge(node.target));
-    }
+    dispatch(setSelectedItem(node.id));
   };
 
   const keyDownHandler: KeyboardEventHandler<HTMLDivElement> = (event) => {
@@ -221,7 +216,8 @@ export const ReactFlowWrapper = () => {
     flattenedSourceSchema,
     addedFunctionNodes,
     currentTargetNode,
-    connections
+    connections,
+    selectedItemKey
   );
 
   const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
