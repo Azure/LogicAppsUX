@@ -33,7 +33,8 @@ export const addNodeToConnections = (
   sourceNode: SchemaNodeExtended | FunctionData,
   sourceReactFlowKey: string,
   self: SchemaNodeExtended | FunctionData,
-  selfReactFlowKey: string
+  selfReactFlowKey: string,
+  desiredInput?: string
 ) => {
   if (sourceNode && self) {
     createConnectionEntryIfNeeded(connections, self, selfReactFlowKey);
@@ -47,13 +48,21 @@ export const addNodeToConnections = (
         connections[selfReactFlowKey].inputs[0].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
         connections[selfReactFlowKey].inputs[0] = connections[selfReactFlowKey].inputs[0].filter(onlyUnique);
       } else {
-        let added = false;
-        Object.entries(connections[selfReactFlowKey].inputs).forEach(([key, value]) => {
-          if (!added && value.length < 1) {
-            connections[selfReactFlowKey].inputs[key].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
-            added = true;
+        if (desiredInput) {
+          if (connections[selfReactFlowKey].inputs[desiredInput].length < 1) {
+            connections[selfReactFlowKey].inputs[desiredInput].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+          } else {
+            console.error('Input already filled. Failed to add');
           }
-        });
+        } else {
+          let added = false;
+          Object.entries(connections[selfReactFlowKey].inputs).forEach(([key, value]) => {
+            if (!added && value.length < 1) {
+              connections[selfReactFlowKey].inputs[key].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+              added = true;
+            }
+          });
+        }
       }
     }
 
@@ -136,4 +145,39 @@ export const isConnectionUnit = (connectionInput: InputConnection): connectionIn
 
 const onlyUnique = (value: any, index: any, self: string | any[]) => {
   return self.indexOf(value) === index;
+};
+
+export const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {
+  if (!currentConnection) {
+    return false;
+  }
+
+  // Put 0 input, content enricher functions in the node bucket
+  const flattenedInputs = flattenInputs(currentConnection.inputs);
+  const definedNonCustomValueInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
+  const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node.maxNumberOfInputs !== 0);
+  const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node.maxNumberOfInputs === 0);
+
+  // All the sources are input nodes
+  if (nodeInputs.length === flattenedInputs.length) {
+    return true;
+  } else {
+    // Still have traversing to do
+    if (functionInputs.length > 0) {
+      return functionInputs.every((functionInput) => {
+        return nodeHasSourceNodeEventually(connections[functionInput.reactFlowKey], connections);
+      });
+    } else {
+      return false;
+    }
+  }
+};
+
+export const collectNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
+  const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
+  if (connectionUnits.length > 0) {
+    return connectionUnits.flatMap((input) => collectNodesForConnectionChain(connections[input.reactFlowKey], connections));
+  }
+
+  return [currentFunction.self];
 };

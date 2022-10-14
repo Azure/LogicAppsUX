@@ -1,6 +1,6 @@
 import { CanvasControls } from '../components/canvasControls/CanvasControls';
-import { CanvasToolbox } from '../components/canvasToolbox/CanvasToolbox';
 import type { ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
+import { CanvasToolbox } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
@@ -23,7 +23,9 @@ import {
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { ViewportCoords } from '../models/ReactFlow';
+import { collectNodesForConnectionChain, flattenInputs } from '../utils/Connection.Utils';
 import { useLayout } from '../utils/ReactFlow.Util';
+import { isSchemaNodeExtended } from '../utils/Schema.Utils';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
@@ -56,28 +58,41 @@ export const ReactFlowWrapper = () => {
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const edgeUpdateSuccessful = useRef(true);
 
-  // TODO update to support input nodes connected to a function, connected to an output node
-  const connectedSourceNodes = useMemo(() => {
+  const connectedTargetNodes = useMemo(() => {
     if (currentTargetNode) {
-      /*
       const connectionValues = Object.values(connections);
       const outputFilteredConnections = currentTargetNode.children.flatMap((childNode) => {
-        const foundConnection = connectionValues.find((connection) => connection.destination.node.key === childNode.key);
+        const foundConnection = connectionValues.find(
+          (connection) => connection.self.node.key === childNode.key && flattenInputs(connection.inputs).length > 0
+        );
         return foundConnection ? [foundConnection] : [];
       });
 
-      return outputFilteredConnections
-        .flatMap((connection) => {
-          const potentialSourceSchemaNodes = connection.inputs.filter((input) => !!input && !isCustomValue(input)) as ConnectionUnit[];
-          return potentialSourceSchemaNodes.map((input) => flattenedSourceSchema[input.node.key]);
-        })
-        .filter((connection) => connection !== undefined);
-        */
-      return [];
-    } else {
-      return [];
+      if (connections[currentTargetNode.key] && flattenInputs(connections[currentTargetNode.key].inputs).length > 0) {
+        outputFilteredConnections.push(connections[currentTargetNode.key]);
+      }
+
+      return outputFilteredConnections;
     }
-  }, [flattenedSourceSchema, currentTargetNode, connections]);
+
+    return [];
+  }, [currentTargetNode, connections]);
+
+  /* TODO populate function nodes
+  const connectedFunctions = useMemo(() => {
+    return connectedTargetNodes
+      .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
+      .map((connectedNode) => connectedNode.node)
+      .filter(isFunctionData);
+  }, [connectedTargetNodes, connections]);
+  */
+
+  const connectedSourceNodes = useMemo(() => {
+    return connectedTargetNodes
+      .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
+      .map((connectedNode) => connectedNode.node)
+      .filter(isSchemaNodeExtended);
+  }, [connectedTargetNodes, connections]);
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node

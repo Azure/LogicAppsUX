@@ -6,12 +6,12 @@ import {
   reservedMapDefinitionKeysArray,
 } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary, ConnectionUnit } from '../models/Connection';
+import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeProperties } from '../models/Schema';
-import { addNodeToConnections, flattenInputs, isConnectionUnit, isCustomValue } from './Connection.Utils';
+import { addNodeToConnections, flattenInputs, isCustomValue, nodeHasSourceNodeEventually } from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, isFunctionData } from './Function.Utils';
 import { createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
@@ -28,8 +28,6 @@ export const convertToMapDefinition = (
 
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
-
-    console.log(yaml.dump(mapDefinition));
 
     return yaml.dump(mapDefinition);
   }
@@ -143,32 +141,6 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
 
   // Is valid to generate the map definition
   return true;
-};
-
-const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {
-  if (!currentConnection) {
-    return false;
-  }
-
-  // Put 0 input, content enricher functions in the node bucket
-  const flattenedInputs = flattenInputs(currentConnection.inputs);
-  const definedNonCustomValueInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
-  const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node.maxNumberOfInputs !== 0);
-  const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node.maxNumberOfInputs === 0);
-
-  // All the sources are input nodes
-  if (nodeInputs.length === flattenedInputs.length) {
-    return true;
-  } else {
-    // Still have traversing to do
-    if (functionInputs.length > 0) {
-      return functionInputs.every((functionInput) => {
-        return nodeHasSourceNodeEventually(connections[functionInput.reactFlowKey], connections);
-      });
-    } else {
-      return false;
-    }
-  }
 };
 
 /* Deserialize yml */
