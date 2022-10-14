@@ -1,11 +1,19 @@
-import type { FunctionData } from '../../models/Function';
 import { functionMock } from '../../models/Function';
-
-// import { SchemaSelectionServiceInstance } from '../services';
+import type { FunctionData } from '../../models/Function';
+import { DataMapperApiServiceInstance } from '../services';
 
 export const getFunctions = (): Promise<FunctionData[]> => {
-  // const service = SchemaSelectionServiceInstance();
-  // const response = service.getFunctionsManifest();
-  // console.log(response);
-  return Promise.resolve(functionMock);
+  const service = DataMapperApiServiceInstance();
+
+  return service
+    .getFunctionsManifest()
+    .then((response) => {
+      return response.transformFunctions;
+    })
+    .catch((error: Error) => {
+      // Returning functionMock on expected failure to reach API for dev-ing w/o runtime
+      console.error(`Error getting functions manifest: ${error.message}`);
+
+      return Promise.resolve(functionMock);
+    });
 };
