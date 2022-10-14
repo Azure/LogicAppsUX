@@ -5,6 +5,7 @@ import {
   mathBranding,
   stringBranding,
   utilityBranding,
+  conversionBranding,
 } from '../constants/FunctionConstants';
 import type { SchemaNodeExtended } from '../models';
 import type { FunctionData } from '../models/Function';
@@ -29,6 +30,9 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
     }
     case FunctionCategory.Utility: {
       return utilityBranding;
+    }
+    case FunctionCategory.Conversion: {
+      return conversionBranding;
     }
     default: {
       console.error(`Invalid category provided: ${functionCategory}`);

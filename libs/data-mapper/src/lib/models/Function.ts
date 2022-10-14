@@ -32,13 +32,15 @@ export interface FunctionInput {
   placeholder: string;
 }
 
+// NOTE: These values must be in alphabetical order (used in sorting within FunctionsList)
 export enum FunctionCategory {
-  Collection = 'collection',
-  DateTime = 'dateTime',
-  Logical = 'logical',
-  Math = 'math',
-  String = 'string',
-  Utility = 'utility',
+  Collection = 'Collection',
+  Conversion = 'Conversion',
+  DateTime = 'Date time',
+  Logical = 'Logical',
+  Math = 'Math',
+  String = 'String',
+  Utility = 'Utility',
 }
 
 export type FunctionDictionary = { [key: string]: FunctionData };
