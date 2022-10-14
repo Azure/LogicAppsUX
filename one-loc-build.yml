@@ -20,11 +20,14 @@ steps:
     displayName: Component Detection
 
   - task: notice@0
-    displayName: Generate NOTICE file
-    inputs:
-      outputfile: $(System.DefaultWorkingDirectory)/NOTICE
-      outputformat: text
-      
+        displayName: Generate NOTICE.txt file
+        inputs:
+          outputfile: $(Build.SourcesDirectory)/NOTICE.txt
+          outputformat: text
+
+  - publish: NOTICE.txt
+    artifact: NOTICE
+    
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: loc'
     inputs:
