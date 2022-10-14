@@ -38,27 +38,28 @@ export const addNodeToConnections = (
 ) => {
   if (sourceNode && self) {
     createConnectionEntryIfNeeded(connections, self, selfReactFlowKey);
+    const currentConnectionInputs = connections[selfReactFlowKey].inputs;
 
     // Nodes can only ever have 1 input
     if (isSchemaNodeExtended(self)) {
-      connections[selfReactFlowKey].inputs[0] = [{ node: sourceNode, reactFlowKey: sourceReactFlowKey }];
+      currentConnectionInputs[0] = [{ node: sourceNode, reactFlowKey: sourceReactFlowKey }];
     } else {
       // If the destination has unlimited inputs, all should go on the first input
       if (self.maxNumberOfInputs === -1) {
-        connections[selfReactFlowKey].inputs[0].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
-        connections[selfReactFlowKey].inputs[0] = connections[selfReactFlowKey].inputs[0].filter(onlyUnique);
+        currentConnectionInputs[0].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
       } else {
         if (desiredInput) {
-          if (connections[selfReactFlowKey].inputs[desiredInput].length < 1) {
-            connections[selfReactFlowKey].inputs[desiredInput].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+          if (currentConnectionInputs[desiredInput].length < 1) {
+            currentConnectionInputs[desiredInput].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
           } else {
             console.error('Input already filled. Failed to add');
+            return;
           }
         } else {
           let added = false;
-          Object.entries(connections[selfReactFlowKey].inputs).forEach(([key, value]) => {
+          Object.entries(currentConnectionInputs).forEach(([key, value]) => {
             if (!added && value.length < 1) {
-              connections[selfReactFlowKey].inputs[key].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+              currentConnectionInputs[key].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
               added = true;
             }
           });
@@ -68,7 +69,7 @@ export const addNodeToConnections = (
 
     createConnectionEntryIfNeeded(connections, sourceNode, sourceReactFlowKey);
     connections[sourceReactFlowKey].outputs.push({ node: self, reactFlowKey: selfReactFlowKey });
-    connections[sourceReactFlowKey].outputs = connections[sourceReactFlowKey].outputs.filter(onlyUnique);
+    connections[sourceReactFlowKey].outputs = connections[sourceReactFlowKey].outputs.filter(onlyUniqueConnections);
   }
 };
 
@@ -143,8 +144,8 @@ export const isCustomValue = (connectionInput: InputConnection): connectionInput
 export const isConnectionUnit = (connectionInput: InputConnection): connectionInput is ConnectionUnit =>
   typeof connectionInput !== 'string';
 
-const onlyUnique = (value: any, index: any, self: string | any[]) => {
-  return self.indexOf(value) === index;
+const onlyUniqueConnections = (value: ConnectionUnit, index: number, self: ConnectionUnit[]) => {
+  return self.findIndex((selfValue) => selfValue.reactFlowKey === value.reactFlowKey) === index;
 };
 
 export const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {

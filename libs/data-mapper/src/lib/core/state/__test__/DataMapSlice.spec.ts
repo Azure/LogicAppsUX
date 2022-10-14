@@ -59,7 +59,7 @@ describe('DataMapSlice', () => {
       expect(flattenInputs(connections[destinationId].inputs).length).toEqual(1);
     });
 
-    it('Add function connection twice', () => {
+    it('Add same function connection twice', () => {
       const connections: ConnectionDictionary = {};
 
       addNodeToConnections(connections, concatFunction, functionId, node, destinationId);
