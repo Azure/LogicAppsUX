@@ -1,8 +1,10 @@
+import type { FunctionManifest } from '../../../models/Function';
 import type { DataMapperApiServiceOptions } from './DataMapperApiService';
 import { DataMapperApiService } from './DataMapperApiService';
 import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
 
 export interface IDataMapperApiService {
+  getFunctionsManifest(): Promise<FunctionManifest>;
   getSchemas(): Promise<SchemaInfoProperties[]>;
   getSchemaFile(schemaName: string): Promise<any>;
   generateDataMapXslt(dataMapDefinition: string): Promise<any>;

@@ -22,16 +22,16 @@ const buttonHoverStyles = makeStyles({
   },
 });
 
-export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListProps) => {
+export const FunctionList = ({ functionData, onFunctionClick }: FunctionListProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortedFunctionsByCategory, setSortedFunctionsByCategory] = useState<FunctionData[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
 
   useEffect(() => {
-    if (props.functionData) {
+    if (functionData) {
       const categoriesArray: FunctionCategory[] = [];
       let newSortedFunctions: FunctionData[] = [];
-      let dataCopy = [...props.functionData];
+      let dataCopy = [...functionData];
       if (searchTerm) {
         const options: Fuse.IFuseOptions<FunctionData> = {
           includeScore: true,
@@ -51,7 +51,7 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
           ],
         };
 
-        const fuse = new Fuse(props.functionData, options);
+        const fuse = new Fuse(functionData, options);
         const results = fuse.search(searchTerm);
 
         dataCopy = results.map((fuse) => {
@@ -104,7 +104,7 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
 
       setGroups(newGroups);
     }
-  }, [props.functionData, searchTerm]);
+  }, [functionData, searchTerm]);
 
   const cell = (functionNode: FunctionData, onFunctionClick: (functionNode: FunctionData) => void) => {
     return <FunctionListCell functionData={functionNode} onFunctionClick={onFunctionClick}></FunctionListCell>;
@@ -150,18 +150,13 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
           groups={groups}
           styles={headerStyle}
           items={sortedFunctionsByCategory}
-          onRenderCell={(depth, item) => cell(item, props.onFunctionClick)}
+          onRenderCell={(depth, item) => cell(item, onFunctionClick)}
           selectionMode={0}
         />
       </div>
     </>
   );
 };
-
-interface FunctionListCellProps {
-  functionData: FunctionData;
-  onFunctionClick: (functionNode: FunctionData) => void;
-}
 
 const cardStyles = makeStyles({
   button: {
@@ -181,7 +176,12 @@ const cardStyles = makeStyles({
   },
 });
 
-const FunctionListCell: React.FC<FunctionListCellProps> = ({ functionData, onFunctionClick }) => {
+interface FunctionListCellProps {
+  functionData: FunctionData;
+  onFunctionClick: (functionNode: FunctionData) => void;
+}
+
+const FunctionListCell = ({ functionData, onFunctionClick }: FunctionListCellProps) => {
   const [isHover, setIsHover] = useState<boolean>(false);
   const cardStyle = cardStyles();
   const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);

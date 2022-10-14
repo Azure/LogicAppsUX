@@ -1,5 +1,5 @@
 import type { SchemaInfoProperties } from '.';
-import type { FunctionData } from '../../../models/Function';
+import type { FunctionManifest } from '../../../models/Function';
 
 export interface DataMapperApiServiceOptions {
   baseUrl: string;
@@ -48,7 +48,7 @@ export class DataMapperApiService {
   };
 
   private getFunctionsManifestUri = () => {
-    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/transformations/getManifest?api-version=2019-10-01-edge-preview`;
+    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=2019-10-01-edge-preview`;
   };
 
   private getGenerateXsltUri = () => {
@@ -59,13 +59,13 @@ export class DataMapperApiService {
     return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=2019-10-01-edge-preview`;
   };
 
-  async getFunctionsManifest(): Promise<FunctionData[]> {
+  async getFunctionsManifest(): Promise<FunctionManifest> {
     const uri = this.getFunctionsManifestUri();
     const response = await fetch(uri, { method: 'GET' });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
-    const functions: FunctionData[] = await response.json();
+    const functions = await response.json();
     return functions;
   }
 
