@@ -1268,6 +1268,12 @@
       "value": "Necessário. A cadeia de caracteres a ser codificada em representação base64."
     }
   ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -3070,6 +3076,12 @@
       "value": "Nome"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Raw"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -3080,6 +3092,12 @@
     {
       "type": 0,
       "value": "Categorias"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "ToPmjE": [
@@ -4475,6 +4493,12 @@
       "value": "Esta Ação tem testes configurados."
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -4927,6 +4951,12 @@
     {
       "type": 0,
       "value": "Necessário. O valor que é convertido em um número de ponto flutuante."
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
     }
   ],
   "n7wxxN": [
@@ -5484,6 +5514,12 @@
       "value": "Procurar"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Client Certificate"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5548,6 +5584,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
     }
   ],
   "tZj2Xn": [

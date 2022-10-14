@@ -1309,6 +1309,12 @@
       "value": "Erforderlich. Die Zeichenfolge, die als Base64-Darstellung codiert werden soll."
     }
   ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -3135,6 +3141,12 @@
       "value": "Name"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Raw"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -3145,6 +3157,12 @@
     {
       "type": 0,
       "value": "Tags"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "ToPmjE": [
@@ -4557,6 +4575,12 @@
       "value": "Für diese Aktion sind Tests konfiguriert."
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -5017,6 +5041,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Wert, der in eine Gleitkommazahl konvertiert wird."
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
     }
   ],
   "n7wxxN": [
@@ -5571,6 +5601,12 @@
       "value": "Durchsuchen"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Client Certificate"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5635,6 +5671,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Nowosibirsk"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
     }
   ],
   "tZj2Xn": [
