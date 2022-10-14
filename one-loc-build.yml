@@ -16,6 +16,15 @@ steps:
       packageSourceAuth: 'patAuth'
       patVariable: $(OneLocBuildPAT)
 
+  - task: ComponentGovernanceComponentDetection@0
+    displayName: Component Detection
+
+  - task: notice@0
+    displayName: Generate NOTICE file
+    inputs:
+      outputfile: $(System.DefaultWorkingDirectory)/NOTICE
+      outputformat: text
+      
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Artifact: loc'
     inputs:
