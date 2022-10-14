@@ -81,10 +81,23 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
+  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const selectedNode = useMemo(() => {
+    if (selectedItemKey) {
+      return flattenedSourceSchema[selectedItemKey]
+        ? flattenedSourceSchema[selectedItemKey]
+        : flattenedTargetSchema[selectedItemKey]
+        ? flattenedTargetSchema[selectedItemKey]
+        : undefined;
+    } else {
+      return undefined;
+    }
+  }, [flattenedSourceSchema, flattenedTargetSchema, selectedItemKey]);
 
   const centerViewHeight = useCenterViewHeight();
-  const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
+  const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!selectedItemKey);
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
@@ -200,7 +213,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
               </div>
 
               <PropertiesPane
-                currentNode={currentlySelectedNode}
+                currentNode={selectedNode}
                 isExpanded={isPropPaneExpanded}
                 setIsExpanded={setIsPropPaneExpanded}
                 centerViewHeight={centerViewHeight}
