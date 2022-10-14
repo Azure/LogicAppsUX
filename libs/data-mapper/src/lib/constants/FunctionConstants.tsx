@@ -43,3 +43,9 @@ export const utilityBranding: FunctionGroupBranding = {
   colorTokenName: 'colorFnCategoryUtility',
   icon: <StringCategory20Regular />,
 };
+
+export const conversionBranding: FunctionGroupBranding = {
+  displayName: 'Conversion',
+  colorTokenName: 'colorFnCategoryUtility',
+  icon: <StringCategory20Regular />,
+};
