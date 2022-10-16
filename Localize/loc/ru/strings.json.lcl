@@ -1849,7 +1849,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Automatic]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Автоматический режим]]></Val>
+            <Val><![CDATA[Автоматически]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

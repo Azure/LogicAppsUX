@@ -4435,7 +4435,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Custom]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Personalizar]]></Val>
+            <Val><![CDATA[Personalizado]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
