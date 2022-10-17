@@ -159,7 +159,7 @@
             "key": "/ns0:InputRecord/Address/CountryCode",
             "name": "CountryCode",
             "schemaNodeDataType": "Integer",
-            "normalizedDataType": "TODO",
+            "normalizedDataType": "Integer",
             "properties": "NotSpecified",
             "fullName": "CountryCode",
             "parentKey": "/ns0:InputRecord/Address"
