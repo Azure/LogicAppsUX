@@ -2,8 +2,8 @@ import { customTokens } from '../../../core';
 import type { RootState } from '../../../core/state/Store';
 import { NormalizedDataType } from '../../../models';
 import type { Connection } from '../../../models/Connection';
-import type { SelectedNode } from '../../../models/SelectedNode';
-import { isCustomValue } from '../../../utils/DataMap.Utils';
+import type { FunctionData } from '../../../models/Function';
+import { isCustomValue } from '../../../utils/Connection.Utils';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
@@ -46,10 +46,10 @@ const useStyles = makeStyles({
 });
 
 interface FunctionNodePropertiesTabProps {
-  currentNode: SelectedNode;
+  functionData: FunctionData;
 }
 
-export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertiesTabProps): JSX.Element => {
+export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -58,7 +58,7 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   // Consists of node names/ids and constant values
-  const [inputValues, setInputValues] = useState<string[]>([]);
+  const [inputValues, setInputValues] = useState<string[][]>([]);
 
   const addFieldLoc = intl.formatMessage({
     defaultMessage: 'Add field',
@@ -81,12 +81,9 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
   });
 
   const addUnboundedInput = () => {
-    const newInputValues = [...inputValues];
+    const newInputValues: string[][] = [...inputValues];
 
-    // NOTE: Should be safe to leave values out of connection.inputs[] if
-    // they're empty strings (which will always be the case here) ?
-
-    newInputValues.push('');
+    newInputValues[0].push('');
 
     setInputValues(newInputValues);
   };
@@ -101,9 +98,7 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
     setInputValues(newInputValues);
   };
 
-  const functionNode = useMemo(() => functionNodeDictionary[currentNode.id], [currentNode.id, functionNodeDictionary]);
-
-  const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionNode.category), [functionNode]);
+  const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionData.category), [functionData]);
 
   const possibleInputOptions = useMemo<InputOptions>(() => {
     const newPossibleInputOptionsDictionary = {} as InputOptions;
@@ -138,7 +133,7 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
   const inputOptions = useMemo<IDropdownOption<InputOptionData>[][]>(() => {
     const newInputOptions: IDropdownOption<InputOptionData>[][] = [];
 
-    functionNode.inputs.forEach((input, idx) => {
+    functionData.inputs.forEach((input, idx) => {
       newInputOptions.push([]);
 
       input.allowedTypes.forEach((type) => {
@@ -173,12 +168,12 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
     });
 
     return newInputOptions;
-  }, [possibleInputOptions, functionNode]);
+  }, [possibleInputOptions, functionData]);
 
-  const connection = useMemo<Connection | undefined>(() => connectionDictionary[currentNode.id], [connectionDictionary, currentNode.id]);
+  const connection = useMemo<Connection | undefined>(() => connectionDictionary[functionData.key], [connectionDictionary, functionData]);
 
   const outputValue = useMemo(() => {
-    let outputValue = `${functionNode.functionName}(`;
+    let outputValue = `${functionData.functionName}(`;
 
     inputValues.forEach((input, idx) => {
       if (input) {
@@ -187,35 +182,35 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
     });
 
     return `${outputValue})`;
-  }, [inputValues, functionNode]);
+  }, [inputValues, functionData]);
 
   useEffect(() => {
-    const newInputValues: string[] = [];
+    const newInputValues: string[][] = [];
 
-    if (functionNode.maxNumberOfInputs === 0) {
+    if (functionData.maxNumberOfInputs === 0) {
       return;
     }
 
-    if (functionNode.maxNumberOfInputs === -1) {
+    if (functionData.maxNumberOfInputs === -1) {
       if (connection) {
-        connection.inputs.forEach((input) => {
-          newInputValues.push(!input ? '' : isCustomValue(input) ? input : input.node.key);
+        Object.values(connection.inputs).forEach((input, idx) => {
+          newInputValues[idx].push(input.length === 0 ? '' : isCustomValue(input[0]) ? input[0] : input[0].node.key);
         });
       }
     } else {
-      functionNode.inputs.forEach((_input) => {
-        newInputValues.push('');
+      functionData.inputs.forEach((_input, idx) => {
+        newInputValues[idx].push('');
       });
 
       if (connection) {
-        connection.inputs.forEach((input, idx) => {
-          newInputValues[idx] = !input ? '' : isCustomValue(input) ? input : input.node.key;
+        Object.values(connection.inputs).forEach((input, idx) => {
+          newInputValues[idx] = [input.length === 0 ? '' : isCustomValue(input[0]) ? input[0] : input[0].node.key];
         });
       }
     }
 
     setInputValues(newInputValues);
-  }, [functionNode, connection]);
+  }, [functionData, connection]);
 
   return (
     <div style={{ height: '100%' }}>
@@ -230,18 +225,18 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
             }}
           >
             <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1, textAlign: 'center' }}>
-              {getIconForFunction(functionNode.functionName, undefined, functionBranding)}
+              {getIconForFunction(functionData.functionName, undefined, functionBranding)}
             </div>
           </span>
 
           <Text className={styles.titleStyle} style={{ marginLeft: '8px' }}>
-            {functionNode.displayName}
+            {functionData.displayName}
           </Text>
         </Stack>
 
-        <Text>{functionNode.description}</Text>
+        <Text>{functionData.description}</Text>
         <Text className={styles.codeExStyle}>
-          <Text className={styles.fnNameStyle}>{functionNode.functionName}</Text>()
+          <Text className={styles.fnNameStyle}>{functionData.functionName}</Text>()
         </Text>
       </div>
 
@@ -249,19 +244,19 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{inputLoc}</Text>
 
-          {functionNode.maxNumberOfInputs === 0 && <Text style={{ marginTop: '16px' }}>{functionNoReqInputLoc}</Text>}
+          {functionData.maxNumberOfInputs === 0 && <Text style={{ marginTop: '16px' }}>{functionNoReqInputLoc}</Text>}
 
-          {functionNode.maxNumberOfInputs > 0 && (
+          {functionData.maxNumberOfInputs > 0 && (
             <Stack>
-              {functionNode.inputs.map((input, idx) => (
+              {functionData.inputs.map((input, idx) => (
                 <div key={idx} style={{ marginTop: 8 }}>
                   <Tooltip relationship="label" content={input.tooltip}>
                     <InputDropdown
-                      currentNode={currentNode}
+                      currentNode={functionData}
                       label={input.displayName}
                       placeholder={input.placeholder}
                       typeMatchedOptions={inputOptions[idx]}
-                      inputValue={inputValues[idx]}
+                      inputValue={inputValues[idx][0]}
                       inputIndex={idx}
                     />
                   </Tooltip>
@@ -270,17 +265,17 @@ export const FunctionNodePropertiesTab = ({ currentNode }: FunctionNodePropertie
             </Stack>
           )}
 
-          {functionNode.maxNumberOfInputs === -1 && (
+          {functionData.maxNumberOfInputs === -1 && (
             <>
               {inputValues.map((_value, idx) => (
                 <Stack key={idx} horizontal verticalAlign="center" style={{ marginTop: 8 }}>
-                  <Tooltip relationship="label" content={functionNode.inputs[0].tooltip}>
+                  <Tooltip relationship="label" content={functionData.inputs[0].tooltip}>
                     <InputDropdown
-                      currentNode={currentNode}
-                      label={functionNode.inputs[0].displayName}
-                      placeholder={functionNode.inputs[0].placeholder}
+                      currentNode={functionData}
+                      label={functionData.inputs[0].displayName}
+                      placeholder={functionData.inputs[0].placeholder}
                       typeMatchedOptions={inputOptions[idx]}
-                      inputValue={inputValues[idx]}
+                      inputValue={inputValues[idx][0]}
                       inputIndex={0}
                     />
                   </Tooltip>
