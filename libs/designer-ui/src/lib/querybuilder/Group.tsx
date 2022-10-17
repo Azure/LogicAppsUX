@@ -37,7 +37,6 @@ interface GroupProps {
   isRootGroup?: boolean;
   isGroupable: boolean;
   groupedItems: GroupedItems[];
-  containerOffset: number;
   index: number;
   mustHaveItem?: boolean;
   isTop: boolean;
@@ -50,7 +49,8 @@ interface GroupProps {
     editorId: string,
     labelId: string,
     onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
+    tokenClicked?: (token: ValueSegment) => void,
+    hideTokenPicker?: () => void
   ) => JSX.Element;
 }
 
@@ -59,7 +59,6 @@ export const Group = ({
   isRootGroup,
   isGroupable,
   groupedItems,
-  containerOffset,
   index,
   mustHaveItem,
   isTop,
@@ -210,7 +209,6 @@ export const Group = ({
   };
 
   const handleMoveChild = (childIndex: number, moveOption: MoveOption) => {
-    console.log(childIndex);
     if (childIndex <= 0 && moveOption === MoveOption.UP) {
       const newItems = { ...groupProps };
       console.log(newItems);
@@ -266,19 +264,23 @@ export const Group = ({
         {!collapsed ? (
           <>
             {!isRootGroup ? (
-              <Checkbox className="msla-querybuilder-group-checkbox" initialChecked={groupProps.checked} onChange={handleCheckbox} />
+              <Checkbox
+                className="msla-querybuilder-group-checkbox"
+                initialChecked={groupProps.checked}
+                onChange={handleCheckbox}
+                key={JSON.stringify(groupProps.checked)}
+              />
             ) : null}
             <div className="msla-querybuilder-row-section">
-              <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} />
+              <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} key={groupProps.selectedOption} />
               {groupProps.items.map((item, currIndex) => {
                 return item.type === 'row' ? (
                   <Row
-                    key={`row ${currIndex + JSON.stringify(item)}`}
+                    key={`row ${currIndex}`}
                     checked={item.checked}
                     keyValue={item.key}
                     dropdownValue={item.dropdownVal}
                     valueValue={item.value}
-                    containerOffset={containerOffset}
                     index={currIndex}
                     isGroupable={isGroupable}
                     showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
@@ -292,8 +294,7 @@ export const Group = ({
                   />
                 ) : (
                   <Group
-                    key={`group ${currIndex + JSON.stringify(item.items)}`}
-                    containerOffset={containerOffset}
+                    key={`group ${currIndex}`}
                     groupProps={{
                       type: 'group',
                       items: item.items,
@@ -318,8 +319,8 @@ export const Group = ({
                 <>
                   {groupProps.items.length === 0 ? (
                     <Row
+                      key={`row 0`}
                       index={0}
-                      containerOffset={containerOffset}
                       isGroupable={isGroupable}
                       showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
                       isTop={isTop && !!isRootGroup}
@@ -341,7 +342,7 @@ export const Group = ({
             </div>
           </>
         ) : (
-          <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} />
+          <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} key={groupProps.selectedOption} />
         )}
         <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
           {!isRootGroup ? (

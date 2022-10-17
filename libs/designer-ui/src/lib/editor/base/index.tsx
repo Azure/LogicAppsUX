@@ -52,7 +52,8 @@ export interface BaseEditorProps {
     editorId: string,
     labelId: string,
     onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
+    tokenClicked?: (token: ValueSegment) => void,
+    hideTokenPicker?: () => void
   ) => JSX.Element;
   onChange?: ChangeHandler;
   onBlur?: () => void;
@@ -92,6 +93,8 @@ export const BaseEditor = ({
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
   const [showTokenPicker, setShowTokenPicker] = useState(true);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
+  const { customButton = true } = tokenPickerButtonProps || {};
+
   const initialConfig = {
     theme: EditorTheme,
     editable: !readonly,
@@ -140,7 +143,7 @@ export const BaseEditor = ({
   };
 
   return (
-    <LexicalComposer initialConfig={initialConfig}>
+    <LexicalComposer initialConfig={initialConfig} key={JSON.stringify(initialValue)}>
       <div className={className ?? 'msla-editor-container'} id={editorId}>
         {toolBar ? <Toolbar /> : null}
         <RichTextPlugin
@@ -155,6 +158,7 @@ export const BaseEditor = ({
 
         {!isTrigger && ((tokens && showTokenPickerButton) || getInTokenPicker()) ? (
           <TokenPickerButton
+            customButton={customButton}
             labelId={labelId}
             showTokenPicker={showTokenPicker}
             buttonClassName={tokenPickerButtonProps?.buttonClassName}
@@ -163,7 +167,7 @@ export const BaseEditor = ({
           />
         ) : null}
         {!isTrigger && ((showTokenPickerButton && showTokenPicker) || getInTokenPicker())
-          ? GetTokenPicker(editorId, labelId, onClickTokenPicker)
+          ? GetTokenPicker(editorId, labelId, onClickTokenPicker, undefined, customButton ? handleShowTokenPicker : undefined)
           : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />

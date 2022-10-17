@@ -30,7 +30,8 @@ export const ScratchTab = () => {
     editorId: string,
     labelId: string,
     onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
+    tokenClicked?: (token: ValueSegment) => void,
+    tokenPickerHide?: () => void
   ): JSX.Element => {
     return (
       <TokenPicker
@@ -40,6 +41,7 @@ export const ScratchTab = () => {
         expressionGroup={expressionGroup}
         tokenPickerFocused={onClick}
         tokenClickedCallback={tokenClicked}
+        tokenPickerHide={tokenPickerHide}
       />
     );
   };

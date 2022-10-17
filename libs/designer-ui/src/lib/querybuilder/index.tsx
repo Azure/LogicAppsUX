@@ -33,13 +33,13 @@ export interface QueryBuilderProps {
     editorId: string,
     labelId: string,
     onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
+    tokenClicked?: (token: ValueSegment) => void,
+    hideTokenPicker?: () => void
   ) => JSX.Element;
 }
 
 export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [containerOffset, setContainerOffset] = useState(0);
   const [heights, setHeights] = useState<number[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
   const [isGroupable, setIsGroupable] = useState(true);
@@ -48,14 +48,10 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
 
   useEffect(() => {
     setHeights(checkHeights(getRootProp(), [], 0));
-    if (containerRef.current) {
-      setContainerOffset(containerRef.current.getBoundingClientRect().bottom);
-    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [containerRef, getRootProp()]);
+  }, [getRootProp()]);
 
   useEffect(() => {
-    console.log(getRootProp());
     if (new Set(heights).size === 1) {
       setIsGroupable(true);
       setGroupedItems(getGroupedItems(getRootProp(), [], 0));
@@ -73,7 +69,6 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
       <Group
         isTop={true}
         isBottom={true}
-        containerOffset={containerOffset}
         GetTokenPicker={GetTokenPicker}
         groupProps={getRootProp()}
         isRootGroup={true}

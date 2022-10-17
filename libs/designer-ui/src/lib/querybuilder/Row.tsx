@@ -3,13 +3,12 @@ import { Checkbox } from '../checkbox';
 import { notEqual } from '../dictionary/plugins/SerializeExpandedDictionary';
 import type { ValueSegment } from '../editor';
 import type { ChangeState } from '../editor/base';
-import type { ButtonOffSet } from '../editor/base/plugins/TokenPickerButton';
 import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
 import { RowDropdown } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const overflowStyle: Partial<IOverflowSetStyles> = {
@@ -29,7 +28,6 @@ interface RowProps {
   valueValue?: ValueSegment[];
   dropdownValue?: string;
   index: number;
-  containerOffset: number;
   showDisabledDelete?: boolean;
   isGroupable?: boolean;
   groupedItems: GroupedItems[];
@@ -42,7 +40,8 @@ interface RowProps {
     editorId: string,
     labelId: string,
     onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
+    tokenClicked?: (token: ValueSegment) => void,
+    hideTokenPicker?: () => void
   ) => JSX.Element;
 }
 
@@ -52,7 +51,6 @@ export const Row = ({
   valueValue = [],
   dropdownValue,
   index,
-  containerOffset,
   showDisabledDelete,
   isGroupable,
   groupedItems,
@@ -67,7 +65,6 @@ export const Row = ({
   const keyEditorRef = useRef<HTMLDivElement | null>(null);
   const valueEditorRef = useRef<HTMLDivElement | null>(null);
   const [key, setKey] = useState<ValueSegment[]>(keyValue);
-  const [pickerOffset, setPickerOffset] = useState<ButtonOffSet>();
 
   const handleGroup = () => {
     handleUpdateParent(
@@ -150,20 +147,6 @@ export const Row = ({
     },
   ];
 
-  const updatePickerHeight = useCallback(() => {
-    let itemHeight = 0;
-    if (keyEditorRef.current && valueEditorRef.current) {
-      const keyHeight = keyEditorRef.current.getBoundingClientRect().top;
-      const valueHeight = valueEditorRef.current.getBoundingClientRect().top;
-      itemHeight += Math.min(keyHeight, valueHeight);
-    }
-    setPickerOffset({ heightOffset: containerOffset - itemHeight });
-  }, [containerOffset]);
-
-  useEffect(() => {
-    updatePickerHeight();
-  }, [containerOffset, updatePickerHeight]);
-
   const handleKeyChange = (newState: ChangeState) => {
     if (notEqual(keyValue, newState.value)) {
       setKey(newState.value);
@@ -172,7 +155,6 @@ export const Row = ({
       setKey([]);
     }
   };
-
   const handleKeySave = (newState: ChangeState) => {
     if (notEqual(keyValue, newState.value)) {
       setKey(newState.value);
@@ -222,7 +204,12 @@ export const Row = ({
   return (
     <div className="msla-querybuilder-row-container">
       <div className="msla-querybuilder-row-gutter-hook" />
-      <Checkbox className="msla-querybuilder-row-checkbox" initialChecked={checked} onChange={handleCheckbox} />
+      <Checkbox
+        className="msla-querybuilder-row-checkbox"
+        initialChecked={checked}
+        onChange={handleCheckbox}
+        key={JSON.stringify(checked)}
+      />
       <div className="msla-querybuilder-row-content">
         <div ref={keyEditorRef}>
           <StringEditor
@@ -233,10 +220,10 @@ export const Row = ({
             onChange={handleKeyChange}
             editorBlur={handleKeySave}
             GetTokenPicker={GetTokenPicker}
-            tokenPickerButtonProps={{ buttonOffset: pickerOffset }}
+            tokenPickerButtonProps={{ customButton: true }}
           />
         </div>
-        <RowDropdown disabled={key.length === 0} selectedOption={dropdownValue} onChange={handleSelectedOption} />
+        <RowDropdown disabled={key.length === 0} selectedOption={dropdownValue} onChange={handleSelectedOption} key={dropdownValue} />
         <div ref={valueEditorRef}>
           <StringEditor
             readonly={key.length === 0}
@@ -246,7 +233,7 @@ export const Row = ({
             singleLine={true}
             GetTokenPicker={GetTokenPicker}
             editorBlur={handleValueSave}
-            tokenPickerButtonProps={{ buttonOffset: pickerOffset }}
+            tokenPickerButtonProps={{ customButton: true }}
           />
         </div>
       </div>

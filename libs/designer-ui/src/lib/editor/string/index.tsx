@@ -25,7 +25,7 @@ export const StringEditor = ({ singleLine, initialValue, editorBlur, onChange, .
     <BaseEditor
       placeholder={baseEditorProps.placeholder}
       className={baseEditorProps.className}
-      initialValue={value}
+      initialValue={initialValue}
       BasePlugins={{ tokens: baseEditorProps.BasePlugins?.tokens ?? true }}
       onBlur={handleBlur}
       onFocus={baseEditorProps.onFocus}

@@ -12,7 +12,7 @@ interface RowDropdownProps {
 
 const items: DropdownItem[] = [
   { key: 'contains', displayName: 'contains', value: 'contains' },
-  { key: 'doesnotcontain', displayName: 'does not contain', value: 'does not contain' },
+  { key: 'doesnotcontain', displayName: '!contain', value: 'not contain' },
   { key: 'isequalto', displayName: '=', value: 'isequalto' },
   { key: 'isnotequalto', displayName: '!=', value: 'isnotequalto' },
   { key: 'isgreaterthan', displayName: '>', value: 'isgreaterthan' },
@@ -20,9 +20,9 @@ const items: DropdownItem[] = [
   { key: 'islessthan', displayName: '<', value: 'islessthan' },
   { key: 'islessthanorequal', displayName: '<=', value: 'islessthanorequal' },
   { key: 'startswith', displayName: 'starts with', value: 'startswith' },
-  { key: 'doesnotstartwith', displayName: 'does not start with', value: 'doesnotstartwith' },
+  { key: 'doesnotstartwith', displayName: '!start with', value: 'doesnotstartwith' },
   { key: 'endswith', displayName: 'ends with', value: 'endswith' },
-  { key: 'doesnotendwith', displayName: 'does not end with', value: 'doesnotendwith' },
+  { key: 'doesnotendwith', displayName: '!end with', value: 'doesnotendwith' },
 ];
 
 export const RowDropdown = ({ selectedOption, disabled, onChange }: RowDropdownProps) => {
