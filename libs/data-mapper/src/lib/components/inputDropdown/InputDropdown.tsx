@@ -154,11 +154,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
 
   const modifiedDropdownOptions = useMemo(() => {
-    if (!typeMatchedOptions) {
-      return [];
-    }
-
-    const newModifiedOptions = [...typeMatchedOptions];
+    const newModifiedOptions = typeMatchedOptions ? [...typeMatchedOptions] : [];
 
     // Divider
     newModifiedOptions.push({
