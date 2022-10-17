@@ -29,8 +29,6 @@ export const convertToMapDefinition = (
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
 
-    console.log(yaml.dump(mapDefinition)); // XXX
-
     return yaml.dump(mapDefinition);
   }
 
@@ -67,6 +65,7 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
         if (isCustomValue(input)) {
           applyValueAtPath(input, mapDefinition, selfNode, selfNode.pathToRoot);
         } else if (isSchemaNodeExtended(input.node)) {
+          // Skip adding in the parent loop node. The children will handle it
           if (input.node.properties !== SchemaNodeProperties.Repeating) {
             applyValueAtPath(input.node.key, mapDefinition, selfNode, selfNode.pathToRoot);
           }
