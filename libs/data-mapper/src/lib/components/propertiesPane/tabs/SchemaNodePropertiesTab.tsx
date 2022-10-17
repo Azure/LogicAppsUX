@@ -43,7 +43,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   // Can be a node name/id or a constant value - only one input per target schema node
-  const [inputValue, setInputValue] = useState<string>('');
+  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
 
   const nameLoc = intl.formatMessage({
     defaultMessage: 'Name',
@@ -157,7 +157,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   );
 
   useEffect(() => {
-    let newInputValue = '';
+    let newInputValue = undefined;
 
     if (connection?.inputs && connection.inputs[0].length === 1) {
       const input = connection.inputs[0][0];
