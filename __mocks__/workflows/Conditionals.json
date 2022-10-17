@@ -6,7 +6,7 @@
         "actions": {
           "Terminate": {
             "inputs": {
-              "runStatus": "Succeeded"
+              "runStatus": "SUCCEEDED"
             },
             "runAfter": {},
             "type": "Terminate"
@@ -70,7 +70,7 @@
           ]
         },
         "runAfter": {
-          "Condition": ["Succeeded"]
+          "Condition": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       }

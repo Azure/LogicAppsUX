@@ -62,7 +62,7 @@ export * from './searchbox';
 // export * from './selector2';
 export * from './selectConnection';
 export * from './settings/settingsection';
-// export * from './table';
+export * from './table';
 export * from './telemetry/models';
 // export * from './textbox';
 export * from './tip';

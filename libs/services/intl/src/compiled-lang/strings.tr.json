@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "Tamam"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -165,6 +159,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Bakü"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Kaydet"
     }
   ],
   "0FzNJV": [
@@ -405,12 +405,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Eşlemeniz için kullanılacak bir hedef şema yükleyin veya seçin."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -481,6 +475,12 @@
     {
       "type": 0,
       "value": "Yönetilen kimlik"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Mevcut olanı seç"
     }
   ],
   "2b1yD3": [
@@ -579,6 +579,12 @@
       "value": "(UTC+02:00) Chisinau"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Mevcut şemanın uyumlu olamayan bir şemayla değiştirilmesi eşlemenizde hatalar oluşturabilir."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -673,6 +679,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Erivan"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Değişiklikleri at"
     }
   ],
   "45ubha": [
@@ -795,12 +807,6 @@
       "value": "Bir nesne, dizi veya dize boşsa true döndürür"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Kaynak Şema Ekle"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -847,6 +853,12 @@
     {
       "type": 0,
       "value": "Eşlemeyi test et"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "İptal"
     }
   ],
   "6XR3FS": [
@@ -1138,7 +1150,7 @@
   "9IDWMU": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Kapat"
     }
   ],
   "9JuvQ4": [
@@ -1249,10 +1261,10 @@
       "value": "Gerekli. Base64 gösterimine kodlanacak dize."
     }
   ],
-  "AwwPJC": [
+  "Az0QvG": [
     {
       "type": 0,
-      "value": "Hedef şema değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Hedef şemayı değiştirmeye devam etmek istiyor musunuz?"
+      "value": "Automatic"
     }
   ],
   "B/JzwK": [
@@ -1391,12 +1403,6 @@
       "value": "Bağlantı gerekli"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Mevcut şemayı değiştir"
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1406,7 +1412,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Kaynak düğümü görünümden kaldırıldı."
     }
   ],
   "CsPY74": [
@@ -1520,7 +1526,7 @@
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "Kaydedilemedi."
     }
   ],
   "EYqGxA": [
@@ -1715,6 +1721,12 @@
       "value": "Durum"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Hedef şemayı güncelleştir"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1745,12 +1757,6 @@
       "value": "Gerekli. Koleksiyon içinde bulunacak nesne."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Kaynak Şema"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1761,12 +1767,6 @@
     {
       "type": 0,
       "value": "Parametreler false ise true döndürür"
-    }
-  ],
-  "GdnEhu": [
-    {
-      "type": 0,
-      "value": "Eşlemeniz için kullanılacak bir kaynak şema yükleyin veya seçin."
     }
   ],
   "Gi72X5": [
@@ -1809,6 +1809,12 @@
     {
       "type": 0,
       "value": "Gerekli. Dilim dizesi."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "Hedef şema değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Hedef şemayı değiştirmeye devam etmek istiyor musunuz?"
     }
   ],
   "H8bEUn": [
@@ -1854,7 +1860,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " Ağ Geçidini Yükle"
     }
   ],
   "HzS2gJ": [
@@ -1891,6 +1897,12 @@
     {
       "type": 0,
       "value": "Geçirilen bir dize zaman damgasını UTC'den hedef saat dilimine dönüştürür"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Yapılandır"
     }
   ],
   "IgNz8Y": [
@@ -2127,12 +2139,6 @@
       "value": "İş Akışı Grafiğini Sil"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Uyarı"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2320,7 +2326,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "İşlev ekle"
     }
   ],
   "N0pS6Y": [
@@ -2386,15 +2392,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " ' before you remove the node."
+      "value": "Düğümü kaldırmadan önce {nodeName} düğümüne tüm başvuruları kaldırın."
     }
   ],
   "NvANon": [
@@ -2503,12 +2501,6 @@
     {
       "type": 0,
       "value": "Bir For_each, Until veya Scope eylemi gibi, belirtilen kapsamlı eylemdeki en üst düzey eylemlerden sonuçları döndürür."
-    }
-  ],
-  "OcJdKG": [
-    {
-      "type": 0,
-      "value": "Kaydedilmemiş tüm çalışma kaybolacak. Her şeyi atmaya devam etmek istiyor musunuz?"
     }
   ],
   "Oib1mL": [
@@ -2795,6 +2787,12 @@
       "value": "Tetikleyiciler silinemez."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "Döngü öğelerini göstermek için dizi öğeleri arasında otomatik olarak bir satır oluşturulur."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2855,6 +2853,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Kaydedilmeyen tüm değişiklikleri atmak istiyor musunuz?"
     }
   ],
   "S8P4N5": [
@@ -3017,6 +3021,12 @@
       "value": "Ad"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Raw"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -3027,6 +3037,12 @@
     {
       "type": 0,
       "value": "Etiketler"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "ToPmjE": [
@@ -3433,6 +3449,12 @@
       "value": "Gerekli. Gövde çıkışlarını istediğiniz eylemin adı."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "Kaynak şema değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Kaynak şemayı değiştirmeye devam etmek istiyor musunuz?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3515,12 +3537,6 @@
       "value": "Uzaklaştır"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Yapılandırma"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3579,12 +3595,6 @@
     {
       "type": 0,
       "value": "Parametrede desteklenmeyen 'in' değeri: {value}"
-    }
-  ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "At"
     }
   ],
   "a7j3gS": [
@@ -3649,10 +3659,10 @@
       "value": "PFX girin"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Ekle"
+      "value": "Eşlemeniz için kullanmak üzere bir kaynak şema ekleyin veya seçin."
     }
   ],
   "b9/1dK": [
@@ -3671,6 +3681,12 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Dizi Eşlemesi"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
@@ -3680,7 +3696,7 @@
   "bIyTi7": [
     {
       "type": 0,
-      "value": "Subscription"
+      "value": "Abonelik"
     }
   ],
   "bS5DyV": [
@@ -3813,6 +3829,12 @@
       "value": "(UTC+02:00) Tripoli"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Şemalarınızı ekleyin veya değiştirin."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3855,6 +3877,12 @@
       "value": "Gerekli. İlk Count nesnenin atlanacağı koleksiyon."
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Uyarı"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -3870,7 +3898,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "Bağlantı silindi."
     }
   ],
   "dDYCuU": [
@@ -3973,6 +4001,12 @@
       "value": "Belirtilmedi"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Kaynak şemayı güncelleştir"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -3983,12 +4017,6 @@
     {
       "type": 0,
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Hedef Şema"
     }
   ],
   "eRvGw3": [
@@ -4067,6 +4095,12 @@
     {
       "type": 0,
       "value": "Disk belleği sayısı maksimum değeri aşıyor"
+    }
+  ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Kaynak şema"
     }
   ],
   "faSDuD": [
@@ -4297,12 +4331,6 @@
       "value": "Hedef kitle"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "Kaynak şema değiştirilecek ve önceki değişikliklere geri dönemeyeceksiniz. Kaynak şemayı değiştirmeye devam etmek istiyor musunuz?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4391,6 +4419,12 @@
       "value": "Bu Eylemde test yapılandırıldı."
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -4453,6 +4487,12 @@
     {
       "type": 0,
       "value": "Belirtilen değişkenin değerini döndürür."
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Eşlemeniz için kullanmak üzere bir hedef şema ekleyin veya seçin."
     }
   ],
   "jHHF/u": [
@@ -4524,7 +4564,7 @@
   "juvF+0": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "Ağ Geçidi"
     }
   ],
   "k/oqFL": [
@@ -4740,7 +4780,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "İşlev silindi."
     }
   ],
   "mGUdCO": [
@@ -4837,6 +4877,12 @@
     {
       "type": 0,
       "value": "Gerekli. Kayan noktalı sayıya dönüştürülen değer."
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
     }
   ],
   "n7wxxN": [
@@ -5000,7 +5046,7 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "{parameters} API’si yürütülürken hata oluştu."
     }
   ],
   "pC2nr2": [
@@ -5287,6 +5333,12 @@
       "value": "(UTC-06:00) Merkezi Saat (ABD ve Kanada)"
     }
   ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Yeni ekle"
+    }
+  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -5377,6 +5429,12 @@
       "value": "Göz at"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Client Certificate"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5441,6 +5499,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
     }
   ],
   "tZj2Xn": [
@@ -5921,12 +5985,6 @@
       "value": "Tarih ve saat işlevleri"
     }
   ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Hedef Şema Ekle"
-    }
-  ],
   "ysoumb": [
     {
       "type": 0,
@@ -5973,6 +6031,12 @@
     {
       "type": 0,
       "value": "Değer girin"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Hedef şema"
     }
   ],
   "zIDVd9": [

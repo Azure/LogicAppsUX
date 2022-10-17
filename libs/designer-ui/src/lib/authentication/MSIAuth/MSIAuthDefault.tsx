@@ -41,10 +41,10 @@ export const MSIAuthenticationDefault = ({
     description: 'Placehodler text for dropdown',
   });
 
-  const { MSIIdentity, MSIAudience } = msiProps;
+  const { msiIdentity, msiAudience } = msiProps;
 
-  const managedIdentityOption: IDropdownOption[] = MSIIdentity
-    ? [{ key: MSIIdentity, text: getIdentityDisplayName(MSIIdentity) }]
+  const managedIdentityOption: IDropdownOption[] = msiIdentity
+    ? [{ key: msiIdentity, text: getIdentityDisplayName(msiIdentity) }]
     : [{ key: ResourceIdentityType.SYSTEM_ASSIGNED, text: systemAssignedManagedIdentity }];
 
   return (
@@ -53,12 +53,12 @@ export const MSIAuthenticationDefault = ({
         dropdownPlaceholder={MSIAuthPlaceholder}
         dropdownLabel={MSIAuthLabel}
         errorMessage={authNotEnabledError}
-        selectedKey={MSIIdentity ?? ResourceIdentityType.SYSTEM_ASSIGNED}
+        selectedKey={msiIdentity ?? ResourceIdentityType.SYSTEM_ASSIGNED}
         options={managedIdentityOption}
         onChange={onManagedIdentityChange}
       />
       <AuthenticationProperty
-        initialValue={MSIAudience}
+        initialValue={msiAudience}
         AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
         GetTokenPicker={GetTokenPicker}
         onBlur={onBlur}

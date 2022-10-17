@@ -29,12 +29,12 @@ test('Should be able to drag and drop operations', async ({ page }) => {
   const obj = {
     Increment_variable55: {
       runAfter: {
-        Response: ['Succeeded'],
+        Response: ['SUCCEEDED'],
       },
     },
     Increment_variable: {
       runAfter: {
-        Initialize_variable: ['Succeeded'],
+        Initialize_variable: ['SUCCEEDED'],
       },
     },
     Initialize_variable: {

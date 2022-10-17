@@ -4,13 +4,13 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
-  DictionaryType, // EditorLanguage,
+  // DictionaryType, // EditorLanguage,
   ValueSegmentType, // CodeEditor, // HTMLEditor,
-  TokenPicker,
-  TokenType,
-  DictionaryEditor,
+  TokenPicker, // TokenType,
+  // DictionaryEditor,
   testTokenSegment, // SchemaEditor, // Combobox,
-  // ArrayEditor,
+  ArrayEditor,
+  ArrayType,
   Scratch, // StringEditor,
   // AuthenticationEditor,
   // DropdownEditor,
@@ -118,7 +118,7 @@ export const ScratchTab = () => {
           GetTokenPicker={GetTokenPicker}
         /> */}
 
-        {/* <ArrayEditor
+        <ArrayEditor
           itemSchema={['Attachments Name', 'Attachments Content']}
           type={ArrayType.COMPLEX}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
@@ -158,7 +158,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
           GetTokenPicker={GetTokenPicker}
-        /> */}
+        />
 
         {/* <Combobox
           options={[
@@ -245,7 +245,7 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         /> */}
-        <DictionaryEditor
+        {/* <DictionaryEditor
           initialItems={[
             {
               key: [
@@ -314,7 +314,7 @@ export const ScratchTab = () => {
           dictionaryType={DictionaryType.TABLE}
           keyTitle={'Header'}
           valueTitle={'Value'}
-        />
+        /> */}
         {/* <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} /> */}
         {/* <StringEditor
           initialValue={[

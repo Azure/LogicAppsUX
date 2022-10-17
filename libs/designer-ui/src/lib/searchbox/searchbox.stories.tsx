@@ -11,7 +11,7 @@ export default {
 const mockSearch = (_term: string) => null;
 
 const props: SearchBoxProps = {
-  onSearch: mockSearch,
+  searchCallback: mockSearch,
 };
 
 export const Standard: ComponentStory<typeof DesignerSearchBox> = () => <DesignerSearchBox {...props} />;

@@ -1,4 +1,4 @@
-import { getFunctions } from '../../core/queries/functions';
+import { customTokens } from '../../core';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
@@ -10,11 +10,6 @@ import { GroupedList } from '@fluentui/react';
 import { Button, Caption1, makeStyles, mergeClasses, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import Fuse from 'fuse.js';
 import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
-
-export interface FunctionListProps {
-  onFunctionClick: (functionNode: FunctionData) => void;
-}
 
 const buttonHoverStyles = makeStyles({
   button: {
@@ -22,17 +17,53 @@ const buttonHoverStyles = makeStyles({
   },
 });
 
-export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListProps) => {
-  const functionListData = useQuery<FunctionData[]>(['functions'], () => getFunctions());
+const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
+  root: {
+    '.ms-GroupHeader': {
+      height: '28px',
+      width: '100%',
+      display: 'flex',
+      'div:first-child': {
+        height: '28px',
+      },
+      borderRadius: tokens.borderRadiusMedium,
+    },
+    '.ms-GroupHeader-title': {
+      ...typographyStyles.caption1,
+      'span:nth-of-type(2)': {
+        display: 'none',
+      },
+    },
+    '.ms-GroupHeader-expand': {
+      height: '28px',
+      width: '16px',
+      paddingLeft: tokens.spacingHorizontalXS,
+      ':hover': {
+        backgroundColor: 'inherit',
+      },
+    },
+    '.ms-GroupedList-group': {
+      paddingBottom: '8px',
+    },
+  },
+};
+
+export interface FunctionListProps {
+  functionData: FunctionData[];
+  onFunctionClick: (functionNode: FunctionData) => void;
+}
+
+export const FunctionList = ({ functionData, onFunctionClick }: FunctionListProps) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortedFunctionsByCategory, setSortedFunctionsByCategory] = useState<FunctionData[]>([]);
   const [groups, setGroups] = useState<IGroup[]>([]);
 
   useEffect(() => {
-    if (functionListData.data) {
+    if (functionData) {
       const categoriesArray: FunctionCategory[] = [];
       let newSortedFunctions: FunctionData[] = [];
-      let dataCopy = functionListData.data;
+      let dataCopy = [...functionData];
+
       if (searchTerm) {
         const options: Fuse.IFuseOptions<FunctionData> = {
           includeScore: true,
@@ -52,7 +83,7 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
           ],
         };
 
-        const fuse = new Fuse(functionListData.data, options);
+        const fuse = new Fuse(functionData, options);
         const results = fuse.search(searchTerm);
 
         dataCopy = results.map((fuse) => {
@@ -65,8 +96,6 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
 
         newSortedFunctions = dataCopy.sort((a, b) => a.category.localeCompare(b.category));
       } else {
-        dataCopy = functionListData.data;
-
         Object.values(FunctionCategory).forEach((category) => categoriesArray.push(category));
 
         newSortedFunctions = dataCopy.sort((a, b) => {
@@ -96,6 +125,7 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
             startIndex: startInd,
             name: getFunctionBrandingForCategory(value).displayName,
             count: numInGroup,
+            isCollapsed: true,
           };
 
           startInd += numInGroup;
@@ -106,66 +136,30 @@ export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListPro
 
       setGroups(newGroups);
     }
-  }, [functionListData.data, searchTerm]);
+  }, [functionData, searchTerm]);
 
   const cell = (functionNode: FunctionData, onFunctionClick: (functionNode: FunctionData) => void) => {
     return <FunctionListCell functionData={functionNode} onFunctionClick={onFunctionClick}></FunctionListCell>;
   };
 
-  const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
-    root: {
-      '.ms-GroupHeader': {
-        height: '28px',
-        width: '100%',
-        display: 'flex',
-        'div:first-child': {
-          height: '28px',
-        },
-        borderRadius: tokens.borderRadiusMedium,
-      },
-      '.ms-GroupHeader-title': {
-        ...typographyStyles.caption1,
-        'span:nth-of-type(2)': {
-          display: 'none',
-        },
-      },
-      '.ms-GroupHeader-expand': {
-        height: '28px',
-        width: '16px',
-        paddingLeft: tokens.spacingHorizontalXS,
-        ':hover': {
-          backgroundColor: 'inherit',
-        },
-      },
-      '.ms-GroupedList-group': {
-        paddingBottom: '8px',
-      },
-    },
-  };
-
   return (
     <>
-      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Function"></TreeHeader>
+      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Function" />
       <div>
         <GroupedList
           onShouldVirtualize={() => false}
           groups={groups}
           styles={headerStyle}
           items={sortedFunctionsByCategory}
-          onRenderCell={(depth, item) => cell(item, props.onFunctionClick)}
+          onRenderCell={(_depth, item) => cell(item, onFunctionClick)}
           selectionMode={0}
-        ></GroupedList>
+        />
       </div>
     </>
   );
 };
 
-interface FunctionListCellProps {
-  functionData: FunctionData;
-  onFunctionClick: (functionNode: FunctionData) => void;
-}
-
-const cardStyles = makeStyles({
+const useCardStyles = makeStyles({
   button: {
     width: '100%',
     height: '40px',
@@ -183,9 +177,16 @@ const cardStyles = makeStyles({
   },
 });
 
-const FunctionListCell: React.FC<FunctionListCellProps> = ({ functionData, onFunctionClick }) => {
+const fnIconSize = '28px';
+
+interface FunctionListCellProps {
+  functionData: FunctionData;
+  onFunctionClick: (functionNode: FunctionData) => void;
+}
+
+const FunctionListCell = ({ functionData, onFunctionClick }: FunctionListCellProps) => {
   const [isHover, setIsHover] = useState<boolean>(false);
-  const cardStyle = cardStyles();
+  const cardStyle = useCardStyles();
   const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
   const brand = getFunctionBrandingForCategory(functionData.category);
 
@@ -202,14 +203,20 @@ const FunctionListCell: React.FC<FunctionListCellProps> = ({ functionData, onFun
     >
       <span
         style={{
-          backgroundColor: brand.colorLight /* need to add this to theme task no. 15544832*/,
-          height: '28px',
-          width: '28px',
-          borderRadius: '14px',
+          backgroundColor: customTokens[brand.colorTokenName],
+          height: fnIconSize,
+          width: fnIconSize,
+          borderRadius: '50%',
         }}
       >
         <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1 }}>
-          {getIconForFunction(functionData.displayName, functionData.iconFileName, brand)}
+          {
+            getIconForFunction(
+              functionData.displayName,
+              undefined,
+              brand
+            ) /* TODO: undefined -> functionData.iconFileName once all SVGs in */
+          }
         </div>
       </span>
       <Caption1 truncate block className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>

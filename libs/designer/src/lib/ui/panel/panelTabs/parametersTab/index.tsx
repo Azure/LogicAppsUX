@@ -9,7 +9,7 @@ import {
 } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
 import type { RootState } from '../../../../core/store';
-import { getConnectionId } from '../../../../core/utils/connectors/connections';
+import { getConnectionReference } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
 import { loadDynamicValuesForParameter, updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
 import type { TokenGroup } from '../../../../core/utils/tokens';
@@ -77,23 +77,23 @@ const ParameterSection = ({
     isTrigger,
     nodeInputs,
     operationInfo,
-    connectionId,
     dependencies,
     settings: nodeSettings,
     variables,
     upstreamNodeIds,
     operationDefinition,
+    connectionReference,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
       nodeInputs: state.operations.inputParameters[nodeId],
       operationInfo: state.operations.operationInfo[nodeId],
-      connectionId: getConnectionId(state.connections, nodeId),
       dependencies: state.operations.dependencies[nodeId],
       settings: state.operations.settings[nodeId],
       upstreamNodeIds: state.tokens.outputTokens[nodeId]?.upstreamNodeIds,
       variables: state.tokens.variables,
-      operationDefinition: state.workflow.operations[nodeId],
+      operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
+      connectionReference: getConnectionReference(state.connections, nodeId),
     };
   });
 
@@ -113,7 +113,7 @@ const ParameterSection = ({
         propertiesToUpdate,
         isTrigger,
         operationInfo,
-        connectionId,
+        connectionReference,
         nodeInputs,
         dependencies,
         getAllVariables(variables),
@@ -127,7 +127,7 @@ const ParameterSection = ({
       group.id,
       isTrigger,
       operationInfo,
-      connectionId,
+      connectionReference,
       nodeInputs,
       dependencies,
       variables,
@@ -139,7 +139,7 @@ const ParameterSection = ({
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
     if (parameter.dynamicData?.status === DynamicCallStatus.FAILED || parameter.dynamicData?.status === DynamicCallStatus.NOTSTARTED) {
-      loadDynamicValuesForParameter(nodeId, group.id, parameter.id, operationInfo, connectionId, nodeInputs, dependencies, dispatch);
+      loadDynamicValuesForParameter(nodeId, group.id, parameter.id, operationInfo, connectionReference, nodeInputs, dependencies, dispatch);
     }
   };
 

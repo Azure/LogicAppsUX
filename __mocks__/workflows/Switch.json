@@ -47,7 +47,7 @@
           ]
         },
         "runAfter": {
-          "Switch": ["Succeeded"]
+          "Switch": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       }

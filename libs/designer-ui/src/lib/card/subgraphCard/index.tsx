@@ -5,18 +5,19 @@ import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
 import type { MenuItemOption } from '../types';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft-logic-apps/utils';
-import { labelCase, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
+import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { useIntl } from 'react-intl';
 
 interface SubgraphCardProps {
   id: string;
   parentId: string;
+  title: string;
   subgraphType: SubgraphType;
   collapsed?: boolean;
   handleCollapse?: (event: { currentTarget: any }) => void;
   selected?: boolean;
   readOnly?: boolean;
-  onClick?(id: string): void;
+  onClick?(id?: string): void;
   showAddButton?: boolean;
   contextMenuOptions?: MenuItemOption[];
 }
@@ -24,6 +25,7 @@ interface SubgraphCardProps {
 export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   id,
   parentId,
+  title,
   subgraphType,
   collapsed,
   handleCollapse,
@@ -41,7 +43,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     if (readOnly) return null;
     return (
       <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
-        <ActionButtonV2 title={'Add Case'} />
+        <ActionButtonV2 title={'Add Case'} onClick={() => onClick?.()} />
       </div>
     );
   }
@@ -67,7 +69,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
     },
     SWITCH_CASE: {
       color: '#484F58',
-      title: labelCase(id),
+      title: title,
       size: 'large',
       id: id,
     },
@@ -108,6 +110,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
         <button
           className="msla-subgraph-title"
           onClick={handleTitleClick}
+          onContextMenu={contextMenu.handle}
           onKeyDown={keyboardInteraction.keyUp}
           onKeyUp={keyboardInteraction.keyDown}
         >

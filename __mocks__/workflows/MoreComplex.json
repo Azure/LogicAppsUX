@@ -32,7 +32,7 @@
           }
         },
         "runAfter": {
-          "Initialize_variable": ["Succeeded"]
+          "Initialize_variable": ["SUCCEEDED"]
         },
         "type": "Wait"
       },
@@ -44,7 +44,7 @@
           }
         },
         "runAfter": {
-          "Update_a_goal": ["Succeeded"]
+          "Update_a_goal": ["SUCCEEDED"]
         },
         "type": "Wait"
       },
@@ -59,7 +59,7 @@
           ]
         },
         "runAfter": {
-          "Create_a_goal": ["Succeeded"]
+          "Create_a_goal": ["SUCCEEDED"]
         },
         "type": "InitializeVariable"
       },
@@ -69,7 +69,7 @@
           "value": true
         },
         "runAfter": {
-          "Verify_property_changes": ["Succeeded"]
+          "Verify_property_changes": ["SUCCEEDED"]
         },
         "type": "SetVariable"
       },
@@ -91,7 +91,7 @@
           }
         },
         "runAfter": {
-          "Delay": ["Succeeded"]
+          "Delay": ["SUCCEEDED"]
         },
         "type": "ApiConnection"
       },
@@ -131,7 +131,7 @@
           ]
         },
         "runAfter": {
-          "When_a_property_of_some_goal_changes": ["Succeeded"]
+          "When_a_property_of_some_goal_changes": ["SUCCEEDED"]
         },
         "type": "If"
       },
@@ -159,7 +159,7 @@
           ]
         },
         "runAfter": {
-          "Delay_2": ["Succeeded"]
+          "Delay_2": ["SUCCEEDED"]
         },
         "type": "If"
       },
@@ -178,7 +178,7 @@
           }
         },
         "runAfter": {
-          "Initialize_variable": ["Succeeded"]
+          "Initialize_variable": ["SUCCEEDED"]
         },
         "type": "ApiConnection"
       }

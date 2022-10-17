@@ -21,7 +21,7 @@ describe('workflow slice reducers', () => {
     expect(state.graph?.children).toEqual([
       {
         id: '123',
-        height: 67,
+        height: 40,
         width: 200,
         type: WORKFLOW_NODE_TYPES.OPERATION_NODE,
       },

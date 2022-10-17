@@ -1,17 +1,19 @@
 import { deleteCurrentlySelectedItem } from '../../core/state/DataMapSlice';
-import type { AppDispatch } from '../../core/state/Store';
-import { NodeType } from '../../models/SelectedNode';
-import type { SelectedNode } from '../../models/SelectedNode';
-import { CodeTab } from './tabComponents/CodeTab';
-import { FunctionNodePropertiesTab } from './tabComponents/FunctionNodePropertiesTab';
-import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
-import { TestTab } from './tabComponents/TestTab';
+import type { AppDispatch, RootState } from '../../core/state/Store';
+import type { SchemaNodeExtended } from '../../models';
+import type { FunctionData } from '../../models/Function';
+import { isFunctionData } from '../../utils/Function.Utils';
+import { addTargetReactFlowPrefix } from '../../utils/ReactFlow.Util';
+import { CodeTab } from './tabs/CodeTab';
+import { FunctionNodePropertiesTab } from './tabs/FunctionNodePropertiesTab';
+import { SchemaNodePropertiesTab } from './tabs/SchemaNodePropertiesTab';
+import { TestTab } from './tabs/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleDown20Regular, ChevronDoubleUp20Regular, Delete20Regular } from '@fluentui/react-icons';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 enum TABS {
   PROPERTIES = 1,
@@ -38,9 +40,6 @@ const useStyles = makeStyles({
   title: {
     ...typographyStyles.body1Strong,
   },
-  chevron: {
-    ...shorthands.margin('15px'),
-  },
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
     ...shorthands.overflow('hidden', 'auto'),
@@ -53,7 +52,7 @@ const useStyles = makeStyles({
 });
 
 export interface PropertiesPaneProps {
-  currentNode?: SelectedNode;
+  currentNode?: SchemaNodeExtended | FunctionData;
   isExpanded: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
   centerViewHeight: number;
@@ -65,6 +64,12 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const { currentNode, isExpanded, setIsExpanded, centerViewHeight, contentHeight, setContentHeight } = props;
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const isTargetNode = useMemo(
+    () => (currentNode ? !!targetSchemaDictionary[addTargetReactFlowPrefix(currentNode.key)] : false),
+    [currentNode, targetSchemaDictionary]
+  );
 
   const styles = useStyles();
   const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
@@ -177,17 +182,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   };
 
   const getPaneTitle = (): string | undefined => {
-    switch (currentNode?.type) {
-      case NodeType.Source:
-        return sourceSchemaNodeLoc;
-      case NodeType.Target:
-        return targetSchemaNodeLoc;
-      case NodeType.Function:
-        return functionLoc;
-      default:
-        console.error("Panel item hasn't been chosen.");
-        return;
-    }
+    return !currentNode || isFunctionData(currentNode) ? functionLoc : isTargetNode ? targetSchemaNodeLoc : sourceSchemaNodeLoc;
   };
 
   const getSelectedTab = (): JSX.Element | null => {
@@ -198,16 +193,16 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
-        if (currentNode.type === NodeType.Function) {
-          return <FunctionNodePropertiesTab nodeKey={currentNode.id} />;
+        if (isFunctionData(currentNode)) {
+          return <FunctionNodePropertiesTab functionData={currentNode} />;
         } else {
           return <SchemaNodePropertiesTab currentNode={currentNode} />;
         }
       case TABS.CODE:
         return <CodeTab />;
       case TABS.TEST:
-        if (currentNode.type === NodeType.Target) {
-          return <TestTab currentTargetNodeKey={currentNode.id} />;
+        if (isTargetNode) {
+          return <TestTab currentTargetNodeKey={currentNode.key} />;
         } else {
           return null;
         }
@@ -224,7 +219,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
         {/*<Tab value={TABS.CODE}>{codeLoc}</Tab>*/}
-        {/*currentNode?.nodeType === NodeType.Target && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
+        {/*isTargetNode && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
       </TabList>
     </>
   );
@@ -255,7 +250,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
-          {(currentNode?.type === NodeType.Source || currentNode?.type === NodeType.Function) && (
+          {currentNode && (isFunctionData(currentNode) || !isTargetNode) && (
             <Button
               appearance="subtle"
               size="medium"
@@ -270,7 +265,6 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
             size="medium"
             icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
             onClick={() => setIsExpanded(!isExpanded)}
-            className={styles.chevron}
             disabled={!currentNode}
             title={!isExpanded ? expandLoc : collapseLoc}
             aria-label={!isExpanded ? expandLoc : collapseLoc}

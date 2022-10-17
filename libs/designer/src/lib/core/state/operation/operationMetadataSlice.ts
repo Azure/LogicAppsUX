@@ -218,8 +218,12 @@ export const operationMetadataSlice = createSlice({
         }
       }
 
-      if (dependencies) {
-        state.dependencies[nodeId] = dependencies;
+      if (dependencies?.inputs) {
+        state.dependencies[nodeId].inputs = { ...state.dependencies[nodeId].inputs, ...dependencies.inputs };
+      }
+
+      if (dependencies?.outputs) {
+        state.dependencies[nodeId].outputs = { ...state.dependencies[nodeId].outputs, ...dependencies.outputs };
       }
     },
     updateOutputs: (state, action: PayloadAction<{ id: string; nodeOutputs: NodeOutputs }>) => {

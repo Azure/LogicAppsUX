@@ -1,10 +1,11 @@
 import { childTargetNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
 import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
-import type { AppDispatch } from '../../core/state/Store';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaTypes, SchemaNodeProperties } from '../../models';
+import { SchemaNodeDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { Connection } from '../../models/Connection';
+import { flattenInputs, isValidInputToFunctionNode, isValidSchemaNodeToSchemaNodeConnection } from '../../utils/Connection.Utils';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
@@ -17,23 +18,15 @@ import {
   mergeClasses,
   shorthands,
   tokens,
+  Tooltip,
   typographyStyles,
 } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
-import type { FunctionComponent } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
-
-export type SchemaCardProps = {
-  schemaNode: SchemaNodeExtended;
-  schemaType: SchemaTypes;
-  displayHandle: boolean;
-  displayChevron: boolean;
-  isLeaf: boolean;
-  isChild: boolean;
-  relatedConnections: Connection[];
-} & CardProps;
 
 const useStyles = makeStyles({
   container: {
@@ -44,6 +37,7 @@ const useStyles = makeStyles({
     height: '48px',
     opacity: 1,
     width: `${nodeCardWidth}px`,
+    float: 'right',
     alignItems: 'center',
     justifyContent: 'left',
     ...shorthands.gap('8px'),
@@ -74,6 +68,8 @@ const useStyles = makeStyles({
   badgeContainer: {
     display: 'flex',
     alignItems: 'center',
+    float: 'right',
+    width: '272px',
   },
   contentButton: {
     height: '48px',
@@ -87,7 +83,7 @@ const useStyles = makeStyles({
     width: '48px',
     borderStartStartRadius: tokens.borderRadiusMedium,
     borderEndStartRadius: tokens.borderRadiusMedium,
-    color: tokens.colorBrandForeground1,
+    color: tokens.colorBrandForeground2,
     fontSize: '24px',
     lineHeight: '48px',
     textAlign: 'center',
@@ -125,9 +121,12 @@ const useStyles = makeStyles({
   }),
   inputArrayBadge: {
     marginLeft: '6px',
+    marginBottom: '30px',
   },
   outputArrayBadge: {
     marginRight: '6px',
+    marginLeft: '-22px',
+    marginBottom: '30px',
   },
 });
 
@@ -137,31 +136,65 @@ const cardInputText = makeStyles({
   },
 });
 
-const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
+const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px', display: 'hidden' };
+
+export interface SchemaCardProps extends CardProps {
+  schemaNode: SchemaNodeExtended;
+  schemaType: SchemaTypes;
+  displayHandle: boolean;
+  displayChevron: boolean;
+  isLeaf: boolean;
+  isChild: boolean;
+  relatedConnections: Connection[];
+}
 
 const isValidConnection = (connection: ReactFlowConnection): boolean => {
   const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
+  const functionDictionary = store.getState().dataMap.curDataMapOperation.currentFunctionNodes;
   const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
+  const connectionDictionary = store.getState().dataMap.curDataMapOperation.dataMapConnections;
 
-  if (connection.source && connection.target && flattenedSourceSchema && flattenedTargetSchema) {
-    const sourceNode = flattenedSourceSchema[connection.source];
-    const targetNode = flattenedTargetSchema[connection.target];
+  if (connection.source && connection.target && flattenedSourceSchema && flattenedTargetSchema && functionDictionary) {
+    const sourceSchemaNode = flattenedSourceSchema[connection.source];
+    // Target is either a function, or target schema, node
+    const targetFunctionNode = functionDictionary[connection.target];
+    const targetSchemaNode = flattenedTargetSchema[connection.target];
+    const currentTargetConnection = connectionDictionary[connection.target];
 
-    // If we have no targetNode that means it's an function and just allow the connection for now
-    // TODO validate function allowed input types
-    return !targetNode || sourceNode.schemaNodeDataType === targetNode.schemaNodeDataType;
+    if (targetFunctionNode) {
+      return isValidInputToFunctionNode(
+        sourceSchemaNode.normalizedDataType,
+        currentTargetConnection,
+        targetFunctionNode.maxNumberOfInputs,
+        targetFunctionNode.inputs
+      );
+    }
+
+    if (targetSchemaNode) {
+      return isValidSchemaNodeToSchemaNodeConnection(sourceSchemaNode.schemaNodeDataType, targetSchemaNode.schemaNodeDataType);
+    }
+
+    return false;
   }
 
   return false;
 };
 
-export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, relatedConnections } =
-    props.data;
+export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
+  const reactFlowId = props.id;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron } = props.data;
+
+  const intl = useIntl();
+  const [_isHover, setIsHover] = useState<boolean>(false);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const dispatch = useDispatch<AppDispatch>();
+
   const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
+
+  const isNodeConnected =
+    connections[reactFlowId] && (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0);
 
   const isOutputChildNode = schemaType === SchemaTypes.Target && isChild;
 
@@ -185,24 +218,43 @@ export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props:
     dispatch(setCurrentTargetNode({ schemaNode: newCurrentSchemaNode, resetSelectedSourceNodes: true }));
   };
 
-  const isNBadgeRequired = relatedConnections.length > 0 && schemaNode.properties === SchemaNodeProperties.Repeating;
+  const isNBadgeRequired = isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating;
+
+  const showHandle =
+    displayHandle && (schemaType === SchemaTypes.Source || schemaNode.schemaNodeDataType !== SchemaNodeDataType.None || isNBadgeRequired);
+
+  const onMouseEnter = () => {
+    setIsHover(true);
+  };
+  const onMouseLeave = () => {
+    setIsHover(false);
+  };
+
+  const arrayMappingTooltip = intl.formatMessage({
+    defaultMessage: 'Array Mapping',
+    description: 'Label for array connection',
+  });
 
   return (
     <div className={classes.badgeContainer}>
       {isNBadgeRequired && schemaType === SchemaTypes.Target && (
-        <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
-          N
-        </Badge>
+        <div>
+          <Tooltip content={arrayMappingTooltip} relationship="label">
+            <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
+              N
+            </Badge>
+          </Tooltip>
+        </div>
       )}
-      <div className={containerStyle}>
-        {displayHandle ? (
+      <div className={containerStyle} onMouseLeave={() => onMouseLeave()} onMouseEnter={() => onMouseEnter()}>
+        {showHandle && (
           <Handle
             type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
             position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
             style={handleStyle}
-            isValidConnection={isValidConnection}
+            isValidConnection={schemaType === SchemaTypes.Source ? isValidConnection : () => false}
           />
-        ) : null}
+        )}
         {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>
