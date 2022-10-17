@@ -186,6 +186,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         dispatch(openDiscardWarning());
       },
       disabled: !isStateDirty,
+      buttonStyles: cmdBarButtonStyles,
       ...cmdBarItemBgStyles,
     },
     {
