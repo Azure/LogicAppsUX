@@ -97,6 +97,7 @@ export const updateConnectionInputValue = (
 
   createConnectionEntryIfNeeded(connections, targetNode, targetNodeReactFlowKey);
   connection = connections[targetNodeReactFlowKey];
+  console.log(connections);
 
   // NOTE: Explicit undefined check to account for empty custom values ('')
   if (value === undefined) {
@@ -196,12 +197,16 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
 
   // Put 0 input, content enricher functions in the node bucket
   const flattenedInputs = flattenInputs(currentConnection.inputs);
+  const customValueInputs = flattenedInputs.filter(isCustomValue);
   const definedNonCustomValueInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
   const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node.maxNumberOfInputs !== 0);
   const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node.maxNumberOfInputs === 0);
 
   // All the sources are input nodes
   if (nodeInputs.length === flattenedInputs.length) {
+    return true;
+  } else if (customValueInputs.length === flattenedInputs.length) {
+    // All inputs are custom values
     return true;
   } else {
     // Still have traversing to do
