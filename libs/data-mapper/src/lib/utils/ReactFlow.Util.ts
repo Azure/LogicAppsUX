@@ -8,6 +8,7 @@ import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
+import { flattenInputs, isConnectionUnit } from './Connection.Utils';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -203,15 +204,18 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-export const convertToReactFlowEdges = (connections: ConnectionDictionary): ReactFlowEdge[] => {
+export const convertToReactFlowEdges = (connections: ConnectionDictionary, selectedItemKey: string | undefined): ReactFlowEdge[] => {
   return Object.values(connections).flatMap((connection) => {
-    return connection.sources.map((source) => {
+    const nodeInputs = flattenInputs(connection.inputs).filter(isConnectionUnit);
+
+    return nodeInputs.map((input) => {
+      const id = createReactFlowConnectionId(input.reactFlowKey, connection.self.reactFlowKey);
       return {
-        id: createReactFlowConnectionId(source.reactFlowKey, connection.destination.reactFlowKey),
-        source: source.reactFlowKey,
-        target: connection.destination.reactFlowKey,
+        id,
+        source: input.reactFlowKey,
+        target: connection.self.reactFlowKey,
         type: ReactFlowEdgeType.ConnectionEdge,
-        selected: connection.isSelected,
+        selected: selectedItemKey === id,
       };
     });
   });
@@ -224,7 +228,8 @@ export const useLayout = (
   allSourceNodes: SchemaNodeDictionary,
   allFunctionNodes: FunctionDictionary,
   currentTargetNode: SchemaNodeExtended | undefined,
-  connections: ConnectionDictionary
+  connections: ConnectionDictionary,
+  selectedItemKey: string | undefined
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
     if (currentTargetNode) {
@@ -245,8 +250,8 @@ export const useLayout = (
   }, [viewportCoords, currentlySelectedSourceNodes, currentTargetNode, allFunctionNodes]);
 
   const reactFlowEdges = useMemo(() => {
-    return convertToReactFlowEdges(connections);
-  }, [connections]);
+    return convertToReactFlowEdges(connections, selectedItemKey);
+  }, [connections, selectedItemKey]);
 
   return [reactFlowNodes, reactFlowEdges];
 };

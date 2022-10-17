@@ -1250,6 +1250,12 @@
       "value": "必須。base64 表現にエンコードする文字列。"
     }
   ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -2964,6 +2970,12 @@
       "value": "名前"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Raw"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -2974,6 +2986,12 @@
     {
       "type": 0,
       "value": "タグ"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "ToPmjE": [
@@ -4339,6 +4357,12 @@
       "value": "このアクションにはテストが構成されています。"
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -4791,6 +4815,12 @@
     {
       "type": 0,
       "value": "必須。浮動小数点数に変換される値。"
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
     }
   ],
   "n7wxxN": [
@@ -5326,6 +5356,12 @@
       "value": "参照"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Client Certificate"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5390,6 +5426,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) ノボシビルスク"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
     }
   ],
   "tZj2Xn": [

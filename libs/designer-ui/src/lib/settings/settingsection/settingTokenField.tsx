@@ -1,4 +1,5 @@
 import { ArrayEditor, ArrayType } from '../../arrayeditor';
+import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
 import { Combobox } from '../../combobox';
 import { DictionaryEditor } from '../../dictionary';
@@ -8,6 +9,7 @@ import type { CallbackHandler, ChangeHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { SchemaEditor } from '../../schemaeditor';
+import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
@@ -120,8 +122,23 @@ const TokenField = ({
         />
       );
 
+    case 'table':
+      return (
+        <TableEditor
+          readonly={readOnly}
+          initialValue={value}
+          initialItems={editorViewModel.items}
+          columnMode={editorViewModel.columnMode}
+          columns={editorOptions.columns.count}
+          titles={editorOptions.columns.titles}
+          keys={editorOptions.columns.keys}
+          isTrigger={isTrigger}
+          GetTokenPicker={GetTokenPicker}
+          onChange={onValueChange}
+        />
+      );
+
     case 'array':
-      // TODO - This requires update
       return (
         <ArrayEditor
           type={ArrayType.SIMPLE}
@@ -131,6 +148,19 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           isTrigger={isTrigger}
+          GetTokenPicker={GetTokenPicker}
+          onChange={onValueChange}
+        />
+      );
+
+    case 'authentication':
+      // TODO - This requires update
+      return (
+        <AuthenticationEditor
+          initialValue={value}
+          options={editorOptions}
+          type={editorViewModel.type}
+          authenticationValue={editorViewModel.authenticationValue}
           GetTokenPicker={GetTokenPicker}
           onChange={onValueChange}
         />

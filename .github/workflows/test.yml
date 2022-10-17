@@ -41,5 +41,5 @@ jobs:
           path: playwright-report/
           retention-days: 30
 
-      - run: npm run build-storybook
+      # - run: npm run build-storybook
       # - run: npm run storybook:files-axe

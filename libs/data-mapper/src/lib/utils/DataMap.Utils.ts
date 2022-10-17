@@ -11,6 +11,7 @@ import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeProperties } from '../models/Schema';
+import { addNodeToConnections, flattenInputs, isCustomValue, nodeHasSourceNodeEventually } from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, isFunctionData } from './Function.Utils';
 import { createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
@@ -56,15 +57,18 @@ const generateMapDefinitionHeader = (
 
 const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
   Object.values(connections).forEach((connection) => {
-    const destinationNode = connection.destination.node;
-    connection.sources.forEach((source) => {
+    const flattenedInputs = flattenInputs(connection.inputs);
+    flattenedInputs.forEach((input) => {
       // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
-      if (isSchemaNodeExtended(destinationNode)) {
-        if (isSchemaNodeExtended(source.node)) {
-          applyValueAtPath(source.node.fullName, mapDefinition, destinationNode, destinationNode.pathToRoot);
+      const selfNode = connection.self.node;
+      if (input && isSchemaNodeExtended(selfNode)) {
+        if (isCustomValue(input)) {
+          applyValueAtPath(input, mapDefinition, selfNode, selfNode.pathToRoot);
+        } else if (isSchemaNodeExtended(input.node)) {
+          applyValueAtPath(input.node.fullName, mapDefinition, selfNode, selfNode.pathToRoot);
         } else {
-          const value = collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
-          applyValueAtPath(value, mapDefinition, destinationNode, destinationNode.pathToRoot);
+          const value = collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
+          applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot);
         }
       }
     });
@@ -100,13 +104,21 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, dest
 
 const collectValueForFunction = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
   const inputValues = currentConnection
-    ? currentConnection.sources.flatMap((source) => {
-        if (isSchemaNodeExtended(source.node)) {
-          return source.node.fullName.startsWith('@') ? `$${source.node.fullName}` : source.node.fullName;
-        } else {
-          return collectValueForFunction(source.node, connections[source.reactFlowKey], connections);
-        }
-      })
+    ? (flattenInputs(currentConnection.inputs)
+        .flatMap((input) => {
+          if (!input) {
+            return undefined;
+          }
+
+          if (isCustomValue(input)) {
+            return input;
+          } else if (isSchemaNodeExtended(input.node)) {
+            return input.node.fullName.startsWith('@') ? `$${input.node.fullName}` : input.node.fullName;
+          } else {
+            return collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
+          }
+        })
+        .filter((mappedInput) => !!mappedInput) as string[])
     : [];
 
   return combineFunctionAndInputs(node, inputValues);
@@ -129,32 +141,6 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
 
   // Is valid to generate the map definition
   return true;
-};
-
-const nodeHasSourceNodeEventually = (currentConnection: Connection, connections: ConnectionDictionary): boolean => {
-  if (!currentConnection) {
-    return false;
-  }
-
-  // Put 0 input, content enricher functions in the node bucket
-  const functionSources = currentConnection.sources.filter((source) => isFunctionData(source.node) && source.node.maxNumberOfInputs !== 0);
-  const nodeSources = currentConnection.sources.filter(
-    (source) => isSchemaNodeExtended(source.node) || source.node.maxNumberOfInputs === 0
-  );
-
-  // All the sources are input nodes
-  if (nodeSources.length === currentConnection.sources.length) {
-    return true;
-  } else {
-    // Still have traversing to do
-    if (functionSources.length > 0) {
-      return functionSources.every((functionSource) => {
-        return nodeHasSourceNodeEventually(connections[functionSource.reactFlowKey], connections);
-      });
-    } else {
-      return false;
-    }
-  }
 };
 
 /* Deserialize yml */
@@ -237,25 +223,6 @@ const parseDefinitionToConnection = (
   }
 };
 
-const addNodeToConnections = (
-  connections: ConnectionDictionary,
-  sourceNode: SchemaNodeExtended | FunctionData,
-  sourceReactFlowKey: string,
-  destinationNode: SchemaNodeExtended | FunctionData,
-  destinationReactFlowKey: string
-) => {
-  if (sourceNode && destinationNode) {
-    if (!connections[destinationReactFlowKey]) {
-      connections[destinationReactFlowKey] = {
-        destination: { node: destinationNode, reactFlowKey: destinationReactFlowKey },
-        sources: [{ node: sourceNode, reactFlowKey: sourceReactFlowKey }],
-      };
-    } else {
-      connections[destinationReactFlowKey].sources.push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
-    }
-  }
-};
-
 // Exported for testing purposes only
 export const splitKeyIntoChildren = (sourceKey: string): string[] => {
   const functionParams = sourceKey.substring(sourceKey.indexOf('(') + 1, sourceKey.lastIndexOf(')'));
@@ -305,8 +272,4 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
   }
 
   return results;
-};
-
-export const getEdgeForSource = (connection: Connection, source: string) => {
-  return connection.sources.find((conn) => conn.reactFlowKey === source);
 };

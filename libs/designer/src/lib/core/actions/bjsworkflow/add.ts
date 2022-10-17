@@ -70,7 +70,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   return;
 });
 
-export const initializeOperationDetails = async (
+const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: NodeOperation,
   workflowState: WorkflowState,
@@ -146,67 +146,38 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
   dispatch(initializeNodes([initData]));
 };
 
-// TODO: Riley - this is very similar to the init function, but we might want to alter it to not overwrite some data
 export const reinitializeOperationDetails = async (
   nodeId: string,
   operationInfo: NodeOperation,
-  workflowState: WorkflowState,
+  state: RootState,
   dispatch: Dispatch
 ): Promise<void> => {
-  const isTrigger = isRootNodeInGraph(nodeId, 'root', workflowState.nodesMetadata);
   const { type, connectorId } = operationInfo;
-  const definition = workflowState.operations[nodeId];
-  const operationManifestService = OperationManifestService();
-  if (operationManifestService.isSupported(type)) {
+  const nodeInputs = state.operations.inputParameters[nodeId];
+  const nodeOutputs = state.operations.outputParameters[nodeId];
+  const settings = state.operations.settings[nodeId];
+  const nodeDependencies = state.operations.dependencies[nodeId];
+  if (OperationManifestService().isSupported(type)) {
     const manifest = await getOperationManifest(operationInfo);
     const { iconUri, brandColor } = manifest.properties;
-
-    const settings = getOperationSettings(isTrigger, operationInfo, manifest, undefined /* swagger */, definition);
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, definition);
-    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
-      manifest,
-      isTrigger,
-      nodeInputs,
-      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
-    );
-    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-
-    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
 
     addTokensAndVariables(
       nodeId,
       type,
       { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest, nodeDependencies },
-      workflowState,
+      state.workflow,
       dispatch
     );
   } else {
-    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    const { connector } = await getConnectorWithSwagger(connectorId);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
 
-    const settings = getOperationSettings(isTrigger, operationInfo, /* manifest */ undefined, parsedSwagger, definition);
-    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
-      nodeId,
-      isTrigger,
-      parsedSwagger,
-      operationInfo,
-      definition
-    );
-    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
-      parsedSwagger,
-      operationInfo,
-      nodeInputs,
-      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
-    );
-    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-
-    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
     addTokensAndVariables(
       nodeId,
       type,
       { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, nodeDependencies },
-      workflowState,
+      state.workflow,
       dispatch
     );
   }

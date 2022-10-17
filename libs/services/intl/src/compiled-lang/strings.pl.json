@@ -1347,6 +1347,12 @@
       "value": "Wymagane. Ciąg do zakodowania do reprezentacji base64."
     }
   ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -3257,6 +3263,12 @@
       "value": "Nazwa"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Raw"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -3267,6 +3279,12 @@
     {
       "type": 0,
       "value": "Tagi"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "ToPmjE": [
@@ -4713,6 +4731,12 @@
       "value": "Ta akcja ma skonfigurowane testowanie."
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -5173,6 +5197,12 @@
     {
       "type": 0,
       "value": "Parametr wymagany. Wartość konwertowana na liczbę zmiennoprzecinkową."
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
     }
   ],
   "n7wxxN": [
@@ -5765,6 +5795,12 @@
       "value": "Przeglądaj"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Client Certificate"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5829,6 +5865,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Nowosybirsk"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
     }
   ],
   "tZj2Xn": [

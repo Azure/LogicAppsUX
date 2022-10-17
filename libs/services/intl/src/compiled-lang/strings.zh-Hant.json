@@ -1250,6 +1250,12 @@
       "value": "必要。要編碼成 base64 表示法的字串。"
     }
   ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatic"
+    }
+  ],
   "B/JzwK": [
     {
       "offset": 0,
@@ -2964,6 +2970,12 @@
       "value": "名稱"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Raw"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -2974,6 +2986,12 @@
     {
       "type": 0,
       "value": "標籤"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Custom"
     }
   ],
   "ToPmjE": [
@@ -4351,6 +4369,12 @@
       "value": "此動作已設定測試。"
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Managed Identity"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -4803,6 +4827,12 @@
     {
       "type": 0,
       "value": "必要。轉換為浮點數的值。"
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
     }
   ],
   "n7wxxN": [
@@ -5338,6 +5368,12 @@
       "value": "瀏覽"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Client Certificate"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5402,6 +5438,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) 新西伯利亞"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
     }
   ],
   "tZj2Xn": [

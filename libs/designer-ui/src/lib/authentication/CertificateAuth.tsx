@@ -22,28 +22,28 @@ export const CertificateAuthentication = ({
   const updateClientCertificatePfx = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      clientCertificateProps: { ...prevState.clientCertificateProps, clientCertificatePfx: newState.value },
+      clientCertificate: { ...prevState.clientCertificate, clientCertificatePfx: newState.value },
     }));
   };
 
   const updateClientCertificatePassword = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      clientCertificateProps: { ...prevState.clientCertificateProps, clientCertificatePassword: newState.value },
+      clientCertificate: { ...prevState.clientCertificate, clientCertificatePassword: newState.value },
     }));
   };
 
   const updateOAuthTypeCertificatePfx = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthTypeCertificatePfx: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthTypeCertificatePfx: newState.value },
     }));
   };
 
   const updateOAuthTypeCertificatePassword = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthTypeCertificatePassword: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthTypeCertificatePassword: newState.value },
     }));
   };
   return (
