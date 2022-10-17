@@ -29,6 +29,8 @@ export const convertToMapDefinition = (
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
 
+    console.log(yaml.dump(mapDefinition)); // XXX
+
     return yaml.dump(mapDefinition);
   }
 
@@ -65,7 +67,9 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
         if (isCustomValue(input)) {
           applyValueAtPath(input, mapDefinition, selfNode, selfNode.pathToRoot);
         } else if (isSchemaNodeExtended(input.node)) {
-          applyValueAtPath(input.node.fullName, mapDefinition, selfNode, selfNode.pathToRoot);
+          if (input.node.properties !== SchemaNodeProperties.Repeating) {
+            applyValueAtPath(input.node.key, mapDefinition, selfNode, selfNode.pathToRoot);
+          }
         } else {
           const value = collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
           applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot);
@@ -80,12 +84,16 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, dest
   const formattedPathLocation = pathLocation.startsWith('@') ? `$${pathLocation}` : pathLocation;
 
   if (path.length > 1) {
-    if (!mapDefinition[formattedPathLocation]) {
-      mapDefinition[formattedPathLocation] = {};
-    }
+    if (path[0].repeating) {
+      generateForSection(value.substring(0, value.lastIndexOf('/')), value, mapDefinition, destinationNode, path);
+    } else {
+      if (!mapDefinition[formattedPathLocation]) {
+        mapDefinition[formattedPathLocation] = {};
+      }
 
-    if (typeof mapDefinition[formattedPathLocation] !== 'string') {
-      applyValueAtPath(value, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1));
+      if (typeof mapDefinition[formattedPathLocation] !== 'string') {
+        applyValueAtPath(value, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1));
+      }
     }
   } else {
     if (destinationNode.properties === SchemaNodeProperties.ComplexTypeSimpleContent) {
@@ -100,6 +108,33 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, dest
       mapDefinition[formattedPathLocation] = value;
     }
   }
+};
+
+const generateForSection = (
+  loopValue: string,
+  value: string,
+  mapDefinition: MapDefinitionEntry,
+  destinationNode: SchemaNodeExtended,
+  path: PathItem[]
+) => {
+  const pathLocation = path[0].fullName;
+  const formattedPathLocation = pathLocation.startsWith('@') ? `$${pathLocation}` : pathLocation;
+
+  const forEntry = `${mapNodeParams.for}(${loopValue})`;
+  if (!mapDefinition[forEntry]) {
+    mapDefinition[forEntry] = {};
+  }
+
+  // Step into the loop
+  mapDefinition = mapDefinition[forEntry] as MapDefinitionEntry;
+
+  if (!mapDefinition[formattedPathLocation]) {
+    mapDefinition[formattedPathLocation] = {};
+  }
+
+  const loopLocalValue = value.replace(`${loopValue}/`, '');
+
+  applyValueAtPath(loopLocalValue, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1));
 };
 
 const collectValueForFunction = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
