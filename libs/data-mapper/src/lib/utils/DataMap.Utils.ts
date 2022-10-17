@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import {
+  customValueQuoteToken,
   mapDefinitionVersion,
   mapNodeParams,
   reservedMapDefinitionKeys,
@@ -29,7 +30,7 @@ export const convertToMapDefinition = (
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
 
-    return yaml.dump(mapDefinition);
+    return yaml.dump(mapDefinition, { quotingType: `"`, replacer: yamlReplacer }).replaceAll(customValueQuoteToken, '"');
   }
 
   return '';
@@ -63,7 +64,7 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
       const selfNode = connection.self.node;
       if (input && isSchemaNodeExtended(selfNode)) {
         if (isCustomValue(input)) {
-          applyValueAtPath(input, mapDefinition, selfNode, selfNode.pathToRoot);
+          applyValueAtPath(formatCustomValue(input), mapDefinition, selfNode, selfNode.pathToRoot);
         } else if (isSchemaNodeExtended(input.node)) {
           // Skip adding in the parent loop node. The children will handle it
           if (input.node.properties !== SchemaNodeProperties.Repeating) {
@@ -145,7 +146,7 @@ const collectValueForFunction = (node: FunctionData, currentConnection: Connecti
           }
 
           if (isCustomValue(input)) {
-            return input;
+            return formatCustomValue(input);
           } else if (isSchemaNodeExtended(input.node)) {
             return input.node.fullName.startsWith('@') ? `$${input.node.fullName}` : input.node.fullName;
           } else {
@@ -307,3 +308,15 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
 
   return results;
 };
+
+const yamlReplacer = (key: string, value: any) => {
+  if (typeof value === 'string') {
+    if (key === reservedMapDefinitionKeys.version) {
+      return parseFloat(value);
+    }
+  }
+
+  return value;
+};
+
+const formatCustomValue = (customValue: string) => customValueQuoteToken + customValue + customValueQuoteToken;
