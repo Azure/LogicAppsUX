@@ -93,7 +93,7 @@ export const BaseEditor = ({
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
   const [showTokenPicker, setShowTokenPicker] = useState(true);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
-  const { customButton = true } = tokenPickerButtonProps || {};
+  const { customButton = false } = tokenPickerButtonProps || {};
 
   const initialConfig = {
     theme: EditorTheme,

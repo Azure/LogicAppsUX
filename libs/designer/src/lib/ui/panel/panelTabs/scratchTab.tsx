@@ -6,13 +6,13 @@ import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
   GroupDropdownOptions,
   QueryBuilderEditor, // DictionaryType, // EditorLanguage,
-  // ValueSegmentType, // CodeEditor, // HTMLEditor,
+  ValueSegmentType, // CodeEditor, // HTMLEditor,
   TokenPicker, // TokenType,
   // DictionaryEditor,
   testTokenSegment, // SchemaEditor, // Combobox,
   // ArrayEditor,
-  Scratch, // StringEditor,
-  // AuthenticationEditor,
+  Scratch,
+  StringEditor, // AuthenticationEditor,
   // DropdownEditor,
   outputToken,
   outputToken2,
@@ -336,7 +336,7 @@ export const ScratchTab = () => {
           valueTitle={'Value'}
         /> */}
         {/* <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} /> */}
-        {/* <StringEditor
+        <StringEditor
           initialValue={[
             testTokenSegment,
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
@@ -345,7 +345,7 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         />
-        <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} /> */}
+        {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} /> */}
       </>
     );
   };
