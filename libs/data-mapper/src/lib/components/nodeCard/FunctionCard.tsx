@@ -2,7 +2,7 @@ import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
 import { customTokens } from '../../core';
 import type { RootState } from '../../core/state/Store';
 import type { FunctionInput } from '../../models/Function';
-import { isValidFunctionNodeToTargetSchemaNodeConnection, isValidInputToFunctionNode } from '../../utils/Connection.Utils';
+import { isValidFunctionNodeToSchemaNodeConnection, isValidInputToFunctionNode } from '../../utils/Connection.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
@@ -102,7 +102,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
         const targetNodeConnection = connectionDictionary[connection.target];
 
         if (targetSchemaNode) {
-          return isValidFunctionNodeToTargetSchemaNodeConnection(sourceFunctionNode.outputValueType, targetSchemaNode.normalizedDataType);
+          return isValidFunctionNodeToSchemaNodeConnection(sourceFunctionNode.outputValueType, targetSchemaNode.normalizedDataType);
         }
 
         if (targetFunctionNode) {

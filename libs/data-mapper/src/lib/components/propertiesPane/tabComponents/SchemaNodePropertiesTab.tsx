@@ -1,6 +1,5 @@
 import type { RootState } from '../../../core/state/Store';
-import { NodeType } from '../../../models/SelectedNode';
-import type { SelectedNode } from '../../../models/SelectedNode';
+import type { SchemaNodeExtended } from '../../../models';
 import { icon16ForSchemaNodeType } from '../../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Checkbox, Input, makeStyles, Text } from '@fluentui/react-components';
@@ -20,14 +19,13 @@ const useStyles = makeStyles({
 });
 
 interface SchemaNodePropertiesTabProps {
-  currentNode: SelectedNode;
+  currentNode: SchemaNodeExtended;
 }
 
 export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
 
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
   const nameLoc = intl.formatMessage({
@@ -70,31 +68,23 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Default value',
   });
 
-  const isTargetSchemaNode = useMemo(() => currentNode.type === NodeType.Target, [currentNode]);
+  const isTargetSchemaNode = useMemo(() => !!targetSchemaDictionary[currentNode.key], [currentNode.key, targetSchemaDictionary]);
 
-  const schemaNode = useMemo(() => {
-    if (isTargetSchemaNode) {
-      return targetSchemaDictionary[currentNode.id];
-    } else {
-      return sourceSchemaDictionary[currentNode.id];
-    }
-  }, [currentNode, isTargetSchemaNode, sourceSchemaDictionary, targetSchemaDictionary]);
-
-  const DataTypeIcon = icon16ForSchemaNodeType(schemaNode.schemaNodeDataType);
+  const DataTypeIcon = icon16ForSchemaNodeType(currentNode.schemaNodeDataType);
 
   return (
     <div>
       <div className={styles.nodeInfoGridContainer}>
         <Text style={{ gridColumn: '1 / span 2' }}>{nameLoc}</Text>
-        <Text>{schemaNode?.name}</Text>
+        <Text>{currentNode.name}</Text>
 
         <Text style={{ gridColumn: '1 / span 2' }}>{fullPathLoc}</Text>
-        <Text>{schemaNode?.key}</Text>
+        <Text>{currentNode.key}</Text>
 
         <Text style={{ gridColumn: '1 / span 2' }}>{dataTypeLoc}</Text>
         <Stack horizontal verticalAlign="center">
           <DataTypeIcon style={{ marginRight: '5px' }} />
-          <Text>{schemaNode?.schemaNodeDataType}</Text>
+          <Text>{currentNode.schemaNodeDataType}</Text>
         </Stack>
       </div>
 
