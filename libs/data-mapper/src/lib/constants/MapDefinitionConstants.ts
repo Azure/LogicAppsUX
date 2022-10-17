@@ -1,8 +1,3 @@
-export const yamlFormats = {
-  indentGap: '  ',
-  newLine: '\n',
-};
-
 export const reservedMapDefinitionKeys = {
   version: '$version',
   sourceFormat: '$input',
@@ -31,3 +26,5 @@ export const mapNodeParams = {
 };
 
 export const mapDefinitionVersion = '1.0';
+
+export const customValueStringConverter = '&quot';

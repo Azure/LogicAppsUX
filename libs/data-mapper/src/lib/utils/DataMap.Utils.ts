@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import {
+  customValueStringConverter,
   mapDefinitionVersion,
   mapNodeParams,
   reservedMapDefinitionKeys,
@@ -29,7 +30,7 @@ export const convertToMapDefinition = (
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
 
-    return yaml.dump(mapDefinition);
+    return yaml.dump(mapDefinition, { quotingType: `"` }).replaceAll(customValueStringConverter, '');
   }
 
   return '';
@@ -308,4 +309,4 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
   return results;
 };
 
-const formatCustomValue = (customValue: string) => customValue;
+const formatCustomValue = (customValue: string) => customValueStringConverter + customValue;
