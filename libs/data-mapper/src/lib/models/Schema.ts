@@ -10,14 +10,12 @@ export interface SchemaNode {
   key: string;
   name: string;
   fullName: string;
+  parentKey?: string;
   namespacePrefix?: string;
-  namespaceUri: string;
+  namespaceUri?: string;
   normalizedDataType: NormalizedDataType;
   schemaNodeDataType: SchemaNodeDataType;
   properties: SchemaNodeProperties;
-  optional?: boolean;
-  repeating?: boolean;
-  attribute?: boolean;
   children: SchemaNode[];
 }
 
@@ -109,6 +107,7 @@ export interface PathItem {
   key: string;
   name: string;
   fullName: string;
+  repeating: boolean;
 }
 
 export enum SchemaTypes {

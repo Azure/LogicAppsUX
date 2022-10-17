@@ -193,8 +193,6 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const sharedStyles = getStylesForSharedState();
   const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
 
-  const showHandle = displayHandle && (schemaType === SchemaTypes.Source || schemaNode.schemaNodeDataType !== SchemaNodeDataType.None);
-
   const isNodeConnected =
     connections[reactFlowId] && (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0);
 
@@ -221,6 +219,9 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   };
 
   const isNBadgeRequired = isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating;
+
+  const showHandle =
+    displayHandle && (schemaType === SchemaTypes.Source || schemaNode.schemaNodeDataType !== SchemaNodeDataType.None || isNBadgeRequired);
 
   const onMouseEnter = () => {
     setIsHover(true);
