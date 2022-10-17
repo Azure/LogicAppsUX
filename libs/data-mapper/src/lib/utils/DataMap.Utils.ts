@@ -63,7 +63,7 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
       const selfNode = connection.self.node;
       if (input && isSchemaNodeExtended(selfNode)) {
         if (isCustomValue(input)) {
-          applyValueAtPath(input, mapDefinition, selfNode, selfNode.pathToRoot);
+          applyValueAtPath(formatCustomValue(input), mapDefinition, selfNode, selfNode.pathToRoot);
         } else if (isSchemaNodeExtended(input.node)) {
           // Skip adding in the parent loop node. The children will handle it
           if (input.node.properties !== SchemaNodeProperties.Repeating) {
@@ -145,7 +145,7 @@ const collectValueForFunction = (node: FunctionData, currentConnection: Connecti
           }
 
           if (isCustomValue(input)) {
-            return input;
+            return formatCustomValue(input);
           } else if (isSchemaNodeExtended(input.node)) {
             return input.node.fullName.startsWith('@') ? `$${input.node.fullName}` : input.node.fullName;
           } else {
@@ -307,3 +307,5 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
 
   return results;
 };
+
+const formatCustomValue = (customValue: string) => customValue;
