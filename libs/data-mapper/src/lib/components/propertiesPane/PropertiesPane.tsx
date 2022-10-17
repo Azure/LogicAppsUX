@@ -219,7 +219,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
         <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
         {/*<Tab value={TABS.CODE}>{codeLoc}</Tab>*/}
-        {/*currentNode?.nodeType === NodeType.Target && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
+        {/*isTargetNode && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
       </TabList>
     </>
   );
