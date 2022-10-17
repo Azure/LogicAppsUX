@@ -55,6 +55,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
 
   const [isCustomValue, setIsCustomValue] = useState(false);
+  const [customValue, setCustomValue] = useState<string>('');
 
   const customValueOptionLoc = intl.formatMessage({
     defaultMessage: 'Enter custom value',
@@ -114,12 +115,17 @@ export const InputDropdown = (props: InputDropdownProps) => {
     updateInput(srcConUnit);
   };
 
-  const onChangeCustomValue = useDebouncedCallback(
-    (newValue?: string) => {
-      if (!newValue) {
-        return;
-      }
+  const onChangeCustomValue = (newValue?: string) => {
+    if (newValue === undefined) {
+      return;
+    }
 
+    setCustomValue(newValue);
+    updateCustomValue(newValue);
+  };
+
+  const updateCustomValue = useDebouncedCallback(
+    (newValue: string) => {
       updateInput(newValue);
     },
     [],
@@ -127,6 +133,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   );
 
   const onClearCustomValue = () => {
+    setCustomValue('');
     updateInput(undefined);
   };
 
@@ -136,7 +143,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   useEffect(() => {
     // Check if inputValue is defined, and if it's a node reference or a custom value
-    if (inputValue) {
+    if (inputValue !== undefined) {
       const srcSchemaNode = sourceSchemaDictionary[`${sourcePrefix}${inputValue}`];
       const functionNode = functionNodeDictionary[inputValue];
 
@@ -147,11 +154,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
 
   const modifiedDropdownOptions = useMemo(() => {
-    if (!typeMatchedOptions) {
-      return [];
-    }
-
-    const newModifiedOptions = [...typeMatchedOptions];
+    const newModifiedOptions = typeMatchedOptions ? [...typeMatchedOptions] : [];
 
     // Divider
     newModifiedOptions.push({
@@ -185,7 +188,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       ) : (
         <div style={{ position: 'relative' }}>
           <TextField
-            value={inputValue}
+            value={customValue}
             onChange={(_e, newValue) => onChangeCustomValue(newValue)}
             label={label}
             placeholder={placeholder}
