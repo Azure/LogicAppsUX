@@ -3,9 +3,10 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import type { FunctionData } from '../../models/Function';
 import { isFunctionData } from '../../utils/Function.Utils';
-import { FunctionNodePropertiesTab } from './tabComponents/FunctionNodePropertiesTab';
-import { SchemaNodePropertiesTab } from './tabComponents/SchemaNodePropertiesTab';
+import { addTargetReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { CodeTab } from './tabs/CodeTab';
+import { FunctionNodePropertiesTab } from './tabs/FunctionNodePropertiesTab';
+import { SchemaNodePropertiesTab } from './tabs/SchemaNodePropertiesTab';
 import { TestTab } from './tabs/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
@@ -65,13 +66,10 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
 
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
-  const isTargetNode = useMemo(() => {
-    if (currentNode) {
-      return !!targetSchemaDictionary[currentNode.key];
-    }
-
-    return false;
-  }, [currentNode, targetSchemaDictionary]);
+  const isTargetNode = useMemo(
+    () => (currentNode ? !!targetSchemaDictionary[addTargetReactFlowPrefix(currentNode.key)] : false),
+    [currentNode, targetSchemaDictionary]
+  );
 
   const styles = useStyles();
   const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);

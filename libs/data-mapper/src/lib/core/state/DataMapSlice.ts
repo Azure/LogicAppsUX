@@ -2,7 +2,7 @@ import type { NotificationData } from '../../components/notification/Notificatio
 import { NotificationTypes } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperties, SchemaTypes } from '../../models';
-import type { ConnectionDictionary } from '../../models/Connection';
+import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import {
   addNodeToConnections,
@@ -10,6 +10,7 @@ import {
   flattenInputs,
   isConnectionUnit,
   isCustomValue,
+  updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
 import {
   addReactFlowPrefix,
@@ -73,6 +74,12 @@ export interface ConnectionAction {
 
   reactFlowSource: string;
   reactFlowDestination: string;
+}
+
+export interface UpdateConnectionInputAction {
+  targetNode: SchemaNodeExtended | FunctionData;
+  inputIndex: number;
+  value: InputConnection | undefined;
 }
 
 export interface DeleteConnectionAction {
@@ -313,6 +320,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    // NOTE: Specifically for dragging existing connection to a new target
     changeConnection: (state, action: PayloadAction<ConnectionAction & DeleteConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -321,6 +329,18 @@ export const dataMapSlice = createSlice({
 
       deleteConnectionFromConnections(newState.dataMapConnections, action.payload.inputKey, action.payload.connectionKey);
       addConnection(newState.dataMapConnections, action.payload);
+
+      doDataMapOperation(state, newState);
+    },
+
+    updateConnectionInput: (state, action: PayloadAction<UpdateConnectionInputAction>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      updateConnectionInputValue(newState.dataMapConnections, action.payload);
+
       doDataMapOperation(state, newState);
     },
 
@@ -400,6 +420,7 @@ export const {
   addFunctionNode,
   makeConnection,
   changeConnection,
+  updateConnectionInput,
   deleteConnection,
   undoDataMapOperation,
   redoDataMapOperation,
@@ -473,29 +494,27 @@ const addParentConnectionForRepeatingNode = (
 ): void => {
   const targetParentNode = mapState.currentTargetNode;
   const source = nodes.source;
-  if (targetParentNode) {
-    if (targetParentNode.properties === SchemaNodeProperties.Repeating && isSchemaNodeExtended(source)) {
-      source.pathToRoot.forEach((parentKey) => {
-        const sourceParent = mapState.flattenedSourceSchema[addReactFlowPrefix(parentKey.key, SchemaTypes.Source)];
+  if (targetParentNode && targetParentNode.properties === SchemaNodeProperties.Repeating && isSchemaNodeExtended(source)) {
+    source.pathToRoot.forEach((parentKey) => {
+      const sourceParent = mapState.flattenedSourceSchema[addReactFlowPrefix(parentKey.key, SchemaTypes.Source)];
 
-        if (sourceParent.properties === SchemaNodeProperties.Repeating) {
-          if (mapState.currentSourceNodes.find((node) => node.key !== sourceParent.key)) {
-            mapState.currentSourceNodes.push(sourceParent);
-          }
-
-          const prefixedTargetKey = addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target);
-          if (!mapState.dataMapConnections[prefixedTargetKey]) {
-            addNodeToConnections(
-              mapState.dataMapConnections,
-              sourceParent,
-              addReactFlowPrefix(sourceParent.key, SchemaTypes.Source),
-              targetParentNode,
-              prefixedTargetKey
-            );
-            state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
-          }
+      if (sourceParent.properties === SchemaNodeProperties.Repeating) {
+        if (mapState.currentSourceNodes.find((node) => node.key !== sourceParent.key)) {
+          mapState.currentSourceNodes.push(sourceParent);
         }
-      });
-    }
+
+        const prefixedTargetKey = addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target);
+        if (!mapState.dataMapConnections[prefixedTargetKey]) {
+          addNodeToConnections(
+            mapState.dataMapConnections,
+            sourceParent,
+            addReactFlowPrefix(sourceParent.key, SchemaTypes.Source),
+            targetParentNode,
+            prefixedTargetKey
+          );
+          state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+        }
+      }
+    });
   }
 };

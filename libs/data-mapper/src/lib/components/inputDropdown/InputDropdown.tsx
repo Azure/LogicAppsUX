@@ -1,8 +1,10 @@
 import { sourcePrefix } from '../../constants/ReactFlowConstants';
-import { makeConnection } from '../../core/state/DataMapSlice';
+import { updateConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { NodeType } from '../../models/SelectedNode';
-import type { SelectedNode } from '../../models/SelectedNode';
+import type { SchemaNodeExtended } from '../../models';
+import type { ConnectionUnit, InputConnection } from '../../models/Connection';
+import type { FunctionData } from '../../models/Function';
+import { isFunctionData } from '../../utils/Function.Utils';
 import { Dropdown, SelectableOptionMenuItemType, TextField } from '@fluentui/react';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
 import { Button, makeStyles, Tooltip } from '@fluentui/react-components';
@@ -34,7 +36,7 @@ const useStyles = makeStyles({
 });
 
 export interface InputDropdownProps {
-  currentNode: SelectedNode;
+  currentNode: SchemaNodeExtended | FunctionData;
   typeMatchedOptions?: IDropdownOption<InputOptionData>[];
   inputValue?: string; // undefined, Node ID, or custom value (string)
   inputIndex: number;
@@ -51,7 +53,6 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
   const [isCustomValue, setIsCustomValue] = useState(false);
 
@@ -75,18 +76,14 @@ export const InputDropdown = (props: InputDropdownProps) => {
   };
 
   const onSelectOption = (option?: IDropdownOption<InputOptionData>) => {
-    if (!option) {
-      return;
-    }
-
     // Don't do anything if same value
-    if (option.key === inputValue) {
+    if (!option || option.key === inputValue) {
       return;
     }
 
     if (option.key === customValueOptionKey) {
-      // NOTE: useEffect below will handle setting isCustomValue
-      // TODO: update connection input value to be ''
+      // NOTE: isCustomValue flag is set in useEffect
+      updateInput('');
     } else {
       // Any other selected option will be a node
       validateAndCreateConnection(option);
@@ -99,35 +96,22 @@ export const InputDropdown = (props: InputDropdownProps) => {
       return;
     }
 
-    console.log(inputIndex);
-
     // If Function node, ensure that new connection won't create loop/circular-logic
-    if (currentNode.type === NodeType.Function) {
-      // TODO
+    if (isFunctionData(currentNode)) {
+      // TODO - ^^
     }
 
-    // Remove current connection if it exists
-
-    // TODO
-
-    // Create new connection
-
+    // Create connection
     const selectedNodeKey = option.key as string;
     const isFunction = option.data.isFunction;
-
     const sourceKey = isFunction ? selectedNodeKey : `${sourcePrefix}${selectedNodeKey}`;
     const source = isFunction ? functionNodeDictionary[sourceKey] : sourceSchemaDictionary[sourceKey];
-    const destinationKey = currentNode.id;
-    const destination = targetSchemaDictionary[destinationKey];
+    const srcConUnit: ConnectionUnit = {
+      node: source,
+      reactFlowKey: sourceKey,
+    };
 
-    dispatch(
-      makeConnection({
-        source,
-        destination,
-        reactFlowDestination: destinationKey,
-        reactFlowSource: sourceKey,
-      })
-    );
+    updateInput(srcConUnit);
   };
 
   const onChangeCustomValue = useDebouncedCallback(
@@ -136,14 +120,18 @@ export const InputDropdown = (props: InputDropdownProps) => {
         return;
       }
 
-      // TODO: update specific connection input's value
+      updateInput(newValue);
     },
     [],
     customValueDebounceDelay
   );
 
   const onClearCustomValue = () => {
-    // TODO: set input to undefined
+    updateInput(undefined);
+  };
+
+  const updateInput = (newValue: InputConnection | undefined) => {
+    dispatch(updateConnectionInput({ targetNode: currentNode, inputIndex, value: newValue }));
   };
 
   useEffect(() => {
@@ -158,7 +146,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
 
-  const modifiedOptions = useMemo(() => {
+  const modifiedDropdownOptions = useMemo(() => {
     if (!typeMatchedOptions) {
       return [];
     }
@@ -185,7 +173,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     <>
       {!isCustomValue ? (
         <Dropdown
-          options={modifiedOptions}
+          options={modifiedDropdownOptions}
           selectedKey={inputValue}
           onChange={(_e, option) => onSelectOption(option)}
           label={label}

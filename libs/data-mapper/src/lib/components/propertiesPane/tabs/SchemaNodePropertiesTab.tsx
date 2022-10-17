@@ -4,6 +4,7 @@ import type { SchemaNodeExtended } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { isCustomValue } from '../../../utils/Connection.Utils';
 import { icon16ForSchemaNodeType } from '../../../utils/Icon.Utils';
+import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import type { InputOptions, InputOptionData } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
@@ -79,7 +80,10 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Default value',
   });
 
-  const isTargetSchemaNode = useMemo(() => !!targetSchemaDictionary[currentNode.key], [currentNode.key, targetSchemaDictionary]);
+  const isTargetSchemaNode = useMemo(
+    () => !!targetSchemaDictionary[addTargetReactFlowPrefix(currentNode.key)],
+    [currentNode, targetSchemaDictionary]
+  );
 
   const DataTypeIcon = icon16ForSchemaNodeType(currentNode.schemaNodeDataType);
 
@@ -147,14 +151,17 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     return newInputOptions;
   }, [possibleInputOptions, currentNode]);
 
-  const connection = useMemo<Connection | undefined>(() => connectionDictionary[currentNode.key], [connectionDictionary, currentNode]);
+  const connection = useMemo<Connection | undefined>(
+    () => connectionDictionary[addTargetReactFlowPrefix(currentNode.key)],
+    [connectionDictionary, currentNode]
+  );
 
   useEffect(() => {
     let newInputValue = '';
 
-    if (connection && Object.keys(connection.inputs).length === 1) {
-      const input = connection.inputs[0];
-      newInputValue = input.length === 0 ? '' : isCustomValue(input[0]) ? input[0] : input[0].node.key;
+    if (connection?.inputs && connection.inputs[0].length === 1) {
+      const input = connection.inputs[0][0];
+      newInputValue = isCustomValue(input) ? input : input.node.key;
     }
 
     setInputValue(newInputValue);

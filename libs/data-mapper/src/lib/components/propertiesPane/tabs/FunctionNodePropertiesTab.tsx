@@ -191,22 +191,16 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
       return;
     }
 
-    if (functionData.maxNumberOfInputs === -1) {
-      if (connection) {
-        Object.values(connection.inputs).forEach((input, idx) => {
-          newInputValues[idx].push(input.length === 0 ? '' : isCustomValue(input[0]) ? input[0] : input[0].node.key);
-        });
-      }
-    } else {
+    if (functionData.maxNumberOfInputs !== -1) {
       functionData.inputs.forEach((_input, idx) => {
         newInputValues[idx].push('');
       });
+    }
 
-      if (connection) {
-        Object.values(connection.inputs).forEach((input, idx) => {
-          newInputValues[idx] = [input.length === 0 ? '' : isCustomValue(input[0]) ? input[0] : input[0].node.key];
-        });
-      }
+    if (connection?.inputs) {
+      Object.values(connection.inputs).forEach((input, idx) => {
+        newInputValues[idx].push(input.length === 0 ? '' : isCustomValue(input[0]) ? input[0] : input[0].node.key);
+      });
     }
 
     setInputValues(newInputValues);
