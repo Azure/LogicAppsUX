@@ -270,7 +270,7 @@ export const createReactFlowFunctionKey = (functionData: FunctionData): string =
 
 export const createReactFlowConnectionId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
 
-export const addReactFlowPrefix = (key: string, type: SchemaTypes) => `${type}${key}`;
+export const addReactFlowPrefix = (key: string, type: SchemaTypes) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
 
