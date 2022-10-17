@@ -2485,6 +2485,12 @@
       "value": "Connection Name"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2711,12 +2717,6 @@
     {
       "type": 0,
       "value": "Convert the input to a JSON type value"
-    }
-  ],
-  "QGuYOg": [
-    {
-      "type": 0,
-      "value": "Nullable"
     }
   ],
   "QQYzHC": [
@@ -4925,6 +4925,12 @@
     {
       "type": 0,
       "value": "Required. The number of time units the desired time is in the future."
+    }
+  ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
     }
   ],
   "nSan4V": [
