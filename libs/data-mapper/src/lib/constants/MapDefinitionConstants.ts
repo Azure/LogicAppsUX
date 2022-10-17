@@ -27,4 +27,4 @@ export const mapNodeParams = {
 
 export const mapDefinitionVersion = '1.0';
 
-export const customValueStringConverter = '&quot';
+export const customValueQuoteToken = 'quot219837189273';

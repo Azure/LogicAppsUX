@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import {
-  customValueStringConverter,
+  customValueQuoteToken,
   mapDefinitionVersion,
   mapNodeParams,
   reservedMapDefinitionKeys,
@@ -30,7 +30,7 @@ export const convertToMapDefinition = (
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
 
-    return yaml.dump(mapDefinition, { quotingType: `"` }).replaceAll(customValueStringConverter, '');
+    return yaml.dump(mapDefinition, { quotingType: `"`, replacer: yamlReplacer }).replaceAll(customValueQuoteToken, '"');
   }
 
   return '';
@@ -309,4 +309,14 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
   return results;
 };
 
-const formatCustomValue = (customValue: string) => customValueStringConverter + customValue;
+const yamlReplacer = (key: string, value: any) => {
+  if (typeof value === 'string') {
+    if (key === reservedMapDefinitionKeys.version) {
+      return parseFloat(value);
+    }
+  }
+
+  return value;
+};
+
+const formatCustomValue = (customValue: string) => customValueQuoteToken + customValue + customValueQuoteToken;
