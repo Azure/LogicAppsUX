@@ -90,8 +90,6 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   const possibleInputOptions = useMemo<InputOptions>(() => {
     const newPossibleInputOptionsDictionary = {} as InputOptions;
 
-    console.log(currentSourceNodes);
-
     currentSourceNodes.forEach((srcNode) => {
       if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
         newPossibleInputOptionsDictionary[srcNode.normalizedDataType] = [];
