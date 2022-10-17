@@ -97,7 +97,6 @@ export const updateConnectionInputValue = (
 
   createConnectionEntryIfNeeded(connections, targetNode, targetNodeReactFlowKey);
   connection = connections[targetNodeReactFlowKey];
-  console.log(connections);
 
   // NOTE: Explicit undefined check to account for empty custom values ('')
   if (value === undefined) {
