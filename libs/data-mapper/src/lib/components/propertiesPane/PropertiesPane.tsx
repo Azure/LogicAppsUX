@@ -15,10 +15,10 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-enum TABS {
-  PROPERTIES = 1,
-  CODE,
-  TEST,
+enum PropertiesPaneTabs {
+  Properties = 1,
+  Code,
+  Test,
 }
 
 export const canvasAreaAndPropPaneMargin = 8;
@@ -68,7 +68,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
-  const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
+  const [tabToDisplay, setTabToDisplay] = useState<PropertiesPaneTabs | undefined>(PropertiesPaneTabs.Properties);
   const [initialDragYPos, setInitialDragYPos] = useState<number | undefined>(undefined);
   const [initialDragHeight, setInitialDragHeight] = useState<number | undefined>(undefined);
 
@@ -129,7 +129,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   };
 
   const onSelectTab = useCallback(
-    (tab: TABS) => {
+    (tab: PropertiesPaneTabs) => {
       setTabToDisplay(tab);
       setIsExpanded(true);
     },
@@ -195,15 +195,15 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     }
 
     switch (tabToDisplay) {
-      case TABS.PROPERTIES:
+      case PropertiesPaneTabs.Properties:
         if (isFunctionData(currentNode)) {
           return <FunctionNodePropertiesTab key={currentNode.key} functionData={currentNode} />;
         } else {
           return <SchemaNodePropertiesTab key={currentNode.key} currentNode={currentNode} />;
         }
-      case TABS.CODE:
+      case PropertiesPaneTabs.Code:
         return <CodeTab key={currentNode.key} />;
-      case TABS.TEST:
+      case PropertiesPaneTabs.Test:
         if (isTargetNode) {
           return <TestTab currentTargetNodeKey={currentNode.key} />;
         } else {
@@ -220,10 +220,14 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
       <>
         <Text className={styles.title}>{paneTitle}</Text>
         <Divider vertical style={{ maxWidth: 24 }} />
-        <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
-          <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
-          {/*<Tab value={TABS.CODE}>{codeLoc}</Tab>*/}
-          {/*isTargetNode && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
+        <TabList
+          selectedValue={tabToDisplay}
+          onTabSelect={(_: unknown, data) => onSelectTab(data.value as PropertiesPaneTabs)}
+          size="small"
+        >
+          <Tab value={PropertiesPaneTabs.Properties}>{propertiesLoc}</Tab>
+          {/*<Tab value={PropertiesPaneTabs.Code}>{codeLoc}</Tab>*/}
+          {/*isTargetNode && <Tab value={PropertiesPaneTabs.Test}>{testLoc}</Tab>*/}
         </TabList>
       </>
     ),
@@ -233,7 +237,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   useEffect(() => {
     // Set tab to first one anytime this panel displays a new item
     if (currentNode) {
-      setTabToDisplay(TABS.PROPERTIES);
+      setTabToDisplay(PropertiesPaneTabs.Properties);
       setIsExpanded(true);
     } else {
       setTabToDisplay(undefined);
