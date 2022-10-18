@@ -162,7 +162,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
             lineNumbers="on"
             scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
             className={styles.editorStyle}
-            height={`500px`}
+            height={`650px`}
             wordWrap="on"
           />
         </PivotItem>
