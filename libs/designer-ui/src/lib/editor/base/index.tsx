@@ -5,15 +5,17 @@ import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
 import DeleteTokenNode from './plugins/DeleteTokenNode';
+import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
+import { ReadOnly } from './plugins/ReadOnly';
 import type { TokenPickerButtonProps } from './plugins/TokenPickerButton';
 import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
 import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
-import { DirectionalHint, TooltipHost } from '@fluentui/react';
+import { css, DirectionalHint, TooltipHost } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -51,7 +53,8 @@ export interface BaseEditorProps {
     editorId: string,
     labelId: string,
     onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
+    tokenClicked?: (token: ValueSegment) => void,
+    hideTokenPicker?: () => void
   ) => JSX.Element;
   onChange?: ChangeHandler;
   onBlur?: () => void;
@@ -82,8 +85,8 @@ export const BaseEditor = ({
   tokenPickerButtonProps,
   isTrigger,
   GetTokenPicker,
-  onBlur,
   onFocus,
+  onBlur,
 }: BaseEditorProps) => {
   const intl = useIntl();
   const editorId = useId('msla-tokenpicker-callout-location');
@@ -91,10 +94,12 @@ export const BaseEditor = ({
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
   const [showTokenPicker, setShowTokenPicker] = useState(true);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
+  const { customButton = false } = tokenPickerButtonProps || {};
+
   const initialConfig = {
     theme: EditorTheme,
+    editable: !readonly,
     onError,
-    readOnly: readonly,
     nodes: [AutoLinkNode, LinkNode, TokenNode],
     namespace: 'editor',
     editorState:
@@ -118,12 +123,13 @@ export const BaseEditor = ({
     setInTokenPicker(false);
     onFocus?.();
   };
+
   const handleBlur = () => {
     if (tokens && !getInTokenPicker()) {
       setInTokenPicker(false);
+      onBlur?.();
     }
     setShowTokenPickerButton(false);
-    onBlur?.();
   };
 
   const handleShowTokenPicker = () => {
@@ -138,11 +144,11 @@ export const BaseEditor = ({
   };
 
   return (
-    <LexicalComposer initialConfig={initialConfig}>
+    <LexicalComposer initialConfig={initialConfig} key={JSON.stringify(initialValue)}>
       <div className={className ?? 'msla-editor-container'} id={editorId}>
         {toolBar ? <Toolbar /> : null}
         <RichTextPlugin
-          contentEditable={<ContentEditable className="editor-input" ariaLabel={editorInputLabel} />}
+          contentEditable={<ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabel={editorInputLabel} />}
           placeholder={<span className="editor-placeholder"> {createPlaceholder(placeholder)} </span>}
         />
         {treeView ? <TreeView /> : null}
@@ -153,6 +159,7 @@ export const BaseEditor = ({
 
         {!isTrigger && ((tokens && showTokenPickerButton) || getInTokenPicker()) ? (
           <TokenPickerButton
+            customButton={customButton}
             labelId={labelId}
             showTokenPicker={showTokenPicker}
             buttonClassName={tokenPickerButtonProps?.buttonClassName}
@@ -161,10 +168,12 @@ export const BaseEditor = ({
           />
         ) : null}
         {!isTrigger && ((showTokenPickerButton && showTokenPicker) || getInTokenPicker())
-          ? GetTokenPicker(editorId, labelId, onClickTokenPicker)
+          ? GetTokenPicker(editorId, labelId, onClickTokenPicker, undefined, customButton ? handleShowTokenPicker : undefined)
           : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
+        <ReadOnly readonly={readonly} />
+        <IgnoreTab />
         {tokens ? <InsertTokenNode /> : null}
         {tokens ? <DeleteTokenNode /> : null}
         {children}

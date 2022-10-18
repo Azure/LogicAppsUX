@@ -15,9 +15,9 @@ import type {
 import { IconButton, TooltipHost, SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { guid } from '@microsoft-logic-apps/utils';
+import { useUpdateEffect } from '@react-hookz/web';
 import { useRef, useState, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useUpdateEffect } from '@react-hookz/web';
 
 enum Mode {
   Default,
