@@ -1,6 +1,6 @@
 import type { SectionProps, TextChangeHandler, ToggleHandler } from '..';
 import constants from '../../../common/constants';
-import type { Settings, SettingSectionProps } from '../settingsection';
+import type { Settings, SettingsSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
 import { useIntl } from 'react-intl';
 
@@ -250,7 +250,7 @@ export const Networking = ({
     };
   };
 
-  const networkingSectionProps: SettingSectionProps = {
+  const networkingSectionProps: SettingsSectionProps = {
     id: 'networking',
     title: networking,
     sectionName: constants.SETTINGSECTIONS.NETWORKING,

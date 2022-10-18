@@ -1,4 +1,5 @@
 import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
+import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import { notEqual } from '../dictionary/plugins/SerializeExpandedDictionary';
 import type { ValueSegment } from '../editor';
@@ -69,7 +70,7 @@ export const Row = ({
   const handleGroup = () => {
     handleUpdateParent(
       {
-        type: 'group',
+        type: GroupType.GROUP,
         checked: false,
         items: groupedItems.map((groupedItem) => {
           return groupedItem.item;
@@ -158,22 +159,31 @@ export const Row = ({
   const handleKeySave = (newState: ChangeState) => {
     if (notEqual(keyValue, newState.value)) {
       setKey(newState.value);
-      handleUpdateParent({ type: 'row', checked: checked, key: newState.value, dropdownVal: dropdownValue, value: valueValue }, index);
+      handleUpdateParent(
+        { type: GroupType.ROW, checked: checked, key: newState.value, dropdownVal: dropdownValue, value: valueValue },
+        index
+      );
     }
   };
 
   const handleSelectedOption = (newState: ChangeState) => {
-    handleUpdateParent({ type: 'row', checked: checked, key: keyValue, dropdownVal: newState.value[0].value, value: valueValue }, index);
+    handleUpdateParent(
+      { type: GroupType.ROW, checked: checked, key: keyValue, dropdownVal: newState.value[0].value, value: valueValue },
+      index
+    );
   };
 
   const handleValueSave = (newState: ChangeState) => {
     if (notEqual(valueValue, newState.value)) {
-      handleUpdateParent({ type: 'row', checked: checked, key: keyValue, dropdownVal: dropdownValue, value: newState.value }, index);
+      handleUpdateParent(
+        { type: GroupType.ROW, checked: checked, key: keyValue, dropdownVal: dropdownValue, value: newState.value },
+        index
+      );
     }
   };
 
   const handleCheckbox = () => {
-    handleUpdateParent({ type: 'row', checked: !checked, key: keyValue, dropdownVal: dropdownValue, value: valueValue }, index);
+    handleUpdateParent({ type: GroupType.ROW, checked: !checked, key: keyValue, dropdownVal: dropdownValue, value: valueValue }, index);
   };
 
   const onRenderOverflowButton = (): JSX.Element => {

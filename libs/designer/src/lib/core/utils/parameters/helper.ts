@@ -1,4 +1,4 @@
-import Constants from '../../../common/constants';
+import constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
@@ -94,12 +94,22 @@ import {
 import type {
   AuthProps,
   DictionaryEditorItemProps,
+  GroupItemProps,
   OutputToken,
   ParameterInfo,
+  RowItemProps,
   Token as SegmentToken,
   ValueSegment,
 } from '@microsoft/designer-ui';
-import { AuthenticationType, ColumnMode, DynamicCallStatus, ValueSegmentType, TokenType } from '@microsoft/designer-ui';
+import {
+  GroupDropdownOptions,
+  GroupType,
+  AuthenticationType,
+  ColumnMode,
+  DynamicCallStatus,
+  ValueSegmentType,
+  TokenType,
+} from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';
@@ -289,22 +299,23 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
   let editorViewModel;
   let schema = inputParameter.schema;
   const { dynamicValues } = inputParameter;
-
   if (
     !type &&
-    inputParameter.type === Constants.SWAGGER.TYPE.ARRAY &&
+    inputParameter.type === constants.SWAGGER.TYPE.ARRAY &&
     !!inputParameter.itemSchema &&
     !equals(inputParameter.visibility, Visibility.Internal)
   ) {
-    type = Constants.EDITOR.ARRAY;
+    type = constants.EDITOR.ARRAY;
     editorViewModel = initializeArrayViewModel(inputParameter, shouldIgnoreDefaultValue);
-    schema = { ...schema, ...{ 'x-ms-editor': Constants.EDITOR.ARRAY } };
-  } else if (type === Constants.EDITOR.DICTIONARY) {
+    schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.ARRAY } };
+  } else if (type === constants.EDITOR.DICTIONARY) {
     editorViewModel = toDictionaryViewModel(inputParameter.value);
-  } else if (type === Constants.EDITOR.TABLE) {
+  } else if (type === constants.EDITOR.TABLE) {
     editorViewModel = toTableViewModel(inputParameter.value, inputParameter.editorOptions);
-  } else if (type === Constants.EDITOR.AUTHENTICATION) {
+  } else if (type === constants.EDITOR.AUTHENTICATION) {
     editorViewModel = toAuthenticationViewModel(inputParameter.value);
+  } else if (type === constants.EDITOR.CONDITION) {
+    editorViewModel = toConditionViewModel(inputParameter);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     type = undefined;
   }
@@ -315,6 +326,47 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
     viewModel: editorViewModel,
     schema,
   };
+}
+
+function toConditionViewModel(parameter: ResolvedParameter): { items: GroupItemProps } {
+  const getSelectedOption = getConditionalSelectedOption(getPreservedValue(parameter));
+  const items: GroupItemProps = {
+    type: GroupType.GROUP,
+    selectedOption: getSelectedOption,
+    items: recurseConditionalItems(getPreservedValue(parameter), getSelectedOption),
+  };
+  return { items };
+}
+
+const getConditionalSelectedOption = (input: any): GroupDropdownOptions | undefined => {
+  if (input?.['and']) {
+    return GroupDropdownOptions.AND;
+  } else if (input?.['or']) {
+    return GroupDropdownOptions.OR;
+  }
+  return undefined;
+};
+
+function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptions): (RowItemProps | GroupItemProps)[] {
+  const output: (RowItemProps | GroupItemProps)[] = [];
+  if (selectedOption) {
+    const items = input[selectedOption];
+    items.forEach((item: any) => {
+      const condition = getConditionalSelectedOption(item);
+      if (!condition) {
+        const dropdownVal = Object.keys(item)[0];
+        output.push({
+          type: GroupType.ROW,
+          dropdownVal: dropdownVal,
+          key: loadParameterValue({ value: item[dropdownVal][0] } as InputParameter),
+          value: loadParameterValue({ value: item[dropdownVal][1] } as InputParameter),
+        });
+      } else {
+        output.push({ type: GroupType.GROUP, selectedOption: condition, items: recurseConditionalItems(item, condition) });
+      }
+    });
+  }
+  return output;
 }
 
 function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[] | undefined } {
@@ -369,8 +421,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             basic: {
-              basicUsername: loadParameterValue({ value: value.username } as any),
-              basicPassword: loadParameterValue({ value: value.password } as any),
+              basicUsername: loadParameterValue({ value: value.username } as InputParameter),
+              basicPassword: loadParameterValue({ value: value.password } as InputParameter),
             },
           },
         };
@@ -379,8 +431,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             clientCertificate: {
-              clientCertificatePfx: loadParameterValue({ value: value.pfx } as any),
-              clientCertificatePassword: loadParameterValue({ value: value.password } as any),
+              clientCertificatePfx: loadParameterValue({ value: value.pfx } as InputParameter),
+              clientCertificatePassword: loadParameterValue({ value: value.password } as InputParameter),
             },
           },
         };
@@ -390,13 +442,12 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             aadOAuth: {
-              oauthAuthority: loadParameterValue({ value: value.authority } as any),
-              oauthTenant: loadParameterValue({ value: value.tenant } as any),
-              oauthAudience: loadParameterValue({ value: value.audience } as any),
-              oauthClientId: loadParameterValue({ value: value.clientId } as any),
-              oauthTypeSecret: loadParameterValue({ value: value.secret } as any),
-              oauthTypeCertificatePfx: loadParameterValue({ value: value.pfx } as any),
-              oauthTypeCertificatePassword: loadParameterValue({ value: value.password } as any),
+              oauthTenant: loadParameterValue({ value: value.tenant } as InputParameter),
+              oauthAudience: loadParameterValue({ value: value.audience } as InputParameter),
+              oauthClientId: loadParameterValue({ value: value.clientId } as InputParameter),
+              oauthTypeSecret: loadParameterValue({ value: value.secret } as InputParameter),
+              oauthTypeCertificatePfx: loadParameterValue({ value: value.pfx } as InputParameter),
+              oauthTypeCertificatePassword: loadParameterValue({ value: value.password } as InputParameter),
             },
           },
         };
@@ -406,7 +457,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             raw: {
-              rawValue: loadParameterValue({ value: value.value } as any),
+              rawValue: loadParameterValue({ value: value.value } as InputParameter),
             },
           },
         };
@@ -416,7 +467,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             msi: {
-              msiAudience: loadParameterValue({ value: value.audience } as any),
+              msiAudience: loadParameterValue({ value: value.audience } as InputParameter),
               msiIdentity: value.identity,
             },
           },
@@ -446,7 +497,7 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
 }
 
 export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
-  const valueObject = parameter.isNotificationUrl ? `@${Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}` : parameter.value;
+  const valueObject = parameter.isNotificationUrl ? `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}` : parameter.value;
 
   // TODO - Might need more parsing for Javascript code editor
   let valueSegments = convertToValueSegments(valueObject, undefined /* repetitionContext */, !parameter.suppressCasting /* shouldUncast */);
@@ -549,7 +600,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
       return `iterationIndexes(${convertToStringLiteral(actionName as string)})`;
 
     case TokenType.ITEM:
-      if (nodeType.toLowerCase() === Constants.NODE.TYPE.FOREACH && key === Constants.FOREACH_CURRENT_ITEM_KEY) {
+      if (nodeType.toLowerCase() === constants.NODE.TYPE.FOREACH && key === constants.FOREACH_CURRENT_ITEM_KEY) {
         return `items(${convertToStringLiteral(actionName as string)})`;
       } else {
         let propertyPath: string;
@@ -574,10 +625,10 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
 
     default:
       method = arrayDetails
-        ? Constants.ITEM
+        ? constants.ITEM
         : actionName
-        ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
-        : Constants.TRIGGER_OUTPUTS_OUTPUT;
+        ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
+        : constants.TRIGGER_OUTPUTS_OUTPUT;
 
       return _generateExpressionFromKey(method, key, actionName, !!arrayDetails);
   }
@@ -630,13 +681,13 @@ export function getTokenExpressionValue(token: SegmentToken, currentValue?: stri
     if (currentValue) {
       return currentValue as string;
     } else {
-      return `${Constants.ITEM}`;
+      return `${constants.ITEM}`;
     }
   } else if (isOutputToken(token)) {
     if (currentValue) {
       return currentValue as string;
     } else {
-      if (name && equals(name, Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME)) {
+      if (name && equals(name, constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME)) {
         return name;
       } else {
         return getNonOpenApiTokenExpressionValue(token);
@@ -675,7 +726,7 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
     if (arrayDetails.loopSource) {
       return `@items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
     } else {
-      return `${Constants.ITEM}${propertyPath}`;
+      return `${constants.ITEM}${propertyPath}`;
     }
   }
 
@@ -687,33 +738,33 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
 
   if (!actionName) {
     if (propertyInQueries) {
-      expressionValue = `${Constants.TRIGGER_QUERIES_OUTPUT}${propertyPath}`;
+      expressionValue = `${constants.TRIGGER_QUERIES_OUTPUT}${propertyPath}`;
     } else if (propertyInHeaders) {
-      expressionValue = `${Constants.TRIGGER_HEADERS_OUTPUT}${propertyPath}`;
+      expressionValue = `${constants.TRIGGER_HEADERS_OUTPUT}${propertyPath}`;
     } else if (propertyInStatusCode) {
-      expressionValue = `${Constants.TRIGGER_OUTPUTS_OUTPUT}['${Constants.OUTPUT_LOCATIONS.STATUS_CODE}']`;
+      expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}['${constants.OUTPUT_LOCATIONS.STATUS_CODE}']`;
     } else if (propertyInOutputs) {
       if (equals(name, OutputKeys.PathParameters) || includes(key, OutputKeys.PathParameters)) {
-        expressionValue = `${Constants.TRIGGER_OUTPUTS_OUTPUT}['${Constants.OUTPUT_LOCATIONS.RELATIVE_PATH_PARAMETERS}']${propertyPath}`;
+        expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}['${constants.OUTPUT_LOCATIONS.RELATIVE_PATH_PARAMETERS}']${propertyPath}`;
       } else {
-        expressionValue = `${Constants.TRIGGER_OUTPUTS_OUTPUT}${propertyPath}`;
+        expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}${propertyPath}`;
       }
     } else {
-      expressionValue = `${Constants.TRIGGER_BODY_OUTPUT}${propertyPath}`;
+      expressionValue = `${constants.TRIGGER_BODY_OUTPUT}${propertyPath}`;
     }
   } else {
     // Note: We escape the characters in step name to convert it to string literal for generating the expression.
     const stepName = convertToStringLiteral(actionName);
     if (propertyInQueries) {
-      expressionValue = `${Constants.OUTPUTS}(${stepName})['${Constants.OUTPUT_LOCATIONS.QUERIES}']${propertyPath}`;
+      expressionValue = `${constants.OUTPUTS}(${stepName})['${constants.OUTPUT_LOCATIONS.QUERIES}']${propertyPath}`;
     } else if (propertyInHeaders) {
-      expressionValue = `${Constants.OUTPUTS}(${stepName})['${Constants.OUTPUT_LOCATIONS.HEADERS}']${propertyPath}`;
+      expressionValue = `${constants.OUTPUTS}(${stepName})['${constants.OUTPUT_LOCATIONS.HEADERS}']${propertyPath}`;
     } else if (propertyInStatusCode) {
-      expressionValue = `${Constants.OUTPUTS}(${stepName})['${Constants.OUTPUT_LOCATIONS.STATUS_CODE}']`;
+      expressionValue = `${constants.OUTPUTS}(${stepName})['${constants.OUTPUT_LOCATIONS.STATUS_CODE}']`;
     } else if (propertyInOutputs) {
-      expressionValue = `${Constants.OUTPUTS}(${stepName})${propertyPath}`;
+      expressionValue = `${constants.OUTPUTS}(${stepName})${propertyPath}`;
     } else {
-      expressionValue = `${Constants.OUTPUT_LOCATIONS.BODY}(${stepName})${propertyPath}`;
+      expressionValue = `${constants.OUTPUT_LOCATIONS.BODY}(${stepName})${propertyPath}`;
     }
   }
 
@@ -737,7 +788,7 @@ export function convertPathToBracketsFormat(path: string, optional: boolean): st
 
 function getPreservedValue(parameter: InputParameter): any {
   return shouldUseCsvValue(parameter) && Array.isArray(parameter.value)
-    ? parameter.value.join(Constants.RECURRENCE_TITLE_JOIN_SEPARATOR)
+    ? parameter.value.join(constants.RECURRENCE_TITLE_JOIN_SEPARATOR)
     : parameter.value;
 }
 
@@ -830,7 +881,7 @@ export function updateParameterWithValues(
                   const restInputParameter: ResolvedParameter = {
                     key: createEx(childKeySegments) as string,
                     name: restPropertyName,
-                    type: Constants.SWAGGER.TYPE.ANY,
+                    type: constants.SWAGGER.TYPE.ANY,
                     in: parameterLocation,
                     required: false,
                     isUnknown: true,
@@ -860,7 +911,7 @@ export function updateParameterWithValues(
               inputParameter = {
                 key: parameterKey,
                 name,
-                type: Constants.SWAGGER.TYPE.OBJECT,
+                type: constants.SWAGGER.TYPE.OBJECT,
                 summary,
                 in: parameterLocation,
                 required,
@@ -884,7 +935,7 @@ export function updateParameterWithValues(
           if (
             lastSegment.value === '$' &&
             lastSegment.type === SegmentType.Property &&
-            typeof clonedParameterValue === Constants.SWAGGER.TYPE.OBJECT &&
+            typeof clonedParameterValue === constants.SWAGGER.TYPE.OBJECT &&
             Object.keys(clonedParameterValue).length > 0
           ) {
             // expand the object
@@ -892,7 +943,7 @@ export function updateParameterWithValues(
               const childInputParameter = {
                 key: createEx([...segments, { type: SegmentType.Property, value: propertyName }]) as string,
                 name: propertyName,
-                type: Constants.SWAGGER.TYPE.ANY,
+                type: constants.SWAGGER.TYPE.ANY,
                 in: parameterLocation,
                 required: false,
               };
@@ -903,7 +954,7 @@ export function updateParameterWithValues(
             inputParameter = {
               key: parameterKey,
               name: lastSegment.value as string,
-              type: Constants.SWAGGER.TYPE.ANY,
+              type: constants.SWAGGER.TYPE.ANY,
               in: parameterLocation,
               required: false,
             };
@@ -1061,7 +1112,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
     }
   } else if (typeof value !== 'object') {
     return false;
-  } else if (!isArray && !Array.isArray(value) && schema.type === Constants.SWAGGER.TYPE.OBJECT && schema.properties === undefined) {
+  } else if (!isArray && !Array.isArray(value) && schema.type === constants.SWAGGER.TYPE.OBJECT && schema.properties === undefined) {
     // NOTE: for schema.additionalProperties as boolean value case, it just ignore the checking and return true.
     if (schema.additionalProperties && schema.additionalProperties.type) {
       return Object.keys(value).every(
@@ -1079,7 +1130,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
   const schemaProcessorOptions: SchemaProcessorOptions = {
     isInputSchema: true,
     expandArrayOutputs: true,
-    expandArrayOutputsDepth: Constants.MAX_EXPAND_ARRAY_DEPTH,
+    expandArrayOutputsDepth: constants.MAX_EXPAND_ARRAY_DEPTH,
     excludeAdvanced: false,
     excludeInternal: false,
   };
@@ -1087,14 +1138,14 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
   let inputs: SchemaProperty[];
   const schemaWithEscapedProperties = { ...schema };
 
-  if (schema.type === Constants.SWAGGER.TYPE.ARRAY) {
+  if (schema.type === constants.SWAGGER.TYPE.ARRAY) {
     if (schema.itemSchema && schema.itemSchema.properties) {
       schemaWithEscapedProperties.itemSchema = {
         ...schemaWithEscapedProperties.itemSchema,
         properties: escapeSchemaProperties(schema.itemSchema.properties),
       };
     }
-  } else if (schema.type === Constants.SWAGGER.TYPE.OBJECT && schema.properties) {
+  } else if (schema.type === constants.SWAGGER.TYPE.OBJECT && schema.properties) {
     schemaWithEscapedProperties.properties = { ...escapeSchemaProperties(schema.properties) };
   }
 
@@ -1120,7 +1171,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
     { type: SegmentType.Property, value: DefaultKeyPrefix },
     { type: SegmentType.Index, value: undefined },
   ]);
-  if (schema.type === Constants.SWAGGER.TYPE.ARRAY) {
+  if (schema.type === constants.SWAGGER.TYPE.ARRAY) {
     itemInput = first((item) => item.key === rootItemKey, inputs);
   }
 
@@ -1128,8 +1179,8 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
     // if itemValue is referring to primitive array
     if (
       itemInput &&
-      itemInput.type !== Constants.SWAGGER.TYPE.ARRAY &&
-      itemInput.type !== Constants.SWAGGER.TYPE.OBJECT &&
+      itemInput.type !== constants.SWAGGER.TYPE.ARRAY &&
+      itemInput.type !== constants.SWAGGER.TYPE.OBJECT &&
       !shallowArrayCheck
     ) {
       isCompatible =
@@ -1144,7 +1195,7 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
       for (const valueKey of valueKeys) {
         const propertyValue = itemValue[valueKey];
         const propertySchema =
-          schema.type === Constants.SWAGGER.TYPE.ARRAY ? schema.items : schema['properties'] && schema['properties'][valueKey];
+          schema.type === constants.SWAGGER.TYPE.ARRAY ? schema.items : schema['properties'] && schema['properties'][valueKey];
         // NOTE: if the property value is array or object, check the value/schema compatibility recursively
         if (Array.isArray(propertyValue) && !shallowArrayCheck) {
           if (
@@ -1463,7 +1514,7 @@ export function isDynamicDataReadyToLoad({ dependentParameters }: DependencyInfo
 function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefinitionValue: boolean): string | undefined {
   const { editor, editorOptions, editorViewModel } = parameter;
   switch (editor?.toLowerCase()) {
-    case Constants.EDITOR.TABLE:
+    case constants.EDITOR.TABLE:
       if (editorViewModel?.columnMode === ColumnMode.Custom && editorOptions?.columns) {
         const { keys, types } = editorOptions.columns;
         const value: any = [];
@@ -1658,12 +1709,12 @@ export function updateTokenMetadata(
   if (!nodeOutputInfo) {
     if (!name) {
       token.title = 'Body';
-    } else if (equals(nodeType, Constants.NODE.TYPE.COMPOSE)) {
+    } else if (equals(nodeType, constants.NODE.TYPE.COMPOSE)) {
       token.title = 'Outputs';
     } else if (token.tokenType === TokenType.ITEM) {
       // TODO: Remove this and other parts in this method when the Feature flag (foreach tokens) is removed.
       token.title = 'Current item';
-      token.type = Constants.SWAGGER.TYPE.ANY;
+      token.type = constants.SWAGGER.TYPE.ANY;
     } else {
       token.title = getTitleFromTokenName(name, '');
     }
@@ -1720,7 +1771,7 @@ export function getExpressionTokenTitle(expression: Expression): string {
 function getOutputByTokenInfo(
   nodeOutputs: OutputInfo[],
   tokenInfo: SegmentToken,
-  type = Constants.SWAGGER.TYPE.ANY
+  type = constants.SWAGGER.TYPE.ANY
 ): OutputInfo | undefined {
   const { name, arrayDetails } = tokenInfo;
 
@@ -1728,7 +1779,7 @@ function getOutputByTokenInfo(
     return undefined;
   }
 
-  const supportedTypes: string[] = getPropertyValue(Constants.TOKENS, type);
+  const supportedTypes: string[] = getPropertyValue(constants.TOKENS, type);
   const allOutputs = supportedTypes.map((supportedType) => getOutputsByType(nodeOutputs, supportedType));
   const outputs = aggregate(allOutputs);
 
@@ -1756,8 +1807,8 @@ function getOutputByTokenInfo(
   return undefined;
 }
 
-function getOutputsByType(allOutputs: OutputInfo[], type = Constants.SWAGGER.TYPE.ANY): OutputInfo[] {
-  if (type === Constants.SWAGGER.TYPE.ANY || type === Constants.SWAGGER.TYPE.OBJECT) {
+function getOutputsByType(allOutputs: OutputInfo[], type = constants.SWAGGER.TYPE.ANY): OutputInfo[] {
+  if (type === constants.SWAGGER.TYPE.ANY || type === constants.SWAGGER.TYPE.OBJECT) {
     return allOutputs;
   }
 
@@ -1828,7 +1879,7 @@ export function getRepetitionValue(manifest: OperationManifest, nodeInputs: Para
 export function getInterpolatedExpression(expression: string, parameterType: string, parameterFormat: string): string {
   if (isUndefinedOrEmptyString(expression)) {
     return expression;
-  } else if (parameterType === Constants.SWAGGER.TYPE.STRING && parameterFormat !== Constants.SWAGGER.FORMAT.BINARY) {
+  } else if (parameterType === constants.SWAGGER.TYPE.STRING && parameterFormat !== constants.SWAGGER.FORMAT.BINARY) {
     return `@{${expression}}`;
   } else {
     return `@${expression}`;
@@ -1877,8 +1928,8 @@ export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitio
   }
 
   if (
-    parameterType === Constants.SWAGGER.TYPE.OBJECT ||
-    parameterType === Constants.SWAGGER.TYPE.ARRAY ||
+    parameterType === constants.SWAGGER.TYPE.OBJECT ||
+    parameterType === constants.SWAGGER.TYPE.ARRAY ||
     (parameter.schema && parameter.schema['oneOf'])
   ) {
     return parameterValueToJSONString(value, /* applyCasting */ !parameterSuppressesCasting);
@@ -1905,7 +1956,7 @@ export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitio
       let expressionValue = segment.value;
       if (isTokenValueSegment(segment)) {
         if (shouldInterpolate) {
-          expressionValue = parameterType === Constants.SWAGGER.TYPE.STRING ? `@{${expressionValue}}` : `@${expressionValue}`;
+          expressionValue = parameterType === constants.SWAGGER.TYPE.STRING ? `@{${expressionValue}}` : `@${expressionValue}`;
         } else {
           if (!isUndefinedOrEmptyString(expressionValue)) {
             // Note: Token segment should be auto casted using interpolation if token type is
@@ -1948,7 +1999,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
             '',
             tokenExpression,
             expression.token?.type,
-            Constants.SWAGGER.TYPE.STRING
+            constants.SWAGGER.TYPE.STRING
           );
         }
 
@@ -1993,7 +2044,7 @@ export function getJSONValueFromString(value: any, type: string): any {
   if (canParse) {
     try {
       // The value is already a string. If the type is also a string, don't do any parsing
-      if (type !== Constants.SWAGGER.TYPE.STRING) {
+      if (type !== constants.SWAGGER.TYPE.STRING) {
         parameterValue = JSON.parse(value);
       } else {
         parameterValue = value;
@@ -2073,9 +2124,9 @@ function requiresCast(
     return false;
   }
 
-  const castFormats = [Constants.SWAGGER.FORMAT.BINARY, Constants.SWAGGER.FORMAT.BYTE, Constants.SWAGGER.FORMAT.DATAURI];
+  const castFormats = [constants.SWAGGER.FORMAT.BINARY, constants.SWAGGER.FORMAT.BYTE, constants.SWAGGER.FORMAT.DATAURI];
 
-  if (castFormats.indexOf(parameterFormat) > -1 || parameterType === Constants.SWAGGER.TYPE.FILE) {
+  if (castFormats.indexOf(parameterFormat) > -1 || parameterType === constants.SWAGGER.TYPE.FILE) {
     if (parameterValue.length === 1) {
       const firstValueSegment = parameterValue[0];
       if (isFunctionValueSegment(firstValueSegment)) {
@@ -2083,7 +2134,7 @@ function requiresCast(
       }
 
       return !(
-        (parameterFormat === Constants.SWAGGER.FORMAT.BINARY || parameterType === Constants.SWAGGER.TYPE.FILE) &&
+        (parameterFormat === constants.SWAGGER.FORMAT.BINARY || parameterType === constants.SWAGGER.TYPE.FILE) &&
         isLiteralValueSegment(firstValueSegment)
       );
     }
@@ -2092,11 +2143,11 @@ function requiresCast(
   } else if (parameterValue.length === 1) {
     const { token } = parameterValue[0];
     return (
-      parameterType === Constants.SWAGGER.TYPE.STRING &&
+      parameterType === constants.SWAGGER.TYPE.STRING &&
       !parameterFormat &&
       isOutputTokenValueSegment(parameterValue[0]) &&
-      token?.type === Constants.SWAGGER.TYPE.STRING &&
-      token?.format === Constants.SWAGGER.FORMAT.BINARY
+      token?.type === constants.SWAGGER.TYPE.STRING &&
+      token?.format === constants.SWAGGER.FORMAT.BINARY
     );
   }
 
@@ -2106,15 +2157,15 @@ function requiresCast(
 function getInferredParameterType(value: ValueSegment[], type: string): string {
   let parameterType = type;
 
-  if (type === Constants.SWAGGER.TYPE.ANY || type === undefined) {
+  if (type === constants.SWAGGER.TYPE.ANY || type === undefined) {
     const stringValueWithoutCasting = parameterValueToStringWithoutCasting(value);
     if (isValidJSONObjectFormat(stringValueWithoutCasting)) {
-      parameterType = Constants.SWAGGER.TYPE.OBJECT;
+      parameterType = constants.SWAGGER.TYPE.OBJECT;
     } else if (isValidJSONArrayFormat(stringValueWithoutCasting)) {
-      parameterType = Constants.SWAGGER.TYPE.ARRAY;
+      parameterType = constants.SWAGGER.TYPE.ARRAY;
     } else if (value.length > 1) {
       // This is the case when there are mix of tokens
-      parameterType = Constants.SWAGGER.TYPE.STRING;
+      parameterType = constants.SWAGGER.TYPE.STRING;
     }
   }
 
@@ -2123,7 +2174,7 @@ function getInferredParameterType(value: ValueSegment[], type: string): string {
 
 function fold(expressions: string[], type: string): string | undefined {
   if (expressions.length === 0) {
-    return type === Constants.SWAGGER.TYPE.STRING ? '' : undefined;
+    return type === constants.SWAGGER.TYPE.STRING ? '' : undefined;
   } else {
     return expressions.join(',');
   }

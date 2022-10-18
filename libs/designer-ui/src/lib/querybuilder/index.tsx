@@ -13,15 +13,19 @@ export interface GroupedItems {
 
 type GroupItems = GroupItemProps | RowItemProps;
 
+export enum GroupType {
+  ROW = 'row',
+  GROUP = 'group',
+}
 export interface RowItemProps {
-  type: 'row';
+  type: GroupType.ROW;
   checked?: boolean;
   key?: ValueSegment[];
   dropdownVal?: string;
   value?: ValueSegment[];
 }
 export interface GroupItemProps {
-  type: 'group';
+  type: GroupType.GROUP;
   checked?: boolean;
   selectedOption?: GroupDropdownOptions;
   items: GroupItems[];
@@ -86,7 +90,7 @@ const checkHeights = (item: GroupItemProps | RowItemProps, returnVal: number[], 
   if (item.checked) {
     returnVal.push(height);
   }
-  if (item.type === 'group') {
+  if (item.type === GroupType.GROUP) {
     item.items.map((childItem) => checkHeights(childItem, returnVal, height + 1));
   }
   return returnVal;
@@ -96,7 +100,7 @@ const getGroupedItems = (item: GroupItemProps | RowItemProps, returnVal: Grouped
   if (item.checked) {
     returnVal.push({ item: { ...item, checked: false }, index: index });
   }
-  if (item.type === 'group') {
+  if (item.type === GroupType.GROUP) {
     item.items.map((childItem, index) => getGroupedItems(childItem, returnVal, index));
   }
   return returnVal;

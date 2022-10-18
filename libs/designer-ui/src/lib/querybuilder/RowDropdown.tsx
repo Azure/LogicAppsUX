@@ -13,7 +13,7 @@ interface RowDropdownProps {
 const items: DropdownItem[] = [
   { key: 'contains', displayName: 'contains', value: 'contains' },
   { key: 'doesnotcontain', displayName: '!contain', value: 'not contain' },
-  { key: 'isequalto', displayName: '=', value: 'isequalto' },
+  { key: 'equals', displayName: '=', value: 'equals' },
   { key: 'isnotequalto', displayName: '!=', value: 'isnotequalto' },
   { key: 'isgreaterthan', displayName: '>', value: 'isgreaterthan' },
   { key: 'isgreaterthanorequal', displayName: '>=', value: 'isgreaterthanorequal' },

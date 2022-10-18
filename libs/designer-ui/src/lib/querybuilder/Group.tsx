@@ -1,4 +1,5 @@
 import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
+import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import type { ValueSegment } from '../editor';
 import type { ChangeState } from '../editor/base';
@@ -75,7 +76,7 @@ export const Group = ({
   const handleGroup = () => {
     handleUpdateParent(
       {
-        type: 'group',
+        type: GroupType.GROUP,
         checked: false,
         items: groupedItems.map((groupedItem) => {
           return groupedItem.item;
@@ -91,7 +92,7 @@ export const Group = ({
   const handleUngroup = (indexToAddAt: number, items: (GroupItemProps | RowItemProps)[]) => {
     let itemsToInsert = items;
     if (items.length === 0) {
-      itemsToInsert = [{ type: 'row' }];
+      itemsToInsert = [{ type: GroupType.ROW }];
     }
     const newItems = { ...groupProps };
     newItems.items.splice(indexToAddAt, 1, ...itemsToInsert);
@@ -180,7 +181,7 @@ export const Group = ({
   ];
 
   const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, currIndex: number) => {
-    const newItems = { ...groupProps };
+    const newItems = { ...groupProps, items: [...groupProps.items] };
     newItems.items[currIndex] = newState;
     handleUpdateParent(newItems, index);
   };
@@ -274,9 +275,9 @@ export const Group = ({
             <div className="msla-querybuilder-row-section">
               <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} key={groupProps.selectedOption} />
               {groupProps.items.map((item, currIndex) => {
-                return item.type === 'row' ? (
+                return item.type === GroupType.ROW ? (
                   <Row
-                    key={`row ${currIndex}`}
+                    key={`${GroupType.ROW} ${currIndex}`}
                     checked={item.checked}
                     keyValue={item.key}
                     dropdownValue={item.dropdownVal}
@@ -294,9 +295,9 @@ export const Group = ({
                   />
                 ) : (
                   <Group
-                    key={`group ${currIndex}`}
+                    key={`${GroupType.GROUP} ${currIndex}`}
                     groupProps={{
-                      type: 'group',
+                      type: GroupType.GROUP,
                       items: item.items,
                       selectedOption: item.selectedOption,
                       checked: item.checked,

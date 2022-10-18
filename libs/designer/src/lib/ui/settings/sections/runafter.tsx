@@ -4,7 +4,7 @@ import type { AppDispatch, RootState } from '../../../core';
 import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
 import { type ValidationError, ValidationWarningKeys } from '../../../core/state/settingSlice';
 import { addEdgeFromRunAfter, removeEdgeFromRunAfter, updateRunAfter } from '../../../core/state/workflow/workflowSlice';
-import type { SettingSectionProps } from '../settingsection';
+import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
 import { useState } from 'react';
@@ -103,7 +103,7 @@ export const RunAfter = ({ runAfter, readOnly = false, expanded, onHeaderClick, 
     return items;
   };
 
-  const runAfterSectionProps: SettingSectionProps = {
+  const runAfterSectionProps: SettingsSectionProps = {
     id: 'runAfter',
     title: runAfterTitle,
     sectionName: constants.SETTINGSECTIONS.RUNAFTER,

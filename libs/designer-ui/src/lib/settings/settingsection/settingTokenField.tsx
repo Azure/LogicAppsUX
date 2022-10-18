@@ -8,6 +8,7 @@ import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, ChangeHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
+import { QueryBuilderEditor } from '../../querybuilder';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
@@ -166,6 +167,8 @@ const TokenField = ({
         />
       );
 
+    case 'condition':
+      return <QueryBuilderEditor GetTokenPicker={GetTokenPicker} groupProps={editorViewModel.items} />;
     default:
       return (
         <StringEditor
