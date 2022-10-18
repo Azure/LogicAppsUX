@@ -3,6 +3,7 @@ import { testDataMap } from '../../core/queries/datamap';
 import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Text } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
+import type { MonacoProps } from '@microsoft/designer-ui';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -12,6 +13,13 @@ enum PanelPivotItems {
   Input = 'input',
   Output = 'output',
 }
+
+const commonCodeEditorProps: Partial<MonacoProps> = {
+  lineNumbers: 'on',
+  scrollbar: { horizontal: 'hidden', vertical: 'auto' },
+  height: '650px',
+  wordWrap: 'on',
+};
 
 const headerTextStyle: React.CSSProperties = {
   display: 'block',
@@ -159,11 +167,8 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
             language={EditorLanguage.xml}
             value={testMapInput}
             onContentChanged={(e) => setTestMapInput(e.value)}
-            lineNumbers="on"
-            scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
             className={styles.editorStyle}
-            height={`650px`}
-            wordWrap="on"
+            {...commonCodeEditorProps}
           />
         </PivotItem>
 
@@ -175,11 +180,8 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
           <MonacoEditor
             language={EditorLanguage.xml}
             value={testMapResponse?.outputInstance?.$content ?? ''}
-            lineNumbers="on"
-            scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
             className={styles.editorStyle}
-            height={`650px`}
-            wordWrap="on"
+            {...commonCodeEditorProps}
             readOnly
           />
         </PivotItem>
