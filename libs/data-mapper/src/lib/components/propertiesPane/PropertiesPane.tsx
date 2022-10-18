@@ -69,7 +69,7 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
   const [currentNode, setCurrentNode] = useState<SchemaNodeExtended | FunctionData | undefined>(undefined);
-  const [tabToDisplay, setTabToDisplay] = useState<PropertiesPaneTabs | undefined>(PropertiesPaneTabs.Properties);
+  const [tabToDisplay, setTabToDisplay] = useState<PropertiesPaneTabs>(PropertiesPaneTabs.Properties);
   const [initialDragYPos, setInitialDragYPos] = useState<number | undefined>(undefined);
   const [initialDragHeight, setInitialDragHeight] = useState<number | undefined>(undefined);
 
@@ -195,14 +195,8 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
   }, [selectedItemKey, sourceSchemaDictionary, targetSchemaDictionary]);
 
   useEffect(() => {
-    // Set tab to first one anytime this panel displays a new item
-    if (currentNode) {
-      setTabToDisplay(PropertiesPaneTabs.Properties);
-      setIsExpanded(true);
-    } else {
-      setTabToDisplay(undefined);
-      setIsExpanded(false);
-    }
+    setTabToDisplay(PropertiesPaneTabs.Properties);
+    setIsExpanded(!!currentNode);
   }, [currentNode, setIsExpanded]);
 
   return (
