@@ -19,15 +19,17 @@ import { useDispatch, useSelector } from 'react-redux';
 const customValueOptionKey = 'customValue';
 const customValueDebounceDelay = 300;
 
-export type InputOptions = {
-  [key: string]: {
-    nodeKey: string;
-    nodeName: string;
-    isFunctionNode?: boolean;
-  }[];
+interface InputOption {
+  nodeKey: string;
+  nodeName: string;
+  isFunctionNode?: boolean;
+}
+
+type InputOptionDictionary = {
+  [key: string]: InputOption[];
 };
 
-export interface InputOptionData {
+interface InputOptionData {
   isFunction: boolean;
 }
 
@@ -159,8 +161,8 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
 
-  const typeSortedInputOptions = useMemo<InputOptions>(() => {
-    const newPossibleInputOptionsDictionary = {} as InputOptions;
+  const typeSortedInputOptions = useMemo<InputOptionDictionary>(() => {
+    const newPossibleInputOptionsDictionary = {} as InputOptionDictionary;
 
     currentSourceNodes.forEach((srcNode) => {
       if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
@@ -190,66 +192,40 @@ export const InputDropdown = (props: InputDropdownProps) => {
   }, [currentSourceNodes, functionNodeDictionary]);
 
   const typeMatchedInputOptions = useMemo<IDropdownOption<InputOptionData>[] | undefined>(() => {
-    const newInputOptions: IDropdownOption<InputOptionData>[] = [];
+    let newInputOptions: IDropdownOption<InputOptionData>[] = [];
+
+    const addTypeMatchedOptions = (typeEntryArray: InputOption[]) => {
+      newInputOptions = [
+        ...newInputOptions,
+        ...typeEntryArray.map<IDropdownOption<InputOptionData>>((possibleOption) => ({
+          key: possibleOption.nodeKey,
+          text: possibleOption.nodeName,
+          data: {
+            isFunction: !!possibleOption.isFunctionNode,
+          },
+        })),
+      ];
+    };
+
+    const addAllOptions = () => {
+      Object.values(typeSortedInputOptions).forEach((typeEntryArray) => {
+        addTypeMatchedOptions(typeEntryArray);
+      });
+    };
+
+    const handleAnyOrSpecificType = (type: NormalizedDataType) => {
+      if (type === NormalizedDataType.Any) {
+        addAllOptions();
+      } else if (typeSortedInputOptions[type]) {
+        // If not type Any, check if any possible input options were found/compiled for provided type
+        addTypeMatchedOptions(typeSortedInputOptions[type]);
+      }
+    };
 
     if (isFunctionData(currentNode)) {
-      currentNode.inputs[inputIndex].allowedTypes.forEach((type) => {
-        if (type === NormalizedDataType.Any) {
-          Object.values(typeSortedInputOptions).forEach((typeEntry) => {
-            typeEntry.forEach((possibleOption) => {
-              newInputOptions.push({
-                key: possibleOption.nodeKey,
-                text: possibleOption.nodeName,
-                data: {
-                  isFunction: !!possibleOption.isFunctionNode,
-                },
-              });
-            });
-          });
-        } else {
-          if (!typeSortedInputOptions[type]) {
-            return;
-          }
-
-          typeSortedInputOptions[type].forEach((possibleOption) => {
-            newInputOptions.push({
-              key: possibleOption.nodeKey,
-              text: possibleOption.nodeName,
-              data: {
-                isFunction: !!possibleOption.isFunctionNode,
-              },
-            });
-          });
-        }
-      });
+      currentNode.inputs[inputIndex].allowedTypes.forEach(handleAnyOrSpecificType);
     } else {
-      if (currentNode.normalizedDataType === NormalizedDataType.Any) {
-        Object.values(typeSortedInputOptions).forEach((typeEntry) => {
-          typeEntry.forEach((possibleOption) => {
-            newInputOptions.push({
-              key: possibleOption.nodeKey,
-              text: possibleOption.nodeName,
-              data: {
-                isFunction: !!possibleOption.isFunctionNode,
-              },
-            });
-          });
-        });
-      } else {
-        if (!typeSortedInputOptions[currentNode.normalizedDataType]) {
-          return;
-        }
-
-        typeSortedInputOptions[currentNode.normalizedDataType].forEach((possibleOption) => {
-          newInputOptions.push({
-            key: possibleOption.nodeKey,
-            text: possibleOption.nodeName,
-            data: {
-              isFunction: !!possibleOption.isFunctionNode,
-            },
-          });
-        });
-      }
+      handleAnyOrSpecificType(currentNode.normalizedDataType);
     }
 
     return newInputOptions;
