@@ -1379,6 +1379,12 @@
       "value": "State type:"
     }
   ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
+    }
+  ],
   "BuYrD3": [
     {
       "type": 0,
@@ -1521,6 +1527,12 @@
     {
       "type": 0,
       "value": "Response"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1771,6 +1783,12 @@
     {
       "type": 0,
       "value": "Returns true if the parameters are false"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2519,6 +2537,12 @@
     {
       "type": 0,
       "value": "Returns the results from the top-level actions in the specified scoped action, such as a For_each, Until, or Scope action."
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -3715,6 +3739,12 @@
       "value": "Actions"
     }
   ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
+    }
+  ],
   "bIyTi7": [
     {
       "type": 0,
@@ -4751,6 +4781,12 @@
     {
       "type": 0,
       "value": "Back"
+    }
+  ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
     }
   ],
   "lcVG4C": [
@@ -5917,6 +5953,12 @@
       "value": "Returns a string representation of a URI encoded string"
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6011,6 +6053,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [
