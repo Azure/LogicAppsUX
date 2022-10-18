@@ -2,7 +2,7 @@ import type { NotificationData } from '../../components/notification/Notificatio
 import { NotificationTypes } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperties, SchemaTypes } from '../../models';
-import type { ConnectionDictionary } from '../../models/Connection';
+import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import {
   addNodeToConnections,
@@ -10,6 +10,7 @@ import {
   flattenInputs,
   isConnectionUnit,
   isCustomValue,
+  updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
 import {
   addReactFlowPrefix,
@@ -20,7 +21,6 @@ import {
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { WritableDraft } from 'immer/dist/internal';
 
 export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
@@ -73,6 +73,12 @@ export interface ConnectionAction {
 
   reactFlowSource: string;
   reactFlowDestination: string;
+}
+
+export interface UpdateConnectionInputAction {
+  targetNode: SchemaNodeExtended | FunctionData;
+  inputIndex: number;
+  value: InputConnection | undefined;
 }
 
 export interface DeleteConnectionAction {
@@ -308,11 +314,30 @@ export const dataMapSlice = createSlice({
       };
 
       addConnection(newState.dataMapConnections, action.payload);
-      addParentConnectionForRepeatingNode(newState, action.payload, state);
+
+      // Add any repeating parent nodes as well
+      const parentTargetNode = newState.currentTargetNode;
+      const sourceNode = action.payload.source;
+      if (parentTargetNode && parentTargetNode.properties === SchemaNodeProperties.Repeating && isSchemaNodeExtended(sourceNode)) {
+        if (sourceNode.parentKey) {
+          const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaTypes.Source);
+          const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
+          if (parentSourceNode.properties === SchemaNodeProperties.Repeating) {
+            if (!newState.currentSourceNodes.find((node) => node.key === parentSourceNode.key)) {
+              newState.currentSourceNodes.push(parentSourceNode);
+            }
+
+            const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaTypes.Target);
+            addNodeToConnections(newState.dataMapConnections, parentSourceNode, prefixedSourceKey, parentTargetNode, prefixedTargetKey);
+            state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+          }
+        }
+      }
 
       doDataMapOperation(state, newState);
     },
 
+    // NOTE: Specifically for dragging existing connection to a new target
     changeConnection: (state, action: PayloadAction<ConnectionAction & DeleteConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -321,6 +346,18 @@ export const dataMapSlice = createSlice({
 
       deleteConnectionFromConnections(newState.dataMapConnections, action.payload.inputKey, action.payload.connectionKey);
       addConnection(newState.dataMapConnections, action.payload);
+
+      doDataMapOperation(state, newState);
+    },
+
+    updateConnectionInput: (state, action: PayloadAction<UpdateConnectionInputAction>) => {
+      const newState: DataMapOperationState = {
+        ...state.curDataMapOperation,
+        dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+      };
+
+      updateConnectionInputValue(newState.dataMapConnections, action.payload);
+
       doDataMapOperation(state, newState);
     },
 
@@ -400,6 +437,7 @@ export const {
   addFunctionNode,
   makeConnection,
   changeConnection,
+  updateConnectionInput,
   deleteConnection,
   undoDataMapOperation,
   redoDataMapOperation,
@@ -464,38 +502,4 @@ export const deleteConnectionFromConnections = (connections: ConnectionDictionar
         isConnectionUnit(inputEntry) ? inputEntry.reactFlowKey !== inputKey : true
       ))
   );
-};
-
-const addParentConnectionForRepeatingNode = (
-  mapState: DataMapOperationState,
-  nodes: ConnectionAction,
-  state: WritableDraft<DataMapState>
-): void => {
-  const targetParentNode = mapState.currentTargetNode;
-  const source = nodes.source;
-  if (targetParentNode) {
-    if (targetParentNode.properties === SchemaNodeProperties.Repeating && isSchemaNodeExtended(source)) {
-      source.pathToRoot.forEach((parentKey) => {
-        const sourceParent = mapState.flattenedSourceSchema[addReactFlowPrefix(parentKey.key, SchemaTypes.Source)];
-
-        if (sourceParent.properties === SchemaNodeProperties.Repeating) {
-          if (mapState.currentSourceNodes.find((node) => node.key !== sourceParent.key)) {
-            mapState.currentSourceNodes.push(sourceParent);
-          }
-
-          const prefixedTargetKey = addReactFlowPrefix(targetParentNode.key, SchemaTypes.Target);
-          if (!mapState.dataMapConnections[prefixedTargetKey]) {
-            addNodeToConnections(
-              mapState.dataMapConnections,
-              sourceParent,
-              addReactFlowPrefix(sourceParent.key, SchemaTypes.Source),
-              targetParentNode,
-              prefixedTargetKey
-            );
-            state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
-          }
-        }
-      });
-    }
-  }
 };

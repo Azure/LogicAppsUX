@@ -74,7 +74,7 @@ export default function TokenPickerButton({
       onMouseDown={(e) => e.preventDefault()}
       style={
         customButton
-          ? { bottom: '-2px', right: '-5px' }
+          ? { bottom: '-1px', right: '-5px' }
           : { top: `${buttonOffset?.heightOffset}px`, right: `${buttonOffset?.widthOffset}px` }
       }
     >

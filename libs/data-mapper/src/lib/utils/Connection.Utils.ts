@@ -1,9 +1,11 @@
 /* eslint-disable no-param-reassign */
+import type { UpdateConnectionInputAction } from '../core/state/DataMapSlice';
 import type { SchemaNodeDataType, SchemaNodeExtended } from '../models';
 import { NormalizedDataType } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionInput } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
+import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 
 export const createConnectionEntryIfNeeded = (
@@ -70,6 +72,45 @@ export const addNodeToConnections = (
     createConnectionEntryIfNeeded(connections, sourceNode, sourceReactFlowKey);
     connections[sourceReactFlowKey].outputs.push({ node: self, reactFlowKey: selfReactFlowKey });
     connections[sourceReactFlowKey].outputs = connections[sourceReactFlowKey].outputs.filter(onlyUniqueConnections);
+  }
+};
+
+// TODO: Need isUnboundedFlag or something - all values for the unbounded input will be in inputs[0]'s array
+export const updateConnectionInputValue = (
+  connections: ConnectionDictionary,
+  { targetNode, inputIndex, value }: UpdateConnectionInputAction
+) => {
+  const targetNodeReactFlowKey = isFunctionData(targetNode) ? targetNode.key : addTargetReactFlowPrefix(targetNode.key);
+
+  // Verify if old value was a ConnectionUnit, and if so, remove it from source's outputs[]
+  let connection = connections[targetNodeReactFlowKey];
+  if (connection?.inputs && connection.inputs[inputIndex].length > 0) {
+    // TODO: Unbounded inputs
+
+    const inputConnection = connection.inputs[inputIndex][0];
+    if (isConnectionUnit(inputConnection)) {
+      connections[inputConnection.reactFlowKey].outputs = connections[inputConnection.reactFlowKey].outputs.filter(
+        (output) => output.reactFlowKey !== targetNodeReactFlowKey
+      );
+    }
+  }
+
+  createConnectionEntryIfNeeded(connections, targetNode, targetNodeReactFlowKey);
+  connection = connections[targetNodeReactFlowKey];
+
+  // NOTE: Explicit undefined check to account for empty custom values ('')
+  if (value === undefined) {
+    connection.inputs[inputIndex] = [];
+  } else {
+    // TODO: Unbounded inputs
+
+    connection.inputs[inputIndex][0] = value;
+
+    // Only need to update/add value to source's outputs[] if it's a ConnectionUnit
+    if (isConnectionUnit(value)) {
+      createConnectionEntryIfNeeded(connections, value.node, value.reactFlowKey);
+      connections[value.reactFlowKey].outputs.push(value);
+    }
   }
 };
 
@@ -155,12 +196,16 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
 
   // Put 0 input, content enricher functions in the node bucket
   const flattenedInputs = flattenInputs(currentConnection.inputs);
+  const customValueInputs = flattenedInputs.filter(isCustomValue);
   const definedNonCustomValueInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
   const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node.maxNumberOfInputs !== 0);
   const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node.maxNumberOfInputs === 0);
 
   // All the sources are input nodes
   if (nodeInputs.length === flattenedInputs.length) {
+    return true;
+  } else if (customValueInputs.length === flattenedInputs.length) {
+    // All inputs are custom values
     return true;
   } else {
     // Still have traversing to do

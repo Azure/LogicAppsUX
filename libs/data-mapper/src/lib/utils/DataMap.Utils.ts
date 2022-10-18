@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import {
+  customValueQuoteToken,
   mapDefinitionVersion,
   mapNodeParams,
   reservedMapDefinitionKeys,
@@ -29,7 +30,7 @@ export const convertToMapDefinition = (
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
 
-    return yaml.dump(mapDefinition);
+    return yaml.dump(mapDefinition, { quotingType: `"`, replacer: yamlReplacer }).replaceAll(customValueQuoteToken, '"');
   }
 
   return '';
@@ -63,9 +64,12 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
       const selfNode = connection.self.node;
       if (input && isSchemaNodeExtended(selfNode)) {
         if (isCustomValue(input)) {
-          applyValueAtPath(input, mapDefinition, selfNode, selfNode.pathToRoot);
+          applyValueAtPath(formatCustomValue(input), mapDefinition, selfNode, selfNode.pathToRoot);
         } else if (isSchemaNodeExtended(input.node)) {
-          applyValueAtPath(input.node.fullName, mapDefinition, selfNode, selfNode.pathToRoot);
+          // Skip adding in the parent loop node. The children will handle it
+          if (input.node.properties !== SchemaNodeProperties.Repeating) {
+            applyValueAtPath(input.node.key, mapDefinition, selfNode, selfNode.pathToRoot);
+          }
         } else {
           const value = collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
           applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot);
@@ -80,12 +84,16 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, dest
   const formattedPathLocation = pathLocation.startsWith('@') ? `$${pathLocation}` : pathLocation;
 
   if (path.length > 1) {
-    if (!mapDefinition[formattedPathLocation]) {
-      mapDefinition[formattedPathLocation] = {};
-    }
+    if (path[0].repeating) {
+      generateForSection(value.substring(0, value.lastIndexOf('/')), value, mapDefinition, destinationNode, path);
+    } else {
+      if (!mapDefinition[formattedPathLocation]) {
+        mapDefinition[formattedPathLocation] = {};
+      }
 
-    if (typeof mapDefinition[formattedPathLocation] !== 'string') {
-      applyValueAtPath(value, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1));
+      if (typeof mapDefinition[formattedPathLocation] !== 'string') {
+        applyValueAtPath(value, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1));
+      }
     }
   } else {
     if (destinationNode.properties === SchemaNodeProperties.ComplexTypeSimpleContent) {
@@ -102,6 +110,33 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, dest
   }
 };
 
+const generateForSection = (
+  loopValue: string,
+  value: string,
+  mapDefinition: MapDefinitionEntry,
+  destinationNode: SchemaNodeExtended,
+  path: PathItem[]
+) => {
+  const pathLocation = path[0].fullName;
+  const formattedPathLocation = pathLocation.startsWith('@') ? `$${pathLocation}` : pathLocation;
+
+  const forEntry = `${mapNodeParams.for}(${loopValue})`;
+  if (!mapDefinition[forEntry]) {
+    mapDefinition[forEntry] = {};
+  }
+
+  // Step into the loop
+  mapDefinition = mapDefinition[forEntry] as MapDefinitionEntry;
+
+  if (!mapDefinition[formattedPathLocation]) {
+    mapDefinition[formattedPathLocation] = {};
+  }
+
+  const loopLocalValue = value.replace(`${loopValue}/`, '');
+
+  applyValueAtPath(loopLocalValue, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1));
+};
+
 const collectValueForFunction = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
   const inputValues = currentConnection
     ? (flattenInputs(currentConnection.inputs)
@@ -111,7 +146,7 @@ const collectValueForFunction = (node: FunctionData, currentConnection: Connecti
           }
 
           if (isCustomValue(input)) {
-            return input;
+            return formatCustomValue(input);
           } else if (isSchemaNodeExtended(input.node)) {
             return input.node.fullName.startsWith('@') ? `$${input.node.fullName}` : input.node.fullName;
           } else {
@@ -273,3 +308,15 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
 
   return results;
 };
+
+const yamlReplacer = (key: string, value: any) => {
+  if (typeof value === 'string') {
+    if (key === reservedMapDefinitionKeys.version) {
+      return parseFloat(value);
+    }
+  }
+
+  return value;
+};
+
+const formatCustomValue = (customValue: string) => customValueQuoteToken + customValue + customValueQuoteToken;
