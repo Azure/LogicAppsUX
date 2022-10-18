@@ -395,6 +395,7 @@ exports[`lib/overview renders 1`] = `
                 <div
                   aria-busy={false}
                   aria-colcount={5}
+                  aria-readonly="true"
                   aria-rowcount={1}
                   role="grid"
                 >
@@ -1075,6 +1076,7 @@ exports[`lib/overview renders a CORS notice 1`] = `
                 <div
                   aria-busy={false}
                   aria-colcount={5}
+                  aria-readonly="true"
                   aria-rowcount={1}
                   role="grid"
                 >
@@ -1786,6 +1788,7 @@ exports[`lib/overview renders a load more button when there are more runs 1`] = 
                 <div
                   aria-busy={false}
                   aria-colcount={5}
+                  aria-readonly="true"
                   aria-rowcount={1}
                   role="grid"
                 >
@@ -2479,6 +2482,7 @@ exports[`lib/overview renders a shimmered run history details list when loading 
                 <div
                   aria-busy={true}
                   aria-colcount={5}
+                  aria-readonly="true"
                   aria-rowcount={0}
                   role="grid"
                 >
@@ -5237,6 +5241,7 @@ exports[`lib/overview renders an error message 1`] = `
                 <div
                   aria-busy={false}
                   aria-colcount={5}
+                  aria-readonly="true"
                   aria-rowcount={1}
                   role="grid"
                 >

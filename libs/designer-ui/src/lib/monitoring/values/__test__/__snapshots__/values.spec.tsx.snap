@@ -137,6 +137,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
         <div
           aria-colcount={2}
           aria-label="Headers"
+          aria-readonly="true"
           aria-rowcount={4}
           role="grid"
         >
@@ -316,6 +317,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                             role="presentation"
                           >
                             <div
+                              aria-readonly={true}
                               className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$key"
                               data-automationid="DetailsRowCell"
@@ -329,6 +331,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               Access-Control-Allow-Credentials
                             </div>
                             <div
+                              aria-readonly={true}
                               className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$value"
                               data-automationid="DetailsRowCell"
@@ -382,6 +385,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                             role="presentation"
                           >
                             <div
+                              aria-readonly={true}
                               className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$key"
                               data-automationid="DetailsRowCell"
@@ -395,6 +399,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               Access-Control-Allow-Origin
                             </div>
                             <div
+                              aria-readonly={true}
                               className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$value"
                               data-automationid="DetailsRowCell"
@@ -448,6 +453,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                             role="presentation"
                           >
                             <div
+                              aria-readonly={true}
                               className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$key"
                               data-automationid="DetailsRowCell"
@@ -461,6 +467,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               Referrer-Policy
                             </div>
                             <div
+                              aria-readonly={true}
                               className="ms-DetailsRow-cell isMultiline-152 ms-DetailsRow-cell cell-146 cellUnpadded-144"
                               data-automation-key="$value"
                               data-automationid="DetailsRowCell"

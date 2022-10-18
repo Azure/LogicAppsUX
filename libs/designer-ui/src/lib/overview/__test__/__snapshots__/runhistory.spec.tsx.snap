@@ -18,6 +18,7 @@ exports[`lib/overview/runhistory renders 1`] = `
     <div
       aria-busy={false}
       aria-colcount={5}
+      aria-readonly="true"
       aria-rowcount={1}
       role="grid"
     >
@@ -315,6 +316,7 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
     <div
       aria-busy={true}
       aria-colcount={5}
+      aria-readonly="true"
       aria-rowcount={0}
       role="grid"
     >
@@ -2690,6 +2692,7 @@ exports[`lib/overview/runhistory renders with items 1`] = `
     <div
       aria-busy={false}
       aria-colcount={5}
+      aria-readonly="true"
       aria-rowcount={2}
       role="grid"
     >
@@ -2998,6 +3001,7 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                         role="presentation"
                       >
                         <div
+                          aria-readonly={true}
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
                           data-automation-key="identifier"
                           data-automationid="DetailsRowCell"
@@ -3017,6 +3021,7 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                           </button>
                         </div>
                         <div
+                          aria-readonly={true}
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
                           data-automation-key="status"
                           data-automationid="DetailsRowCell"
@@ -3030,6 +3035,7 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                           Succeeded
                         </div>
                         <div
+                          aria-readonly={true}
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
                           data-automation-key="startTime"
                           data-automationid="DetailsRowCell"
@@ -3043,6 +3049,7 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                           2/4/2022, 5:58:19 PM
                         </div>
                         <div
+                          aria-readonly={true}
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
                           data-automation-key="duration"
                           data-automationid="DetailsRowCell"
@@ -3056,6 +3063,7 @@ exports[`lib/overview/runhistory renders with items 1`] = `
                           1s
                         </div>
                         <div
+                          aria-readonly={true}
                           className="ms-DetailsRow-cell cell-160 cellUnpadded-158"
                           data-automation-key="contextMenu"
                           data-automationid="DetailsRowCell"
