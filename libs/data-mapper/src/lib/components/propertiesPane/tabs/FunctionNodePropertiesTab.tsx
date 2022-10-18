@@ -112,20 +112,18 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   useEffect(() => {
     const newInputValues: string[][] = [];
 
-    if (functionData.maxNumberOfInputs === 0) {
-      return;
-    }
+    if (functionData.maxNumberOfInputs !== 0) {
+      if (functionData.maxNumberOfInputs !== -1) {
+        functionData.inputs.forEach((_input, idx) => {
+          newInputValues[idx].push('');
+        });
+      }
 
-    if (functionData.maxNumberOfInputs !== -1) {
-      functionData.inputs.forEach((_input, idx) => {
-        newInputValues[idx].push('');
-      });
-    }
-
-    if (connection?.inputs) {
-      Object.values(connection.inputs).forEach((input, idx) => {
-        newInputValues[idx].push(input.length === 0 ? '' : isCustomValue(input[0]) ? input[0] : input[0].node.key);
-      });
+      if (connection?.inputs) {
+        Object.values(connection.inputs).forEach((input, idx) => {
+          newInputValues[idx].push(input.length === 0 ? '' : isCustomValue(input[0]) ? input[0] : input[0].node.key);
+        });
+      }
     }
 
     setInputValues(newInputValues);
