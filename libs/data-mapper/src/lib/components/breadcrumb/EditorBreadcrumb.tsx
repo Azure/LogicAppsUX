@@ -4,7 +4,7 @@ import type { SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { findNodeForKey } from '../../utils/Schema.Utils';
 import type { IBreadcrumbItem } from '@fluentui/react';
 import { Breadcrumb } from '@fluentui/react';
-import { Button, tokens } from '@fluentui/react-components';
+import { Button, tokens, makeStyles } from '@fluentui/react-components';
 import { Code20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -21,6 +21,14 @@ const baseBreadcrumbStyles = {
   borderRadius: tokens.borderRadiusMedium,
 };
 
+const useStyles = makeStyles({
+  codeIcon: {
+    ':disabled': {
+      color: tokens.colorNeutralForegroundDisabled,
+    },
+  },
+});
+
 interface EditorBreadcrumbProps {
   isCodeViewOpen: boolean;
   setIsCodeViewOpen: (isOpen: boolean) => void;
@@ -31,6 +39,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
   const dispatch = useDispatch<AppDispatch>();
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
+  const styles = useStyles();
 
   const breadcrumbItems = useMemo<IBreadcrumbItem[]>(() => {
     if (targetSchema) {
@@ -65,8 +74,10 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
         overflowIndex={currentTargetNode ? overflowIndex : 0}
       />
       <Button
-        appearance="transparent"
-        icon={<Code20Regular />}
+        appearance="subtle"
+        shape="circular"
+        size="medium"
+        icon={<Code20Regular className={styles.codeIcon} />}
         onClick={() => {
           setIsCodeViewOpen(!isCodeViewOpen);
         }}
