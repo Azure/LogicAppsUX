@@ -42,6 +42,8 @@ const useStyles = makeStyles({
   },
 });
 
+type InputValueMatrix = (string | undefined)[][];
+
 interface FunctionNodePropertiesTabProps {
   functionData: FunctionData;
 }
@@ -53,7 +55,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   // Consists of node names/ids and constant values
-  const [inputValues, setInputValues] = useState<string[][]>([]);
+  const [inputValueArrays, setInputValues] = useState<InputValueMatrix | undefined>(undefined);
 
   const addFieldLoc = intl.formatMessage({
     defaultMessage: 'Add field',
@@ -76,7 +78,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   });
 
   const addUnboundedInput = () => {
-    const newInputValues: string[][] = [...inputValues];
+    const newInputValues: InputValueMatrix = inputValueArrays ? [...inputValueArrays] : [];
 
     newInputValues[0].push('');
 
@@ -84,7 +86,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   };
 
   const removeUnboundedInput = (index: number) => {
-    const newInputValues = [...inputValues];
+    const newInputValues = inputValueArrays ? [...inputValueArrays] : [];
 
     // TODO: Need to remove value from connection inputs[] if there
 
@@ -100,28 +102,29 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   const outputValue = useMemo(() => {
     let outputValue = `${functionData.functionName}(`;
 
-    inputValues.forEach((input, idx) => {
-      if (input) {
-        outputValue += `${idx === 0 ? '' : ', '}${input}`;
-      }
-    });
+    if (inputValueArrays) {
+      inputValueArrays.forEach((inputValueArray, idx) => {
+        if (inputValueArray) {
+          outputValue += `${idx === 0 ? '' : ', '}${inputValueArray}`;
+        }
+      });
+    }
 
     return `${outputValue})`;
-  }, [inputValues, functionData]);
+  }, [inputValueArrays, functionData]);
 
   useEffect(() => {
-    const newInputValues: string[][] = [];
+    const newInputValues: InputValueMatrix = [];
 
     if (functionData.maxNumberOfInputs !== 0) {
-      if (functionData.maxNumberOfInputs !== -1) {
-        functionData.inputs.forEach((_input, idx) => {
-          newInputValues[idx].push('');
-        });
-      }
+      functionData.inputs.forEach((_input, idx) => {
+        newInputValues[idx] = [undefined];
+      });
 
       if (connection?.inputs) {
-        Object.values(connection.inputs).forEach((input, idx) => {
-          newInputValues[idx].push(input.length === 0 ? '' : isCustomValue(input[0]) ? input[0] : input[0].node.key);
+        Object.values(connection.inputs).forEach((inputValueArray, idx) => {
+          newInputValues[idx][0] =
+            inputValueArray.length === 0 ? undefined : isCustomValue(inputValueArray[0]) ? inputValueArray[0] : inputValueArray[0].node.key;
         });
       }
     }
@@ -172,7 +175,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       currentNode={functionData}
                       label={input.displayName}
                       placeholder={input.placeholder}
-                      inputValue={inputValues[idx][0]}
+                      inputValue={inputValueArrays ? inputValueArrays[idx][0] : undefined}
                       inputIndex={idx}
                     />
                   </Tooltip>
@@ -183,26 +186,27 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
           {functionData.maxNumberOfInputs === -1 && (
             <>
-              {inputValues.map((_value, idx) => (
-                <Stack key={idx} horizontal verticalAlign="center" style={{ marginTop: 8 }}>
-                  <Tooltip relationship="label" content={functionData.inputs[0].tooltip}>
-                    <InputDropdown
-                      currentNode={functionData}
-                      label={functionData.inputs[0].displayName}
-                      placeholder={functionData.inputs[0].placeholder}
-                      inputValue={inputValues[idx][0]}
-                      inputIndex={0}
-                    />
-                  </Tooltip>
+              {inputValueArrays &&
+                inputValueArrays.map((_inputValueArray, idx) => (
+                  <Stack key={idx} horizontal verticalAlign="center" style={{ marginTop: 8 }}>
+                    <Tooltip relationship="label" content={functionData.inputs[0].tooltip}>
+                      <InputDropdown
+                        currentNode={functionData}
+                        label={functionData.inputs[0].displayName}
+                        placeholder={functionData.inputs[0].placeholder}
+                        inputValue={inputValueArrays[idx][0]}
+                        inputIndex={0}
+                      />
+                    </Tooltip>
 
-                  <Button
-                    appearance="subtle"
-                    icon={<Delete20Regular />}
-                    onClick={() => removeUnboundedInput(idx)}
-                    style={{ marginLeft: '16px' }}
-                  />
-                </Stack>
-              ))}
+                    <Button
+                      appearance="subtle"
+                      icon={<Delete20Regular />}
+                      onClick={() => removeUnboundedInput(idx)}
+                      style={{ marginLeft: '16px' }}
+                    />
+                  </Stack>
+                ))}
 
               <Button appearance="subtle" icon={<Add20Regular />} onClick={addUnboundedInput} style={{ width: '72px', marginTop: 12 }}>
                 {addFieldLoc}
