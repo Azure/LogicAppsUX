@@ -185,21 +185,20 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     return !currentNode || isFunctionData(currentNode) ? functionLoc : isTargetNode ? targetSchemaNodeLoc : sourceSchemaNodeLoc;
   };
 
-  const getSelectedTab = (): JSX.Element | null => {
-    if (!currentNode) {
-      console.error('currentNode is undefined');
+  const selectedTabContent = useMemo<JSX.Element | null>(() => {
+    if (!currentNode || !tabToDisplay) {
       return null;
     }
 
     switch (tabToDisplay) {
       case TABS.PROPERTIES:
         if (isFunctionData(currentNode)) {
-          return <FunctionNodePropertiesTab functionData={currentNode} />;
+          return <FunctionNodePropertiesTab key={currentNode.key} functionData={currentNode} />;
         } else {
-          return <SchemaNodePropertiesTab currentNode={currentNode} />;
+          return <SchemaNodePropertiesTab key={currentNode.key} currentNode={currentNode} />;
         }
       case TABS.CODE:
-        return <CodeTab />;
+        return <CodeTab key={currentNode.key} />;
       case TABS.TEST:
         if (isTargetNode) {
           return <TestTab currentTargetNodeKey={currentNode.key} />;
@@ -210,7 +209,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         console.error('tabToDisplay is undefined');
         return null;
     }
-  };
+  }, [currentNode, isTargetNode, tabToDisplay]);
 
   const TopBarContent = () => (
     <>
@@ -274,7 +273,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
 
       {currentNode && isExpanded && (
         <div className={styles.paneContent} style={{ height: contentHeight }}>
-          {getSelectedTab()}
+          {selectedTabContent}
         </div>
       )}
     </div>

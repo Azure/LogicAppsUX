@@ -5,6 +5,7 @@ import type { SchemaNodeExtended } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { isFunctionData } from '../../utils/Function.Utils';
+import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { Dropdown, SelectableOptionMenuItemType, TextField } from '@fluentui/react';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
 import { Button, makeStyles, Tooltip } from '@fluentui/react-components';
@@ -144,11 +145,13 @@ export const InputDropdown = (props: InputDropdownProps) => {
   useEffect(() => {
     // Check if inputValue is defined, and if it's a node reference or a custom value
     if (inputValue !== undefined) {
-      const srcSchemaNode = sourceSchemaDictionary[`${sourcePrefix}${inputValue}`];
+      const srcSchemaNode = sourceSchemaDictionary[addSourceReactFlowPrefix(inputValue)];
       const functionNode = functionNodeDictionary[inputValue];
 
+      setCustomValue(inputValue);
       setIsCustomValue(!srcSchemaNode && !functionNode);
     } else {
+      setCustomValue('');
       setIsCustomValue(false);
     }
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
