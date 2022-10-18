@@ -3,7 +3,6 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import type { FunctionData } from '../../models/Function';
 import { isFunctionData } from '../../utils/Function.Utils';
-import { addTargetReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { CodeTab } from './tabs/CodeTab';
 import { FunctionNodePropertiesTab } from './tabs/FunctionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabs/SchemaNodePropertiesTab';
@@ -11,14 +10,14 @@ import { TestTab } from './tabs/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleDown20Regular, ChevronDoubleUp20Regular, Delete20Regular } from '@fluentui/react-icons';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-enum TABS {
-  PROPERTIES = 1,
-  CODE,
-  TEST,
+enum PropertiesPaneTabs {
+  Properties = 1,
+  Code,
+  Test,
 }
 
 export const canvasAreaAndPropPaneMargin = 8;
@@ -52,7 +51,7 @@ const useStyles = makeStyles({
 });
 
 export interface PropertiesPaneProps {
-  currentNode?: SchemaNodeExtended | FunctionData;
+  selectedItemKey: string;
   isExpanded: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
   centerViewHeight: number;
@@ -60,19 +59,18 @@ export interface PropertiesPaneProps {
   setContentHeight: (newHeight: number) => void;
 }
 
-export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
-  const { currentNode, isExpanded, setIsExpanded, centerViewHeight, contentHeight, setContentHeight } = props;
+export const PropertiesPane = (props: PropertiesPaneProps) => {
+  const { selectedItemKey, isExpanded, setIsExpanded, centerViewHeight, contentHeight, setContentHeight } = props;
+  const styles = useStyles();
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const functionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
-  const isTargetNode = useMemo(
-    () => (currentNode ? !!targetSchemaDictionary[addTargetReactFlowPrefix(currentNode.key)] : false),
-    [currentNode, targetSchemaDictionary]
-  );
 
-  const styles = useStyles();
-  const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
+  const [currentNode, setCurrentNode] = useState<SchemaNodeExtended | FunctionData | undefined>(undefined);
+  const [tabToDisplay, setTabToDisplay] = useState<PropertiesPaneTabs>(PropertiesPaneTabs.Properties);
   const [initialDragYPos, setInitialDragYPos] = useState<number | undefined>(undefined);
   const [initialDragHeight, setInitialDragHeight] = useState<number | undefined>(undefined);
 
@@ -132,10 +130,13 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     dispatch(deleteCurrentlySelectedItem());
   };
 
-  const onSelectTab = (tab: TABS) => {
-    setTabToDisplay(tab);
-    setIsExpanded(true);
-  };
+  const onSelectTab = useCallback(
+    (tab: PropertiesPaneTabs) => {
+      setTabToDisplay(tab);
+      setIsExpanded(true);
+    },
+    [setIsExpanded]
+  );
 
   const onStartDrag = (e: React.DragEvent) => {
     setInitialDragYPos(e.clientY);
@@ -181,58 +182,24 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     setInitialDragYPos(undefined);
   };
 
-  const getPaneTitle = (): string | undefined => {
-    return !currentNode || isFunctionData(currentNode) ? functionLoc : isTargetNode ? targetSchemaNodeLoc : sourceSchemaNodeLoc;
-  };
-
-  const getSelectedTab = (): JSX.Element | null => {
-    if (!currentNode) {
-      console.error('currentNode is undefined');
-      return null;
-    }
-
-    switch (tabToDisplay) {
-      case TABS.PROPERTIES:
-        if (isFunctionData(currentNode)) {
-          return <FunctionNodePropertiesTab functionData={currentNode} />;
-        } else {
-          return <SchemaNodePropertiesTab currentNode={currentNode} />;
-        }
-      case TABS.CODE:
-        return <CodeTab />;
-      case TABS.TEST:
-        if (isTargetNode) {
-          return <TestTab currentTargetNodeKey={currentNode.key} />;
-        } else {
-          return null;
-        }
-      default:
-        console.error('tabToDisplay is undefined');
-        return null;
-    }
-  };
-
-  const TopBarContent = () => (
-    <>
-      <Text className={styles.title}>{getPaneTitle()}</Text>
-      <Divider vertical style={{ maxWidth: 24 }} />
-      <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
-        <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
-        {/*<Tab value={TABS.CODE}>{codeLoc}</Tab>*/}
-        {/*isTargetNode && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
-      </TabList>
-    </>
+  const isTargetSchemaNode = useMemo(
+    () => (selectedItemKey ? !!targetSchemaDictionary[selectedItemKey] : false),
+    [selectedItemKey, targetSchemaDictionary]
   );
 
+  const paneTitle = useMemo<string | undefined>(() => {
+    return !currentNode || isFunctionData(currentNode) ? functionLoc : isTargetSchemaNode ? targetSchemaNodeLoc : sourceSchemaNodeLoc;
+  }, [currentNode, functionLoc, isTargetSchemaNode, sourceSchemaNodeLoc, targetSchemaNodeLoc]);
+
   useEffect(() => {
-    // Set tab to first one anytime this panel displays a new item
-    if (currentNode) {
-      setTabToDisplay(TABS.PROPERTIES);
-      setIsExpanded(true);
-    } else {
-      setTabToDisplay(undefined);
-      setIsExpanded(false);
-    }
+    setCurrentNode(
+      sourceSchemaDictionary[selectedItemKey] ?? targetSchemaDictionary[selectedItemKey] ?? functionDictionary[selectedItemKey] ?? undefined
+    );
+  }, [selectedItemKey, sourceSchemaDictionary, functionDictionary, targetSchemaDictionary]);
+
+  useEffect(() => {
+    setTabToDisplay(PropertiesPaneTabs.Properties);
+    setIsExpanded(!!currentNode);
   }, [currentNode, setIsExpanded]);
 
   return (
@@ -247,10 +214,26 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         onDrag={onDrag}
         onDragEnd={onDragEnd}
       >
-        {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
+        {!currentNode ? (
+          <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>
+        ) : (
+          <>
+            <Text className={styles.title}>{paneTitle}</Text>
+            <Divider vertical style={{ maxWidth: 24 }} />
+            <TabList
+              selectedValue={tabToDisplay}
+              onTabSelect={(_: unknown, data) => onSelectTab(data.value as PropertiesPaneTabs)}
+              size="small"
+            >
+              <Tab value={PropertiesPaneTabs.Properties}>{propertiesLoc}</Tab>
+              {/*<Tab value={PropertiesPaneTabs.Code}>{codeLoc}</Tab>*/}
+              {/*isTargetSchemaNode && <Tab value={PropertiesPaneTabs.Test}>{testLoc}</Tab>*/}
+            </TabList>
+          </>
+        )}
 
         <div style={{ marginLeft: 'auto' }}>
-          {currentNode && (isFunctionData(currentNode) || !isTargetNode) && (
+          {currentNode && (isFunctionData(currentNode) || !isTargetSchemaNode) && (
             <Button
               appearance="subtle"
               size="medium"
@@ -272,9 +255,21 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         </div>
       </Stack>
 
-      {currentNode && isExpanded && (
+      {isExpanded && currentNode && tabToDisplay && (
         <div className={styles.paneContent} style={{ height: contentHeight }}>
-          {getSelectedTab()}
+          {tabToDisplay === PropertiesPaneTabs.Properties && (
+            <>
+              {isFunctionData(currentNode) ? (
+                <FunctionNodePropertiesTab key={currentNode.key} functionData={currentNode} />
+              ) : (
+                <SchemaNodePropertiesTab key={currentNode.key} currentNode={currentNode} />
+              )}
+            </>
+          )}
+
+          {tabToDisplay === PropertiesPaneTabs.Code && <CodeTab key={currentNode.key} />}
+
+          {tabToDisplay === PropertiesPaneTabs.Test && <TestTab currentTargetNodeKey={currentNode.key} />}
         </div>
       )}
     </div>
