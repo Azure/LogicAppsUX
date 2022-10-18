@@ -41,7 +41,7 @@ export interface InputDropdownProps {
   typeMatchedOptions?: IDropdownOption<InputOptionData>[];
   inputValue?: string; // undefined, Node ID, or custom value (string)
   inputIndex: number;
-  inputStyles?: IRawStyle;
+  inputStyles?: IRawStyle & React.CSSProperties;
   label?: string;
   placeholder?: string;
 }
@@ -84,7 +84,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     if (option.key === customValueOptionKey) {
-      // NOTE: isCustomValue flag is set in useEffect
+      // NOTE: isCustomValue flag will be confirmed/re-set in useEffect
+      // (must be set here too to not flash weird dropdown state)
+      setIsCustomValue(true);
       updateInput('');
     } else {
       // Any other selected option will be a node
@@ -189,7 +191,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           onRenderOption={onRenderOption}
         />
       ) : (
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', ...inputStyles }}>
           <TextField
             value={customValue}
             onChange={(_e, newValue) => onChangeCustomValue(newValue)}
