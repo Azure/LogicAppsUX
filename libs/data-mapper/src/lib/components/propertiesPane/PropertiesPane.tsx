@@ -66,6 +66,7 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const functionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
   const [currentNode, setCurrentNode] = useState<SchemaNodeExtended | FunctionData | undefined>(undefined);
@@ -191,8 +192,10 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
   }, [currentNode, functionLoc, isTargetSchemaNode, sourceSchemaNodeLoc, targetSchemaNodeLoc]);
 
   useEffect(() => {
-    setCurrentNode(sourceSchemaDictionary[selectedItemKey] ?? targetSchemaDictionary[selectedItemKey] ?? undefined);
-  }, [selectedItemKey, sourceSchemaDictionary, targetSchemaDictionary]);
+    setCurrentNode(
+      sourceSchemaDictionary[selectedItemKey] ?? targetSchemaDictionary[selectedItemKey] ?? functionDictionary[selectedItemKey] ?? undefined
+    );
+  }, [selectedItemKey, sourceSchemaDictionary, functionDictionary, targetSchemaDictionary]);
 
   useEffect(() => {
     setTabToDisplay(PropertiesPaneTabs.Properties);
