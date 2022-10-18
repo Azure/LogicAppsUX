@@ -245,9 +245,15 @@ export const useLayout = (
     } else {
       return [];
     }
-    // Explicitly ignoring connectedSourceNodes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewportCoords, currentlySelectedSourceNodes, currentTargetNode, allFunctionNodes]);
+  }, [
+    currentTargetNode,
+    viewportCoords,
+    currentlySelectedSourceNodes,
+    connectedSourceNodes,
+    allSourceNodes,
+    allFunctionNodes,
+    connections,
+  ]);
 
   const reactFlowEdges = useMemo(() => {
     return convertToReactFlowEdges(connections, selectedItemKey);

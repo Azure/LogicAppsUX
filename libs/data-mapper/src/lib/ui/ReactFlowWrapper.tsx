@@ -22,9 +22,10 @@ import {
   setSelectedItem,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
+import { SchemaTypes } from '../models';
 import type { ViewportCoords } from '../models/ReactFlow';
 import { collectNodesForConnectionChain, flattenInputs } from '../utils/Connection.Utils';
-import { useLayout } from '../utils/ReactFlow.Util';
+import { addReactFlowPrefix, useLayout } from '../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../utils/Schema.Utils';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -68,8 +69,9 @@ export const ReactFlowWrapper = () => {
         return foundConnection ? [foundConnection] : [];
       });
 
-      if (connections[currentTargetNode.key] && flattenInputs(connections[currentTargetNode.key].inputs).length > 0) {
-        outputFilteredConnections.push(connections[currentTargetNode.key]);
+      const targetReactFlowKey = addReactFlowPrefix(currentTargetNode.key, SchemaTypes.Target);
+      if (connections[targetReactFlowKey] && flattenInputs(connections[targetReactFlowKey].inputs).length > 0) {
+        outputFilteredConnections.push(connections[targetReactFlowKey]);
       }
 
       return outputFilteredConnections;
