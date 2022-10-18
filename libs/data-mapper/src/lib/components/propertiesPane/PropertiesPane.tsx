@@ -210,7 +210,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
           return null;
         }
       default:
-        console.error('tabToDisplay is undefined');
+        console.error('Invalid tabToDisplay value');
         return null;
     }
   }, [currentNode, isTargetNode, tabToDisplay]);
