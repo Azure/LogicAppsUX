@@ -189,7 +189,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
               {inputValueArrays &&
                 inputValueArrays.map((_inputValueArray, idx) => (
                   <Stack key={idx} horizontal verticalAlign="center" style={{ marginTop: 8 }}>
-                    <Tooltip relationship="label" content={functionData.inputs[0].tooltip}>
+                    <Tooltip relationship="label" content={functionData.inputs[0].tooltip || ''}>
                       <InputDropdown
                         currentNode={functionData}
                         label={functionData.inputs[0].name}
