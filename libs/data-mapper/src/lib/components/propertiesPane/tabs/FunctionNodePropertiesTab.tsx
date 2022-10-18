@@ -170,11 +170,11 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
             <Stack>
               {functionData.inputs.map((input, idx) => (
                 <div key={idx} style={{ marginTop: 8 }}>
-                  <Tooltip relationship="label" content={input.tooltip}>
+                  <Tooltip relationship="label" content={input.tooltip || ''}>
                     <InputDropdown
                       currentNode={functionData}
-                      label={input.displayName}
-                      placeholder={input.placeholder}
+                      label={input.name}
+                      placeholder={input.placeHolder}
                       inputValue={inputValueArrays ? inputValueArrays[idx][0] : undefined}
                       inputIndex={idx}
                     />
@@ -189,11 +189,11 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
               {inputValueArrays &&
                 inputValueArrays.map((_inputValueArray, idx) => (
                   <Stack key={idx} horizontal verticalAlign="center" style={{ marginTop: 8 }}>
-                    <Tooltip relationship="label" content={functionData.inputs[0].tooltip}>
+                    <Tooltip relationship="label" content={functionData.inputs[0].tooltip || ''}>
                       <InputDropdown
                         currentNode={functionData}
-                        label={functionData.inputs[0].displayName}
-                        placeholder={functionData.inputs[0].placeholder}
+                        label={functionData.inputs[0].name}
+                        placeholder={functionData.inputs[0].placeHolder}
                         inputValue={inputValueArrays[idx][0]}
                         inputIndex={0}
                       />
