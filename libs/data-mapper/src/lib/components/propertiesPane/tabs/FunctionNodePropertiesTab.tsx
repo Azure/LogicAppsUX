@@ -1,15 +1,12 @@
 import { customTokens } from '../../../core';
 import type { RootState } from '../../../core/state/Store';
-import { NormalizedDataType } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
 import { isCustomValue } from '../../../utils/Connection.Utils';
 import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
-import type { InputOptions, InputOptionData } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react';
 import { Button, Divider, Input, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
@@ -53,8 +50,6 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   const intl = useIntl();
   const styles = useStyles();
 
-  const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   // Consists of node names/ids and constant values
@@ -99,76 +94,6 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   };
 
   const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionData.category), [functionData]);
-
-  const possibleInputOptions = useMemo<InputOptions>(() => {
-    const newPossibleInputOptionsDictionary = {} as InputOptions;
-
-    currentSourceNodes.forEach((srcNode) => {
-      if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
-        newPossibleInputOptionsDictionary[srcNode.normalizedDataType] = [];
-      }
-
-      newPossibleInputOptionsDictionary[srcNode.normalizedDataType].push({
-        nodeKey: srcNode.key,
-        nodeName: srcNode.name,
-        isFunctionNode: false,
-      });
-    });
-
-    Object.entries(functionNodeDictionary).forEach(([key, node]) => {
-      if (!newPossibleInputOptionsDictionary[node.outputValueType]) {
-        newPossibleInputOptionsDictionary[node.outputValueType] = [];
-      }
-
-      newPossibleInputOptionsDictionary[node.outputValueType].push({
-        nodeKey: key,
-        nodeName: node.functionName, // TODO: use output value of fn node here instead
-        isFunctionNode: true,
-      });
-    });
-
-    return newPossibleInputOptionsDictionary;
-  }, [currentSourceNodes, functionNodeDictionary]);
-
-  const inputOptions = useMemo<IDropdownOption<InputOptionData>[][]>(() => {
-    const newInputOptions: IDropdownOption<InputOptionData>[][] = [];
-
-    functionData.inputs.forEach((input, idx) => {
-      newInputOptions.push([]);
-
-      input.allowedTypes.forEach((type) => {
-        if (type === NormalizedDataType.Any) {
-          Object.values(possibleInputOptions).forEach((typeEntry) => {
-            typeEntry.forEach((possibleOption) => {
-              newInputOptions[idx].push({
-                key: possibleOption.nodeKey,
-                text: possibleOption.nodeName,
-                data: {
-                  isFunction: !!possibleOption.isFunctionNode,
-                },
-              });
-            });
-          });
-        } else {
-          if (!possibleInputOptions[type]) {
-            return;
-          }
-
-          possibleInputOptions[type].forEach((possibleOption) => {
-            newInputOptions[idx].push({
-              key: possibleOption.nodeKey,
-              text: possibleOption.nodeName,
-              data: {
-                isFunction: !!possibleOption.isFunctionNode,
-              },
-            });
-          });
-        }
-      });
-    });
-
-    return newInputOptions;
-  }, [possibleInputOptions, functionData]);
 
   const connection = useMemo<Connection | undefined>(() => connectionDictionary[functionData.key], [connectionDictionary, functionData]);
 
@@ -249,7 +174,6 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       currentNode={functionData}
                       label={input.displayName}
                       placeholder={input.placeholder}
-                      typeMatchedOptions={inputOptions[idx]}
                       inputValue={inputValues[idx][0]}
                       inputIndex={idx}
                     />
@@ -268,7 +192,6 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       currentNode={functionData}
                       label={functionData.inputs[0].displayName}
                       placeholder={functionData.inputs[0].placeholder}
-                      typeMatchedOptions={inputOptions[idx]}
                       inputValue={inputValues[idx][0]}
                       inputIndex={0}
                     />

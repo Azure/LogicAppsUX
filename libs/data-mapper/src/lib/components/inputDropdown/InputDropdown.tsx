@@ -2,6 +2,7 @@ import { sourcePrefix } from '../../constants/ReactFlowConstants';
 import { updateConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
+import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { isFunctionData } from '../../utils/Function.Utils';
@@ -38,7 +39,6 @@ const useStyles = makeStyles({
 
 export interface InputDropdownProps {
   currentNode: SchemaNodeExtended | FunctionData;
-  typeMatchedOptions?: IDropdownOption<InputOptionData>[];
   inputValue?: string; // undefined, Node ID, or custom value (string)
   inputIndex: number;
   inputStyles?: IRawStyle & React.CSSProperties;
@@ -47,11 +47,12 @@ export interface InputDropdownProps {
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, typeMatchedOptions, inputValue, inputIndex, inputStyles, label, placeholder } = props;
+  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
 
+  const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
 
@@ -158,8 +159,104 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
 
+  const typeSortedInputOptions = useMemo<InputOptions>(() => {
+    const newPossibleInputOptionsDictionary = {} as InputOptions;
+
+    currentSourceNodes.forEach((srcNode) => {
+      if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
+        newPossibleInputOptionsDictionary[srcNode.normalizedDataType] = [];
+      }
+
+      newPossibleInputOptionsDictionary[srcNode.normalizedDataType].push({
+        nodeKey: srcNode.key,
+        nodeName: srcNode.name,
+        isFunctionNode: false,
+      });
+    });
+
+    Object.entries(functionNodeDictionary).forEach(([key, node]) => {
+      if (!newPossibleInputOptionsDictionary[node.outputValueType]) {
+        newPossibleInputOptionsDictionary[node.outputValueType] = [];
+      }
+
+      newPossibleInputOptionsDictionary[node.outputValueType].push({
+        nodeKey: key,
+        nodeName: node.functionName, // TODO: use output value of fn node here instead (move outputValue to be util method - needs fnName and its inputValues)
+        isFunctionNode: true,
+      });
+    });
+
+    return newPossibleInputOptionsDictionary;
+  }, [currentSourceNodes, functionNodeDictionary]);
+
+  const typeMatchedInputOptions = useMemo<IDropdownOption<InputOptionData>[] | undefined>(() => {
+    const newInputOptions: IDropdownOption<InputOptionData>[] = [];
+
+    if (isFunctionData(currentNode)) {
+      currentNode.inputs[inputIndex].allowedTypes.forEach((type) => {
+        if (type === NormalizedDataType.Any) {
+          Object.values(typeSortedInputOptions).forEach((typeEntry) => {
+            typeEntry.forEach((possibleOption) => {
+              newInputOptions.push({
+                key: possibleOption.nodeKey,
+                text: possibleOption.nodeName,
+                data: {
+                  isFunction: !!possibleOption.isFunctionNode,
+                },
+              });
+            });
+          });
+        } else {
+          if (!typeSortedInputOptions[type]) {
+            return;
+          }
+
+          typeSortedInputOptions[type].forEach((possibleOption) => {
+            newInputOptions.push({
+              key: possibleOption.nodeKey,
+              text: possibleOption.nodeName,
+              data: {
+                isFunction: !!possibleOption.isFunctionNode,
+              },
+            });
+          });
+        }
+      });
+    } else {
+      if (currentNode.normalizedDataType === NormalizedDataType.Any) {
+        Object.values(typeSortedInputOptions).forEach((typeEntry) => {
+          typeEntry.forEach((possibleOption) => {
+            newInputOptions.push({
+              key: possibleOption.nodeKey,
+              text: possibleOption.nodeName,
+              data: {
+                isFunction: !!possibleOption.isFunctionNode,
+              },
+            });
+          });
+        });
+      } else {
+        if (!typeSortedInputOptions[currentNode.normalizedDataType]) {
+          return;
+        }
+
+        typeSortedInputOptions[currentNode.normalizedDataType].forEach((possibleOption) => {
+          newInputOptions.push({
+            key: possibleOption.nodeKey,
+            text: possibleOption.nodeName,
+            data: {
+              isFunction: !!possibleOption.isFunctionNode,
+            },
+          });
+        });
+      }
+    }
+
+    return newInputOptions;
+  }, [inputIndex, typeSortedInputOptions, currentNode]);
+
   const modifiedDropdownOptions = useMemo(() => {
-    const newModifiedOptions = typeMatchedOptions ? [...typeMatchedOptions] : [];
+    const newModifiedOptions = typeMatchedInputOptions ? [...typeMatchedInputOptions] : [];
 
     // Divider
     newModifiedOptions.push({
@@ -175,7 +272,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     });
 
     return newModifiedOptions;
-  }, [typeMatchedOptions, customValueOptionLoc]);
+  }, [typeMatchedInputOptions, customValueOptionLoc]);
 
   return (
     <>
