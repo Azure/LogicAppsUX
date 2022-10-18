@@ -4,15 +4,15 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
-  // DictionaryType, // EditorLanguage,
+  GroupDropdownOptions,
+  QueryBuilderEditor, // DictionaryType, // EditorLanguage,
   ValueSegmentType, // CodeEditor, // HTMLEditor,
   TokenPicker, // TokenType,
   // DictionaryEditor,
   testTokenSegment, // SchemaEditor, // Combobox,
-  ArrayEditor,
-  ArrayType,
-  Scratch, // StringEditor,
-  // AuthenticationEditor,
+  // ArrayEditor,
+  Scratch,
+  StringEditor, // AuthenticationEditor,
   // DropdownEditor,
   outputToken,
   outputToken2,
@@ -30,7 +30,8 @@ export const ScratchTab = () => {
     editorId: string,
     labelId: string,
     onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
+    tokenClicked?: (token: ValueSegment) => void,
+    tokenPickerHide?: () => void
   ): JSX.Element => {
     return (
       <TokenPicker
@@ -40,12 +41,31 @@ export const ScratchTab = () => {
         expressionGroup={expressionGroup}
         tokenPickerFocused={onClick}
         tokenClickedCallback={tokenClicked}
+        tokenPickerHide={tokenPickerHide}
       />
     );
   };
   const children = (): React.ReactNode => {
     return (
       <>
+        <QueryBuilderEditor
+          GetTokenPicker={GetTokenPicker}
+          readonly={false}
+          groupProps={{
+            type: 'group',
+            selectedOption: GroupDropdownOptions.OR,
+            items: [
+              { type: 'row', checked: true },
+              { type: 'row', key: [testTokenSegment], dropdownVal: 'islessthanorequal', value: [testTokenSegment] },
+              { type: 'group', checked: false, items: [] },
+              {
+                type: 'group',
+                checked: true,
+                items: [{ type: 'row' }, { type: 'group', checked: false, items: [{ type: 'row', key: [testTokenSegment] }] }],
+              },
+            ],
+          }}
+        />
         {/* <CodeEditor
           initialValue={[
             {
@@ -118,7 +138,7 @@ export const ScratchTab = () => {
           GetTokenPicker={GetTokenPicker}
         /> */}
 
-        <ArrayEditor
+        {/* <ArrayEditor
           itemSchema={['Attachments Name', 'Attachments Content']}
           type={ArrayType.COMPLEX}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
@@ -158,7 +178,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
           GetTokenPicker={GetTokenPicker}
-        />
+        /> */}
 
         {/* <Combobox
           options={[
@@ -316,7 +336,7 @@ export const ScratchTab = () => {
           valueTitle={'Value'}
         /> */}
         {/* <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} /> */}
-        {/* <StringEditor
+        <StringEditor
           initialValue={[
             testTokenSegment,
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
@@ -325,7 +345,7 @@ export const ScratchTab = () => {
           ]}
           GetTokenPicker={GetTokenPicker}
         />
-        <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} /> */}
+        {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} /> */}
       </>
     );
   };

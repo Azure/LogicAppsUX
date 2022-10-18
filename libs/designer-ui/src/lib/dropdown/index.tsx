@@ -3,32 +3,17 @@ import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
+import { guid } from '@microsoft-logic-apps/utils';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
-
-const dropdownStyles: Partial<IDropdownStyles> = {
-  root: {
-    minHeight: '30px',
-    fontSize: '14px',
-  },
-  dropdown: {
-    minHeight: '30px',
-  },
-  title: {
-    height: '30px',
-    fontSize: '14px',
-    lineHeight: '30px',
-  },
-  caretDownWrapper: {
-    paddingTop: '4px',
-  },
-};
 
 interface DropdownEditorProps {
   multiSelect?: boolean;
   initialValue: ValueSegment[];
   options: DropdownItem[];
   readonly?: boolean;
+  height?: number;
+  fontSize?: number;
   onChange?: ChangeHandler;
 }
 
@@ -40,20 +25,53 @@ export interface DropdownItem {
   type?: string;
 }
 
-export const DropdownEditor = ({ multiSelect = false, initialValue, readonly, options }: DropdownEditorProps): JSX.Element => {
+export const DropdownEditor = ({
+  multiSelect = false,
+  initialValue,
+  readonly,
+  options,
+  height,
+  fontSize,
+  onChange,
+}: DropdownEditorProps): JSX.Element => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? getSelectedKeys(options, initialValue) : undefined);
   const [dropdownOptions] = useState<IDropdownOption[]>(getOptions(options));
 
+  const dropdownStyles: Partial<IDropdownStyles> = {
+    root: {
+      minHeight: height ?? '30px',
+      fontSize: fontSize ?? '14px',
+    },
+    dropdown: {
+      minHeight: height ?? '30px',
+    },
+    title: {
+      height: height ?? '30px',
+      fontSize: fontSize ?? '14px',
+      lineHeight: height ?? '30px',
+    },
+    caretDownWrapper: {
+      paddingTop: '4px',
+    },
+  };
+
   const handleOptionSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option) {
       setSelectedKey(option.key as string);
+      onChange?.({ value: [{ id: guid(), value: getSelectedValue(options, option.key as string), type: ValueSegmentType.LITERAL }] });
     }
   };
 
   const handleOptionMultiSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option && selectedKeys) {
-      setSelectedKeys(option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key));
+      const newKeys = option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key);
+      setSelectedKeys(newKeys);
+      onChange?.({
+        value: newKeys.map((key) => {
+          return { id: guid(), value: getSelectedValue(options, key as string), type: ValueSegmentType.LITERAL };
+        }),
+      });
     }
   };
 
@@ -111,4 +129,10 @@ const getSelectedKeys = (options: DropdownItem[], initialValue?: ValueSegment[])
     }
   });
   return returnVal;
+};
+
+const getSelectedValue = (options: DropdownItem[], key: string): any => {
+  return options.find((option) => {
+    return option.key === key;
+  })?.value;
 };

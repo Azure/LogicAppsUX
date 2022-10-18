@@ -147,7 +147,8 @@ const ParameterSection = ({
     editorId: string,
     labelId: string,
     tokenPickerFocused?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
+    tokenClicked?: (token: ValueSegment) => void,
+    tokenPickerHide?: () => void
   ): JSX.Element => {
     // check to see if there's a custom Token Picker
     return (
@@ -158,6 +159,7 @@ const ParameterSection = ({
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerFocused}
         tokenClickedCallback={tokenClicked}
+        tokenPickerHide={tokenPickerHide}
       />
     );
   };

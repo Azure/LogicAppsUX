@@ -10,11 +10,25 @@
   justify-content: center;
   align-items: center;
   margin-top: 5px;
+  white-space: nowrap;
   .msla-tokenpicker-button-text {
     color: @brandColor;
     padding-right: 3px;
     margin: 0px;
   }
+}
+.msla-tokenpicker-beak {
+  position: absolute;
+  background-color: rgb(255, 255, 255);
+  box-shadow: inherit;
+  border: 0px solid rgb(0, 120, 212);
+  box-sizing: border-box;
+  transform: rotate(45deg);
+  height: 20px;
+  width: 20px;
+  top: 10px;
+  right: -9px;
+  z-index: -1;
 }
 .msla-combobox-editor-tokenpicker {
   right: -37px;
