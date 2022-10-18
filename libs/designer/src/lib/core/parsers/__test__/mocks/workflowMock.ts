@@ -14,7 +14,7 @@ export const initialState: WorkflowState = {
   collapsedGraphIds: {},
   edgeIdsBySource: {},
   idReplacements: {},
-  newlyAddedOperations: {}
+  newlyAddedOperations: {},
 };
 
 const createMockNode = (id: string) => ({
