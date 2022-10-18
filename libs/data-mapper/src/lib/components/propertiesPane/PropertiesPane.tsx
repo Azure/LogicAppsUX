@@ -11,7 +11,7 @@ import { TestTab } from './tabs/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleDown20Regular, ChevronDoubleUp20Regular, Delete20Regular } from '@fluentui/react-icons';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -62,16 +62,12 @@ export interface PropertiesPaneProps {
 
 export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
   const { currentNode, isExpanded, setIsExpanded, centerViewHeight, contentHeight, setContentHeight } = props;
+  const styles = useStyles();
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
-  const isTargetNode = useMemo(
-    () => (currentNode ? !!targetSchemaDictionary[addTargetReactFlowPrefix(currentNode.key)] : false),
-    [currentNode, targetSchemaDictionary]
-  );
 
-  const styles = useStyles();
   const [tabToDisplay, setTabToDisplay] = useState<TABS | undefined>(TABS.PROPERTIES);
   const [initialDragYPos, setInitialDragYPos] = useState<number | undefined>(undefined);
   const [initialDragHeight, setInitialDragHeight] = useState<number | undefined>(undefined);
@@ -132,10 +128,13 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     dispatch(deleteCurrentlySelectedItem());
   };
 
-  const onSelectTab = (tab: TABS) => {
-    setTabToDisplay(tab);
-    setIsExpanded(true);
-  };
+  const onSelectTab = useCallback(
+    (tab: TABS) => {
+      setTabToDisplay(tab);
+      setIsExpanded(true);
+    },
+    [setIsExpanded]
+  );
 
   const onStartDrag = (e: React.DragEvent) => {
     setInitialDragYPos(e.clientY);
@@ -181,9 +180,14 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     setInitialDragYPos(undefined);
   };
 
-  const getPaneTitle = (): string | undefined => {
+  const isTargetNode = useMemo(
+    () => (currentNode ? !!targetSchemaDictionary[addTargetReactFlowPrefix(currentNode.key)] : false),
+    [currentNode, targetSchemaDictionary]
+  );
+
+  const paneTitle = useMemo<string | undefined>(() => {
     return !currentNode || isFunctionData(currentNode) ? functionLoc : isTargetNode ? targetSchemaNodeLoc : sourceSchemaNodeLoc;
-  };
+  }, [currentNode, functionLoc, isTargetNode, sourceSchemaNodeLoc, targetSchemaNodeLoc]);
 
   const selectedTabContent = useMemo<JSX.Element | null>(() => {
     if (!currentNode || !tabToDisplay) {
@@ -211,16 +215,19 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
     }
   }, [currentNode, isTargetNode, tabToDisplay]);
 
-  const TopBarContent = () => (
-    <>
-      <Text className={styles.title}>{getPaneTitle()}</Text>
-      <Divider vertical style={{ maxWidth: 24 }} />
-      <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
-        <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
-        {/*<Tab value={TABS.CODE}>{codeLoc}</Tab>*/}
-        {/*isTargetNode && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
-      </TabList>
-    </>
+  const topBarContent = useMemo(
+    () => (
+      <>
+        <Text className={styles.title}>{paneTitle}</Text>
+        <Divider vertical style={{ maxWidth: 24 }} />
+        <TabList selectedValue={tabToDisplay} onTabSelect={(_: unknown, data) => onSelectTab(data.value as TABS)} size="small">
+          <Tab value={TABS.PROPERTIES}>{propertiesLoc}</Tab>
+          {/*<Tab value={TABS.CODE}>{codeLoc}</Tab>*/}
+          {/*isTargetNode && <Tab value={TABS.TEST}>{testLoc}</Tab>*/}
+        </TabList>
+      </>
+    ),
+    [paneTitle, onSelectTab, propertiesLoc, styles, tabToDisplay]
   );
 
   useEffect(() => {
@@ -246,7 +253,7 @@ export const PropertiesPane = (props: PropertiesPaneProps): JSX.Element => {
         onDrag={onDrag}
         onDragEnd={onDragEnd}
       >
-        {currentNode ? <TopBarContent /> : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
+        {currentNode ? topBarContent : <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>}
 
         <div style={{ marginLeft: 'auto' }}>
           {currentNode && (isFunctionData(currentNode) || !isTargetNode) && (
