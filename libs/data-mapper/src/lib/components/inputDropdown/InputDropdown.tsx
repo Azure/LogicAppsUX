@@ -2,9 +2,11 @@ import { sourcePrefix } from '../../constants/ReactFlowConstants';
 import { updateConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
+import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { isFunctionData } from '../../utils/Function.Utils';
+import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { Dropdown, SelectableOptionMenuItemType, TextField } from '@fluentui/react';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
 import { Button, makeStyles, Tooltip } from '@fluentui/react-components';
@@ -17,15 +19,17 @@ import { useDispatch, useSelector } from 'react-redux';
 const customValueOptionKey = 'customValue';
 const customValueDebounceDelay = 300;
 
-export type InputOptions = {
-  [key: string]: {
-    nodeKey: string;
-    nodeName: string;
-    isFunctionNode?: boolean;
-  }[];
+interface InputOption {
+  nodeKey: string;
+  nodeName: string;
+  isFunctionNode?: boolean;
+}
+
+type InputOptionDictionary = {
+  [key: string]: InputOption[];
 };
 
-export interface InputOptionData {
+interface InputOptionData {
   isFunction: boolean;
 }
 
@@ -37,20 +41,20 @@ const useStyles = makeStyles({
 
 export interface InputDropdownProps {
   currentNode: SchemaNodeExtended | FunctionData;
-  typeMatchedOptions?: IDropdownOption<InputOptionData>[];
   inputValue?: string; // undefined, Node ID, or custom value (string)
   inputIndex: number;
-  inputStyles?: IRawStyle;
+  inputStyles?: IRawStyle & React.CSSProperties;
   label?: string;
   placeholder?: string;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, typeMatchedOptions, inputValue, inputIndex, inputStyles, label, placeholder } = props;
+  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
 
+  const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
 
@@ -83,7 +87,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     if (option.key === customValueOptionKey) {
-      // NOTE: isCustomValue flag is set in useEffect
+      // NOTE: isCustomValue flag will be confirmed/re-set in useEffect
+      // (must be set here too to not flash weird dropdown state)
+      setIsCustomValue(true);
       updateInput('');
     } else {
       // Any other selected option will be a node
@@ -144,17 +150,89 @@ export const InputDropdown = (props: InputDropdownProps) => {
   useEffect(() => {
     // Check if inputValue is defined, and if it's a node reference or a custom value
     if (inputValue !== undefined) {
-      const srcSchemaNode = sourceSchemaDictionary[`${sourcePrefix}${inputValue}`];
+      const srcSchemaNode = sourceSchemaDictionary[addSourceReactFlowPrefix(inputValue)];
       const functionNode = functionNodeDictionary[inputValue];
 
+      setCustomValue(inputValue);
       setIsCustomValue(!srcSchemaNode && !functionNode);
     } else {
+      setCustomValue('');
       setIsCustomValue(false);
     }
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
 
+  const typeSortedInputOptions = useMemo<InputOptionDictionary>(() => {
+    const newPossibleInputOptionsDictionary = {} as InputOptionDictionary;
+
+    currentSourceNodes.forEach((srcNode) => {
+      if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
+        newPossibleInputOptionsDictionary[srcNode.normalizedDataType] = [];
+      }
+
+      newPossibleInputOptionsDictionary[srcNode.normalizedDataType].push({
+        nodeKey: srcNode.key,
+        nodeName: srcNode.name,
+        isFunctionNode: false,
+      });
+    });
+
+    Object.entries(functionNodeDictionary).forEach(([key, node]) => {
+      if (!newPossibleInputOptionsDictionary[node.outputValueType]) {
+        newPossibleInputOptionsDictionary[node.outputValueType] = [];
+      }
+
+      newPossibleInputOptionsDictionary[node.outputValueType].push({
+        nodeKey: key,
+        nodeName: node.functionName, // TODO: use output value of fn node here instead (move outputValue to be util method - needs fnName and its inputValues)
+        isFunctionNode: true,
+      });
+    });
+
+    return newPossibleInputOptionsDictionary;
+  }, [currentSourceNodes, functionNodeDictionary]);
+
+  const typeMatchedInputOptions = useMemo<IDropdownOption<InputOptionData>[] | undefined>(() => {
+    let newInputOptions: IDropdownOption<InputOptionData>[] = [];
+
+    const addTypeMatchedOptions = (typeEntryArray: InputOption[]) => {
+      newInputOptions = [
+        ...newInputOptions,
+        ...typeEntryArray.map<IDropdownOption<InputOptionData>>((possibleOption) => ({
+          key: possibleOption.nodeKey,
+          text: possibleOption.nodeName,
+          data: {
+            isFunction: !!possibleOption.isFunctionNode,
+          },
+        })),
+      ];
+    };
+
+    const addAllOptions = () => {
+      Object.values(typeSortedInputOptions).forEach((typeEntryArray) => {
+        addTypeMatchedOptions(typeEntryArray);
+      });
+    };
+
+    const handleAnyOrSpecificType = (type: NormalizedDataType) => {
+      if (type === NormalizedDataType.Any) {
+        addAllOptions();
+      } else if (typeSortedInputOptions[type]) {
+        // If not type Any, check if any possible input options were found/compiled for provided type
+        addTypeMatchedOptions(typeSortedInputOptions[type]);
+      }
+    };
+
+    if (isFunctionData(currentNode)) {
+      currentNode.inputs[inputIndex].allowedTypes.forEach(handleAnyOrSpecificType);
+    } else {
+      handleAnyOrSpecificType(currentNode.normalizedDataType);
+    }
+
+    return newInputOptions;
+  }, [inputIndex, typeSortedInputOptions, currentNode]);
+
   const modifiedDropdownOptions = useMemo(() => {
-    const newModifiedOptions = typeMatchedOptions ? [...typeMatchedOptions] : [];
+    const newModifiedOptions = typeMatchedInputOptions ? [...typeMatchedInputOptions] : [];
 
     // Divider
     newModifiedOptions.push({
@@ -170,7 +248,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     });
 
     return newModifiedOptions;
-  }, [typeMatchedOptions, customValueOptionLoc]);
+  }, [typeMatchedInputOptions, customValueOptionLoc]);
 
   return (
     <>
@@ -186,7 +264,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           onRenderOption={onRenderOption}
         />
       ) : (
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: 'relative', ...inputStyles }}>
           <TextField
             value={customValue}
             onChange={(_e, newValue) => onChangeCustomValue(newValue)}
