@@ -19,6 +19,3 @@ export const Standard: ComponentStory<typeof PropertiesPane> = (args: Properties
     }}
   />
 );
-Standard.args = {
-  currentNode: undefined,
-};
