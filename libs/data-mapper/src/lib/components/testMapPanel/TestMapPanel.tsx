@@ -1,9 +1,29 @@
+import type { TestMapResponse } from '../../core';
 import { testDataMap } from '../../core/queries/datamap';
-import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton } from '@fluentui/react';
+import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Text } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
-import React, { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+
+const defaultStartingXmlInputValue = `<?xml version="1.0" encoding="utf-8"?>`;
+
+enum PanelPivotItems {
+  Input = 'input',
+  Output = 'output',
+}
+
+const headerTextStyle: React.CSSProperties = {
+  display: 'block',
+  fontWeight: 600,
+  fontSize: '16px',
+};
+
+const textStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: '14px',
+  marginTop: '4px',
+};
 
 const useStyles = makeStyles({
   editorStyle: {
@@ -12,23 +32,24 @@ const useStyles = makeStyles({
     ...shorthands.borderRadius('3px'),
     ...shorthands.padding('10px'),
   },
+  pivotItem: {
+    marginTop: '12px',
+  },
 });
-
-const defaultStartingXmlInputValue = `<?xml version="1.0" encoding="utf-8"?>`;
 
 export interface TestMapPanelProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const TestMapPanel = (props: TestMapPanelProps) => {
-  const { isOpen, onClose } = props;
+export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
   const [selectedInputOption, setSelectedInputOption] = useState<string | undefined>('pasteSample');
+  const [selectedPivotItem, setSelectedPivotItem] = useState<PanelPivotItems>(PanelPivotItems.Input);
   const [testMapInput, setTestMapInput] = useState<string | undefined>(defaultStartingXmlInputValue);
-  const [testMapResponse, _setTestMapResponse] = useState<any>({});
+  const [testMapResponse, setTestMapResponse] = useState<TestMapResponse | undefined>(undefined);
 
   const testMapLoc = intl.formatMessage({
     defaultMessage: 'Test map',
@@ -70,16 +91,33 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
     description: 'Label for input data option choice group',
   });
 
-  const inputDataOptions = [{ key: 'pasteSample', text: pasteFromSampleLoc }];
+  const statusCodeLoc = intl.formatMessage({
+    defaultMessage: 'Status code',
+    description: 'Response status code for test map API',
+  });
 
-  const testMap = async () => {
+  const responseBodyLoc = intl.formatMessage({
+    defaultMessage: 'Response body',
+    description: 'Response body for test map API',
+  });
+
+  const inputDataOptions = useMemo(() => [{ key: 'pasteSample', text: pasteFromSampleLoc }], [pasteFromSampleLoc]);
+
+  const testMap = () => {
     if (!testMapInput) {
       return;
     }
 
-    const testMapResponse = await testDataMap('CheckAvailability', testMapInput);
+    setSelectedPivotItem(PanelPivotItems.Output);
 
-    console.log(testMapResponse);
+    testDataMap('CheckAvailability', testMapInput)
+      .then((response) => {
+        setTestMapResponse(response);
+      })
+      .catch((error: Error) => {
+        setTestMapResponse(undefined);
+        console.error(error.message);
+      });
   };
 
   const getFooterContent = () => {
@@ -104,8 +142,12 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
       isFooterAtBottom={true}
       isLightDismiss
     >
-      <Pivot style={{ marginTop: 16 }}>
-        <PivotItem headerText={inputLoc} style={{ marginTop: 12 }}>
+      <Pivot
+        selectedKey={selectedPivotItem}
+        onLinkClick={(item, _event) => setSelectedPivotItem((item?.props.itemKey as PanelPivotItems) ?? PanelPivotItems.Input)}
+        style={{ marginTop: 16 }}
+      >
+        <PivotItem headerText={inputLoc} itemKey={PanelPivotItems.Input} className={styles.pivotItem}>
           <ChoiceGroup
             label={inputDataOptionsLabelLoc}
             selectedKey={selectedInputOption}
@@ -125,14 +167,18 @@ export const TestMapPanel = (props: TestMapPanelProps) => {
           />
         </PivotItem>
 
-        <PivotItem headerText={outputLoc} style={{ marginTop: 12 }}>
+        <PivotItem headerText={outputLoc} itemKey={PanelPivotItems.Output} className={styles.pivotItem}>
+          <Text style={headerTextStyle}>{statusCodeLoc}</Text>
+          <Text style={textStyle}>{testMapResponse && `${testMapResponse.statusCode} - ${testMapResponse.statusText}`}</Text>
+
+          <Text style={{ ...headerTextStyle, marginTop: 20 }}>{responseBodyLoc}</Text>
           <MonacoEditor
             language={EditorLanguage.xml}
-            value={testMapResponse.value ?? ''}
+            value={testMapResponse?.outputInstance?.$content ?? ''}
             lineNumbers="on"
             scrollbar={{ horizontal: 'hidden', vertical: 'auto' }}
             className={styles.editorStyle}
-            height={`500px`}
+            height={`650px`}
             wordWrap="on"
             readOnly
           />
