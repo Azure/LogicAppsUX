@@ -5,6 +5,7 @@ import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
 import DeleteTokenNode from './plugins/DeleteTokenNode';
+import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OnBlur from './plugins/OnBlur';
 import OnFocus from './plugins/OnFocus';
@@ -165,6 +166,7 @@ export const BaseEditor = ({
           : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
+        <IgnoreTab />
         {tokens ? <InsertTokenNode /> : null}
         {tokens ? <DeleteTokenNode /> : null}
         {children}
