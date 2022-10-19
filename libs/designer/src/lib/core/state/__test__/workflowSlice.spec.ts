@@ -29,6 +29,7 @@ describe('workflow slice reducers', () => {
     expect(state.nodesMetadata).toEqual({
       '123': {
         graphId: 'root',
+        isRoot: true,
       },
     });
   });

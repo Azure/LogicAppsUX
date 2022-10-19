@@ -1,6 +1,5 @@
 import type { OutputToken } from '..';
 import type { ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
@@ -8,7 +7,6 @@ import { TokenPickerMode } from '../tokenpickerpivot';
 import { Icon } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { guid } from '@microsoft-logic-apps/utils';
 import Fuse from 'fuse.js';
 import type { LexicalEditor } from 'lexical';
 import type { editor } from 'monaco-editor';
@@ -16,6 +14,7 @@ import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
+export type GetValueSegmentHandler = (tokenProps: OutputToken, addImplicitForeach: boolean) => Promise<ValueSegment>;
 interface TokenPickerOptionsProps {
   selectedKey: TokenPickerMode;
   section: TokenGroup;
@@ -26,6 +25,7 @@ interface TokenPickerOptionsProps {
   expression: ExpressionEditorEvent;
   setTokenLength: Dispatch<SetStateAction<number[]>>;
   setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
+  getValueSegmentFromToken: GetValueSegmentHandler;
   tokenClickedCallback?: (token: ValueSegment) => void;
 }
 export const TokenPickerOptions = ({
@@ -38,6 +38,7 @@ export const TokenPickerOptions = ({
   expression,
   setExpression,
   setTokenLength,
+  getValueSegmentFromToken,
   tokenClickedCallback,
 }: TokenPickerOptionsProps): JSX.Element => {
   const intl = useIntl();
@@ -131,31 +132,9 @@ export const TokenPickerOptions = ({
     }
   };
 
-  const handleCreateToken = (token: OutputToken) => {
-    const { key, brandColor, icon, title, description, name, type, value, outputInfo } = token;
-    const { actionName, type: tokenType, required, format, source, isSecure, arrayDetails } = outputInfo;
-    const segment: ValueSegment = {
-      id: guid(),
-      type: ValueSegmentType.TOKEN,
-      value: value ?? '',
-      token: {
-        actionName,
-        tokenType,
-        brandColor,
-        icon,
-        description,
-        key,
-        name,
-        type,
-        value,
-        format,
-        required,
-        title,
-        source,
-        isSecure,
-        arrayDetails: arrayDetails ? { parentArrayName: arrayDetails.parentArray, itemSchema: arrayDetails.itemSchema } : undefined,
-      },
-    };
+  const handleCreateToken = async (token: OutputToken) => {
+    const { brandColor, icon, title, description, value } = token;
+    const segment = await getValueSegmentFromToken(token, !tokenClickedCallback);
     if (tokenClickedCallback) {
       tokenClickedCallback(segment);
     } else {

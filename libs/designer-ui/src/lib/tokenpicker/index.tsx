@@ -5,6 +5,7 @@ import TokenPickerHandler from './plugins/TokenPickerHandler';
 import UpdateTokenNode from './plugins/UpdateTokenNode';
 import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
 import { TokenPickerSearch } from './tokenpickersearch/tokenpickersearch';
+import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { ICalloutContentStyles, PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
@@ -29,6 +30,7 @@ export type SearchTextChangedEventHandler = (e: string) => void;
 export interface TokenPickerProps {
   editorId: string;
   labelId: string;
+  getValueSegmentFromToken: GetValueSegmentHandler;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   initialMode?: TokenPickerMode;
@@ -45,6 +47,7 @@ export function TokenPicker({
   initialMode,
   tokenPickerFocused,
   onSearchTextChanged,
+  getValueSegmentFromToken,
   tokenClickedCallback,
   tokenPickerHide,
 }: TokenPickerProps): JSX.Element {
@@ -164,6 +167,7 @@ export function TokenPicker({
               editMode={updatingExpression !== null || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
               setExpression={setExpression}
               isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
+              getValueSegmentFromToken={getValueSegmentFromToken}
               tokenClickedCallback={tokenClickedCallback}
             />
           </div>

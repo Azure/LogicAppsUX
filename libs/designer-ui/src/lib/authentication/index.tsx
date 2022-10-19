@@ -81,7 +81,7 @@ export const AuthenticationEditor = ({
   options,
   authenticationValue,
   initialValue,
-  GetTokenPicker,
+  getTokenPicker,
   readOnly = false,
   onChange,
 }: AuthenticationEditorProps): JSX.Element => {
@@ -102,29 +102,29 @@ export const AuthenticationEditor = ({
   const renderAuthentication = () => {
     switch (option) {
       case AuthenticationType.BASIC:
-        return <BasicAuthentication basicProps={basic} GetTokenPicker={GetTokenPicker} setCurrentProps={setCurrentProps} />;
+        return <BasicAuthentication basicProps={basic} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.CERTIFICATE:
         return (
           <CertificateAuthentication
             clientCertificateProps={clientCertificate}
-            GetTokenPicker={GetTokenPicker}
+            getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.RAW:
-        return <RawAuthentication rawProps={raw} GetTokenPicker={GetTokenPicker} setCurrentProps={setCurrentProps} />;
+        return <RawAuthentication rawProps={raw} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.MSI:
         return (
           <MSIAuthentication
             identity={options?.identity}
             msiProps={msi}
             onManagedIdentityChange={onManagedIdentityDropdownChange}
-            GetTokenPicker={GetTokenPicker}
+            getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.OAUTH:
-        return <ActiveDirectoryAuthentication OauthProps={aadOAuth} GetTokenPicker={GetTokenPicker} setCurrentProps={setCurrentProps} />;
+        return <ActiveDirectoryAuthentication OauthProps={aadOAuth} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.NONE:
         return null;
       default:
@@ -160,7 +160,7 @@ export const AuthenticationEditor = ({
           collapsedValue={collapsedValue}
           isValid={isValid}
           setCollapsedValue={setCollapsedValue}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
           setIsValid={setIsValid}
           setCurrentProps={setCurrentProps}
           setOption={setOption}

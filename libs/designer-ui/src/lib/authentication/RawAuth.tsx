@@ -1,16 +1,16 @@
 import type { AuthProps, RawProps } from '.';
-import type { ChangeState } from '../editor/base';
+import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { AuthenticationProperty } from './AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from './util';
 import type { Dispatch, SetStateAction } from 'react';
 
 interface RawAuthenticationProps {
   rawProps: RawProps;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
-export const RawAuthentication = ({ rawProps, GetTokenPicker, setCurrentProps }: RawAuthenticationProps): JSX.Element => {
+export const RawAuthentication = ({ rawProps, getTokenPicker, setCurrentProps }: RawAuthenticationProps): JSX.Element => {
   const { rawValue } = rawProps;
 
   const updateRawValue = (newState: ChangeState) => {
@@ -25,7 +25,7 @@ export const RawAuthentication = ({ rawProps, GetTokenPicker, setCurrentProps }:
       <AuthenticationProperty
         initialValue={rawValue}
         AuthProperty={AUTHENTICATION_PROPERTIES.RAW_VALUE}
-        GetTokenPicker={GetTokenPicker}
+        getTokenPicker={getTokenPicker}
         onBlur={updateRawValue}
       />
     </div>

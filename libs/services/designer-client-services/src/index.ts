@@ -12,7 +12,7 @@ export * from './lib/logging/logEntry';
 export { StandardConnectionService } from './lib/standard/connection';
 export { StandardConnectorService } from './lib/standard/connector';
 export { StandardGatewayService } from './lib/standard/gateway';
-export { StandardOperationManifestService } from './lib/standard/operationmanifest';
+export { StandardOperationManifestService, foreachOperationInfo } from './lib/standard/operationmanifest';
 export { StandardOAuthService } from './lib/standard/oAuth';
 export type { StandardOperationManifestServiceOptions } from './lib/standard/operationmanifest';
 export { StandardSearchService } from './lib/standard/search';

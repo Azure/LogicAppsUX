@@ -2,7 +2,7 @@ import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
 import { Checkbox } from '../checkbox';
 import { notEqual } from '../dictionary/plugins/SerializeExpandedDictionary';
 import type { ValueSegment } from '../editor';
-import type { ChangeState } from '../editor/base';
+import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
 import { RowDropdown } from './RowDropdown';
@@ -36,13 +36,7 @@ interface RowProps {
   handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   handleUpdateParent: (newProps: RowItemProps | GroupItemProps, index: number) => void;
-  GetTokenPicker: (
-    editorId: string,
-    labelId: string,
-    onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void,
-    hideTokenPicker?: () => void
-  ) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const Row = ({
@@ -59,7 +53,7 @@ export const Row = ({
   // handleMove,
   handleDeleteChild,
   handleUpdateParent,
-  GetTokenPicker,
+  getTokenPicker,
 }: RowProps) => {
   const intl = useIntl();
   const keyEditorRef = useRef<HTMLDivElement | null>(null);
@@ -219,7 +213,7 @@ export const Row = ({
             singleLine={true}
             onChange={handleKeyChange}
             editorBlur={handleKeySave}
-            GetTokenPicker={GetTokenPicker}
+            getTokenPicker={getTokenPicker}
             tokenPickerButtonProps={{ customButton: true }}
           />
         </div>
@@ -231,7 +225,7 @@ export const Row = ({
             initialValue={valueValue}
             placeholder={rowValueInputPlaceholder}
             singleLine={true}
-            GetTokenPicker={GetTokenPicker}
+            getTokenPicker={getTokenPicker}
             editorBlur={handleValueSave}
             tokenPickerButtonProps={{ customButton: true }}
           />

@@ -31,7 +31,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   keyTitle,
   valueTitle,
   dictionaryType = DictionaryType.DEFAULT,
-  GetTokenPicker,
+  getTokenPicker,
   onChange,
   ...baseEditorProps
 }): JSX.Element => {
@@ -66,7 +66,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           isTrigger={baseEditorProps.isTrigger}
           readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
           setItems={updateItems}
           setIsValid={setIsValid}
           setCollapsedValue={(val: ValueSegment[]) => setCollapsedValue(val)}
@@ -80,7 +80,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           keyTitle={keyTitle}
           valueTitle={valueTitle}
           setItems={updateItems}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
         />
       )}
 

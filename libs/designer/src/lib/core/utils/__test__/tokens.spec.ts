@@ -101,6 +101,25 @@ describe('Token Picker Utilities', () => {
     Compose_9: 'Compose_9',
   };
 
+  const operationInfos = {
+    manual: { type: 'Request' },
+    Compose: { type: 'Compose' },
+    Compose_11: { type: 'Compose' },
+    Compose_2: { type: 'Compose' },
+    Execute_a_navigation_plan: 'Execute_a_navigation_plan',
+    Response: { type: 'Response' },
+    Until: { type: 'Until' },
+    Compose_10: { type: 'Compose' },
+    Compose_3: { type: 'Compose' },
+    Compose_4: { type: 'Compose' },
+    Compose_5: { type: 'Compose' },
+    Compose_6: { type: 'Compose' },
+    Until_2: { type: 'Until' },
+    Compose_7: { type: 'Compose' },
+    Compose_8: { type: 'Compose' },
+    Compose_9: { type: 'Compose' },
+  } as any;
+
   const nodesManifest = {
     Until: { manifest: { properties: { outputTokens: { selfReference: true } } } },
     Until_2: { manifest: { properties: { outputTokens: { selfReference: true } } } },
@@ -122,15 +141,15 @@ describe('Token Picker Utilities', () => {
 
   describe('getTokenNodeIds', () => {
     it('should get all nodes in upstream chain for a node in root graph', () => {
-      let result = getTokenNodeIds('Response', graph, nodesMetadata, nodesManifest, operationMap);
+      let result = getTokenNodeIds('Response', graph, nodesMetadata, nodesManifest, operationInfos, operationMap);
       expect(result).toEqual(['Execute_a_navigation_plan', 'manual']);
 
-      result = getTokenNodeIds('Compose_8', graph, nodesMetadata, nodesManifest, operationMap);
+      result = getTokenNodeIds('Compose_8', graph, nodesMetadata, nodesManifest, operationInfos, operationMap);
       expect(result).toEqual(['Compose_7', 'Compose_5', 'Compose_3', 'Response', 'Execute_a_navigation_plan', 'manual']);
     });
 
     it('should get all containing nodes for until operation along with its upstream nodes in graph', () => {
-      let result = getTokenNodeIds('Until_2', graph, nodesMetadata, nodesManifest, operationMap);
+      let result = getTokenNodeIds('Until_2', graph, nodesMetadata, nodesManifest, operationInfos, operationMap);
       expect(result).toEqual([
         'Compose_5',
         'Compose_3',
@@ -142,7 +161,7 @@ describe('Token Picker Utilities', () => {
         'Compose_9',
       ]);
 
-      result = getTokenNodeIds('Until', graph, nodesMetadata, nodesManifest, operationMap);
+      result = getTokenNodeIds('Until', graph, nodesMetadata, nodesManifest, operationInfos, operationMap);
       expect(result).toEqual([
         'Response',
         'Execute_a_navigation_plan',

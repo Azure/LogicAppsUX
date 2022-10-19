@@ -1,7 +1,7 @@
 import type { BaseEditorProps } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 
-export const HTMLEditor = ({ placeholder, readonly, initialValue, GetTokenPicker }: BaseEditorProps): JSX.Element => {
+export const HTMLEditor = ({ placeholder, readonly, initialValue, getTokenPicker }: BaseEditorProps): JSX.Element => {
   return (
     <BaseEditor
       className="msla-html-editor"
@@ -9,7 +9,7 @@ export const HTMLEditor = ({ placeholder, readonly, initialValue, GetTokenPicker
       placeholder={placeholder}
       BasePlugins={{ tokens: true, clearEditor: true, toolBar: true }}
       initialValue={initialValue}
-      GetTokenPicker={GetTokenPicker}
+      getTokenPicker={getTokenPicker}
       tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
     />
   );

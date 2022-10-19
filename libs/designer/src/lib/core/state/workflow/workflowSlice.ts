@@ -7,6 +7,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
+import { getImmediateSourceNodeIds } from '../../utils/graph';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
@@ -14,6 +15,12 @@ import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'reactflow';
+
+export interface AddImplicitForeachPayload {
+  nodeId: string;
+  foreachNodeId: string;
+  operation: any;
+}
 
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
@@ -51,6 +58,29 @@ export const workflowSlice = createSlice({
         message: 'New Action Node Added',
         args: [action.payload],
       });
+    },
+    addImplicitForeachNode: (state: WorkflowState, action: PayloadAction<AddImplicitForeachPayload>) => {
+      const { nodeId, foreachNodeId, operation } = action.payload;
+      const currentNodeToBeReplaced = getWorkflowNodeFromGraphState(state, nodeId) as WorkflowNode;
+      const graphId = state.nodesMetadata[nodeId].graphId;
+      const currentGraph = (graphId === 'root' ? state.graph : getWorkflowNodeFromGraphState(state, graphId)) as WorkflowNode;
+      const parentId = getImmediateSourceNodeIds(currentGraph, nodeId)[0];
+      addNodeToWorkflow(
+        { nodeId: foreachNodeId, relationshipIds: { graphId, parentId, childId: nodeId }, operation },
+        currentGraph,
+        state.nodesMetadata,
+        state
+      );
+      state.operations[foreachNodeId] = { ...state.operations[foreachNodeId], ...operation };
+      const foreachNode = getWorkflowNodeFromGraphState(state, foreachNodeId) as WorkflowNode;
+      moveNodeInWorkflow(
+        currentNodeToBeReplaced,
+        currentGraph,
+        foreachNode,
+        { graphId: foreachNode?.id, parentId: foreachNode.children?.[0].id },
+        state.nodesMetadata,
+        state
+      );
     },
     moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
       if (!state.graph) {
@@ -261,6 +291,7 @@ export const {
   clearFocusNode,
   setFocusNode,
   replaceId,
+  addImplicitForeachNode,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

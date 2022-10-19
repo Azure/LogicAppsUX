@@ -1,5 +1,5 @@
 import type { ValueSegment } from '../editor';
-import type { ChangeHandler } from '../editor/base';
+import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import { Label } from '../label';
 import type { AuthProperty } from './util';
@@ -7,14 +7,14 @@ import type { AuthProperty } from './util';
 interface AuthenticationPropertyProps {
   AuthProperty: AuthProperty;
   initialValue?: ValueSegment[];
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
   onBlur?: ChangeHandler;
 }
 
 export const AuthenticationProperty = ({
   initialValue = [],
   AuthProperty,
-  GetTokenPicker,
+  getTokenPicker,
   onBlur,
 }: AuthenticationPropertyProps): JSX.Element => {
   return (
@@ -27,7 +27,7 @@ export const AuthenticationProperty = ({
       <div className="msla-authentication-editor-expanded-editor-container">
         <StringEditor
           initialValue={initialValue}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
           placeholder={AuthProperty.placeHolder}
           BasePlugins={{ tokens: true }}
           singleLine={true}

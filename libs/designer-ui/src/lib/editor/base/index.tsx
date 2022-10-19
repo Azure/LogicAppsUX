@@ -33,6 +33,13 @@ export interface ChangeState {
   viewModel?: any; // TODO - Should be strongly typed once updated for Array
 }
 
+export type GetTokenPickerHandler = (
+  editorId: string,
+  labelId: string,
+  onClick?: (b: boolean) => void,
+  tokenClicked?: (token: ValueSegment) => void,
+  hideTokenPicker?: () => void
+) => JSX.Element;
 export type ChangeHandler = (newState: ChangeState) => void;
 export type CallbackHandler = () => void;
 
@@ -49,13 +56,7 @@ export interface BaseEditorProps {
   children?: React.ReactNode;
   tokenPickerButtonProps?: TokenPickerButtonProps;
   isTrigger?: boolean;
-  GetTokenPicker: (
-    editorId: string,
-    labelId: string,
-    onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void,
-    hideTokenPicker?: () => void
-  ) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
@@ -84,7 +85,7 @@ export const BaseEditor = ({
   children,
   tokenPickerButtonProps,
   isTrigger,
-  GetTokenPicker,
+  getTokenPicker,
   onFocus,
   onBlur,
 }: BaseEditorProps) => {
@@ -168,7 +169,7 @@ export const BaseEditor = ({
           />
         ) : null}
         {!isTrigger && ((showTokenPickerButton && showTokenPicker) || getInTokenPicker())
-          ? GetTokenPicker(editorId, labelId, onClickTokenPicker, undefined, customButton ? handleShowTokenPicker : undefined)
+          ? getTokenPicker(editorId, labelId, onClickTokenPicker, undefined, customButton ? handleShowTokenPicker : undefined)
           : null}
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
