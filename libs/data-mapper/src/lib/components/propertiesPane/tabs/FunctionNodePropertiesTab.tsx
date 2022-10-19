@@ -99,19 +99,10 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
   const connection = useMemo<Connection | undefined>(() => connectionDictionary[functionData.key], [connectionDictionary, functionData]);
 
-  const outputValue = useMemo(() => {
-    let outputValue = `${functionData.functionName}(`;
-
-    if (inputValueArrays) {
-      inputValueArrays.forEach((inputValueArray, idx) => {
-        if (inputValueArray) {
-          outputValue += `${idx === 0 ? '' : ', '}${inputValueArray}`;
-        }
-      });
-    }
-
-    return `${outputValue})`;
-  }, [inputValueArrays, functionData]);
+  const outputValue = useMemo(
+    () => getFunctionOutputValue((inputValueArrays?.flat().filter((value) => !!value) as string[]) ?? [], functionData.functionName),
+    [inputValueArrays, functionData]
+  );
 
   useEffect(() => {
     const newInputValues: InputValueMatrix = [];
@@ -229,4 +220,16 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
       </Stack>
     </div>
   );
+};
+
+export const getFunctionOutputValue = (inputValues: string[], functionName: string) => {
+  let outputValue = `${functionName}(`;
+
+  inputValues.forEach((inputValue, idx) => {
+    if (inputValue) {
+      outputValue += `${idx === 0 ? '' : ', '}${inputValue}`;
+    }
+  });
+
+  return `${outputValue})`;
 };

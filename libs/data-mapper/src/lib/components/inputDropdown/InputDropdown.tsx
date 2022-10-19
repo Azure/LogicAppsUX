@@ -5,8 +5,10 @@ import type { SchemaNodeExtended } from '../../models';
 import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
+import { isCustomValue } from '../../utils/Connection.Utils';
 import { isFunctionData } from '../../utils/Function.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
+import { getFunctionOutputValue } from '../propertiesPane/tabs/FunctionNodePropertiesTab';
 import { Dropdown, SelectableOptionMenuItemType, TextField } from '@fluentui/react';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
 import { Button, makeStyles, Tooltip } from '@fluentui/react-components';
@@ -57,8 +59,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
-  const [isCustomValue, setIsCustomValue] = useState(false);
+  const [inputIsCustomValue, setInputIsCustomValue] = useState(false);
   const [customValue, setCustomValue] = useState<string>('');
 
   const customValueOptionLoc = intl.formatMessage({
@@ -87,9 +90,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     if (option.key === customValueOptionKey) {
-      // NOTE: isCustomValue flag will be confirmed/re-set in useEffect
+      // NOTE: inputIsCustomValue flag will be confirmed/re-set in useEffect
       // (must be set here too to not flash weird dropdown state)
-      setIsCustomValue(true);
+      setInputIsCustomValue(true);
       updateInput('');
     } else {
       // Any other selected option will be a node
@@ -154,16 +157,17 @@ export const InputDropdown = (props: InputDropdownProps) => {
       const functionNode = functionNodeDictionary[inputValue];
 
       setCustomValue(inputValue);
-      setIsCustomValue(!srcSchemaNode && !functionNode);
+      setInputIsCustomValue(!srcSchemaNode && !functionNode);
     } else {
       setCustomValue('');
-      setIsCustomValue(false);
+      setInputIsCustomValue(false);
     }
   }, [inputValue, sourceSchemaDictionary, functionNodeDictionary]);
 
   const typeSortedInputOptions = useMemo<InputOptionDictionary>(() => {
     const newPossibleInputOptionsDictionary = {} as InputOptionDictionary;
 
+    // Sort source schema nodes on the canvas by type
     currentSourceNodes.forEach((srcNode) => {
       if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
         newPossibleInputOptionsDictionary[srcNode.normalizedDataType] = [];
@@ -176,21 +180,35 @@ export const InputDropdown = (props: InputDropdownProps) => {
       });
     });
 
+    // Sort function nodes on the canvas by type
     Object.entries(functionNodeDictionary).forEach(([key, node]) => {
       if (!newPossibleInputOptionsDictionary[node.outputValueType]) {
         newPossibleInputOptionsDictionary[node.outputValueType] = [];
       }
 
+      // Compile Function's input values (if any)
+      let fnInputValues: string[] = [];
+      const fnConnection = connectionDictionary[key];
+      if (fnConnection) {
+        const flattenedInputs = Object.values(fnConnection.inputs)
+          .flat()
+          .filter((value) => !!value);
+        fnInputValues = flattenedInputs.map((input) =>
+          isCustomValue(input) ? input : isFunctionData(input.node) ? input.node.functionName : input.node.name
+        );
+      }
+
       newPossibleInputOptionsDictionary[node.outputValueType].push({
         nodeKey: key,
-        nodeName: node.functionName, // TODO: use output value of fn node here instead (move outputValue to be util method - needs fnName and its inputValues)
+        nodeName: getFunctionOutputValue(fnInputValues, node.functionName),
         isFunctionNode: true,
       });
     });
 
     return newPossibleInputOptionsDictionary;
-  }, [currentSourceNodes, functionNodeDictionary]);
+  }, [currentSourceNodes, functionNodeDictionary, connectionDictionary]);
 
+  // Compile options from the possible type-sorted input options based on the input's type
   const typeMatchedInputOptions = useMemo<IDropdownOption<InputOptionData>[] | undefined>(() => {
     let newInputOptions: IDropdownOption<InputOptionData>[] = [];
 
@@ -252,7 +270,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   return (
     <>
-      {!isCustomValue ? (
+      {!inputIsCustomValue ? (
         <Dropdown
           options={modifiedDropdownOptions}
           selectedKey={inputValue}
