@@ -1312,7 +1312,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "Automatikus"
     }
   ],
   "B/JzwK": [
@@ -1425,6 +1425,12 @@
     {
       "type": 0,
       "value": "Állapot típusa:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1569,6 +1575,12 @@
     {
       "type": 0,
       "value": "Válasz"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1827,6 +1839,12 @@
     {
       "type": 0,
       "value": "Igaz értéket ad vissza, ha a paraméterek hamisak."
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2589,6 +2607,12 @@
       "value": "Kapcsolat neve"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2617,6 +2641,12 @@
     {
       "type": 0,
       "value": "A legfelső szintű hatóköri műveletek eredményeit adja vissza a megadott hatóköri műveletben, például „For_each”, „Until” vagy „Scope action”."
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2817,10 +2847,10 @@
       "value": "A bemenet átalakítása JSON típusú értékké."
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Nullázható"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -3144,7 +3174,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "Formázatlan"
     }
   ],
   "Tb2QLA": [
@@ -3162,7 +3192,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Egyéni"
     }
   ],
   "ToPmjE": [
@@ -3827,6 +3857,12 @@
     {
       "type": 0,
       "value": "Műveletek"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4594,7 +4630,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Felügyelt identitás"
     }
   ],
   "iU1OJh": [
@@ -4899,6 +4935,12 @@
       "value": "Vissza"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -5079,6 +5121,12 @@
       "value": "Kötelező megadni. Az időegységek azon mennyisége, amellyel a kívánt időpont a jövőben van."
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5175,6 +5223,12 @@
     {
       "type": 0,
       "value": "Adja meg a futtatásazonosítót a futtatás megnyitásához"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5632,7 +5686,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "Ügyféltanúsítvány"
     }
   ],
   "t+XCkg": [
@@ -5704,7 +5758,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "Alapszintű"
     }
   ],
   "tZj2Xn": [
@@ -6075,6 +6129,12 @@
       "value": "Egy URI-ként kódolt sztringet sztringként ad vissza."
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6169,6 +6229,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [

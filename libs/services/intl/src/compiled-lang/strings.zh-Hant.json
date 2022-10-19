@@ -1253,7 +1253,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "自動"
     }
   ],
   "B/JzwK": [
@@ -1355,6 +1355,12 @@
     {
       "type": 0,
       "value": "狀態類型:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1499,6 +1505,12 @@
     {
       "type": 0,
       "value": "回應"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1738,6 +1750,12 @@
     {
       "type": 0,
       "value": "若參數皆為 False，則傳回 True"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2433,6 +2451,12 @@
       "value": "連線名稱"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2461,6 +2485,12 @@
     {
       "type": 0,
       "value": "傳回指定範圍動作內的最上層動作結果，例如 For_each、Until 或 Scope 動作。"
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2661,10 +2691,10 @@
       "value": "將輸入轉換為 JSON 類型值"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "可為 Null"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -2973,7 +3003,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "原始"
     }
   ],
   "Tb2QLA": [
@@ -2991,7 +3021,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "自訂"
     }
   ],
   "ToPmjE": [
@@ -3640,6 +3670,12 @@
     {
       "type": 0,
       "value": "動作"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4372,7 +4408,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "受控識別"
     }
   ],
   "iU1OJh": [
@@ -4673,6 +4709,12 @@
       "value": "返回"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -4853,6 +4895,12 @@
       "value": "必要。未來所需時間的時間單位數字。"
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -4949,6 +4997,12 @@
     {
       "type": 0,
       "value": "輸入執行識別碼以開啟執行"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5371,7 +5425,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "用戶端憑證"
     }
   ],
   "t+XCkg": [
@@ -5443,7 +5497,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "基本"
     }
   ],
   "tZj2Xn": [
@@ -5814,6 +5868,12 @@
       "value": "傳回 URI 編碼字串的字串表示法"
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -5908,6 +5968,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [
