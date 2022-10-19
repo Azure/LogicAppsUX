@@ -93,7 +93,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   };
 
   const addUnboundedInput = () => {
-    updateInput(inputValueArrays && inputValueArrays[0].length > 1 ? inputValueArrays[0].length - 1 : 0, undefined);
+    updateInput(inputValueArrays ? inputValueArrays[0].length : 0, undefined);
   };
 
   const removeUnboundedInput = (index: number) => {
@@ -175,6 +175,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       placeholder={input.placeHolder}
                       inputValue={inputValueArrays ? inputValueArrays[idx][0] : undefined}
                       inputIndex={idx}
+                      inputStyles={{ width: '100%' }}
                     />
                   </Tooltip>
                 </div>
@@ -195,6 +196,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                           placeholder={functionData.inputs[0].placeHolder}
                           inputValue={unboundedInputValue}
                           inputIndex={idx}
+                          inputStyles={{ width: '100%' }}
                           isUnboundedInput
                         />
                       </Tooltip>
@@ -228,6 +230,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                             placeholder={functionData.inputs[idx + 1].placeHolder}
                             inputValue={inputValueArray.length > 0 ? inputValueArray[0] : undefined}
                             inputIndex={idx + 1}
+                            inputStyles={{ width: '100%' }}
                           />
                         </Tooltip>
                       </div>
