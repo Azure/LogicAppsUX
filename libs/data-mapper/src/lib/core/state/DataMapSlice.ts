@@ -78,8 +78,11 @@ export interface ConnectionAction {
 
 export interface UpdateConnectionInputAction {
   targetNode: SchemaNodeExtended | FunctionData;
+  targetNodeReactFlowKey: string;
   inputIndex: number;
-  value: InputConnection | undefined;
+  value: InputConnection | null; // null is indicator to remove an unbounded input value
+  // If true, inputIndex becomes the value's index within inputs[0] (instead of inputs[inputIndex])
+  isUnboundedInput?: boolean;
 }
 
 export interface DeleteConnectionAction {
@@ -130,7 +133,7 @@ export const dataMapSlice = createSlice({
           Object.values(incomingConnections).forEach((connection) => {
             // TODO change to support functions
             flattenInputs(connection.inputs).forEach((input) => {
-              if (isCustomValue(input)) {
+              if (!input || isCustomValue(input)) {
                 return;
               }
 

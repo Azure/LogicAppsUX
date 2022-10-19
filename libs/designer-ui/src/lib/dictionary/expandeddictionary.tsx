@@ -1,5 +1,6 @@
 import type { DictionaryEditorItemProps } from '.';
 import constants from '../constants';
+import type { GetTokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import type { ButtonOffSet } from '../editor/base/plugins/TokenPickerButton';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
@@ -20,7 +21,7 @@ export interface ExpandedDictionaryProps {
   keyTitle?: string;
   valueTitle?: string;
   setItems: (items: DictionaryEditorItemProps[]) => void;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const ExpandedDictionary = ({
@@ -29,7 +30,7 @@ export const ExpandedDictionary = ({
   readonly,
   keyTitle,
   valueTitle,
-  GetTokenPicker,
+  getTokenPicker,
   setItems,
 }: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
@@ -102,7 +103,7 @@ export const ExpandedDictionary = ({
                 tokenPickerButtonProps={{
                   buttonOffset: pickerOffset,
                 }}
-                GetTokenPicker={GetTokenPicker}
+                getTokenPicker={getTokenPicker}
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary
@@ -126,7 +127,7 @@ export const ExpandedDictionary = ({
                   buttonOffset: pickerOffset,
                 }}
                 onFocus={() => addItem(index, ExpandedDictionaryEditorType.VALUE)}
-                GetTokenPicker={GetTokenPicker}
+                getTokenPicker={getTokenPicker}
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary

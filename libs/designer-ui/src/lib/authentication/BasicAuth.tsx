@@ -1,16 +1,16 @@
 import type { AuthProps, BasicProps } from '.';
-import type { ChangeState } from '../editor/base';
+import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { AuthenticationProperty } from './AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from './util';
 import type { Dispatch, SetStateAction } from 'react';
 
 interface BasicAuthenticationProps {
   basicProps: BasicProps;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
-export const BasicAuthentication = ({ basicProps, GetTokenPicker, setCurrentProps }: BasicAuthenticationProps): JSX.Element => {
+export const BasicAuthentication = ({ basicProps, getTokenPicker, setCurrentProps }: BasicAuthenticationProps): JSX.Element => {
   const { basicUsername, basicPassword } = basicProps;
 
   const updateBasicUserName = (newState: ChangeState) => {
@@ -32,13 +32,13 @@ export const BasicAuthentication = ({ basicProps, GetTokenPicker, setCurrentProp
       <AuthenticationProperty
         initialValue={basicUsername}
         AuthProperty={AUTHENTICATION_PROPERTIES.BASIC_USERNAME}
-        GetTokenPicker={GetTokenPicker}
+        getTokenPicker={getTokenPicker}
         onBlur={updateBasicUserName}
       />
       <AuthenticationProperty
         initialValue={basicPassword}
         AuthProperty={AUTHENTICATION_PROPERTIES.BASIC_PASSWORD}
-        GetTokenPicker={GetTokenPicker}
+        getTokenPicker={getTokenPicker}
         onBlur={updateBasicPassword}
       />
     </div>

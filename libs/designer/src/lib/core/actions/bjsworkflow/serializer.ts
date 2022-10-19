@@ -6,7 +6,7 @@ import { getOperationManifest } from '../../queries/operation';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { RootState } from '../../store';
-import { getNode, isRootNode, isRootNodeInGraph } from '../../utils/graph';
+import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
 import {
   encodePathValue,
   getAndEscapeSegment,
@@ -95,13 +95,11 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
 };
 
 const getTrigger = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Triggers> => {
-  const rootGraph = rootState.workflow.graph as WorkflowNode;
-  const rootNode = rootGraph.children?.find((child) => isRootNode(child.id, rootState.workflow.nodesMetadata)) as WorkflowNode;
-  const rootNodeid = rootNode.id;
+  const rootNodeId = getTriggerNodeId(rootState.workflow);
   const idReplacements = rootState.workflow.idReplacements;
-  return rootNode
+  return rootNodeId
     ? {
-        [idReplacements[rootNodeid] ?? rootNodeid]: ((await serializeOperation(rootState, rootNode.id, options)) ??
+        [idReplacements[rootNodeId] ?? rootNodeId]: ((await serializeOperation(rootState, rootNodeId, options)) ??
           {}) as LogicAppsV2.TriggerDefinition,
       }
     : {};
@@ -173,11 +171,13 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     inputs.retryPolicy = retryPolicy;
   }
 
+  const inputsLocation = manifest.properties.inputsLocation ?? ['inputs'];
+
   return {
     type: operation.type,
     ...optional('description', operationFromWorkflow.description),
     ...optional('kind', operation.kind),
-    ...optional((manifest.properties.inputsLocation ?? ['inputs'])[0], inputs),
+    ...(inputsLocation.length ? optional(inputsLocation[0], inputs) : inputs),
     ...childOperations,
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),

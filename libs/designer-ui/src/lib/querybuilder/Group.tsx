@@ -1,7 +1,6 @@
 import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
 import { Checkbox } from '../checkbox';
-import type { ValueSegment } from '../editor';
-import type { ChangeState } from '../editor/base';
+import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { AddSection } from './AddSection';
 import type { GroupDropdownOptions } from './GroupDropdown';
 import { GroupDropdown } from './GroupDropdown';
@@ -45,13 +44,7 @@ interface GroupProps {
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   handleUngroupChild?: (indexToInsertAt: number) => void;
   handleUpdateParent: (newProps: GroupItemProps, index: number) => void;
-  GetTokenPicker: (
-    editorId: string,
-    labelId: string,
-    onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void,
-    hideTokenPicker?: () => void
-  ) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const Group = ({
@@ -67,7 +60,7 @@ export const Group = ({
   handleDeleteChild,
   handleUngroupChild,
   handleUpdateParent,
-  GetTokenPicker,
+  getTokenPicker,
 }: GroupProps) => {
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
@@ -290,7 +283,7 @@ export const Group = ({
                     handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUpdateParent={handleUpdateNewParent}
-                    GetTokenPicker={GetTokenPicker}
+                    getTokenPicker={getTokenPicker}
                   />
                 ) : (
                   <Group
@@ -311,7 +304,7 @@ export const Group = ({
                     handleDeleteChild={handleDelete}
                     handleUngroupChild={() => handleUngroup(currIndex, item.items)}
                     handleUpdateParent={handleUpdateNewParent}
-                    GetTokenPicker={GetTokenPicker}
+                    getTokenPicker={getTokenPicker}
                   />
                 );
               })}
@@ -327,7 +320,7 @@ export const Group = ({
                       isBottom={isBottom && !!isRootGroup}
                       groupedItems={groupedItems}
                       handleMove={handleMoveChild}
-                      GetTokenPicker={GetTokenPicker}
+                      getTokenPicker={getTokenPicker}
                       handleDeleteChild={handleDeleteChild}
                       handleUpdateParent={handleUpdateNewParent}
                     />

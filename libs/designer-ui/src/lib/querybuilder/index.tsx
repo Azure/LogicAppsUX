@@ -3,6 +3,7 @@ import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
 import { useFunctionalState } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
+import type { GetTokenPickerHandler } from '../editor/base';
 
 export { GroupDropdownOptions };
 
@@ -29,16 +30,10 @@ export interface GroupItemProps {
 export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
-  GetTokenPicker: (
-    editorId: string,
-    labelId: string,
-    onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void,
-    hideTokenPicker?: () => void
-  ) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
-export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderProps) => {
+export const QueryBuilderEditor = ({ getTokenPicker, groupProps }: QueryBuilderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
@@ -69,7 +64,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
       <Group
         isTop={true}
         isBottom={true}
-        GetTokenPicker={GetTokenPicker}
+        getTokenPicker={getTokenPicker}
         groupProps={getRootProp()}
         isRootGroup={true}
         isGroupable={isGroupable}

@@ -657,3 +657,9 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [terminate, terminateManifest],
   [until, untilManifest],
 ]);
+
+export const foreachOperationInfo = {
+  type: foreach,
+  connectorId: controlConnectorId,
+  operationId: foreach,
+};

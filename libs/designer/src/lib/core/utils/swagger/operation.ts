@@ -176,7 +176,7 @@ export const getInputParametersFromSwagger = (
   }
 
   const inputParametersAsArray = unmap(inputParametersByKey);
-  const allParametersAsArray = toParameterInfoMap(inputParametersAsArray, stepDefinition, nodeId);
+  const allParametersAsArray = toParameterInfoMap(inputParametersAsArray, stepDefinition);
 
   const defaultParameterGroup = {
     id: ParameterGroupKeys.DEFAULT,
