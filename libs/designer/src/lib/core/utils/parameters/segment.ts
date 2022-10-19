@@ -375,6 +375,7 @@ export function createVariableToken(variableName: string): Token {
     value: variableName,
     key: variableName,
     title: variableName,
+    name: variableName,
     brandColor: '#770bd6',
     icon: VariableIcon,
     tokenType: TokenType.VARIABLE,
