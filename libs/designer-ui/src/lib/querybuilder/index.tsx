@@ -51,6 +51,7 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
   useEffect(() => {
+    console.log(getRootProp());
     setHeights(checkHeights(getRootProp(), [], 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getRootProp()]);
