@@ -6,7 +6,7 @@ import { RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/uti
 ///////////////////////////////////////////////////////////
 // EDGES
 
-export const addNewEdge = (state: WorkflowState, source: string, target: string, graph: WorkflowNode) => {
+export const addNewEdge = (state: WorkflowState, source: string, target: string, graph: WorkflowNode, addRunAfter = true) => {
   const workflowEdge: WorkflowEdge = {
     id: `${source}-${target}`,
     source,
@@ -17,7 +17,7 @@ export const addNewEdge = (state: WorkflowState, source: string, target: string,
   graph?.edges.push(workflowEdge);
 
   const targetOp = state.operations?.[target] as any;
-  if (targetOp) (state.operations?.[target] as any).runAfter = { [source]: [RUN_AFTER_STATUS.SUCCEEDED] };
+  if (targetOp && addRunAfter) (state.operations?.[target] as any).runAfter = { [source]: [RUN_AFTER_STATUS.SUCCEEDED] };
 };
 
 export const removeEdge = (state: WorkflowState, sourceId: string, targetId: string, graph: WorkflowNode) => {
@@ -43,12 +43,18 @@ const setEdgeTarget = (edge: WorkflowEdge, newTarget: string) => {
 // Reassign edge source ids to new node id
 //   /|\   =>   |
 //             /|\
-export const reassignEdgeSources = (state: WorkflowState, oldSourceId: string, newSourceId: string, graph: WorkflowNode) => {
+export const reassignEdgeSources = (
+  state: WorkflowState,
+  oldSourceId: string,
+  newSourceId: string,
+  graph: WorkflowNode,
+  isSourceTrigger: boolean
+) => {
   if (!state) return;
   graph.edges = graph.edges?.map((edge) => {
     if (edge.source === oldSourceId) {
       setEdgeSource(edge, newSourceId);
-      moveRunAfterSource(state, edge.target, oldSourceId, newSourceId);
+      moveRunAfterSource(state, edge.target, oldSourceId, newSourceId, isSourceTrigger);
     }
     return edge;
   });
@@ -76,10 +82,16 @@ const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: strin
   }
 };
 
-const moveRunAfterSource = (state: WorkflowState | undefined, nodeId: string, oldSourceId: string, newSourceId: string) => {
+const moveRunAfterSource = (
+  state: WorkflowState | undefined,
+  nodeId: string,
+  oldSourceId: string,
+  newSourceId: string,
+  isOldSourceTrigger: boolean
+) => {
   if (!state) return;
   const targetRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
-  targetRunAfter[newSourceId] = targetRunAfter[oldSourceId];
+  targetRunAfter[newSourceId] = isOldSourceTrigger ? [RUN_AFTER_STATUS.SUCCEEDED] : targetRunAfter[oldSourceId];
   delete targetRunAfter[oldSourceId];
 };
 
