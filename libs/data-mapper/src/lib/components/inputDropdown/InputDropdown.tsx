@@ -64,8 +64,6 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
-  console.log(connectionDictionary);
-
   const [inputIsCustomValue, setInputIsCustomValue] = useState(false);
   const [customValue, setCustomValue] = useState<string>('');
 

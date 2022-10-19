@@ -109,7 +109,10 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
   const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionData.category), [functionData]);
 
-  const connection = useMemo<Connection | undefined>(() => connectionDictionary[functionData.key], [connectionDictionary, functionData]);
+  const connection = useMemo<Connection | undefined>(
+    () => connectionDictionary[selectedItemKey ?? ''],
+    [connectionDictionary, selectedItemKey]
+  );
 
   const outputValue = useMemo(
     () => getFunctionOutputValue((inputValueArrays?.flat().filter((value) => !!value) as string[]) ?? [], functionData.functionName),
@@ -117,23 +120,21 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   );
 
   useEffect(() => {
-    const newInputValues: InputValueMatrix = [];
+    let newInputValueArrays: InputValueMatrix = [];
 
     if (functionData.maxNumberOfInputs !== 0) {
-      functionData.inputs.forEach((_input, idx) => {
-        newInputValues[idx] = [];
-      });
+      newInputValueArrays = functionData.inputs.map((_input) => []);
 
       if (connection?.inputs) {
         Object.values(connection.inputs).forEach((inputValueArray, idx) => {
-          newInputValues[idx] = inputValueArray.map((inputValue) =>
+          newInputValueArrays[idx] = inputValueArray.map((inputValue) =>
             !inputValue ? undefined : isCustomValue(inputValue) ? inputValue : inputValue.node.key
           );
         });
       }
     }
 
-    setInputValueArrays(newInputValues);
+    setInputValueArrays(newInputValueArrays);
   }, [functionData, connection]);
 
   return (
