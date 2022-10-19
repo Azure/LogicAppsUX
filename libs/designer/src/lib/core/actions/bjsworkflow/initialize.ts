@@ -109,14 +109,14 @@ export const getInputParametersFromManifest = (
       getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], stepDefinition),
       '',
       primaryInputParametersInArray,
-      true /* createInvisibleParameter */,
+      !inputsLocation || !!inputsLocation.length /* createInvisibleParameter */,
       false /* useDefault */
     );
   } else {
     loadParameterValuesFromDefault(primaryInputParameters);
   }
 
-  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
+  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);
   const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
   // TODO (14490585)- Initialize editor view models for array

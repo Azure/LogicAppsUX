@@ -1,4 +1,5 @@
 import type { ComplexArrayItem } from '..';
+import type { GetTokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import type { LabelProps } from '../label';
 import { ItemMenuButton, renderLabel } from './expandedsimplearray';
@@ -19,7 +20,7 @@ export interface ExpandedComplexArrayProps {
   canDeleteLastItem: boolean;
   readOnly?: boolean;
   isTrigger?: boolean;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: ComplexArrayItem[]) => void;
 }
 
@@ -30,7 +31,7 @@ export const ExpandedComplexArray = ({
   canDeleteLastItem,
   readOnly,
   isTrigger,
-  GetTokenPicker,
+  getTokenPicker,
   setItems,
 }: ExpandedComplexArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -71,7 +72,7 @@ export const ExpandedComplexArray = ({
                     BasePlugins={{ tokens: true, clearEditor: true }}
                     isTrigger={isTrigger}
                     tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
-                    GetTokenPicker={GetTokenPicker}
+                    getTokenPicker={getTokenPicker}
                   >
                     <EditorChangeComplex item={complexItems ?? []} items={items} setItems={setItems} index={index} innerIndex={i} />
                   </BaseEditor>
