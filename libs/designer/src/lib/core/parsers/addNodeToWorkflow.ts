@@ -28,7 +28,9 @@ export const addNodeToWorkflow = (
   const workflowNode: WorkflowNode = createWorkflowNode(newNodeId);
 
   // Handle Extra node addition if is a scope operation
-  if (isScopeOperation(payload.operation.type)) handleExtraScopeNodeSetup(payload.operation, workflowNode, nodesMetadata, state);
+  if (isScopeOperation(payload.operation.type)) {
+    handleExtraScopeNodeSetup(payload.operation, workflowNode, nodesMetadata, state);
+  }
 
   if (workflowNode.id) workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
 

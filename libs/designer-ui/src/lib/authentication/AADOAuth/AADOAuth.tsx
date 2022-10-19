@@ -1,5 +1,5 @@
 import type { AuthProps, OAuthProps } from '..';
-import type { ChangeState } from '../../editor/base';
+import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
@@ -16,13 +16,13 @@ export enum AuthenticationOAuthType {
 
 interface ActiveDirectoryAuthenticationProps {
   OauthProps: OAuthProps;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
 export const ActiveDirectoryAuthentication = ({
   OauthProps,
-  GetTokenPicker,
+  getTokenPicker,
   setCurrentProps,
 }: ActiveDirectoryAuthenticationProps): JSX.Element => {
   const intl = useIntl();
@@ -102,25 +102,25 @@ export const ActiveDirectoryAuthentication = ({
       <AuthenticationProperty
         initialValue={oauthAuthority}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY}
-        GetTokenPicker={GetTokenPicker}
+        getTokenPicker={getTokenPicker}
         onBlur={updateOAuthAuthority}
       />
       <AuthenticationProperty
         initialValue={oauthTenant}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT}
-        GetTokenPicker={GetTokenPicker}
+        getTokenPicker={getTokenPicker}
         onBlur={updateOAuthTenant}
       />
       <AuthenticationProperty
         initialValue={oauthAudience}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE}
-        GetTokenPicker={GetTokenPicker}
+        getTokenPicker={getTokenPicker}
         onBlur={updateOAuthAudience}
       />
       <AuthenticationProperty
         initialValue={oauthClientId}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_CLIENT_ID}
-        GetTokenPicker={GetTokenPicker}
+        getTokenPicker={getTokenPicker}
         onBlur={updateOAuthClientId}
       />
       <AuthenticationDropdown
@@ -133,7 +133,7 @@ export const ActiveDirectoryAuthentication = ({
         selectedCredTypeKey={type as string}
         secret={oauthTypeSecret}
         clientCertificateProps={{ clientCertificatePfx: oauthTypeCertificatePfx, clientCertificatePassword: oauthTypeCertificatePassword }}
-        GetTokenPicker={GetTokenPicker}
+        getTokenPicker={getTokenPicker}
         setCurrentProps={setCurrentProps}
       />
     </div>
