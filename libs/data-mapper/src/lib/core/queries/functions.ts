@@ -1,5 +1,5 @@
-import { functionMock } from '../../models/Function';
 import type { FunctionData } from '../../models/Function';
+import { functionMock, pseudoFunctions } from '../../models/Function';
 import { DataMapperApiServiceInstance } from '../services';
 
 export const getFunctions = (): Promise<FunctionData[]> => {
@@ -8,7 +8,7 @@ export const getFunctions = (): Promise<FunctionData[]> => {
   return service
     .getFunctionsManifest()
     .then((response) => {
-      return response.transformFunctions;
+      return [...response.transformFunctions, ...pseudoFunctions];
     })
     .catch((error: Error) => {
       // Returning functionMock on expected failure to reach API for dev-ing w/o runtime

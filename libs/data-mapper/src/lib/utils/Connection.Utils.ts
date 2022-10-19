@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import type { UpdateConnectionInputAction } from '../core/state/DataMapSlice';
-import type { SchemaNodeDataType, SchemaNodeExtended } from '../models';
-import { NormalizedDataType } from '../models';
+import type { SchemaNodeExtended } from '../models';
+import { NormalizedDataType, SchemaNodeDataType } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionInput } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
@@ -115,9 +115,9 @@ export const updateConnectionInputValue = (
 };
 
 export const isValidSchemaNodeToSchemaNodeConnection = (srcDataType: SchemaNodeDataType, tgtDataType: SchemaNodeDataType) =>
-  srcDataType === tgtDataType;
+  srcDataType === SchemaNodeDataType.AnyAtomicType || tgtDataType === SchemaNodeDataType.AnyAtomicType || srcDataType === tgtDataType;
 export const isValidFunctionNodeToSchemaNodeConnection = (srcDataType: NormalizedDataType, tgtDataType: NormalizedDataType) =>
-  srcDataType === tgtDataType;
+  srcDataType === NormalizedDataType.Any || tgtDataType === NormalizedDataType.Any || srcDataType === tgtDataType;
 
 export const isValidInputToFunctionNode = (
   srcNodeType: NormalizedDataType,
@@ -217,6 +217,26 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
       return false;
     }
   }
+};
+
+export const nodeHasSpecificSourceNodeEventually = (
+  sourceKey: string,
+  currentConnection: Connection,
+  connections: ConnectionDictionary
+): boolean => {
+  if (!currentConnection) {
+    return false;
+  }
+
+  if (currentConnection.self.reactFlowKey === sourceKey) {
+    return true;
+  }
+
+  // Put 0 input, content enricher functions in the node bucket
+  const flattenedInputs = flattenInputs(currentConnection.inputs);
+  const nonCustomInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
+
+  return nonCustomInputs.some((input) => nodeHasSpecificSourceNodeEventually(sourceKey, connections[input.reactFlowKey], connections));
 };
 
 export const collectNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {

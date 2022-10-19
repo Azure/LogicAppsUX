@@ -44,6 +44,28 @@ export enum FunctionCategory {
 
 export type FunctionDictionary = { [key: string]: FunctionData };
 
+export const pseudoFunctions: FunctionData[] = [
+  {
+    key: 'index',
+    maxNumberOfInputs: 1,
+    type: 'PseudoFunction',
+    functionName: '',
+    outputValueType: NormalizedDataType.Any,
+    inputs: [
+      {
+        name: 'Loop',
+        allowedTypes: [NormalizedDataType.ComplexType],
+        isOptional: false,
+        allowCustomInput: false,
+        placeHolder: 'The source loop.',
+      },
+    ],
+    displayName: 'Index',
+    category: FunctionCategory.Collection,
+    description: 'Adds an index value to the loop',
+  },
+];
+
 // Temp until we get the manifest plugged in
 export const functionMock: FunctionData[] = [
   {
@@ -299,4 +321,5 @@ export const functionMock: FunctionData[] = [
     iconFileName: 'dm_category_logical.svg',
     description: 'Checks whether the value is Null.',
   },
+  ...pseudoFunctions,
 ];
