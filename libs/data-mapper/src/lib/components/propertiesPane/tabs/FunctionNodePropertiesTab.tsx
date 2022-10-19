@@ -185,58 +185,54 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
           {functionData.maxNumberOfInputs === -1 && (
             <>
-              <>
-                {inputValueArrays && // Unbounded input value mapping
-                  inputValueArrays[0].map((unboundedInputValue, idx) => (
-                    <Stack key={`${functionData.inputs[0].name}-${idx}`} horizontal verticalAlign="center" style={{ marginTop: 8 }}>
-                      <Tooltip relationship="label" content={functionData.inputs[0].tooltip || ''}>
+              {inputValueArrays && // Unbounded input value mapping
+                inputValueArrays[0].map((unboundedInputValue, idx) => (
+                  <Stack key={`${functionData.inputs[0].name}-${idx}`} horizontal verticalAlign="center" style={{ marginTop: 8 }}>
+                    <Tooltip relationship="label" content={functionData.inputs[0].tooltip || ''}>
+                      <InputDropdown
+                        currentNode={functionData}
+                        label={functionData.inputs[0].name}
+                        placeholder={functionData.inputs[0].placeHolder}
+                        inputValue={unboundedInputValue}
+                        inputIndex={idx}
+                        inputStyles={{ width: '100%' }}
+                        isUnboundedInput
+                      />
+                    </Tooltip>
+
+                    <Button
+                      appearance="subtle"
+                      icon={<Delete20Regular />}
+                      onClick={() => removeUnboundedInput(idx)}
+                      style={{ marginLeft: '16px' }}
+                    />
+                  </Stack>
+                ))}
+
+              <Button appearance="subtle" icon={<Add20Regular />} onClick={addUnboundedInput} style={{ width: '72px', marginTop: 12 }}>
+                {addFieldLoc}
+              </Button>
+
+              {inputValueArrays && // Any other inputs after the first unbounded input
+                inputValueArrays.slice(1).map(
+                  (
+                    inputValueArray,
+                    idx // NOTE: Actual input index will be idx+1
+                  ) => (
+                    <div key={idx} style={{ marginTop: 8 }}>
+                      <Tooltip relationship="label" content={functionData.inputs[idx + 1].tooltip || ''}>
                         <InputDropdown
                           currentNode={functionData}
-                          label={functionData.inputs[0].name}
-                          placeholder={functionData.inputs[0].placeHolder}
-                          inputValue={unboundedInputValue}
-                          inputIndex={idx}
+                          label={functionData.inputs[idx + 1].name}
+                          placeholder={functionData.inputs[idx + 1].placeHolder}
+                          inputValue={inputValueArray.length > 0 ? inputValueArray[0] : undefined}
+                          inputIndex={idx + 1}
                           inputStyles={{ width: '100%' }}
-                          isUnboundedInput
                         />
                       </Tooltip>
-
-                      <Button
-                        appearance="subtle"
-                        icon={<Delete20Regular />}
-                        onClick={() => removeUnboundedInput(idx)}
-                        style={{ marginLeft: '16px' }}
-                      />
-                    </Stack>
-                  ))}
-
-                <Button appearance="subtle" icon={<Add20Regular />} onClick={addUnboundedInput} style={{ width: '72px', marginTop: 12 }}>
-                  {addFieldLoc}
-                </Button>
-              </>
-
-              <>
-                {inputValueArrays && // Any other inputs after the first unbounded input
-                  inputValueArrays.slice(1).map(
-                    (
-                      inputValueArray,
-                      idx // NOTE: Actual input index will be idx+1
-                    ) => (
-                      <div key={idx} style={{ marginTop: 8 }}>
-                        <Tooltip relationship="label" content={functionData.inputs[idx + 1].tooltip || ''}>
-                          <InputDropdown
-                            currentNode={functionData}
-                            label={functionData.inputs[idx + 1].name}
-                            placeholder={functionData.inputs[idx + 1].placeHolder}
-                            inputValue={inputValueArray.length > 0 ? inputValueArray[0] : undefined}
-                            inputIndex={idx + 1}
-                            inputStyles={{ width: '100%' }}
-                          />
-                        </Tooltip>
-                      </div>
-                    )
-                  )}
-              </>
+                    </div>
+                  )
+                )}
             </>
           )}
         </Stack>
