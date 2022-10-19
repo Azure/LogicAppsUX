@@ -24,7 +24,7 @@ const customValueDebounceDelay = 300;
 interface InputOption {
   nodeKey: string;
   nodeName: string;
-  isFunctionNode?: boolean;
+  isFunctionNode: boolean;
 }
 
 type InputOptionDictionary = {
@@ -48,10 +48,11 @@ export interface InputDropdownProps {
   inputStyles?: IRawStyle & React.CSSProperties;
   label?: string;
   placeholder?: string;
+  isUnboundedInput?: boolean;
 }
 
 export const InputDropdown = (props: InputDropdownProps) => {
-  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder } = props;
+  const { currentNode, inputValue, inputIndex, inputStyles, label, placeholder, isUnboundedInput } = props;
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
@@ -60,6 +61,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
   const [inputIsCustomValue, setInputIsCustomValue] = useState(false);
   const [customValue, setCustomValue] = useState<string>('');
@@ -146,8 +148,14 @@ export const InputDropdown = (props: InputDropdownProps) => {
     updateInput(undefined);
   };
 
-  const updateInput = (newValue: InputConnection | undefined) => {
-    dispatch(updateConnectionInput({ targetNode: currentNode, inputIndex, value: newValue }));
+  const updateInput = (newValue: InputConnection) => {
+    if (!selectedItemKey) {
+      console.error('PropPane - Function: Attempted to update input with nothing selected on canvas');
+      return;
+    }
+
+    const targetNodeReactFlowKey = selectedItemKey;
+    dispatch(updateConnectionInput({ targetNode: currentNode, targetNodeReactFlowKey, inputIndex, value: newValue, isUnboundedInput }));
   };
 
   useEffect(() => {
@@ -190,12 +198,12 @@ export const InputDropdown = (props: InputDropdownProps) => {
       let fnInputValues: string[] = [];
       const fnConnection = connectionDictionary[key];
       if (fnConnection) {
-        const flattenedInputs = Object.values(fnConnection.inputs)
+        fnInputValues = Object.values(fnConnection.inputs)
           .flat()
-          .filter((value) => !!value);
-        fnInputValues = flattenedInputs.map((input) =>
-          isCustomValue(input) ? input : isFunctionData(input.node) ? input.node.functionName : input.node.name
-        );
+          .map((input) =>
+            !input ? undefined : isCustomValue(input) ? input : isFunctionData(input.node) ? input.node.functionName : input.node.name
+          )
+          .filter((value) => !!value) as string[];
       }
 
       newPossibleInputOptionsDictionary[node.outputValueType].push({
@@ -219,7 +227,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           key: possibleOption.nodeKey,
           text: possibleOption.nodeName,
           data: {
-            isFunction: !!possibleOption.isFunctionNode,
+            isFunction: possibleOption.isFunctionNode,
           },
         })),
       ];
@@ -241,13 +249,13 @@ export const InputDropdown = (props: InputDropdownProps) => {
     };
 
     if (isFunctionData(currentNode)) {
-      currentNode.inputs[inputIndex].allowedTypes.forEach(handleAnyOrSpecificType);
+      currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.forEach(handleAnyOrSpecificType);
     } else {
       handleAnyOrSpecificType(currentNode.normalizedDataType);
     }
 
     return newInputOptions;
-  }, [inputIndex, typeSortedInputOptions, currentNode]);
+  }, [isUnboundedInput, inputIndex, typeSortedInputOptions, currentNode]);
 
   const modifiedDropdownOptions = useMemo(() => {
     const newModifiedOptions = typeMatchedInputOptions ? [...typeMatchedInputOptions] : [];

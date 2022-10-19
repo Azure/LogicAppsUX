@@ -92,7 +92,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
     if (connection?.inputs && connection.inputs[0].length === 1) {
       const input = connection.inputs[0][0];
-      newInputValue = isCustomValue(input) ? input : input.node.key;
+      newInputValue = !input ? undefined : isCustomValue(input) ? input : input.node.key;
     }
 
     setInputValue(newInputValue);

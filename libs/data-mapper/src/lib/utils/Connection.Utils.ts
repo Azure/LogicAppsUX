@@ -5,7 +5,6 @@ import { NormalizedDataType } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionInput } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
-import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 
 export const createConnectionEntryIfNeeded = (
@@ -75,20 +74,22 @@ export const addNodeToConnections = (
   }
 };
 
-// TODO: Need isUnboundedFlag or something - all values for the unbounded input will be in inputs[0]'s array
 export const updateConnectionInputValue = (
   connections: ConnectionDictionary,
-  { targetNode, inputIndex, value }: UpdateConnectionInputAction
+  { targetNode, targetNodeReactFlowKey, inputIndex, value, isUnboundedInput }: UpdateConnectionInputAction
 ) => {
-  const targetNodeReactFlowKey = isFunctionData(targetNode) ? targetNode.key : addTargetReactFlowPrefix(targetNode.key);
-
   // Verify if old value was a ConnectionUnit, and if so, remove it from source's outputs[]
   let connection = connections[targetNodeReactFlowKey];
-  if (connection?.inputs && connection.inputs[inputIndex].length > 0) {
-    // TODO: Unbounded inputs
+  if (connection?.inputs) {
+    let inputConnection: InputConnection = undefined;
 
-    const inputConnection = connection.inputs[inputIndex][0];
-    if (isConnectionUnit(inputConnection)) {
+    if (isUnboundedInput) {
+      inputConnection = connection.inputs[0][inputIndex];
+    } else if (connection.inputs[inputIndex].length > 0) {
+      inputConnection = connection.inputs[inputIndex][0];
+    }
+
+    if (inputConnection && isConnectionUnit(inputConnection)) {
       connections[inputConnection.reactFlowKey].outputs = connections[inputConnection.reactFlowKey].outputs.filter(
         (output) => output.reactFlowKey !== targetNodeReactFlowKey
       );
@@ -98,13 +99,28 @@ export const updateConnectionInputValue = (
   createConnectionEntryIfNeeded(connections, targetNode, targetNodeReactFlowKey);
   connection = connections[targetNodeReactFlowKey];
 
-  // NOTE: Explicit undefined check to account for empty custom values ('')
-  if (value === undefined) {
-    connection.inputs[inputIndex] = [];
+  // null is signal to delete unbounded input value
+  if (value === null) {
+    if (isUnboundedInput) {
+      const newUnboundedInputValues = connection.inputs[0];
+      newUnboundedInputValues.splice(inputIndex, 1);
+      connection.inputs[0] = newUnboundedInputValues;
+    } else {
+      console.error('Invalid Connection Input Op: null was provided for non-unbounded-input value');
+    }
+  } else if (value === undefined) {
+    // NOTE: Explicit undefined check to account for empty custom values ('')
+    if (isUnboundedInput) {
+      connection.inputs[0][inputIndex] = undefined;
+    } else {
+      connection.inputs[inputIndex] = [];
+    }
   } else {
-    // TODO: Unbounded inputs
-
-    connection.inputs[inputIndex][0] = value;
+    if (isUnboundedInput) {
+      connection.inputs[0][inputIndex] = value;
+    } else {
+      connection.inputs[inputIndex][0] = value;
+    }
 
     // Only need to update/add value to source's outputs[] if it's a ConnectionUnit
     if (isConnectionUnit(value)) {
