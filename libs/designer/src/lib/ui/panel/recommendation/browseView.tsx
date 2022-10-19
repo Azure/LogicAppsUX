@@ -1,10 +1,10 @@
-import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
+import { useAllConnectors, useAllOperations, useTriggerCapabilities } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { Connector } from '@microsoft-logic-apps/utils';
 import { isBuiltInConnector } from '@microsoft-logic-apps/utils';
 import { BrowseGrid } from '@microsoft/designer-ui';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -16,18 +16,8 @@ export const BrowseView = ({ filters }: { filters: Record<string, string> }) => 
   const { data: allOperations, isLoading: operationsLoading } = useAllOperations();
   const allConnectors = useAllConnectors();
 
-  const triggerCapabilities = useMemo(() => {
-    return allOperations?.reduce<Record<string, { trigger?: boolean; action?: boolean }>>((acc, operation) => {
-      const isTrigger = !!operation.properties.trigger;
-      return {
-        ...acc,
-        [operation.properties.api.id.toLowerCase()]: {
-          ...acc[operation.properties.api.id],
-          [isTrigger ? 'trigger' : 'action']: true,
-        },
-      };
-    }, {});
-  }, [allOperations]);
+  const { data: triggerCapabilities } = useTriggerCapabilities(allOperations);
+
   const filterItems = useCallback(
     (connector: Connector): boolean => {
       let ret = true;

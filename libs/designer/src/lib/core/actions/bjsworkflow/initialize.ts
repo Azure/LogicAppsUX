@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
+import { preloadOperationsQuery } from '../../queries/browse';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
@@ -62,6 +63,7 @@ export const InitializeServices = ({ connectionService, operationManifestService
   InitOperationManifestService(operationManifestService);
   InitSearchService(searchService);
   InitOAuthService(oAuthService);
+  preloadOperationsQuery();
 };
 
 export const getInputParametersFromManifest = (
