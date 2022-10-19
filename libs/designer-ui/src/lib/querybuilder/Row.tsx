@@ -72,13 +72,12 @@ export const Row = ({
       {
         type: GroupType.GROUP,
         checked: false,
-        items: groupedItems.map((groupedItem) => {
+        items: [...groupedItems].map((groupedItem) => {
           return groupedItem.item;
         }),
       },
       index
     );
-
     // Delete groupedItems not including current item
     handleDeleteChild?.(groupedItems.filter((item) => item.index !== index).map((item) => item.index));
   };

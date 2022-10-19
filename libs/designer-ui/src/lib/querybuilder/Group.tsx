@@ -181,18 +181,18 @@ export const Group = ({
   ];
 
   const handleUpdateNewParent = (newState: GroupItemProps | RowItemProps, currIndex: number) => {
-    const newItems = { ...groupProps, items: [...groupProps.items] };
+    const newItems = { ...groupProps };
     newItems.items[currIndex] = newState;
     handleUpdateParent(newItems, index);
   };
 
   const handleDelete = (indicesToDelete: number | number[]) => {
     // Is an array of indices to delete
+    const newItems = { ...groupProps };
     if (Array.isArray(indicesToDelete)) {
-      if (indicesToDelete.length === groupProps.items.length) {
+      if (indicesToDelete.length === newItems.items.length) {
         handleDeleteChild?.(index);
       } else {
-        const newItems = { ...groupProps };
         for (let i = indicesToDelete.length - 1; i >= 0; i--) {
           newItems.items.splice(indicesToDelete[i], 1);
         }
@@ -202,7 +202,6 @@ export const Group = ({
       if (groupProps.items.length <= 1) {
         handleDeleteChild?.(index);
       } else {
-        const newItems = { ...groupProps };
         newItems.items.splice(indicesToDelete, 1);
         handleUpdateParent(newItems, index);
       }

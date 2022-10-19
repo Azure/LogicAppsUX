@@ -328,15 +328,16 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
   };
 }
 
-function toConditionViewModel(parameter: ResolvedParameter): { items: GroupItemProps } {
-  const getSelectedOption = getConditionalSelectedOption(getPreservedValue(parameter));
+const toConditionViewModel = (parameter: ResolvedParameter): { items: GroupItemProps } => {
+  const peservedValue = getPreservedValue(parameter);
+  const getSelectedOption = getConditionalSelectedOption(peservedValue);
   const items: GroupItemProps = {
     type: GroupType.GROUP,
     selectedOption: getSelectedOption,
-    items: recurseConditionalItems(getPreservedValue(parameter), getSelectedOption),
+    items: recurseConditionalItems(peservedValue, getSelectedOption),
   };
   return { items };
-}
+};
 
 const getConditionalSelectedOption = (input: any): GroupDropdownOptions | undefined => {
   if (input?.['and']) {

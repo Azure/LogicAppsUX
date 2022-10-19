@@ -143,7 +143,7 @@ const TokenField = ({
       return (
         <ArrayEditor
           type={ArrayType.SIMPLE}
-          labelProps={{ text: '' }}
+          labelProps={{ text: 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
@@ -168,7 +168,7 @@ const TokenField = ({
       );
 
     case 'condition':
-      return <QueryBuilderEditor GetTokenPicker={GetTokenPicker} groupProps={editorViewModel.items} />;
+      return <QueryBuilderEditor GetTokenPicker={GetTokenPicker} groupProps={JSON.parse(JSON.stringify(editorViewModel.items))} />;
     default:
       return (
         <StringEditor
