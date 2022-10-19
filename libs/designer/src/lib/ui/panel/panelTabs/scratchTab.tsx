@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
-import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
+import type { OutputToken, PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
   DictionaryEditor,
   TokenType,
@@ -29,6 +29,35 @@ const testTokenGroup: TokenGroup[] = [
 export const ScratchTab = () => {
   const expressionGroup = getExpressionTokenSections();
 
+  const getValueSegmentFromToken = async (token: OutputToken): Promise<ValueSegment> => {
+    const { key, brandColor, icon, title, description, name, type, value, outputInfo } = token;
+    const { actionName, type: tokenType, required, format, source, isSecure, arrayDetails } = outputInfo;
+    const segment = {
+      id: guid(),
+      type: ValueSegmentType.TOKEN,
+      value: value ?? '',
+      token: {
+        actionName,
+        tokenType,
+        brandColor,
+        icon,
+        description,
+        key,
+        name,
+        type,
+        value,
+        format,
+        required,
+        title,
+        source,
+        isSecure,
+        arrayDetails: arrayDetails ? { parentArrayName: arrayDetails.parentArray, itemSchema: arrayDetails.itemSchema } : undefined,
+      },
+    };
+
+    return segment;
+  };
+
   const GetTokenPicker = (
     editorId: string,
     labelId: string,
@@ -43,6 +72,7 @@ export const ScratchTab = () => {
         tokenGroup={testTokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={onClick}
+        getValueSegmentFromToken={getValueSegmentFromToken}
         tokenClickedCallback={tokenClicked}
         tokenPickerHide={tokenPickerHide}
       />
@@ -52,7 +82,7 @@ export const ScratchTab = () => {
     return (
       <>
         <QueryBuilderEditor
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={GetTokenPicker}
           readonly={false}
           groupProps={{
             type: GroupType.GROUP,
@@ -183,7 +213,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={GetTokenPicker}
         /> */}
 
         {/* <Combobox
@@ -269,7 +299,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={GetTokenPicker}
         />
         {/* <DictionaryEditor
           initialItems={[
@@ -336,7 +366,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={GetTokenPicker}
           dictionaryType={DictionaryType.TABLE}
           keyTitle={'Header'}
           valueTitle={'Value'}
@@ -349,7 +379,7 @@ export const ScratchTab = () => {
             testTokenSegment,
             testTokenSegment,
           ]}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={GetTokenPicker}
         />
         {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} /> */}
       </>

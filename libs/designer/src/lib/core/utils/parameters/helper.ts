@@ -216,22 +216,14 @@ export const getDependentParameters = (
  * Converts to parameter info map.
  * @arg {InputParameter[]} inputParameters - The input parameters.
  * @arg {any} [stepDefinition] - The step definition.
- * @arg {string} [nodeId] - The graph node id which contains the specified parameters.
  */
-export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any, nodeId?: string): ParameterInfo[] {
+export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): ParameterInfo[] {
   const metadata = stepDefinition && stepDefinition.metadata;
   const result: ParameterInfo[] = [];
 
   for (const inputParameter of inputParameters) {
-    let repetitionContext: RepetitionContext | null;
-    if (nodeId) {
-      repetitionContext = getRepetitionContext(); // TODO: Get repetition context from redux for this node
-    } else {
-      repetitionContext = null;
-    }
-
     if (!inputParameter.dynamicSchema) {
-      const parameter = createParameterInfo(inputParameter, repetitionContext, metadata);
+      const parameter = createParameterInfo(inputParameter, metadata);
       result.push(parameter);
     }
   }
@@ -249,17 +241,9 @@ export function toParameterInfoMap(inputParameters: InputParameter[], stepDefini
  */
 export function createParameterInfo(
   parameter: ResolvedParameter,
-  repetitionContext?: RepetitionContext | null,
-  metadata?: Record<string, string>,
+  _metadata?: Record<string, string>,
   shouldIgnoreDefaultValue = false
 ): ParameterInfo {
-  if (!repetitionContext) {
-    // eslint-disable-next-line no-param-reassign
-    repetitionContext = {
-      repetitionReferences: [],
-    };
-  }
-
   const editor = getParameterEditorProps(parameter, shouldIgnoreDefaultValue);
   const parameterInfo: ParameterInfo = {
     alternativeKey: parameter.alternativeKey,
@@ -641,14 +625,19 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
         ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
         : constants.TRIGGER_OUTPUTS_OUTPUT;
 
-      return _generateExpressionFromKey(method, key, actionName, !!arrayDetails);
+      return generateExpressionFromKey(method, key, actionName, !!arrayDetails);
   }
 }
 
 // NOTE: For example, if tokenKey is outputs.$.foo.[*].bar, which means
 // the root outputs is an object, and the object has a property foo which is an array.
 // Every item in the array has a bar property, and the expression would something like item()?['bar'].
-function _generateExpressionFromKey(method: string, tokenKey: string, actionName: string | undefined, isInsideArray: boolean): string {
+export function generateExpressionFromKey(
+  method: string,
+  tokenKey: string,
+  actionName: string | undefined,
+  isInsideArray: boolean
+): string {
   const segments = parseEx(tokenKey);
   segments.shift();
   segments.shift();
@@ -1577,6 +1566,18 @@ export function getParameterFromName(nodeInputs: NodeInputs, parameterName: stri
   return undefined;
 }
 
+export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string): ParameterInfo | undefined {
+  for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
+    const parameterGroup = nodeInputs.parameterGroups[groupId];
+    const parameter = parameterGroup.parameters.find((parameter) => parameter.id === parameterId);
+    if (parameter) {
+      return parameter;
+    }
+  }
+
+  return undefined;
+}
+
 export function parameterHasValue(parameter: ParameterInfo): boolean {
   const value = parameter.value;
 
@@ -1866,14 +1867,6 @@ export function getNormalizedTokenName(tokenName: string): string {
 
   // Replace occurences of ? from the tokenName.
   return tokenName.replace(/\?/g, '');
-}
-
-// TODO - Add code to get correct repetition context to handle nested foreach and foreach scenarios
-export function getRepetitionContext(_includeSelf?: boolean): RepetitionContext {
-  const repetitionReferences: RepetitionReference[] = [];
-  return {
-    repetitionReferences,
-  };
 }
 
 export function getRepetitionValue(manifest: OperationManifest, nodeInputs: ParameterInfo[]): any {

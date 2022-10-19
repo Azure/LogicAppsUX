@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
+import { preloadOperationsQuery } from '../../queries/browse';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
@@ -62,6 +63,7 @@ export const InitializeServices = ({ connectionService, operationManifestService
   InitOperationManifestService(operationManifestService);
   InitSearchService(searchService);
   InitOAuthService(oAuthService);
+  preloadOperationsQuery();
 };
 
 export const getInputParametersFromManifest = (
@@ -109,14 +111,14 @@ export const getInputParametersFromManifest = (
       getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], stepDefinition),
       '',
       primaryInputParametersInArray,
-      true /* createInvisibleParameter */,
+      !inputsLocation || !!inputsLocation.length /* createInvisibleParameter */,
       false /* useDefault */
     );
   } else {
     loadParameterValuesFromDefault(primaryInputParameters);
   }
 
-  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
+  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);
   const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
   // TODO (14490585)- Initialize editor view models for array

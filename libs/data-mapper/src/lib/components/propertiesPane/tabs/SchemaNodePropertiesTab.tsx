@@ -1,14 +1,11 @@
 import type { RootState } from '../../../core/state/Store';
-import { NormalizedDataType } from '../../../models';
 import type { SchemaNodeExtended } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { isCustomValue } from '../../../utils/Connection.Utils';
 import { icon16ForSchemaNodeType } from '../../../utils/Icon.Utils';
 import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
-import type { InputOptions, InputOptionData } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
-import type { IDropdownOption } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Checkbox, Input, makeStyles, Text } from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -37,8 +34,6 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   const intl = useIntl();
   const styles = useStyles();
 
-  const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
-  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
@@ -87,70 +82,6 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
   const DataTypeIcon = icon16ForSchemaNodeType(currentNode.schemaNodeDataType);
 
-  const possibleInputOptions = useMemo<InputOptions>(() => {
-    const newPossibleInputOptionsDictionary = {} as InputOptions;
-
-    currentSourceNodes.forEach((srcNode) => {
-      if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
-        newPossibleInputOptionsDictionary[srcNode.normalizedDataType] = [];
-      }
-
-      newPossibleInputOptionsDictionary[srcNode.normalizedDataType].push({
-        nodeKey: srcNode.key,
-        nodeName: srcNode.name,
-        isFunctionNode: false,
-      });
-    });
-
-    Object.entries(functionNodeDictionary).forEach(([key, node]) => {
-      if (!newPossibleInputOptionsDictionary[node.outputValueType]) {
-        newPossibleInputOptionsDictionary[node.outputValueType] = [];
-      }
-
-      newPossibleInputOptionsDictionary[node.outputValueType].push({
-        nodeKey: key,
-        nodeName: node.functionName,
-        isFunctionNode: true,
-      });
-    });
-
-    return newPossibleInputOptionsDictionary;
-  }, [currentSourceNodes, functionNodeDictionary]);
-
-  const inputOptions = useMemo<IDropdownOption<InputOptionData>[] | undefined>(() => {
-    const newInputOptions: IDropdownOption<InputOptionData>[] = [];
-
-    if (currentNode.normalizedDataType === NormalizedDataType.Any) {
-      Object.values(possibleInputOptions).forEach((typeEntry) => {
-        typeEntry.forEach((possibleOption) => {
-          newInputOptions.push({
-            key: possibleOption.nodeKey,
-            text: possibleOption.nodeName,
-            data: {
-              isFunction: !!possibleOption.isFunctionNode,
-            },
-          });
-        });
-      });
-    } else {
-      if (!possibleInputOptions[currentNode.normalizedDataType]) {
-        return;
-      }
-
-      possibleInputOptions[currentNode.normalizedDataType].forEach((possibleOption) => {
-        newInputOptions.push({
-          key: possibleOption.nodeKey,
-          text: possibleOption.nodeName,
-          data: {
-            isFunction: !!possibleOption.isFunctionNode,
-          },
-        });
-      });
-    }
-
-    return newInputOptions;
-  }, [possibleInputOptions, currentNode]);
-
   const connection = useMemo<Connection | undefined>(
     () => connectionDictionary[addTargetReactFlowPrefix(currentNode.key)],
     [connectionDictionary, currentNode]
@@ -161,7 +92,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
     if (connection?.inputs && connection.inputs[0].length === 1) {
       const input = connection.inputs[0][0];
-      newInputValue = isCustomValue(input) ? input : input.node.key;
+      newInputValue = !input ? undefined : isCustomValue(input) ? input : input.reactFlowKey;
     }
 
     setInputValue(newInputValue);
@@ -187,13 +118,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
         <div>
           <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
             <Text style={{ gridColumn: gridColumnSpan1 }}>{inputLoc}</Text>
-            <InputDropdown
-              currentNode={currentNode}
-              typeMatchedOptions={inputOptions}
-              inputValue={inputValue}
-              inputStyles={{ gridColumn: gridColumnSpan2 }}
-              inputIndex={0}
-            />
+            <InputDropdown currentNode={currentNode} inputValue={inputValue} inputStyles={{ gridColumn: gridColumnSpan2 }} inputIndex={0} />
           </div>
 
           <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px' }}>

@@ -10,6 +10,7 @@ import {
   flattenInputs,
   isConnectionUnit,
   isCustomValue,
+  nodeHasSpecificSourceNodeEventually,
   updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
 import {
@@ -77,8 +78,11 @@ export interface ConnectionAction {
 
 export interface UpdateConnectionInputAction {
   targetNode: SchemaNodeExtended | FunctionData;
+  targetNodeReactFlowKey: string;
   inputIndex: number;
-  value: InputConnection | undefined;
+  value: InputConnection | null; // null is indicator to remove an unbounded input value
+  // If true, inputIndex becomes the value's index within inputs[0] (instead of inputs[inputIndex])
+  isUnboundedInput?: boolean;
 }
 
 export interface DeleteConnectionAction {
@@ -129,7 +133,7 @@ export const dataMapSlice = createSlice({
           Object.values(incomingConnections).forEach((connection) => {
             // TODO change to support functions
             flattenInputs(connection.inputs).forEach((input) => {
-              if (isCustomValue(input)) {
+              if (!input || isCustomValue(input)) {
                 return;
               }
 
@@ -322,12 +326,19 @@ export const dataMapSlice = createSlice({
         if (sourceNode.parentKey) {
           const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaTypes.Source);
           const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
-          if (parentSourceNode.properties === SchemaNodeProperties.Repeating) {
+          const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaTypes.Target);
+          if (
+            parentSourceNode.properties === SchemaNodeProperties.Repeating &&
+            !nodeHasSpecificSourceNodeEventually(
+              prefixedSourceKey,
+              newState.dataMapConnections[prefixedTargetKey],
+              newState.dataMapConnections
+            )
+          ) {
             if (!newState.currentSourceNodes.find((node) => node.key === parentSourceNode.key)) {
               newState.currentSourceNodes.push(parentSourceNode);
             }
 
-            const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaTypes.Target);
             addNodeToConnections(newState.dataMapConnections, parentSourceNode, prefixedSourceKey, parentTargetNode, prefixedTargetKey);
             state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
           }

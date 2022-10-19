@@ -5,7 +5,7 @@ import { Combobox } from '../../combobox';
 import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
-import type { CallbackHandler, ChangeHandler } from '../../editor/base';
+import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
 import { QueryBuilderEditor } from '../../querybuilder';
@@ -31,12 +31,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   isTrigger?: boolean;
-  GetTokenPicker: (
-    editorId: string,
-    labelId: string,
-    onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
-  ) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
 }
@@ -62,7 +57,7 @@ const TokenField = ({
   readOnly,
   value,
   isTrigger,
-  GetTokenPicker,
+  getTokenPicker,
   onValueChange,
   onComboboxMenuOpen,
 }: SettingTokenFieldProps) => {
@@ -84,7 +79,7 @@ const TokenField = ({
       return (
         <CodeEditor
           initialValue={value}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
           language={EditorLanguage.javascript}
           onChange={onValueChange}
           isTrigger={isTrigger}
@@ -101,7 +96,7 @@ const TokenField = ({
           options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
           isTrigger={isTrigger}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
         />
@@ -118,8 +113,8 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           isTrigger={isTrigger}
-          GetTokenPicker={GetTokenPicker}
-          // onChange={onValueChange}
+          getTokenPicker={getTokenPicker}
+          onChange={onValueChange}
         />
       );
 
@@ -134,7 +129,7 @@ const TokenField = ({
           titles={editorOptions.columns.titles}
           keys={editorOptions.columns.keys}
           isTrigger={isTrigger}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
       );
@@ -149,7 +144,7 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           isTrigger={isTrigger}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
       );
@@ -162,7 +157,7 @@ const TokenField = ({
           options={editorOptions}
           type={editorViewModel.type}
           authenticationValue={editorViewModel.authenticationValue}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
           onChange={onValueChange}
         />
       );
@@ -170,7 +165,7 @@ const TokenField = ({
     case 'condition':
       return (
         <QueryBuilderEditor
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
         />
@@ -185,7 +180,7 @@ const TokenField = ({
           readonly={readOnly}
           isTrigger={isTrigger}
           initialValue={value}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
           editorBlur={onValueChange}
         />
       );

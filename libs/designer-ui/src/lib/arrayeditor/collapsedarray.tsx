@@ -1,5 +1,6 @@
 import type { SimpleArrayItem, ComplexArrayItem } from '.';
 import type { ValueSegment } from '../editor';
+import type { GetTokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
@@ -17,7 +18,7 @@ export interface CollapsedArrayProps {
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItem[]) => void);
   setIsValid: (b: boolean) => void;
   onBlur?: () => void;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const CollapsedArray = ({
@@ -27,7 +28,7 @@ export const CollapsedArray = ({
   readOnly,
   isTrigger,
   itemSchema,
-  GetTokenPicker,
+  getTokenPicker,
   setItems,
   setIsValid,
   onBlur,
@@ -70,7 +71,7 @@ export const CollapsedArray = ({
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
           onBlur={onBlur}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
         >
           <CollapsedArrayValidation
             defaultErrorMessage={defaultErrorMessage}
