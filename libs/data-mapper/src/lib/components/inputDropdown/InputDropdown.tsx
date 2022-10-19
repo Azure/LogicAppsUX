@@ -1,13 +1,14 @@
 import { sourcePrefix } from '../../constants/ReactFlowConstants';
-import { updateConnectionInput } from '../../core/state/DataMapSlice';
+import { showNotification, updateConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
-import { isCustomValue } from '../../utils/Connection.Utils';
+import { isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
 import { isFunctionData } from '../../utils/Function.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
+import { NotificationTypes } from '../notification/Notification';
 import { getFunctionOutputValue } from '../propertiesPane/tabs/FunctionNodePropertiesTab';
 import { Dropdown, SelectableOptionMenuItemType, TextField } from '@fluentui/react';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
@@ -63,6 +64,8 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
+  console.log(connectionDictionary);
+
   const [inputIsCustomValue, setInputIsCustomValue] = useState(false);
   const [customValue, setCustomValue] = useState<string>('');
 
@@ -104,20 +107,26 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   const validateAndCreateConnection = (option: IDropdownOption<InputOptionData>) => {
     if (!option.data) {
-      console.error('InputDropdown called to create connection with node without necessary data');
+      console.error('InputDropdown called to create connection without necessary data');
       return;
     }
 
-    // If Function node, ensure that new connection won't create loop/circular-logic
-    if (isFunctionData(currentNode)) {
-      // TODO - ^^
+    const selectedInputKey = option.key as string;
+    const isSelectedInputFunction = option.data.isFunction;
+
+    // If Function node, ensure that new connection won't create loop/circular logic
+    if (
+      isFunctionData(currentNode) &&
+      selectedItemKey &&
+      newConnectionWillHaveCircularLogic(selectedItemKey, selectedInputKey, connectionDictionary)
+    ) {
+      dispatch(showNotification({ type: NotificationTypes.CircularLogicError }));
+      return;
     }
 
     // Create connection
-    const selectedNodeKey = option.key as string;
-    const isFunction = option.data.isFunction;
-    const sourceKey = isFunction ? selectedNodeKey : `${sourcePrefix}${selectedNodeKey}`;
-    const source = isFunction ? functionNodeDictionary[sourceKey] : sourceSchemaDictionary[sourceKey];
+    const sourceKey = isSelectedInputFunction ? selectedInputKey : `${sourcePrefix}${selectedInputKey}`;
+    const source = isSelectedInputFunction ? functionNodeDictionary[sourceKey] : sourceSchemaDictionary[sourceKey];
     const srcConUnit: ConnectionUnit = {
       node: source,
       reactFlowKey: sourceKey,
@@ -194,6 +203,11 @@ export const InputDropdown = (props: InputDropdownProps) => {
         newPossibleInputOptionsDictionary[node.outputValueType] = [];
       }
 
+      // Don't list currentNode as an option
+      if (key === selectedItemKey) {
+        return;
+      }
+
       // Compile Function's input values (if any)
       let fnInputValues: string[] = [];
       const fnConnection = connectionDictionary[key];
@@ -214,7 +228,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     });
 
     return newPossibleInputOptionsDictionary;
-  }, [currentSourceNodes, functionNodeDictionary, connectionDictionary]);
+  }, [currentSourceNodes, functionNodeDictionary, connectionDictionary, selectedItemKey]);
 
   // Compile options from the possible type-sorted input options based on the input's type
   const typeMatchedInputOptions = useMemo<IDropdownOption<InputOptionData>[] | undefined>(() => {

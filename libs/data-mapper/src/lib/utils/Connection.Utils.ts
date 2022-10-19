@@ -124,8 +124,13 @@ export const updateConnectionInputValue = (
 
     // Only need to update/add value to source's outputs[] if it's a ConnectionUnit
     if (isConnectionUnit(value)) {
+      const tgtConUnit: ConnectionUnit = {
+        node: targetNode,
+        reactFlowKey: targetNodeReactFlowKey,
+      };
+
       createConnectionEntryIfNeeded(connections, value.node, value.reactFlowKey);
-      connections[value.reactFlowKey].outputs.push(value);
+      connections[value.reactFlowKey].outputs.push(tgtConUnit);
     }
   }
 };
@@ -242,4 +247,23 @@ export const collectNodesForConnectionChain = (currentFunction: Connection, conn
   }
 
   return [currentFunction.self];
+};
+
+export const newConnectionWillHaveCircularLogic = (
+  currentNodeKey: string,
+  desiredInputKey: string,
+  connections: ConnectionDictionary
+): boolean => {
+  // DFS traversal output-wards
+  if (currentNodeKey === desiredInputKey) {
+    return true;
+  }
+
+  if (connections[currentNodeKey]?.outputs && connections[currentNodeKey].outputs.length > 0) {
+    return connections[currentNodeKey].outputs.some((output) =>
+      newConnectionWillHaveCircularLogic(output.reactFlowKey, desiredInputKey, connections)
+    );
+  }
+
+  return false;
 };
