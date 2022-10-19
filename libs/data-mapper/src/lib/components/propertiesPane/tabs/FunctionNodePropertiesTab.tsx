@@ -121,7 +121,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
       if (connection?.inputs) {
         Object.values(connection.inputs).forEach((inputValueArray, idx) => {
           newInputValueArrays[idx] = inputValueArray.map((inputValue) =>
-            !inputValue ? undefined : isCustomValue(inputValue) ? inputValue : inputValue.node.key
+            !inputValue ? undefined : isCustomValue(inputValue) ? inputValue : inputValue.reactFlowKey
           );
         });
       }
