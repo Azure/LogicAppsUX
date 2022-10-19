@@ -511,27 +511,3 @@ export const deleteConnectionFromConnections = (connections: ConnectionDictionar
       ))
   );
 };
-
-/*
-const addParentNodeToConnections = (connections: ConnectionDictionary, sourceNode: SchemaNodeExtended, flattenedSchema: SchemaNodeDictionary, parentTargetNode: SchemaNodeExtended) => {
-      if (sourceNode && sourceNode.properties === SchemaNodeProperties.Repeating) {
-        if (sourceNode.parentKey) {
-          const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaTypes.Source);
-          const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
-          if (parentSourceNode.properties === SchemaNodeProperties.Repeating) {
-            if (!newState.currentSourceNodes.find((node) => node.key === parentSourceNode.key)) {
-              newState.currentSourceNodes.push(parentSourceNode);
-            }
-
-            const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaTypes.Target);
-            addNodeToConnections(newState.dataMapConnections, parentSourceNode, prefixedSourceKey, parentTargetNode, prefixedTargetKey);
-            state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
-          }
-        }
-      } else {
-        if (sourceNode.parentKey) {
-          const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaTypes.Source);
-          const parentSourceNode = flattenedSchema[prefixedSourceKey];
-        }
-      }
-}*/

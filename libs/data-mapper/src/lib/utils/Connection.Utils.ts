@@ -232,7 +232,6 @@ export const nodeHasSpecificSourceNodeEventually = (
     return true;
   }
 
-  // Put 0 input, content enricher functions in the node bucket
   const flattenedInputs = flattenInputs(currentConnection.inputs);
   const nonCustomInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
 
