@@ -46,10 +46,17 @@
               "equals": ["test", "@variables('goalOwner')"]
             },
             {
-              "isnotequalto": ["test", "@variables('goalOwner')"]
+              "not": {
+                "equals": ["test", "@variables('goalOwner')"]
+              }
             },
             {
               "or": [
+                {
+                  "not": {
+                    "endsWith": ["g", ""]
+                  }
+                },
                 {
                   "equals": ["test", "@variables('goalOwner')"]
                 }

@@ -358,12 +358,19 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
     items.forEach((item: any) => {
       const condition = getConditionalSelectedOption(item);
       if (!condition) {
-        const dropdownVal = Object.keys(item)[0];
+        let not = '';
+        let dropdownVal = '';
+        if (item?.['not']) {
+          not = 'not';
+          dropdownVal = Object.keys(item?.[not])[0];
+        } else {
+          dropdownVal = Object.keys(item)[0];
+        }
         output.push({
           type: GroupType.ROW,
-          dropdownVal: dropdownVal,
-          key: loadParameterValue({ value: item[dropdownVal][0] } as InputParameter),
-          value: loadParameterValue({ value: item[dropdownVal][1] } as InputParameter),
+          dropdownVal: not + dropdownVal,
+          key: loadParameterValue({ value: not ? item[not][dropdownVal][0] : item[dropdownVal][0] } as InputParameter),
+          value: loadParameterValue({ value: not ? item[not][dropdownVal][1] : item[dropdownVal][1] } as InputParameter),
         });
       } else {
         output.push({ type: GroupType.GROUP, selectedOption: condition, items: recurseConditionalItems(item, condition) });

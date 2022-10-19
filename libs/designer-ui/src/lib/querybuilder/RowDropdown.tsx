@@ -12,17 +12,17 @@ interface RowDropdownProps {
 
 const items: DropdownItem[] = [
   { key: 'contains', displayName: 'contains', value: 'contains' },
-  { key: 'doesnotcontain', displayName: '!contain', value: 'not contain' },
+  { key: 'notcontains', displayName: '!contain', value: 'notcontains' },
   { key: 'equals', displayName: '=', value: 'equals' },
-  { key: 'isnotequalto', displayName: '!=', value: 'isnotequalto' },
-  { key: 'isgreaterthan', displayName: '>', value: 'isgreaterthan' },
-  { key: 'isgreaterthanorequal', displayName: '>=', value: 'isgreaterthanorequal' },
-  { key: 'islessthan', displayName: '<', value: 'islessthan' },
-  { key: 'islessthanorequal', displayName: '<=', value: 'islessthanorequal' },
-  { key: 'startswith', displayName: 'starts with', value: 'startswith' },
-  { key: 'doesnotstartwith', displayName: '!start with', value: 'doesnotstartwith' },
-  { key: 'endswith', displayName: 'ends with', value: 'endswith' },
-  { key: 'doesnotendwith', displayName: '!end with', value: 'doesnotendwith' },
+  { key: 'notequals', displayName: '!=', value: 'notequals' },
+  { key: 'greater', displayName: '>', value: 'greater' },
+  { key: 'greaterOrEquals', displayName: '>=', value: 'greaterOrEquals' },
+  { key: 'less', displayName: '<', value: 'less' },
+  { key: 'lessOrEquals', displayName: '<=', value: 'lessOrEquals' },
+  { key: 'startsWith', displayName: 'starts with', value: 'startsWith' },
+  { key: 'notstartsWith', displayName: '!start with', value: 'notstartsWith' },
+  { key: 'endsWith', displayName: 'ends with', value: 'endsWith' },
+  { key: 'notendsWith', displayName: '!end with', value: 'notendsWith' },
 ];
 
 export const RowDropdown = ({ selectedOption, disabled, onChange }: RowDropdownProps) => {
