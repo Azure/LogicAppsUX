@@ -1312,7 +1312,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "Automatisch"
     }
   ],
   "B/JzwK": [
@@ -1425,6 +1425,12 @@
     {
       "type": 0,
       "value": "Zustandstyp:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1569,6 +1575,12 @@
     {
       "type": 0,
       "value": "Antwort"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1827,6 +1839,12 @@
     {
       "type": 0,
       "value": "Gibt TRUE zurück, wenn die Parameter FALSE sind."
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2589,6 +2607,12 @@
       "value": "Verbindungsname"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2617,6 +2641,12 @@
     {
       "type": 0,
       "value": "Hiermit werden die Ergebnisse der Aktionen der obersten Ebene in der angegebenen bereichsbezogenen Aktion zurückgegeben, z. B. eine for_each-, Until- oder Scope-Aktion."
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2817,10 +2847,10 @@
       "value": "Eingabe in Wert vom Typ JSON konvertieren"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Nullwerte zulassend"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -3144,7 +3174,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "Roh"
     }
   ],
   "Tb2QLA": [
@@ -3162,7 +3192,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Benutzerdefiniert"
     }
   ],
   "ToPmjE": [
@@ -3819,6 +3849,12 @@
     {
       "type": 0,
       "value": "Aktionen"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4578,7 +4614,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Verwaltete Identität"
     }
   ],
   "iU1OJh": [
@@ -4887,6 +4923,12 @@
       "value": "Zurück"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -5067,6 +5109,12 @@
       "value": "Erforderlich. Hiermit wird angegeben, um wie viele Zeiteinheiten die gewünschte Uhrzeit in der Zukunft liegt."
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5163,6 +5211,12 @@
     {
       "type": 0,
       "value": "Geben Sie den Ausführungsbezeichner ein, um die Ausführung zu öffnen."
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5604,7 +5658,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "Clientzertifikat"
     }
   ],
   "t+XCkg": [
@@ -6047,6 +6101,12 @@
       "value": "Gibt eine Zeichenfolgendarstellung einer URI-codierten Zeichenfolge zurück."
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6141,6 +6201,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [

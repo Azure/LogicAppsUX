@@ -1338,7 +1338,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "Automaticky"
     }
   ],
   "B/JzwK": [
@@ -1473,6 +1473,12 @@
     {
       "type": 0,
       "value": "Typ stavu:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1617,6 +1623,12 @@
     {
       "type": 0,
       "value": "Odpověď"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1897,6 +1909,12 @@
     {
       "type": 0,
       "value": "Vrátí true, pokud jsou parametry false."
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2685,6 +2703,12 @@
       "value": "Název připojení"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2713,6 +2737,12 @@
     {
       "type": 0,
       "value": "Vrátí výsledky z akcí na nejvyšší úrovni s určeným rozsahem, například z akcí For_each, Until nebo Scope."
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2913,10 +2943,10 @@
       "value": "Převede vstup na hodnotu typu JSON."
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Nullable"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -3258,7 +3288,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "Nezpracováno"
     }
   ],
   "Tb2QLA": [
@@ -3276,7 +3306,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Vlastní"
     }
   ],
   "ToPmjE": [
@@ -3941,6 +3971,12 @@
     {
       "type": 0,
       "value": "Akce"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4722,7 +4758,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Spravovaná identita"
     }
   ],
   "iU1OJh": [
@@ -5027,6 +5063,12 @@
       "value": "Zpět"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -5207,6 +5249,12 @@
       "value": "Povinný parametr. Počet časových jednotek, o který je požadovaný čas v budoucnosti"
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5303,6 +5351,12 @@
     {
       "type": 0,
       "value": "Zadejte identifikátor spuštění a spuštění otevřete."
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5778,7 +5832,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "Certifikát klienta"
     }
   ],
   "t+XCkg": [
@@ -5850,7 +5904,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "Základní"
     }
   ],
   "tZj2Xn": [
@@ -6221,6 +6275,12 @@
       "value": "Vrátí řetězcovou reprezentaci řetězce zakódovaného jako identifikátor URI."
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6315,6 +6375,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [

@@ -1350,7 +1350,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "Automatyczne"
     }
   ],
   "B/JzwK": [
@@ -1485,6 +1485,12 @@
     {
       "type": 0,
       "value": "Typ stanu: "
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1629,6 +1635,12 @@
     {
       "type": 0,
       "value": "Odpowiedź"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1909,6 +1921,12 @@
     {
       "type": 0,
       "value": "Zwraca wartość true, jeśli parametry mają wartość false"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2693,6 +2711,12 @@
       "value": "Nazwa połączenia"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2721,6 +2745,12 @@
     {
       "type": 0,
       "value": "Zwraca wyniki z akcji najwyższego poziomu w podanej akcji o określonym zakresie takiej jak For_each, Until lub Scope."
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2921,10 +2951,10 @@
       "value": "Konwertuj dane wejściowe na wartość typu JSON"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Możliwa wartość null"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -3266,7 +3296,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "Niesformatowany"
     }
   ],
   "Tb2QLA": [
@@ -3284,7 +3314,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Niestandardowe"
     }
   ],
   "ToPmjE": [
@@ -3949,6 +3979,12 @@
     {
       "type": 0,
       "value": "Akcje"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4734,7 +4770,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Tożsamość zarządzana"
     }
   ],
   "iU1OJh": [
@@ -5043,6 +5079,12 @@
       "value": "Wstecz"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -5202,7 +5244,7 @@
   "n4V2Hi": [
     {
       "type": 0,
-      "value": "Active Directory OAuth"
+      "value": "Uwierzytelnianie OAuth usługi Active Directory"
     }
   ],
   "n7wxxN": [
@@ -5221,6 +5263,12 @@
     {
       "type": 0,
       "value": "Wymagane. Liczba jednostek czasu określająca żądany czas w przyszłości."
+    }
+  ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
     }
   ],
   "nSan4V": [
@@ -5319,6 +5367,12 @@
     {
       "type": 0,
       "value": "Wprowadź identyfikator uruchomienia, aby je otworzyć"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5798,7 +5852,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "Certyfikat klienta"
     }
   ],
   "t+XCkg": [
@@ -5870,7 +5924,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "Podstawowy"
     }
   ],
   "tZj2Xn": [
@@ -6241,6 +6295,12 @@
       "value": "Zwraca ciągową reprezentację ciągu zakodowanego jako identyfikator URI"
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6335,6 +6395,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [

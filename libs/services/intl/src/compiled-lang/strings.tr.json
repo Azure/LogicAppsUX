@@ -1264,7 +1264,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "Otomatik"
     }
   ],
   "B/JzwK": [
@@ -1377,6 +1377,12 @@
     {
       "type": 0,
       "value": "Durum türü:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1521,6 +1527,12 @@
     {
       "type": 0,
       "value": "Yanıt"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1767,6 +1779,12 @@
     {
       "type": 0,
       "value": "Parametreler false ise true döndürür"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2473,6 +2491,12 @@
       "value": "Bağlantı Adı"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2501,6 +2525,12 @@
     {
       "type": 0,
       "value": "Bir For_each, Until veya Scope eylemi gibi, belirtilen kapsamlı eylemdeki en üst düzey eylemlerden sonuçları döndürür."
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2701,10 +2731,10 @@
       "value": "Girişi JSON türü değere dönüştürür"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Null atanabilir"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -3024,7 +3054,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "Ham"
     }
   ],
   "Tb2QLA": [
@@ -3042,7 +3072,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Özel"
     }
   ],
   "ToPmjE": [
@@ -3691,6 +3721,12 @@
     {
       "type": 0,
       "value": "Eylemler"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4422,7 +4458,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Yönetilen Kimlik"
     }
   ],
   "iU1OJh": [
@@ -4723,6 +4759,12 @@
       "value": "Geri"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -4903,6 +4945,12 @@
       "value": "Zorunlu. İstenen saatin gelecekteki zaman birimlerinin sayısı."
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -4999,6 +5047,12 @@
     {
       "type": 0,
       "value": "Çalıştırmayı açmak için çalıştırma tanımlayıcısını girin"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5432,7 +5486,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "İstemci Sertifikası"
     }
   ],
   "t+XCkg": [
@@ -5504,7 +5558,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "Temel"
     }
   ],
   "tZj2Xn": [
@@ -5871,6 +5925,12 @@
       "value": "URI ile kodlanmış bir dizenin dize gösterimini döndürür"
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -5965,6 +6025,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [

@@ -1312,7 +1312,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "Automatisch"
     }
   ],
   "B/JzwK": [
@@ -1425,6 +1425,12 @@
     {
       "type": 0,
       "value": "Statustype:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1569,6 +1575,12 @@
     {
       "type": 0,
       "value": "Antwoord"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1827,6 +1839,12 @@
     {
       "type": 0,
       "value": "Indien de parameters onwaar zijn, wordt Waar geretourneerd"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2581,6 +2599,12 @@
       "value": "Verbindingsnaam"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2609,6 +2633,12 @@
     {
       "type": 0,
       "value": "Hiermee worden de resultaten geretourneerd van de acties op het hoogste niveau in de opgegeven actie met bereik, zoals een For_each-, Until- of Scope-actie."
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2809,10 +2839,10 @@
       "value": "De invoer naar het waardetype JSON converteren"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Mag null zijn"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -3136,7 +3166,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "Onbewerkt"
     }
   ],
   "Tb2QLA": [
@@ -3154,7 +3184,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Aangepast"
     }
   ],
   "ToPmjE": [
@@ -3811,6 +3841,12 @@
     {
       "type": 0,
       "value": "Acties"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4574,7 +4610,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Beheerde identiteit"
     }
   ],
   "iU1OJh": [
@@ -4875,6 +4911,12 @@
       "value": "Vorige"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -5055,6 +5097,12 @@
       "value": "Vereist. Het aantal tijdseenheden waarmee de gewenste tijd in de toekomst wordt opgegeven."
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5151,6 +5199,12 @@
     {
       "type": 0,
       "value": "Voer de uitvoerings-id in om de uitvoering te openen"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5608,7 +5662,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "Clientcertificaat"
     }
   ],
   "t+XCkg": [
@@ -5680,7 +5734,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "Basis"
     }
   ],
   "tZj2Xn": [
@@ -6051,6 +6105,12 @@
       "value": "Er wordt een weergave van een tekenreeks met URI-codering geretourneerd"
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6145,6 +6205,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [

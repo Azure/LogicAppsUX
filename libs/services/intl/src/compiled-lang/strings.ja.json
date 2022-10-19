@@ -1253,7 +1253,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "自動"
     }
   ],
   "B/JzwK": [
@@ -1355,6 +1355,12 @@
     {
       "type": 0,
       "value": "状態の種類:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1499,6 +1505,12 @@
     {
       "type": 0,
       "value": "応答"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1738,6 +1750,12 @@
     {
       "type": 0,
       "value": "パラメーターが false の場合は true を返します"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2433,6 +2451,12 @@
       "value": "接続名"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2461,6 +2485,12 @@
     {
       "type": 0,
       "value": "指定されたスコープ アクション内のトップレベルのアクション (For_each、Until、Scope のアクションなど) の結果を返します。"
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2661,10 +2691,10 @@
       "value": "入力を JSON 型の値に変換します"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "NULL 許容"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -2973,7 +3003,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "生"
     }
   ],
   "Tb2QLA": [
@@ -2991,7 +3021,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "カスタム"
     }
   ],
   "ToPmjE": [
@@ -3640,6 +3670,12 @@
     {
       "type": 0,
       "value": "アクション"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4360,7 +4396,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "マネージド ID"
     }
   ],
   "iU1OJh": [
@@ -4661,6 +4697,12 @@
       "value": "戻る"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -4841,6 +4883,12 @@
       "value": "必須。時間単位数は希望する将来の時間です。"
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -4937,6 +4985,12 @@
     {
       "type": 0,
       "value": "実行を開く実行識別子を入力してください"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5359,7 +5413,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "クライアント証明書"
     }
   ],
   "t+XCkg": [
@@ -5431,7 +5485,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "基本"
     }
   ],
   "tZj2Xn": [
@@ -5798,6 +5852,12 @@
       "value": "URI でエンコードされた文字列の文字列表現を返します"
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -5892,6 +5952,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [

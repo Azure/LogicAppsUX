@@ -1253,7 +1253,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "자동"
     }
   ],
   "B/JzwK": [
@@ -1355,6 +1355,12 @@
     {
       "type": 0,
       "value": "상태 유형:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1499,6 +1505,12 @@
     {
       "type": 0,
       "value": "응답"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1738,6 +1750,12 @@
     {
       "type": 0,
       "value": "매개 변수가 false인 경우 true를 반환합니다."
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2433,6 +2451,12 @@
       "value": "연결 이름"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2461,6 +2485,12 @@
     {
       "type": 0,
       "value": "지정된 범위 작업(예: For_each, Until 또는 Scope 작업)에서 최상위 작업의 결과를 반환합니다."
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2661,10 +2691,10 @@
       "value": "입력을 JSON 형식 값으로 변환합니다."
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Null 허용"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -2973,7 +3003,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "원시"
     }
   ],
   "Tb2QLA": [
@@ -2991,7 +3021,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "사용자 지정"
     }
   ],
   "ToPmjE": [
@@ -3640,6 +3670,12 @@
     {
       "type": 0,
       "value": "작업"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4360,7 +4396,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "관리 ID"
     }
   ],
   "iU1OJh": [
@@ -4661,6 +4697,12 @@
       "value": "뒤로"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -4841,6 +4883,12 @@
       "value": "필수 사항으로, 미래의 원하는 시간에 대한 시간 단위 수입니다."
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -4937,6 +4985,12 @@
     {
       "type": 0,
       "value": "실행을 열려면 실행 식별자를 입력하세요."
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5359,7 +5413,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "클라이언트 인증서"
     }
   ],
   "t+XCkg": [
@@ -5431,7 +5485,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "기본"
     }
   ],
   "tZj2Xn": [
@@ -5798,6 +5852,12 @@
       "value": "URI로 인코딩된 문자열의 문자열 표현을 반환합니다."
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -5892,6 +5952,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [

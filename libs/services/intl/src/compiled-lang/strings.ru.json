@@ -1334,7 +1334,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "Автоматически"
     }
   ],
   "B/JzwK": [
@@ -1469,6 +1469,12 @@
     {
       "type": 0,
       "value": "Тип состояния:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1613,6 +1619,12 @@
     {
       "type": 0,
       "value": "Отклик"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1893,6 +1905,12 @@
     {
       "type": 0,
       "value": "Возвращает значение true, если параметры имеют значение false"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2677,6 +2695,12 @@
       "value": "Имя подключения"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2705,6 +2729,12 @@
     {
       "type": 0,
       "value": "Возвращает результаты действий верхнего уровня в заданном действии области, например For_each, Until или Scope."
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2905,10 +2935,10 @@
       "value": "Преобразует входные данные в значение типа JSON"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Допускает значение NULL"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -3250,7 +3280,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "Без обработки"
     }
   ],
   "Tb2QLA": [
@@ -3268,7 +3298,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Пользовательское"
     }
   ],
   "ToPmjE": [
@@ -3933,6 +3963,12 @@
     {
       "type": 0,
       "value": "Действия"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4722,7 +4758,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Управляемое удостоверение"
     }
   ],
   "iU1OJh": [
@@ -5031,6 +5067,12 @@
       "value": "Назад"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -5211,6 +5253,12 @@
       "value": "Обязательно. Количество единиц измерения времени, на которое желаемая дата находится в будущем по отношению к текущему времени."
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5307,6 +5355,12 @@
     {
       "type": 0,
       "value": "Введите идентификатор запуска, чтобы открыть его"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5786,7 +5840,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "Сертификат клиента"
     }
   ],
   "t+XCkg": [
@@ -5858,7 +5912,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "Базовый"
     }
   ],
   "tZj2Xn": [
@@ -6229,6 +6283,12 @@
       "value": "Возвращает строковое представление сроки в кодировке URI"
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6323,6 +6383,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [

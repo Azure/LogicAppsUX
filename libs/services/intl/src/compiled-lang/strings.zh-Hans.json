@@ -1305,7 +1305,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "自动"
     }
   ],
   "B/JzwK": [
@@ -1407,6 +1407,12 @@
     {
       "type": 0,
       "value": "状态类型:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1551,6 +1557,12 @@
     {
       "type": 0,
       "value": "响应"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1790,6 +1802,12 @@
     {
       "type": 0,
       "value": "如果参数为 false，则返回 true"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2537,6 +2555,12 @@
       "value": "连接名称"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2565,6 +2589,12 @@
     {
       "type": 0,
       "value": "返回指定范围内操作中的顶级操作结果，如 For_each、Until 或 Scope 操作。"
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2765,10 +2795,10 @@
       "value": "将输入转换为 JSON 类型的值"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "可以为 Null"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -3077,7 +3107,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "原始"
     }
   ],
   "Tb2QLA": [
@@ -3095,7 +3125,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "自定义"
     }
   ],
   "ToPmjE": [
@@ -3764,6 +3794,12 @@
     {
       "type": 0,
       "value": "操作"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4516,7 +4552,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "托管标识"
     }
   ],
   "iU1OJh": [
@@ -4825,6 +4861,12 @@
       "value": "后退"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -5005,6 +5047,12 @@
       "value": "必需。表示所需将来时间与当前时间相差的时间单位数。"
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5109,6 +5157,12 @@
     {
       "type": 0,
       "value": "输入运行标识符以打开运行"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5555,7 +5609,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "客户端证书"
     }
   ],
   "t+XCkg": [
@@ -5627,7 +5681,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "基本"
     }
   ],
   "tZj2Xn": [
@@ -5998,6 +6052,12 @@
       "value": "返回 URI 编码字符串的字符串表示形式"
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6092,6 +6152,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [
