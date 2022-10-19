@@ -12,7 +12,13 @@ import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeProperties } from '../models/Schema';
-import { addNodeToConnections, flattenInputs, isCustomValue, nodeHasSourceNodeEventually } from './Connection.Utils';
+import {
+  addNodeToConnections,
+  collectNodesForConnectionChain,
+  flattenInputs,
+  isCustomValue,
+  nodeHasSourceNodeEventually,
+} from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, isFunctionData } from './Function.Utils';
 import { createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
@@ -66,13 +72,21 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
         if (isCustomValue(input)) {
           applyValueAtPath(formatCustomValue(input), mapDefinition, selfNode, selfNode.pathToRoot);
         } else if (isSchemaNodeExtended(input.node)) {
-          // Skip adding in the parent loop node. The children will handle it
-          if (input.node.properties !== SchemaNodeProperties.Repeating) {
-            applyValueAtPath(input.node.key, mapDefinition, selfNode, selfNode.pathToRoot);
-          }
+          applyValueAtPath(input.node.key, mapDefinition, selfNode, selfNode.pathToRoot);
         } else {
-          const value = collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
-          applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot);
+          const currentConnection = connections[input.reactFlowKey];
+          const connectionChain = collectNodesForConnectionChain(currentConnection, connections);
+          const containsRepeatingNode = connectionChain.some((connectionChainItem) => {
+            const node = connectionChainItem.node;
+            return isSchemaNodeExtended(node) && node.properties === SchemaNodeProperties.Repeating;
+          });
+
+          if (containsRepeatingNode) {
+            // Temp Still need to add in logic to merge index into the for loop
+          } else {
+            const value = collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
+            applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot);
+          }
         }
       }
     });
@@ -104,7 +118,7 @@ const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, dest
       } else {
         (mapDefinition[formattedPathLocation] as MapDefinitionEntry)[mapNodeParams.value] = value;
       }
-    } else {
+    } else if (destinationNode.properties !== SchemaNodeProperties.Repeating) {
       mapDefinition[formattedPathLocation] = value;
     }
   }
