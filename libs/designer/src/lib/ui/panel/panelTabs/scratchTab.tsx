@@ -79,7 +79,7 @@ export const ScratchTab = () => {
     return (
       <>
         <QueryBuilderEditor
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={GetTokenPicker}
           readonly={false}
           groupProps={{
             type: 'group',
@@ -373,7 +373,7 @@ export const ScratchTab = () => {
             testTokenSegment,
             testTokenSegment,
           ]}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={GetTokenPicker}
         />
         {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} /> */}
       </>
