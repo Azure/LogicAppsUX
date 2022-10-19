@@ -269,7 +269,7 @@ export const Group = ({
               {groupProps.items.map((item, currIndex) => {
                 return item.type === 'row' ? (
                   <Row
-                    key={`row ${currIndex}`}
+                    key={`row ${currIndex} ${item.key} ${item.value}`}
                     checked={item.checked}
                     keyValue={item.key}
                     dropdownValue={item.dropdownVal}
