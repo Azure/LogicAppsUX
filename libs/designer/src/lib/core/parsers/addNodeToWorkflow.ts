@@ -35,9 +35,9 @@ export const addNodeToWorkflow = (
   if (workflowNode.id) workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
 
   // Update metadata
-  const isRoot = parentId?.split('-#')[0] === graphId;
+  const isRoot = parentId ? parentId?.split('-#')[0] === graphId : true;
   const parentNodeId = graphId !== 'root' ? graphId : undefined;
-  nodesMetadata[newNodeId] = { graphId, parentNodeId, ...(isRoot && { isRoot }) };
+  nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
 
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
