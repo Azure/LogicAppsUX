@@ -3,7 +3,7 @@ import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaNodeDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
+import { SchemaNodeProperties, SchemaTypes } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { flattenInputs, isValidInputToFunctionNode, isValidSchemaNodeToSchemaNodeConnection } from '../../utils/Connection.Utils';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
@@ -182,7 +182,7 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron } = props.data;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayChevron } = props.data;
 
   const intl = useIntl();
   const [_isHover, setIsHover] = useState<boolean>(false);
@@ -220,9 +220,6 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const isNBadgeRequired = isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating;
 
-  const showHandle =
-    displayHandle && (schemaType === SchemaTypes.Source || schemaNode.schemaNodeDataType !== SchemaNodeDataType.None || isNBadgeRequired);
-
   const onMouseEnter = () => {
     setIsHover(true);
   };
@@ -247,14 +244,12 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
         </div>
       )}
       <div className={containerStyle} onMouseLeave={() => onMouseLeave()} onMouseEnter={() => onMouseEnter()}>
-        {showHandle && (
-          <Handle
-            type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
-            position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
-            style={handleStyle}
-            isValidConnection={schemaType === SchemaTypes.Source ? isValidConnection : () => false}
-          />
-        )}
+        <Handle
+          type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
+          position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
+          style={handleStyle}
+          isValidConnection={schemaType === SchemaTypes.Source ? isValidConnection : () => false}
+        />
         {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>

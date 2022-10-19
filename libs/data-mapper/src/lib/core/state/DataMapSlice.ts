@@ -10,6 +10,7 @@ import {
   flattenInputs,
   isConnectionUnit,
   isCustomValue,
+  nodeHasSpecificSourceNodeEventually,
   updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
 import {
@@ -322,12 +323,19 @@ export const dataMapSlice = createSlice({
         if (sourceNode.parentKey) {
           const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaTypes.Source);
           const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
-          if (parentSourceNode.properties === SchemaNodeProperties.Repeating) {
+          const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaTypes.Target);
+          if (
+            parentSourceNode.properties === SchemaNodeProperties.Repeating &&
+            !nodeHasSpecificSourceNodeEventually(
+              prefixedSourceKey,
+              newState.dataMapConnections[prefixedTargetKey],
+              newState.dataMapConnections
+            )
+          ) {
             if (!newState.currentSourceNodes.find((node) => node.key === parentSourceNode.key)) {
               newState.currentSourceNodes.push(parentSourceNode);
             }
 
-            const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaTypes.Target);
             addNodeToConnections(newState.dataMapConnections, parentSourceNode, prefixedSourceKey, parentTargetNode, prefixedTargetKey);
             state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
           }
