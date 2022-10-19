@@ -93,18 +93,11 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   };
 
   const addUnboundedInput = () => {
-    updateInput(inputValueArrays ? inputValueArrays[0].length - 1 : 0, undefined);
-
-    const newInputValueArrays: InputValueMatrix = inputValueArrays ? [...inputValueArrays] : [];
-    setInputValueArrays(newInputValueArrays);
+    updateInput(inputValueArrays && inputValueArrays[0].length > 1 ? inputValueArrays[0].length - 1 : 0, undefined);
   };
 
   const removeUnboundedInput = (index: number) => {
     updateInput(index, null);
-
-    const newInputValueArrays = inputValueArrays ? [...inputValueArrays] : [];
-    newInputValueArrays[0].splice(index, 1);
-    setInputValueArrays(newInputValueArrays);
   };
 
   const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionData.category), [functionData]);
