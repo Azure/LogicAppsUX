@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { useEffect } from 'react';
+import { useUpdateEffect } from '@react-hookz/web';
 
 interface ReadOnlyProps {
   readonly: boolean;
@@ -8,7 +8,7 @@ interface ReadOnlyProps {
 export function ReadOnly({ readonly }: ReadOnlyProps) {
   const [editor] = useLexicalComposerContext();
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     editor.setEditable(!readonly);
   }, [editor, readonly]);
 
