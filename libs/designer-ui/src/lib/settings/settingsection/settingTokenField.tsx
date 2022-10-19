@@ -119,7 +119,7 @@ const TokenField = ({
           initialItems={editorViewModel.items}
           isTrigger={isTrigger}
           GetTokenPicker={GetTokenPicker}
-          onChange={onValueChange}
+          // onChange={onValueChange}
         />
       );
 
@@ -168,7 +168,14 @@ const TokenField = ({
       );
 
     case 'condition':
-      return <QueryBuilderEditor GetTokenPicker={GetTokenPicker} groupProps={JSON.parse(JSON.stringify(editorViewModel.items))} />;
+      return (
+        <QueryBuilderEditor
+          GetTokenPicker={GetTokenPicker}
+          groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
+          onChange={onValueChange}
+        />
+      );
+
     default:
       return (
         <StringEditor

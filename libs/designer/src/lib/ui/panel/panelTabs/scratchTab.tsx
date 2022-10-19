@@ -4,6 +4,8 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
+  DictionaryEditor,
+  TokenType,
   GroupType,
   GroupDropdownOptions,
   QueryBuilderEditor, // DictionaryType, // EditorLanguage,
@@ -202,7 +204,7 @@ export const ScratchTab = () => {
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
         /> */}
-        {/* <DictionaryEditor
+        <DictionaryEditor
           initialItems={[
             {
               key: [
@@ -268,7 +270,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
           GetTokenPicker={GetTokenPicker}
-        /> */}
+        />
         {/* <DictionaryEditor
           initialItems={[
             {

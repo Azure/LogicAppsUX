@@ -1,7 +1,8 @@
 import type { ValueSegment } from '../editor';
+import type { ChangeHandler } from '../editor/base';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
-import { useFunctionalState } from '@react-hookz/web';
+import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
 
 export { GroupDropdownOptions };
@@ -40,9 +41,10 @@ export interface QueryBuilderProps {
     tokenClicked?: (token: ValueSegment) => void,
     hideTokenPicker?: () => void
   ) => JSX.Element;
+  onChange?: ChangeHandler;
 }
 
-export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderProps) => {
+export const QueryBuilderEditor = ({ GetTokenPicker, groupProps, onChange }: QueryBuilderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
@@ -50,8 +52,8 @@ export const QueryBuilderEditor = ({ GetTokenPicker, groupProps }: QueryBuilderP
 
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
-  useEffect(() => {
-    console.log(getRootProp());
+  useUpdateEffect(() => {
+    onChange?.({ value: [], viewModel: { items: getRootProp() } });
     setHeights(checkHeights(getRootProp(), [], 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getRootProp()]);
