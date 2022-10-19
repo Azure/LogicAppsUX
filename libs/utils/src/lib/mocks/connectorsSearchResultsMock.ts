@@ -75,6 +75,30 @@ export const connectorsSearchResultsMock: Connector[] = [
   },
   {
     type: 'ServiceProvider',
+    name: 'TestConnector',
+    id: '/serviceProviders/TestConnector',
+    properties: {
+      displayName: 'Test Connector',
+      iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1393/1.0.1393.2131/documentdb/icon.png',
+      brandColor: '#804998',
+      description: 'I am a test connector',
+      capabilities: ['triggers', 'actions'],
+      connectionParameters: {
+        connectionString: {
+          type: 'securestring',
+          // parameterSource 'AppConfiguration',
+          uiDefinition: {
+            displayName: 'Test Connector Connection String',
+            tooltip: 'Provide Test Connector Connection String',
+            constraints: { required: 'true' },
+            description: 'Test Connector Connection String',
+          },
+        },
+      },
+    },
+  },
+  {
+    type: 'ServiceProvider',
     name: 'DB2',
     id: '/serviceProviders/DB2',
     properties: {

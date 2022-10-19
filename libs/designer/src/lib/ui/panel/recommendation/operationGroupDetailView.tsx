@@ -45,7 +45,7 @@ export const OperationGroupDetailView = (props: OperationGroupDetailViewProps) =
     .map((operation) => OperationActionDataFromOperation(operation))
     .filter(filterItems);
 
-  return groupOperations.length > 0 ? (
+  return operationGroupActions.length > 0 ? (
     <OperationGroupDetailsPage
       operationApi={groupOperations[0].properties.api}
       operationActionsData={operationGroupActions}
