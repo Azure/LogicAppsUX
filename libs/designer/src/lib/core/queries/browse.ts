@@ -10,7 +10,7 @@ export const useAllOperations = () => {
     },
     {
       retry: false,
-      cacheTime: 0,
+      cacheTime: 1000 * 60 * 60 * 24,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,
@@ -26,7 +26,7 @@ export const useAllConnectors = () => {
     },
     {
       retry: false,
-      cacheTime: 0,
+      cacheTime: 1000 * 60 * 60 * 24,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
       refetchOnReconnect: false,

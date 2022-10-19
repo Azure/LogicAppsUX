@@ -546,6 +546,32 @@ export const almostAllBuiltInOperations: DiscoveryOperation<DiscoveryResultTypes
     },
   },
   {
+    name: 'testAnOperation',
+    id: 'testAnOperation',
+    type: 'testAnOperation',
+    properties: {
+      api: {
+        id: '/serviceProviders/TestConnector',
+        type: 'ServiceProvider',
+        name: 'testAnOperationConnector',
+        displayName: 'Test Connector',
+        iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1393/1.0.1393.2131/documentdb/icon.png',
+        brandColor: '#804998',
+        description: 'This is a test',
+      },
+      summary: 'Create or update many items in bulk',
+      description: 'Create or update many items in bulk.',
+      visibility: 'Important',
+      operationType: 'ServiceProvider',
+      brandColor: '#804998',
+      iconUri: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1393/1.0.1393.2131/documentdb/icon.png',
+      annotation: {
+        status: 'Preview',
+        family: '/serviceProviders/TestConnector',
+      },
+    },
+  },
+  {
     name: 'CreateOrUpdateDocument',
     id: 'CreateOrUpdateDocument',
     type: 'CreateOrUpdateDocument',
