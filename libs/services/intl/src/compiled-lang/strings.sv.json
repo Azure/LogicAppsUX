@@ -1312,7 +1312,7 @@
   "Az0QvG": [
     {
       "type": 0,
-      "value": "Automatic"
+      "value": "Automatiskt"
     }
   ],
   "B/JzwK": [
@@ -1425,6 +1425,12 @@
     {
       "type": 0,
       "value": "Tillståndstyp:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Collapse"
     }
   ],
   "BuYrD3": [
@@ -1569,6 +1575,12 @@
     {
       "type": 0,
       "value": "Svar"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1827,6 +1839,12 @@
     {
       "type": 0,
       "value": "Returnerar sant om båda parametrarna är falsk"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "More commands"
     }
   ],
   "Gi72X5": [
@@ -2581,6 +2599,12 @@
       "value": "Anslutningens namn"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Enter custom value"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2609,6 +2633,12 @@
     {
       "type": 0,
       "value": "Returnerar resultaten från åtgärderna på toppnivå i den angivna omfångsdefinierade åtgärden, till exempel en For_each, Until eller Scope."
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Ungroup"
     }
   ],
   "Oib1mL": [
@@ -2809,10 +2839,10 @@
       "value": "Konverterar indata till ett värde av JSON-typ"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Kan ha värdet null"
+      "value": "Status code"
     }
   ],
   "QQYzHC": [
@@ -3136,7 +3166,7 @@
   "Tayrub": [
     {
       "type": 0,
-      "value": "Raw"
+      "value": "Rådata"
     }
   ],
   "Tb2QLA": [
@@ -3154,7 +3184,7 @@
   "Tiqnir": [
     {
       "type": 0,
-      "value": "Custom"
+      "value": "Anpassat"
     }
   ],
   "ToPmjE": [
@@ -3815,6 +3845,12 @@
     {
       "type": 0,
       "value": "Åtgärder"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Delete"
     }
   ],
   "bIyTi7": [
@@ -4574,7 +4610,7 @@
   "iSb/hp": [
     {
       "type": 0,
-      "value": "Managed Identity"
+      "value": "Hanterad identitet"
     }
   ],
   "iU1OJh": [
@@ -4879,6 +4915,12 @@
       "value": "Tillbaka"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Add Group"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -5059,6 +5101,12 @@
       "value": "Krävs. Antalet tidsenheter som den önskade tiden är i framtiden."
     }
   ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
+    }
+  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5155,6 +5203,12 @@
     {
       "type": 0,
       "value": "Ange körningsidentifieraren för att öppna körningen"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Response body"
     }
   ],
   "ol+TkT": [
@@ -5608,7 +5662,7 @@
   "sys5gu": [
     {
       "type": 0,
-      "value": "Client Certificate"
+      "value": "Klientcertifikat"
     }
   ],
   "t+XCkg": [
@@ -5680,7 +5734,7 @@
   "tUlRzr": [
     {
       "type": 0,
-      "value": "Basic"
+      "value": "Grundläggande"
     }
   ],
   "tZj2Xn": [
@@ -6051,6 +6105,12 @@
       "value": "Returnerar en strängrepresentation av en URI-kodad sträng"
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Add Row"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6145,6 +6205,12 @@
     {
       "type": 0,
       "value": "8"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Choose a value"
     }
   ],
   "yoCi15": [
