@@ -145,7 +145,7 @@ export const BaseEditor = ({
   };
 
   return (
-    <LexicalComposer initialConfig={initialConfig} key={JSON.stringify(initialValue)}>
+    <LexicalComposer initialConfig={initialConfig}>
       <div className={className ?? 'msla-editor-container'} id={editorId}>
         {toolBar ? <Toolbar /> : null}
         <RichTextPlugin
