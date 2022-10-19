@@ -111,7 +111,7 @@ export const Row = ({
       },
       iconOnly: true,
       name: deleteButton,
-      onClick: handleDeleteChild,
+      onClick: () => handleDeleteChild?.(index),
     },
     // TODO: Allow Moving of Rows in querybuilder
     // {
