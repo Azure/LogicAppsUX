@@ -135,7 +135,7 @@ const convertSourceToReactFlowParentAndChildNodes = (
       sourcePosition: Position.Right,
       position: {
         x: sourceSchemaElkTree.x + elkNode.x,
-        y: sourceSchemaElkTree.y + elkNode.y,
+        y: elkNode.y,
       },
     });
   });
@@ -185,7 +185,7 @@ export const convertToReactFlowParentAndChildNodes = (
     targetPosition: !displayTargets ? undefined : SchemaTypes.Source ? Position.Right : Position.Left,
     position: {
       x: elkTree.x + parentElkNode.x,
-      y: elkTree.y + parentElkNode.y,
+      y: parentElkNode.y,
     },
   });
 
@@ -214,7 +214,7 @@ export const convertToReactFlowParentAndChildNodes = (
       targetPosition: !displayTargets ? undefined : SchemaTypes.Source ? Position.Right : Position.Left,
       position: {
         x: elkTree.x + childElkNode.x + childTargetNodeCardIndent,
-        y: elkTree.y + childElkNode.y,
+        y: childElkNode.y,
       },
     });
   });
@@ -250,7 +250,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
       sourcePosition: Position.Right,
       position: {
         x: functionsElkTree.x + elkNode.x,
-        y: functionsElkTree.y + elkNode.y,
+        y: elkNode.y,
       },
     });
   });

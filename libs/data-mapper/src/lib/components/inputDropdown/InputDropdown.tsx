@@ -1,4 +1,3 @@
-import { sourcePrefix } from '../../constants/ReactFlowConstants';
 import { showNotification, updateConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
@@ -6,10 +5,9 @@ import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
-import { isFunctionData } from '../../utils/Function.Utils';
+import { isFunctionData, getFunctionOutputValue } from '../../utils/Function.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { NotificationTypes } from '../notification/Notification';
-import { getFunctionOutputValue } from '../propertiesPane/tabs/FunctionNodePropertiesTab';
 import { Dropdown, SelectableOptionMenuItemType, TextField } from '@fluentui/react';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
 import { Button, makeStyles, Tooltip } from '@fluentui/react-components';
@@ -123,11 +121,10 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     // Create connection
-    const sourceKey = isSelectedInputFunction ? selectedInputKey : `${sourcePrefix}${selectedInputKey}`;
-    const source = isSelectedInputFunction ? functionNodeDictionary[sourceKey] : sourceSchemaDictionary[sourceKey];
+    const source = isSelectedInputFunction ? functionNodeDictionary[selectedInputKey] : sourceSchemaDictionary[selectedInputKey];
     const srcConUnit: ConnectionUnit = {
       node: source,
-      reactFlowKey: sourceKey,
+      reactFlowKey: selectedInputKey,
     };
 
     updateInput(srcConUnit);
@@ -168,7 +165,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   useEffect(() => {
     // Check if inputValue is defined, and if it's a node reference or a custom value
     if (inputValue !== undefined) {
-      const srcSchemaNode = sourceSchemaDictionary[addSourceReactFlowPrefix(inputValue)];
+      const srcSchemaNode = sourceSchemaDictionary[inputValue];
       const functionNode = functionNodeDictionary[inputValue];
 
       setCustomValue(inputValue);
@@ -189,7 +186,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       }
 
       newPossibleInputOptionsDictionary[srcNode.normalizedDataType].push({
-        nodeKey: srcNode.key,
+        nodeKey: addSourceReactFlowPrefix(srcNode.key),
         nodeName: srcNode.name,
         isFunctionNode: false,
       });
