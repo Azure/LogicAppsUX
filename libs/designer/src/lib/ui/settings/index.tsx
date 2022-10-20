@@ -66,7 +66,7 @@ function GeneralSettings(): JSX.Element | null {
   });
 
   const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions } = useSelector(
-    (state: RootState) => state.operations.settings[nodeId] ?? {}
+    (state: RootState) => state.operations.settings?.[nodeId] ?? {}
   );
 
   useEffect(() => {
@@ -360,9 +360,34 @@ function DataHandlingSettings(): JSX.Element | null {
 function NetworkingSettings(): JSX.Element | null {
   const { validate: triggerValidation, validationErrors } = useValidate();
   const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelectedNodeId(),
-    {
+  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
+  const nodeId = useSelectedNodeId();
+  const {
+    asynchronous,
+    disableAsyncPattern,
+    suppressWorkflowHeaders,
+    suppressWorkflowHeadersOnResponse,
+    requestOptions,
+    retryPolicy,
+    uploadChunk,
+    paging,
+    downloadChunkSize,
+    operations,
+  } = useSelector((state: RootState) => {
+    const { operations } = state;
+    const operationSettings = operations.settings?.[nodeId];
+    const {
+      asynchronous,
+      disableAsyncPattern,
+      suppressWorkflowHeaders,
+      suppressWorkflowHeadersOnResponse,
+      requestOptions,
+      retryPolicy,
+      uploadChunk,
+      paging,
+      downloadChunkSize,
+    } = operationSettings ?? {};
+    return {
       asynchronous,
       disableAsyncPattern,
       suppressWorkflowHeaders,
@@ -373,33 +398,8 @@ function NetworkingSettings(): JSX.Element | null {
       paging,
       downloadChunkSize,
       operations,
-    } = useSelector((state: RootState) => {
-      const { operations } = state;
-      const operationSettings = operations.settings[nodeId];
-      const {
-        asynchronous,
-        disableAsyncPattern,
-        suppressWorkflowHeaders,
-        suppressWorkflowHeadersOnResponse,
-        requestOptions,
-        retryPolicy,
-        uploadChunk,
-        paging,
-        downloadChunkSize,
-      } = operationSettings;
-      return {
-        asynchronous,
-        disableAsyncPattern,
-        suppressWorkflowHeaders,
-        suppressWorkflowHeadersOnResponse,
-        requestOptions,
-        retryPolicy,
-        uploadChunk,
-        paging,
-        downloadChunkSize,
-        operations,
-      };
-    });
+    };
+  });
 
   useEffect(() => {
     const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
@@ -554,10 +554,10 @@ function NetworkingSettings(): JSX.Element | null {
 function RunAfterSettings(): JSX.Element | null {
   const { validate: triggerValidation, validationErrors } = useValidate();
   const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelectedNodeId(),
-    operations = useSelector((state: RootState) => state.operations),
-    { runAfter } = operations.settings[nodeId];
+  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
+  const nodeId = useSelectedNodeId();
+  const operations = useSelector((state: RootState) => state.operations);
+  const { runAfter } = operations.settings?.[nodeId] ?? {};
 
   useEffect(() => {
     const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
@@ -586,7 +586,7 @@ function SecuritySettings(): JSX.Element | null {
     settings: { secureInputs, secureOutputs },
     operationInfo,
   } = useSelector((state: RootState) => ({
-    settings: state.operations.settings[nodeId] ?? {},
+    settings: state.operations.settings?.[nodeId] ?? {},
     operationInfo: state.operations.operationInfo[nodeId],
   }));
   const onSecureInputsChange = (checked: boolean): void => {
