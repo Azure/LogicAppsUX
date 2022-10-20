@@ -23,8 +23,8 @@ export const useValidate = () => {
   });
 
   const validateOperationSettings = useCallback(
-    (settings: Settings): ValidationError[] => {
-      const { conditionExpressions, paging } = settings;
+    (settings?: Settings): ValidationError[] => {
+      const { conditionExpressions, paging } = settings ?? {};
       const validationErrors: ValidationError[] = [];
 
       if (conditionExpressions?.value?.some((conditionExpression) => !conditionExpression)) {
