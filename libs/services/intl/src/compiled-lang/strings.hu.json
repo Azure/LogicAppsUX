@@ -2469,6 +2469,12 @@
       "value": "(UTC+03:00) Minszk"
     }
   ],
+  "Nn/DN4": [
+    {
+      "type": 0,
+      "value": "This connection would introduce circular logic."
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
