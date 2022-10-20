@@ -11,25 +11,30 @@ import type { ElkNode, ElkExtendedEdge } from 'elkjs/lib/elk.bundled';
 const elk = new ELK();
 
 const defaultTreeLayoutOptions: Record<string, string> = {
-  alignment: 'LEFT', // General layout settings
-  'elk.direction': 'RIGHT',
+  // General layout settings
+  direction: 'RIGHT',
   algorithm: 'layered',
   hierarchyHandling: 'INCLUDE_CHILDREN',
   'layering.strategy': 'INTERACTIVE',
-  'spacing.nodeNodeBetweenLayers': '300.0', // Spacing between node groups (Source schema/Functions/Target schema)
-  'spacing.edgeNodeBetweenLayers': '128.0',
-  'crossingMinimization.semiInteractive': 'true', // Settings related to node ordering (when attempting to minimize edge crossing)
+  // Spacing between node groups (Source schema/Functions/Target schema)
+  'spacing.nodeNodeBetweenLayers': '200.0',
+  'edge.thickness': '20.0',
+  // Settings related to node ordering (when attempting to minimize edge crossing)
+  'crossingMinimization.semiInteractive': 'true',
   'considerModelOrder.strategy': 'NODES_AND_EDGES',
-  'partitioning.activate': 'true', // Allows blocks/node-groups to be forced into specific "slots"
+  // Allows blocks/node-groups to be forced into specific "slots"
+  'partitioning.activate': 'true',
 };
 
 const sourceSchemaLayoutOptions: Record<string, string> = {
   'partitioning.partition': '0',
-  'crossingMinimization.forceNodeModelOrder': 'true', // Ensures that node order is maintained (which we want for schema nodes (not functions))
+  'crossingMinimization.forceNodeModelOrder': 'true', // Ensures that node order is maintained
 };
 
 const functionsLayoutOptions: Record<string, string> = {
   'partitioning.partition': '1',
+  'crossingMinimization.forceNodeModelOrder': 'true',
+  'spacing.nodeNodeBetweenLayers': '64.0',
 };
 
 const targetSchemaLayoutOptions: Record<string, string> = {
