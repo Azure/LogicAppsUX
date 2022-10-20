@@ -25,9 +25,9 @@ const menuIconProps: IIconProps = {
 
 interface RowProps {
   checked?: boolean;
-  keyValue?: ValueSegment[];
-  valueValue?: ValueSegment[];
-  dropdownValue?: string;
+  operand1?: ValueSegment[];
+  operand2?: ValueSegment[];
+  operator?: string;
   index: number;
   showDisabledDelete?: boolean;
   isGroupable?: boolean;
@@ -42,9 +42,9 @@ interface RowProps {
 
 export const Row = ({
   checked = false,
-  keyValue = [],
-  valueValue = [],
-  dropdownValue,
+  operand1 = [],
+  operand2 = [],
+  operator,
   index,
   showDisabledDelete,
   isGroupable,
@@ -59,7 +59,7 @@ export const Row = ({
   const intl = useIntl();
   const keyEditorRef = useRef<HTMLDivElement | null>(null);
   const valueEditorRef = useRef<HTMLDivElement | null>(null);
-  const [key, setKey] = useState<ValueSegment[]>(keyValue);
+  const [key, setKey] = useState<ValueSegment[]>(operand1);
 
   const handleGroup = () => {
     handleUpdateParent(
@@ -142,7 +142,7 @@ export const Row = ({
   ];
 
   const handleKeyChange = (newState: ChangeState) => {
-    if (notEqual(keyValue, newState.value)) {
+    if (notEqual(operand1, newState.value)) {
       setKey(newState.value);
     }
     if (newState.value.length === 0) {
@@ -150,10 +150,10 @@ export const Row = ({
     }
   };
   const handleKeySave = (newState: ChangeState) => {
-    if (notEqual(keyValue, newState.value)) {
+    if (notEqual(operand1, newState.value)) {
       setKey(newState.value);
       handleUpdateParent(
-        { type: GroupType.ROW, checked: checked, key: newState.value, dropdownVal: dropdownValue, value: valueValue },
+        { type: GroupType.ROW, checked: checked, operand1: newState.value, operator: operator, operand2: operand2 },
         index
       );
     }
@@ -161,22 +161,22 @@ export const Row = ({
 
   const handleSelectedOption = (newState: ChangeState) => {
     handleUpdateParent(
-      { type: GroupType.ROW, checked: checked, key: keyValue, dropdownVal: newState.value[0].value, value: valueValue },
+      { type: GroupType.ROW, checked: checked, operand1: operand1, operator: newState.value[0].value, operand2: operand2 },
       index
     );
   };
 
   const handleValueSave = (newState: ChangeState) => {
-    if (notEqual(valueValue, newState.value)) {
+    if (notEqual(operand2, newState.value)) {
       handleUpdateParent(
-        { type: GroupType.ROW, checked: checked, key: keyValue, dropdownVal: dropdownValue, value: newState.value },
+        { type: GroupType.ROW, checked: checked, operand1: operand1, operator: operator, operand2: newState.value },
         index
       );
     }
   };
 
   const handleCheckbox = () => {
-    handleUpdateParent({ type: GroupType.ROW, checked: !checked, key: keyValue, dropdownVal: dropdownValue, value: valueValue }, index);
+    handleUpdateParent({ type: GroupType.ROW, checked: !checked, operand1: operand1, operator: operator, operand2: operand2 }, index);
   };
 
   const onRenderOverflowButton = (): JSX.Element => {
@@ -217,7 +217,7 @@ export const Row = ({
         <div ref={keyEditorRef}>
           <StringEditor
             className={'msla-querybuilder-row-value-input'}
-            initialValue={keyValue}
+            initialValue={operand1}
             placeholder={rowValueInputPlaceholder}
             singleLine={true}
             onChange={handleKeyChange}
@@ -226,12 +226,12 @@ export const Row = ({
             tokenPickerButtonProps={{ customButton: true }}
           />
         </div>
-        <RowDropdown disabled={key.length === 0} selectedOption={dropdownValue} onChange={handleSelectedOption} key={dropdownValue} />
+        <RowDropdown disabled={key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <div ref={valueEditorRef}>
           <StringEditor
             readonly={key.length === 0}
             className={'msla-querybuilder-row-value-input'}
-            initialValue={valueValue}
+            initialValue={operand2}
             placeholder={rowValueInputPlaceholder}
             singleLine={true}
             getTokenPicker={getTokenPicker}

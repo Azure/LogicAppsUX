@@ -269,11 +269,11 @@ export const Group = ({
               {groupProps.items.map((item, currIndex) => {
                 return item.type === GroupType.ROW ? (
                   <Row
-                    key={`row ${currIndex} ${item.key} ${item.value}`}
+                    key={`row ${currIndex} ${JSON.stringify(item.operand1)} ${JSON.stringify(item.operand2)}`}
                     checked={item.checked}
-                    keyValue={item.key}
-                    dropdownValue={item.dropdownVal}
-                    valueValue={item.value}
+                    operand1={item.operand1}
+                    operator={item.operator}
+                    operand2={item.operand2}
                     index={currIndex}
                     isGroupable={isGroupable}
                     showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}

@@ -38,7 +38,7 @@
           }
         },
         "expression": {
-          "and": [
+          "or": [
             {
               "equals": ["abc@microsoft.com", "@variables('goalOwner')"]
             },

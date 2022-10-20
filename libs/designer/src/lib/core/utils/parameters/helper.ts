@@ -302,7 +302,7 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
   } else if (type === constants.EDITOR.AUTHENTICATION) {
     editorViewModel = toAuthenticationViewModel(inputParameter.value);
   } else if (type === constants.EDITOR.CONDITION) {
-    editorViewModel = toConditionViewModel(inputParameter);
+    editorViewModel = toConditionViewModel(inputParameter.value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     type = undefined;
   }
@@ -315,13 +315,12 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
   };
 }
 
-const toConditionViewModel = (parameter: ResolvedParameter): { items: GroupItemProps } => {
-  const peservedValue = getPreservedValue(parameter);
-  const getSelectedOption = getConditionalSelectedOption(peservedValue);
+const toConditionViewModel = (input: any): { items: GroupItemProps } => {
+  const getSelectedOption = getConditionalSelectedOption(input);
   const items: GroupItemProps = {
     type: GroupType.GROUP,
     selectedOption: getSelectedOption,
-    items: recurseConditionalItems(peservedValue, getSelectedOption),
+    items: recurseConditionalItems(input, getSelectedOption),
   };
   return { items };
 };
@@ -350,11 +349,12 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
         } else {
           dropdownVal = Object.keys(item)[0];
         }
+        console.log(not + dropdownVal);
         output.push({
           type: GroupType.ROW,
-          dropdownVal: not + dropdownVal,
-          key: loadParameterValue({ value: not ? item[not][dropdownVal][0] : item[dropdownVal][0] } as InputParameter),
-          value: loadParameterValue({ value: not ? item[not][dropdownVal][1] : item[dropdownVal][1] } as InputParameter),
+          operator: not + dropdownVal,
+          operand1: loadParameterValue({ value: not ? item[not][dropdownVal][0] : item[dropdownVal][0] } as InputParameter),
+          operand2: loadParameterValue({ value: not ? item[not][dropdownVal][1] : item[dropdownVal][1] } as InputParameter),
         });
       } else {
         output.push({ type: GroupType.GROUP, selectedOption: condition, items: recurseConditionalItems(item, condition) });

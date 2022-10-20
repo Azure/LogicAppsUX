@@ -19,6 +19,7 @@ import {
   // DropdownEditor,
   outputToken,
   outputToken2,
+  RowDropdownOptions,
 } from '@microsoft/designer-ui';
 
 const testTokenGroup: TokenGroup[] = [
@@ -89,14 +90,19 @@ export const ScratchTab = () => {
             selectedOption: GroupDropdownOptions.OR,
             items: [
               { type: GroupType.ROW, checked: true },
-              { type: GroupType.ROW, key: [testTokenSegment], dropdownVal: 'islessthanorequal', value: [testTokenSegment] },
+              {
+                type: GroupType.ROW,
+                operand1: [testTokenSegment],
+                operator: RowDropdownOptions.LESSOREQUALS,
+                operand2: [testTokenSegment],
+              },
               { type: GroupType.GROUP, checked: false, items: [] },
               {
                 type: GroupType.GROUP,
                 checked: true,
                 items: [
                   { type: GroupType.ROW },
-                  { type: GroupType.GROUP, checked: false, items: [{ type: GroupType.ROW, key: [testTokenSegment] }] },
+                  { type: GroupType.GROUP, checked: false, items: [{ type: GroupType.ROW, operand1: [testTokenSegment] }] },
                 ],
               },
             ],

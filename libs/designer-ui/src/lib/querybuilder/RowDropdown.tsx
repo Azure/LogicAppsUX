@@ -5,34 +5,49 @@ import type { ChangeHandler } from '../editor/base';
 import { guid } from '@microsoft-logic-apps/utils';
 
 interface RowDropdownProps {
-  selectedOption?: string;
+  condition?: string;
   disabled: boolean;
   onChange: ChangeHandler;
 }
 
+export enum RowDropdownOptions {
+  CONTAINS = 'contains',
+  NOTCONTAINS = 'notcontains',
+  EQUALS = 'equals',
+  NOTEQUALS = 'notequals',
+  GREATER = 'greater',
+  GREATEROREQUALS = 'greaterOrEquals',
+  LESS = 'less',
+  LESSOREQUALS = 'lessOrEquals',
+  STARTSWITH = 'startsWith',
+  NOTSTARTSWITH = 'notstartsWith',
+  ENDSWITH = 'endsWith',
+  NOTENDSWITH = 'notendsWith',
+}
+
 const items: DropdownItem[] = [
-  { key: 'contains', displayName: 'contains', value: 'contains' },
-  { key: 'notcontains', displayName: '!contain', value: 'notcontains' },
-  { key: 'equals', displayName: '=', value: 'equals' },
-  { key: 'notequals', displayName: '!=', value: 'notequals' },
-  { key: 'greater', displayName: '>', value: 'greater' },
-  { key: 'greaterOrEquals', displayName: '>=', value: 'greaterOrEquals' },
-  { key: 'less', displayName: '<', value: 'less' },
-  { key: 'lessOrEquals', displayName: '<=', value: 'lessOrEquals' },
-  { key: 'startsWith', displayName: 'starts with', value: 'startsWith' },
-  { key: 'notstartsWith', displayName: '!start with', value: 'notstartsWith' },
-  { key: 'endsWith', displayName: 'ends with', value: 'endsWith' },
-  { key: 'notendsWith', displayName: '!end with', value: 'notendsWith' },
+  { key: RowDropdownOptions.CONTAINS, displayName: 'contains', value: RowDropdownOptions.CONTAINS },
+  { key: RowDropdownOptions.NOTCONTAINS, displayName: '!contain', value: RowDropdownOptions.NOTCONTAINS },
+  { key: RowDropdownOptions.EQUALS, displayName: '=', value: RowDropdownOptions.EQUALS },
+  { key: RowDropdownOptions.NOTEQUALS, displayName: '!=', value: RowDropdownOptions.NOTEQUALS },
+  { key: RowDropdownOptions.GREATER, displayName: '>', value: RowDropdownOptions.GREATER },
+  { key: RowDropdownOptions.GREATEROREQUALS, displayName: '>=', value: RowDropdownOptions.GREATEROREQUALS },
+  { key: RowDropdownOptions.LESS, displayName: '<', value: RowDropdownOptions.LESS },
+  { key: RowDropdownOptions.LESSOREQUALS, displayName: '<=', value: RowDropdownOptions.LESSOREQUALS },
+  { key: RowDropdownOptions.STARTSWITH, displayName: 'starts with', value: RowDropdownOptions.STARTSWITH },
+  { key: RowDropdownOptions.NOTSTARTSWITH, displayName: '!start with', value: RowDropdownOptions.NOTSTARTSWITH },
+  { key: RowDropdownOptions.ENDSWITH, displayName: 'ends with', value: RowDropdownOptions.ENDSWITH },
+  { key: RowDropdownOptions.NOTENDSWITH, displayName: '!end with', value: RowDropdownOptions.NOTENDSWITH },
 ];
 
-export const RowDropdown = ({ selectedOption, disabled, onChange }: RowDropdownProps) => {
+export const RowDropdown = ({ condition, disabled, onChange }: RowDropdownProps) => {
   return (
     <div className="msla-querybuilder-row-dropdown-container">
       <DropdownEditor
         readonly={disabled}
         initialValue={
-          selectedOption
-            ? [{ id: guid(), type: ValueSegmentType.LITERAL, value: selectedOption }]
+          condition
+            ? [{ id: guid(), type: ValueSegmentType.LITERAL, value: condition }]
             : [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'isequalto' }]
         }
         onChange={onChange}

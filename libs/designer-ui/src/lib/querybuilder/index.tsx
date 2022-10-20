@@ -1,11 +1,14 @@
 import type { ValueSegment } from '../editor';
+import { ValueSegmentType } from '../editor';
 import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
+import { RowDropdownOptions } from './RowDropdown';
+import { guid } from '@microsoft-logic-apps/utils';
 import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
 
-export { GroupDropdownOptions };
+export { GroupDropdownOptions, RowDropdownOptions };
 
 export interface GroupedItems {
   index: number;
@@ -21,9 +24,9 @@ export enum GroupType {
 export interface RowItemProps {
   type: GroupType.ROW;
   checked?: boolean;
-  key?: ValueSegment[];
-  dropdownVal?: string;
-  value?: ValueSegment[];
+  operand1?: ValueSegment[];
+  operator?: string;
+  operand2?: ValueSegment[];
 }
 export interface GroupItemProps {
   type: GroupType.GROUP;
@@ -37,7 +40,7 @@ export interface QueryBuilderProps {
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
 }
-
+const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
 export const QueryBuilderEditor = ({ getTokenPicker, onChange, groupProps }: QueryBuilderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
@@ -47,7 +50,8 @@ export const QueryBuilderEditor = ({ getTokenPicker, onChange, groupProps }: Que
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
   useUpdateEffect(() => {
-    onChange?.({ value: [], viewModel: { items: getRootProp() } });
+    console.log(getRootProp());
+    onChange?.({ value: emptyValue, viewModel: getRootProp() });
     setHeights(checkHeights(getRootProp(), [], 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getRootProp()]);
