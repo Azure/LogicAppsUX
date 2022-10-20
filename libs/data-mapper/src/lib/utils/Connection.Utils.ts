@@ -244,20 +244,26 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
 export const nodeHasSpecificSourceNodeEventually = (
   sourceKey: string,
   currentConnection: Connection,
-  connections: ConnectionDictionary
+  connections: ConnectionDictionary,
+  exactMatch: boolean
 ): boolean => {
   if (!currentConnection) {
     return false;
   }
 
-  if (currentConnection.self.reactFlowKey === sourceKey) {
+  if (
+    (exactMatch && currentConnection.self.reactFlowKey === sourceKey) ||
+    (!exactMatch && currentConnection.self.reactFlowKey.indexOf(sourceKey) > -1)
+  ) {
     return true;
   }
 
   const flattenedInputs = flattenInputs(currentConnection.inputs);
   const nonCustomInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
 
-  return nonCustomInputs.some((input) => nodeHasSpecificSourceNodeEventually(sourceKey, connections[input.reactFlowKey], connections));
+  return nonCustomInputs.some((input) =>
+    nodeHasSpecificSourceNodeEventually(sourceKey, connections[input.reactFlowKey], connections, exactMatch)
+  );
 };
 
 export const collectNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
