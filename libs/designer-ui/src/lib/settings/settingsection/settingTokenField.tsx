@@ -2,6 +2,7 @@ import { ArrayEditor, ArrayType } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
 import { Combobox } from '../../combobox';
+import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
@@ -61,6 +62,9 @@ const TokenField = ({
   onComboboxMenuOpen,
 }: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
+    case 'copyable':
+      return <CopyInputControl placeholder={placeholder} text={value[0].value} />;
+
     case 'dropdown':
       // eslint-disable-next-line no-case-declarations
       const { options, multiSelect } = editorOptions;
