@@ -22,6 +22,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
+// eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { ReactFlowProvider, useNodes, useReactFlow, useStore } from 'reactflow';
 import type { NodeChange } from 'reactflow';
 
