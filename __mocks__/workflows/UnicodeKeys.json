@@ -4,7 +4,7 @@
     "actions": {
       "Switch": {
         "cases": {
-          "First_Case": {
+          "Groß-/Kleinbuchstaben": {
             "actions": {
               "Action-1-Compose": {
                 "inputs": "test",
@@ -13,13 +13,13 @@
             },
             "case": "test"
           },
-          "Second_Case": {
+          "🐞🍋🐠": {
             "actions": {},
-            "case": "test-2"
+            "case": "🤯"
           },
-          "Third_Case": {
+          "早上好": {
             "actions": {},
-            "case": "test-3"
+            "case": "早上好"
           }
         },
         "default": {
