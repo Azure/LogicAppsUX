@@ -50,8 +50,7 @@ export const QueryBuilderEditor = ({ getTokenPicker, onChange, groupProps }: Que
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
   useUpdateEffect(() => {
-    console.log(getRootProp());
-    onChange?.({ value: emptyValue, viewModel: getRootProp() });
+    onChange?.({ value: emptyValue, viewModel: { type: GroupType.GROUP, items: JSON.parse(JSON.stringify(getRootProp())) } });
     setHeights(checkHeights(getRootProp(), [], 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getRootProp()]);

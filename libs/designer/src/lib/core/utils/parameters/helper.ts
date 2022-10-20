@@ -349,7 +349,6 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
         } else {
           dropdownVal = Object.keys(item)[0];
         }
-        console.log(not + dropdownVal);
         output.push({
           type: GroupType.ROW,
           operator: not + dropdownVal,
@@ -389,6 +388,7 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
 }
 
 function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[]; columnMode: ColumnMode } {
+  console.log('here');
   const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')] };
   if (Array.isArray(value)) {
     const keys = editorOptions.columns.keys;

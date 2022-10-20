@@ -167,7 +167,7 @@ const TokenField = ({
         <QueryBuilderEditor
           getTokenPicker={getTokenPicker}
           groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
-          // onChange={onValueChange}
+          onChange={onValueChange}
         />
       );
 
