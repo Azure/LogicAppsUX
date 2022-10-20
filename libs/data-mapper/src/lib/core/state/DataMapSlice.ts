@@ -319,6 +319,7 @@ export const dataMapSlice = createSlice({
 
       addConnection(newState.dataMapConnections, action.payload);
 
+      // XXX Bug here that if you add the connection one level above, then we still make the auto connection when you navigate down and add children
       // Add any repeating parent nodes as well
       const parentTargetNode = newState.currentTargetNode;
       const sourceNode = action.payload.source;
@@ -332,7 +333,8 @@ export const dataMapSlice = createSlice({
             !nodeHasSpecificSourceNodeEventually(
               prefixedSourceKey,
               newState.dataMapConnections[prefixedTargetKey],
-              newState.dataMapConnections
+              newState.dataMapConnections,
+              true
             )
           ) {
             if (!newState.currentSourceNodes.find((node) => node.key === parentSourceNode.key)) {
