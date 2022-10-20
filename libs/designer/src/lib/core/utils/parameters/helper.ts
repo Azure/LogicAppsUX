@@ -1640,7 +1640,7 @@ export function updateTokenMetadata(
     // TODO - Item token details
   }
 
-  const { settings, nodeOutputs, brandColor: nodeBrandColor, iconUri: nodeIconUri } = nodes[tokenNodeId];
+  const { settings, nodeOutputs, brandColor: nodeBrandColor, iconUri: nodeIconUri } = nodes[tokenNodeId] ?? {};
   const tokenNodeOperation = operations[tokenNodeId];
   const nodeType = tokenNodeOperation?.type;
   const isSecure = hasSecureOutputs(nodeType, settings ?? {});
