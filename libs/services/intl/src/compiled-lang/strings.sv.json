@@ -1430,7 +1430,7 @@
   "BoMvF2": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Dölj"
     }
   ],
   "BuYrD3": [
@@ -1844,7 +1844,7 @@
   "GdGm4T": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Fler kommandon"
     }
   ],
   "Gi72X5": [
@@ -2608,7 +2608,7 @@
   "OL5S5H": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "Ange ett anpassat värde"
     }
   ],
   "OOUSLP": [
@@ -2644,7 +2644,7 @@
   "OdNhwc": [
     {
       "type": 0,
-      "value": "Ungroup"
+      "value": "Dela upp grupp"
     }
   ],
   "Oib1mL": [
@@ -2848,7 +2848,7 @@
   "QGbUXX": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Statuskod"
     }
   ],
   "QQYzHC": [
@@ -3856,7 +3856,7 @@
   "bGtEPd": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Ta bort"
     }
   ],
   "bIyTi7": [
@@ -4277,6 +4277,20 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -4924,7 +4938,7 @@
   "lZT0JI": [
     {
       "type": 0,
-      "value": "Add Group"
+      "value": "Lägg till grupp"
     }
   ],
   "lcVG4C": [
@@ -5214,7 +5228,7 @@
   "odQ554": [
     {
       "type": 0,
-      "value": "Response body"
+      "value": "Svarstext"
     }
   ],
   "ol+TkT": [
@@ -6114,7 +6128,7 @@
   "xLF2Zr": [
     {
       "type": 0,
-      "value": "Add Row"
+      "value": "Lägg till rad"
     }
   ],
   "xN3GEX": [
@@ -6216,7 +6230,7 @@
   "ydqOly": [
     {
       "type": 0,
-      "value": "Choose a value"
+      "value": "Välj ett värde"
     }
   ],
   "yoCi15": [

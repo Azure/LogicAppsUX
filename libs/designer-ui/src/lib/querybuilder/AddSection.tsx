@@ -1,4 +1,5 @@
 import type { GroupItemProps, RowItemProps } from '.';
+import { GroupType } from '.';
 import type { IContextualMenuProps, IIconProps } from '@fluentui/react';
 import { DefaultButton } from '@fluentui/react';
 import { useIntl } from 'react-intl';
@@ -25,16 +26,16 @@ export const AddSection = ({ handleUpdateParent, index, addEmptyRow }: AddSectio
 
   const handleAddRow = () => {
     if (addEmptyRow) {
-      handleUpdateParent({ type: 'row' }, index);
+      handleUpdateParent({ type: GroupType.ROW }, index);
     }
-    handleUpdateParent({ type: 'row' }, index + (addEmptyRow ? 1 : 0));
+    handleUpdateParent({ type: GroupType.ROW }, index + (addEmptyRow ? 1 : 0));
   };
 
   const handleAddGroup = () => {
     if (addEmptyRow) {
-      handleUpdateParent({ type: 'row' }, index);
+      handleUpdateParent({ type: GroupType.ROW }, index);
     }
-    handleUpdateParent({ type: 'group', items: [] }, index + (addEmptyRow ? 1 : 0));
+    handleUpdateParent({ type: GroupType.GROUP, items: [] }, index + (addEmptyRow ? 1 : 0));
   };
 
   const menuProps: IContextualMenuProps = {

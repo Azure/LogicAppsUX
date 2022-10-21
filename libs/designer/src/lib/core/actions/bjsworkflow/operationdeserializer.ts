@@ -26,7 +26,7 @@ import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
-import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
+import { getInputParametersFromManifest, getOutputParametersFromManifest, updateCallbackUrlInInputs } from './initialize';
 import { getOperationSettings } from './settings';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { InputParameter, OutputParameter } from '@microsoft-logic-apps/parsers';
@@ -141,6 +141,11 @@ export const initializeOperationDetailsForManifest = async (
 
       const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation);
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, operation);
+
+      if (isTrigger) {
+        await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
+      }
+
       const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
         manifest,
         isTrigger,

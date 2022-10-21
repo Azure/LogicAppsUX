@@ -1,4 +1,5 @@
 import constants from '../../common/constants';
+import type { RootState } from '../../core';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsDiscovery,
@@ -21,6 +22,7 @@ import {
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { deleteNode, replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
+import { isRootNodeInGraph } from '../../core/utils/graph';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
@@ -35,7 +37,7 @@ import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designe
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const PanelRoot = (): JSX.Element => {
   const intl = useIntl();
@@ -46,6 +48,7 @@ export const PanelRoot = (): JSX.Element => {
 
   const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
+  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
   const isDiscovery = useIsDiscovery();
 
@@ -62,7 +65,7 @@ export const PanelRoot = (): JSX.Element => {
   let showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, aboutTab, codeViewTab, SettingsTab, createConnectionTab, selectConnectionTab];
+    const tabs = [monitoringTab, parametersTab, SettingsTab, codeViewTab, createConnectionTab, selectConnectionTab, aboutTab];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
@@ -171,7 +174,6 @@ export const PanelRoot = (): JSX.Element => {
       description: 'Delete text',
     });
     // TODO: 13067650 Disabled reason/description tobe implemented when panel actions gets built
-    const canDelete = true;
     const disabledDeleteAction = intl.formatMessage({
       defaultMessage: 'This operation has already been deleted.',
       description: 'Text to tell users why delete is disabled',
@@ -179,7 +181,7 @@ export const PanelRoot = (): JSX.Element => {
 
     options.push({
       key: deleteDescription,
-      disabled: readOnly || !canDelete,
+      disabled: readOnly || isTriggerNode,
       disabledReason: disabledDeleteAction,
       iconName: 'Delete',
       title: deleteDescription,

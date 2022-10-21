@@ -2,12 +2,14 @@ import { ArrayEditor, ArrayType } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
 import { Combobox } from '../../combobox';
+import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
+import { QueryBuilderEditor } from '../../querybuilder';
 import { SchemaEditor } from '../../schemaeditor';
 import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
@@ -61,6 +63,9 @@ const TokenField = ({
   onComboboxMenuOpen,
 }: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
+    case 'copyable':
+      return <CopyInputControl placeholder={placeholder} text={value[0].value} />;
+
     case 'dropdown':
       // eslint-disable-next-line no-case-declarations
       const { options, multiSelect } = editorOptions;
@@ -137,7 +142,7 @@ const TokenField = ({
       return (
         <ArrayEditor
           type={ArrayType.SIMPLE}
-          labelProps={{ text: '' }}
+          labelProps={{ text: 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
@@ -157,6 +162,15 @@ const TokenField = ({
           type={editorViewModel.type}
           authenticationValue={editorViewModel.authenticationValue}
           getTokenPicker={getTokenPicker}
+          onChange={onValueChange}
+        />
+      );
+
+    case 'condition':
+      return (
+        <QueryBuilderEditor
+          getTokenPicker={getTokenPicker}
+          groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
           onChange={onValueChange}
         />
       );
