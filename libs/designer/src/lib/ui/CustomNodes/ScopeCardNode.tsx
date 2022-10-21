@@ -144,7 +144,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <>
-        <div className="msla-scope-card">
+        <div className="msla-scope-card nopan">
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
             brandColor={brandColor.result}

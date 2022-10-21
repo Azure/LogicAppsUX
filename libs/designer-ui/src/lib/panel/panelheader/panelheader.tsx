@@ -122,15 +122,13 @@ export const PanelHeader = ({
   const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
 
   const iconComponent = isLoading ? (
-    <Spinner size={SpinnerSize.small} />
+    <div className="msla-panel-card-icon">
+      <Spinner size={SpinnerSize.medium} style={{ padding: '6px' }} />
+    </div>
   ) : cardIcon ? (
     <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" />
-  ) : (
-    // Need placeholder for icon here
-    <div className="msla-panel-card-icon">
-      <Spinner size={SpinnerSize.large} style={{ padding: '2px' }} />
-    </div>
-  );
+  ) : // Occurs both during loading new nodes and on Switch Case Nodes
+  null;
 
   const getPanelHeaderMenu = (): JSX.Element => {
     const panelHeaderMenuItems = panelHeaderMenu.map((item) => ({

@@ -53,7 +53,7 @@ export const ParametersTab = () => {
           />
         </div>
       ))}
-      {connectionName.isLoading === false && showConnectionDisplay ? (
+      {operationInfo && connectionName.isLoading === false && showConnectionDisplay ? (
         <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />
       ) : null}
     </>

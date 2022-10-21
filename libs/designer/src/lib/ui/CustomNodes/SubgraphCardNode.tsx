@@ -113,7 +113,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
 
   return (
     <div>
-      <div style={{ minHeight: '40px', display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'relative' }}>
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           {metadata?.subgraphType ? (
