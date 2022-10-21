@@ -125,11 +125,11 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       description: 'Button text for running test',
     }),
     CONFIGURATION: intl.formatMessage({
-      defaultMessage: 'Configuration',
+      defaultMessage: 'Configure',
       description: 'Button text for opening the configuration',
     }),
     TOUR_TUTORIAL: intl.formatMessage({
-      defaultMessage: 'Tour/Tutorial',
+      defaultMessage: 'Tour',
       description: 'Button text for tour and tutorial',
     }),
     GIVE_FEEDBACK: intl.formatMessage({
