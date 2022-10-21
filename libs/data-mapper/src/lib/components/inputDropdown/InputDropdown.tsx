@@ -210,7 +210,13 @@ export const InputDropdown = (props: InputDropdownProps) => {
         fnInputValues = Object.values(fnConnection.inputs)
           .flat()
           .map((input) =>
-            !input ? undefined : isCustomValue(input) ? input : isFunctionData(input.node) ? input.node.functionName : input.node.name
+            !input
+              ? undefined
+              : isCustomValue(input)
+              ? `"${input}"`
+              : isFunctionData(input.node)
+              ? `${input.node.functionName}()`
+              : input.node.name
           )
           .filter((value) => !!value) as string[];
       }
