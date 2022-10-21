@@ -57,6 +57,7 @@ const gatewayService = new StandardGatewayService({
     gateway: '2016-06-01',
   },
 });
+const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
 export const App = () => {
   return (
@@ -69,6 +70,7 @@ export const App = () => {
           searchService,
           oAuthService,
           gatewayService,
+          workflowService
         },
       }}
     >
