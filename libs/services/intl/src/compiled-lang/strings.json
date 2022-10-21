@@ -5,6 +5,12 @@
       "value": "Invalid properties {0} for authentication type {1}."
     }
   ],
+  "+3efoo": [
+    {
+      "type": 0,
+      "value": "No schema is added"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -1833,6 +1839,12 @@
       "value": "Required. The number that Subtrahend is removed from."
     }
   ],
+  "HBWyxc": [
+    {
+      "type": 0,
+      "value": "Pencil icon"
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -2875,6 +2887,12 @@
       "value": "Switch to input entire array"
     }
   ],
+  "RZO5Ic": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
+    }
+  ],
   "RhH4pF": [
     {
       "offset": 0,
@@ -3189,6 +3207,12 @@
     {
       "type": 0,
       "value": " (file name)"
+    }
+  ],
+  "UnrrzF": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "Ur+wph": [
@@ -3893,12 +3917,6 @@
       "value": "(UTC+02:00) Tripoli"
     }
   ],
-  "cbL6Gv": [
-    {
-      "type": 0,
-      "value": "Add or replace your schemas."
-    }
-  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3993,12 +4011,6 @@
     {
       "type": 0,
       "value": "Secure inputs of the operation."
-    }
-  ],
-  "dWeRGU": [
-    {
-      "type": 0,
-      "value": "pencil icon"
     }
   ],
   "dWx21B": [
@@ -4157,12 +4169,6 @@
     {
       "type": 0,
       "value": "Paging count exceeds maximum value"
-    }
-  ],
-  "fLSetk": [
-    {
-      "type": 0,
-      "value": "Source schema"
     }
   ],
   "faSDuD": [
@@ -4609,6 +4615,12 @@
     {
       "type": 0,
       "value": "Add a source schema"
+    }
+  ],
+  "jUDhbs": [
+    {
+      "type": 0,
+      "value": "Target schema"
     }
   ],
   "jVpanH": [
@@ -6157,12 +6169,6 @@
     {
       "type": 0,
       "value": "Enter value"
-    }
-  ],
-  "zGRgUE": [
-    {
-      "type": 0,
-      "value": "Target schema"
     }
   ],
   "zIDVd9": [
