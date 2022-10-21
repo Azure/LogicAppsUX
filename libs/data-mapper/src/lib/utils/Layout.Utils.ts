@@ -55,6 +55,16 @@ export const convertDataMapNodesToElkGraph = (
   const interBlockEdges: ElkExtendedEdge[] = [];
 
   Object.values(connections).forEach((connection) => {
+    // Make sure that this connection and its nodes are actively on the canvas
+    if (
+      !currentFunctionNodes[connection.self.reactFlowKey] &&
+      !currentSourceNodes.some((srcSchemaNode) => srcSchemaNode.key === connection.self.node.key) &&
+      currentTargetNode.key !== connection.self.node.key &&
+      !currentTargetNode.children.some((childTgtNode) => childTgtNode.key === connection.self.node.key)
+    ) {
+      return;
+    }
+
     // Categorize connections to function<->function and any others for elkTree creation below
     Object.values(connection.inputs).forEach((inputValueArray) => {
       inputValueArray.forEach((inputValue) => {
