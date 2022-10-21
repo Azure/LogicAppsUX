@@ -1,7 +1,8 @@
 import constants from '../../../common/constants';
+import type { AppDispatch } from '../../../core';
+import { updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
-import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
@@ -14,7 +15,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 export const SelectConnectionTab = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const selectedNodeId = useSelectedNodeId();
   const currentConnectionId = useNodeConnectionId(selectedNodeId);
@@ -43,7 +44,7 @@ export const SelectConnectionTab = () => {
     (connection?: Connection) => {
       if (!connection) return;
       dispatch(
-        changeConnectionMapping({ nodeId: selectedNodeId, connectionId: connection?.id as string, connectorId: connector?.id as string })
+        updateNodeConnection({ nodeId: selectedNodeId, connectionId: connection?.id as string, connectorId: connector?.id as string })
       );
       ConnectionService().createConnectionAclIfNeeded(connection);
       hideConnectionTabs();

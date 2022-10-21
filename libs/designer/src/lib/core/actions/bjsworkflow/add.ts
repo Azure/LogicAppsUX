@@ -2,23 +2,24 @@ import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
-import { changeConnectionMapping } from '../../state/connection/connectionSlice';
-import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { isolateTab, switchToOperationPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
-import type { RootState } from '../../store';
+import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { isRootNodeInGraph } from '../../utils/graph';
+import { loadDynamicData } from '../../utils/parameters/helper';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
-import { setVariableMetadata, getVariableDeclarations } from '../../utils/variables';
-import { isConnectionRequiredForOperation } from './connections';
+import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
+import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
 import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
+import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type {
@@ -60,7 +61,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   };
 
   dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-  initializeOperationDetails(nodeId, nodeOperationInfo, getState() as RootState, dispatch);
+  initializeOperationDetails(nodeId, nodeOperationInfo, getState as () => RootState, dispatch);
 
   // Update settings for children and parents
 
@@ -71,25 +72,28 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
 const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: NodeOperation,
-  state: RootState,
+  getState: () => RootState,
   dispatch: Dispatch
 ): Promise<void> => {
+  const state = getState();
   const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
   const { type, connectorId } = operationInfo;
+  let isConnectionRequired = true;
   const operationManifestService = OperationManifestService();
 
   dispatch(switchToOperationPanel(nodeId));
 
+  let initData: NodeData;
   if (operationManifestService.isSupported(type)) {
     const manifest = await getOperationManifest(operationInfo);
-    if (isConnectionRequiredForOperation(manifest)) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+    isConnectionRequired = isConnectionRequiredForOperation(manifest);
 
     const { iconUri, brandColor } = manifest.properties;
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
-    const initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings };
+    initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings };
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(nodeId, type, { ...initData, iconUri, brandColor, manifest }, state, dispatch);
   } else {
@@ -115,7 +119,8 @@ const initializeOperationDetails = async (
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, /* manifest */ undefined, parsedSwagger);
 
-    dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
+    initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings };
+    dispatch(initializeNodes([initData]));
     addTokensAndVariables(
       nodeId,
       type,
@@ -124,6 +129,20 @@ const initializeOperationDetails = async (
       dispatch
     );
   }
+
+  return !isConnectionRequired
+    ? loadDynamicData(
+        nodeId,
+        isTrigger,
+        operationInfo,
+        undefined,
+        initData.nodeDependencies,
+        initData.nodeInputs,
+        initData.settings as Settings,
+        getAllVariables(getState().tokens.variables),
+        dispatch
+      )
+    : trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
@@ -176,11 +195,11 @@ export const reinitializeOperationDetails = async (
   }
 };
 
-export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: Dispatch) => {
+export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: AppDispatch) => {
   const connections = await getConnectionsForConnector(connectorId);
   if (connections.length > 0) {
-    dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id, connectorId }));
     await ConnectionService().createConnectionAclIfNeeded(connections[0]);
+    dispatch(updateNodeConnection({ nodeId, connectionId: connections[0].id, connectorId }));
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
