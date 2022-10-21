@@ -73,11 +73,11 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     description: 'error message for loading the schema',
   });
   const updateSourceSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Update source schema',
+    defaultMessage: 'Add source schema',
     description: 'header message for adding source schema',
   });
   const updateTargetSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Update target schema',
+    defaultMessage: 'Add target schema',
     description: 'header message for adding target schema',
   });
   const backMessage = intl.formatMessage({
