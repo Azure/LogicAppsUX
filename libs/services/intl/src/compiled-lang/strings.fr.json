@@ -1452,7 +1452,7 @@
   "BoMvF2": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Réduire"
     }
   ],
   "BuYrD3": [
@@ -1602,7 +1602,7 @@
   "ERVorY": [
     {
       "type": 0,
-      "value": "Make Group"
+      "value": "Créer un groupe"
     }
   ],
   "EV9iRu": [
@@ -1869,7 +1869,7 @@
   "GdGm4T": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Autres commandes"
     }
   ],
   "Gi72X5": [
@@ -2644,7 +2644,7 @@
   "OL5S5H": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "Entrer une valeur personnalisée"
     }
   ],
   "OOUSLP": [
@@ -2680,7 +2680,7 @@
   "OdNhwc": [
     {
       "type": 0,
-      "value": "Ungroup"
+      "value": "Dissocier"
     }
   ],
   "Oib1mL": [
@@ -2884,7 +2884,7 @@
   "QGbUXX": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Code d'état"
     }
   ],
   "QQYzHC": [
@@ -3887,7 +3887,7 @@
   "bGtEPd": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Supprimer"
     }
   ],
   "bIyTi7": [
@@ -4308,6 +4308,20 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -4958,7 +4972,7 @@
   "lZT0JI": [
     {
       "type": 0,
-      "value": "Add Group"
+      "value": "Ajouter un groupe"
     }
   ],
   "lcVG4C": [
@@ -5144,7 +5158,7 @@
   "nQxMfu": [
     {
       "type": 0,
-      "value": "Clear custom value and reselect"
+      "value": "Effacer la valeur personnalisée et resélectionner"
     }
   ],
   "nSan4V": [
@@ -5248,7 +5262,7 @@
   "odQ554": [
     {
       "type": 0,
-      "value": "Response body"
+      "value": "Corps de la réponse"
     }
   ],
   "ol+TkT": [
@@ -6155,7 +6169,7 @@
   "xLF2Zr": [
     {
       "type": 0,
-      "value": "Add Row"
+      "value": "Ajouter une ligne"
     }
   ],
   "xN3GEX": [
@@ -6257,7 +6271,7 @@
   "ydqOly": [
     {
       "type": 0,
-      "value": "Choose a value"
+      "value": "Choisir une valeur"
     }
   ],
   "yoCi15": [
