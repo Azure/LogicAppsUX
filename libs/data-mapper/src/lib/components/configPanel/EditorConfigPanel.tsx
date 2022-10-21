@@ -56,28 +56,28 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     [dispatch, schemaType]
   );
 
-  const addMessage = intl.formatMessage({
-    defaultMessage: 'Add',
-    description: 'Button text for Add to add the selected schema file to use',
+  const saveMessage = intl.formatMessage({
+    defaultMessage: 'Save',
+    description: 'Save',
   });
-  const discardMessage = intl.formatMessage({
-    defaultMessage: 'Discard',
-    description: 'Button text for discard the changes and close the panel.',
+  const cancelMessage = intl.formatMessage({
+    defaultMessage: 'Cancel',
+    description: 'Cancel',
   });
   const configurationHeader = intl.formatMessage({
-    defaultMessage: 'Configuration',
-    description: 'Header text to inform users this panel is for configuration.',
+    defaultMessage: 'Configure',
+    description: 'Header text to inform users this panel is for configuration',
   });
   const genericErrMsg = intl.formatMessage({
     defaultMessage: 'Failed loading the schema. Please try again.',
     description: 'error message for loading the schema',
   });
-  const addSourceSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Add Source Schema',
+  const updateSourceSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Update source schema',
     description: 'header message for adding source schema',
   });
-  const addTargetSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Add Target Schema',
+  const updateTargetSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Update target schema',
     description: 'header message for adding target schema',
   });
   const backMessage = intl.formatMessage({
@@ -183,6 +183,10 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
   }, [readCurrentSchemaOptions]);
 
   const onRenderFooterContent = useCallback(() => {
+    if (!isChangeSchemaPanelOpen) {
+      return null;
+    }
+
     let isNoNewSchemaSelected = true;
 
     if (uploadType === UploadSchemaTypes.SelectFrom) {
@@ -197,18 +201,16 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
 
     return (
       <div>
-        {isChangeSchemaPanelOpen && (
-          <PrimaryButton
-            className="panel-button-left"
-            onClick={addSchema}
-            // TODO: Refactor below to be more clear
-            disabled={isNoNewSchemaSelected}
-          >
-            {addMessage}
-          </PrimaryButton>
-        )}
+        <PrimaryButton
+          className="panel-button-left"
+          onClick={addSchema}
+          // TODO: Refactor below to be more clear
+          disabled={isNoNewSchemaSelected}
+        >
+          {saveMessage}
+        </PrimaryButton>
 
-        <DefaultButton onClick={hideEntirePanel}>{discardMessage}</DefaultButton>
+        <DefaultButton onClick={hideEntirePanel}>{cancelMessage}</DefaultButton>
       </div>
     );
   }, [
@@ -217,9 +219,9 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
     curDataMapOperation,
     selectedSourceSchema,
     selectedTargetSchema,
-    addMessage,
+    saveMessage,
     hideEntirePanel,
-    discardMessage,
+    cancelMessage,
     addSchema,
     selectedSchemaFile,
     uploadType,
@@ -246,7 +248,9 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
         ) : isDefaultPanelOpen ? (
           <Text className="header-text">{configurationHeader}</Text>
         ) : isChangeSchemaPanelOpen ? (
-          <Text className="header-text">{schemaType === SchemaTypes.Source ? addSourceSchemaHeaderMsg : addTargetSchemaHeaderMsg}</Text>
+          <Text className="header-text">
+            {schemaType === SchemaTypes.Source ? updateSourceSchemaHeaderMsg : updateTargetSchemaHeaderMsg}
+          </Text>
         ) : (
           <div />
         )}
@@ -254,8 +258,8 @@ export const EditorConfigPanel: FunctionComponent<EditorConfigPanelProps> = ({ r
       </div>
     ),
     [
-      addSourceSchemaHeaderMsg,
-      addTargetSchemaHeaderMsg,
+      updateSourceSchemaHeaderMsg,
+      updateTargetSchemaHeaderMsg,
       configurationHeader,
       isChangeSchemaPanelOpen,
       isDefaultPanelOpen,

@@ -1,5 +1,6 @@
 import type { SchemaNodeExtended } from '../../models';
-import { ItemToggledState, type NodeToggledStateDictionary, SchemaTreeItem, SharedTreeItemContent } from './SchemaTreeItem';
+import { ItemToggledState, SchemaTreeItem, SharedTreeItemContent } from './SchemaTreeItem';
+import type { NodeToggledStateDictionary } from './SchemaTreeItem';
 import { tokens } from '@fluentui/react-components';
 import { CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular } from '@fluentui/react-icons';
 import React, { useMemo } from 'react';

@@ -8,19 +8,20 @@ import {
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
-import type { RootState } from '../../../../core/store';
-import { getConnectionId } from '../../../../core/utils/connectors/connections';
+import type { AppDispatch, RootState } from '../../../../core/store';
+import { getConnectionReference } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
+import { addForeachToNode } from '../../../../core/utils/loops';
 import { loadDynamicValuesForParameter, updateParameterAndDependencies } from '../../../../core/utils/parameters/helper';
 import type { TokenGroup } from '../../../../core/utils/tokens';
-import { getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
+import { createValueSegmentFromToken, getExpressionTokenSections, getOutputTokenSections } from '../../../../core/utils/tokens';
 import { getAllVariables, getAvailableVariables } from '../../../../core/utils/variables';
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { equals } from '@microsoft-logic-apps/utils';
 import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
-import type { ChangeState, PanelTab, ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
+import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -52,7 +53,7 @@ export const ParametersTab = () => {
           />
         </div>
       ))}
-      {!connectionName.isLoading && showConnectionDisplay ? (
+      {operationInfo && connectionName.isLoading === false && showConnectionDisplay ? (
         <ConnectionDisplay connectionName={connectionName.result} nodeId={selectedNodeId} />
       ) : null}
     </>
@@ -72,30 +73,31 @@ const ParameterSection = ({
   tokenGroup: TokenGroup[];
   expressionGroup: TokenGroup[];
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const {
     isTrigger,
     nodeInputs,
     operationInfo,
-    connectionId,
     dependencies,
     settings: nodeSettings,
     variables,
     upstreamNodeIds,
     operationDefinition,
+    connectionReference,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
       nodeInputs: state.operations.inputParameters[nodeId],
       operationInfo: state.operations.operationInfo[nodeId],
-      connectionId: getConnectionId(state.connections, nodeId),
       dependencies: state.operations.dependencies[nodeId],
       settings: state.operations.settings[nodeId],
       upstreamNodeIds: state.tokens.outputTokens[nodeId]?.upstreamNodeIds,
       variables: state.tokens.variables,
-      operationDefinition: state.workflow.operations[nodeId],
+      operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
+      connectionReference: getConnectionReference(state.connections, nodeId),
     };
   });
+  const rootState = useSelector((state: RootState) => state);
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
@@ -113,7 +115,7 @@ const ParameterSection = ({
         propertiesToUpdate,
         isTrigger,
         operationInfo,
-        connectionId,
+        connectionReference,
         nodeInputs,
         dependencies,
         getAllVariables(variables),
@@ -127,7 +129,7 @@ const ParameterSection = ({
       group.id,
       isTrigger,
       operationInfo,
-      connectionId,
+      connectionReference,
       nodeInputs,
       dependencies,
       variables,
@@ -139,15 +141,36 @@ const ParameterSection = ({
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
     if (parameter.dynamicData?.status === DynamicCallStatus.FAILED || parameter.dynamicData?.status === DynamicCallStatus.NOTSTARTED) {
-      loadDynamicValuesForParameter(nodeId, group.id, parameter.id, operationInfo, connectionId, nodeInputs, dependencies, dispatch);
+      loadDynamicValuesForParameter(nodeId, group.id, parameter.id, operationInfo, connectionReference, nodeInputs, dependencies, dispatch);
     }
   };
 
-  const GetTokenPicker = (
+  const getValueSegmentFromToken = async (
+    parameterId: string,
+    token: OutputToken,
+    addImplicitForeachIfNeeded: boolean
+  ): Promise<ValueSegment> => {
+    const { segment, foreachDetails } = await createValueSegmentFromToken(
+      nodeId,
+      parameterId,
+      token,
+      addImplicitForeachIfNeeded,
+      rootState
+    );
+    if (foreachDetails) {
+      dispatch(addForeachToNode({ arrayName: foreachDetails.arrayValue, nodeId, token }));
+    }
+
+    return segment;
+  };
+
+  const getTokenPicker = (
+    parameterId: string,
     editorId: string,
     labelId: string,
     tokenPickerFocused?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
+    tokenClicked?: (token: ValueSegment) => void,
+    tokenPickerHide?: () => void
   ): JSX.Element => {
     // check to see if there's a custom Token Picker
     return (
@@ -157,7 +180,11 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         expressionGroup={expressionGroup}
         tokenPickerFocused={tokenPickerFocused}
+        getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
+          getValueSegmentFromToken(parameterId, token, addImplicitForeach)
+        }
         tokenClickedCallback={tokenClicked}
+        tokenPickerHide={tokenPickerHide}
       />
     );
   };
@@ -180,7 +207,12 @@ const ParameterSection = ({
           placeholder: param.placeholder,
           tokenEditor: true,
           isTrigger: isTrigger,
-          GetTokenPicker: GetTokenPicker,
+          getTokenPicker: (
+            editorId: string,
+            labelId: string,
+            tokenPickerFocused?: (b: boolean) => void,
+            tokenClicked?: (token: ValueSegment) => void
+          ) => getTokenPicker(param.id, editorId, labelId, tokenPickerFocused, tokenClicked),
           onValueChange: (newState: ChangeState) => onValueChange(param.id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
         },

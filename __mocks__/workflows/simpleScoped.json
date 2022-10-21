@@ -21,7 +21,7 @@
         },
         "kind": "http",
         "runAfter": {
-          "Scope": ["Succeeded"]
+          "Scope": ["SUCCEEDED"]
         },
         "type": "Response"
       },
@@ -41,7 +41,7 @@
               "value": 1
             },
             "runAfter": {
-              "Increment_variable_2": ["Succeeded"]
+              "Increment_variable_2": ["SUCCEEDED"]
             },
             "type": "IncrementVariable"
           },
@@ -61,26 +61,26 @@
                   "value": 1
                 },
                 "runAfter": {
-                  "Increment_variable_4": ["Succeeded"]
+                  "Increment_variable_4": ["SUCCEEDED"]
                 },
                 "type": "IncrementVariable"
               }
             },
             "runAfter": {
-              "Increment_variable_3": ["Succeeded"]
+              "Increment_variable_3": ["SUCCEEDED"]
             },
             "type": "Scope"
           },
           "Scope_nested_empty": {
             "actions": {},
             "runAfter": {
-              "Scope_nested": ["Succeeded"]
+              "Scope_nested": ["SUCCEEDED"]
             },
             "type": "Scope"
           }
         },
         "runAfter": {
-          "Initialize_variable": ["Succeeded"]
+          "Initialize_variable": ["SUCCEEDED"]
         },
         "type": "Scope"
       }

@@ -28,7 +28,9 @@ export const DataMapperStandaloneDesigner = () => {
   });
 
   const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
+    console.log('Map Definition\n===============');
     console.log(dataMapDefinition);
+    console.log('\nXSLT\n===============');
     console.log(dataMapXslt);
   };
 

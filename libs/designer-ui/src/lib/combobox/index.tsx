@@ -15,7 +15,8 @@ import type {
 import { IconButton, TooltipHost, SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { guid } from '@microsoft-logic-apps/utils';
-import { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import { useUpdateEffect } from '@react-hookz/web';
+import { useRef, useState, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 enum Mode {
@@ -115,7 +116,7 @@ export const Combobox = ({
     return getOptions(options);
   }, [intl, options, searchValue, useOption]);
 
-  useEffect(() => {
+  useUpdateEffect(() => {
     onChange?.({
       value:
         mode === Mode.Custom
@@ -185,7 +186,7 @@ export const Combobox = ({
             BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
             initialValue={value}
             onBlur={handleBlur}
-            GetTokenPicker={baseEditorProps.GetTokenPicker}
+            getTokenPicker={baseEditorProps.getTokenPicker}
             tokenPickerButtonProps={{ buttonClassName: 'msla-combobox-editor-tokenpicker' }}
             placeholder={baseEditorProps.placeholder}
             isTrigger={baseEditorProps.isTrigger}

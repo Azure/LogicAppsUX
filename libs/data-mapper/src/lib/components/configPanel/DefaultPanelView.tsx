@@ -15,15 +15,15 @@ export const DefaultPanelView: FunctionComponent<DefaultPanelViewProps> = ({ onS
   const intl = useIntl();
 
   const replaceMessage = intl.formatMessage({
-    defaultMessage: 'Replace existing schema',
+    defaultMessage: 'Add or replace your schemas.',
     description: 'label to inform the ability to replace schemas',
   });
   const sourceSchemaLabel = intl.formatMessage({
-    defaultMessage: 'Source Schema',
+    defaultMessage: 'Source schema',
     description: 'label to inform the below schema name is for source schema',
   });
   const targetSchemaLabel = intl.formatMessage({
-    defaultMessage: 'Target Schema',
+    defaultMessage: 'Target schema',
     description: 'label to inform the below schema name is for target schema',
   });
   const pencilAriaLabel = intl.formatMessage({

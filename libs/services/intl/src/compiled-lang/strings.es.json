@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "Aceptar"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -181,6 +175,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Bakú"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Guardar"
     }
   ],
   "0FzNJV": [
@@ -432,12 +432,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Cargue o seleccione un esquema de destino que se usará para la asignación."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -508,6 +502,12 @@
     {
       "type": 0,
       "value": "Identidad administrada"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Seleccionar existente"
     }
   ],
   "2b1yD3": [
@@ -606,6 +606,12 @@
       "value": "(UTC+02:00) Chisinau"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Reemplazar un esquema existente por un esquema incompatible podría crear errores en la asignación."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -700,6 +706,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Ereván"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Descartar cambios"
     }
   ],
   "45ubha": [
@@ -822,12 +834,6 @@
       "value": "Devuelve true si un objeto, una matriz o una cadena están vacíos."
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Agregar esquema de origen"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -874,6 +880,12 @@
     {
       "type": 0,
       "value": "Comprobar asignación"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Cancelar"
     }
   ],
   "6XR3FS": [
@@ -1181,7 +1193,7 @@
   "9IDWMU": [
     {
       "type": 0,
-      "value": "Close"
+      "value": "Cerrar"
     }
   ],
   "9JuvQ4": [
@@ -1308,10 +1320,10 @@
       "value": "Obligatorio. La cadena que se codificará como representación en Base64."
     }
   ],
-  "AwwPJC": [
+  "Az0QvG": [
     {
       "type": 0,
-      "value": "El esquema de destino se reemplazará y no podrá volver a los cambios anteriores. ¿Desea continuar para cambiar el esquema de destino?"
+      "value": "Automático"
     }
   ],
   "B/JzwK": [
@@ -1437,6 +1449,12 @@
       "value": "Tipo de estado:"
     }
   ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Contraer"
+    }
+  ],
   "BuYrD3": [
     {
       "type": 0,
@@ -1459,12 +1477,6 @@
     {
       "type": 0,
       "value": "Conexión obligatoria"
-    }
-  ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Reemplazar esquema existente"
     }
   ],
   "Ciol6I": [
@@ -1585,6 +1597,12 @@
     {
       "type": 0,
       "value": "Respuesta"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
     }
   ],
   "EV9iRu": [
@@ -1800,6 +1818,12 @@
       "value": "Estado"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Actualizar esquema de destino"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1830,12 +1854,6 @@
       "value": "Obligatorio. El objeto que se buscará dentro de la colección."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Esquema de origen"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1848,10 +1866,10 @@
       "value": "Devuelve true si los parámetros son falsos."
     }
   ],
-  "GdnEhu": [
+  "GdGm4T": [
     {
       "type": 0,
-      "value": "Cargue o seleccione un esquema de origen que se usará para la asignación."
+      "value": "Más comandos"
     }
   ],
   "Gi72X5": [
@@ -1894,6 +1912,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Cadena que se va a segmentar."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "El esquema de destino se reemplazará y no podrá volver a los cambios anteriores. ¿Desea continuar para cambiar el esquema de destino?"
     }
   ],
   "H8bEUn": [
@@ -1947,7 +1971,7 @@
     },
     {
       "type": 0,
-      "value": " Install Gateway"
+      "value": " Instalar puerta de enlace"
     }
   ],
   "HzS2gJ": [
@@ -1984,6 +2008,12 @@
     {
       "type": 0,
       "value": "Convierte una marca de tiempo de una cadena pasada de una hora UTC a una zona horaria de destino."
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Configurar"
     }
   ],
   "IgNz8Y": [
@@ -2231,12 +2261,6 @@
       "value": "Eliminar gráfico de flujo de trabajo"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Advertencia"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2440,7 +2464,7 @@
   "MnThTq": [
     {
       "type": 0,
-      "value": "Insert function"
+      "value": "Insertar función"
     }
   ],
   "N0pS6Y": [
@@ -2471,6 +2495,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "Nn/DN4": [
+    {
+      "type": 0,
+      "value": "This connection would introduce circular logic."
     }
   ],
   "NnD8gF": [
@@ -2603,6 +2633,12 @@
       "value": "Nombre de conexión"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Escribir un valor personalizado"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2633,10 +2669,10 @@
       "value": "Devuelve los resultados de las acciones de nivel superior en la acción con ámbito especificada, como una acción For_each, Until o Scope."
     }
   ],
-  "OcJdKG": [
+  "OdNhwc": [
     {
       "type": 0,
-      "value": "Todo el trabajo no guardado desaparecerá. ¿Desea continuar para descartarlo todo?"
+      "value": "Desagrupar"
     }
   ],
   "Oib1mL": [
@@ -2837,10 +2873,10 @@
       "value": "Convertir la entrada en un valor de tipo JSON"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Acepta valores NULL"
+      "value": "Código de estado"
     }
   ],
   "QQYzHC": [
@@ -2923,6 +2959,12 @@
       "value": "No se pueden eliminar los desencadenadores."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "Se crea automáticamente una línea entre los elementos de matriz para indicar elementos de bucle."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2994,6 +3036,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "¿Quiere descartar todos los cambios no guardados?"
     }
   ],
   "S8P4N5": [
@@ -3156,6 +3204,12 @@
       "value": "Nombre"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Sin formato"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -3166,6 +3220,12 @@
     {
       "type": 0,
       "value": "Etiquetas"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Personalizado"
     }
   ],
   "ToPmjE": [
@@ -3572,6 +3632,12 @@
       "value": "Necesario. Nombre de la acción cuyo cuerpo contiene las salidas que desea."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "El esquema de origen se reemplazará y no podrá volver a los cambios anteriores. ¿Desea continuar para cambiar el esquema de origen?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3654,12 +3720,6 @@
       "value": "Alejar"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Configuración"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3728,12 +3788,6 @@
       "value": "\" en el parámetro"
     }
   ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Descartar"
-    }
-  ],
   "a7j3gS": [
     {
       "type": 0,
@@ -3796,10 +3850,10 @@
       "value": "Especificar el archivo PFX"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Agregar"
+      "value": "Agregue o seleccione un esquema de origen para usarlo en la asignación."
     }
   ],
   "b9/1dK": [
@@ -3818,16 +3872,28 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Asignación de matriz"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
       "value": "Acciones"
     }
   ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Eliminar"
+    }
+  ],
   "bIyTi7": [
     {
       "type": 0,
-      "value": "Subscription"
+      "value": "Suscripción"
     }
   ],
   "bS5DyV": [
@@ -3960,6 +4026,12 @@
       "value": "(UTC+02:00) Trípoli"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Agregue o reemplace los esquemas."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -4000,6 +4072,12 @@
     {
       "type": 0,
       "value": "Obligatorio. La colección desde la cual se omiten los primeros objetos de recuento."
+    }
+  ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Advertencia"
     }
   ],
   "d3bSQA": [
@@ -4124,6 +4202,12 @@
       "value": "Sin especificar"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Actualizar esquema de origen"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4134,12 +4218,6 @@
     {
       "type": 0,
       "value": "Obligatorio. El nombre de la variable de la que quiere el valor."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Esquema de destino"
     }
   ],
   "eRvGw3": [
@@ -4220,10 +4298,30 @@
       "value": "El recuento de paginación supera el valor máximo"
     }
   ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Esquema de origen"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -4467,12 +4565,6 @@
       "value": "Audiencia"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "El esquema de origen se reemplazará y no podrá volver a los cambios anteriores. ¿Desea continuar para cambiar el esquema de origen?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4573,6 +4665,12 @@
       "value": "Las pruebas están configuradas para esta acción."
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Identidad administrada"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -4635,6 +4733,12 @@
     {
       "type": 0,
       "value": "Devuelve el valor de la variable especificada."
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Agregue o seleccione un esquema de destino para usarlo en la asignación."
     }
   ],
   "jHHF/u": [
@@ -4714,7 +4818,7 @@
   "juvF+0": [
     {
       "type": 0,
-      "value": "Gateway"
+      "value": "Puerta de enlace"
     }
   ],
   "k/oqFL": [
@@ -4873,6 +4977,12 @@
       "value": "Atrás"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Agregar grupo"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -5029,6 +5139,12 @@
       "value": "Obligatorio. El valor que se convertirá a un número de punto flotante."
     }
   ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
+    }
+  ],
   "n7wxxN": [
     {
       "type": 0,
@@ -5045,6 +5161,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Número de unidades de tiempo cuya hora deseada es futura."
+    }
+  ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
     }
   ],
   "nSan4V": [
@@ -5143,6 +5265,12 @@
     {
       "type": 0,
       "value": "Escriba el identificador de ejecución para abrir la ejecución"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Cuerpo de la respuesta"
     }
   ],
   "ol+TkT": [
@@ -5504,6 +5632,12 @@
       "value": "(UTC-06:00) Hora central (EE. UU. y Canadá)"
     }
   ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Agregar nuevo"
+    }
+  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -5594,6 +5728,12 @@
       "value": "Examinar"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Certificado de cliente"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5658,6 +5798,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Básico"
     }
   ],
   "tZj2Xn": [
@@ -6028,6 +6174,12 @@
       "value": "Devuelve una representación de cadena de una cadena codificada de URI."
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Agregar fila"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6124,6 +6276,12 @@
       "value": "8"
     }
   ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Elegir un valor"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -6140,12 +6298,6 @@
     {
       "type": 0,
       "value": "Funciones de fecha y hora"
-    }
-  ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Agregar esquema de destino"
     }
   ],
   "ysoumb": [
@@ -6194,6 +6346,12 @@
     {
       "type": 0,
       "value": "Escribir valor"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Esquema de destino"
     }
   ],
   "zIDVd9": [

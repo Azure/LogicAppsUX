@@ -8,6 +8,18 @@ export interface ListDynamicValue {
   disabled?: boolean;
 }
 
+export interface ManagedIdentityRequestProperties {
+  connection: {
+    id: string;
+  };
+  connectionRuntimeUrl: string;
+  connectionProperties: Record<string, any>;
+  authentication: {
+    type: string;
+    identity?: string;
+  };
+}
+
 export interface IConnectorService {
   /**
    * Gets the item dynamic values for azure operations.
@@ -17,7 +29,7 @@ export interface IConnectorService {
    * @arg {LegacyDynamicValuesExtension} extension - Dynamic value extension.
    * @arg {string} parameterArrayType - Dynamic values parameter collection array type.
    * @arg {boolean} isManagedIdentityTypeConnection - If connection is a managed identity connection.
-   * @arg {any} data - Data to be sent in request payload for managed identity connections.
+   * @arg {ManagedIdentityRequestProperties} managedIdentityProperties - Data to be sent in request payload for managed identity connections.
    * @return {Promise<ListDynamicValue[]>}
    */
   getLegacyDynamicValues(
@@ -27,7 +39,7 @@ export interface IConnectorService {
     extension: LegacyDynamicValuesExtension,
     parameterArrayType: string,
     isManagedIdentityTypeConnection?: boolean,
-    data?: any
+    managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<ListDynamicValue[]>;
 
   /**
@@ -56,7 +68,7 @@ export interface IConnectorService {
    * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter name.
    * @arg {LegacyDynamicSchemaExtension} extension - Dynamic schema extension.
    * @arg {boolean} isManagedIdentityTypeConnection - If connection is a managed identity connection.
-   * @arg {any} data - Data to be sent in request payload for managed identity connections.
+   * @arg {ManagedIdentityRequestProperties} managedIdentityProperties - Data to be sent in request payload for managed identity connections.
    * @return {Promise<OpenAPIV2.SchemaObject | null>}
    */
   getLegacyDynamicSchema(
@@ -65,7 +77,7 @@ export interface IConnectorService {
     parameters: Record<string, any>,
     extension: LegacyDynamicSchemaExtension,
     isManagedIdentityTypeConnection?: boolean,
-    data?: any
+    managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<OpenAPIV2.SchemaObject | null>;
 
   /**

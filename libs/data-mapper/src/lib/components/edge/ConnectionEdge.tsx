@@ -54,7 +54,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const [edgePath, labelX, labelY] = useMemo(
-    () => getSmoothStepPath({ sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition }),
+    () => getSmoothStepPath({ sourceX: sourceX + 10, sourceY, sourcePosition, targetX: targetX - 10, targetY, targetPosition }),
     [sourcePosition, sourceX, sourceY, targetX, targetY, targetPosition]
   );
 

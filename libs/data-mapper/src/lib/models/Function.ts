@@ -18,7 +18,7 @@ export interface FunctionData {
   category: FunctionCategory;
   iconFileName?: string;
   description: string;
-  tooltip: string;
+  tooltip?: string;
 }
 
 export interface FunctionInput {
@@ -27,21 +27,46 @@ export interface FunctionInput {
   isOptional: boolean;
   allowCustomInput: boolean;
 
-  displayName: string;
-  tooltip: string;
-  placeholder: string;
+  tooltip?: string;
+  placeHolder: string;
 }
 
+// NOTE: These values must be in alphabetical order (used in sorting within FunctionsList)
 export enum FunctionCategory {
-  Collection = 'collection',
-  DateTime = 'dateTime',
-  Logical = 'logical',
-  Math = 'math',
-  String = 'string',
-  Utility = 'utility',
+  Collection = 'Collection',
+  Conversion = 'Conversion',
+  DateTime = 'Date time',
+  Logical = 'Logical',
+  Math = 'Math',
+  String = 'String',
+  Utility = 'Utility',
 }
 
 export type FunctionDictionary = { [key: string]: FunctionData };
+
+export const indexKey = 'index';
+
+export const pseudoFunctions: FunctionData[] = [
+  {
+    key: indexKey,
+    maxNumberOfInputs: 1,
+    type: 'PseudoFunction',
+    functionName: '',
+    outputValueType: NormalizedDataType.Any,
+    inputs: [
+      {
+        name: 'Loop',
+        allowedTypes: [NormalizedDataType.ComplexType],
+        isOptional: false,
+        allowCustomInput: false,
+        placeHolder: 'The source loop.',
+      },
+    ],
+    displayName: 'Index',
+    category: FunctionCategory.Collection,
+    description: 'Adds an index value to the loop',
+  },
+];
 
 // Temp until we get the manifest plugged in
 export const functionMock: FunctionData[] = [
@@ -53,22 +78,20 @@ export const functionMock: FunctionData[] = [
     outputValueType: NormalizedDataType.Number,
     inputs: [
       {
-        name: 'value',
+        name: 'Value',
         allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Decimal, NormalizedDataType.Integer],
         isOptional: false,
         allowCustomInput: false,
-        displayName: 'Value',
         tooltip: 'The value to use',
-        placeholder: 'The value',
+        placeHolder: 'The value',
       },
       {
-        name: 'scope',
+        name: 'Scope',
         allowedTypes: [NormalizedDataType.Any],
         isOptional: true,
         allowCustomInput: false,
-        displayName: 'Scope',
         tooltip: 'The scope to use',
-        placeholder: 'The scope',
+        placeHolder: 'The scope',
       },
     ],
     displayName: 'Max',
@@ -84,22 +107,20 @@ export const functionMock: FunctionData[] = [
     outputValueType: NormalizedDataType.Number,
     inputs: [
       {
-        name: 'value',
+        name: 'Value',
         allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Decimal, NormalizedDataType.Integer],
         isOptional: false,
         allowCustomInput: false,
-        displayName: 'Value',
         tooltip: 'The value to use',
-        placeholder: 'The value',
+        placeHolder: 'The value',
       },
       {
-        name: 'scope',
+        name: 'Scope',
         allowedTypes: [NormalizedDataType.Any],
         isOptional: true,
         allowCustomInput: false,
-        displayName: 'Scope',
         tooltip: 'The scope to use',
-        placeholder: 'The scope',
+        placeHolder: 'The scope',
       },
     ],
     displayName: 'Min',
@@ -116,22 +137,20 @@ export const functionMock: FunctionData[] = [
     outputValueType: NormalizedDataType.Number,
     inputs: [
       {
-        name: 'value',
+        name: 'Value',
         allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Decimal, NormalizedDataType.Integer],
         isOptional: false,
         allowCustomInput: false,
-        displayName: 'Value',
         tooltip: 'The value to use',
-        placeholder: 'The value',
+        placeHolder: 'The value',
       },
       {
-        name: 'scope',
+        name: 'Scope',
         allowedTypes: [NormalizedDataType.Any],
         isOptional: true,
         allowCustomInput: false,
-        displayName: 'Scope',
         tooltip: 'The scope to use',
-        placeholder: 'The scope',
+        placeHolder: 'The scope',
       },
     ],
     displayName: 'Average',
@@ -151,18 +170,16 @@ export const functionMock: FunctionData[] = [
         allowedTypes: [NormalizedDataType.Any],
         isOptional: false,
         allowCustomInput: false,
-        displayName: 'Scope',
         tooltip: 'The scope to use',
-        placeholder: 'The scope',
+        placeHolder: 'The scope',
       },
       {
         name: 'indexVariable',
         allowedTypes: [NormalizedDataType.String],
         isOptional: true,
         allowCustomInput: true,
-        displayName: 'Index',
         tooltip: 'The index of the loop',
-        placeholder: 'The index',
+        placeHolder: 'The index',
       },
     ],
     displayName: 'For Each',
@@ -182,9 +199,8 @@ export const functionMock: FunctionData[] = [
         allowedTypes: [NormalizedDataType.Boolean],
         isOptional: false,
         allowCustomInput: true,
-        displayName: 'Scope',
         tooltip: 'The scope to use',
-        placeholder: 'The scope',
+        placeHolder: 'The scope',
       },
     ],
     displayName: 'Condition',
@@ -212,13 +228,12 @@ export const functionMock: FunctionData[] = [
     outputValueType: NormalizedDataType.String,
     inputs: [
       {
-        name: 'value',
+        name: 'Value',
         allowedTypes: [NormalizedDataType.String],
         isOptional: false,
         allowCustomInput: true,
-        displayName: 'Value',
         tooltip: 'The value to use',
-        placeholder: 'The value',
+        placeHolder: 'The value',
       },
     ],
     displayName: 'To Lower',
@@ -234,13 +249,12 @@ export const functionMock: FunctionData[] = [
     outputValueType: NormalizedDataType.String,
     inputs: [
       {
-        name: 'value',
+        name: 'Value',
         allowedTypes: [NormalizedDataType.String],
         isOptional: false,
         allowCustomInput: true,
-        displayName: 'Value',
         tooltip: 'The value to use',
-        placeholder: 'The value',
+        placeHolder: 'The value',
       },
     ],
     displayName: 'Concatenate',
@@ -256,13 +270,12 @@ export const functionMock: FunctionData[] = [
     outputValueType: NormalizedDataType.String,
     inputs: [
       {
-        name: 'value',
+        name: 'Value',
         allowedTypes: [NormalizedDataType.Any],
         isOptional: false,
         allowCustomInput: true,
-        displayName: 'Value',
         tooltip: 'The value to use',
-        placeholder: 'The value',
+        placeHolder: 'The value',
       },
     ],
     displayName: 'To String',
@@ -270,4 +283,45 @@ export const functionMock: FunctionData[] = [
     description: 'Converts the input into a string',
     tooltip: 'Converts to string',
   },
+  {
+    key: 'Condition',
+    maxNumberOfInputs: 1,
+    type: 'TransformationControlFunction',
+    functionName: '$if',
+    outputValueType: NormalizedDataType.Any,
+    inputs: [
+      {
+        name: 'Condition',
+        allowedTypes: [NormalizedDataType.Boolean],
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'The condition to evaluate.',
+      },
+    ],
+    displayName: 'Condition',
+    category: FunctionCategory.Logical,
+    iconFileName: 'dm_category_logical.svg',
+    description: 'Evaluates the condition of the input value.',
+  },
+  {
+    key: 'IsNull',
+    maxNumberOfInputs: 1,
+    type: 'TransformationFunction',
+    functionName: 'is-null',
+    outputValueType: NormalizedDataType.Boolean,
+    inputs: [
+      {
+        name: 'Value',
+        allowedTypes: [NormalizedDataType.Any],
+        isOptional: false,
+        allowCustomInput: false,
+        placeHolder: 'The value to check.',
+      },
+    ],
+    displayName: 'Is null',
+    category: FunctionCategory.Logical,
+    iconFileName: 'dm_category_logical.svg',
+    description: 'Checks whether the value is Null.',
+  },
+  ...pseudoFunctions,
 ];

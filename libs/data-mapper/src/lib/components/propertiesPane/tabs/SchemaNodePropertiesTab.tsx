@@ -1,34 +1,44 @@
 import type { RootState } from '../../../core/state/Store';
-import { NodeType } from '../../../models/SelectedNode';
-import type { SelectedNode } from '../../../models/SelectedNode';
+import type { SchemaNodeExtended } from '../../../models';
+import type { Connection } from '../../../models/Connection';
+import { isCustomValue } from '../../../utils/Connection.Utils';
 import { icon16ForSchemaNodeType } from '../../../utils/Icon.Utils';
+import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
+import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Checkbox, Input, makeStyles, Text } from '@fluentui/react-components';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+
+const gridColumnSpan1 = '1 / span 1';
+const gridColumnSpan2 = '2 / span 2';
 
 const useStyles = makeStyles({
   nodeInfoGridContainer: {
     display: 'grid',
-    width: '50%',
+    width: '100%',
     rowGap: '16px',
     columnGap: '12px',
-    gridTemplateColumns: 'auto auto auto auto auto auto',
+    gridTemplateColumns: 'repeat(6, 1fr)',
     alignItems: 'center',
+    justifyContent: 'start',
   },
 });
 
 interface SchemaNodePropertiesTabProps {
-  currentNode: SelectedNode;
+  currentNode: SchemaNodeExtended;
 }
 
 export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTabProps): JSX.Element => {
   const intl = useIntl();
   const styles = useStyles();
 
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+
+  // Can be a node name/id or a constant value - only one input per target schema node
+  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
 
   const nameLoc = intl.formatMessage({
     defaultMessage: 'Name',
@@ -50,11 +60,6 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Checkbox label to not generate if no value',
   });
 
-  const nullableLabelLoc = intl.formatMessage({
-    defaultMessage: 'Nullable',
-    description: 'Checkbox label for nullable',
-  });
-
   const inputLoc = intl.formatMessage({
     defaultMessage: 'Input',
     description: 'Input',
@@ -70,39 +75,50 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     description: 'Default value',
   });
 
-  const isTargetSchemaNode = useMemo(() => currentNode.type === NodeType.Target, [currentNode]);
+  const isTargetSchemaNode = useMemo(
+    () => !!targetSchemaDictionary[addTargetReactFlowPrefix(currentNode.key)],
+    [currentNode, targetSchemaDictionary]
+  );
 
-  const schemaNode = useMemo(() => {
-    if (isTargetSchemaNode) {
-      return targetSchemaDictionary[currentNode.id];
-    } else {
-      return sourceSchemaDictionary[currentNode.id];
+  const DataTypeIcon = icon16ForSchemaNodeType(currentNode.schemaNodeDataType);
+
+  const connection = useMemo<Connection | undefined>(
+    () => connectionDictionary[addTargetReactFlowPrefix(currentNode.key)],
+    [connectionDictionary, currentNode]
+  );
+
+  useEffect(() => {
+    let newInputValue = undefined;
+
+    if (connection?.inputs && connection.inputs[0].length === 1) {
+      const input = connection.inputs[0][0];
+      newInputValue = !input ? undefined : isCustomValue(input) ? input : input.reactFlowKey;
     }
-  }, [currentNode, isTargetSchemaNode, sourceSchemaDictionary, targetSchemaDictionary]);
 
-  const DataTypeIcon = icon16ForSchemaNodeType(schemaNode.schemaNodeDataType);
+    setInputValue(newInputValue);
+  }, [connection]);
 
   return (
     <div>
       <div className={styles.nodeInfoGridContainer}>
-        <Text style={{ gridColumn: '1 / span 2' }}>{nameLoc}</Text>
-        <Text>{schemaNode?.name}</Text>
+        <Text style={{ gridColumn: gridColumnSpan1 }}>{nameLoc}</Text>
+        <Text style={{ gridColumn: gridColumnSpan2 }}>{currentNode?.name}</Text>
 
-        <Text style={{ gridColumn: '1 / span 2' }}>{fullPathLoc}</Text>
-        <Text>{schemaNode?.key}</Text>
+        <Text style={{ gridColumn: gridColumnSpan1 }}>{fullPathLoc}</Text>
+        <Text style={{ gridColumn: gridColumnSpan2 }}>{currentNode?.key}</Text>
 
-        <Text style={{ gridColumn: '1 / span 2' }}>{dataTypeLoc}</Text>
-        <Stack horizontal verticalAlign="center">
+        <Text style={{ gridColumn: gridColumnSpan1 }}>{dataTypeLoc}</Text>
+        <Stack horizontal verticalAlign="center" style={{ gridColumn: gridColumnSpan2 }}>
           <DataTypeIcon style={{ marginRight: '5px' }} />
-          <Text>{schemaNode?.schemaNodeDataType}</Text>
+          <Text>{currentNode?.schemaNodeDataType}</Text>
         </Stack>
       </div>
 
       {isTargetSchemaNode && (
         <div>
           <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-            <Text style={{ gridColumn: '1 / span 2' }}>{inputLoc}</Text>
-            <Input placeholder="Temporary placeholder" />
+            <Text style={{ gridColumn: gridColumnSpan1 }}>{inputLoc}</Text>
+            <InputDropdown currentNode={currentNode} inputValue={inputValue} inputStyles={{ gridColumn: gridColumnSpan2 }} inputIndex={0} />
           </div>
 
           <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px' }}>
@@ -110,13 +126,12 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
               <AccordionHeader>{advOptLoc}</AccordionHeader>
               <AccordionPanel>
                 <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-                  <Text style={{ gridColumn: '1 / span 2' }}>{defValLoc}</Text>
-                  <Input placeholder="Temporary placeholder" />
+                  <Text style={{ gridColumn: gridColumnSpan1 }}>{defValLoc}</Text>
+                  <Input style={{ gridColumn: gridColumnSpan2 }} />
                 </div>
 
                 <Stack>
                   <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
-                  <Checkbox label={nullableLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
                 </Stack>
               </AccordionPanel>
             </AccordionItem>

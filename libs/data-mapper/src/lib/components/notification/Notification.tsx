@@ -10,6 +10,8 @@ export enum NotificationTypes {
   SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
   FunctionNodeDeleted = 'functionNodeDeleted',
   ConnectionDeleted = 'connectionDeleted',
+  ArrayConnectionAdded = 'arrayConnectionAdded',
+  CircularLogicError = 'circularLogicError',
 }
 
 export interface NotificationData {
@@ -54,6 +56,7 @@ export const Notification = (props: NotificationProps) => {
     switch (type) {
       case NotificationTypes.SaveFailed:
       case NotificationTypes.SourceNodeRemoveFailed:
+      case NotificationTypes.CircularLogicError:
         return <DismissCircle20Filled style={{ color: tokens.colorPaletteRedBackground3, marginRight: 8 }} />;
 
       default:
@@ -92,6 +95,17 @@ export const Notification = (props: NotificationProps) => {
       description: 'Message on deleting connection',
     });
 
+    const arrayConnectionAddedLoc = intl.formatMessage({
+      defaultMessage: 'A line between array elements is automatically created to indicate looping elements.',
+      description: 'Describes connection being added',
+    });
+
+    const circularLogicErrorLoc = intl.formatMessage({
+      defaultMessage: 'This connection would introduce circular logic.',
+      description: 'Error message for circular logic connection validation',
+    });
+
+    // TODO: Switch this to a dictionary reference or something
     switch (type) {
       case NotificationTypes.SaveFailed:
         return saveFailedLoc;
@@ -103,7 +117,10 @@ export const Notification = (props: NotificationProps) => {
         return functionNodeDeletedLoc;
       case NotificationTypes.ConnectionDeleted:
         return connectionDeletedLoc;
-
+      case NotificationTypes.ArrayConnectionAdded:
+        return arrayConnectionAddedLoc;
+      case NotificationTypes.CircularLogicError:
+        return circularLogicErrorLoc;
       default:
         return null;
     }

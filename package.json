@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-apps",
-  "version": "0.1.26",
+  "version": "0.1.42",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -30,7 +30,8 @@
     "vscode:designer:pack": "cd ./dist/apps/vs-code-designer && npm install && vsce package",
     "vscode:data-mapper:pack": "cd ./dist/apps/vs-code-data-mapper && npm install && vsce package",
     "fixLineEndings": "prettier --write \"**/*.json\"",
-    "testgen": "playwright codegen https://localhost:4200"
+    "testgen": "playwright codegen https://localhost:4200",
+    "postinstall": "node init.js"
   },
   "engines": {
     "node": "16",
@@ -64,7 +65,7 @@
     "consola": "2.15.3",
     "core-js": "3.24.1",
     "d3-shape": "3.1.0",
-    "elkjs": "0.7.3-dev",
+    "elkjs": "^0.8.2",
     "fuse.js": "6.6.2",
     "github-markdown-css": "5.1.0",
     "guid-typescript": "1.0.9",
@@ -73,6 +74,7 @@
     "immer": "9.0.15",
     "js-yaml": "4.1.0",
     "json-schema-generator": "2.0.6",
+    "lodash.merge": "^4.6.2",
     "monaco-editor": "0.34.0",
     "monaco-yaml": "^4.0.2",
     "prism-react-renderer": "1.3.5",
@@ -126,7 +128,7 @@
     "@nrwl/tao": "14.5.10",
     "@nrwl/web": "14.5.10",
     "@nrwl/workspace": "14.5.10",
-    "@playwright/test": "1.25.1",
+    "@playwright/test": "1.27.0",
     "@storybook/addon-a11y": "6.5.10",
     "@storybook/addon-essentials": "6.5.10",
     "@storybook/addon-links": "6.5.10",
@@ -142,6 +144,7 @@
     "@types/d3-shape": "3.1.0",
     "@types/jest": "27.4.1",
     "@types/js-yaml": "4.0.5",
+    "@types/lodash.merge": "^4.6.7",
     "@types/node": "18.7.11",
     "@types/react": "18.0.17",
     "@types/react-dnd-multi-backend": "6.0.2",
@@ -175,7 +178,7 @@
     "jsonc-eslint-parser": "^2.1.0",
     "less-loader": "11.0.0",
     "lexical": "^0.5.0",
-    "playwright": "1.25.1",
+    "playwright": "1.27.0",
     "prettier": "2.7.1",
     "react-test-renderer": "18.2.0",
     "rollup-plugin-peer-deps-external": "2.2.4",

@@ -12,194 +12,201 @@
     "properties": "NotSpecified",
     "children": [
       {
-        "key": "/ns0:InputRecord/Identity",
+        "key": "/ns0:OutputRecord/Identity",
         "name": "Identity",
         "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:InputRecord/Identity/DrinksCoffee",
+            "key": "/ns0:OutputRecord/Identity/DrinksCoffee",
             "name": "DrinksCoffee",
             "schemaNodeDataType": "Boolean",
             "normalizedDataType": "Bool",
             "properties": "NotSpecified",
             "fullName": "DrinksCoffee",
-            "parentKey": "/ns0:InputRecord/Identity"
+            "parentKey": "/ns0:OutputRecord/Identity"
           },
           {
-            "key": "/ns0:InputRecord/Identity/NumCoffees",
+            "key": "/ns0:OutputRecord/Identity/NumCoffees",
             "name": "NumCoffees",
             "schemaNodeDataType": "Integer",
             "normalizedDataType": "Integer",
             "properties": "NotSpecified",
             "fullName": "NumCoffees",
-            "parentKey": "/ns0:InputRecord/Identity"
+            "parentKey": "/ns0:OutputRecord/Identity"
           },
           {
-            "key": "/ns0:InputRecord/Identity/NumCoffeesButAsADecimal",
+            "key": "/ns0:OutputRecord/Identity/NumCoffeesButAsADecimal",
             "name": "NumCoffeesButAsADecimal",
             "schemaNodeDataType": "Decimal",
             "normalizedDataType": "Decimal",
             "properties": "NotSpecified",
             "fullName": "NumCoffeesButAsADecimal",
-            "parentKey": "/ns0:InputRecord/Identity"
+            "parentKey": "/ns0:OutputRecord/Identity"
           },
           {
-            "key": "/ns0:InputRecord/Identity/UserID",
+            "key": "/ns0:OutputRecord/Identity/UserID",
             "name": "UserID",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "UserID",
-            "parentKey": "/ns0:InputRecord/Identity"
+            "parentKey": "/ns0:OutputRecord/Identity"
           },
           {
-            "key": "/ns0:InputRecord/Identity/LastName",
+            "key": "/ns0:OutputRecord/Identity/LastName",
             "name": "LastName",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "LastName",
-            "parentKey": "/ns0:InputRecord/Identity"
+            "parentKey": "/ns0:OutputRecord/Identity"
           },
           {
-            "key": "/ns0:InputRecord/Identity/FirstName",
+            "key": "/ns0:OutputRecord/Identity/FirstName",
             "name": "FirstName",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "FirstName",
-            "parentKey": "/ns0:InputRecord/Identity"
+            "parentKey": "/ns0:OutputRecord/Identity"
           },
           {
-            "key": "/ns0:InputRecord/Identity/Initials",
+            "key": "/ns0:OutputRecord/Identity/Initials",
             "name": "Initials",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "Initial",
-            "parentKey": "/ns0:InputRecord/Identity"
+            "parentKey": "/ns0:OutputRecord/Identity"
           },
           {
-            "key": "/ns0:InputRecord/Identity/Birthday",
+            "key": "/ns0:OutputRecord/Identity/Birthday",
             "name": "Birthday",
             "schemaNodeDataType": "Date",
             "normalizedDataType": "DateTime",
             "properties": "NotSpecified",
             "fullName": "Birthday",
-            "parentKey": "/ns0:InputRecord/Identity"
+            "parentKey": "/ns0:OutputRecord/Identity"
           }
-        ]
+        ],
+        "fullName": "Identity",
+        "parentKey": "/ns0:OutputRecord"
       },
       {
-        "key": "/ns0:InputRecord/Address",
+        "key": "/ns0:OutputRecord/Address",
         "name": "Address",
         "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:InputRecord/Address/AddressLine1",
+            "key": "/ns0:OutputRecord/Address/AddressLine1",
             "name": "AddressLine1",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "AddressLine1",
-            "parentKey": "/ns0:InputRecord/Address"
+            "parentKey": "/ns0:OutputRecord/Address"
           },
           {
-            "key": "/ns0:InputRecord/Address/AddressLine2",
+            "key": "/ns0:OutputRecord/Address/AddressLine2",
             "name": "AddressLine2",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "AddressLine2",
-            "parentKey": "/ns0:InputRecord/Address"
+            "parentKey": "/ns0:OutputRecord/Address"
           },
           {
-            "key": "/ns0:InputRecord/Address/City",
+            "key": "/ns0:OutputRecord/Address/City",
             "name": "City",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "City",
-            "parentKey": "/ns0:InputRecord/Address"
+            "parentKey": "/ns0:OutputRecord/Address"
           },
           {
-            "key": "/ns0:InputRecord/Address/State",
+            "key": "/ns0:OutputRecord/Address/State",
             "name": "State",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "State",
-            "parentKey": "/ns0:InputRecord/Address"
+            "parentKey": "/ns0:OutputRecord/Address"
           },
           {
-            "key": "/ns0:InputRecord/Address/ZipCode",
+            "key": "/ns0:OutputRecord/Address/ZipCode",
             "name": "ZipCode",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "ZipCode",
-            "parentKey": "/ns0:InputRecord/Address"
+            "parentKey": "/ns0:OutputRecord/Address"
           },
           {
-            "key": "/ns0:InputRecord/Address/Country",
+            "key": "/ns0:OutputRecord/Address/Country",
             "name": "Country",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "Country",
-            "parentKey": "/ns0:InputRecord/Address"
+            "parentKey": "/ns0:OutputRecord/Address"
           },
           {
-            "key": "/ns0:InputRecord/Address/CountryCode",
+            "key": "/ns0:OutputRecord/Address/CountryCode",
             "name": "CountryCode",
             "schemaNodeDataType": "Integer",
-            "normalizedDataType": "TODO",
+            "normalizedDataType": "Integer",
             "properties": "NotSpecified",
             "fullName": "CountryCode",
-            "parentKey": "/ns0:InputRecord/Address"
+            "parentKey": "/ns0:OutputRecord/Address"
           }
-        ]
+        ],
+        "fullName": "Address",
+        "parentKey": "/ns0:OutputRecord"
       },
       {
-        "key": "/ns0:InputRecord/ContactInfo",
+        "key": "/ns0:OutputRecord/ContactInfo",
         "name": "ContactInfo",
         "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
         "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:InputRecord/ContactInfo/HomePhone",
+            "key": "/ns0:OutputRecord/ContactInfo/HomePhone",
             "name": "HomePhone",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "HomePhone",
-            "parentKey": "/ns0:InputRecord/ContactInfo"
+            "parentKey": "/ns0:OutputRecord/ContactInfo"
           },
           {
-            "key": "/ns0:InputRecord/ContactInfo/WorkPhone",
+            "key": "/ns0:OutputRecord/ContactInfo/WorkPhone",
             "name": "WorkPhone",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "WorkPhone",
-            "parentKey": "/ns0:InputRecord/ContactInfo"
+            "parentKey": "/ns0:OutputRecord/ContactInfo"
           },
           {
-            "key": "/ns0:InputRecord/ContactInfo/CellPhone",
+            "key": "/ns0:OutputRecord/ContactInfo/CellPhone",
             "name": "CellPhone",
             "schemaNodeDataType": "String",
             "normalizedDataType": "String",
             "properties": "NotSpecified",
             "fullName": "CellPhone",
-            "parentKey": "/ns0:InputRecord/ContactInfo"
+            "parentKey": "/ns0:OutputRecord/ContactInfo"
           }
-        ]
+        ],
+        "fullName": "ContactInfo",
+        "parentKey": "/ns0:OutputRecord"
       }
-    ]
+    ],
+    "fullName": "ns0:OutputRecord"
   }
 }

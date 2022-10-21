@@ -4,12 +4,14 @@ import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childTargetNodeCardIndent, nodeCardWidth } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
-import type { FunctionDictionary } from '../models/Function';
+import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { ViewportCoords } from '../models/ReactFlow';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaTypes } from '../models/Schema';
+import { flattenInputs, isConnectionUnit } from './Connection.Utils';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { isLeafNode } from './Schema.Utils';
+import { guid } from '@microsoft-logic-apps/utils';
 import { useMemo } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 import { Position } from 'reactflow';
@@ -41,21 +43,21 @@ export const convertToReactFlowNodes = (
   const reactFlowNodes: ReactFlowNode<CardProps>[] = [];
 
   reactFlowNodes.push(
-    ...convertInputToReactFlowParentAndChildNodes(
+    ...convertSourceToReactFlowParentAndChildNodes(
       viewportCoords,
       currentlySelectedSourceNodes,
       connectedSourceNodes,
       allSourceNodes,
       connections
     ),
-    ...convertOutputToReactFlowParentAndChildNodes(viewportCoords, targetSchemaNode, connections),
+    ...convertTargetToReactFlowParentAndChildNodes(viewportCoords, targetSchemaNode, connections),
     ...convertFunctionsToReactFlowParentAndChildNodes(viewportCoords, allFunctionNodes)
   );
 
   return reactFlowNodes;
 };
 
-const convertInputToReactFlowParentAndChildNodes = (
+const convertSourceToReactFlowParentAndChildNodes = (
   viewportCoords: ViewportCoords,
   currentlySelectedSourceNodes: SchemaNodeExtended[],
   connectedSourceNodes: SchemaNodeExtended[],
@@ -105,7 +107,7 @@ const convertInputToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-const convertOutputToReactFlowParentAndChildNodes = (
+const convertTargetToReactFlowParentAndChildNodes = (
   viewportCoords: ViewportCoords,
   targetSchemaNode: SchemaNodeExtended,
   connections: ConnectionDictionary
@@ -202,15 +204,18 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
   return reactFlowNodes;
 };
 
-export const convertToReactFlowEdges = (connections: ConnectionDictionary): ReactFlowEdge[] => {
+export const convertToReactFlowEdges = (connections: ConnectionDictionary, selectedItemKey: string | undefined): ReactFlowEdge[] => {
   return Object.values(connections).flatMap((connection) => {
-    return connection.sources.map((source) => {
+    const nodeInputs = flattenInputs(connection.inputs).filter(isConnectionUnit);
+
+    return nodeInputs.map((input) => {
+      const id = createReactFlowConnectionId(input.reactFlowKey, connection.self.reactFlowKey);
       return {
-        id: createReactFlowId(source.reactFlowKey, connection.destination.reactFlowKey),
-        source: source.reactFlowKey,
-        target: connection.destination.reactFlowKey,
+        id,
+        source: input.reactFlowKey,
+        target: connection.self.reactFlowKey,
         type: ReactFlowEdgeType.ConnectionEdge,
-        selected: connection.isSelected,
+        selected: selectedItemKey === id,
       };
     });
   });
@@ -223,7 +228,8 @@ export const useLayout = (
   allSourceNodes: SchemaNodeDictionary,
   allFunctionNodes: FunctionDictionary,
   currentTargetNode: SchemaNodeExtended | undefined,
-  connections: ConnectionDictionary
+  connections: ConnectionDictionary,
+  selectedItemKey: string | undefined
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
   const reactFlowNodes = useMemo(() => {
     if (currentTargetNode) {
@@ -239,13 +245,19 @@ export const useLayout = (
     } else {
       return [];
     }
-    // Explicitly ignoring connectedSourceNodes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [viewportCoords, currentlySelectedSourceNodes, currentTargetNode, allFunctionNodes]);
+  }, [
+    currentTargetNode,
+    viewportCoords,
+    currentlySelectedSourceNodes,
+    connectedSourceNodes,
+    allSourceNodes,
+    allFunctionNodes,
+    connections,
+  ]);
 
   const reactFlowEdges = useMemo(() => {
-    return convertToReactFlowEdges(connections);
-  }, [connections]);
+    return convertToReactFlowEdges(connections, selectedItemKey);
+  }, [connections, selectedItemKey]);
 
   return [reactFlowNodes, reactFlowEdges];
 };
@@ -260,9 +272,13 @@ const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: strin
   return relatedConnections;
 };
 
-export const createReactFlowId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
+export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
+
+export const createReactFlowConnectionId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
 
 export const addReactFlowPrefix = (key: string, type: SchemaTypes) => `${type}-${key}`;
+export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
+export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
 
 export const getSourceIdFromReactFlowId = (reactFlowId: string): string => reactFlowId.split('-to-')[0];
 

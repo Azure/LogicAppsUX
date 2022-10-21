@@ -1,6 +1,6 @@
 import type { RootState } from '../../core/state/Store';
 import { SchemaTypes } from '../../models';
-import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown } from '@fluentui/react';
+import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import React, { useCallback, useRef } from 'react';
 import type { FunctionComponent } from 'react';
@@ -24,6 +24,10 @@ export interface SchemaFile {
   type: SchemaTypes;
 }
 
+export interface SchemaInfo {
+  name: string;
+}
+
 export interface ChangeSchemaViewProps {
   schemaType?: SchemaTypes;
   selectedSchema?: IDropdownOption;
@@ -35,15 +39,6 @@ export interface ChangeSchemaViewProps {
   setUploadType: (newUploadType: UploadSchemaTypes) => void;
 }
 
-export interface SchemaInfo {
-  name: string;
-}
-
-const uploadSchemaOptions: IChoiceGroupOption[] = [
-  { key: UploadSchemaTypes.UploadNew, text: 'Upload new' },
-  { key: UploadSchemaTypes.SelectFrom, text: 'Select from existing' },
-];
-
 export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   schemaType,
   selectedSchema,
@@ -54,14 +49,18 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   uploadType,
   setUploadType,
 }) => {
+  const intl = useIntl();
+  const schemaFileInputRef = useRef<HTMLInputElement>(null);
   const schemaList = useSelector((state: RootState) => {
     return state.schema.availableSchemas;
   });
 
   const dataMapDropdownOptions = schemaList?.map((file: string) => ({ key: file, text: file } ?? []));
 
-  const intl = useIntl();
-  const schemaFileInputRef = useRef<HTMLInputElement>(null);
+  const replaceSchemaWarningLoc = intl.formatMessage({
+    defaultMessage: 'Replacing an existing schema with an incompatible schema might create errors in your map.',
+    description: 'Message bar warning about replacing existing schema',
+  });
 
   const uploadMessage = intl.formatMessage({
     defaultMessage: 'Select a file to upload',
@@ -82,7 +81,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   switch (schemaType) {
     case SchemaTypes.Source:
       uploadSelectLabelMessage = intl.formatMessage({
-        defaultMessage: 'Upload or select a source schema to be used for your map.',
+        defaultMessage: 'Add or select a source schema to use for your map.',
         description: 'label to inform to upload or select source schema to be used',
       });
       selectSchemaPlaceholderMessage = intl.formatMessage({
@@ -92,7 +91,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
       break;
     case SchemaTypes.Target:
       uploadSelectLabelMessage = intl.formatMessage({
-        defaultMessage: 'Upload or select a target schema to be used for your map.',
+        defaultMessage: 'Add or select a target schema to use for your map.',
         description: 'label to inform to upload or select target schema to be used',
       });
       selectSchemaPlaceholderMessage = intl.formatMessage({
@@ -103,6 +102,21 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
     default:
       break;
   }
+
+  const addNewLoc = intl.formatMessage({
+    defaultMessage: 'Add new',
+    description: 'Add new option',
+  });
+
+  const selectExistingLoc = intl.formatMessage({
+    defaultMessage: 'Select existing',
+    description: 'Select existing option',
+  });
+
+  const uploadSchemaOptions: IChoiceGroupOption[] = [
+    { key: UploadSchemaTypes.UploadNew, text: addNewLoc },
+    { key: UploadSchemaTypes.SelectFrom, text: selectExistingLoc },
+  ];
 
   const onSelectedItemChange = useCallback(
     (_: unknown, item?: IDropdownOption): void => {
@@ -138,6 +152,10 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
 
   return (
     <div>
+      <MessageBar messageBarType={MessageBarType.warning} styles={{ root: { marginTop: 20 } }}>
+        {replaceSchemaWarningLoc}
+      </MessageBar>
+
       <p className="inform-text">{uploadSelectLabelMessage}</p>
 
       <ChoiceGroup

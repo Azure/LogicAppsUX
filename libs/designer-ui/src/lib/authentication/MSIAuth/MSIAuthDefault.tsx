@@ -1,5 +1,5 @@
 import type { MSIProps } from '..';
-import type { ChangeHandler } from '../../editor/base';
+import type { ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
@@ -9,14 +9,14 @@ import { useIntl } from 'react-intl';
 
 interface MSIAuthenticationDefaultProps {
   msiProps: MSIProps;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
   onBlur: ChangeHandler;
 }
 
 export const MSIAuthenticationDefault = ({
   msiProps,
-  GetTokenPicker,
+  getTokenPicker,
   onManagedIdentityChange,
   onBlur,
 }: MSIAuthenticationDefaultProps): JSX.Element => {
@@ -41,10 +41,10 @@ export const MSIAuthenticationDefault = ({
     description: 'Placehodler text for dropdown',
   });
 
-  const { MSIIdentity, MSIAudience } = msiProps;
+  const { msiIdentity, msiAudience } = msiProps;
 
-  const managedIdentityOption: IDropdownOption[] = MSIIdentity
-    ? [{ key: MSIIdentity, text: getIdentityDisplayName(MSIIdentity) }]
+  const managedIdentityOption: IDropdownOption[] = msiIdentity
+    ? [{ key: msiIdentity, text: getIdentityDisplayName(msiIdentity) }]
     : [{ key: ResourceIdentityType.SYSTEM_ASSIGNED, text: systemAssignedManagedIdentity }];
 
   return (
@@ -53,14 +53,14 @@ export const MSIAuthenticationDefault = ({
         dropdownPlaceholder={MSIAuthPlaceholder}
         dropdownLabel={MSIAuthLabel}
         errorMessage={authNotEnabledError}
-        selectedKey={MSIIdentity ?? ResourceIdentityType.SYSTEM_ASSIGNED}
+        selectedKey={msiIdentity ?? ResourceIdentityType.SYSTEM_ASSIGNED}
         options={managedIdentityOption}
         onChange={onManagedIdentityChange}
       />
       <AuthenticationProperty
-        initialValue={MSIAudience}
+        initialValue={msiAudience}
         AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
-        GetTokenPicker={GetTokenPicker}
+        getTokenPicker={getTokenPicker}
         onBlur={onBlur}
       />
     </>

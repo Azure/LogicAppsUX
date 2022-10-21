@@ -6,7 +6,7 @@
         "actions": {
           "Terminate": {
             "inputs": {
-              "runStatus": "Succeeded"
+              "runStatus": "SUCCEEDED"
             },
             "runAfter": {},
             "type": "Terminate"
@@ -38,25 +38,33 @@
           }
         },
         "expression": {
-          "and": [
+          "or": [
             {
-              "equals": ["@body('Get_a_goal')['name']", "@variables('goalName')"]
+              "equals": ["abc@microsoft.com", "@variables('goalOwner')"]
             },
             {
-              "equals": ["@body('Get_a_goal')?['owner']", "@variables('goalOwner')"]
+              "equals": ["test", "@variables('goalOwner')"]
             },
             {
-              "equals": ["@body('Get_a_goal')?['currentValue']", "@variables('goalValue')"]
+              "not": {
+                "equals": ["test", "@variables('goalOwner')"]
+              }
             },
             {
-              "equals": ["@body('Get_a_goal')?['targetValue']", "@variables('goalTarget')"]
-            },
-            {
-              "equals": ["@body('Get_a_goal')?['status']", "On track"]
+              "or": [
+                {
+                  "not": {
+                    "endsWith": ["g", ""]
+                  }
+                },
+                {
+                  "equals": ["test", "@variables('goalOwner')"]
+                }
+              ]
             }
           ]
         },
-        "runAfter": {},
+        "runAfter": { "Initialize_owner": ["SUCCEEDED"] },
         "type": "If"
       },
       "Initialize_owner": {
@@ -69,9 +77,7 @@
             }
           ]
         },
-        "runAfter": {
-          "Condition": ["Succeeded"]
-        },
+        "runAfter": {},
         "type": "InitializeVariable"
       }
     },

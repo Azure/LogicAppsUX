@@ -12,7 +12,7 @@ const fileOptions = [
   { key: 'Panel.json', text: 'Panel' },
   // { key: 'straightLine.json', text: 'Straight Line' },
   { key: 'simpleBigworkflow.json', text: 'Simple Big Workflow' },
-
+  { key: 'UnicodeKeys.json', text: 'Unicode Keys' },
   // Scope Nodes
   { key: 'divider_1', text: '-', itemType: DropdownMenuItemType.Divider },
   { key: 'ScopeNodesHeader', text: 'Scope Node Testing Workflows', itemType: DropdownMenuItemType.Header },

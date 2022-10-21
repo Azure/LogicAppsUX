@@ -1,6 +1,7 @@
 import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { NormalizedDataType, SchemaNodeDataType, type SchemaNodeExtended } from '../../models';
+import { NormalizedDataType, SchemaNodeDataType } from '../../models';
+import type { SchemaNodeExtended } from '../../models';
 import { SchemaTree } from '../tree/SchemaTree';
 import type { NodeToggledStateDictionary } from '../tree/SchemaTreeItem';
 import { ItemToggledState } from '../tree/SchemaTreeItem';
@@ -57,8 +58,8 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     const nodesWithConnections: { [key: string]: true } = {};
 
     Object.values(connectionDictionary).forEach((connection) => {
-      if (connection.destination.reactFlowKey in targetSchemaDictionary) {
-        nodesWithConnections[connection.destination.node.key] = true; // targetSchemaDictionary[value.reactFlowDestination]
+      if (connection.self.reactFlowKey in targetSchemaDictionary) {
+        nodesWithConnections[connection.self.node.key] = true; // targetSchemaDictionary[value.reactFlowDestination]
       }
     });
 

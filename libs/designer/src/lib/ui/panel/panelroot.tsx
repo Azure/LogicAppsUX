@@ -1,4 +1,5 @@
 import constants from '../../common/constants';
+import type { RootState } from '../../core';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsDiscovery,
@@ -16,14 +17,15 @@ import {
   registerPanelTabs,
   selectPanelTab,
   setTabVisibility,
-  showDefaultTabs,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { deleteNode, replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
+import { isRootNodeInGraph } from '../../core/utils/graph';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
+import { loadingTab } from './panelTabs/loadingTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
@@ -35,7 +37,7 @@ import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designe
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const PanelRoot = (): JSX.Element => {
   const intl = useIntl();
@@ -46,6 +48,7 @@ export const PanelRoot = (): JSX.Element => {
 
   const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
+  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
   const isDiscovery = useIsDiscovery();
 
@@ -62,7 +65,7 @@ export const PanelRoot = (): JSX.Element => {
   let showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, aboutTab, codeViewTab, SettingsTab, scratchTab, createConnectionTab, selectConnectionTab];
+    const tabs = [monitoringTab, parametersTab, SettingsTab, codeViewTab, createConnectionTab, selectConnectionTab, aboutTab, loadingTab];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
@@ -90,8 +93,6 @@ export const PanelRoot = (): JSX.Element => {
   useEffect(() => {
     if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
       dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
-    } else {
-      dispatch(showDefaultTabs());
     }
     dispatch(
       setTabVisibility({
@@ -100,15 +101,6 @@ export const PanelRoot = (): JSX.Element => {
       })
     );
   }, [dispatch, selectedNode, nodeMetaData, isMonitoringView]);
-
-  useEffect(() => {
-    dispatch(
-      setTabVisibility({
-        tabName: constants.PANEL_TAB_NAMES.PARAMETERS,
-        visible: isMonitoringView || operationInfo?.type !== 'Scope',
-      })
-    );
-  }, [dispatch, isMonitoringView, operationInfo]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -171,7 +163,6 @@ export const PanelRoot = (): JSX.Element => {
       description: 'Delete text',
     });
     // TODO: 13067650 Disabled reason/description tobe implemented when panel actions gets built
-    const canDelete = true;
     const disabledDeleteAction = intl.formatMessage({
       defaultMessage: 'This operation has already been deleted.',
       description: 'Text to tell users why delete is disabled',
@@ -179,7 +170,7 @@ export const PanelRoot = (): JSX.Element => {
 
     options.push({
       key: deleteDescription,
-      disabled: readOnly || !canDelete,
+      disabled: readOnly || isTriggerNode,
       disabledReason: disabledDeleteAction,
       iconName: 'Delete',
       title: deleteDescription,

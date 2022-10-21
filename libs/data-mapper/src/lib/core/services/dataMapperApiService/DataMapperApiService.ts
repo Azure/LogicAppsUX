@@ -1,5 +1,5 @@
-import type { SchemaInfoProperties } from '.';
-import type { FunctionData } from '../../../models/Function';
+import type { GenerateXsltResponse, SchemaInfoProperties, TestMapResponse } from '.';
+import type { FunctionManifest } from '../../../models/Function';
 
 export interface DataMapperApiServiceOptions {
   baseUrl: string;
@@ -48,7 +48,7 @@ export class DataMapperApiService {
   };
 
   private getFunctionsManifestUri = () => {
-    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/transformations/getManifest?api-version=2019-10-01-edge-preview`;
+    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=2019-10-01-edge-preview`;
   };
 
   private getGenerateXsltUri = () => {
@@ -59,13 +59,13 @@ export class DataMapperApiService {
     return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=2019-10-01-edge-preview`;
   };
 
-  async getFunctionsManifest(): Promise<FunctionData[]> {
+  async getFunctionsManifest(): Promise<FunctionManifest> {
     const uri = this.getFunctionsManifestUri();
     const response = await fetch(uri, { method: 'GET' });
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
-    const functions: FunctionData[] = await response.json();
+    const functions = await response.json();
     return functions;
   }
 
@@ -96,7 +96,7 @@ export class DataMapperApiService {
     return schemaFileResponse;
   }
 
-  async generateDataMapXslt(dataMapDefinition: string): Promise<any> {
+  async generateDataMapXslt(dataMapDefinition: string): Promise<string> {
     const response = await fetch(this.getGenerateXsltUri(), {
       method: 'POST',
       headers: {
@@ -111,12 +111,12 @@ export class DataMapperApiService {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
-    const dataMapXsltResponse = await response.json();
+    const dataMapXsltResponse: GenerateXsltResponse = await response.json();
 
     return dataMapXsltResponse.xsltContent;
   }
 
-  async testDataMap(dataMapXsltFilename: string, schemaInputValue: string): Promise<any> {
+  async testDataMap(dataMapXsltFilename: string, schemaInputValue: string): Promise<TestMapResponse> {
     const base64EncodedSchemaInputValue = Buffer.from(schemaInputValue).toString('base64');
 
     const response = await fetch(this.getTestMapUri(dataMapXsltFilename), {
@@ -132,15 +132,22 @@ export class DataMapperApiService {
       }),
     });
 
-    if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+    const testMapResponse: TestMapResponse = {
+      statusCode: response.status,
+      statusText: response.statusText,
+    };
+
+    if (response.ok) {
+      const respJson = await response.json();
+      // Decode base64 response content
+      respJson.outputInstance.$content = Buffer.from(respJson.outputInstance.$content, 'base64').toString('utf-8');
+
+      testMapResponse.outputInstance = respJson.outputInstance;
+
+      if (!testMapResponse?.outputInstance) {
+        throw new Error(`Test Map error: Schema output instance not properly set on successful response`);
+      }
     }
-
-    const testMapResponse = await response.json();
-
-    // NOTE: In future, may need to use testMapResponse.OutputInstance.$content-type
-    // Decode base64 response content
-    testMapResponse.OutputInstance.$content = Buffer.from(testMapResponse.OutputInstance.$content).toString('utf-8');
 
     return testMapResponse;
   }
