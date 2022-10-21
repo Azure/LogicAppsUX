@@ -19,7 +19,7 @@ import {
   flattenInputs,
   isCustomValue,
   nodeHasSourceNodeEventually,
-  nodeHasSpecificSourceNodeEventually,
+  nodeHasSpecificInputEventually,
 } from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, isFunctionData } from './Function.Utils';
 import { addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
@@ -44,7 +44,8 @@ export const convertToMapDefinition = (
   return '';
 };
 
-const generateMapDefinitionHeader = (
+// Exported for testing purposes
+export const generateMapDefinitionHeader = (
   mapDefinition: MapDefinitionEntry,
   sourceSchema: SchemaExtended,
   targetSchema: SchemaExtended
@@ -64,7 +65,8 @@ const generateMapDefinitionHeader = (
   }
 };
 
-const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
+// Exported for testing purposes
+export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
   Object.values(connections).forEach((connection) => {
     const flattenedInputs = flattenInputs(connection.inputs);
     flattenedInputs.forEach((input) => {
@@ -107,6 +109,8 @@ const applyValueAtPath = (
 
   if (path.length > 1) {
     if (path[0].repeating) {
+      // Assumption for now that there is only 1 source node in a loop chain
+      // TODO const loopValue = connections[addTargetReactFlowPrefix(path[0].key)]
       generateForSection(value.substring(0, value.lastIndexOf('/')), value, mapDefinition, destinationNode, path, connections);
     } else {
       if (!mapDefinition[formattedPathLocation]) {
@@ -145,7 +149,7 @@ const generateForSection = (
   const formattedPathLocation = pathLocation.startsWith('@') ? `./${pathLocation}` : pathLocation;
 
   // TODO allow for nested loops
-  const forEntry = nodeHasSpecificSourceNodeEventually(indexKey, connections[addTargetReactFlowPrefix(path[0].key)], connections, false)
+  const forEntry = nodeHasSpecificInputEventually(indexKey, connections[addTargetReactFlowPrefix(path[0].key)], connections, false)
     ? `${mapNodeParams.for}(${loopValue}, $i)`
     : `${mapNodeParams.for}(${loopValue})`;
   if (!mapDefinition[forEntry]) {
@@ -175,7 +179,7 @@ const collectValueForFunction = (node: FunctionData, currentConnection: Connecti
           if (isCustomValue(input)) {
             return formatCustomValue(input);
           } else if (isSchemaNodeExtended(input.node)) {
-            return input.node.fullName.startsWith('@') ? `$${input.node.fullName}` : input.node.fullName;
+            return input.node.fullName.startsWith('@') ? `$${input.node.key}` : input.node.key;
           } else {
             return collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
           }
