@@ -393,10 +393,22 @@
       "value": "Required. The object to check if it is less than value being compared to."
     }
   ],
+  "1nODUD": [
+    {
+      "type": 0,
+      "value": "Hide functions"
+    }
+  ],
   "1nvvw1": [
     {
       "type": 0,
       "value": "Enter the value of the Authorization header"
+    }
+  ],
+  "1pjO9s": [
+    {
+      "type": 0,
+      "value": "Hide source schema"
     }
   ],
   "1uGBLP": [
@@ -1439,6 +1451,12 @@
       "value": "Returns the path and query from a URI"
     }
   ],
+  "D/xTXV": [
+    {
+      "type": 0,
+      "value": "Show source schema"
+    }
+  ],
   "D1lgsT": [
     {
       "type": 0,
@@ -1479,6 +1497,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Aleutian Islands"
+    }
+  ],
+  "Dhu3IS": [
+    {
+      "type": 0,
+      "value": "Show mini-map"
     }
   ],
   "DsPDVB": [
@@ -2707,6 +2731,12 @@
       "value": "Do not generate if no value"
     }
   ],
+  "PvWTxR": [
+    {
+      "type": 0,
+      "value": "Show functions"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -3685,12 +3715,6 @@
       "value": "Data Handling"
     }
   ],
-  "aL0Uut": [
-    {
-      "type": 0,
-      "value": "Function"
-    }
-  ],
   "aRKDWL": [
     {
       "type": 0,
@@ -4635,12 +4659,6 @@
       "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
     }
   ],
-  "jsEMSu": [
-    {
-      "type": 0,
-      "value": "Toolbox"
-    }
-  ],
   "juR40n": [
     {
       "type": 0,
@@ -4699,12 +4717,6 @@
     {
       "type": 0,
       "value": "Returns a string representation of an input based64 string"
-    }
-  ],
-  "kV/U0C": [
-    {
-      "type": 0,
-      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -5067,6 +5079,12 @@
     {
       "type": 1,
       "value": "max_page"
+    }
+  ],
+  "o3SfI4": [
+    {
+      "type": 0,
+      "value": "Zoom to fit"
     }
   ],
   "oAFcW6": [
@@ -5865,12 +5883,6 @@
       "value": "Sunday"
     }
   ],
-  "w9OL8U": [
-    {
-      "type": 0,
-      "value": "Page fit"
-    }
-  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -5929,6 +5941,12 @@
     {
       "type": 0,
       "value": "Returns a specified value based on whether the expression resulted in true or false"
+    }
+  ],
+  "wl7X0l": [
+    {
+      "type": 0,
+      "value": "Hide mini-map"
     }
   ],
   "wmDUGV": [

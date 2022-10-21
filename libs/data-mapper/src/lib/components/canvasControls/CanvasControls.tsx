@@ -47,13 +47,18 @@ export const CanvasControls = ({ displayMiniMap, toggleDisplayMiniMap }: CanvasC
   });
 
   const fitViewLoc = intl.formatMessage({
-    defaultMessage: 'Page fit',
+    defaultMessage: 'Zoom to fit',
     description: 'Label to fit the whole canvas in view',
   });
 
-  const displayMiniMapLoc = intl.formatMessage({
-    defaultMessage: 'Display mini map',
-    description: 'Label to toggle the mini map',
+  const showMiniMapLoc = intl.formatMessage({
+    defaultMessage: 'Show mini-map',
+    description: 'Label to show the mini-map',
+  });
+
+  const hideMiniMapLoc = intl.formatMessage({
+    defaultMessage: 'Hide mini-map',
+    description: 'Label to hide the mini-map',
   });
 
   const mapControlsButtonContainerProps: ButtonContainerProps = useMemo(
@@ -78,7 +83,7 @@ export const CanvasControls = ({ displayMiniMap, toggleDisplayMiniMap }: CanvasC
           onClick: fitView,
         },
         {
-          tooltip: displayMiniMapLoc,
+          tooltip: displayMiniMap ? hideMiniMapLoc : showMiniMapLoc,
           regularIcon: Map20Regular,
           filledIcon: Map20Filled,
           filled: displayMiniMap,
@@ -90,7 +95,7 @@ export const CanvasControls = ({ displayMiniMap, toggleDisplayMiniMap }: CanvasC
       yPos: '16px',
       anchorToBottom: true,
     }),
-    [displayMiniMap, toggleDisplayMiniMap, zoomOut, zoomIn, fitView, displayMiniMapLoc, zoomOutLoc, zoomInLoc, fitViewLoc]
+    [displayMiniMap, toggleDisplayMiniMap, zoomOut, zoomIn, fitView, hideMiniMapLoc, showMiniMapLoc, zoomOutLoc, zoomInLoc, fitViewLoc]
   );
 
   const getNodeColor = (node: Node) => {
