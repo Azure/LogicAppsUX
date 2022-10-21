@@ -4,7 +4,7 @@ import type { AppDispatch, RootState } from '../../../core/state/Store';
 import type { Connection, InputConnection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
 import { isCustomValue } from '../../../utils/Connection.Utils';
-import { getFunctionBrandingForCategory } from '../../../utils/Function.Utils';
+import { getFunctionBrandingForCategory, getFunctionOutputValue } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
@@ -251,16 +251,4 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
       </Stack>
     </div>
   );
-};
-
-export const getFunctionOutputValue = (inputValues: string[], functionName: string) => {
-  let outputValue = `${functionName}(`;
-
-  inputValues.forEach((inputValue, idx) => {
-    if (inputValue) {
-      outputValue += `${idx === 0 ? '' : ', '}${inputValue}`;
-    }
-  });
-
-  return `${outputValue})`;
 };

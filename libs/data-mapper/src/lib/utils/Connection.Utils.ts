@@ -176,7 +176,7 @@ const isFunctionTypeSupportedAndAvailable = (
     let supportedTypeInputIsAvailable = false;
     tgtInputs.forEach((targetInput, index) => {
       if (targetInput.allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)) {
-        if (connection.inputs[index].length < 1) {
+        if (!connection.inputs || connection.inputs[index].length < 1) {
           supportedTypeInputIsAvailable = true;
         }
       }

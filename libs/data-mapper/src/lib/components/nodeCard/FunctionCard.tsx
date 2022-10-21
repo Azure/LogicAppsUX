@@ -1,4 +1,5 @@
 import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
+import { functionNodeCardSize } from '../../constants/NodeConstants';
 import { customTokens } from '../../core';
 import type { RootState } from '../../core/state/Store';
 import type { FunctionInput } from '../../models/Function';
@@ -22,15 +23,17 @@ import { useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
 
+const sharedHalfCardSize = functionNodeCardSize / 2;
+
 const useStyles = makeStyles({
   root: {
     ...shorthands.borderRadius(tokens.borderRadiusCircular),
     color: tokens.colorNeutralForegroundInverted,
     fontSize: '20px',
-    height: '32px',
+    height: `${sharedHalfCardSize}px`,
+    width: `${sharedHalfCardSize}px`,
+    minWidth: `${sharedHalfCardSize}px`,
     textAlign: 'center',
-    width: '32px',
-    minWidth: '32px',
     position: 'relative',
     justifyContent: 'center',
     ...shorthands.padding('0px'),
@@ -51,20 +54,17 @@ const useStyles = makeStyles({
       },
     },
   },
-
   badge: {
     position: 'absolute',
     top: '1px',
     right: '-2px',
     zIndex: '1',
   },
-
   container: {
-    height: '32px',
-    width: '32px',
+    height: `${sharedHalfCardSize}px`,
+    width: `${sharedHalfCardSize}px`,
     position: 'relative',
   },
-
   focusIndicator: createFocusOutlineStyle({
     selector: 'focus-within',
     style: {

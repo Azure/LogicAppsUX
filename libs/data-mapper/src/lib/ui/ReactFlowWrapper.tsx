@@ -36,6 +36,7 @@ import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as 
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { ConnectionLineType, useReactFlow } from 'reactflow';
 
+const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
 export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
 export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
 
@@ -52,9 +53,10 @@ export const ReactFlowWrapper = () => {
   const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
-  const [canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
   const [toolboxTabToDisplay, setToolboxTabToDisplay] = useState<ToolboxPanelTabs | ''>('');
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
+  // TODO: Deprecated in favor of elk, but keeping around for a little bit in case something else needs it
+  const [_canvasViewportCoords, setCanvasViewportCoords] = useState<ViewportCoords>({ startX: 0, endX: 0, startY: 0, endY: 0 });
 
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const edgeUpdateSuccessful = useRef(true);
@@ -212,7 +214,6 @@ export const ReactFlowWrapper = () => {
   }, [project]);
 
   const [nodes, edges] = useLayout(
-    canvasViewportCoords,
     currentlyAddedSourceNodes,
     connectedSourceNodes,
     flattenedSourceSchema,
@@ -222,7 +223,6 @@ export const ReactFlowWrapper = () => {
     selectedItemKey
   );
 
-  const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
   return (
     <ReactFlow
       ref={reactFlowRef}
@@ -236,7 +236,6 @@ export const ReactFlowWrapper = () => {
       onNodeClick={onNodeSingleClick}
       defaultViewport={defaultViewport}
       nodesDraggable={false}
-      fitView={false}
       // With custom edge component, only affects appearance when drawing edge
       connectionLineType={ConnectionLineType.SmoothStep}
       proOptions={{
@@ -253,6 +252,7 @@ export const ReactFlowWrapper = () => {
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}
       onEdgeClick={onEdgeClick}
+      fitView
     >
       <CanvasToolbox
         toolboxTabToDisplay={toolboxTabToDisplay}

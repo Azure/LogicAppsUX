@@ -1,4 +1,4 @@
-import { childTargetNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
+import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardWidth } from '../../constants/NodeConstants';
 import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
@@ -34,9 +34,9 @@ const useStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground1,
     display: 'flex',
     flexDirection: 'row',
-    height: '48px',
+    height: `${schemaNodeCardHeight}px`,
+    width: `${schemaNodeCardWidth}px`,
     opacity: 1,
-    width: `${nodeCardWidth}px`,
     float: 'right',
     alignItems: 'center',
     justifyContent: 'left',
