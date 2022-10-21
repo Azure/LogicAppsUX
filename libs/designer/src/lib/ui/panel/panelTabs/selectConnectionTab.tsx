@@ -11,11 +11,13 @@ import type { Connection } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 export const SelectConnectionTab = () => {
   const dispatch = useDispatch();
 
+  const intl = useIntl();
   const selectedNodeId = useSelectedNodeId();
   const currentConnectionId = useNodeConnectionId(selectedNodeId);
 
@@ -55,10 +57,15 @@ export const SelectConnectionTab = () => {
     hideConnectionTabs();
   }, [hideConnectionTabs]);
 
+  const loadingText = intl.formatMessage({
+    defaultMessage: 'Loading connection data...',
+    description: 'Message to show under the loading icon when loading connection parameters',
+  });
+
   if (connectionQuery.isLoading)
     return (
       <div className="msla-loading-container">
-        <Spinner size={SpinnerSize.large} />
+        <Spinner size={SpinnerSize.large} label={loadingText} />
       </div>
     );
 

@@ -3,6 +3,7 @@ import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { useActionMetadata, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
+import { SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import { GraphContainer } from '@microsoft/designer-ui';
 import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
@@ -17,11 +18,12 @@ const GraphContainerNode = ({ data, targetPosition = Position.Top, sourcePositio
   const nodeMetadata = useNodeMetadata(id);
   const isLeaf = useIsLeafNode(id);
   const showLeafComponents = !readOnly && actionMetadata?.type && isLeaf;
-  const hasFooter = actionMetadata?.type.toLowerCase() === 'until';
+  const isSubgraphContainer = nodeMetadata?.subgraphType !== undefined;
+  const hasFooter = nodeMetadata?.subgraphType === SUBGRAPH_TYPES.UNTIL_DO;
 
   return (
     <>
-      <div className={css('msla-graph-container-wrapper', hasFooter && 'has-footer')}>
+      <div className={css('msla-graph-container-wrapper', hasFooter && 'has-footer', isSubgraphContainer && 'is-subgraph')}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <GraphContainer selected={selected} />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
