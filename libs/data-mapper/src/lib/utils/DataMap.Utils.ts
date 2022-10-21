@@ -9,6 +9,7 @@ import {
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
+import { indexKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeProperties } from '../models/Schema';
@@ -18,9 +19,10 @@ import {
   flattenInputs,
   isCustomValue,
   nodeHasSourceNodeEventually,
+  nodeHasSpecificSourceNodeEventually,
 } from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, isFunctionData } from './Function.Utils';
-import { createReactFlowFunctionKey } from './ReactFlow.Util';
+import { addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft-logic-apps/utils';
 import yaml from 'js-yaml';
@@ -70,9 +72,9 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
       const selfNode = connection.self.node;
       if (input && isSchemaNodeExtended(selfNode)) {
         if (isCustomValue(input)) {
-          applyValueAtPath(formatCustomValue(input), mapDefinition, selfNode, selfNode.pathToRoot);
+          applyValueAtPath(formatCustomValue(input), mapDefinition, selfNode, selfNode.pathToRoot, connections);
         } else if (isSchemaNodeExtended(input.node)) {
-          applyValueAtPath(input.node.key, mapDefinition, selfNode, selfNode.pathToRoot);
+          applyValueAtPath(input.node.key, mapDefinition, selfNode, selfNode.pathToRoot, connections);
         } else {
           const currentConnection = connections[input.reactFlowKey];
           const connectionChain = collectNodesForConnectionChain(currentConnection, connections);
@@ -82,10 +84,10 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
           });
 
           if (containsRepeatingNode) {
-            // Temp Still need to add in logic to merge index into the for loop
+            // Temp Still need to handle functions in loops
           } else {
             const value = collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
-            applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot);
+            applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
           }
         }
       }
@@ -93,20 +95,26 @@ const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connection
   });
 };
 
-const applyValueAtPath = (value: string, mapDefinition: MapDefinitionEntry, destinationNode: SchemaNodeExtended, path: PathItem[]) => {
+const applyValueAtPath = (
+  value: string,
+  mapDefinition: MapDefinitionEntry,
+  destinationNode: SchemaNodeExtended,
+  path: PathItem[],
+  connections: ConnectionDictionary
+) => {
   const pathLocation = path[0].fullName;
   const formattedPathLocation = pathLocation.startsWith('@') ? `$${pathLocation}` : pathLocation;
 
   if (path.length > 1) {
     if (path[0].repeating) {
-      generateForSection(value.substring(0, value.lastIndexOf('/')), value, mapDefinition, destinationNode, path);
+      generateForSection(value.substring(0, value.lastIndexOf('/')), value, mapDefinition, destinationNode, path, connections);
     } else {
       if (!mapDefinition[formattedPathLocation]) {
         mapDefinition[formattedPathLocation] = {};
       }
 
       if (typeof mapDefinition[formattedPathLocation] !== 'string') {
-        applyValueAtPath(value, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1));
+        applyValueAtPath(value, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1), connections);
       }
     }
   } else {
@@ -129,12 +137,17 @@ const generateForSection = (
   value: string,
   mapDefinition: MapDefinitionEntry,
   destinationNode: SchemaNodeExtended,
-  path: PathItem[]
+  path: PathItem[],
+  connections: ConnectionDictionary
 ) => {
   const pathLocation = path[0].fullName;
-  const formattedPathLocation = pathLocation.startsWith('@') ? `$${pathLocation}` : pathLocation;
+  // Local loop variables use current working directory './' instead of '$'
+  const formattedPathLocation = pathLocation.startsWith('@') ? `./${pathLocation}` : pathLocation;
 
-  const forEntry = `${mapNodeParams.for}(${loopValue})`;
+  // TODO allow for nested loops
+  const forEntry = nodeHasSpecificSourceNodeEventually(indexKey, connections[addTargetReactFlowPrefix(path[0].key)], connections, false)
+    ? `${mapNodeParams.for}(${loopValue}, $i)`
+    : `${mapNodeParams.for}(${loopValue})`;
   if (!mapDefinition[forEntry]) {
     mapDefinition[forEntry] = {};
   }
@@ -148,7 +161,7 @@ const generateForSection = (
 
   const loopLocalValue = value.replace(`${loopValue}/`, '');
 
-  applyValueAtPath(loopLocalValue, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1));
+  applyValueAtPath(loopLocalValue, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1), connections);
 };
 
 const collectValueForFunction = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
