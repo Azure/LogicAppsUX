@@ -41,7 +41,7 @@ export const InitOAuthService = (oAuthService: IOAuthService): void => {
 
 export const OAuthService = (): IOAuthService => {
   if (!service) {
-    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'ConnectionService need to be initialized before using');
+    throw new AssertionException(AssertionErrorCode.SERVICE_NOT_INITIALIZED, 'OAuth Service need to be initialized before using');
   }
 
   return service;

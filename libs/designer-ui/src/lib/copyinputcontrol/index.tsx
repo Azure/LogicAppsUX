@@ -6,7 +6,7 @@ import { useIntl } from 'react-intl';
 
 export interface CopyInputControlProps {
   ariaLabelledBy?: string;
-  placeholder: string;
+  placeholder?: string;
   text: string;
   onCopy?(): void;
 }
