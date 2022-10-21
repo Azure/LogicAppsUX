@@ -241,7 +241,7 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
   }
 };
 
-export const nodeHasSpecificSourceNodeEventually = (
+export const nodeHasSpecificInputEventually = (
   sourceKey: string,
   currentConnection: Connection,
   connections: ConnectionDictionary,
@@ -262,7 +262,7 @@ export const nodeHasSpecificSourceNodeEventually = (
   const nonCustomInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
 
   return nonCustomInputs.some((input) =>
-    nodeHasSpecificSourceNodeEventually(sourceKey, connections[input.reactFlowKey], connections, exactMatch)
+    nodeHasSpecificInputEventually(sourceKey, connections[input.reactFlowKey], connections, exactMatch)
   );
 };
 
