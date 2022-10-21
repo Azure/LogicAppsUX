@@ -1554,8 +1554,14 @@ const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: an
     if (!operator) {
       operator = RowDropdownOptions.EQUALS;
     }
-    const stringifiedOperand1 = parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue);
-    const stringifiedOperand2 = parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue);
+    const stringifiedOperand1 = getJSONValueFromString(
+      parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue),
+      'any'
+    );
+    const stringifiedOperand2 = getJSONValueFromString(
+      parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue),
+      'any'
+    );
     if (not) {
       returnVal.not = {};
       returnVal['not'][operator] = [stringifiedOperand1, stringifiedOperand2];
