@@ -35,6 +35,7 @@ import {
   WORKFLOW_NODE_TYPES,
 } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
+import merge from 'lodash.merge';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -422,14 +423,12 @@ const serializeNestedOperations = async (
   rootState: RootState
 ): Promise<Partial<LogicAppsV2.Action>> => {
   const { childOperationsLocation, subGraphDetails } = manifest.properties;
+  const idReplacements = rootState.workflow.idReplacements;
   const node = getNode(nodeId, rootState.workflow.graph as WorkflowNode) as WorkflowNode;
   let result: Partial<LogicAppsV2.Action> = {};
 
   if (childOperationsLocation) {
-    result = {
-      ...result,
-      ...(await serializeSubGraph(node, childOperationsLocation ?? [], [], rootState, {})),
-    };
+    result = merge(result, await serializeSubGraph(node, childOperationsLocation ?? [], [], rootState, {}));
   }
 
   if (subGraphDetails) {
@@ -440,29 +439,29 @@ const serializeNestedOperations = async (
 
       if (subGraphDetail.isAdditive) {
         for (const subGraph of subGraphs) {
-          const subGraphId = subGraph.id;
-          result = {
-            ...result,
-            ...(await serializeSubGraph(
+          const subGraphId = idReplacements[subGraph.id] ?? subGraph.id;
+          result = merge(
+            result,
+            await serializeSubGraph(
               subGraph,
               [subGraphLocation, subGraphId, ...(subGraphDetail.location ?? [])],
               [subGraphLocation, subGraphId],
               rootState,
               subGraphDetail
-            )),
-          };
+            )
+          );
         }
       } else if (subGraphs.length === 1) {
-        result = {
-          ...result,
-          ...(await serializeSubGraph(
+        result = merge(
+          result,
+          await serializeSubGraph(
             subGraphs[0],
             [subGraphLocation, ...(subGraphDetail.location ?? [])],
             [subGraphLocation],
             rootState,
             subGraphDetail
-          )),
-        };
+          )
+        );
       }
     }
   }
