@@ -5,7 +5,7 @@ import React from 'react';
 
 export default {
   component: PropertiesPane,
-  title: 'Data Mapper Component/Pane/Properties Pane',
+  title: 'Data Mapper Components/Pane/Properties Pane',
 } as ComponentMeta<typeof PropertiesPane>;
 
 export const Standard: ComponentStory<typeof PropertiesPane> = (args: PropertiesPaneProps) => (

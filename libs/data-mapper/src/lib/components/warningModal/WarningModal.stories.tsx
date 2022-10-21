@@ -12,7 +12,7 @@ const MockStore = ({ children }) => {
 
 export default {
   component: WarningModal,
-  title: 'Data Mapper Component/Modal/Warning',
+  title: 'Data Mapper Components/Modal/Warning',
 } as ComponentMeta<typeof WarningModal>;
 
 const Template: ComponentStory<typeof WarningModal> = () => <WarningModal />;
