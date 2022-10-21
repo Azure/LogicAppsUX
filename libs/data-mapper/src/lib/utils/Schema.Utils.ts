@@ -72,4 +72,4 @@ export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended):
   return result;
 };
 
-export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended => !!node && 'pathToRoot' in node;
+export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended => 'pathToRoot' in node;
