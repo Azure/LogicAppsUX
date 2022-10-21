@@ -84,20 +84,27 @@ export const convertDataMapNodesToElkGraph = (
       {
         id: 'sourceSchemaBlock',
         layoutOptions: sourceSchemaLayoutOptions,
-        children: currentSourceNodes.map((srcNode) => ({
-          id: addSourceReactFlowPrefix(srcNode.key),
-          width: schemaNodeCardWidth,
-          height: schemaNodeCardHeight,
-        })),
+        children: [
+          ...currentSourceNodes.map((srcNode) => ({
+            id: addSourceReactFlowPrefix(srcNode.key),
+            width: schemaNodeCardWidth,
+            height: schemaNodeCardHeight,
+          })),
+          // NOTE: Dummy nodes allow proper layouting when no real nodes exist yet
+          { id: 'srcDummyNode', width: schemaNodeCardWidth, height: schemaNodeCardHeight },
+        ],
       },
       {
         id: 'functionsBlock',
         layoutOptions: functionsLayoutOptions,
-        children: Object.keys(currentFunctionNodes).map((fnNodeKey) => ({
-          id: fnNodeKey,
-          width: functionNodeCardSize,
-          height: functionNodeCardSize,
-        })),
+        children: [
+          ...Object.keys(currentFunctionNodes).map((fnNodeKey) => ({
+            id: fnNodeKey,
+            width: functionNodeCardSize,
+            height: functionNodeCardSize,
+          })),
+          { id: 'fnDummyNode', width: functionNodeCardSize, height: functionNodeCardSize },
+        ],
         // Only function<->function edges
         edges: interFunctionEdges,
       },

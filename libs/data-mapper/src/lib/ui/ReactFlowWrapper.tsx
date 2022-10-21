@@ -252,6 +252,7 @@ export const ReactFlowWrapper = () => {
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}
       onEdgeClick={onEdgeClick}
+      fitView
     >
       <CanvasToolbox
         toolboxTabToDisplay={toolboxTabToDisplay}
