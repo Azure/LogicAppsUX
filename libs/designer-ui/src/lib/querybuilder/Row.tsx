@@ -3,12 +3,14 @@ import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import { notEqual } from '../dictionary/plugins/SerializeExpandedDictionary';
 import type { ValueSegment } from '../editor';
+import { ValueSegmentType } from '../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
 import { RowDropdown } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
+import { guid } from '@microsoft-logic-apps/utils';
 import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -22,6 +24,8 @@ const overflowStyle: Partial<IOverflowSetStyles> = {
 const menuIconProps: IIconProps = {
   iconName: 'More',
 };
+
+const emptyValueSegmentArray: ValueSegment[] = [{ type: ValueSegmentType.LITERAL, value: '', id: guid() }];
 
 interface RowProps {
   checked?: boolean;
@@ -153,7 +157,13 @@ export const Row = ({
     if (notEqual(operand1, newState.value)) {
       setKey(newState.value);
       handleUpdateParent(
-        { type: GroupType.ROW, checked: checked, operand1: newState.value, operator: operator, operand2: operand2 },
+        {
+          type: GroupType.ROW,
+          checked: checked,
+          operand1: newState.value,
+          operator: operator ?? 'equals',
+          operand2: operandNotEmpty(operand2) ? operand2 : emptyValueSegmentArray,
+        },
         index
       );
     }
@@ -161,7 +171,13 @@ export const Row = ({
 
   const handleSelectedOption = (newState: ChangeState) => {
     handleUpdateParent(
-      { type: GroupType.ROW, checked: checked, operand1: operand1, operator: newState.value[0].value, operand2: operand2 },
+      {
+        type: GroupType.ROW,
+        checked: checked,
+        operand1: operandNotEmpty(operand1) ? operand1 : emptyValueSegmentArray,
+        operator: newState.value[0].value,
+        operand2: operandNotEmpty(operand2) ? operand2 : emptyValueSegmentArray,
+      },
       index
     );
   };
@@ -169,7 +185,13 @@ export const Row = ({
   const handleValueSave = (newState: ChangeState) => {
     if (notEqual(operand2, newState.value)) {
       handleUpdateParent(
-        { type: GroupType.ROW, checked: checked, operand1: operand1, operator: operator, operand2: newState.value },
+        {
+          type: GroupType.ROW,
+          checked: checked,
+          operand1: operandNotEmpty(operand1) ? operand1 : emptyValueSegmentArray,
+          operator: operator ?? 'equals',
+          operand2: newState.value,
+        },
         index
       );
     }
@@ -252,4 +274,8 @@ export const Row = ({
       />
     </div>
   );
+};
+
+const operandNotEmpty = (valSeg: ValueSegment[]): boolean => {
+  return valSeg.length > 0;
 };

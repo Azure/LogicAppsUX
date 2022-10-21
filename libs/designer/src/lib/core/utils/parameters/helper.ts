@@ -102,6 +102,7 @@ import type {
   ValueSegment,
 } from '@microsoft/designer-ui';
 import {
+  RowDropdownOptions,
   GroupDropdownOptions,
   GroupType,
   AuthenticationType,
@@ -1533,8 +1534,7 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
       }
       return undefined;
     case constants.EDITOR.CONDITION:
-      console.log(JSON.stringify(recurseSerializeCondition(parameter, editorViewModel, isDefinitionValue)));
-      return JSON.stringify(editorViewModel);
+      return JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
     default:
       return undefined;
   }
@@ -1551,16 +1551,32 @@ const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: an
       operator = operator.slice(3);
       not = true;
     }
-    const stringifiedOperand1 = parameterValueToString({ value: operand1, ...commonProperties } as any, isDefinitionValue);
-    const stringifiedOperand2 = parameterValueToString({ value: operand2, ...commonProperties } as any, isDefinitionValue);
+    if (!operator) {
+      operator = RowDropdownOptions.EQUALS;
+    }
+    const stringifiedOperand1 = parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue);
+    const stringifiedOperand2 = parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue);
     if (not) {
       returnVal.not = {};
       returnVal['not'][operator] = [stringifiedOperand1, stringifiedOperand2];
     } else {
-      returnVal[operator] = [operand1, operand2];
+      returnVal[operator] = [stringifiedOperand1, stringifiedOperand2];
     }
   } else {
-    const { condition, items } = editorViewModel;
+    let { condition, items } = editorViewModel;
+    if (!condition) {
+      condition = GroupDropdownOptions.AND;
+    }
+    if (items.length === 0) {
+      items = [
+        {
+          type: GroupType.ROW,
+          operator: RowDropdownOptions.EQUALS,
+          operand1: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
+          operand2: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
+        },
+      ];
+    }
     returnVal[condition] = items.map((item: any) => {
       return recurseSerializeCondition(parameter, item, isDefinitionValue);
     });

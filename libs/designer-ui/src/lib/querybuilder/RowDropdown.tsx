@@ -48,7 +48,7 @@ export const RowDropdown = ({ condition, disabled, onChange }: RowDropdownProps)
         initialValue={
           condition
             ? [{ id: guid(), type: ValueSegmentType.LITERAL, value: condition }]
-            : [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'isequalto' }]
+            : [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'equals' }]
         }
         onChange={onChange}
         options={items}
