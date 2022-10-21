@@ -2247,6 +2247,9 @@
       <Item ItemId=";ERVorY" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Make Group]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Fazer Grupo]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7119,6 +7122,9 @@
       <Item ItemId=";nQxMfu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Clear custom value and reselect]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Limpar o valor personalizado e selecionar novamente]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
