@@ -34,7 +34,7 @@ export const deleteNodeFromWorkflow = (
     removeEdge(state, nodeId, childId, workflowGraph);
   } else {
     const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
-    reassignEdgeSources(state, nodeId, parentId, workflowGraph);
+    reassignEdgeSources(state, nodeId, parentId, workflowGraph, /* isSourceTrigger */ false);
     removeEdge(state, parentId, nodeId, workflowGraph);
   }
 

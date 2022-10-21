@@ -31,7 +31,7 @@ export const StringEditor = ({ singleLine, initialValue, editorBlur, onChange, .
       onFocus={baseEditorProps.onFocus}
       readonly={baseEditorProps.readonly}
       isTrigger={baseEditorProps.isTrigger}
-      GetTokenPicker={baseEditorProps.GetTokenPicker}
+      getTokenPicker={baseEditorProps.getTokenPicker}
       tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
     >
       {singleLine ? <SingleLine /> : null}

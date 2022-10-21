@@ -1474,7 +1474,7 @@
   "BoMvF2": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Свернуть"
     }
   ],
   "BuYrD3": [
@@ -1624,7 +1624,7 @@
   "ERVorY": [
     {
       "type": 0,
-      "value": "Make Group"
+      "value": "Создать группу"
     }
   ],
   "EV9iRu": [
@@ -1910,7 +1910,7 @@
   "GdGm4T": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Дополнительные команды"
     }
   ],
   "Gi72X5": [
@@ -2557,6 +2557,12 @@
       "value": "(UTC+03:00) Минск"
     }
   ],
+  "Nn/DN4": [
+    {
+      "type": 0,
+      "value": "This connection would introduce circular logic."
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -2698,7 +2704,7 @@
   "OL5S5H": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "Введите пользовательское значение"
     }
   ],
   "OOUSLP": [
@@ -2734,7 +2740,7 @@
   "OdNhwc": [
     {
       "type": 0,
-      "value": "Ungroup"
+      "value": "Разгруппировать"
     }
   ],
   "Oib1mL": [
@@ -2938,7 +2944,7 @@
   "QGbUXX": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Код состояния"
     }
   ],
   "QQYzHC": [
@@ -3968,7 +3974,7 @@
   "bGtEPd": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Удалить"
     }
   ],
   "bIyTi7": [
@@ -4389,6 +4395,20 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Порт-Луи"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -5070,7 +5090,7 @@
   "lZT0JI": [
     {
       "type": 0,
-      "value": "Add Group"
+      "value": "Добавить группу"
     }
   ],
   "lcVG4C": [
@@ -5256,7 +5276,7 @@
   "nQxMfu": [
     {
       "type": 0,
-      "value": "Clear custom value and reselect"
+      "value": "Очистить пользовательское значение и выбрать повторно"
     }
   ],
   "nSan4V": [
@@ -5360,7 +5380,7 @@
   "odQ554": [
     {
       "type": 0,
-      "value": "Response body"
+      "value": "Текст отклика"
     }
   ],
   "ol+TkT": [
@@ -6286,7 +6306,7 @@
   "xLF2Zr": [
     {
       "type": 0,
-      "value": "Add Row"
+      "value": "Добавить строку"
     }
   ],
   "xN3GEX": [
@@ -6388,7 +6408,7 @@
   "ydqOly": [
     {
       "type": 0,
-      "value": "Choose a value"
+      "value": "Выберите значение"
     }
   ],
   "yoCi15": [

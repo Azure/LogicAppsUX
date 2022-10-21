@@ -1452,7 +1452,7 @@
   "BoMvF2": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Contraer"
     }
   ],
   "BuYrD3": [
@@ -1869,7 +1869,7 @@
   "GdGm4T": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Más comandos"
     }
   ],
   "Gi72X5": [
@@ -2497,6 +2497,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "Nn/DN4": [
+    {
+      "type": 0,
+      "value": "This connection would introduce circular logic."
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -2630,7 +2636,7 @@
   "OL5S5H": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "Escribir un valor personalizado"
     }
   ],
   "OOUSLP": [
@@ -2666,7 +2672,7 @@
   "OdNhwc": [
     {
       "type": 0,
-      "value": "Ungroup"
+      "value": "Desagrupar"
     }
   ],
   "Oib1mL": [
@@ -2870,7 +2876,7 @@
   "QGbUXX": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Código de estado"
     }
   ],
   "QQYzHC": [
@@ -3881,7 +3887,7 @@
   "bGtEPd": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Eliminar"
     }
   ],
   "bIyTi7": [
@@ -4302,6 +4308,20 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -4960,7 +4980,7 @@
   "lZT0JI": [
     {
       "type": 0,
-      "value": "Add Group"
+      "value": "Agregar grupo"
     }
   ],
   "lcVG4C": [
@@ -5250,7 +5270,7 @@
   "odQ554": [
     {
       "type": 0,
-      "value": "Response body"
+      "value": "Cuerpo de la respuesta"
     }
   ],
   "ol+TkT": [
@@ -6157,7 +6177,7 @@
   "xLF2Zr": [
     {
       "type": 0,
-      "value": "Add Row"
+      "value": "Agregar fila"
     }
   ],
   "xN3GEX": [
@@ -6259,7 +6279,7 @@
   "ydqOly": [
     {
       "type": 0,
-      "value": "Choose a value"
+      "value": "Elegir un valor"
     }
   ],
   "yoCi15": [

@@ -6,10 +6,9 @@ import { changeConnectionMapping } from '../../state/connection/connectionSlice'
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
-import { isolateTab, switchToOperationPanel } from '../../state/panel/panelSlice';
+import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
-import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
@@ -61,8 +60,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   };
 
   dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
-  const newWorkflowState = (getState() as RootState).workflow;
-  initializeOperationDetails(nodeId, nodeOperationInfo, newWorkflowState, dispatch);
+  initializeOperationDetails(nodeId, nodeOperationInfo, getState() as RootState, dispatch);
 
   // Update settings for children and parents
 
@@ -73,14 +71,15 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
 const initializeOperationDetails = async (
   nodeId: string,
   operationInfo: NodeOperation,
-  workflowState: WorkflowState,
+  state: RootState,
   dispatch: Dispatch
 ): Promise<void> => {
-  const isTrigger = isRootNodeInGraph(nodeId, 'root', workflowState.nodesMetadata);
+  const isTrigger = isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata);
   const { type, connectorId } = operationInfo;
   const operationManifestService = OperationManifestService();
 
-  dispatch(switchToOperationPanel(nodeId));
+  dispatch(changePanelNode(nodeId));
+  dispatch(isolateTab(Constants.PANEL_TAB_NAMES.LOADING));
 
   if (operationManifestService.isSupported(type)) {
     const manifest = await getOperationManifest(operationInfo);
@@ -98,7 +97,7 @@ const initializeOperationDetails = async (
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings };
     dispatch(initializeNodes([initData]));
-    addTokensAndVariables(nodeId, type, { ...initData, iconUri, brandColor, manifest }, workflowState, dispatch);
+    addTokensAndVariables(nodeId, type, { ...initData, iconUri, brandColor, manifest }, state, dispatch);
   } else {
     const [, { connector, parsedSwagger }] = await Promise.all([
       trySetDefaultConnectionForNode(nodeId, connectorId, dispatch),
@@ -127,10 +126,12 @@ const initializeOperationDetails = async (
       nodeId,
       type,
       { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, nodeDependencies },
-      workflowState,
+      state,
       dispatch
     );
   }
+
+  dispatch(showDefaultTabs());
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
@@ -165,7 +166,7 @@ export const reinitializeOperationDetails = async (
       nodeId,
       type,
       { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest, nodeDependencies },
-      state.workflow,
+      state,
       dispatch
     );
   } else {
@@ -177,7 +178,7 @@ export const reinitializeOperationDetails = async (
       nodeId,
       type,
       { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, nodeDependencies },
-      state.workflow,
+      state,
       dispatch
     );
   }
@@ -188,26 +189,29 @@ export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId
   if (connections.length > 0) {
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id, connectorId }));
     await ConnectionService().createConnectionAclIfNeeded(connections[0]);
-  } else {
-    dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
-
-  dispatch(switchToOperationPanel(nodeId));
 };
 
-const addTokensAndVariables = (
+export const addTokensAndVariables = (
   nodeId: string,
   operationType: string,
   nodeData: NodeDataWithOperationMetadata,
-  workflowState: WorkflowState,
+  state: RootState,
   dispatch: Dispatch
 ): void => {
-  const { graph, nodesMetadata, operations } = workflowState;
+  const { graph, nodesMetadata, operations } = state.workflow;
   const { nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest } = nodeData;
   const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {
     [nodeId]: nodeId,
   });
-  const upstreamNodeIds = getTokenNodeIds(nodeId, graph as WorkflowNode, nodesMetadata, { [nodeId]: nodeData }, nodeMap);
+  const upstreamNodeIds = getTokenNodeIds(
+    nodeId,
+    graph as WorkflowNode,
+    nodesMetadata,
+    { [nodeId]: nodeData },
+    state.operations.operationInfo,
+    nodeMap
+  );
   const tokensAndVariables = {
     outputTokens: {
       [nodeId]: { tokens: [], upstreamNodeIds } as NodeTokens,

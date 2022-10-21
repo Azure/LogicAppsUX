@@ -1,23 +1,28 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
+import { preloadOperationsQuery } from '../../queries/browse';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
+import { updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import { updateTokens } from '../../state/tokensSlice';
+import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
+import { getTriggerNodeId } from '../../utils/graph';
 import { getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
   getDependentParameters,
   getInputsValueFromDefinitionForManifest,
+  getParameterFromName,
   getParametersSortedByVisibility,
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../../utils/parameters/helper';
+import { createLiteralValueSegment } from '../../utils/parameters/segment';
 import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens } from '../../utils/tokens';
 import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
@@ -27,14 +32,20 @@ import type {
   IOperationManifestService,
   ISearchService,
   IOAuthService,
+  IWorkflowService,
 } from '@microsoft-logic-apps/designer-client-services';
 import {
+  InitWorkflowService,
+  WorkflowService,
+  LoggerService,
+  LogEntryLevel,
   InitConnectionService,
   InitOperationManifestService,
   InitSearchService,
   InitOAuthService,
   OperationManifestService,
 } from '@microsoft-logic-apps/designer-client-services';
+import { getIntl } from '@microsoft-logic-apps/intl';
 import type { SchemaProperty, InputParameter } from '@microsoft-logic-apps/parsers';
 import {
   isDynamicListExtension,
@@ -46,8 +57,8 @@ import {
   PropertyName,
 } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { ConnectionReferenceKeyFormat, unmap } from '@microsoft-logic-apps/utils';
-import type { OutputToken } from '@microsoft/designer-ui';
+import { clone, equals, ConnectionReferenceKeyFormat, unmap } from '@microsoft-logic-apps/utils';
+import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -55,13 +66,22 @@ export interface ServiceOptions {
   operationManifestService: IOperationManifestService;
   searchService: ISearchService;
   oAuthService: IOAuthService;
+  workflowService: IWorkflowService;
 }
 
-export const InitializeServices = ({ connectionService, operationManifestService, searchService, oAuthService }: ServiceOptions) => {
+export const InitializeServices = ({
+  connectionService,
+  operationManifestService,
+  searchService,
+  oAuthService,
+  workflowService,
+}: ServiceOptions) => {
   InitConnectionService(connectionService);
   InitOperationManifestService(operationManifestService);
   InitSearchService(searchService);
   InitOAuthService(oAuthService);
+  InitWorkflowService(workflowService);
+  preloadOperationsQuery();
 };
 
 export const getInputParametersFromManifest = (
@@ -109,14 +129,14 @@ export const getInputParametersFromManifest = (
       getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], stepDefinition),
       '',
       primaryInputParametersInArray,
-      true /* createInvisibleParameter */,
+      !inputsLocation || !!inputsLocation.length /* createInvisibleParameter */,
       false /* useDefault */
     );
   } else {
     loadParameterValuesFromDefault(primaryInputParameters);
   }
 
-  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
+  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);
   const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
   // TODO (14490585)- Initialize editor view models for array
@@ -275,4 +295,51 @@ export const getInputDependencies = (nodeInputs: NodeInputs, allInputs: InputPar
   }
 
   return dependencies;
+};
+
+export const updateCallbackUrl = async (rootState: RootState, dispatch: Dispatch): Promise<void> => {
+  const trigger = getTriggerNodeId(rootState.workflow);
+  const operationInfo = rootState.operations.operationInfo[trigger];
+  const nodeInputs = clone(rootState.operations.inputParameters[trigger]);
+  const updatedParameter = await updateCallbackUrlInInputs(trigger, operationInfo, nodeInputs);
+
+  if (updatedParameter) {
+    dispatch(
+      updateNodeParameters({
+        nodeId: trigger,
+        parameters: [{ groupId: ParameterGroupKeys.DEFAULT, parameterId: updatedParameter.id, propertiesToUpdate: updatedParameter }],
+      })
+    );
+  }
+};
+
+export const updateCallbackUrlInInputs = async (
+  nodeId: string,
+  { type, kind }: NodeOperation,
+  nodeInputs: NodeInputs
+): Promise<ParameterInfo | undefined> => {
+  if (equals(type, Constants.NODE.TYPE.REQUEST) && equals(kind, Constants.NODE.KIND.HTTP)) {
+    try {
+      const callbackInfo = await WorkflowService().getCallbackUrl(nodeId);
+      const parameter = getParameterFromName(nodeInputs, 'callbackUrl');
+
+      if (parameter && callbackInfo) {
+        parameter.label = getIntl().formatMessage(
+          { defaultMessage: 'HTTP {method} URL', description: 'Callback url method' },
+          { method: callbackInfo.method }
+        );
+        parameter.value = [createLiteralValueSegment(callbackInfo.value)];
+
+        return parameter;
+      }
+    } catch (error) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'CallbackUrl_Update',
+        message: `Unable to initialize callback url for manual trigger, error ${error}`,
+      });
+    }
+  }
+
+  return;
 };

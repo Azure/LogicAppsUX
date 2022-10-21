@@ -2381,6 +2381,12 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
+  "Nn/DN4": [
+    {
+      "type": 0,
+      "value": "This connection would introduce circular logic."
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -4163,6 +4169,26 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "Loading connection data..."
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [

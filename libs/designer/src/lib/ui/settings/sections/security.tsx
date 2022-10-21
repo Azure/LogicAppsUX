@@ -1,6 +1,6 @@
 import type { SectionProps, ToggleHandler } from '..';
 import constants from '../../../common/constants';
-import type { SettingSectionProps } from '../settingsection';
+import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
 import { useIntl } from 'react-intl';
 
@@ -51,7 +51,7 @@ export const Security = ({
   const secureInputsLabel = <SettingLabel labelText={secureInputsTitle} infoTooltipText={secureInputsTooltipText} isChild={false} />;
   const secureOutputsLabel = <SettingLabel labelText={secureOutputsTitle} infoTooltipText={secureOutputsTooltipText} isChild={false} />;
 
-  const securitySectionProps: SettingSectionProps = {
+  const securitySectionProps: SettingsSectionProps = {
     id: 'security',
     title: securityTitle,
     sectionName: constants.SETTINGSECTIONS.SECURITY,

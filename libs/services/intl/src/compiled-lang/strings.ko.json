@@ -1360,7 +1360,7 @@
   "BoMvF2": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "축소"
     }
   ],
   "BuYrD3": [
@@ -1755,7 +1755,7 @@
   "GdGm4T": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "기타 명령"
     }
   ],
   "Gi72X5": [
@@ -2337,6 +2337,12 @@
       "value": "(UTC+03:00) 민스크"
     }
   ],
+  "Nn/DN4": [
+    {
+      "type": 0,
+      "value": "This connection would introduce circular logic."
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -2454,7 +2460,7 @@
   "OL5S5H": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "사용자 지정 값 입력"
     }
   ],
   "OOUSLP": [
@@ -2490,7 +2496,7 @@
   "OdNhwc": [
     {
       "type": 0,
-      "value": "Ungroup"
+      "value": "그룹 해제"
     }
   ],
   "Oib1mL": [
@@ -2694,7 +2700,7 @@
   "QGbUXX": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "상태 코드"
     }
   ],
   "QQYzHC": [
@@ -3675,7 +3681,7 @@
   "bGtEPd": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "삭제"
     }
   ],
   "bIyTi7": [
@@ -4092,6 +4098,20 @@
     {
       "type": 0,
       "value": "(UTC+04:00) 포트루이스"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -4700,7 +4720,7 @@
   "lZT0JI": [
     {
       "type": 0,
-      "value": "Add Group"
+      "value": "그룹 추가"
     }
   ],
   "lcVG4C": [
@@ -4990,7 +5010,7 @@
   "odQ554": [
     {
       "type": 0,
-      "value": "Response body"
+      "value": "응답 본문"
     }
   ],
   "ol+TkT": [
@@ -5855,7 +5875,7 @@
   "xLF2Zr": [
     {
       "type": 0,
-      "value": "Add Row"
+      "value": "행 추가"
     }
   ],
   "xN3GEX": [
@@ -5957,7 +5977,7 @@
   "ydqOly": [
     {
       "type": 0,
-      "value": "Choose a value"
+      "value": "값 선택"
     }
   ],
   "yoCi15": [

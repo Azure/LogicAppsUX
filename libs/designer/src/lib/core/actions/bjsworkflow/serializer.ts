@@ -6,7 +6,7 @@ import { getOperationManifest } from '../../queries/operation';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
 import type { RootState } from '../../store';
-import { getNode, isRootNode, isRootNodeInGraph } from '../../utils/graph';
+import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
 import {
   encodePathValue,
   getAndEscapeSegment,
@@ -35,6 +35,7 @@ import {
   WORKFLOW_NODE_TYPES,
 } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
+import merge from 'lodash.merge';
 
 export interface SerializeOptions {
   skipValidation: boolean;
@@ -95,13 +96,11 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
 };
 
 const getTrigger = async (rootState: RootState, options?: SerializeOptions): Promise<LogicAppsV2.Triggers> => {
-  const rootGraph = rootState.workflow.graph as WorkflowNode;
-  const rootNode = rootGraph.children?.find((child) => isRootNode(child.id, rootState.workflow.nodesMetadata)) as WorkflowNode;
-  const rootNodeid = rootNode.id;
+  const rootNodeId = getTriggerNodeId(rootState.workflow);
   const idReplacements = rootState.workflow.idReplacements;
-  return rootNode
+  return rootNodeId
     ? {
-        [idReplacements[rootNodeid] ?? rootNodeid]: ((await serializeOperation(rootState, rootNode.id, options)) ??
+        [idReplacements[rootNodeId] ?? rootNodeId]: ((await serializeOperation(rootState, rootNodeId, options)) ??
           {}) as LogicAppsV2.TriggerDefinition,
       }
     : {};
@@ -173,11 +172,13 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     inputs.retryPolicy = retryPolicy;
   }
 
+  const inputsLocation = manifest.properties.inputsLocation ?? ['inputs'];
+
   return {
     type: operation.type,
     ...optional('description', operationFromWorkflow.description),
     ...optional('kind', operation.kind),
-    ...optional((manifest.properties.inputsLocation ?? ['inputs'])[0], inputs),
+    ...(inputsLocation.length ? optional(inputsLocation[0], inputs) : inputs),
     ...childOperations,
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
@@ -422,14 +423,12 @@ const serializeNestedOperations = async (
   rootState: RootState
 ): Promise<Partial<LogicAppsV2.Action>> => {
   const { childOperationsLocation, subGraphDetails } = manifest.properties;
+  const idReplacements = rootState.workflow.idReplacements;
   const node = getNode(nodeId, rootState.workflow.graph as WorkflowNode) as WorkflowNode;
   let result: Partial<LogicAppsV2.Action> = {};
 
   if (childOperationsLocation) {
-    result = {
-      ...result,
-      ...(await serializeSubGraph(node, childOperationsLocation ?? [], [], rootState, {})),
-    };
+    result = merge(result, await serializeSubGraph(node, childOperationsLocation ?? [], [], rootState, {}));
   }
 
   if (subGraphDetails) {
@@ -440,29 +439,29 @@ const serializeNestedOperations = async (
 
       if (subGraphDetail.isAdditive) {
         for (const subGraph of subGraphs) {
-          const subGraphId = subGraph.id;
-          result = {
-            ...result,
-            ...(await serializeSubGraph(
+          const subGraphId = idReplacements[subGraph.id] ?? subGraph.id;
+          result = merge(
+            result,
+            await serializeSubGraph(
               subGraph,
               [subGraphLocation, subGraphId, ...(subGraphDetail.location ?? [])],
               [subGraphLocation, subGraphId],
               rootState,
               subGraphDetail
-            )),
-          };
+            )
+          );
         }
       } else if (subGraphs.length === 1) {
-        result = {
-          ...result,
-          ...(await serializeSubGraph(
+        result = merge(
+          result,
+          await serializeSubGraph(
             subGraphs[0],
             [subGraphLocation, ...(subGraphDetail.location ?? [])],
             [subGraphLocation],
             rootState,
             subGraphDetail
-          )),
-        };
+          )
+        );
       }
     }
   }

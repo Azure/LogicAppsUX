@@ -6,7 +6,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { ConnectorWithParsedSwagger } from '../../queries/connections';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
-import type { DependencyInfo, NodeData, NodeInputs, NodeOutputs } from '../../state/operation/operationMetadataSlice';
+import type { DependencyInfo, NodeData, NodeInputs, NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
@@ -26,7 +26,7 @@ import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
-import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
+import { getInputParametersFromManifest, getOutputParametersFromManifest, updateCallbackUrlInInputs } from './initialize';
 import { getOperationSettings } from './settings';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { InputParameter, OutputParameter } from '@microsoft-logic-apps/parsers';
@@ -36,6 +36,7 @@ import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
   manifest?: OperationManifest;
+  operationInfo?: NodeOperation;
   iconUri: string;
   brandColor: string;
 }
@@ -122,7 +123,7 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
   return (await Promise.all(connectorPromises)).filter((result) => !!result) as ConnectorWithParsedSwagger[];
 };
 
-const initializeOperationDetailsForManifest = async (
+export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
@@ -140,6 +141,11 @@ const initializeOperationDetailsForManifest = async (
 
       const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation);
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, operation);
+
+      if (isTrigger) {
+        await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
+      }
+
       const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
         manifest,
         isTrigger,
@@ -150,7 +156,20 @@ const initializeOperationDetailsForManifest = async (
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 
-      return [{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, manifest, iconUri, brandColor }, ...childGraphInputs];
+      return [
+        {
+          id: nodeId,
+          nodeInputs,
+          nodeOutputs,
+          nodeDependencies,
+          settings,
+          operationInfo: nodeOperationInfo,
+          manifest,
+          iconUri,
+          brandColor,
+        },
+        ...childGraphInputs,
+      ];
     }
 
     return;
@@ -192,6 +211,7 @@ const processChildGraphAndItsInputs = (
               nodeInputs: subNodeInputs,
               nodeOutputs: subNodeOutputs,
               nodeDependencies: { inputs: subNodeInputDependencies, outputs: {} },
+              operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
               manifest: subManifest,
               iconUri: '',
               brandColor: '',
@@ -210,6 +230,7 @@ const processChildGraphAndItsInputs = (
           nodeInputs,
           nodeOutputs,
           nodeDependencies: { inputs: inputDependencies, outputs: {} },
+          operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
           manifest: subManifest,
           iconUri: '',
           brandColor: '',
@@ -236,7 +257,7 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithOperationMetadata[],
       if (segments && segments.length) {
         parameter.value = segments.map((segment) => {
           if (isTokenValueSegment(segment)) {
-            segment = updateTokenMetadata(segment, actionNodes, triggerNodeId, nodesData, operations, parameter.type);
+            return updateTokenMetadata(segment, actionNodes, triggerNodeId, nodesData, operations, parameter.type);
           }
 
           return segment;
@@ -260,11 +281,18 @@ const initializeOutputTokensForOperations = (
     }),
     {}
   );
+  const operationInfos = allNodesData.reduce(
+    (result: Record<string, NodeOperation>, nodeData: NodeDataWithOperationMetadata) => ({
+      ...result,
+      [nodeData.id]: nodeData.operationInfo as NodeOperation,
+    }),
+    {}
+  );
 
   const result: Record<string, NodeTokens> = {};
 
   for (const operationId of Object.keys(operations)) {
-    const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithData, nodeMap);
+    const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithData, operationInfos, nodeMap);
     const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds };
 
     try {

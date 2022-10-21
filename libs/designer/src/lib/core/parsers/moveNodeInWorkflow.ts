@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
+import { isRootNodeInGraph } from '../utils/graph';
 import type { WorkflowNode } from './models/workflowNode';
 import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';
 
@@ -56,7 +57,7 @@ export const moveNodeInWorkflow = (
     removeEdge(state, nodeId, childId, oldWorkflowGraph);
   } else {
     const parentId = (oldWorkflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
-    reassignEdgeSources(state, nodeId, parentId, oldWorkflowGraph);
+    reassignEdgeSources(state, nodeId, parentId, oldWorkflowGraph, /* isSourceTrigger */ false);
     removeEdge(state, parentId, nodeId, oldWorkflowGraph);
   }
 
@@ -84,6 +85,7 @@ export const moveNodeInWorkflow = (
   nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, isRoot: isNewRoot };
   if (nodesMetadata[nodeId].isRoot === false) delete nodesMetadata[nodeId].isRoot;
 
+  const shouldAddRunAfters = parentId ? !isRootNodeInGraph(parentId, 'root', state.nodesMetadata) : true;
   // X parents, 1 child
   if (childId) {
     reassignEdgeTargets(state, childId, nodeId, newWorkflowGraph);
@@ -91,8 +93,8 @@ export const moveNodeInWorkflow = (
   }
   // 1 parent, X children
   else if (parentId) {
-    reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph);
-    addNewEdge(state, parentId, nodeId, newWorkflowGraph);
+    reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph, !shouldAddRunAfters);
+    addNewEdge(state, parentId, nodeId, newWorkflowGraph, shouldAddRunAfters);
   }
 
   if (isNewRoot) {

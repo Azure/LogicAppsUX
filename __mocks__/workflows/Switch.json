@@ -8,7 +8,6 @@
             "actions": {
               "Action-1-Compose": {
                 "inputs": "test",
-                "runAfter": {},
                 "type": "Compose"
               }
             },
@@ -27,7 +26,6 @@
           "actions": {
             "Default-Compose": {
               "inputs": "test",
-              "runAfter": {},
               "type": "Compose"
             }
           }

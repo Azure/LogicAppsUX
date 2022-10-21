@@ -101,7 +101,7 @@ export type Settings = SettingBase &
   );
 
 type WarningDismissHandler = (key?: string, message?: string) => void;
-export interface SettingSectionProps {
+export interface SettingsSectionProps {
   id?: string;
   title?: string;
   sectionName?: string;
@@ -115,7 +115,7 @@ export interface SettingSectionProps {
   onWarningDismiss?: WarningDismissHandler;
 }
 
-export const SettingsSection: FC<SettingSectionProps> = ({
+export const SettingsSection: FC<SettingsSectionProps> = ({
   title = 'Settings',
   sectionName,
   showHeading = true,

@@ -1,5 +1,6 @@
 import type { DictionaryEditorItemProps } from '.';
 import type { ValueSegment } from '../editor';
+import type { GetTokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { CollapsedDictionaryValidation } from './plugins/CollapsedDictionaryValidation';
 import { useIntl } from 'react-intl';
@@ -9,7 +10,7 @@ export type CollapsedDictionaryProps = {
   isTrigger?: boolean;
   readonly?: boolean;
   collapsedValue: ValueSegment[];
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  getTokenPicker: GetTokenPickerHandler;
   setIsValid: (b: boolean) => void;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   setCollapsedValue: (val: ValueSegment[]) => void;
@@ -21,7 +22,7 @@ export const CollapsedDictionary = ({
   isTrigger,
   readonly,
   collapsedValue,
-  GetTokenPicker,
+  getTokenPicker,
   setItems,
   setIsValid,
   setCollapsedValue,
@@ -53,7 +54,7 @@ export const CollapsedDictionary = ({
           isTrigger={isTrigger}
           readonly={readonly}
           onBlur={onBlur}
-          GetTokenPicker={GetTokenPicker}
+          getTokenPicker={getTokenPicker}
         >
           <CollapsedDictionaryValidation
             errorMessage={errorMessage}

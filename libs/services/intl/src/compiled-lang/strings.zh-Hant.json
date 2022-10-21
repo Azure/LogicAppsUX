@@ -1360,7 +1360,7 @@
   "BoMvF2": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "摺疊"
     }
   ],
   "BuYrD3": [
@@ -1510,7 +1510,7 @@
   "ERVorY": [
     {
       "type": 0,
-      "value": "Make Group"
+      "value": "製作群組"
     }
   ],
   "EV9iRu": [
@@ -1755,7 +1755,7 @@
   "GdGm4T": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "更多命令"
     }
   ],
   "Gi72X5": [
@@ -2337,6 +2337,12 @@
       "value": "(UTC+03:00) 明斯克"
     }
   ],
+  "Nn/DN4": [
+    {
+      "type": 0,
+      "value": "This connection would introduce circular logic."
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -2454,7 +2460,7 @@
   "OL5S5H": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "輸入自訂值"
     }
   ],
   "OOUSLP": [
@@ -2490,7 +2496,7 @@
   "OdNhwc": [
     {
       "type": 0,
-      "value": "Ungroup"
+      "value": "取消群組"
     }
   ],
   "Oib1mL": [
@@ -2694,7 +2700,7 @@
   "QGbUXX": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "狀態碼"
     }
   ],
   "QQYzHC": [
@@ -3675,7 +3681,7 @@
   "bGtEPd": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "刪除"
     }
   ],
   "bIyTi7": [
@@ -4100,6 +4106,20 @@
     {
       "type": 0,
       "value": "(UTC+04:00) 路易士港"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -4712,7 +4732,7 @@
   "lZT0JI": [
     {
       "type": 0,
-      "value": "Add Group"
+      "value": "新增群組"
     }
   ],
   "lcVG4C": [
@@ -4898,7 +4918,7 @@
   "nQxMfu": [
     {
       "type": 0,
-      "value": "Clear custom value and reselect"
+      "value": "清除自訂值並重新選擇"
     }
   ],
   "nSan4V": [
@@ -5002,7 +5022,7 @@
   "odQ554": [
     {
       "type": 0,
-      "value": "Response body"
+      "value": "回應本文"
     }
   ],
   "ol+TkT": [
@@ -5871,7 +5891,7 @@
   "xLF2Zr": [
     {
       "type": 0,
-      "value": "Add Row"
+      "value": "新增列"
     }
   ],
   "xN3GEX": [
@@ -5973,7 +5993,7 @@
   "ydqOly": [
     {
       "type": 0,
-      "value": "Choose a value"
+      "value": "選擇值"
     }
   ],
   "yoCi15": [

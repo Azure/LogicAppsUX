@@ -1,0 +1,75 @@
+{
+  "definition": {
+    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+    "actions": {
+      "Switch": {
+        "cases": {
+          "Groß-/Kleinbuchstaben": {
+            "actions": {
+              "Action-1-Compose": {
+                "inputs": "test",
+                "type": "Compose"
+              }
+            },
+            "case": "test"
+          },
+          "🐞🍋🐠": {
+            "actions": {},
+            "case": "🤯"
+          },
+          "早上好": {
+            "actions": {},
+            "case": "早上好"
+          }
+        },
+        "default": {
+          "actions": {
+            "Default-Compose": {
+              "inputs": "test",
+              "type": "Compose"
+            }
+          }
+        },
+        "expression": "@triggerBody()",
+        "runAfter": {},
+        "type": "Switch"
+      },
+      "Initialize_owner": {
+        "inputs": {
+          "variables": [
+            {
+              "name": "goalOwner",
+              "type": "string",
+              "value": "abc@microsoft.com"
+            }
+          ]
+        },
+        "runAfter": {
+          "Switch": ["SUCCEEDED"]
+        },
+        "type": "InitializeVariable"
+      }
+    },
+    "contentVersion": "1.0.0.0",
+    "outputs": {},
+    "triggers": {
+      "Http": {
+        "inputs": {
+          "body": "d",
+          "headers": {
+            "d": "d"
+          },
+          "method": "PUT",
+          "uri": "http://uri.com"
+        },
+        "recurrence": {
+          "frequency": "Hour",
+          "interval": 3,
+          "timeZone": "UTC-11"
+        },
+        "type": "Http"
+      }
+    }
+  },
+  "kind": "Stateful"
+}

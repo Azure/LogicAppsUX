@@ -1490,7 +1490,7 @@
   "BoMvF2": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Zwiń"
     }
   ],
   "BuYrD3": [
@@ -1926,7 +1926,7 @@
   "GdGm4T": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Więcej poleceń"
     }
   ],
   "Gi72X5": [
@@ -2573,6 +2573,12 @@
       "value": "(UTC+03:00) Mińsk"
     }
   ],
+  "Nn/DN4": [
+    {
+      "type": 0,
+      "value": "This connection would introduce circular logic."
+    }
+  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -2714,7 +2720,7 @@
   "OL5S5H": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "Wprowadź wartość niestandardową"
     }
   ],
   "OOUSLP": [
@@ -2750,7 +2756,7 @@
   "OdNhwc": [
     {
       "type": 0,
-      "value": "Ungroup"
+      "value": "Rozgrupuj"
     }
   ],
   "Oib1mL": [
@@ -2954,7 +2960,7 @@
   "QGbUXX": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Kod stanu"
     }
   ],
   "QQYzHC": [
@@ -3984,7 +3990,7 @@
   "bGtEPd": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Usuń"
     }
   ],
   "bIyTi7": [
@@ -4405,6 +4411,20 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -5082,7 +5102,7 @@
   "lZT0JI": [
     {
       "type": 0,
-      "value": "Add Group"
+      "value": "Dodaj grupę"
     }
   ],
   "lcVG4C": [
@@ -5372,7 +5392,7 @@
   "odQ554": [
     {
       "type": 0,
-      "value": "Response body"
+      "value": "Treść odpowiedzi"
     }
   ],
   "ol+TkT": [
@@ -6298,7 +6318,7 @@
   "xLF2Zr": [
     {
       "type": 0,
-      "value": "Add Row"
+      "value": "Dodaj wiersz"
     }
   ],
   "xN3GEX": [
@@ -6400,7 +6420,7 @@
   "ydqOly": [
     {
       "type": 0,
-      "value": "Choose a value"
+      "value": "Wybierz wartość"
     }
   ],
   "yoCi15": [
