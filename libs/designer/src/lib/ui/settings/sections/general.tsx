@@ -137,7 +137,7 @@ export const General = ({
         settingType: 'SettingDropdown',
         settingProp: {
           id: 'arrayValue',
-          readOnly,
+          readOnly: readOnly || !splitOn?.value?.enabled,
           items: getSplitOnOptions(nodeOutputs).map((option) => ({ title: option, value: option })),
           selectedValue: splitOn?.value?.value,
           onSelectionChanged: onSplitOnSelectionChanged,
