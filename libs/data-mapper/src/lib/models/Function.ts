@@ -44,9 +44,11 @@ export enum FunctionCategory {
 
 export type FunctionDictionary = { [key: string]: FunctionData };
 
+export const indexKey = 'index';
+
 export const pseudoFunctions: FunctionData[] = [
   {
-    key: 'index',
+    key: indexKey,
     maxNumberOfInputs: 1,
     type: 'PseudoFunction',
     functionName: '',

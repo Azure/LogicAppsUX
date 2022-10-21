@@ -1,4 +1,5 @@
 import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
+import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { AddSection } from './AddSection';
@@ -68,7 +69,7 @@ export const Group = ({
   const handleGroup = () => {
     handleUpdateParent(
       {
-        type: 'group',
+        type: GroupType.GROUP,
         checked: false,
         items: groupedItems.map((groupedItem) => {
           return groupedItem.item;
@@ -84,7 +85,7 @@ export const Group = ({
   const handleUngroup = (indexToAddAt: number, items: (GroupItemProps | RowItemProps)[]) => {
     let itemsToInsert = items;
     if (items.length === 0) {
-      itemsToInsert = [{ type: 'row' }];
+      itemsToInsert = [{ type: GroupType.ROW }];
     }
     const newItems = { ...groupProps };
     newItems.items.splice(indexToAddAt, 1, ...itemsToInsert);
@@ -180,11 +181,11 @@ export const Group = ({
 
   const handleDelete = (indicesToDelete: number | number[]) => {
     // Is an array of indices to delete
+    const newItems = { ...groupProps };
     if (Array.isArray(indicesToDelete)) {
-      if (indicesToDelete.length === groupProps.items.length) {
+      if (indicesToDelete.length === newItems.items.length) {
         handleDeleteChild?.(index);
       } else {
-        const newItems = { ...groupProps };
         for (let i = indicesToDelete.length - 1; i >= 0; i--) {
           newItems.items.splice(indicesToDelete[i], 1);
         }
@@ -194,7 +195,6 @@ export const Group = ({
       if (groupProps.items.length <= 1) {
         handleDeleteChild?.(index);
       } else {
-        const newItems = { ...groupProps };
         newItems.items.splice(indicesToDelete, 1);
         handleUpdateParent(newItems, index);
       }
@@ -238,7 +238,7 @@ export const Group = ({
   };
 
   const handleSelectedOption = (newState: ChangeState) => {
-    handleUpdateParent({ ...groupProps, selectedOption: newState.value[0].value as GroupDropdownOptions }, index);
+    handleUpdateParent({ ...groupProps, condition: newState.value[0].value as GroupDropdownOptions }, index);
   };
 
   const collapseLabel = intl.formatMessage({
@@ -265,15 +265,15 @@ export const Group = ({
               />
             ) : null}
             <div className="msla-querybuilder-row-section">
-              <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} key={groupProps.selectedOption} />
+              <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} />
               {groupProps.items.map((item, currIndex) => {
-                return item.type === 'row' ? (
+                return item.type === GroupType.ROW ? (
                   <Row
-                    key={`row ${currIndex} ${item.key} ${item.value}`}
+                    key={`row ${currIndex} ${JSON.stringify(item.operand1)} ${JSON.stringify(item.operand2)}`}
                     checked={item.checked}
-                    keyValue={item.key}
-                    dropdownValue={item.dropdownVal}
-                    valueValue={item.value}
+                    operand1={item.operand1}
+                    operator={item.operator}
+                    operand2={item.operand2}
                     index={currIndex}
                     isGroupable={isGroupable}
                     showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
@@ -287,11 +287,11 @@ export const Group = ({
                   />
                 ) : (
                   <Group
-                    key={`group ${currIndex}`}
+                    key={`${GroupType.GROUP} ${currIndex}`}
                     groupProps={{
-                      type: 'group',
+                      type: GroupType.GROUP,
                       items: item.items,
-                      selectedOption: item.selectedOption,
+                      condition: item.condition,
                       checked: item.checked,
                     }}
                     index={currIndex}
@@ -335,7 +335,7 @@ export const Group = ({
             </div>
           </>
         ) : (
-          <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} key={groupProps.selectedOption} />
+          <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} />
         )}
         <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
           {!isRootGroup ? (

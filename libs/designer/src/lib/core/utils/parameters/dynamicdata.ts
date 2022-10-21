@@ -152,7 +152,7 @@ export async function getDynamicSchema(
 
       switch (dynamicState?.extension?.builtInOperation) {
         case 'getVariableSchema':
-          schema = { type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase()) };
+          schema = { type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean') };
           break;
         case 'getVariable':
           // eslint-disable-next-line no-case-declarations
