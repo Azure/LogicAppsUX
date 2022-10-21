@@ -86,15 +86,10 @@ const initializeOperationDetails = async (
     if (isConnectionRequiredForOperation(manifest)) await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
 
     const { iconUri, brandColor } = manifest.properties;
-    const settings = getOperationSettings(isTrigger, operationInfo, manifest, /* swagger */ undefined);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest);
-    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
-      manifest,
-      isTrigger,
-      nodeInputs,
-      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
-    );
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+    const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
     const initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings };
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(nodeId, type, { ...initData, iconUri, brandColor, manifest }, state, dispatch);
@@ -106,7 +101,6 @@ const initializeOperationDetails = async (
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
 
-    const settings = getOperationSettings(isTrigger, operationInfo, /* manifest */ undefined, parsedSwagger);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
       nodeId,
       isTrigger,
@@ -114,12 +108,13 @@ const initializeOperationDetails = async (
       operationInfo
     );
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
+      isTrigger,
       parsedSwagger,
       operationInfo,
-      nodeInputs,
-      settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
+      nodeInputs
     );
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+    const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, /* manifest */ undefined, parsedSwagger);
 
     dispatch(initializeNodes([{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings }]));
     addTokensAndVariables(

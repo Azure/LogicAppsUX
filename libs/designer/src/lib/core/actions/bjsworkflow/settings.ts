@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
-import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+import type { NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
+import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
 import type { SwaggerParser } from '@microsoft-logic-apps/parsers';
 import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft-logic-apps/parsers';
@@ -100,15 +101,17 @@ export interface Settings {
 /**
  * Gets the operation options for the specified node based on the definition of the operation in a reload, or from swagger information.
  * @arg {string} isTrigger - Specifies if this is trigger operation node.
- * @arg {string} nodeType - The node type. This parameter should be provided for authoring scenario.
- * @arg {string} [nodeKind] - The node kind. This parameter should be provided for authoring scenario.
+ * @arg {NodeOperation} operationInfo - The operation information about the node.
+ * @arg {NodeOutputs} nodeOutputs - All outputs of the node.
  * @arg {OperationManifest} [manifest] - The operation manifest if node type supports.
- * @arg {LogicApps.OperationDefinition | LogicAppsV2.OperationDefinition} [operation] - The JSON from the definition for the given operation.
+ * @arg {SwaggerParser} [swagger] - The swagger if the node type supports.
+ * @arg {LogicAppsV2.OperationDefinition} [operation] - The JSON from the definition for the given operation.
  * @return {Settings}
  */
 export const getOperationSettings = (
   isTrigger: boolean,
   operationInfo: NodeOperation,
+  nodeOutputs: NodeOutputs,
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operation?: LogicAppsV2.OperationDefinition
@@ -134,12 +137,12 @@ export const getOperationSettings = (
       value: getDisableAutomaticDecompression(isTrigger, nodeType, manifest, operation),
     },
     splitOn: {
-      isSupported: isSplitOnSupported(isTrigger, manifest, swagger, operationId, operation),
+      isSupported: isSplitOnSupported(isTrigger, nodeOutputs, manifest, swagger, operationId, operation),
       value: getSplitOn(manifest, swagger, operationId, operation),
     },
     retryPolicy: {
-      isSupported: isRetryPolicySupported(isTrigger, manifest, operation),
-      value: getRetryPolicy(isTrigger, manifest, operation),
+      isSupported: isRetryPolicySupported(isTrigger, operationInfo.type, manifest),
+      value: getRetryPolicy(isTrigger, operationInfo.type, manifest, operation),
     },
     requestOptions: { isSupported: areRequestOptionsSupported(isTrigger, nodeType), value: getRequestOptions(operation) },
     sequential: getSequential(operation),
@@ -426,16 +429,12 @@ const isConcurrencySupported = (isTrigger: boolean, nodeType: string, manifest?:
 
 const getRetryPolicy = (
   isTrigger: boolean,
+  operationType: string,
   manifest?: OperationManifest,
   definition?: LogicAppsV2.ActionDefinition
 ): RetryPolicy | undefined => {
   if (definition) {
-    const isRetryableAction = manifest
-      ? isSettingSupportedFromOperationManifest(
-          getOperationSettingFromManifest(manifest, 'retryPolicy') as OperationManifestSetting<void>,
-          isTrigger
-        )
-      : isRetryableOperation(definition);
+    const isRetryableAction = isRetryPolicySupported(isTrigger, operationType, manifest);
     if (isRetryableAction) {
       const retryableActionDefinition = definition as LogicAppsV2.RetryableOperationDefinition;
 
@@ -467,26 +466,15 @@ const getRetryPolicy = (
   }
 };
 
-const isRetryableOperation = (operation?: LogicAppsV2.OperationDefinition): boolean => {
-  if (!operation) {
-    return false;
-  }
-
-  const supportedTypes = [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK, Constants.NODE.TYPE.HTTP];
-  return supportedTypes.indexOf(operation.type.toLowerCase()) > -1;
-};
-
-const isRetryPolicySupported = (
-  isTrigger: boolean,
-  manifest?: OperationManifest,
-  definition?: LogicAppsV2.OperationDefinition
-): boolean => {
+const isRetryPolicySupported = (isTrigger: boolean, operationType: string, manifest?: OperationManifest): boolean => {
   return manifest
     ? isSettingSupportedFromOperationManifest(
         getOperationSettingFromManifest(manifest, 'retryPolicy') as OperationManifestSetting<void>,
         isTrigger
       )
-    : isRetryableOperation(definition);
+    : [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK, Constants.NODE.TYPE.HTTP].indexOf(
+        operationType.toLowerCase()
+      ) > -1;
 };
 
 const getSequential = (definition?: LogicAppsV2.OperationDefinition): boolean => {
@@ -561,13 +549,14 @@ const getSplitOnValue = (
 
 const isSplitOnSupported = (
   isTrigger: boolean,
+  nodeOutputs: NodeOutputs,
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operationId?: string,
   definition?: LogicAppsV2.OperationDefinition
 ): boolean => {
   const existingSplitOn = getSplitOn(manifest, swagger, operationId, definition);
-  return isTrigger && existingSplitOn.enabled;
+  return isTrigger && (getSplitOnOptions(nodeOutputs).length > 0 || existingSplitOn.enabled);
 };
 
 const getTimeout = (

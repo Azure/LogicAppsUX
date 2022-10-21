@@ -120,6 +120,9 @@ export default {
       concurrency: {
         scopes: [SettingScope.Trigger],
       },
+      correlation: {
+        scopes: [SettingScope.Trigger],
+      },
       operationOptions: {
         scopes: [SettingScope.Trigger],
         options: [OperationOptions.SuppressWorkflowHeaders, OperationOptions.EnableSchemaValidation],

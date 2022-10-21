@@ -45,6 +45,7 @@ export interface NodeInputs {
 export interface NodeOutputs {
   dynamicLoadStatus?: DynamicLoadStatus;
   outputs: Record<string, OutputInfo>;
+  originalOutputs?: Record<string, OutputInfo>;
 }
 
 type DependencyType = 'StaticSchema' | 'ApiSchema' | 'ListValues';
