@@ -41,14 +41,24 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay, con
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
 
-  const toolboxLoc = intl.formatMessage({
-    defaultMessage: 'Toolbox',
-    description: 'Label to open the input toolbox card',
+  const showSourceSchemaLoc = intl.formatMessage({
+    defaultMessage: 'Show source schema',
+    description: 'Label to open source schema toolbox',
   });
 
-  const functionLoc = intl.formatMessage({
-    defaultMessage: 'Function',
-    description: 'Label to open the Function card',
+  const hideSourceSchemaLoc = intl.formatMessage({
+    defaultMessage: 'Hide source schema',
+    description: 'Label to close source schema toolbox',
+  });
+
+  const showFunctionsLoc = intl.formatMessage({
+    defaultMessage: 'Show functions',
+    description: 'Label to open Functions list',
+  });
+
+  const hideFunctionsLoc = intl.formatMessage({
+    defaultMessage: 'Hide functions',
+    description: 'Label to close Functions list',
   });
 
   const onTabSelect = useCallback(
@@ -82,13 +92,13 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay, con
     () => ({
       buttons: [
         {
-          tooltip: toolboxLoc,
+          tooltip: toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree ? hideSourceSchemaLoc : showSourceSchemaLoc,
           regularIcon: CubeTree20Regular,
           filledIcon: CubeTree20Filled,
           value: ToolboxPanelTabs.sourceSchemaTree,
         },
         {
-          tooltip: functionLoc,
+          tooltip: toolboxTabToDisplay === ToolboxPanelTabs.functionsList ? hideFunctionsLoc : showFunctionsLoc,
           regularIcon: MathFormula20Regular,
           filledIcon: MathFormula20Filled,
           value: ToolboxPanelTabs.functionsList,
@@ -100,7 +110,7 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay, con
       selectedValue: toolboxTabToDisplay,
       onTabSelect: onTabSelect,
     }),
-    [toolboxTabToDisplay, onTabSelect, toolboxLoc, functionLoc]
+    [toolboxTabToDisplay, onTabSelect, hideSourceSchemaLoc, showSourceSchemaLoc, hideFunctionsLoc, showFunctionsLoc]
   );
 
   return (
