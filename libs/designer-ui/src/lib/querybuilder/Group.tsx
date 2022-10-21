@@ -238,7 +238,7 @@ export const Group = ({
   };
 
   const handleSelectedOption = (newState: ChangeState) => {
-    handleUpdateParent({ ...groupProps, selectedOption: newState.value[0].value as GroupDropdownOptions }, index);
+    handleUpdateParent({ ...groupProps, condition: newState.value[0].value as GroupDropdownOptions }, index);
   };
 
   const collapseLabel = intl.formatMessage({
@@ -265,7 +265,7 @@ export const Group = ({
               />
             ) : null}
             <div className="msla-querybuilder-row-section">
-              <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} key={groupProps.selectedOption} />
+              <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} />
               {groupProps.items.map((item, currIndex) => {
                 return item.type === GroupType.ROW ? (
                   <Row
@@ -291,7 +291,7 @@ export const Group = ({
                     groupProps={{
                       type: GroupType.GROUP,
                       items: item.items,
-                      selectedOption: item.selectedOption,
+                      condition: item.condition,
                       checked: item.checked,
                     }}
                     index={currIndex}
@@ -335,7 +335,7 @@ export const Group = ({
             </div>
           </>
         ) : (
-          <GroupDropdown selectedOption={groupProps.selectedOption} onChange={handleSelectedOption} key={groupProps.selectedOption} />
+          <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} />
         )}
         <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
           {!isRootGroup ? (

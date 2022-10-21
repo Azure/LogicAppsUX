@@ -316,11 +316,11 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
 }
 
 const toConditionViewModel = (input: any): { items: GroupItemProps } => {
-  const getSelectedOption = getConditionalSelectedOption(input);
+  const getConditionOption = getConditionalSelectedOption(input);
   const items: GroupItemProps = {
     type: GroupType.GROUP,
-    selectedOption: getSelectedOption,
-    items: recurseConditionalItems(input, getSelectedOption),
+    condition: getConditionOption,
+    items: recurseConditionalItems(input, getConditionOption),
   };
   return { items };
 };
@@ -356,7 +356,7 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
           operand2: loadParameterValue({ value: not ? item[not][dropdownVal][1] : item[dropdownVal][1] } as InputParameter),
         });
       } else {
-        output.push({ type: GroupType.GROUP, selectedOption: condition, items: recurseConditionalItems(item, condition) });
+        output.push({ type: GroupType.GROUP, condition: condition, items: recurseConditionalItems(item, condition) });
       }
     });
   }
@@ -388,7 +388,6 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
 }
 
 function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEditorItemProps[]; columnMode: ColumnMode } {
-  console.log('here');
   const placeholderItem = { key: [createLiteralValueSegment('')], value: [createLiteralValueSegment('')] };
   if (Array.isArray(value)) {
     const keys = editorOptions.columns.keys;
@@ -1533,10 +1532,42 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
         return JSON.stringify(value);
       }
       return undefined;
+    case constants.EDITOR.CONDITION:
+      console.log(JSON.stringify(recurseSerializeCondition(parameter, editorViewModel, isDefinitionValue)));
+      return JSON.stringify(editorViewModel);
     default:
       return undefined;
   }
 }
+
+const recurseSerializeCondition = (parameter: ParameterInfo, editorViewModel: any, isDefinitionValue: boolean): any => {
+  const returnVal: any = {};
+  const commonProperties = { supressCasting: parameter.suppressCasting, info: parameter.info };
+  if (editorViewModel.type === GroupType.ROW) {
+    let not = false;
+    let { operator } = editorViewModel;
+    const { operand1, operand2 } = editorViewModel;
+    if (operator.slice(0, 3) === 'not') {
+      operator = operator.slice(3);
+      not = true;
+    }
+    const stringifiedOperand1 = parameterValueToString({ value: operand1, ...commonProperties } as any, isDefinitionValue);
+    const stringifiedOperand2 = parameterValueToString({ value: operand2, ...commonProperties } as any, isDefinitionValue);
+    if (not) {
+      returnVal.not = {};
+      returnVal['not'][operator] = [stringifiedOperand1, stringifiedOperand2];
+    } else {
+      returnVal[operator] = [operand1, operand2];
+    }
+  } else {
+    const { condition, items } = editorViewModel;
+    returnVal[condition] = items.map((item: any) => {
+      return recurseSerializeCondition(parameter, item, isDefinitionValue);
+    });
+  }
+
+  return returnVal;
+};
 
 function updateNodeInputsWithParameter(
   nodeInputs: NodeInputs,

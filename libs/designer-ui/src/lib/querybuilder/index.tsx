@@ -31,7 +31,7 @@ export interface RowItemProps {
 export interface GroupItemProps {
   type: GroupType.GROUP;
   checked?: boolean;
-  selectedOption?: GroupDropdownOptions;
+  condition?: GroupDropdownOptions;
   items: GroupItems[];
 }
 export interface QueryBuilderProps {
@@ -50,7 +50,7 @@ export const QueryBuilderEditor = ({ getTokenPicker, onChange, groupProps }: Que
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
   useUpdateEffect(() => {
-    onChange?.({ value: emptyValue, viewModel: { type: GroupType.GROUP, items: JSON.parse(JSON.stringify(getRootProp())) } });
+    onChange?.({ value: emptyValue, viewModel: JSON.parse(JSON.stringify(getRootProp())) });
     setHeights(checkHeights(getRootProp(), [], 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getRootProp()]);
