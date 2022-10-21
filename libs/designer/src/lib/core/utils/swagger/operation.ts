@@ -63,7 +63,6 @@ export const initializeOperationDetailsForSwagger = async (
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
       const { connector, parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
 
-      const settings = getOperationSettings(isTrigger, nodeOperationInfo, /* manifest */ undefined, parsedSwagger, operation);
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromSwagger(
         nodeId,
         isTrigger,
@@ -72,12 +71,14 @@ export const initializeOperationDetailsForSwagger = async (
         operation
       );
       const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromSwagger(
+        isTrigger,
         parsedSwagger,
         nodeOperationInfo,
         nodeInputs,
-        settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
+        isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, /* manifest */ undefined, parsedSwagger, operation);
 
       return [
         {
@@ -198,6 +199,7 @@ export const getInputParametersFromSwagger = (
 };
 
 export const getOutputParametersFromSwagger = (
+  isTrigger: boolean,
   swagger: SwaggerParser,
   operationInfo: NodeOperation,
   nodeInputs: NodeInputs,
@@ -213,6 +215,15 @@ export const getOutputParametersFromSwagger = (
     throw new Error(`Failed to parse operation outputs from swagger for connector - ${connectorId}`);
   }
 
+  let originalOutputs: Record<string, OutputInfo> | undefined;
+  if (isTrigger) {
+    originalOutputs = Object.values(operationOutputs).reduce((result: Record<string, OutputInfo>, output: OutputParameter) => {
+      return {
+        ...result,
+        [output.key]: toOutputInfo(output),
+      };
+    }, {});
+  }
   const updatedOutputs = updateOutputsForBatchingTrigger(operationOutputs, splitOnValue);
   const nodeOutputs: Record<string, OutputInfo> = {};
   let dynamicOutput: OutputParameter | undefined;
@@ -236,7 +247,10 @@ export const getOutputParametersFromSwagger = (
     }
   }
 
-  return { outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs }, dependencies };
+  return {
+    outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs, originalOutputs },
+    dependencies,
+  };
 };
 
 const getOperationInfo = async (

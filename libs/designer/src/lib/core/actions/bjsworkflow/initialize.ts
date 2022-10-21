@@ -4,12 +4,12 @@ import { preloadOperationsQuery } from '../../queries/browse';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
+import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import { updateTokens } from '../../state/tokensSlice';
 import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getTriggerNodeId } from '../../utils/graph';
-import { getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
+import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
@@ -165,12 +165,27 @@ export const getOutputParametersFromManifest = (
   splitOnValue?: string
 ): NodeOutputsWithDependencies => {
   let manifestToParse = manifest;
+  let originalOutputs: Record<string, OutputInfo> | undefined;
 
   if (manifest.properties.outputsSchema) {
     manifestToParse = getUpdatedManifestForSchemaDependency(manifest, inputs);
   }
 
   if (isTrigger) {
+    const originalOperationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
+      true /* includeParentObject */,
+      Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
+      false /* expandOneOf */,
+      undefined /* data */,
+      true /* selectAllOneOfSchemas */
+    );
+    originalOutputs = Object.values(originalOperationOutputs).reduce((result: Record<string, OutputInfo>, output: SchemaProperty) => {
+      return {
+        ...result,
+        [output.key]: toOutputInfo(output),
+      };
+    }, {});
+
     manifestToParse = getUpdatedManifestForSpiltOn(manifestToParse, splitOnValue);
   }
 
@@ -224,7 +239,10 @@ export const getOutputParametersFromManifest = (
     }
   }
 
-  return { outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs }, dependencies };
+  return {
+    outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs, originalOutputs },
+    dependencies,
+  };
 };
 
 export const updateOutputsAndTokens = async (
@@ -233,7 +251,8 @@ export const updateOutputsAndTokens = async (
   dispatch: Dispatch,
   isTrigger: boolean,
   inputs: NodeInputs,
-  settings: Settings
+  settings: Settings,
+  shouldProcessSettings = false
 ): Promise<void> => {
   const { type, kind, connectorId } = operationInfo;
   const supportsManifest = OperationManifestService().isSupported(type, kind);
@@ -255,7 +274,7 @@ export const updateOutputsAndTokens = async (
     ];
   } else {
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-    nodeOutputs = getOutputParametersFromSwagger(parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
+    nodeOutputs = getOutputParametersFromSwagger(isTrigger, parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
     tokens = convertOutputsToTokens(
       isTrigger ? undefined : nodeId,
       type,
@@ -267,6 +286,14 @@ export const updateOutputsAndTokens = async (
 
   dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
   dispatch(updateTokens({ id: nodeId, tokens }));
+
+  // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
+  if (shouldProcessSettings && isTrigger) {
+    const isSplitOnSupported = getSplitOnOptions(nodeOutputs).length > 0;
+    if (settings.splitOn?.isSupported !== isSplitOnSupported) {
+      dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
+    }
+  }
 };
 
 export const getInputDependencies = (nodeInputs: NodeInputs, allInputs: InputParameter[]): Record<string, DependencyInfo> => {
