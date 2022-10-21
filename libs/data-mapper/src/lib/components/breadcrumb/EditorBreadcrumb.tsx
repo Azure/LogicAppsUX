@@ -24,11 +24,9 @@ const baseBreadcrumbStyles = {
 const useStyles = makeStyles({
   codeIcon: {
     color: tokens.colorBrandForeground1,
-    ':disabled': {
-      color: tokens.colorNeutralForegroundDisabled,
-    },
   },
 });
+
 interface EditorBreadcrumbProps {
   isCodeViewOpen: boolean;
   setIsCodeViewOpen: (isOpen: boolean) => void;
@@ -41,6 +39,16 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
   const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
   const styles = useStyles();
 
+  const showCodeLoc = intl.formatMessage({
+    defaultMessage: 'Show code',
+    description: 'Button to display the code view',
+  });
+
+  const hideCodeLoc = intl.formatMessage({
+    defaultMessage: 'Hide code',
+    description: 'Button to hide the code view',
+  });
+
   const breadcrumbItems = useMemo<IBreadcrumbItem[]>(() => {
     if (targetSchema) {
       return convertToBreadcrumbItems(dispatch, targetSchema, currentTargetNode);
@@ -49,10 +57,9 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
     return [];
   }, [dispatch, targetSchema, currentTargetNode]);
 
-  return breadcrumbItems.length < 1 ? (
-    // Breadcrumb doesn't display when empty, this is a breadcrumb space placeholder
-    <div style={{ ...baseBreadcrumbStyles }}></div>
-  ) : (
+  const isCodeViewButtonDisabled = useMemo<boolean>(() => breadcrumbItems.length === 0, [breadcrumbItems]);
+
+  return (
     <div
       style={{
         ...baseBreadcrumbStyles,
@@ -76,15 +83,18 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
       <Button
         appearance="subtle"
         size="medium"
-        icon={<Code20Regular className={styles.codeIcon} />}
+        icon={
+          <Code20Regular
+            className={styles.codeIcon}
+            style={isCodeViewButtonDisabled ? { color: tokens.colorNeutralForegroundDisabled } : undefined}
+          />
+        }
         onClick={() => {
           setIsCodeViewOpen(!isCodeViewOpen);
         }}
+        disabled={isCodeViewButtonDisabled}
       >
-        {intl.formatMessage({
-          defaultMessage: 'Show code view',
-          description: 'Button to display the code view',
-        })}
+        {isCodeViewOpen ? hideCodeLoc : showCodeLoc}
       </Button>
     </div>
   );
