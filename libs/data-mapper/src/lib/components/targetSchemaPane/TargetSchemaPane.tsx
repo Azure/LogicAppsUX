@@ -138,12 +138,23 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
           icon={isExpanded ? <ChevronDoubleRight20Regular /> : <ChevronDoubleLeft20Regular />}
           size="medium"
           appearance="transparent"
-          style={{ color: tokens.colorNeutralForeground2 }}
+          style={{ color: !targetSchema ? tokens.colorNeutralForegroundDisabled : tokens.colorNeutralForeground2 }}
           onClick={() => setIsExpanded(!isExpanded)}
           disabled={!targetSchema}
         />
 
-        <Text className={styles.title} style={!isExpanded ? { writingMode: 'vertical-lr', marginTop: tokens.spacingVerticalS } : undefined}>
+        <Text
+          className={styles.title}
+          style={
+            !isExpanded
+              ? {
+                  writingMode: 'vertical-lr',
+                  marginTop: tokens.spacingVerticalS,
+                  color: !targetSchema ? tokens.colorNeutralForegroundDisabled : undefined,
+                }
+              : undefined
+          }
+        >
           {targetSchemaLoc}
         </Text>
 
