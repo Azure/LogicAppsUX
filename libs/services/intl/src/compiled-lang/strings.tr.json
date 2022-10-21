@@ -1382,7 +1382,7 @@
   "BoMvF2": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "Daralt"
     }
   ],
   "BuYrD3": [
@@ -1784,7 +1784,7 @@
   "GdGm4T": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "Diğer komutlar"
     }
   ],
   "Gi72X5": [
@@ -2500,7 +2500,7 @@
   "OL5S5H": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "Özel değer girin"
     }
   ],
   "OOUSLP": [
@@ -2536,7 +2536,7 @@
   "OdNhwc": [
     {
       "type": 0,
-      "value": "Ungroup"
+      "value": "Grubu çöz"
     }
   ],
   "Oib1mL": [
@@ -2740,7 +2740,7 @@
   "QGbUXX": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "Durum kodu"
     }
   ],
   "QQYzHC": [
@@ -3732,7 +3732,7 @@
   "bGtEPd": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "Sil"
     }
   ],
   "bIyTi7": [
@@ -4149,6 +4149,20 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -4768,7 +4782,7 @@
   "lZT0JI": [
     {
       "type": 0,
-      "value": "Add Group"
+      "value": "Grup Ekle"
     }
   ],
   "lcVG4C": [
@@ -5058,7 +5072,7 @@
   "odQ554": [
     {
       "type": 0,
-      "value": "Response body"
+      "value": "Yanıt gövdesi"
     }
   ],
   "ol+TkT": [
@@ -5934,7 +5948,7 @@
   "xLF2Zr": [
     {
       "type": 0,
-      "value": "Add Row"
+      "value": "Satır Ekle"
     }
   ],
   "xN3GEX": [
@@ -6036,7 +6050,7 @@
   "ydqOly": [
     {
       "type": 0,
-      "value": "Choose a value"
+      "value": "Bir değer seçin"
     }
   ],
   "yoCi15": [
