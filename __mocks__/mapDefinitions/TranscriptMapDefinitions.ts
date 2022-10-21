@@ -1,4 +1,4 @@
-export const simplePassthroughMapDefinition = `$version: '1.0'
+export const demoScriptMapDefinition = `$version: '1.0'
 $input: XML
 $output: XML
 $sourceSchema: Source.xsd
@@ -14,4 +14,7 @@ ns0:Root:
   DirectTranslation:
     Employee:
       ID: /ns0:Root/DirectTranslation/EmployeeID
-      Name: /ns0:Root/DirectTranslation/EmployeeName`;
+      Name: concat(EmployeeName, string(EmployeeID))
+  ContentEnrich:
+    DateOfDemo: current-date()
+`;
