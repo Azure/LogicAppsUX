@@ -1,9 +1,9 @@
 import { SettingsSection } from '../settingsection';
-import type { SettingSectionProps } from '../settingsection';
+import type { SettingsSectionProps } from '../settingsection';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('ui/settings/settingsection', () => {
-  let minimal: SettingSectionProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: SettingsSectionProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {
@@ -104,7 +104,7 @@ describe('ui/settings/settingsection', () => {
   });
 
   it('should have child section when expanded', () => {
-    const props: SettingSectionProps = { ...minimal, expanded: true };
+    const props: SettingsSectionProps = { ...minimal, expanded: true };
     renderer.render(<SettingsSection {...props} />);
 
     const settingSection = renderer.getRenderOutput();

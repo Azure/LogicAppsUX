@@ -77,7 +77,7 @@ const RenderedComponent = (props: ComponentProps) => (
             resourceGroup: '',
             location: '',
           }),
-          workflowService: { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) }
+          workflowService: { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) },
         },
       }}
     >

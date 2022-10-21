@@ -1,4 +1,4 @@
-import type { SettingSectionProps } from './settingsection';
+import type { SettingsSectionProps } from './settingsection';
 import { SettingsSection } from './settingsection';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 
@@ -6,7 +6,7 @@ export default {
   component: SettingsSection,
   title: 'Components/Settings',
 } as ComponentMeta<typeof SettingsSection>;
-const Template: ComponentStory<typeof SettingsSection> = (args: SettingSectionProps) => <SettingsSection {...args} />;
+const Template: ComponentStory<typeof SettingsSection> = (args: SettingsSectionProps) => <SettingsSection {...args} />;
 
 export const settingSection = Template.bind({});
 settingSection.args = {
