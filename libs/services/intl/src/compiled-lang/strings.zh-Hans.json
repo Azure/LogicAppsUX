@@ -1412,7 +1412,7 @@
   "BoMvF2": [
     {
       "type": 0,
-      "value": "Collapse"
+      "value": "折叠"
     }
   ],
   "BuYrD3": [
@@ -1807,7 +1807,7 @@
   "GdGm4T": [
     {
       "type": 0,
-      "value": "More commands"
+      "value": "更多命令"
     }
   ],
   "Gi72X5": [
@@ -2564,7 +2564,7 @@
   "OL5S5H": [
     {
       "type": 0,
-      "value": "Enter custom value"
+      "value": "输入自定义值"
     }
   ],
   "OOUSLP": [
@@ -2600,7 +2600,7 @@
   "OdNhwc": [
     {
       "type": 0,
-      "value": "Ungroup"
+      "value": "取消组合"
     }
   ],
   "Oib1mL": [
@@ -2804,7 +2804,7 @@
   "QGbUXX": [
     {
       "type": 0,
-      "value": "Status code"
+      "value": "状态代码"
     }
   ],
   "QQYzHC": [
@@ -3805,7 +3805,7 @@
   "bGtEPd": [
     {
       "type": 0,
-      "value": "Delete"
+      "value": "删除"
     }
   ],
   "bIyTi7": [
@@ -4230,6 +4230,20 @@
     {
       "type": 0,
       "value": "(UTC+04:00)路易港"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -4870,7 +4884,7 @@
   "lZT0JI": [
     {
       "type": 0,
-      "value": "Add Group"
+      "value": "添加组"
     }
   ],
   "lcVG4C": [
@@ -5168,7 +5182,7 @@
   "odQ554": [
     {
       "type": 0,
-      "value": "Response body"
+      "value": "响应正文"
     }
   ],
   "ol+TkT": [
@@ -6061,7 +6075,7 @@
   "xLF2Zr": [
     {
       "type": 0,
-      "value": "Add Row"
+      "value": "添加行"
     }
   ],
   "xN3GEX": [
@@ -6163,7 +6177,7 @@
   "ydqOly": [
     {
       "type": 0,
-      "value": "Choose a value"
+      "value": "选择一个值"
     }
   ],
   "yoCi15": [
