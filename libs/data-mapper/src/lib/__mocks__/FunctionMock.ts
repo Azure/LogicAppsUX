@@ -1,6 +1,6 @@
-import { NormalizedDataType } from '../../../models';
-import type { FunctionData } from '../../../models/Function';
-import { FunctionCategory } from '../../../models/Function';
+import { NormalizedDataType } from '../models';
+import type { FunctionData } from '../models/Function';
+import { FunctionCategory } from '../models/Function';
 
 export const concatFunction: FunctionData = {
   key: 'Concat',

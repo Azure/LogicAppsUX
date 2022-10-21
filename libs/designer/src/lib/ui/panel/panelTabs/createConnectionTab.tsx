@@ -6,17 +6,20 @@ import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../co
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
 import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useCallback, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CreateConnectionTab = () => {
   const dispatch = useDispatch<AppDispatch>();
 
+  const intl = useIntl();
   const nodeId: string = useSelectedNodeId();
   const connector = useConnectorByNodeId(nodeId);
   const operationInfo = useOperationInfo(nodeId);
@@ -133,8 +136,17 @@ const CreateConnectionTab = () => {
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
   }, [dispatch]);
 
-  // By the time you get to this component, there should always be a connector associated
-  if (connector?.properties === undefined) return <p></p>;
+  const loadingText = intl.formatMessage({
+    defaultMessage: 'Loading connection data...',
+    description: 'Message to show under the loading icon when loading connection parameters',
+  });
+
+  if (connector?.properties === undefined)
+    return (
+      <div className="msla-loading-container">
+        <Spinner size={SpinnerSize.large} label={loadingText} />
+      </div>
+    );
 
   return (
     <CreateConnection

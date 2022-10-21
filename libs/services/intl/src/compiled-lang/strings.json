@@ -5,6 +5,12 @@
       "value": "Invalid properties {0} for authentication type {1}."
     }
   ],
+  "+3efoo": [
+    {
+      "type": 0,
+      "value": "No schema is added"
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -357,12 +363,6 @@
       "value": "Specify one or more expressions which must be true for the trigger to fire."
     }
   ],
-  "1X4U/1": [
-    {
-      "type": 0,
-      "value": "Show code view"
-    }
-  ],
   "1ZDLZA": [
     {
       "type": 0,
@@ -393,10 +393,22 @@
       "value": "Required. The object to check if it is less than value being compared to."
     }
   ],
+  "1nODUD": [
+    {
+      "type": 0,
+      "value": "Hide functions"
+    }
+  ],
   "1nvvw1": [
     {
       "type": 0,
       "value": "Enter the value of the Authorization header"
+    }
+  ],
+  "1pjO9s": [
+    {
+      "type": 0,
+      "value": "Hide source schema"
     }
   ],
   "1uGBLP": [
@@ -723,6 +735,12 @@
       "value": "Required. The unit of time specified in the interval."
     }
   ],
+  "4aaixN": [
+    {
+      "type": 0,
+      "value": "Tour"
+    }
+  ],
   "4c0uPQ": [
     {
       "type": 0,
@@ -759,12 +777,6 @@
       "value": "Service request ID"
     }
   ],
-  "4wavwk": [
-    {
-      "type": 0,
-      "value": "Tour/Tutorial"
-    }
-  ],
   "4wjJs0": [
     {
       "type": 0,
@@ -781,12 +793,6 @@
     {
       "type": 0,
       "value": "Required. The XPath expression to evaluate."
-    }
-  ],
-  "5P8UWJ": [
-    {
-      "type": 0,
-      "value": "Select a source schema"
     }
   ],
   "5SAQOb": [
@@ -939,6 +945,12 @@
     {
       "type": 0,
       "value": "Required. The string from which the substring is taken."
+    }
+  ],
+  "7WVgiU": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "7ZR1xr": [
@@ -1439,6 +1451,12 @@
       "value": "Returns the path and query from a URI"
     }
   ],
+  "D/xTXV": [
+    {
+      "type": 0,
+      "value": "Show source schema"
+    }
+  ],
   "D1lgsT": [
     {
       "type": 0,
@@ -1479,6 +1497,12 @@
     {
       "type": 0,
       "value": "(UTC-10:00) Aleutian Islands"
+    }
+  ],
+  "Dhu3IS": [
+    {
+      "type": 0,
+      "value": "Show mini-map"
     }
   ],
   "DsPDVB": [
@@ -1737,12 +1761,6 @@
       "value": "Status"
     }
   ],
-  "FuXqJI": [
-    {
-      "type": 0,
-      "value": "Update target schema"
-    }
-  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1845,6 +1863,12 @@
       "value": "Required. The number that Subtrahend is removed from."
     }
   ],
+  "HBWyxc": [
+    {
+      "type": 0,
+      "value": "Pencil icon"
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -1919,6 +1943,12 @@
     {
       "type": 0,
       "value": "Converts a string timestamp passed in from a UTC to a target time zone"
+    }
+  ],
+  "IXy91L": [
+    {
+      "type": 0,
+      "value": "Add a target schema"
     }
   ],
   "Ie4sUt": [
@@ -2339,6 +2369,12 @@
       "value": "Next failed"
     }
   ],
+  "MirIsS": [
+    {
+      "type": 0,
+      "value": "Show code"
+    }
+  ],
   "MmBfD1": [
     {
       "type": 0,
@@ -2707,6 +2743,12 @@
       "value": "Do not generate if no value"
     }
   ],
+  "PvWTxR": [
+    {
+      "type": 0,
+      "value": "Show functions"
+    }
+  ],
   "Pvm0xB": [
     {
       "type": 0,
@@ -2811,6 +2853,12 @@
       "value": "Returns a string in date format"
     }
   ],
+  "QnPHOB": [
+    {
+      "type": 0,
+      "value": "Add target schema"
+    }
+  ],
   "QpRRt3": [
     {
       "type": 0,
@@ -2867,6 +2915,12 @@
     {
       "type": 0,
       "value": "Switch to input entire array"
+    }
+  ],
+  "RZO5Ic": [
+    {
+      "type": 0,
+      "value": "Add or replace your schemas."
     }
   ],
   "RhH4pF": [
@@ -3163,6 +3217,12 @@
       "value": "Replaces a string with a given string"
     }
   ],
+  "UR1CS5": [
+    {
+      "type": 0,
+      "value": "Hide code"
+    }
+  ],
   "USVffu": [
     {
       "type": 0,
@@ -3177,6 +3237,12 @@
     {
       "type": 0,
       "value": " (file name)"
+    }
+  ],
+  "UnrrzF": [
+    {
+      "type": 0,
+      "value": "Source schema"
     }
   ],
   "Ur+wph": [
@@ -3333,12 +3399,6 @@
     {
       "type": 0,
       "value": "Required. The first integer in the array."
-    }
-  ],
-  "WTTJ89": [
-    {
-      "type": 0,
-      "value": "Select a target schema"
     }
   ],
   "WUe3DY": [
@@ -3685,12 +3745,6 @@
       "value": "Data Handling"
     }
   ],
-  "aL0Uut": [
-    {
-      "type": 0,
-      "value": "Function"
-    }
-  ],
   "aRKDWL": [
     {
       "type": 0,
@@ -3793,6 +3847,12 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
+  "brtCAE": [
+    {
+      "type": 0,
+      "value": "Add source schema"
+    }
+  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -3857,12 +3917,6 @@
       "value": "Dynamic content may also be added from other sources."
     }
   ],
-  "cCYmTK": [
-    {
-      "type": 0,
-      "value": "Configuration"
-    }
-  ],
   "cJm+ah": [
     {
       "type": 0,
@@ -3885,12 +3939,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Tripoli"
-    }
-  ],
-  "cbL6Gv": [
-    {
-      "type": 0,
-      "value": "Add or replace your schemas."
     }
   ],
   "cgq/+y": [
@@ -3989,12 +4037,6 @@
       "value": "Secure inputs of the operation."
     }
   ],
-  "dWeRGU": [
-    {
-      "type": 0,
-      "value": "pencil icon"
-    }
-  ],
   "dWx21B": [
     {
       "type": 0,
@@ -4061,12 +4103,6 @@
     {
       "type": 0,
       "value": "Not specified"
-    }
-  ],
-  "eCkaMR": [
-    {
-      "type": 0,
-      "value": "Update source schema"
     }
   ],
   "eGa1Wa": [
@@ -4159,16 +4195,16 @@
       "value": "Paging count exceeds maximum value"
     }
   ],
-  "fLSetk": [
-    {
-      "type": 0,
-      "value": "Source schema"
-    }
-  ],
   "faSDuD": [
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "Loading connection data..."
     }
   ],
   "fc1AV8": [
@@ -4599,6 +4635,18 @@
       "value": "Required. The value that is converted to a string."
     }
   ],
+  "jQjteB": [
+    {
+      "type": 0,
+      "value": "Add a source schema"
+    }
+  ],
+  "jUDhbs": [
+    {
+      "type": 0,
+      "value": "Target schema"
+    }
+  ],
   "jVpanH": [
     {
       "type": 0,
@@ -4627,12 +4675,6 @@
     {
       "type": 0,
       "value": "Unsupported manifest connection reference format: {referenceKeyFormat}"
-    }
-  ],
-  "jsEMSu": [
-    {
-      "type": 0,
-      "value": "Toolbox"
     }
   ],
   "juR40n": [
@@ -4699,12 +4741,6 @@
     {
       "type": 0,
       "value": "Returns a string representation of an input based64 string"
-    }
-  ],
-  "kV/U0C": [
-    {
-      "type": 0,
-      "value": "Display mini map"
     }
   ],
   "kYivbS": [
@@ -5067,6 +5103,12 @@
     {
       "type": 1,
       "value": "max_page"
+    }
+  ],
+  "o3SfI4": [
+    {
+      "type": 0,
+      "value": "Zoom to fit"
     }
   ],
   "oAFcW6": [
@@ -5865,12 +5907,6 @@
       "value": "Sunday"
     }
   ],
-  "w9OL8U": [
-    {
-      "type": 0,
-      "value": "Page fit"
-    }
-  ],
   "wEaGWn": [
     {
       "type": 0,
@@ -5929,6 +5965,12 @@
     {
       "type": 0,
       "value": "Returns a specified value based on whether the expression resulted in true or false"
+    }
+  ],
+  "wl7X0l": [
+    {
+      "type": 0,
+      "value": "Hide mini-map"
     }
   ],
   "wmDUGV": [
@@ -6151,12 +6193,6 @@
     {
       "type": 0,
       "value": "Enter value"
-    }
-  ],
-  "zGRgUE": [
-    {
-      "type": 0,
-      "value": "Target schema"
     }
   ],
   "zIDVd9": [

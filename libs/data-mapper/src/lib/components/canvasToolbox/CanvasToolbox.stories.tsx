@@ -5,7 +5,7 @@ import React from 'react';
 
 export default {
   component: CanvasToolbox,
-  title: 'Data Mapper Component/Floaties/Canvas Toolbox',
+  title: 'Data Mapper Components/Floaties/Canvas Toolbox',
 } as ComponentMeta<typeof CanvasToolbox>;
 
 export const Standard: ComponentStory<typeof CanvasToolbox> = (args: CanvasToolboxProps) => <CanvasToolbox {...args} />;

@@ -5,7 +5,7 @@ import { getOperationManifest } from '../../queries/operation';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
-import { isolateTab, switchToOperationPanel } from '../../state/panel/panelSlice';
+import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
@@ -81,7 +81,8 @@ const initializeOperationDetails = async (
   let isConnectionRequired = true;
   const operationManifestService = OperationManifestService();
 
-  dispatch(switchToOperationPanel(nodeId));
+  dispatch(changePanelNode(nodeId));
+  dispatch(isolateTab(Constants.PANEL_TAB_NAMES.LOADING));
 
   let initData: NodeData;
   if (operationManifestService.isSupported(type)) {
@@ -130,19 +131,23 @@ const initializeOperationDetails = async (
     );
   }
 
-  return !isConnectionRequired
-    ? loadDynamicData(
-        nodeId,
-        isTrigger,
-        operationInfo,
-        undefined,
-        initData.nodeDependencies,
-        initData.nodeInputs,
-        initData.settings as Settings,
-        getAllVariables(getState().tokens.variables),
-        dispatch
-      )
-    : trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+  if (!isConnectionRequired) {
+    loadDynamicData(
+      nodeId,
+      isTrigger,
+      operationInfo,
+      undefined,
+      initData.nodeDependencies,
+      initData.nodeInputs,
+      initData.settings as Settings,
+      getAllVariables(getState().tokens.variables),
+      dispatch
+    );
+  } else {
+    await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+  }
+
+  dispatch(showDefaultTabs());
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
@@ -203,8 +208,6 @@ export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId
   } else {
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
-
-  dispatch(switchToOperationPanel(nodeId));
 };
 
 export const addTokensAndVariables = (
