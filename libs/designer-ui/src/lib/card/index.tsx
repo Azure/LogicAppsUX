@@ -81,12 +81,13 @@ export const Card: React.FC<CardProps> = ({
   const contextMenu = useCardContextMenu();
 
   const cardIcon = isLoading ? (
-    <Spinner className="msla-card-header-spinner" size={SpinnerSize.small} />
+    <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
   ) : icon ? (
-    <div className="panel-card-content-icon-section">
-      <img className="panel-card-icon" src={icon} alt="" />
-    </div>
-  ) : null;
+    <img className="panel-card-icon" src={icon} alt="" />
+  ) : (
+    // There is some race condition where the icon is not available yet but the loading state is off
+    <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
+  );
 
   return (
     <div ref={dragPreview} style={{ position: 'relative' }}>
@@ -115,7 +116,7 @@ export const Card: React.FC<CardProps> = ({
           <div className="panel-card-header" role="button">
             <div className="panel-card-content-container">
               <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
-              {cardIcon}
+              <div className="panel-card-content-icon-section">{cardIcon}</div>
               <div className="panel-card-top-content">
                 <div className="panel-msla-title">{title}</div>
               </div>
