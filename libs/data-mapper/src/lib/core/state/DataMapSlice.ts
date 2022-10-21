@@ -10,7 +10,7 @@ import {
   flattenInputs,
   isConnectionUnit,
   isCustomValue,
-  nodeHasSpecificSourceNodeEventually,
+  nodeHasSpecificInputEventually,
   updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
 import {
@@ -330,7 +330,7 @@ export const dataMapSlice = createSlice({
           const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaTypes.Target);
           if (
             parentSourceNode.properties === SchemaNodeProperties.Repeating &&
-            !nodeHasSpecificSourceNodeEventually(
+            !nodeHasSpecificInputEventually(
               prefixedSourceKey,
               newState.dataMapConnections[prefixedTargetKey],
               newState.dataMapConnections,
