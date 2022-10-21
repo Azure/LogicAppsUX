@@ -70,7 +70,7 @@ export const App = () => {
           searchService,
           oAuthService,
           gatewayService,
-          workflowService
+          workflowService,
         },
       }}
     >

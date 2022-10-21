@@ -22,8 +22,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
-// eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ReactFlowProvider, useNodes, useReactFlow, useStore } from 'reactflow';
+import { ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { NodeChange } from 'reactflow';
 
 export interface DesignerProps {
@@ -46,7 +45,7 @@ const nodeTypes: NodeTypesObj = {
 const edgeTypes = {
   BUTTON_EDGE: ButtonEdge,
   HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
-  // ONLY_EDGE: undefined,
+  ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
   HIDDEN_EDGE: HiddenEdge,
 };
 export const CanvasFinder = () => {

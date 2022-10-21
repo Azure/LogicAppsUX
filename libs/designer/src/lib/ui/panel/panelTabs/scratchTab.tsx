@@ -4,6 +4,9 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { OutputToken, PanelTab, ValueSegment } from '@microsoft/designer-ui';
 import {
+  DictionaryEditor,
+  TokenType,
+  GroupType,
   GroupDropdownOptions,
   QueryBuilderEditor, // DictionaryType, // EditorLanguage,
   ValueSegmentType, // CodeEditor, // HTMLEditor,
@@ -16,6 +19,7 @@ import {
   // DropdownEditor,
   outputToken,
   outputToken2,
+  RowDropdownOptions,
 } from '@microsoft/designer-ui';
 
 const testTokenGroup: TokenGroup[] = [
@@ -82,16 +86,24 @@ export const ScratchTab = () => {
           getTokenPicker={GetTokenPicker}
           readonly={false}
           groupProps={{
-            type: 'group',
-            selectedOption: GroupDropdownOptions.OR,
+            type: GroupType.GROUP,
+            condition: GroupDropdownOptions.OR,
             items: [
-              { type: 'row', checked: true },
-              { type: 'row', key: [testTokenSegment], dropdownVal: 'islessthanorequal', value: [testTokenSegment] },
-              { type: 'group', checked: false, items: [] },
+              { type: GroupType.ROW, checked: true },
               {
-                type: 'group',
+                type: GroupType.ROW,
+                operand1: [testTokenSegment],
+                operator: RowDropdownOptions.LESSOREQUALS,
+                operand2: [testTokenSegment],
+              },
+              { type: GroupType.GROUP, checked: false, items: [] },
+              {
+                type: GroupType.GROUP,
                 checked: true,
-                items: [{ type: 'row' }, { type: 'group', checked: false, items: [{ type: 'row', key: [testTokenSegment] }] }],
+                items: [
+                  { type: GroupType.ROW },
+                  { type: GroupType.GROUP, checked: false, items: [{ type: GroupType.ROW, operand1: [testTokenSegment] }] },
+                ],
               },
             ],
           }}
@@ -228,7 +240,7 @@ export const ScratchTab = () => {
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
         /> */}
-        {/* <DictionaryEditor
+        <DictionaryEditor
           initialItems={[
             {
               key: [
@@ -293,8 +305,8 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
-          GetTokenPicker={GetTokenPicker}
-        /> */}
+          getTokenPicker={GetTokenPicker}
+        />
         {/* <DictionaryEditor
           initialItems={[
             {

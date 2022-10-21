@@ -59,7 +59,7 @@ describe('core/utils/parameters/tokensegment', () => {
 
     describe('triggerBody()', () => {
       it('should convert to token segment successfully.', () => {
-        const expression: ExpressionFunction = ExpressionParser.parseTemplateExpression('@triggerBody()');
+        const expression: ExpressionFunction = ExpressionParser.parseTemplateExpression('@triggerBody()') as ExpressionFunction;
         const tokenSegment = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression as ExpressionFunction);
         expectOutputTokenSegment(tokenSegment, undefined, OutputSource.Body, OutputKeys.Body, 'outputs.$.body', undefined, false);
       });
@@ -72,7 +72,7 @@ describe('core/utils/parameters/tokensegment', () => {
 
       it('should convert to token segment successfully when having dereferences which contains special characters.', () => {
         const expression1 = ExpressionParser.parseTemplateExpression("@triggerBody()['Account''AadTenantId']");
-        const tokenSegment1 = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression1);
+        const tokenSegment1 = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression1 as ExpressionFunction);
         expectOutputTokenSegment(
           tokenSegment1,
           undefined,
@@ -84,7 +84,7 @@ describe('core/utils/parameters/tokensegment', () => {
         );
 
         const expression2 = ExpressionParser.parseTemplateExpression("@triggerBody()['Account.AadUserId']");
-        const tokenSegment2 = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression2);
+        const tokenSegment2 = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression2 as ExpressionFunction);
         expectOutputTokenSegment(
           tokenSegment2,
           undefined,
@@ -96,7 +96,7 @@ describe('core/utils/parameters/tokensegment', () => {
         );
 
         const expression3 = ExpressionParser.parseTemplateExpression("@triggerBody()['Account\nAadUserId']");
-        const tokenSegment3 = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression3);
+        const tokenSegment3 = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression3 as ExpressionFunction);
         expectOutputTokenSegment(
           tokenSegment3,
           undefined,
@@ -110,7 +110,7 @@ describe('core/utils/parameters/tokensegment', () => {
 
       it('should convert to token segment successfully when having dereferences with optional markers.', () => {
         const expression1 = ExpressionParser.parseTemplateExpression("@triggerBody()['Account''AadTenantId']?['Account.?AadUserId']");
-        const tokenSegment1 = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression1);
+        const tokenSegment1 = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression1 as ExpressionFunction);
         expectOutputTokenSegment(
           tokenSegment1,
           undefined,
@@ -122,7 +122,7 @@ describe('core/utils/parameters/tokensegment', () => {
         );
 
         const expression2 = ExpressionParser.parseTemplateExpression("@triggerBody()?['Account''AadTenantId']['Account.?AadUserId']");
-        const tokenSegment2 = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression2);
+        const tokenSegment2 = new TokenSegmentConvertor().tryConvertToDynamicContentTokenSegment(expression2 as ExpressionFunction);
         expectOutputTokenSegment(
           tokenSegment2,
           undefined,

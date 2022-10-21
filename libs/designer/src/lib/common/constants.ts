@@ -174,6 +174,7 @@ export default {
     ARRAY: 'array',
     AUTHENTICATION: 'authentication',
     CODE: 'code',
+    CONDITION: 'condition',
     COPYABLE: 'copyable',
     DICTIONARY: 'dictionary',
     DROPDOWN: 'dropdown',

@@ -1,13 +1,16 @@
 import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
+import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import { notEqual } from '../dictionary/plugins/SerializeExpandedDictionary';
 import type { ValueSegment } from '../editor';
+import { ValueSegmentType } from '../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
 import { RowDropdown } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
+import { guid } from '@microsoft-logic-apps/utils';
 import { useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -22,11 +25,13 @@ const menuIconProps: IIconProps = {
   iconName: 'More',
 };
 
+const emptyValueSegmentArray: ValueSegment[] = [{ type: ValueSegmentType.LITERAL, value: '', id: guid() }];
+
 interface RowProps {
   checked?: boolean;
-  keyValue?: ValueSegment[];
-  valueValue?: ValueSegment[];
-  dropdownValue?: string;
+  operand1?: ValueSegment[];
+  operand2?: ValueSegment[];
+  operator?: string;
   index: number;
   showDisabledDelete?: boolean;
   isGroupable?: boolean;
@@ -41,9 +46,9 @@ interface RowProps {
 
 export const Row = ({
   checked = false,
-  keyValue = [],
-  valueValue = [],
-  dropdownValue,
+  operand1 = [],
+  operand2 = [],
+  operator,
   index,
   showDisabledDelete,
   isGroupable,
@@ -58,20 +63,19 @@ export const Row = ({
   const intl = useIntl();
   const keyEditorRef = useRef<HTMLDivElement | null>(null);
   const valueEditorRef = useRef<HTMLDivElement | null>(null);
-  const [key, setKey] = useState<ValueSegment[]>(keyValue);
+  const [key, setKey] = useState<ValueSegment[]>(operand1);
 
   const handleGroup = () => {
     handleUpdateParent(
       {
-        type: 'group',
+        type: GroupType.GROUP,
         checked: false,
-        items: groupedItems.map((groupedItem) => {
+        items: [...groupedItems].map((groupedItem) => {
           return groupedItem.item;
         }),
       },
       index
     );
-
     // Delete groupedItems not including current item
     handleDeleteChild?.(groupedItems.filter((item) => item.index !== index).map((item) => item.index));
   };
@@ -105,7 +109,7 @@ export const Row = ({
       },
       iconOnly: true,
       name: deleteButton,
-      onClick: handleDeleteChild,
+      onClick: () => handleDeleteChild?.(index),
     },
     // TODO: Allow Moving of Rows in querybuilder
     // {
@@ -142,7 +146,7 @@ export const Row = ({
   ];
 
   const handleKeyChange = (newState: ChangeState) => {
-    if (notEqual(keyValue, newState.value)) {
+    if (notEqual(operand1, newState.value)) {
       setKey(newState.value);
     }
     if (newState.value.length === 0) {
@@ -150,24 +154,51 @@ export const Row = ({
     }
   };
   const handleKeySave = (newState: ChangeState) => {
-    if (notEqual(keyValue, newState.value)) {
+    if (notEqual(operand1, newState.value)) {
       setKey(newState.value);
-      handleUpdateParent({ type: 'row', checked: checked, key: newState.value, dropdownVal: dropdownValue, value: valueValue }, index);
+      handleUpdateParent(
+        {
+          type: GroupType.ROW,
+          checked: checked,
+          operand1: newState.value,
+          operator: operator ?? 'equals',
+          operand2: operandNotEmpty(operand2) ? operand2 : emptyValueSegmentArray,
+        },
+        index
+      );
     }
   };
 
   const handleSelectedOption = (newState: ChangeState) => {
-    handleUpdateParent({ type: 'row', checked: checked, key: keyValue, dropdownVal: newState.value[0].value, value: valueValue }, index);
+    handleUpdateParent(
+      {
+        type: GroupType.ROW,
+        checked: checked,
+        operand1: operandNotEmpty(operand1) ? operand1 : emptyValueSegmentArray,
+        operator: newState.value[0].value,
+        operand2: operandNotEmpty(operand2) ? operand2 : emptyValueSegmentArray,
+      },
+      index
+    );
   };
 
   const handleValueSave = (newState: ChangeState) => {
-    if (notEqual(valueValue, newState.value)) {
-      handleUpdateParent({ type: 'row', checked: checked, key: keyValue, dropdownVal: dropdownValue, value: newState.value }, index);
+    if (notEqual(operand2, newState.value)) {
+      handleUpdateParent(
+        {
+          type: GroupType.ROW,
+          checked: checked,
+          operand1: operandNotEmpty(operand1) ? operand1 : emptyValueSegmentArray,
+          operator: operator ?? 'equals',
+          operand2: newState.value,
+        },
+        index
+      );
     }
   };
 
   const handleCheckbox = () => {
-    handleUpdateParent({ type: 'row', checked: !checked, key: keyValue, dropdownVal: dropdownValue, value: valueValue }, index);
+    handleUpdateParent({ type: GroupType.ROW, checked: !checked, operand1: operand1, operator: operator, operand2: operand2 }, index);
   };
 
   const onRenderOverflowButton = (): JSX.Element => {
@@ -208,7 +239,7 @@ export const Row = ({
         <div ref={keyEditorRef}>
           <StringEditor
             className={'msla-querybuilder-row-value-input'}
-            initialValue={keyValue}
+            initialValue={operand1}
             placeholder={rowValueInputPlaceholder}
             singleLine={true}
             onChange={handleKeyChange}
@@ -217,12 +248,12 @@ export const Row = ({
             tokenPickerButtonProps={{ customButton: true }}
           />
         </div>
-        <RowDropdown disabled={key.length === 0} selectedOption={dropdownValue} onChange={handleSelectedOption} key={dropdownValue} />
+        <RowDropdown disabled={key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <div ref={valueEditorRef}>
           <StringEditor
             readonly={key.length === 0}
             className={'msla-querybuilder-row-value-input'}
-            initialValue={valueValue}
+            initialValue={operand2}
             placeholder={rowValueInputPlaceholder}
             singleLine={true}
             getTokenPicker={getTokenPicker}
@@ -243,4 +274,8 @@ export const Row = ({
       />
     </div>
   );
+};
+
+const operandNotEmpty = (valSeg: ValueSegment[]): boolean => {
+  return valSeg.length > 0;
 };

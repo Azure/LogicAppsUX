@@ -1,7 +1,7 @@
 import type { SectionProps, ToggleHandler } from '..';
 import constants from '../../../common/constants';
 import { SettingLabel, SettingsSection } from '../settingsection';
-import type { SettingSectionProps } from '../settingsection';
+import type { SettingsSectionProps } from '../settingsection';
 import { useIntl } from 'react-intl';
 
 export interface DataHandlingSectionProps extends SectionProps {
@@ -44,7 +44,7 @@ export const DataHandling = ({
     description: 'label when setting is off',
   });
 
-  const dataHandlingSectionProps: SettingSectionProps = {
+  const dataHandlingSectionProps: SettingsSectionProps = {
     id: 'dataHandling',
     title: dataHandlingTitle,
     expanded,

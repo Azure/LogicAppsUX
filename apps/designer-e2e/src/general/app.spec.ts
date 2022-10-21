@@ -14,7 +14,6 @@ test('Sanity Check', async ({ page }) => {
   await page.locator('[data-testid="card-Increment variable"] div[role="button"]:has-text("Increment variable")').click();
   await page.locator('p:has-text("1")').click();
   await page.locator('button:has-text("Body")').click();
-  await page.locator('text=Collapse/ExpandMore commands Parameters About Code View Settings ScratchNAMEt').click();
   await page.locator('button[role="tab"]:has-text("About")').click();
   await page.locator('button[role="tab"]:has-text("Code View")').click();
   await page.locator('button[role="tab"]:has-text("Settings")').click();
