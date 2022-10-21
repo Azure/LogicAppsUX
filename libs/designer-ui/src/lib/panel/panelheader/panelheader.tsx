@@ -125,7 +125,12 @@ export const PanelHeader = ({
     <Spinner size={SpinnerSize.small} />
   ) : cardIcon ? (
     <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" />
-  ) : null;
+  ) : (
+    // Need placeholder for icon here
+    <div className="msla-panel-card-icon">
+      <Spinner size={SpinnerSize.large} style={{ padding: '2px' }} />
+    </div>
+  );
 
   const getPanelHeaderMenu = (): JSX.Element => {
     const panelHeaderMenuItems = panelHeaderMenu.map((item) => ({

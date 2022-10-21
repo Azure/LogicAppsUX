@@ -4,7 +4,7 @@ import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode } from '../../core/state/panel/panelSlice';
+import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
   useBrandColor,
   useIconUri,
@@ -74,7 +74,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
-  const nodeClick = useCallback(() => dispatch(changePanelNode(id)), [dispatch, id]);
+  const nodeClick = useCallback(() => {
+    dispatch(changePanelNode(id));
+    dispatch(showDefaultTabs());
+  }, [dispatch, id]);
 
   const brandColorResult = useBrandColor(operationInfo);
   const iconUriResult = useIconUri(operationInfo);
@@ -123,6 +126,11 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
+  const isLoading = useMemo(
+    () => iconUriResult.isLoading || brandColorResult.isLoading || connectionResult.isLoading,
+    [iconUriResult, brandColorResult, connectionResult]
+  );
+
   return (
     <>
       <div className="nopan">
@@ -139,7 +147,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           drag={drag}
           dragPreview={dragPreview}
           isDragging={isDragging}
-          isLoading={iconUriResult.isLoading}
+          isLoading={isLoading}
           isMonitoringView={isMonitoringView}
           readOnly={readOnly}
           onClick={nodeClick}

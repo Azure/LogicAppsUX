@@ -4171,6 +4171,12 @@
       "value": "(UTC+04:00) Port Louis"
     }
   ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "Loading connection data..."
+    }
+  ],
   "fg/34o": [
     {
       "type": 0,

@@ -5,7 +5,7 @@ import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode } from '../../core/state/panel/panelSlice';
+import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import { useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import {
   useIsGraphCollapsed,
@@ -57,9 +57,11 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
         const subGraphManifest = { properties: { ...caseManifestData, iconUri: '', brandColor: '' } };
         initializeSwitchCaseFromManifest(newCaseId, subGraphManifest, dispatch);
         dispatch(changePanelNode(newCaseId));
+        dispatch(showDefaultTabs());
         dispatch(setFocusNode(newCaseId));
       } else {
         dispatch(changePanelNode(_id));
+        dispatch(showDefaultTabs());
       }
     },
     [dispatch, isAddCase, newCaseId, graphNode, operationInfo, subgraphId]

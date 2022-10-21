@@ -16,7 +16,6 @@ import {
   registerPanelTabs,
   selectPanelTab,
   setTabVisibility,
-  showDefaultTabs,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
@@ -24,6 +23,7 @@ import { deleteNode, replaceId, setNodeDescription } from '../../core/state/work
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
+import { loadingTab } from './panelTabs/loadingTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
@@ -62,7 +62,7 @@ export const PanelRoot = (): JSX.Element => {
   let showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, aboutTab, codeViewTab, SettingsTab, createConnectionTab, selectConnectionTab];
+    const tabs = [monitoringTab, parametersTab, aboutTab, codeViewTab, SettingsTab, createConnectionTab, selectConnectionTab, loadingTab];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
@@ -90,8 +90,6 @@ export const PanelRoot = (): JSX.Element => {
   useEffect(() => {
     if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
       dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
-    } else {
-      dispatch(showDefaultTabs());
     }
     dispatch(
       setTabVisibility({
@@ -100,15 +98,6 @@ export const PanelRoot = (): JSX.Element => {
       })
     );
   }, [dispatch, selectedNode, nodeMetaData, isMonitoringView]);
-
-  useEffect(() => {
-    dispatch(
-      setTabVisibility({
-        tabName: constants.PANEL_TAB_NAMES.PARAMETERS,
-        visible: isMonitoringView || operationInfo?.type !== 'Scope',
-      })
-    );
-  }, [dispatch, isMonitoringView, operationInfo]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
