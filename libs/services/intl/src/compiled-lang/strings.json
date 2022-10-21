@@ -357,12 +357,6 @@
       "value": "Specify one or more expressions which must be true for the trigger to fire."
     }
   ],
-  "1X4U/1": [
-    {
-      "type": 0,
-      "value": "Show code view"
-    }
-  ],
   "1ZDLZA": [
     {
       "type": 0,
@@ -2339,6 +2333,12 @@
       "value": "Next failed"
     }
   ],
+  "MirIsS": [
+    {
+      "type": 0,
+      "value": "Show code"
+    }
+  ],
   "MmBfD1": [
     {
       "type": 0,
@@ -3161,6 +3161,12 @@
     {
       "type": 0,
       "value": "Replaces a string with a given string"
+    }
+  ],
+  "UR1CS5": [
+    {
+      "type": 0,
+      "value": "Hide code"
     }
   ],
   "USVffu": [
