@@ -723,6 +723,12 @@
       "value": "Required. The unit of time specified in the interval."
     }
   ],
+  "4aaixN": [
+    {
+      "type": 0,
+      "value": "Tour"
+    }
+  ],
   "4c0uPQ": [
     {
       "type": 0,
@@ -757,12 +763,6 @@
     {
       "type": 0,
       "value": "Service request ID"
-    }
-  ],
-  "4wavwk": [
-    {
-      "type": 0,
-      "value": "Tour/Tutorial"
     }
   ],
   "4wjJs0": [
@@ -933,6 +933,12 @@
     {
       "type": 0,
       "value": "Required. The string from which the substring is taken."
+    }
+  ],
+  "7WVgiU": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "7ZR1xr": [
@@ -3855,12 +3861,6 @@
     {
       "type": 0,
       "value": "Dynamic content may also be added from other sources."
-    }
-  ],
-  "cCYmTK": [
-    {
-      "type": 0,
-      "value": "Configuration"
     }
   ],
   "cJm+ah": [
