@@ -5,7 +5,7 @@ import React from 'react';
 
 export default {
   component: Notification,
-  title: 'Data Mapper Component/Notification',
+  title: 'Data Mapper Components/Notification',
 } as ComponentMeta<typeof Notification>;
 
 export const Standard: ComponentStory<typeof Notification> = (args: NotificationProps) => <Notification {...args} />;
