@@ -23,6 +23,7 @@ const baseBreadcrumbStyles = {
 
 const useStyles = makeStyles({
   codeIcon: {
+    color: tokens.colorBrandForeground1,
     ':disabled': {
       color: tokens.colorNeutralForegroundDisabled,
     },
@@ -74,7 +75,6 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
       />
       <Button
         appearance="subtle"
-        shape="circular"
         size="medium"
         icon={<Code20Regular className={styles.codeIcon} />}
         onClick={() => {
