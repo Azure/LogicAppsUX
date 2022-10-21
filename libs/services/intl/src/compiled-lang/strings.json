@@ -4171,6 +4171,12 @@
       "value": "(UTC+04:00) Port Louis"
     }
   ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "Loading connection data..."
+    }
+  ],
   "fc1AV8": [
     {
       "type": 0,

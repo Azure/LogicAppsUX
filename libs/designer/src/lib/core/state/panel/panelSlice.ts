@@ -39,6 +39,7 @@ export const panelSlice = createSlice({
       if (state.collapsed) state.collapsed = false;
       state.selectedNode = action.payload;
       state.isDiscovery = false;
+      state.selectedOperationGroupId = '';
     },
     expandDiscoveryPanel: (
       state,
@@ -55,7 +56,6 @@ export const panelSlice = createSlice({
       state.selectedOperationGroupId = action.payload;
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
-      showDefaultTabs();
       state.selectedNode = action.payload;
       state.isDiscovery = false;
       state.selectedOperationGroupId = '';

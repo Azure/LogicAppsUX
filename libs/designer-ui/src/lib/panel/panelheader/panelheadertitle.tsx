@@ -3,7 +3,7 @@ import { handleOnEscapeDown } from './panelheader';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const titleTextFieldStyle: Partial<ITextFieldStyles> = {
@@ -34,8 +34,16 @@ export const PanelHeaderTitle = ({
 
   const titleTextFieldRef = React.createRef<ITextField>();
 
+  const [newTitleValue, setNewTitleValue] = useState(titleValue);
+  useEffect(() => setNewTitleValue(titleValue), [titleValue]);
+
   const onTitleChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    onChange(newValue || '');
+    if (newValue || '') onChange(newValue || '');
+    else setNewTitleValue(newValue || '');
+  };
+
+  const onTitleBlur = (): void => {
+    onChange(newTitleValue || '');
   };
 
   const readOnly = readOnlyMode || renameTitleDisabled;
@@ -43,6 +51,7 @@ export const PanelHeaderTitle = ({
     defaultMessage: 'Card Title',
     description: 'Label for the title for panel header card',
   });
+
   return (
     <TextField
       id={titleId}
@@ -53,8 +62,9 @@ export const PanelHeaderTitle = ({
       ariaLabel={panelHeaderCardTitle}
       maxLength={constants.PANEL.MAX_TITLE_LENGTH}
       borderless
-      value={titleValue}
+      value={newTitleValue}
       onChange={onTitleChange}
+      onBlur={onTitleBlur}
       onKeyDown={handleOnEscapeDown}
     />
   );

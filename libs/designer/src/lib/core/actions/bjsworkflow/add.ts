@@ -6,7 +6,7 @@ import { changeConnectionMapping } from '../../state/connection/connectionSlice'
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
-import { isolateTab, switchToOperationPanel } from '../../state/panel/panelSlice';
+import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
@@ -78,7 +78,8 @@ const initializeOperationDetails = async (
   const { type, connectorId } = operationInfo;
   const operationManifestService = OperationManifestService();
 
-  dispatch(switchToOperationPanel(nodeId));
+  dispatch(changePanelNode(nodeId));
+  dispatch(isolateTab(Constants.PANEL_TAB_NAMES.LOADING));
 
   if (operationManifestService.isSupported(type)) {
     const manifest = await getOperationManifest(operationInfo);
@@ -129,6 +130,8 @@ const initializeOperationDetails = async (
       dispatch
     );
   }
+
+  dispatch(showDefaultTabs());
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
@@ -186,11 +189,7 @@ export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId
   if (connections.length > 0) {
     dispatch(changeConnectionMapping({ nodeId, connectionId: connections[0].id, connectorId }));
     await ConnectionService().createConnectionAclIfNeeded(connections[0]);
-  } else {
-    dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
-
-  dispatch(switchToOperationPanel(nodeId));
 };
 
 export const addTokensAndVariables = (

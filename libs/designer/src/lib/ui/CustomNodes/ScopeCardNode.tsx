@@ -3,7 +3,7 @@ import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode } from '../../core/state/panel/panelSlice';
+import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import { useBrandColor, useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import {
   useActionMetadata,
@@ -78,7 +78,10 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isLeaf = useIsLeafNode(id);
 
   const label = useNodeDisplayName(scopeId);
-  const nodeClick = useCallback(() => dispatch(changePanelNode(scopeId)), [dispatch, scopeId]);
+  const nodeClick = useCallback(() => {
+    dispatch(changePanelNode(scopeId));
+    dispatch(showDefaultTabs());
+  }, [dispatch, scopeId]);
 
   const graphCollapsed = useIsGraphCollapsed(scopeId);
   const handleGraphCollapse = useCallback(() => {
@@ -141,7 +144,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   if (implementedGraphTypes.includes(normalizedType)) {
     return (
       <>
-        <div className="msla-scope-card">
+        <div className="msla-scope-card nopan">
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
             brandColor={brandColor.result}

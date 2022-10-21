@@ -1,7 +1,8 @@
 import constants from '../../../../common/constants';
 import { isolateTab } from '../../../../core/state/panel/panelSlice';
+import { useIsConnectionRequired, useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
 import { Label, Link } from '@fluentui/react';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -11,7 +12,7 @@ interface ConnectionDisplayProps {
 }
 
 export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
-  const { connectionName } = props;
+  const { connectionName, nodeId } = props;
 
   const intl = useIntl();
   const dispatch = useDispatch();
@@ -19,6 +20,15 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   const openChangeConnectionCallback = useCallback(() => {
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
   }, [dispatch]);
+
+  const operationInfo = useOperationInfo(nodeId);
+  const requiresConnection = useIsConnectionRequired(operationInfo);
+
+  useEffect(() => {
+    if (requiresConnection && !connectionName) {
+      openChangeConnectionCallback();
+    }
+  }, [connectionName, openChangeConnectionCallback, requiresConnection]);
 
   const connectionDisplayText = intl.formatMessage(
     {
