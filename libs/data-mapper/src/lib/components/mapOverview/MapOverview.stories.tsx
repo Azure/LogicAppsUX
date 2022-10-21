@@ -7,7 +7,7 @@ import React from 'react';
 
 export default {
   component: MapOverview,
-  title: 'Data Mapper Component/Map Overview',
+  title: 'Data Mapper Components/Map Overview',
 } as ComponentMeta<typeof MapOverview>;
 
 const schema: SchemaExtended = {

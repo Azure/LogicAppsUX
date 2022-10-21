@@ -9,7 +9,7 @@ import ReactFlow, { ReactFlowProvider } from 'reactflow';
 
 export default {
   component: CanvasControls,
-  title: 'Data Mapper Component/Floaties/Canvas Controls',
+  title: 'Data Mapper Components/Floaties/Canvas Controls',
 } as ComponentMeta<typeof CanvasControls>;
 
 export const Standard: ComponentStory<typeof CanvasControls> = (args: CanvasControlsProps) => (
