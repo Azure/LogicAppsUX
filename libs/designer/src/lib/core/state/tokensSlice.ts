@@ -2,6 +2,7 @@ import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
+export type UpdateUpstreamNodesPayload = Record<string, string[]>;
 export interface NodeTokens {
   isLoading?: boolean;
   tokens: Token[];
@@ -76,11 +77,22 @@ export const tokensSlice = createSlice({
         state.outputTokens[nodeId].tokens = newTokens;
       }
     },
+    updateUpstreamNodes: (state, action: PayloadAction<UpdateUpstreamNodesPayload>) => {
+      for (const nodeId of Object.keys(action.payload)) {
+        state.outputTokens[nodeId].upstreamNodeIds = action.payload[nodeId];
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeTokensAndVariables, deinitializeTokensAndVariables, addDynamicTokens, updateTokens, updateTokenSecureStatus } =
-  tokensSlice.actions;
+export const {
+  initializeTokensAndVariables,
+  deinitializeTokensAndVariables,
+  addDynamicTokens,
+  updateTokens,
+  updateTokenSecureStatus,
+  updateUpstreamNodes,
+} = tokensSlice.actions;
 
 export default tokensSlice.reducer;
