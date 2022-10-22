@@ -55,7 +55,7 @@ export const addNodeToWorkflow = (
   }
   // 1 parent, X children
   else if (parentId) {
-    reassignEdgeSources(state, parentId, newNodeId, workflowGraph, !shouldAddRunAfters);
+    reassignEdgeSources(state, parentId, newNodeId, workflowGraph, !shouldAddRunAfters, /* isNewSourceTrigger */ false);
     addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
   }
 

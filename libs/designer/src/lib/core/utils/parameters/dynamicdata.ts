@@ -74,16 +74,15 @@ export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
   operationInfo: OperationInfo,
-  connectionReference: ConnectionReference
+  connectionReference: ConnectionReference | undefined
 ): Promise<ListDynamicValue[]> {
   const { definition, parameter } = dependencyInfo;
-  const { id: connectionId } = connectionReference.connection;
   if (isDynamicListExtension(definition)) {
     const { dynamicState, parameters } = definition.extension;
     const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs);
 
     return getListDynamicValues(
-      connectionId,
+      connectionReference?.connection.id,
       operationInfo.connectorId,
       operationInfo.operationId,
       parameter?.alias,
@@ -92,6 +91,7 @@ export async function getDynamicValues(
     );
   } else if (isLegacyDynamicValuesExtension(definition)) {
     const { connectorId } = operationInfo;
+    const connectionId = connectionReference?.connection.id as string;
     const { parameters, operationId } = definition.extension;
     const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs);
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
@@ -112,8 +112,8 @@ export async function getDynamicValues(
       managedIdentityRequestProperties = {
         connection: { id: connection.id },
         connectionRuntimeUrl: connection.properties.connectionRuntimeUrl as string,
-        connectionProperties: connectionReference.connectionProperties as Record<string, any>,
-        authentication: connectionReference.authentication as any,
+        connectionProperties: connectionReference?.connectionProperties as Record<string, any>,
+        authentication: connectionReference?.authentication as any,
       };
     }
 
@@ -161,7 +161,7 @@ export async function getDynamicSchema(
           break;
         default:
           schema = await getDynamicSchemaProperties(
-            (connectionReference as ConnectionReference).connection.id,
+            connectionReference?.connection.id,
             operationInfo.connectorId,
             operationInfo.operationId,
             parameter?.alias,
@@ -173,7 +173,6 @@ export async function getDynamicSchema(
 
       return schema ? { ...emptySchema, ...schema } : schema;
     } else {
-      // TODO - Add for swagger based dynamic calls
       const { connectorId } = operationInfo;
       const { parameters, operationId } = definition.extension;
       const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs);

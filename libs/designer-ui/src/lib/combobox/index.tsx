@@ -166,9 +166,9 @@ export const Combobox = ({
         return <span className="msla-combobox-custom-option">{item?.text}</span>;
       case 'loadingrender':
         return (
-          <div>
+          <div className="msla-combobox-loading">
             <Spinner size={SpinnerSize.small} />
-            <span className="msla-combobox-option">{item?.text}</span>
+            <span className="msla-combobox-loading-text">{item?.text}</span>
           </div>
         );
       default:
