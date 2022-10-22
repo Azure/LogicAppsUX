@@ -17,7 +17,7 @@ import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '.
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
 import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
-import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
+import { getInputParametersFromManifest, getOutputParametersFromManifest, updateAllUpstreamNodes } from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
@@ -147,6 +147,7 @@ const initializeOperationDetails = async (
     await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
   }
 
+  updateAllUpstreamNodes(getState() as RootState, dispatch);
   dispatch(showDefaultTabs());
 };
 
@@ -161,43 +162,6 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
   const initData = { id, nodeInputs, nodeOutputs, nodeDependencies };
   dispatch(initializeNodes([initData]));
-};
-
-export const reinitializeOperationDetails = async (
-  nodeId: string,
-  operationInfo: NodeOperation,
-  state: RootState,
-  dispatch: Dispatch
-): Promise<void> => {
-  const { type, connectorId } = operationInfo;
-  const nodeInputs = state.operations.inputParameters[nodeId];
-  const nodeOutputs = state.operations.outputParameters[nodeId];
-  const settings = state.operations.settings[nodeId];
-  const nodeDependencies = state.operations.dependencies[nodeId];
-  if (OperationManifestService().isSupported(type)) {
-    const manifest = await getOperationManifest(operationInfo);
-    const { iconUri, brandColor } = manifest.properties;
-
-    addTokensAndVariables(
-      nodeId,
-      type,
-      { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest, nodeDependencies },
-      state,
-      dispatch
-    );
-  } else {
-    const { connector } = await getConnectorWithSwagger(connectorId);
-    const iconUri = getIconUriFromConnector(connector);
-    const brandColor = getBrandColorFromConnector(connector);
-
-    addTokensAndVariables(
-      nodeId,
-      type,
-      { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, nodeDependencies },
-      state,
-      dispatch
-    );
-  }
 };
 
 export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: AppDispatch) => {

@@ -1,5 +1,6 @@
 import Constants from '../../common/constants';
-import { addTokensAndVariables, reinitializeOperationDetails } from '../actions/bjsworkflow/add';
+import { addTokensAndVariables } from '../actions/bjsworkflow/add';
+import { updateAllUpstreamNodes } from '../actions/bjsworkflow/initialize';
 import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
 import { initializeOperationDetailsForManifest } from '../actions/bjsworkflow/operationdeserializer';
 import { getOperationManifest } from '../queries/operation';
@@ -123,8 +124,8 @@ export const addForeachToNode = createAsyncThunk(
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(foreachNodeId, Constants.NODE.TYPE.FOREACH, { ...initData, iconUri, brandColor, manifest }, newState, dispatch);
 
-    // Reinitializing details for node encapsulated in foreach.
-    reinitializeOperationDetails(nodeId, newState.operations.operationInfo[nodeId], newState, dispatch);
+    updateAllUpstreamNodes(getState() as RootState, dispatch);
+    return;
   }
 );
 
