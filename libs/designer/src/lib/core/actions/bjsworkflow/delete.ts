@@ -1,9 +1,11 @@
+import type { RootState } from '../../..';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { removeNodeConnectionData } from '../../state/connection/connectionSlice';
 import { deinitializeNodes, deinitializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokensSlice';
 import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
+import { updateAllUpstreamNodes } from './initialize';
 import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -17,16 +19,20 @@ export type DeleteGraphPayload = {
   graphNode: WorkflowNode;
 };
 
-export const deleteOperation = createAsyncThunk('deleteOperation', async (deletePayload: DeleteOperationPayload, { dispatch }) => {
-  const { nodeId } = deletePayload;
+export const deleteOperation = createAsyncThunk(
+  'deleteOperation',
+  async (deletePayload: DeleteOperationPayload, { getState, dispatch }) => {
+    const { nodeId } = deletePayload;
 
-  dispatch(clearFocusNode());
-  dispatch(clearPanel());
+    dispatch(clearFocusNode());
+    dispatch(clearPanel());
 
-  dispatch(deleteNode(deletePayload));
-  deleteOperationDetails(nodeId, dispatch);
-  return;
-});
+    dispatch(deleteNode(deletePayload));
+    deleteOperationDetails(nodeId, dispatch);
+    updateAllUpstreamNodes(getState() as RootState, dispatch);
+    return;
+  }
+);
 
 const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch): Promise<void> => {
   dispatch(removeNodeConnectionData({ nodeId }));

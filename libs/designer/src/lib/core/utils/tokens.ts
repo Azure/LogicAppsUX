@@ -39,7 +39,7 @@ export function getTokenNodeIds(
   operationMap: Record<string, string>
 ): string[] {
   const tokenNodes = getUpstreamNodeIds(nodeId, graph, nodesMetadata, operationMap);
-  const manifest = nodesManifest[nodeId].manifest;
+  const manifest = nodesManifest[nodeId]?.manifest;
 
   if (manifest) {
     // Should include itself as repetition reference if nodes can reference its outputs
