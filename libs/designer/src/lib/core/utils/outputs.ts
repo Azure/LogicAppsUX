@@ -314,7 +314,7 @@ export const loadDynamicOutputsInNode = async (
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
-  connectionReference: ConnectionReference,
+  connectionReference: ConnectionReference | undefined,
   outputDependencies: Record<string, DependencyInfo>,
   nodeInputs: NodeInputs,
   settings: Settings,

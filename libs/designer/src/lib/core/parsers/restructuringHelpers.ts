@@ -48,13 +48,14 @@ export const reassignEdgeSources = (
   oldSourceId: string,
   newSourceId: string,
   graph: WorkflowNode,
-  isSourceTrigger: boolean
+  isOldSourceTrigger: boolean,
+  isNewSourceTrigger: boolean
 ) => {
   if (!state) return;
   graph.edges = graph.edges?.map((edge) => {
     if (edge.source === oldSourceId) {
       setEdgeSource(edge, newSourceId);
-      moveRunAfterSource(state, edge.target, oldSourceId, newSourceId, isSourceTrigger);
+      moveRunAfterSource(state, edge.target, oldSourceId, newSourceId, isOldSourceTrigger, isNewSourceTrigger);
     }
     return edge;
   });
@@ -87,11 +88,15 @@ const moveRunAfterSource = (
   nodeId: string,
   oldSourceId: string,
   newSourceId: string,
-  isOldSourceTrigger: boolean
+  isOldSourceTrigger: boolean,
+  isNewSourceTrigger: boolean
 ) => {
   if (!state) return;
   const targetRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
-  targetRunAfter[newSourceId] = isOldSourceTrigger ? [RUN_AFTER_STATUS.SUCCEEDED] : targetRunAfter[oldSourceId];
+  if (!isNewSourceTrigger) {
+    targetRunAfter[newSourceId] = isOldSourceTrigger ? [RUN_AFTER_STATUS.SUCCEEDED] : targetRunAfter[oldSourceId];
+  }
+
   delete targetRunAfter[oldSourceId];
 };
 

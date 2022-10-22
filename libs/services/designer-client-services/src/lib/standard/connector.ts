@@ -104,7 +104,7 @@ export class StandardConnectorService implements IConnectorService {
   }
 
   async getListDynamicValues(
-    connectionId: string,
+    connectionId: string | undefined,
     connectorId: string,
     operationId: string,
     _parameterAlias: string | undefined,
@@ -115,7 +115,7 @@ export class StandardConnectorService implements IConnectorService {
     const { operationId: dynamicOperation } = dynamicState;
 
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId);
+    const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
       return this.options.valuesClient[dynamicOperation]({ parameters: invokeParameters, configuration });
@@ -160,7 +160,7 @@ export class StandardConnectorService implements IConnectorService {
   }
 
   async getDynamicSchema(
-    connectionId: string,
+    connectionId: string | undefined,
     connectorId: string,
     operationId: string,
     _parameterAlias: string | undefined,
@@ -174,7 +174,7 @@ export class StandardConnectorService implements IConnectorService {
     } = dynamicState;
 
     const invokeParameters = this._getInvokeParameters(parameters, dynamicState);
-    const configuration = await getConfiguration(connectionId);
+    const configuration = await getConfiguration(connectionId ?? '');
 
     if (this._isClientSupportedOperation(connectorId, operationId)) {
       return this.options.schemaClient[dynamicOperation]({ parameters: invokeParameters, isInput, configuration });

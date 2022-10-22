@@ -12,7 +12,7 @@ import type {
   IIconProps,
   ITooltipHostStyles,
 } from '@fluentui/react';
-import { IconButton, TooltipHost, SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
+import { Spinner, SpinnerSize, IconButton, TooltipHost, SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { guid } from '@microsoft-logic-apps/utils';
 import { useUpdateEffect } from '@react-hookz/web';
@@ -57,6 +57,8 @@ export interface ComboboxItem {
 
 export interface ComboboxProps extends BaseEditorProps {
   options: ComboboxItem[];
+  isLoading?: boolean;
+  errorDetails?: { message: string };
   useOption?: boolean;
   onMenuOpen?: CallbackHandler;
 }
@@ -64,6 +66,8 @@ export interface ComboboxProps extends BaseEditorProps {
 export const Combobox = ({
   options,
   initialValue,
+  isLoading,
+  errorDetails,
   useOption = true,
   onChange,
   onMenuOpen,
@@ -80,11 +84,28 @@ export const Combobox = ({
   const [canAutoFocus, setCanAutoFocus] = useState(false);
 
   const comboboxOptions = useMemo(() => {
+    const loadingOption: ComboboxItem = {
+      key: 'isloading',
+      value: 'isloading',
+      disabled: true,
+      displayName: intl.formatMessage({ defaultMessage: 'Loading...', description: 'Loading text when items are being fetched' }),
+      type: 'loadingrender',
+    };
+    const errorOption: ComboboxItem = {
+      key: 'errorText',
+      value: 'errorText',
+      disabled: true,
+      displayName: errorDetails?.message ?? '',
+      type: 'errorrender',
+    };
     if (searchValue) {
       comboBoxRef.current?.focus(true);
-      const newOptions = options.filter((option) =>
-        new RegExp(searchValue.replace(/\\/g, '').toLowerCase()).test(option.value.toLowerCase())
-      );
+      const newOptions = isLoading
+        ? [loadingOption]
+        : errorDetails
+        ? [errorOption]
+        : options.filter((option) => new RegExp(searchValue.replace(/\\/g, '').toLowerCase()).test(option.value.toLowerCase()));
+
       if (newOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
           defaultMessage: 'No values matching your search',
@@ -113,8 +134,8 @@ export const Combobox = ({
       return getOptions(newOptions);
     }
 
-    return getOptions(options);
-  }, [intl, options, searchValue, useOption]);
+    return getOptions(isLoading ? [loadingOption] : errorDetails ? [errorOption] : options);
+  }, [intl, errorDetails, searchValue, isLoading, options, useOption]);
 
   useUpdateEffect(() => {
     onChange?.({
@@ -143,6 +164,13 @@ export const Combobox = ({
     switch (item?.data) {
       case 'customrender':
         return <span className="msla-combobox-custom-option">{item?.text}</span>;
+      case 'loadingrender':
+        return (
+          <div className="msla-combobox-loading">
+            <Spinner size={SpinnerSize.small} />
+            <span className="msla-combobox-loading-text">{item?.text}</span>
+          </div>
+        );
       default:
         return <span className="msla-combobox-option">{item?.text}</span>;
     }

@@ -1,9 +1,8 @@
 import constants from '../../../common/constants';
-import type { RootState } from '../../../core';
-import { getConnectionMetadata, needsAuth } from '../../../core/actions/bjsworkflow/connections';
+import type { AppDispatch, RootState } from '../../../core';
+import { getConnectionMetadata, needsAuth, updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
-import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
@@ -18,7 +17,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CreateConnectionTab = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const intl = useIntl();
   const nodeId: string = useSelectedNodeId();
@@ -40,7 +39,7 @@ const CreateConnectionTab = () => {
 
   const applyNewConnection = useCallback(
     (newConnection: Connection, _newName: string) => {
-      dispatch(changeConnectionMapping({ nodeId, connectionId: newConnection?.id, connectorId: connector?.id ?? '' }));
+      dispatch(updateNodeConnection({ nodeId, connectionId: newConnection?.id, connectorId: connector?.id ?? '' }));
     },
     [connector?.id, dispatch, nodeId]
   );

@@ -36,7 +36,7 @@ export const getLegacyDynamicValues = async (
   );
 };
 export const getListDynamicValues = async (
-  connectionId: string,
+  connectionId: string | undefined,
   connectorId: string,
   operationId: string,
   parameterAlias: string | undefined,
@@ -49,7 +49,7 @@ export const getListDynamicValues = async (
   return queryClient.fetchQuery(
     [
       'listdynamicvalues',
-      connectionId.toLowerCase(),
+      (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),
@@ -90,7 +90,7 @@ export const getLegacyDynamicSchema = async (
 };
 
 export const getDynamicSchemaProperties = async (
-  connectionId: string,
+  connectionId: string | undefined,
   connectorId: string,
   operationId: string,
   parameterAlias: string | undefined,
@@ -103,7 +103,7 @@ export const getDynamicSchemaProperties = async (
   return queryClient.fetchQuery(
     [
       'dynamicschemaproperties',
-      connectionId.toLowerCase(),
+      (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
       getParametersKey(parameters),

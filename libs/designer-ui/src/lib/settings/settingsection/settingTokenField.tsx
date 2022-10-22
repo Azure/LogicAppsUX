@@ -20,6 +20,8 @@ import React from 'react';
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
   value: ValueSegment[];
+  isLoading?: boolean;
+  errorDetails?: { message: string };
   editor?: string;
   editorOptions?: any;
   editorViewModel?: any;
@@ -58,6 +60,8 @@ const TokenField = ({
   readOnly,
   value,
   isTrigger,
+  isLoading,
+  errorDetails,
   getTokenPicker,
   onValueChange,
   onComboboxMenuOpen,
@@ -100,6 +104,8 @@ const TokenField = ({
           options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
           isTrigger={isTrigger}
+          isLoading={isLoading}
+          errorDetails={errorDetails}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
