@@ -44,7 +44,7 @@ export interface IConnectorService {
 
   /**
    * Gets the item dynamic values for manifest based operations.
-   * @arg {string} connectionId - The connection id.
+   * @arg {string | undefined} connectionId - The connection id.
    * @arg {string} connectorId - The connector id.
    * @arg {string} operationId - The operation id.
    * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic values must be fetched.
@@ -53,7 +53,7 @@ export interface IConnectorService {
    * @return {Promise<ListDynamicValue[]>}
    */
   getListDynamicValues(
-    connectionId: string,
+    connectionId: string | undefined,
     connectorId: string,
     operationId: string,
     parameterAlias: string | undefined,
@@ -82,7 +82,7 @@ export interface IConnectorService {
 
   /**
    * Gets the dynamic schema for a parameter in manifest based operations.
-   * @arg {string} connectionId - The connection id.
+   * @arg {string | undefined} connectionId - The connection id.
    * @arg {string} connectorId - The connector id.
    * @arg {string} operationId - The operation id.
    * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic schema must be fetched.
@@ -91,7 +91,7 @@ export interface IConnectorService {
    * @return {Promise<OpenAPIV2.SchemaObject>}
    */
   getDynamicSchema(
-    connectionId: string,
+    connectionId: string | undefined,
     connectorId: string,
     operationId: string,
     parameterAlias: string | undefined,

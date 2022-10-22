@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
+import { isRootNodeInGraph } from '../utils/graph';
 import type { WorkflowNode } from './models/workflowNode';
 import { removeEdge, reassignEdgeSources, reassignEdgeTargets } from './restructuringHelpers';
 
@@ -34,7 +35,8 @@ export const deleteNodeFromWorkflow = (
     removeEdge(state, nodeId, childId, workflowGraph);
   } else {
     const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
-    reassignEdgeSources(state, nodeId, parentId, workflowGraph, /* isSourceTrigger */ false);
+    const isNewSourceTrigger = isRootNodeInGraph(parentId, 'root', state.nodesMetadata);
+    reassignEdgeSources(state, nodeId, parentId, workflowGraph, /* isSourceTrigger */ false, isNewSourceTrigger);
     removeEdge(state, parentId, nodeId, workflowGraph);
   }
 

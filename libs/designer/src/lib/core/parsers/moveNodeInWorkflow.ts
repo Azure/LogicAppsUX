@@ -57,7 +57,8 @@ export const moveNodeInWorkflow = (
     removeEdge(state, nodeId, childId, oldWorkflowGraph);
   } else {
     const parentId = (oldWorkflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
-    reassignEdgeSources(state, nodeId, parentId, oldWorkflowGraph, /* isSourceTrigger */ false);
+    const isNewSourceTrigger = isRootNodeInGraph(parentId, 'root', state.nodesMetadata);
+    reassignEdgeSources(state, nodeId, parentId, oldWorkflowGraph, /* isSourceTrigger */ false, isNewSourceTrigger);
     removeEdge(state, parentId, nodeId, oldWorkflowGraph);
   }
 
@@ -93,7 +94,7 @@ export const moveNodeInWorkflow = (
   }
   // 1 parent, X children
   else if (parentId) {
-    reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph, !shouldAddRunAfters);
+    reassignEdgeSources(state, parentId, nodeId, newWorkflowGraph, !shouldAddRunAfters, /* isNewSourceTrigger */ false);
     addNewEdge(state, parentId, nodeId, newWorkflowGraph, shouldAddRunAfters);
   }
 
