@@ -8,8 +8,8 @@ import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
 import { DefaultConfigView } from './DefaultConfigView';
+import { DefaultButton, IconButton, Panel, PrimaryButton, Text, Stack } from '@fluentui/react';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
-import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -34,61 +34,61 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
-  const fetchedSourceSchema = useQuery(
-    [selectedSourceSchema?.text],
-    () => {
-      return getSelectedSchema(selectedSourceSchema?.text ?? '');
-    },
-    {
-      enabled: selectedSourceSchema !== undefined,
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 5,
-    }
-  );
+  const fetchedSourceSchema = useQuery([selectedSourceSchema?.text], () => getSelectedSchema(selectedSourceSchema?.text ?? ''), {
+    enabled: selectedSourceSchema !== undefined,
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 5,
+  });
 
-  const fetchedTargetSchema = useQuery(
-    [selectedTargetSchema?.text],
-    () => {
-      return getSelectedSchema(selectedTargetSchema?.text ?? '');
-    },
-    {
-      enabled: selectedTargetSchema !== undefined,
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 5,
-    }
-  );
+  const fetchedTargetSchema = useQuery([selectedTargetSchema?.text], () => getSelectedSchema(selectedTargetSchema?.text ?? ''), {
+    enabled: selectedTargetSchema !== undefined,
+    staleTime: 1000 * 60 * 5,
+    cacheTime: 1000 * 60 * 5,
+  });
 
-  const saveMessage = intl.formatMessage({
+  const addLoc = intl.formatMessage({
+    defaultMessage: 'Add',
+    description: 'Add',
+  });
+
+  const saveLoc = intl.formatMessage({
     defaultMessage: 'Save',
     description: 'Save',
   });
-  const cancelMessage = intl.formatMessage({
+
+  const cancelLoc = intl.formatMessage({
     defaultMessage: 'Cancel',
     description: 'Cancel',
   });
-  const configurationHeader = intl.formatMessage({
+
+  const configureLoc = intl.formatMessage({
     defaultMessage: 'Configure',
-    description: 'Header text to inform users this panel is for configuration',
+    description: 'Configure',
   });
-  const genericErrMsg = intl.formatMessage({
-    defaultMessage: 'Failed loading the schema. Please try again.',
-    description: 'error message for loading the schema',
-  });
-  const updateSourceSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Add source schema',
-    description: 'header message for adding source schema',
-  });
-  const updateTargetSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Add target schema',
-    description: 'header message for adding target schema',
-  });
-  const backMessage = intl.formatMessage({
+
+  const backLoc = intl.formatMessage({
     defaultMessage: 'Back',
-    description: 'button message for going back a panel to the default panel layer',
+    description: 'Back',
   });
-  const closeAriaLabel = intl.formatMessage({
+
+  const closeLoc = intl.formatMessage({
     defaultMessage: 'Close',
-    description: 'aria label for close icon button that closes that panel on click',
+    description: 'Close',
+  });
+
+  const genericErrorMsg = intl.formatMessage({
+    defaultMessage: 'Failed loading the schema. Please try again.',
+    description: 'Load schema error message',
+  });
+
+  const addSourceSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Add source schema',
+    description: 'Header to add source schema',
+  });
+
+  const addTargetSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Add target schema',
+    description: 'Header to add target schema',
   });
 
   const goBackToDefaultConfigPanelView = useCallback(() => {
@@ -114,25 +114,22 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
     [dispatch, schemaType]
   );
 
-  const editSchema = useCallback(() => {
-    const selectedSchema = schemaType === SchemaTypes.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
-
-    if (selectedSchema) {
-      onSubmitSchema(selectedSchema);
-      setErrorMessage('');
-      goBackToDefaultConfigPanelView();
-    } else {
-      setErrorMessage(genericErrMsg);
-    }
-  }, [goBackToDefaultConfigPanelView, onSubmitSchema, genericErrMsg, fetchedSourceSchema, fetchedTargetSchema, schemaType]);
-
-  const addSchema = useCallback(() => {
+  const addOrUpdateSchema = useCallback(() => {
     if (schemaType === undefined) {
       return;
     }
 
     if (uploadType === UploadSchemaTypes.SelectFrom) {
-      editSchema();
+      const selectedSchema =
+        schemaType === SchemaTypes.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
+
+      if (selectedSchema) {
+        onSubmitSchema(selectedSchema);
+        goBackToDefaultConfigPanelView();
+        setErrorMessage('');
+      } else {
+        setErrorMessage(genericErrorMsg);
+      }
     } else if (uploadType === UploadSchemaTypes.UploadNew) {
       if (selectedSchemaFile) {
         onSubmitSchemaFileSelection(selectedSchemaFile);
@@ -140,16 +137,20 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
         goBackToDefaultConfigPanelView();
         setErrorMessage('');
       } else {
-        setErrorMessage(genericErrMsg);
+        setErrorMessage(genericErrorMsg);
       }
     }
-  }, [schemaType, editSchema, goBackToDefaultConfigPanelView, genericErrMsg, selectedSchemaFile, uploadType, onSubmitSchemaFileSelection]);
-
-  /* TODO: Remove this completely if everything is still working properly when testing
-  useEffect(() => {
-    editSchema();
-  }, [goBackToDefaultConfigPanelView, dispatch, editSchema, genericErrMsg, onSubmitSchema, schemaType, selectedSourceSchema]);
-  */
+  }, [
+    schemaType,
+    goBackToDefaultConfigPanelView,
+    genericErrorMsg,
+    selectedSchemaFile,
+    uploadType,
+    onSubmitSchemaFileSelection,
+    fetchedSourceSchema,
+    fetchedTargetSchema,
+    onSubmitSchema,
+  ]);
 
   // Read current schema file options if method exists
   useEffect(() => {
@@ -160,43 +161,38 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
 
   const onRenderNavigationContent: IRenderFunction<IPanelProps> = useCallback(
     (props, defaultRender) => (
-      <div className="custom-navigation">
+      <Stack className="custom-navigation" horizontal horizontalAlign="space-between">
         {currentPanelView === ConfigPanelView.UpdateSchema && (
           <div>
-            <IconButton
-              iconProps={{ iconName: 'Back' }}
-              title={backMessage}
-              ariaLabel={backMessage}
-              onClick={goBackToDefaultConfigPanelView}
-            />
-            <Text className="back-header-text">{backMessage}</Text>
+            <Stack horizontal verticalAlign="center">
+              <IconButton iconProps={{ iconName: 'Back' }} title={backLoc} ariaLabel={backLoc} onClick={goBackToDefaultConfigPanelView} />
+              <Text className="back-header-text">{backLoc}</Text>
+            </Stack>
           </div>
         )}
 
-        {currentPanelView === ConfigPanelView.DefaultConfig && <Text className="header-text">{configurationHeader}</Text>}
+        {currentPanelView === ConfigPanelView.DefaultConfig && <Text className="header-text">{configureLoc}</Text>}
 
         {currentPanelView === ConfigPanelView.AddSchema && (
-          <Text className="header-text">
-            {schemaType === SchemaTypes.Source ? updateSourceSchemaHeaderMsg : updateTargetSchemaHeaderMsg}
-          </Text>
+          <Text className="header-text">{schemaType === SchemaTypes.Source ? addSourceSchemaHeaderMsg : addTargetSchemaHeaderMsg}</Text>
         )}
 
         {(currentPanelView === ConfigPanelView.DefaultConfig || currentPanelView === ConfigPanelView.AddSchema) && defaultRender?.(props)}
-      </div>
+      </Stack>
     ),
     [
-      updateSourceSchemaHeaderMsg,
-      updateTargetSchemaHeaderMsg,
-      configurationHeader,
+      addSourceSchemaHeaderMsg,
+      addTargetSchemaHeaderMsg,
+      configureLoc,
       currentPanelView,
       goBackToDefaultConfigPanelView,
       schemaType,
-      backMessage,
+      backLoc,
     ]
   );
 
   const onRenderFooterContent = useCallback(() => {
-    if (currentPanelView !== ConfigPanelView.UpdateSchema) {
+    if (currentPanelView === ConfigPanelView.DefaultConfig) {
       return null;
     }
 
@@ -214,11 +210,11 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
 
     return (
       <div>
-        <PrimaryButton className="panel-button-left" onClick={addSchema} disabled={isNoNewSchemaSelected}>
-          {saveMessage}
+        <PrimaryButton className="panel-button-left" onClick={addOrUpdateSchema} disabled={isNoNewSchemaSelected}>
+          {currentPanelView === ConfigPanelView.AddSchema ? addLoc : saveLoc}
         </PrimaryButton>
 
-        <DefaultButton onClick={closeEntirePanel}>{cancelMessage}</DefaultButton>
+        <DefaultButton onClick={closeEntirePanel}>{cancelLoc}</DefaultButton>
       </div>
     );
   }, [
@@ -227,12 +223,13 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
     curDataMapOperation,
     selectedSourceSchema,
     selectedTargetSchema,
-    saveMessage,
+    saveLoc,
     closeEntirePanel,
-    cancelMessage,
-    addSchema,
+    cancelLoc,
+    addOrUpdateSchema,
     selectedSchemaFile,
     uploadType,
+    addLoc,
   ]);
 
   return (
@@ -242,7 +239,7 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
         isOpen={!!currentPanelView}
         onDismiss={closeEntirePanel}
         onRenderNavigationContent={onRenderNavigationContent}
-        closeButtonAriaLabel={closeAriaLabel}
+        closeButtonAriaLabel={closeLoc}
         onRenderFooterContent={onRenderFooterContent}
         isFooterAtBottom={true}
         isLightDismiss

@@ -11,6 +11,12 @@
       "value": "No schema is added"
     }
   ],
+  "+DxBpE": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -45,6 +51,12 @@
     {
       "type": 0,
       "value": "Pagination"
+    }
+  ],
+  "/9r9ML": [
+    {
+      "type": 0,
+      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -915,6 +927,12 @@
       "value": "Required. The number to multiply Multiplicand 2 with."
     }
   ],
+  "73iM9+": [
+    {
+      "type": 0,
+      "value": "Update source schema"
+    }
+  ],
   "7GSk99": [
     {
       "type": 0,
@@ -1627,6 +1645,12 @@
       "value": "(UTC+08:00) Irkutsk"
     }
   ],
+  "F9dR1Q": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "FDF4Qb": [
     {
       "type": 0,
@@ -1933,12 +1957,6 @@
       "value": "Add a target schema"
     }
   ],
-  "Ie4sUt": [
-    {
-      "type": 0,
-      "value": "Configure"
-    }
-  ],
   "IgNz8Y": [
     {
       "type": 0,
@@ -2189,6 +2207,12 @@
     {
       "type": 0,
       "value": "Invalid type on split on value {splitOn}, split on not in array."
+    }
+  ],
+  "LR/3Lr": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "LS8rfZ": [
@@ -2827,12 +2851,6 @@
     {
       "type": 0,
       "value": "Returns a string in date format"
-    }
-  ],
-  "QnPHOB": [
-    {
-      "type": 0,
-      "value": "Add target schema"
     }
   ],
   "QpRRt3": [
@@ -3823,12 +3841,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "brtCAE": [
-    {
-      "type": 0,
-      "value": "Add source schema"
-    }
-  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -4203,6 +4215,12 @@
       "value": "Logical functions"
     }
   ],
+  "fqNVDv": [
+    {
+      "type": 0,
+      "value": "Back"
+    }
+  ],
   "froV/0": [
     {
       "type": 0,
@@ -4411,6 +4429,12 @@
     {
       "type": 0,
       "value": "Duration"
+    }
+  ],
+  "htj+eZ": [
+    {
+      "type": 0,
+      "value": "Update target schema"
     }
   ],
   "hvbclb": [
@@ -4815,12 +4839,6 @@
       "value": "Title"
     }
   ],
-  "lWjfm3": [
-    {
-      "type": 0,
-      "value": "Back"
-    }
-  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -5043,12 +5061,6 @@
       "value": "Adds an integer number of minutes to a string timestamp passed in"
     }
   ],
-  "ntiOaL": [
-    {
-      "type": 0,
-      "value": "Close"
-    }
-  ],
   "nx25nq": [
     {
       "type": 0,
@@ -5127,12 +5139,6 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
-    }
-  ],
-  "orhWzV": [
-    {
-      "type": 0,
-      "value": "Failed loading the schema. Please try again."
     }
   ],
   "oxH1L/": [
@@ -5965,6 +5971,12 @@
     {
       "type": 0,
       "value": "Callback URL:"
+    }
+  ],
+  "woq0x0": [
+    {
+      "type": 0,
+      "value": "Add source schema"
     }
   ],
   "wzEneQ": [

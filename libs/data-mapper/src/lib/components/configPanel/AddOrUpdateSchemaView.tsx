@@ -1,6 +1,7 @@
+import { ConfigPanelView } from '../../core/state/PanelSlice';
 import type { RootState } from '../../core/state/Store';
 import { SchemaTypes } from '../../models';
-import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType } from '@fluentui/react';
+import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType, Text } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
@@ -13,9 +14,6 @@ export enum UploadSchemaTypes {
   SelectFrom = 'select-from',
 }
 
-export interface ChangeSchemaView {
-  schemaList: SchemaInfo[] | any;
-}
 export interface FileWithVsCodePath extends File {
   path?: string;
 }
@@ -23,10 +21,6 @@ export interface SchemaFile {
   name: string;
   path: string;
   type: SchemaTypes;
-}
-
-export interface SchemaInfo {
-  name: string;
 }
 
 export interface AddOrUpdateSchemaViewProps {
@@ -53,33 +47,47 @@ export const AddOrUpdateSchemaView = ({
   const intl = useIntl();
   const schemaFileInputRef = useRef<HTMLInputElement>(null);
 
-  const schemaList = useSelector((state: RootState) => {
-    return state.schema.availableSchemas;
-  });
+  const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
+  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
 
   const replaceSchemaWarningLoc = intl.formatMessage({
     defaultMessage: 'Replacing an existing schema with an incompatible schema might create errors in your map.',
     description: 'Message bar warning about replacing existing schema',
   });
+
   const uploadMessage = intl.formatMessage({
     defaultMessage: 'Select a file to upload',
     description: 'Placeholder for input to load a schema file',
   });
+
   const dropdownAriaLabel = intl.formatMessage({
     defaultMessage: 'Select the schema for dropdown',
     description: 'Schema dropdown aria label',
   });
+
   const browseLoc = intl.formatMessage({
     defaultMessage: 'Browse',
     description: 'Browse for file',
   });
+
   const addNewLoc = intl.formatMessage({
     defaultMessage: 'Add new',
     description: 'Add new option',
   });
+
   const selectExistingLoc = intl.formatMessage({
     defaultMessage: 'Select existing',
     description: 'Select existing option',
+  });
+
+  const updateSourceSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Update source schema',
+    description: 'Header to update source schema',
+  });
+
+  const updateTargetSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Update target schema',
+    description: 'Header to update target schema',
   });
 
   const [addOrSelectSchemaMsg, schemaDropdownPlaceholder] = useMemo(() => {
@@ -107,16 +115,6 @@ export const AddOrUpdateSchemaView = ({
       ];
     }
   }, [intl, schemaType]);
-
-  const dataMapDropdownOptions = useMemo(() => schemaList?.map((file) => ({ key: file, text: file })) ?? [], [schemaList]);
-
-  const uploadSchemaOptions: IChoiceGroupOption[] = useMemo(
-    () => [
-      { key: UploadSchemaTypes.UploadNew, text: addNewLoc },
-      { key: UploadSchemaTypes.SelectFrom, text: selectExistingLoc },
-    ],
-    [addNewLoc, selectExistingLoc]
-  );
 
   const onSelectOption = useCallback(
     (option?: IDropdownOption) => {
@@ -150,11 +148,32 @@ export const AddOrUpdateSchemaView = ({
     }
   };
 
+  const uploadSchemaOptions: IChoiceGroupOption[] = useMemo(
+    () => [
+      { key: UploadSchemaTypes.UploadNew, text: addNewLoc },
+      { key: UploadSchemaTypes.SelectFrom, text: selectExistingLoc },
+    ],
+    [addNewLoc, selectExistingLoc]
+  );
+
+  const dataMapDropdownOptions = useMemo(
+    () => availableSchemaList?.map((file) => ({ key: file, text: file })) ?? [],
+    [availableSchemaList]
+  );
+
   return (
     <div>
-      <MessageBar messageBarType={MessageBarType.warning} styles={{ root: { marginTop: 20 } }}>
-        {replaceSchemaWarningLoc}
-      </MessageBar>
+      {currentPanelView === ConfigPanelView.UpdateSchema && (
+        <div style={{ marginTop: 24 }}>
+          <Text className="header-text">
+            {schemaType === SchemaTypes.Source ? updateSourceSchemaHeaderMsg : updateTargetSchemaHeaderMsg}
+          </Text>
+
+          <MessageBar messageBarType={MessageBarType.warning} styles={{ root: { marginTop: 20 } }}>
+            {replaceSchemaWarningLoc}
+          </MessageBar>
+        </div>
+      )}
 
       <p className="inform-text">{addOrSelectSchemaMsg}</p>
 
