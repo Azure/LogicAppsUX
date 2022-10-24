@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { UpdateConnectionInputAction } from '../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../models';
 import { NormalizedDataType, SchemaNodeDataType } from '../models';
@@ -268,13 +267,15 @@ export const nodeHasSpecificInputEventually = (
 
 export const collectNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
   const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
+
   if (connectionUnits.length > 0) {
-    return connectionUnits.flatMap((input) => collectNodesForConnectionChain(connections[input.reactFlowKey], connections));
+    return [
+      currentFunction.self,
+      ...connectionUnits.flatMap((input) => collectNodesForConnectionChain(connections[input.reactFlowKey], connections)),
+    ];
   }
 
-  // NOTE: Don't return if it's a target node
-  // (was causing target schema nodes with custom value input to be added to connectedSourceNodes)
-  return !currentFunction.self.reactFlowKey.includes(targetPrefix) ? [currentFunction.self] : [];
+  return [currentFunction.self];
 };
 
 export const newConnectionWillHaveCircularLogic = (

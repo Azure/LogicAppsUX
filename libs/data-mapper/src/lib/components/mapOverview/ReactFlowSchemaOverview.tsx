@@ -1,7 +1,7 @@
-// eslint-disable-next-line import/no-named-as-default
 import type { SchemaExtended } from '../../models';
 import { nodeTypes } from '../../ui/ReactFlowWrapper';
 import { useLayout } from '../../utils/ReactFlow.Util';
+// eslint-disable-next-line import/no-named-as-default
 import ReactFlow from 'reactflow';
 
 const reactFlowStyle = {
@@ -14,7 +14,7 @@ interface ReactFlowSchemaOverviewProps {
 }
 
 export const ReactFlowSchemaOverview = ({ schema }: ReactFlowSchemaOverviewProps) => {
-  const [reactFlowNodes, _reactFlowEdges] = useLayout([], [], {}, {}, schema.schemaTreeRoot, {}, undefined);
+  const [reactFlowNodes, _reactFlowEdges] = useLayout([], [], {}, {}, [], schema.schemaTreeRoot, {}, undefined);
 
   return (
     <ReactFlow
