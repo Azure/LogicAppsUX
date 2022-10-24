@@ -1,7 +1,7 @@
+import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperties, SchemaFileFormat } from '../../models/Schema';
 import type { SchemaExtended } from '../../models/Schema';
-import { SchemaNodeDataType, SchemaNodeProperties, SchemaFileFormat } from '../../models/Schema';
-import type { MapOverviewProps } from './MapOverview';
 import { MapOverview } from './MapOverview';
+import type { MapOverviewProps } from './MapOverview';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
@@ -18,29 +18,35 @@ const schema: SchemaExtended = {
   schemaTreeRoot: {
     key: 'root',
     name: 'Root',
+    fullName: 'Root',
     pathToRoot: [],
     namespacePrefix: '',
     namespaceUri: '',
     schemaNodeDataType: SchemaNodeDataType.None,
+    normalizedDataType: NormalizedDataType.ComplexType,
     properties: SchemaNodeProperties.NotSpecified,
     children: [
       {
         key: 'child1',
         name: 'Child 1',
+        fullName: 'Child 1',
         pathToRoot: [],
         namespacePrefix: '',
         namespaceUri: '',
         schemaNodeDataType: SchemaNodeDataType.String,
+        normalizedDataType: NormalizedDataType.String,
         properties: SchemaNodeProperties.NotSpecified,
         children: [],
       },
       {
         key: 'child2',
         name: 'Child 2',
+        fullName: 'Child 2',
         pathToRoot: [],
         namespacePrefix: '',
         namespaceUri: '',
         schemaNodeDataType: SchemaNodeDataType.Integer,
+        normalizedDataType: NormalizedDataType.Integer,
         properties: SchemaNodeProperties.NotSpecified,
         children: [],
       },
