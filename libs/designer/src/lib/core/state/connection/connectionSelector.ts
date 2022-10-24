@@ -45,3 +45,8 @@ export const useConnectionRefsByConnectorId = (connectorId?: string) => {
   const allConnectonReferences = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
   return allConnectonReferences.filter((ref: ConnectionReference) => ref.api.id === connectorId);
 };
+
+export const useIsOperationMissingConnection = (nodeId: string) => {
+  const connectionsMapping = useSelector((state: RootState) => state.connections.connectionsMapping);
+  return Object.keys(connectionsMapping).includes(nodeId) && connectionsMapping[nodeId] === null;
+};
