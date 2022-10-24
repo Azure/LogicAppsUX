@@ -341,6 +341,9 @@ export function createOutputToken(key: string, actionName: string | undefined, s
     required,
     tokenType: TokenType.OUTPUTS,
     title: name,
+    value: name,
+    // brandColor: '#AD008C',
+    // icon: FxIcon,
   };
 
   return token;

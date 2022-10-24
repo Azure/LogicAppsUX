@@ -19,9 +19,9 @@
         "inputs": {
           "variables": [
             {
-              "name": "IntegerVar",
+              "name": "IntegerVar@{variables('stringvar')}",
               "type": "integer",
-              "value": 123
+              "value": "test@{triggerOutputs()['headers']}"
             }
           ]
         },

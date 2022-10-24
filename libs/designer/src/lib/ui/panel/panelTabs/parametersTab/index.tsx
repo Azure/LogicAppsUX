@@ -20,9 +20,9 @@ import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { equals } from '@microsoft-logic-apps/utils';
-import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
+import { DynamicCallStatus, TokenPicker, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
@@ -39,14 +39,46 @@ export const ParametersTab = () => {
   const tokenGroup = getOutputTokenSections(tokenstate, selectedNodeId, nodeType);
   const expressionGroup = getExpressionTokenSections();
 
+  const parameterGroup = useMemo(() => {
+    const something = Object.keys(inputs.parameterGroups ?? {}).map((sectionName) => {
+      const paramGroup = {
+        ...inputs.parameterGroups[sectionName],
+        parameters: inputs.parameterGroups[sectionName].parameters.map((param) => {
+          const paramValue = {
+            ...param,
+            value: param.value.map((valSegment) => {
+              if (valSegment.type === ValueSegmentType.TOKEN && valSegment.token?.tokenType === TokenType.OUTPUTS) {
+                let icon;
+                let brandColor;
+                Object.keys(tokenstate.outputTokens ?? {}).forEach((token) => {
+                  tokenstate.outputTokens[token].tokens.forEach((output) => {
+                    if (valSegment.token && output.key === valSegment.token.key) {
+                      icon = output.icon;
+                      brandColor = output.brandColor;
+                    }
+                  });
+                });
+                return { ...valSegment, token: { ...valSegment.token, icon: icon, brandColor: brandColor } };
+              }
+              return valSegment;
+            }),
+          };
+          return paramValue;
+        }),
+      };
+      return paramGroup;
+    });
+    return something;
+  }, [inputs.parameterGroups, tokenstate]);
+
   return (
     <>
-      {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
-        <div key={sectionName}>
+      {parameterGroup.map((sectionName, index) => (
+        <div key={index}>
           <ParameterSection
             key={selectedNodeId}
             nodeId={selectedNodeId}
-            group={inputs.parameterGroups[sectionName]}
+            group={sectionName}
             readOnly={readOnly}
             tokenGroup={tokenGroup}
             expressionGroup={expressionGroup}

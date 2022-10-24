@@ -1726,8 +1726,11 @@ export function updateTokenMetadata(
   parameterType?: string
 ): ValueSegment {
   const token = valueSegment.token as SegmentToken;
-
   switch (token?.tokenType) {
+    case TokenType.VARIABLE:
+      token.brandColor = '#770bd6';
+      token.icon = VariableIcon;
+      return valueSegment;
     case TokenType.PARAMETER:
       token.brandColor = '#916F6F';
       token.icon = ParameterIcon;
