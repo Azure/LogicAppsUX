@@ -1,10 +1,13 @@
-import { SchemaTypes } from '../../models';
+import { openAddSourceSchemaPanelView, openAddTargetSchemaPanelView } from '../../core/state/PanelSlice';
+import type { AppDispatch } from '../../core/state/Store';
+import { SchemaType } from '../../models';
 import CardOnHover from './card_onHover.svg';
 import CardOnRest from './card_onRest.svg';
 import { Image, Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 const useStyles = makeStyles({
   schemaSelectCard: {
@@ -25,41 +28,44 @@ const useStyles = makeStyles({
 });
 
 export interface SelectSchemaCardProps {
-  schemaType: SchemaTypes;
-  onClick: () => void;
+  schemaType: SchemaType;
 }
 
-export const SelectSchemaCard = ({ schemaType, onClick }: SelectSchemaCardProps) => {
+export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
   const intl = useIntl();
   const styles = useStyles();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [isHovering, setIsHovering] = useState(false);
 
-  let selectSchemaMsg = '';
+  const selectSchemaMsg = useMemo(() => {
+    if (schemaType === SchemaType.Source) {
+      return intl.formatMessage({
+        defaultMessage: 'Add a source schema',
+        description: 'label to inform to add a source schema to be used',
+      });
+    } else {
+      return intl.formatMessage({
+        defaultMessage: 'Add a target schema',
+        description: 'label to inform to add a target schema to be used',
+      });
+    }
+  }, [intl, schemaType]);
 
-  switch (schemaType) {
-    case SchemaTypes.Source:
-      selectSchemaMsg = intl.formatMessage({
-        defaultMessage: 'Select a source schema',
-        description: 'label to inform to select source schema to be used',
-      });
-      break;
-    case SchemaTypes.Target:
-      selectSchemaMsg = intl.formatMessage({
-        defaultMessage: 'Select a target schema',
-        description: 'label to inform to select target schema to be used',
-      });
-      break;
-    default:
-      break;
-  }
+  const onClickSchemaCard = () => {
+    if (schemaType === SchemaType.Source) {
+      dispatch(openAddSourceSchemaPanelView());
+    } else {
+      dispatch(openAddTargetSchemaPanelView());
+    }
+  };
 
   return (
     <Stack
       verticalAlign="center"
       horizontalAlign="center"
       className={styles.schemaSelectCard}
-      onClick={onClick}
+      onClick={onClickSchemaCard}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >

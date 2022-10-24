@@ -8,8 +8,9 @@ import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo
 import { clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokensSlice';
 import { getBrandColorFromConnector, getIconUriFromConnector } from './card';
+import { getTokenExpressionValueForManifestBasedOperation } from './loops';
 import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dynamicdata';
-import { getAllInputParameters, getTokenExpressionValue, isDynamicDataReadyToLoad } from './parameters/helper';
+import { getAllInputParameters, isDynamicDataReadyToLoad } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
@@ -33,7 +34,7 @@ import {
   clone,
   equals,
 } from '@microsoft-logic-apps/utils';
-import { generateSchemaFromJsonString, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export const toOutputInfo = (output: OutputParameter): OutputInfo => {
@@ -168,7 +169,9 @@ export const isSupportedSplitOnExpression = (expression: Expression): boolean =>
 };
 
 export const getSplitOnOptions = (outputs: NodeOutputs): string[] => {
-  const arrayOutputs = unmap(outputs.outputs).filter((output) => equals(output.type, Constants.SWAGGER.TYPE.ARRAY));
+  const arrayOutputs = unmap(outputs.originalOutputs ?? outputs.outputs).filter((output) =>
+    equals(output.type, Constants.SWAGGER.TYPE.ARRAY)
+  );
 
   // NOTE: The isInsideArray flag is unreliable, as this is reset when calculating
   // if an output is inside a splitOn array. If the entire body is an array, all other array
@@ -311,7 +314,7 @@ export const loadDynamicOutputsInNode = async (
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
-  connectionReference: ConnectionReference,
+  connectionReference: ConnectionReference | undefined,
   outputDependencies: Record<string, DependencyInfo>,
   nodeInputs: NodeInputs,
   settings: Settings,
@@ -323,7 +326,7 @@ export const loadDynamicOutputsInNode = async (
 
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
-        updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings);
+        updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings, /* shouldProcessSettings */ true);
       } else {
         const outputSchema = await getDynamicSchema(info, nodeInputs, operationInfo, connectionReference);
         let schemaOutputs = outputSchema ? getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter) : {};
@@ -361,6 +364,6 @@ export const loadDynamicOutputsInNode = async (
   }
 };
 
-const getExpressionValue = ({ name, required, key, title, source }: OutputInfo): string => {
-  return `@${getTokenExpressionValue({ name, required, key, title, source, tokenType: TokenType.OUTPUTS })}`;
+const getExpressionValue = ({ key }: OutputInfo): string => {
+  return `@${getTokenExpressionValueForManifestBasedOperation(key, false, undefined, undefined)}`;
 };

@@ -1,0 +1,791 @@
+{
+  "name": "Target.xsd",
+  "type": "XML",
+  "targetNamespace": "http://tempuri.org/Target.xsd",
+  "namespaces": {
+    "ns0": "http://tempuri.org/Target.xsd",
+    "td": "http://tempuri.org/TypeDefinition.xsd",
+    "xs": "http://www.w3.org/2001/XMLSchema"
+  },
+  "schemaTreeRoot": {
+    "key": "/ns0:Root",
+    "name": "Root",
+    "namespacePrefix": "ns0",
+    "namespaceUri": "http://tempuri.org/Target.xsd",
+    "schemaNodeDataType": "None",
+    "normalizedDataType": "ComplexType",
+    "properties": "NotSpecified",
+    "children": [
+      {
+        "key": "/ns0:Root/DirectTranslation",
+        "name": "DirectTranslation",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/DirectTranslation/Employee",
+            "name": "Employee",
+            "schemaNodeDataType": "None",
+            "normalizedDataType": "ComplexType",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/DirectTranslation/Employee/ID",
+                "name": "ID",
+                "schemaNodeDataType": "Decimal",
+                "normalizedDataType": "Decimal",
+                "properties": "NotSpecified",
+                "fullName": "ID",
+                "parentKey": "/ns0:Root/DirectTranslation/Employee"
+              },
+              {
+                "key": "/ns0:Root/DirectTranslation/Employee/Name",
+                "name": "Name",
+                "schemaNodeDataType": "String",
+                "normalizedDataType": "String",
+                "properties": "NotSpecified",
+                "fullName": "Name",
+                "parentKey": "/ns0:Root/DirectTranslation/Employee"
+              }
+            ],
+            "fullName": "Employee",
+            "parentKey": "/ns0:Root/DirectTranslation"
+          }
+        ],
+        "fullName": "DirectTranslation",
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/DataTranslation",
+        "name": "DataTranslation",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/DataTranslation/EmployeeName",
+            "name": "EmployeeName",
+            "schemaNodeDataType": "String",
+            "normalizedDataType": "String",
+            "properties": "ComplexTypeSimpleContent",
+            "children": [
+              {
+                "key": "/ns0:Root/DataTranslation/EmployeeName/@RegularFulltime",
+                "name": "RegularFulltime",
+                "schemaNodeDataType": "Boolean",
+                "normalizedDataType": "Bool",
+                "properties": "Attribute",
+                "fullName": "@RegularFulltime",
+                "parentKey": "/ns0:Root/DataTranslation/EmployeeName"
+              },
+              {
+                "key": "/ns0:Root/DataTranslation/EmployeeName/@<AnyAttribute>",
+                "name": "<AnyAttribute>",
+                "schemaNodeDataType": "Attribute",
+                "normalizedDataType": "String",
+                "properties": "Attribute",
+                "fullName": "@<AnyAttribute>",
+                "parentKey": "/ns0:Root/DataTranslation/EmployeeName"
+              }
+            ],
+            "fullName": "EmployeeName",
+            "parentKey": "/ns0:Root/DataTranslation"
+          }
+        ],
+        "fullName": "DataTranslation",
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ContentEnrich",
+        "name": "ContentEnrich",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ContentEnrich/DateOfDemo",
+            "name": "DateOfDemo",
+            "schemaNodeDataType": "Date",
+            "normalizedDataType": "DateTime",
+            "properties": "NotSpecified",
+            "fullName": "DateOfDemo",
+            "parentKey": "/ns0:Root/ContentEnrich"
+          }
+        ],
+        "fullName": "ContentEnrich",
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/CumulativeExpression",
+        "name": "CumulativeExpression",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/CumulativeExpression/PopulationSummary",
+            "name": "PopulationSummary",
+            "schemaNodeDataType": "None",
+            "normalizedDataType": "ComplexType",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/CumulativeExpression/PopulationSummary/State",
+                "name": "State",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/CumulativeExpression/PopulationSummary/State/Name",
+                    "name": "Name",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Name",
+                    "parentKey": "/ns0:Root/CumulativeExpression/PopulationSummary/State"
+                  },
+                  {
+                    "key": "/ns0:Root/CumulativeExpression/PopulationSummary/State/SexRatio",
+                    "name": "SexRatio",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "SexRatio",
+                    "parentKey": "/ns0:Root/CumulativeExpression/PopulationSummary/State"
+                  }
+                ],
+                "fullName": "State",
+                "parentKey": "/ns0:Root/CumulativeExpression/PopulationSummary"
+              }
+            ],
+            "fullName": "PopulationSummary",
+            "parentKey": "/ns0:Root/CumulativeExpression"
+          }
+        ],
+        "fullName": "CumulativeExpression",
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ConditionalMapping",
+        "name": "ConditionalMapping",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ConditionalMapping/ItemPrice",
+            "name": "ItemPrice",
+            "schemaNodeDataType": "Decimal",
+            "normalizedDataType": "Decimal",
+            "properties": "NotSpecified",
+            "fullName": "ItemPrice",
+            "parentKey": "/ns0:Root/ConditionalMapping"
+          },
+          {
+            "key": "/ns0:Root/ConditionalMapping/ItemQuantity",
+            "name": "ItemQuantity",
+            "schemaNodeDataType": "Decimal",
+            "normalizedDataType": "Decimal",
+            "properties": "NotSpecified",
+            "fullName": "ItemQuantity",
+            "parentKey": "/ns0:Root/ConditionalMapping"
+          },
+          {
+            "key": "/ns0:Root/ConditionalMapping/ItemDiscount",
+            "name": "ItemDiscount",
+            "schemaNodeDataType": "Decimal",
+            "normalizedDataType": "Decimal",
+            "properties": "Optional",
+            "fullName": "ItemDiscount",
+            "parentKey": "/ns0:Root/ConditionalMapping"
+          }
+        ],
+        "fullName": "ConditionalMapping",
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/Looping",
+        "name": "Looping",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/Looping/Person",
+            "name": "Person",
+            "schemaNodeDataType": "None",
+            "normalizedDataType": "ComplexType",
+            "properties": "Repeating",
+            "children": [
+              {
+                "key": "/ns0:Root/Looping/Person/Name",
+                "name": "Name",
+                "schemaNodeDataType": "String",
+                "normalizedDataType": "String",
+                "properties": "NotSpecified",
+                "fullName": "Name",
+                "parentKey": "/ns0:Root/Looping/Person"
+              },
+              {
+                "key": "/ns0:Root/Looping/Person/Address",
+                "name": "Address",
+                "schemaNodeDataType": "String",
+                "normalizedDataType": "String",
+                "properties": "NotSpecified",
+                "fullName": "Address",
+                "parentKey": "/ns0:Root/Looping/Person"
+              },
+              {
+                "key": "/ns0:Root/Looping/Person/Other",
+                "name": "Other",
+                "schemaNodeDataType": "String",
+                "normalizedDataType": "String",
+                "properties": "Optional",
+                "fullName": "Other",
+                "parentKey": "/ns0:Root/Looping/Person"
+              }
+            ],
+            "fullName": "Person",
+            "parentKey": "/ns0:Root/Looping"
+          },
+          {
+            "key": "/ns0:Root/Looping/Trips",
+            "name": "Trips",
+            "schemaNodeDataType": "None",
+            "normalizedDataType": "ComplexType",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/Looping/Trips/Trip",
+                "name": "Trip",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/Looping/Trips/Trip/VehicleRegistration",
+                    "name": "VehicleRegistration",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "VehicleRegistration",
+                    "parentKey": "/ns0:Root/Looping/Trips/Trip"
+                  },
+                  {
+                    "key": "/ns0:Root/Looping/Trips/Trip/Distance",
+                    "name": "Distance",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Distance",
+                    "parentKey": "/ns0:Root/Looping/Trips/Trip"
+                  },
+                  {
+                    "key": "/ns0:Root/Looping/Trips/Trip/Duration",
+                    "name": "Duration",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Duration",
+                    "parentKey": "/ns0:Root/Looping/Trips/Trip"
+                  }
+                ],
+                "fullName": "Trip",
+                "parentKey": "/ns0:Root/Looping/Trips"
+              }
+            ],
+            "fullName": "Trips",
+            "parentKey": "/ns0:Root/Looping"
+          }
+        ],
+        "fullName": "Looping",
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/ConditionalLooping",
+        "name": "ConditionalLooping",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog",
+            "name": "CategorizedCatalog",
+            "schemaNodeDataType": "None",
+            "normalizedDataType": "ComplexType",
+            "properties": "Repeating",
+            "children": [
+              {
+                "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct",
+                "name": "PetProduct",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "Optional",
+                "children": [
+                  {
+                    "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct/Name",
+                    "name": "Name",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Name",
+                    "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct"
+                  },
+                  {
+                    "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct/SKU",
+                    "name": "SKU",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "SKU",
+                    "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct"
+                  },
+                  {
+                    "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct/Price",
+                    "name": "Price",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Price",
+                    "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog/PetProduct"
+                  }
+                ],
+                "fullName": "PetProduct",
+                "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog"
+              },
+              {
+                "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/GroovyProduct",
+                "name": "GroovyProduct",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "Optional",
+                "children": [
+                  {
+                    "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/GroovyProduct/Name",
+                    "name": "Name",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Name",
+                    "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog/GroovyProduct"
+                  },
+                  {
+                    "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/GroovyProduct/SKU",
+                    "name": "SKU",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "SKU",
+                    "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog/GroovyProduct"
+                  },
+                  {
+                    "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/GroovyProduct/Price",
+                    "name": "Price",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Price",
+                    "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog/GroovyProduct"
+                  }
+                ],
+                "fullName": "GroovyProduct",
+                "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog"
+              },
+              {
+                "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/OfficeProduct",
+                "name": "OfficeProduct",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "Optional",
+                "children": [
+                  {
+                    "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/OfficeProduct/Name",
+                    "name": "Name",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Name",
+                    "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog/OfficeProduct"
+                  },
+                  {
+                    "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/OfficeProduct/SKU",
+                    "name": "SKU",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "SKU",
+                    "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog/OfficeProduct"
+                  },
+                  {
+                    "key": "/ns0:Root/ConditionalLooping/CategorizedCatalog/OfficeProduct/Price",
+                    "name": "Price",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Price",
+                    "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog/OfficeProduct"
+                  }
+                ],
+                "fullName": "OfficeProduct",
+                "parentKey": "/ns0:Root/ConditionalLooping/CategorizedCatalog"
+              }
+            ],
+            "fullName": "CategorizedCatalog",
+            "parentKey": "/ns0:Root/ConditionalLooping"
+          }
+        ],
+        "fullName": "ConditionalLooping",
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/LoopingWithIndex",
+        "name": "LoopingWithIndex",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/LoopingWithIndex/WeatherSummary",
+            "name": "WeatherSummary",
+            "schemaNodeDataType": "None",
+            "normalizedDataType": "ComplexType",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1",
+                "name": "Day1",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "NotSpecified",
+                "children": [
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Name",
+                    "name": "Name",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Name",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Pressure",
+                    "name": "Pressure",
+                    "schemaNodeDataType": "Decimal",
+                    "normalizedDataType": "Decimal",
+                    "properties": "NotSpecified",
+                    "fullName": "Pressure",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/WindSpeed",
+                    "name": "WindSpeed",
+                    "schemaNodeDataType": "Decimal",
+                    "normalizedDataType": "Decimal",
+                    "properties": "NotSpecified",
+                    "fullName": "WindSpeed",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Temperature",
+                    "name": "Temperature",
+                    "schemaNodeDataType": "Decimal",
+                    "normalizedDataType": "Decimal",
+                    "properties": "NotSpecified",
+                    "fullName": "Temperature",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/<AnyElement>",
+                    "name": "<AnyElement>",
+                    "schemaNodeDataType": "None",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Optional",
+                    "fullName": "<AnyElement>",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day1"
+                  }
+                ],
+                "fullName": "Day1",
+                "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary"
+              },
+              {
+                "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2",
+                "name": "Day2",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "NotSpecified",
+                "children": [
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Name",
+                    "name": "Name",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Name",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Pressure",
+                    "name": "Pressure",
+                    "schemaNodeDataType": "Decimal",
+                    "normalizedDataType": "Decimal",
+                    "properties": "NotSpecified",
+                    "fullName": "Pressure",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/WindSpeed",
+                    "name": "WindSpeed",
+                    "schemaNodeDataType": "Decimal",
+                    "normalizedDataType": "Decimal",
+                    "properties": "NotSpecified",
+                    "fullName": "WindSpeed",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Temperature",
+                    "name": "Temperature",
+                    "schemaNodeDataType": "Decimal",
+                    "normalizedDataType": "Decimal",
+                    "properties": "NotSpecified",
+                    "fullName": "Temperature",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/<AnyElement>",
+                    "name": "<AnyElement>",
+                    "schemaNodeDataType": "None",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Optional",
+                    "fullName": "<AnyElement>",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day2"
+                  }
+                ],
+                "fullName": "Day2",
+                "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary"
+              },
+              {
+                "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day",
+                "name": "Day",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "Optional, Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Name",
+                    "name": "Name",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "Name",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Pressure",
+                    "name": "Pressure",
+                    "schemaNodeDataType": "Decimal",
+                    "normalizedDataType": "Decimal",
+                    "properties": "NotSpecified",
+                    "fullName": "Pressure",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day/WindSpeed",
+                    "name": "WindSpeed",
+                    "schemaNodeDataType": "Decimal",
+                    "normalizedDataType": "Decimal",
+                    "properties": "NotSpecified",
+                    "fullName": "WindSpeed",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day/Temperature",
+                    "name": "Temperature",
+                    "schemaNodeDataType": "Decimal",
+                    "normalizedDataType": "Decimal",
+                    "properties": "NotSpecified",
+                    "fullName": "Temperature",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day"
+                  },
+                  {
+                    "key": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day/<AnyElement>",
+                    "name": "<AnyElement>",
+                    "schemaNodeDataType": "None",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Optional",
+                    "fullName": "<AnyElement>",
+                    "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary/Day"
+                  }
+                ],
+                "fullName": "Day",
+                "parentKey": "/ns0:Root/LoopingWithIndex/WeatherSummary"
+              }
+            ],
+            "fullName": "WeatherSummary",
+            "parentKey": "/ns0:Root/LoopingWithIndex"
+          }
+        ],
+        "fullName": "LoopingWithIndex",
+        "parentKey": "/ns0:Root"
+      },
+      {
+        "key": "/ns0:Root/NameValueTransforms",
+        "name": "NameValueTransforms",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "NotSpecified",
+        "children": [
+          {
+            "key": "/ns0:Root/NameValueTransforms/FlatterCatalog",
+            "name": "FlatterCatalog",
+            "schemaNodeDataType": "None",
+            "normalizedDataType": "ComplexType",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price",
+                "name": "Price",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price/Pen",
+                    "name": "Pen",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "Optional",
+                    "fullName": "Pen",
+                    "parentKey": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price"
+                  },
+                  {
+                    "key": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price/Pencil",
+                    "name": "Pencil",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "Optional",
+                    "fullName": "Pencil",
+                    "parentKey": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price"
+                  },
+                  {
+                    "key": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price/NoteBook",
+                    "name": "NoteBook",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "Optional",
+                    "fullName": "NoteBook",
+                    "parentKey": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price"
+                  },
+                  {
+                    "key": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price/Bag",
+                    "name": "Bag",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "Optional",
+                    "fullName": "Bag",
+                    "parentKey": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price"
+                  },
+                  {
+                    "key": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price/Others",
+                    "name": "Others",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "Optional",
+                    "fullName": "Others",
+                    "parentKey": "/ns0:Root/NameValueTransforms/FlatterCatalog/Price"
+                  }
+                ],
+                "fullName": "Price",
+                "parentKey": "/ns0:Root/NameValueTransforms/FlatterCatalog"
+              }
+            ],
+            "fullName": "FlatterCatalog",
+            "parentKey": "/ns0:Root/NameValueTransforms"
+          },
+          {
+            "key": "/ns0:Root/NameValueTransforms/PO_Status",
+            "name": "PO_Status",
+            "schemaNodeDataType": "None",
+            "normalizedDataType": "ComplexType",
+            "properties": "NotSpecified",
+            "children": [
+              {
+                "key": "/ns0:Root/NameValueTransforms/PO_Status/ShipDate",
+                "name": "ShipDate",
+                "schemaNodeDataType": "String",
+                "normalizedDataType": "String",
+                "properties": "NotSpecified",
+                "fullName": "ShipDate",
+                "parentKey": "/ns0:Root/NameValueTransforms/PO_Status"
+              },
+              {
+                "key": "/ns0:Root/NameValueTransforms/PO_Status/ShippedVia",
+                "name": "ShippedVia",
+                "schemaNodeDataType": "String",
+                "normalizedDataType": "String",
+                "properties": "NotSpecified",
+                "fullName": "ShippedVia",
+                "parentKey": "/ns0:Root/NameValueTransforms/PO_Status"
+              },
+              {
+                "key": "/ns0:Root/NameValueTransforms/PO_Status/Product",
+                "name": "Product",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/NameValueTransforms/PO_Status/Product/ProductIdentifier",
+                    "name": "ProductIdentifier",
+                    "schemaNodeDataType": "String",
+                    "normalizedDataType": "String",
+                    "properties": "NotSpecified",
+                    "fullName": "ProductIdentifier",
+                    "parentKey": "/ns0:Root/NameValueTransforms/PO_Status/Product"
+                  },
+                  {
+                    "key": "/ns0:Root/NameValueTransforms/PO_Status/Product/OrderStatusQuantity",
+                    "name": "OrderStatusQuantity",
+                    "schemaNodeDataType": "None",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:Root/NameValueTransforms/PO_Status/Product/OrderStatusQuantity/GlobalOrderQuantityTypeCode",
+                        "name": "GlobalOrderQuantityTypeCode",
+                        "schemaNodeDataType": "String",
+                        "normalizedDataType": "String",
+                        "properties": "NotSpecified",
+                        "fullName": "GlobalOrderQuantityTypeCode",
+                        "parentKey": "/ns0:Root/NameValueTransforms/PO_Status/Product/OrderStatusQuantity"
+                      },
+                      {
+                        "key": "/ns0:Root/NameValueTransforms/PO_Status/Product/OrderStatusQuantity/ProductQuantity",
+                        "name": "ProductQuantity",
+                        "schemaNodeDataType": "String",
+                        "normalizedDataType": "String",
+                        "properties": "NotSpecified",
+                        "fullName": "ProductQuantity",
+                        "parentKey": "/ns0:Root/NameValueTransforms/PO_Status/Product/OrderStatusQuantity"
+                      }
+                    ],
+                    "fullName": "OrderStatusQuantity",
+                    "parentKey": "/ns0:Root/NameValueTransforms/PO_Status/Product"
+                  }
+                ],
+                "fullName": "Product",
+                "parentKey": "/ns0:Root/NameValueTransforms/PO_Status"
+              }
+            ],
+            "fullName": "PO_Status",
+            "parentKey": "/ns0:Root/NameValueTransforms"
+          }
+        ],
+        "fullName": "NameValueTransforms",
+        "parentKey": "/ns0:Root"
+      }
+    ],
+    "fullName": "ns0:Root"
+  }
+}

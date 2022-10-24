@@ -1,35 +1,30 @@
+import { ConfigPanelView } from '../../core/state/PanelSlice';
 import type { RootState } from '../../core/state/Store';
-import { SchemaTypes } from '../../models';
-import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType } from '@fluentui/react';
+import { SchemaType } from '../../models';
+import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType, Text } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
-import React, { useCallback, useRef } from 'react';
-import type { FunctionComponent } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
+
+const acceptedSchemaFileInputExtensions = '.xsd';
 
 export enum UploadSchemaTypes {
   UploadNew = 'upload-new',
   SelectFrom = 'select-from',
 }
 
-export interface ChangeSchemaView {
-  schemaList: SchemaInfo[] | any;
-}
 export interface FileWithVsCodePath extends File {
   path?: string;
 }
 export interface SchemaFile {
   name: string;
   path: string;
-  type: SchemaTypes;
+  type: SchemaType;
 }
 
-export interface SchemaInfo {
-  name: string;
-}
-
-export interface ChangeSchemaViewProps {
-  schemaType?: SchemaTypes;
+export interface AddOrUpdateSchemaViewProps {
+  schemaType?: SchemaType;
   selectedSchema?: IDropdownOption;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
@@ -39,7 +34,7 @@ export interface ChangeSchemaViewProps {
   setUploadType: (newUploadType: UploadSchemaTypes) => void;
 }
 
-export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
+export const AddOrUpdateSchemaView = ({
   schemaType,
   selectedSchema,
   selectedSchemaFile,
@@ -48,14 +43,12 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   errorMessage,
   uploadType,
   setUploadType,
-}) => {
+}: AddOrUpdateSchemaViewProps) => {
   const intl = useIntl();
   const schemaFileInputRef = useRef<HTMLInputElement>(null);
-  const schemaList = useSelector((state: RootState) => {
-    return state.schema.availableSchemas;
-  });
 
-  const dataMapDropdownOptions = schemaList?.map((file: string) => ({ key: file, text: file } ?? []));
+  const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
+  const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
 
   const replaceSchemaWarningLoc = intl.formatMessage({
     defaultMessage: 'Replacing an existing schema with an incompatible schema might create errors in your map.',
@@ -66,42 +59,16 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
     defaultMessage: 'Select a file to upload',
     description: 'Placeholder for input to load a schema file',
   });
+
   const dropdownAriaLabel = intl.formatMessage({
     defaultMessage: 'Select the schema for dropdown',
-    description: 'Dropdown for selecting or changing the input or target schema ',
+    description: 'Schema dropdown aria label',
   });
+
   const browseLoc = intl.formatMessage({
     defaultMessage: 'Browse',
     description: 'Browse for file',
   });
-
-  let uploadSelectLabelMessage = '';
-  let selectSchemaPlaceholderMessage = '';
-
-  switch (schemaType) {
-    case SchemaTypes.Source:
-      uploadSelectLabelMessage = intl.formatMessage({
-        defaultMessage: 'Add or select a source schema to use for your map.',
-        description: 'label to inform to upload or select source schema to be used',
-      });
-      selectSchemaPlaceholderMessage = intl.formatMessage({
-        defaultMessage: 'Select a source schema',
-        description: 'placeholder for selecting the source schema dropdown',
-      });
-      break;
-    case SchemaTypes.Target:
-      uploadSelectLabelMessage = intl.formatMessage({
-        defaultMessage: 'Add or select a target schema to use for your map.',
-        description: 'label to inform to upload or select target schema to be used',
-      });
-      selectSchemaPlaceholderMessage = intl.formatMessage({
-        defaultMessage: 'Select a target schema',
-        description: 'placeholder for selecting the target schema dropdown',
-      });
-      break;
-    default:
-      break;
-  }
 
   const addNewLoc = intl.formatMessage({
     defaultMessage: 'Add new',
@@ -113,20 +80,51 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
     description: 'Select existing option',
   });
 
-  const uploadSchemaOptions: IChoiceGroupOption[] = [
-    { key: UploadSchemaTypes.UploadNew, text: addNewLoc },
-    { key: UploadSchemaTypes.SelectFrom, text: selectExistingLoc },
-  ];
+  const updateSourceSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Update source schema',
+    description: 'Header to update source schema',
+  });
 
-  const onSelectedItemChange = useCallback(
-    (_: unknown, item?: IDropdownOption): void => {
-      setSelectedSchema(item);
+  const updateTargetSchemaHeaderMsg = intl.formatMessage({
+    defaultMessage: 'Update target schema',
+    description: 'Header to update target schema',
+  });
+
+  const [addOrSelectSchemaMsg, schemaDropdownPlaceholder] = useMemo(() => {
+    if (schemaType === SchemaType.Source) {
+      return [
+        intl.formatMessage({
+          defaultMessage: 'Add or select a source schema to use for your map.',
+          description: 'label to inform to upload or select source schema to be used',
+        }),
+        intl.formatMessage({
+          defaultMessage: 'Select a source schema',
+          description: 'Source schema dropdown placeholder',
+        }),
+      ];
+    } else {
+      return [
+        intl.formatMessage({
+          defaultMessage: 'Add or select a target schema to use for your map.',
+          description: 'label to inform to upload or select target schema to be used',
+        }),
+        intl.formatMessage({
+          defaultMessage: 'Select a target schema',
+          description: 'Target schema dropdown placeholder',
+        }),
+      ];
+    }
+  }, [intl, schemaType]);
+
+  const onSelectOption = useCallback(
+    (option?: IDropdownOption) => {
+      setSelectedSchema(option);
     },
     [setSelectedSchema]
   );
 
-  const onUploadTypeChange = useCallback(
-    (_: unknown, option?: IChoiceGroupOption): void => {
+  const onChangeUploadType = useCallback(
+    (option?: IChoiceGroupOption) => {
       if (option) {
         setUploadType(option.key as UploadSchemaTypes);
       }
@@ -150,25 +148,46 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
     }
   };
 
+  const uploadSchemaOptions: IChoiceGroupOption[] = useMemo(
+    () => [
+      { key: UploadSchemaTypes.UploadNew, text: addNewLoc },
+      { key: UploadSchemaTypes.SelectFrom, text: selectExistingLoc },
+    ],
+    [addNewLoc, selectExistingLoc]
+  );
+
+  const dataMapDropdownOptions = useMemo(
+    () => availableSchemaList?.map((file) => ({ key: file, text: file })) ?? [],
+    [availableSchemaList]
+  );
+
   return (
     <div>
-      <MessageBar messageBarType={MessageBarType.warning} styles={{ root: { marginTop: 20 } }}>
-        {replaceSchemaWarningLoc}
-      </MessageBar>
+      {currentPanelView === ConfigPanelView.UpdateSchema && (
+        <div style={{ marginTop: 24 }}>
+          <Text className="header-text">
+            {schemaType === SchemaType.Source ? updateSourceSchemaHeaderMsg : updateTargetSchemaHeaderMsg}
+          </Text>
 
-      <p className="inform-text">{uploadSelectLabelMessage}</p>
+          <MessageBar messageBarType={MessageBarType.warning} styles={{ root: { marginTop: 20 } }}>
+            {replaceSchemaWarningLoc}
+          </MessageBar>
+        </div>
+      )}
+
+      <p className="inform-text">{addOrSelectSchemaMsg}</p>
 
       <ChoiceGroup
         className="choice-group"
         selectedKey={uploadType}
         options={uploadSchemaOptions}
-        onChange={onUploadTypeChange}
+        onChange={(_e, option) => onChangeUploadType(option)}
         required={true}
       />
 
       {uploadType === UploadSchemaTypes.UploadNew && (
         <div>
-          <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept=".xsd" hidden />
+          <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept={acceptedSchemaFileInputExtensions} hidden />
           <Stack horizontal>
             <TextField value={selectedSchemaFile?.name} placeholder={uploadMessage} readOnly />
             <PrimaryButton onClick={() => schemaFileInputRef.current?.click()} style={{ marginLeft: 8 }}>
@@ -182,9 +201,9 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
         <Dropdown
           aria-label={dropdownAriaLabel}
           selectedKey={selectedSchema ? selectedSchema.key : undefined}
-          placeholder={selectSchemaPlaceholderMessage}
+          placeholder={schemaDropdownPlaceholder}
           options={dataMapDropdownOptions ?? []}
-          onChange={onSelectedItemChange}
+          onChange={(_e, option) => onSelectOption(option)}
           errorMessage={errorMessage}
         />
       )}

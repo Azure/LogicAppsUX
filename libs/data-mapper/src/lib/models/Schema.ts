@@ -1,6 +1,6 @@
 export interface Schema {
   name: string;
-  type: SchemaType;
+  type: SchemaFileFormat;
   targetNamespace: string;
   namespaces?: NamespaceDictionary;
   schemaTreeRoot: SchemaNode;
@@ -19,7 +19,7 @@ export interface SchemaNode {
   children: SchemaNode[];
 }
 
-export enum SchemaType {
+export enum SchemaFileFormat {
   NotSpecified = 'NotSpecified',
   XML = 'XML',
   JSON = 'JSON',
@@ -110,7 +110,7 @@ export interface PathItem {
   repeating: boolean;
 }
 
-export enum SchemaTypes {
+export enum SchemaType {
   Source = 'source',
   Target = 'target',
 }

@@ -176,7 +176,7 @@ const isFunctionTypeSupportedAndAvailable = (
     let supportedTypeInputIsAvailable = false;
     tgtInputs.forEach((targetInput, index) => {
       if (targetInput.allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)) {
-        if (connection.inputs[index].length < 1) {
+        if (!connection.inputs || connection.inputs[index].length < 1) {
           supportedTypeInputIsAvailable = true;
         }
       }
@@ -241,7 +241,7 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
   }
 };
 
-export const nodeHasSpecificSourceNodeEventually = (
+export const nodeHasSpecificInputEventually = (
   sourceKey: string,
   currentConnection: Connection,
   connections: ConnectionDictionary,
@@ -262,7 +262,7 @@ export const nodeHasSpecificSourceNodeEventually = (
   const nonCustomInputs: ConnectionUnit[] = flattenedInputs.filter(isConnectionUnit);
 
   return nonCustomInputs.some((input) =>
-    nodeHasSpecificSourceNodeEventually(sourceKey, connections[input.reactFlowKey], connections, exactMatch)
+    nodeHasSpecificInputEventually(sourceKey, connections[input.reactFlowKey], connections, exactMatch)
   );
 };
 

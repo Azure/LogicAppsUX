@@ -147,6 +147,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   const idReplacements = rootState.workflow.idReplacements;
   const operation = rootState.operations.operationInfo[operationId];
   const manifest = await getOperationManifest(operation);
+  const isTrigger = isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = rootState.operations.settings[operationId] ?? {};
   const inputPathValue = serializeOperationParameters(inputsToSerialize, manifest);
@@ -157,9 +158,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     ? undefined
     : getRunAfter(operationFromWorkflow, idReplacements);
   const recurrence =
-    isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata) &&
-    manifest.properties.recurrence &&
-    manifest.properties.recurrence.type !== RecurrenceType.None
+    isTrigger && manifest.properties.recurrence && manifest.properties.recurrence.type !== RecurrenceType.None
       ? constructInputValues('recurrence.$', inputsToSerialize, false /* encodePathComponents */)
       : undefined;
 
@@ -182,7 +181,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
     ...childOperations,
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
-    ...serializeSettings(operationId, nodeSettings, rootState),
+    ...serializeSettings(operationId, nodeSettings, isTrigger, rootState),
   };
 };
 
@@ -218,7 +217,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
     ...optional('inputs', inputs),
     ...optional('runAfter', runAfter),
     ...optional('recurrence', recurrence),
-    ...serializeSettings(operationId, nodeSettings, rootState),
+    ...serializeSettings(operationId, nodeSettings, isTrigger, rootState),
   };
 };
 
@@ -516,6 +515,7 @@ const isWorkflowOperationNode = (node: WorkflowNode) =>
 const serializeSettings = (
   operationId: string,
   settings: Settings,
+  isTrigger: boolean,
   rootState: RootState
 ): Partial<LogicAppsV2.Action | LogicAppsV2.Trigger> => {
   const conditionExpressions = settings.conditionExpressions;
@@ -532,6 +532,7 @@ const serializeSettings = (
     ...optional('operationOptions', getSerializedOperationOptions(operationId, settings, rootState)),
     ...optional('runtimeConfiguration', getSerializedRuntimeConfiguration(operationId, settings, rootState)),
     ...optional('trackedProperties', trackedProperties),
+    ...(getSplitOn(isTrigger, settings) ?? {}),
   };
 };
 
@@ -718,6 +719,24 @@ const getRetryPolicy = (settings: Settings): LogicAppsV2.RetryPolicy | undefined
   }
 };
 
+const getSplitOn = (
+  isTrigger: boolean,
+  { splitOn, splitOnConfiguration }: Settings
+):
+  | {
+      splitOn: string;
+      splitOnConfiguration?: { correlation?: { clientTrackingId?: string } };
+    }
+  | undefined => {
+  if (!isTrigger || !splitOn?.value?.enabled) {
+    return undefined;
+  }
+
+  return {
+    splitOn: splitOn.value.value as string,
+    ...(splitOnConfiguration ? { splitOnConfiguration } : {}),
+  };
+};
 //#endregion
 
 const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Record<string, string>): LogicAppsV2.RunAfter => {

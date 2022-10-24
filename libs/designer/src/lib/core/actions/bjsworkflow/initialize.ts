@@ -1,15 +1,17 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { preloadOperationsQuery } from '../../queries/browse';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
-import { updateTokens } from '../../state/tokensSlice';
+import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
+import type { UpdateUpstreamNodesPayload } from '../../state/tokensSlice';
+import { updateTokens, updateUpstreamNodes } from '../../state/tokensSlice';
 import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
-import { getTriggerNodeId } from '../../utils/graph';
-import { getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
+import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
+import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
@@ -24,7 +26,7 @@ import {
 } from '../../utils/parameters/helper';
 import { createLiteralValueSegment } from '../../utils/parameters/segment';
 import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
-import { convertOutputsToTokens, getBuiltInTokens } from '../../utils/tokens';
+import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
 import type { Settings } from './settings';
 import type {
@@ -165,12 +167,27 @@ export const getOutputParametersFromManifest = (
   splitOnValue?: string
 ): NodeOutputsWithDependencies => {
   let manifestToParse = manifest;
+  let originalOutputs: Record<string, OutputInfo> | undefined;
 
   if (manifest.properties.outputsSchema) {
     manifestToParse = getUpdatedManifestForSchemaDependency(manifest, inputs);
   }
 
   if (isTrigger) {
+    const originalOperationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
+      true /* includeParentObject */,
+      Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
+      false /* expandOneOf */,
+      undefined /* data */,
+      true /* selectAllOneOfSchemas */
+    );
+    originalOutputs = Object.values(originalOperationOutputs).reduce((result: Record<string, OutputInfo>, output: SchemaProperty) => {
+      return {
+        ...result,
+        [output.key]: toOutputInfo(output),
+      };
+    }, {});
+
     manifestToParse = getUpdatedManifestForSpiltOn(manifestToParse, splitOnValue);
   }
 
@@ -224,7 +241,10 @@ export const getOutputParametersFromManifest = (
     }
   }
 
-  return { outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs }, dependencies };
+  return {
+    outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs, originalOutputs },
+    dependencies,
+  };
 };
 
 export const updateOutputsAndTokens = async (
@@ -233,7 +253,8 @@ export const updateOutputsAndTokens = async (
   dispatch: Dispatch,
   isTrigger: boolean,
   inputs: NodeInputs,
-  settings: Settings
+  settings: Settings,
+  shouldProcessSettings = false
 ): Promise<void> => {
   const { type, kind, connectorId } = operationInfo;
   const supportsManifest = OperationManifestService().isSupported(type, kind);
@@ -255,7 +276,7 @@ export const updateOutputsAndTokens = async (
     ];
   } else {
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-    nodeOutputs = getOutputParametersFromSwagger(parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
+    nodeOutputs = getOutputParametersFromSwagger(isTrigger, parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
     tokens = convertOutputsToTokens(
       isTrigger ? undefined : nodeId,
       type,
@@ -267,6 +288,14 @@ export const updateOutputsAndTokens = async (
 
   dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
   dispatch(updateTokens({ id: nodeId, tokens }));
+
+  // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
+  if (shouldProcessSettings && isTrigger) {
+    const isSplitOnSupported = getSplitOnOptions(nodeOutputs).length > 0;
+    if (settings.splitOn?.isSupported !== isSplitOnSupported) {
+      dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
+    }
+  }
 };
 
 export const getInputDependencies = (nodeInputs: NodeInputs, allInputs: InputParameter[]): Record<string, DependencyInfo> => {
@@ -342,4 +371,28 @@ export const updateCallbackUrlInInputs = async (
   }
 
   return;
+};
+
+export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): void => {
+  const allOperations = state.workflow.operations;
+  const payload: UpdateUpstreamNodesPayload = {};
+  const nodeMap = Object.keys(allOperations).reduce(
+    (actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }),
+    {}
+  );
+
+  for (const nodeId of Object.keys(allOperations)) {
+    if (!isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata)) {
+      payload[nodeId] = getTokenNodeIds(
+        nodeId,
+        state.workflow.graph as WorkflowNode,
+        state.workflow.nodesMetadata,
+        {},
+        state.operations.operationInfo,
+        nodeMap
+      );
+    }
+  }
+
+  dispatch(updateUpstreamNodes(payload));
 };

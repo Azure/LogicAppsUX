@@ -1,7 +1,7 @@
 import type { NotificationData } from '../../components/notification/Notification';
 import { NotificationTypes } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
-import { SchemaNodeProperties, SchemaTypes } from '../../models';
+import { SchemaNodeProperties, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import {
@@ -10,7 +10,7 @@ import {
   flattenInputs,
   isConnectionUnit,
   isCustomValue,
-  nodeHasSpecificSourceNodeEventually,
+  nodeHasSpecificInputEventually,
   updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
 import {
@@ -64,7 +64,7 @@ const initialState: DataMapState = {
 
 export interface InitialSchemaAction {
   schema: SchemaExtended;
-  schemaType: SchemaTypes.Source | SchemaTypes.Target;
+  schemaType: SchemaType.Source | SchemaType.Target;
   flattenedSchema: SchemaNodeDictionary;
 }
 
@@ -100,7 +100,7 @@ export const dataMapSlice = createSlice({
     },
 
     setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
-      if (action.payload.schemaType === SchemaTypes.Source) {
+      if (action.payload.schemaType === SchemaType.Source) {
         state.curDataMapOperation.sourceSchema = action.payload.schema;
         state.curDataMapOperation.flattenedSourceSchema = action.payload.flattenedSchema;
         state.pristineDataMap.sourceSchema = action.payload.schema;
@@ -325,12 +325,12 @@ export const dataMapSlice = createSlice({
       const sourceNode = action.payload.source;
       if (parentTargetNode && parentTargetNode.properties === SchemaNodeProperties.Repeating && isSchemaNodeExtended(sourceNode)) {
         if (sourceNode.parentKey) {
-          const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaTypes.Source);
+          const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
           const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
-          const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaTypes.Target);
+          const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
           if (
             parentSourceNode.properties === SchemaNodeProperties.Repeating &&
-            !nodeHasSpecificSourceNodeEventually(
+            !nodeHasSpecificInputEventually(
               prefixedSourceKey,
               newState.dataMapConnections[prefixedTargetKey],
               newState.dataMapConnections,

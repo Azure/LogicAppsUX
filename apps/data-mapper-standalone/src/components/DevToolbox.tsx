@@ -1,4 +1,5 @@
-import { simplePassthroughMapDefinition } from '../../../../__mocks__/mapDefinitions/TranscriptMapDefinitions';
+import { customerOrderMapDefinition } from '../../../../__mocks__/mapDefinitions/SimpleCustomerOrder';
+import { demoScriptMapDefinition } from '../../../../__mocks__/mapDefinitions/TranscriptMapDefinitions';
 import { dataMapDataLoaderSlice, loadDataMap, type ThemeType } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -11,6 +12,10 @@ import { useDispatch, useSelector } from 'react-redux';
 const themeOptions = ['Light', 'Dark'];
 const themeDropdownOptions = themeOptions.map((theme) => ({ key: theme, text: theme }));
 
+export const mapDefinitionDropdownOptions: IDropdownOption<string>[] = [
+  { key: 'demoScriptMapDefinition', text: 'Demo Script Map Definition', data: demoScriptMapDefinition },
+  { key: 'customerOrderMapDefinition', text: 'Simple Schema Map Definition', data: customerOrderMapDefinition },
+];
 export const schemaFileOptions = ['SourceSchema.json', 'TargetSchema.json', 'SimpleInputOrderSchema.json', 'SimpleOutputOrderSchema.json'];
 
 export const DevToolbox: React.FC = () => {
@@ -29,16 +34,16 @@ export const DevToolbox: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const changeResourcePathCB = useCallback(
-    (_: unknown, newValue?: string) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(newValue ?? ''));
+    (_: unknown, _newValue?: string) => {
+      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as IDropdownOption<string>));
       dispatch(loadDataMap());
     },
     [dispatch]
   );
 
   const resetToUseARM = useCallback(
-    (_: unknown, newValue?: string) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(newValue ?? ''));
+    (_: unknown, _newValue?: string) => {
+      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as IDropdownOption<string>));
       dispatch(loadDataMap());
     },
     [dispatch]
@@ -52,8 +57,8 @@ export const DevToolbox: React.FC = () => {
   );
 
   const changeMapDefinitionResourcePathDropdownCB = useCallback(
-    (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition((item?.data as string) ?? ''));
+    (_: unknown, item: IDropdownOption<string> | undefined) => {
+      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(item ?? ({} as IDropdownOption<string>)));
       dispatch(loadDataMap());
     },
     [dispatch]
@@ -107,22 +112,14 @@ export const DevToolbox: React.FC = () => {
   const toolboxItems = useMemo(() => {
     const newToolboxItems = [];
 
-    const mapDefinitionDropdownOptions: IDropdownOption<string>[] = [
-      { key: 'simplePassthroughMapDefinition', text: 'Simple Passthrough', data: simplePassthroughMapDefinition },
-    ];
     const schemaDropdownOptions = schemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
 
     if (loadingMethod === 'file') {
       newToolboxItems.push(
-        <StackItem key={'mapXsltFilenameTextField'} style={{ width: '250px' }}>
-          <TextField label="Map XSLT Filename" value={xsltFilename} onChange={(_e, newValue) => changeMapXsltFilenameCB(newValue)} />
-        </StackItem>
-      );
-      newToolboxItems.push(
         <StackItem key={'mapDefinitionDropDown'} style={{ width: '250px' }}>
           <Dropdown
             label="Map Definition"
-            selectedKey={rawDefinition}
+            selectedKey={rawDefinition.key}
             onChange={changeMapDefinitionResourcePathDropdownCB}
             placeholder="Select a map definition"
             options={mapDefinitionDropdownOptions}
@@ -151,6 +148,11 @@ export const DevToolbox: React.FC = () => {
           />
         </StackItem>
       );
+      newToolboxItems.push(
+        <StackItem key={'mapXsltFilenameTextField'} style={{ width: '250px' }}>
+          <TextField label="Map XSLT Filename" value={xsltFilename} onChange={(_e, newValue) => changeMapXsltFilenameCB(newValue)} />
+        </StackItem>
+      );
     } else {
       newToolboxItems.push(
         <StackItem key={'resourceUriTextField'} style={{ width: '250px' }}>
@@ -158,7 +160,7 @@ export const DevToolbox: React.FC = () => {
             label="Resource Uri"
             description="/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}"
             onChange={changeResourcePathCB}
-            value={rawDefinition ?? ''}
+            value={rawDefinition.data ?? ''}
           />
         </StackItem>
       );

@@ -137,7 +137,6 @@ export const initializeOperationDetailsForManifest = async (
 
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
 
-      const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation);
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, operation);
 
       if (isTrigger) {
@@ -148,9 +147,10 @@ export const initializeOperationDetailsForManifest = async (
         manifest,
         isTrigger,
         nodeInputs,
-        settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
+        isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, undefined /* swagger */, operation);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 

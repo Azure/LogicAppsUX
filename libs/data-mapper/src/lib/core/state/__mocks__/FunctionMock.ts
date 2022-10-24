@@ -1,7 +1,8 @@
 import { NormalizedDataType } from '../../../models';
+import type { FunctionData } from '../../../models/Function';
 import { FunctionCategory } from '../../../models/Function';
 
-export const concatFunction = {
+export const concatFunction: FunctionData = {
   key: 'Concat',
   maxNumberOfInputs: -1,
   type: 'TransformationFunction',
@@ -9,13 +10,12 @@ export const concatFunction = {
   outputValueType: NormalizedDataType.String,
   inputs: [
     {
-      name: 'value',
+      name: 'Value',
       allowedTypes: [NormalizedDataType.String],
       isOptional: false,
       allowCustomInput: true,
-      displayName: 'Value',
       tooltip: 'The value to use',
-      placeholder: 'The value',
+      placeHolder: 'The value',
     },
   ],
   displayName: 'Concatenate',

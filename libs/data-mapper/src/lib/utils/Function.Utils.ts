@@ -48,3 +48,15 @@ export const findFunctionForKey = (nodeKey: string, functions: FunctionData[]): 
   functions.find((functionData) => functionData.key === nodeKey);
 
 export const isFunctionData = (node: SchemaNodeExtended | FunctionData): node is FunctionData => 'functionName' in node;
+
+export const getFunctionOutputValue = (inputValues: string[], functionName: string) => {
+  let outputValue = `${functionName}(`;
+
+  inputValues.forEach((inputValue, idx) => {
+    if (inputValue) {
+      outputValue += `${idx === 0 ? '' : ', '}${inputValue}`;
+    }
+  });
+
+  return `${outputValue})`;
+};

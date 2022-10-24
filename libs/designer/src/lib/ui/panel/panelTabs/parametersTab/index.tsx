@@ -239,6 +239,8 @@ const ParameterSection = ({
           placeholder: param.placeholder,
           tokenEditor: true,
           isTrigger: isTrigger,
+          isLoading: param.dynamicData?.status === DynamicCallStatus.STARTED,
+          errorDetails: param.dynamicData?.error ? { message: param.dynamicData.error.message } : undefined,
           getTokenPicker: (
             editorId: string,
             labelId: string,

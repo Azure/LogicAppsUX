@@ -1,67 +1,63 @@
-import { SchemaTypes } from '../../models';
+import { SchemaType } from '../../models';
 import { createSlice } from '@reduxjs/toolkit';
 
-export interface PanelState {
-  leftPanelCollapsed: boolean;
-
-  isDefaultConfigPanelOpen: boolean;
-  isChangeSchemaPanelOpen: boolean;
-  schemaType?: SchemaTypes;
+export enum ConfigPanelView {
+  DefaultConfig = 'defaultConfig',
+  AddSchema = 'addSchema',
+  UpdateSchema = 'updateSchema',
 }
 
-const initialState: PanelState = {
-  leftPanelCollapsed: true,
-  isDefaultConfigPanelOpen: false,
-  isChangeSchemaPanelOpen: false,
-};
+export interface PanelState {
+  currentPanelView?: ConfigPanelView;
+  schemaType?: SchemaType;
+}
+
+const initialState: PanelState = {};
 
 export const panelSlice = createSlice({
   name: 'panel',
   initialState,
   reducers: {
-    expandLeftPanel: (state) => {
-      state.leftPanelCollapsed = false;
-    },
-    collapseLeftPanel: (state) => {
-      state.leftPanelCollapsed = true;
-    },
-
-    openDefaultConfigPanel: (state) => {
-      state.isChangeSchemaPanelOpen = false;
+    // Also used onClickBackBtn
+    openDefaultConfigPanelView: (state) => {
       state.schemaType = undefined;
-      state.isDefaultConfigPanelOpen = true;
+      state.currentPanelView = ConfigPanelView.DefaultConfig;
     },
 
-    closeDefaultConfigPanel: (state) => {
-      state.isChangeSchemaPanelOpen = false;
-      state.isDefaultConfigPanelOpen = false;
+    openAddSourceSchemaPanelView: (state) => {
+      state.schemaType = SchemaType.Source;
+      state.currentPanelView = ConfigPanelView.AddSchema;
     },
 
-    openSourceSchemaPanel: (state) => {
-      state.schemaType = SchemaTypes.Source;
-      state.isChangeSchemaPanelOpen = true;
+    openUpdateSourceSchemaPanelView: (state) => {
+      state.schemaType = SchemaType.Source;
+      state.currentPanelView = ConfigPanelView.UpdateSchema;
     },
 
-    openTargetSchemaPanel: (state) => {
-      state.schemaType = SchemaTypes.Target;
-      state.isChangeSchemaPanelOpen = true;
+    openAddTargetSchemaPanelView: (state) => {
+      state.schemaType = SchemaType.Target;
+      state.currentPanelView = ConfigPanelView.AddSchema;
     },
 
-    closeSchemaChangePanel: (state) => {
-      state.isChangeSchemaPanelOpen = false;
+    openUpdateTargetSchemaPanelView: (state) => {
+      state.schemaType = SchemaType.Target;
+      state.currentPanelView = ConfigPanelView.UpdateSchema;
+    },
+
+    closePanel: (state) => {
+      state.schemaType = undefined;
+      state.currentPanelView = undefined;
     },
   },
 });
 
-// Action creators are generated for each case reducer function
 export const {
-  expandLeftPanel,
-  collapseLeftPanel,
-  openDefaultConfigPanel,
-  closeDefaultConfigPanel,
-  openSourceSchemaPanel,
-  openTargetSchemaPanel,
-  closeSchemaChangePanel,
+  openDefaultConfigPanelView,
+  openAddSourceSchemaPanelView,
+  openUpdateSourceSchemaPanelView,
+  openAddTargetSchemaPanelView,
+  openUpdateTargetSchemaPanelView,
+  closePanel,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;
