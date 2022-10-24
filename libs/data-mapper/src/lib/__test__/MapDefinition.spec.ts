@@ -1,7 +1,7 @@
 import { sourceMockSchema, targetMockSchema } from '../__mocks__';
 import { concatFunction } from '../__mocks__/FunctionMock';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../models';
-import { SchemaTypes } from '../models';
+import { SchemaType } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { addNodeToConnections } from '../utils/Connection.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader, splitKeyIntoChildren } from '../utils/DataMap.Utils';
@@ -34,17 +34,17 @@ describe('Map definition conversions', () => {
       addNodeToConnections(
         connections,
         sourceNode.children[0],
-        addReactFlowPrefix(sourceNode.children[0].key, SchemaTypes.Source),
+        addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
         targetNode.children[0].children[0],
-        addReactFlowPrefix(targetNode.children[0].children[0].key, SchemaTypes.Target)
+        addReactFlowPrefix(targetNode.children[0].children[0].key, SchemaType.Target)
       );
 
       addNodeToConnections(
         connections,
         sourceNode.children[1],
-        addReactFlowPrefix(sourceNode.children[1].key, SchemaTypes.Source),
+        addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
         targetNode.children[0].children[1],
-        addReactFlowPrefix(targetNode.children[0].children[1].key, SchemaTypes.Target)
+        addReactFlowPrefix(targetNode.children[0].children[1].key, SchemaType.Target)
       );
       generateMapDefinitionBody(mapDefinition, connections);
 
@@ -79,14 +79,14 @@ describe('Map definition conversions', () => {
       addNodeToConnections(
         connections,
         sourceNode.children[0],
-        addReactFlowPrefix(sourceNode.children[0].key, SchemaTypes.Source),
+        addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
         concatFunction,
         functionId
       );
       addNodeToConnections(
         connections,
         sourceNode.children[1],
-        addReactFlowPrefix(sourceNode.children[1].key, SchemaTypes.Source),
+        addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
         concatFunction,
         functionId
       );
@@ -95,15 +95,15 @@ describe('Map definition conversions', () => {
         concatFunction,
         functionId,
         targetNode.children[0].children[0],
-        addReactFlowPrefix(targetNode.children[0].children[0].key, SchemaTypes.Target)
+        addReactFlowPrefix(targetNode.children[0].children[0].key, SchemaType.Target)
       );
 
       addNodeToConnections(
         connections,
         sourceNode.children[1],
-        addReactFlowPrefix(sourceNode.children[1].key, SchemaTypes.Source),
+        addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
         targetNode.children[0].children[1],
-        addReactFlowPrefix(targetNode.children[0].children[1].key, SchemaTypes.Target)
+        addReactFlowPrefix(targetNode.children[0].children[1].key, SchemaType.Target)
       );
 
       generateMapDefinitionBody(mapDefinition, connections);
@@ -145,17 +145,17 @@ describe('Map definition conversions', () => {
       addNodeToConnections(
         connections,
         sourceChildNode.children[0],
-        addReactFlowPrefix(sourceChildNode.children[0].key, SchemaTypes.Source),
+        addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
         targetChildNode.children[1],
-        addReactFlowPrefix(targetChildNode.children[1].key, SchemaTypes.Target)
+        addReactFlowPrefix(targetChildNode.children[1].key, SchemaType.Target)
       );
 
       addNodeToConnections(
         connections,
         sourceChildNode.children[1],
-        addReactFlowPrefix(sourceChildNode.children[1].key, SchemaTypes.Source),
+        addReactFlowPrefix(sourceChildNode.children[1].key, SchemaType.Source),
         targetChildNode.children[0],
-        addReactFlowPrefix(targetChildNode.children[0].key, SchemaTypes.Target)
+        addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target)
       );
       generateMapDefinitionBody(mapDefinition, connections);
 

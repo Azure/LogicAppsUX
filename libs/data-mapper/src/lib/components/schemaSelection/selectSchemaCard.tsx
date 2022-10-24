@@ -1,6 +1,6 @@
 import { openAddSourceSchemaPanelView, openAddTargetSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
-import { SchemaTypes } from '../../models';
+import { SchemaType } from '../../models';
 import CardOnHover from './card_onHover.svg';
 import CardOnRest from './card_onRest.svg';
 import { Image, Stack } from '@fluentui/react';
@@ -28,7 +28,7 @@ const useStyles = makeStyles({
 });
 
 export interface SelectSchemaCardProps {
-  schemaType: SchemaTypes;
+  schemaType: SchemaType;
 }
 
 export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
@@ -39,7 +39,7 @@ export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
   const [isHovering, setIsHovering] = useState(false);
 
   const selectSchemaMsg = useMemo(() => {
-    if (schemaType === SchemaTypes.Source) {
+    if (schemaType === SchemaType.Source) {
       return intl.formatMessage({
         defaultMessage: 'Add a source schema',
         description: 'label to inform to add a source schema to be used',
@@ -53,7 +53,7 @@ export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
   }, [intl, schemaType]);
 
   const onClickSchemaCard = () => {
-    if (schemaType === SchemaTypes.Source) {
+    if (schemaType === SchemaType.Source) {
       dispatch(openAddSourceSchemaPanelView());
     } else {
       dispatch(openAddTargetSchemaPanelView());
