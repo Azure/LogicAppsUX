@@ -31,6 +31,7 @@ export const panelSlice = createSlice({
     },
     clearPanel: (state) => {
       state.collapsed = true;
+      state.isDiscovery = false;
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
     },
