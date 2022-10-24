@@ -1,19 +1,18 @@
-import type { RootState } from '../../core/state/Store';
+import { openUpdateSourceSchemaPanelView, openUpdateTargetSchemaPanelView } from '../../core/state/PanelSlice';
+import type { AppDispatch, RootState } from '../../core/state/Store';
+import { SchemaTypes } from '../../models';
 import { IconButton, Text } from '@fluentui/react';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-export interface DefaultPanelViewProps {
-  onSourceSchemaClick: () => void;
-  onTargetSchemaClick: () => void;
-}
-
-export const DefaultPanelView = ({ onSourceSchemaClick, onTargetSchemaClick }: DefaultPanelViewProps) => {
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+export const DefaultConfigView = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
 
-  const replaceMessage = intl.formatMessage({
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+
+  const replaceMsgLoc = intl.formatMessage({
     defaultMessage: 'Add or replace your schemas.',
     description: 'Label to inform the ability to replace schemas',
   });
@@ -33,21 +32,34 @@ export const DefaultPanelView = ({ onSourceSchemaClick, onTargetSchemaClick }: D
     description: 'Placeholder when no schema has been added',
   });
 
-  const pencilAriaLabel = intl.formatMessage({
+  const pencilIconLoc = intl.formatMessage({
     defaultMessage: 'Pencil icon',
-    description: 'Icon to click to edit the schema selection, pressing will lead to a selection panel page',
+    description: 'Pencil icon aria label',
   });
+
+  const onEditSchemaClick = (schemaType: SchemaTypes) => {
+    if (schemaType === SchemaTypes.Source) {
+      dispatch(openUpdateSourceSchemaPanelView());
+    } else {
+      dispatch(openUpdateTargetSchemaPanelView());
+    }
+  };
 
   return (
     <div>
-      <p className="inform-text">{replaceMessage}</p>
+      <p className="inform-text">{replaceMsgLoc}</p>
 
       <div className="schema-selection-container">
         <div>
           <Text className="schema-label-text">{sourceSchemaLabel}</Text>
           <p>{sourceSchema?.name ?? noSchemaAddedLoc}</p>
         </div>
-        <IconButton iconProps={{ iconName: 'Edit' }} title={pencilAriaLabel} ariaLabel={pencilAriaLabel} onClick={onSourceSchemaClick} />
+        <IconButton
+          iconProps={{ iconName: 'Edit' }}
+          title={pencilIconLoc}
+          ariaLabel={pencilIconLoc}
+          onClick={() => onEditSchemaClick(SchemaTypes.Source)}
+        />
       </div>
 
       <div className="schema-selection-container">
@@ -55,7 +67,12 @@ export const DefaultPanelView = ({ onSourceSchemaClick, onTargetSchemaClick }: D
           <Text className="schema-label-text">{targetSchemaLabel}</Text>
           <p>{targetSchema?.name ?? noSchemaAddedLoc}</p>
         </div>
-        <IconButton iconProps={{ iconName: 'Edit' }} title={pencilAriaLabel} ariaLabel={pencilAriaLabel} onClick={onTargetSchemaClick} />
+        <IconButton
+          iconProps={{ iconName: 'Edit' }}
+          title={pencilIconLoc}
+          ariaLabel={pencilIconLoc}
+          onClick={() => onEditSchemaClick(SchemaTypes.Target)}
+        />
       </div>
     </div>
   );
