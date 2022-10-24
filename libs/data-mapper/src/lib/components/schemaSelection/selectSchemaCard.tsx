@@ -1,4 +1,4 @@
-import { SchemaTypes } from '../../models';
+import { SchemaType } from '../../models';
 import CardOnHover from './card_onHover.svg';
 import CardOnRest from './card_onRest.svg';
 import { Image, Stack } from '@fluentui/react';
@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 });
 
 export interface SelectSchemaCardProps {
-  schemaType: SchemaTypes;
+  schemaType: SchemaType;
   onClick: () => void;
 }
 
@@ -38,13 +38,13 @@ export const SelectSchemaCard = ({ schemaType, onClick }: SelectSchemaCardProps)
   let selectSchemaMsg = '';
 
   switch (schemaType) {
-    case SchemaTypes.Source:
+    case SchemaType.Source:
       selectSchemaMsg = intl.formatMessage({
         defaultMessage: 'Add a source schema',
         description: 'label to inform to add a source schema to be used',
       });
       break;
-    case SchemaTypes.Target:
+    case SchemaType.Target:
       selectSchemaMsg = intl.formatMessage({
         defaultMessage: 'Add a target schema',
         description: 'label to inform to add a target schema to be used',

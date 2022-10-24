@@ -1,7 +1,7 @@
 import { setAvailableSchemas } from '../../core/state/SchemaSlice';
 import { store } from '../../core/state/Store';
 import type { Schema } from '../../models/Schema';
-import { SchemaTypes } from '../../models/Schema';
+import { SchemaType } from '../../models/Schema';
 import { noChildrenMockSchema, simpleMockSchema } from '../../models/__mocks__';
 import type { ChangeSchemaViewProps } from './ChangeSchemaView';
 import { ChangeSchemaView } from './ChangeSchemaView';
@@ -31,7 +31,7 @@ const Template: ComponentStory<typeof ChangeSchemaView> = (args: ChangeSchemaVie
 export const Standard = Template.bind({});
 
 Standard.args = {
-  schemaType: SchemaTypes.Source,
+  schemaType: SchemaType.Source,
   setSelectedSchema: () => console.log('Selected new schema'),
   errorMessage: '',
 };

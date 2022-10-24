@@ -1,7 +1,7 @@
 import { openSourceSchemaPanel, openTargetSchemaPanel } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
-import { SchemaTypes } from '../../models/';
+import { SchemaType } from '../../models/';
 import { nodeTypes } from '../../ui/ReactFlowWrapper';
 import { useLayout } from '../../utils/ReactFlow.Util';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
@@ -85,7 +85,7 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSc
             <LayeredReactFlow schema={sourceSchema} isSourceSchema />
           </ReactFlowProvider>
         ) : (
-          <SelectSchemaCard schemaType={SchemaTypes.Source} onClick={onSourceSchemaClick} />
+          <SelectSchemaCard schemaType={SchemaType.Source} onClick={onSourceSchemaClick} />
         )}
       </Stack>
       <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
@@ -94,7 +94,7 @@ export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSc
             <LayeredReactFlow schema={targetSchema} />
           </ReactFlowProvider>
         ) : (
-          <SelectSchemaCard schemaType={SchemaTypes.Target} onClick={onTargetSchemaClick} />
+          <SelectSchemaCard schemaType={SchemaType.Target} onClick={onTargetSchemaClick} />
         )}
       </Stack>
     </div>

@@ -1,4 +1,4 @@
-import { SchemaTypes } from '../../models/Schema';
+import { SchemaType } from '../../models/Schema';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -28,10 +28,10 @@ export const modalSlice = createSlice({
       state.isWarningModalOpen = true;
       state.warningModalType = WarningModalState.DiscardWarning;
     },
-    openChangeSchemaWarning: (state, action: PayloadAction<{ schemaType: SchemaTypes.Source | SchemaTypes.Target }>) => {
+    openChangeSchemaWarning: (state, action: PayloadAction<{ schemaType: SchemaType.Source | SchemaType.Target }>) => {
       state.isOkClicked = false;
       state.isWarningModalOpen = true;
-      if (action.payload.schemaType === SchemaTypes.Source) {
+      if (action.payload.schemaType === SchemaType.Source) {
         state.warningModalType = WarningModalState.ChangeSourceWarning;
       } else {
         state.warningModalType = WarningModalState.ChangeTargetWarning;

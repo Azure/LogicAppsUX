@@ -1,5 +1,5 @@
 import type { RootState } from '../../core/state/Store';
-import { SchemaTypes } from '../../models';
+import { SchemaType } from '../../models';
 import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import React, { useCallback, useRef } from 'react';
@@ -21,7 +21,7 @@ export interface FileWithVsCodePath extends File {
 export interface SchemaFile {
   name: string;
   path: string;
-  type: SchemaTypes;
+  type: SchemaType;
 }
 
 export interface SchemaInfo {
@@ -29,7 +29,7 @@ export interface SchemaInfo {
 }
 
 export interface ChangeSchemaViewProps {
-  schemaType?: SchemaTypes;
+  schemaType?: SchemaType;
   selectedSchema?: IDropdownOption;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
@@ -79,7 +79,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   let selectSchemaPlaceholderMessage = '';
 
   switch (schemaType) {
-    case SchemaTypes.Source:
+    case SchemaType.Source:
       uploadSelectLabelMessage = intl.formatMessage({
         defaultMessage: 'Add or select a source schema to use for your map.',
         description: 'label to inform to upload or select source schema to be used',
@@ -89,7 +89,7 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
         description: 'placeholder for selecting the source schema dropdown',
       });
       break;
-    case SchemaTypes.Target:
+    case SchemaType.Target:
       uploadSelectLabelMessage = intl.formatMessage({
         defaultMessage: 'Add or select a target schema to use for your map.',
         description: 'label to inform to upload or select target schema to be used',

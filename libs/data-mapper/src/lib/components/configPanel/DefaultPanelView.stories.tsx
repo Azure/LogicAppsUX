@@ -2,7 +2,7 @@ import type { InitialSchemaAction } from '../../core/state/DataMapSlice';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended } from '../../models/Schema';
-import { SchemaTypes } from '../../models/Schema';
+import { SchemaType } from '../../models/Schema';
 import { simpleMockSchema } from '../../models/__mocks__';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema.Utils';
 import type { DefaultPanelViewProps } from './DefaultPanelView';
@@ -20,15 +20,15 @@ const MockStore = ({ mockState, children }) => {
   const extendedSourceSchema = convertSchemaToSchemaExtended(mockState.sourceSchema);
   const sourceAction: InitialSchemaAction = {
     schema: extendedSourceSchema,
-    schemaType: SchemaTypes.Source,
-    flattenedSchema: flattenSchema(extendedSourceSchema, SchemaTypes.Source),
+    schemaType: SchemaType.Source,
+    flattenedSchema: flattenSchema(extendedSourceSchema, SchemaType.Source),
   };
 
   const extendedTargetSchema = convertSchemaToSchemaExtended(mockState.targetSchema);
   const targetAction: InitialSchemaAction = {
     schema: extendedTargetSchema,
-    schemaType: SchemaTypes.Target,
-    flattenedSchema: flattenSchema(extendedTargetSchema, SchemaTypes.Target),
+    schemaType: SchemaType.Target,
+    flattenedSchema: flattenSchema(extendedTargetSchema, SchemaType.Target),
   };
 
   store.dispatch(setInitialSchema(sourceAction));

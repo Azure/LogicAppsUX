@@ -1,4 +1,4 @@
-import { SchemaTypes } from '../../models';
+import { SchemaType } from '../../models';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface PanelState {
@@ -6,7 +6,7 @@ export interface PanelState {
 
   isDefaultConfigPanelOpen: boolean;
   isChangeSchemaPanelOpen: boolean;
-  schemaType?: SchemaTypes;
+  schemaType?: SchemaType;
 }
 
 const initialState: PanelState = {
@@ -38,12 +38,12 @@ export const panelSlice = createSlice({
     },
 
     openSourceSchemaPanel: (state) => {
-      state.schemaType = SchemaTypes.Source;
+      state.schemaType = SchemaType.Source;
       state.isChangeSchemaPanelOpen = true;
     },
 
     openTargetSchemaPanel: (state) => {
-      state.schemaType = SchemaTypes.Target;
+      state.schemaType = SchemaType.Target;
       state.isChangeSchemaPanelOpen = true;
     },
 

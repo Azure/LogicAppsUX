@@ -1,5 +1,5 @@
 import type { SchemaExtended } from '../../models/Schema';
-import { SchemaNodeDataType, SchemaNodeProperties, SchemaType } from '../../models/Schema';
+import { SchemaNodeDataType, SchemaNodeProperties, SchemaFileFormat } from '../../models/Schema';
 import type { MapOverviewProps } from './MapOverview';
 import { MapOverview } from './MapOverview';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -12,7 +12,7 @@ export default {
 
 const schema: SchemaExtended = {
   name: 'Sample',
-  type: SchemaType.XML,
+  type: SchemaFileFormat.XML,
   targetNamespace: '',
   namespaces: {},
   schemaTreeRoot: {
