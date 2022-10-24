@@ -1,4 +1,4 @@
-import { SchemaTypes } from '../../models';
+import { SchemaType } from '../../models';
 import type { SelectSchemaCardProps } from './selectSchemaCard';
 import { SelectSchemaCard } from './selectSchemaCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -11,6 +11,6 @@ export default {
 
 export const Standard: ComponentStory<typeof SelectSchemaCard> = (args: SelectSchemaCardProps) => <SelectSchemaCard {...args} />;
 Standard.args = {
-  schemaType: SchemaTypes.Source,
+  schemaType: SchemaType.Source,
   onClick: () => console.log('Select Schema Card clicked'),
 };

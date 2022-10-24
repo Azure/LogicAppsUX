@@ -3,7 +3,7 @@ import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaNodeProperties, SchemaTypes } from '../../models';
+import { SchemaNodeProperties, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { flattenInputs, isValidInputToFunctionNode, isValidSchemaNodeToSchemaNodeConnection } from '../../utils/Connection.Utils';
 import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
@@ -140,7 +140,7 @@ const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10
 
 export interface SchemaCardProps extends CardProps {
   schemaNode: SchemaNodeExtended;
-  schemaType: SchemaTypes;
+  schemaType: SchemaType;
   displayHandle: boolean;
   displayChevron: boolean;
   isLeaf: boolean;
@@ -196,7 +196,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const isNodeConnected =
     connections[reactFlowId] && (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0);
 
-  const isOutputChildNode = schemaType === SchemaTypes.Target && isChild;
+  const isOutputChildNode = schemaType === SchemaType.Target && isChild;
 
   const containerStyleClasses = [sharedStyles.root, classes.container];
   if (isOutputChildNode) {
@@ -209,7 +209,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const containerStyle = mergeClasses(...containerStyleClasses);
 
-  const showOutputChevron = schemaType === SchemaTypes.Target && !isLeaf && displayChevron;
+  const showOutputChevron = schemaType === SchemaType.Target && !isLeaf && displayChevron;
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType, schemaNode.properties);
@@ -234,7 +234,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   return (
     <div className={classes.badgeContainer}>
-      {isNBadgeRequired && schemaType === SchemaTypes.Target && (
+      {isNBadgeRequired && schemaType === SchemaType.Target && (
         <div>
           <Tooltip content={arrayMappingTooltip} relationship="label">
             <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
@@ -245,17 +245,17 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       )}
       <div className={containerStyle} onMouseLeave={() => onMouseLeave()} onMouseEnter={() => onMouseEnter()}>
         <Handle
-          type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
-          position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
+          type={schemaType === SchemaType.Source ? 'source' : 'target'}
+          position={schemaType === SchemaType.Source ? Position.Right : Position.Left}
           style={handleStyle}
-          isValidConnection={schemaType === SchemaTypes.Source ? isValidConnection : () => false}
+          isValidConnection={schemaType === SchemaType.Source ? isValidConnection : () => false}
         />
         {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>
             <BundledTypeIcon />
           </span>
-          <Text className={schemaType === SchemaTypes.Target ? classes.cardText : mergedInputText} block={true} nowrap={true}>
+          <Text className={schemaType === SchemaType.Target ? classes.cardText : mergedInputText} block={true} nowrap={true}>
             {schemaNode.name}
           </Text>
         </Button>
@@ -271,7 +271,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           />
         )}
       </div>
-      {isNBadgeRequired && schemaType === SchemaTypes.Source && (
+      {isNBadgeRequired && schemaType === SchemaType.Source && (
         <Badge className={classes.inputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
           N
         </Badge>

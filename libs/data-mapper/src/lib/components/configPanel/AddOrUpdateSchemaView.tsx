@@ -1,6 +1,6 @@
 import { ConfigPanelView } from '../../core/state/PanelSlice';
 import type { RootState } from '../../core/state/Store';
-import { SchemaTypes } from '../../models';
+import { SchemaType } from '../../models';
 import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType, Text } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import React, { useCallback, useMemo, useRef } from 'react';
@@ -20,11 +20,11 @@ export interface FileWithVsCodePath extends File {
 export interface SchemaFile {
   name: string;
   path: string;
-  type: SchemaTypes;
+  type: SchemaType;
 }
 
 export interface AddOrUpdateSchemaViewProps {
-  schemaType?: SchemaTypes;
+  schemaType?: SchemaType;
   selectedSchema?: IDropdownOption;
   selectedSchemaFile?: SchemaFile;
   setSelectedSchema: (item: IDropdownOption<any> | undefined) => void;
@@ -91,7 +91,7 @@ export const AddOrUpdateSchemaView = ({
   });
 
   const [addOrSelectSchemaMsg, schemaDropdownPlaceholder] = useMemo(() => {
-    if (schemaType === SchemaTypes.Source) {
+    if (schemaType === SchemaType.Source) {
       return [
         intl.formatMessage({
           defaultMessage: 'Add or select a source schema to use for your map.',
@@ -166,7 +166,7 @@ export const AddOrUpdateSchemaView = ({
       {currentPanelView === ConfigPanelView.UpdateSchema && (
         <div style={{ marginTop: 24 }}>
           <Text className="header-text">
-            {schemaType === SchemaTypes.Source ? updateSourceSchemaHeaderMsg : updateTargetSchemaHeaderMsg}
+            {schemaType === SchemaType.Source ? updateSourceSchemaHeaderMsg : updateTargetSchemaHeaderMsg}
           </Text>
 
           <MessageBar messageBarType={MessageBarType.warning} styles={{ root: { marginTop: 20 } }}>

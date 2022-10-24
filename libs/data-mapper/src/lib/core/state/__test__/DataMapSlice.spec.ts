@@ -1,5 +1,5 @@
 import type { Schema, SchemaExtended } from '../../../models';
-import { SchemaTypes } from '../../../models';
+import { SchemaType } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import { addNodeToConnections, flattenInputs } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
@@ -12,8 +12,8 @@ describe('DataMapSlice', () => {
   const schema: Schema = simpleMockSchema;
   const extendedSchema: SchemaExtended = convertSchemaToSchemaExtended(schema);
   const node = extendedSchema.schemaTreeRoot.children[0];
-  const sourceId = addReactFlowPrefix(node.key, SchemaTypes.Source);
-  const destinationId = addReactFlowPrefix(node.key, SchemaTypes.Target);
+  const sourceId = addReactFlowPrefix(node.key, SchemaType.Source);
+  const destinationId = addReactFlowPrefix(node.key, SchemaType.Target);
   const functionId = createReactFlowFunctionKey(concatFunction);
 
   describe('addNodeToConnections', () => {

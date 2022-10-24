@@ -1,4 +1,4 @@
-import { SchemaTypes } from '../../models';
+import { SchemaType } from '../../models';
 import { createSlice } from '@reduxjs/toolkit';
 
 export enum ConfigPanelView {
@@ -9,7 +9,7 @@ export enum ConfigPanelView {
 
 export interface PanelState {
   currentPanelView?: ConfigPanelView;
-  schemaType?: SchemaTypes;
+  schemaType?: SchemaType;
 }
 
 const initialState: PanelState = {};
@@ -25,22 +25,22 @@ export const panelSlice = createSlice({
     },
 
     openAddSourceSchemaPanelView: (state) => {
-      state.schemaType = SchemaTypes.Source;
+      state.schemaType = SchemaType.Source;
       state.currentPanelView = ConfigPanelView.AddSchema;
     },
 
     openUpdateSourceSchemaPanelView: (state) => {
-      state.schemaType = SchemaTypes.Source;
+      state.schemaType = SchemaType.Source;
       state.currentPanelView = ConfigPanelView.UpdateSchema;
     },
 
     openAddTargetSchemaPanelView: (state) => {
-      state.schemaType = SchemaTypes.Target;
+      state.schemaType = SchemaType.Target;
       state.currentPanelView = ConfigPanelView.AddSchema;
     },
 
     openUpdateTargetSchemaPanelView: (state) => {
-      state.schemaType = SchemaTypes.Target;
+      state.schemaType = SchemaType.Target;
       state.currentPanelView = ConfigPanelView.UpdateSchema;
     },
 

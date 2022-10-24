@@ -1,6 +1,6 @@
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { Schema } from '../models/Schema';
-import { SchemaTypes } from '../models/Schema';
+import { SchemaType } from '../models/Schema';
 import { convertFromMapDefinition } from '../utils/DataMap.Utils';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
@@ -50,8 +50,8 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
       dispatch(
         setInitialSchema({
           schema: extendedSourceSchema,
-          schemaType: SchemaTypes.Source,
-          flattenedSchema: flattenSchema(extendedSourceSchema, SchemaTypes.Source),
+          schemaType: SchemaType.Source,
+          flattenedSchema: flattenSchema(extendedSourceSchema, SchemaType.Source),
         })
       );
     }
@@ -62,8 +62,8 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
       dispatch(
         setInitialSchema({
           schema: extendedTargetSchema,
-          schemaType: SchemaTypes.Target,
-          flattenedSchema: flattenSchema(extendedTargetSchema, SchemaTypes.Target),
+          schemaType: SchemaType.Target,
+          flattenedSchema: flattenSchema(extendedTargetSchema, SchemaType.Target),
         })
       );
     }

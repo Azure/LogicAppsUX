@@ -1,6 +1,6 @@
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { SchemaNodeProperties, SchemaTypes } from '../models';
+import { SchemaNodeProperties, SchemaType } from '../models';
 import type { FunctionData } from '../models/Function';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
@@ -32,9 +32,9 @@ const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPat
   return extendedSchemaNode;
 };
 
-export const flattenSchema = (schema: SchemaExtended, schemaType: SchemaTypes): SchemaNodeDictionary => {
+export const flattenSchema = (schema: SchemaExtended, schemaType: SchemaType): SchemaNodeDictionary => {
   const result: SchemaNodeDictionary = {};
-  const idPrefix = schemaType === SchemaTypes.Source ? sourcePrefix : targetPrefix;
+  const idPrefix = schemaType === SchemaType.Source ? sourcePrefix : targetPrefix;
   const schemaNodeArray = flattenSchemaNode(schema.schemaTreeRoot);
 
   schemaNodeArray.reduce((dict, node) => {

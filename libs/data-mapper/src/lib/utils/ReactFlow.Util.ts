@@ -6,7 +6,7 @@ import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
-import { SchemaTypes } from '../models/Schema';
+import { SchemaType } from '../models/Schema';
 import { flattenInputs, isConnectionUnit } from './Connection.Utils';
 import { getFunctionBrandingForCategory } from './Function.Utils';
 import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
@@ -110,7 +110,7 @@ const convertSourceToReactFlowParentAndChildNodes = (
 
   combinedSourceNodes.forEach((sourceNode) => {
     const nodeReactFlowId = addSourceReactFlowPrefix(sourceNode.key);
-    const relatedConnections = getConnectionsForNode(connections, sourceNode.key, SchemaTypes.Source);
+    const relatedConnections = getConnectionsForNode(connections, sourceNode.key, SchemaType.Source);
 
     const elkNode = sourceSchemaElkTree.children?.find((node) => node.id === nodeReactFlowId);
     if (!elkNode || !elkNode.x || !elkNode.y || !sourceSchemaElkTree.x || !sourceSchemaElkTree.y) {
@@ -122,7 +122,7 @@ const convertSourceToReactFlowParentAndChildNodes = (
       id: nodeReactFlowId,
       data: {
         schemaNode: sourceNode,
-        schemaType: SchemaTypes.Source,
+        schemaType: SchemaType.Source,
         displayHandle: true,
         displayChevron: true,
         isLeaf: true,
@@ -148,18 +148,18 @@ const convertTargetToReactFlowParentAndChildNodes = (
   targetSchemaNode: SchemaNodeExtended,
   connections: ConnectionDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
-  return convertToReactFlowParentAndChildNodes(targetSchemaElkTree, targetSchemaNode, SchemaTypes.Target, true, connections);
+  return convertToReactFlowParentAndChildNodes(targetSchemaElkTree, targetSchemaNode, SchemaType.Target, true, connections);
 };
 
 export const convertToReactFlowParentAndChildNodes = (
   elkTree: ElkNode,
   parentSchemaNode: SchemaNodeExtended,
-  schemaType: SchemaTypes,
+  schemaType: SchemaType,
   displayTargets: boolean,
   connections: ConnectionDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
-  const relatedConnections = getConnectionsForNode(connections, parentSchemaNode.key, SchemaTypes.Source);
+  const relatedConnections = getConnectionsForNode(connections, parentSchemaNode.key, SchemaType.Source);
 
   const parentNodeReactFlowId = addReactFlowPrefix(parentSchemaNode.key, schemaType);
   const parentElkNode = elkTree.children?.find((node) => node.id === parentNodeReactFlowId);
@@ -182,7 +182,7 @@ export const convertToReactFlowParentAndChildNodes = (
       relatedConnections: relatedConnections,
     },
     type: ReactFlowNodeType.SchemaNode,
-    targetPosition: !displayTargets ? undefined : SchemaTypes.Source ? Position.Right : Position.Left,
+    targetPosition: !displayTargets ? undefined : SchemaType.Source ? Position.Right : Position.Left,
     position: {
       x: elkTree.x + parentElkNode.x,
       y: parentElkNode.y,
@@ -211,7 +211,7 @@ export const convertToReactFlowParentAndChildNodes = (
         relatedConnections: [],
       },
       type: ReactFlowNodeType.SchemaNode,
-      targetPosition: !displayTargets ? undefined : SchemaTypes.Source ? Position.Right : Position.Left,
+      targetPosition: !displayTargets ? undefined : SchemaType.Source ? Position.Right : Position.Left,
       position: {
         x: elkTree.x + childElkNode.x + childTargetNodeCardIndent,
         y: childElkNode.y,
@@ -275,10 +275,10 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary, selec
   });
 };
 
-const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: string, nodeType: SchemaTypes): Connection[] => {
+const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: string, nodeType: SchemaType): Connection[] => {
   const relatedConnections: Connection[] = [];
   Object.keys(connections).forEach((key) => {
-    if ((nodeType === SchemaTypes.Source && key.startsWith(nodeKey)) || (nodeType === SchemaTypes.Target && key.endsWith(nodeKey))) {
+    if ((nodeType === SchemaType.Source && key.startsWith(nodeKey)) || (nodeType === SchemaType.Target && key.endsWith(nodeKey))) {
       relatedConnections.push(connections[key]);
     }
   });
@@ -289,7 +289,7 @@ export const createReactFlowFunctionKey = (functionData: FunctionData): string =
 
 export const createReactFlowConnectionId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
 
-export const addReactFlowPrefix = (key: string, type: SchemaTypes) => `${type}-${key}`;
+export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
 

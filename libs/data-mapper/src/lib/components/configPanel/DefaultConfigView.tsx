@@ -1,6 +1,6 @@
 import { openUpdateSourceSchemaPanelView, openUpdateTargetSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { SchemaTypes } from '../../models';
+import { SchemaType } from '../../models';
 import { IconButton, Text } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -37,8 +37,8 @@ export const DefaultConfigView = () => {
     description: 'Pencil icon aria label',
   });
 
-  const onEditSchemaClick = (schemaType: SchemaTypes) => {
-    if (schemaType === SchemaTypes.Source) {
+  const onEditSchemaClick = (schemaType: SchemaType) => {
+    if (schemaType === SchemaType.Source) {
       dispatch(openUpdateSourceSchemaPanelView());
     } else {
       dispatch(openUpdateTargetSchemaPanelView());
@@ -58,7 +58,7 @@ export const DefaultConfigView = () => {
           iconProps={{ iconName: 'Edit' }}
           title={pencilIconLoc}
           ariaLabel={pencilIconLoc}
-          onClick={() => onEditSchemaClick(SchemaTypes.Source)}
+          onClick={() => onEditSchemaClick(SchemaType.Source)}
         />
       </div>
 
@@ -71,7 +71,7 @@ export const DefaultConfigView = () => {
           iconProps={{ iconName: 'Edit' }}
           title={pencilIconLoc}
           ariaLabel={pencilIconLoc}
-          onClick={() => onEditSchemaClick(SchemaTypes.Target)}
+          onClick={() => onEditSchemaClick(SchemaType.Target)}
         />
       </div>
     </div>

@@ -3,7 +3,7 @@ import { setInitialDataMap, setInitialSchema } from '../../core/state/DataMapSli
 import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
-import { SchemaTypes } from '../../models';
+import { SchemaType } from '../../models';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
@@ -120,8 +120,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     }
 
     if (uploadType === UploadSchemaTypes.SelectFrom) {
-      const selectedSchema =
-        schemaType === SchemaTypes.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
+      const selectedSchema = schemaType === SchemaType.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
 
       if (selectedSchema) {
         onSubmitSchema(selectedSchema);
@@ -174,7 +173,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
         {currentPanelView === ConfigPanelView.DefaultConfig && <Text className="header-text">{configureLoc}</Text>}
 
         {currentPanelView === ConfigPanelView.AddSchema && (
-          <Text className="header-text">{schemaType === SchemaTypes.Source ? addSourceSchemaHeaderMsg : addTargetSchemaHeaderMsg}</Text>
+          <Text className="header-text">{schemaType === SchemaType.Source ? addSourceSchemaHeaderMsg : addTargetSchemaHeaderMsg}</Text>
         )}
 
         {(currentPanelView === ConfigPanelView.DefaultConfig || currentPanelView === ConfigPanelView.AddSchema) && defaultRender?.(props)}
@@ -199,7 +198,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     let isNoNewSchemaSelected = true;
 
     if (uploadType === UploadSchemaTypes.SelectFrom) {
-      if (schemaType === SchemaTypes.Source) {
+      if (schemaType === SchemaType.Source) {
         isNoNewSchemaSelected = !selectedSourceSchema || selectedSourceSchema.key === curDataMapOperation.sourceSchema?.name;
       } else {
         isNoNewSchemaSelected = !selectedTargetSchema || selectedTargetSchema.key === curDataMapOperation.targetSchema?.name;
@@ -249,8 +248,8 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
         {(currentPanelView === ConfigPanelView.AddSchema || currentPanelView === ConfigPanelView.UpdateSchema) && (
           <AddOrUpdateSchemaView
             schemaType={schemaType}
-            selectedSchema={schemaType === SchemaTypes.Source ? selectedSourceSchema : selectedTargetSchema}
-            setSelectedSchema={schemaType === SchemaTypes.Source ? setSelectedSourceSchema : setSelectedTargetSchema}
+            selectedSchema={schemaType === SchemaType.Source ? selectedSourceSchema : selectedTargetSchema}
+            setSelectedSchema={schemaType === SchemaType.Source ? setSelectedSourceSchema : setSelectedTargetSchema}
             selectedSchemaFile={selectedSchemaFile}
             setSelectedSchemaFile={setSelectedSchemaFile}
             errorMessage={errorMessage}
