@@ -623,6 +623,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3eeli7": [
+    {
+      "type": 0,
+      "value": "Select a source schema"
+    }
+  ],
   "3ewBbk": [
     {
       "type": 0,
@@ -847,12 +853,6 @@
     {
       "type": 0,
       "value": "(UTC+08:45) Eucla"
-    }
-  ],
-  "6Ld/c8": [
-    {
-      "type": 0,
-      "value": "Select a target schema"
     }
   ],
   "6OSgRP": [
@@ -2551,12 +2551,6 @@
       "value": "Comment"
     }
   ],
-  "OUS2wX": [
-    {
-      "type": 0,
-      "value": "Select the schema for dropdown"
-    }
-  ],
   "OVvieE": [
     {
       "type": 0,
@@ -2759,12 +2753,6 @@
     {
       "type": 0,
       "value": "Discard"
-    }
-  ],
-  "QBOaAu": [
-    {
-      "type": 0,
-      "value": "Select a source schema"
     }
   ],
   "QEp3C8": [
@@ -3519,6 +3507,12 @@
       "value": "(UTC-08:00) Pacific Time (US & Canada)"
     }
   ],
+  "XkBxv5": [
+    {
+      "type": 0,
+      "value": "Select a target schema"
+    }
+  ],
   "Xnn0uj": [
     {
       "type": 0,
@@ -3885,6 +3879,12 @@
     {
       "type": 0,
       "value": "Returns an object with a property set to the provided value"
+    }
+  ],
+  "c4GQZE": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
     }
   ],
   "c6XbVI": [

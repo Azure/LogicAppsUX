@@ -134,23 +134,22 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
     if (uploadType === UploadSchemaTypes.SelectFrom) {
       editSchema();
     } else if (uploadType === UploadSchemaTypes.UploadNew) {
-      setErrorMessage('');
-
       if (selectedSchemaFile) {
         onSubmitSchemaFileSelection(selectedSchemaFile);
         setSelectedSchemaFile(undefined);
         goBackToDefaultConfigPanelView();
+        setErrorMessage('');
       } else {
         setErrorMessage(genericErrMsg);
       }
     }
   }, [schemaType, editSchema, goBackToDefaultConfigPanelView, genericErrMsg, selectedSchemaFile, uploadType, onSubmitSchemaFileSelection]);
 
-  // Update schema on any dependency change
-  // TODO: Test if this is necessary, and/or even poorly-performant
+  /* TODO: Remove this completely if everything is still working properly when testing
   useEffect(() => {
     editSchema();
   }, [goBackToDefaultConfigPanelView, dispatch, editSchema, genericErrMsg, onSubmitSchema, schemaType, selectedSourceSchema]);
+  */
 
   // Read current schema file options if method exists
   useEffect(() => {
