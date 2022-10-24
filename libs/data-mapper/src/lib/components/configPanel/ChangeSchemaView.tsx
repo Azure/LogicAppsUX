@@ -3,7 +3,6 @@ import { SchemaTypes } from '../../models';
 import { PrimaryButton, Stack, TextField, ChoiceGroup, Dropdown, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IChoiceGroupOption, IDropdownOption } from '@fluentui/react';
 import React, { useCallback, useRef } from 'react';
-import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -39,7 +38,7 @@ export interface ChangeSchemaViewProps {
   setUploadType: (newUploadType: UploadSchemaTypes) => void;
 }
 
-export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
+export const ChangeSchemaView = ({
   schemaType,
   selectedSchema,
   selectedSchemaFile,
@@ -48,9 +47,10 @@ export const ChangeSchemaView: FunctionComponent<ChangeSchemaViewProps> = ({
   errorMessage,
   uploadType,
   setUploadType,
-}) => {
+}: ChangeSchemaViewProps) => {
   const intl = useIntl();
   const schemaFileInputRef = useRef<HTMLInputElement>(null);
+
   const schemaList = useSelector((state: RootState) => {
     return state.schema.availableSchemas;
   });

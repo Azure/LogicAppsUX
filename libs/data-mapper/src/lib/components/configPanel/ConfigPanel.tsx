@@ -243,30 +243,28 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
     <div>
       <Panel
         className="config-panel"
-        isLightDismiss
         isOpen={isDefaultPanelOpen || isChangeSchemaPanelOpen}
         onDismiss={hideEntirePanel}
         onRenderNavigationContent={onRenderNavigationContent}
         closeButtonAriaLabel={closeAriaLabel}
         onRenderFooterContent={onRenderFooterContent}
         isFooterAtBottom={true}
+        isLightDismiss
       >
-        <div>
-          {isChangeSchemaPanelOpen ? (
-            <ChangeSchemaView
-              schemaType={schemaType}
-              selectedSchema={schemaType === SchemaTypes.Source ? selectedSourceSchema : selectedTargetSchema}
-              setSelectedSchema={schemaType === SchemaTypes.Source ? setSelectedSourceSchema : setSelectedTargetSchema}
-              selectedSchemaFile={selectedSchemaFile}
-              setSelectedSchemaFile={setSelectedSchemaFile}
-              errorMessage={errorMessage}
-              uploadType={uploadType}
-              setUploadType={setUploadType}
-            />
-          ) : (
-            <DefaultPanelView onSourceSchemaClick={onSourceSchemaClick} onTargetSchemaClick={onTargetSchemaClick} />
-          )}
-        </div>
+        {isChangeSchemaPanelOpen ? (
+          <ChangeSchemaView
+            schemaType={schemaType}
+            selectedSchema={schemaType === SchemaTypes.Source ? selectedSourceSchema : selectedTargetSchema}
+            setSelectedSchema={schemaType === SchemaTypes.Source ? setSelectedSourceSchema : setSelectedTargetSchema}
+            selectedSchemaFile={selectedSchemaFile}
+            setSelectedSchemaFile={setSelectedSchemaFile}
+            errorMessage={errorMessage}
+            uploadType={uploadType}
+            setUploadType={setUploadType}
+          />
+        ) : (
+          <DefaultPanelView onSourceSchemaClick={onSourceSchemaClick} onTargetSchemaClick={onTargetSchemaClick} />
+        )}
       </Panel>
     </div>
   );

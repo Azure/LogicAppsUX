@@ -2,7 +2,7 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
-import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
+import { EditorConfigPanel } from '../components/configPanel/ConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { NotificationTypes } from '../components/notification/Notification';
 import {
