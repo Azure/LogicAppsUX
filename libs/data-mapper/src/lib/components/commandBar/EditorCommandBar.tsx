@@ -1,6 +1,6 @@
 import { discardDataMap } from '../../core/state/DataMapSlice';
 import { closeModal, WarningModalState, openDiscardWarningModal } from '../../core/state/ModalSlice';
-import { openDefaultConfigPanel } from '../../core/state/PanelSlice';
+import { openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { IButtonStyles, ICommandBarItemProps } from '@fluentui/react';
 import { CommandBar, ContextualMenuItemType } from '@fluentui/react';
@@ -217,7 +217,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         ariaLabel: Resources.CONFIGURATION,
         iconProps: { iconName: 'Settings' },
         onClick: () => {
-          dispatch(openDefaultConfigPanel());
+          dispatch(openDefaultConfigPanelView());
         },
         buttonStyles: cmdBarButtonStyles,
         ...cmdBarItemBgStyles,

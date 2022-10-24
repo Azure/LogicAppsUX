@@ -1851,12 +1851,6 @@
       "value": "Required. The number that Subtrahend is removed from."
     }
   ],
-  "HBWyxc": [
-    {
-      "type": 0,
-      "value": "Pencil icon"
-    }
-  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -2815,6 +2809,12 @@
     {
       "type": 0,
       "value": "Item"
+    }
+  ],
+  "QdJUaS": [
+    {
+      "type": 0,
+      "value": "Pencil icon"
     }
   ],
   "QeE0k/": [

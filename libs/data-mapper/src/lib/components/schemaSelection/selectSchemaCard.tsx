@@ -1,4 +1,4 @@
-import { openSourceSchemaPanel, openTargetSchemaPanel } from '../../core/state/PanelSlice';
+import { openAddSourceSchemaPanelView, openAddTargetSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch } from '../../core/state/Store';
 import { SchemaTypes } from '../../models';
 import CardOnHover from './card_onHover.svg';
@@ -54,9 +54,9 @@ export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
 
   const onClickSchemaCard = () => {
     if (schemaType === SchemaTypes.Source) {
-      dispatch(openSourceSchemaPanel());
+      dispatch(openAddSourceSchemaPanelView());
     } else {
-      dispatch(openTargetSchemaPanel());
+      dispatch(openAddTargetSchemaPanelView());
     }
   };
 

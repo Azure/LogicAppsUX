@@ -1,13 +1,13 @@
 import { getSelectedSchema } from '../../core';
 import { setInitialDataMap, setInitialSchema } from '../../core/state/DataMapSlice';
-import { closeDefaultConfigPanel, closeSchemaChangePanel, openSourceSchemaPanel, openTargetSchemaPanel } from '../../core/state/PanelSlice';
+import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaTypes } from '../../models';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema.Utils';
-import type { SchemaFile } from './ChangeSchemaView';
-import { ChangeSchemaView, UploadSchemaTypes } from './ChangeSchemaView';
-import { DefaultPanelView } from './DefaultPanelView';
+import type { SchemaFile } from './AddOrUpdateSchemaView';
+import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
+import { DefaultConfigView } from './DefaultConfigView';
 import type { IDropdownOption, IPanelProps, IRenderFunction } from '@fluentui/react';
 import { DefaultButton, IconButton, Panel, PrimaryButton, Text } from '@fluentui/react';
 import { useCallback, useEffect, useState } from 'react';
@@ -25,8 +25,7 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
   const intl = useIntl();
 
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
-  const isDefaultPanelOpen = useSelector((state: RootState) => state.panel.isDefaultConfigPanelOpen);
-  const isChangeSchemaPanelOpen = useSelector((state: RootState) => state.panel.isChangeSchemaPanelOpen);
+  const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
 
   const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
@@ -35,17 +34,28 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
-  const onSubmitSchema = useCallback(
-    (schema: Schema) => {
-      if (schemaType) {
-        const extendedSchema = convertSchemaToSchemaExtended(schema);
-        dispatch(
-          setInitialSchema({ schema: extendedSchema, schemaType: schemaType, flattenedSchema: flattenSchema(extendedSchema, schemaType) })
-        );
-        dispatch(setInitialDataMap(undefined));
-      }
+  const fetchedSourceSchema = useQuery(
+    [selectedSourceSchema?.text],
+    () => {
+      return getSelectedSchema(selectedSourceSchema?.text ?? '');
     },
-    [dispatch, schemaType]
+    {
+      enabled: selectedSourceSchema !== undefined,
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 5,
+    }
+  );
+
+  const fetchedTargetSchema = useQuery(
+    [selectedTargetSchema?.text],
+    () => {
+      return getSelectedSchema(selectedTargetSchema?.text ?? '');
+    },
+    {
+      enabled: selectedTargetSchema !== undefined,
+      staleTime: 1000 * 60 * 5,
+      cacheTime: 1000 * 60 * 5,
+    }
   );
 
   const saveMessage = intl.formatMessage({
@@ -81,39 +91,28 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
     description: 'aria label for close icon button that closes that panel on click',
   });
 
-  const fetchedSourceSchema = useQuery(
-    [selectedSourceSchema?.text],
-    () => {
-      return getSelectedSchema(selectedSourceSchema?.text ?? '');
-    },
-    {
-      enabled: selectedSourceSchema !== undefined,
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 5,
-    }
-  );
-
-  const fetchedTargetSchema = useQuery(
-    [selectedTargetSchema?.text],
-    () => {
-      return getSelectedSchema(selectedTargetSchema?.text ?? '');
-    },
-    {
-      enabled: selectedTargetSchema !== undefined,
-      staleTime: 1000 * 60 * 5,
-      cacheTime: 1000 * 60 * 5,
-    }
-  );
-
-  const hideEntirePanel = useCallback(() => {
-    dispatch(closeDefaultConfigPanel());
+  const goBackToDefaultConfigPanelView = useCallback(() => {
+    dispatch(openDefaultConfigPanelView());
     setErrorMessage('');
   }, [dispatch, setErrorMessage]);
 
-  const closeSchemaPanel = useCallback(() => {
-    dispatch(closeSchemaChangePanel());
+  const closeEntirePanel = useCallback(() => {
+    dispatch(closePanel());
     setErrorMessage('');
   }, [dispatch, setErrorMessage]);
+
+  const onSubmitSchema = useCallback(
+    (schema: Schema) => {
+      if (schemaType) {
+        const extendedSchema = convertSchemaToSchemaExtended(schema);
+        dispatch(
+          setInitialSchema({ schema: extendedSchema, schemaType: schemaType, flattenedSchema: flattenSchema(extendedSchema, schemaType) })
+        );
+        dispatch(setInitialDataMap(undefined));
+      }
+    },
+    [dispatch, schemaType]
+  );
 
   const editSchema = useCallback(() => {
     const selectedSchema = schemaType === SchemaTypes.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
@@ -121,11 +120,11 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
     if (selectedSchema) {
       onSubmitSchema(selectedSchema);
       setErrorMessage('');
-      closeSchemaPanel();
+      goBackToDefaultConfigPanelView();
     } else {
       setErrorMessage(genericErrMsg);
     }
-  }, [closeSchemaPanel, onSubmitSchema, genericErrMsg, fetchedSourceSchema, fetchedTargetSchema, schemaType]);
+  }, [goBackToDefaultConfigPanelView, onSubmitSchema, genericErrMsg, fetchedSourceSchema, fetchedTargetSchema, schemaType]);
 
   const addSchema = useCallback(() => {
     if (schemaType === undefined) {
@@ -140,25 +139,65 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
       if (selectedSchemaFile) {
         onSubmitSchemaFileSelection(selectedSchemaFile);
         setSelectedSchemaFile(undefined);
-        closeSchemaPanel();
+        goBackToDefaultConfigPanelView();
       } else {
         setErrorMessage(genericErrMsg);
       }
     }
-  }, [schemaType, editSchema, closeSchemaPanel, genericErrMsg, selectedSchemaFile, uploadType, onSubmitSchemaFileSelection]);
+  }, [schemaType, editSchema, goBackToDefaultConfigPanelView, genericErrMsg, selectedSchemaFile, uploadType, onSubmitSchemaFileSelection]);
 
+  // Update schema on any dependency change
+  // TODO: Test if this is necessary, and/or even poorly-performant
   useEffect(() => {
     editSchema();
-  }, [closeSchemaPanel, dispatch, editSchema, genericErrMsg, onSubmitSchema, schemaType, selectedSourceSchema]);
+  }, [goBackToDefaultConfigPanelView, dispatch, editSchema, genericErrMsg, onSubmitSchema, schemaType, selectedSourceSchema]);
 
+  // Read current schema file options if method exists
   useEffect(() => {
     if (readCurrentSchemaOptions) {
       readCurrentSchemaOptions();
     }
   }, [readCurrentSchemaOptions]);
 
+  const onRenderNavigationContent: IRenderFunction<IPanelProps> = useCallback(
+    (props, defaultRender) => (
+      <div className="custom-navigation">
+        {currentPanelView === ConfigPanelView.UpdateSchema && (
+          <div>
+            <IconButton
+              iconProps={{ iconName: 'Back' }}
+              title={backMessage}
+              ariaLabel={backMessage}
+              onClick={goBackToDefaultConfigPanelView}
+            />
+            <Text className="back-header-text">{backMessage}</Text>
+          </div>
+        )}
+
+        {currentPanelView === ConfigPanelView.DefaultConfig && <Text className="header-text">{configurationHeader}</Text>}
+
+        {currentPanelView === ConfigPanelView.AddSchema && (
+          <Text className="header-text">
+            {schemaType === SchemaTypes.Source ? updateSourceSchemaHeaderMsg : updateTargetSchemaHeaderMsg}
+          </Text>
+        )}
+
+        {(currentPanelView === ConfigPanelView.DefaultConfig || currentPanelView === ConfigPanelView.AddSchema) && defaultRender?.(props)}
+      </div>
+    ),
+    [
+      updateSourceSchemaHeaderMsg,
+      updateTargetSchemaHeaderMsg,
+      configurationHeader,
+      currentPanelView,
+      goBackToDefaultConfigPanelView,
+      schemaType,
+      backMessage,
+    ]
+  );
+
   const onRenderFooterContent = useCallback(() => {
-    if (!isChangeSchemaPanelOpen) {
+    if (currentPanelView !== ConfigPanelView.UpdateSchema) {
       return null;
     }
 
@@ -180,79 +219,39 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
           {saveMessage}
         </PrimaryButton>
 
-        <DefaultButton onClick={hideEntirePanel}>{cancelMessage}</DefaultButton>
+        <DefaultButton onClick={closeEntirePanel}>{cancelMessage}</DefaultButton>
       </div>
     );
   }, [
-    isChangeSchemaPanelOpen,
+    currentPanelView,
     schemaType,
     curDataMapOperation,
     selectedSourceSchema,
     selectedTargetSchema,
     saveMessage,
-    hideEntirePanel,
+    closeEntirePanel,
     cancelMessage,
     addSchema,
     selectedSchemaFile,
     uploadType,
   ]);
 
-  const onSourceSchemaClick = () => {
-    dispatch(openSourceSchemaPanel());
-  };
-  const onTargetSchemaClick = () => {
-    dispatch(openTargetSchemaPanel());
-  };
-  const onBackButtonClick = useCallback(() => {
-    closeSchemaPanel();
-  }, [closeSchemaPanel]);
-
-  const onRenderNavigationContent: IRenderFunction<IPanelProps> = useCallback(
-    (props, defaultRender) => (
-      <div className="custom-navigation">
-        {isDefaultPanelOpen && isChangeSchemaPanelOpen ? (
-          <div>
-            <IconButton iconProps={{ iconName: 'Back' }} title={backMessage} ariaLabel={backMessage} onClick={onBackButtonClick} />
-            <Text className="back-header-text">{backMessage}</Text>
-          </div>
-        ) : isDefaultPanelOpen ? (
-          <Text className="header-text">{configurationHeader}</Text>
-        ) : isChangeSchemaPanelOpen ? (
-          <Text className="header-text">
-            {schemaType === SchemaTypes.Source ? updateSourceSchemaHeaderMsg : updateTargetSchemaHeaderMsg}
-          </Text>
-        ) : (
-          <div />
-        )}
-        {isDefaultPanelOpen !== isChangeSchemaPanelOpen && defaultRender?.(props)}
-      </div>
-    ),
-    [
-      updateSourceSchemaHeaderMsg,
-      updateTargetSchemaHeaderMsg,
-      configurationHeader,
-      isChangeSchemaPanelOpen,
-      isDefaultPanelOpen,
-      onBackButtonClick,
-      schemaType,
-      backMessage,
-    ]
-  );
-
   return (
     <div>
       <Panel
         className="config-panel"
-        isOpen={isDefaultPanelOpen || isChangeSchemaPanelOpen}
-        onDismiss={hideEntirePanel}
+        isOpen={!!currentPanelView}
+        onDismiss={closeEntirePanel}
         onRenderNavigationContent={onRenderNavigationContent}
         closeButtonAriaLabel={closeAriaLabel}
         onRenderFooterContent={onRenderFooterContent}
         isFooterAtBottom={true}
         isLightDismiss
       >
-        {isChangeSchemaPanelOpen ? (
-          <ChangeSchemaView
+        {currentPanelView === ConfigPanelView.DefaultConfig && <DefaultConfigView />}
+
+        {(currentPanelView === ConfigPanelView.AddSchema || currentPanelView === ConfigPanelView.UpdateSchema) && (
+          <AddOrUpdateSchemaView
             schemaType={schemaType}
             selectedSchema={schemaType === SchemaTypes.Source ? selectedSourceSchema : selectedTargetSchema}
             setSelectedSchema={schemaType === SchemaTypes.Source ? setSelectedSourceSchema : setSelectedTargetSchema}
@@ -262,8 +261,6 @@ export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFile
             uploadType={uploadType}
             setUploadType={setUploadType}
           />
-        ) : (
-          <DefaultPanelView onSourceSchemaClick={onSourceSchemaClick} onTargetSchemaClick={onTargetSchemaClick} />
         )}
       </Panel>
     </div>

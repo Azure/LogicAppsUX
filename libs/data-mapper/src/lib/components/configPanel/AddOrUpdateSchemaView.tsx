@@ -6,6 +6,8 @@ import React, { useCallback, useRef } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
+const acceptedSchemaFileInputExtensions = '.xsd';
+
 export enum UploadSchemaTypes {
   UploadNew = 'upload-new',
   SelectFrom = 'select-from',
@@ -27,7 +29,7 @@ export interface SchemaInfo {
   name: string;
 }
 
-export interface ChangeSchemaViewProps {
+export interface AddOrUpdateSchemaViewProps {
   schemaType?: SchemaTypes;
   selectedSchema?: IDropdownOption;
   selectedSchemaFile?: SchemaFile;
@@ -38,7 +40,7 @@ export interface ChangeSchemaViewProps {
   setUploadType: (newUploadType: UploadSchemaTypes) => void;
 }
 
-export const ChangeSchemaView = ({
+export const AddOrUpdateSchemaView = ({
   schemaType,
   selectedSchema,
   selectedSchemaFile,
@@ -47,7 +49,7 @@ export const ChangeSchemaView = ({
   errorMessage,
   uploadType,
   setUploadType,
-}: ChangeSchemaViewProps) => {
+}: AddOrUpdateSchemaViewProps) => {
   const intl = useIntl();
   const schemaFileInputRef = useRef<HTMLInputElement>(null);
 
@@ -55,13 +57,10 @@ export const ChangeSchemaView = ({
     return state.schema.availableSchemas;
   });
 
-  const dataMapDropdownOptions = schemaList?.map((file: string) => ({ key: file, text: file } ?? []));
-
   const replaceSchemaWarningLoc = intl.formatMessage({
     defaultMessage: 'Replacing an existing schema with an incompatible schema might create errors in your map.',
     description: 'Message bar warning about replacing existing schema',
   });
-
   const uploadMessage = intl.formatMessage({
     defaultMessage: 'Select a file to upload',
     description: 'Placeholder for input to load a schema file',
@@ -73,6 +72,14 @@ export const ChangeSchemaView = ({
   const browseLoc = intl.formatMessage({
     defaultMessage: 'Browse',
     description: 'Browse for file',
+  });
+  const addNewLoc = intl.formatMessage({
+    defaultMessage: 'Add new',
+    description: 'Add new option',
+  });
+  const selectExistingLoc = intl.formatMessage({
+    defaultMessage: 'Select existing',
+    description: 'Select existing option',
   });
 
   let uploadSelectLabelMessage = '';
@@ -103,15 +110,7 @@ export const ChangeSchemaView = ({
       break;
   }
 
-  const addNewLoc = intl.formatMessage({
-    defaultMessage: 'Add new',
-    description: 'Add new option',
-  });
-
-  const selectExistingLoc = intl.formatMessage({
-    defaultMessage: 'Select existing',
-    description: 'Select existing option',
-  });
+  const dataMapDropdownOptions = schemaList?.map((file: string) => ({ key: file, text: file } ?? []));
 
   const uploadSchemaOptions: IChoiceGroupOption[] = [
     { key: UploadSchemaTypes.UploadNew, text: addNewLoc },
@@ -168,7 +167,7 @@ export const ChangeSchemaView = ({
 
       {uploadType === UploadSchemaTypes.UploadNew && (
         <div>
-          <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept=".xsd" hidden />
+          <input type="file" ref={schemaFileInputRef} onInput={onSelectSchemaFile} accept={acceptedSchemaFileInputExtensions} hidden />
           <Stack horizontal>
             <TextField value={selectedSchemaFile?.name} placeholder={uploadMessage} readOnly />
             <PrimaryButton onClick={() => schemaFileInputRef.current?.click()} style={{ marginLeft: 8 }}>
