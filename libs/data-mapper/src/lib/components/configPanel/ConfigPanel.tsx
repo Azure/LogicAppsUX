@@ -15,12 +15,12 @@ import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
-export interface EditorConfigPanelProps {
+export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
 }
 
-export const EditorConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelection }: EditorConfigPanelProps) => {
+export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelection }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
 

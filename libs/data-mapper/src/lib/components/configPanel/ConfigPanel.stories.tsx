@@ -1,18 +1,19 @@
-/* TODO: DefaultPanelView stuff
 import type { InitialSchemaAction } from '../../core/state/DataMapSlice';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
+import { setAvailableSchemas } from '../../core/state/SchemaSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended } from '../../models/Schema';
 import { SchemaTypes } from '../../models/Schema';
-import { simpleMockSchema } from '../../models/__mocks__';
+import { noChildrenMockSchema, simpleMockSchema } from '../../models/__mocks__';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema.Utils';
-import type { DefaultPanelViewProps } from './DefaultPanelView';
-import { DefaultPanelView } from './DefaultPanelView';
+import { ConfigPanel } from './ConfigPanel';
+import type { ConfigPanelProps } from './ConfigPanel';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 import { Provider } from 'react-redux';
 
 interface MockStoreData {
+  availableSchemas: Schema[];
   sourceSchema: SchemaExtended;
   targetSchema: SchemaExtended;
 }
@@ -32,6 +33,7 @@ const MockStore = ({ mockState, children }) => {
     flattenedSchema: flattenSchema(extendedTargetSchema, SchemaTypes.Target),
   };
 
+  store.dispatch(setAvailableSchemas(mockState.availableSchemas));
   store.dispatch(setInitialSchema(sourceAction));
   store.dispatch(setInitialSchema(targetAction));
 
@@ -39,12 +41,12 @@ const MockStore = ({ mockState, children }) => {
 };
 
 export default {
-  component: DefaultPanelView,
-  title: 'Data Mapper Components/Panel/DefaultPanelView',
-} as ComponentMeta<typeof DefaultPanelView>;
+  component: ConfigPanel,
+  title: 'Data Mapper Components/Panel/Configuration Panel',
+} as ComponentMeta<typeof ConfigPanel>;
 
-const Template: ComponentStory<typeof DefaultPanelView> = (args: DefaultPanelViewProps) => {
-  return <DefaultPanelView {...args} />;
+const Template: ComponentStory<typeof ConfigPanel> = (args: ConfigPanelProps) => {
+  return <ConfigPanel {...args} />;
 };
 
 export const Standard = Template.bind({});
@@ -52,6 +54,9 @@ export const Standard = Template.bind({});
 Standard.args = {
   onSourceSchemaClick: () => console.log('Source schema button clicked'),
   onTargetSchemaClick: () => console.log('Target schema button clicked'),
+  schemaType: SchemaTypes.Source,
+  setSelectedSchema: () => console.log('Selected new schema'),
+  errorMessage: '',
 };
 
 Standard.decorators = [
@@ -60,6 +65,7 @@ Standard.decorators = [
     const extendedSchema = convertSchemaToSchemaExtended(schema);
 
     const stateUpdate: MockStoreData = {
+      availableSchemas: [JSON.parse(JSON.stringify(simpleMockSchema)), JSON.parse(JSON.stringify(noChildrenMockSchema))],
       sourceSchema: extendedSchema,
       targetSchema: extendedSchema,
     };
@@ -67,57 +73,3 @@ Standard.decorators = [
     return <MockStore mockState={stateUpdate}>{story()}</MockStore>;
   },
 ];
-*/
-
-/* TODO: DefaultPanelView stuff
-import { setAvailableSchemas } from '../../core/state/SchemaSlice';
-import { store } from '../../core/state/Store';
-import type { Schema } from '../../models/Schema';
-import { SchemaTypes } from '../../models/Schema';
-import { noChildrenMockSchema, simpleMockSchema } from '../../models/__mocks__';
-import type { ChangeSchemaViewProps } from './ChangeSchemaView';
-import { ChangeSchemaView } from './ChangeSchemaView';
-import type { ComponentMeta, ComponentStory } from '@storybook/react';
-import React from 'react';
-import { Provider } from 'react-redux';
-
-interface MockStoreData {
-  availableSchemas: Schema[];
-}
-
-const MockStore = ({ mockState, children }) => {
-  store.dispatch(setAvailableSchemas(mockState.availableSchemas));
-
-  return <Provider store={store}>{children}</Provider>;
-};
-
-export default {
-  component: ChangeSchemaView,
-  title: 'Data Mapper Components/Panel/ChangeSchemaView',
-} as ComponentMeta<typeof ChangeSchemaView>;
-
-const Template: ComponentStory<typeof ChangeSchemaView> = (args: ChangeSchemaViewProps) => {
-  return <ChangeSchemaView {...args} />;
-};
-
-export const Standard = Template.bind({});
-
-Standard.args = {
-  schemaType: SchemaTypes.Source,
-  setSelectedSchema: () => console.log('Selected new schema'),
-  errorMessage: '',
-};
-
-Standard.decorators = [
-  (story) => {
-    const availableSchemas = [JSON.parse(JSON.stringify(simpleMockSchema)), JSON.parse(JSON.stringify(noChildrenMockSchema))];
-
-    const stateUpdate: MockStoreData = {
-      availableSchemas: availableSchemas,
-    };
-
-    return <MockStore mockState={stateUpdate}>{story()}</MockStore>;
-  },
-];
-
-*/

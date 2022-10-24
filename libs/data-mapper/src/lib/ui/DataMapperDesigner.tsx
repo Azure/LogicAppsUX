@@ -2,7 +2,7 @@ import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
-import { EditorConfigPanel } from '../components/configPanel/ConfigPanel';
+import { ConfigPanel } from '../components/configPanel/ConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { NotificationTypes } from '../components/notification/Notification';
 import {
@@ -214,7 +214,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         </div>
 
         <WarningModal />
-        <EditorConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
+        <ConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
         <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setIsTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
