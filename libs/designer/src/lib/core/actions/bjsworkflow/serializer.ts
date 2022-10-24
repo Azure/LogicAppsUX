@@ -46,6 +46,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
   const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = connectionsMapping[nodeId];
+    if (!referenceKey) return references;
     const reference = referencesObject[referenceKey];
 
     return {
@@ -378,7 +379,7 @@ const serializeHost = (
 
   const intl = getIntl();
   const { referenceKeyFormat } = manifest.properties.connectionReference;
-  const referenceKey = rootState.connections.connectionsMapping[nodeId];
+  const referenceKey = rootState.connections.connectionsMapping[nodeId] ?? '';
   const { connectorId, operationId } = rootState.operations.operationInfo[nodeId];
 
   switch (referenceKeyFormat) {
