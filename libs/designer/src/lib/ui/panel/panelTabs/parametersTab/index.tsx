@@ -40,7 +40,7 @@ export const ParametersTab = () => {
   const expressionGroup = getExpressionTokenSections();
 
   const parameterGroup = useMemo(() => {
-    const something = Object.keys(inputs.parameterGroups ?? {}).map((sectionName) => {
+    const group = Object.keys(inputs.parameterGroups ?? {}).map((sectionName) => {
       const paramGroup = {
         ...inputs.parameterGroups[sectionName],
         parameters: inputs.parameterGroups[sectionName].parameters.map((param) => {
@@ -68,17 +68,16 @@ export const ParametersTab = () => {
       };
       return paramGroup;
     });
-    return something;
+    return group;
   }, [inputs.parameterGroups, tokenstate]);
-
   return (
     <>
-      {parameterGroup.map((sectionName, index) => (
+      {parameterGroup.map((section, index) => (
         <div key={index}>
           <ParameterSection
             key={selectedNodeId}
             nodeId={selectedNodeId}
-            group={sectionName}
+            group={section}
             readOnly={readOnly}
             tokenGroup={tokenGroup}
             expressionGroup={expressionGroup}
@@ -241,6 +240,7 @@ const ParameterSection = ({
           isTrigger: isTrigger,
           isLoading: param.dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: param.dynamicData?.error ? { message: param.dynamicData.error.message } : undefined,
+          showTokens: param.showTokens,
           getTokenPicker: (
             editorId: string,
             labelId: string,

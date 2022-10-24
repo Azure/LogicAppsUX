@@ -271,7 +271,7 @@ export function createParameterInfo(
     required: !!parameter.required,
     schema: editor.schema,
     showErrors: false,
-    showTokens: false,
+    showTokens: parameter?.schema?.['x-ms-editor'] === 'string' ? false : true,
     suppressCasting: parameter.suppressCasting,
     type: parameter.type,
     value: loadParameterValue(parameter),
