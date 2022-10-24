@@ -1,4 +1,4 @@
-import { closeAllWarning, setOkClicked, WarningModalState } from '../../core/state/ModalSlice';
+import { closeModal, setModalOkClicked } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { Dialog, DialogFooter, DefaultButton, PrimaryButton } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -9,83 +9,51 @@ import { useDispatch, useSelector } from 'react-redux';
 export const WarningModal: FunctionComponent = () => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+
   const isWarningModalOpen = useSelector((state: RootState) => state.modal.isWarningModalOpen);
-  const warningModalType = useSelector((state: RootState) => state.modal.warningModalType);
 
-  const warningHeader = intl.formatMessage({
-    defaultMessage: 'Warning',
-    description: 'Header text for warning modal',
-  });
-
-  const discardChangesHeader = intl.formatMessage({
+  const discardChangesHeaderLoc = intl.formatMessage({
     defaultMessage: 'Discard changes',
     description: 'Header text for discard modal',
   });
 
-  let warningMessage: string;
+  const discardChangesMessageLoc = intl.formatMessage({
+    defaultMessage: 'Do you want to discard all unsaved changes?',
+    description: 'Discard warning text',
+  });
 
-  switch (warningModalType) {
-    case WarningModalState.DiscardWarning:
-      warningMessage = intl.formatMessage({
-        defaultMessage: 'Do you want to discard all unsaved changes?',
-        description: 'Discard warning text',
-      });
-      break;
-    case WarningModalState.ChangeSourceWarning:
-      warningMessage = intl.formatMessage({
-        defaultMessage:
-          'Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?',
-        description: 'Change source schema warning text',
-      });
-      break;
-    case WarningModalState.ChangeTargetWarning:
-      warningMessage = intl.formatMessage({
-        defaultMessage:
-          'Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?',
-        description: 'Change target schema text',
-      });
-      break;
-    default:
-      warningMessage = '';
-  }
-
-  const discardMessage = intl.formatMessage({
+  const discardLoc = intl.formatMessage({
     defaultMessage: 'Discard',
     description: 'Discard',
   });
 
-  const cancelMessage = intl.formatMessage({
+  const cancelLoc = intl.formatMessage({
     defaultMessage: 'Cancel',
-    description: 'Button text for Cancel to stop proceeding by reading the warning displayed',
+    description: 'Cancel',
   });
 
-  const closeWarningModal = useCallback(() => {
-    dispatch(closeAllWarning());
+  const onClickOk = useCallback(() => {
+    dispatch(setModalOkClicked());
   }, [dispatch]);
 
-  const dialogContentProps = {
-    title: warningModalType === WarningModalState.DiscardWarning ? discardChangesHeader : warningHeader,
-    subText: warningMessage,
-  };
+  const closeWarningModal = useCallback(() => {
+    dispatch(closeModal());
+  }, [dispatch]);
 
   return (
-    <div>
-      <Dialog
-        hidden={!isWarningModalOpen}
-        onDismiss={closeWarningModal}
-        dialogContentProps={dialogContentProps}
-        modalProps={{ isBlocking: true }}
-      >
-        <DialogFooter>
-          <PrimaryButton
-            onClick={() => {
-              dispatch(setOkClicked());
-            }}
-            text={discardMessage}
-          />
-          <DefaultButton onClick={closeWarningModal} text={cancelMessage} />
-        </DialogFooter>
-      </Dialog>
-    </div>
+    <Dialog
+      hidden={!isWarningModalOpen}
+      onDismiss={closeWarningModal}
+      dialogContentProps={{
+        title: discardChangesHeaderLoc,
+        subText: discardChangesMessageLoc,
+      }}
+      modalProps={{ isBlocking: true }}
+    >
+      <DialogFooter>
+        <PrimaryButton onClick={onClickOk} text={discardLoc} />
+        <DefaultButton onClick={closeWarningModal} text={cancelLoc} />
+      </DialogFooter>
+    </Dialog>
   );
 };

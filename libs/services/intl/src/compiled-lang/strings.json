@@ -11,6 +11,12 @@
       "value": "No schema is added"
     }
   ],
+  "+DxBpE": [
+    {
+      "type": 0,
+      "value": "Failed loading the schema. Please try again."
+    }
+  ],
   "+W9fkq": [
     {
       "type": 0,
@@ -45,6 +51,12 @@
     {
       "type": 0,
       "value": "Pagination"
+    }
+  ],
+  "/9r9ML": [
+    {
+      "type": 0,
+      "value": "Add target schema"
     }
   ],
   "/AtN16": [
@@ -623,6 +635,12 @@
       "value": "(UTC+09:00) Chita"
     }
   ],
+  "3eeli7": [
+    {
+      "type": 0,
+      "value": "Select a source schema"
+    }
+  ],
   "3ewBbk": [
     {
       "type": 0,
@@ -849,12 +867,6 @@
       "value": "(UTC+08:45) Eucla"
     }
   ],
-  "6Ld/c8": [
-    {
-      "type": 0,
-      "value": "Select a target schema"
-    }
-  ],
   "6OSgRP": [
     {
       "type": 0,
@@ -913,6 +925,12 @@
     {
       "type": 0,
       "value": "Required. The number to multiply Multiplicand 2 with."
+    }
+  ],
+  "73iM9+": [
+    {
+      "type": 0,
+      "value": "Update source schema"
     }
   ],
   "7GSk99": [
@@ -1627,6 +1645,12 @@
       "value": "(UTC+08:00) Irkutsk"
     }
   ],
+  "F9dR1Q": [
+    {
+      "type": 0,
+      "value": "Add"
+    }
+  ],
   "FDF4Qb": [
     {
       "type": 0,
@@ -1729,12 +1753,6 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "hours"
-    }
-  ],
-  "FemgEF": [
-    {
-      "type": 0,
-      "value": "Cancel"
     }
   ],
   "Fgq3Db": [
@@ -1851,22 +1869,10 @@
       "value": "Required. The string to slice."
     }
   ],
-  "H7t3Pm": [
-    {
-      "type": 0,
-      "value": "Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?"
-    }
-  ],
   "H8bEUn": [
     {
       "type": 0,
       "value": "Required. The number that Subtrahend is removed from."
-    }
-  ],
-  "HBWyxc": [
-    {
-      "type": 0,
-      "value": "Pencil icon"
     }
   ],
   "HDqP2g": [
@@ -1949,12 +1955,6 @@
     {
       "type": 0,
       "value": "Add a target schema"
-    }
-  ],
-  "Ie4sUt": [
-    {
-      "type": 0,
-      "value": "Configure"
     }
   ],
   "IgNz8Y": [
@@ -2207,6 +2207,12 @@
     {
       "type": 0,
       "value": "Invalid type on split on value {splitOn}, split on not in array."
+    }
+  ],
+  "LR/3Lr": [
+    {
+      "type": 0,
+      "value": "Configure"
     }
   ],
   "LS8rfZ": [
@@ -2569,12 +2575,6 @@
       "value": "Comment"
     }
   ],
-  "OUS2wX": [
-    {
-      "type": 0,
-      "value": "Select the schema for dropdown"
-    }
-  ],
   "OVvieE": [
     {
       "type": 0,
@@ -2779,12 +2779,6 @@
       "value": "Discard"
     }
   ],
-  "QBOaAu": [
-    {
-      "type": 0,
-      "value": "Select a source schema"
-    }
-  ],
   "QEp3C8": [
     {
       "type": 0,
@@ -2829,6 +2823,12 @@
       "value": "Item"
     }
   ],
+  "QdJUaS": [
+    {
+      "type": 0,
+      "value": "Pencil icon"
+    }
+  ],
   "QeE0k/": [
     {
       "type": 0,
@@ -2851,12 +2851,6 @@
     {
       "type": 0,
       "value": "Returns a string in date format"
-    }
-  ],
-  "QnPHOB": [
-    {
-      "type": 0,
-      "value": "Add target schema"
     }
   ],
   "QpRRt3": [
@@ -3531,6 +3525,12 @@
       "value": "(UTC-08:00) Pacific Time (US & Canada)"
     }
   ],
+  "XkBxv5": [
+    {
+      "type": 0,
+      "value": "Select a target schema"
+    }
+  ],
   "Xnn0uj": [
     {
       "type": 0,
@@ -3559,12 +3559,6 @@
     {
       "type": 0,
       "value": "Required. The name of the action whose body outputs you want."
-    }
-  ],
-  "XylNMU": [
-    {
-      "type": 0,
-      "value": "Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?"
     }
   ],
   "Y/bcmG": [
@@ -3847,12 +3841,6 @@
       "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
     }
   ],
-  "brtCAE": [
-    {
-      "type": 0,
-      "value": "Add source schema"
-    }
-  ],
   "bwfJdj": [
     {
       "type": 0,
@@ -3903,6 +3891,12 @@
     {
       "type": 0,
       "value": "Returns an object with a property set to the provided value"
+    }
+  ],
+  "c4GQZE": [
+    {
+      "type": 0,
+      "value": "Select the schema for dropdown"
     }
   ],
   "c6XbVI": [
@@ -3981,12 +3975,6 @@
     {
       "type": 0,
       "value": "Required. The collection to skip the first Count objects from."
-    }
-  ],
-  "d32jcW": [
-    {
-      "type": 0,
-      "value": "Warning"
     }
   ],
   "d3bSQA": [
@@ -4227,6 +4215,12 @@
       "value": "Logical functions"
     }
   ],
+  "fqNVDv": [
+    {
+      "type": 0,
+      "value": "Back"
+    }
+  ],
   "froV/0": [
     {
       "type": 0,
@@ -4435,6 +4429,12 @@
     {
       "type": 0,
       "value": "Duration"
+    }
+  ],
+  "htj+eZ": [
+    {
+      "type": 0,
+      "value": "Update target schema"
     }
   ],
   "hvbclb": [
@@ -4839,12 +4839,6 @@
       "value": "Title"
     }
   ],
-  "lWjfm3": [
-    {
-      "type": 0,
-      "value": "Back"
-    }
-  ],
   "lZT0JI": [
     {
       "type": 0,
@@ -5067,12 +5061,6 @@
       "value": "Adds an integer number of minutes to a string timestamp passed in"
     }
   ],
-  "ntiOaL": [
-    {
-      "type": 0,
-      "value": "Close"
-    }
-  ],
   "nx25nq": [
     {
       "type": 0,
@@ -5151,12 +5139,6 @@
     {
       "type": 0,
       "value": "(UTC-03:00) Salvador"
-    }
-  ],
-  "orhWzV": [
-    {
-      "type": 0,
-      "value": "Failed loading the schema. Please try again."
     }
   ],
   "oxH1L/": [
@@ -5989,6 +5971,12 @@
     {
       "type": 0,
       "value": "Callback URL:"
+    }
+  ],
+  "woq0x0": [
+    {
+      "type": 0,
+      "value": "Add source schema"
     }
   ],
   "wzEneQ": [
