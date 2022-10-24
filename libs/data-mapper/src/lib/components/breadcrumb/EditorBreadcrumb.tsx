@@ -10,7 +10,7 @@ import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-const maxBreadcrumbItems = 3;
+const maxBreadcrumbItems = 4;
 const overflowIndex = 1;
 
 const baseBreadcrumbStyles = {
