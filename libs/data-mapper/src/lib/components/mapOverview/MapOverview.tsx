@@ -1,15 +1,11 @@
-import { openSourceSchemaPanel, openTargetSchemaPanel } from '../../core/state/PanelSlice';
-import type { AppDispatch } from '../../core/state/Store';
 import type { SchemaExtended } from '../../models/';
 import { SchemaTypes } from '../../models/';
-import { nodeTypes } from '../../ui/ReactFlowWrapper';
-import { useLayout } from '../../utils/ReactFlow.Util';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
+import { ReactFlowSchemaOverview } from './ReactFlowSchemaOverview';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { useDispatch } from 'react-redux';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ReactFlowProvider } from 'reactflow';
+import { ReactFlowProvider } from 'reactflow';
 
 const useStyles = makeStyles({
   mapOverviewStyles: {
@@ -29,72 +25,33 @@ const useStyles = makeStyles({
   },
 });
 
-const reactFlowStyle = {
-  background: '#e0e0e0',
-  height: '100%',
-};
-
-interface LayeredReactFlowProps {
-  schema: SchemaExtended;
-  isSourceSchema?: boolean;
-}
-
-const LayeredReactFlow = ({ schema }: LayeredReactFlowProps) => {
-  const [reactFlowNodes, _reactFlowEdges] = useLayout([], [], {}, {}, schema.schemaTreeRoot, {}, undefined);
-
-  return (
-    <ReactFlow
-      nodes={reactFlowNodes}
-      nodesDraggable={false}
-      panOnDrag={false}
-      zoomOnDoubleClick={false}
-      zoomOnPinch={false}
-      zoomOnScroll={false}
-      proOptions={{
-        account: 'paid-sponsor',
-        hideAttribution: true,
-      }}
-      nodeTypes={nodeTypes}
-      style={reactFlowStyle}
-      fitView
-    />
-  );
-};
-
 export interface MapOverviewProps {
   sourceSchema?: SchemaExtended;
   targetSchema?: SchemaExtended;
 }
 
-export const MapOverview: React.FC<MapOverviewProps> = ({ sourceSchema, targetSchema }: MapOverviewProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+export const MapOverview = ({ sourceSchema, targetSchema }: MapOverviewProps) => {
   const styles = useStyles();
 
-  const onSourceSchemaClick = () => {
-    dispatch(openSourceSchemaPanel());
-  };
-  const onTargetSchemaClick = () => {
-    dispatch(openTargetSchemaPanel());
-  };
-
   return (
-    <div className={styles.mapOverviewStyles} style={reactFlowStyle}>
+    <div className={styles.mapOverviewStyles}>
       <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
         {sourceSchema ? (
           <ReactFlowProvider>
-            <LayeredReactFlow schema={sourceSchema} isSourceSchema />
+            <ReactFlowSchemaOverview schema={sourceSchema} />
           </ReactFlowProvider>
         ) : (
-          <SelectSchemaCard schemaType={SchemaTypes.Source} onClick={onSourceSchemaClick} />
+          <SelectSchemaCard schemaType={SchemaTypes.Source} />
         )}
       </Stack>
+
       <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
         {targetSchema ? (
           <ReactFlowProvider>
-            <LayeredReactFlow schema={targetSchema} />
+            <ReactFlowSchemaOverview schema={targetSchema} />
           </ReactFlowProvider>
         ) : (
-          <SelectSchemaCard schemaType={SchemaTypes.Target} onClick={onTargetSchemaClick} />
+          <SelectSchemaCard schemaType={SchemaTypes.Target} />
         )}
       </Stack>
     </div>
