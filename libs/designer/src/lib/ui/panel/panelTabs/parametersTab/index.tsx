@@ -40,7 +40,7 @@ export const ParametersTab = () => {
   const tokenGroup = getOutputTokenSections(tokenstate, selectedNodeId, nodeType);
   const expressionGroup = getExpressionTokenSections();
 
-  if (!operationInfo || inputs?.parameterGroups === undefined) {
+  if (!operationInfo) {
     return (
       <div className="msla-loading-container">
         <Spinner size={SpinnerSize.large} />
