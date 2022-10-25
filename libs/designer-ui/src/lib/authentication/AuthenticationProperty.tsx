@@ -1,8 +1,8 @@
 import type { ValueSegment } from '../editor';
 import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
-import { Label } from '../label';
 import type { AuthProperty } from './util';
+import { Label } from '@fluentui/react';
 
 interface AuthenticationPropertyProps {
   AuthProperty: AuthProperty;
@@ -19,11 +19,11 @@ export const AuthenticationProperty = ({
 }: AuthenticationPropertyProps): JSX.Element => {
   return (
     <div className="msla-authentication-editor-expanded-item">
-      <Label
-        className="msla-authentication-editor-expanded-item-label"
-        text={AuthProperty.displayName}
-        isRequiredField={AuthProperty.isRequired}
-      />
+      <div className="msla-input-parameter-label">
+        <Label className={'msla-label'} required={AuthProperty.isRequired}>
+          {AuthProperty.displayName}
+        </Label>
+      </div>
       <div className="msla-authentication-editor-expanded-editor-container">
         <StringEditor
           className="msla-authentication-editor-expanded-editor"
