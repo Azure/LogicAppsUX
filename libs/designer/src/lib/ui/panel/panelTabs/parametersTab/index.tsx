@@ -42,10 +42,10 @@ export const ParametersTab = () => {
   const expressionGroup = getExpressionTokenSections();
 
   const parameterGroup = useMemo(() => {
-    const group = Object.keys(inputs.parameterGroups ?? {}).map((sectionName) => {
+    const group = Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => {
       const paramGroup = {
-        ...inputs.parameterGroups[sectionName],
-        parameters: inputs.parameterGroups[sectionName].parameters.map((param) => {
+        ...inputs?.parameterGroups[sectionName],
+        parameters: inputs?.parameterGroups[sectionName].parameters.map((param) => {
           const paramValue = {
             ...param,
             value: param.value.map((valSegment) => {
@@ -73,7 +73,7 @@ export const ParametersTab = () => {
       return paramGroup;
     });
     return group;
-  }, [inputs.parameterGroups, tokenstate]);
+  }, [inputs, tokenstate]);
 
   if (!operationInfo) {
     return (
