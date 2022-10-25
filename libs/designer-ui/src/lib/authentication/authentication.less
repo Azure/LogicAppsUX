@@ -1,3 +1,4 @@
+@import (reference) '../variables.less';
 .msla-authentication-editor-container {
   border: 1px dashed @defaultBorderColor;
   display: flex;
@@ -22,25 +23,17 @@
 }
 
 .msla-authentication-editor-expanded-editor-container {
-  width: 85%;
   margin-left: auto;
   margin-right: 0;
 }
 
-.msla-authentication-editor-expanded-item-label {
-  margin-top: 20px;
-}
-
-.msla-authentication-editor-expanded-item {
-  display: flex;
-}
 .msla-authentication-dropdown {
+  &.has-error {
+    padding-bottom: 20px;
+  }
   .ms-Dropdown {
     height: 28px;
   }
-}
-.msla-authentication-text-editor-label {
-  margin-top: 8px;
 }
 
 .msla-auth-editor-validation {
@@ -48,4 +41,42 @@
   color: #e00202;
   font-size: 14px;
   width: 70%;
+}
+
+.msla-authentication-editor-expanded-editor {
+  width: 100%;
+  margin: auto;
+  border-radius: 2px;
+  position: relative;
+  .editor-input {
+    outline: 1px solid @panel-mode-panel-border-color;
+    margin: 1px;
+    resize: none;
+    font-size: 15px;
+    tab-size: 1;
+    min-height: 30px;
+    line-height: 30px;
+    caret-color: #444;
+    padding-inline-start: 5px;
+    &.readonly {
+      background-color: rgba(128, 128, 128, 0.1);
+    }
+    p {
+      margin: 0;
+    }
+  }
+  .editor-placeholder {
+    color: #696969;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 95%;
+    margin-top: -28px;
+    margin-left: 5px;
+    font-size: 15px;
+    user-select: none;
+    display: inline-block;
+    pointer-events: none;
+  }
 }
