@@ -45,7 +45,7 @@ export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
     <>
       <div className="msla-input-parameter-label">
         <Label className="msla-label" required={props.required}>
-          {props.label.toUpperCase()}
+          {props.label}
         </Label>
       </div>
       <TokenField {...props} />

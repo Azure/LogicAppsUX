@@ -1,7 +1,6 @@
-import { Label } from '../label';
 import { AUTHENTICATION_PROPERTIES } from './util';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
-import { FontSizes, Dropdown } from '@fluentui/react';
+import { css, Label, FontSizes, Dropdown } from '@fluentui/react';
 
 const dropdownStyle: Partial<IDropdownStyles> = {
   caretDown: {
@@ -19,7 +18,6 @@ const dropdownStyle: Partial<IDropdownStyles> = {
     lineHeight: '26px',
   },
   root: {
-    marginBottom: '20px',
     height: '28px',
   },
 };
@@ -44,22 +42,23 @@ export const AuthenticationDropdown = ({
   return (
     <div className="msla-authentication-property">
       {dropdownLabel ? (
-        <div className="msla-authentication-text-editor-label">
-          <Label isRequiredField={AUTHENTICATION_PROPERTIES.MSI_IDENTITY.isRequired} text={dropdownLabel} />
+        <div className="msla-input-parameter-label">
+          <Label className={'msla-label'} required={AUTHENTICATION_PROPERTIES.MSI_IDENTITY.isRequired}>
+            {dropdownLabel}
+          </Label>
         </div>
       ) : null}
-      <div className="msla-input-sub-parameter-content">
-        <Dropdown
-          styles={dropdownStyle}
-          selectedKey={selectedKey}
-          placeholder={dropdownPlaceholder}
-          ariaLabel={dropdownLabel}
-          options={options}
-          className="msla-authentication-dropdown"
-          errorMessage={errorMessage}
-          onChange={onChange}
-        />
-      </div>
+
+      <Dropdown
+        styles={dropdownStyle}
+        selectedKey={selectedKey}
+        placeholder={dropdownPlaceholder}
+        ariaLabel={dropdownLabel}
+        options={options}
+        className={css('msla-authentication-dropdown', errorMessage && 'has-error')}
+        errorMessage={errorMessage}
+        onChange={onChange}
+      />
     </div>
   );
 };

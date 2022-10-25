@@ -11,7 +11,7 @@ import { RowDropdown } from './RowDropdown';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
 import { guid } from '@microsoft-logic-apps/utils';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const overflowStyle: Partial<IOverflowSetStyles> = {
@@ -61,8 +61,6 @@ export const Row = ({
   getTokenPicker,
 }: RowProps) => {
   const intl = useIntl();
-  const keyEditorRef = useRef<HTMLDivElement | null>(null);
-  const valueEditorRef = useRef<HTMLDivElement | null>(null);
   const [key, setKey] = useState<ValueSegment[]>(operand1);
 
   const handleGroup = () => {
@@ -236,31 +234,27 @@ export const Row = ({
         key={JSON.stringify(checked)}
       />
       <div className="msla-querybuilder-row-content">
-        <div ref={keyEditorRef}>
-          <StringEditor
-            className={'msla-querybuilder-row-value-input'}
-            initialValue={operand1}
-            placeholder={rowValueInputPlaceholder}
-            singleLine={true}
-            onChange={handleKeyChange}
-            editorBlur={handleKeySave}
-            getTokenPicker={getTokenPicker}
-            tokenPickerButtonProps={{ customButton: true }}
-          />
-        </div>
+        <StringEditor
+          className={'msla-querybuilder-row-value-input'}
+          initialValue={operand1}
+          placeholder={rowValueInputPlaceholder}
+          singleLine={true}
+          onChange={handleKeyChange}
+          editorBlur={handleKeySave}
+          getTokenPicker={getTokenPicker}
+          tokenPickerButtonProps={{ customButton: true }}
+        />
         <RowDropdown disabled={key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
-        <div ref={valueEditorRef}>
-          <StringEditor
-            readonly={key.length === 0}
-            className={'msla-querybuilder-row-value-input'}
-            initialValue={operand2}
-            placeholder={rowValueInputPlaceholder}
-            singleLine={true}
-            getTokenPicker={getTokenPicker}
-            editorBlur={handleValueSave}
-            tokenPickerButtonProps={{ customButton: true }}
-          />
-        </div>
+        <StringEditor
+          readonly={key.length === 0}
+          className={'msla-querybuilder-row-value-input'}
+          initialValue={operand2}
+          placeholder={rowValueInputPlaceholder}
+          singleLine={true}
+          getTokenPicker={getTokenPicker}
+          editorBlur={handleValueSave}
+          tokenPickerButtonProps={{ customButton: true }}
+        />
       </div>
       <OverflowSet
         className="msla-querybuilder-row-more"
