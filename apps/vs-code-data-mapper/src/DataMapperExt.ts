@@ -194,9 +194,8 @@ export default class DataMapperExt {
             // If XSLT, show notification and re-check/set xslt filename
             const openMapBtnText = `Open ${fileName}`;
             window.showInformationMessage('Map saved and .XSLT file generated.', openMapBtnText).then((clickedButton?: string) => {
-              // NOTE: Would need to check equivalency to openMapBtnText if add other CTA buttons
-              if (clickedButton) {
-                workspace.openTextDocument(filePath);
+              if (clickedButton && clickedButton === openMapBtnText) {
+                workspace.openTextDocument(filePath).then(window.showTextDocument);
               }
             });
 
