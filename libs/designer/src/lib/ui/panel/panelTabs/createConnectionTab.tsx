@@ -32,6 +32,7 @@ const CreateConnectionTab = () => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
   const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
   const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
+  const needsAuthentication = useMemo(() => needsAuth(connector), [connector]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -45,10 +46,13 @@ const CreateConnectionTab = () => {
   );
 
   const createConnectionCallback = useCallback(
-    async (displayName: string, selectedParameterSet?: ConnectionParameterSet, parameterValues: Record<string, any> = {}) => {
-      setErrorMessage(undefined);
-      setIsLoading(true);
+    async (displayName?: string, selectedParameterSet?: ConnectionParameterSet, parameterValues: Record<string, any> = {}) => {
+      if (!connector?.id) return;
 
+      setIsLoading(true);
+      setErrorMessage(undefined);
+
+      const newName = selectedParameterSet?.name ?? (await getUniqueConnectionName(connector.id));
       const connectionParameterSetValues: ConnectionParameterSetValues = {
         name: selectedParameterSet?.name ?? '',
         values: Object.keys(parameterValues).reduce((acc: any, key) => {
@@ -70,67 +74,38 @@ const CreateConnectionTab = () => {
       };
 
       try {
-        const connectorId = connector?.id as string;
-        const uniqueConnectionName = await getUniqueConnectionName(connectorId);
-        const newConnection = await ConnectionService().createConnection(
-          uniqueConnectionName,
-          connectorId,
-          connectionInfo,
-          parametersMetadata
-        );
-        applyNewConnection(newConnection, uniqueConnectionName);
-        dispatch(showDefaultTabs());
+        let connection, err;
+
+        if (needsAuthentication) {
+          await ConnectionService()
+            .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
+            .then(({ connection: c, errorMessage }) => {
+              connection = c;
+              err = errorMessage;
+            })
+            .catch((errorMessage) => (err = errorMessage));
+        } else {
+          await ConnectionService()
+            .createConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
+            .then((c) => (connection = c))
+            .catch((errorMessage) => (err = errorMessage));
+        }
+
+        if (connection) {
+          applyNewConnection(connection, newName);
+          dispatch(showDefaultTabs());
+        } else if (err) {
+          setErrorMessage(err);
+        }
       } catch (error: any) {
         setErrorMessage(error.responseText);
-        const errorMessage = `Unable to create connection for operation - ${nodeId}. Error details - ${JSON.stringify(error)}`;
-        LoggerService().log({
-          level: LogEntryLevel.Error,
-          area: 'create connection tab',
-          message: errorMessage,
-        });
+        const message = `Failed to create OAuth connection: ${error}`;
+        LoggerService().log({ level: LogEntryLevel.Error, area: 'create connection tab', message });
       }
       setIsLoading(false);
     },
-    [applyNewConnection, connectionMetadata?.type, connector?.id, connector?.properties.connectionParameters, dispatch, nodeId]
+    [applyNewConnection, connectionMetadata?.type, connector, dispatch, needsAuthentication]
   );
-
-  const needsAuthentication = useMemo(() => needsAuth(connector), [connector]);
-  const authClickCallback = useCallback(async () => {
-    if (!connector?.id) return;
-
-    setIsLoading(true);
-    setErrorMessage(undefined);
-
-    const newName = await getUniqueConnectionName(connector.id);
-    const connectionInfo: ConnectionCreationInfo = {
-      displayName: newName,
-      connectionParametersSet: undefined,
-      connectionParameters: undefined,
-    };
-
-    try {
-      const { connection, errorMessage: e } = await ConnectionService().createAndAuthorizeOAuthConnection(
-        newName,
-        connector?.id ?? '',
-        connectionInfo
-      );
-      if (connection) {
-        applyNewConnection(connection, newName);
-        dispatch(showDefaultTabs());
-      } else if (e) {
-        setErrorMessage(e);
-      }
-    } catch (error: any) {
-      setErrorMessage(error.responseText);
-      const errorMessage = `Failed to create OAuth connection: ${error}`;
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: 'create connection tab',
-        message: errorMessage,
-      });
-    }
-    setIsLoading(false);
-  }, [applyNewConnection, connector?.id, dispatch]);
 
   const cancelCallback = useCallback(() => {
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
@@ -158,7 +133,6 @@ const CreateConnectionTab = () => {
       cancelCallback={cancelCallback}
       hideCancelButton={!hasExistingConnection}
       needsAuth={needsAuthentication}
-      authClickCallback={authClickCallback}
       errorMessage={errorMessage}
       clearErrorCallback={() => setErrorMessage(undefined)}
       selectSubscriptionCallback={(subscriptionId: string) => {
