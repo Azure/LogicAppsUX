@@ -4,10 +4,10 @@ import { useRelationshipIds, useIsParallelBranch } from '../../../core/state/pan
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
-import { isBuiltInConnector, guid } from '@microsoft-logic-apps/utils';
+import { useThrottledEffect, isBuiltInConnector, guid } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import Fuse from 'fuse.js';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -55,38 +55,42 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     [filters]
   );
 
-  useEffect(() => {
-    if (!allOperations) return;
-    const options = {
-      includeScore: true,
-      threshold: 0.4,
-      keys: [
-        {
-          name: 'properties.summary', // Operation 'name'
-          weight: 2.1,
-        },
-        {
-          name: 'displayName', // Connector 'name'
-          getFn: (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-            return operation.properties.api.displayName;
+  useThrottledEffect(
+    () => {
+      if (!allOperations) return;
+      const options = {
+        includeScore: true,
+        threshold: 0.4,
+        keys: [
+          {
+            name: 'properties.summary', // Operation 'name'
+            weight: 2.1,
           },
-          weight: 2,
-        },
-        {
-          name: 'description', // Connector 'description'
-          getFn: (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
-            return operation.properties.api.description ?? '';
+          {
+            name: 'displayName', // Connector 'name'
+            getFn: (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
+              return operation.properties.api.displayName;
+            },
+            weight: 2,
           },
-          weight: 1.9,
-        },
-      ],
-    };
-    if (allOperations) {
-      const fuse = new Fuse(allOperations, options);
-      const searchResults = fuse.search(searchTerm).filter(filterItems);
-      setSearchResults(searchResults.slice(0, 199));
-    }
-  }, [searchTerm, allOperations, filterItems]);
+          {
+            name: 'description', // Connector 'description'
+            getFn: (operation: DiscoveryOperation<DiscoveryResultTypes>) => {
+              return operation.properties.api.description ?? '';
+            },
+            weight: 1.9,
+          },
+        ],
+      };
+      if (allOperations) {
+        const fuse = new Fuse(allOperations, options);
+        const searchResults = fuse.search(searchTerm).filter(filterItems);
+        setSearchResults(searchResults.slice(0, 199));
+      }
+    },
+    [searchTerm, allOperations, filterItems],
+    1000
+  );
 
   const onConnectorClick = (connectorId: string) => {
     dispatch(selectOperationGroupId(connectorId));
