@@ -20,7 +20,7 @@ export const createConnectionEntryIfNeeded = (
     };
 
     if (isFunctionData(node) && node.maxNumberOfInputs !== -1) {
-      for (let index = 0; index <= node.maxNumberOfInputs; index++) {
+      for (let index = 0; index < node.maxNumberOfInputs; index++) {
         connections[reactFlowKey].inputs[index] = [];
       }
     } else {
@@ -34,14 +34,13 @@ export const addNodeToConnections = (
   sourceNode: SchemaNodeExtended | FunctionData,
   sourceReactFlowKey: string,
   self: SchemaNodeExtended | FunctionData,
-  selfReactFlowKey: string,
-  desiredInput?: string
+  selfReactFlowKey: string
 ) => {
   if (sourceNode && self) {
     createConnectionEntryIfNeeded(connections, self, selfReactFlowKey);
     const currentConnectionInputs = connections[selfReactFlowKey].inputs;
 
-    // Nodes can only ever have 1 input
+    // Schema nodes can only ever have 1 input
     if (isSchemaNodeExtended(self)) {
       currentConnectionInputs[0] = [{ node: sourceNode, reactFlowKey: sourceReactFlowKey }];
     } else {
@@ -49,22 +48,22 @@ export const addNodeToConnections = (
       if (self.maxNumberOfInputs === -1) {
         currentConnectionInputs[0].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
       } else {
-        if (desiredInput) {
-          if (currentConnectionInputs[desiredInput].length < 1) {
-            currentConnectionInputs[desiredInput].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
-          } else {
-            console.error('Input already filled. Failed to add');
-            return;
+        // Add input to first available and type-matched place (handle & PropPane validation should guarantee there's at least one)
+        let added = false;
+        Object.entries(currentConnectionInputs).forEach(([key, value], idx) => {
+          if (
+            !added &&
+            value.length < 1 &&
+            self.inputs[idx].allowedTypes.some(
+              (type) =>
+                type === NormalizedDataType.Any ||
+                (isSchemaNodeExtended(sourceNode) ? type === sourceNode.normalizedDataType : type === sourceNode.outputValueType)
+            )
+          ) {
+            currentConnectionInputs[key].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+            added = true;
           }
-        } else {
-          let added = false;
-          Object.entries(currentConnectionInputs).forEach(([key, value]) => {
-            if (!added && value.length < 1) {
-              currentConnectionInputs[key].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
-              added = true;
-            }
-          });
-        }
+        });
       }
     }
 
@@ -175,7 +174,10 @@ const isFunctionTypeSupportedAndAvailable = (
     // If inputs, verify that there's an open/undefined spot that matches type
     let supportedTypeInputIsAvailable = false;
     tgtInputs.forEach((targetInput, index) => {
-      if (targetInput.allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)) {
+      if (
+        inputNodeType === NormalizedDataType.Any ||
+        targetInput.allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)
+      ) {
         if (!connection.inputs || connection.inputs[index].length < 1) {
           supportedTypeInputIsAvailable = true;
         }
@@ -195,8 +197,11 @@ const isFunctionTypeSupportedAndAvailable = (
 
 // Iterate through each input's supported types for a match
 const isFunctionTypeSupported = (inputNodeType: NormalizedDataType, tgtInputs: FunctionInput[]) => {
-  return tgtInputs.some((input) =>
-    input.allowedTypes.some((allowedType) => allowedType === NormalizedDataType.Any || allowedType === inputNodeType)
+  return (
+    inputNodeType === NormalizedDataType.Any ||
+    tgtInputs.some((input) =>
+      input.allowedTypes.some((allowedType) => allowedType === NormalizedDataType.Any || allowedType === inputNodeType)
+    )
   );
 };
 
@@ -268,8 +273,12 @@ export const nodeHasSpecificInputEventually = (
 
 export const collectNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
   const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
+
   if (connectionUnits.length > 0) {
-    return connectionUnits.flatMap((input) => collectNodesForConnectionChain(connections[input.reactFlowKey], connections));
+    return [
+      currentFunction.self,
+      ...connectionUnits.flatMap((input) => collectNodesForConnectionChain(connections[input.reactFlowKey], connections)),
+    ];
   }
 
   return [currentFunction.self];

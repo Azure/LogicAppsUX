@@ -90,9 +90,18 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isOutputPaneExpanded, setIsOutputPaneExpanded] = useState(false);
 
-  const dataMapDefinition = useMemo((): string => {
+  const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
-      return convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+      try {
+        return convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+      } catch (error) {
+        // NOTE: Doing it this way so that the error, whatever it is, just gets formatted/logged on its own
+        // - can and maybe should change if we add more infrastructure around error classes/types
+        console.error(`-----------------Error generating map definition-----------------`);
+        console.error(error);
+
+        return '';
+      }
     }
 
     return '';

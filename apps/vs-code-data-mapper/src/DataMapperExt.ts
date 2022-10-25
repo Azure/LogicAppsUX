@@ -191,7 +191,14 @@ export default class DataMapperExt {
       .then(() => {
         fs.writeFile(filePath, fileContents, 'utf8').then(() => {
           if (!isDefinition) {
-            // If XSLT, re-check/set xslt filename
+            // If XSLT, show notification and re-check/set xslt filename
+            const openMapBtnText = `Open ${fileName}`;
+            window.showInformationMessage('Map saved and .XSLT file generated.', openMapBtnText).then((clickedButton?: string) => {
+              if (clickedButton && clickedButton === openMapBtnText) {
+                workspace.openTextDocument(filePath).then(window.showTextDocument);
+              }
+            });
+
             DataMapperExt.checkForAndSetXsltFilename();
           }
         });
