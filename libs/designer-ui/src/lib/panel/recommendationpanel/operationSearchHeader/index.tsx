@@ -140,7 +140,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
       <Navigation />
       {!selectedGroupId ? (
         <>
-          <DesignerSearchBox searchCallback={searchCallback} />
+          <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} />
           <Dropdown
             placeholder={intl.formatMessage({ defaultMessage: 'Select a filter', description: 'Select a filter placeholder' })}
             label={intl.formatMessage({ defaultMessage: 'Filter', description: 'Filter by label' })}
