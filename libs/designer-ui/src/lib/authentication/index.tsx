@@ -82,8 +82,8 @@ export const AuthenticationEditor = ({
   authenticationValue,
   initialValue,
   getTokenPicker,
-  readOnly = false,
   onChange,
+  ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
   const [codeView, { toggle: toggleCodeView }] = useBoolean(false);
@@ -177,7 +177,7 @@ export const AuthenticationEditor = ({
         </div>
       )}
       <div className="msla-authentication-default-view-mode">
-        <EditorCollapseToggle collapsed={codeView} toggleCollapsed={toggleCodeView} disabled={!isValid || readOnly} />
+        <EditorCollapseToggle collapsed={codeView} toggleCollapsed={toggleCodeView} disabled={!isValid || props.readOnly} />
       </div>
     </div>
   );
