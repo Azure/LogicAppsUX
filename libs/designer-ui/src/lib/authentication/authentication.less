@@ -49,3 +49,41 @@
   font-size: 14px;
   width: 70%;
 }
+
+.msla-authentication-editor-expanded-editor {
+  width: 100%;
+  margin: 20px auto 10px auto;
+  border-radius: 2px;
+  position: relative;
+  .editor-input {
+    outline: 1px solid @panel-mode-panel-border-color;
+    margin: 1px;
+    resize: none;
+    font-size: 15px;
+    tab-size: 1;
+    min-height: 30px;
+    line-height: 30px;
+    caret-color: #444;
+    padding-inline-start: 5px;
+    &.readonly {
+      background-color: rgba(128, 128, 128, 0.1);
+    }
+    p {
+      margin: 0;
+    }
+  }
+  .editor-placeholder {
+    color: #696969;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 95%;
+    margin-top: -28px;
+    margin-left: 5px;
+    font-size: 15px;
+    user-select: none;
+    display: inline-block;
+    pointer-events: none;
+  }
+}

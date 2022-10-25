@@ -26,6 +26,7 @@ export const AuthenticationProperty = ({
       />
       <div className="msla-authentication-editor-expanded-editor-container">
         <StringEditor
+          className="msla-authentication-editor-expanded-editor"
           initialValue={initialValue}
           getTokenPicker={getTokenPicker}
           placeholder={AuthProperty.placeHolder}
