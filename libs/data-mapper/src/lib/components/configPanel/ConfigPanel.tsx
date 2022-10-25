@@ -114,42 +114,41 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     [dispatch, schemaType]
   );
 
-  const addOrUpdateSchema = useCallback(() => {
-    if (schemaType === undefined) {
-      return;
-    }
+  const addOrUpdateSchema = useCallback(
+    (isAddSchema?: boolean) => {
+      if (schemaType === undefined) {
+        return;
+      }
 
-    if (uploadType === UploadSchemaTypes.SelectFrom) {
       const selectedSchema = schemaType === SchemaType.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
 
-      if (selectedSchema) {
+      if (uploadType === UploadSchemaTypes.SelectFrom && selectedSchema) {
         onSubmitSchema(selectedSchema);
-        goBackToDefaultConfigPanelView();
-        setErrorMessage('');
-      } else {
-        setErrorMessage(genericErrorMsg);
-      }
-    } else if (uploadType === UploadSchemaTypes.UploadNew) {
-      if (selectedSchemaFile) {
+      } else if (uploadType === UploadSchemaTypes.UploadNew && selectedSchemaFile) {
         onSubmitSchemaFileSelection(selectedSchemaFile);
         setSelectedSchemaFile(undefined);
-        goBackToDefaultConfigPanelView();
+      }
+
+      if (selectedSchema || selectedSchemaFile) {
+        isAddSchema ? closeEntirePanel() : goBackToDefaultConfigPanelView();
         setErrorMessage('');
       } else {
         setErrorMessage(genericErrorMsg);
       }
-    }
-  }, [
-    schemaType,
-    goBackToDefaultConfigPanelView,
-    genericErrorMsg,
-    selectedSchemaFile,
-    uploadType,
-    onSubmitSchemaFileSelection,
-    fetchedSourceSchema,
-    fetchedTargetSchema,
-    onSubmitSchema,
-  ]);
+    },
+    [
+      schemaType,
+      closeEntirePanel,
+      goBackToDefaultConfigPanelView,
+      genericErrorMsg,
+      selectedSchemaFile,
+      uploadType,
+      onSubmitSchemaFileSelection,
+      fetchedSourceSchema,
+      fetchedTargetSchema,
+      onSubmitSchema,
+    ]
+  );
 
   // Read current schema file options if method exists
   useEffect(() => {
@@ -209,7 +208,11 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
 
     return (
       <div>
-        <PrimaryButton className="panel-button-left" onClick={addOrUpdateSchema} disabled={isNoNewSchemaSelected}>
+        <PrimaryButton
+          className="panel-button-left"
+          onClick={() => addOrUpdateSchema(currentPanelView === ConfigPanelView.AddSchema)}
+          disabled={isNoNewSchemaSelected}
+        >
           {currentPanelView === ConfigPanelView.AddSchema ? addLoc : saveLoc}
         </PrimaryButton>
 

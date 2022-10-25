@@ -32,7 +32,6 @@ const createNewDataMapCmd = (context: ExtensionContext) => {
     await openDataMapperCmd(context);
 
     DataMapperExt.currentPanel.sendMsgToWebview({ command: 'loadNewDataMap', data: {} });
-    DataMapperExt.checkForAndSetXsltFilename();
   });
 };
 
