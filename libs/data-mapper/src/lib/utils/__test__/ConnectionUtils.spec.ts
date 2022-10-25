@@ -3,7 +3,7 @@ import type { SchemaNodeExtended } from '../../models';
 import type { Connection, ConnectionDictionary } from '../../models/Connection';
 import { functionMock } from '../../models/Function';
 import type { FunctionData, FunctionInput } from '../../models/Function';
-import { createConnectionEntryIfNeeded, isValidInputToFunctionNode } from '../Connection.Utils';
+import { createConnectionEntryIfNeeded, isValidInputToFunctionNode, newConnectionWillHaveCircularLogic } from '../Connection.Utils';
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
@@ -74,6 +74,8 @@ describe('utils/Connections', () => {
     });
   });
 
+  // TODO: addNodeToConnections (drawn connections) && updateConnectionInputValue (PropPane InputDropdowns)
+
   describe('isValidInputToFunctionNode', () => {
     it('Test specific-typed, matching input with no slot available', () => {
       const mockConnection: Connection = {
@@ -112,8 +114,44 @@ describe('utils/Connections', () => {
       ).toEqual(false);
     });
 
-    it('Test type-matched input to unbounded input ', () => {
+    it('Test type-matched input to unbounded input', () => {
       expect(isValidInputToFunctionNode(NormalizedDataType.String, undefined, -1, mockUnboundedFunctionInput)).toEqual(true);
+    });
+  });
+
+  describe('newConnectionWillHaveCircularLogic', () => {
+    const currentNodeKey = 'testNode3';
+    const desiredInputKey = 'desiredInput';
+    const dummyNode = {} as SchemaNodeExtended;
+    const mockConnectionsWithoutImpendingCircularLogic: ConnectionDictionary = {
+      testNode1: {
+        self: { node: dummyNode, reactFlowKey: 'testNode1' },
+        inputs: {},
+        outputs: [{ node: dummyNode, reactFlowKey: desiredInputKey }],
+      },
+      [desiredInputKey]: {
+        self: { node: dummyNode, reactFlowKey: desiredInputKey },
+        inputs: {},
+        outputs: [],
+      },
+      [currentNodeKey]: {
+        self: { node: dummyNode, reactFlowKey: currentNodeKey },
+        inputs: {},
+        outputs: [],
+      },
+    };
+
+    it('Test will NOT have circular logic', () => {
+      expect(newConnectionWillHaveCircularLogic(currentNodeKey, desiredInputKey, mockConnectionsWithoutImpendingCircularLogic)).toEqual(
+        false
+      );
+    });
+
+    it('Test will have circular logic', () => {
+      const mockConnectionsWithImpendingCircularLogic = { ...mockConnectionsWithoutImpendingCircularLogic };
+      mockConnectionsWithImpendingCircularLogic[currentNodeKey].outputs.push({ node: dummyNode, reactFlowKey: 'testNode1' });
+
+      expect(newConnectionWillHaveCircularLogic(currentNodeKey, desiredInputKey, mockConnectionsWithImpendingCircularLogic)).toEqual(true);
     });
   });
 });
