@@ -8,6 +8,7 @@ import {
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
+import { updateVariableInfo } from '../../../../core/state/tokensSlice';
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
@@ -48,14 +49,16 @@ export const ParametersTab = () => {
             ...param,
             value: param.value.map((valSegment) => {
               if (valSegment.type === ValueSegmentType.TOKEN && valSegment.token?.tokenType === TokenType.OUTPUTS) {
-                let icon;
-                let brandColor;
+                let icon: string | undefined;
+                let brandColor: string | undefined;
                 Object.keys(tokenstate.outputTokens ?? {}).forEach((token) => {
-                  tokenstate.outputTokens[token].tokens.forEach((output) => {
-                    if (valSegment.token && output.key === valSegment.token.key) {
+                  tokenstate.outputTokens[token].tokens.find((output) => {
+                    if (!icon && valSegment.token && output.key === valSegment.token.key) {
                       icon = output.icon;
                       brandColor = output.brandColor;
+                      return null;
                     }
+                    return null;
                   });
                 });
                 return { ...valSegment, token: { ...valSegment.token, icon: icon, brandColor: brandColor } };
@@ -137,6 +140,14 @@ const ParameterSection = ({
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
+      }
+      const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param) => param.id === id);
+      if (variables[nodeId]) {
+        if (parameter?.parameterKey === 'inputs.$.name') {
+          dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
+        } else if (parameter?.parameterKey === 'inputs.$.type') {
+          dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
+        }
       }
 
       updateParameterAndDependencies(
