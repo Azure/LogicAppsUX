@@ -6,20 +6,10 @@
         "actions": {
           "Terminate": {
             "inputs": {
-              "runStatus": "SUCCEEDED"
+              "runStatus": "Succeeded"
             },
             "runAfter": {},
             "type": "Terminate"
-          },
-          "Increment_variable_4": {
-            "inputs": {
-              "name": "var1",
-              "value": 1
-            },
-            "runAfter": {
-              "Terminate": ["Failed"]
-            },
-            "type": "IncrementVariable"
           }
         },
         "else": {
@@ -51,10 +41,10 @@
               }
             },
             {
-              "or": [
+              "and": [
                 {
                   "not": {
-                    "endsWith": ["g", ""]
+                    "endsWith": ["g", "@variables('goalOwner')"]
                   }
                 },
                 {
@@ -64,10 +54,12 @@
             }
           ]
         },
-        "runAfter": { "Initialize_owner": ["SUCCEEDED"] },
+        "runAfter": {
+          "Initialize_variable": ["Succeeded"]
+        },
         "type": "If"
       },
-      "Initialize_owner": {
+      "Initialize_variable": {
         "inputs": {
           "variables": [
             {
@@ -86,7 +78,7 @@
     "triggers": {
       "Recurrence": {
         "recurrence": {
-          "frequency": "Day",
+          "frequency": "Month",
           "interval": 1
         },
         "type": "Recurrence"
