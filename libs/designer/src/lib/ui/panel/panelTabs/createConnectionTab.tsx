@@ -78,14 +78,12 @@ const CreateConnectionTab = () => {
 
         if (needsAuthentication) {
           await ConnectionService()
-            .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo)
+            .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
             .then(({ connection: c, errorMessage }) => {
               connection = c;
               err = errorMessage;
             })
-            .catch((errorMessage) => {
-              err = errorMessage;
-            });
+            .catch((errorMessage) => (err = errorMessage));
         } else {
           await ConnectionService()
             .createConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
