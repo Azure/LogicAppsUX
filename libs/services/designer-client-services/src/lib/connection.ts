@@ -50,7 +50,8 @@ export interface IConnectionService {
   createAndAuthorizeOAuthConnection(
     connectionId: string,
     connectorId: string,
-    connectionInfo: ConnectionCreationInfo
+    connectionInfo: ConnectionCreationInfo,
+    parametersMetadata: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
 }
