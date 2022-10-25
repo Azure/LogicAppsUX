@@ -472,9 +472,10 @@ export class StandardConnectionService implements IConnectionService {
   async createAndAuthorizeOAuthConnection(
     connectionId: string,
     connectorId: string,
-    connectionInfo: ConnectionCreationInfo
+    connectionInfo: ConnectionCreationInfo,
+    parametersMetadata?: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult> {
-    const connection = await this.createConnection(connectionId, connectorId, connectionInfo);
+    const connection = await this.createConnection(connectionId, connectorId, connectionInfo, parametersMetadata);
     const oAuthService = OAuthService();
     let oAuthPopupInstance: IOAuthPopup | undefined;
 

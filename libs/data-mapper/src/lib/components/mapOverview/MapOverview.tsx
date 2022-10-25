@@ -1,5 +1,5 @@
+import { SchemaType } from '../../models/';
 import type { SchemaExtended } from '../../models/';
-import { SchemaTypes } from '../../models/';
 import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
 import { ReactFlowSchemaOverview } from './ReactFlowSchemaOverview';
 import { Stack } from '@fluentui/react';
@@ -41,7 +41,7 @@ export const MapOverview = ({ sourceSchema, targetSchema }: MapOverviewProps) =>
             <ReactFlowSchemaOverview schema={sourceSchema} />
           </ReactFlowProvider>
         ) : (
-          <SelectSchemaCard schemaType={SchemaTypes.Source} />
+          <SelectSchemaCard schemaType={SchemaType.Source} />
         )}
       </Stack>
 
@@ -51,7 +51,7 @@ export const MapOverview = ({ sourceSchema, targetSchema }: MapOverviewProps) =>
             <ReactFlowSchemaOverview schema={targetSchema} />
           </ReactFlowProvider>
         ) : (
-          <SelectSchemaCard schemaType={SchemaTypes.Target} />
+          <SelectSchemaCard schemaType={SchemaType.Target} />
         )}
       </Stack>
     </div>
