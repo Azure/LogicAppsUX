@@ -117,6 +117,8 @@ export const serializeOperation = async (
   // TODO: Add logic to identify if this operation is in Recommendation phase.
   // If in recommendation phase then return null;
 
+  if (rootState.connections.connectionsMapping[operationId] === undefined) return null;
+
   let serializedOperation: LogicAppsV2.OperationDefinition;
   if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
@@ -201,7 +203,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
       : undefined;
   const retryPolicy = getRetryPolicy(nodeSettings);
   const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
-  const hostInfo = { host: { connection: { referenceName: rootState.connections.connectionsMapping[operationId] ?? '' } } };
+  const hostInfo = { host: { connection: { referenceName: rootState.connections.connectionsMapping[operationId] } } };
   const inputs = { ...hostInfo, ...inputPathValue, retryPolicy };
   const serializedType = equals(type, Constants.NODE.TYPE.API_CONNECTION)
     ? Constants.SERIALIZED_TYPE.API_CONNECTION
