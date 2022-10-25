@@ -174,7 +174,10 @@ const isFunctionTypeSupportedAndAvailable = (
     // If inputs, verify that there's an open/undefined spot that matches type
     let supportedTypeInputIsAvailable = false;
     tgtInputs.forEach((targetInput, index) => {
-      if (targetInput.allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)) {
+      if (
+        inputNodeType === NormalizedDataType.Any ||
+        targetInput.allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)
+      ) {
         if (!connection.inputs || connection.inputs[index].length < 1) {
           supportedTypeInputIsAvailable = true;
         }
@@ -194,8 +197,11 @@ const isFunctionTypeSupportedAndAvailable = (
 
 // Iterate through each input's supported types for a match
 const isFunctionTypeSupported = (inputNodeType: NormalizedDataType, tgtInputs: FunctionInput[]) => {
-  return tgtInputs.some((input) =>
-    input.allowedTypes.some((allowedType) => allowedType === NormalizedDataType.Any || allowedType === inputNodeType)
+  return (
+    inputNodeType === NormalizedDataType.Any ||
+    tgtInputs.some((input) =>
+      input.allowedTypes.some((allowedType) => allowedType === NormalizedDataType.Any || allowedType === inputNodeType)
+    )
   );
 };
 
