@@ -1,6 +1,6 @@
 import { SchemaType } from '../../models/';
 import type { SchemaExtended } from '../../models/';
-import { SelectSchemaCard } from '../schemaSelection/selectSchemaCard';
+import { SelectSchemaCard } from '../schemaSelection/SelectSchemaCard';
 import { ReactFlowSchemaOverview } from './ReactFlowSchemaOverview';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';

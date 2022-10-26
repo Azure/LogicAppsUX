@@ -293,7 +293,7 @@ export const useOverviewLayout = (
       data: {
         schemaNode: parentSchemaNode,
         schemaType,
-        displayHandle: !!displayTargets,
+        displayHandle: false,
         displayChevron: false,
         isLeaf: false,
         isChild: false,
@@ -315,8 +315,8 @@ export const useOverviewLayout = (
         data: {
           schemaNode: childNode,
           schemaType,
-          displayHandle: !!displayTargets,
-          displayChevron: true,
+          displayHandle: false,
+          displayChevron: schemaType !== SchemaType.Source,
           isLeaf: isLeafNode(childNode),
           isChild: true,
           disabled: false,
