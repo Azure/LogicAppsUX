@@ -308,7 +308,7 @@ export const newConnectionWillHaveCircularLogic = (
 export const getTargetSchemaNodeConnections = (
   currentTargetSchemaNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary
-) => {
+): Connection[] => {
   if (!currentTargetSchemaNode) {
     return [];
   }
@@ -329,14 +329,20 @@ export const getTargetSchemaNodeConnections = (
   return outputFilteredConnections;
 };
 
-export const getConnectedSourceSchemaNodes = (targetSchemaNodeConnections: Connection[], connections: ConnectionDictionary) => {
+export const getConnectedSourceSchemaNodes = (
+  targetSchemaNodeConnections: Connection[],
+  connections: ConnectionDictionary
+): SchemaNodeExtended[] => {
   return targetSchemaNodeConnections
     .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
     .filter((connectedNode) => isSchemaNodeExtended(connectedNode.node) && !connectedNode.reactFlowKey.includes(targetPrefix))
     .map((connectedNode) => connectedNode.node) as SchemaNodeExtended[];
 };
 
-export const getFunctionConnectionUnits = (targetSchemaNodeConnections: Connection[], connections: ConnectionDictionary) => {
+export const getFunctionConnectionUnits = (
+  targetSchemaNodeConnections: Connection[],
+  connections: ConnectionDictionary
+): ConnectionUnit[] => {
   return targetSchemaNodeConnections
     .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
     .filter((connectionUnit) => isFunctionData(connectionUnit.node));
