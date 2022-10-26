@@ -87,9 +87,7 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
             return isSchemaNodeExtended(node) && node.properties === SchemaNodeProperties.Repeating;
           });
 
-          if (containsRepeatingNode) {
-            // Temp Still need to handle functions in loops
-          } else {
+          if (!containsRepeatingNode) {
             const value = collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
             applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
           }
@@ -116,7 +114,6 @@ const applyValueAtPath = (
       const parentSourceNode = parentTargetConnection.inputs[0][0];
       const loopValue: string = (parentSourceNode && isConnectionUnit(parentSourceNode) && parentSourceNode.node.key) || '';
       generateForSection(loopValue, value, mapDefinition, destinationNode, path, connections);
-      //generateForSection(value.substring(0, value.lastIndexOf('/')), value, mapDefinition, destinationNode, path, connections);
     } else {
       if (!mapDefinition[formattedPathLocation]) {
         mapDefinition[formattedPathLocation] = {};
