@@ -197,6 +197,12 @@
       "value": "Url decodes the input string"
     }
   ],
+  "0IRUjM": [
+    {
+      "type": 0,
+      "value": "Select a target schema node to start mapping"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,

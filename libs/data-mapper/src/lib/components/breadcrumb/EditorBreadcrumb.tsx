@@ -4,21 +4,30 @@ import type { SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { findNodeForKey } from '../../utils/Schema.Utils';
 import type { IBreadcrumbItem } from '@fluentui/react';
 import { Breadcrumb } from '@fluentui/react';
-import { Button, tokens, makeStyles } from '@fluentui/react-components';
+import { Button, tokens, makeStyles, Text, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular } from '@fluentui/react-icons';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 const maxBreadcrumbItems = 4;
 const overflowIndex = 1;
+const placeholderItemKey = 'placeholder';
 
-const baseBreadcrumbStyles = {
-  height: '40px',
+const baseBreadcrumbContainerStyles: React.CSSProperties = {
+  height: '32px',
   padding: '4px 8px',
   marginBottom: '8px',
   backgroundColor: tokens.colorNeutralBackground1,
   borderRadius: tokens.borderRadiusMedium,
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+};
+
+const baseBreadcrumbStyles: React.CSSProperties = {
+  margin: 0,
 };
 
 const useStyles = makeStyles({
@@ -39,6 +48,11 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const styles = useStyles();
 
+  const startMappingLoc = intl.formatMessage({
+    defaultMessage: 'Select a target schema node to start mapping',
+    description: 'Breadcrumb message shown in overview',
+  });
+
   const showCodeLoc = intl.formatMessage({
     defaultMessage: 'Show code',
     description: 'Button to display the code view',
@@ -51,34 +65,34 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
 
   const breadcrumbItems = useMemo<IBreadcrumbItem[]>(() => {
     if (targetSchema) {
-      return convertToBreadcrumbItems(dispatch, targetSchema, currentTargetSchemaNode);
+      return convertToBreadcrumbItems(dispatch, targetSchema, startMappingLoc, currentTargetSchemaNode);
     }
 
     return [];
-  }, [dispatch, targetSchema, currentTargetSchemaNode]);
+  }, [dispatch, targetSchema, startMappingLoc, currentTargetSchemaNode]);
 
   const isCodeViewButtonDisabled = useMemo<boolean>(() => breadcrumbItems.length === 0, [breadcrumbItems]);
 
+  const onRenderBreadcrumbContent = useCallback((item?: IBreadcrumbItem) => {
+    if (!item) return null;
+
+    if (item.key === placeholderItemKey) {
+      return <Text style={{ ...typographyStyles.body1, lineHeight: 30, color: tokens.colorNeutralStroke1 }}>{item.text}</Text>;
+    } else {
+      return <Text>{item.text}</Text>;
+    }
+  }, []);
+
   return (
-    <div
-      style={{
-        ...baseBreadcrumbStyles,
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-      }}
-    >
+    <div style={baseBreadcrumbContainerStyles}>
       <Breadcrumb
-        style={{
-          alignItems: 'flex-start',
-          margin: '0px',
-        }}
         // Returning undefined here stops the breadcrumb from shrinking
         onReduceData={() => undefined}
         items={breadcrumbItems}
         maxDisplayedItems={maxBreadcrumbItems}
         overflowIndex={currentTargetSchemaNode ? overflowIndex : 0}
+        onRenderItemContent={onRenderBreadcrumbContent}
+        style={baseBreadcrumbStyles}
       />
       <Button
         appearance="subtle"
@@ -100,7 +114,12 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
   );
 };
 
-const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended, currentNode?: SchemaNodeExtended) => {
+const convertToBreadcrumbItems = (
+  dispatch: AppDispatch,
+  schema: SchemaExtended,
+  breadcrumbPlaceholder: string,
+  currentNode?: SchemaNodeExtended
+) => {
   const rootItem: IBreadcrumbItem = {
     key: schema.name,
     text: schema.name,
@@ -128,6 +147,17 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
           dispatch(setCurrentTargetSchemaNode(schema.schemaTreeRoot));
         },
       });
+    });
+  }
+
+  // When in overview (at schemaTreeRoot), don't show the root node in the breadcrumb
+  if (breadcrumbItems.length === 2) {
+    breadcrumbItems.pop();
+
+    // Instead, show placeholder text
+    breadcrumbItems.push({
+      key: 'placeholder',
+      text: breadcrumbPlaceholder,
     });
   }
 
