@@ -1,5 +1,5 @@
 import type { SimpleArrayItem } from '..';
-import type { GetTokenPickerHandler } from '../editor/base';
+import type { TokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
@@ -32,7 +32,7 @@ export interface ExpandedSimpleArrayProps {
   canDeleteLastItem: boolean;
   readOnly?: boolean;
   isTrigger?: boolean;
-  getTokenPicker: GetTokenPickerHandler;
+  tokenPickerHandler: TokenPickerHandler;
   setItems: (newItems: SimpleArrayItem[]) => void;
 }
 
@@ -43,7 +43,7 @@ export const ExpandedSimpleArray = ({
   canDeleteLastItem,
   readOnly,
   isTrigger,
-  getTokenPicker,
+  tokenPickerHandler,
   setItems,
 }: ExpandedSimpleArrayProps): JSX.Element => {
   const intl = useIntl();
@@ -78,8 +78,7 @@ export const ExpandedSimpleArray = ({
               initialValue={item.value ?? []}
               BasePlugins={{ tokens: true, clearEditor: true }}
               isTrigger={isTrigger}
-              tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
-              getTokenPicker={getTokenPicker}
+              tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { buttonClassName: `msla-editor-tokenpicker-button` } }}
             >
               <EditorChange item={item.value ?? []} items={items} setItems={setItems} index={index} />
             </BaseEditor>

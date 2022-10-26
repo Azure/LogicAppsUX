@@ -214,8 +214,10 @@ export const Combobox = ({
             BasePlugins={{ tokens: true, clearEditor: true, autoFocus: canAutoFocus }}
             initialValue={value}
             onBlur={handleBlur}
-            getTokenPicker={baseEditorProps.getTokenPicker}
-            tokenPickerButtonProps={{ buttonClassName: 'msla-combobox-editor-tokenpicker' }}
+            tokenPickerHandler={{
+              ...baseEditorProps.tokenPickerHandler,
+              tokenPickerButtonProps: { buttonClassName: 'msla-combobox-editor-tokenpicker' },
+            }}
             placeholder={baseEditorProps.placeholder}
             isTrigger={baseEditorProps.isTrigger}
           >
