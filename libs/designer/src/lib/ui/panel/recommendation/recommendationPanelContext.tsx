@@ -21,7 +21,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   });
   const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
 
-  const [isGrouped, setIsGrouped] = useState(false);
+  const [isGrouped, setIsGrouped] = useState(true);
 
   const selectedOperationGroupId: string = useSelectedOperationGroupId();
 
