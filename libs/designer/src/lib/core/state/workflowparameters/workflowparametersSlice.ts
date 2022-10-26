@@ -14,17 +14,17 @@ export interface WorkflowParameterDefinition extends WorkflowParameter {
   isEditable: boolean;
 }
 
-interface WorkflowParametersState {
+export interface WorkflowParametersState {
   definitions: Record<string, WorkflowParameterDefinition>;
   validationErrors: Record<string, Record<string, string | undefined>>;
 }
 
-const initialState: WorkflowParametersState = {
+export const initialState: WorkflowParametersState = {
   definitions: {},
   validationErrors: {},
 };
 
-const validateParameter = (
+export const validateParameter = (
   id: string,
   data: { name?: string; type?: string; value?: string },
   keyToValidate: string,
