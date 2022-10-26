@@ -14,7 +14,14 @@ interface CodeEditorProps extends BaseEditorProps {
   language: EditorLanguage;
 }
 
-export function CodeEditor({ readonly = false, initialValue, language, onChange, onFocus, getTokenPicker }: CodeEditorProps): JSX.Element {
+export function CodeEditor({
+  readonly = false,
+  initialValue,
+  language,
+  onChange,
+  onFocus,
+  tokenPickerHandler,
+}: CodeEditorProps): JSX.Element {
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const editorId = useId('msla-tokenpicker-callout-location');
   const labelId = useId('msla-tokenpicker-callout-label');
@@ -91,7 +98,7 @@ export function CodeEditor({ readonly = false, initialValue, language, onChange,
         <TokenPickerButton labelId={labelId} showTokenPicker={showTokenPicker} setShowTokenPicker={handleShowTokenPicker} />
       ) : null}
       {(showTokenPickerButton && showTokenPicker) || getInTokenPicker()
-        ? getTokenPicker?.(editorId, labelId, onClickTokenPicker, tokenClicked)
+        ? tokenPickerHandler.getTokenPicker?.(editorId, labelId, onClickTokenPicker, tokenClicked)
         : null}
     </div>
   );

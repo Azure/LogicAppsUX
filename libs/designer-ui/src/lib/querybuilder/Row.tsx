@@ -4,7 +4,7 @@ import { Checkbox } from '../checkbox';
 import { notEqual } from '../dictionary/plugins/SerializeExpandedDictionary';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeState, TokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
 import { RowDropdown } from './RowDropdown';
@@ -38,10 +38,10 @@ interface RowProps {
   groupedItems: GroupedItems[];
   isTop: boolean;
   isBottom: boolean;
+  tokenPickerHandler: TokenPickerHandler;
   handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   handleUpdateParent: (newProps: RowItemProps | GroupItemProps, index: number) => void;
-  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const Row = ({
@@ -53,12 +53,12 @@ export const Row = ({
   showDisabledDelete,
   isGroupable,
   groupedItems,
+  tokenPickerHandler,
   // isTop,
   // isBottom,
   // handleMove,
   handleDeleteChild,
   handleUpdateParent,
-  getTokenPicker,
 }: RowProps) => {
   const intl = useIntl();
   const [key, setKey] = useState<ValueSegment[]>(operand1);
@@ -241,8 +241,7 @@ export const Row = ({
           singleLine={true}
           onChange={handleKeyChange}
           editorBlur={handleKeySave}
-          getTokenPicker={getTokenPicker}
-          tokenPickerButtonProps={{ customButton: true }}
+          tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { customButton: true } }}
         />
         <RowDropdown disabled={key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <StringEditor
@@ -251,9 +250,8 @@ export const Row = ({
           initialValue={operand2}
           placeholder={rowValueInputPlaceholder}
           singleLine={true}
-          getTokenPicker={getTokenPicker}
+          tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { customButton: true } }}
           editorBlur={handleValueSave}
-          tokenPickerButtonProps={{ customButton: true }}
         />
       </div>
       <OverflowSet

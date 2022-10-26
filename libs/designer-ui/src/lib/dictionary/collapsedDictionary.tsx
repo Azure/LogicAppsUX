@@ -1,6 +1,6 @@
 import type { DictionaryEditorItemProps } from '.';
 import type { ValueSegment } from '../editor';
-import type { GetTokenPickerHandler } from '../editor/base';
+import type { TokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import { CollapsedDictionaryValidation } from './plugins/CollapsedDictionaryValidation';
 import { useIntl } from 'react-intl';
@@ -10,7 +10,7 @@ export type CollapsedDictionaryProps = {
   isTrigger?: boolean;
   readonly?: boolean;
   collapsedValue: ValueSegment[];
-  getTokenPicker: GetTokenPickerHandler;
+  tokenPickerHandler: TokenPickerHandler;
   setIsValid: (b: boolean) => void;
   setItems: (items: DictionaryEditorItemProps[]) => void;
   setCollapsedValue: (val: ValueSegment[]) => void;
@@ -22,7 +22,7 @@ export const CollapsedDictionary = ({
   isTrigger,
   readonly,
   collapsedValue,
-  getTokenPicker,
+  tokenPickerHandler,
   setItems,
   setIsValid,
   setCollapsedValue,
@@ -48,13 +48,12 @@ export const CollapsedDictionary = ({
           BasePlugins={{
             tokens: true,
           }}
-          tokenPickerButtonProps={{ buttonClassName: `msla-editor-tokenpicker-button` }}
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
           isTrigger={isTrigger}
           readonly={readonly}
           onBlur={onBlur}
-          getTokenPicker={getTokenPicker}
+          tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { buttonClassName: `msla-editor-tokenpicker-button` } }}
         >
           <CollapsedDictionaryValidation
             errorMessage={errorMessage}

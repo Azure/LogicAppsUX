@@ -1,5 +1,5 @@
 import type { AuthProps, MSIProps } from '..';
-import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
+import type { ChangeState, TokenPickerHandler } from '../../editor/base';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES, containsUserAssignedIdentities } from '../util';
@@ -14,7 +14,7 @@ import { useIntl } from 'react-intl';
 interface MSIAuthenticationProps {
   msiProps: MSIProps;
   identity?: ManagedIdentity;
-  getTokenPicker: GetTokenPickerHandler;
+  tokenPickerHandler: TokenPickerHandler;
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
@@ -22,7 +22,7 @@ interface MSIAuthenticationProps {
 export const MSIAuthentication = ({
   identity,
   msiProps,
-  getTokenPicker,
+  tokenPickerHandler,
   onManagedIdentityChange,
   setCurrentProps,
 }: MSIAuthenticationProps): JSX.Element => {
@@ -118,14 +118,14 @@ export const MSIAuthentication = ({
           <AuthenticationProperty
             initialValue={msiAudience}
             AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
-            getTokenPicker={getTokenPicker}
+            tokenPickerHandler={tokenPickerHandler}
             onBlur={updateMsiAudience}
           />
         </>
       ) : (
         <MSIAuthenticationDefault
           msiProps={msiProps}
-          getTokenPicker={getTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
           onManagedIdentityChange={onManagedIdentityChange}
           onBlur={updateMsiAudience}
         />

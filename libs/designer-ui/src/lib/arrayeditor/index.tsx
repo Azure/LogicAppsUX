@@ -54,7 +54,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   initialItems = [],
   labelProps,
   itemSchema,
-  getTokenPicker,
+  tokenPickerHandler,
   onChange,
   ...baseEditorProps
 }): JSX.Element => {
@@ -110,7 +110,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           itemSchema={itemSchema}
           setItems={type === ArrayType.SIMPLE ? updateSimpleItems : updateComplexItems}
           setIsValid={setIsValid}
-          getTokenPicker={getTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
           onBlur={handleBlur}
           setCollapsedValue={setCollapsedValue}
         />
@@ -123,7 +123,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           isTrigger={baseEditorProps.isTrigger}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateSimpleItems}
-          getTokenPicker={getTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
         />
       ) : (
         <ExpandedComplexArray
@@ -134,7 +134,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           isTrigger={baseEditorProps.isTrigger}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateComplexItems}
-          getTokenPicker={getTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
         />
       )}
       <div className="msla-array-commands">

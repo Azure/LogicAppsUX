@@ -1,7 +1,7 @@
 import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
 import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
-import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeState, TokenPickerHandler } from '../editor/base';
 import { AddSection } from './AddSection';
 import type { GroupDropdownOptions } from './GroupDropdown';
 import { GroupDropdown } from './GroupDropdown';
@@ -41,11 +41,11 @@ interface GroupProps {
   mustHaveItem?: boolean;
   isTop: boolean;
   isBottom: boolean;
+  tokenPickerHandler: TokenPickerHandler;
   handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   handleUngroupChild?: (indexToInsertAt: number) => void;
   handleUpdateParent: (newProps: GroupItemProps, index: number) => void;
-  getTokenPicker: GetTokenPickerHandler;
 }
 
 export const Group = ({
@@ -57,11 +57,11 @@ export const Group = ({
   mustHaveItem,
   isTop,
   isBottom,
+  tokenPickerHandler,
   // handleMove,
   handleDeleteChild,
   handleUngroupChild,
   handleUpdateParent,
-  getTokenPicker,
 }: GroupProps) => {
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
@@ -280,10 +280,10 @@ export const Group = ({
                     groupedItems={groupedItems}
                     isTop={isTop && currIndex === 0 && !!isRootGroup}
                     isBottom={isBottom && index === groupProps.items.length - 1 && !!isRootGroup}
+                    tokenPickerHandler={tokenPickerHandler}
                     handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUpdateParent={handleUpdateNewParent}
-                    getTokenPicker={getTokenPicker}
                   />
                 ) : (
                   <Group
@@ -300,11 +300,11 @@ export const Group = ({
                     mustHaveItem={groupProps.items.length <= 1 && mustHaveItem}
                     isTop={isTop && currIndex === 0}
                     isBottom={isBottom && currIndex === groupProps.items.length - 1}
+                    tokenPickerHandler={tokenPickerHandler}
                     handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUngroupChild={() => handleUngroup(currIndex, item.items)}
                     handleUpdateParent={handleUpdateNewParent}
-                    getTokenPicker={getTokenPicker}
                   />
                 );
               })}
@@ -319,8 +319,8 @@ export const Group = ({
                       isTop={isTop && !!isRootGroup}
                       isBottom={isBottom && !!isRootGroup}
                       groupedItems={groupedItems}
+                      tokenPickerHandler={tokenPickerHandler}
                       handleMove={handleMoveChild}
-                      getTokenPicker={getTokenPicker}
                       handleDeleteChild={handleDeleteChild}
                       handleUpdateParent={handleUpdateNewParent}
                     />

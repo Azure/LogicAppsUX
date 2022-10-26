@@ -44,10 +44,11 @@ interface TokenPickerSearchProps {
   expression: ExpressionEditorEvent;
   updatingExpression?: NodeKey | null;
   isEditing: boolean;
+  isDynamicContentAvailable: boolean;
   setSearchQuery: (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, text?: string) => void;
   expressionEditorBlur: (e: ExpressionEditorEvent) => void;
   resetTokenPicker: () => void;
-  isDynamicContentAvailable: boolean;
+  showTokenPickerSwitch?: (show?: boolean) => void;
 }
 
 export const TokenPickerSearch = ({
@@ -57,10 +58,11 @@ export const TokenPickerSearch = ({
   expression,
   updatingExpression,
   isEditing,
+  isDynamicContentAvailable,
   setSearchQuery,
   expressionEditorBlur,
   resetTokenPicker,
-  isDynamicContentAvailable,
+  showTokenPickerSwitch,
 }: TokenPickerSearchProps): JSX.Element => {
   const intl = useIntl();
   const { isInverted } = useTheme();
@@ -117,6 +119,7 @@ export const TokenPickerSearch = ({
         title: token.title,
         icon: token.icon ?? FxIcon,
         value: token.value,
+        showTokenPickerSwitch: showTokenPickerSwitch,
         data: {
           id: guid(),
           type: ValueSegmentType.TOKEN,

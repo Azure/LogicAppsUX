@@ -40,6 +40,18 @@ export type GetTokenPickerHandler = (
   tokenClicked?: (token: ValueSegment) => void,
   hideTokenPicker?: () => void
 ) => JSX.Element;
+
+export interface tokenPickerVisibilityHandler {
+  tokenPickerVisibility?: boolean;
+  showTokenPickerSwitch?: (show?: boolean) => void;
+}
+
+export interface TokenPickerHandler {
+  getTokenPicker: GetTokenPickerHandler;
+  tokenPickerProps: tokenPickerVisibilityHandler;
+  tokenPickerButtonProps?: TokenPickerButtonProps;
+}
+
 export type ChangeHandler = (newState: ChangeState) => void;
 export type CallbackHandler = () => void;
 
@@ -54,12 +66,11 @@ export interface BaseEditorProps {
   BasePlugins?: BasePlugins;
   initialValue: ValueSegment[];
   children?: React.ReactNode;
-  tokenPickerButtonProps?: TokenPickerButtonProps;
   isTrigger?: boolean;
-  getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
+  tokenPickerHandler: TokenPickerHandler;
 }
 
 export interface BasePlugins {
@@ -83,19 +94,19 @@ export const BaseEditor = ({
   BasePlugins = {},
   initialValue,
   children,
-  tokenPickerButtonProps,
   isTrigger,
-  getTokenPicker,
   onFocus,
   onBlur,
+  tokenPickerHandler,
 }: BaseEditorProps) => {
   const intl = useIntl();
   const editorId = useId('msla-tokenpicker-callout-location');
   const labelId = useId('msla-tokenpicker-callout-label');
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
-  const [showTokenPicker, setShowTokenPicker] = useState(true);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
+  const { getTokenPicker, tokenPickerProps, tokenPickerButtonProps } = tokenPickerHandler || {};
   const { customButton = false } = tokenPickerButtonProps || {};
+  const { tokenPickerVisibility, showTokenPickerSwitch } = tokenPickerProps || {};
 
   const initialConfig = {
     theme: EditorTheme,
@@ -136,10 +147,10 @@ export const BaseEditor = ({
   };
 
   const handleShowTokenPicker = () => {
-    if (showTokenPicker) {
+    if (tokenPickerVisibility) {
       setInTokenPicker(false);
     }
-    setShowTokenPicker(!showTokenPicker);
+    showTokenPickerSwitch?.();
   };
 
   const onClickTokenPicker = (b: boolean) => {
@@ -164,13 +175,13 @@ export const BaseEditor = ({
           <TokenPickerButton
             customButton={customButton}
             labelId={labelId}
-            showTokenPicker={showTokenPicker}
+            showTokenPicker={!!tokenPickerVisibility}
             buttonClassName={tokenPickerButtonProps?.buttonClassName}
             buttonOffset={tokenPickerButtonProps?.buttonOffset}
             setShowTokenPicker={handleShowTokenPicker}
           />
         ) : null}
-        {!isTrigger && ((showTokenPickerButton && showTokenPicker) || getInTokenPicker())
+        {!isTrigger && ((showTokenPickerButton && tokenPickerVisibility) || getInTokenPicker())
           ? getTokenPicker(editorId, labelId, onClickTokenPicker, undefined, customButton ? handleShowTokenPicker : undefined)
           : null}
         <OnBlur command={handleBlur} />

@@ -2,6 +2,7 @@ import constants from '../../../../common/constants';
 import { useReadOnly } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
+import { showTokenPicker, hideTokenPicker } from '../../../../core/state/panel/panelSlice';
 import {
   useAllowUserToChangeConnection,
   useNodeConnectionName,
@@ -118,6 +119,7 @@ const ParameterSection = ({
     upstreamNodeIds,
     operationDefinition,
     connectionReference,
+    tokenPickerVisibility,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
@@ -129,9 +131,22 @@ const ParameterSection = ({
       variables: state.tokens.variables,
       operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
       connectionReference: getConnectionReference(state.connections, nodeId),
+      tokenPickerVisibility: state.panel.tokenPickerVisibility,
     };
   });
   const rootState = useSelector((state: RootState) => state);
+
+  const showTokenPickerSwitch = (show?: boolean) => {
+    if (show) {
+      dispatch(showTokenPicker());
+    } else {
+      if (tokenPickerVisibility) {
+        dispatch(hideTokenPicker());
+      } else {
+        dispatch(showTokenPicker());
+      }
+    }
+  };
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
@@ -227,6 +242,7 @@ const ParameterSection = ({
         }
         tokenClickedCallback={tokenClicked}
         tokenPickerHide={tokenPickerHide}
+        showTokenPickerSwitch={showTokenPickerSwitch}
       />
     );
   };
@@ -252,14 +268,17 @@ const ParameterSection = ({
           isLoading: param.dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: param.dynamicData?.error ? { message: param.dynamicData.error.message } : undefined,
           showTokens: param.showTokens,
-          getTokenPicker: (
-            editorId: string,
-            labelId: string,
-            tokenPickerFocused?: (b: boolean) => void,
-            tokenClicked?: (token: ValueSegment) => void
-          ) => getTokenPicker(param.id, editorId, labelId, tokenPickerFocused, tokenClicked),
           onValueChange: (newState: ChangeState) => onValueChange(param.id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
+          tokenPickerHandler: {
+            getTokenPicker: (
+              editorId: string,
+              labelId: string,
+              tokenPickerFocused?: (b: boolean) => void,
+              tokenClicked?: (token: ValueSegment) => void
+            ) => getTokenPicker(param.id, editorId, labelId, tokenPickerFocused, tokenClicked),
+            tokenPickerProps: { tokenPickerVisibility, showTokenPickerSwitch },
+          },
         },
       };
     });

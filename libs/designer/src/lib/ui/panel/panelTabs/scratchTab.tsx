@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import type { TokenGroup } from '../../../core/utils/tokens';
 import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
-import type { OutputToken, PanelTab, ValueSegment } from '@microsoft/designer-ui';
+import type { OutputToken, PanelTab, TokenPickerHandler, ValueSegment } from '@microsoft/designer-ui';
 import {
   DictionaryEditor,
   TokenType,
@@ -79,11 +79,13 @@ export const ScratchTab = () => {
       />
     );
   };
+
+  const tokenPickerHandler: TokenPickerHandler = { getTokenPicker: GetTokenPicker, tokenPickerProps: {} };
   const children = (): React.ReactNode => {
     return (
       <>
         <QueryBuilderEditor
-          getTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
           readonly={false}
           groupProps={{
             type: GroupType.GROUP,
@@ -130,7 +132,7 @@ export const ScratchTab = () => {
               id: guid(),
             },
           ]}
-          GetTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
           language={EditorLanguage.javascript}
         /> */}
         {/* <DropdownEditor
@@ -147,7 +149,7 @@ export const ScratchTab = () => {
             { displayName: 'DELETE', value: 'DELETE', key: 'DELETE', disabled: false },
           ]}
         /> */}
-        {/* <AuthenticationEditor initialValue={[]} GetTokenPicker={GetTokenPicker} AuthenticationEditorOptions={{}} authProps={{}} /> */}
+        {/* <AuthenticationEditor initialValue={[]} tokenPickerHandler={tokenPickerHandler} AuthenticationEditorOptions={{}} authProps={{}} /> */}
         {/* <ArrayEditor
           type={ArrayType.SIMPLE}
           itemSchema={'test'}
@@ -177,7 +179,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
-          GetTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
         /> */}
 
         {/* <ArrayEditor
@@ -219,7 +221,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
-          getTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
         /> */}
 
         {/* <Combobox
@@ -232,7 +234,7 @@ export const ScratchTab = () => {
           ]}
           placeholder="Method is Required"
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
-          GetTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
           // readonly={true}
         /> */}
 
@@ -305,7 +307,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
-          getTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
         />
         {/* <DictionaryEditor
           initialItems={[
@@ -372,12 +374,12 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
-          getTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
           dictionaryType={DictionaryType.TABLE}
           keyTitle={'Header'}
           valueTitle={'Value'}
         /> */}
-        {/* <DictionaryEditor initialValue={[testTokenSegment]} GetTokenPicker={GetTokenPicker} /> */}
+        {/* <DictionaryEditor initialValue={[testTokenSegment]} tokenPickerHandler={tokenPickerHandler} /> */}
         <StringEditor
           initialValue={[
             testTokenSegment,
@@ -385,9 +387,9 @@ export const ScratchTab = () => {
             testTokenSegment,
             testTokenSegment,
           ]}
-          getTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
         />
-        {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" GetTokenPicker={GetTokenPicker} /> */}
+        {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" tokenPickerHandler={tokenPickerHandler} /> */}
       </>
     );
   };

@@ -10,6 +10,7 @@ export interface TokenNodeProps {
   data: ValueSegment;
   icon: string;
   title: string;
+  showTokenPickerSwitch?: (show?: boolean) => void;
 }
 
 export type SerailizedTokenNode = Spread<
@@ -30,13 +31,14 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   __icon: string;
   __title: string;
   __data: ValueSegment;
+  __showTokenPickerSwitch?: (show?: boolean) => void;
 
   static getType() {
     return 'token';
   }
 
   static clone(node: TokenNode) {
-    return new TokenNode(node.__icon, node.__title, node.__data, node.__value, node.__brandColor, node.__key);
+    return new TokenNode(node.__icon, node.__title, node.__data, node.__value, node.__brandColor, node.__showTokenPickerSwitch, node.__key);
   }
 
   static importJSON(serializedTokenNode: SerailizedTokenNode): TokenNode {
@@ -76,13 +78,22 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     writable.__data = data;
   }
 
-  constructor(icon: string, title: string, data: ValueSegment, value?: string, brandColor?: string, key?: string) {
+  constructor(
+    icon: string,
+    title: string,
+    data: ValueSegment,
+    value?: string,
+    brandColor?: string,
+    showTokenPickerSwitch?: (show?: boolean) => void,
+    key?: string
+  ) {
     super(key);
     this.__brandColor = brandColor;
     this.__value = value;
     this.__data = data;
     this.__icon = icon;
     this.__title = title;
+    this.__showTokenPickerSwitch = showTokenPickerSwitch;
   }
 
   createDOM() {
@@ -103,13 +114,14 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
         brandColor={this.__brandColor}
         nodeKey={this.__key}
         isSecure={this.__data.token?.isSecure}
+        showTokenPickerSwitch={this.__showTokenPickerSwitch}
       />
     );
   }
 }
 
-export function $createTokenNode({ icon, title, data, value, brandColor }: TokenNodeProps) {
-  return new TokenNode(`url("${icon}")`, title, data, value, brandColor);
+export function $createTokenNode({ icon, title, data, value, brandColor, showTokenPickerSwitch }: TokenNodeProps) {
+  return new TokenNode(`url("${icon}")`, title, data, value, brandColor, showTokenPickerSwitch);
 }
 
 export function $isTokenNode(node: LexicalNode | null): node is TokenNode {
