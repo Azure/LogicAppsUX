@@ -16,6 +16,7 @@ interface QueryResult {
 
 export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   const result = useOperationManifest(operationInfo);
+  if (result.isLoading || !result.isFetched || result.isPlaceholderData) return false;
   const manifest = result.data;
   return manifest ? isConnectionRequiredForOperation(manifest) : true;
   // else case needs to be implemented: work item 14936435
@@ -68,6 +69,7 @@ export const useOperationManifest = (operationInfo: NodeOperation) => {
         : undefined,
     {
       enabled: !!connectorId && !!operationId,
+      placeholderData: undefined,
     }
   );
 };

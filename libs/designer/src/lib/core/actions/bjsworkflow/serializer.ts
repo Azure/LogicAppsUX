@@ -46,6 +46,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
   const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = connectionsMapping[nodeId];
+    if (!referenceKey) return references;
     const reference = referencesObject[referenceKey];
 
     return {
@@ -200,7 +201,7 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
       : undefined;
   const retryPolicy = getRetryPolicy(nodeSettings);
   const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
-  const hostInfo = { host: { connection: { referenceName: rootState.connections.connectionsMapping[operationId] ?? '' } } };
+  const hostInfo = { host: { connection: { referenceName: rootState.connections.connectionsMapping[operationId] } } };
   const inputs = { ...hostInfo, ...inputPathValue, retryPolicy };
   const serializedType = equals(type, Constants.NODE.TYPE.API_CONNECTION)
     ? Constants.SERIALIZED_TYPE.API_CONNECTION
@@ -378,7 +379,7 @@ const serializeHost = (
 
   const intl = getIntl();
   const { referenceKeyFormat } = manifest.properties.connectionReference;
-  const referenceKey = rootState.connections.connectionsMapping[nodeId];
+  const referenceKey = rootState.connections.connectionsMapping[nodeId] ?? '';
   const { connectorId, operationId } = rootState.operations.operationInfo[nodeId];
 
   switch (referenceKeyFormat) {

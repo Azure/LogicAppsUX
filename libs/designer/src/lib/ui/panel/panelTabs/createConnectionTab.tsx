@@ -52,7 +52,6 @@ const CreateConnectionTab = () => {
       setIsLoading(true);
       setErrorMessage(undefined);
 
-      const newName = selectedParameterSet?.name ?? (await getUniqueConnectionName(connector.id));
       const connectionParameterSetValues: ConnectionParameterSetValues = {
         name: selectedParameterSet?.name ?? '',
         values: Object.keys(parameterValues).reduce((acc: any, key) => {
@@ -76,6 +75,7 @@ const CreateConnectionTab = () => {
       try {
         let connection, err;
 
+        const newName = await getUniqueConnectionName(connector.id);
         if (needsAuthentication) {
           await ConnectionService()
             .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)

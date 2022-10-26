@@ -9,7 +9,7 @@ export interface ConnectionsStoreState {
 }
 
 type NodeId = string;
-type ReferenceKey = string;
+type ReferenceKey = string | null;
 export type ConnectionMapping = Record<NodeId, ReferenceKey>;
 
 export const initialConnectionsState: ConnectionsStoreState = {
@@ -46,6 +46,9 @@ export const connectionSlice = createSlice({
         state.connectionsMapping[nodeId] = newReferenceKey;
       }
     },
+    initEmptyConnectionMap: (state, action: PayloadAction<NodeId>) => {
+      state.connectionsMapping[action.payload] = null;
+    },
     removeNodeConnectionData: (state, action: PayloadAction<{ nodeId: NodeId }>) => {
       const { nodeId } = action.payload;
       delete state.connectionsMapping[nodeId];
@@ -54,7 +57,12 @@ export const connectionSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeConnectionReferences, initializeConnectionsMappings, changeConnectionMapping, removeNodeConnectionData } =
-  connectionSlice.actions;
+export const {
+  initializeConnectionReferences,
+  initializeConnectionsMappings,
+  changeConnectionMapping,
+  initEmptyConnectionMap,
+  removeNodeConnectionData,
+} = connectionSlice.actions;
 
 export default connectionSlice.reducer;

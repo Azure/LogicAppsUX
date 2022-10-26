@@ -21,6 +21,7 @@ import { getAllVariables, getAvailableVariables } from '../../../../core/utils/v
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import { equals } from '@microsoft-logic-apps/utils';
 import { DynamicCallStatus, TokenPicker, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
@@ -42,18 +43,18 @@ export const ParametersTab = () => {
   const expressionGroup = getExpressionTokenSections();
 
   const parameterGroup = useMemo(() => {
-    const group = Object.keys(inputs.parameterGroups ?? {}).map((sectionName) => {
+    const group = Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => {
       const paramGroup = {
-        ...inputs.parameterGroups[sectionName],
-        parameters: inputs.parameterGroups[sectionName].parameters.map((param) => {
+        ...inputs?.parameterGroups[sectionName],
+        parameters: inputs?.parameterGroups[sectionName].parameters.map((param) => {
           const paramValue = {
             ...param,
             value: param.value.map((valSegment) => {
               if (valSegment.type === ValueSegmentType.TOKEN && valSegment.token?.tokenType === TokenType.OUTPUTS) {
                 let icon: string | undefined;
                 let brandColor: string | undefined;
-                Object.keys(tokenstate.outputTokens ?? {}).forEach((token) => {
-                  tokenstate.outputTokens[token].tokens.find((output) => {
+                Object.values(tokenstate.outputTokens ?? {}).forEach((t) => {
+                  t.tokens.find((output) => {
                     if (!icon && valSegment.token && output.key === valSegment.token.key) {
                       icon = output.icon;
                       brandColor = output.brandColor;
@@ -73,7 +74,16 @@ export const ParametersTab = () => {
       return paramGroup;
     });
     return group;
-  }, [inputs.parameterGroups, tokenstate]);
+  }, [inputs, tokenstate]);
+
+  if (!operationInfo) {
+    return (
+      <div className="msla-loading-container">
+        <Spinner size={SpinnerSize.large} />
+      </div>
+    );
+  }
+
   return (
     <>
       {parameterGroup.map((section, index) => (
