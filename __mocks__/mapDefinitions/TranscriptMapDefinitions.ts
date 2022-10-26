@@ -14,7 +14,7 @@ ns0:Root:
   DirectTranslation:
     Employee:
       ID: /ns0:Root/DirectTranslation/EmployeeID
-      Name: concat(EmployeeName, string(EmployeeID))
+      Name: concat(/ns0:Root/DirectTranslation/EmployeeName, string(/ns0:Root/DirectTranslation/EmployeeID))
   ContentEnrich:
     DateOfDemo: current-date()
 `;

@@ -144,7 +144,7 @@ export const FunctionList = ({ functionData, onFunctionClick }: FunctionListProp
 
   return (
     <>
-      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Function" />
+      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} />
       <div>
         <GroupedList
           onShouldVirtualize={() => false}

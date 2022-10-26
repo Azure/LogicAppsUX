@@ -19,13 +19,13 @@ export enum ToolboxPanelTabs {
   functionsList = 'functionsList',
 }
 
-const toolboxPanelProps: FloatingPanelProps = {
+const generalToolboxPanelProps = {
   xPos: '16px',
   yPos: '76px',
   width: '250px',
   minHeight: '450px',
   maxHeight: '450px',
-};
+} as FloatingPanelProps;
 
 export interface CanvasToolboxProps {
   toolboxTabToDisplay: ToolboxPanelTabs | '';
@@ -61,15 +61,29 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay, con
     description: 'Label to close Functions list',
   });
 
+  const functionLoc = intl.formatMessage({
+    defaultMessage: 'Function',
+    description: 'Function',
+  });
+
+  const sourceSchemaLoc = intl.formatMessage({
+    defaultMessage: 'Source schema',
+    description: 'Source schema',
+  });
+
+  const closeToolbox = useCallback(() => {
+    setToolboxTabToDisplay('');
+  }, [setToolboxTabToDisplay]);
+
   const onTabSelect = useCallback(
     (_event: SelectTabEvent, data: SelectTabData) => {
       if (data.value === toolboxTabToDisplay) {
-        setToolboxTabToDisplay('');
+        closeToolbox();
       } else {
         setToolboxTabToDisplay(data.value as ToolboxPanelTabs);
       }
     },
-    [toolboxTabToDisplay, setToolboxTabToDisplay]
+    [toolboxTabToDisplay, setToolboxTabToDisplay, closeToolbox]
   );
 
   const onFunctionItemClick = (selectedFunction: FunctionData) => {
@@ -118,7 +132,7 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay, con
       <ButtonPivot {...toolboxButtonPivotProps} />
 
       {toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree && sourceSchema && (
-        <FloatingPanel {...toolboxPanelProps}>
+        <FloatingPanel {...generalToolboxPanelProps} title={sourceSchemaLoc} subtitle={sourceSchema.name} onClose={closeToolbox}>
           <SchemaTree
             schema={sourceSchema}
             toggledNodes={[...currentlyAddedSourceNodes, ...connectedSourceNodes]}
@@ -128,7 +142,7 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay, con
       )}
 
       {toolboxTabToDisplay === ToolboxPanelTabs.functionsList && (
-        <FloatingPanel {...toolboxPanelProps}>
+        <FloatingPanel {...generalToolboxPanelProps} title={functionLoc} onClose={closeToolbox}>
           <FunctionList functionData={functionData} onFunctionClick={onFunctionItemClick}></FunctionList>
         </FloatingPanel>
       )}

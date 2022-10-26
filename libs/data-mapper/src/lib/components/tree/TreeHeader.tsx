@@ -1,6 +1,6 @@
 import type { ISearchBoxStyleProps, ISearchBoxStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { SearchBox } from '@fluentui/react';
-import { Body1, makeStyles, tokens, typographyStyles } from '@fluentui/react-components';
+import { tokens } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
 const searchBoxStyles: IStyleFunctionOrObject<ISearchBoxStyleProps, ISearchBoxStyles> = {
@@ -26,23 +26,13 @@ const searchBoxStyles: IStyleFunctionOrObject<ISearchBoxStyleProps, ISearchBoxSt
   },
 };
 
-const useStyles = makeStyles({
-  header: {
-    ...typographyStyles.body1Strong,
-    paddingBottom: '10px',
-    display: 'block',
-  },
-});
-
 interface TreeHeaderProps {
-  title?: string;
   onSearch: (searchTerm: string) => void;
   onClear: () => void;
 }
 
-export const TreeHeader = ({ title, onSearch, onClear }: TreeHeaderProps) => {
+export const TreeHeader = ({ onSearch, onClear }: TreeHeaderProps) => {
   const intl = useIntl();
-  const styles = useStyles();
 
   const searchLoc = intl.formatMessage({
     defaultMessage: 'Search',
@@ -51,7 +41,6 @@ export const TreeHeader = ({ title, onSearch, onClear }: TreeHeaderProps) => {
 
   return (
     <span>
-      {title && <Body1 className={styles.header}>{title}</Body1>}
       <SearchBox onSearch={onSearch} onClear={onClear} styles={searchBoxStyles} placeholder={searchLoc}></SearchBox>
     </span>
   );

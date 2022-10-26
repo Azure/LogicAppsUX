@@ -1,7 +1,7 @@
 export const webviewTitle = 'Data Mapper';
 export const outputChannelTitle = webviewTitle;
 
-export const supportedDataMapFileExts = ['.yml'];
+export const supportedDataMapDefinitionFileExts = ['.yml'];
 export const supportedSchemaFileExts = ['.xsd'];
 
 const artifactsPath = '/Artifacts/';
