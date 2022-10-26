@@ -176,7 +176,7 @@ export interface SchemaCardProps extends CardProps {
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayChevron } = props.data;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron } = props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
@@ -225,12 +225,14 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge />}
 
       <div className={containerStyle} onMouseLeave={() => setIsHovered(false)} onMouseEnter={() => setIsHovered(true)}>
-        <Handle
-          type={isSourceSchemaNode ? 'source' : 'target'}
-          position={isSourceSchemaNode ? Position.Right : Position.Left}
-          style={handleStyle}
-          isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
-        />
+        {displayHandle && (
+          <Handle
+            type={isSourceSchemaNode ? 'source' : 'target'}
+            position={isSourceSchemaNode ? Position.Right : Position.Left}
+            style={handleStyle}
+            isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
+          />
+        )}
         {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>
