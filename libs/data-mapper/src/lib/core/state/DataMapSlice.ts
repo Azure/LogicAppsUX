@@ -1,21 +1,21 @@
 import type { NotificationData } from '../../components/notification/Notification';
 import { NotificationTypes } from '../../components/notification/Notification';
-import { targetPrefix } from '../../constants/ReactFlowConstants';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperties, SchemaType } from '../../models';
-import type { Connection, ConnectionDictionary, InputConnection } from '../../models/Connection';
+import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import {
   addNodeToConnections,
-  collectNodesForConnectionChain,
   createConnectionEntryIfNeeded,
   flattenInputs,
+  getConnectedSourceSchemaNodes,
+  getFunctionConnectionUnits,
+  getTargetSchemaNodeConnections,
   isConnectionUnit,
   isCustomValue,
   nodeHasSpecificInputEventually,
   updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
-import { isFunctionData } from '../../utils/Function.Utils';
 import {
   addReactFlowPrefix,
   createReactFlowFunctionKey,
@@ -252,44 +252,6 @@ export const dataMapSlice = createSlice({
     },
 
     setCurrentTargetSchemaNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
-      // TODO: Move these out to their own util methods, and maybe optimize them a little
-      const getTargetSchemaNodeConnections = (
-        currentTargetSchemaNode: SchemaNodeExtended | undefined,
-        connections: ConnectionDictionary
-      ) => {
-        if (!currentTargetSchemaNode) {
-          return [];
-        }
-
-        const connectionValues = Object.values(connections);
-        const outputFilteredConnections = currentTargetSchemaNode.children.flatMap((childNode) => {
-          const foundConnection = connectionValues.find(
-            (connection) => connection.self.node.key === childNode.key && flattenInputs(connection.inputs).length > 0
-          );
-          return foundConnection ? [foundConnection] : [];
-        });
-
-        const targetReactFlowKey = addReactFlowPrefix(currentTargetSchemaNode.key, SchemaType.Target);
-        if (connections[targetReactFlowKey] && flattenInputs(connections[targetReactFlowKey].inputs).length > 0) {
-          outputFilteredConnections.push(connections[targetReactFlowKey]);
-        }
-
-        return outputFilteredConnections;
-      };
-
-      const getConnectedSourceSchemaNodes = (targetSchemaNodeConnections: Connection[], connections: ConnectionDictionary) => {
-        return targetSchemaNodeConnections
-          .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
-          .filter((connectedNode) => isSchemaNodeExtended(connectedNode.node) && !connectedNode.reactFlowKey.includes(targetPrefix))
-          .map((connectedNode) => connectedNode.node) as SchemaNodeExtended[];
-      };
-
-      const getFunctionConnectionUnits = (targetSchemaNodeConnections: Connection[], connections: ConnectionDictionary) => {
-        return targetSchemaNodeConnections
-          .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
-          .filter((connectionUnit) => isFunctionData(connectionUnit.node));
-      };
-
       //const currentTargetSchemaNode = state.curDataMapOperation.currentTargetSchemaNode;
       const newTargetSchemaNode = action.payload;
 
