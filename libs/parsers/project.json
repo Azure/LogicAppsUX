@@ -13,6 +13,7 @@
         "project": "libs/parsers/package.json",
         "entryFile": "libs/parsers/src/index.ts",
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "buildableProjectDepsInPackageJsonType": "dependencies",
         "format": ["cjs", "esm"],
         "assets": [
           {

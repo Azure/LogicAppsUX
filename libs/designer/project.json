@@ -13,6 +13,7 @@
         "entryFile": "libs/designer/src/index.ts",
         "external": ["react/jsx-runtime"],
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "buildableProjectDepsInPackageJsonType": "dependencies",
         "extractCss": true,
         "format": ["cjs", "esm"],
         "assets": [

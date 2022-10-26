@@ -11,6 +11,7 @@
         "main": "libs/utils/src/index.ts",
         "tsConfig": "libs/utils/tsconfig.lib.json",
         "project": "libs/utils/package.json",
+        "buildableProjectDepsInPackageJsonType": "dependencies",
         "entryFile": "libs/utils/src/index.ts",
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
         "format": ["cjs", "esm"],
