@@ -117,8 +117,6 @@ export const serializeOperation = async (
   // TODO: Add logic to identify if this operation is in Recommendation phase.
   // If in recommendation phase then return null;
 
-  if (rootState.connections.connectionsMapping[operationId] === undefined) return null;
-
   let serializedOperation: LogicAppsV2.OperationDefinition;
   if (OperationManifestService().isSupported(operation.type, operation.kind)) {
     serializedOperation = await serializeManifestBasedOperation(rootState, operationId);
