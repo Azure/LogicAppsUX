@@ -213,7 +213,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     return mergeClasses(...newContStyles);
   }, [isOutputChildNode, disabled, classes, sharedStyles]);
 
-  const outputChevronOnClick = () => {
+  const outputChevronOnClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     dispatch(setCurrentTargetSchemaNode(schemaNode));
   };
 
@@ -246,10 +247,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
         {showOutputChevron && (
           <Button
             className={classes.cardChevron}
-            onClick={(e) => {
-              e.stopPropagation();
-              outputChevronOnClick();
-            }}
+            onClick={outputChevronOnClick}
             icon={<ChevronRight16Regular />}
             appearance={'transparent'}
           />
