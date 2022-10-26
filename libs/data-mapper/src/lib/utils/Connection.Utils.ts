@@ -230,11 +230,8 @@ export const nodeHasSourceNodeEventually = (currentConnection: Connection, conne
   const functionInputs = definedNonCustomValueInputs.filter((input) => isFunctionData(input.node) && input.node.maxNumberOfInputs !== 0);
   const nodeInputs = definedNonCustomValueInputs.filter((input) => isSchemaNodeExtended(input.node) || input.node.maxNumberOfInputs === 0);
 
-  // All the sources are input nodes
-  if (nodeInputs.length === flattenedInputs.length) {
-    return true;
-  } else if (customValueInputs.length === flattenedInputs.length) {
-    // All inputs are custom values
+  // All inputs are a mix of nodes and/or custom values
+  if (nodeInputs.length + customValueInputs.length === flattenedInputs.length) {
     return true;
   } else {
     // Still have traversing to do
