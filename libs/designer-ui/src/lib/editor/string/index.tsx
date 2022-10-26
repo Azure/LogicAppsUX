@@ -27,12 +27,11 @@ export const StringEditor = ({ singleLine, initialValue, editorBlur, onChange, .
       className={baseEditorProps.className}
       initialValue={initialValue}
       BasePlugins={{ tokens: baseEditorProps.BasePlugins?.tokens ?? true }}
-      onBlur={handleBlur}
-      onFocus={baseEditorProps.onFocus}
       readonly={baseEditorProps.readonly}
       isTrigger={baseEditorProps.isTrigger}
-      getTokenPicker={baseEditorProps.getTokenPicker}
-      tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
+      tokenPickerHandler={baseEditorProps.tokenPickerHandler}
+      onBlur={handleBlur}
+      onFocus={baseEditorProps.onFocus}
     >
       {singleLine ? <SingleLine /> : null}
       <Change setValue={onValueChange} />
