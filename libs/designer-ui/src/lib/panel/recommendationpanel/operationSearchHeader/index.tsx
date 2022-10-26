@@ -3,12 +3,10 @@
 /* eslint-disable react/jsx-no-literals */
 import { DesignerSearchBox } from '../../../searchbox';
 import { Checkbox, Icon, IconButton, Link, Text } from '@fluentui/react';
-import type { IDropdownStyles, IDropdownOption } from '@fluentui/react/lib/Dropdown';
+import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { Dropdown, DropdownMenuItemType } from '@fluentui/react/lib/Dropdown';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
-
-const dropdownStyles: Partial<IDropdownStyles> = { dropdown: { width: 300 } };
 
 interface OperationSearchHeaderProps {
   searchCallback: (s: string) => void;
@@ -122,7 +120,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
     );
   }, [browseNavText, navigateBack, onDismiss, returnToBrowseText, returnToSearchText, searchTerm, selectedGroupId]);
 
-  const onChange = (event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
+  const onChange = (_event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
     if (item) {
       const [k, v] = (item.key as string).split('-');
       if (item.selected) {
@@ -141,22 +139,23 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
       {!selectedGroupId ? (
         <>
           <DesignerSearchBox searchCallback={searchCallback} searchTerm={searchTerm} />
-          <Dropdown
-            placeholder={intl.formatMessage({ defaultMessage: 'Select a filter', description: 'Select a filter placeholder' })}
-            label={intl.formatMessage({ defaultMessage: 'Filter', description: 'Filter by label' })}
-            selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
-            onChange={onChange}
-            multiSelect
-            options={DropdownControlledMultiExampleOptions}
-            styles={dropdownStyles}
-          />
+          <div style={{ display: 'grid', grid: 'auto-flow / 1fr 1fr', gridColumnGap: '8px' }}>
+            <Dropdown
+              placeholder={intl.formatMessage({ defaultMessage: 'Select a filter', description: 'Select a filter placeholder' })}
+              label={intl.formatMessage({ defaultMessage: 'Filter', description: 'Filter by label' })}
+              selectedKeys={Object.entries(props.filters ?? {}).map(([k, v]) => `${k}-${v}`)}
+              onChange={onChange}
+              multiSelect
+              options={DropdownControlledMultiExampleOptions}
+            />
+            <div /> {/* TODO: This will be the sort box eventually */}
+          </div>
           {searchTerm ? (
             <div className="msla-flex-row">
               <span className="msla-search-heading-text">{searchResultsText}</span>
               <Checkbox label={groupByConnectorLabelText} onChange={onGroupToggleChange} checked={isGrouped} />
             </div>
           ) : null}
-          {/* TODO: riley - show the filter and sort options */}
         </>
       ) : null}
     </div>
