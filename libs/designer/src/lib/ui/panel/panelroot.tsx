@@ -22,11 +22,6 @@ import {
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
-import { addParameter, deleteParameter, updateParameter } from '../../core/state/workflowparameters/workflowparametersSlice';
-import {
-  useWorkflowParameters,
-  useWorkflowParameterValidationErrors,
-} from '../../core/state/workflowparameters/workflowparametersselector';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
@@ -38,22 +33,10 @@ import { scratchTab } from './panelTabs/scratchTab';
 import { selectConnectionTab } from './panelTabs/selectConnectionTab';
 import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
-import { isNullOrUndefined, SUBGRAPH_TYPES, unmap } from '@microsoft-logic-apps/utils';
-import type {
-  MenuItemOption,
-  PageActionTelemetryData,
-  WorkflowParameterDefinition as WorkflowParameterUIDefinition,
-  WorkflowParameterUpdateEvent,
-} from '@microsoft/designer-ui';
-import {
-  WorkflowParameters,
-  MenuItemType,
-  PanelContainer,
-  PanelHeaderControlType,
-  PanelLocation,
-  PanelScope,
-  PanelSize,
-} from '@microsoft/designer-ui';
+import { WorkflowParametersPanel } from './workflowparameterspanel';
+import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
+import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
+import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -71,8 +54,6 @@ export const PanelRoot = (): JSX.Element => {
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
   const isDiscovery = useIsDiscovery();
   const isWorkflowParameters = useIsWorkflowParametersMode();
-  const workflowParameters = useWorkflowParameters();
-  const workflowParametersValidationErrors = useWorkflowParameterValidationErrors();
 
   const [width, setWidth] = useState(PanelSize.Auto);
 
@@ -218,21 +199,8 @@ export const PanelRoot = (): JSX.Element => {
 
   const togglePanel = (): void => (!collapsed ? collapse() : expand());
 
-  //#region WorkflowParameters handlers
-  const onWorkflowParameterAdd = () => dispatch(addParameter());
-  const onDeleteWorkflowParameter = (event: { id: string }) => dispatch(deleteParameter(event.id));
-  const onUpdateParameter = (event: WorkflowParameterUpdateEvent) => dispatch(updateParameter(event));
-  //#endregion
-
   return isWorkflowParameters ? (
-    <WorkflowParameters
-      parameters={unmap(workflowParameters, 'id') as WorkflowParameterUIDefinition[]}
-      isReadOnly={readOnly}
-      validationErrors={workflowParametersValidationErrors}
-      onAddParameter={onWorkflowParameterAdd}
-      onDeleteParameter={onDeleteWorkflowParameter}
-      onUpdateParameter={onUpdateParameter}
-    />
+    <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={togglePanel} width={width} />
   ) : isDiscovery ? (
     <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width} key={selectedNode} />
   ) : (

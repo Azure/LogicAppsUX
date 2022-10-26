@@ -51,8 +51,8 @@ export const ParametersTab = () => {
               if (valSegment.type === ValueSegmentType.TOKEN && valSegment.token?.tokenType === TokenType.OUTPUTS) {
                 let icon: string | undefined;
                 let brandColor: string | undefined;
-                Object.keys(tokenstate.outputTokens ?? {}).forEach((token) => {
-                  tokenstate.outputTokens[token].tokens.find((output) => {
+                Object.keys(rootState.tokens.outputTokens ?? {}).forEach((token) => {
+                  rootState.tokens.outputTokens[token].tokens.find((output) => {
                     if (!icon && valSegment.token && output.key === valSegment.token.key) {
                       icon = output.icon;
                       brandColor = output.brandColor;
@@ -72,7 +72,7 @@ export const ParametersTab = () => {
       return paramGroup;
     });
     return group;
-  }, [inputs.parameterGroups, tokenstate]);
+  }, [inputs.parameterGroups, rootState.tokens.outputTokens]);
   return (
     <>
       {parameterGroup.map((section, index) => (

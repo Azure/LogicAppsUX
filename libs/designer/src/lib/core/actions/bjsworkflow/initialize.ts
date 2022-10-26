@@ -9,6 +9,8 @@ import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokensSlice';
 import { updateTokens, updateUpstreamNodes } from '../../state/tokensSlice';
+import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
+import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';

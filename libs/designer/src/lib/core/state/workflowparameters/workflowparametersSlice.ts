@@ -24,46 +24,6 @@ const initialState: WorkflowParametersState = {
   validationErrors: {},
 };
 
-export const workflowParametersSlice = createSlice({
-  name: 'workflowParameters',
-  initialState,
-  reducers: {
-    initializeParameters: (state, action: PayloadAction<Record<string, WorkflowParameterDefinition>>) => {
-      state.definitions = action.payload;
-    },
-    addParameter: (state) => {
-      const parameterId = guid();
-      state.definitions[parameterId] = { isEditable: true, type: UIConstants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, name: '' };
-      state.validationErrors[parameterId] = {};
-    },
-    deleteParameter: (state, action: PayloadAction<string>) => {
-      const parameterId = action.payload;
-      delete state.validationErrors[parameterId];
-      delete state.definitions[parameterId];
-    },
-    updateParameter: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
-      const {
-        id,
-        newDefinition: { name, type, value },
-      } = action.payload;
-      const validationErrors = {
-        name: validateParameter(id, { name }, 'name', state.definitions),
-        value: validateParameter(id, { name, type, value }, 'value', state.definitions),
-      };
-
-      state.definitions[id] = { ...state.definitions[id], type, value, name: name ?? '' };
-      state.validationErrors[id] = {
-        ...state.validationErrors[id],
-        ...validationErrors,
-      };
-    },
-  },
-});
-
-export const { initializeParameters, addParameter, deleteParameter, updateParameter } = workflowParametersSlice.actions;
-
-export default workflowParametersSlice.reducer;
-
 const validateParameter = (
   id: string,
   data: { name?: string; type?: string; value?: string },
@@ -142,3 +102,43 @@ const validateParameter = (
 
   return undefined;
 };
+
+export const workflowParametersSlice = createSlice({
+  name: 'workflowParameters',
+  initialState,
+  reducers: {
+    initializeParameters: (state, action: PayloadAction<Record<string, WorkflowParameterDefinition>>) => {
+      state.definitions = action.payload;
+    },
+    addParameter: (state) => {
+      const parameterId = guid();
+      state.definitions[parameterId] = { isEditable: true, type: UIConstants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY, name: '' };
+      state.validationErrors[parameterId] = {};
+    },
+    deleteParameter: (state, action: PayloadAction<string>) => {
+      const parameterId = action.payload;
+      delete state.validationErrors[parameterId];
+      delete state.definitions[parameterId];
+    },
+    updateParameter: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
+      const {
+        id,
+        newDefinition: { name, type, value },
+      } = action.payload;
+      const validationErrors = {
+        name: validateParameter(id, { name }, 'name', state.definitions),
+        value: validateParameter(id, { name, type, value }, 'value', state.definitions),
+      };
+
+      state.definitions[id] = { ...state.definitions[id], type, value, name: name ?? '' };
+      state.validationErrors[id] = {
+        ...state.validationErrors[id],
+        ...validationErrors,
+      };
+    },
+  },
+});
+
+export const { initializeParameters, addParameter, deleteParameter, updateParameter } = workflowParametersSlice.actions;
+
+export default workflowParametersSlice.reducer;
