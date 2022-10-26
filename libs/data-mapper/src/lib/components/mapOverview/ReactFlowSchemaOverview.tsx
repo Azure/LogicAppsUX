@@ -5,7 +5,6 @@ import { useLayout } from '../../utils/ReactFlow.Util';
 import ReactFlow from 'reactflow';
 
 const reactFlowStyle = {
-  background: '#e0e0e0',
   height: '100%',
 };
 
