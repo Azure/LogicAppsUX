@@ -1,4 +1,4 @@
-import { setCurrentTargetNode, setInitialSchema } from '../../core/state/DataMapSlice';
+import { setCurrentTargetSchemaNode, setInitialSchema } from '../../core/state/DataMapSlice';
 import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { SchemaType } from '../../models/Schema';
@@ -16,7 +16,7 @@ interface MockStoreData {
 
 const MockStore = ({ mockState, children }) => {
   store.dispatch(setInitialSchema({ schema: mockState.schema, schemaType: SchemaType.Target, flattenedSchema: {} }));
-  store.dispatch(setCurrentTargetNode({ schemaNode: mockState.currentNode, resetSelectedSourceNodes: true }));
+  store.dispatch(setCurrentTargetSchemaNode(mockState.currentNode));
 
   return <Provider store={store}>{children}</Provider>;
 };
