@@ -252,18 +252,40 @@ export const dataMapSlice = createSlice({
     },
 
     setCurrentTargetSchemaNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
-      //const currentTargetSchemaNode = state.curDataMapOperation.currentTargetSchemaNode;
+      const currentTargetSchemaNode = state.curDataMapOperation.currentTargetSchemaNode;
       const newTargetSchemaNode = action.payload;
 
-      // TODO
       // Remove any nodes/connection-chains that don't connect to a target schema node on the current level
       // - garbage collection for nodes that will never be displayed again
 
       const cleanConnections = { ...state.curDataMapOperation.dataMapConnections };
 
-      //const currentTargetSchemaNodeConnections = getTargetSchemaNodeConnections(currentTargetSchemaNode, state.curDataMapOperation.dataMapConnections);
+      const currentTargetSchemaNodeConnections = getTargetSchemaNodeConnections(
+        currentTargetSchemaNode,
+        state.curDataMapOperation.dataMapConnections
+      );
       //const currentFullyConnectedSourceSchemaNodes = getConnectedSourceSchemaNodes(currentTargetSchemaNodeConnections, state.curDataMapOperation.dataMapConnections);
-      //const currentFullyConnectedFunctionConnectionUnits = getFunctionConnectionUnits(currentTargetSchemaNodeConnections, state.curDataMapOperation.dataMapConnections);
+      const currentFullyConnectedFunctionConnectionUnits = getFunctionConnectionUnits(
+        currentTargetSchemaNodeConnections,
+        state.curDataMapOperation.dataMapConnections
+      );
+
+      /* Leaving out source schema node garbage collection for now as it could be part of a full connection chain
+      // on a separate target schema level (thus we can't fully delete it just because it isn't connected on this current level)
+      state.curDataMapOperation.currentSourceSchemaNodes.forEach((node) => {
+        if (!currentFullyConnectedSourceSchemaNodes.some((fullyConnectedNode) => fullyConnectedNode.key === node.key)) {
+          delete cleanConnections[addSourceReactFlowPrefix(node.key)];
+        }
+      });*/
+
+      // Function nodes can be safely deleted because each node is unique, and thus can only be used on one target schema level
+      Object.keys(state.curDataMapOperation.currentFunctionNodes).forEach((fnKey) => {
+        if (
+          !currentFullyConnectedFunctionConnectionUnits.some((fullyConnectedFnConUnit) => fullyConnectedFnConUnit.reactFlowKey === fnKey)
+        ) {
+          delete cleanConnections[fnKey];
+        }
+      });
 
       // Reset currentSourceSchema/FunctionNodes, and add back any nodes part of complete connection chains on the new target schema level
 
