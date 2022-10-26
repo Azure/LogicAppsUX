@@ -16,12 +16,19 @@ const initialState: PanelState = {
   selectedTabName: undefined,
   selectedOperationGroupId: '',
   addingTrigger: false,
+  tokenPickerVisibility: true,
 };
 
 export const panelSlice = createSlice({
   name: 'panel',
   initialState,
   reducers: {
+    showTokenPicker: (state) => {
+      state.tokenPickerVisibility = true;
+    },
+    hideTokenPicker: (state) => {
+      state.tokenPickerVisibility = false;
+    },
     expandPanel: (state) => {
       state.collapsed = false;
     },
@@ -122,6 +129,8 @@ export const panelSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+  showTokenPicker,
+  hideTokenPicker,
   expandPanel,
   collapsePanel,
   clearPanel,

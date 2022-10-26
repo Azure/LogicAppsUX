@@ -1,6 +1,6 @@
 import type { AuthProps, ClientCertificateProps } from '..';
 import type { ValueSegment } from '../../editor';
-import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
+import type { ChangeState, TokenPickerHandler } from '../../editor/base';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { CertificateAuthentication } from '../CertificateAuth';
 import { AUTHENTICATION_PROPERTIES } from '../util';
@@ -12,7 +12,7 @@ interface AadOAuthCredentialsProps {
   selectedCredTypeKey: string;
   secret?: ValueSegment[];
   clientCertificateProps: ClientCertificateProps;
-  getTokenPicker: GetTokenPickerHandler;
+  tokenPickerHandler: TokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
@@ -20,7 +20,7 @@ export const AadOAuthCredentials = ({
   selectedCredTypeKey,
   secret,
   clientCertificateProps,
-  getTokenPicker,
+  tokenPickerHandler,
   setCurrentProps,
 }: AadOAuthCredentialsProps): JSX.Element => {
   const updateOAuthTypeSecret = (newState: ChangeState) => {
@@ -37,7 +37,7 @@ export const AadOAuthCredentials = ({
           <AuthenticationProperty
             initialValue={secret}
             AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET}
-            getTokenPicker={getTokenPicker}
+            tokenPickerHandler={tokenPickerHandler}
             onBlur={updateOAuthTypeSecret}
           />
         );
@@ -46,7 +46,7 @@ export const AadOAuthCredentials = ({
           <CertificateAuthentication
             clientCertificateProps={clientCertificateProps}
             isOAuth={true}
-            getTokenPicker={getTokenPicker}
+            tokenPickerHandler={tokenPickerHandler}
             setCurrentProps={setCurrentProps}
           />
         );

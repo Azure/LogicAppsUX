@@ -81,7 +81,7 @@ export const AuthenticationEditor = ({
   options,
   authenticationValue,
   initialValue,
-  getTokenPicker,
+  tokenPickerHandler,
   onChange,
   ...props
 }: AuthenticationEditorProps): JSX.Element => {
@@ -102,29 +102,31 @@ export const AuthenticationEditor = ({
   const renderAuthentication = () => {
     switch (option) {
       case AuthenticationType.BASIC:
-        return <BasicAuthentication basicProps={basic} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return <BasicAuthentication basicProps={basic} tokenPickerHandler={tokenPickerHandler} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.CERTIFICATE:
         return (
           <CertificateAuthentication
             clientCertificateProps={clientCertificate}
-            getTokenPicker={getTokenPicker}
+            tokenPickerHandler={tokenPickerHandler}
             setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.RAW:
-        return <RawAuthentication rawProps={raw} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return <RawAuthentication rawProps={raw} tokenPickerHandler={tokenPickerHandler} setCurrentProps={setCurrentProps} />;
       case AuthenticationType.MSI:
         return (
           <MSIAuthentication
             identity={options?.identity}
             msiProps={msi}
             onManagedIdentityChange={onManagedIdentityDropdownChange}
-            getTokenPicker={getTokenPicker}
+            tokenPickerHandler={tokenPickerHandler}
             setCurrentProps={setCurrentProps}
           />
         );
       case AuthenticationType.OAUTH:
-        return <ActiveDirectoryAuthentication OauthProps={aadOAuth} getTokenPicker={getTokenPicker} setCurrentProps={setCurrentProps} />;
+        return (
+          <ActiveDirectoryAuthentication OauthProps={aadOAuth} tokenPickerHandler={tokenPickerHandler} setCurrentProps={setCurrentProps} />
+        );
       case AuthenticationType.NONE:
         return null;
       default:
@@ -160,7 +162,7 @@ export const AuthenticationEditor = ({
           collapsedValue={collapsedValue}
           isValid={isValid}
           setCollapsedValue={setCollapsedValue}
-          getTokenPicker={getTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
           setIsValid={setIsValid}
           setCurrentProps={setCurrentProps}
           setOption={setOption}
