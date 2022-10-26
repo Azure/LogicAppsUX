@@ -104,7 +104,6 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
   const rootItem: IBreadcrumbItem = {
     key: schema.name,
     text: schema.name,
-    // TODO (14748905): Click root to view map overview, not top node
     onClick: () => {
       dispatch(setCurrentTargetSchemaNode(schema.schemaTreeRoot));
     },

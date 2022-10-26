@@ -1,6 +1,6 @@
-import type { SchemaExtended } from '../../models';
+import type { SchemaExtended, SchemaType } from '../../models';
 import { nodeTypes } from '../../ui/ReactFlowWrapper';
-import { useLayout } from '../../utils/ReactFlow.Util';
+import { useOverviewLayout } from '../../utils/ReactFlow.Util';
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow from 'reactflow';
 
@@ -8,29 +8,13 @@ const reactFlowStyle = {
   height: '100%',
 };
 
-// Using this to prevent infinite re-rendering
-const placeholderData = {
-  currentSourceSchemaNodes: [],
-  allSourceSchemaNodes: {},
-  currentFunctionNodes: {},
-  //currentTargetSchemaNode, - This is the one thing that has an actual value (schema.schemaTreeRoot)
-  connections: {},
-  selectedItemKey: undefined,
-};
-
 interface ReactFlowSchemaOverviewProps {
   schema: SchemaExtended;
+  schemaType: SchemaType;
 }
 
-export const ReactFlowSchemaOverview = ({ schema }: ReactFlowSchemaOverviewProps) => {
-  const [reactFlowNodes, _reactFlowEdges] = useLayout(
-    placeholderData.currentSourceSchemaNodes,
-    placeholderData.allSourceSchemaNodes,
-    placeholderData.currentFunctionNodes,
-    schema.schemaTreeRoot,
-    placeholderData.connections,
-    placeholderData.selectedItemKey
-  );
+export const ReactFlowSchemaOverview = ({ schema, schemaType }: ReactFlowSchemaOverviewProps) => {
+  const reactFlowNodes = useOverviewLayout(schema.schemaTreeRoot, schemaType, true);
 
   return (
     <ReactFlow

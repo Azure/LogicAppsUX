@@ -38,7 +38,7 @@ export const MapOverview = ({ sourceSchema, targetSchema }: MapOverviewProps) =>
       <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
         {sourceSchema ? (
           <ReactFlowProvider>
-            <ReactFlowSchemaOverview schema={sourceSchema} />
+            <ReactFlowSchemaOverview schema={sourceSchema} schemaType={SchemaType.Source} />
           </ReactFlowProvider>
         ) : (
           <SelectSchemaCard schemaType={SchemaType.Source} />
@@ -48,7 +48,7 @@ export const MapOverview = ({ sourceSchema, targetSchema }: MapOverviewProps) =>
       <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
         {targetSchema ? (
           <ReactFlowProvider>
-            <ReactFlowSchemaOverview schema={targetSchema} />
+            <ReactFlowSchemaOverview schema={targetSchema} schemaType={SchemaType.Target} />
           </ReactFlowProvider>
         ) : (
           <SelectSchemaCard schemaType={SchemaType.Target} />
