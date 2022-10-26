@@ -22,7 +22,7 @@ import {
   typographyStyles,
 } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
@@ -130,23 +130,7 @@ const useStyles = makeStyles({
   },
 });
 
-const cardInputText = makeStyles({
-  cardText: {
-    width: '136px',
-  },
-});
-
 const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px', display: 'hidden' };
-
-export interface SchemaCardProps extends CardProps {
-  schemaNode: SchemaNodeExtended;
-  schemaType: SchemaType;
-  displayHandle: boolean;
-  displayChevron: boolean;
-  isLeaf: boolean;
-  isChild: boolean;
-  relatedConnections: Connection[];
-}
 
 const isValidConnection = (connection: ReactFlowConnection): boolean => {
   const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
@@ -180,82 +164,80 @@ const isValidConnection = (connection: ReactFlowConnection): boolean => {
   return false;
 };
 
+export interface SchemaCardProps extends CardProps {
+  schemaNode: SchemaNodeExtended;
+  schemaType: SchemaType;
+  displayHandle: boolean;
+  displayChevron: boolean;
+  isLeaf: boolean;
+  isChild: boolean;
+  relatedConnections: Connection[];
+}
+
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
   const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayChevron } = props.data;
-
-  const intl = useIntl();
-  const [_isHover, setIsHover] = useState<boolean>(false);
-  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const dispatch = useDispatch<AppDispatch>();
-
-  const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
-  const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
+  const classes = useStyles();
 
-  const isNodeConnected =
-    connections[reactFlowId] && (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
-  const isOutputChildNode = schemaType === SchemaType.Target && isChild;
+  const [_isHovered, setIsHovered] = useState<boolean>(false);
 
-  const containerStyleClasses = [sharedStyles.root, classes.container];
-  if (isOutputChildNode) {
-    containerStyleClasses.push(classes.outputChildCard);
-  }
+  const isNodeConnected = useMemo(() => {
+    return (
+      connections[reactFlowId] && (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0)
+    );
+  }, [connections, reactFlowId]);
 
-  if (disabled) {
-    containerStyleClasses.push(classes.disabled);
-  }
+  const isSourceSchemaNode = useMemo(() => schemaType === SchemaType.Source, [schemaType]);
+  const isOutputChildNode = useMemo(() => !isSourceSchemaNode && isChild, [isSourceSchemaNode, isChild]);
+  const showOutputChevron = useMemo(() => !isSourceSchemaNode && !isLeaf && displayChevron, [isSourceSchemaNode, displayChevron, isLeaf]);
+  const isNBadgeRequired = useMemo(
+    () => isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating,
+    [isNodeConnected, schemaNode]
+  );
 
-  const containerStyle = mergeClasses(...containerStyleClasses);
+  const containerStyle = useMemo(() => {
+    const newContStyles = [sharedStyles.root, classes.container];
 
-  const showOutputChevron = schemaType === SchemaType.Target && !isLeaf && displayChevron;
+    if (isOutputChildNode) {
+      newContStyles.push(classes.outputChildCard);
+    }
+
+    if (disabled) {
+      newContStyles.push(classes.disabled);
+    }
+
+    return mergeClasses(...newContStyles);
+  }, [isOutputChildNode, disabled, classes, sharedStyles]);
+
+  const outputChevronOnClick = () => {
+    dispatch(setCurrentTargetSchemaNode(schemaNode));
+  };
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType, schemaNode.properties);
 
-  const outputChevronOnClick = (newCurrentSchemaNode: SchemaNodeExtended) => {
-    dispatch(setCurrentTargetSchemaNode(newCurrentSchemaNode));
-  };
-
-  const isNBadgeRequired = isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating;
-
-  const onMouseEnter = () => {
-    setIsHover(true);
-  };
-  const onMouseLeave = () => {
-    setIsHover(false);
-  };
-
-  const arrayMappingTooltip = intl.formatMessage({
-    defaultMessage: 'Array Mapping',
-    description: 'Label for array connection',
-  });
-
   return (
     <div className={classes.badgeContainer}>
-      {isNBadgeRequired && schemaType === SchemaType.Target && (
-        <div>
-          <Tooltip content={arrayMappingTooltip} relationship="label">
-            <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
-              N
-            </Badge>
-          </Tooltip>
-        </div>
-      )}
-      <div className={containerStyle} onMouseLeave={() => onMouseLeave()} onMouseEnter={() => onMouseEnter()}>
+      {isNBadgeRequired && !isSourceSchemaNode && <NBadge />}
+
+      <div className={containerStyle} onMouseLeave={() => setIsHovered(false)} onMouseEnter={() => setIsHovered(true)}>
         <Handle
-          type={schemaType === SchemaType.Source ? 'source' : 'target'}
-          position={schemaType === SchemaType.Source ? Position.Right : Position.Left}
+          type={isSourceSchemaNode ? 'source' : 'target'}
+          position={isSourceSchemaNode ? Position.Right : Position.Left}
           style={handleStyle}
-          isValidConnection={schemaType === SchemaType.Source ? isValidConnection : () => false}
+          isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
         />
         {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>
             <BundledTypeIcon />
           </span>
-          <Text className={schemaType === SchemaType.Target ? classes.cardText : mergedInputText} block={true} nowrap={true}>
+
+          <Text className={classes.cardText} style={{ width: !isSourceSchemaNode ? '100%' : '136px' }} block={true} nowrap={true}>
             {schemaNode.name}
           </Text>
         </Button>
@@ -264,18 +246,35 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             className={classes.cardChevron}
             onClick={(e) => {
               e.stopPropagation();
-              outputChevronOnClick(schemaNode);
+              outputChevronOnClick();
             }}
             icon={<ChevronRight16Regular />}
             appearance={'transparent'}
           />
         )}
       </div>
-      {isNBadgeRequired && schemaType === SchemaType.Source && (
-        <Badge className={classes.inputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
+
+      {isNBadgeRequired && isSourceSchemaNode && <NBadge />}
+    </div>
+  );
+};
+
+const NBadge = () => {
+  const intl = useIntl();
+  const classes = useStyles();
+
+  const arrayMappingTooltip = intl.formatMessage({
+    defaultMessage: 'Array Mapping',
+    description: 'Label for array connection',
+  });
+
+  return (
+    <div>
+      <Tooltip content={arrayMappingTooltip} relationship="label">
+        <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
           N
         </Badge>
-      )}
+      </Tooltip>
     </div>
   );
 };
