@@ -38,6 +38,7 @@ export interface TokenPickerProps {
   onSearchTextChanged?: SearchTextChangedEventHandler;
   tokenClickedCallback?: (token: ValueSegment) => void;
   tokenPickerHide?: () => void;
+  showTokenPickerSwitch?: (show?: boolean) => void;
 }
 export function TokenPicker({
   editorId,
@@ -50,6 +51,7 @@ export function TokenPicker({
   getValueSegmentFromToken,
   tokenClickedCallback,
   tokenPickerHide,
+  showTokenPickerSwitch,
 }: TokenPickerProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
@@ -72,7 +74,7 @@ export function TokenPicker({
         endColumn: 1,
       });
       expressionEditorRef.current?.focus();
-    }, 50);
+    }, 100);
   };
 
   const handleSelectKey = (item?: PivotItem) => {
@@ -155,6 +157,7 @@ export function TokenPicker({
               isEditing={isEditing}
               resetTokenPicker={resetTokenPicker}
               isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
+              showTokenPickerSwitch={showTokenPickerSwitch}
             />
 
             <TokenPickerSection

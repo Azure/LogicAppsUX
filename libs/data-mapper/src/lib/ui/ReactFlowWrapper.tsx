@@ -22,17 +22,12 @@ import {
   setSelectedItem,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { SchemaType } from '../models';
-import type { SchemaNodeExtended } from '../models';
 import type { ViewportCoords } from '../models/ReactFlow';
-import { collectNodesForConnectionChain, flattenInputs } from '../utils/Connection.Utils';
-import { isFunctionData } from '../utils/Function.Utils';
-import { addReactFlowPrefix, useLayout } from '../utils/ReactFlow.Util';
-import { isSchemaNodeExtended } from '../utils/Schema.Utils';
+import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
@@ -46,14 +41,15 @@ export const ReactFlowWrapper = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { project } = useReactFlow();
 
-  const addedFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
-  const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  // NOTE: Includes nodes added from toolbox, and nodes with connection chains to target schema nodes on the current target schema level
+  const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
+  const currentFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
-  const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
   const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
-  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [toolboxTabToDisplay, setToolboxTabToDisplay] = useState<ToolboxPanelTabs | ''>('');
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
@@ -62,40 +58,6 @@ export const ReactFlowWrapper = () => {
 
   const reactFlowRef = useRef<HTMLDivElement>(null);
   const edgeUpdateSuccessful = useRef(true);
-
-  const connectedTargetNodes = useMemo(() => {
-    if (currentTargetNode) {
-      const connectionValues = Object.values(connections);
-      const outputFilteredConnections = currentTargetNode.children.flatMap((childNode) => {
-        const foundConnection = connectionValues.find(
-          (connection) => connection.self.node.key === childNode.key && flattenInputs(connection.inputs).length > 0
-        );
-        return foundConnection ? [foundConnection] : [];
-      });
-
-      const targetReactFlowKey = addReactFlowPrefix(currentTargetNode.key, SchemaType.Target);
-      if (connections[targetReactFlowKey] && flattenInputs(connections[targetReactFlowKey].inputs).length > 0) {
-        outputFilteredConnections.push(connections[targetReactFlowKey]);
-      }
-
-      return outputFilteredConnections;
-    }
-
-    return [];
-  }, [currentTargetNode, connections]);
-
-  const functionConnectionUnits = useMemo(() => {
-    return connectedTargetNodes
-      .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
-      .filter((connectionUnit) => isFunctionData(connectionUnit.node));
-  }, [connectedTargetNodes, connections]);
-
-  const connectedSourceNodes = useMemo(() => {
-    return connectedTargetNodes
-      .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
-      .filter((connectedNode) => isSchemaNodeExtended(connectedNode.node) && !connectedNode.reactFlowKey.includes(targetPrefix))
-      .map((connectedNode) => connectedNode.node) as SchemaNodeExtended[];
-  }, [connectedTargetNodes, connections]);
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
@@ -112,10 +74,10 @@ export const ReactFlowWrapper = () => {
     if (connection.target && connection.source) {
       const source = connection.source.startsWith(sourcePrefix)
         ? flattenedSourceSchema[connection.source]
-        : addedFunctionNodes[connection.source];
+        : currentFunctionNodes[connection.source];
       const destination = connection.target.startsWith(targetPrefix)
         ? flattenedTargetSchema[connection.target]
-        : addedFunctionNodes[connection.target];
+        : currentFunctionNodes[connection.target];
 
       dispatch(
         makeConnection({
@@ -138,10 +100,10 @@ export const ReactFlowWrapper = () => {
       if (newConnection.target && newConnection.source && oldEdge.target) {
         const source = newConnection.source.startsWith(sourcePrefix)
           ? flattenedSourceSchema[newConnection.source]
-          : addedFunctionNodes[newConnection.source];
+          : currentFunctionNodes[newConnection.source];
         const destination = newConnection.target.startsWith(targetPrefix)
           ? flattenedTargetSchema[newConnection.target]
-          : addedFunctionNodes[newConnection.target];
+          : currentFunctionNodes[newConnection.target];
 
         dispatch(
           changeConnection({
@@ -155,7 +117,7 @@ export const ReactFlowWrapper = () => {
         );
       }
     },
-    [dispatch, flattenedSourceSchema, flattenedTargetSchema, addedFunctionNodes]
+    [dispatch, flattenedSourceSchema, flattenedTargetSchema, currentFunctionNodes]
   );
 
   const onEdgeUpdateEnd = useCallback(
@@ -213,12 +175,10 @@ export const ReactFlowWrapper = () => {
   }, [project]);
 
   const [nodes, edges] = useLayout(
-    currentlyAddedSourceNodes,
-    connectedSourceNodes,
+    currentSourceSchemaNodes,
     flattenedSourceSchema,
-    addedFunctionNodes,
-    functionConnectionUnits,
-    currentTargetNode,
+    currentFunctionNodes,
+    currentTargetSchemaNode,
     connections,
     selectedItemKey
   );
@@ -254,11 +214,7 @@ export const ReactFlowWrapper = () => {
       onEdgeClick={onEdgeClick}
       fitView
     >
-      <CanvasToolbox
-        toolboxTabToDisplay={toolboxTabToDisplay}
-        setToolboxTabToDisplay={setToolboxTabToDisplay}
-        connectedSourceNodes={connectedSourceNodes}
-      />
+      <CanvasToolbox toolboxTabToDisplay={toolboxTabToDisplay} setToolboxTabToDisplay={setToolboxTabToDisplay} />
 
       <CanvasControls displayMiniMap={displayMiniMap} toggleDisplayMiniMap={toggleDisplayMiniMap} />
 

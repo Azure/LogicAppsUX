@@ -56,7 +56,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
-  const currentSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
+  const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
   const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
@@ -180,7 +180,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     const newPossibleInputOptionsDictionary = {} as InputOptionDictionary;
 
     // Sort source schema nodes on the canvas by type
-    currentSourceNodes.forEach((srcNode) => {
+    currentSourceSchemaNodes.forEach((srcNode) => {
       if (!newPossibleInputOptionsDictionary[srcNode.normalizedDataType]) {
         newPossibleInputOptionsDictionary[srcNode.normalizedDataType] = [];
       }
@@ -229,7 +229,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     });
 
     return newPossibleInputOptionsDictionary;
-  }, [currentSourceNodes, functionNodeDictionary, connectionDictionary, selectedItemKey]);
+  }, [currentSourceSchemaNodes, functionNodeDictionary, connectionDictionary, selectedItemKey]);
 
   // Compile options from the possible type-sorted input options based on the input's type
   const typeMatchedInputOptions = useMemo<IDropdownOption<InputOptionData>[] | undefined>(() => {

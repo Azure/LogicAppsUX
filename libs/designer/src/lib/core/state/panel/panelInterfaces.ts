@@ -11,6 +11,7 @@ export interface PanelState {
   selectedTabName: string | undefined;
   selectedOperationGroupId: string;
   addingTrigger: boolean;
+  tokenPickerVisibility: boolean;
 }
 
 export interface RelationshipIds {

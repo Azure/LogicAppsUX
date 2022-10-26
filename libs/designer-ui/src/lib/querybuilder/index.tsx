@@ -1,6 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeHandler, TokenPickerHandler } from '../editor/base';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
 import { RowDropdownOptions } from './RowDropdown';
@@ -37,11 +37,11 @@ export interface GroupItemProps {
 export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
-  getTokenPicker: GetTokenPickerHandler;
+  tokenPickerHandler: TokenPickerHandler;
   onChange?: ChangeHandler;
 }
 const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
-export const QueryBuilderEditor = ({ getTokenPicker, onChange, groupProps }: QueryBuilderProps) => {
+export const QueryBuilderEditor = ({ tokenPickerHandler, groupProps, onChange }: QueryBuilderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
@@ -73,7 +73,6 @@ export const QueryBuilderEditor = ({ getTokenPicker, onChange, groupProps }: Que
       <Group
         isTop={true}
         isBottom={true}
-        getTokenPicker={getTokenPicker}
         groupProps={getRootProp()}
         isRootGroup={true}
         isGroupable={isGroupable}
@@ -81,6 +80,7 @@ export const QueryBuilderEditor = ({ getTokenPicker, onChange, groupProps }: Que
         index={0}
         mustHaveItem={true}
         handleUpdateParent={handleUpdateParent}
+        tokenPickerHandler={tokenPickerHandler}
       />
     </div>
   );
