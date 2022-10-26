@@ -17,6 +17,7 @@ import {
   addNodeToConnections,
   collectNodesForConnectionChain,
   flattenInputs,
+  isConnectionUnit,
   isCustomValue,
   nodeHasSourceNodeEventually,
   nodeHasSpecificInputEventually,
@@ -67,10 +68,11 @@ export const generateMapDefinitionHeader = (
 
 // Exported for testing purposes
 export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
-  Object.values(connections).forEach((connection) => {
+  // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
+  const targetSchemas = Object.entries(connections).filter(([key, _connection]) => key.startsWith(targetPrefix));
+  targetSchemas.forEach(([_key, connection]) => {
     const flattenedInputs = flattenInputs(connection.inputs);
     flattenedInputs.forEach((input) => {
-      // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
       const selfNode = connection.self.node;
       if (input && isSchemaNodeExtended(selfNode)) {
         if (isCustomValue(input)) {
@@ -85,9 +87,7 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
             return isSchemaNodeExtended(node) && node.properties === SchemaNodeProperties.Repeating;
           });
 
-          if (containsRepeatingNode) {
-            // Temp Still need to handle functions in loops
-          } else {
+          if (!containsRepeatingNode) {
             const value = collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
             applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
           }
@@ -110,8 +110,10 @@ const applyValueAtPath = (
   if (path.length > 1) {
     if (path[0].repeating) {
       // Assumption for now that there is only 1 source node in a loop chain
-      // TODO const loopValue = connections[addTargetReactFlowPrefix(path[0].key)]
-      generateForSection(value.substring(0, value.lastIndexOf('/')), value, mapDefinition, destinationNode, path, connections);
+      const parentTargetConnection = connections[addTargetReactFlowPrefix(path[0].key)];
+      const parentSourceNode = parentTargetConnection.inputs[0][0];
+      const loopValue: string = (parentSourceNode && isConnectionUnit(parentSourceNode) && parentSourceNode.node.key) || '';
+      generateForSection(loopValue, value, mapDefinition, destinationNode, path, connections);
     } else {
       if (!mapDefinition[formattedPathLocation]) {
         mapDefinition[formattedPathLocation] = {};
@@ -163,7 +165,7 @@ const generateForSection = (
     mapDefinition[formattedPathLocation] = {};
   }
 
-  const loopLocalValue = value.replace(`${loopValue}/`, '');
+  const loopLocalValue = value.replaceAll(`${loopValue}/`, '');
 
   applyValueAtPath(loopLocalValue, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1), connections);
 };

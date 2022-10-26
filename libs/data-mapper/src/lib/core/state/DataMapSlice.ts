@@ -375,7 +375,7 @@ export const dataMapSlice = createSlice({
 
       addConnection(newState.dataMapConnections, action.payload);
 
-      // XXX Bug here that if you add the connection one level above, then we still make the auto connection when you navigate down and add children
+      // TODO Bug here that if you add the connection one level above, then we still make the auto connection when you navigate down and add children
       // Add any repeating parent nodes as well
       const parentTargetNode = newState.currentTargetSchemaNode;
       const sourceNode = action.payload.source;
