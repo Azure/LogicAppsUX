@@ -43,9 +43,9 @@ const targetSchemaLayoutOptions: Record<string, string> = {
 };
 
 export const convertDataMapNodesToElkGraph = (
-  currentSourceNodes: SchemaNodeExtended[],
+  currentSourceSchemaNodes: SchemaNodeExtended[],
   currentFunctionNodes: FunctionDictionary,
-  currentTargetNode: SchemaNodeExtended,
+  currentTargetSchemaNode: SchemaNodeExtended,
   connections: ConnectionDictionary
 ): ElkNode => {
   // NOTE: Sub-block edges[] only contain edges between nodes *within that block*
@@ -58,9 +58,9 @@ export const convertDataMapNodesToElkGraph = (
     // Make sure that this connection and its nodes are actively on the canvas
     if (
       !currentFunctionNodes[connection.self.reactFlowKey] &&
-      !currentSourceNodes.some((srcSchemaNode) => srcSchemaNode.key === connection.self.node.key) &&
-      currentTargetNode.key !== connection.self.node.key &&
-      !currentTargetNode.children.some((childTgtNode) => childTgtNode.key === connection.self.node.key)
+      !currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === connection.self.node.key) &&
+      currentTargetSchemaNode.key !== connection.self.node.key &&
+      !currentTargetSchemaNode.children.some((childTgtNode) => childTgtNode.key === connection.self.node.key)
     ) {
       return;
     }
@@ -95,7 +95,7 @@ export const convertDataMapNodesToElkGraph = (
         id: 'sourceSchemaBlock',
         layoutOptions: sourceSchemaLayoutOptions,
         children: [
-          ...currentSourceNodes.map((srcNode) => ({
+          ...currentSourceSchemaNodes.map((srcNode) => ({
             id: addSourceReactFlowPrefix(srcNode.key),
             width: schemaNodeCardWidth,
             height: schemaNodeCardHeight,
@@ -122,8 +122,8 @@ export const convertDataMapNodesToElkGraph = (
         id: 'targetSchemaBlock',
         layoutOptions: targetSchemaLayoutOptions,
         children: [
-          { id: addTargetReactFlowPrefix(currentTargetNode.key), width: schemaNodeCardWidth, height: schemaNodeCardHeight },
-          ...currentTargetNode.children.map((childNode) => ({
+          { id: addTargetReactFlowPrefix(currentTargetSchemaNode.key), width: schemaNodeCardWidth, height: schemaNodeCardHeight },
+          ...currentTargetSchemaNode.children.map((childNode) => ({
             id: addTargetReactFlowPrefix(childNode.key),
             width: schemaNodeCardWidth,
             height: schemaNodeCardHeight,

@@ -3,12 +3,12 @@ import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import { childTargetNodeCardIndent } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary, ConnectionUnit } from '../models/Connection';
+import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { flattenInputs, isConnectionUnit } from './Connection.Utils';
-import { getFunctionBrandingForCategory, isFunctionData } from './Function.Utils';
+import { getFunctionBrandingForCategory } from './Function.Utils';
 import { applyElkLayout, convertDataMapNodesToElkGraph } from './Layout.Utils';
 import { isLeafNode } from './Schema.Utils';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -18,12 +18,10 @@ import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 import { Position } from 'reactflow';
 
 export const useLayout = (
-  currentlySelectedSourceNodes: SchemaNodeExtended[],
-  connectedSourceNodes: SchemaNodeExtended[],
-  allSourceNodes: SchemaNodeDictionary,
-  addedFunctionNodes: FunctionDictionary,
-  functionConnectionUnits: ConnectionUnit[],
-  currentTargetNode: SchemaNodeExtended | undefined,
+  currentSourceSchemaNodes: SchemaNodeExtended[],
+  allSourceSchemaNodes: SchemaNodeDictionary,
+  currentFunctionNodes: FunctionDictionary,
+  currentTargetSchemaNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary,
   selectedItemKey: string | undefined
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
@@ -32,34 +30,20 @@ export const useLayout = (
 
   // Nodes
   useEffect(() => {
-    if (currentTargetNode) {
+    if (currentTargetSchemaNode) {
       // Sort source schema nodes according to their order in the schema
-      const combinedSourceNodes = [
-        ...connectedSourceNodes,
-        ...currentlySelectedSourceNodes.filter((selectedNode) => {
-          const existingNode = connectedSourceNodes.find((currentNode) => currentNode.key === selectedNode.key);
-          return !existingNode;
-        }),
-      ];
-      const flattenedKeys = Object.values(allSourceNodes).map((sourceNode) => sourceNode.key);
-      combinedSourceNodes.sort((nodeA, nodeB) =>
+      const flattenedKeys = Object.values(allSourceSchemaNodes).map((node) => node.key);
+      const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort((nodeA, nodeB) =>
         nodeA.pathToRoot.length !== nodeB.pathToRoot.length
           ? nodeA.pathToRoot.length - nodeB.pathToRoot.length
           : flattenedKeys.indexOf(nodeA.key) - flattenedKeys.indexOf(nodeB.key)
       );
 
-      const combinedFunctionDictionary: FunctionDictionary = { ...addedFunctionNodes };
-      functionConnectionUnits.forEach((conUnit) => {
-        if (!combinedFunctionDictionary[conUnit.reactFlowKey] && isFunctionData(conUnit.node)) {
-          combinedFunctionDictionary[conUnit.reactFlowKey] = conUnit.node;
-        }
-      });
-
       // Build ELK node/edges data
       const elkTreeFromCanvasNodes = convertDataMapNodesToElkGraph(
-        combinedSourceNodes,
-        combinedFunctionDictionary,
-        currentTargetNode,
+        sortedSourceSchemaNodes,
+        currentFunctionNodes,
+        currentTargetSchemaNode,
         connections
       );
 
@@ -69,7 +53,7 @@ export const useLayout = (
           // Convert newly-calculated ELK node data to React Flow nodes
           // NOTE: edges were only used to aid ELK in layout calculation, ReactFlow still handles creating/routing/etc them
           setReactFlowNodes(
-            convertToReactFlowNodes(layoutedElkTree, combinedSourceNodes, combinedFunctionDictionary, currentTargetNode, connections)
+            convertToReactFlowNodes(layoutedElkTree, sortedSourceSchemaNodes, currentFunctionNodes, currentTargetSchemaNode, connections)
           );
         })
         .catch((error) => {
@@ -78,15 +62,7 @@ export const useLayout = (
     } else {
       setReactFlowNodes([]);
     }
-  }, [
-    currentTargetNode,
-    currentlySelectedSourceNodes,
-    connectedSourceNodes,
-    allSourceNodes,
-    addedFunctionNodes,
-    functionConnectionUnits,
-    connections,
-  ]);
+  }, [currentTargetSchemaNode, currentSourceSchemaNodes, allSourceSchemaNodes, currentFunctionNodes, connections]);
 
   // Edges
   useEffect(() => {
@@ -98,8 +74,8 @@ export const useLayout = (
 
 export const convertToReactFlowNodes = (
   elkTree: ElkNode,
-  combinedSourceNodes: SchemaNodeExtended[],
-  allFunctionNodes: FunctionDictionary,
+  currentSourceSchemaNodes: SchemaNodeExtended[],
+  currentFunctionNodes: FunctionDictionary,
   targetSchemaNode: SchemaNodeExtended,
   connections: ConnectionDictionary
 ): ReactFlowNode<CardProps>[] => {
@@ -113,11 +89,11 @@ export const convertToReactFlowNodes = (
   reactFlowNodes.push(
     ...convertSourceToReactFlowParentAndChildNodes(
       elkTree.children[0], // sourceSchemaBlock
-      combinedSourceNodes,
+      currentSourceSchemaNodes,
       connections
     ),
     ...convertTargetToReactFlowParentAndChildNodes(elkTree.children[2], targetSchemaNode, connections),
-    ...convertFunctionsToReactFlowParentAndChildNodes(elkTree.children[1], allFunctionNodes)
+    ...convertFunctionsToReactFlowParentAndChildNodes(elkTree.children[1], currentFunctionNodes)
   );
 
   return reactFlowNodes;
@@ -125,7 +101,7 @@ export const convertToReactFlowNodes = (
 
 const convertSourceToReactFlowParentAndChildNodes = (
   sourceSchemaElkTree: ElkNode,
-  combinedSourceNodes: SchemaNodeExtended[],
+  combinedSourceSchemaNodes: SchemaNodeExtended[],
   connections: ConnectionDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
@@ -135,9 +111,9 @@ const convertSourceToReactFlowParentAndChildNodes = (
     return reactFlowNodes;
   }
 
-  combinedSourceNodes.forEach((sourceNode) => {
-    const nodeReactFlowId = addSourceReactFlowPrefix(sourceNode.key);
-    const relatedConnections = getConnectionsForNode(connections, sourceNode.key, SchemaType.Source);
+  combinedSourceSchemaNodes.forEach((srcNode) => {
+    const nodeReactFlowId = addSourceReactFlowPrefix(srcNode.key);
+    const relatedConnections = getConnectionsForNode(connections, srcNode.key, SchemaType.Source);
 
     const elkNode = sourceSchemaElkTree.children?.find((node) => node.id === nodeReactFlowId);
     if (!elkNode || !elkNode.x || !elkNode.y || !sourceSchemaElkTree.x || !sourceSchemaElkTree.y) {
@@ -148,7 +124,7 @@ const convertSourceToReactFlowParentAndChildNodes = (
     reactFlowNodes.push({
       id: nodeReactFlowId,
       data: {
-        schemaNode: sourceNode,
+        schemaNode: srcNode,
         schemaType: SchemaType.Source,
         displayHandle: true,
         displayChevron: true,
@@ -251,11 +227,11 @@ export const convertToReactFlowParentAndChildNodes = (
 
 const convertFunctionsToReactFlowParentAndChildNodes = (
   functionsElkTree: ElkNode,
-  allFunctionNodes: FunctionDictionary
+  currentFunctionNodes: FunctionDictionary
 ): ReactFlowNode<FunctionCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<FunctionCardProps>[] = [];
 
-  Object.entries(allFunctionNodes).forEach(([functionKey, functionNode]) => {
+  Object.entries(currentFunctionNodes).forEach(([functionKey, fnNode]) => {
     const elkNode = functionsElkTree.children?.find((node) => node.id === functionKey);
     if (!elkNode || !elkNode.x || !elkNode.y || !functionsElkTree.x || !functionsElkTree.y) {
       console.error('Layout error: Function ElkNode not found, or missing x/y');
@@ -265,11 +241,11 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
     reactFlowNodes.push({
       id: functionKey,
       data: {
-        functionName: functionNode.functionName,
+        functionName: fnNode.functionName,
         displayHandle: true,
-        maxNumberOfInputs: functionNode.maxNumberOfInputs,
-        inputs: functionNode.inputs,
-        functionBranding: getFunctionBrandingForCategory(functionNode.category),
+        maxNumberOfInputs: fnNode.maxNumberOfInputs,
+        inputs: fnNode.inputs,
+        functionBranding: getFunctionBrandingForCategory(fnNode.category),
         disabled: false,
         error: false,
       },

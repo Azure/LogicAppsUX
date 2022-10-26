@@ -26,10 +26,10 @@ const useStyles = makeStyles({
 });
 
 interface TestTabProps {
-  currentTargetNodeKey: string;
+  currentTargetSchemaNodeKey: string;
 }
 
-export const TestTab = ({ currentTargetNodeKey }: TestTabProps) => {
+export const TestTab = ({ currentTargetSchemaNodeKey }: TestTabProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
@@ -58,7 +58,7 @@ export const TestTab = ({ currentTargetNodeKey }: TestTabProps) => {
     description: 'Reset',
   });
 
-  console.log(currentTargetNodeKey);
+  console.log(currentTargetSchemaNodeKey);
 
   return (
     <div className={styles.testTabDivStyle}>

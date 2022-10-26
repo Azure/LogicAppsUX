@@ -1,4 +1,4 @@
-import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
+import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { findNodeForKey } from '../../utils/Schema.Utils';
@@ -36,7 +36,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const currentTargetNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetNode);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const styles = useStyles();
 
   const showCodeLoc = intl.formatMessage({
@@ -51,11 +51,11 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
 
   const breadcrumbItems = useMemo<IBreadcrumbItem[]>(() => {
     if (targetSchema) {
-      return convertToBreadcrumbItems(dispatch, targetSchema, currentTargetNode);
+      return convertToBreadcrumbItems(dispatch, targetSchema, currentTargetSchemaNode);
     }
 
     return [];
-  }, [dispatch, targetSchema, currentTargetNode]);
+  }, [dispatch, targetSchema, currentTargetSchemaNode]);
 
   const isCodeViewButtonDisabled = useMemo<boolean>(() => breadcrumbItems.length === 0, [breadcrumbItems]);
 
@@ -78,7 +78,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
         onReduceData={() => undefined}
         items={breadcrumbItems}
         maxDisplayedItems={maxBreadcrumbItems}
-        overflowIndex={currentTargetNode ? overflowIndex : 0}
+        overflowIndex={currentTargetSchemaNode ? overflowIndex : 0}
       />
       <Button
         appearance="subtle"
@@ -106,7 +106,7 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
     text: schema.name,
     // TODO (14748905): Click root to view map overview, not top node
     onClick: () => {
-      dispatch(setCurrentTargetNode({ schemaNode: schema.schemaTreeRoot, resetSelectedSourceNodes: true }));
+      dispatch(setCurrentTargetSchemaNode(schema.schemaTreeRoot));
     },
   };
 
@@ -121,12 +121,12 @@ const convertToBreadcrumbItems = (dispatch: AppDispatch, schema: SchemaExtended,
           if (item) {
             const newNode = findNodeForKey(item.key, schema.schemaTreeRoot);
             if (newNode) {
-              dispatch(setCurrentTargetNode({ schemaNode: newNode, resetSelectedSourceNodes: true }));
+              dispatch(setCurrentTargetSchemaNode(newNode));
               return;
             }
           }
 
-          dispatch(setCurrentTargetNode({ schemaNode: schema.schemaTreeRoot, resetSelectedSourceNodes: true }));
+          dispatch(setCurrentTargetSchemaNode(schema.schemaTreeRoot));
         },
       });
     });

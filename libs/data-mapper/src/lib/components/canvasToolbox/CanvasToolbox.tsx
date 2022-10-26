@@ -1,4 +1,4 @@
-import { addFunctionNode, addSourceNodes, removeSourceNodes } from '../../core/state/DataMapSlice';
+import { addFunctionNode, addSourceSchemaNodes, removeSourceSchemaNodes } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import type { FunctionData } from '../../models/Function';
@@ -30,16 +30,15 @@ const generalToolboxPanelProps = {
 export interface CanvasToolboxProps {
   toolboxTabToDisplay: ToolboxPanelTabs | '';
   setToolboxTabToDisplay: (newTab: ToolboxPanelTabs | '') => void;
-  connectedSourceNodes: SchemaNodeExtended[];
 }
 
-export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay, connectedSourceNodes }: CanvasToolboxProps) => {
+export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay }: CanvasToolboxProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
   const functionData = useSelector((state: RootState) => state.function.availableFunctions);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const currentlyAddedSourceNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceNodes);
+  const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
 
   const showSourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Show source schema',
@@ -90,15 +89,11 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay, con
     dispatch(addFunctionNode(selectedFunction));
   };
 
-  const onToolboxItemClick = (selectedNode: SchemaNodeExtended) => {
-    if (
-      currentlyAddedSourceNodes.some((node) => {
-        return node.key === selectedNode.key;
-      })
-    ) {
-      dispatch(removeSourceNodes([selectedNode]));
+  const onSourceSchemaItemClick = (selectedNode: SchemaNodeExtended) => {
+    if (currentSourceSchemaNodes.some((node) => node.key === selectedNode.key)) {
+      dispatch(removeSourceSchemaNodes([selectedNode]));
     } else {
-      dispatch(addSourceNodes([selectedNode]));
+      dispatch(addSourceSchemaNodes([selectedNode]));
     }
   };
 
@@ -133,11 +128,7 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay, con
 
       {toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree && sourceSchema && (
         <FloatingPanel {...generalToolboxPanelProps} title={sourceSchemaLoc} subtitle={sourceSchema.name} onClose={closeToolbox}>
-          <SchemaTree
-            schema={sourceSchema}
-            toggledNodes={[...currentlyAddedSourceNodes, ...connectedSourceNodes]}
-            onNodeClick={onToolboxItemClick}
-          />
+          <SchemaTree schema={sourceSchema} toggledNodes={currentSourceSchemaNodes} onNodeClick={onSourceSchemaItemClick} />
         </FloatingPanel>
       )}
 
