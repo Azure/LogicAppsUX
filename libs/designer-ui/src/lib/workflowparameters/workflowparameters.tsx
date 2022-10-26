@@ -59,7 +59,7 @@ export interface WorkflowParametersProps {
   isEditable?: boolean;
   isReadOnly?: boolean;
   parameters: WorkflowParameterDefinition[];
-  validationErrors?: Record<string, Record<string, string>>;
+  validationErrors?: Record<string, Record<string, string | undefined>>;
   onAddParameter?: OnClickHandler;
   onDeleteParameter?: WorkflowParameterDeleteHandler;
   onManageParameters?: OnClickHandler;
@@ -139,7 +139,7 @@ export function WorkflowParameters({
     return (
       <WorkflowParameter
         key={item?.id}
-        definition={item ?? { id: 'id' }}
+        definition={item ?? { id: 'id', type: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY }}
         isReadOnly={isReadOnly}
         isInverted={isInverted}
         onChange={onUpdateParameter}

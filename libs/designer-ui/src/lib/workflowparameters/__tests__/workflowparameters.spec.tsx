@@ -13,14 +13,14 @@ describe('ui/workflowparameters/workflowparameters', () => {
       parameters: [
         {
           id: 'test1',
-          defaultValue: 'true',
+          value: 'true',
           type: 'Bool',
           name: 'test',
           isEditable: true,
         },
         {
           id: 'test2',
-          defaultValue: '{}',
+          value: '{}',
           type: 'Object',
           name: 'test2',
           isEditable: false,

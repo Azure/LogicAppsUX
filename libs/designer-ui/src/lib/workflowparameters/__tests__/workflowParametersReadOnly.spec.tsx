@@ -11,12 +11,11 @@ describe('ui/workflowparameters/workflowparameterReadOnly', () => {
       name: 'test',
       parameterDetails: {
         name: `test-name`,
-        defaultValue: `test-defaultValue`,
-        type: `test-type`,
         value: `test-value`,
+        type: `test-type`,
       },
       type: 'Bool',
-      defaultValue: 'true',
+      value: 'true',
     };
     renderer = ReactShallowRenderer.createRenderer();
   });
@@ -51,6 +50,6 @@ describe('ui/workflowparameters/workflowparameterReadOnly', () => {
     expect(defaultValue.props.className).toBe('msla-workflow-parameter-value-field');
     const [, text3]: any[] = React.Children.toArray(defaultValue.props.children);
     expect(text3.props.className).toBe(readOnlyClassName);
-    expect(text3.props.children).toBe(minimal.defaultValue);
+    expect(text3.props.children).toBe(minimal.value);
   });
 });

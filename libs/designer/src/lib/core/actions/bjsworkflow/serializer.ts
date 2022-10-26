@@ -1,5 +1,5 @@
 import Constants from '../../../common/constants';
-import type { ConnectionReferences, Workflow } from '../../../common/models/workflow';
+import type { ConnectionReferences, Workflow, WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -35,6 +35,7 @@ import {
   WORKFLOW_NODE_TYPES,
 } from '@microsoft-logic-apps/utils';
 import type { ParameterInfo } from '@microsoft/designer-ui';
+import { UIConstants } from '@microsoft/designer-ui';
 import merge from 'lodash.merge';
 
 export interface SerializeOptions {
@@ -44,6 +45,7 @@ export interface SerializeOptions {
 
 export const serializeWorkflow = async (rootState: RootState, options?: SerializeOptions): Promise<Workflow> => {
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
+  const workflowParameters = rootState.workflowParameters.definitions;
   const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = connectionsMapping[nodeId];
     const reference = referencesObject[referenceKey];
@@ -52,6 +54,25 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       ...references,
       [referenceKey]: reference,
     };
+  }, {});
+
+  const parameters = Object.keys(workflowParameters).reduce((result: Record<string, WorkflowParameter>, parameterId: string) => {
+    const parameter = workflowParameters[parameterId];
+    const parameterDefinition: any = { ...parameter };
+    const value = parameterDefinition.value;
+
+    delete parameterDefinition['name'];
+    delete parameterDefinition['isEditable'];
+
+    parameterDefinition.value = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+      ? value
+      : value === ''
+      ? undefined
+      : typeof value !== 'string'
+      ? value
+      : JSON.parse(value);
+
+    return { ...result, [parameter.name]: parameterDefinition };
   }, {});
 
   return {
@@ -63,7 +84,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       triggers: await getTrigger(rootState, options),
     },
     connectionReferences,
-    parameters: {},
+    parameters,
   };
 };
 

@@ -556,6 +556,7 @@ const updateTokenMetadataInForeachInputs = (inputs: NodeInputs, token: OutputTok
             triggerNodeId,
             nodesData,
             { [tokenOwnerNodeId]: rootState.workflow.operations[tokenOwnerNodeId] },
+            rootState.workflowParameters.definitions,
             parameter.type
           );
         }

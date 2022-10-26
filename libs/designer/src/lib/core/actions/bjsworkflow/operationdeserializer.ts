@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
-import type { ConnectionReferences } from '../../../common/models/workflow';
+import type { ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { ConnectorWithParsedSwagger } from '../../queries/connections';
@@ -61,6 +61,7 @@ export interface OperationMetadata {
 export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
+  workflowParameters: Record<string, WorkflowParameter>,
   dispatch: Dispatch
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
@@ -85,7 +86,7 @@ export const initializeOperationMetadata = async (
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
 
-  updateTokenMetadataInParameters(allNodeData, operations, triggerNodeId);
+  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, triggerNodeId);
   dispatch(clearPanel());
   dispatch(
     initializeNodes(
@@ -242,7 +243,12 @@ const processChildGraphAndItsInputs = (
   return nodesData;
 };
 
-const updateTokenMetadataInParameters = (nodes: NodeDataWithOperationMetadata[], operations: Operations, triggerNodeId: string) => {
+const updateTokenMetadataInParameters = (
+  nodes: NodeDataWithOperationMetadata[],
+  workflowParameters: Record<string, WorkflowParameter>,
+  operations: Operations,
+  triggerNodeId: string
+) => {
   const nodesData = map(nodes, 'id');
   const actionNodes = nodes
     .map((node) => node.id)
@@ -257,7 +263,7 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithOperationMetadata[],
       if (segments && segments.length) {
         parameter.value = segments.map((segment) => {
           if (isTokenValueSegment(segment)) {
-            return updateTokenMetadata(segment, actionNodes, triggerNodeId, nodesData, operations, parameter.type);
+            return updateTokenMetadata(segment, actionNodes, triggerNodeId, nodesData, operations, workflowParameters, parameter.type);
           }
 
           return segment;

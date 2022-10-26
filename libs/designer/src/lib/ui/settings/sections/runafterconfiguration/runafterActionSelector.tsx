@@ -3,6 +3,7 @@ import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useIconUri, useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { addEdgeFromRunAfter, removeEdgeFromRunAfter } from '../../../../core/state/workflow/workflowSlice';
+import { getTriggerNodeId } from '../../../../core/utils/graph';
 import { Menu, MenuTrigger, MenuList, MenuPopover, MenuButton, Label, MenuItemCheckbox, Input, Button } from '@fluentui/react-components';
 import { bundleIcon, Add20Regular, Add20Filled, Search24Regular, Dismiss24Regular } from '@fluentui/react-icons';
 import Fuse from 'fuse.js';
@@ -43,6 +44,7 @@ export const RunAfterActionSelector = () => {
   const intl = useIntl();
   const [searchText, setSearchText] = useState<string>('');
   const currentNodeId = useSelectedNodeId();
+  const triggerNodeId = useSelector((state: RootState) => getTriggerNodeId(state.workflow));
   const currentNodeRunAfter = useSelector((state: RootState) => {
     return state.workflow.operations[currentNodeId];
   });
@@ -55,7 +57,7 @@ export const RunAfterActionSelector = () => {
       .filter(([key]) => {
         return state.workflow.nodesMetadata[currentNodeId].graphId === state.workflow.nodesMetadata[key].graphId;
       })
-      .filter(([key]) => !subNodes.includes(key) && key !== currentNodeId)
+      .filter(([key]) => !subNodes.includes(key) && key !== currentNodeId && key !== triggerNodeId)
       .map(([key, value]) => {
         return {
           ...value,
@@ -112,6 +114,15 @@ export const RunAfterActionSelector = () => {
             })
           );
         });
+
+        if (!data.checkedItems.length) {
+          dispatch(
+            addEdgeFromRunAfter({
+              parentOperationId: triggerNodeId,
+              childOperationId: currentNodeId,
+            })
+          );
+        }
       }}
     >
       <MenuTrigger>

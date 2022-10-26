@@ -28,7 +28,7 @@ import { useDispatch, useSelector } from 'react-redux';
 export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
-  const tokenstate = useSelector((state: RootState) => state.tokens);
+  const rootState = useSelector((state: RootState) => state);
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
   const readOnly = useReadOnly();
 
@@ -36,7 +36,7 @@ export const ParametersTab = () => {
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
 
-  const tokenGroup = getOutputTokenSections(tokenstate, selectedNodeId, nodeType);
+  const tokenGroup = getOutputTokenSections(rootState, selectedNodeId, nodeType);
   const expressionGroup = getExpressionTokenSections();
 
   return (
