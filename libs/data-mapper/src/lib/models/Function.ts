@@ -44,29 +44,28 @@ export enum FunctionCategory {
 
 export type FunctionDictionary = { [key: string]: FunctionData };
 
-export const indexKey = 'index';
+export const indexPseudoFunctionKey = 'index';
+export const indexPseudoFunction: FunctionData = {
+  key: indexPseudoFunctionKey,
+  maxNumberOfInputs: 1,
+  type: 'PseudoFunction',
+  functionName: '',
+  outputValueType: NormalizedDataType.Any,
+  inputs: [
+    {
+      name: 'Loop',
+      allowedTypes: [NormalizedDataType.ComplexType],
+      isOptional: false,
+      allowCustomInput: false,
+      placeHolder: 'The source loop.',
+    },
+  ],
+  displayName: 'Index',
+  category: FunctionCategory.Collection,
+  description: 'Adds an index value to the loop',
+};
 
-export const pseudoFunctions: FunctionData[] = [
-  {
-    key: indexKey,
-    maxNumberOfInputs: 1,
-    type: 'PseudoFunction',
-    functionName: '',
-    outputValueType: NormalizedDataType.Any,
-    inputs: [
-      {
-        name: 'Loop',
-        allowedTypes: [NormalizedDataType.ComplexType],
-        isOptional: false,
-        allowCustomInput: false,
-        placeHolder: 'The source loop.',
-      },
-    ],
-    displayName: 'Index',
-    category: FunctionCategory.Collection,
-    description: 'Adds an index value to the loop',
-  },
-];
+export const pseudoFunctions: FunctionData[] = [indexPseudoFunction];
 
 // Temp until we get the manifest plugged in
 export const functionMock: FunctionData[] = [

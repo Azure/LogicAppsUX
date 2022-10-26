@@ -9,7 +9,7 @@ import {
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { indexKey } from '../models/Function';
+import { indexPseudoFunctionKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeProperties } from '../models/Schema';
@@ -112,7 +112,17 @@ const applyValueAtPath = (
       // Assumption for now that there is only 1 source node in a loop chain
       const parentTargetConnection = connections[addTargetReactFlowPrefix(path[0].key)];
       const parentSourceNode = parentTargetConnection.inputs[0][0];
-      const loopValue: string = (parentSourceNode && isConnectionUnit(parentSourceNode) && parentSourceNode.node.key) || '';
+      let loopValue = '';
+      if (parentSourceNode && isConnectionUnit(parentSourceNode)) {
+        if (isFunctionData(parentSourceNode.node)) {
+          const sourceSchemaNodeConnection = connections[parentSourceNode.reactFlowKey].inputs[0][0];
+          const sourceSchemaNodeKey = (isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.node.key) || '';
+          loopValue = sourceSchemaNodeKey;
+        } else {
+          loopValue = parentSourceNode.node.key;
+        }
+      }
+
       generateForSection(loopValue, value, mapDefinition, destinationNode, path, connections);
     } else {
       if (!mapDefinition[formattedPathLocation]) {
@@ -151,7 +161,12 @@ const generateForSection = (
   const formattedPathLocation = pathLocation.startsWith('@') ? `./${pathLocation}` : pathLocation;
 
   // TODO allow for nested loops
-  const forEntry = nodeHasSpecificInputEventually(indexKey, connections[addTargetReactFlowPrefix(path[0].key)], connections, false)
+  const forEntry = nodeHasSpecificInputEventually(
+    indexPseudoFunctionKey,
+    connections[addTargetReactFlowPrefix(path[0].key)],
+    connections,
+    false
+  )
     ? `${mapNodeParams.for}(${loopValue}, $i)`
     : `${mapNodeParams.for}(${loopValue})`;
   if (!mapDefinition[forEntry]) {
