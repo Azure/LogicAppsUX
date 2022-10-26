@@ -2,13 +2,14 @@ import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
-import { List, Text } from '@fluentui/react';
+import { List, Spinner, SpinnerSize, Text } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 export type SearchResultsGridProps = {
+  isLoading?: boolean;
   searchTerm: string;
   operationSearchResults: DiscoveryOperation<DiscoveryResultTypes>[];
   onConnectorClick: (connectorId: string) => void;
@@ -17,7 +18,7 @@ export type SearchResultsGridProps = {
 };
 
 export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProps>> = (props) => {
-  const { searchTerm, operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } = props;
+  const { isLoading = false, searchTerm, operationSearchResults, onConnectorClick, onOperationClick, groupByConnector } = props;
 
   const intl = useIntl();
 
@@ -72,6 +73,18 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
       searchTerm: <strong>{`"${searchTerm}"`}</strong>,
     }
   );
+
+  const loadingText = intl.formatMessage({
+    defaultMessage: 'Loading search results...',
+    description: 'Message to show under the loading icon when loading search results',
+  });
+
+  if (isLoading)
+    return (
+      <div className="msla-loading-container">
+        <Spinner size={SpinnerSize.large} label={loadingText} />
+      </div>
+    );
 
   if (operationSearchResults.length === 0)
     return (
