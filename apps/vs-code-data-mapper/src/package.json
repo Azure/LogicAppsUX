@@ -55,7 +55,7 @@
         {
           "command": "azureDataMapper.loadDataMapFile",
           "group": "navigation",
-          "when": "resourceExtname in azureDataMapper.supportedDataMapFileExts"
+          "when": "resourceExtname in azureDataMapper.supportedDataMapDefinitionFileExts"
         }
       ]
     },

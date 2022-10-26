@@ -31,6 +31,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   readOnly?: boolean;
   tokenEditor: true;
   required?: boolean;
+  showTokens?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   isTrigger?: boolean;
@@ -44,7 +45,7 @@ export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
     <>
       <div className="msla-input-parameter-label">
         <Label className="msla-label" required={props.required}>
-          {props.label.toUpperCase()}
+          {props.label}
         </Label>
       </div>
       <TokenField {...props} />
@@ -62,6 +63,7 @@ const TokenField = ({
   isTrigger,
   isLoading,
   errorDetails,
+  showTokens,
   getTokenPicker,
   onValueChange,
   onComboboxMenuOpen,
@@ -169,6 +171,7 @@ const TokenField = ({
           authenticationValue={editorViewModel.authenticationValue}
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
+          BasePlugins={{ tokens: showTokens }}
         />
       );
 
@@ -186,7 +189,7 @@ const TokenField = ({
         <StringEditor
           className="msla-setting-token-editor-container"
           placeholder={placeholder}
-          BasePlugins={{ tokens: true }}
+          BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           isTrigger={isTrigger}
           initialValue={value}

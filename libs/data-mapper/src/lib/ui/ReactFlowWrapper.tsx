@@ -22,9 +22,11 @@ import {
   setSelectedItem,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-import { SchemaTypes } from '../models';
+import { SchemaType } from '../models';
+import type { SchemaNodeExtended } from '../models';
 import type { ViewportCoords } from '../models/ReactFlow';
 import { collectNodesForConnectionChain, flattenInputs } from '../utils/Connection.Utils';
+import { isFunctionData } from '../utils/Function.Utils';
 import { addReactFlowPrefix, useLayout } from '../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../utils/Schema.Utils';
 import { tokens } from '@fluentui/react-components';
@@ -71,7 +73,7 @@ export const ReactFlowWrapper = () => {
         return foundConnection ? [foundConnection] : [];
       });
 
-      const targetReactFlowKey = addReactFlowPrefix(currentTargetNode.key, SchemaTypes.Target);
+      const targetReactFlowKey = addReactFlowPrefix(currentTargetNode.key, SchemaType.Target);
       if (connections[targetReactFlowKey] && flattenInputs(connections[targetReactFlowKey].inputs).length > 0) {
         outputFilteredConnections.push(connections[targetReactFlowKey]);
       }
@@ -82,20 +84,17 @@ export const ReactFlowWrapper = () => {
     return [];
   }, [currentTargetNode, connections]);
 
-  /* TODO populate function nodes
-  const connectedFunctions = useMemo(() => {
+  const functionConnectionUnits = useMemo(() => {
     return connectedTargetNodes
       .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
-      .map((connectedNode) => connectedNode.node)
-      .filter(isFunctionData);
+      .filter((connectionUnit) => isFunctionData(connectionUnit.node));
   }, [connectedTargetNodes, connections]);
-  */
 
   const connectedSourceNodes = useMemo(() => {
     return connectedTargetNodes
       .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
-      .map((connectedNode) => connectedNode.node)
-      .filter(isSchemaNodeExtended);
+      .filter((connectedNode) => isSchemaNodeExtended(connectedNode.node) && !connectedNode.reactFlowKey.includes(targetPrefix))
+      .map((connectedNode) => connectedNode.node) as SchemaNodeExtended[];
   }, [connectedTargetNodes, connections]);
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
@@ -218,6 +217,7 @@ export const ReactFlowWrapper = () => {
     connectedSourceNodes,
     flattenedSourceSchema,
     addedFunctionNodes,
+    functionConnectionUnits,
     currentTargetNode,
     connections,
     selectedItemKey

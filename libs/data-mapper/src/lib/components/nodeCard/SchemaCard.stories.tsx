@@ -1,4 +1,4 @@
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
+import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperties, SchemaType } from '../../models';
 import type { SchemaCardProps } from './SchemaCard';
 import { SchemaCard } from './SchemaCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -32,7 +32,7 @@ Standard.args = {
       children: [],
       pathToRoot: [],
     },
-    schemaType: SchemaTypes.Source,
+    schemaType: SchemaType.Source,
     displayHandle: false,
     isLeaf: false,
     isChild: false,

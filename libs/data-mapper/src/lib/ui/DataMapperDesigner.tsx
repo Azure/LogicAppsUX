@@ -1,8 +1,8 @@
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
-import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
+import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
+import { ConfigPanel } from '../components/configPanel/ConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
 import { NotificationTypes } from '../components/notification/Notification';
 import {
@@ -90,9 +90,18 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isOutputPaneExpanded, setIsOutputPaneExpanded] = useState(false);
 
-  const dataMapDefinition = useMemo((): string => {
+  const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
-      return convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+      try {
+        return convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+      } catch (error) {
+        // NOTE: Doing it this way so that the error, whatever it is, just gets formatted/logged on its own
+        // - can and maybe should change if we add more infrastructure around error classes/types
+        console.error(`-----------------Error generating map definition-----------------`);
+        console.error(error);
+
+        return '';
+      }
     }
 
     return '';
@@ -214,7 +223,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         </div>
 
         <WarningModal />
-        <EditorConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
+        <ConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
         <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setIsTestMapPanelOpen(false)} />
       </div>
     </DndProvider>

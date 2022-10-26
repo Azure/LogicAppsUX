@@ -341,6 +341,7 @@ export function createOutputToken(key: string, actionName: string | undefined, s
     required,
     tokenType: TokenType.OUTPUTS,
     title: name,
+    value: name,
   };
 
   return token;

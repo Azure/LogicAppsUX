@@ -3,7 +3,11 @@ import { functionNodeCardSize } from '../../constants/NodeConstants';
 import { customTokens } from '../../core';
 import type { RootState } from '../../core/state/Store';
 import type { FunctionInput } from '../../models/Function';
-import { isValidFunctionNodeToSchemaNodeConnection, isValidInputToFunctionNode } from '../../utils/Connection.Utils';
+import {
+  isValidFunctionNodeToSchemaNodeConnection,
+  isValidInputToFunctionNode,
+  newConnectionWillHaveCircularLogic,
+} from '../../utils/Connection.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
@@ -106,7 +110,12 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
         }
 
         if (targetFunctionNode) {
-          return isValidInputToFunctionNode(sourceFunctionNode.outputValueType, targetNodeConnection, maxNumberOfInputs, inputs);
+          // Verify the connection (Function<->Function) won't create circular logic
+          if (newConnectionWillHaveCircularLogic(connection.target, connection.source, connectionDictionary)) {
+            return false;
+          } else {
+            return isValidInputToFunctionNode(sourceFunctionNode.outputValueType, targetNodeConnection, maxNumberOfInputs, inputs);
+          }
         }
 
         return false;
