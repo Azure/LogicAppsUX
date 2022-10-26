@@ -11,12 +11,10 @@ const reactFlowStyle = {
 
 // Using this to prevent infinite re-rendering
 const placeholderData = {
-  currentlySelectedSourceNodes: [],
-  connectedSourceNodes: [],
-  allSourceNodes: {},
-  addedFunctionNodes: {},
-  functionConnectionUnits: [],
-  //currentTargetNode, - This is the one thing that has an actual value (schema.schemaTreeRoot)
+  currentSourceSchemaNodes: [],
+  allSourceSchemaNodes: {},
+  currentFunctionNodes: {},
+  //currentTargetSchemaNode, - This is the one thing that has an actual value (schema.schemaTreeRoot)
   connections: {},
   selectedItemKey: undefined,
 };
@@ -27,11 +25,9 @@ interface ReactFlowSchemaOverviewProps {
 
 export const ReactFlowSchemaOverview = ({ schema }: ReactFlowSchemaOverviewProps) => {
   const [reactFlowNodes, _reactFlowEdges] = useLayout(
-    placeholderData.currentlySelectedSourceNodes,
-    placeholderData.connectedSourceNodes,
-    placeholderData.allSourceNodes,
-    placeholderData.addedFunctionNodes,
-    placeholderData.functionConnectionUnits,
+    placeholderData.currentSourceSchemaNodes,
+    placeholderData.allSourceSchemaNodes,
+    placeholderData.currentFunctionNodes,
     schema.schemaTreeRoot,
     placeholderData.connections,
     placeholderData.selectedItemKey

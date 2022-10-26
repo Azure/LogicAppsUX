@@ -269,7 +269,7 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
 
           {tabToDisplay === PropertiesPaneTabs.Code && <CodeTab key={currentNode.key} />}
 
-          {tabToDisplay === PropertiesPaneTabs.Test && <TestTab currentTargetNodeKey={currentNode.key} />}
+          {tabToDisplay === PropertiesPaneTabs.Test && <TestTab currentTargetSchemaNodeKey={currentNode.key} />}
         </div>
       )}
     </div>

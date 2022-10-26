@@ -1,4 +1,4 @@
-import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
+import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { NormalizedDataType, SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
@@ -50,7 +50,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   });
 
   const handleItemClick = (schemaNode: SchemaNodeExtended) => {
-    dispatch(setCurrentTargetNode({ schemaNode: schemaNode, resetSelectedSourceNodes: true }));
+    dispatch(setCurrentTargetSchemaNode(schemaNode));
   };
 
   // For MVP - only checks for a connection, not its validity

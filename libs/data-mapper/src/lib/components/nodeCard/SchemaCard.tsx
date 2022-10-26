@@ -1,5 +1,5 @@
 import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardWidth } from '../../constants/NodeConstants';
-import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
+import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
@@ -215,7 +215,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType, schemaNode.properties);
 
   const outputChevronOnClick = (newCurrentSchemaNode: SchemaNodeExtended) => {
-    dispatch(setCurrentTargetNode({ schemaNode: newCurrentSchemaNode, resetSelectedSourceNodes: true }));
+    dispatch(setCurrentTargetSchemaNode(newCurrentSchemaNode));
   };
 
   const isNBadgeRequired = isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating;

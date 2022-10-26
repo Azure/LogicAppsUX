@@ -1,10 +1,12 @@
 /* eslint-disable no-param-reassign */
+import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { UpdateConnectionInputAction } from '../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../models';
-import { NormalizedDataType, SchemaNodeDataType } from '../models';
+import { NormalizedDataType, SchemaNodeDataType, SchemaType } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionInput } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
+import { addReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 
 export const createConnectionEntryIfNeeded = (
@@ -301,4 +303,47 @@ export const newConnectionWillHaveCircularLogic = (
   }
 
   return false;
+};
+
+export const getTargetSchemaNodeConnections = (
+  currentTargetSchemaNode: SchemaNodeExtended | undefined,
+  connections: ConnectionDictionary
+): Connection[] => {
+  if (!currentTargetSchemaNode) {
+    return [];
+  }
+
+  const connectionValues = Object.values(connections);
+  const outputFilteredConnections = currentTargetSchemaNode.children.flatMap((childNode) => {
+    const foundConnection = connectionValues.find(
+      (connection) => connection.self.node.key === childNode.key && flattenInputs(connection.inputs).length > 0
+    );
+    return foundConnection ? [foundConnection] : [];
+  });
+
+  const targetReactFlowKey = addReactFlowPrefix(currentTargetSchemaNode.key, SchemaType.Target);
+  if (connections[targetReactFlowKey] && flattenInputs(connections[targetReactFlowKey].inputs).length > 0) {
+    outputFilteredConnections.push(connections[targetReactFlowKey]);
+  }
+
+  return outputFilteredConnections;
+};
+
+export const getConnectedSourceSchemaNodes = (
+  targetSchemaNodeConnections: Connection[],
+  connections: ConnectionDictionary
+): SchemaNodeExtended[] => {
+  return targetSchemaNodeConnections
+    .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
+    .filter((connectedNode) => isSchemaNodeExtended(connectedNode.node) && !connectedNode.reactFlowKey.includes(targetPrefix))
+    .map((connectedNode) => connectedNode.node) as SchemaNodeExtended[];
+};
+
+export const getFunctionConnectionUnits = (
+  targetSchemaNodeConnections: Connection[],
+  connections: ConnectionDictionary
+): ConnectionUnit[] => {
+  return targetSchemaNodeConnections
+    .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
+    .filter((connectionUnit) => isFunctionData(connectionUnit.node));
 };
