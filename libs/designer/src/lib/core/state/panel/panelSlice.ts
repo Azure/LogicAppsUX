@@ -40,6 +40,7 @@ export const panelSlice = createSlice({
     clearPanel: (state) => {
       state.collapsed = true;
       state.isDiscovery = false;
+      state.isWorkflowParameters = false;
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
     },
@@ -73,6 +74,7 @@ export const panelSlice = createSlice({
       state.selectedOperationGroupId = '';
     },
     switchToWorkflowParameters: (state) => {
+      state.collapsed = false;
       state.isWorkflowParameters = true;
       state.isDiscovery = false;
       state.selectedNode = '';

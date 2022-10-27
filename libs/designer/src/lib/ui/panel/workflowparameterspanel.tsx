@@ -1,5 +1,4 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { selectOperationGroupId } from '../../core/state/panel/panelSlice';
 import { addParameter, deleteParameter, updateParameter } from '../../core/state/workflowparameters/workflowparametersSlice';
 import {
   useWorkflowParameters,
@@ -16,21 +15,16 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
   const workflowParameters = useWorkflowParameters();
   const workflowParametersValidationErrors = useWorkflowParameterValidationErrors();
 
-  const onDismiss = () => {
-    dispatch(selectOperationGroupId(''));
-    props.toggleCollapse();
-  };
-
   const onWorkflowParameterAdd = () => dispatch(addParameter());
   const onDeleteWorkflowParameter = (event: { id: string }) => dispatch(deleteParameter(event.id));
   const onUpdateParameter = (event: WorkflowParameterUpdateEvent) => dispatch(updateParameter(event));
 
   return (
-    <Panel isLightDismiss type={PanelType.medium} isOpen={!props.isCollapsed} onDismiss={onDismiss} hasCloseButton={false}>
+    <Panel isLightDismiss type={PanelType.medium} isOpen={!props.isCollapsed} onDismiss={props.toggleCollapse} hasCloseButton={false}>
       <WorkflowParameters
         parameters={Object.entries(workflowParameters).map(([key, value]) => ({ id: key, ...value }))}
         isReadOnly={readOnly}
-        onDismiss={onDismiss}
+        onDismiss={props.toggleCollapse}
         validationErrors={workflowParametersValidationErrors}
         onAddParameter={onWorkflowParameterAdd}
         onDeleteParameter={onDeleteWorkflowParameter}

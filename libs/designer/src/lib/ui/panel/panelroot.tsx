@@ -11,7 +11,15 @@ import {
   useSelectedPanelTabName,
   useVisiblePanelTabs,
 } from '../../core/state/panel/panelSelectors';
-import { clearPanel, isolateTab, registerPanelTabs, selectPanelTab, setTabVisibility } from '../../core/state/panel/panelSlice';
+import {
+  clearPanel,
+  collapsePanel,
+  expandPanel,
+  isolateTab,
+  registerPanelTabs,
+  selectPanelTab,
+  setTabVisibility,
+} from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
@@ -30,7 +38,7 @@ import { WorkflowParametersPanel } from './workflowparameterspanel';
 import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -101,6 +109,14 @@ export const PanelRoot = (): JSX.Element => {
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
   }, [collapsed]);
+
+  const collapse = useCallback(() => {
+    dispatch(collapsePanel());
+  }, [dispatch]);
+
+  const expand = useCallback(() => {
+    dispatch(expandPanel());
+  }, [dispatch]);
 
   const getPanelHeaderControlType = (): boolean => {
     // TODO: 13067650
@@ -182,12 +198,13 @@ export const PanelRoot = (): JSX.Element => {
     // TODO: 12798935 Analytics (event logging)
   };
 
-  const togglePanel = () => dispatch(clearPanel());
+  const togglePanel = (): void => (!collapsed ? collapse() : expand());
+  const dismissPanel = () => dispatch(clearPanel());
 
   return isWorkflowParameters ? (
-    <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={togglePanel} width={width} />
+    <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} />
   ) : isDiscovery ? (
-    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width} key={selectedNode} />
+    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} key={selectedNode} />
   ) : (
     <PanelContainer
       cardIcon={iconUriResult.result}
