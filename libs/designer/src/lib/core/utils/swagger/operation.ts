@@ -86,8 +86,7 @@ export const initializeOperationDetailsForSwagger = async (
           nodeInputs,
           nodeOutputs,
           nodeDependencies,
-          brandColor: getBrandColorFromConnector(connector),
-          iconUri: getIconUriFromConnector(connector),
+          operationMetadata: { brandColor: getBrandColorFromConnector(connector), iconUri: getIconUriFromConnector(connector) },
           settings,
         },
       ];

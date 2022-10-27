@@ -7,10 +7,10 @@ export interface ReadOnlyParametersProps {
   parameterDetails: ParameterFieldDetails;
   name?: string;
   type?: string;
-  defaultValue?: string;
+  value?: string;
 }
 
-export const ReadOnlyParameters = ({ name, type, defaultValue, parameterDetails }: ReadOnlyParametersProps): JSX.Element => {
+export const ReadOnlyParameters = ({ name, type, value, parameterDetails }: ReadOnlyParametersProps): JSX.Element => {
   const intl = useIntl();
   const nameTitle = intl.formatMessage({
     defaultMessage: 'Name',
@@ -45,7 +45,7 @@ export const ReadOnlyParameters = ({ name, type, defaultValue, parameterDetails 
           {valueTitle}
         </Label>
         <Text block className="msla-workflow-parameter-read-only">
-          {defaultValue}
+          {value}
         </Text>
       </div>
     </>

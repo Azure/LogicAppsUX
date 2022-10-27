@@ -1,5 +1,5 @@
 import type { RepetitionContext } from './helper';
-import { FxIcon, ParameterIcon, VariableIcon } from './helper';
+import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helper';
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
@@ -377,7 +377,7 @@ export function createVariableToken(variableName: string): Token {
     key: variableName,
     title: variableName,
     name: variableName,
-    brandColor: '#770bd6',
+    brandColor: VariableBrandColor,
     icon: VariableIcon,
     tokenType: TokenType.VARIABLE,
   };

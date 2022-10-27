@@ -9,6 +9,9 @@ export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelStat
 
 export const useIsDiscovery = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.isDiscovery));
 
+export const useIsWorkflowParametersMode = () =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.isWorkflowParameters));
+
 export const useRelationshipIds = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.relationshipIds));
 
 export const useIsParallelBranch = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.isParallelBranch));

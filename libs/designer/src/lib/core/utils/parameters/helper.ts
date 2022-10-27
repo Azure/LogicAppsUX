@@ -1,5 +1,5 @@
 import constants from '../../../common/constants';
-import type { ConnectionReference } from '../../../common/models/workflow';
+import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type {
@@ -19,9 +19,13 @@ import {
 } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokensSlice';
 import type { Operations as Actions } from '../../state/workflow/workflowInterfaces';
+import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
+import type { RootState } from '../../store';
 import { initializeArrayViewModel } from '../editors/array';
+import { getTriggerNodeId } from '../graph';
 import { loadDynamicOutputsInNode } from '../outputs';
 import { hasSecureOutputs } from '../setting';
+import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
 import { getRecurrenceParameters } from './builtins';
 import { addCastToExpression, addFoldingCastToExpression } from './casting';
 import { getDynamicInputsFromSchema, getDynamicSchema, getDynamicValues } from './dynamicdata';
@@ -115,11 +119,15 @@ import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';
 
+export const ParameterBrandColor = '#916F6F';
 export const ParameterIcon =
   'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiA8cGF0aCBkPSJtMCAwaDMydjMyaC0zMnoiIGZpbGw9IiM5MTZmNmYiLz4NCiA8ZyBmaWxsPSIjZmZmIj4NCiAgPHBhdGggZD0ibTE2LjAyMyAxMS41cTAuOTQ1MzEgMCAxLjc3MzQgMC4yODkwNiAwLjgyODEyIDAuMjg5MDYgMS40NDUzIDAuODM1OTQgMC42MTcxOSAwLjU0Njg4IDAuOTY4NzUgMS4zMjgxIDAuMzU5MzggMC43ODEyNSAwLjM1OTM4IDEuNzY1NiAwIDAuNTE1NjItMC4xNDA2MiAxLjA3ODEtMC4xMzI4MSAwLjU1NDY5LTAuNDIxODggMS4wMTU2LTAuMjgxMjUgMC40NTMxMi0wLjcyNjU2IDAuNzUtMC40Mzc1IDAuMjk2ODgtMS4wNDY5IDAuMjk2ODgtMC42NzE4OCAwLTAuOTY4NzUtMC4zNjcxOS0wLjI5Njg4LTAuMzY3MTktMC4zMDQ2OS0xLjAwNzhoLTAuMDMxMjVxLTAuMTc5NjkgMC42MTcxOS0wLjU4NTk0IDEtMC4zOTg0NCAwLjM3NS0xLjA3MDMgMC4zNzUtMC40NjA5NCAwLTAuNzk2ODgtMC4xNzk2OS0wLjMyODEyLTAuMTg3NS0wLjU0Njg4LTAuNDg0MzgtMC4yMTA5NC0wLjMwNDY5LTAuMzEyNS0wLjY4NzUtMC4xMDE1Ni0wLjM5MDYyLTAuMTAxNTYtMC44MDQ2OSAwLTAuNTQ2ODggMC4xNDA2Mi0xLjA5MzggMC4xNDg0NC0wLjU0Njg4IDAuNDQ1MzEtMC45NzY1NiAwLjI5Njg4LTAuNDI5NjkgMC43NS0wLjY5NTMxIDAuNDYwOTQtMC4yNzM0NCAxLjA4NTktMC4yNzM0NCAwLjE3OTY5IDAgMC4zNTkzOCAwLjA0Njg3IDAuMTg3NSAwLjA0Njg3IDAuMzUxNTYgMC4xNDA2MiAwLjE2NDA2IDAuMDkzNzUgMC4yODkwNiAwLjIzNDM4dDAuMTg3NSAwLjMyODEydi0wLjAzOTA1OHEwLjAxNTYzLTAuMTU2MjUgMC4wMjM0NC0wLjMxMjUgMC4wMTU2My0wLjE1NjI1IDAuMDMxMjUtMC4zMTI1aDAuNzI2NTZsLTAuMTg3NSAyLjIzNDRxLTAuMDIzNDQgMC4yNS0wLjA1NDY5IDAuNTA3ODEtMC4wMzEyNTEgMC4yNTc4MS0wLjAzMTI1MSAwLjUwNzgxIDAgMC4xNzE4OCAwLjAxNTYzIDAuMzgyODEgMC4wMjM0NCAwLjIwMzEyIDAuMDkzNzUgMC4zOTA2MiAwLjA3MDMxIDAuMTc5NjkgMC4yMDMxMiAwLjMwNDY5IDAuMTQwNjIgMC4xMTcxOSAwLjM3NSAwLjExNzE5IDAuMjgxMjUgMCAwLjUtMC4xMTcxOSAwLjIxODc1LTAuMTI1IDAuMzc1LTAuMzIwMzEgMC4xNjQwNi0wLjE5NTMxIDAuMjczNDQtMC40NDUzMSAwLjEwOTM4LTAuMjU3ODEgMC4xNzk2OS0wLjUyMzQ0IDAuMDcwMzEtMC4yNzM0NCAwLjA5Mzc1LTAuNTM5MDYgMC4wMzEyNS0wLjI2NTYyIDAuMDMxMjUtMC40ODQzOCAwLTAuODU5MzgtMC4yODEyNS0xLjUzMTJ0LTAuNzg5MDYtMS4xMzI4cS0wLjUtMC40NjA5NC0xLjIwMzEtMC43MDMxMi0wLjY5NTMxLTAuMjQyMTktMS41MjM0LTAuMjQyMTktMC44OTg0NCAwLTEuNjMyOCAwLjMzNTk0LTAuNzI2NTYgMC4zMzU5NC0xLjI1IDAuOTE0MDYtMC41MTU2MiAwLjU3MDMxLTAuNzk2ODggMS4zMzU5dC0wLjI4MTI1IDEuNjMyOHEwIDAuODk4NDQgMC4yNzM0NCAxLjYzMjggMC4yODEyNSAwLjcyNjU2IDAuNzk2ODggMS4yNDIydDEuMjQyMiAwLjc5Njg4cTAuNzM0MzggMC4yODEyNSAxLjYzMjggMC4yODEyNSAwLjYzMjgxIDAgMS4yNS0wLjEwMTU2IDAuNjI1LTAuMTAxNTYgMS4xOTUzLTAuMzc1djAuNzE4NzVxLTAuNTg1OTQgMC4yNS0xLjIyNjYgMC4zNDM3NS0wLjY0MDYzIDAuMDg1OTM4LTEuMjczNCAwLjA4NTkzOC0xLjAzOTEgMC0xLjg5ODQtMC4zMjAzMS0wLjg1OTM4LTAuMzI4MTItMS40ODQ0LTAuOTIxODgtMC42MTcxOS0wLjYwMTU2LTAuOTYwOTQtMS40NTMxLTAuMzQzNzUtMC44NTE1Ni0wLjM0Mzc1LTEuODk4NCAwLTEuMDU0NyAwLjM1MTU2LTEuOTUzMSAwLjM1MTU2LTAuODk4NDQgMC45ODQzOC0xLjU1NDcgMC42MzI4MS0wLjY1NjI1IDEuNTE1Ni0xLjAyMzQgMC44ODI4MS0wLjM3NSAxLjk1MzEtMC4zNzV6bS0wLjYwOTM3IDYuNjc5N3EwLjQ3NjU2IDAgMC43ODEyNS0wLjI2NTYyIDAuMzA0NjktMC4yNzM0NCAwLjQ3NjU2LTAuNjcxODggMC4xNzE4OC0wLjM5ODQ0IDAuMjM0MzgtMC44NTE1NiAwLjA3MDMxLTAuNDUzMTIgMC4wNzAzMS0wLjgyMDMxIDAtMC4yNjU2Mi0wLjA1NDY5LTAuNDkyMTktMC4wNTQ2OS0wLjIyNjU2LTAuMTc5NjktMC4zOTA2Mi0wLjExNzE5LTAuMTY0MDYtMC4zMjAzMS0wLjI1NzgxdC0wLjQ5MjE5LTAuMDkzNzVxLTAuNDUzMTIgMC0wLjc1NzgxIDAuMjM0MzgtMC4zMDQ2OSAwLjIzNDM4LTAuNDkyMTkgMC41ODU5NC0wLjE4NzUgMC4zNTE1Ni0wLjI3MzQ0IDAuNzczNDQtMC4wNzgxMyAwLjQxNDA2LTAuMDc4MTMgMC43ODEyNSAwIDAuMjU3ODEgMC4wNTQ2OSAwLjUyMzQ0IDAuMDU0NjkgMC4yNTc4MSAwLjE3OTY5IDAuNDY4NzUgMC4xMjUgMC4yMTA5NCAwLjMzNTk0IDAuMzQzNzUgMC4yMTA5NCAwLjEzMjgxIDAuNTE1NjIgMC4xMzI4MXptLTcuNDE0MS04LjE3OTdoM3YxaC0ydjEwaDJ2MWgtM3ptMTYgMHYxMmgtM3YtMWgydi0xMGgtMnYtMXoiIHN0cm9rZS13aWR0aD0iLjQiLz4NCiA8L2c+DQo8L3N2Zz4NCg==';
+
+export const FxBrandColor = '#AD008C';
 export const FxIcon =
   'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzNCAzNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiA8cmVjdCB3aWR0aD0iMzQiIGhlaWdodD0iMzQiIGZpbGw9IiNhZDAwOGMiLz4NCiA8cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMTMuNDg3LDEzLjI0OGE3LjA1NCw3LjA1NCwwLDAsMSwxLjg0OS0zLjY5QTUuMyw1LjMsMCwwLDEsMTguNTkzLDcuOWMuOTg1LDAsMS40NjcuNTg1LDEuNDQ3LDEuMDY5YTEuNTUxLDEuNTUxLDAsMCwxLS43NDQsMS4xNDkuNDA2LjQwNiwwLDAsMS0uNTQzLS4wNjFjLS41NDMtLjY2NS0xLjAwNS0xLjA2OS0xLjM2Ny0xLjA2OS0uNC0uMDItLjc2NC4yODItMS40MDcsNC4yNTVoMi4zMzJsLS40MjIuODA3LTIuMDkuMTYxYy0uMzQyLDEuODM1LS42LDMuNjMtMS4xNDYsNS45MDgtLjc4NCwzLjMyNy0xLjY4OCw0LjY1OC0zLjEsNS44MjdBMy43NDYsMy43NDYsMCwwLDEsOS4zNDcsMjdDOC42ODMsMjcsOCwyNi41NTYsOCwyNi4wMzJhMS42OTIsMS42OTIsMCwwLDEsLjcyNC0xLjE0OWMuMTYxLS4xMjEuMjgxLS4xNDEuNDIyLS4wNGEyLjg3MywyLjg3MywwLDAsMCwxLjU2OC43MDYuNjc1LjY3NSwwLDAsMCwuNjYzLS41LDI3LjQyNywyNy40MjcsMCwwLDAsLjg0NC00LjE3NGMuNDYyLTIuNzYyLjc0NC00LjY1OCwxLjA4NS02LjY1NEgxMS43bC0uMS0uMi42ODMtLjc2NloiLz4NCiA8cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMTcuMzIxLDE4LjljLjgxMi0xLjE4MywxLjY1NC0xLjg3NCwyLjIzNi0xLjg3NC40OSwwLC43MzUuNTIyLDEuMDU3LDEuNDlsLjIzLjcyMmMxLjE2NC0xLjY3NSwxLjczMS0yLjIxMiwyLjQtMi4yMTJhLjc0Mi43NDIsMCwwLDEsLjc1MS44NDUuOTIyLjkyMiwwLDAsMS0uOC44NzYuNDE0LjQxNCwwLDAsMS0uMjkxLS4xNjkuNDc3LjQ3NywwLDAsMC0uMzY4LS4xODRjLS4xNTMsMC0uMzM3LjEwOC0uNjEzLjM4NGE4LjU0Nyw4LjU0NywwLDAsMC0uODczLDEuMDc1bC42MTMsMS45NjZjLjE4NC42My4zNjcuOTUyLjU2Ny45NTIuMTg0LDAsLjUwNi0uMjQ2LDEuMDQyLS44OTFsLjMyMi4zODRjLS45LDEuNDI5LTEuNzYxLDEuOTItMi4zNDMsMS45Mi0uNTIxLDAtLjg1OC0uNDMtMS4xOC0xLjQ5bC0uMzUyLTEuMTY4Yy0xLjE3OSwxLjkyLTEuNzQ2LDIuNjU4LTIuNTQzLDIuNjU4YS44MTUuODE1LDAsMCwxLS44MTItLjg3NS45LjksMCwwLDEsLjc2Ni0uOTIyLjQ5My40OTMsMCwwLDEsLjI5MS4xNTQuNTE0LjUxNCwwLDAsMCwuMzY4LjE2OWMuMzM3LDAsLjk1LS42NzYsMS43MTUtMS44NTlsLS40LTEuMzY3Yy0uMjc2LS45MDYtLjQxNC0xLjAxNC0uNTY3LTEuMDE0LS4xMzgsMC0uNDE0LjItLjg4OC44MTRaIi8+DQo8L3N2Zz4NCg==';
 
+export const VariableBrandColor = '#770bd6';
 export const VariableIcon =
   'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzJweCIgaGVpZ2h0PSIzMnB4IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAzMiAzMiIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMzIgMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+DQogPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzcwQkQ2Ii8+DQogPGcgZmlsbD0iI2ZmZiI+DQogIDxwYXRoIGQ9Ik02Ljc2MywxMy42ODV2LTMuMjA4QzYuNzYzLDguNzQ4LDcuNzYyLDgsMTAsOHYxLjA3Yy0xLDAtMiwwLjMyNS0yLDEuNDA3djMuMTg4ICAgIEM4LDE0LjgzNiw2LjUxMiwxNiw1LjUxMiwxNkM2LjUxMiwxNiw4LDE3LjE2NCw4LDE4LjMzNVYyMS41YzAsMS4wODIsMSwxLjQyOSwyLDEuNDI5VjI0Yy0yLjIzOCwwLTMuMjM4LTAuNzcyLTMuMjM4LTIuNXYtMy4xNjUgICAgYzAtMS4xNDktMC44OTMtMS41MjktMS43NjMtMS41ODV2LTEuNUM1Ljg3LDE1LjE5NCw2Ljc2MywxNC44MzQsNi43NjMsMTMuNjg1eiIvPg0KICA8cGF0aCBkPSJtMjUuMjM4IDEzLjY4NXYtMy4yMDhjMC0xLjcyOS0xLTIuNDc3LTMuMjM4LTIuNDc3djEuMDdjMSAwIDIgMC4zMjUgMiAxLjQwN3YzLjE4OGMwIDEuMTcxIDEuNDg4IDIuMzM1IDIuNDg4IDIuMzM1LTEgMC0yLjQ4OCAxLjE2NC0yLjQ4OCAyLjMzNXYzLjE2NWMwIDEuMDgyLTEgMS40MjktMiAxLjQyOXYxLjA3MWMyLjIzOCAwIDMuMjM4LTAuNzcyIDMuMjM4LTIuNXYtMy4xNjVjMC0xLjE0OSAwLjg5My0xLjUyOSAxLjc2Mi0xLjU4NXYtMS41Yy0wLjg3LTAuMDU2LTEuNzYyLTAuNDE2LTEuNzYyLTEuNTY1eiIvPg0KICA8cGF0aCBkPSJtMTUuODE1IDE2LjUxMmwtMC4yNDItMC42NDFjLTAuMTc3LTAuNDUzLTAuMjczLTAuNjk4LTAuMjg5LTAuNzM0bC0wLjM3NS0wLjgzNmMtMC4yNjYtMC41OTktMC41MjEtMC44OTgtMC43NjYtMC44OTgtMC4zNyAwLTAuNjYyIDAuMzQ3LTAuODc1IDEuMDM5LTAuMTU2LTAuMDU3LTAuMjM0LTAuMTQxLTAuMjM0LTAuMjUgMC0wLjMyMyAwLjE4OC0wLjY5MiAwLjU2Mi0xLjEwOSAwLjM3NS0wLjQxNyAwLjcxLTAuNjI1IDEuMDA3LTAuNjI1IDAuNTgzIDAgMS4xODYgMC44MzkgMS44MTEgMi41MTZsMC4xNjEgMC40MTQgMC4xOC0wLjI4OWMxLjEwOC0xLjc2IDIuMDQ0LTIuNjQxIDIuODA0LTIuNjQxIDAuMTk4IDAgMC40MyAwLjA1OCAwLjY5NSAwLjE3MmwtMC45NDYgMC45OTJjLTAuMTI1LTAuMDM2LTAuMjE0LTAuMDU1LTAuMjY2LTAuMDU1LTAuNTczIDAtMS4yNTYgMC42NTktMi4wNDggMS45NzdsLTAuMjI3IDAuMzc5IDAuMTc5IDAuNDhjMC42ODQgMS44OTEgMS4yNDkgMi44MzYgMS42OTQgMi44MzYgMC40MDggMCAwLjcyLTAuMjkyIDAuOTM1LTAuODc1IDAuMTQ2IDAuMDk0IDAuMjE5IDAuMTkgMC4yMTkgMC4yODkgMCAwLjI2MS0wLjIwOCAwLjU3My0wLjYyNSAwLjkzOHMtMC43NzYgMC41NDctMS4wNzggMC41NDdjLTAuNjA0IDAtMS4yMjEtMC44NTItMS44NTEtMi41NTVsLTAuMjE5LTAuNTc4LTAuMjI3IDAuMzk4Yy0xLjA2MiAxLjgyMy0yLjA3OCAyLjczNC0zLjA0NyAyLjczNC0wLjM2NSAwLTAuNjc1LTAuMDkxLTAuOTMtMC4yNzFsMC45MDYtMC44ODVjMC4xNTYgMC4xNTYgMC4zMzggMC4yMzQgMC41NDcgMC4yMzQgMC41ODggMCAxLjI1LTAuNTk2IDEuOTg0LTEuNzg2bDAuNDA2LTAuNjU4IDAuMTU1LTAuMjU5eiIvPg0KICA8ZWxsaXBzZSB0cmFuc2Zvcm09Im1hdHJpeCguMDUzNiAtLjk5ODYgLjk5ODYgLjA1MzYgNS40OTI1IDMyLjI0NSkiIGN4PSIxOS43NTciIGN5PSIxMy4yMjUiIHJ4PSIuNzc4IiByeT0iLjc3OCIvPg0KICA8ZWxsaXBzZSB0cmFuc2Zvcm09Im1hdHJpeCguMDUzNiAtLjk5ODYgLjk5ODYgLjA1MzYgLTcuNTgzOSAzMC42MjkpIiBjeD0iMTIuMzY2IiBjeT0iMTkuMzE1IiByeD0iLjc3OCIgcnk9Ii43NzgiLz4NCiA8L2c+DQo8L3N2Zz4NCg==';
 
@@ -663,7 +671,7 @@ export function generateExpressionFromKey(
   return result.reverse().join('');
 }
 
-function getTokenValueFromToken(tokenType: TokenType, functionArguments: string[]): string | undefined {
+export function getTokenValueFromToken(tokenType: TokenType, functionArguments: string[]): string | undefined {
   return tokenType === TokenType.PARAMETER
     ? `parameters(${convertToStringLiteral(functionArguments[0])})`
     : tokenType === TokenType.VARIABLE
@@ -1242,6 +1250,7 @@ export async function updateParameterAndDependencies(
   variables: VariableDeclaration[],
   settings: Settings,
   dispatch: Dispatch,
+  rootState: RootState,
   operationDefinition?: any
 ): Promise<void> {
   const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
@@ -1294,6 +1303,7 @@ export async function updateParameterAndDependencies(
       settings,
       variables,
       dispatch,
+      rootState,
       operationDefinition
     );
   }
@@ -1337,7 +1347,7 @@ function getDependenciesToUpdate(
   return dependenciesToUpdate;
 }
 
-export async function loadDynamicData(
+export async function updateDynamicDataInNode(
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
@@ -1347,6 +1357,55 @@ export async function loadDynamicData(
   settings: Settings,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
+  rootState: RootState,
+  operationDefinition?: any
+): Promise<void> {
+  await loadDynamicData(
+    nodeId,
+    isTrigger,
+    operationInfo,
+    connectionReference,
+    dependencies,
+    nodeInputs,
+    settings,
+    variables,
+    dispatch,
+    rootState,
+    operationDefinition
+  );
+
+  for (const parameterKey of Object.keys(dependencies.inputs)) {
+    const dependencyInfo = dependencies.inputs[parameterKey];
+    if (dependencyInfo.dependencyType === 'ListValues') {
+      const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
+      if (details) {
+        loadDynamicValuesForParameter(
+          nodeId,
+          details.groupId,
+          details.parameter.id,
+          operationInfo,
+          connectionReference,
+          nodeInputs,
+          dependencies,
+          false /* showErrorWhenNotReady */,
+          dispatch
+        );
+      }
+    }
+  }
+}
+
+async function loadDynamicData(
+  nodeId: string,
+  isTrigger: boolean,
+  operationInfo: NodeOperation,
+  connectionReference: ConnectionReference | undefined,
+  dependencies: NodeDependencies,
+  nodeInputs: NodeInputs,
+  settings: Settings,
+  variables: VariableDeclaration[],
+  dispatch: Dispatch,
+  rootState: RootState,
   operationDefinition?: any
 ): Promise<void> {
   if (Object.keys(dependencies.outputs).length) {
@@ -1362,6 +1421,7 @@ export async function loadDynamicData(
       nodeInputs,
       variables,
       dispatch,
+      rootState,
       operationDefinition
     );
   }
@@ -1375,6 +1435,7 @@ async function loadDynamicContentForInputsInNode(
   allInputs: NodeInputs,
   variables: VariableDeclaration[],
   dispatch: Dispatch,
+  rootState: RootState,
   operationDefinition?: any
 ): Promise<void> {
   for (const inputKey of Object.keys(inputDependencies)) {
@@ -1399,7 +1460,9 @@ async function loadDynamicContentForInputsInNode(
           ...createParameterInfo(input),
           schema: input,
         })) as ParameterInfo[];
+
         // TODO - Initialize Editor View for dynamic inputs
+        updateTokenMetadataInParameters(inputParameters, rootState);
         dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters }));
       }
     }
@@ -1411,9 +1474,10 @@ export async function loadDynamicValuesForParameter(
   groupId: string,
   parameterId: string,
   operationInfo: NodeOperation,
-  connectionReference: ConnectionReference,
+  connectionReference: ConnectionReference | undefined,
   nodeInputs: NodeInputs,
   dependencies: NodeDependencies,
+  showErrorWhenNotReady: boolean,
   dispatch: Dispatch
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
@@ -1467,7 +1531,7 @@ export async function loadDynamicValuesForParameter(
           })
         );
       }
-    } else {
+    } else if (showErrorWhenNotReady) {
       const intl = getIntl();
       const invalidParameterNames = Object.keys(dependencyInfo.dependentParameters)
         .filter((key) => !dependencyInfo.dependentParameters[key].isValid)
@@ -1717,29 +1781,66 @@ function getClosestRepetitionReference(repetitionContext: RepetitionContext): Re
   return undefined;
 }
 
+export function updateTokenMetadataInParameters(parameters: ParameterInfo[], rootState: RootState): void {
+  const {
+    workflow: { operations },
+    operations: { operationMetadata, outputParameters, settings },
+    workflowParameters: { definitions },
+  } = rootState;
+  const triggerNodeId = getTriggerNodeId(rootState.workflow);
+
+  const actionNodes = Object.keys(operations)
+    .filter((nodeId) => nodeId !== triggerNodeId)
+    .reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
+  const nodesData = Object.keys(operations).reduce(
+    (data: Record<string, Partial<NodeDataWithOperationMetadata>>, id: string) => ({
+      ...data,
+      [id]: {
+        settings: settings[id],
+        nodeOutputs: outputParameters[id],
+        operationMetadata: operationMetadata[id],
+      },
+    }),
+    {}
+  );
+
+  for (const parameter of parameters) {
+    const segments = parameter.value;
+
+    if (segments && segments.length) {
+      parameter.value = segments.map((segment) => {
+        if (isTokenValueSegment(segment)) {
+          return updateTokenMetadata(segment, actionNodes, triggerNodeId, nodesData, operations, definitions, parameter.type);
+        }
+
+        return segment;
+      });
+    }
+  }
+}
 export function updateTokenMetadata(
   valueSegment: ValueSegment,
   actionNodes: Record<string, string>,
   triggerNodeId: string,
-  nodes: Record<string, NodeDataWithOperationMetadata>,
+  nodes: Record<string, Partial<NodeDataWithOperationMetadata>>,
   operations: Actions,
+  workflowParameters: Record<string, WorkflowParameter | WorkflowParameterDefinition>,
   parameterType?: string
 ): ValueSegment {
   const token = valueSegment.token as SegmentToken;
   switch (token?.tokenType) {
     case TokenType.VARIABLE:
-      token.brandColor = '#770bd6';
+      token.brandColor = VariableBrandColor;
       token.icon = VariableIcon;
       return valueSegment;
     case TokenType.PARAMETER:
-      token.brandColor = '#916F6F';
+      token.brandColor = ParameterBrandColor;
       token.icon = ParameterIcon;
-      // TODO - Update type correctly when workflow parameters are implemented.
-      token.type = 'string';
+      token.type = convertWorkflowParameterTypeToSwaggerType(workflowParameters[token.title]?.type);
       return valueSegment;
 
     case TokenType.FX:
-      token.brandColor = '#AD008C';
+      token.brandColor = FxBrandColor;
       token.icon = FxIcon;
       token.title = getExpressionTokenTitle(token.expression as Expression);
       return valueSegment;
@@ -1758,18 +1859,18 @@ export function updateTokenMetadata(
     // TODO - Item token details
   }
 
-  const { settings, nodeOutputs, brandColor: nodeBrandColor, iconUri: nodeIconUri } = nodes[tokenNodeId] ?? {};
+  const { settings, nodeOutputs, operationMetadata } = nodes[tokenNodeId] ?? {};
   const tokenNodeOperation = operations[tokenNodeId];
   const nodeType = tokenNodeOperation?.type;
   const isSecure = hasSecureOutputs(nodeType, settings ?? {});
-  const nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs.outputs), valueSegment.token as SegmentToken, parameterType);
+  const nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs?.outputs), valueSegment.token as SegmentToken, parameterType);
 
-  const brandColor = token.tokenType === TokenType.ITEM ? '#486991' : nodeBrandColor;
+  const brandColor = token.tokenType === TokenType.ITEM ? '#486991' : operationMetadata?.brandColor;
 
   const iconUri =
     token.tokenType === TokenType.ITEM
       ? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzQ4Njk5MSIvPg0KIDxwYXRoIGQ9Ik0xMSAyMGg3LjJsMSAxaC05LjJ2LTguM2wtMS4zIDEuMy0uNy0uNyAyLjUtMi41IDIuNSAyLjUtLjcuNy0xLjMtMS4zem0xMi4zLTJsLjcuNy0yLjUgMi41LTIuNS0yLjUuNy0uNyAxLjMgMS4zdi03LjNoLTcuMmwtMS0xaDkuMnY4LjN6IiBmaWxsPSIjZmZmIi8+DQo8L3N2Zz4NCg=='
-      : nodeIconUri;
+      : operationMetadata?.iconUri;
 
   // TODO - Code to get parent array name for item tokens.
 

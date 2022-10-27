@@ -66,12 +66,18 @@ export interface NodeDependencies {
   outputs: Record<string, DependencyInfo>;
 }
 
+export interface OperationMetadata {
+  iconUri: string;
+  brandColor: string;
+}
+
 export interface OperationMetadataState {
   operationInfo: Record<string, NodeOperation>;
   inputParameters: Record<string, NodeInputs>;
   outputParameters: Record<string, NodeOutputs>;
   settings: Record<string, Settings>;
   dependencies: Record<string, NodeDependencies>;
+  operationMetadata: Record<string, OperationMetadata>;
 }
 
 const initialState: OperationMetadataState = {
@@ -80,6 +86,7 @@ const initialState: OperationMetadataState = {
   outputParameters: {},
   dependencies: {},
   settings: {},
+  operationMetadata: {},
 };
 
 export interface AddNodeOperationPayload extends NodeOperation {
@@ -97,7 +104,9 @@ export interface NodeData {
   nodeOutputs: NodeOutputs;
   nodeDependencies: NodeDependencies;
   settings?: Settings;
+  operationMetadata: OperationMetadata;
 }
+
 interface AddSettingsPayload {
   id: string;
   settings: Settings;
@@ -138,10 +147,11 @@ export const operationMetadataSlice = createSlice({
           return;
         }
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
+        state.operationMetadata[id] = operationMetadata;
 
         if (settings) {
           state.settings[id] = settings;
@@ -243,6 +253,7 @@ export const operationMetadataSlice = createSlice({
         delete state.outputParameters[id];
         delete state.dependencies[id];
         delete state.settings[id];
+        delete state.operationMetadata[id];
       }
     },
   },

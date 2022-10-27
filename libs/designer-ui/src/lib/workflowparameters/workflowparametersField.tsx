@@ -35,13 +35,6 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
   root: fieldStyles,
 };
 
-const disabledTextFieldStyles: Partial<ITextFieldStyles> = {
-  root: fieldStyles,
-  fieldGroup: {
-    borderColor: Constants.FIELD_GROUP_BORDER_COLOR,
-  },
-};
-
 const textFieldWithWarningStyles: Partial<ITextFieldStyles> = {
   root: fieldStyles,
   fieldGroup: {
@@ -66,7 +59,7 @@ const textStyles: Partial<ITextStyles> = {
 };
 
 const NAME_KEY = 'name';
-const DEFAULT_VALUE_KEY = 'defaultValue';
+const VALUE_KEY = 'value';
 
 export interface WorkflowParameterUpdateEvent {
   id: string;
@@ -77,9 +70,8 @@ export type WorkflowParameterUpdateHandler = EventHandler<WorkflowParameterUpdat
 
 export interface ParameterFieldDetails {
   name: string;
-  defaultValue: string;
-  type: string;
   value: string;
+  type: string;
 }
 
 export interface WorkflowparameterFieldProps {
@@ -87,7 +79,7 @@ export interface WorkflowparameterFieldProps {
   name?: string;
   definition: WorkflowParameterDefinition;
   isReadOnly?: boolean;
-  validationErrors?: Record<string, string>;
+  validationErrors?: Record<string, string | undefined>;
   setName: (value: string | undefined | ((prevVar: string | undefined) => string)) => void;
   onChange?: WorkflowParameterUpdateHandler;
 }
@@ -101,17 +93,16 @@ export const WorkflowparameterField = ({
   setName,
   onChange,
 }: WorkflowparameterFieldProps): JSX.Element => {
-  const [valueWarningMessage, setValueWarningMessage] = useState(getValueWarningMessage(definition.defaultValue, definition.type));
-  const [defaultValue, setDefaultValue] = useState(definition.defaultValue);
+  const [valueWarningMessage, setValueWarningMessage] = useState(getValueWarningMessage(definition.value, definition.type));
+  const [defaultValue, setDefaultValue] = useState(definition.value);
   const [type, setType] = useState(definition.type);
 
   const intl = useIntl();
 
   const parameterDetails: ParameterFieldDetails = {
     name: `${definition.id}-${NAME_KEY}`,
-    defaultValue: `${definition.id}-${DEFAULT_VALUE_KEY}`,
+    value: `${definition.id}-${VALUE_KEY}`,
     type: `${definition.id}-type`,
-    value: `${definition.id}-value`,
   };
 
   const errors = validationErrors ? validationErrors : {};
@@ -173,16 +164,12 @@ export const WorkflowparameterField = ({
     description: 'Parameter Field Type Title',
   });
   const defaultValueTitle = intl.formatMessage({
-    defaultMessage: 'Default Value',
-    description: 'Parameter Field Default Value Title',
+    defaultMessage: 'Value',
+    description: 'Parameter Field Value Title',
   });
   const defaultValueDescription = intl.formatMessage({
-    defaultMessage: 'Enter default value for parameter.',
-    description: 'Parameter Field Default Value Placeholder Text',
-  });
-  const actualValueTitle = intl.formatMessage({
-    defaultMessage: 'Actual Value',
-    description: 'Parameter Field Actual Value Title',
+    defaultMessage: 'Enter value for parameter.',
+    description: 'Parameter Field Value Placeholder Text',
   });
   const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setName(newValue);
@@ -193,11 +180,11 @@ export const WorkflowparameterField = ({
   };
 
   const onTypeChange = (_event?: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
-    const newType = item?.key.toString();
+    const newType = item?.key.toString() as string;
 
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, type },
+      newDefinition: { ...definition, type: newType },
     });
 
     setType(newType);
@@ -214,7 +201,7 @@ export const WorkflowparameterField = ({
 
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, defaultValue: value },
+      newDefinition: { ...definition, value },
     });
   };
 
@@ -261,41 +248,27 @@ export const WorkflowparameterField = ({
           />
         </div>
         <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} htmlFor={parameterDetails.defaultValue}>
+          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.value}>
             {defaultValueTitle}
           </Label>
           <TextField
-            data-testid={parameterDetails.defaultValue}
-            id={parameterDetails.defaultValue}
+            data-testid={parameterDetails.value}
+            id={parameterDetails.value}
             ariaLabel={defaultValueTitle}
             placeholder={defaultValueDescription}
             description={valueWarningMessage}
             value={defaultValue}
-            errorMessage={errors[DEFAULT_VALUE_KEY]}
+            errorMessage={errors[VALUE_KEY]}
             styles={valueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
             onChange={onValueChange}
             onRenderDescription={valueWarningMessage ? onRenderDescription : undefined}
             disabled={isReadOnly}
           />
         </div>
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} htmlFor={parameterDetails.value}>
-            {actualValueTitle}
-          </Label>
-          <TextField
-            data-testid={parameterDetails.value}
-            styles={disabledTextFieldStyles}
-            id={parameterDetails.value}
-            ariaLabel={actualValueTitle}
-            type={isSecureParameter(type) ? 'password' : undefined}
-            defaultValue={definition.value}
-            disabled
-          />
-        </div>
       </>
     );
   } else {
-    return <ReadOnlyParameters name={name} defaultValue={defaultValue} type={type} parameterDetails={parameterDetails} />;
+    return <ReadOnlyParameters name={name} value={defaultValue} type={type} parameterDetails={parameterDetails} />;
   }
 };
 

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
-import type { ConnectionReferences } from '../../../common/models/workflow';
+import type { ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { ConnectorWithParsedSwagger } from '../../queries/connections';
@@ -14,13 +14,7 @@ import type { NodesMetadata, Operations } from '../../state/workflow/workflowInt
 import type { RootState } from '../../store';
 import { getConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
-import {
-  getAllInputParameters,
-  getGroupAndParameterFromParameterKey,
-  loadDynamicData,
-  loadDynamicValuesForParameter,
-  updateTokenMetadata,
-} from '../../utils/parameters/helper';
+import { getAllInputParameters, updateDynamicDataInNode, updateTokenMetadata } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
@@ -36,8 +30,6 @@ import type { Dispatch } from '@reduxjs/toolkit';
 export interface NodeDataWithOperationMetadata extends NodeData {
   manifest?: OperationManifest;
   operationInfo?: NodeOperation;
-  iconUri: string;
-  brandColor: string;
 }
 
 export interface NodeInputsWithDependencies {
@@ -60,6 +52,7 @@ export interface OperationMetadata {
 export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
+  workflowParameters: Record<string, WorkflowParameter>,
   dispatch: Dispatch
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
@@ -84,12 +77,12 @@ export const initializeOperationMetadata = async (
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
 
-  updateTokenMetadataInParameters(allNodeData, operations, triggerNodeId);
+  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, triggerNodeId);
   dispatch(
     initializeNodes(
       allNodeData.map((data) => {
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings } = data;
-        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings };
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata } = data;
+        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata };
       })
     )
   );
@@ -163,8 +156,7 @@ export const initializeOperationDetailsForManifest = async (
           settings,
           operationInfo: nodeOperationInfo,
           manifest,
-          iconUri,
-          brandColor,
+          operationMetadata: { iconUri, brandColor },
         },
         ...childGraphInputs,
       ];
@@ -211,8 +203,7 @@ const processChildGraphAndItsInputs = (
               nodeDependencies: { inputs: subNodeInputDependencies, outputs: {} },
               operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
               manifest: subManifest,
-              iconUri: '',
-              brandColor: '',
+              operationMetadata: { iconUri: '', brandColor: '' },
             });
           }
         }
@@ -230,8 +221,7 @@ const processChildGraphAndItsInputs = (
           nodeDependencies: { inputs: inputDependencies, outputs: {} },
           operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
           manifest: subManifest,
-          iconUri: '',
-          brandColor: '',
+          operationMetadata: { iconUri: '', brandColor: '' },
         });
       }
     }
@@ -240,7 +230,12 @@ const processChildGraphAndItsInputs = (
   return nodesData;
 };
 
-const updateTokenMetadataInParameters = (nodes: NodeDataWithOperationMetadata[], operations: Operations, triggerNodeId: string) => {
+const updateTokenMetadataInParameters = (
+  nodes: NodeDataWithOperationMetadata[],
+  workflowParameters: Record<string, WorkflowParameter>,
+  operations: Operations,
+  triggerNodeId: string
+) => {
   const nodesData = map(nodes, 'id');
   const actionNodes = nodes
     .map((node) => node.id)
@@ -255,7 +250,7 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithOperationMetadata[],
       if (segments && segments.length) {
         parameter.value = segments.map((segment) => {
           if (isTokenValueSegment(segment)) {
-            return updateTokenMetadata(segment, actionNodes, triggerNodeId, nodesData, operations, parameter.type);
+            return updateTokenMetadata(segment, actionNodes, triggerNodeId, nodesData, operations, workflowParameters, parameter.type);
           }
 
           return segment;
@@ -295,7 +290,11 @@ const initializeOutputTokensForOperations = (
 
     try {
       const nodeData = nodesWithData[operationId];
-      const { manifest, nodeOutputs, iconUri, brandColor } = nodeData;
+      const {
+        manifest,
+        nodeOutputs,
+        operationMetadata: { iconUri, brandColor },
+      } = nodeData;
 
       nodeTokens.tokens.push(...getBuiltInTokens(manifest));
       nodeTokens.tokens.push(
@@ -355,6 +354,7 @@ export const updateDynamicDataInNodes = async (
     tokens: { variables },
     connections,
   } = rootState;
+  const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
     const nodeDependencies = dependencies[nodeId];
     const nodeInputs = inputParameters[nodeId];
@@ -363,7 +363,7 @@ export const updateDynamicDataInNodes = async (
     const nodeOperationInfo = operationInfo[nodeId];
     const connectionReference = getConnectionReference(connections, nodeId);
 
-    loadDynamicData(
+    updateDynamicDataInNode(
       nodeId,
       isTrigger,
       nodeOperationInfo,
@@ -371,28 +371,10 @@ export const updateDynamicDataInNodes = async (
       nodeDependencies,
       nodeInputs,
       nodeSettings,
-      getAllVariables(variables),
+      allVariables,
       dispatch,
+      rootState,
       operation
     );
-
-    for (const parameterKey of Object.keys(nodeDependencies.inputs)) {
-      const dependencyInfo = nodeDependencies.inputs[parameterKey];
-      if (dependencyInfo.dependencyType === 'ListValues') {
-        const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
-        if (details) {
-          loadDynamicValuesForParameter(
-            nodeId,
-            details.groupId,
-            details.parameter.id,
-            nodeOperationInfo,
-            connectionReference,
-            nodeInputs,
-            nodeDependencies,
-            dispatch
-          );
-        }
-      }
-    }
   }
 };

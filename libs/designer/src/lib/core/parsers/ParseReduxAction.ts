@@ -1,5 +1,6 @@
 import type { Workflow } from '../../common/models/workflow';
 import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections';
+import { parseWorkflowParameters } from '../actions/bjsworkflow/initialize';
 import { initializeOperationMetadata, updateDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
@@ -19,10 +20,16 @@ export const initializeGraphState = createAsyncThunk<DeserializedWorkflow, Workf
     }
     if (spec === 'BJS') {
       getConnectionsQuery();
-      const { definition, connectionReferences } = workflowDefinition;
+      const { definition, connectionReferences, parameters } = workflowDefinition;
       const deserializedWorkflow = BJSDeserialize(definition);
       thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {})); // danielle I think we need
-      const operationMetadataPromise = initializeOperationMetadata(deserializedWorkflow, connectionReferences, thunkAPI.dispatch);
+      parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
+      const operationMetadataPromise = initializeOperationMetadata(
+        deserializedWorkflow,
+        connectionReferences,
+        parameters ?? {},
+        thunkAPI.dispatch
+      );
       const actionsAndTriggers = deserializedWorkflow.actionData;
       const connectionsPromise = getConnectionsApiAndMapping(
         actionsAndTriggers,

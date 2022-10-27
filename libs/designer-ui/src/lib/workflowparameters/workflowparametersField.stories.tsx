@@ -13,5 +13,5 @@ export const Field: ComponentStory<typeof WorkflowparameterField> = (args: Workf
 Field.args = {
   isEditable: true,
   name: 'id',
-  definition: { id: 'id', defaultValue: 'defaultValue', name: 'name', type: 'Array', value: 'testing' },
+  definition: { id: 'id', value: 'defaultValue', name: 'name', type: 'Array' },
 };
