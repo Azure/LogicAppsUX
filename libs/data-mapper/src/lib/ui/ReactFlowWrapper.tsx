@@ -1,10 +1,10 @@
 import { CanvasControls } from '../components/canvasControls/CanvasControls';
-import type { ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
-import { CanvasToolbox } from '../components/canvasToolbox/CanvasToolbox';
+import { ToolboxPanelTabs, CanvasToolbox } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { Notification } from '../components/notification/Notification';
+import { SourceSchemaPlaceholder } from '../components/schemaSelection/SourceSchemaPlaceholder';
 import {
   checkerboardBackgroundImage,
   defaultCanvasZoom,
@@ -212,6 +212,7 @@ export const ReactFlowWrapper = () => {
       onEdgeUpdateStart={onEdgeUpdateStart}
       onEdgeUpdateEnd={onEdgeUpdateEnd}
       onEdgeClick={onEdgeClick}
+      fitViewOptions={{ maxZoom: defaultCanvasZoom }}
       fitView
     >
       <CanvasToolbox toolboxTabToDisplay={toolboxTabToDisplay} setToolboxTabToDisplay={setToolboxTabToDisplay} />
@@ -225,6 +226,10 @@ export const ReactFlowWrapper = () => {
           msgBody={notificationData.msgBody}
           onClose={() => dispatch(hideNotification())}
         />
+      )}
+
+      {currentSourceSchemaNodes.length === 0 && (
+        <SourceSchemaPlaceholder onClickSelectElement={() => setToolboxTabToDisplay(ToolboxPanelTabs.sourceSchemaTree)} />
       )}
     </ReactFlow>
   );
