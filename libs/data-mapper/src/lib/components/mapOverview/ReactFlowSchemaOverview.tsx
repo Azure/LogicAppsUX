@@ -23,11 +23,12 @@ const useStyles = makeStyles({
 interface ReactFlowSchemaOverviewProps {
   schema: SchemaExtended;
   schemaType: SchemaType;
+  shouldTargetSchemaDisplayChevrons?: boolean;
 }
 
-export const ReactFlowSchemaOverview = ({ schema, schemaType }: ReactFlowSchemaOverviewProps) => {
+export const ReactFlowSchemaOverview = ({ schema, schemaType, shouldTargetSchemaDisplayChevrons }: ReactFlowSchemaOverviewProps) => {
   const styles = useStyles();
-  const reactFlowNodes = useOverviewLayout(schema.schemaTreeRoot, schemaType, true);
+  const reactFlowNodes = useOverviewLayout(schema.schemaTreeRoot, schemaType, shouldTargetSchemaDisplayChevrons);
 
   return (
     <ReactFlow

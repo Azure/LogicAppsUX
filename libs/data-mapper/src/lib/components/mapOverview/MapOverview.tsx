@@ -1,11 +1,11 @@
 import { SchemaType } from '../../models/';
 import type { SchemaExtended } from '../../models/';
+import { SelectSchemaCard } from '../schemaSelection/SelectSchemaCard';
 import { ReactFlowSchemaOverview } from './ReactFlowSchemaOverview';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 // eslint-disable-next-line import/no-named-as-default
 import { ReactFlowProvider } from 'reactflow';
-import { SelectSchemaCard } from '../schemaSelection/SelectSchemaCard';
 
 const useStyles = makeStyles({
   mapOverviewStyles: {
@@ -48,7 +48,11 @@ export const MapOverview = ({ sourceSchema, targetSchema }: MapOverviewProps) =>
       <Stack verticalAlign="center" className={styles.schemaCardStackStyles}>
         {targetSchema ? (
           <ReactFlowProvider>
-            <ReactFlowSchemaOverview schema={targetSchema} schemaType={SchemaType.Target} />
+            <ReactFlowSchemaOverview
+              schema={targetSchema}
+              schemaType={SchemaType.Target}
+              shouldTargetSchemaDisplayChevrons={!!sourceSchema && !!targetSchema}
+            />
           </ReactFlowProvider>
         ) : (
           <SelectSchemaCard schemaType={SchemaType.Target} />

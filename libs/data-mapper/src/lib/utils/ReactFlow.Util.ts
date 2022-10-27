@@ -281,7 +281,7 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary, selec
 export const useOverviewLayout = (
   parentSchemaNode: SchemaNodeExtended,
   schemaType: SchemaType,
-  displayTargets: boolean
+  shouldTargetSchemaDisplayChevrons?: boolean
 ): ReactFlowNode<SchemaCardProps>[] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode[]>([]);
 
@@ -302,7 +302,6 @@ export const useOverviewLayout = (
         relatedConnections: [],
       },
       type: ReactFlowNodeType.SchemaNode,
-      targetPosition: !displayTargets ? undefined : schemaType === SchemaType.Source ? Position.Right : Position.Left,
       position: {
         x: 0,
         y: 0,
@@ -316,7 +315,7 @@ export const useOverviewLayout = (
           schemaNode: childNode,
           schemaType,
           displayHandle: false,
-          displayChevron: schemaType !== SchemaType.Source,
+          displayChevron: schemaType === SchemaType.Target && !!shouldTargetSchemaDisplayChevrons,
           isLeaf: isLeafNode(childNode),
           isChild: true,
           disabled: false,
@@ -324,7 +323,6 @@ export const useOverviewLayout = (
           relatedConnections: [],
         },
         type: ReactFlowNodeType.SchemaNode,
-        targetPosition: !displayTargets ? undefined : schemaType === SchemaType.Source ? Position.Right : Position.Left,
         position: {
           x: childTargetNodeCardIndent,
           y: (idx + 1) * (schemaNodeCardHeight + 10),
@@ -333,7 +331,7 @@ export const useOverviewLayout = (
     });
 
     setReactFlowNodes(newReactFlowNodes);
-  }, [parentSchemaNode, schemaType, displayTargets]);
+  }, [parentSchemaNode, schemaType, shouldTargetSchemaDisplayChevrons]);
 
   return reactFlowNodes;
 };
