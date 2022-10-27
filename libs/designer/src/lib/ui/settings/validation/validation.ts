@@ -75,9 +75,16 @@ export const useValidate = () => {
           retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.EXPONENTIAL ||
           retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.FIXED
         ) {
-          // Invalid retry count
           const retryCount = Number(retryPolicy?.value?.count);
-          if (
+          // Empty retry interval
+          if (!retryPolicy?.value?.interval) {
+            validationErrors.push({
+              key: ValidationErrorKeys.RETRY_INTERVAL_EMPTY,
+              message: retryIntervalEmptyText,
+            });
+          }
+          // Invalid retry count
+          else if (
             isNaN(retryCount) ||
             retryCount < constants.RETRY_POLICY_LIMITS.MIN_COUNT ||
             retryCount > constants.RETRY_POLICY_LIMITS.MAX_COUNT
@@ -85,13 +92,6 @@ export const useValidate = () => {
             validationErrors.push({
               key: ValidationErrorKeys.RETRY_COUNT_INVALID,
               message: retryCountInvalidText,
-            });
-          }
-          // Empty retry interval
-          if (!retryPolicy?.value?.interval) {
-            validationErrors.push({
-              key: ValidationErrorKeys.RETRY_INTERVAL_EMPTY,
-              message: retryIntervalEmptyText,
             });
           }
           // Invalid retry interval
