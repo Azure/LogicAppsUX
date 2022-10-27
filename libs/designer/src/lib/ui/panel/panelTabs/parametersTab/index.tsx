@@ -23,15 +23,18 @@ import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { equals } from '@microsoft-logic-apps/utils';
-import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
+import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
-  const tokenstate = useSelector((state: RootState) => state.tokens);
+  const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
+    tokenState: state.tokens,
+    workflowParametersState: state.workflowParameters,
+  }));
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
   const readOnly = useReadOnly();
 
@@ -39,7 +42,7 @@ export const ParametersTab = () => {
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
 
-  const tokenGroup = getOutputTokenSections(tokenstate, selectedNodeId, nodeType);
+  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState);
   const expressionGroup = getExpressionTokenSections();
   if (!operationInfo) {
     return (
@@ -153,9 +156,11 @@ const ParameterSection = ({
         getAllVariables(variables),
         nodeSettings,
         dispatch,
+        rootState,
         operationDefinition
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       nodeId,
       group.id,
@@ -173,7 +178,17 @@ const ParameterSection = ({
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
     if (parameter.dynamicData?.status === DynamicCallStatus.FAILED || parameter.dynamicData?.status === DynamicCallStatus.NOTSTARTED) {
-      loadDynamicValuesForParameter(nodeId, group.id, parameter.id, operationInfo, connectionReference, nodeInputs, dependencies, dispatch);
+      loadDynamicValuesForParameter(
+        nodeId,
+        group.id,
+        parameter.id,
+        operationInfo,
+        connectionReference,
+        nodeInputs,
+        dependencies,
+        true /* showErrorWhenNotReady */,
+        dispatch
+      );
     }
   };
 

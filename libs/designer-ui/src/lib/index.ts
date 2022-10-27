@@ -14,6 +14,7 @@ export * from './checkbox';
 // export * from './colorizer'
 export * from './code';
 export * from './combobox';
+export { default as UIConstants } from './constants';
 export * from './html';
 // export * from './conditioncontrol';
 // export * from './configItem';
@@ -70,6 +71,6 @@ export * from './tip';
 export * from './tokenpicker';
 export * from './utils';
 export * from './workflow/schema/generator';
-// export * from './workflowparameters';
+export * from './workflowparameters';
 export { FunctionGroupDefinitions as TemplateFunctions } from './workflow/languageservice/templatefunctions';
 export type { FunctionDefinition } from './workflow/languageservice/templatefunctions';

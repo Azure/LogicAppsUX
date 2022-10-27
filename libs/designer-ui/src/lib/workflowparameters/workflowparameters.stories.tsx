@@ -12,14 +12,14 @@ Standard.args = {
   parameters: [
     {
       id: 'first',
-      defaultValue: 'true',
+      value: 'true',
       type: 'Bool',
       name: 'ParameterOne',
       isEditable: true,
     },
     {
       id: 'second',
-      defaultValue: '{}',
+      value: '{}',
       type: 'Object',
       name: 'ParameterTwo',
       isEditable: false,

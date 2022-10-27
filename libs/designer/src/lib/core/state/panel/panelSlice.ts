@@ -12,6 +12,7 @@ const initialState: PanelState = {
   },
   isDiscovery: false,
   isParallelBranch: false,
+  isWorkflowParameters: false,
   registeredTabs: {},
   selectedTabName: undefined,
   selectedOperationGroupId: '',
@@ -39,6 +40,7 @@ export const panelSlice = createSlice({
     clearPanel: (state) => {
       state.collapsed = true;
       state.isDiscovery = false;
+      state.isWorkflowParameters = false;
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
     },
@@ -47,6 +49,7 @@ export const panelSlice = createSlice({
       if (state.collapsed) state.collapsed = false;
       state.selectedNode = action.payload;
       state.isDiscovery = false;
+      state.isWorkflowParameters = false;
       state.selectedOperationGroupId = '';
     },
     expandDiscoveryPanel: (
@@ -55,6 +58,7 @@ export const panelSlice = createSlice({
     ) => {
       state.collapsed = false;
       state.isDiscovery = true;
+      state.isWorkflowParameters = false;
       state.relationshipIds = action.payload.relationshipIds;
       state.selectedNode = action.payload.nodeId;
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
@@ -66,15 +70,21 @@ export const panelSlice = createSlice({
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
       state.selectedNode = action.payload;
       state.isDiscovery = false;
+      state.isWorkflowParameters = false;
       state.selectedOperationGroupId = '';
     },
-
+    switchToWorkflowParameters: (state) => {
+      state.collapsed = false;
+      state.isWorkflowParameters = true;
+      state.isDiscovery = false;
+      state.selectedNode = '';
+      state.selectedOperationGroupId = '';
+    },
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
       action.payload.forEach((tab) => {
         state.registeredTabs[tab.name.toLowerCase()] = tab;
       });
     },
-
     setTabError: (state, action: PayloadAction<{ tabName: string; hasErrors: boolean; nodeId: string }>) => {
       const tabName = action.payload.tabName.toLowerCase();
       const { nodeId, hasErrors } = action.payload;
@@ -88,7 +98,6 @@ export const panelSlice = createSlice({
         };
       }
     },
-
     unregisterPanelTab: (state, action: PayloadAction<string>) => {
       delete state.registeredTabs[action.payload];
     },
@@ -121,7 +130,6 @@ export const panelSlice = createSlice({
       });
       state.selectedTabName = action.payload;
     },
-
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabName = action.payload;
     },
@@ -146,6 +154,7 @@ export const {
   isolateTab,
   selectPanelTab,
   setTabError,
+  switchToWorkflowParameters,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

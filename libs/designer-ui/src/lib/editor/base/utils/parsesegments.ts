@@ -16,8 +16,8 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
   }
 
   value.forEach((segment) => {
+    const segmentValue = segment.value;
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
-      const segmentValue = segment.value;
       const { brandColor, icon, title, name } = segment.token;
       if (title || name) {
         const token = $createTokenNode({ title: title ?? name, data: segment, brandColor, icon: icon, value: segmentValue });
@@ -26,7 +26,7 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
         throw new Error('Token Node is missing title or name');
       }
     } else {
-      const splitSegment = segment.value.split('\n');
+      const splitSegment = segmentValue.split('\n');
       paragraph.append($createTextNode(splitSegment[0]));
       for (let i = 1; i < splitSegment.length; i++) {
         root.append(paragraph);
