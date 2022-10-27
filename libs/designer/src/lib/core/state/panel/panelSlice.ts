@@ -65,8 +65,6 @@ export const panelSlice = createSlice({
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
       state.selectedOperationGroupId = action.payload;
-      state.isDiscovery = false;
-      state.isWorkflowParameters = false;
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
       state.selectedNode = action.payload;

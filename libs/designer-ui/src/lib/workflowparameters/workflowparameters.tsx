@@ -165,7 +165,7 @@ export function WorkflowParameters({
     <div className="msla-workflow-parameters">
       <div className="msla-flex-row">
         <h3 className="msla-workflow-parameters-create">{createTitleText}</h3>
-        <IconButton onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
+        <IconButton className="msla-workflow-parameters-close" onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
       </div>
 
       {parameters.length ? <InfoBar isInverted={isInverted} /> : null}

@@ -184,7 +184,7 @@ export const WorkflowparameterField = ({
 
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, type },
+      newDefinition: { ...definition, type: newType },
     });
 
     setType(newType);
@@ -201,7 +201,7 @@ export const WorkflowparameterField = ({
 
     onChange?.({
       id: definition.id,
-      newDefinition: { ...definition, value: value },
+      newDefinition: { ...definition, value },
     });
   };
 

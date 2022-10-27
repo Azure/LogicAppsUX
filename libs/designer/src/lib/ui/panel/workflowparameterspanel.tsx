@@ -30,6 +30,7 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
       <WorkflowParameters
         parameters={Object.entries(workflowParameters).map(([key, value]) => ({ id: key, ...value }))}
         isReadOnly={readOnly}
+        onDismiss={onDismiss}
         validationErrors={workflowParametersValidationErrors}
         onAddParameter={onWorkflowParameterAdd}
         onDeleteParameter={onDeleteWorkflowParameter}
