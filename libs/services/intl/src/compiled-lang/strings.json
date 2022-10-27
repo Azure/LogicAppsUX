@@ -729,12 +729,6 @@
       "value": "(UTC+04:00) Yerevan"
     }
   ],
-  "438H98": [
-    {
-      "type": 0,
-      "value": "Discard changes"
-    }
-  ],
   "45ubha": [
     {
       "type": 0,
@@ -3039,12 +3033,6 @@
       "value": "6"
     }
   ],
-  "Rno87I": [
-    {
-      "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
-    }
-  ],
   "S8P4N5": [
     {
       "type": 0,
@@ -4009,6 +3997,12 @@
     {
       "type": 0,
       "value": "View Documentation"
+    }
+  ],
+  "cR9RtV": [
+    {
+      "type": 0,
+      "value": "Discard changes"
     }
   ],
   "cT2MlP": [
@@ -5233,6 +5227,12 @@
     {
       "type": 0,
       "value": "Enter the run identifier to open the run"
+    }
+  ],
+  "oVVPst": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "odQ554": [
