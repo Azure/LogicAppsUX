@@ -232,8 +232,8 @@ const processChildGraphAndItsInputs = (
 
 const updateTokenMetadataInParameters = (
   nodes: NodeDataWithOperationMetadata[],
-  workflowParameters: Record<string, WorkflowParameter>,
   operations: Operations,
+  workflowParameters: Record<string, WorkflowParameter>,
   triggerNodeId: string
 ) => {
   const nodesData = map(nodes, 'id');
