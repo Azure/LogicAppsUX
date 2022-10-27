@@ -1,4 +1,4 @@
-import type { SectionProps, TextChangeHandler, ToggleHandler } from '..';
+import type { DropdownSelectionChangeHandler, SectionProps, TextChangeHandler, ToggleHandler } from '..';
 import constants from '../../../common/constants';
 import type { Settings, SettingsSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
@@ -13,6 +13,11 @@ export interface NetworkingSectionProps extends SectionProps {
   onHeadersOnResponseToggle: ToggleHandler;
   onContentTransferToggle: ToggleHandler;
   chunkedTransferMode: boolean;
+  onRetryPolicyChange: DropdownSelectionChangeHandler;
+  onRetryCountChange: TextChangeHandler;
+  onRetryIntervalChange: TextChangeHandler;
+  onRetryMinIntervalChange: TextChangeHandler;
+  onRetryMaxIntervalChange: TextChangeHandler;
 }
 
 export const Networking = ({
@@ -33,8 +38,14 @@ export const Networking = ({
   onHeadersOnResponseToggle,
   onContentTransferToggle,
   chunkedTransferMode,
+  onRetryPolicyChange,
+  onRetryCountChange,
+  onRetryIntervalChange,
+  onRetryMinIntervalChange,
+  onRetryMaxIntervalChange,
   expanded,
   onHeaderClick,
+  retryPolicy,
 }: NetworkingSectionProps): JSX.Element => {
   const intl = useIntl();
   const onText = intl.formatMessage({
@@ -118,6 +129,72 @@ export const Networking = ({
       'Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks',
     description: 'description of content transfer setting',
   });
+
+  // RETRY POLICY
+  const retryPolicyTypeTitle = intl.formatMessage({
+    defaultMessage: 'Retry Policy',
+    description: 'title for retry policy setting',
+  });
+  const retryPolicyTypeDescription = intl.formatMessage({
+    defaultMessage:
+      'A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times.',
+    description: 'description of retry policy setting',
+  });
+  const retryPolicyCountTitle = intl.formatMessage({
+    defaultMessage: 'Count',
+    description: 'title for retry count setting',
+  });
+  // const retryPolicyCountDescription = intl.formatMessage({
+  //   defaultMessage: 'The number of times to retry the request.',
+  //   description: 'description of retry count setting',
+  // });
+  const retryPolicyCountPlaceholder = intl.formatMessage({
+    defaultMessage: 'Specify a retry count from 1 to 90',
+    description: 'placeholder for retry count setting',
+  });
+  const retryPolicyIntervalTitle = intl.formatMessage({
+    defaultMessage: 'Interval',
+    description: 'title for retry interval setting',
+  });
+  const retryPolicyIntervalDescription = intl.formatMessage({
+    defaultMessage: 'Specify interval in ISO 8601 format.',
+    description: 'description of retry interval setting',
+  });
+  const retryPolicyIntervalPlaceholder = intl.formatMessage(
+    {
+      defaultMessage: 'Example: {example}',
+      description: 'placeholder for retry interval setting',
+    },
+    {
+      example: 'PT20S',
+    }
+  );
+  const retryPolicyMinIntervalTitle = intl.formatMessage({
+    defaultMessage: 'Minimum Interval',
+    description: 'title for retry minimum interval setting',
+  });
+  const retryPolicyMinIntervalPlaceholder = intl.formatMessage(
+    {
+      defaultMessage: 'Example: {example}',
+      description: 'placeholder for retry interval setting',
+    },
+    {
+      example: 'PT10S',
+    }
+  );
+  const retryPolicyMaxIntervalTitle = intl.formatMessage({
+    defaultMessage: 'Maximum Interval',
+    description: 'title for retry maximum interval setting',
+  });
+  const retryPolicyMaxIntervalPlaceholder = intl.formatMessage(
+    {
+      defaultMessage: 'Example: {example}',
+      description: 'placeholder for retry interval setting',
+    },
+    {
+      example: 'PT1H',
+    }
+  );
 
   const getAsyncPatternSetting = (): Settings => {
     const asyncPatternCustomLabel = (
@@ -250,6 +327,114 @@ export const Networking = ({
     };
   };
 
+  const getRetryPolicySetting = (): Settings => {
+    const retryPolicyLabel = <SettingLabel labelText={retryPolicyTypeTitle} infoTooltipText={retryPolicyTypeDescription} isChild={false} />;
+
+    const items = [
+      { title: 'Default', value: constants.RETRY_POLICY_TYPE.DEFAULT },
+      { title: 'None', value: constants.RETRY_POLICY_TYPE.NONE },
+      { title: 'Exponential Interval', value: constants.RETRY_POLICY_TYPE.EXPONENTIAL },
+      { title: 'Fixed Interval', value: constants.RETRY_POLICY_TYPE.FIXED },
+    ];
+
+    // const customRetryPolicySetting = this._settingStoreUtility.getCustomRetryPolicySettings(this.props.graphNodeId);
+    // const description = (customRetryPolicySetting && customRetryPolicySetting.description) || Resources.RETRY_POLICY_DESCRIPTION;
+    // const customMinValue = (customRetryPolicySetting && customRetryPolicySetting.minValue) || undefined;
+    // const customMaxValue = (customRetryPolicySetting && customRetryPolicySetting.maxValue) || undefined;
+    // const policies = (customRetryPolicySetting && customRetryPolicySetting.customOptions) || defaultPolicies;
+
+    return {
+      settingType: 'SettingDropdown',
+      settingProp: {
+        id: 'retryPolicy',
+        readOnly,
+        items,
+        selectedValue: retryPolicy?.value?.type,
+        onSelectionChanged: onRetryPolicyChange,
+        customLabel: () => retryPolicyLabel,
+      },
+      visible: retryPolicy?.isSupported,
+    };
+  };
+
+  const getRetryCountSetting = (): Settings => {
+    const retryCountLabel = <SettingLabel labelText={retryPolicyCountTitle} isChild={false} />;
+
+    return {
+      settingType: 'SettingTextField',
+      settingProp: {
+        readOnly,
+        value: retryPolicy?.value?.count?.toString() ?? '',
+        placeholder: retryPolicyCountPlaceholder,
+        customLabel: () => retryCountLabel,
+        onValueChange: (_, newVal) => onRetryCountChange(newVal as string),
+        required: true,
+      },
+      visible:
+        retryPolicy?.isSupported &&
+        retryPolicy?.value?.type !== constants.RETRY_POLICY_TYPE.NONE &&
+        retryPolicy?.value?.type !== constants.RETRY_POLICY_TYPE.DEFAULT,
+    };
+  };
+
+  const getRetryIntervalSetting = (): Settings => {
+    const retryIntervalLabel = (
+      <SettingLabel labelText={retryPolicyIntervalTitle} infoTooltipText={retryPolicyIntervalDescription} isChild={false} />
+    );
+
+    return {
+      settingType: 'SettingTextField',
+      settingProp: {
+        readOnly,
+        value: retryPolicy?.value?.interval ?? '',
+        placeholder: retryPolicyIntervalPlaceholder,
+        customLabel: () => retryIntervalLabel,
+        onValueChange: (_, newVal) => onRetryIntervalChange(newVal as string),
+        required: true,
+      },
+      visible:
+        retryPolicy?.isSupported &&
+        retryPolicy?.value?.type !== constants.RETRY_POLICY_TYPE.NONE &&
+        retryPolicy?.value?.type !== constants.RETRY_POLICY_TYPE.DEFAULT,
+    };
+  };
+
+  const getRetryMinIntervalSetting = (): Settings => {
+    const retryMinIntervalLabel = (
+      <SettingLabel labelText={retryPolicyMinIntervalTitle} infoTooltipText={retryPolicyIntervalDescription} isChild={false} />
+    );
+
+    return {
+      settingType: 'SettingTextField',
+      settingProp: {
+        readOnly,
+        value: retryPolicy?.value?.minimumInterval ?? '',
+        placeholder: retryPolicyMinIntervalPlaceholder,
+        customLabel: () => retryMinIntervalLabel,
+        onValueChange: (_, newVal) => onRetryMinIntervalChange(newVal as string),
+      },
+      visible: retryPolicy?.isSupported && retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.EXPONENTIAL,
+    };
+  };
+
+  const getRetryMaxIntervalSetting = (): Settings => {
+    const retryMaxIntervalLabel = (
+      <SettingLabel labelText={retryPolicyMaxIntervalTitle} infoTooltipText={retryPolicyIntervalDescription} isChild={false} />
+    );
+
+    return {
+      settingType: 'SettingTextField',
+      settingProp: {
+        readOnly,
+        value: retryPolicy?.value?.maximumInterval ?? '',
+        placeholder: retryPolicyMaxIntervalPlaceholder,
+        customLabel: () => retryMaxIntervalLabel,
+        onValueChange: (_, newVal) => onRetryMaxIntervalChange(newVal as string),
+      },
+      visible: retryPolicy?.isSupported && retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.EXPONENTIAL,
+    };
+  };
+
   const networkingSectionProps: SettingsSectionProps = {
     id: 'networking',
     title: networking,
@@ -264,6 +449,11 @@ export const Networking = ({
       getRequestOptionSetting(),
       getSuppressHeadersSetting(),
       getWorkflowHeadersOnResponseSetting(),
+      getRetryPolicySetting(),
+      getRetryCountSetting(),
+      getRetryIntervalSetting(),
+      getRetryMinIntervalSetting(),
+      getRetryMaxIntervalSetting(),
     ],
   };
 

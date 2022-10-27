@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 export type ToggleHandler = (checked: boolean) => void;
 export type TextChangeHandler = (newVal: string) => void;
 export type NumberChangeHandler = (newVal: number) => void;
+export type DropdownSelectionChangeHandler = (selectedOption: IDropdownOption) => void;
 
 export interface SectionProps extends Settings {
   readOnly: boolean | undefined;
@@ -406,108 +407,137 @@ function NetworkingSettings(): JSX.Element | null {
     dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
   }, [dispatch, nodeId, operations, triggerValidation]);
 
+  const updateSettings = (settings: Settings): void => {
+    dispatch(updateNodeSettings({ id: nodeId, settings }));
+  };
+
   const onAsyncPatternToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          disableAsyncPattern: {
-            isSupported: !!disableAsyncPattern?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
+    updateSettings({
+      disableAsyncPattern: {
+        isSupported: !!disableAsyncPattern?.isSupported,
+        value: checked,
+      },
+    });
   };
 
   const onAsyncResponseToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          asynchronous: {
-            isSupported: !!asynchronous?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
+    updateSettings({
+      asynchronous: {
+        isSupported: !!asynchronous?.isSupported,
+        value: checked,
+      },
+    });
   };
 
   const onRequestOptionsChange = (newVal: string): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          requestOptions: {
-            isSupported: !!requestOptions?.isSupported,
-            value: { timeout: newVal },
-          },
-        },
-      })
-    );
+    updateSettings({
+      requestOptions: {
+        isSupported: !!requestOptions?.isSupported,
+        value: { timeout: newVal },
+      },
+    });
   };
 
   const onSuppressHeadersToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          suppressWorkflowHeaders: {
-            isSupported: !!suppressWorkflowHeaders?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
+    updateSettings({
+      suppressWorkflowHeaders: {
+        isSupported: !!suppressWorkflowHeaders?.isSupported,
+        value: checked,
+      },
+    });
   };
 
   const onPaginationValueChange = (newVal: string): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          paging: {
-            isSupported: !!paging?.isSupported,
-            value: {
-              enabled: !!paging?.value?.enabled,
-              value: Number(newVal),
-            },
-          },
+    updateSettings({
+      paging: {
+        isSupported: !!paging?.isSupported,
+        value: {
+          enabled: !!paging?.value?.enabled,
+          value: Number(newVal),
         },
-      })
-    );
+      },
+    });
   };
 
   const onHeadersOnResponseToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          suppressWorkflowHeadersOnResponse: {
-            isSupported: !!suppressWorkflowHeadersOnResponse?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
+    updateSettings({
+      suppressWorkflowHeadersOnResponse: {
+        isSupported: !!suppressWorkflowHeadersOnResponse?.isSupported,
+        value: checked,
+      },
+    });
   };
 
   const onContentTransferToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          uploadChunk: {
-            isSupported: !uploadChunk?.isSupported,
-            value: {
-              ...uploadChunk?.value,
-              transferMode: checked ? constants.SETTINGS.TRANSFER_MODE.CHUNKED : undefined,
-            },
-          },
+    updateSettings({
+      uploadChunk: {
+        isSupported: !uploadChunk?.isSupported,
+        value: {
+          ...uploadChunk?.value,
+          transferMode: checked ? constants.SETTINGS.TRANSFER_MODE.CHUNKED : undefined,
         },
-      })
-    );
+      },
+    });
+  };
+
+  const onRetryPolicyChange = (selectedOption: IDropdownOption): void => {
+    updateSettings({
+      retryPolicy: {
+        isSupported: !!retryPolicy?.isSupported,
+        value: {
+          ...retryPolicy?.value,
+          type: selectedOption.key.toString(),
+        },
+      },
+    });
+  };
+
+  const onRetryCountChange = (newVal: string): void => {
+    updateSettings({
+      retryPolicy: {
+        isSupported: !!retryPolicy?.isSupported,
+        value: {
+          ...(retryPolicy?.value as any),
+          count: Number(newVal),
+        },
+      },
+    });
+  };
+
+  const onRetryIntervalChange = (newVal: string): void => {
+    updateSettings({
+      retryPolicy: {
+        isSupported: !!retryPolicy?.isSupported,
+        value: {
+          ...(retryPolicy?.value as any),
+          interval: newVal,
+        },
+      },
+    });
+  };
+
+  const onRetryMinIntervalChange = (newVal: string): void => {
+    updateSettings({
+      retryPolicy: {
+        isSupported: !!retryPolicy?.isSupported,
+        value: {
+          ...(retryPolicy?.value as any),
+          minimumInterval: newVal,
+        },
+      },
+    });
+  };
+
+  const onRetryMaxIntervalChange = (newVal: string): void => {
+    updateSettings({
+      retryPolicy: {
+        isSupported: !!retryPolicy?.isSupported,
+        value: {
+          ...(retryPolicy?.value as any),
+          maximumInterval: newVal,
+        },
+      },
+    });
   };
 
   const networkingProps: NetworkingSectionProps = {
@@ -532,9 +562,12 @@ function NetworkingSettings(): JSX.Element | null {
     onRequestOptionsChange,
     onHeadersOnResponseToggle,
     onSuppressHeadersToggle,
-    validationErrors: validationErrors.filter(({ key }) => {
-      return key === ValidationErrorKeys.PAGING_COUNT;
-    }),
+    validationErrors: validationErrors.filter(({ key }) => key === ValidationErrorKeys.PAGING_COUNT),
+    onRetryPolicyChange,
+    onRetryCountChange,
+    onRetryIntervalChange,
+    onRetryMinIntervalChange,
+    onRetryMaxIntervalChange,
   };
   if (
     retryPolicy?.isSupported ||

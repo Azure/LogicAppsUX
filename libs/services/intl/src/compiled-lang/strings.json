@@ -735,6 +735,12 @@
       "value": "Required. The number of days to add. Can be negative to subtract days."
     }
   ],
+  "4IS4yp": [
+    {
+      "type": 0,
+      "value": "Retry Policy"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1289,6 +1295,12 @@
     {
       "type": 0,
       "value": "Required. The string to encode into base64 representation."
+    }
+  ],
+  "AsqIUa": [
+    {
+      "type": 0,
+      "value": "Maximum Interval"
     }
   ],
   "Az0QvG": [
@@ -3061,6 +3073,12 @@
       "value": "Name"
     }
   ],
+  "T7Xwii": [
+    {
+      "type": 0,
+      "value": "Interval"
+    }
+  ],
   "T7zcR6": [
     {
       "type": 0,
@@ -3535,6 +3553,12 @@
     {
       "type": 0,
       "value": "(UTC-08:00) Pacific Time (US & Canada)"
+    }
+  ],
+  "XbtEq9": [
+    {
+      "type": 0,
+      "value": "Count"
     }
   ],
   "XkBxv5": [
@@ -4353,6 +4377,12 @@
     {
       "type": 0,
       "value": "Enter or paste a sample JSON payload."
+    }
+  ],
+  "h40rpg": [
+    {
+      "type": 0,
+      "value": "Specify interval in ISO 8601 format."
     }
   ],
   "hBLPXK": [
@@ -5375,6 +5405,16 @@
       "value": "Returns the number of elements in an array or string"
     }
   ],
+  "qiIs4V": [
+    {
+      "type": 0,
+      "value": "Example: "
+    },
+    {
+      "type": 1,
+      "value": "example"
+    }
+  ],
   "qnI4Y1": [
     {
       "type": 0,
@@ -5403,6 +5443,12 @@
     {
       "type": 0,
       "value": "Undo"
+    }
+  ],
+  "r7vZ5a": [
+    {
+      "type": 0,
+      "value": "Minimum Interval"
     }
   ],
   "r8aZXs": [
@@ -5685,6 +5731,12 @@
     {
       "type": 0,
       "value": "Select an element to start configuring"
+    }
+  ],
+  "uM1i27": [
+    {
+      "type": 0,
+      "value": "Specify a retry count from 1 to 90"
     }
   ],
   "uN4zFU": [
@@ -6191,6 +6243,12 @@
     {
       "type": 0,
       "value": "Required. The string that is converted to a native type value."
+    }
+  ],
+  "zNesUZ": [
+    {
+      "type": 0,
+      "value": "A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times."
     }
   ],
   "zTKAc9": [
