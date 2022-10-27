@@ -1,7 +1,7 @@
 import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
-import { childTargetNodeCardIndent } from '../constants/NodeConstants';
+import { childTargetNodeCardIndent, schemaNodeCardHeight } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
@@ -162,7 +162,7 @@ export const convertToReactFlowParentAndChildNodes = (
   connections: ConnectionDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const reactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
-  const relatedConnections = getConnectionsForNode(connections, parentSchemaNode.key, SchemaType.Source);
+  const relatedConnections = getConnectionsForNode(connections, parentSchemaNode.key, schemaType);
 
   const parentNodeReactFlowId = addReactFlowPrefix(parentSchemaNode.key, schemaType);
   const parentElkNode = elkTree.children?.find((node) => node.id === parentNodeReactFlowId);
@@ -176,7 +176,7 @@ export const convertToReactFlowParentAndChildNodes = (
     data: {
       schemaNode: parentSchemaNode,
       schemaType,
-      displayHandle: displayTargets,
+      displayHandle: !!displayTargets,
       displayChevron: false,
       isLeaf: false,
       isChild: false,
@@ -185,7 +185,7 @@ export const convertToReactFlowParentAndChildNodes = (
       relatedConnections: relatedConnections,
     },
     type: ReactFlowNodeType.SchemaNode,
-    targetPosition: !displayTargets ? undefined : SchemaType.Source ? Position.Right : Position.Left,
+    targetPosition: !displayTargets ? undefined : schemaType === SchemaType.Source ? Position.Right : Position.Left,
     position: {
       x: elkTree.x + parentElkNode.x,
       y: parentElkNode.y,
@@ -201,11 +201,11 @@ export const convertToReactFlowParentAndChildNodes = (
     }
 
     reactFlowNodes.push({
-      id: addReactFlowPrefix(childNode.key, schemaType),
+      id: childNodeReactFlowId,
       data: {
         schemaNode: childNode,
         schemaType,
-        displayHandle: displayTargets,
+        displayHandle: !!displayTargets,
         displayChevron: true,
         isLeaf: isLeafNode(childNode),
         isChild: true,
@@ -214,7 +214,7 @@ export const convertToReactFlowParentAndChildNodes = (
         relatedConnections: [],
       },
       type: ReactFlowNodeType.SchemaNode,
-      targetPosition: !displayTargets ? undefined : SchemaType.Source ? Position.Right : Position.Left,
+      targetPosition: !displayTargets ? undefined : schemaType === SchemaType.Source ? Position.Right : Position.Left,
       position: {
         x: elkTree.x + childElkNode.x + childTargetNodeCardIndent,
         y: childElkNode.y,
@@ -276,6 +276,64 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary, selec
       };
     });
   });
+};
+
+export const useOverviewLayout = (
+  parentSchemaNode: SchemaNodeExtended,
+  schemaType: SchemaType,
+  shouldTargetSchemaDisplayChevrons?: boolean
+): ReactFlowNode<SchemaCardProps>[] => {
+  const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode[]>([]);
+
+  useEffect(() => {
+    const newReactFlowNodes: ReactFlowNode[] = [];
+
+    newReactFlowNodes.push({
+      id: addReactFlowPrefix(parentSchemaNode.key, schemaType),
+      data: {
+        schemaNode: parentSchemaNode,
+        schemaType,
+        displayHandle: false,
+        displayChevron: false,
+        isLeaf: false,
+        isChild: false,
+        disabled: false,
+        error: false,
+        relatedConnections: [],
+      },
+      type: ReactFlowNodeType.SchemaNode,
+      position: {
+        x: 0,
+        y: 0,
+      },
+    });
+
+    parentSchemaNode.children?.forEach((childNode, idx) => {
+      newReactFlowNodes.push({
+        id: addReactFlowPrefix(childNode.key, schemaType),
+        data: {
+          schemaNode: childNode,
+          schemaType,
+          displayHandle: false,
+          displayChevron: schemaType === SchemaType.Target && !!shouldTargetSchemaDisplayChevrons,
+          isLeaf: isLeafNode(childNode),
+          isChild: true,
+          disabled: false,
+          error: false,
+          relatedConnections: [],
+        },
+        type: ReactFlowNodeType.SchemaNode,
+        position: {
+          x: childTargetNodeCardIndent,
+          y: (idx + 1) * (schemaNodeCardHeight + 10),
+        },
+      });
+    });
+
+    setReactFlowNodes(newReactFlowNodes);
+  }, [parentSchemaNode, schemaType, shouldTargetSchemaDisplayChevrons]);
+
+  return reactFlowNodes;
 };
 
 const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: string, nodeType: SchemaType): Connection[] => {

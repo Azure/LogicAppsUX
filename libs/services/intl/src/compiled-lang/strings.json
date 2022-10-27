@@ -197,6 +197,12 @@
       "value": "Url decodes the input string"
     }
   ],
+  "0IRUjM": [
+    {
+      "type": 0,
+      "value": "Select a target schema node to start mapping"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
@@ -853,6 +859,12 @@
     {
       "type": 0,
       "value": "Required. The name of the loop whose item you want."
+    }
+  ],
+  "5hWg4V": [
+    {
+      "type": 0,
+      "value": "Select element"
     }
   ],
   "5qzZMo": [
@@ -5577,6 +5589,12 @@
     {
       "type": 0,
       "value": "Expression"
+    }
+  ],
+  "rsdJcV": [
+    {
+      "type": 0,
+      "value": "Select source schema elements to build your map"
     }
   ],
   "rstpaK": [

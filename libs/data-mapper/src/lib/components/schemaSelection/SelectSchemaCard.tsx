@@ -9,10 +9,13 @@ import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
+export const selectSchemaCardHeight = 260;
+export const selectSchemaCardWidth = 200;
+
 const useStyles = makeStyles({
-  schemaSelectCard: {
-    width: '200px',
-    height: '260px',
+  selectSchemaCard: {
+    width: `${selectSchemaCardWidth}px`,
+    height: `${selectSchemaCardHeight}px`,
     backgroundColor: tokens.colorNeutralBackground1,
     color: tokens.colorNeutralForeground1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
@@ -64,7 +67,7 @@ export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
     <Stack
       verticalAlign="center"
       horizontalAlign="center"
-      className={styles.schemaSelectCard}
+      className={styles.selectSchemaCard}
       onClick={onClickSchemaCard}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
