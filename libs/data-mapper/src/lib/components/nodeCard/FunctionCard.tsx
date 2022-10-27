@@ -32,7 +32,7 @@ const sharedHalfCardSize = functionNodeCardSize / 2;
 const useStyles = makeStyles({
   root: {
     ...shorthands.borderRadius(tokens.borderRadiusCircular),
-    color: tokens.colorNeutralForegroundInverted,
+    color: tokens.colorNeutralBackground1,
     fontSize: '20px',
     height: `${sharedHalfCardSize}px`,
     width: `${sharedHalfCardSize}px`,
@@ -42,20 +42,12 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     ...shorthands.padding('0px'),
     ...shorthands.margin(tokens.strokeWidthThick),
-
-    '&:disabled': {
-      '&:hover': {
-        color: tokens.colorNeutralForegroundInverted,
-      },
+    '&:hover': {
+      color: tokens.colorNeutralBackground1,
     },
-
-    '&:enabled': {
-      '&:hover': {
-        color: 'white',
-      },
-      '&:focus': {
-        color: 'white',
-      },
+    '&:active': {
+      // Not sure what was overwriting the base color, but the important overwrites the overwrite
+      color: `${tokens.colorNeutralBackground1} !important`,
     },
   },
   badge: {
@@ -88,7 +80,7 @@ export interface FunctionCardProps extends CardProps {
 }
 
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
-  const { functionName, maxNumberOfInputs, inputs, disabled, error, functionBranding, iconFileName, displayHandle, onClick } = props.data;
+  const { functionName, maxNumberOfInputs, inputs, disabled, error, functionBranding, displayHandle, onClick } = props.data; // iconFileName
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
@@ -146,7 +138,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
           style={{ backgroundColor: customTokens[functionBranding.colorTokenName] }}
           disabled={!!disabled}
         >
-          {getIconForFunction(functionName, iconFileName, functionBranding)}
+          {getIconForFunction(functionName, undefined, functionBranding) /* TODO: undefined -> iconFileName once all SVGs in */}
         </Button>
       </Tooltip>
 

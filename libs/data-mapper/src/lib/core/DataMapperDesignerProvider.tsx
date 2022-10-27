@@ -21,6 +21,7 @@ const extendedWebLightTheme: ExtendedTheme = {
   colorFnCategoryMath: '#004e8c',
   colorFnCategoryString: '#e43ba6',
   colorFnCategoryUtility: '#8764b8',
+  colorFnCategoryConversion: '#814e29',
 };
 
 const extendedWebDarkTheme: ExtendedTheme = {
@@ -31,6 +32,7 @@ const extendedWebDarkTheme: ExtendedTheme = {
   colorFnCategoryMath: '#286ea8',
   colorFnCategoryString: '#ef85cb',
   colorFnCategoryUtility: '#a083c9',
+  colorFnCategoryConversion: '#9c663f',
 };
 
 export const customTokens = themeToTokensObject(extendedWebLightTheme);
