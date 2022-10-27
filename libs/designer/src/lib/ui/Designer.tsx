@@ -154,8 +154,8 @@ export const Designer = () => {
             <PanelRoot />
           </ReactFlow>
           <div className="msla-designer-tools">
-            <Minimap />
             <Controls />
+            <Minimap />
           </div>
           <CanvasFinder />
         </ReactFlowProvider>

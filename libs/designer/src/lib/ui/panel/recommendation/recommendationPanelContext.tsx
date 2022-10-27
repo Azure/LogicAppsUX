@@ -9,7 +9,7 @@ import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-
 import { areApiIdsEqual } from '@microsoft-logic-apps/utils';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { RecommendationPanel, OperationSearchHeader } from '@microsoft/designer-ui';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const RecommendationPanelContext = (props: CommonPanelProps) => {
@@ -21,7 +21,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   });
   const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
 
-  const [isGrouped, setIsGrouped] = useState(false);
+  const [isGrouped, setIsGrouped] = useState(true);
 
   const selectedOperationGroupId: string = useSelectedOperationGroupId();
 
@@ -37,16 +37,16 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     }
   }, [selectedOperationGroupId, allOperations.data]);
 
-  const onDismiss = () => {
+  const onDismiss = useCallback(() => {
     dispatch(selectOperationGroupId(''));
     setSearchTerm('');
     props.toggleCollapse();
-  };
+  }, [dispatch, props]);
 
-  const navigateBack = () => {
+  const navigateBack = useCallback(() => {
     if (selectedOperationGroupId) dispatch(selectOperationGroupId(''));
     else if (searchTerm) setSearchTerm('');
-  };
+  }, [dispatch, searchTerm, selectedOperationGroupId]);
 
   return (
     <RecommendationPanel placeholder={''} {...props}>

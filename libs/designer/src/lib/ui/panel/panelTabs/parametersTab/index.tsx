@@ -21,6 +21,7 @@ import { getAllVariables, getAvailableVariables } from '../../../../core/utils/v
 import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import { equals } from '@microsoft-logic-apps/utils';
 import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
@@ -43,6 +44,14 @@ export const ParametersTab = () => {
 
   const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState);
   const expressionGroup = getExpressionTokenSections();
+
+  if (!operationInfo) {
+    return (
+      <div className="msla-loading-container">
+        <Spinner size={SpinnerSize.large} />
+      </div>
+    );
+  }
 
   return (
     <>

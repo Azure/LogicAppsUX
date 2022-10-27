@@ -2,6 +2,7 @@ import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
+import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
@@ -98,10 +99,7 @@ const initializeOperationDetails = async (
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
-    const [, { connector, parsedSwagger }] = await Promise.all([
-      trySetDefaultConnectionForNode(nodeId, connectorId, dispatch),
-      getConnectorWithSwagger(connectorId),
-    ]);
+    const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
 
@@ -145,7 +143,7 @@ const initializeOperationDetails = async (
       getState()
     );
   } else {
-    await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
+    await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch, isConnectionRequired);
   }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
@@ -165,12 +163,18 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
   dispatch(initializeNodes([initData]));
 };
 
-export const trySetDefaultConnectionForNode = async (nodeId: string, connectorId: string, dispatch: AppDispatch) => {
+export const trySetDefaultConnectionForNode = async (
+  nodeId: string,
+  connectorId: string,
+  dispatch: AppDispatch,
+  isConnectionRequired: boolean
+) => {
   const connections = await getConnectionsForConnector(connectorId);
   if (connections.length > 0) {
     await ConnectionService().createConnectionAclIfNeeded(connections[0]);
     dispatch(updateNodeConnection({ nodeId, connectionId: connections[0].id, connectorId }));
-  } else {
+  } else if (isConnectionRequired) {
+    dispatch(initEmptyConnectionMap(nodeId));
     dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
   }
 };
