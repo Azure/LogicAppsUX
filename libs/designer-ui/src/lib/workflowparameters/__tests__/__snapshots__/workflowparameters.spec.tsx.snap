@@ -4,11 +4,24 @@ exports[`ui/workflowparameters/workflowparameters should construct. 1`] = `
 <div
   className="msla-workflow-parameters"
 >
-  <h3
-    className="msla-workflow-parameters-create"
+  <div
+    className="msla-flex-row"
   >
-    Parameters
-  </h3>
+    <h3
+      className="msla-workflow-parameters-create"
+    >
+      Parameters
+    </h3>
+    <CustomizedIconButton
+      className="msla-workflow-parameters-close"
+      iconProps={
+        Object {
+          "iconName": "Cancel",
+        }
+      }
+      onClick={[Function]}
+    />
+  </div>
   <InfoBar
     isInverted={false}
   />

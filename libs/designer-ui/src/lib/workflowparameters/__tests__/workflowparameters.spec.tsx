@@ -50,8 +50,11 @@ describe('ui/workflowparameters/workflowparameters', () => {
       defaultMessage: 'Parameters',
       description: 'Create Title',
     });
-    expect(header.props.className).toBe('msla-workflow-parameters-create');
-    const headerText = header.props.children;
+    expect(header.props.className).toBe('msla-flex-row');
+    const [headerTextSection, icon]: any[] = React.Children.toArray(header.props.children);
+    expect(headerTextSection.props.className).toBe('msla-workflow-parameters-create');
+    expect(icon.props.className).toBe('msla-workflow-parameters-close');
+    const headerText = headerTextSection.props.children;
     expect(headerText).toBe(headerTitle);
 
     expect(messageBar).toBeDefined();
