@@ -1,6 +1,12 @@
 import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import type { IconProps } from '../images/IconModel';
-import { AddSubtractCircle20Filled, CalendarClock20Regular, Cube20Regular, MathSymbols20Regular } from '@fluentui/react-icons';
+import {
+  AddSubtractCircle20Filled,
+  CalendarClock20Regular,
+  Wrench20Regular,
+  MathSymbols20Regular,
+  ArrowSwap20Regular,
+} from '@fluentui/react-icons';
 
 export interface FunctionGroupBranding {
   displayName: string;
@@ -35,17 +41,17 @@ export const mathBranding: FunctionGroupBranding = {
 export const stringBranding: FunctionGroupBranding = {
   displayName: 'String',
   colorTokenName: 'colorFnCategoryString',
-  icon: <Cube20Regular />,
+  icon: <StringCategory20Regular />,
 };
 
 export const utilityBranding: FunctionGroupBranding = {
   displayName: 'Utility',
   colorTokenName: 'colorFnCategoryUtility',
-  icon: <StringCategory20Regular />,
+  icon: <Wrench20Regular />,
 };
 
 export const conversionBranding: FunctionGroupBranding = {
   displayName: 'Conversion',
-  colorTokenName: 'colorFnCategoryUtility',
-  icon: <StringCategory20Regular />,
+  colorTokenName: 'colorFnCategoryConversion',
+  icon: <ArrowSwap20Regular />,
 };
