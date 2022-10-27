@@ -19,10 +19,11 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
     const segmentValue = segment.value;
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
       const { brandColor, icon, title, name } = segment.token;
-
-      if (brandColor && icon && (title || name)) {
-        const token = $createTokenNode({ icon, title: title ?? name, value: segmentValue, brandColor, data: segment });
+      if (title || name) {
+        const token = $createTokenNode({ title: title ?? name, data: segment, brandColor, icon: icon, value: segmentValue });
         tokensEnabled && paragraph.append(token);
+      } else {
+        throw new Error('Token Node is missing title or name');
       }
     } else {
       const splitSegment = segmentValue.split('\n');

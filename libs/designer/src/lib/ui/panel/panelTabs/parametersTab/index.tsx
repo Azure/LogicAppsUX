@@ -44,7 +44,6 @@ export const ParametersTab = () => {
 
   const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState);
   const expressionGroup = getExpressionTokenSections();
-
   if (!operationInfo) {
     return (
       <div className="msla-loading-container">
