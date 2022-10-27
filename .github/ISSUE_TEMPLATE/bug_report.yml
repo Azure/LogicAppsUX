@@ -6,14 +6,14 @@ body:
       value: |
         Thank you for reporting an issue.
 
-        This issue tracker is for reporting bugs found in Logic Apps UI (https://github.com/Azure/logic_apps_designer)
+        This issue tracker is for reporting bugs found in Logic Apps UI (https://github.com/Azure/LogicAppsUX)
         If you have a question about how to achieve something and are struggling with a broader Logic App issue, please post a question
         inside of Logic App's Discussion repo: https://github.com/Azure/logicapps/discussions
         If it's an issue about the docs, please go to the Logic App's documentation repo (https://github.com/Azure/logicapps)
 
         Before submitting a new bug/issue, please check the links below to see if there is a solution or question posted there already:
-         - Open Issue's tab: https://github.com/Azure/logic_apps_designer/issues?q=is%3Aissue+sort%3Aupdated-desc+position
-         - Closed Issues tab: https://github.com/Azure/logic_apps_designer/issues?q=is%3Aissue+sort%3Aupdated-desc+position+is%3Aclosed
+         - Open Issue's tab: https://github.com/Azure/LogicAppsUX/issues?q=is%3Aissue+sort%3Aupdated-desc+position
+         - Closed Issues tab: https://github.com/Azure/LogicAppsUX/issues?q=is%3Aissue+sort%3Aupdated-desc+position+is%3Aclosed
 
         The more information you fill in, the better we can help you.
 
