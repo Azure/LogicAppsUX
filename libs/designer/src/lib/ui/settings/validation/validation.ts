@@ -6,6 +6,8 @@ import { ValidationErrorKeys, type ValidationError } from '../../../core/state/s
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
+const ISO_8601_REGEX = /^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$/;
+
 export const useValidate = () => {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const intl = useIntl();
@@ -22,9 +24,28 @@ export const useValidate = () => {
     description: 'error message for max-exceeding paging count',
   });
 
+  const retryCountInvalidText = intl.formatMessage(
+    {
+      defaultMessage: 'Retry Policy count is invalid (Must be from {min} to {max})',
+      description: 'error message for invalid retry count',
+    },
+    {
+      min: constants.RETRY_POLICY_LIMITS.MIN_COUNT,
+      max: constants.RETRY_POLICY_LIMITS.MAX_COUNT,
+    }
+  );
+  const retryIntervalEmptyText = intl.formatMessage({
+    defaultMessage: 'Retry Policy interval cannot be empty',
+    description: 'error message for empty retry interval',
+  });
+  const retryIntervalInvalidText = intl.formatMessage({
+    defaultMessage: 'Retry Policy interval is invalid, must match ISO 8601 duration format',
+    description: 'error message for invalid retry interval',
+  });
+
   const validateOperationSettings = useCallback(
     (settings?: Settings): ValidationError[] => {
-      const { conditionExpressions, paging } = settings ?? {};
+      const { conditionExpressions, paging, retryPolicy } = settings ?? {};
       const validationErrors: ValidationError[] = [];
 
       if (conditionExpressions?.value?.some((conditionExpression) => !conditionExpression)) {
@@ -49,9 +70,42 @@ export const useValidate = () => {
         }
       }
 
+      if (retryPolicy?.isSupported) {
+        if (
+          retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.EXPONENTIAL ||
+          retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.FIXED
+        ) {
+          const retryCount = Number(retryPolicy?.value?.count);
+          // Empty retry interval
+          if (!retryPolicy?.value?.interval) {
+            validationErrors.push({
+              key: ValidationErrorKeys.RETRY_INTERVAL_EMPTY,
+              message: retryIntervalEmptyText,
+            });
+          }
+          // Invalid retry count
+          else if (
+            isNaN(retryCount) ||
+            retryCount < constants.RETRY_POLICY_LIMITS.MIN_COUNT ||
+            retryCount > constants.RETRY_POLICY_LIMITS.MAX_COUNT
+          ) {
+            validationErrors.push({
+              key: ValidationErrorKeys.RETRY_COUNT_INVALID,
+              message: retryCountInvalidText,
+            });
+          }
+          // Invalid retry interval
+          if (!ISO_8601_REGEX.test(retryPolicy?.value?.interval ?? '')) {
+            validationErrors.push({
+              key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
+              message: retryIntervalInvalidText,
+            });
+          }
+        }
+      }
       return validationErrors;
     },
-    [pagingCount, pagingCountMax, triggerConditionEmpty]
+    [pagingCount, pagingCountMax, retryCountInvalidText, retryIntervalEmptyText, retryIntervalInvalidText, triggerConditionEmpty]
   );
 
   const validate = useCallback(
