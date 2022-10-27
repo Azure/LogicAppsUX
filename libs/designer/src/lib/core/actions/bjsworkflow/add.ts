@@ -4,7 +4,7 @@ import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queri
 import { getOperationManifest } from '../../queries/operation';
 import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
-import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { updateNodeSettings, initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
@@ -23,6 +23,7 @@ import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings } from './settings';
 import { ConnectionService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import type { SwaggerParser } from '@microsoft-logic-apps/parsers';
 import type {
   DiscoveryOperation,
   DiscoveryResultTypes,
@@ -86,8 +87,10 @@ const initializeOperationDetails = async (
   dispatch(isolateTab(Constants.PANEL_TAB_NAMES.LOADING));
 
   let initData: NodeData;
+  let manifest: OperationManifest | undefined = undefined;
+  let swagger: SwaggerParser | undefined = undefined;
   if (operationManifestService.isSupported(type)) {
-    const manifest = await getOperationManifest(operationInfo);
+    manifest = await getOperationManifest(operationInfo);
     isConnectionRequired = isConnectionRequiredForOperation(manifest);
 
     const { iconUri, brandColor } = manifest.properties;
@@ -100,6 +103,7 @@ const initializeOperationDetails = async (
     addTokensAndVariables(nodeId, type, { ...initData, iconUri, brandColor, manifest }, state, dispatch);
   } else {
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+    swagger = parsedSwagger;
     const iconUri = getIconUriFromConnector(connector);
     const brandColor = getBrandColorFromConnector(connector);
 
@@ -142,6 +146,11 @@ const initializeOperationDetails = async (
       dispatch
     );
   }
+
+  // Re-update settings after we have valid operation data
+  const operation = getState().workflow.operations[nodeId];
+  const settings = getOperationSettings(isTrigger, operationInfo, initData.nodeOutputs, manifest, swagger, operation);
+  dispatch(updateNodeSettings({ id: nodeId, settings }));
 
   await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch, isConnectionRequired);
 
