@@ -80,6 +80,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
@@ -106,6 +107,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 
     return '';
   }, [currentConnections, sourceSchema, targetSchema]);
+
+  const showMapOverview = useMemo<boolean>(
+    () => !sourceSchema || !targetSchema || (!!currentTargetSchemaNode && currentTargetSchemaNode.key === targetSchema.schemaTreeRoot.key),
+    [sourceSchema, targetSchema, currentTargetSchemaNode]
+  );
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
     if (addSchemaFromFile) {
@@ -181,7 +187,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                   boxSizing: 'border-box',
                 }}
               >
-                {sourceSchema && targetSchema ? (
+                {showMapOverview ? (
+                  <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
+                ) : (
                   <Stack horizontal style={{ height: '100%' }}>
                     <div
                       className={styles.canvasWrapper}
@@ -203,8 +211,6 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                       canvasAreaHeight={getCanvasAreaHeight()}
                     />
                   </Stack>
-                ) : (
-                  <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
                 )}
               </div>
 

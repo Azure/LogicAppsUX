@@ -192,9 +192,12 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
   }, [currentNode, functionLoc, isTargetSchemaNode, sourceSchemaNodeLoc, targetSchemaNodeLoc]);
 
   useEffect(() => {
-    setCurrentNode(
-      sourceSchemaDictionary[selectedItemKey] ?? targetSchemaDictionary[selectedItemKey] ?? functionDictionary[selectedItemKey] ?? undefined
-    );
+    // Spread operator to get new reference for each node so PropPane stuff re-renders properly
+    const sourceSchemaNode = sourceSchemaDictionary[selectedItemKey] ? { ...sourceSchemaDictionary[selectedItemKey] } : undefined;
+    const targetSchemaNode = targetSchemaDictionary[selectedItemKey] ? { ...targetSchemaDictionary[selectedItemKey] } : undefined;
+    const functionNode = functionDictionary[selectedItemKey] ? { ...functionDictionary[selectedItemKey] } : undefined;
+
+    setCurrentNode(sourceSchemaNode ?? targetSchemaNode ?? functionNode ?? undefined);
   }, [selectedItemKey, sourceSchemaDictionary, functionDictionary, targetSchemaDictionary]);
 
   useEffect(() => {
@@ -260,14 +263,14 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
           {tabToDisplay === PropertiesPaneTabs.Properties && (
             <>
               {isFunctionData(currentNode) ? (
-                <FunctionNodePropertiesTab key={currentNode.key} functionData={currentNode} />
+                <FunctionNodePropertiesTab functionData={currentNode} />
               ) : (
-                <SchemaNodePropertiesTab key={currentNode.key} currentNode={currentNode} />
+                <SchemaNodePropertiesTab currentNode={currentNode} />
               )}
             </>
           )}
 
-          {tabToDisplay === PropertiesPaneTabs.Code && <CodeTab key={currentNode.key} />}
+          {tabToDisplay === PropertiesPaneTabs.Code && <CodeTab />}
 
           {tabToDisplay === PropertiesPaneTabs.Test && <TestTab currentTargetSchemaNodeKey={currentNode.key} />}
         </div>
