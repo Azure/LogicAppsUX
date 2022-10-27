@@ -405,6 +405,12 @@
       "value": "Each run after configuration must have at least one status checked"
     }
   ],
+  "1diflT": [
+    {
+      "type": 0,
+      "value": "Retry Policy interval cannot be empty"
+    }
+  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -3761,6 +3767,28 @@
     {
       "type": 0,
       "value": "Zoom out"
+    }
+  ],
+  "Z9PWl/": [
+    {
+      "type": 0,
+      "value": "Retry Policy count is invalid (Must be from "
+    },
+    {
+      "type": 1,
+      "value": "min"
+    },
+    {
+      "type": 0,
+      "value": " to "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": ")"
     }
   ],
   "ZM1mRy": [

@@ -562,7 +562,12 @@ function NetworkingSettings(): JSX.Element | null {
     onRequestOptionsChange,
     onHeadersOnResponseToggle,
     onSuppressHeadersToggle,
-    validationErrors: validationErrors.filter(({ key }) => key === ValidationErrorKeys.PAGING_COUNT),
+    validationErrors: validationErrors.filter(
+      ({ key }) =>
+        key === ValidationErrorKeys.PAGING_COUNT ||
+        key === ValidationErrorKeys.RETRY_COUNT_INVALID ||
+        key === ValidationErrorKeys.RETRY_INTERVAL_INVALID
+    ),
     onRetryPolicyChange,
     onRetryCountChange,
     onRetryIntervalChange,

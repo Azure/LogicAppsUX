@@ -46,6 +46,7 @@ export const Networking = ({
   expanded,
   onHeaderClick,
   retryPolicy,
+  validationErrors,
 }: NetworkingSectionProps): JSX.Element => {
   const intl = useIntl();
   const onText = intl.formatMessage({
@@ -455,6 +456,7 @@ export const Networking = ({
       getRetryMinIntervalSetting(),
       getRetryMaxIntervalSetting(),
     ],
+    validationErrors,
   };
 
   return <SettingsSection {...networkingSectionProps} />;
