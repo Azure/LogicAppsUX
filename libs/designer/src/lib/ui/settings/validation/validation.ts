@@ -6,6 +6,8 @@ import { ValidationErrorKeys, type ValidationError } from '../../../core/state/s
 import { useCallback, useState } from 'react';
 import { useIntl } from 'react-intl';
 
+const ISO_8601_REGEX = /^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$/;
+
 export const useValidate = () => {
   const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const intl = useIntl();
@@ -32,10 +34,13 @@ export const useValidate = () => {
       max: constants.RETRY_POLICY_LIMITS.MAX_COUNT,
     }
   );
-
   const retryIntervalEmptyText = intl.formatMessage({
     defaultMessage: 'Retry Policy interval cannot be empty',
     description: 'error message for empty retry interval',
+  });
+  const retryIntervalInvalidText = intl.formatMessage({
+    defaultMessage: 'Retry Policy interval is invalid, must match ISO 8601 duration format',
+    description: 'error message for invalid retry interval',
   });
 
   const validateOperationSettings = useCallback(
@@ -89,11 +94,18 @@ export const useValidate = () => {
               message: retryIntervalEmptyText,
             });
           }
+          // Invalid retry interval
+          if (!ISO_8601_REGEX.test(retryPolicy?.value?.interval ?? '')) {
+            validationErrors.push({
+              key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
+              message: retryIntervalInvalidText,
+            });
+          }
         }
       }
       return validationErrors;
     },
-    [pagingCount, pagingCountMax, retryCountInvalidText, retryIntervalEmptyText, triggerConditionEmpty]
+    [pagingCount, pagingCountMax, retryCountInvalidText, retryIntervalEmptyText, retryIntervalInvalidText, triggerConditionEmpty]
   );
 
   const validate = useCallback(
