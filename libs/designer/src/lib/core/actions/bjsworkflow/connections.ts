@@ -5,7 +5,7 @@ import type { Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import { getConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { loadDynamicData } from '../../utils/parameters/helper';
+import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
 import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
@@ -30,7 +30,7 @@ export const updateNodeConnection = createAsyncThunk(
 
     const newState = getState() as RootState;
 
-    return loadDynamicData(
+    return updateDynamicDataInNode(
       nodeId,
       isRootNodeInGraph(nodeId, 'root', newState.workflow.nodesMetadata),
       newState.operations.operationInfo[nodeId],
@@ -40,6 +40,7 @@ export const updateNodeConnection = createAsyncThunk(
       newState.operations.settings[nodeId],
       getAllVariables(newState.tokens.variables),
       dispatch,
+      newState,
       newState.workflow.newlyAddedOperations[nodeId] ? undefined : newState.workflow.operations[nodeId]
     );
   }

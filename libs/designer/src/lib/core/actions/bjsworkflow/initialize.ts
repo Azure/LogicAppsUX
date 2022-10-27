@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
+import type { WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { preloadOperationsQuery } from '../../queries/browse';
 import { getConnectorWithSwagger } from '../../queries/connections';
@@ -8,6 +9,8 @@ import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokensSlice';
 import { updateTokens, updateUpstreamNodes } from '../../state/tokensSlice';
+import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
+import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
@@ -84,6 +87,20 @@ export const InitializeServices = ({
   InitOAuthService(oAuthService);
   InitWorkflowService(workflowService);
   preloadOperationsQuery();
+};
+
+export const parseWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
+  dispatch(
+    initializeParameters(
+      Object.keys(parameters).reduce(
+        (result: Record<string, WorkflowParameterDefinition>, currentKey: string) => ({
+          ...result,
+          [currentKey]: { name: currentKey, isEditable: false, ...parameters[currentKey] },
+        }),
+        {}
+      )
+    )
+  );
 };
 
 export const getInputParametersFromManifest = (

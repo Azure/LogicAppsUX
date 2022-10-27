@@ -197,6 +197,12 @@
       "value": "Url decodes the input string"
     }
   ],
+  "0IRUjM": [
+    {
+      "type": 0,
+      "value": "Select a target schema node to start mapping"
+    }
+  ],
   "0JTHTZ": [
     {
       "type": 0,
@@ -287,6 +293,12 @@
       "value": "Returns the port from a URI. If port is not specified, returns the default port for the protocol"
     }
   ],
+  "11qu8f": [
+    {
+      "type": 0,
+      "value": "Enter a valid integer."
+    }
+  ],
   "14lYtE": [
     {
       "type": 0,
@@ -361,6 +373,12 @@
       "pluralType": "cardinal",
       "type": 6,
       "value": "count"
+    }
+  ],
+  "1REk6u": [
+    {
+      "type": 0,
+      "value": "Enter a valid email."
     }
   ],
   "1TE0e8": [
@@ -813,6 +831,12 @@
       "value": "Action Type"
     }
   ],
+  "5+MuPz": [
+    {
+      "type": 0,
+      "value": "Enter a valid double."
+    }
+  ],
   "5J7j9k": [
     {
       "type": 0,
@@ -841,6 +865,12 @@
     {
       "type": 0,
       "value": "Required. The name of the loop whose item you want."
+    }
+  ],
+  "5hWg4V": [
+    {
+      "type": 0,
+      "value": "Select element"
     }
   ],
   "5qzZMo": [
@@ -1023,6 +1053,12 @@
     {
       "type": 0,
       "value": "Required. The string that may contain the value."
+    }
+  ],
+  "8+0teU": [
+    {
+      "type": 0,
+      "value": "Parameter name already exists."
     }
   ],
   "84D91Y": [
@@ -1463,6 +1499,12 @@
       "value": "Source node removed from view."
     }
   ],
+  "ClZW2r": [
+    {
+      "type": 0,
+      "value": "Value"
+    }
+  ],
   "CsPY74": [
     {
       "type": 0,
@@ -1711,6 +1753,12 @@
       "value": "Returns the body for a part in a multipart output of the trigger"
     }
   ],
+  "FS06y3": [
+    {
+      "type": 0,
+      "value": "Must provide name of parameter."
+    }
+  ],
   "FUhNu4": [
     {
       "type": 0,
@@ -1821,6 +1869,12 @@
       "value": "Required. The object to find inside the Within collection."
     }
   ],
+  "GXXLuT": [
+    {
+      "type": 0,
+      "value": "Enter a valid boolean."
+    }
+  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1915,6 +1969,12 @@
     {
       "type": 0,
       "value": "Please select a card to see the content"
+    }
+  ],
+  "HoQiVa": [
+    {
+      "type": 0,
+      "value": "Enter a valid datetime."
     }
   ],
   "HsO1Rd": [
@@ -2029,6 +2089,12 @@
     {
       "type": 0,
       "value": "."
+    }
+  ],
+  "J9wWry": [
+    {
+      "type": 0,
+      "value": "Parameters"
     }
   ],
   "JErLDT": [
@@ -2369,6 +2435,12 @@
       "value": "Returns the current timestamp as a string"
     }
   ],
+  "MVrv+N": [
+    {
+      "type": 0,
+      "value": "Enter a valid array."
+    }
+  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -2385,6 +2457,12 @@
     {
       "type": 0,
       "value": "Next failed"
+    }
+  ],
+  "Mgcs5s": [
+    {
+      "type": 0,
+      "value": "Enter a valid number."
     }
   ],
   "MirIsS": [
@@ -3317,6 +3395,12 @@
       "value": "The provided workflow run name is not valid."
     }
   ],
+  "VL9wOu": [
+    {
+      "type": 0,
+      "value": "Must provide value for parameter."
+    }
+  ],
   "VLc3FV": [
     {
       "type": 0,
@@ -3779,6 +3863,12 @@
     {
       "type": 0,
       "value": "Enter Pfx"
+    }
+  ],
+  "amRYtC": [
+    {
+      "type": 0,
+      "value": "Enter a valid float."
     }
   ],
   "auUI93": [
@@ -4435,6 +4525,12 @@
       "value": "Alt/Option + click to download {displayName}"
     }
   ],
+  "hic23z": [
+    {
+      "type": 0,
+      "value": "The value is too large."
+    }
+  ],
   "hq1mk6": [
     {
       "type": 0,
@@ -4831,6 +4927,12 @@
       "value": "Missing authentication type property: 'type'."
     }
   ],
+  "kxMDyM": [
+    {
+      "type": 0,
+      "value": "Enter a valid json."
+    }
+  ],
   "l36V56": [
     {
       "type": 1,
@@ -4901,12 +5003,6 @@
     {
       "type": 0,
       "value": "Shorthand for actions('actionName').outputs.body"
-    }
-  ],
-  "lztiwS": [
-    {
-      "type": 0,
-      "value": "Actual Value"
     }
   ],
   "m7Y6Qf": [
@@ -5125,6 +5221,12 @@
     {
       "type": 1,
       "value": "max_page"
+    }
+  ],
+  "o2Cmny": [
+    {
+      "type": 0,
+      "value": "Enter a valid uri."
     }
   ],
   "o3SfI4": [
@@ -5487,6 +5589,12 @@
       "value": "Is connection invalid"
     }
   ],
+  "rSIBjh": [
+    {
+      "type": 0,
+      "value": "Enter value for parameter."
+    }
+  ],
   "raBiud": [
     {
       "type": 0,
@@ -5503,6 +5611,12 @@
     {
       "type": 0,
       "value": "Expression"
+    }
+  ],
+  "rsdJcV": [
+    {
+      "type": 0,
+      "value": "Select source schema elements to build your map"
     }
   ],
   "rstpaK": [
@@ -5809,12 +5923,6 @@
     {
       "type": 0,
       "value": "4"
-    }
-  ],
-  "ut5Med": [
-    {
-      "type": 0,
-      "value": "Default Value"
     }
   ],
   "uzsleE": [
@@ -6213,12 +6321,6 @@
     {
       "type": 0,
       "value": "Menu"
-    }
-  ],
-  "z4YYlQ": [
-    {
-      "type": 0,
-      "value": "Enter default value for parameter."
     }
   ],
   "z9kH+0": [

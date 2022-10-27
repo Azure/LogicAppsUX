@@ -16,9 +16,8 @@ type ReferenceKey = string;
 export type ConnectionReferences = Record<ReferenceKey, ConnectionReference>;
 
 export interface WorkflowParameter {
-  name: string;
+  name?: string;
   type: string;
-  defaultValue?: any;
   value?: any;
   metadata?: any;
   description?: string;

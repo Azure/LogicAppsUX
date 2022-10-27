@@ -1,9 +1,11 @@
 import constants from '../../common/constants';
-import type { RootState } from '../../core';
+import type { AppDispatch, RootState } from '../../core';
+import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsDiscovery,
   useIsPanelCollapsed,
+  useIsWorkflowParametersMode,
   useRegisteredPanelTabs,
   useSelectedNodeId,
   useSelectedPanelTabName,
@@ -20,7 +22,7 @@ import {
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
-import { deleteNode, replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
+import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
@@ -32,6 +34,7 @@ import { scratchTab } from './panelTabs/scratchTab';
 import { selectConnectionTab } from './panelTabs/selectConnectionTab';
 import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
+import { WorkflowParametersPanel } from './workflowparameterspanel';
 import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
@@ -41,7 +44,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const PanelRoot = (): JSX.Element => {
   const intl = useIntl();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
@@ -51,6 +54,7 @@ export const PanelRoot = (): JSX.Element => {
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
   const isDiscovery = useIsDiscovery();
+  const isWorkflowParameters = useIsWorkflowParametersMode();
 
   const [width, setWidth] = useState(PanelSize.Auto);
 
@@ -190,15 +194,17 @@ export const PanelRoot = (): JSX.Element => {
   };
 
   const handleDelete = (): void => {
-    dispatch(deleteNode({ nodeId: selectedNode }));
-    dispatch(clearPanel());
+    dispatch(deleteOperation({ nodeId: selectedNode }));
     // TODO: 12798935 Analytics (event logging)
   };
 
   const togglePanel = (): void => (!collapsed ? collapse() : expand());
+  const dismissPanel = () => dispatch(clearPanel());
 
-  return isDiscovery ? (
-    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={() => dispatch(clearPanel())} width={width} key={selectedNode} />
+  return isWorkflowParameters ? (
+    <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} />
+  ) : isDiscovery ? (
+    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} key={selectedNode} />
   ) : (
     <PanelContainer
       cardIcon={iconUriResult.result}

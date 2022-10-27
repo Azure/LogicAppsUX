@@ -278,7 +278,7 @@ export const functionMock: FunctionData[] = [
       },
     ],
     displayName: 'To String',
-    category: FunctionCategory.String,
+    category: FunctionCategory.Conversion,
     description: 'Converts the input into a string',
     tooltip: 'Converts to string',
   },
