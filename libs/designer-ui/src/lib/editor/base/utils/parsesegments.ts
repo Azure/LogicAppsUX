@@ -20,8 +20,10 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
       const segmentValue = segment.value;
       const { brandColor, icon, title, name } = segment.token;
       if (title || name) {
-        const token = $createTokenNode({ icon: icon, title, value: segmentValue, brandColor, data: segment });
+        const token = $createTokenNode({ title: title ?? name, data: segment, brandColor, icon: icon, value: segmentValue });
         tokensEnabled && paragraph.append(token);
+      } else {
+        throw new Error('Token Node is missing title or name');
       }
     } else {
       const splitSegment = segment.value.split('\n');
