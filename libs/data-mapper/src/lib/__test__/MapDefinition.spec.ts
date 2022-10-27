@@ -3,6 +3,7 @@ import { concatFunction } from '../__mocks__/FunctionMock';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaType } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
+import { indexPseudoFunction } from '../models/Function';
 import { addNodeToConnections } from '../utils/Connection.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader, splitKeyIntoChildren } from '../utils/DataMap.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
@@ -272,6 +273,80 @@ describe('Map definition conversions', () => {
       expect(employeeObjectEntries.length).toEqual(2);
       expect(employeeObjectEntries[0][0]).toEqual('Other');
       expect(employeeObjectEntries[0][1]).toEqual('concat(TelephoneNumber, Name)');
+      expect(employeeObjectEntries[1][0]).toEqual('Name');
+      expect(employeeObjectEntries[1][1]).toEqual('Name');
+    });
+
+    it('Generates body with index loop', async () => {
+      const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
+      const targetNode = extendedTargetSchema.schemaTreeRoot.children.find((child) => child.name === 'Looping') as SchemaNodeExtended;
+      const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
+      const mapDefinition: MapDefinitionEntry = {};
+      const connections: ConnectionDictionary = {};
+
+      // Just confirm the mock hasn't changed
+      expect(sourceNode).toBeDefined();
+      expect(targetNode).toBeDefined();
+
+      const sourceChildNode = sourceNode.children[0];
+      const targetChildNode = targetNode.children[0];
+
+      addNodeToConnections(
+        connections,
+        sourceChildNode.children[0],
+        addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
+        targetChildNode.children[1],
+        addReactFlowPrefix(targetChildNode.children[1].key, SchemaType.Target)
+      );
+
+      //Add parents
+      addNodeToConnections(
+        connections,
+        sourceChildNode,
+        addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
+        indexPseudoFunction,
+        indexFunctionId
+      );
+      addNodeToConnections(
+        connections,
+        indexPseudoFunction,
+        indexFunctionId,
+        targetChildNode,
+        addReactFlowPrefix(targetChildNode.key, SchemaType.Target)
+      );
+
+      addNodeToConnections(
+        connections,
+        sourceChildNode.children[1],
+        addReactFlowPrefix(sourceChildNode.children[1].key, SchemaType.Source),
+        targetChildNode.children[0],
+        addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target)
+      );
+      generateMapDefinitionBody(mapDefinition, connections);
+
+      expect(Object.keys(mapDefinition).length).toEqual(1);
+      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      expect(rootChildren.length).toEqual(1);
+      expect(rootChildren[0][0]).toEqual('Looping');
+      expect(rootChildren[0][1]).not.toBe('string');
+
+      const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
+      const loopingEntries = Object.entries(loopObject);
+      expect(loopingEntries.length).toEqual(1);
+      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $i)');
+      expect(loopingEntries[0][1]).not.toBe('string');
+
+      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $i)'] as MapDefinitionEntry;
+      const employeeForLoopEntries = Object.entries(employeeForObject);
+      expect(employeeForLoopEntries.length).toEqual(1);
+      expect(employeeForLoopEntries[0][0]).toEqual('Person');
+      expect(employeeForLoopEntries[0][1]).not.toBe('string');
+
+      const employeeObject = employeeForObject['Person'] as MapDefinitionEntry;
+      const employeeObjectEntries = Object.entries(employeeObject);
+      expect(employeeObjectEntries.length).toEqual(2);
+      expect(employeeObjectEntries[0][0]).toEqual('Address');
+      expect(employeeObjectEntries[0][1]).toEqual('TelephoneNumber');
       expect(employeeObjectEntries[1][0]).toEqual('Name');
       expect(employeeObjectEntries[1][1]).toEqual('Name');
     });
