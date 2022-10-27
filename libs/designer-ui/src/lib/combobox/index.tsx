@@ -99,7 +99,6 @@ export const Combobox = ({
       type: 'errorrender',
     };
     if (searchValue) {
-      comboBoxRef.current?.focus(true);
       const newOptions = isLoading
         ? [loadingOption]
         : errorDetails
@@ -157,6 +156,8 @@ export const Combobox = ({
   };
 
   const updateOptions = (value?: string): void => {
+    comboBoxRef.current?.focus(true);
+    setSelectedKey('');
     setSearchValue(value ?? '');
   };
 
