@@ -44,7 +44,7 @@ export const BrowseGrid = (props: BrowseGridProps) => {
   );
 
   return (
-    <div ref={ref} className="msla-result-list">
+    <div ref={ref} className="msla-browse-list">
       <List onRenderCell={onRenderCell} items={props.connectorBrowse} getPageHeight={() => (forceSingleCol ? 80 * 10 : 80 * 5)} />
     </div>
   );
