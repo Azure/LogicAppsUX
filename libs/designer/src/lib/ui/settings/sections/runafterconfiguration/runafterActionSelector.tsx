@@ -1,6 +1,6 @@
 import type { RootState } from '../../../../core';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useIconUri, useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
+import { useIconUri } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { addEdgeFromRunAfter, removeEdgeFromRunAfter } from '../../../../core/state/workflow/workflowSlice';
 import { Menu, MenuTrigger, MenuList, MenuPopover, MenuButton, Label, MenuItemCheckbox, Input, Button } from '@fluentui/react-components';
@@ -29,11 +29,10 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
 };
 
 const ActionMenuItem = ({ id }: { id: string; value: LogicAppsV2.ActionDefinition }) => {
-  const operationInfo = useOperationInfo(id);
-  const iconUri = useIconUri(operationInfo);
+  const iconUri = useIconUri(id);
   const actionName = useNodeDisplayName(id);
   return (
-    <MenuItemCheckbox name="actions" value={id} icon={<img style={{ height: '24px', width: '24px' }} src={iconUri.result} alt="" />}>
+    <MenuItemCheckbox name="actions" value={id} icon={<img style={{ height: '24px', width: '24px' }} src={iconUri} alt="" />}>
       <Label style={{ overflow: 'hidden' }}>{actionName}</Label>
     </MenuItemCheckbox>
   );
