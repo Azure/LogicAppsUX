@@ -79,10 +79,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     dispatch(showDefaultTabs());
   }, [dispatch, id]);
 
-  const brandColorResult = useBrandColor(operationInfo);
-  const iconUriResult = useIconUri(operationInfo);
+  const brandColor = useBrandColor(id);
+  const iconUri = useIconUri(id);
 
-  const brandColor = brandColorResult.result;
   const comment = useMemo(
     () =>
       nodeComment
@@ -127,8 +126,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
   const isLoading = useMemo(
-    () => iconUriResult.isLoading || brandColorResult.isLoading || connectionResult.isLoading,
-    [iconUriResult, brandColorResult, connectionResult]
+    () => !brandColor || !iconUri || connectionResult.isLoading,
+    [brandColor, iconUri, connectionResult.isLoading]
   );
 
   return (
@@ -137,7 +136,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
           title={label}
-          icon={iconUriResult.result}
+          icon={iconUri}
           draggable={!readOnly && !isTrigger}
           brandColor={brandColor}
           id={id}

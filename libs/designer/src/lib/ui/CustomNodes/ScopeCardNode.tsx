@@ -4,7 +4,7 @@ import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
-import { useBrandColor, useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useBrandColor, useIconUri } from '../../core/state/selectors/actionMetadataSelector';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
@@ -38,7 +38,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isMonitoringView = useMonitoringView();
 
   const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
-  const operationInfo = useOperationInfo(scopeId);
   const metadata = useNodeMetadata(scopeId);
 
   const [{ isDragging }, drag, dragPreview] = useDrag(
@@ -73,8 +72,8 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   );
 
   const selected = useIsNodeSelected(scopeId);
-  const brandColor = useBrandColor(operationInfo);
-  const iconUri = useIconUri(operationInfo);
+  const brandColor = useBrandColor(scopeId);
+  const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
 
   const label = useNodeDisplayName(scopeId);
@@ -147,9 +146,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         <div className="msla-scope-card nopan">
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
-            brandColor={brandColor.result}
-            icon={iconUri.result}
-            isLoading={iconUri.isLoading}
+            brandColor={brandColor}
+            icon={iconUri}
+            isLoading={!brandColor && !iconUri}
             collapsed={graphCollapsed}
             handleCollapse={handleGraphCollapse}
             drag={drag}
