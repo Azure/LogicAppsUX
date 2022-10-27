@@ -5,32 +5,32 @@ import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
 
 export interface TokenNodeProps {
+  title: string;
+  data: ValueSegment;
+  icon?: string;
   brandColor?: string;
   value?: string;
-  data: ValueSegment;
-  icon: string;
-  title: string;
   showTokenPickerSwitch?: (show?: boolean) => void;
 }
 
 export type SerailizedTokenNode = Spread<
   {
-    icon: string;
     title: string;
     data: ValueSegment;
-    value?: string;
+    icon?: string;
     brandColor?: string;
+    value?: string;
     type: 'token';
     version: 1;
   },
   SerializedLexicalNode
 >;
 export class TokenNode extends DecoratorNode<JSX.Element> {
-  __brandColor?: string;
-  __value?: string;
-  __icon: string;
   __title: string;
   __data: ValueSegment;
+  __icon?: string;
+  __brandColor?: string;
+  __value?: string;
   __showTokenPickerSwitch?: (show?: boolean) => void;
 
   static getType() {
@@ -38,26 +38,26 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   static clone(node: TokenNode) {
-    return new TokenNode(node.__icon, node.__title, node.__data, node.__value, node.__brandColor, node.__showTokenPickerSwitch, node.__key);
+    return new TokenNode(node.__title, node.__data, node.__icon, node.__brandColor, node.__value, node.__showTokenPickerSwitch, node.__key);
   }
 
   static importJSON(serializedTokenNode: SerailizedTokenNode): TokenNode {
     return new TokenNode(
-      serializedTokenNode.icon,
       serializedTokenNode.title,
       serializedTokenNode.data,
-      serializedTokenNode.value,
-      serializedTokenNode.brandColor
+      serializedTokenNode.icon,
+      serializedTokenNode.brandColor,
+      serializedTokenNode.value
     );
   }
 
   exportJSON(): SerailizedTokenNode {
     return {
       title: this.__title,
+      data: this.__data,
       icon: this.__icon,
       value: this.__value,
       brandColor: this.__brandColor,
-      data: this.__data,
       type: 'token',
       version: 1,
     };
@@ -79,11 +79,11 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   }
 
   constructor(
-    icon: string,
     title: string,
     data: ValueSegment,
-    value?: string,
+    icon?: string,
     brandColor?: string,
+    value?: string,
     showTokenPickerSwitch?: (show?: boolean) => void,
     key?: string
   ) {
@@ -111,7 +111,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
         value={this.__value}
         icon={this.__icon}
         title={this.__title}
-        brandColor={this.__brandColor}
+        brandColor={this.__brandColor ?? 'black'}
         nodeKey={this.__key}
         isSecure={this.__data.token?.isSecure}
         showTokenPickerSwitch={this.__showTokenPickerSwitch}
@@ -121,7 +121,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
 }
 
 export function $createTokenNode({ icon, title, data, value, brandColor, showTokenPickerSwitch }: TokenNodeProps) {
-  return new TokenNode(`url("${icon}")`, title, data, value, brandColor, showTokenPickerSwitch);
+  return new TokenNode(title, data, icon ? `url("${icon}")` : undefined, brandColor ?? 'black', value, showTokenPickerSwitch);
 }
 
 export function $isTokenNode(node: LexicalNode | null): node is TokenNode {
