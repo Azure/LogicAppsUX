@@ -566,7 +566,8 @@ function NetworkingSettings(): JSX.Element | null {
       ({ key }) =>
         key === ValidationErrorKeys.PAGING_COUNT ||
         key === ValidationErrorKeys.RETRY_COUNT_INVALID ||
-        key === ValidationErrorKeys.RETRY_INTERVAL_INVALID
+        key === ValidationErrorKeys.RETRY_INTERVAL_INVALID ||
+        key === ValidationErrorKeys.RETRY_INTERVAL_EMPTY
     ),
     onRetryPolicyChange,
     onRetryCountChange,

@@ -338,11 +338,7 @@ export const Networking = ({
       { title: 'Fixed Interval', value: constants.RETRY_POLICY_TYPE.FIXED },
     ];
 
-    // const customRetryPolicySetting = this._settingStoreUtility.getCustomRetryPolicySettings(this.props.graphNodeId);
-    // const description = (customRetryPolicySetting && customRetryPolicySetting.description) || Resources.RETRY_POLICY_DESCRIPTION;
-    // const customMinValue = (customRetryPolicySetting && customRetryPolicySetting.minValue) || undefined;
-    // const customMaxValue = (customRetryPolicySetting && customRetryPolicySetting.maxValue) || undefined;
-    // const policies = (customRetryPolicySetting && customRetryPolicySetting.customOptions) || defaultPolicies;
+    // TODO: Implement custom retry policy logic (couldn't find any connectors that use this though)
 
     return {
       settingType: 'SettingDropdown',
