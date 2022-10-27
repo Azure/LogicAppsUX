@@ -225,34 +225,36 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     <div className={classes.badgeContainer}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge />}
 
-      <div className={containerStyle} onMouseLeave={() => setIsHovered(false)} onMouseEnter={() => setIsHovered(true)}>
-        {displayHandle && (
-          <Handle
-            type={isSourceSchemaNode ? 'source' : 'target'}
-            position={isSourceSchemaNode ? Position.Right : Position.Left}
-            style={handleStyle}
-            isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
-          />
-        )}
-        {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
-        <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
-          <span className={classes.cardIcon}>
-            <BundledTypeIcon />
-          </span>
+      <Tooltip relationship="label" content={schemaNode.name}>
+        <div className={containerStyle} onMouseLeave={() => setIsHovered(false)} onMouseEnter={() => setIsHovered(true)}>
+          {displayHandle && (
+            <Handle
+              type={isSourceSchemaNode ? 'source' : 'target'}
+              position={isSourceSchemaNode ? Position.Right : Position.Left}
+              style={handleStyle}
+              isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
+            />
+          )}
+          {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
+          <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
+            <span className={classes.cardIcon}>
+              <BundledTypeIcon />
+            </span>
 
-          <Text className={classes.cardText} style={{ width: !isSourceSchemaNode ? '100%' : '136px' }} block={true} nowrap={true}>
-            {schemaNode.name}
-          </Text>
-        </Button>
-        {showOutputChevron && (
-          <Button
-            className={classes.cardChevron}
-            onClick={outputChevronOnClick}
-            icon={<ChevronRight16Regular />}
-            appearance={'transparent'}
-          />
-        )}
-      </div>
+            <Text className={classes.cardText} style={{ width: !isSourceSchemaNode ? '100%' : '136px' }} block={true} nowrap={true}>
+              {schemaNode.name}
+            </Text>
+          </Button>
+          {showOutputChevron && (
+            <Button
+              className={classes.cardChevron}
+              onClick={outputChevronOnClick}
+              icon={<ChevronRight16Regular />}
+              appearance={'transparent'}
+            />
+          )}
+        </div>
+      </Tooltip>
 
       {isNBadgeRequired && isSourceSchemaNode && <NBadge />}
     </div>
