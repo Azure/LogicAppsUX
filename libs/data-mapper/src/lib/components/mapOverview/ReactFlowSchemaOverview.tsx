@@ -6,7 +6,7 @@ import { Badge, makeStyles, shorthands } from '@fluentui/react-components';
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { useViewport } from 'reactflow';
 
-// TODO: Status icon - probably needs to be on actual SchemaNodeCard component
+// TODO (#16023841): Status icon - probably needs to be on actual SchemaNodeCard component
 
 const reactFlowStyle: React.CSSProperties = {
   height: '100%',
