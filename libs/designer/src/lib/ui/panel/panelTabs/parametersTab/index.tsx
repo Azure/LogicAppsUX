@@ -22,15 +22,18 @@ import { SettingsSection } from '../../../settings/settingsection';
 import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { equals } from '@microsoft-logic-apps/utils';
-import { DynamicCallStatus, TokenPicker, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
-  const rootState = useSelector((state: RootState) => state);
+  const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
+    tokenState: state.tokens,
+    workflowParametersState: state.workflowParameters,
+  }));
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNodeId]?.type);
   const readOnly = useReadOnly();
 
@@ -38,50 +41,17 @@ export const ParametersTab = () => {
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
 
-  const tokenGroup = getOutputTokenSections(rootState, selectedNodeId, nodeType);
+  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState);
   const expressionGroup = getExpressionTokenSections();
 
-  const parameterGroup = useMemo(() => {
-    const group = Object.keys(inputs.parameterGroups ?? {}).map((sectionName) => {
-      const paramGroup = {
-        ...inputs.parameterGroups[sectionName],
-        parameters: inputs.parameterGroups[sectionName].parameters.map((param) => {
-          const paramValue = {
-            ...param,
-            value: param.value.map((valSegment) => {
-              if (valSegment.type === ValueSegmentType.TOKEN && valSegment.token?.tokenType === TokenType.OUTPUTS) {
-                let icon: string | undefined;
-                let brandColor: string | undefined;
-                Object.keys(rootState.tokens.outputTokens ?? {}).forEach((token) => {
-                  rootState.tokens.outputTokens[token].tokens.find((output) => {
-                    if (!icon && valSegment.token && output.key === valSegment.token.key) {
-                      icon = output.icon;
-                      brandColor = output.brandColor;
-                      return null;
-                    }
-                    return null;
-                  });
-                });
-                return { ...valSegment, token: { ...valSegment.token, icon: icon, brandColor: brandColor } };
-              }
-              return valSegment;
-            }),
-          };
-          return paramValue;
-        }),
-      };
-      return paramGroup;
-    });
-    return group;
-  }, [inputs.parameterGroups, rootState.tokens.outputTokens]);
   return (
     <>
-      {parameterGroup.map((section, index) => (
-        <div key={index}>
+      {Object.keys(inputs?.parameterGroups ?? {}).map((sectionName) => (
+        <div key={sectionName}>
           <ParameterSection
             key={selectedNodeId}
             nodeId={selectedNodeId}
-            group={section}
+            group={inputs.parameterGroups[sectionName]}
             readOnly={readOnly}
             tokenGroup={tokenGroup}
             expressionGroup={expressionGroup}
@@ -178,9 +148,11 @@ const ParameterSection = ({
         getAllVariables(variables),
         nodeSettings,
         dispatch,
+        rootState,
         operationDefinition
       );
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       nodeId,
       group.id,
@@ -198,7 +170,17 @@ const ParameterSection = ({
 
   const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
     if (parameter.dynamicData?.status === DynamicCallStatus.FAILED || parameter.dynamicData?.status === DynamicCallStatus.NOTSTARTED) {
-      loadDynamicValuesForParameter(nodeId, group.id, parameter.id, operationInfo, connectionReference, nodeInputs, dependencies, dispatch);
+      loadDynamicValuesForParameter(
+        nodeId,
+        group.id,
+        parameter.id,
+        operationInfo,
+        connectionReference,
+        nodeInputs,
+        dependencies,
+        true /* showErrorWhenNotReady */,
+        dispatch
+      );
     }
   };
 

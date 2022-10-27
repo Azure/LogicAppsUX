@@ -6,12 +6,7 @@ import {
   useWorkflowParameterValidationErrors,
 } from '../../core/state/workflowparameters/workflowparametersselector';
 import { Panel, PanelType } from '@fluentui/react';
-import { unmap } from '@microsoft-logic-apps/utils';
-import type {
-  CommonPanelProps,
-  WorkflowParameterUpdateEvent,
-  WorkflowParameterDefinition as WorkflowParameterUIDefinition,
-} from '@microsoft/designer-ui';
+import type { CommonPanelProps, WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { WorkflowParameters } from '@microsoft/designer-ui';
 import { useDispatch } from 'react-redux';
 
@@ -33,7 +28,7 @@ export const WorkflowParametersPanel = (props: CommonPanelProps) => {
   return (
     <Panel isLightDismiss type={PanelType.medium} isOpen={!props.isCollapsed} onDismiss={onDismiss} hasCloseButton={false}>
       <WorkflowParameters
-        parameters={unmap(workflowParameters, 'id') as WorkflowParameterUIDefinition[]}
+        parameters={Object.entries(workflowParameters).map(([key, value]) => ({ id: key, ...value }))}
         isReadOnly={readOnly}
         validationErrors={workflowParametersValidationErrors}
         onAddParameter={onWorkflowParameterAdd}

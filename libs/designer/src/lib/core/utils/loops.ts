@@ -120,9 +120,9 @@ export const addForeachToNode = createAsyncThunk(
     updateTokenMetadataInForeachInputs(nodeInputs, token, newState);
     const manifest = await getOperationManifest(foreachOperationInfo);
     const { iconUri, brandColor } = manifest.properties;
-    const initData = { id: foreachNodeId, nodeInputs, nodeOutputs, nodeDependencies, settings };
+    const initData = { id: foreachNodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata: { iconUri, brandColor } };
     dispatch(initializeNodes([initData]));
-    addTokensAndVariables(foreachNodeId, Constants.NODE.TYPE.FOREACH, { ...initData, iconUri, brandColor, manifest }, newState, dispatch);
+    addTokensAndVariables(foreachNodeId, Constants.NODE.TYPE.FOREACH, { ...initData, manifest }, newState, dispatch);
 
     updateAllUpstreamNodes(getState() as RootState, dispatch);
     return;
@@ -540,8 +540,7 @@ const updateTokenMetadataInForeachInputs = (inputs: NodeInputs, token: OutputTok
     [tokenOwnerNodeId]: {
       settings: rootState.operations.settings[tokenOwnerNodeId],
       nodeOutputs: rootState.operations.outputParameters[tokenOwnerNodeId],
-      brandColor: token.brandColor,
-      iconUri: token.icon,
+      operationMetadata: { brandColor: token.brandColor, iconUri: token.icon },
     },
   } as Record<string, NodeDataWithOperationMetadata>;
   for (const parameter of allParameters) {

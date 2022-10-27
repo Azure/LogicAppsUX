@@ -16,14 +16,16 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
   }
 
   value.forEach((segment) => {
+    const segmentValue = segment.value;
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
-      const { brandColor, icon, title, value, source } = segment.token;
-      if (brandColor && value && icon && title) {
-        const token = $createTokenNode({ icon, title: source ?? title, value: title ?? value, brandColor, data: segment });
+      const { brandColor, icon, title, name } = segment.token;
+
+      if (brandColor && icon && (title || name)) {
+        const token = $createTokenNode({ icon, title: title ?? name, value: segmentValue, brandColor, data: segment });
         tokensEnabled && paragraph.append(token);
       }
     } else {
-      const splitSegment = segment.value.split('\n');
+      const splitSegment = segmentValue.split('\n');
       paragraph.append($createTextNode(splitSegment[0]));
       for (let i = 1; i < splitSegment.length; i++) {
         root.append(paragraph);

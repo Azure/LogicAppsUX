@@ -3,8 +3,9 @@ import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/opera
 import type { Settings } from '../actions/bjsworkflow/settings';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodeOperation, OutputInfo } from '../state/operation/operationMetadataSlice';
+import type { TokensState } from '../state/tokensSlice';
 import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
-import type { WorkflowParameterDefinition } from '../state/workflowparameters/workflowparametersSlice';
+import type { WorkflowParameterDefinition, WorkflowParametersState } from '../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../store';
 import { getAllNodesInsideNode, getTriggerNodeId, getUpstreamNodeIds } from './graph';
 import { getForeachActionName, getRepetitionNodeIds, getTokenExpressionValueForManifestBasedOperation, shouldAddForeach } from './loops';
@@ -160,9 +161,14 @@ export const getExpressionTokenSections = (): TokenGroup[] => {
   });
 };
 
-export const getOutputTokenSections = (state: RootState, nodeId: string, nodeType: string): TokenGroup[] => {
-  const { definitions } = state.workflowParameters;
-  const { variables, outputTokens } = state.tokens;
+export const getOutputTokenSections = (
+  nodeId: string,
+  nodeType: string,
+  tokenState: TokensState,
+  workflowParametersState: WorkflowParametersState
+): TokenGroup[] => {
+  const { definitions } = workflowParametersState;
+  const { variables, outputTokens } = tokenState;
   const nodeTokens = outputTokens[nodeId];
   const tokenGroups: TokenGroup[] = [];
 

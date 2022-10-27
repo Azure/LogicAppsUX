@@ -12,7 +12,7 @@ import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { isRootNodeInGraph } from '../../utils/graph';
-import { loadDynamicData } from '../../utils/parameters/helper';
+import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
 import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
@@ -94,9 +94,9 @@ const initializeOperationDetails = async (
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(manifest, isTrigger, nodeInputs);
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, manifest, /* swagger */ undefined);
-    initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings };
+    initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata: { iconUri, brandColor } };
     dispatch(initializeNodes([initData]));
-    addTokensAndVariables(nodeId, type, { ...initData, iconUri, brandColor, manifest }, state, dispatch);
+    addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
     const [, { connector, parsedSwagger }] = await Promise.all([
       trySetDefaultConnectionForNode(nodeId, connectorId, dispatch),
@@ -120,19 +120,19 @@ const initializeOperationDetails = async (
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
     const settings = getOperationSettings(isTrigger, operationInfo, nodeOutputs, /* manifest */ undefined, parsedSwagger);
 
-    initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings };
+    initData = { id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata: { iconUri, brandColor } };
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(
       nodeId,
       type,
-      { id: nodeId, nodeInputs, nodeOutputs, settings, iconUri, brandColor, nodeDependencies },
+      { id: nodeId, nodeInputs, nodeOutputs, settings, operationMetadata: { iconUri, brandColor }, nodeDependencies },
       state,
       dispatch
     );
   }
 
   if (!isConnectionRequired) {
-    loadDynamicData(
+    updateDynamicDataInNode(
       nodeId,
       isTrigger,
       operationInfo,
@@ -141,7 +141,8 @@ const initializeOperationDetails = async (
       initData.nodeInputs,
       initData.settings as Settings,
       getAllVariables(getState().tokens.variables),
-      dispatch
+      dispatch,
+      getState()
     );
   } else {
     await trySetDefaultConnectionForNode(nodeId, connectorId, dispatch);
@@ -160,7 +161,7 @@ export const initializeSwitchCaseFromManifest = async (id: string, manifest: Ope
     undefined
   );
   const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-  const initData = { id, nodeInputs, nodeOutputs, nodeDependencies };
+  const initData = { id, nodeInputs, nodeOutputs, nodeDependencies, operationMetadata: { iconUri: '', brandColor: '' } };
   dispatch(initializeNodes([initData]));
 };
 
@@ -182,7 +183,13 @@ export const addTokensAndVariables = (
   dispatch: Dispatch
 ): void => {
   const { graph, nodesMetadata, operations } = state.workflow;
-  const { nodeInputs, nodeOutputs, settings, iconUri, brandColor, manifest } = nodeData;
+  const {
+    nodeInputs,
+    nodeOutputs,
+    settings,
+    operationMetadata: { iconUri, brandColor },
+    manifest,
+  } = nodeData;
   const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {
     [nodeId]: nodeId,
   });
