@@ -193,11 +193,12 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const [isChevronHovered, setIsChevronHovered] = useState<boolean>(false);
   const [isTooltipEnabled, setIsTooltipEnabled] = useState<boolean>(false);
 
-  const isNodeConnected = useMemo(() => {
-    return (
-      connections[reactFlowId] && (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0)
-    );
-  }, [connections, reactFlowId]);
+  const isNodeConnected = useMemo(
+    () =>
+      connections[reactFlowId] &&
+      (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0),
+    [connections, reactFlowId]
+  );
 
   const isSourceSchemaNode = useMemo(() => schemaType === SchemaType.Source, [schemaType]);
   const showOutputChevron = useMemo(() => !isSourceSchemaNode && !isLeaf && displayChevron, [isSourceSchemaNode, displayChevron, isLeaf]);
