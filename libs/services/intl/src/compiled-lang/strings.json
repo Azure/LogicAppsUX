@@ -405,12 +405,6 @@
       "value": "Each run after configuration must have at least one status checked"
     }
   ],
-  "1diflT": [
-    {
-      "type": 0,
-      "value": "Retry Policy interval cannot be empty"
-    }
-  ],
   "1ejxkP": [
     {
       "type": 0,

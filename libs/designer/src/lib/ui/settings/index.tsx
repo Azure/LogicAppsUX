@@ -52,9 +52,9 @@ export const SettingsPanel = (): JSX.Element => {
 };
 
 function GeneralSettings(): JSX.Element | null {
-  const { validate: triggerValidation, validationErrors } = useValidate();
   const dispatch = useDispatch();
   const nodeId = useSelectedNodeId();
+  const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const { expandedSections, isTrigger, nodeInputs, operationInfo, settings, operations } = useSelector((state: RootState) => {
     return {
       expandedSections: state.settings.expandedSections,
@@ -359,10 +359,10 @@ function DataHandlingSettings(): JSX.Element | null {
 }
 
 function NetworkingSettings(): JSX.Element | null {
-  const { validate: triggerValidation, validationErrors } = useValidate();
+  const nodeId = useSelectedNodeId();
+  const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
-  const nodeId = useSelectedNodeId();
   const {
     asynchronous,
     disableAsyncPattern,
@@ -485,7 +485,6 @@ function NetworkingSettings(): JSX.Element | null {
       retryPolicy: {
         isSupported: !!retryPolicy?.isSupported,
         value: {
-          ...retryPolicy?.value,
           type: selectedOption.key.toString(),
         },
       },
@@ -566,8 +565,7 @@ function NetworkingSettings(): JSX.Element | null {
       ({ key }) =>
         key === ValidationErrorKeys.PAGING_COUNT ||
         key === ValidationErrorKeys.RETRY_COUNT_INVALID ||
-        key === ValidationErrorKeys.RETRY_INTERVAL_INVALID ||
-        key === ValidationErrorKeys.RETRY_INTERVAL_EMPTY
+        key === ValidationErrorKeys.RETRY_INTERVAL_INVALID
     ),
     onRetryPolicyChange,
     onRetryCountChange,
@@ -591,10 +589,10 @@ function NetworkingSettings(): JSX.Element | null {
 }
 
 function RunAfterSettings(): JSX.Element | null {
-  const { validate: triggerValidation, validationErrors } = useValidate();
+  const nodeId = useSelectedNodeId();
+  const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const dispatch = useDispatch();
   const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
-  const nodeId = useSelectedNodeId();
   const operations = useSelector((state: RootState) => state.operations);
   const { runAfter } = operations.settings?.[nodeId] ?? {};
 
