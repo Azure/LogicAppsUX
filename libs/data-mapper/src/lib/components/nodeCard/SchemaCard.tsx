@@ -5,11 +5,11 @@ import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperties, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
+import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { flattenInputs, isValidInputToFunctionNode, isValidSchemaNodeToSchemaNodeConnection } from '../../utils/Connection.Utils';
-import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
+import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
-import { Text } from '@fluentui/react';
 import {
   Badge,
   Button,
@@ -22,11 +22,14 @@ import {
   typographyStyles,
 } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight16Regular, ChevronRight16Filled, Important12Filled } from '@fluentui/react-icons';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
+
+const badgeContainerWidth = schemaNodeCardWidth + 72;
+const contentBtnWidth = schemaNodeCardWidth - 30;
 
 const useStyles = makeStyles({
   container: {
@@ -69,11 +72,11 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     float: 'right',
-    width: '272px',
+    width: `${badgeContainerWidth}px`,
   },
   contentButton: {
     height: '48px',
-    width: '170px',
+    width: `${contentBtnWidth}px`,
     ...shorthands.border('0px'),
     ...shorthands.padding('0px'),
     marginRight: '0px',
@@ -98,7 +101,9 @@ const useStyles = makeStyles({
     alignSelf: 'center',
     color: tokens.colorNeutralForeground1,
     textAlign: 'left',
-    width: '100%',
+    ...shorthands.overflow('hidden'),
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
   },
   cardChevron: {
     color: tokens.colorNeutralForeground3,
@@ -110,7 +115,7 @@ const useStyles = makeStyles({
   disabled: {
     opacity: 0.38,
   },
-  outputChildCard: {
+  schemaChildCard: {
     width: `${childTargetNodeCardWidth}px`,
   },
 
@@ -183,28 +188,33 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
+  const schemaNameTextRef = useRef<HTMLDivElement>(null);
   const [_isCardHovered, setIsCardHovered] = useState<boolean>(false);
   const [isChevronHovered, setIsChevronHovered] = useState<boolean>(false);
+  const [isTooltipEnabled, setIsTooltipEnabled] = useState<boolean>(false);
 
-  const isNodeConnected = useMemo(() => {
-    return (
-      connections[reactFlowId] && (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0)
-    );
-  }, [connections, reactFlowId]);
+  const isNodeConnected = useMemo(
+    () =>
+      connections[reactFlowId] &&
+      (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0),
+    [connections, reactFlowId]
+  );
 
   const isSourceSchemaNode = useMemo(() => schemaType === SchemaType.Source, [schemaType]);
-  const isOutputChildNode = useMemo(() => !isSourceSchemaNode && isChild, [isSourceSchemaNode, isChild]);
   const showOutputChevron = useMemo(() => !isSourceSchemaNode && !isLeaf && displayChevron, [isSourceSchemaNode, displayChevron, isLeaf]);
   const isNBadgeRequired = useMemo(
     () => isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating,
     [isNodeConnected, schemaNode]
   );
+  const shouldNameTooltipDisplay = schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false;
 
   const containerStyle = useMemo(() => {
     const newContStyles = [sharedStyles.root, classes.container];
 
-    if (isOutputChildNode) {
-      newContStyles.push(classes.outputChildCard);
+    // Need to style both source and target schema child nodes on overview
+    // - doesn't seem to affect canvas source schema nodes
+    if (isChild) {
+      newContStyles.push(classes.schemaChildCard);
     }
 
     if (disabled) {
@@ -212,7 +222,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     }
 
     return mergeClasses(...newContStyles);
-  }, [isOutputChildNode, disabled, classes, sharedStyles]);
+  }, [isChild, disabled, classes, sharedStyles]);
 
   const outputChevronOnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -221,44 +231,53 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
-  const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType, schemaNode.properties);
+  const BundledTypeIcon = iconForSchemaNodeDataType(schemaNode.schemaNodeDataType, 24, false, schemaNode.properties);
 
   return (
     <div className={classes.badgeContainer}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge />}
 
-      <Tooltip relationship="label" content={schemaNode.name}>
-        <div className={containerStyle} onMouseLeave={() => setIsCardHovered(false)} onMouseEnter={() => setIsCardHovered(true)}>
-          {displayHandle && (
-            <Handle
-              type={isSourceSchemaNode ? 'source' : 'target'}
-              position={isSourceSchemaNode ? Position.Right : Position.Left}
-              style={handleStyle}
-              isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
-            />
-          )}
-          {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
-          <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
-            <span className={classes.cardIcon}>
-              <BundledTypeIcon />
-            </span>
+      <div className={containerStyle} onMouseLeave={() => setIsCardHovered(false)} onMouseEnter={() => setIsCardHovered(true)}>
+        {displayHandle && (
+          <Handle
+            type={isSourceSchemaNode ? 'source' : 'target'}
+            position={isSourceSchemaNode ? Position.Right : Position.Left}
+            style={handleStyle}
+            isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
+          />
+        )}
+        {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
+        <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
+          <span className={classes.cardIcon}>
+            <BundledTypeIcon />
+          </span>
 
-            <Text className={classes.cardText} style={{ width: !isSourceSchemaNode ? '100%' : '136px' }} block={true} nowrap={true}>
+          <Tooltip
+            relationship="label"
+            content={schemaNode.name}
+            visible={shouldNameTooltipDisplay && isTooltipEnabled}
+            onVisibleChange={(_ev, data) => setIsTooltipEnabled(data.visible)}
+          >
+            <div
+              ref={schemaNameTextRef}
+              className={classes.cardText}
+              style={{ width: !isSourceSchemaNode ? `${contentBtnWidth}px` : '136px' }}
+            >
               {schemaNode.name}
-            </Text>
-          </Button>
-          {showOutputChevron && (
-            <Button
-              className={classes.cardChevron}
-              onClick={outputChevronOnClick}
-              icon={<ChevronIcon filled={isChevronHovered ? true : undefined} />}
-              appearance={'transparent'}
-              onMouseEnter={() => setIsChevronHovered(true)}
-              onMouseLeave={() => setIsChevronHovered(false)}
-            />
-          )}
-        </div>
-      </Tooltip>
+            </div>
+          </Tooltip>
+        </Button>
+        {showOutputChevron && (
+          <Button
+            className={classes.cardChevron}
+            onClick={outputChevronOnClick}
+            icon={<ChevronIcon filled={isChevronHovered ? true : undefined} />}
+            appearance={'transparent'}
+            onMouseEnter={() => setIsChevronHovered(true)}
+            onMouseLeave={() => setIsChevronHovered(false)}
+          />
+        )}
+      </div>
 
       {isNBadgeRequired && isSourceSchemaNode && <NBadge />}
     </div>

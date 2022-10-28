@@ -1,14 +1,15 @@
 import { showNotification, updateConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
+import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
 import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
 import { isFunctionData, getFunctionOutputValue, functionInputHasInputs } from '../../utils/Function.Utils';
+import { iconForNormalizedDataType, iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { NotificationTypes } from '../notification/Notification';
-import { Dropdown, SelectableOptionMenuItemType, TextField } from '@fluentui/react';
+import { Dropdown, SelectableOptionMenuItemType, Stack, TextField } from '@fluentui/react';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
 import { Button, makeStyles, Tooltip } from '@fluentui/react-components';
 import { Dismiss20Regular } from '@fluentui/react-icons';
@@ -20,19 +21,20 @@ import { useDispatch, useSelector } from 'react-redux';
 const customValueOptionKey = 'customValue';
 const customValueDebounceDelay = 300;
 
-interface InputOption {
+interface SharedOptionData {
+  isFunction: boolean;
+  schemaNodeDataType?: SchemaNodeDataType; // Will be preferentially used over normalized type if present (should just be source schema nodes)
+  normalizedDataType: NormalizedDataType;
+}
+
+interface InputOption extends SharedOptionData {
   nodeKey: string;
   nodeName: string;
-  isFunctionNode: boolean;
 }
 
 type InputOptionDictionary = {
   [key: string]: InputOption[];
 };
-
-interface InputOptionData {
-  isFunction: boolean;
-}
 
 const useStyles = makeStyles({
   inputStyles: {
@@ -75,16 +77,54 @@ export const InputDropdown = (props: InputDropdownProps) => {
     description: 'Tooltip content for clearing custom value',
   });
 
-  const onRenderOption = (item?: IDropdownOption) => {
-    switch (item?.key) {
-      case customValueOptionKey:
-        return <span style={{ color: 'rgb(0, 120, 212)' }}>{item?.text}</span>;
-      default:
-        return <span>{item?.text}</span>;
+  const onRenderTitle = (items?: IDropdownOption<SharedOptionData>[]) => {
+    if (!items || items.length === 0 || !items[0].data) {
+      return null;
+    }
+
+    if (items.length > 1) {
+      console.error('InputDropdown attempted to render more than one selected item');
+      return null;
+    }
+
+    const TypeIcon = items[0].data.schemaNodeDataType
+      ? iconForSchemaNodeDataType(items[0].data.schemaNodeDataType, 16, false)
+      : iconForNormalizedDataType(items[0].data.normalizedDataType, 16, false);
+
+    return (
+      <Stack horizontal verticalAlign="center">
+        <TypeIcon />
+        <div style={{ marginLeft: 4 }}>{items[0].text}</div>
+      </Stack>
+    );
+  };
+
+  const onRenderOption = (item?: IDropdownOption<SharedOptionData>) => {
+    if (!item) {
+      return null;
+    }
+
+    if (item.key === customValueOptionKey) {
+      return <span style={{ color: 'rgb(0, 120, 212)' }}>{item?.text}</span>;
+    } else {
+      if (!item.data) {
+        return null;
+      }
+
+      const TypeIcon = item.data.schemaNodeDataType
+        ? iconForSchemaNodeDataType(item.data.schemaNodeDataType, 16, false)
+        : iconForNormalizedDataType(item.data.normalizedDataType, 16, false);
+
+      return (
+        <Stack horizontal verticalAlign="center">
+          <TypeIcon />
+          <div style={{ marginLeft: 4 }}>{item.text}</div>
+        </Stack>
+      );
     }
   };
 
-  const onSelectOption = (option?: IDropdownOption<InputOptionData>) => {
+  const onSelectOption = (option?: IDropdownOption<SharedOptionData>) => {
     // Don't do anything if same value
     if (!option || option.key === inputValue) {
       return;
@@ -101,7 +141,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
   };
 
-  const validateAndCreateConnection = (option: IDropdownOption<InputOptionData>) => {
+  const validateAndCreateConnection = (option: IDropdownOption<SharedOptionData>) => {
     if (!option.data) {
       console.error('InputDropdown called to create connection without necessary data');
       return;
@@ -188,7 +228,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
       newPossibleInputOptionsDictionary[srcNode.normalizedDataType].push({
         nodeKey: addSourceReactFlowPrefix(srcNode.key),
         nodeName: srcNode.name,
-        isFunctionNode: false,
+        isFunction: false,
+        schemaNodeDataType: srcNode.schemaNodeDataType,
+        normalizedDataType: srcNode.normalizedDataType,
       });
     });
 
@@ -233,7 +275,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
       newPossibleInputOptionsDictionary[node.outputValueType].push({
         nodeKey: key,
         nodeName: getFunctionOutputValue(fnInputValues, node.functionName),
-        isFunctionNode: true,
+        isFunction: true,
+        schemaNodeDataType: undefined,
+        normalizedDataType: node.outputValueType,
       });
     });
 
@@ -241,17 +285,19 @@ export const InputDropdown = (props: InputDropdownProps) => {
   }, [currentSourceSchemaNodes, functionNodeDictionary, connectionDictionary, selectedItemKey]);
 
   // Compile options from the possible type-sorted input options based on the input's type
-  const typeMatchedInputOptions = useMemo<IDropdownOption<InputOptionData>[] | undefined>(() => {
-    let newInputOptions: IDropdownOption<InputOptionData>[] = [];
+  const typeMatchedInputOptions = useMemo<IDropdownOption<SharedOptionData>[] | undefined>(() => {
+    let newInputOptions: IDropdownOption<SharedOptionData>[] = [];
 
     const addTypeMatchedOptions = (typeEntryArray: InputOption[]) => {
       newInputOptions = [
         ...newInputOptions,
-        ...typeEntryArray.map<IDropdownOption<InputOptionData>>((possibleOption) => ({
+        ...typeEntryArray.map<IDropdownOption<SharedOptionData>>((possibleOption) => ({
           key: possibleOption.nodeKey,
           text: possibleOption.nodeName,
           data: {
-            isFunction: possibleOption.isFunctionNode,
+            isFunction: possibleOption.isFunction,
+            schemaNodeDataType: possibleOption.schemaNodeDataType,
+            normalizedDataType: possibleOption.normalizedDataType,
           },
         })),
       ];
@@ -311,6 +357,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           placeholder={placeholder}
           className={styles.inputStyles}
           styles={{ root: { ...inputStyles } }}
+          onRenderTitle={onRenderTitle}
           onRenderOption={onRenderOption}
         />
       ) : (
