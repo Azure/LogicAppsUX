@@ -1,5 +1,5 @@
 import type { SchemaNodeExtended } from '../../models';
-import { icon16ForSchemaNodeType } from '../../utils/Icon.Utils';
+import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { SourceTreeItemContent } from './SourceSchemaTreeItem';
 import { TargetTreeItemContent } from './TargetSchemaTreeItem';
 import { Caption1, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
@@ -87,7 +87,7 @@ const FastTreeItem = wrap(
 );
 
 export const SharedTreeItemContent = (node: SchemaNodeExtended, isSelected: boolean): JSX.Element => {
-  const BundledTypeIcon = icon16ForSchemaNodeType(node.schemaNodeDataType, node.properties);
+  const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, false, node.properties);
   return (
     <span style={{ display: 'flex', paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} slot="start">
       <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={isSelected ? true : undefined} />
