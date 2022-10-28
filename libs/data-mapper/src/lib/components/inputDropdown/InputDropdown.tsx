@@ -5,7 +5,7 @@ import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
-import { isFunctionData, getFunctionOutputValue } from '../../utils/Function.Utils';
+import { isFunctionData, getFunctionOutputValue, functionInputHasInputs } from '../../utils/Function.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { NotificationTypes } from '../notification/Notification';
 import { Dropdown, SelectableOptionMenuItemType, TextField } from '@fluentui/react';
@@ -209,15 +209,24 @@ export const InputDropdown = (props: InputDropdownProps) => {
       if (fnConnection) {
         fnInputValues = Object.values(fnConnection.inputs)
           .flat()
-          .map((input) =>
-            !input
-              ? undefined
-              : isCustomValue(input)
-              ? `"${input}"`
-              : isFunctionData(input.node)
-              ? `${input.node.functionName}()`
-              : input.node.name
-          )
+          .map((input) => {
+            if (!input) {
+              return undefined;
+            }
+            if (isCustomValue(input)) {
+              return `"${input}"`;
+            }
+            if (isFunctionData(input.node)) {
+              if (functionInputHasInputs(input.reactFlowKey, connectionDictionary)) {
+                return `${input.node.functionName}(...)`;
+              } else {
+                return `${input.node.functionName}()`;
+              }
+            }
+
+            // Source schema node
+            return input.node.name;
+          })
           .filter((value) => !!value) as string[];
       }
 
