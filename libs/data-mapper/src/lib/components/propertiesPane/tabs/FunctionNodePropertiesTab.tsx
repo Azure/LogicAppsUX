@@ -190,7 +190,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       currentNode={functionData}
                       label={input.name}
                       placeholder={input.placeHolder}
-                      inputValue={inputValueArrays ? inputValueArrays[idx][0] : undefined}
+                      inputValue={inputValueArrays && inputValueArrays[idx].length ? inputValueArrays[idx][0] : undefined}
                       inputIndex={idx}
                       inputStyles={{ width: '100%' }}
                     />
