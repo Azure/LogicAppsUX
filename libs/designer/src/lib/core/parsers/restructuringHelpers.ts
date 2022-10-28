@@ -52,6 +52,16 @@ export const reassignEdgeSources = (
   isNewSourceTrigger: boolean
 ) => {
   if (!state) return;
+
+  // Remove would-be duplicate edges
+  const targetEdges = graph.edges?.filter((edge) => edge.source === oldSourceId) ?? [];
+  targetEdges.forEach((tEdge) => {
+    if (graph.edges?.some((aEdge) => aEdge.source === newSourceId && aEdge.target === tEdge.target)) {
+      removeEdge(state, oldSourceId, tEdge.target, graph);
+      moveRunAfterSource(state, tEdge.target, oldSourceId, newSourceId, isOldSourceTrigger, isNewSourceTrigger);
+    }
+  });
+
   graph.edges = graph.edges?.map((edge) => {
     if (edge.source === oldSourceId) {
       setEdgeSource(edge, newSourceId);
@@ -93,7 +103,7 @@ const moveRunAfterSource = (
 ) => {
   if (!state) return;
   const targetRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
-  if (!isNewSourceTrigger) {
+  if (!isNewSourceTrigger && !targetRunAfter?.[newSourceId]) {
     targetRunAfter[newSourceId] = isOldSourceTrigger ? [RUN_AFTER_STATUS.SUCCEEDED] : targetRunAfter[oldSourceId];
   }
 
