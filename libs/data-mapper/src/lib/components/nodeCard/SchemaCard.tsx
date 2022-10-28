@@ -188,7 +188,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
-  const schemaNameTextRef = useRef<HTMLInputElement>(null);
+  const schemaNameTextRef = useRef<HTMLDivElement>(null);
   const [_isCardHovered, setIsCardHovered] = useState<boolean>(false);
   const [isChevronHovered, setIsChevronHovered] = useState<boolean>(false);
   const [isTooltipEnabled, setIsTooltipEnabled] = useState<boolean>(false);
@@ -206,10 +206,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     () => isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating,
     [isNodeConnected, schemaNode]
   );
-  const shouldNameTooltipDisplay = useMemo(
-    () => (schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false),
-    [schemaNameTextRef]
-  );
+  const shouldNameTooltipDisplay = schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false;
 
   const containerStyle = useMemo(() => {
     const newContStyles = [sharedStyles.root, classes.container];

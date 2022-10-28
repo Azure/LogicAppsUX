@@ -1,1 +1,1 @@
-export const isTextUsingEllipsis = (element: HTMLElement) => element.offsetWidth <= element.scrollWidth;
+export const isTextUsingEllipsis = (element: HTMLDivElement) => element.offsetWidth < element.scrollWidth;
