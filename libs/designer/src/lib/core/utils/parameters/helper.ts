@@ -131,6 +131,9 @@ export const VariableBrandColor = '#770bd6';
 export const VariableIcon =
   'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzJweCIgaGVpZ2h0PSIzMnB4IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAzMiAzMiIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMzIgMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+DQogPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzcwQkQ2Ii8+DQogPGcgZmlsbD0iI2ZmZiI+DQogIDxwYXRoIGQ9Ik02Ljc2MywxMy42ODV2LTMuMjA4QzYuNzYzLDguNzQ4LDcuNzYyLDgsMTAsOHYxLjA3Yy0xLDAtMiwwLjMyNS0yLDEuNDA3djMuMTg4ICAgIEM4LDE0LjgzNiw2LjUxMiwxNiw1LjUxMiwxNkM2LjUxMiwxNiw4LDE3LjE2NCw4LDE4LjMzNVYyMS41YzAsMS4wODIsMSwxLjQyOSwyLDEuNDI5VjI0Yy0yLjIzOCwwLTMuMjM4LTAuNzcyLTMuMjM4LTIuNXYtMy4xNjUgICAgYzAtMS4xNDktMC44OTMtMS41MjktMS43NjMtMS41ODV2LTEuNUM1Ljg3LDE1LjE5NCw2Ljc2MywxNC44MzQsNi43NjMsMTMuNjg1eiIvPg0KICA8cGF0aCBkPSJtMjUuMjM4IDEzLjY4NXYtMy4yMDhjMC0xLjcyOS0xLTIuNDc3LTMuMjM4LTIuNDc3djEuMDdjMSAwIDIgMC4zMjUgMiAxLjQwN3YzLjE4OGMwIDEuMTcxIDEuNDg4IDIuMzM1IDIuNDg4IDIuMzM1LTEgMC0yLjQ4OCAxLjE2NC0yLjQ4OCAyLjMzNXYzLjE2NWMwIDEuMDgyLTEgMS40MjktMiAxLjQyOXYxLjA3MWMyLjIzOCAwIDMuMjM4LTAuNzcyIDMuMjM4LTIuNXYtMy4xNjVjMC0xLjE0OSAwLjg5My0xLjUyOSAxLjc2Mi0xLjU4NXYtMS41Yy0wLjg3LTAuMDU2LTEuNzYyLTAuNDE2LTEuNzYyLTEuNTY1eiIvPg0KICA8cGF0aCBkPSJtMTUuODE1IDE2LjUxMmwtMC4yNDItMC42NDFjLTAuMTc3LTAuNDUzLTAuMjczLTAuNjk4LTAuMjg5LTAuNzM0bC0wLjM3NS0wLjgzNmMtMC4yNjYtMC41OTktMC41MjEtMC44OTgtMC43NjYtMC44OTgtMC4zNyAwLTAuNjYyIDAuMzQ3LTAuODc1IDEuMDM5LTAuMTU2LTAuMDU3LTAuMjM0LTAuMTQxLTAuMjM0LTAuMjUgMC0wLjMyMyAwLjE4OC0wLjY5MiAwLjU2Mi0xLjEwOSAwLjM3NS0wLjQxNyAwLjcxLTAuNjI1IDEuMDA3LTAuNjI1IDAuNTgzIDAgMS4xODYgMC44MzkgMS44MTEgMi41MTZsMC4xNjEgMC40MTQgMC4xOC0wLjI4OWMxLjEwOC0xLjc2IDIuMDQ0LTIuNjQxIDIuODA0LTIuNjQxIDAuMTk4IDAgMC40MyAwLjA1OCAwLjY5NSAwLjE3MmwtMC45NDYgMC45OTJjLTAuMTI1LTAuMDM2LTAuMjE0LTAuMDU1LTAuMjY2LTAuMDU1LTAuNTczIDAtMS4yNTYgMC42NTktMi4wNDggMS45NzdsLTAuMjI3IDAuMzc5IDAuMTc5IDAuNDhjMC42ODQgMS44OTEgMS4yNDkgMi44MzYgMS42OTQgMi44MzYgMC40MDggMCAwLjcyLTAuMjkyIDAuOTM1LTAuODc1IDAuMTQ2IDAuMDk0IDAuMjE5IDAuMTkgMC4yMTkgMC4yODkgMCAwLjI2MS0wLjIwOCAwLjU3My0wLjYyNSAwLjkzOHMtMC43NzYgMC41NDctMS4wNzggMC41NDdjLTAuNjA0IDAtMS4yMjEtMC44NTItMS44NTEtMi41NTVsLTAuMjE5LTAuNTc4LTAuMjI3IDAuMzk4Yy0xLjA2MiAxLjgyMy0yLjA3OCAyLjczNC0zLjA0NyAyLjczNC0wLjM2NSAwLTAuNjc1LTAuMDkxLTAuOTMtMC4yNzFsMC45MDYtMC44ODVjMC4xNTYgMC4xNTYgMC4zMzggMC4yMzQgMC41NDcgMC4yMzQgMC41ODggMCAxLjI1LTAuNTk2IDEuOTg0LTEuNzg2bDAuNDA2LTAuNjU4IDAuMTU1LTAuMjU5eiIvPg0KICA8ZWxsaXBzZSB0cmFuc2Zvcm09Im1hdHJpeCguMDUzNiAtLjk5ODYgLjk5ODYgLjA1MzYgNS40OTI1IDMyLjI0NSkiIGN4PSIxOS43NTciIGN5PSIxMy4yMjUiIHJ4PSIuNzc4IiByeT0iLjc3OCIvPg0KICA8ZWxsaXBzZSB0cmFuc2Zvcm09Im1hdHJpeCguMDUzNiAtLjk5ODYgLjk5ODYgLjA1MzYgLTcuNTgzOSAzMC42MjkpIiBjeD0iMTIuMzY2IiBjeT0iMTkuMzE1IiByeD0iLjc3OCIgcnk9Ii43NzgiLz4NCiA8L2c+DQo8L3N2Zz4NCg==';
 
+export const ItemBrandColor = '#486991';
+export const ItemIcon = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzQ4Njk5MSIvPg0KIDxwYXRoIGQ9Ik0xMSAyMGg3LjJsMSAxaC05LjJ2LTguM2wtMS4zIDEuMy0uNy0uNyAyLjUtMi41IDIuNSAyLjUtLjcuNy0xLjMtMS4zem0xMi4zLTJsLjcuNy0yLjUgMi41LTIuNS0yLjUuNy0uNyAxLjMgMS4zdi03LjNoLTcuMmwtMS0xaDkuMnY4LjN6IiBmaWxsPSIjZmZmIi8+DQo8L3N2Zz4NCg==';
+
 export const ParameterGroupKeys = {
   DEFAULT: 'default',
   RECURRENCE: 'recurrence',
@@ -1825,7 +1828,8 @@ export function updateTokenMetadata(
   nodes: Record<string, Partial<NodeDataWithOperationMetadata>>,
   operations: Actions,
   workflowParameters: Record<string, WorkflowParameter | WorkflowParameterDefinition>,
-  parameterType?: string
+  parameterType?: string,
+  parameterNodeId?: string,
 ): ValueSegment {
   const token = valueSegment.token as SegmentToken;
   switch (token?.tokenType) {
@@ -1846,7 +1850,7 @@ export function updateTokenMetadata(
       return valueSegment;
 
     case TokenType.ITERATIONINDEX:
-      // TODO - Need implementation for loops
+      // TODO - Need implementation for until
       break;
     default:
       break;
@@ -1856,7 +1860,7 @@ export function updateTokenMetadata(
   const tokenNodeId = actionName ? getPropertyValue(actionNodes, actionName) : triggerNodeId;
 
   if (arrayDetails?.loopSource) {
-    // TODO - Item token details
+    // TODO - If the token comes from foreach with literal value, need to update tokenNodeId with foreach branding.
   }
 
   const { settings, nodeOutputs, operationMetadata } = nodes[tokenNodeId] ?? {};
@@ -1864,15 +1868,18 @@ export function updateTokenMetadata(
   const nodeType = tokenNodeOperation?.type;
   const isSecure = hasSecureOutputs(nodeType, settings ?? {});
   const nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs?.outputs), valueSegment.token as SegmentToken, parameterType);
-
-  const brandColor = token.tokenType === TokenType.ITEM ? '#486991' : operationMetadata?.brandColor;
-
-  const iconUri =
-    token.tokenType === TokenType.ITEM
-      ? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzQ4Njk5MSIvPg0KIDxwYXRoIGQ9Ik0xMSAyMGg3LjJsMSAxaC05LjJ2LTguM2wtMS4zIDEuMy0uNy0uNyAyLjUtMi41IDIuNSAyLjUtLjcuNy0xLjMtMS4zem0xMi4zLTJsLjcuNy0yLjUgMi41LTIuNS0yLjUuNy0uNyAxLjMgMS4zdi03LjNoLTcuMmwtMS0xaDkuMnY4LjN6IiBmaWxsPSIjZmZmIi8+DQo8L3N2Zz4NCg=='
-      : operationMetadata?.iconUri;
+  const brandColor = token.tokenType === TokenType.ITEM ? ItemBrandColor : operationMetadata?.brandColor;
+  const iconUri = token.tokenType === TokenType.ITEM ? ItemIcon : operationMetadata?.iconUri;
 
   // TODO - Code to get parent array name for item tokens.
+  let outputInsideForeach = false;
+  if (parameterNodeId) {
+      const nodeParents = context.GraphStore.getAllParentsForNode(parameterNodeId).map(node => node.getId());
+      const parentForeachNodeId = context.GraphStore.getFirstParentForeachNodeId(tokenNodeId);
+      outputInsideForeach = !!parentForeachNodeId && nodeParents.indexOf(parentForeachNodeId) === -1;
+  }
+
+  const parentArrayOutput = getOutput(context, getPropertyValue(actionNodes, actionName) || triggerNodeId, getNormalizedName(token.arrayDetails?.parentArrayName ?? ''), token.arrayDetails?.parentArrayKey, token.source);
 
   // If we do not get any nodeOutputInfo, we need to check if it is a body parameter, compose parameter, or not
   if (!nodeOutputInfo) {
@@ -1885,7 +1892,7 @@ export function updateTokenMetadata(
       token.title = 'Current item';
       token.type = constants.SWAGGER.TYPE.ANY;
     } else {
-      token.title = getTitleFromTokenName(name, '');
+      token.title = getTitleFromTokenName(name, arrayDetails?.parentArrayName, parentArrayOutput?.title);
     }
   } else {
     if (!nodeOutputInfo.title && name) {
@@ -1909,8 +1916,13 @@ export function updateTokenMetadata(
       };
     }
 
-    if (!!nodeOutputInfo.parentArray && valueSegment.token?.arrayDetails && !valueSegment.token.arrayDetails.loopSource) {
-      // TODO - Update parent array and loop source in case of foreach or item tokens
+    if (token.arrayDetails && !!nodeOutputInfo.parentArray && valueSegment.token?.arrayDetails && !valueSegment.token.arrayDetails.loopSource) {
+      const parentArrayKey = getParentArrayKey(nodeOutputInfo.key);
+      token.arrayDetails.parentArrayKey = parentArrayKey;
+      if (parameterNodeId) {
+        const foreachActionName = context.OperationParametersActions.getForeachActionName(parentArrayKey, actionName, parameterNodeId);
+        token.arrayDetails.loopSource = foreachActionName;
+      }
     }
   }
 
