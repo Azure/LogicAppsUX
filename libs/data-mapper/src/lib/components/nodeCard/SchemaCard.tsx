@@ -21,7 +21,7 @@ import {
   Tooltip,
   typographyStyles,
 } from '@fluentui/react-components';
-import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
+import { bundleIcon, ChevronRight16Regular, ChevronRight16Filled, Important12Filled } from '@fluentui/react-icons';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -183,7 +183,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
-  const [_isHovered, setIsHovered] = useState<boolean>(false);
+  const [_isCardHovered, setIsCardHovered] = useState<boolean>(false);
+  const [isChevronHovered, setIsChevronHovered] = useState<boolean>(false);
 
   const isNodeConnected = useMemo(() => {
     return (
@@ -219,6 +220,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   };
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
+  const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
   const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType, schemaNode.properties);
 
   return (
@@ -226,7 +228,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge />}
 
       <Tooltip relationship="label" content={schemaNode.name}>
-        <div className={containerStyle} onMouseLeave={() => setIsHovered(false)} onMouseEnter={() => setIsHovered(true)}>
+        <div className={containerStyle} onMouseLeave={() => setIsCardHovered(false)} onMouseEnter={() => setIsCardHovered(true)}>
           {displayHandle && (
             <Handle
               type={isSourceSchemaNode ? 'source' : 'target'}
@@ -249,8 +251,10 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             <Button
               className={classes.cardChevron}
               onClick={outputChevronOnClick}
-              icon={<ChevronRight16Regular />}
+              icon={<ChevronIcon filled={isChevronHovered ? true : undefined} />}
               appearance={'transparent'}
+              onMouseEnter={() => setIsChevronHovered(true)}
+              onMouseLeave={() => setIsChevronHovered(false)}
             />
           )}
         </div>
