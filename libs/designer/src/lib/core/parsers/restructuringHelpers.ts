@@ -52,6 +52,15 @@ export const reassignEdgeSources = (
   isNewSourceTrigger: boolean
 ) => {
   if (!state) return;
+
+  // Remove would-be duplicate edges
+  const targetEdges = graph.edges?.filter((edge) => edge.source === oldSourceId) ?? [];
+  targetEdges.forEach((tEdge) => {
+    if (graph.edges?.some((aEdge) => aEdge.source === newSourceId && aEdge.target === tEdge.target)) {
+      removeEdge(state, oldSourceId, tEdge.target, graph);
+    }
+  });
+
   graph.edges = graph.edges?.map((edge) => {
     if (edge.source === oldSourceId) {
       setEdgeSource(edge, newSourceId);
@@ -65,6 +74,14 @@ export const reassignEdgeSources = (
 //   \|/   =>   \|/
 //               |
 export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, newTargetId: string, graph: WorkflowNode) => {
+  // Remove would-be duplicate edges
+  const targetEdges = graph.edges?.filter((edge) => edge.target === oldTargetId) ?? [];
+  targetEdges.forEach((tEdge) => {
+    if (graph.edges?.some((aEdge) => aEdge.source === tEdge.source && aEdge.target === newTargetId)) {
+      removeEdge(state, tEdge.source, oldTargetId, graph);
+    }
+  });
+
   moveRunAfterTarget(state, oldTargetId, newTargetId);
   graph.edges = graph.edges?.map((edge) => {
     if (edge.target === oldTargetId) {
@@ -72,6 +89,8 @@ export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, n
     }
     return edge;
   });
+  // Remove duplicate edges
+  graph.edges = [...new Set(graph.edges)];
 };
 
 const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
