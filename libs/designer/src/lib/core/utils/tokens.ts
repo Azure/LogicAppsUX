@@ -318,16 +318,31 @@ const getTokenTitle = (output: OutputInfo): string => {
     return output.title;
   }
 
+  const intl = getIntl();
+  const itemToken = intl.formatMessage({ defaultMessage: 'Item', description: 'Display name for item output' });
   if (output.isInsideArray) {
-    return output.parentArray ? `${output.parentArray} - Item` : 'Item';
+    return output.parentArray ? `${output.parentArray} - ${itemToken}` : itemToken;
   }
 
   if (output.name) {
     switch (output.name) {
+      case OutputKeys.Body:
+        return intl.formatMessage({ defaultMessage: 'Body', description: 'Display name for body outputs' });
+      case OutputKeys.Headers:
+        return intl.formatMessage({ defaultMessage: 'Headers', description: 'Display name for headers in outputs' });
+      case OutputKeys.Outputs:
+        return intl.formatMessage({ defaultMessage: 'Outputs', description: 'Display name for operation outputs' });
+      case OutputKeys.Queries:
+        return intl.formatMessage({ defaultMessage: 'Queries', description: 'Display name for queries in outputs' });
+      case OutputKeys.StatusCode:
+        return intl.formatMessage({ defaultMessage: 'Status Code', description: 'Display name for status code in outputs' });
       case OutputKeys.Item:
-        return 'Item';
+        return itemToken;
       case OutputKeys.PathParameters:
-        return 'Path Parameters';
+        return intl.formatMessage({
+          defaultMessage: 'Path Parameters',
+          description: 'Display name for relative path parameters in trigger outputs',
+        });
       default:
         // eslint-disable-next-line no-case-declarations
         const segments = parseEx(output.name);

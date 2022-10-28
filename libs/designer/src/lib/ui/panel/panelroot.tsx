@@ -20,7 +20,7 @@ import {
   selectPanelTab,
   setTabVisibility,
 } from '../../core/state/panel/panelSlice';
-import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useIconUri } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
@@ -63,8 +63,7 @@ export const PanelRoot = (): JSX.Element => {
   const selectedPanelTab = useSelectedPanelTabName();
 
   const comment = useNodeDescription(selectedNode);
-  const operationInfo = useOperationInfo(selectedNode);
-  const iconUriResult = useIconUri(operationInfo);
+  const iconUri = useIconUri(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
 
@@ -207,12 +206,12 @@ export const PanelRoot = (): JSX.Element => {
     <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} key={selectedNode} />
   ) : (
     <PanelContainer
-      cardIcon={iconUriResult.result}
+      cardIcon={iconUri}
       comment={comment}
       panelLocation={PanelLocation.Right}
       isCollapsed={collapsed}
       noNodeSelected={!selectedNode}
-      isLoading={iconUriResult.isLoading}
+      isLoading={!iconUri}
       panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}

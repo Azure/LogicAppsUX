@@ -98,12 +98,16 @@ const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: stri
   };
 };
 
-export const useBrandColor = (operationInfo: NodeOperation) => {
-  return useNodeAttribute(operationInfo, ['brandColor'], ['metadata', 'brandColor']);
+export const useBrandColor = (nodeId: string) => {
+  return useSelector((state: RootState) => {
+    return state.operations.operationMetadata[nodeId]?.brandColor ?? '';
+  });
 };
 
-export const useIconUri = (operationInfo: NodeOperation) => {
-  return useNodeAttribute(operationInfo, ['iconUri'], ['iconUrl']);
+export const useIconUri = (nodeId: string) => {
+  return useSelector((state: RootState) => {
+    return state.operations.operationMetadata[nodeId]?.iconUri ?? '';
+  });
 };
 
 export const useConnectorName = (operationInfo: NodeOperation) => {

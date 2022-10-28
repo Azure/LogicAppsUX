@@ -1,5 +1,5 @@
 import constants from '../../../../common/constants';
-import { useOperationInfo, useIconUri } from '../../../../core/state/selectors/actionMetadataSelector';
+import { useIconUri } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
@@ -89,7 +89,7 @@ export const RunAfterActionDetails = ({
   };
 
   const title = useNodeDisplayName(id);
-  const icon = useIcon(id) ?? '';
+  const icon = useIconUri(id);
   return (
     <>
       <div className="msla-run-after-edge-header">
@@ -167,9 +167,4 @@ const Label = ({ label, status }: LabelProps): JSX.Element => {
       <span>{label}</span>
     </>
   );
-};
-
-const useIcon = (selectedNode: string): string => {
-  const operationInfo = useOperationInfo(selectedNode);
-  return useIconUri(operationInfo).result;
 };

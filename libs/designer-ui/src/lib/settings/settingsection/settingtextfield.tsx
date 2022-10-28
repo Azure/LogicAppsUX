@@ -13,6 +13,7 @@ export interface SettingTextFieldProps extends SettingProps {
   placeholder?: string;
   label?: string;
   readOnly?: boolean;
+  required?: boolean;
   onValueChange?: TextInputChangeHandler;
 }
 
@@ -20,6 +21,7 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
   value,
   id,
   readOnly,
+  required,
   label,
   placeholder,
   customLabel,
@@ -36,37 +38,22 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
     wrapper: { display: 'inline-flex', width: '100%', maxHeight: 40, alignItems: 'center', paddingLeft: 35 },
   };
 
-  if (customLabel) {
-    return (
-      <>
-        {customLabel()}
-        <TextField
-          className="msla-setting-section-textField"
-          id={id}
-          ariaLabel={label}
-          value={textVal}
-          defaultValue={defaultValue}
-          placeholder={placeholder}
-          styles={textFieldStyles}
-          readOnly={readOnly}
-          onChange={handleTextInputChange}
-        />
-      </>
-    );
-  } else {
-    return (
+  return (
+    <>
+      {customLabel && customLabel()}
       <TextField
         className="msla-setting-section-textField"
         id={id}
-        label={label}
+        label={!customLabel ? label : ''}
         ariaLabel={label}
         value={textVal}
         defaultValue={defaultValue}
         placeholder={placeholder}
         styles={textFieldStyles}
         readOnly={readOnly}
+        required={required}
         onChange={handleTextInputChange}
       />
-    );
-  }
+    </>
+  );
 };
