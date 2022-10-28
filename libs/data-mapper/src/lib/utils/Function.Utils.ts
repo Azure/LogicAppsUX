@@ -8,6 +8,7 @@ import {
   conversionBranding,
 } from '../constants/FunctionConstants';
 import type { SchemaNodeExtended } from '../models';
+import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { FunctionCategory } from '../models/Function';
 
@@ -59,4 +60,9 @@ export const getFunctionOutputValue = (inputValues: string[], functionName: stri
   });
 
   return `${outputValue})`;
+};
+
+export const functionInputHasInputs = (fnInputReactFlowKey: string, connections: ConnectionDictionary): boolean => {
+  const fnInputConnection = connections[fnInputReactFlowKey];
+  return !!fnInputConnection && Object.values(fnInputConnection.inputs).some((inputConArr) => inputConArr.length > 0);
 };
