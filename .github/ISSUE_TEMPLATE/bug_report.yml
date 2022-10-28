@@ -29,7 +29,7 @@ body:
     id: steps
     attributes:
       label: Steps to Reproduce the Bug or Issue
-      description: Describe the steps we have to take to reproduce the behavior. 
+      description: Describe the steps we have to take to reproduce the behavior.
       placeholder: |
         1. Go to '...'
         2. Click on '....'
@@ -42,7 +42,7 @@ body:
     id: workflow
     attributes:
       label: Workflow JSON
-      description: If able, provide a workflow json that reproduces the issue. 
+      description: If able, provide a workflow json that reproduces the issue.
       placeholder: |
         {
             "definition": {
