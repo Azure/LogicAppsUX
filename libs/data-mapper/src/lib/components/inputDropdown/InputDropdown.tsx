@@ -75,7 +75,15 @@ export const InputDropdown = (props: InputDropdownProps) => {
     description: 'Tooltip content for clearing custom value',
   });
 
-  const onRenderOption = (item?: IDropdownOption) => {
+  const onRenderTitle = (items?: IDropdownOption<InputOptionData>[]) => {
+    if (!items) {
+      return null;
+    }
+
+    return <span>{items[0].text}</span>;
+  };
+
+  const onRenderOption = (item?: IDropdownOption<InputOptionData>) => {
     switch (item?.key) {
       case customValueOptionKey:
         return <span style={{ color: 'rgb(0, 120, 212)' }}>{item?.text}</span>;
@@ -311,6 +319,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           placeholder={placeholder}
           className={styles.inputStyles}
           styles={{ root: { ...inputStyles } }}
+          onRenderTitle={onRenderTitle}
           onRenderOption={onRenderOption}
         />
       ) : (

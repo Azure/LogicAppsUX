@@ -6,7 +6,7 @@ import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperties, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { flattenInputs, isValidInputToFunctionNode, isValidSchemaNodeToSchemaNodeConnection } from '../../utils/Connection.Utils';
-import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
+import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState } from './NodeCard';
 import { Text } from '@fluentui/react';
@@ -221,7 +221,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
-  const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType, schemaNode.properties);
+  const BundledTypeIcon = iconForSchemaNodeDataType(schemaNode.schemaNodeDataType, 24, false, schemaNode.properties);
 
   return (
     <div className={classes.badgeContainer}>
