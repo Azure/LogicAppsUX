@@ -2,15 +2,17 @@ import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import type { OperationMetadataState } from '../../../core/state/operation/operationMetadataSlice';
-import { ValidationErrorKeys, type ValidationError } from '../../../core/state/settingSlice';
-import { useCallback, useState } from 'react';
+import { setValidationError, ValidationErrorKeys, type ValidationError } from '../../../core/state/settingSlice';
+import { isISO8601 } from '../../../core/utils/validation';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
 
-const ISO_8601_REGEX = /^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$/;
+export const useValidate = (nodeId: string) => {
+  const dispatch = useDispatch();
 
-export const useValidate = () => {
-  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
   const intl = useIntl();
+
   const triggerConditionEmpty = intl.formatMessage({
     defaultMessage: 'Trigger condition cannot be empty',
     description: 'error message for empty trigger condition',
@@ -34,10 +36,6 @@ export const useValidate = () => {
       max: constants.RETRY_POLICY_LIMITS.MAX_COUNT,
     }
   );
-  const retryIntervalEmptyText = intl.formatMessage({
-    defaultMessage: 'Retry Policy interval cannot be empty',
-    description: 'error message for empty retry interval',
-  });
   const retryIntervalInvalidText = intl.formatMessage({
     defaultMessage: 'Retry Policy interval is invalid, must match ISO 8601 duration format',
     description: 'error message for invalid retry interval',
@@ -76,15 +74,8 @@ export const useValidate = () => {
           retryPolicy?.value?.type === constants.RETRY_POLICY_TYPE.FIXED
         ) {
           const retryCount = Number(retryPolicy?.value?.count);
-          // Empty retry interval
-          if (!retryPolicy?.value?.interval) {
-            validationErrors.push({
-              key: ValidationErrorKeys.RETRY_INTERVAL_EMPTY,
-              message: retryIntervalEmptyText,
-            });
-          }
           // Invalid retry count
-          else if (
+          if (
             isNaN(retryCount) ||
             retryCount < constants.RETRY_POLICY_LIMITS.MIN_COUNT ||
             retryCount > constants.RETRY_POLICY_LIMITS.MAX_COUNT
@@ -95,7 +86,7 @@ export const useValidate = () => {
             });
           }
           // Invalid retry interval
-          if (!ISO_8601_REGEX.test(retryPolicy?.value?.interval ?? '')) {
+          if (!isISO8601(retryPolicy?.value?.interval ?? '')) {
             validationErrors.push({
               key: ValidationErrorKeys.RETRY_INTERVAL_INVALID,
               message: retryIntervalInvalidText,
@@ -105,7 +96,7 @@ export const useValidate = () => {
       }
       return validationErrors;
     },
-    [pagingCount, pagingCountMax, retryCountInvalidText, retryIntervalEmptyText, retryIntervalInvalidText, triggerConditionEmpty]
+    [pagingCount, pagingCountMax, retryCountInvalidText, retryIntervalInvalidText, triggerConditionEmpty]
   );
 
   const validate = useCallback(
@@ -114,15 +105,17 @@ export const useValidate = () => {
         case 'operations': {
           const proposedOperationMetadataState = proposedState as OperationMetadataState;
           const errors = validateOperationSettings(proposedOperationMetadataState.settings[nodeId]);
-          setValidationErrors(errors);
+          dispatch(setValidationError({ nodeId, errors }));
           return errors;
         }
         default:
           return [];
       }
     },
-    [validateOperationSettings]
+    [dispatch, validateOperationSettings]
   );
+
+  const validationErrors = useSelector((rootState: RootState) => rootState.settings.validationErrors?.[nodeId] ?? []);
 
   return {
     validate,
