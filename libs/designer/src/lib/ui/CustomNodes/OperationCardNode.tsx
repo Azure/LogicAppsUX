@@ -125,10 +125,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
-  const isLoading = useMemo(
-    () => !brandColor || !iconUri || connectionResult.isLoading,
-    [brandColor, iconUri, connectionResult.isLoading]
-  );
+  const isLoading = useMemo(() => !brandColor || !iconUri || connectionResult.isLoading, [brandColor, iconUri, connectionResult.isLoading]);
 
   return (
     <>
