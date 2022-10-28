@@ -4,7 +4,7 @@ import { useIconUri } from '../../../../core/state/selectors/actionMetadataSelec
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { addEdgeFromRunAfter, removeEdgeFromRunAfter } from '../../../../core/state/workflow/workflowSlice';
 import { Menu, MenuTrigger, MenuList, MenuPopover, MenuButton, Label, MenuItemCheckbox, Input, Button } from '@fluentui/react-components';
-import { bundleIcon, Add20Regular, Add20Filled, Search24Regular, Dismiss24Regular } from '@fluentui/react-icons';
+import { bundleIcon, Add20Regular, Add20Filled, Search24Regular, DismissRegular } from '@fluentui/react-icons';
 import Fuse from 'fuse.js';
 import { useState, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -126,7 +126,7 @@ export const RunAfterActionSelector = () => {
           contentBefore={<Search24Regular />}
           contentAfter={
             <Button
-              icon={<Dismiss24Regular />}
+              icon={<DismissRegular />}
               appearance="transparent"
               onClick={() => {
                 setSearchText('');

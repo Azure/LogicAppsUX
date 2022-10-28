@@ -44,6 +44,15 @@ export interface SerializeOptions {
 }
 
 export const serializeWorkflow = async (rootState: RootState, options?: SerializeOptions): Promise<Workflow> => {
+  const operationsWithSettingsErrors = (Object.entries(rootState.settings.validationErrors) ?? []).filter(
+    ([_id, errorArr]) => errorArr.length > 0
+  );
+  if (operationsWithSettingsErrors.length > 0)
+    throw new Error(
+      'Workflow has operation settings validation errors on the following operations: ' +
+        operationsWithSettingsErrors.map(([id, _errorArr]) => id).join(', ')
+    );
+
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
   const workflowParameters = rootState.workflowParameters.definitions;
   const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
