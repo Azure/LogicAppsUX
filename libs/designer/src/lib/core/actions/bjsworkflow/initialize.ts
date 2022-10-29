@@ -2,7 +2,6 @@
 import Constants from '../../../common/constants';
 import type { WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { preloadOperationsQuery } from '../../queries/browse';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
@@ -39,17 +38,7 @@ import type {
   IOAuthService,
   IWorkflowService,
 } from '@microsoft-logic-apps/designer-client-services';
-import {
-  InitWorkflowService,
-  WorkflowService,
-  LoggerService,
-  LogEntryLevel,
-  InitConnectionService,
-  InitOperationManifestService,
-  InitSearchService,
-  InitOAuthService,
-  OperationManifestService,
-} from '@microsoft-logic-apps/designer-client-services';
+import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type { SchemaProperty, InputParameter } from '@microsoft-logic-apps/parsers';
 import {
@@ -73,21 +62,6 @@ export interface ServiceOptions {
   oAuthService: IOAuthService;
   workflowService: IWorkflowService;
 }
-
-export const InitializeServices = ({
-  connectionService,
-  operationManifestService,
-  searchService,
-  oAuthService,
-  workflowService,
-}: ServiceOptions) => {
-  InitConnectionService(connectionService);
-  InitOperationManifestService(operationManifestService);
-  InitSearchService(searchService);
-  InitOAuthService(oAuthService);
-  InitWorkflowService(workflowService);
-  preloadOperationsQuery();
-};
 
 export const parseWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
   dispatch(

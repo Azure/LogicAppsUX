@@ -57,5 +57,6 @@ SingleAuthExample.args = {
   connectionParameterSets: mockSingleAuthConnector.properties.connectionParameterSets,
   isLoading: false,
   createConnectionCallback,
+  checkOAuthCallback: () => false,
   cancelCallback: () => alert('Cancelled'),
 };
