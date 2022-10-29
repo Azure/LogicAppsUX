@@ -56,6 +56,6 @@ OAuthExample.args = {
   connectionParameterSets: mockOAuthConnector.properties.connectionParameterSets,
   isLoading: false,
   authClickCallback,
-  needsAuth: true,
+  checkOAuthCallback: () => true,
   cancelCallback: () => alert('Cancelled'),
 };

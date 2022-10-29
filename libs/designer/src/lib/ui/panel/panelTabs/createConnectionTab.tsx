@@ -1,6 +1,6 @@
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
-import { getConnectionMetadata, needsAuth, updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
+import { getConnectionMetadata, needsOAuth, updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
@@ -32,7 +32,6 @@ const CreateConnectionTab = () => {
   const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
   const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
   const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
-  const needsAuthentication = useMemo(() => needsAuth(connector), [connector]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,7 +45,12 @@ const CreateConnectionTab = () => {
   );
 
   const createConnectionCallback = useCallback(
-    async (displayName?: string, selectedParameterSet?: ConnectionParameterSet, parameterValues: Record<string, any> = {}) => {
+    async (
+      displayName?: string,
+      selectedParameterSet?: ConnectionParameterSet,
+      parameterValues: Record<string, any> = {},
+      isOAuthConnection?: boolean
+    ) => {
       if (!connector?.id) return;
 
       setIsLoading(true);
@@ -76,7 +80,7 @@ const CreateConnectionTab = () => {
         let connection, err;
 
         const newName = await getUniqueConnectionName(connector.id);
-        if (needsAuthentication) {
+        if (isOAuthConnection) {
           await ConnectionService()
             .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
             .then(({ connection: c, errorMessage }) => {
@@ -104,7 +108,7 @@ const CreateConnectionTab = () => {
       }
       setIsLoading(false);
     },
-    [applyNewConnection, connectionMetadata?.type, connector, dispatch, needsAuthentication]
+    [applyNewConnection, connectionMetadata?.type, connector, dispatch]
   );
 
   const cancelCallback = useCallback(() => {
@@ -132,7 +136,6 @@ const CreateConnectionTab = () => {
       isLoading={isLoading}
       cancelCallback={cancelCallback}
       hideCancelButton={!hasExistingConnection}
-      needsAuth={needsAuthentication}
       errorMessage={errorMessage}
       clearErrorCallback={() => setErrorMessage(undefined)}
       selectSubscriptionCallback={(subscriptionId: string) => {
@@ -141,6 +144,7 @@ const CreateConnectionTab = () => {
       selectedSubscriptionId={selectedSubscriptionId}
       availableSubscriptions={subscriptions}
       availableGateways={availableGateways}
+      checkOAuthCallback={needsOAuth}
     />
   );
 };

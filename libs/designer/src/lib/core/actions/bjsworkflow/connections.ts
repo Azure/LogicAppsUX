@@ -160,7 +160,18 @@ export function needsConnection(connector: Connector | undefined): boolean {
   );
 }
 
-export function needsAuth(connector?: Connector): boolean {
+export function needsOAuth(connectionParameters: Record<string, ConnectionParameter>): boolean {
+  return (
+    Object.keys(connectionParameters || {})
+      .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
+      .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
+      .filter((connectionParameter) => equals(connectionParameter.type, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]))
+      .length > 0
+  );
+}
+
+// This only checks if this connector has any OAuth connection, it can be just part of Multi Auth
+function needsAuth(connector?: Connector): boolean {
   if (!connector) return false;
   return getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]).length > 0;
 }
