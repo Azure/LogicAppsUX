@@ -186,10 +186,12 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
 
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const schemaNameTextRef = useRef<HTMLDivElement>(null);
-  const [_isCardHovered, setIsCardHovered] = useState<boolean>(false);
+  const [isCardHovered, setIsCardHovered] = useState<boolean>(false);
   const [isChevronHovered, setIsChevronHovered] = useState<boolean>(false);
   const [isTooltipEnabled, setIsTooltipEnabled] = useState<boolean>(false);
 
@@ -206,6 +208,14 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     () => isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating,
     [isNodeConnected, schemaNode]
   );
+  const shouldDisplayHandles = useMemo<boolean>(
+    () =>
+      displayHandle && !isSourceSchemaNode
+        ? !!sourceNodeConnectionBeingDrawnFromId
+        : sourceNodeConnectionBeingDrawnFromId === reactFlowId || isCardHovered || selectedItemKey === reactFlowId,
+    [displayHandle, isSourceSchemaNode, sourceNodeConnectionBeingDrawnFromId, isCardHovered, selectedItemKey, reactFlowId]
+  );
+
   const shouldNameTooltipDisplay = schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false;
 
   const containerStyle = useMemo(() => {
@@ -238,14 +248,15 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge />}
 
       <div className={containerStyle} onMouseLeave={() => setIsCardHovered(false)} onMouseEnter={() => setIsCardHovered(true)}>
-        {displayHandle && (
-          <Handle
-            type={isSourceSchemaNode ? 'source' : 'target'}
-            position={isSourceSchemaNode ? Position.Right : Position.Left}
-            style={handleStyle}
-            isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
-          />
-        )}
+        <Handle
+          type={isSourceSchemaNode ? 'source' : 'target'}
+          position={isSourceSchemaNode ? Position.Right : Position.Left}
+          style={{
+            ...handleStyle,
+            visibility: shouldDisplayHandles ? 'visible' : 'hidden',
+          }}
+          isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
+        />
         {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>
