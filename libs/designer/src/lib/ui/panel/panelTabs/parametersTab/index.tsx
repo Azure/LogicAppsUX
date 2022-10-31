@@ -10,6 +10,7 @@ import {
 } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
 import { updateVariableInfo } from '../../../../core/state/tokensSlice';
+import { useNodeMetadata } from '../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
@@ -30,6 +31,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
+  const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
     tokenState: state.tokens,
@@ -44,7 +46,8 @@ export const ParametersTab = () => {
 
   const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState);
   const expressionGroup = getExpressionTokenSections();
-  if (!operationInfo) {
+
+  if (!operationInfo && !nodeMetadata?.subgraphType) {
     return (
       <div className="msla-loading-container">
         <Spinner size={SpinnerSize.large} />
