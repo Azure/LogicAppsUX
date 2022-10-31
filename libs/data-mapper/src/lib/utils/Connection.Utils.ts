@@ -41,14 +41,23 @@ export const addNodeToConnections = (
   if (sourceNode && self) {
     createConnectionEntryIfNeeded(connections, self, selfReactFlowKey);
     const currentConnectionInputs = connections[selfReactFlowKey].inputs;
+    const newInputValue = { node: sourceNode, reactFlowKey: sourceReactFlowKey };
 
     // Schema nodes can only ever have 1 input
     if (isSchemaNodeExtended(self)) {
-      currentConnectionInputs[0] = [{ node: sourceNode, reactFlowKey: sourceReactFlowKey }];
+      currentConnectionInputs[0] = [newInputValue];
     } else {
       // If the destination has unlimited inputs, all should go on the first input
       if (self.maxNumberOfInputs === -1) {
-        currentConnectionInputs[0].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+        // Check if an undefined input field exists first (created through PropPane)
+        const indexOfFirstOpenInput = currentConnectionInputs[0].findIndex((inputCon) => !inputCon);
+
+        if (indexOfFirstOpenInput >= 0) {
+          currentConnectionInputs[0][indexOfFirstOpenInput] = newInputValue;
+        } else {
+          // Otherwise we can safely just append its value to the end
+          currentConnectionInputs[0].push(newInputValue);
+        }
       } else {
         // Add input to first available and type-matched place (handle & PropPane validation should guarantee there's at least one)
         let added = false;
@@ -62,7 +71,7 @@ export const addNodeToConnections = (
                 (isSchemaNodeExtended(sourceNode) ? type === sourceNode.normalizedDataType : type === sourceNode.outputValueType)
             )
           ) {
-            currentConnectionInputs[key].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+            currentConnectionInputs[key].push(newInputValue);
             added = true;
           }
         });
@@ -143,23 +152,38 @@ export const isValidFunctionNodeToSchemaNodeConnection = (srcDataType: Normalize
 
 export const isValidInputToFunctionNode = (
   srcNodeType: NormalizedDataType,
-  currentNodeConnection: Connection | undefined,
+  targetNodeConnection: Connection | undefined,
   tgtMaxNumInputs: number,
   tgtInputs: FunctionInput[]
 ) => {
-  // If Function has unbounded inputs, just check if type matches
-  if (tgtMaxNumInputs === -1) {
-    return isFunctionTypeSupported(srcNodeType, tgtInputs);
-  }
-
-  // Make sure there's available inputs
-  if (currentNodeConnection) {
-    if (flattenInputs(currentNodeConnection.inputs).length === tgtMaxNumInputs) {
-      return false;
+  try {
+    // If Function has unbounded inputs, just check if type matches
+    if (tgtMaxNumInputs === -1) {
+      return isFunctionTypeSupported(srcNodeType, tgtInputs);
     }
-  }
 
-  return isFunctionTypeSupportedAndAvailable(srcNodeType, currentNodeConnection, tgtInputs);
+    // Make sure there's available inputs
+    if (targetNodeConnection) {
+      if (flattenInputs(targetNodeConnection.inputs).length === tgtMaxNumInputs) {
+        return false;
+      }
+    }
+
+    return isFunctionTypeSupportedAndAvailable(srcNodeType, targetNodeConnection, tgtInputs);
+  } catch (e) {
+    console.error(`Error validating Function input!`);
+    console.error(e);
+
+    console.error(`--------Related Details------------`);
+    console.error(`Src node type: ${srcNodeType}`);
+    console.error(`Target node connection:`);
+    console.error(targetNodeConnection);
+    console.error(`Target function max inputs: ${tgtMaxNumInputs}`);
+    console.error(`Target function input info:`);
+    console.error(tgtInputs);
+
+    return false;
+  }
 };
 
 const isFunctionTypeSupportedAndAvailable = (
@@ -180,7 +204,7 @@ const isFunctionTypeSupportedAndAvailable = (
         inputNodeType === NormalizedDataType.Any ||
         targetInput.allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)
       ) {
-        if (!connection.inputs || connection.inputs[index].length < 1) {
+        if (!connection.inputs || !(index in connection.inputs) || connection.inputs[index].length < 1) {
           supportedTypeInputIsAvailable = true;
         }
       }

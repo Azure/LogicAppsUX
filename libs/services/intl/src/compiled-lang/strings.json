@@ -405,12 +405,6 @@
       "value": "Each run after configuration must have at least one status checked"
     }
   ],
-  "1diflT": [
-    {
-      "type": 0,
-      "value": "Retry Policy interval cannot be empty"
-    }
-  ],
   "1ejxkP": [
     {
       "type": 0,
@@ -733,12 +727,6 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Yerevan"
-    }
-  ],
-  "438H98": [
-    {
-      "type": 0,
-      "value": "Discard changes"
     }
   ],
   "45ubha": [
@@ -1273,6 +1261,12 @@
       "value": "Returns true if both parameters are true"
     }
   ],
+  "A5Ferh": [
+    {
+      "type": 0,
+      "value": "Source element removed from view."
+    }
+  ],
   "ADM1Z8": [
     {
       "type": 0,
@@ -1403,6 +1397,12 @@
       "value": "No dynamic content available"
     }
   ],
+  "B999mz": [
+    {
+      "type": 0,
+      "value": "Line deleted."
+    }
+  ],
   "BAgRzO": [
     {
       "type": 0,
@@ -1419,6 +1419,12 @@
     {
       "type": 0,
       "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
+    }
+  ],
+  "BEZWxB": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
     }
   ],
   "BHe7qY": [
@@ -1503,12 +1509,6 @@
     {
       "type": 0,
       "value": "Output"
-    }
-  ],
-  "CkfIxl": [
-    {
-      "type": 0,
-      "value": "Source node removed from view."
     }
   ],
   "ClZW2r": [
@@ -1945,6 +1945,12 @@
     {
       "type": 0,
       "value": "Required. The string to slice."
+    }
+  ],
+  "H5VikC": [
+    {
+      "type": 0,
+      "value": "Invalid connection, mapping must not form a closed loop."
     }
   ],
   "H8bEUn": [
@@ -2531,12 +2537,6 @@
       "value": "(UTC+03:00) Minsk"
     }
   ],
-  "Nn/DN4": [
-    {
-      "type": 0,
-      "value": "This connection would introduce circular logic."
-    }
-  ],
   "NnD8gF": [
     {
       "type": 0,
@@ -2565,20 +2565,6 @@
     {
       "type": 0,
       "value": "Please select an identity"
-    }
-  ],
-  "NtY1mD": [
-    {
-      "type": 0,
-      "value": "Remove all references to node ' "
-    },
-    {
-      "type": 1,
-      "value": "nodeName"
-    },
-    {
-      "type": 0,
-      "value": " ' before you remove the node."
     }
   ],
   "NvANon": [
@@ -3067,12 +3053,6 @@
     {
       "type": 0,
       "value": "6"
-    }
-  ],
-  "Rno87I": [
-    {
-      "type": 0,
-      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "S8P4N5": [
@@ -3781,12 +3761,6 @@
       "value": "Zoom out"
     }
   ],
-  "ZCFMoe": [
-    {
-      "type": 0,
-      "value": "Body"
-    }
-  ],
   "Z9PWl/": [
     {
       "type": 0,
@@ -3807,6 +3781,12 @@
     {
       "type": 0,
       "value": ")"
+    }
+  ],
+  "ZCFMoe": [
+    {
+      "type": 0,
+      "value": "Body"
     }
   ],
   "ZM1mRy": [
@@ -4087,6 +4067,12 @@
       "value": "Retry Policy interval is invalid, must match ISO 8601 duration format"
     }
   ],
+  "cR9RtV": [
+    {
+      "type": 0,
+      "value": "Discard changes"
+    }
+  ],
   "cT2MlP": [
     {
       "type": 0,
@@ -4151,12 +4137,6 @@
     {
       "type": 0,
       "value": "(UTC+02:00) Harare, Pretoria"
-    }
-  ],
-  "dA6SUc": [
-    {
-      "type": 0,
-      "value": "Connection deleted."
     }
   ],
   "dDYCuU": [
@@ -5045,6 +5025,20 @@
       "value": "Please enter a valid array"
     }
   ],
+  "lexzgJ": [
+    {
+      "type": 0,
+      "value": "Remove all references to element ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' before you remove the element."
+    }
+  ],
   "lgs5sf": [
     {
       "type": 0,
@@ -5207,12 +5201,6 @@
       "value": "Required. The number of time units the desired time is in the future."
     }
   ],
-  "nQxMfu": [
-    {
-      "type": 0,
-      "value": "Clear custom value and reselect"
-    }
-  ],
   "nSan4V": [
     {
       "type": 0,
@@ -5321,6 +5309,12 @@
     {
       "type": 0,
       "value": "Enter the run identifier to open the run"
+    }
+  ],
+  "oVVPst": [
+    {
+      "type": 0,
+      "value": "Do you want to discard all unsaved changes?"
     }
   ],
   "odQ554": [
@@ -5963,6 +5957,12 @@
     {
       "type": 0,
       "value": "(UTC-11:00) Coordinated Universal Time-11"
+    }
+  ],
+  "uesaee": [
+    {
+      "type": 0,
+      "value": "Expression"
     }
   ],
   "ui7GCl": [

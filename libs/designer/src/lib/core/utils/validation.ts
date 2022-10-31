@@ -242,3 +242,8 @@ function isValidJSONObjectFormat(value: string): boolean {
   const trimmedValue = (value || '').trim();
   return startsWith(trimmedValue, '{') && endsWith(trimmedValue, '}');
 }
+
+export const isISO8601 = (s: string) => {
+  const ISO_8601_REGEX = /^P(?!$)(\d+Y)?(\d+M)?(\d+W)?(\d+D)?(T(?=\d+[HMS])(\d+H)?(\d+M)?(\d+S)?)?$/;
+  return ISO_8601_REGEX.test(s);
+};

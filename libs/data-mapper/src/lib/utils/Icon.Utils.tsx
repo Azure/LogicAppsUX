@@ -3,6 +3,7 @@ import { Collection20Regular, StringCategory20Regular } from '../images/Category
 import {
   Any16Filled,
   Any16Regular,
+  Array16Filled,
   Array16Regular,
   Binary16Filled,
   Binary16Regular,
@@ -16,6 +17,7 @@ import {
 import {
   Any24Filled,
   Any24Regular,
+  Array24Filled,
   Array24Regular,
   Binary24Filled,
   Binary24Regular,
@@ -27,7 +29,7 @@ import {
   String24Regular,
 } from '../images/DataType24Icons';
 import { FunctionCategory } from '../models/Function';
-import { SchemaNodeDataType, SchemaNodeProperties } from '../models/Schema';
+import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../models/Schema';
 import { Image } from '@fluentui/react-components';
 import {
   AddSubtractCircle16Filled,
@@ -43,8 +45,6 @@ import {
   CalendarClock24Regular,
   CircleOff16Filled,
   CircleOff16Regular,
-  CircleOffFilled,
-  CircleOffRegular,
   Cube16Filled,
   Cube16Regular,
   Cube24Filled,
@@ -53,91 +53,57 @@ import {
   Wrench20Regular,
 } from '@fluentui/react-icons';
 
-export const icon16BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
+type iconSize = 16 | 24;
+
+export const iconForNormalizedDataType = (nodeType: NormalizedDataType, size: iconSize, bundled: boolean) => {
+  let convertedType: SchemaNodeDataType = SchemaNodeDataType.AnyAtomicType;
+
   switch (nodeType) {
-    /* Currently Unused will come into play with JSON
-    case SchemaNodeDataType.ComplexType: {
-      return bundleIcon(NumberSymbol16Filled, NumberSymbol16Regular); // Number
-    }
-    */
-    case SchemaNodeDataType.Int:
-    case SchemaNodeDataType.Integer:
-    case SchemaNodeDataType.Long:
-    case SchemaNodeDataType.NegativeInteger:
-    case SchemaNodeDataType.NonNegativeInteger:
-    case SchemaNodeDataType.NonPositiveInteger:
-    case SchemaNodeDataType.PositiveInteger:
-    case SchemaNodeDataType.Short:
-    case SchemaNodeDataType.UnsignedInt:
-    case SchemaNodeDataType.UnsignedLong:
-    case SchemaNodeDataType.UnsignedShort: {
-      return bundleIcon(Integer16Filled, Integer16Regular); // Integer
-    }
-    case SchemaNodeDataType.Decimal:
-    case SchemaNodeDataType.Double:
-    case SchemaNodeDataType.Float: {
-      return bundleIcon(Decimal16Filled, Decimal16Regular); // Decimal
-    }
-    case SchemaNodeDataType.Base64Binary:
-    case SchemaNodeDataType.Byte:
-    case SchemaNodeDataType.HexBinary:
-    case SchemaNodeDataType.UnsignedByte: {
-      return bundleIcon(Binary16Filled, Binary16Regular); // Binary
-    }
-    case SchemaNodeDataType.Boolean: {
-      return bundleIcon(AddSubtractCircle16Filled, AddSubtractCircle16Regular); // Boolean
-    }
-    case SchemaNodeDataType.AnyUri:
-    case SchemaNodeDataType.Id:
-    case SchemaNodeDataType.Idref:
-    case SchemaNodeDataType.Language:
-    case SchemaNodeDataType.Name:
-    case SchemaNodeDataType.NCName:
-    case SchemaNodeDataType.NmToken:
-    case SchemaNodeDataType.NormalizedString:
-    case SchemaNodeDataType.QName:
-    case SchemaNodeDataType.String:
-    case SchemaNodeDataType.Token: {
-      return bundleIcon(String16Filled, String16Regular); // String
-    }
-    case SchemaNodeDataType.Date:
-    case SchemaNodeDataType.DateTime:
-    case SchemaNodeDataType.Duration:
-    case SchemaNodeDataType.GDay:
-    case SchemaNodeDataType.GMonth:
-    case SchemaNodeDataType.GMonthDay:
-    case SchemaNodeDataType.GYear:
-    case SchemaNodeDataType.GYearMonth:
-    case SchemaNodeDataType.Time: {
-      return bundleIcon(CalendarClock16Filled, CalendarClock16Regular); // Date time
-    }
-    /* Currently Unused
-    case SchemaNodeDataType: {
-      return bundleIcon(Array16Filled, Array16Regular); // Array
-    }
-    */
-    case SchemaNodeDataType.Entity:
-    case SchemaNodeDataType.None: {
-      return bundleIcon(Cube16Filled, Cube16Regular); // Object
-    }
-    case SchemaNodeDataType.AnyAtomicType:
-    case SchemaNodeDataType.Item:
-    case SchemaNodeDataType.Notation:
-    case SchemaNodeDataType.UntypedAtomic: {
-      return bundleIcon(Any16Filled, Any16Regular); // Any
-    }
-    default: {
-      // TODO log when we fail to match a data type
-      return bundleIcon(CircleOff16Filled, CircleOff16Regular); // Null
-    }
+    case NormalizedDataType.Any:
+      break;
+    case NormalizedDataType.Binary:
+      convertedType = SchemaNodeDataType.Base64Binary;
+      break;
+    case NormalizedDataType.Boolean:
+      convertedType = SchemaNodeDataType.Boolean;
+      break;
+    case NormalizedDataType.ComplexType:
+      convertedType = SchemaNodeDataType.None;
+      break;
+    case NormalizedDataType.DateTime:
+      convertedType = SchemaNodeDataType.DateTime;
+      break;
+    case NormalizedDataType.Decimal:
+      convertedType = SchemaNodeDataType.Decimal;
+      break;
+    case NormalizedDataType.Integer:
+    case NormalizedDataType.Number:
+      convertedType = SchemaNodeDataType.Integer;
+      break;
+    case NormalizedDataType.String:
+      convertedType = SchemaNodeDataType.String;
+      break;
+    default:
+      console.error(`Icon.Utils Error: No corresponding SchemaNodeDataType found for NormalizedDataType ${nodeType}`);
   }
+
+  return iconForSchemaNodeDataType(convertedType, size, bundled);
 };
 
-export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType, properties?: SchemaNodeProperties) => {
+export const iconForSchemaNodeDataType = (
+  nodeType: SchemaNodeDataType,
+  size: iconSize,
+  bundled: boolean,
+  nodeProperties?: SchemaNodeProperty[]
+) => {
+  let icons: typeof Integer16Regular[] = [];
+
   switch (nodeType) {
     /* Currently Unused will come into play with JSON
     case SchemaNodeDataType.ComplexType: {
-      return bundleIcon(NumberSymbol16Filled, NumberSymbol16Regular); // Number
+      // Number
+      icons = size === 16 ? [NumberSymbol16Regular, NumberSymbol16Filled] : [NumberSymbol24Regular, NumberSymbol24Filled];
+      break;
     }
     */
     case SchemaNodeDataType.Int:
@@ -151,21 +117,30 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType, properties
     case SchemaNodeDataType.UnsignedInt:
     case SchemaNodeDataType.UnsignedLong:
     case SchemaNodeDataType.UnsignedShort: {
-      return Integer16Regular; // Integer
+      // Integer
+      icons = size === 16 ? [Integer16Regular, Integer16Filled] : [Integer24Regular, Integer24Filled];
+      break;
     }
     case SchemaNodeDataType.Decimal:
     case SchemaNodeDataType.Double:
     case SchemaNodeDataType.Float: {
-      return Decimal16Regular; // Decimal
+      // Decimal
+      icons = size === 16 ? [Decimal16Regular, Decimal16Filled] : [Decimal24Regular, Decimal24Filled];
+      break;
     }
     case SchemaNodeDataType.Base64Binary:
     case SchemaNodeDataType.Byte:
     case SchemaNodeDataType.HexBinary:
     case SchemaNodeDataType.UnsignedByte: {
-      return Binary16Regular; // Binary
+      // Binary
+      icons = size === 16 ? [Binary16Regular, Binary16Filled] : [Binary24Regular, Binary24Filled];
+      break;
     }
     case SchemaNodeDataType.Boolean: {
-      return AddSubtractCircle16Regular; // Boolean
+      // Boolean
+      icons =
+        size === 16 ? [AddSubtractCircle16Regular, AddSubtractCircle16Filled] : [AddSubtractCircle24Regular, AddSubtractCircle24Filled];
+      break;
     }
     case SchemaNodeDataType.AnyUri:
     case SchemaNodeDataType.Id:
@@ -178,7 +153,9 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType, properties
     case SchemaNodeDataType.QName:
     case SchemaNodeDataType.String:
     case SchemaNodeDataType.Token: {
-      return String16Regular; // String
+      // String
+      icons = size === 16 ? [String16Regular, String16Filled] : [String24Regular, String24Filled];
+      break;
     }
     case SchemaNodeDataType.Date:
     case SchemaNodeDataType.DateTime:
@@ -189,189 +166,38 @@ export const icon16ForSchemaNodeType = (nodeType: SchemaNodeDataType, properties
     case SchemaNodeDataType.GYear:
     case SchemaNodeDataType.GYearMonth:
     case SchemaNodeDataType.Time: {
-      return CalendarClock16Regular; // Date time
+      // Date time
+      icons = size === 16 ? [CalendarClock16Regular, CalendarClock16Filled] : [CalendarClock24Regular, CalendarClock24Filled];
+      break;
     }
-    case SchemaNodeDataType.Entity: // danielle refactor this
+    case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
-      if (properties === SchemaNodeProperties.Repeating) {
-        return Array16Regular;
+      // Object | Array
+      if (nodeProperties && nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1) {
+        icons = size === 16 ? [Array16Regular, Array16Filled] : [Array24Regular, Array24Filled];
+      } else {
+        icons = size === 16 ? [Cube16Regular, Cube16Filled] : [Cube24Regular, Cube24Filled];
       }
-      return Cube16Regular;
+      break;
     }
     case SchemaNodeDataType.AnyAtomicType:
     case SchemaNodeDataType.Item:
     case SchemaNodeDataType.Notation:
     case SchemaNodeDataType.UntypedAtomic: {
-      return Any16Regular; // Any
+      // Any
+      icons = size === 16 ? [Any16Regular, Any16Filled] : [Any24Regular, Any24Filled];
+      break;
     }
     default: {
-      // TODO log when we fail to match a data type
-      return CircleOff16Regular; // Null
-    }
-  }
-};
+      console.error(`Icon.Utils Error: No icon found for type ${nodeType}`);
 
-export const icon24BundleForSchemaNodeType = (nodeType: SchemaNodeDataType) => {
-  switch (nodeType) {
-    /* Currently Unused will come into play with JSON
-    case SchemaNodeDataType.ComplexType: {
-      return bundleIcon(NumberSymbol24Filled, NumberSymbol24Regular); // Number
-    }
-    */
-    case SchemaNodeDataType.Int:
-    case SchemaNodeDataType.Integer:
-    case SchemaNodeDataType.Long:
-    case SchemaNodeDataType.NegativeInteger:
-    case SchemaNodeDataType.NonNegativeInteger:
-    case SchemaNodeDataType.NonPositiveInteger:
-    case SchemaNodeDataType.PositiveInteger:
-    case SchemaNodeDataType.Short:
-    case SchemaNodeDataType.UnsignedInt:
-    case SchemaNodeDataType.UnsignedLong:
-    case SchemaNodeDataType.UnsignedShort: {
-      return bundleIcon(Integer24Filled, Integer24Regular); // Integer
-    }
-    case SchemaNodeDataType.Decimal:
-    case SchemaNodeDataType.Double:
-    case SchemaNodeDataType.Float: {
-      return bundleIcon(Decimal24Filled, Decimal24Regular); // Decimal
-    }
-    case SchemaNodeDataType.Base64Binary:
-    case SchemaNodeDataType.Byte:
-    case SchemaNodeDataType.HexBinary:
-    case SchemaNodeDataType.UnsignedByte: {
-      return bundleIcon(Binary24Filled, Binary24Regular); // Binary
-    }
-    case SchemaNodeDataType.Boolean: {
-      return bundleIcon(AddSubtractCircle24Filled, AddSubtractCircle24Regular); // Boolean
-    }
-    case SchemaNodeDataType.AnyUri:
-    case SchemaNodeDataType.Id:
-    case SchemaNodeDataType.Idref:
-    case SchemaNodeDataType.Language:
-    case SchemaNodeDataType.Name:
-    case SchemaNodeDataType.NCName:
-    case SchemaNodeDataType.NmToken:
-    case SchemaNodeDataType.NormalizedString:
-    case SchemaNodeDataType.QName:
-    case SchemaNodeDataType.String:
-    case SchemaNodeDataType.Token: {
-      return bundleIcon(String24Filled, String24Regular); // String
-    }
-    case SchemaNodeDataType.Date:
-    case SchemaNodeDataType.DateTime:
-    case SchemaNodeDataType.Duration:
-    case SchemaNodeDataType.GDay:
-    case SchemaNodeDataType.GMonth:
-    case SchemaNodeDataType.GMonthDay:
-    case SchemaNodeDataType.GYear:
-    case SchemaNodeDataType.GYearMonth:
-    case SchemaNodeDataType.Time: {
-      return bundleIcon(CalendarClock24Filled, CalendarClock24Regular); // Date time
-    }
-    /* Currently Unused
-    case SchemaNodeDataType: {
-      return bundleIcon(Array24Filled, Array24Regular); // Array
-    }
-    */
-    case SchemaNodeDataType.Entity:
-    case SchemaNodeDataType.None: {
-      return bundleIcon(Cube24Filled, Cube24Regular); // Object
-    }
-    case SchemaNodeDataType.AnyAtomicType:
-    case SchemaNodeDataType.Item:
-    case SchemaNodeDataType.Notation:
-    case SchemaNodeDataType.UntypedAtomic: {
-      return bundleIcon(Any24Filled, Any24Regular); // Any
-    }
-    default: {
-      // TODO log when we fail to match a data type
-      return bundleIcon(CircleOffFilled, CircleOffRegular); // Null
+      // Null
+      icons = [CircleOff16Regular, CircleOff16Filled];
+      break;
     }
   }
-};
 
-export const icon24ForSchemaNodeType = (nodeType: SchemaNodeDataType, properties?: SchemaNodeProperties) => {
-  switch (nodeType) {
-    /* Currently Unused will come into play with JSON
-    case SchemaNodeDataType.ComplexType: {
-      return NumberSymbol24Regular; // Number
-    }
-    */
-    case SchemaNodeDataType.Int:
-    case SchemaNodeDataType.Integer:
-    case SchemaNodeDataType.Long:
-    case SchemaNodeDataType.NegativeInteger:
-    case SchemaNodeDataType.NonNegativeInteger:
-    case SchemaNodeDataType.NonPositiveInteger:
-    case SchemaNodeDataType.PositiveInteger:
-    case SchemaNodeDataType.Short:
-    case SchemaNodeDataType.UnsignedInt:
-    case SchemaNodeDataType.UnsignedLong:
-    case SchemaNodeDataType.UnsignedShort: {
-      return Integer24Regular; // Integer
-    }
-    case SchemaNodeDataType.Decimal:
-    case SchemaNodeDataType.Double:
-    case SchemaNodeDataType.Float: {
-      return Decimal24Regular; // Decimal
-    }
-    case SchemaNodeDataType.Base64Binary:
-    case SchemaNodeDataType.Byte:
-    case SchemaNodeDataType.HexBinary:
-    case SchemaNodeDataType.UnsignedByte: {
-      return Binary24Regular; // Binary
-    }
-    case SchemaNodeDataType.Boolean: {
-      return AddSubtractCircle24Regular; // Boolean
-    }
-    case SchemaNodeDataType.AnyUri:
-    case SchemaNodeDataType.Id:
-    case SchemaNodeDataType.Idref:
-    case SchemaNodeDataType.Language:
-    case SchemaNodeDataType.Name:
-    case SchemaNodeDataType.NCName:
-    case SchemaNodeDataType.NmToken:
-    case SchemaNodeDataType.NormalizedString:
-    case SchemaNodeDataType.QName:
-    case SchemaNodeDataType.String:
-    case SchemaNodeDataType.Token: {
-      return String24Regular; // String
-    }
-    case SchemaNodeDataType.Date:
-    case SchemaNodeDataType.DateTime:
-    case SchemaNodeDataType.Duration:
-    case SchemaNodeDataType.GDay:
-    case SchemaNodeDataType.GMonth:
-    case SchemaNodeDataType.GMonthDay:
-    case SchemaNodeDataType.GYear:
-    case SchemaNodeDataType.GYearMonth:
-    case SchemaNodeDataType.Time: {
-      return CalendarClock24Regular; // Date time
-    }
-    /* Currently Unused
-    case SchemaNodeDataType: {
-      return Array24Regular; // Array
-    }
-    */
-    case SchemaNodeDataType.Entity:
-    case SchemaNodeDataType.None: {
-      if (properties === SchemaNodeProperties.Repeating) {
-        return Array24Regular;
-      }
-      return Cube24Regular;
-    }
-    case SchemaNodeDataType.AnyAtomicType:
-    case SchemaNodeDataType.Item:
-    case SchemaNodeDataType.Notation:
-    case SchemaNodeDataType.UntypedAtomic: {
-      return Any24Regular; // Any
-    }
-    default: {
-      // TODO log when we fail to match a data type
-      return CircleOffRegular; // Null
-    }
-  }
+  return bundled ? bundleIcon(icons[1], icons[0]) : icons[0];
 };
 
 export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {

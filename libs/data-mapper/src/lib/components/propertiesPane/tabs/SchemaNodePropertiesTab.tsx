@@ -2,7 +2,7 @@ import type { RootState } from '../../../core/state/Store';
 import type { SchemaNodeExtended } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { isCustomValue } from '../../../utils/Connection.Utils';
-import { icon16ForSchemaNodeType } from '../../../utils/Icon.Utils';
+import { iconForSchemaNodeDataType } from '../../../utils/Icon.Utils';
 import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
@@ -80,7 +80,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     [currentNode, targetSchemaDictionary]
   );
 
-  const DataTypeIcon = icon16ForSchemaNodeType(currentNode.schemaNodeDataType);
+  const DataTypeIcon = iconForSchemaNodeDataType(currentNode.schemaNodeDataType, 16, false, currentNode.nodeProperties);
 
   const connection = useMemo<Connection | undefined>(
     () => connectionDictionary[addTargetReactFlowPrefix(currentNode.key)],

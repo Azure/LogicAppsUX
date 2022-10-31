@@ -35,17 +35,18 @@ export interface CreateConnectionProps {
   createConnectionCallback?: (
     newName?: string,
     selectedParameterSet?: ConnectionParameterSet,
-    parameterValues?: Record<string, any>
+    parameterValues?: Record<string, any>,
+    isOAuthConnection?: boolean
   ) => void;
   cancelCallback?: () => void;
   hideCancelButton?: boolean;
-  needsAuth?: boolean;
   errorMessage?: string;
   clearErrorCallback?: () => void;
   selectSubscriptionCallback?: (subscriptionId: string) => void;
   selectedSubscriptionId?: string;
   availableSubscriptions?: Subscription[];
   availableGateways?: Gateway[];
+  checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
 }
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
@@ -59,13 +60,13 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     createConnectionCallback,
     cancelCallback,
     hideCancelButton = false,
-    needsAuth = false,
     errorMessage,
     clearErrorCallback,
     selectSubscriptionCallback,
     selectedSubscriptionId,
     availableSubscriptions,
     availableGateways,
+    checkOAuthCallback,
   } = props;
 
   const intl = useIntl();
@@ -100,12 +101,16 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     () => connectionParameterSets?.values[selectedParamSetIndex].parameters ?? {},
     [connectionParameterSets, selectedParamSetIndex]
   );
-  const parameters = useMemo(() => {
-    const params = { ...multiAuthParams, ...singleAuthParams } ?? {};
-    return filterRecord(params, (_key, value) => isParamVisible(value));
-  }, [isParamVisible, multiAuthParams, singleAuthParams]);
-
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 1, [connectionParameterSets?.values]);
+  const parameters = useMemo(() => {
+    const params = (isMultiAuth ? { ...multiAuthParams } : { ...singleAuthParams }) ?? {};
+    return filterRecord<any>(params, (_key, value) => isParamVisible(value));
+  }, [isMultiAuth, isParamVisible, multiAuthParams, singleAuthParams]);
+  const hasOAuth = useMemo(
+    () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams),
+    [checkOAuthCallback, isMultiAuth, multiAuthParams, singleAuthParams]
+  );
+
   const showNameInput = useMemo(() => isMultiAuth || Object.keys(parameters).length > 0, [isMultiAuth, parameters]);
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
@@ -122,8 +127,13 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   }, [isLoading, validParams]);
 
   const submitCallback = useCallback(() => {
-    return createConnectionCallback?.(connectionDisplayName, connectionParameterSets?.values[selectedParamSetIndex], parameterValues);
-  }, [createConnectionCallback, connectionDisplayName, connectionParameterSets?.values, selectedParamSetIndex, parameterValues]);
+    return createConnectionCallback?.(
+      connectionDisplayName,
+      connectionParameterSets?.values[selectedParamSetIndex],
+      parameterValues,
+      hasOAuth
+    );
+  }, [createConnectionCallback, connectionDisplayName, connectionParameterSets?.values, selectedParamSetIndex, parameterValues, hasOAuth]);
 
   // INTL STRINGS
 
@@ -201,19 +211,19 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   });
 
   const connectorDescription = useMemo(() => {
-    if (needsAuth) return authDescriptionText;
+    if (hasOAuth) return authDescriptionText;
     if (Object.keys(parameters ?? {}).length === 0) return simpleDescriptionText;
     return '';
-  }, [authDescriptionText, needsAuth, parameters, simpleDescriptionText]);
+  }, [authDescriptionText, hasOAuth, parameters, simpleDescriptionText]);
 
   const submitButtonText = useMemo(() => {
-    if (isLoading) return needsAuth ? signInButtonLoadingText : createButtonLoadingText;
-    return needsAuth ? signInButtonText : createButtonText;
-  }, [createButtonLoadingText, createButtonText, isLoading, needsAuth, signInButtonLoadingText, signInButtonText]);
+    if (isLoading) return hasOAuth ? signInButtonLoadingText : createButtonLoadingText;
+    return hasOAuth ? signInButtonText : createButtonText;
+  }, [createButtonLoadingText, createButtonText, isLoading, hasOAuth, signInButtonLoadingText, signInButtonText]);
 
   const submitButtonAriaLabel = useMemo(() => {
-    return needsAuth ? signInButtonAria : createButtonAria;
-  }, [needsAuth, signInButtonAria, createButtonAria]);
+    return hasOAuth ? signInButtonAria : createButtonAria;
+  }, [hasOAuth, signInButtonAria, createButtonAria]);
 
   // RENDER
 
