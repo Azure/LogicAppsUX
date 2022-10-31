@@ -20,6 +20,7 @@ import {
   hideNotification,
   makeConnection,
   setSelectedItem,
+  setSourceNodeConnectionBeingDrawnFromId,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import type { ViewportCoords } from '../models/ReactFlow';
@@ -27,9 +28,15 @@ import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, Viewport } from 'reactflow';
+import type {
+  Connection as ReactFlowConnection,
+  Edge as ReactFlowEdge,
+  Node as ReactFlowNode,
+  OnConnectStartParams,
+  Viewport,
+} from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { ConnectionLineType, useReactFlow } from 'reactflow';
 
@@ -88,6 +95,19 @@ export const ReactFlowWrapper = () => {
         })
       );
     }
+  };
+
+  const onConnectStart = (event: React.MouseEvent, { nodeId, handleType }: OnConnectStartParams) => {
+    // handleType check prevents other nodes' handles being displayed when attempting to draw from right-to-left (currently not allowed)
+    if (!nodeId || !handleType || handleType === 'target') {
+      return;
+    }
+
+    dispatch(setSourceNodeConnectionBeingDrawnFromId(nodeId));
+  };
+
+  const onConnectEnd = () => {
+    dispatch(setSourceNodeConnectionBeingDrawnFromId(undefined));
   };
 
   const onEdgeUpdateStart = useCallback(() => {
@@ -192,6 +212,8 @@ export const ReactFlowWrapper = () => {
       nodes={nodes}
       edges={edges}
       onConnect={onConnect}
+      onConnectStart={onConnectStart}
+      onConnectEnd={onConnectEnd}
       onPaneClick={onPaneClick}
       onNodeClick={onNodeSingleClick}
       defaultViewport={defaultViewport}

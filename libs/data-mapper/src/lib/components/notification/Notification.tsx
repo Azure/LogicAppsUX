@@ -71,13 +71,13 @@ export const Notification = (props: NotificationProps) => {
     });
 
     const sourceNodeRemovedLoc = intl.formatMessage({
-      defaultMessage: 'Source node removed from view.',
+      defaultMessage: 'Source element removed from view.',
       description: 'Message on removing source node',
     });
 
     const sourceNodeRemoveFailedLoc = intl.formatMessage(
       {
-        defaultMessage: `Remove all references to node ' {nodeName} ' before you remove the node.`,
+        defaultMessage: `Remove all references to element ' {nodeName} ' before you remove the element.`,
         description: 'Message on failure to remove source node',
       },
       {
@@ -91,7 +91,7 @@ export const Notification = (props: NotificationProps) => {
     });
 
     const connectionDeletedLoc = intl.formatMessage({
-      defaultMessage: `Connection deleted.`,
+      defaultMessage: `Line deleted.`,
       description: 'Message on deleting connection',
     });
 
@@ -101,7 +101,7 @@ export const Notification = (props: NotificationProps) => {
     });
 
     const circularLogicErrorLoc = intl.formatMessage({
-      defaultMessage: 'This connection would introduce circular logic.',
+      defaultMessage: 'Invalid connection, mapping must not form a closed loop.',
       description: 'Error message for circular logic connection validation',
     });
 

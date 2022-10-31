@@ -73,7 +73,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
   });
 
   const clearCustomValueLoc = intl.formatMessage({
-    defaultMessage: 'Clear custom value and reselect',
+    defaultMessage: 'Clear custom value',
     description: 'Tooltip content for clearing custom value',
   });
 
