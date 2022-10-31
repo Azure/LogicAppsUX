@@ -180,7 +180,10 @@ const generateForSection = (
     mapDefinition[formattedPathLocation] = {};
   }
 
-  const loopLocalValue = value.replaceAll(`${loopValue}/`, '');
+  let loopLocalValue = value.replaceAll(`${loopValue}/`, '');
+  if (loopLocalValue.startsWith('@')) {
+    loopLocalValue = `./${loopLocalValue}`;
+  }
 
   applyValueAtPath(loopLocalValue, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1), connections);
 };
