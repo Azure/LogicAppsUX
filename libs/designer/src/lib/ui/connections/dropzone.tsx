@@ -58,7 +58,6 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
         if (graphParents.includes(item.id)) return false;
         return item.id !== childId && item.id !== parentId;
       },
-      // TODO: Riley - prevent from dropping into nested children
       collect: (monitor) => ({
         isOver: monitor.isOver(),
         canDrop: monitor.canDrop(),
