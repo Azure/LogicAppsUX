@@ -9,7 +9,7 @@ import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { flattenInputs, isValidInputToFunctionNode, isValidSchemaNodeToSchemaNodeConnection } from '../../utils/Connection.Utils';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
-import { getStylesForSharedState } from './NodeCard';
+import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import {
   Badge,
   Button,
@@ -55,11 +55,7 @@ const useStyles = makeStyles({
       },
     },
     '&:focus-within': {
-      outlineWidth: tokens.strokeWidthThick,
-      outlineColor: tokens.colorBrandStroke1,
-      outlineStyle: 'solid',
-      opacity: 1,
-      boxShadow: tokens.shadow4,
+      ...selectedCardStyles,
     },
   },
   errorBadge: {
@@ -186,10 +182,12 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
 
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const schemaNameTextRef = useRef<HTMLDivElement>(null);
-  const [_isCardHovered, setIsCardHovered] = useState<boolean>(false);
+  const [isCardHovered, setIsCardHovered] = useState<boolean>(false);
   const [isChevronHovered, setIsChevronHovered] = useState<boolean>(false);
   const [isTooltipEnabled, setIsTooltipEnabled] = useState<boolean>(false);
 
@@ -206,6 +204,15 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     () => isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating,
     [isNodeConnected, schemaNode]
   );
+  const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
+  const shouldDisplayHandles = useMemo<boolean>(
+    () =>
+      displayHandle && !isSourceSchemaNode
+        ? !!sourceNodeConnectionBeingDrawnFromId
+        : sourceNodeConnectionBeingDrawnFromId === reactFlowId || isCardHovered || isCurrentNodeSelected,
+    [displayHandle, isSourceSchemaNode, sourceNodeConnectionBeingDrawnFromId, isCardHovered, isCurrentNodeSelected, reactFlowId]
+  );
+
   const shouldNameTooltipDisplay = schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false;
 
   const containerStyle = useMemo(() => {
@@ -237,15 +244,21 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     <div className={classes.badgeContainer}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge />}
 
-      <div className={containerStyle} onMouseLeave={() => setIsCardHovered(false)} onMouseEnter={() => setIsCardHovered(true)}>
-        {displayHandle && (
-          <Handle
-            type={isSourceSchemaNode ? 'source' : 'target'}
-            position={isSourceSchemaNode ? Position.Right : Position.Left}
-            style={handleStyle}
-            isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
-          />
-        )}
+      <div
+        className={containerStyle}
+        style={isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined}
+        onMouseLeave={() => setIsCardHovered(false)}
+        onMouseEnter={() => setIsCardHovered(true)}
+      >
+        <Handle
+          type={isSourceSchemaNode ? 'source' : 'target'}
+          position={isSourceSchemaNode ? Position.Right : Position.Left}
+          style={{
+            ...handleStyle,
+            visibility: shouldDisplayHandles ? 'visible' : 'hidden',
+          }}
+          isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
+        />
         {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>

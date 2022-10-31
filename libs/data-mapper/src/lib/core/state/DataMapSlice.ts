@@ -33,6 +33,7 @@ export interface DataMapState {
   undoStack: DataMapOperationState[];
   redoStack: DataMapOperationState[];
   notificationData?: NotificationData;
+  sourceNodeConnectionBeingDrawnFromId?: string;
 }
 
 export interface DataMapOperationState {
@@ -488,6 +489,10 @@ export const dataMapSlice = createSlice({
     hideNotification: (state) => {
       state.notificationData = undefined;
     },
+
+    setSourceNodeConnectionBeingDrawnFromId: (state, action: PayloadAction<string | undefined>) => {
+      state.sourceNodeConnectionBeingDrawnFromId = action.payload;
+    },
   },
 });
 
@@ -515,6 +520,7 @@ export const {
   deleteCurrentlySelectedItem,
   showNotification,
   hideNotification,
+  setSourceNodeConnectionBeingDrawnFromId,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

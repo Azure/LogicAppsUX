@@ -46,3 +46,11 @@ export const getStylesForSharedState = makeStyles({
     outlineColor: tokens.colorBrandStroke1,
   },
 });
+
+export const selectedCardStyles = {
+  outlineWidth: tokens.strokeWidthThick,
+  outlineColor: tokens.colorBrandStroke1,
+  outlineStyle: 'solid',
+  opacity: 1,
+  boxShadow: tokens.shadow4,
+};
