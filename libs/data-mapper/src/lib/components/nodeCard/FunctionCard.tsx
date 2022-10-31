@@ -10,7 +10,7 @@ import {
 } from '../../utils/Connection.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
-import { getStylesForSharedState } from './NodeCard';
+import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import {
   Button,
   createFocusOutlineStyle,
@@ -22,7 +22,7 @@ import {
   tokens,
   Tooltip,
 } from '@fluentui/react-components';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
@@ -128,7 +128,8 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
     [functionDictionary, flattenedTargetSchema, connectionDictionary]
   );
 
-  const shouldDisplayHandles = isCardHovered || selectedItemKey === reactFlowId;
+  const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
+  const shouldDisplayHandles = isCardHovered || isCurrentNodeSelected;
 
   return (
     <div className={classes.container} onMouseEnter={() => setIsCardHovered(true)} onMouseLeave={() => setIsCardHovered(false)}>
@@ -159,7 +160,11 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
         <Button
           onClick={onClick}
           className={mergedClasses}
-          style={{ backgroundColor: customTokens[functionBranding.colorTokenName] }}
+          style={
+            isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId
+              ? { ...selectedCardStyles, backgroundColor: customTokens[functionBranding.colorTokenName] }
+              : { backgroundColor: customTokens[functionBranding.colorTokenName] }
+          }
           disabled={!!disabled}
         >
           {getIconForFunction(functionName, undefined, functionBranding) /* TODO: undefined -> iconFileName once all SVGs in */}

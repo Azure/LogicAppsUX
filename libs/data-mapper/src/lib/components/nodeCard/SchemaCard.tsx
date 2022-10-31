@@ -9,7 +9,7 @@ import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { flattenInputs, isValidInputToFunctionNode, isValidSchemaNodeToSchemaNodeConnection } from '../../utils/Connection.Utils';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
-import { getStylesForSharedState } from './NodeCard';
+import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import {
   Badge,
   Button,
@@ -55,11 +55,7 @@ const useStyles = makeStyles({
       },
     },
     '&:focus-within': {
-      outlineWidth: tokens.strokeWidthThick,
-      outlineColor: tokens.colorBrandStroke1,
-      outlineStyle: 'solid',
-      opacity: 1,
-      boxShadow: tokens.shadow4,
+      ...selectedCardStyles,
     },
   },
   errorBadge: {
@@ -208,12 +204,13 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     () => isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating,
     [isNodeConnected, schemaNode]
   );
+  const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
   const shouldDisplayHandles = useMemo<boolean>(
     () =>
       displayHandle && !isSourceSchemaNode
         ? !!sourceNodeConnectionBeingDrawnFromId
-        : sourceNodeConnectionBeingDrawnFromId === reactFlowId || isCardHovered || selectedItemKey === reactFlowId,
-    [displayHandle, isSourceSchemaNode, sourceNodeConnectionBeingDrawnFromId, isCardHovered, selectedItemKey, reactFlowId]
+        : sourceNodeConnectionBeingDrawnFromId === reactFlowId || isCardHovered || isCurrentNodeSelected,
+    [displayHandle, isSourceSchemaNode, sourceNodeConnectionBeingDrawnFromId, isCardHovered, isCurrentNodeSelected, reactFlowId]
   );
 
   const shouldNameTooltipDisplay = schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false;
@@ -247,7 +244,12 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     <div className={classes.badgeContainer}>
       {isNBadgeRequired && !isSourceSchemaNode && <NBadge />}
 
-      <div className={containerStyle} onMouseLeave={() => setIsCardHovered(false)} onMouseEnter={() => setIsCardHovered(true)}>
+      <div
+        className={containerStyle}
+        style={isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined}
+        onMouseLeave={() => setIsCardHovered(false)}
+        onMouseEnter={() => setIsCardHovered(true)}
+      >
         <Handle
           type={isSourceSchemaNode ? 'source' : 'target'}
           position={isSourceSchemaNode ? Position.Right : Position.Left}
