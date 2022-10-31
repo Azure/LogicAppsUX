@@ -25,6 +25,14 @@ describe('Map definition conversions', () => {
 
       expect(Object.keys(mapDefinition).length).toEqual(7);
     });
+  });
+
+  describe('generateMapDefinitionBody', () => {
+    const sourceSchema: Schema = sourceMockSchema;
+    const extendedSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceSchema);
+
+    const targetSchema: Schema = targetMockSchema;
+    const extendedTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(targetSchema);
 
     it('Generates body with passthrough', async () => {
       const sourceNode = extendedSourceSchema.schemaTreeRoot.children[0];
@@ -194,6 +202,72 @@ describe('Map definition conversions', () => {
       expect(employeeObjectEntries[0][1]).toEqual('TelephoneNumber');
       expect(employeeObjectEntries[1][0]).toEqual('Name');
       expect(employeeObjectEntries[1][1]).toEqual('Name');
+    });
+
+    it('Generates body with child objects loop', async () => {
+      const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find(
+        (child) => child.name === 'LoopingWithIndex'
+      ) as SchemaNodeExtended;
+      const targetNode = extendedTargetSchema.schemaTreeRoot.children.find(
+        (child) => child.name === 'LoopingWithIndex'
+      ) as SchemaNodeExtended;
+      const mapDefinition: MapDefinitionEntry = {};
+      const connections: ConnectionDictionary = {};
+
+      // Just confirm the mock hasn't changed
+      expect(sourceNode).toBeDefined();
+      expect(targetNode).toBeDefined();
+
+      const sourceChildNode = sourceNode.children[0];
+      const targetChildNode = targetNode.children[0].children[2];
+
+      addNodeToConnections(
+        connections,
+        sourceChildNode.children[0],
+        addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
+        targetChildNode.children[1],
+        addReactFlowPrefix(targetChildNode.children[1].key, SchemaType.Target)
+      );
+
+      //Add parents
+      addNodeToConnections(
+        connections,
+        sourceChildNode,
+        addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
+        targetChildNode,
+        addReactFlowPrefix(targetChildNode.key, SchemaType.Target)
+      );
+      generateMapDefinitionBody(mapDefinition, connections);
+
+      expect(Object.keys(mapDefinition).length).toEqual(1);
+      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      expect(rootChildren.length).toEqual(1);
+      expect(rootChildren[0][0]).toEqual('LoopingWithIndex');
+      expect(rootChildren[0][1]).not.toBe('string');
+
+      const loopingObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['LoopingWithIndex'] as MapDefinitionEntry;
+      const loopingEntries = Object.entries(loopingObject);
+      expect(loopingEntries.length).toEqual(1);
+      expect(loopingEntries[0][0]).toEqual('WeatherSummary');
+      expect(loopingEntries[0][1]).not.toBe('string');
+
+      const weatherSummaryObject = loopingObject['WeatherSummary'] as MapDefinitionEntry;
+      const weatherSummaryEntries = Object.entries(weatherSummaryObject);
+      expect(weatherSummaryEntries.length).toEqual(1);
+      expect(weatherSummaryEntries[0][0]).toEqual('$for(/ns0:Root/LoopingWithIndex/WeatherReport)');
+      expect(weatherSummaryEntries[0][1]).not.toBe('string');
+
+      const dayForObject = weatherSummaryObject['$for(/ns0:Root/LoopingWithIndex/WeatherReport)'] as MapDefinitionEntry;
+      const dayForObjectLoopEntries = Object.entries(dayForObject);
+      expect(dayForObjectLoopEntries.length).toEqual(1);
+      expect(dayForObjectLoopEntries[0][0]).toEqual('Day');
+      expect(dayForObjectLoopEntries[0][1]).not.toBe('string');
+
+      const dayObject = dayForObject['Day'] as MapDefinitionEntry;
+      const dayEntries = Object.entries(dayObject);
+      expect(dayEntries.length).toEqual(1);
+      expect(dayEntries[0][0]).toEqual('Pressure');
+      expect(dayEntries[0][1]).toEqual('./@Pressure');
     });
 
     it('Generates body with function loop', async () => {
