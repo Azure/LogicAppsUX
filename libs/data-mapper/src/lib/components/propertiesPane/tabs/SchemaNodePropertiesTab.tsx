@@ -80,7 +80,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
     [currentNode, targetSchemaDictionary]
   );
 
-  const DataTypeIcon = iconForSchemaNodeDataType(currentNode.schemaNodeDataType, 16, false);
+  const DataTypeIcon = iconForSchemaNodeDataType(currentNode.schemaNodeDataType, 16, false, currentNode.nodeProperties);
 
   const connection = useMemo<Connection | undefined>(
     () => connectionDictionary[addTargetReactFlowPrefix(currentNode.key)],

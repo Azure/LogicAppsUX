@@ -1,6 +1,6 @@
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { SchemaNodeProperties, SchemaType } from '../models';
+import { SchemaNodeProperty, SchemaType } from '../models';
 import type { FunctionData } from '../models/Function';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
@@ -13,23 +13,36 @@ export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended =>
 };
 
 const convertSchemaNodeToSchemaNodeExtended = (schemaNode: SchemaNode, parentPath: PathItem[]): SchemaNodeExtended => {
+  const nodeProperties = parsePropertiesIntoNodeProperties(schemaNode.properties);
   const pathToRoot: PathItem[] = [
     ...parentPath,
     {
       key: schemaNode.key,
       name: schemaNode.name,
       fullName: schemaNode.fullName,
-      repeating: schemaNode.properties === SchemaNodeProperties.Repeating,
+      repeating: nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1,
     },
   ];
 
   const extendedSchemaNode: SchemaNodeExtended = {
     ...schemaNode,
+    nodeProperties,
     children: schemaNode.children ? schemaNode.children.map((child) => convertSchemaNodeToSchemaNodeExtended(child, pathToRoot)) : [],
     pathToRoot: pathToRoot,
   };
 
   return extendedSchemaNode;
+};
+
+// Exported for testing purposes
+export const parsePropertiesIntoNodeProperties = (propertiesString: string): SchemaNodeProperty[] => {
+  if (propertiesString) {
+    return propertiesString.split(',').map((propertyString) => {
+      return SchemaNodeProperty[propertyString.trim() as keyof typeof SchemaNodeProperty];
+    });
+  }
+
+  return [];
 };
 
 export const flattenSchema = (schema: SchemaExtended, schemaType: SchemaType): SchemaNodeDictionary => {
