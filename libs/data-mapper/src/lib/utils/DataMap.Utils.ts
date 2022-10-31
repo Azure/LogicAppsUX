@@ -15,7 +15,6 @@ import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Sch
 import { SchemaNodeProperty } from '../models/Schema';
 import {
   addNodeToConnections,
-  collectNodesForConnectionChain,
   flattenInputs,
   isConnectionUnit,
   isCustomValue,
@@ -80,17 +79,8 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
         } else if (isSchemaNodeExtended(input.node)) {
           applyValueAtPath(input.node.key, mapDefinition, selfNode, selfNode.pathToRoot, connections);
         } else {
-          const currentConnection = connections[input.reactFlowKey];
-          const connectionChain = collectNodesForConnectionChain(currentConnection, connections);
-          const containsRepeatingNode = connectionChain.some((connectionChainItem) => {
-            const node = connectionChainItem.node;
-            return isSchemaNodeExtended(node) && node.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1;
-          });
-
-          if (!containsRepeatingNode) {
-            const value = collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
-            applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
-          }
+          const value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
+          applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
         }
       }
     });
@@ -188,7 +178,12 @@ const generateForSection = (
   applyValueAtPath(loopLocalValue, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1), connections);
 };
 
-const collectValueForFunction = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
+const collectFunctionValue = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
+  // Special case where the index is used directly
+  if (currentConnection.self.node.key === indexPseudoFunctionKey) {
+    return '$i';
+  }
+
   const inputValues = currentConnection
     ? (flattenInputs(currentConnection.inputs)
         .flatMap((input) => {
@@ -201,7 +196,11 @@ const collectValueForFunction = (node: FunctionData, currentConnection: Connecti
           } else if (isSchemaNodeExtended(input.node)) {
             return input.node.fullName.startsWith('@') ? `$${input.node.key}` : input.node.key;
           } else {
-            return collectValueForFunction(input.node, connections[input.reactFlowKey], connections);
+            if (input.node.key === indexPseudoFunctionKey) {
+              return '$i';
+            } else {
+              return collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
+            }
           }
         })
         .filter((mappedInput) => !!mappedInput) as string[])
