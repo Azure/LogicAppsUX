@@ -13,7 +13,7 @@ import {
 import { getIconForFunction } from '../../../utils/Icon.Utils';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, Input, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
+import { Button, Divider, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -76,9 +76,9 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
     description: 'Input',
   });
 
-  const outputLoc = intl.formatMessage({
-    defaultMessage: 'Output',
-    description: 'Output',
+  const expressionLoc = intl.formatMessage({
+    defaultMessage: 'Expression',
+    description: 'Expression',
   });
 
   const functionNoReqInputLoc = intl.formatMessage({
@@ -281,9 +281,9 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
         />
 
         <Stack className={styles.inputOutputStackStyle}>
-          <Text className={styles.titleStyle}>{outputLoc}</Text>
+          <Text className={styles.titleStyle}>{expressionLoc}</Text>
 
-          <Input value={outputValue} style={{ marginTop: 16 }} readOnly />
+          <Text style={{ marginTop: 16 }}>{outputValue}</Text>
         </Stack>
       </Stack>
     </div>
