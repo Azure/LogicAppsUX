@@ -41,14 +41,23 @@ export const addNodeToConnections = (
   if (sourceNode && self) {
     createConnectionEntryIfNeeded(connections, self, selfReactFlowKey);
     const currentConnectionInputs = connections[selfReactFlowKey].inputs;
+    const newInputValue = { node: sourceNode, reactFlowKey: sourceReactFlowKey };
 
     // Schema nodes can only ever have 1 input
     if (isSchemaNodeExtended(self)) {
-      currentConnectionInputs[0] = [{ node: sourceNode, reactFlowKey: sourceReactFlowKey }];
+      currentConnectionInputs[0] = [newInputValue];
     } else {
       // If the destination has unlimited inputs, all should go on the first input
       if (self.maxNumberOfInputs === -1) {
-        currentConnectionInputs[0].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+        // Check if an undefined input field exists first (created through PropPane)
+        const indexOfFirstOpenInput = currentConnectionInputs[0].findIndex((inputCon) => !inputCon);
+
+        if (indexOfFirstOpenInput >= 0) {
+          currentConnectionInputs[0][indexOfFirstOpenInput] = newInputValue;
+        } else {
+          // Otherwise we can safely just append its value to the end
+          currentConnectionInputs[0].push(newInputValue);
+        }
       } else {
         // Add input to first available and type-matched place (handle & PropPane validation should guarantee there's at least one)
         let added = false;
@@ -62,7 +71,7 @@ export const addNodeToConnections = (
                 (isSchemaNodeExtended(sourceNode) ? type === sourceNode.normalizedDataType : type === sourceNode.outputValueType)
             )
           ) {
-            currentConnectionInputs[key].push({ node: sourceNode, reactFlowKey: sourceReactFlowKey });
+            currentConnectionInputs[key].push(newInputValue);
             added = true;
           }
         });
