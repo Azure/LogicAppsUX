@@ -80,7 +80,7 @@ export interface FunctionCardProps extends CardProps {
 }
 
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
-  const { functionName, maxNumberOfInputs, inputs, disabled, error, functionBranding, displayHandle, onClick } = props.data; // iconFileName
+  const { functionName, maxNumberOfInputs, disabled, error, functionBranding, displayHandle, onClick } = props.data; // iconFileName
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
@@ -106,7 +106,12 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
           if (newConnectionWillHaveCircularLogic(connection.target, connection.source, connectionDictionary)) {
             return false;
           } else {
-            return isValidInputToFunctionNode(sourceFunctionNode.outputValueType, targetNodeConnection, maxNumberOfInputs, inputs);
+            return isValidInputToFunctionNode(
+              sourceFunctionNode.outputValueType,
+              targetNodeConnection,
+              targetFunctionNode.maxNumberOfInputs,
+              targetFunctionNode.inputs
+            );
           }
         }
 
@@ -115,7 +120,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
 
       return false;
     },
-    [maxNumberOfInputs, inputs, functionDictionary, flattenedTargetSchema, connectionDictionary]
+    [functionDictionary, flattenedTargetSchema, connectionDictionary]
   );
 
   return (

@@ -143,23 +143,38 @@ export const isValidFunctionNodeToSchemaNodeConnection = (srcDataType: Normalize
 
 export const isValidInputToFunctionNode = (
   srcNodeType: NormalizedDataType,
-  currentNodeConnection: Connection | undefined,
+  targetNodeConnection: Connection | undefined,
   tgtMaxNumInputs: number,
   tgtInputs: FunctionInput[]
 ) => {
-  // If Function has unbounded inputs, just check if type matches
-  if (tgtMaxNumInputs === -1) {
-    return isFunctionTypeSupported(srcNodeType, tgtInputs);
-  }
-
-  // Make sure there's available inputs
-  if (currentNodeConnection) {
-    if (flattenInputs(currentNodeConnection.inputs).length === tgtMaxNumInputs) {
-      return false;
+  try {
+    // If Function has unbounded inputs, just check if type matches
+    if (tgtMaxNumInputs === -1) {
+      return isFunctionTypeSupported(srcNodeType, tgtInputs);
     }
-  }
 
-  return isFunctionTypeSupportedAndAvailable(srcNodeType, currentNodeConnection, tgtInputs);
+    // Make sure there's available inputs
+    if (targetNodeConnection) {
+      if (flattenInputs(targetNodeConnection.inputs).length === tgtMaxNumInputs) {
+        return false;
+      }
+    }
+
+    return isFunctionTypeSupportedAndAvailable(srcNodeType, targetNodeConnection, tgtInputs);
+  } catch (e) {
+    console.error(`Error validating Function input!`);
+    console.error(e);
+
+    console.error(`--------Related Details------------`);
+    console.error(`Src node type: ${srcNodeType}`);
+    console.error(`Target node connection:`);
+    console.error(targetNodeConnection);
+    console.error(`Target function max inputs: ${tgtMaxNumInputs}`);
+    console.error(`Target function input info:`);
+    console.error(tgtInputs);
+
+    return false;
+  }
 };
 
 const isFunctionTypeSupportedAndAvailable = (
@@ -180,7 +195,7 @@ const isFunctionTypeSupportedAndAvailable = (
         inputNodeType === NormalizedDataType.Any ||
         targetInput.allowedTypes.some((allowedType) => allowedType === inputNodeType || allowedType === NormalizedDataType.Any)
       ) {
-        if (!connection.inputs || connection.inputs[index].length < 1) {
+        if (!connection.inputs || !(index in connection.inputs) || connection.inputs[index].length < 1) {
           supportedTypeInputIsAvailable = true;
         }
       }
