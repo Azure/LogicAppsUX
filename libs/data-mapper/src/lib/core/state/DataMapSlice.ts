@@ -1,7 +1,7 @@
 import type { NotificationData } from '../../components/notification/Notification';
 import { NotificationTypes } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
-import { SchemaNodeProperties, SchemaType } from '../../models';
+import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import {
@@ -380,13 +380,17 @@ export const dataMapSlice = createSlice({
       // Add any repeating parent nodes as well
       const parentTargetNode = newState.currentTargetSchemaNode;
       const sourceNode = action.payload.source;
-      if (parentTargetNode && parentTargetNode.properties === SchemaNodeProperties.Repeating && isSchemaNodeExtended(sourceNode)) {
+      if (
+        parentTargetNode &&
+        parentTargetNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1 &&
+        isSchemaNodeExtended(sourceNode)
+      ) {
         if (sourceNode.parentKey) {
           const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
           const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
           const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
           if (
-            parentSourceNode.properties === SchemaNodeProperties.Repeating &&
+            parentSourceNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1 &&
             !nodeHasSpecificInputEventually(
               prefixedSourceKey,
               newState.dataMapConnections[prefixedTargetKey],

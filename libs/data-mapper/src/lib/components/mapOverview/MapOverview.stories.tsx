@@ -1,7 +1,7 @@
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperties, SchemaFileFormat } from '../../models/Schema';
 import type { SchemaExtended } from '../../models/Schema';
-import { MapOverview } from './MapOverview';
+import { NormalizedDataType, SchemaFileFormat, SchemaNodeDataType, SchemaNodeProperty } from '../../models/Schema';
 import type { MapOverviewProps } from './MapOverview';
+import { MapOverview } from './MapOverview';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
 
@@ -24,7 +24,8 @@ const schema: SchemaExtended = {
     namespaceUri: '',
     schemaNodeDataType: SchemaNodeDataType.None,
     normalizedDataType: NormalizedDataType.ComplexType,
-    properties: SchemaNodeProperties.NotSpecified,
+    properties: SchemaNodeProperty.NotSpecified,
+    nodeProperties: [SchemaNodeProperty.NotSpecified],
     children: [
       {
         key: 'child1',
@@ -35,7 +36,8 @@ const schema: SchemaExtended = {
         namespaceUri: '',
         schemaNodeDataType: SchemaNodeDataType.String,
         normalizedDataType: NormalizedDataType.String,
-        properties: SchemaNodeProperties.NotSpecified,
+        properties: SchemaNodeProperty.NotSpecified,
+        nodeProperties: [SchemaNodeProperty.NotSpecified],
         children: [],
       },
       {
@@ -47,7 +49,8 @@ const schema: SchemaExtended = {
         namespaceUri: '',
         schemaNodeDataType: SchemaNodeDataType.Integer,
         normalizedDataType: NormalizedDataType.Integer,
-        properties: SchemaNodeProperties.NotSpecified,
+        properties: SchemaNodeProperty.NotSpecified,
+        nodeProperties: [SchemaNodeProperty.NotSpecified],
         children: [],
       },
     ],
