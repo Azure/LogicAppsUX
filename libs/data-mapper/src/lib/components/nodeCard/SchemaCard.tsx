@@ -1,15 +1,16 @@
 import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardWidth } from '../../constants/NodeConstants';
+import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { store } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperties, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
-import { flattenInputs, isValidInputToFunctionNode, isValidSchemaNodeToSchemaNodeConnection } from '../../utils/Connection.Utils';
+import { flattenInputs } from '../../utils/Connection.Utils';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
-import type { CardProps } from './NodeCard';
+import HandleWrapper from './HandleWrapper';
 import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
+import type { CardProps } from './NodeCard';
 import {
   Badge,
   Button,
@@ -25,8 +26,8 @@ import { bundleIcon, ChevronRight16Regular, ChevronRight16Filled, Important12Fil
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
-import { Handle, Position } from 'reactflow';
+import type { NodeProps } from 'reactflow';
+import { Position } from 'reactflow';
 
 const badgeContainerWidth = schemaNodeCardWidth + 72;
 const contentBtnWidth = schemaNodeCardWidth - 30;
@@ -131,40 +132,6 @@ const useStyles = makeStyles({
   },
 });
 
-const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px', display: 'hidden' };
-
-const isValidConnection = (connection: ReactFlowConnection): boolean => {
-  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
-  const functionDictionary = store.getState().dataMap.curDataMapOperation.currentFunctionNodes;
-  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
-  const connectionDictionary = store.getState().dataMap.curDataMapOperation.dataMapConnections;
-
-  if (connection.source && connection.target && flattenedSourceSchema && flattenedTargetSchema && functionDictionary) {
-    const sourceSchemaNode = flattenedSourceSchema[connection.source];
-    // Target is either a function, or target schema, node
-    const targetFunctionNode = functionDictionary[connection.target];
-    const targetSchemaNode = flattenedTargetSchema[connection.target];
-    const currentTargetConnection = connectionDictionary[connection.target];
-
-    if (targetFunctionNode) {
-      return isValidInputToFunctionNode(
-        sourceSchemaNode.normalizedDataType,
-        currentTargetConnection,
-        targetFunctionNode.maxNumberOfInputs,
-        targetFunctionNode.inputs
-      );
-    }
-
-    if (targetSchemaNode) {
-      return isValidSchemaNodeToSchemaNodeConnection(sourceSchemaNode.schemaNodeDataType, targetSchemaNode.schemaNodeDataType);
-    }
-
-    return false;
-  }
-
-  return false;
-};
-
 export interface SchemaCardProps extends CardProps {
   schemaNode: SchemaNodeExtended;
   schemaType: SchemaType;
@@ -213,7 +180,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     [displayHandle, isSourceSchemaNode, sourceNodeConnectionBeingDrawnFromId, isCardHovered, isCurrentNodeSelected, reactFlowId]
   );
 
-  const shouldNameTooltipDisplay = schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false;
+  // NOTE: This isn't memo'd to play nice with the element refs
+  const shouldNameTooltipDisplay: boolean = schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false;
 
   const containerStyle = useMemo(() => {
     const newContStyles = [sharedStyles.root, classes.container];
@@ -250,14 +218,12 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
         onMouseLeave={() => setIsCardHovered(false)}
         onMouseEnter={() => setIsCardHovered(true)}
       >
-        <Handle
+        <HandleWrapper
           type={isSourceSchemaNode ? 'source' : 'target'}
           position={isSourceSchemaNode ? Position.Right : Position.Left}
-          style={{
-            ...handleStyle,
-            visibility: shouldDisplayHandles ? 'visible' : 'hidden',
-          }}
-          isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
+          nodeReactFlowType={ReactFlowNodeType.SchemaNode}
+          nodeReactFlowId={reactFlowId}
+          shouldDisplay={shouldDisplayHandles}
         />
         {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
