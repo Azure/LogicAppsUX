@@ -1,4 +1,5 @@
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
+import { useAllGraphParents } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
@@ -47,11 +48,16 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
   }, [dispatch, graphId, parentId]);
 
+  const graphParents = useAllGraphParents(graphId);
+
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: 'BOX',
       drop: () => ({ graphId, parentId, childId }),
-      canDrop: (item: any) => item.id !== childId && item.id !== parentId && item.id !== graphId,
+      canDrop: (item: any) => {
+        if (graphParents.includes(item.id)) return false;
+        return item.id !== childId && item.id !== parentId;
+      },
       // TODO: Riley - prevent from dropping into nested children
       collect: (monitor) => ({
         isOver: monitor.isOver(),
