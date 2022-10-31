@@ -1409,6 +1409,12 @@
       "value": "Either a single format specifier character or a custom format pattern that indicates how to format the value of this timestamp. If format is not provided, the ISO 8601 format ('o') is used."
     }
   ],
+  "BEZWxB": [
+    {
+      "type": 0,
+      "value": "Clear custom value"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -5193,12 +5199,6 @@
     {
       "type": 0,
       "value": "Required. The number of time units the desired time is in the future."
-    }
-  ],
-  "nQxMfu": [
-    {
-      "type": 0,
-      "value": "Clear custom value and reselect"
     }
   ],
   "nSan4V": [
