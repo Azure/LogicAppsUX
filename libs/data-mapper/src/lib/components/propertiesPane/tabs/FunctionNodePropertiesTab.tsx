@@ -13,7 +13,7 @@ import {
 import { getIconForFunction } from '../../../utils/Icon.Utils';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, Input, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
+import { Button, Divider, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Add20Regular, Delete20Regular } from '@fluentui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -76,9 +76,9 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
     description: 'Input',
   });
 
-  const outputLoc = intl.formatMessage({
-    defaultMessage: 'Output',
-    description: 'Output',
+  const expressionLoc = intl.formatMessage({
+    defaultMessage: 'Expression',
+    description: 'Expression',
   });
 
   const functionNoReqInputLoc = intl.formatMessage({
@@ -113,6 +113,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
     [connectionDictionary, selectedItemKey]
   );
 
+  // Compile Function's input value(-array)s from its Connection
   useEffect(() => {
     let newInputValueArrays: InputValueMatrix = [];
     const newInputNameArrays: string[] = []; // Node name or formatted custom value for fnOutputValue
@@ -122,6 +123,15 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
       if (connection?.inputs) {
         Object.values(connection.inputs).forEach((inputValueArray, idx) => {
+          if (!(idx in newInputValueArrays)) {
+            console.error(
+              `Connection inputs had more input-value-arrays than its Function had input slots - connection.inputs -> ${Object.values(
+                connection.inputs
+              ).map((input) => (!input ? 'undefined' : input.toString()))}`
+            );
+            return;
+          }
+
           inputValueArray.forEach((inputValue) => {
             if (!inputValue) {
               newInputValueArrays[idx].push(undefined);
@@ -179,9 +189,11 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
         <Stack className={styles.inputOutputStackStyle}>
           <Text className={styles.titleStyle}>{inputLoc}</Text>
 
-          {functionData.maxNumberOfInputs === 0 && <Text style={{ marginTop: '16px' }}>{functionNoReqInputLoc}</Text>}
+          {functionData.maxNumberOfInputs === 0 && ( // Functions with no inputs
+            <Text style={{ marginTop: '16px' }}>{functionNoReqInputLoc}</Text>
+          )}
 
-          {functionData.maxNumberOfInputs > 0 && (
+          {functionData.maxNumberOfInputs > 0 && ( // Functions with bounded inputs
             <Stack>
               {functionData.inputs.map((input, idx) => (
                 <div key={idx} style={{ marginTop: 8 }}>
@@ -190,7 +202,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       currentNode={functionData}
                       label={input.name}
                       placeholder={input.placeHolder}
-                      inputValue={inputValueArrays && inputValueArrays[idx].length ? inputValueArrays[idx][0] : undefined}
+                      inputValue={inputValueArrays && idx in inputValueArrays && 0 in inputValueArrays[idx] ? inputValueArrays[idx][0] : ''}
                       inputIndex={idx}
                       inputStyles={{ width: '100%' }}
                     />
@@ -200,9 +212,10 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
             </Stack>
           )}
 
-          {functionData.maxNumberOfInputs === -1 && (
+          {functionData.maxNumberOfInputs === -1 && ( // Function with unbounded input (first input will always be the only unbounded one)
             <>
-              {inputValueArrays && // Unbounded input value mapping
+              {inputValueArrays &&
+                0 in inputValueArrays && // Unbounded input value mapping
                 inputValueArrays[0].map((unboundedInputValue, idx) => (
                   <Stack key={`${functionData.inputs[0].name}-${idx}`} horizontal verticalAlign="center" style={{ marginTop: 8 }}>
                     <Tooltip relationship="label" content={functionData.inputs[0].tooltip || ''}>
@@ -235,20 +248,27 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                   (
                     inputValueArray,
                     idx // NOTE: Actual input index will be idx+1
-                  ) => (
-                    <div key={idx} style={{ marginTop: 8 }}>
-                      <Tooltip relationship="label" content={functionData.inputs[idx + 1].tooltip || ''}>
-                        <InputDropdown
-                          currentNode={functionData}
-                          label={functionData.inputs[idx + 1].name}
-                          placeholder={functionData.inputs[idx + 1].placeHolder}
-                          inputValue={inputValueArray.length > 0 ? inputValueArray[0] : undefined}
-                          inputIndex={idx + 1}
-                          inputStyles={{ width: '100%' }}
-                        />
-                      </Tooltip>
-                    </div>
-                  )
+                  ) =>
+                    idx + 1 in functionData.inputs ? (
+                      <div key={idx} style={{ marginTop: 8 }}>
+                        <Tooltip relationship="label" content={functionData.inputs[idx + 1].tooltip || ''}>
+                          <InputDropdown
+                            currentNode={functionData}
+                            label={functionData.inputs[idx + 1].name}
+                            placeholder={functionData.inputs[idx + 1].placeHolder}
+                            inputValue={inputValueArray.length > 0 ? inputValueArray[0] : undefined}
+                            inputIndex={idx + 1}
+                            inputStyles={{ width: '100%' }}
+                          />
+                        </Tooltip>
+                      </div>
+                    ) : (
+                      console.error(
+                        `inputValueArrays had value-array for an unspecified input on Function ${functionData.functionName} at idx ${
+                          idx + 1
+                        }: ${inputValueArray.toString()}`
+                      )
+                    )
                 )}
             </>
           )}
@@ -261,9 +281,9 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
         />
 
         <Stack className={styles.inputOutputStackStyle}>
-          <Text className={styles.titleStyle}>{outputLoc}</Text>
+          <Text className={styles.titleStyle}>{expressionLoc}</Text>
 
-          <Input value={outputValue} style={{ marginTop: 16 }} readOnly />
+          <Text style={{ marginTop: 16 }}>{outputValue}</Text>
         </Stack>
       </Stack>
     </div>

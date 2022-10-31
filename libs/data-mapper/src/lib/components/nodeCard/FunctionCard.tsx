@@ -10,7 +10,7 @@ import {
 } from '../../utils/Connection.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
 import type { CardProps } from './NodeCard';
-import { getStylesForSharedState } from './NodeCard';
+import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import {
   Button,
   createFocusOutlineStyle,
@@ -22,7 +22,7 @@ import {
   tokens,
   Tooltip,
 } from '@fluentui/react-components';
-import { useCallback } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
@@ -80,13 +80,18 @@ export interface FunctionCardProps extends CardProps {
 }
 
 export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
-  const { functionName, maxNumberOfInputs, inputs, disabled, error, functionBranding, displayHandle, onClick } = props.data; // iconFileName
+  const reactFlowId = props.id;
+  const { functionName, maxNumberOfInputs, disabled, error, functionBranding, displayHandle, onClick } = props.data; // iconFileName
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
   const functionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+
+  const [isCardHovered, setIsCardHovered] = useState<boolean>(false);
 
   const isValidConnection = useCallback(
     (connection: ReactFlowConnection) => {
@@ -106,7 +111,12 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
           if (newConnectionWillHaveCircularLogic(connection.target, connection.source, connectionDictionary)) {
             return false;
           } else {
-            return isValidInputToFunctionNode(sourceFunctionNode.outputValueType, targetNodeConnection, maxNumberOfInputs, inputs);
+            return isValidInputToFunctionNode(
+              sourceFunctionNode.outputValueType,
+              targetNodeConnection,
+              targetFunctionNode.maxNumberOfInputs,
+              targetFunctionNode.inputs
+            );
           }
         }
 
@@ -115,14 +125,29 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
 
       return false;
     },
-    [maxNumberOfInputs, inputs, functionDictionary, flattenedTargetSchema, connectionDictionary]
+    [functionDictionary, flattenedTargetSchema, connectionDictionary]
   );
 
+  const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
+  const shouldDisplayHandles = isCardHovered || isCurrentNodeSelected;
+
   return (
-    <div className={classes.container}>
-      {displayHandle && maxNumberOfInputs !== 0 && (
-        <Handle type="target" position={Position.Left} style={handleStyle} isValidConnection={() => false} />
-      )}
+    <div className={classes.container} onMouseEnter={() => setIsCardHovered(true)} onMouseLeave={() => setIsCardHovered(false)}>
+      <Handle
+        type="target"
+        position={Position.Left}
+        style={{
+          ...handleStyle,
+          visibility:
+            displayHandle &&
+            !!sourceNodeConnectionBeingDrawnFromId &&
+            sourceNodeConnectionBeingDrawnFromId !== reactFlowId &&
+            maxNumberOfInputs !== 0
+              ? 'visible'
+              : 'hidden',
+        }}
+        isValidConnection={() => false}
+      />
 
       {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge} />}
 
@@ -135,21 +160,27 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
         <Button
           onClick={onClick}
           className={mergedClasses}
-          style={{ backgroundColor: customTokens[functionBranding.colorTokenName] }}
+          style={
+            isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId
+              ? { ...selectedCardStyles, backgroundColor: customTokens[functionBranding.colorTokenName] }
+              : { backgroundColor: customTokens[functionBranding.colorTokenName] }
+          }
           disabled={!!disabled}
         >
           {getIconForFunction(functionName, undefined, functionBranding) /* TODO: undefined -> iconFileName once all SVGs in */}
         </Button>
       </Tooltip>
 
-      {displayHandle && (
-        <Handle
-          type="source"
-          position={Position.Right}
-          style={handleStyle}
-          isValidConnection={(connection) => isValidConnection(connection)}
-        />
-      )}
+      <Handle
+        type="source"
+        position={Position.Right}
+        style={{
+          ...handleStyle,
+          visibility:
+            displayHandle && (sourceNodeConnectionBeingDrawnFromId === reactFlowId || shouldDisplayHandles) ? 'visible' : 'hidden',
+        }}
+        isValidConnection={(connection) => isValidConnection(connection)}
+      />
     </div>
   );
 };
