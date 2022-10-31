@@ -29,7 +29,7 @@ import {
   String24Regular,
 } from '../images/DataType24Icons';
 import { FunctionCategory } from '../models/Function';
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperties } from '../models/Schema';
+import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../models/Schema';
 import { Image } from '@fluentui/react-components';
 import {
   AddSubtractCircle16Filled,
@@ -94,7 +94,7 @@ export const iconForSchemaNodeDataType = (
   nodeType: SchemaNodeDataType,
   size: iconSize,
   bundled: boolean,
-  properties?: SchemaNodeProperties
+  nodeProperties?: SchemaNodeProperty[]
 ) => {
   let icons: typeof Integer16Regular[] = [];
 
@@ -173,7 +173,7 @@ export const iconForSchemaNodeDataType = (
     case SchemaNodeDataType.Entity:
     case SchemaNodeDataType.None: {
       // Object | Array
-      if (properties === SchemaNodeProperties.Repeating) {
+      if (nodeProperties && nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1) {
         icons = size === 16 ? [Array16Regular, Array16Filled] : [Array24Regular, Array24Filled];
       } else {
         icons = size === 16 ? [Cube16Regular, Cube16Filled] : [Cube24Regular, Cube24Filled];
