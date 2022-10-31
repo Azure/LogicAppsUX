@@ -15,7 +15,11 @@ export interface SchemaNode {
   namespaceUri?: string;
   normalizedDataType: NormalizedDataType;
   schemaNodeDataType: SchemaNodeDataType;
-  // Do not use. Is parsed on the extended node "nodeProperties"
+
+  /**
+   * @deprecated Do not use, but do not remove. Is parsed on the extended node - nodeProperties
+   * @see SchemaNodeExtended
+   */
   properties: string;
   children: SchemaNode[];
 }
