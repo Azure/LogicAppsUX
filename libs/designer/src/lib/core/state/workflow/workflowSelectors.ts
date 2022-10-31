@@ -131,3 +131,29 @@ export const useNewSwitchCaseId = () =>
       return caseId;
     })
   );
+
+export const useAllGraphParents = (graphId: string): string[] => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      if (state.graph) return getWorkflowGraphPath(state.graph, graphId);
+      else return [];
+    })
+  );
+};
+
+export const getWorkflowGraphPath = (graph: WorkflowNode, graphId: string) => {
+  const traverseGraph = (node: WorkflowNode, path: string[] = []): string[] | undefined => {
+    if (node.id === graphId) {
+      return path;
+    } else {
+      let result;
+      for (const child of node.children ?? []) {
+        const childResult = traverseGraph(child, [...path, node.id]);
+        if (childResult) result = childResult;
+      }
+      return result;
+    }
+  };
+
+  return [...(traverseGraph(graph) ?? []), graphId];
+};
