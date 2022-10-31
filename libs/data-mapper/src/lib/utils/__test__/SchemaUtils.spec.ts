@@ -1,3 +1,4 @@
+import { SchemaNodeProperty } from '../../models';
 import { parsePropertiesIntoNodeProperties } from '../Schema.Utils';
 
 describe('utils/Schema', () => {
@@ -10,14 +11,14 @@ describe('utils/Schema', () => {
     it('One property', () => {
       const nodeProperties = parsePropertiesIntoNodeProperties('Repeating');
       expect(nodeProperties.length).toEqual(1);
-      expect(nodeProperties[0]).toEqual('Repeating');
+      expect(nodeProperties[0]).toEqual(SchemaNodeProperty.Repeating);
     });
 
     it('Multiple properties', () => {
       const nodeProperties = parsePropertiesIntoNodeProperties('Optional, Repeating');
       expect(nodeProperties.length).toEqual(2);
-      expect(nodeProperties[0]).toEqual('Optional');
-      expect(nodeProperties[1]).toEqual('Repeating');
+      expect(nodeProperties[0]).toEqual(SchemaNodeProperty.Optional);
+      expect(nodeProperties[1]).toEqual(SchemaNodeProperty.Repeating);
     });
   });
 });
