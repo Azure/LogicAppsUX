@@ -1,8 +1,8 @@
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperties } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
+import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary } from '../../models/Connection';
-import { functionMock } from '../../models/Function';
 import type { FunctionData, FunctionInput } from '../../models/Function';
+import { functionMock } from '../../models/Function';
 import { createConnectionEntryIfNeeded, isValidInputToFunctionNode, newConnectionWillHaveCircularLogic } from '../Connection.Utils';
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
@@ -47,7 +47,8 @@ describe('utils/Connections', () => {
         fullName: '',
         schemaNodeDataType: SchemaNodeDataType.Integer,
         normalizedDataType: NormalizedDataType.Integer,
-        properties: SchemaNodeProperties.NotSpecified,
+        properties: SchemaNodeProperty.NotSpecified,
+        nodeProperties: [SchemaNodeProperty.NotSpecified],
         children: [],
         pathToRoot: [],
       };

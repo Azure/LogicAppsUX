@@ -87,7 +87,7 @@ const FastTreeItem = wrap(
 );
 
 export const SharedTreeItemContent = (node: SchemaNodeExtended, isSelected: boolean): JSX.Element => {
-  const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, false, node.properties);
+  const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, false, node.nodeProperties);
   return (
     <span style={{ display: 'flex', paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} slot="start">
       <BundledTypeIcon style={{ verticalAlign: 'middle' }} filled={isSelected ? true : undefined} />

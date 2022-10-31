@@ -12,7 +12,7 @@ import type { FunctionData } from '../models/Function';
 import { indexPseudoFunctionKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { SchemaNodeProperties } from '../models/Schema';
+import { SchemaNodeProperty } from '../models/Schema';
 import {
   addNodeToConnections,
   collectNodesForConnectionChain,
@@ -84,7 +84,7 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
           const connectionChain = collectNodesForConnectionChain(currentConnection, connections);
           const containsRepeatingNode = connectionChain.some((connectionChainItem) => {
             const node = connectionChainItem.node;
-            return isSchemaNodeExtended(node) && node.properties === SchemaNodeProperties.Repeating;
+            return isSchemaNodeExtended(node) && node.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1;
           });
 
           if (!containsRepeatingNode) {
@@ -134,7 +134,7 @@ const applyValueAtPath = (
       }
     }
   } else {
-    if (destinationNode.properties === SchemaNodeProperties.ComplexTypeSimpleContent) {
+    if (destinationNode.nodeProperties.indexOf(SchemaNodeProperty.ComplexTypeSimpleContent) > -1) {
       if (!mapDefinition[formattedPathLocation]) {
         mapDefinition[formattedPathLocation] = {
           [mapNodeParams.value]: value,
@@ -142,7 +142,7 @@ const applyValueAtPath = (
       } else {
         (mapDefinition[formattedPathLocation] as MapDefinitionEntry)[mapNodeParams.value] = value;
       }
-    } else if (destinationNode.properties !== SchemaNodeProperties.Repeating) {
+    } else if (destinationNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) < 0) {
       mapDefinition[formattedPathLocation] = value;
     }
   }
@@ -180,7 +180,10 @@ const generateForSection = (
     mapDefinition[formattedPathLocation] = {};
   }
 
-  const loopLocalValue = value.replaceAll(`${loopValue}/`, '');
+  let loopLocalValue = value.replaceAll(`${loopValue}/`, '');
+  if (loopLocalValue.startsWith('@')) {
+    loopLocalValue = `./${loopLocalValue}`;
+  }
 
   applyValueAtPath(loopLocalValue, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1), connections);
 };

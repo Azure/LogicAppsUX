@@ -3,7 +3,7 @@ import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaNodeProperties, SchemaType } from '../../models';
+import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { flattenInputs } from '../../utils/Connection.Utils';
@@ -22,7 +22,7 @@ import {
   Tooltip,
   typographyStyles,
 } from '@fluentui/react-components';
-import { bundleIcon, ChevronRight16Regular, ChevronRight16Filled, Important12Filled } from '@fluentui/react-icons';
+import { bundleIcon, ChevronRight16Filled, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -168,7 +168,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const isSourceSchemaNode = useMemo(() => schemaType === SchemaType.Source, [schemaType]);
   const showOutputChevron = useMemo(() => !isSourceSchemaNode && !isLeaf && displayChevron, [isSourceSchemaNode, displayChevron, isLeaf]);
   const isNBadgeRequired = useMemo(
-    () => isNodeConnected && schemaNode.properties === SchemaNodeProperties.Repeating,
+    () => isNodeConnected && schemaNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1,
     [isNodeConnected, schemaNode]
   );
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
@@ -206,7 +206,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
-  const BundledTypeIcon = iconForSchemaNodeDataType(schemaNode.schemaNodeDataType, 24, false, schemaNode.properties);
+  const BundledTypeIcon = iconForSchemaNodeDataType(schemaNode.schemaNodeDataType, 24, false, schemaNode.nodeProperties);
 
   return (
     <div className={classes.badgeContainer}>
