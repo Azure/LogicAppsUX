@@ -1,6 +1,6 @@
 # Project
 
-Documentation for getting started can be found at https://purple-pebble-0e11de71e.1.azurestaticapps.net
+Documentation for getting started can be found at https://aka.ms/logicappsux
 
 ## Contributing
 
