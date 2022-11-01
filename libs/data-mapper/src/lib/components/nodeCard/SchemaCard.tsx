@@ -108,6 +108,12 @@ const useStyles = makeStyles({
     fontSize: '16px',
     flexBasis: '48px',
     justifyContent: 'right',
+    '&:hover': {
+      color: tokens.colorNeutralForeground3,
+    },
+    '&:active': {
+      color: `${tokens.colorNeutralForeground3} !important`,
+    },
   },
   disabled: {
     opacity: 0.38,
@@ -172,13 +178,11 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     [isNodeConnected, schemaNode]
   );
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
-  const shouldDisplayHandles = useMemo<boolean>(
-    () =>
-      displayHandle && !isSourceSchemaNode
-        ? !!sourceNodeConnectionBeingDrawnFromId
-        : sourceNodeConnectionBeingDrawnFromId === reactFlowId || isCardHovered || isCurrentNodeSelected,
-    [displayHandle, isSourceSchemaNode, sourceNodeConnectionBeingDrawnFromId, isCardHovered, isCurrentNodeSelected, reactFlowId]
-  );
+
+  const shouldDisplaySourceHandle =
+    (displayHandle && sourceNodeConnectionBeingDrawnFromId === reactFlowId) ||
+    (!sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected));
+  const shouldDisplayTargetHandle = displayHandle && !!sourceNodeConnectionBeingDrawnFromId;
 
   // NOTE: This isn't memo'd to play nice with the element refs
   const shouldNameTooltipDisplay: boolean = schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false;
@@ -223,7 +227,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           position={isSourceSchemaNode ? Position.Right : Position.Left}
           nodeReactFlowType={ReactFlowNodeType.SchemaNode}
           nodeReactFlowId={reactFlowId}
-          shouldDisplay={shouldDisplayHandles}
+          shouldDisplay={isSourceSchemaNode ? shouldDisplaySourceHandle : shouldDisplayTargetHandle}
         />
         {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>

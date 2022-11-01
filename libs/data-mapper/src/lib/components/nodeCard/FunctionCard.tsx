@@ -86,19 +86,21 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const [isCardHovered, setIsCardHovered] = useState<boolean>(false);
 
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
-  const shouldDisplayHandles = isCardHovered || isCurrentNodeSelected;
+
+  const shouldDisplayHandles = !sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected);
+  const shouldDisplayTargetHandle =
+    displayHandle &&
+    maxNumberOfInputs !== 0 &&
+    !!sourceNodeConnectionBeingDrawnFromId &&
+    sourceNodeConnectionBeingDrawnFromId !== reactFlowId;
+  const shouldDisplaySourceHandle = displayHandle && (sourceNodeConnectionBeingDrawnFromId === reactFlowId || shouldDisplayHandles);
 
   return (
     <div className={classes.container} onMouseEnter={() => setIsCardHovered(true)} onMouseLeave={() => setIsCardHovered(false)}>
       <HandleWrapper
         type="target"
         position={Position.Left}
-        shouldDisplay={
-          maxNumberOfInputs !== 0 &&
-          displayHandle &&
-          !!sourceNodeConnectionBeingDrawnFromId &&
-          sourceNodeConnectionBeingDrawnFromId !== reactFlowId
-        }
+        shouldDisplay={shouldDisplayTargetHandle}
         nodeReactFlowType={ReactFlowNodeType.FunctionNode}
         nodeReactFlowId={reactFlowId}
       />
@@ -128,7 +130,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
       <HandleWrapper
         type="source"
         position={Position.Right}
-        shouldDisplay={displayHandle && (sourceNodeConnectionBeingDrawnFromId === reactFlowId || shouldDisplayHandles)}
+        shouldDisplay={shouldDisplaySourceHandle}
         nodeReactFlowType={ReactFlowNodeType.FunctionNode}
         nodeReactFlowId={reactFlowId}
       />
