@@ -8,7 +8,7 @@ import { ItemToggledState } from '../tree/SchemaTreeItem';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular } from '@fluentui/react-icons';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -28,6 +28,8 @@ const useStyles = makeStyles({
   },
 });
 
+export type TargetNodesWithConnectionsDictionary = { [key: string]: true };
+
 export type TargetSchemaPaneProps = {
   isExpanded: boolean;
   setIsExpanded: (isExpanded: boolean) => void;
@@ -36,8 +38,8 @@ export type TargetSchemaPaneProps = {
 export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPaneProps) => {
   const intl = useIntl();
   const styles = useStyles();
-
   const dispatch = useDispatch<AppDispatch>();
+
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
@@ -53,78 +55,27 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     dispatch(setCurrentTargetSchemaNode(schemaNode));
   };
 
-  // For MVP - only checks for a connection, not its validity
-  const targetNodesWithConnections = useMemo(() => {
+  const targetNodesWithConnections = useMemo<TargetNodesWithConnectionsDictionary>(() => {
     const nodesWithConnections: { [key: string]: true } = {};
 
     Object.values(connectionDictionary).forEach((connection) => {
       if (connection.self.reactFlowKey in targetSchemaDictionary) {
-        nodesWithConnections[connection.self.node.key] = true; // targetSchemaDictionary[value.reactFlowDestination]
+        nodesWithConnections[connection.self.node.key] = true;
       }
     });
 
     return nodesWithConnections;
   }, [connectionDictionary, targetSchemaDictionary]);
 
-  /*eslint no-param-reassign: ["error", { "props": false }]*/
-  const handleObjectParentToggledState = useCallback(
-    (stateDict: NodeToggledStateDictionary, nodeKey: string, nodeChildrenToggledAmt: number, nodeChildrenAmt: number) => {
-      if (nodeChildrenToggledAmt === nodeChildrenAmt) {
-        stateDict[nodeKey] = ItemToggledState.Completed;
-        return 1;
-      } else if (nodeChildrenToggledAmt === 0) {
-        stateDict[nodeKey] = ItemToggledState.NotStarted;
-        return 0;
-      } else {
-        stateDict[nodeKey] = ItemToggledState.InProgress;
-        return 0.5;
-      }
-    },
-    []
-  );
-
-  const handleNodeWithValue = useCallback(
-    (stateDict: NodeToggledStateDictionary, nodeKey: string) => {
-      if (nodeKey in targetNodesWithConnections) {
-        stateDict[nodeKey] = ItemToggledState.Completed;
-        return 1;
-      } else {
-        stateDict[nodeKey] = ItemToggledState.NotStarted;
-        return 0;
-      }
-    },
-    [targetNodesWithConnections]
-  );
-
-  const checkNodeStatuses = useCallback(
-    (schemaNode: any, stateDict: NodeToggledStateDictionary) => {
-      let numChildrenToggled = 0;
-
-      schemaNode.children.forEach((child: any) => {
-        numChildrenToggled += checkNodeStatuses(child, stateDict);
-      });
-
-      // TODO: Sync w/ any type/expected-functionality updates
-      if (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) {
-        // Is object parent
-        return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
-      } else {
-        // Is node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
-        return handleNodeWithValue(stateDict, schemaNode.key);
-      }
-    },
-    [handleObjectParentToggledState, handleNodeWithValue]
-  );
-
   useEffect(() => {
     if (!targetSchema || !connectionDictionary) {
       setToggledStatesDictionary(undefined);
     } else {
       const newToggledStatesDictionary: NodeToggledStateDictionary = {};
-      checkNodeStatuses(targetSchema.schemaTreeRoot, newToggledStatesDictionary);
+      checkNodeStatuses(targetSchema.schemaTreeRoot, newToggledStatesDictionary, targetNodesWithConnections);
       setToggledStatesDictionary(newToggledStatesDictionary);
     }
-  }, [checkNodeStatuses, connectionDictionary, targetSchema, targetNodesWithConnections]);
+  }, [connectionDictionary, targetSchema, targetNodesWithConnections]);
 
   return (
     <div className={styles.outputPane} style={{ display: 'flex', flexDirection: 'column', flex: '0 1 1px' }}>
@@ -177,4 +128,57 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
       )}
     </div>
   );
+};
+
+/*eslint no-param-reassign: ["error", { "props": false }]*/
+const handleObjectParentToggledState = (
+  stateDict: NodeToggledStateDictionary,
+  nodeKey: string,
+  nodeChildrenToggledAmt: number,
+  nodeChildrenAmt: number
+) => {
+  if (nodeChildrenToggledAmt === nodeChildrenAmt) {
+    stateDict[nodeKey] = ItemToggledState.Completed;
+    return 1;
+  } else if (nodeChildrenToggledAmt === 0) {
+    stateDict[nodeKey] = ItemToggledState.NotStarted;
+    return 0;
+  } else {
+    stateDict[nodeKey] = ItemToggledState.InProgress;
+    return 0.5;
+  }
+};
+
+const handleNodeWithValue = (
+  stateDict: NodeToggledStateDictionary,
+  nodeKey: string,
+  targetNodesWithConnections: TargetNodesWithConnectionsDictionary
+) => {
+  if (nodeKey in targetNodesWithConnections) {
+    stateDict[nodeKey] = ItemToggledState.Completed;
+    return 1;
+  } else {
+    stateDict[nodeKey] = ItemToggledState.NotStarted;
+    return 0;
+  }
+};
+
+export const checkNodeStatuses = (
+  schemaNode: any,
+  stateDict: NodeToggledStateDictionary,
+  targetNodesWithConnections: TargetNodesWithConnectionsDictionary
+) => {
+  let numChildrenToggled = 0;
+
+  schemaNode.children.forEach((child: any) => {
+    numChildrenToggled += checkNodeStatuses(child, stateDict, targetNodesWithConnections);
+  });
+
+  if (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) {
+    // Is object parent
+    return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
+  } else {
+    // Is node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
+    return handleNodeWithValue(stateDict, schemaNode.key, targetNodesWithConnections);
+  }
 };

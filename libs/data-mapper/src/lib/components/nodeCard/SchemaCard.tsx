@@ -8,6 +8,7 @@ import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { flattenInputs, isValidInputToFunctionNode, isValidSchemaNodeToSchemaNodeConnection } from '../../utils/Connection.Utils';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { ItemToggledState } from '../tree/SchemaTreeItem';
 import type { CardProps } from './NodeCard';
 import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import {
@@ -21,7 +22,15 @@ import {
   Tooltip,
   typographyStyles,
 } from '@fluentui/react-components';
-import { bundleIcon, ChevronRight16Filled, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
+import {
+  bundleIcon,
+  ChevronRight16Filled,
+  ChevronRight16Regular,
+  Important12Filled,
+  CheckmarkCircle12Filled,
+  CircleHalfFill12Regular,
+  Circle12Regular,
+} from '@fluentui/react-icons';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -173,11 +182,12 @@ export interface SchemaCardProps extends CardProps {
   isLeaf: boolean;
   isChild: boolean;
   relatedConnections: Connection[];
+  connectionStatus?: ItemToggledState;
 }
 
 export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const reactFlowId = props.id;
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron } = props.data;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, connectionStatus } = props.data;
   const dispatch = useDispatch<AppDispatch>();
   const sharedStyles = getStylesForSharedState();
   const classes = useStyles();
@@ -231,6 +241,19 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     return mergeClasses(...newContStyles);
   }, [isChild, disabled, classes, sharedStyles]);
 
+  const connectionStatusIcon = useMemo(() => {
+    switch (connectionStatus) {
+      case ItemToggledState.Completed:
+        return <CheckmarkCircle12Filled primaryFill={tokens.colorPaletteGreenForeground1} />;
+      case ItemToggledState.InProgress:
+        return <CircleHalfFill12Regular primaryFill={tokens.colorPaletteYellowForeground1} />;
+      case ItemToggledState.NotStarted:
+        return <Circle12Regular primaryFill={tokens.colorNeutralForegroundDisabled} />;
+      default:
+        return null;
+    }
+  }, [connectionStatus]);
+
   const outputChevronOnClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     dispatch(setCurrentTargetSchemaNode(schemaNode));
@@ -259,7 +282,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           }}
           isValidConnection={isSourceSchemaNode ? isValidConnection : () => false}
         />
-        {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
+        {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}
+        {connectionStatusIcon && <span style={{ position: 'absolute', right: -16, top: 0 }}>{connectionStatusIcon}</span>}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>
             <BundledTypeIcon />
