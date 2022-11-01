@@ -265,19 +265,26 @@ export const dataMapSlice = createSlice({
         currentTargetSchemaNode,
         state.curDataMapOperation.dataMapConnections
       );
-      //const currentFullyConnectedSourceSchemaNodes = getConnectedSourceSchemaNodes(currentTargetSchemaNodeConnections, state.curDataMapOperation.dataMapConnections);
+      const currentFullyConnectedSourceSchemaNodes = getConnectedSourceSchemaNodes(
+        currentTargetSchemaNodeConnections,
+        state.curDataMapOperation.dataMapConnections
+      );
       const currentFullyConnectedFunctionConnectionUnits = getFunctionConnectionUnits(
         currentTargetSchemaNodeConnections,
         state.curDataMapOperation.dataMapConnections
       );
 
-      /* Leaving out source schema node garbage collection for now as it could be part of a full connection chain
-      // on a separate target schema level (thus we can't fully delete it just because it isn't connected on this current level)
+      let wereNodesGarbageCollected = false;
       state.curDataMapOperation.currentSourceSchemaNodes.forEach((node) => {
         if (!currentFullyConnectedSourceSchemaNodes.some((fullyConnectedNode) => fullyConnectedNode.key === node.key)) {
+          /* Leaving out source schema node garbage collection for now as it could be part of a full connection chain
+            on a separate target schema level (thus we can't fully delete it just because it isn't connected on this current level)
           delete cleanConnections[addSourceReactFlowPrefix(node.key)];
+          */
+
+          wereNodesGarbageCollected = true;
         }
-      });*/
+      });
 
       // Function nodes can be safely deleted because each node is unique, and thus can only be used on one target schema level
       Object.keys(state.curDataMapOperation.currentFunctionNodes).forEach((fnKey) => {
@@ -285,8 +292,13 @@ export const dataMapSlice = createSlice({
           !currentFullyConnectedFunctionConnectionUnits.some((fullyConnectedFnConUnit) => fullyConnectedFnConUnit.reactFlowKey === fnKey)
         ) {
           delete cleanConnections[fnKey];
+          wereNodesGarbageCollected = true;
         }
       });
+
+      if (wereNodesGarbageCollected) {
+        state.notificationData = { type: NotificationTypes.ElementsAndMappingsRemoved };
+      }
 
       // Reset currentSourceSchema/FunctionNodes, and add back any nodes part of complete connection chains on the new target schema level
 
