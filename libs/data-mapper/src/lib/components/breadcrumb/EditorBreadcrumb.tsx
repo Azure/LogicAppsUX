@@ -77,7 +77,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
     if (!item) return null;
 
     if (item.key === placeholderItemKey) {
-      return <Text style={{ ...typographyStyles.body1, lineHeight: 30, color: tokens.colorNeutralStroke1 }}>{item.text}</Text>;
+      return <Text style={{ ...typographyStyles.body1, color: tokens.colorNeutralStroke1 }}>{item.text}</Text>;
     } else {
       return <Text>{item.text}</Text>;
     }
@@ -92,6 +92,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
         maxDisplayedItems={maxBreadcrumbItems}
         overflowIndex={currentTargetSchemaNode ? overflowIndex : 0}
         onRenderItemContent={onRenderBreadcrumbContent}
+        styles={{ item: { lineHeight: 0 } }}
         style={baseBreadcrumbStyles}
       />
       <Button
