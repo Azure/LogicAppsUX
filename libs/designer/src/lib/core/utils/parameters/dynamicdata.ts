@@ -308,7 +308,6 @@ function getParametersForDynamicInvoke(referenceParameters: DynamicParameters, n
   const operationParameters: SerializedParameter[] = [];
 
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
-    // TODO: <2337657> Verify nested dependency parameters work once dynamic values available on api.
     const referenceParameterName = (parameter.parameterReference ?? parameter.parameter) as string;
     const referencedParameter = getParameterFromName(nodeInputs, referenceParameterName);
 

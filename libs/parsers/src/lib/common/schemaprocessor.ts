@@ -2,7 +2,7 @@
 import type { SchemaProperty } from '../models/operation';
 import * as SwaggerConstants from './constants';
 import * as ParameterKeyUtility from './helpers/keysutility';
-import { dereferenceRefSchema, getEnum, getParameterDynamicSchema, getParameterDynamicValues } from './helpers/utils';
+import { dereferenceRefSchema, getEnum, getKnownTitles, getParameterDynamicSchema, getParameterDynamicValues } from './helpers/utils';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
@@ -535,7 +535,7 @@ export class SchemaProcessor {
       ? title
       : key === ParameterKeyUtility.WildIndexSegment
       ? intl.formatMessage({ defaultMessage: 'Item', description: 'Label for single item inside an array.' })
-      : key;
+      : getKnownTitles(key);
     const titlePrefix = this.options.titlePrefix || this.options.summaryPrefix;
 
     return titlePrefix && titleText ? `${titlePrefix} ${titleText}` : titleText;

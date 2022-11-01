@@ -1,6 +1,8 @@
 import type { EnumObject, OutputMetadata, ParameterDynamicSchema, ParameterDynamicValues } from '../../models/operation';
 import { DynamicSchemaType, DynamicValuesType } from '../../models/operation';
 import * as Constants from '../constants';
+import { OutputKeys } from '../constants';
+import { parseEx } from './keysutility';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
@@ -221,4 +223,31 @@ function makeDefinition($refs: Record<string, any>): MakeDefinitionReducer {
     const { type } = $refs[current];
     return { ...previous, [current]: type };
   };
+}
+
+export function getKnownTitles(key: string): string {
+  const intl = getIntl();
+  switch (key) {
+    case OutputKeys.Body:
+      return intl.formatMessage({ defaultMessage: 'Body', description: 'Display name for body outputs' });
+    case OutputKeys.Headers:
+      return intl.formatMessage({ defaultMessage: 'Headers', description: 'Display name for headers in outputs' });
+    case OutputKeys.Outputs:
+      return intl.formatMessage({ defaultMessage: 'Outputs', description: 'Display name for operation outputs' });
+    case OutputKeys.Queries:
+      return intl.formatMessage({ defaultMessage: 'Queries', description: 'Display name for queries in outputs' });
+    case OutputKeys.StatusCode:
+      return intl.formatMessage({ defaultMessage: 'Status Code', description: 'Display name for status code in outputs' });
+    case OutputKeys.Item:
+      return intl.formatMessage({ defaultMessage: 'Item', description: 'Display name for item output' });
+    case OutputKeys.PathParameters:
+      return intl.formatMessage({
+        defaultMessage: 'Path Parameters',
+        description: 'Display name for relative path parameters in trigger outputs',
+      });
+    default:
+      // eslint-disable-next-line no-case-declarations
+      const segments = parseEx(key);
+      return String(segments[segments.length - 1].value);
+  }
 }
