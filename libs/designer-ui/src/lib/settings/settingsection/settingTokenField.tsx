@@ -64,6 +64,7 @@ const TokenField = ({
   isLoading,
   errorDetails,
   showTokens,
+  label,
   onValueChange,
   onComboboxMenuOpen,
   tokenPickerHandler,
@@ -150,12 +151,12 @@ const TokenField = ({
       return (
         <ArrayEditor
           type={ArrayType.SIMPLE}
-          labelProps={{ text: 'Array Item' }}
+          labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
           initialItems={editorViewModel?.items}
-          itemSchema={'Array Item'}
+          itemSchema={label ? `${label} Item` : 'Array Item'}
           isTrigger={isTrigger}
           tokenPickerHandler={tokenPickerHandler}
           onChange={onValueChange}
