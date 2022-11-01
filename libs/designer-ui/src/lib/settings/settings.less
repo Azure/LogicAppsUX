@@ -50,7 +50,6 @@
       display: flex;
       width: 100%;
       vertical-align: middle;
-      background-color: white;
       border: none;
 
       .msla-setting-section-header-icon {
@@ -61,7 +60,6 @@
       }
 
       .msla-setting-section-header-text {
-        background-color: white;
         border: none;
         text-align: left;
         font-size: 14px;
@@ -70,36 +68,6 @@
         min-width: 80%;
         line-height: 40px;
         padding-left: 10px;
-      }
-
-      .msla-setting-section-header-text-dark {
-        color: white;
-        background-color: #6b6b6b;
-        border: none;
-        text-align: left;
-        font-size: 14px;
-        vertical-align: middle;
-        font-weight: 600;
-        font-family: @font-family;
-        min-width: 80%;
-        line-height: 40px;
-        padding-left: 10px;
-      }
-    }
-
-    .msla-setting-section-header:hover {
-      background-color: #f3f3f3;
-      cursor: pointer;
-      .msla-setting-section-header-text {
-        background-color: #f3f3f3;
-      }
-    }
-
-    .msla-setting-section-header:active {
-      background-color: #e9e9e9;
-
-      .msla-setting-section-header-text {
-        background-color: #e9e9e9;
       }
     }
 
@@ -286,5 +254,35 @@
 
   [class^='ms-Toggle-slider'] {
     display: inline-block;
+  }
+}
+
+body.light {
+  .msla-setting-section-header {
+    background-color: white;
+  }
+
+  .msla-setting-section-header:hover {
+    background-color: #f3f3f3;
+    cursor: pointer;
+  }
+
+  .msla-setting-section-header:active {
+    background-color: #e9e9e9;
+  }
+}
+
+body.dark {
+  .msla-setting-section-header {
+    background-color: @ms-color-graphBackground;
+  }
+
+  .msla-setting-section-header:hover {
+    background-color: @ms-color-nodeBackground;
+    cursor: pointer;
+  }
+
+  .msla-setting-section-header:active {
+    background-color: @ms-color-nodeBackgroundHover;
   }
 }

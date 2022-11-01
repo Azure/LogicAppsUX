@@ -6,7 +6,7 @@ import { store } from './store';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import type { Theme } from '@fluentui/react';
 import { ThemeProvider } from '@fluentui/react';
-import { FluentProvider, webLightTheme } from '@fluentui/react-components';
+import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { IntlProvider } from '@microsoft-logic-apps/intl';
 import React, { useEffect } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
@@ -22,18 +22,28 @@ const OptionsStateSet = ({ options, children }: any) => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (!options) return; // TODO: This dispatch keeps getting ran out of order in storybook, overwriting the options with null values each time.  This is just a quick temp safeguard.
-    dispatch(initDesignerOptions({ readOnly: options.readOnly, isMonitoringView: options.isMonitoringView }));
+    dispatch(
+      initDesignerOptions({ readOnly: options.readOnly, isMonitoringView: options.isMonitoringView, isDarkMode: options.isDarkMode })
+    );
   }, [dispatch, options]);
   return <>{children}</>;
 };
 
 export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', options, children }: DesignerProviderProps) => {
+  const isDark = theme === AzureThemeLight ? false : true;
+  const webTheme = !isDark ? webLightTheme : webDarkTheme;
+  useEffect(() => {
+    document.body.classList.add(!isDark ? 'light' : 'dark');
+    document.body.classList.remove(!isDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-color-scheme', !isDark ? 'light' : 'dark');
+  }, [isDark, theme]);
+
   return (
     <ReduxProvider store={store}>
       <OptionsStateSet options={options}>
         <ProviderWrappedContext.Provider value={options.services}>
           <ThemeProvider theme={theme}>
-            <FluentProvider theme={webLightTheme}>
+            <FluentProvider theme={webTheme}>
               <div style={{ height: '100vh', overflow: 'hidden' }}>
                 <ReactQueryProvider>
                   <IntlProvider

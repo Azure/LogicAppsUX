@@ -8,3 +8,7 @@ export const useReadOnly = () => {
 export const useMonitoringView = () => {
   return useSelector((state: RootState) => state.designerOptions.isMonitoringView);
 };
+
+export const useIsDarkMode = () => {
+  return useSelector((state: RootState) => state.designerOptions.isDarkMode);
+};

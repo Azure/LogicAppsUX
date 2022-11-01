@@ -1,6 +1,6 @@
 import Constants from '../../constants';
-import { isHighContrastBlack } from '../../utils/theme';
 import { registerWorkflowLanguageProviders } from '../../workflow/languageservice/workflowlanguageservice';
+import { useTheme } from '@fluentui/react';
 import Editor, { loader } from '@monaco-editor/react';
 import type { IScrollEvent, editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
@@ -102,6 +102,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     },
     ref
   ) => {
+    const { isInverted: isDarkMode } = useTheme();
     const [canRender, setCanRender] = useState(false);
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
@@ -248,7 +249,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
             value={value}
             defaultValue={defaultValue}
             defaultLanguage={language ? language.toString() : undefined}
-            theme={language === EditorLanguage.templateExpressionLanguage ? language : isHighContrastBlack() ? 'vs-dark' : 'vs'}
+            theme={isDarkMode ? 'vs-dark' : 'vs-light'}
             onMount={handleEditorMounted}
             onChange={handleUpdate}
             height={height}

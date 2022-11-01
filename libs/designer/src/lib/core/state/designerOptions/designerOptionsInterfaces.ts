@@ -12,6 +12,7 @@ import type {
 export interface DesignerOptionsState {
   readOnly?: boolean;
   isMonitoringView?: boolean;
+  isDarkMode?: boolean;
   servicesInitialized?: boolean;
 }
 

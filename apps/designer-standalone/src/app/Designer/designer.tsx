@@ -1,6 +1,8 @@
 import { SettingsBox } from '../../components/settings_box';
 import type { RootState } from '../../state/store';
 import { HttpClient } from './httpClient';
+import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
+import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -67,17 +69,19 @@ const gatewayService = new StandardGatewayService({
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
 export const DesignerWrapper = () => {
-  const { workflowDefinition, readOnly, monitoringView, connections } = useSelector((state: RootState) => state.workflowLoader);
+  const { workflowDefinition, readOnly, monitoringView, darkMode, connections } = useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
     services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService },
     readOnly,
     isMonitoringView: monitoringView,
+    isDarkMode: darkMode,
   };
+  const theme = darkMode ? AzureThemeDark : AzureThemeLight;
 
   return (
     <>
       <SettingsBox />
-      <DesignerProvider locale="en-US" options={{ ...designerProviderProps }}>
+      <DesignerProvider locale="en-US" options={{ ...designerProviderProps }} theme={theme}>
         {workflowDefinition ? (
           <BJSWorkflowProvider
             workflow={{

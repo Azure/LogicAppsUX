@@ -3,6 +3,7 @@ import { useIconUri } from '../../../../core/state/selectors/actionMetadataSelec
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
+import { useTheme } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { IconButton } from '@fluentui/react/lib/Button';
@@ -11,7 +12,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import type { ISeparatorStyles } from '@fluentui/react/lib/Separator';
 import { Separator } from '@fluentui/react/lib/Separator';
 import { RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
-import { Failed, Skipped, Succeeded, TimedOut } from '@microsoft/designer-ui';
+import { Failed, isHighContrastBlack, Skipped, Succeeded, TimedOut } from '@microsoft/designer-ui';
 import type { MouseEvent } from 'react';
 import { useIntl } from 'react-intl';
 import { format } from 'util';
@@ -64,6 +65,10 @@ export const RunAfterActionDetails = ({
   onRenderLabel,
 }: RunAfterActionDetailsProps) => {
   const [expanded, setExpanded] = useBoolean(false);
+
+  const theme = useTheme();
+  const isInverted = isHighContrastBlack() || theme.isInverted;
+
   const intl = useIntl();
 
   const expandAriaLabel = intl.formatMessage({
@@ -100,7 +105,7 @@ export const RunAfterActionDetails = ({
                 className="msla-run-after-icon"
                 ariaLabel={format(expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`, title)}
                 iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
-                styles={{ root: { color: constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
+                styles={{ root: { color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
               />
               <div className="msla-run-after-edge-header-logo">
                 <img alt="" className="msla-run-after-logo-image" role="presentation" src={icon} />

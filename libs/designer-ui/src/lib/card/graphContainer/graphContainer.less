@@ -10,3 +10,13 @@
     border: 2px solid #605e5c;
   }
 }
+
+body.dark {
+  .msla-graph-container {
+    background-color: @ms-color-graphBackground;
+    border: 2px solid @ms-color-nodeBorder;
+    &.selected {
+      border: 2px solid @ms-color-nodeBorderFocused;
+    }
+  }
+}

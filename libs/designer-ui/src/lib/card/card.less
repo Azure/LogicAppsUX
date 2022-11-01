@@ -688,28 +688,6 @@
 }
 
 body.dark {
-  .msla-connector-add-step-button {
-    &:focus {
-      outline: 2px dotted @ms-color-black;
-    }
-  }
-
-  .msla-main-page {
-    .msla-connector-add-step-button:focus {
-      outline: none;
-    }
-  }
-
-  .msla-card {
-    background-color: @ms-color-white;
-  }
-
-  .msla-main-page {
-    .msla-card {
-      background-color: #252423;
-    }
-  }
-
   .msla-tab-component-container {
     .msla-card,
     .msla-card-placeolder {
@@ -766,27 +744,23 @@ body.dark {
   }
 
   .msla-panel-card-container {
-    .panel-card-main {
-      background-color: #2f2f2f;
+    .panel-card-error {
+      &.error,
+      &.blocked {
+        color: #f1707b;
+      }
 
-      .panel-card-error {
-        &.error,
-        &.blocked {
-          color: #f1707b;
-        }
+      &.severeWarning {
+        color: #fce100;
+      }
 
-        &.severeWarning {
-          color: #fce100;
-        }
+      &.success {
+        color: #92c353;
+      }
 
-        &.success {
-          color: #92c353;
-        }
-
-        &.info,
-        &.warning {
-          color: #a19f9d;
-        }
+      &.info,
+      &.warning {
+        color: #a19f9d;
       }
     }
   }
@@ -1148,14 +1122,15 @@ body.dark {
   }
 
   .msla-panel-card-container {
+    background-color: @ms-color-nodeBackground;
+    border: 1px solid @ms-color-nodeBorder;
+
     &:focus {
-      outline-color: #babab5;
+      outline-color: @ms-color-nodeBorderFocused;
     }
 
     &:hover {
-      .panel-card-main {
-        background-color: #484644;
-      }
+      background-color: @ms-color-nodeBackgroundHover;
     }
 
     .panel-card-slideout {
