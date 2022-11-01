@@ -23,6 +23,14 @@ const useStaticStyles = makeStaticStyles({
     border: `${tokens.strokeWidthThick} solid ${tokens.colorCompoundBrandForeground1}`,
     backgroundColor: tokens.colorNeutralBackground1,
   },
+  '.react-flow__handle-left': {
+    left: 0,
+    transform: 'translate(-50%, -50%)',
+  },
+  '.react-flow__handle-right': {
+    right: 0,
+    transform: 'translate(50%, -50%)',
+  },
   '.react-flow__handle-connecting': {
     // Handle invalid state
     borderColor: tokens.colorPaletteRedBackground3,
@@ -93,7 +101,10 @@ const HandleWrapper = ({ type, position, shouldDisplay, nodeReactFlowType, nodeR
     <Handle
       type={type}
       position={position}
-      style={{ visibility: shouldDisplay ? 'visible' : 'hidden' }}
+      style={{
+        visibility: shouldDisplay ? 'visible' : 'hidden',
+        transform: nodeReactFlowType === ReactFlowNodeType.FunctionNode ? `translate(${type === 'target' ? '-' : ''}30%, -55%)` : undefined,
+      }}
       isValidConnection={checkConnectionValidity}
       onMouseEnter={() => setIsHandleHovered(true)}
       onMouseLeave={() => setIsHandleHovered(false)}

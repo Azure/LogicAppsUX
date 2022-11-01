@@ -54,8 +54,6 @@ const useStyles = makeStyles({
     zIndex: '1',
   },
   container: {
-    height: `${sharedHalfCardSize}px`,
-    width: `${sharedHalfCardSize}px`,
     position: 'relative',
   },
   focusIndicator: createFocusOutlineStyle({
