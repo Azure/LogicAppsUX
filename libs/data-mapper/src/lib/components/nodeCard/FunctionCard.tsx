@@ -1,16 +1,13 @@
 import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
 import { functionNodeCardSize } from '../../constants/NodeConstants';
+import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { customTokens } from '../../core';
 import type { RootState } from '../../core/state/Store';
 import type { FunctionInput } from '../../models/Function';
-import {
-  isValidFunctionNodeToSchemaNodeConnection,
-  isValidInputToFunctionNode,
-  newConnectionWillHaveCircularLogic,
-} from '../../utils/Connection.Utils';
 import { getIconForFunction } from '../../utils/Icon.Utils';
-import type { CardProps } from './NodeCard';
+import HandleWrapper from './HandleWrapper';
 import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
+import type { CardProps } from './NodeCard';
 import {
   Button,
   createFocusOutlineStyle,
@@ -22,10 +19,10 @@ import {
   tokens,
   Tooltip,
 } from '@fluentui/react-components';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
-import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
-import { Handle, Position } from 'reactflow';
+import type { NodeProps } from 'reactflow';
+import { Position } from 'reactflow';
 
 const sharedHalfCardSize = functionNodeCardSize / 2;
 
@@ -57,8 +54,6 @@ const useStyles = makeStyles({
     zIndex: '1',
   },
   container: {
-    height: `${sharedHalfCardSize}px`,
-    width: `${sharedHalfCardSize}px`,
     position: 'relative',
   },
   focusIndicator: createFocusOutlineStyle({
@@ -68,8 +63,6 @@ const useStyles = makeStyles({
     },
   }),
 });
-
-const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
 
 export interface FunctionCardProps extends CardProps {
   functionName: string;
@@ -87,66 +80,27 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
   const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
-  const functionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
-  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [isCardHovered, setIsCardHovered] = useState<boolean>(false);
 
-  const isValidConnection = useCallback(
-    (connection: ReactFlowConnection) => {
-      if (connection.source && connection.target) {
-        const sourceFunctionNode = functionDictionary[connection.source];
-        // Target is either a function, or target schema, node
-        const targetFunctionNode = functionDictionary[connection.target];
-        const targetSchemaNode = flattenedTargetSchema[connection.target];
-        const targetNodeConnection = connectionDictionary[connection.target];
-
-        if (targetSchemaNode) {
-          return isValidFunctionNodeToSchemaNodeConnection(sourceFunctionNode.outputValueType, targetSchemaNode.normalizedDataType);
-        }
-
-        if (targetFunctionNode) {
-          // Verify the connection (Function<->Function) won't create circular logic
-          if (newConnectionWillHaveCircularLogic(connection.target, connection.source, connectionDictionary)) {
-            return false;
-          } else {
-            return isValidInputToFunctionNode(
-              sourceFunctionNode.outputValueType,
-              targetNodeConnection,
-              targetFunctionNode.maxNumberOfInputs,
-              targetFunctionNode.inputs
-            );
-          }
-        }
-
-        return false;
-      }
-
-      return false;
-    },
-    [functionDictionary, flattenedTargetSchema, connectionDictionary]
-  );
-
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
-  const shouldDisplayHandles = isCardHovered || isCurrentNodeSelected;
+
+  const shouldDisplayHandles = !sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected);
+  const shouldDisplayTargetHandle =
+    displayHandle &&
+    maxNumberOfInputs !== 0 &&
+    !!sourceNodeConnectionBeingDrawnFromId &&
+    sourceNodeConnectionBeingDrawnFromId !== reactFlowId;
+  const shouldDisplaySourceHandle = displayHandle && (sourceNodeConnectionBeingDrawnFromId === reactFlowId || shouldDisplayHandles);
 
   return (
     <div className={classes.container} onMouseEnter={() => setIsCardHovered(true)} onMouseLeave={() => setIsCardHovered(false)}>
-      <Handle
+      <HandleWrapper
         type="target"
         position={Position.Left}
-        style={{
-          ...handleStyle,
-          visibility:
-            displayHandle &&
-            !!sourceNodeConnectionBeingDrawnFromId &&
-            sourceNodeConnectionBeingDrawnFromId !== reactFlowId &&
-            maxNumberOfInputs !== 0
-              ? 'visible'
-              : 'hidden',
-        }}
-        isValidConnection={() => false}
+        shouldDisplay={shouldDisplayTargetHandle}
+        nodeReactFlowType={ReactFlowNodeType.FunctionNode}
+        nodeReactFlowId={reactFlowId}
       />
 
       {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge} />}
@@ -171,15 +125,12 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
         </Button>
       </Tooltip>
 
-      <Handle
+      <HandleWrapper
         type="source"
         position={Position.Right}
-        style={{
-          ...handleStyle,
-          visibility:
-            displayHandle && (sourceNodeConnectionBeingDrawnFromId === reactFlowId || shouldDisplayHandles) ? 'visible' : 'hidden',
-        }}
-        isValidConnection={(connection) => isValidConnection(connection)}
+        shouldDisplay={shouldDisplaySourceHandle}
+        nodeReactFlowType={ReactFlowNodeType.FunctionNode}
+        nodeReactFlowId={reactFlowId}
       />
     </div>
   );
