@@ -1,6 +1,7 @@
 import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
+import type { NodeToggledStateDictionary } from '../components/tree/SchemaTreeItem';
 import { childTargetNodeCardIndent, schemaNodeCardHeight } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
@@ -281,12 +282,13 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary, selec
 export const useOverviewLayout = (
   parentSchemaNode: SchemaNodeExtended,
   schemaType: SchemaType,
-  shouldTargetSchemaDisplayChevrons?: boolean
+  shouldTargetSchemaDisplayChevrons?: boolean,
+  toggledStatesDictionary?: NodeToggledStateDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
-  const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode[]>([]);
+  const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode<SchemaCardProps>[]>([]);
 
   useEffect(() => {
-    const newReactFlowNodes: ReactFlowNode[] = [];
+    const newReactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
 
     newReactFlowNodes.push({
       id: addReactFlowPrefix(parentSchemaNode.key, schemaType),
@@ -300,6 +302,7 @@ export const useOverviewLayout = (
         disabled: false,
         error: false,
         relatedConnections: [],
+        connectionStatus: toggledStatesDictionary ? toggledStatesDictionary[parentSchemaNode.key] : undefined,
       },
       type: ReactFlowNodeType.SchemaNode,
       position: {
@@ -321,6 +324,7 @@ export const useOverviewLayout = (
           disabled: false,
           error: false,
           relatedConnections: [],
+          connectionStatus: toggledStatesDictionary ? toggledStatesDictionary[childNode.key] : undefined,
         },
         type: ReactFlowNodeType.SchemaNode,
         position: {
@@ -331,7 +335,7 @@ export const useOverviewLayout = (
     });
 
     setReactFlowNodes(newReactFlowNodes);
-  }, [parentSchemaNode, schemaType, shouldTargetSchemaDisplayChevrons]);
+  }, [parentSchemaNode, schemaType, shouldTargetSchemaDisplayChevrons, toggledStatesDictionary]);
 
   return reactFlowNodes;
 };

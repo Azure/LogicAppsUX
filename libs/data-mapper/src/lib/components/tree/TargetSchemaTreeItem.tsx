@@ -27,17 +27,14 @@ export const TargetTreeItemContent = ({ node, isSelected, children, status }: Ta
     switch (status) {
       case ItemToggledState.Completed:
         return (
-          <CheckmarkCircle12Filled
-            style={{ display: 'flex', marginRight: '4px' }}
-            primaryFill={tokens.colorPaletteGreenForeground1}
-          ></CheckmarkCircle12Filled>
+          <CheckmarkCircle12Filled style={{ display: 'flex', marginRight: '4px' }} primaryFill={tokens.colorPaletteGreenForeground1} />
         );
       case ItemToggledState.InProgress:
-        return <CircleHalfFill12Regular primaryFill={tokens.colorPaletteYellowForeground1}></CircleHalfFill12Regular>;
+        return <CircleHalfFill12Regular primaryFill={tokens.colorPaletteYellowForeground1} />;
       case ItemToggledState.NotStarted:
-        return <Circle12Regular primaryFill={tokens.colorNeutralForegroundDisabled}></Circle12Regular>;
+        return <Circle12Regular primaryFill={tokens.colorNeutralForegroundDisabled} />;
       default:
-        return <div />;
+        return null;
     }
   }, [status]);
 

@@ -1,12 +1,17 @@
 import { defaultCanvasZoom } from '../../constants/ReactFlowConstants';
-import type { SchemaExtended, SchemaType } from '../../models';
+import type { RootState } from '../../core/state/Store';
+import { SchemaType } from '../../models';
+import type { SchemaExtended } from '../../models';
 import { nodeTypes } from '../../ui/ReactFlowWrapper';
 import { useOverviewLayout } from '../../utils/ReactFlow.Util';
+import { checkNodeStatuses } from '../targetSchemaPane/TargetSchemaPane';
+import type { TargetNodesWithConnectionsDictionary } from '../targetSchemaPane/TargetSchemaPane';
+import type { NodeToggledStateDictionary } from '../tree/SchemaTreeItem';
 import { Badge, makeStyles, shorthands } from '@fluentui/react-components';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-named-as-default
 import ReactFlow, { useViewport } from 'reactflow';
-
-// TODO (#16023841): Status icon - probably needs to be on actual SchemaNodeCard component
 
 const reactFlowStyle: React.CSSProperties = {
   height: '100%',
@@ -30,9 +35,33 @@ interface ReactFlowSchemaOverviewProps {
 export const ReactFlowSchemaOverview = ({ schema, schemaType, shouldTargetSchemaDisplayChevrons }: ReactFlowSchemaOverviewProps) => {
   const styles = useStyles();
   const reactFlowViewport = useViewport();
-  const reactFlowNodes = useOverviewLayout(schema.schemaTreeRoot, schemaType, shouldTargetSchemaDisplayChevrons);
 
-  const badgeCoords = { x: reactFlowViewport.x, y: reactFlowViewport.y - 24 };
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+
+  const toggledStatesDictionary = useMemo<NodeToggledStateDictionary | undefined>(() => {
+    if (schemaType !== SchemaType.Target) {
+      return undefined;
+    }
+
+    // Find target schema nodes with connections
+    const targetSchemaodesWithConnections: TargetNodesWithConnectionsDictionary = {};
+    Object.values(connectionDictionary).forEach((connection) => {
+      if (connection.self.reactFlowKey in targetSchemaDictionary) {
+        targetSchemaodesWithConnections[connection.self.node.key] = true;
+      }
+    });
+
+    // Recursively traverse the schema tree to calculate connected statuses from the leaf nodes up
+    const newToggledStatesDictionary: NodeToggledStateDictionary = {};
+    checkNodeStatuses(schema.schemaTreeRoot, newToggledStatesDictionary, targetSchemaodesWithConnections);
+
+    return newToggledStatesDictionary;
+  }, [schema, schemaType, connectionDictionary, targetSchemaDictionary]);
+
+  const reactFlowNodes = useOverviewLayout(schema.schemaTreeRoot, schemaType, shouldTargetSchemaDisplayChevrons, toggledStatesDictionary);
+
+  const schemaNameBadgeCoords = { x: reactFlowViewport.x, y: reactFlowViewport.y - 24 };
 
   return (
     <ReactFlow
@@ -53,7 +82,7 @@ export const ReactFlowSchemaOverview = ({ schema, schemaType, shouldTargetSchema
     >
       <Badge
         className={styles.schemaNameBadge}
-        style={{ position: 'absolute', top: `${badgeCoords.y}px`, left: `${badgeCoords.x}px` }}
+        style={{ position: 'absolute', top: `${schemaNameBadgeCoords.y}px`, left: `${schemaNameBadgeCoords.x}px` }}
         appearance="tint"
         shape="rounded"
         color="informative"
