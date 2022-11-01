@@ -720,7 +720,7 @@ body.dark {
   }
 
   .msla-badges {
-    border-top: 1px solid #e1dfdd;
+    border-top: 1px solid @ms-color-primaryBorder;
 
     .panel-card-v2-badge {
       &.active {
@@ -1122,15 +1122,15 @@ body.dark {
   }
 
   .msla-panel-card-container {
-    background-color: @ms-color-nodeBackground;
-    border: 1px solid @ms-color-nodeBorder;
+    background-color: @ms-color-primaryBackground;
+    border: 1px solid @ms-color-primaryBorder;
 
     &:focus {
-      outline-color: @ms-color-nodeBorderFocused;
+      outline-color: @ms-color-primaryBorderFocused;
     }
 
     &:hover {
-      background-color: @ms-color-nodeBackgroundHover;
+      background-color: @ms-color-primaryBackgroundHover;
     }
 
     .panel-card-slideout {

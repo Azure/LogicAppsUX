@@ -219,7 +219,7 @@
 
 body.dark {
   .msla-token-picker {
-    background: @ms-color-graphBackground;
+    background: @ms-color-secondaryBackground;
   }
   .msla-token-picker-option-title {
     color: #fff;
@@ -227,26 +227,31 @@ body.dark {
   .msla-token-picker-search,
   .msla-token-picker-action-bar,
   .msla-token-picker-expression {
-    background-color: @ms-color-nodeBackground;
+    background-color: @ms-color-primaryBackgroundHover;
   }
   .msla-token-picker-section-header {
-    background-color: @ms-color-nodeBackground;
+    background-color: @ms-color-primaryBackground;
     span {
       color: rgba(255, 255, 255, 0.5);
     }
   }
   .msla-token-picker-section-header-button {
-    background-color: @ms-color-nodeBackground;
+    background-color: @ms-color-primaryBackground;
     span {
       color: rgba(255, 255, 255, 0.5);
     }
   }
   .msla-token-picker-section-option {
+    border-bottom: 1px solid @ms-color-secondaryBorder;
     &:hover {
-      background-color: @ms-color-nodeBackground;
+      background-color: @ms-color-primaryBackground;
     }
   }
   .msla-token-picker-option-description {
     color: rgba(255, 255, 255, 0.5);
+  }
+
+  .ms-TextField-field {
+    background: none;
   }
 }
