@@ -21,36 +21,35 @@ import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
-import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useLayoutEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactFlowProvider } from 'reactflow';
 
-const useCenterViewHeight = () => {
-  const [centerViewHeight, setCenterViewHeight] = useState(0);
-
-  const handleCenterViewHeight = () => {
-    const centerView = document.getElementById('centerView');
-
-    if (centerView?.clientHeight) {
-      setCenterViewHeight(centerView.clientHeight);
-    }
-  };
-
-  useLayoutEffect(() => {
-    window.addEventListener('resize', handleCenterViewHeight);
-
-    // NOTE: Not the nicest, but it's required to ensure we get the actual final height after the initial render
-    // TODO: 96% chance this will a better solution around Fit/Finish time
-    setTimeout(handleCenterViewHeight, 75);
-
-    return () => window.removeEventListener('resize', handleCenterViewHeight);
-  }, []);
-
-  return centerViewHeight;
-};
+const useStaticStyles = makeStaticStyles({
+  // Firefox who's trying to early-adopt a WIP CSS standard (as of 11/2/2022)
+  '*': {
+    scrollbarColor: `${tokens.colorScrollbarOverlay} ${tokens.colorNeutralBackground1Hover}`,
+    scrollbarWidth: 'thin',
+  },
+  // Any WebKit browsers (essentially every other browser) - supposedly will eventually deprecate to the above
+  '*::-webkit-scrollbar': {
+    height: '8px',
+    width: '8px',
+  },
+  '*::-webkit-scrollbar-track:active': {
+    backgroundColor: tokens.colorNeutralBackground1Hover,
+    border: `0.5px solid ${tokens.colorNeutralStroke2}`,
+  },
+  '*::-webkit-scrollbar-thumb': {
+    backgroundClip: 'content-box',
+    border: '2px solid transparent',
+    borderRadius: '10000px',
+    backgroundColor: tokens.colorScrollbarOverlay,
+  },
+});
 
 const useStyles = makeStyles({
   dataMapperShell: {
@@ -76,6 +75,7 @@ export interface DataMapperDesignerProps {
 
 export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }) => {
   const dispatch = useDispatch<AppDispatch>();
+  useStaticStyles();
   const styles = useStyles();
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
@@ -240,4 +240,28 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
       </div>
     </DndProvider>
   );
+};
+
+const useCenterViewHeight = () => {
+  const [centerViewHeight, setCenterViewHeight] = useState(0);
+
+  const handleCenterViewHeight = () => {
+    const centerView = document.getElementById('centerView');
+
+    if (centerView?.clientHeight) {
+      setCenterViewHeight(centerView.clientHeight);
+    }
+  };
+
+  useLayoutEffect(() => {
+    window.addEventListener('resize', handleCenterViewHeight);
+
+    // NOTE: Not the nicest, but it's required to ensure we get the actual final height after the initial render
+    // TODO: 96% chance this will a better solution around Fit/Finish time
+    setTimeout(handleCenterViewHeight, 75);
+
+    return () => window.removeEventListener('resize', handleCenterViewHeight);
+  }, []);
+
+  return centerViewHeight;
 };
