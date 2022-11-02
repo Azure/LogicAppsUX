@@ -1,5 +1,5 @@
+import { NotificationTypes, deletedNotificationAutoHideDuration } from '../../components/notification/Notification';
 import type { NotificationData } from '../../components/notification/Notification';
-import { NotificationTypes } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
@@ -340,7 +340,7 @@ export const dataMapSlice = createSlice({
 
           state.curDataMapOperation.selectedItemKey = undefined;
           doDataMapOperation(state, { ...state.curDataMapOperation, currentSourceSchemaNodes: removedNodes });
-          state.notificationData = { type: NotificationTypes.SourceNodeRemoved };
+          state.notificationData = { type: NotificationTypes.SourceNodeRemoved, autoHideDurationMs: deletedNotificationAutoHideDuration };
           return;
         }
 
@@ -353,7 +353,7 @@ export const dataMapSlice = createSlice({
 
           state.curDataMapOperation.selectedItemKey = undefined;
           doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
-          state.notificationData = { type: NotificationTypes.FunctionNodeDeleted };
+          state.notificationData = { type: NotificationTypes.FunctionNodeDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
           return;
         }
 
@@ -364,7 +364,7 @@ export const dataMapSlice = createSlice({
         );
 
         doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: state.curDataMapOperation.dataMapConnections });
-        state.notificationData = { type: NotificationTypes.ConnectionDeleted };
+        state.notificationData = { type: NotificationTypes.ConnectionDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
       }
     },
 
@@ -456,7 +456,7 @@ export const dataMapSlice = createSlice({
       deleteConnectionFromConnections(newState.dataMapConnections, action.payload.inputKey, action.payload.connectionKey);
 
       doDataMapOperation(state, newState);
-      state.notificationData = { type: NotificationTypes.ConnectionDeleted };
+      state.notificationData = { type: NotificationTypes.ConnectionDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
     },
 
     undoDataMapOperation: (state) => {
