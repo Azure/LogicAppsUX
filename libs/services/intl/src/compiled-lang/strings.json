@@ -747,6 +747,12 @@
       "value": "Required. The number of days to add. Can be negative to subtract days."
     }
   ],
+  "4Ekn9t": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "4IS4yp": [
     {
       "type": 0,
@@ -4735,6 +4741,12 @@
     {
       "type": 0,
       "value": "s"
+    }
+  ],
+  "isnFBi": [
+    {
+      "type": 0,
+      "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
   "iy8rNf": [
