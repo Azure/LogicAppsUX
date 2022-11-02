@@ -4,22 +4,21 @@ import { getExpressionTokenSections } from '../../../core/utils/tokens';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { OutputToken, PanelTab, TokenPickerHandler, ValueSegment } from '@microsoft/designer-ui';
 import {
-  DictionaryEditor,
-  TokenType,
-  GroupType,
-  GroupDropdownOptions,
-  QueryBuilderEditor, // DictionaryType, // EditorLanguage,
+  ArrayEditor,
+  ArrayType, // DictionaryEditor,
+  // TokenType,
+  // GroupType,
+  // GroupDropdownOptions,
+  // QueryBuilderEditor, // DictionaryType, // EditorLanguage,
   ValueSegmentType, // CodeEditor, // HTMLEditor,
   TokenPicker, // TokenType,
   // DictionaryEditor,
   testTokenSegment, // SchemaEditor, // Combobox,
   // ArrayEditor,
-  Scratch,
-  StringEditor, // AuthenticationEditor,
+  Scratch, // StringEditor, // AuthenticationEditor,
   // DropdownEditor,
   outputToken,
-  outputToken2,
-  RowDropdownOptions,
+  outputToken2, // RowDropdownOptions,
 } from '@microsoft/designer-ui';
 
 const testTokenGroup: TokenGroup[] = [
@@ -84,7 +83,7 @@ export const ScratchTab = () => {
   const children = (): React.ReactNode => {
     return (
       <>
-        <QueryBuilderEditor
+        {/* <QueryBuilderEditor
           tokenPickerHandler={tokenPickerHandler}
           readonly={false}
           groupProps={{
@@ -109,7 +108,7 @@ export const ScratchTab = () => {
               },
             ],
           }}
-        />
+        /> */}
         {/* <CodeEditor
           initialValue={[
             {
@@ -150,7 +149,7 @@ export const ScratchTab = () => {
           ]}
         /> */}
         {/* <AuthenticationEditor initialValue={[]} tokenPickerHandler={tokenPickerHandler} AuthenticationEditorOptions={{}} authProps={{}} /> */}
-        {/* <ArrayEditor
+        <ArrayEditor
           type={ArrayType.SIMPLE}
           itemSchema={'test'}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
@@ -180,9 +179,9 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
           tokenPickerHandler={tokenPickerHandler}
-        /> */}
+        />
 
-        {/* <ArrayEditor
+        <ArrayEditor
           itemSchema={['Attachments Name', 'Attachments Content']}
           type={ArrayType.COMPLEX}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
@@ -222,7 +221,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
           ]}
           tokenPickerHandler={tokenPickerHandler}
-        /> */}
+        />
 
         {/* <Combobox
           options={[
@@ -242,7 +241,7 @@ export const ScratchTab = () => {
           initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
         /> */}
-        <DictionaryEditor
+        {/* <DictionaryEditor
           initialItems={[
             {
               key: [
@@ -308,7 +307,7 @@ export const ScratchTab = () => {
             { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
           ]}
           tokenPickerHandler={tokenPickerHandler}
-        />
+        /> */}
         {/* <DictionaryEditor
           initialItems={[
             {
@@ -380,7 +379,7 @@ export const ScratchTab = () => {
           valueTitle={'Value'}
         /> */}
         {/* <DictionaryEditor initialValue={[testTokenSegment]} tokenPickerHandler={tokenPickerHandler} /> */}
-        <StringEditor
+        {/* <StringEditor
           initialValue={[
             testTokenSegment,
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
@@ -388,7 +387,7 @@ export const ScratchTab = () => {
             testTokenSegment,
           ]}
           tokenPickerHandler={tokenPickerHandler}
-        />
+        /> */}
         {/* <HTMLEditor initialValue={[]} placeholder="Specify the body of the mail" tokenPickerHandler={tokenPickerHandler} /> */}
       </>
     );

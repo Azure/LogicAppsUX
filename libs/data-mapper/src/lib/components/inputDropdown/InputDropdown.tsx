@@ -8,7 +8,7 @@ import { isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/C
 import { isFunctionData, getFunctionOutputValue, functionInputHasInputs } from '../../utils/Function.Utils';
 import { iconForNormalizedDataType, iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
-import { NotificationTypes } from '../notification/Notification';
+import { errorNotificationAutoHideDuration, NotificationTypes } from '../notification/Notification';
 import { Dropdown, SelectableOptionMenuItemType, Stack, TextField } from '@fluentui/react';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
 import { Button, makeStyles, Tooltip } from '@fluentui/react-components';
@@ -156,7 +156,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       selectedItemKey &&
       newConnectionWillHaveCircularLogic(selectedItemKey, selectedInputKey, connectionDictionary)
     ) {
-      dispatch(showNotification({ type: NotificationTypes.CircularLogicError }));
+      dispatch(showNotification({ type: NotificationTypes.CircularLogicError, autoHideDurationMs: errorNotificationAutoHideDuration }));
       return;
     }
 

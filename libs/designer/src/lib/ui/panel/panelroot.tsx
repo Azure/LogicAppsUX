@@ -38,7 +38,7 @@ import { WorkflowParametersPanel } from './workflowparameterspanel';
 import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -200,6 +200,11 @@ export const PanelRoot = (): JSX.Element => {
   const togglePanel = (): void => (!collapsed ? collapse() : expand());
   const dismissPanel = () => dispatch(clearPanel());
 
+  const isLoading = useMemo(() => {
+    if (nodeMetaData?.subgraphType) return false;
+    return !iconUri;
+  }, [iconUri, nodeMetaData?.subgraphType]);
+
   return isWorkflowParameters ? (
     <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} />
   ) : isDiscovery ? (
@@ -211,7 +216,7 @@ export const PanelRoot = (): JSX.Element => {
       panelLocation={PanelLocation.Right}
       isCollapsed={collapsed}
       noNodeSelected={!selectedNode}
-      isLoading={!iconUri}
+      isLoading={isLoading}
       panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}
