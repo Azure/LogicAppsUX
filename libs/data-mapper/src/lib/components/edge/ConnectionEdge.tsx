@@ -1,8 +1,9 @@
 import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
+import { getSmartEdge, pathfindingJumpPointNoDiagonal, svgDrawSmoothLinePath } from '@tisoap/react-flow-smart-edge';
 import React, { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { BaseEdge, getSmoothStepPath } from 'reactflow';
+import { BaseEdge, getSmoothStepPath, useNodes } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
 const addFunctionBtnSize = 24;
@@ -50,18 +51,77 @@ export const ConnectionEdge = (props: EdgeProps) => {
   const { id, sourceX, sourceY, sourcePosition, targetX, targetY, targetPosition, selected } = props;
   const intl = useIntl();
   const styles = useStyles();
+  const reactFlowNodes = useNodes();
 
   const [isHovered, setIsHovered] = useState(false);
-
-  const [edgePath, labelX, labelY] = useMemo(
-    () => getSmoothStepPath({ sourceX: sourceX + 10, sourceY, sourcePosition, targetX: targetX - 10, targetY, targetPosition }),
-    [sourcePosition, sourceX, sourceY, targetX, targetY, targetPosition]
-  );
 
   const insertFnLoc = intl.formatMessage({
     defaultMessage: 'Insert function',
     description: 'Message to insert function',
   });
+
+  const baseEdgeProperties = useMemo(
+    () => ({
+      sourcePosition,
+      targetPosition,
+      sourceX: sourceX + 10,
+      sourceY,
+      targetX: targetX - 10,
+      targetY,
+    }),
+    [sourcePosition, targetPosition, sourceX, sourceY, targetX, targetY]
+  );
+
+  const smartEdge = useMemo(
+    () =>
+      getSmartEdge({
+        ...baseEdgeProperties,
+        nodes: reactFlowNodes,
+        options: {
+          // nodePadding
+          // gridRatio
+          // SmoothStep edge equivalent
+          drawEdge: (source, target, path) => {
+            // NOTE: Due to the use of a larger-scale and thus less accurate grid (10x10 pixels by default),
+            // the Y value of the portions of the path that go straight into the nodes handles would not be
+            // exactly on-level with the node-handle's Y value...so we just force that to be the case below
+            const modifiedPath = [...path];
+
+            const sourceY = source.y;
+            const targetY = target.y;
+
+            const pathStartLegY = path[0][1];
+            const pathEndLegY = path[path.length - 1][1];
+
+            modifiedPath.forEach((point, idx) => {
+              if (point[1] === pathStartLegY) {
+                modifiedPath[idx][1] = sourceY;
+              } else if (point[1] === pathEndLegY) {
+                modifiedPath[idx][1] = targetY;
+              }
+            });
+
+            return svgDrawSmoothLinePath(source, target, modifiedPath);
+          },
+          generatePath: pathfindingJumpPointNoDiagonal,
+        },
+      }),
+    [baseEdgeProperties, reactFlowNodes]
+  );
+
+  const { svgPathString, edgeCenterX, edgeCenterY } = useMemo(() => {
+    if (smartEdge) {
+      return smartEdge;
+    } else {
+      // getSmartEdge failed to find a valid path, so we'll just default to ReactFlow's built-in edge
+      const [edgePath, labelX, labelY] = getSmoothStepPath({ ...baseEdgeProperties });
+      return {
+        svgPathString: edgePath,
+        edgeCenterX: labelX,
+        edgeCenterY: labelY,
+      };
+    }
+  }, [smartEdge, baseEdgeProperties]);
 
   const onAddFunctionClick = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -72,9 +132,9 @@ export const ConnectionEdge = (props: EdgeProps) => {
   return (
     <svg onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
       <BaseEdge
-        path={edgePath}
-        labelX={labelX}
-        labelY={labelY}
+        path={svgPathString}
+        labelX={edgeCenterX}
+        labelY={edgeCenterY}
         {...props}
         style={{
           strokeWidth: tokens.strokeWidthThick,
@@ -85,8 +145,8 @@ export const ConnectionEdge = (props: EdgeProps) => {
       <foreignObject
         width={parentTotalSize}
         height={parentTotalSize}
-        x={labelX - parentTotalSize / 2}
-        y={labelY - parentTotalSize / 2}
+        x={edgeCenterX - parentTotalSize / 2}
+        y={edgeCenterY - parentTotalSize / 2}
         style={{
           borderRadius: tokens.borderRadiusCircular,
           padding: parentPadding,
