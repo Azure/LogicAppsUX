@@ -3,8 +3,8 @@ import { ReactQueryProvider } from './ReactQueryProvider';
 import type { DesignerOptionsState, ServiceOptions } from './state/designerOptions/designerOptionsInterfaces';
 import { initDesignerOptions } from './state/designerOptions/designerOptionsSlice';
 import { store } from './store';
+import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
-import type { Theme } from '@fluentui/react';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { IntlProvider } from '@microsoft-logic-apps/intl';
@@ -12,7 +12,7 @@ import React, { useEffect } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 
 export interface DesignerProviderProps {
-  theme?: Theme;
+  themeName?: 'light' | 'dark';
   locale?: string;
   options: Omit<DesignerOptionsState, 'servicesInitialized'> & { services: ServiceOptions };
   children: React.ReactNode;
@@ -29,20 +29,21 @@ const OptionsStateSet = ({ options, children }: any) => {
   return <>{children}</>;
 };
 
-export const DesignerProvider = ({ theme = AzureThemeLight, locale = 'en', options, children }: DesignerProviderProps) => {
-  const isDark = theme === AzureThemeLight ? false : true;
+export const DesignerProvider = ({ themeName = 'light', locale = 'en', options, children }: DesignerProviderProps) => {
+  const isDark = themeName === 'light' ? false : true;
+  const azTheme = isDark ? AzureThemeDark : AzureThemeLight;
   const webTheme = !isDark ? webLightTheme : webDarkTheme;
   useEffect(() => {
     document.body.classList.add(!isDark ? 'light' : 'dark');
     document.body.classList.remove(!isDark ? 'dark' : 'light');
     document.documentElement.setAttribute('data-color-scheme', !isDark ? 'light' : 'dark');
-  }, [isDark, theme]);
+  }, [isDark, themeName]);
 
   return (
     <ReduxProvider store={store}>
       <OptionsStateSet options={options}>
         <ProviderWrappedContext.Provider value={options.services}>
-          <ThemeProvider theme={theme}>
+          <ThemeProvider theme={azTheme}>
             <FluentProvider theme={webTheme}>
               <div style={{ height: '100vh', overflow: 'hidden' }}>
                 <ReactQueryProvider>

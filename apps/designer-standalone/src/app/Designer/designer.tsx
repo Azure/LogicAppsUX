@@ -1,8 +1,6 @@
 import { SettingsBox } from '../../components/settings_box';
 import type { RootState } from '../../state/store';
 import { HttpClient } from './httpClient';
-import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
-import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -12,6 +10,7 @@ import {
 } from '@microsoft-logic-apps/designer-client-services';
 import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
@@ -76,12 +75,14 @@ export const DesignerWrapper = () => {
     isMonitoringView: monitoringView,
     isDarkMode: darkMode,
   };
-  const theme = darkMode ? AzureThemeDark : AzureThemeLight;
+  const themeName = darkMode ? 'dark' : 'light';
+
+  useEffect(() => document.body.classList.add('is-standalone'), []);
 
   return (
     <>
       <SettingsBox />
-      <DesignerProvider locale="en-US" options={{ ...designerProviderProps }} theme={theme}>
+      <DesignerProvider locale="en-US" options={{ ...designerProviderProps }} themeName={themeName}>
         {workflowDefinition ? (
           <BJSWorkflowProvider
             workflow={{
