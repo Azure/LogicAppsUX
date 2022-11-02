@@ -85,7 +85,6 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
             modifiedPathItems.push({ key: ifPseudoFunctionKey, name: values[1], fullName: values[0], repeating: false });
             modifiedPathItems.push(...selfNode.pathToRoot.slice(-1));
             applyValueAtPath(values[1], mapDefinition, selfNode, modifiedPathItems, connections);
-            //generateIfSection(value, value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
           } else {
             const value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
             applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
