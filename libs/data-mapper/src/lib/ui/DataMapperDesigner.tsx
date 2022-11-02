@@ -4,7 +4,7 @@ import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
 import { ConfigPanel } from '../components/configPanel/ConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
-import { NotificationTypes } from '../components/notification/Notification';
+import { errorNotificationAutoHideDuration, NotificationTypes } from '../components/notification/Notification';
 import {
   basePropPaneContentHeight,
   canvasAreaAndPropPaneMargin,
@@ -133,7 +133,13 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         );
       })
       .catch((error: Error) => {
-        dispatch(showNotification({ type: NotificationTypes.SaveFailed, msgBody: error.message }));
+        dispatch(
+          showNotification({
+            type: NotificationTypes.SaveFailed,
+            msgBody: error.message,
+            autoHideDurationMs: errorNotificationAutoHideDuration,
+          })
+        );
       });
   };
 

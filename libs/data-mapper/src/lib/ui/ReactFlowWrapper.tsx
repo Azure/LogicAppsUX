@@ -246,6 +246,7 @@ export const ReactFlowWrapper = () => {
           type={notificationData.type}
           msgParam={notificationData.msgParam}
           msgBody={notificationData.msgBody}
+          autoHideDuration={notificationData.autoHideDurationMs}
           onClose={() => dispatch(hideNotification())}
         />
       )}
