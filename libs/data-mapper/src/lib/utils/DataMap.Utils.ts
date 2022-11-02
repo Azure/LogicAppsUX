@@ -257,16 +257,23 @@ const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]):
 export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
   // All functions connections must eventually terminate into the source
   const connectionsArray = Object.entries(connections);
-  if (
-    !connectionsArray
-      .filter(([key, _connection]) => key.startsWith(targetPrefix))
-      .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections))
-  ) {
-    return false;
-  }
+  const allNodesTerminateIntoSource = connectionsArray
+    .filter(([key, _connection]) => key.startsWith(targetPrefix))
+    .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections));
+
+  const allRequiredInputsFilledOut = connectionsArray.every(([_key, targetConnection]) => {
+    const selfNode = targetConnection.self.node;
+    if (isFunctionData(selfNode)) {
+      return selfNode.inputs.every((nodeInput, index) => {
+        return nodeInput.isOptional || targetConnection.inputs[index].length > 0;
+      });
+    }
+
+    return true;
+  });
 
   // Is valid to generate the map definition
-  return true;
+  return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
 };
 
 /* Deserialize yml */
