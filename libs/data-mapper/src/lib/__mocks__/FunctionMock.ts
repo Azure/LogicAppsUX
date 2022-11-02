@@ -23,3 +23,30 @@ export const concatFunction: FunctionData = {
   description: 'Combines multiple strings together',
   tooltip: 'Combine strings',
 };
+
+export const greaterThanFunction: FunctionData = {
+  key: 'IsGreater',
+  maxNumberOfInputs: 2,
+  type: 'TransformationFunction',
+  functionName: 'is-greater-than',
+  outputValueType: NormalizedDataType.Boolean,
+  inputs: [
+    {
+      name: 'Value',
+      allowedTypes: [NormalizedDataType.Any],
+      isOptional: false,
+      allowCustomInput: true,
+      placeHolder: 'The value to check.',
+    },
+    {
+      name: '',
+      allowedTypes: [NormalizedDataType.Any],
+      isOptional: false,
+      allowCustomInput: true,
+      placeHolder: '',
+    },
+  ],
+  displayName: 'Greater',
+  category: FunctionCategory.Logical,
+  description: 'Checks whether the first value is greater than the second value.',
+};
