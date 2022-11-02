@@ -102,7 +102,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     },
     ref
   ) => {
-    const { isInverted: isDarkMode } = useTheme();
+    const { isInverted } = useTheme();
     const [canRender, setCanRender] = useState(false);
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
@@ -249,7 +249,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
             value={value}
             defaultValue={defaultValue}
             defaultLanguage={language ? language.toString() : undefined}
-            theme={isDarkMode ? 'vs-dark' : 'vs-light'}
+            theme={isInverted ? 'vs-dark' : 'vs-light'}
             onMount={handleEditorMounted}
             onChange={handleUpdate}
             height={height}

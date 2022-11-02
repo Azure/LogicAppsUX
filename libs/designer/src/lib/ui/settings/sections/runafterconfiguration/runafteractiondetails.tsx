@@ -12,7 +12,7 @@ import { Icon } from '@fluentui/react/lib/Icon';
 import type { ISeparatorStyles } from '@fluentui/react/lib/Separator';
 import { Separator } from '@fluentui/react/lib/Separator';
 import { RUN_AFTER_STATUS } from '@microsoft-logic-apps/utils';
-import { Failed, isHighContrastBlack, Skipped, Succeeded, TimedOut } from '@microsoft/designer-ui';
+import { Failed, Skipped, Succeeded, TimedOut } from '@microsoft/designer-ui';
 import type { MouseEvent } from 'react';
 import { useIntl } from 'react-intl';
 import { format } from 'util';
@@ -67,7 +67,7 @@ export const RunAfterActionDetails = ({
   const [expanded, setExpanded] = useBoolean(false);
 
   const theme = useTheme();
-  const isInverted = isHighContrastBlack() || theme.isInverted;
+  const isInverted = theme.isInverted;
 
   const intl = useIntl();
 
