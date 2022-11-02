@@ -6,6 +6,11 @@ exports[`recommendation panel matches snapshot 1`] = `
   isLightDismiss={true}
   isOpen={true}
   onDismiss={[MockFunction]}
+  overlayProps={
+    Object {
+      "isDarkThemed": false,
+    }
+  }
   type={3}
 />
 `;
