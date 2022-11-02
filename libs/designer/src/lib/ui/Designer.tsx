@@ -140,7 +140,6 @@ export const Designer = () => {
             nodes={nodesWithPlaceholder}
             edges={edges}
             onNodesChange={onNodesChange}
-            minZoom={0}
             nodesDraggable={false}
             edgeTypes={edgeTypes}
             panOnScroll={true}
