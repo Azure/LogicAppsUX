@@ -17,7 +17,7 @@ import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunction
 import { GroupedList } from '@fluentui/react';
 import { tokens, typographyStyles } from '@fluentui/react-components';
 import Fuse from 'fuse.js';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
@@ -60,11 +60,19 @@ export const FunctionList = () => {
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
   const [sortedFunctionsByCategory, setSortedFunctionsByCategory] = useState<FunctionData[]>([]);
   const [functionCategoryGroups, setFunctionCategoryGroups] = useState<IGroup[]>([]);
 
   const isAddingInlineFunction = useMemo(() => inlineFunctionInputOutputKeys.length === 2, [inlineFunctionInputOutputKeys]);
+
+  const updateSearchTerm = (newSearchTerm: string) => {
+    if (newSearchTerm !== searchTerm) {
+      setSearchTerm(newSearchTerm);
+
+      compileFunctionsAndCategoryGroups();
+    }
+  };
 
   const onFunctionItemClick = (selectedFunction: FunctionData) => {
     if (isAddingInlineFunction) {
@@ -108,7 +116,7 @@ export const FunctionList = () => {
     }
   };
 
-  useEffect(() => {
+  const compileFunctionsAndCategoryGroups = useCallback(() => {
     if (functionData) {
       let functionDataCopy = [...functionData];
       const categoriesArray: FunctionCategory[] = [];
@@ -225,7 +233,7 @@ export const FunctionList = () => {
             startIndex: startInd,
             name: getFunctionBrandingForCategory(value).displayName,
             count: numInGroup,
-            isCollapsed: true,
+            isCollapsed: functionCategoryGroups.find((group) => group.key === value)?.isCollapsed ?? true,
           };
 
           startInd += numInGroup;
@@ -244,7 +252,16 @@ export const FunctionList = () => {
     flattenedTargetSchema,
     inlineFunctionInputOutputKeys,
     isAddingInlineFunction,
+    functionCategoryGroups,
   ]);
+
+  useEffect(() => {
+    // Compile list on first load
+    if (searchTerm === undefined) {
+      compileFunctionsAndCategoryGroups();
+      setSearchTerm('');
+    }
+  }, [searchTerm, compileFunctionsAndCategoryGroups]);
 
   const getFunctionItemCell = (functionNode: FunctionData) => {
     return <FunctionListCell functionData={functionNode} onFunctionClick={onFunctionItemClick} />;
@@ -252,7 +269,7 @@ export const FunctionList = () => {
 
   return (
     <>
-      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} />
+      <TreeHeader onSearch={updateSearchTerm} onClear={() => updateSearchTerm('')} />
       <div>
         <GroupedList
           onShouldVirtualize={() => false}
