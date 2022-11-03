@@ -225,9 +225,9 @@ function makeDefinition($refs: Record<string, any>): MakeDefinitionReducer {
   };
 }
 
-export function getKnownTitles(key: string): string {
+export function getKnownTitles(name: string): string {
   const intl = getIntl();
-  switch (key) {
+  switch (name) {
     case OutputKeys.Body:
       return intl.formatMessage({ defaultMessage: 'Body', description: 'Display name for body outputs' });
     case OutputKeys.Headers:
@@ -247,7 +247,24 @@ export function getKnownTitles(key: string): string {
       });
     default:
       // eslint-disable-next-line no-case-declarations
-      const segments = parseEx(key);
-      return String(segments[segments.length - 1].value);
+      const segments = parseEx(name);
+      return segments.length ? String(segments[segments.length - 1].value) : '';
+  }
+}
+
+export function getKnownTitlesFromKey(key: string): string | undefined {
+  switch (key?.toLowerCase()) {
+    case '$.body':
+      return getKnownTitles(OutputKeys.Body);
+    case '$.headers':
+      return getKnownTitles(OutputKeys.Headers);
+    case '$.queries':
+      return getKnownTitles(OutputKeys.Queries);
+    case '$.pathparameters':
+      return getKnownTitles(OutputKeys.PathParameters);
+    case '$.statuscode':
+      return getKnownTitles(OutputKeys.StatusCode);
+    default:
+      return undefined;
   }
 }

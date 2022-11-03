@@ -2,7 +2,6 @@ import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
 import type { IHttpClient, QueryParameters } from '../httpClient';
-import { LoggerService } from '../logger';
 import type { ISearchService, SearchResult } from '../search';
 import * as ClientOperationsData from './operations';
 import type {
@@ -128,11 +127,11 @@ export class StandardSearchService implements ISearchService {
   }
 
   private async getAllAzureOperations(): Promise<DiscoveryOpArray> {
-    const traceId = LoggerService()?.startTrace({
+    /*const traceId = LoggerService().startTrace({
       name: 'Get All Azure Operations',
       action: 'getAllAzureOperations',
       source: 'connection.ts',
-    });
+    });*/
 
     const {
       apiHubServiceDetails: { location, subscriptionId },
@@ -146,7 +145,7 @@ export class StandardSearchService implements ISearchService {
 
     const operations = await this.batchAzureResourceRequests(uri, queryParameters);
 
-    LoggerService()?.endTrace(traceId);
+    //LoggerService().endTrace(traceId);
     return operations;
   }
 

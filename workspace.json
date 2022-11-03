@@ -1,8 +1,6 @@
 {
   "version": 2,
   "projects": {
-    "data-mapper": "libs/data-mapper",
-    "data-mapper-standalone": "apps/data-mapper-standalone",
     "designer": "libs/designer",
     "designer-e2e": "apps/designer-e2e",
     "designer-standalone": "apps/designer-standalone",
