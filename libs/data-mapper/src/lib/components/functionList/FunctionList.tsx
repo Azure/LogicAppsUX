@@ -193,6 +193,12 @@ export const FunctionList = () => {
           : [destination.normalizedDataType];
 
         newSortedFunctions = newSortedFunctions.filter((functionNode) => {
+          // In Function manifest, Functions without any inputs won't even have a the inputs property
+          // Either way, Functions with no inputs shouldn't be shown when adding inline functions
+          if (!functionNode.inputs) {
+            return false;
+          }
+
           const functionInputTypes = functionNode.inputs.flatMap((input) => input.allowedTypes);
           const functionOutputType = functionNode.outputValueType;
 
