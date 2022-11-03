@@ -278,10 +278,14 @@ export const dataMapSlice = createSlice({
       }
 
       // Reset currentSourceSchema/FunctionNodes, and add back any nodes part of complete connection chains on the new target schema level
-
       const newTargetSchemaNodeConnections = getTargetSchemaNodeConnections(newTargetSchemaNode, cleanConnections);
 
-      const newFullyConnectedSourceSchemaNodes = getConnectedSourceSchemaNodes(newTargetSchemaNodeConnections, cleanConnections);
+      // Get all the unique source nodes
+      const newFullyConnectedSourceSchemaNodes = getConnectedSourceSchemaNodes(newTargetSchemaNodeConnections, cleanConnections).filter(
+        (node, index, self) => {
+          return self.findIndex((subNode) => subNode.key === node.key) === index;
+        }
+      );
       const newFullyConnectedFunctions: FunctionDictionary = {};
       getFunctionConnectionUnits(newTargetSchemaNodeConnections, cleanConnections).forEach((conUnit) => {
         newFullyConnectedFunctions[conUnit.reactFlowKey] = conUnit.node as FunctionData;
@@ -373,7 +377,6 @@ export const dataMapSlice = createSlice({
 
       addConnection(newState.dataMapConnections, action.payload);
 
-      // TODO Bug here that if you add the connection one level above, then we still make the auto connection when you navigate down and add children
       // Add any repeating parent nodes as well
       const parentTargetNode = newState.currentTargetSchemaNode;
       const sourceNode = action.payload.source;
