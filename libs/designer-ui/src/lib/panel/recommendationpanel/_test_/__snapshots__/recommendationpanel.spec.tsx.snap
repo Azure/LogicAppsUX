@@ -5,6 +5,15 @@ exports[`recommendation panel matches snapshot 1`] = `
   hasCloseButton={false}
   isLightDismiss={true}
   isOpen={true}
+  layerProps={
+    Object {
+      "styles": Object {
+        "root": Object {
+          "zIndex": 999998,
+        },
+      },
+    }
+  }
   onDismiss={[MockFunction]}
   overlayProps={
     Object {

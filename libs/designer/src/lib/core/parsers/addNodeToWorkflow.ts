@@ -42,7 +42,7 @@ export const addNodeToWorkflow = (
   if (workflowNode.id) workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
 
   // Update metadata
-  const isTrigger = !!operation.properties.trigger;
+  const isTrigger = !!operation.properties?.trigger;
   const isRoot = isTrigger ?? (parentId ? parentId?.split('-#')[0] === graphId : false);
   const parentNodeId = graphId !== 'root' ? graphId : undefined;
   nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
