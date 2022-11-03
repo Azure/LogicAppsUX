@@ -352,12 +352,13 @@ const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: strin
 
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
 
-export const createReactFlowConnectionId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
-
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
 
-export const getSourceIdFromReactFlowId = (reactFlowId: string): string => reactFlowId.split('-to-')[0];
-
-export const getDestinationIdFromReactFlowId = (reactFlowId: string): string => reactFlowId.split('-to-')[1];
+export const reactFlowConnectionIdSeparator = '-to-';
+export const createReactFlowConnectionId = (sourceId: string, targetId: string): string =>
+  `${sourceId}${reactFlowConnectionIdSeparator}${targetId}`;
+export const getSourceIdFromReactFlowConnectionId = (reactFlowId: string): string => reactFlowId.split(reactFlowConnectionIdSeparator)[0];
+export const getDestinationIdFromReactFlowConnectionId = (reactFlowId: string): string =>
+  reactFlowId.split(reactFlowConnectionIdSeparator)[1];
