@@ -17,6 +17,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 const initialState: DesignerOptionsState = {
   readOnly: false,
   isMonitoringView: false,
+  isDarkMode: false,
   servicesInitialized: false,
 };
 
@@ -65,6 +66,7 @@ export const designerOptionsSlice = createSlice({
     initDesignerOptions: (state: DesignerOptionsState, action: PayloadAction<Omit<DesignerOptionsState, 'servicesInitialized'>>) => {
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
+      state.isDarkMode = action.payload.isDarkMode;
     },
   },
   extraReducers: (builder) => {

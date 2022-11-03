@@ -1,9 +1,9 @@
 import { sourceMockSchema, targetMockSchema } from '../__mocks__';
-import { concatFunction } from '../__mocks__/FunctionMock';
+import { concatFunction, greaterThanFunction } from '../__mocks__/FunctionMock';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaType } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import { indexPseudoFunction } from '../models/Function';
+import { ifPseudoFunction, indexPseudoFunction } from '../models/Function';
 import { addNodeToConnections } from '../utils/Connection.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader, splitKeyIntoChildren } from '../utils/DataMap.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
@@ -136,6 +136,74 @@ describe('Map definition conversions', () => {
       expect(employeeChildren[0][1]).toEqual('concat(/ns0:Root/DirectTranslation/EmployeeID, /ns0:Root/DirectTranslation/EmployeeName)');
       expect(employeeChildren[1][0]).toEqual('Name');
       expect(employeeChildren[1][1]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
+    });
+
+    it('Generates body with conditional', async () => {
+      const sourceNode = extendedSourceSchema.schemaTreeRoot.children[3];
+      const targetNode = extendedTargetSchema.schemaTreeRoot.children[4];
+      const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
+      const greaterThanId = createReactFlowFunctionKey(greaterThanFunction);
+      const mapDefinition: MapDefinitionEntry = {};
+      const connections: ConnectionDictionary = {};
+
+      // Source to greater than
+      addNodeToConnections(
+        connections,
+        sourceNode.children[0],
+        addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
+        greaterThanFunction,
+        greaterThanId
+      );
+      addNodeToConnections(
+        connections,
+        sourceNode.children[1],
+        addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
+        greaterThanFunction,
+        greaterThanId
+      );
+
+      // Inputs to conditional
+      addNodeToConnections(connections, greaterThanFunction, greaterThanId, ifPseudoFunction, ifFunctionId);
+      addNodeToConnections(
+        connections,
+        sourceNode.children[0],
+        addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
+        ifPseudoFunction,
+        ifFunctionId
+      );
+
+      //Conditional to target
+      addNodeToConnections(
+        connections,
+        ifPseudoFunction,
+        ifFunctionId,
+        targetNode.children[0],
+        addReactFlowPrefix(targetNode.children[0].key, SchemaType.Target)
+      );
+
+      generateMapDefinitionBody(mapDefinition, connections);
+
+      expect(Object.keys(mapDefinition).length).toEqual(1);
+      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      expect(rootChildren.length).toEqual(1);
+      expect(rootChildren[0][0]).toEqual('ConditionalMapping');
+      expect(rootChildren[0][1]).not.toBe('string');
+
+      const conditionalMappingObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['ConditionalMapping'] as MapDefinitionEntry;
+      const conditionalMappingChildren = Object.entries(conditionalMappingObject);
+      expect(conditionalMappingChildren.length).toEqual(1);
+      expect(conditionalMappingChildren[0][0]).toEqual(
+        '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))'
+      );
+      expect(conditionalMappingChildren[0][1]).not.toBe('string');
+
+      const ifObject = conditionalMappingObject[
+        '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))'
+      ] as MapDefinitionEntry;
+      const ifChildren = Object.entries(ifObject);
+      expect(ifChildren.length).toEqual(1);
+      expect(ifChildren[0][0]).toEqual('ItemPrice');
+      expect(ifChildren[0][1]).toEqual('/ns0:Root/ConditionalMapping/ItemPrice');
     });
 
     it('Generates body with loop', async () => {

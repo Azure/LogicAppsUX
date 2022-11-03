@@ -9,7 +9,7 @@ import {
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { indexPseudoFunctionKey } from '../models/Function';
+import { ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeProperty } from '../models/Schema';
@@ -79,8 +79,16 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
         } else if (isSchemaNodeExtended(input.node)) {
           applyValueAtPath(input.node.key, mapDefinition, selfNode, selfNode.pathToRoot, connections);
         } else {
-          const value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
-          applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
+          if (input.node.key.startsWith(ifPseudoFunctionKey)) {
+            const values = collectConditionalValues(connections[input.reactFlowKey], connections);
+            const modifiedPathItems = selfNode.pathToRoot.slice(0, -1);
+            modifiedPathItems.push({ key: ifPseudoFunctionKey, name: values[1], fullName: values[0], repeating: false });
+            modifiedPathItems.push(...selfNode.pathToRoot.slice(-1));
+            applyValueAtPath(values[1], mapDefinition, selfNode, modifiedPathItems, connections);
+          } else {
+            const value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
+            applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
+          }
         }
       }
     });
@@ -98,7 +106,9 @@ const applyValueAtPath = (
   const formattedPathLocation = pathLocation.startsWith('@') ? `$${pathLocation}` : pathLocation;
 
   if (path.length > 1) {
-    if (path[0].repeating) {
+    if (path[0].key === ifPseudoFunctionKey) {
+      generateIfSection(path[0].fullName, value, mapDefinition, destinationNode, path, connections);
+    } else if (path[0].repeating) {
       // Assumption for now that there is only 1 source node in a loop chain
       const parentTargetConnection = connections[addTargetReactFlowPrefix(path[0].key)];
       const parentSourceNode = parentTargetConnection.inputs[0][0];
@@ -178,13 +188,46 @@ const generateForSection = (
   applyValueAtPath(loopLocalValue, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1), connections);
 };
 
+const generateIfSection = (
+  conditionalValue: string,
+  value: string,
+  mapDefinition: MapDefinitionEntry,
+  destinationNode: SchemaNodeExtended,
+  path: PathItem[],
+  connections: ConnectionDictionary
+) => {
+  const ifEntry = `${mapNodeParams.if}(${conditionalValue})`;
+  if (!mapDefinition[ifEntry]) {
+    mapDefinition[ifEntry] = {};
+  }
+
+  applyValueAtPath(value, mapDefinition[ifEntry] as MapDefinitionEntry, destinationNode, path.slice(1), connections);
+};
+
 const collectFunctionValue = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
   // Special case where the index is used directly
   if (currentConnection.self.node.key === indexPseudoFunctionKey) {
     return '$i';
   }
 
-  const inputValues = currentConnection
+  const inputValues = getInputValues(currentConnection, connections);
+
+  // Special case for conditionals
+  if (currentConnection.self.node.key === ifPseudoFunctionKey) {
+    return inputValues[0];
+  }
+
+  return combineFunctionAndInputs(node, inputValues);
+};
+
+const collectConditionalValues = (currentConnection: Connection, connections: ConnectionDictionary): [string, string] => {
+  const inputValues = getInputValues(currentConnection, connections);
+
+  return [inputValues[0], inputValues[1]];
+};
+
+const getInputValues = (currentConnection: Connection | undefined, connections: ConnectionDictionary): string[] => {
+  return currentConnection
     ? (flattenInputs(currentConnection.inputs)
         .flatMap((input) => {
           if (!input) {
@@ -205,8 +248,6 @@ const collectFunctionValue = (node: FunctionData, currentConnection: Connection,
         })
         .filter((mappedInput) => !!mappedInput) as string[])
     : [];
-
-  return combineFunctionAndInputs(node, inputValues);
 };
 
 const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]): string => {
@@ -216,16 +257,23 @@ const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]):
 export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
   // All functions connections must eventually terminate into the source
   const connectionsArray = Object.entries(connections);
-  if (
-    !connectionsArray
-      .filter(([key, _connection]) => key.startsWith(targetPrefix))
-      .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections))
-  ) {
-    return false;
-  }
+  const allNodesTerminateIntoSource = connectionsArray
+    .filter(([key, _connection]) => key.startsWith(targetPrefix))
+    .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections));
+
+  const allRequiredInputsFilledOut = connectionsArray.every(([_key, targetConnection]) => {
+    const selfNode = targetConnection.self.node;
+    if (isFunctionData(selfNode)) {
+      return selfNode.inputs.every((nodeInput, index) => {
+        return nodeInput.isOptional || targetConnection.inputs[index].length > 0;
+      });
+    }
+
+    return true;
+  });
 
   // Is valid to generate the map definition
-  return true;
+  return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
 };
 
 /* Deserialize yml */

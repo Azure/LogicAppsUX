@@ -52,6 +52,7 @@
   flex-wrap: nowrap;
   gap: 8px;
   align-items: center;
+  min-height: 24px;
 
   .msla-connector-summary-title {
     font: 13px/20px @semibold-font-family;
@@ -68,4 +69,14 @@
   margin-top: 8px;
   display: flex;
   gap: 8px;
+}
+
+body.dark {
+  .msla-connector-summary-card {
+    background: @ms-color-primaryBackground;
+
+    &:hover {
+      background: @ms-color-primaryBackgroundHover;
+    }
+  }
 }

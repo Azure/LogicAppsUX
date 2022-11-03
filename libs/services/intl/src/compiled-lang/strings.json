@@ -747,6 +747,12 @@
       "value": "Required. The number of days to add. Can be negative to subtract days."
     }
   ],
+  "4Ekn9t": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "4IS4yp": [
     {
       "type": 0,
@@ -2981,12 +2987,6 @@
       "value": "Triggers cannot be deleted."
     }
   ],
-  "R7v2iQ": [
-    {
-      "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -5005,6 +5005,12 @@
     {
       "type": 0,
       "value": "Run trigger"
+    }
+  ],
+  "lQNKUB": [
+    {
+      "type": 0,
+      "value": "A line for the parent element is added automatically."
     }
   ],
   "lV77P8": [
