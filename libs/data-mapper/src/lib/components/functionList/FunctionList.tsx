@@ -145,6 +145,8 @@ export const FunctionList = () => {
           if (!categoriesArray.find((category) => category === functionNode.category)) categoriesArray.push(functionNode.category);
         });
 
+        // Sort categories and functions alphabetically
+        categoriesArray.sort((a, b) => a.localeCompare(b));
         newSortedFunctions = functionDataCopy.sort((a, b) => a.category.localeCompare(b.category));
       } else {
         // If no search term, sort the function data by category
