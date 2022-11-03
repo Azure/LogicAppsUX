@@ -3,7 +3,7 @@ import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '
 import { Dismiss20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 
-const FLOATING_PANEL_Z = 10;
+export const floatingPanelZIndex = 10;
 
 const useStyles = makeStyles({
   title: {
@@ -41,7 +41,7 @@ export const FloatingPanel = (props: FloatingPanelProps) => {
   const innerStyle: React.CSSProperties = useMemo(
     () => ({
       position: 'absolute',
-      zIndex: panelOrdering ? FLOATING_PANEL_Z + panelOrdering : FLOATING_PANEL_Z,
+      zIndex: panelOrdering ? floatingPanelZIndex + panelOrdering : floatingPanelZIndex,
       boxShadow: tokens.shadow4,
       borderRadius: tokens.borderRadiusMedium,
       padding: '12px',
