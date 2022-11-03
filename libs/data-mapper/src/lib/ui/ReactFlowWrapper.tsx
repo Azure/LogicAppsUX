@@ -19,6 +19,8 @@ import {
   deleteCurrentlySelectedItem,
   hideNotification,
   makeConnection,
+  setCanvasToolboxTabToDisplay,
+  setInlineFunctionInputOutputKeys,
   setSelectedItem,
   setSourceNodeConnectionBeingDrawnFromId,
 } from '../core/state/DataMapSlice';
@@ -60,7 +62,6 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
 
-  const [toolboxTabToDisplay, setToolboxTabToDisplay] = useState<ToolboxPanelTabs | ''>('');
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
 
   const reactFlowRef = useRef<HTMLDivElement>(null);
@@ -70,7 +71,10 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
     // If user clicks on pane (empty canvas area), "deselect" node
     dispatch(setSelectedItem(undefined));
 
-    setToolboxTabToDisplay('');
+    // Cancel adding inline function
+    dispatch(setInlineFunctionInputOutputKeys(undefined));
+
+    dispatch(setCanvasToolboxTabToDisplay(''));
   };
 
   const onNodeSingleClick = (_event: ReactMouseEvent, node: ReactFlowNode): void => {
@@ -206,7 +210,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
       fitViewOptions={{ maxZoom: defaultCanvasZoom }}
       fitView
     >
-      <CanvasToolbox toolboxTabToDisplay={toolboxTabToDisplay} setToolboxTabToDisplay={setToolboxTabToDisplay} />
+      <CanvasToolbox />
 
       <CanvasControls displayMiniMap={displayMiniMap} toggleDisplayMiniMap={toggleDisplayMiniMap} />
 
@@ -221,7 +225,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
       )}
 
       {currentSourceSchemaNodes.length === 0 && (
-        <SourceSchemaPlaceholder onClickSelectElement={() => setToolboxTabToDisplay(ToolboxPanelTabs.sourceSchemaTree)} />
+        <SourceSchemaPlaceholder onClickSelectElement={() => dispatch(setCanvasToolboxTabToDisplay(ToolboxPanelTabs.sourceSchemaTree))} />
       )}
     </ReactFlow>
   );
