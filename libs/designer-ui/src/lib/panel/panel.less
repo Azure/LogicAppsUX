@@ -12,7 +12,6 @@
     align-items: center;
 
     .msla-panel-empty-text {
-      color: #60535c;
       font-size: 14px;
       margin-top: 24px;
     }
@@ -59,8 +58,8 @@
     }
 
     .msla-panel-comment-container {
+      margin: 16px 0px -12px;
       padding: 12px 32px;
-      background-color: @panel-mode-comment-field-color_light;
       .msla-card-comment {
         .ms-TextField-fieldGroup {
           outline: 0.75px solid @panel-mode-panel-border-color;
@@ -202,7 +201,7 @@
       align-items: center;
 
       .msla-panel-empty-text {
-        color: #60535c; /* @ms-color-neutralSecondary */
+        color: @ms-color-neutralSecondary;
         font-size: 14px;
         margin-top: 24px;
       }
@@ -214,4 +213,19 @@
   display: flex;
   margin: 8px 0px;
   gap: 8px;
+}
+
+body.light {
+  .msla-panel-comment-container {
+    background-color: @panel-mode-comment-field-color_light;
+  }
+}
+
+body.dark {
+  .msla-panel-comment-container {
+    background-color: @ms-color-primaryBackground;
+    .ms-TextField-field {
+      background: @ms-color-primaryBackground;
+    }
+  }
 }

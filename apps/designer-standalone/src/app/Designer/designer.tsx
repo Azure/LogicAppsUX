@@ -10,6 +10,7 @@ import {
 } from '@microsoft-logic-apps/designer-client-services';
 import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
@@ -67,17 +68,21 @@ const gatewayService = new StandardGatewayService({
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
 export const DesignerWrapper = () => {
-  const { workflowDefinition, readOnly, monitoringView, connections } = useSelector((state: RootState) => state.workflowLoader);
+  const { workflowDefinition, readOnly, monitoringView, darkMode, connections } = useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
     services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService },
     readOnly,
     isMonitoringView: monitoringView,
+    isDarkMode: darkMode,
   };
+  const themeName = darkMode ? 'dark' : 'light';
+
+  useEffect(() => document.body.classList.add('is-standalone'), []);
 
   return (
     <>
       <SettingsBox />
-      <DesignerProvider locale="en-US" options={{ ...designerProviderProps }}>
+      <DesignerProvider locale="en-US" options={{ ...designerProviderProps }} themeName={themeName}>
         {workflowDefinition ? (
           <BJSWorkflowProvider
             workflow={{
