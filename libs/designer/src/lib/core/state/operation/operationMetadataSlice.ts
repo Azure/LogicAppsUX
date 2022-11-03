@@ -1,3 +1,4 @@
+import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { InputParameter, OutputParameter } from '@microsoft-logic-apps/parsers';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
@@ -121,6 +122,7 @@ interface AddDynamicInputsPayload {
   nodeId: string;
   groupId: string;
   inputs: ParameterInfo[];
+  newInputs: InputParameter[];
 }
 
 export interface UpdateParametersPayload {
@@ -159,7 +161,7 @@ export const operationMetadataSlice = createSlice({
       }
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
-      const { nodeId, groupId, inputs } = action.payload;
+      const { nodeId, groupId, inputs, newInputs: rawInputs } = action.payload;
       if (state.inputParameters[nodeId] && state.inputParameters[nodeId].parameterGroups[groupId]) {
         const { parameters } = state.inputParameters[nodeId].parameterGroups[groupId];
         const newParameters = [...parameters];
@@ -172,6 +174,11 @@ export const operationMetadataSlice = createSlice({
           }
         }
         state.inputParameters[nodeId].parameterGroups[groupId].parameters = newParameters;
+      }
+
+      const dependencies = getInputDependencies(state.inputParameters[nodeId], rawInputs);
+      if (dependencies) {
+        state.dependencies[nodeId].inputs = { ...state.dependencies[nodeId].inputs, ...dependencies };
       }
     },
     addDynamicOutputs: (state, action: PayloadAction<AddDynamicOutputsPayload>) => {

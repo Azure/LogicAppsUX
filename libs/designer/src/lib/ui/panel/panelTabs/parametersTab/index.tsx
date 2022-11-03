@@ -26,7 +26,7 @@ import { Spinner, SpinnerSize } from '@fluentui/react';
 import { equals } from '@microsoft-logic-apps/utils';
 import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
@@ -90,6 +90,7 @@ const ParameterSection = ({
   expressionGroup: TokenGroup[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const [ sectionExpanded, setSectionExpanded] = useState<boolean>(false);
   const {
     isTrigger,
     nodeInputs,
@@ -240,6 +241,12 @@ const ParameterSection = ({
     );
   };
 
+  const onExpandSection = (sectionName: string) => {
+    if (sectionName) {
+      setSectionExpanded(!sectionExpanded);
+    }
+  };
+
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI)
     .map((param) => {
@@ -276,8 +283,18 @@ const ParameterSection = ({
       };
     });
 
-  return (
-    <SettingsSection id={group.id} title={group.description} settings={settings} showHeading={!!group.description} showSeparator={false} />
+  
+    return (
+    <SettingsSection
+      id={group.id}
+      sectionName={group.description}
+      title={group.description}
+      settings={settings}
+      showHeading={!!group.description}
+      expanded={sectionExpanded}
+      onHeaderClick={onExpandSection}
+      showSeparator={false}
+    />
   );
 };
 

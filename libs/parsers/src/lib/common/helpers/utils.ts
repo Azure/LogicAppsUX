@@ -1,6 +1,8 @@
 import type { EnumObject, OutputMetadata, ParameterDynamicSchema, ParameterDynamicValues } from '../../models/operation';
 import { DynamicSchemaType, DynamicValuesType } from '../../models/operation';
 import * as Constants from '../constants';
+import { OutputKeys } from '../constants';
+import { parseEx } from './keysutility';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { equals, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
@@ -221,4 +223,48 @@ function makeDefinition($refs: Record<string, any>): MakeDefinitionReducer {
     const { type } = $refs[current];
     return { ...previous, [current]: type };
   };
+}
+
+export function getKnownTitles(name: string): string {
+  const intl = getIntl();
+  switch (name) {
+    case OutputKeys.Body:
+      return intl.formatMessage({ defaultMessage: 'Body', description: 'Display name for body outputs' });
+    case OutputKeys.Headers:
+      return intl.formatMessage({ defaultMessage: 'Headers', description: 'Display name for headers in outputs' });
+    case OutputKeys.Outputs:
+      return intl.formatMessage({ defaultMessage: 'Outputs', description: 'Display name for operation outputs' });
+    case OutputKeys.Queries:
+      return intl.formatMessage({ defaultMessage: 'Queries', description: 'Display name for queries in outputs' });
+    case OutputKeys.StatusCode:
+      return intl.formatMessage({ defaultMessage: 'Status Code', description: 'Display name for status code in outputs' });
+    case OutputKeys.Item:
+      return intl.formatMessage({ defaultMessage: 'Item', description: 'Display name for item output' });
+    case OutputKeys.PathParameters:
+      return intl.formatMessage({
+        defaultMessage: 'Path Parameters',
+        description: 'Display name for relative path parameters in trigger outputs',
+      });
+    default:
+      // eslint-disable-next-line no-case-declarations
+      const segments = parseEx(name);
+      return segments.length ? String(segments[segments.length - 1].value) : '';
+  }
+}
+
+export function getKnownTitlesFromKey(key: string): string | undefined {
+  switch (key?.toLowerCase()) {
+    case '$.body':
+      return getKnownTitles(OutputKeys.Body);
+    case '$.headers':
+      return getKnownTitles(OutputKeys.Headers);
+    case '$.queries':
+      return getKnownTitles(OutputKeys.Queries);
+    case '$.pathparameters':
+      return getKnownTitles(OutputKeys.PathParameters);
+    case '$.statuscode':
+      return getKnownTitles(OutputKeys.StatusCode);
+    default:
+      return undefined;
+  }
 }

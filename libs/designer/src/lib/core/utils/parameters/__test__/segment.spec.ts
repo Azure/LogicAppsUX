@@ -56,7 +56,7 @@ describe('core/utils/parameters/segment', () => {
         shouldUncast: true,
         rawModeEnabled: true,
       });
-      const segments = convertor.convertToValueSegments("@decodebase64(actionBody('a').foo)");
+      const segments = convertor.convertToValueSegments("@base64ToBinary(actionBody('a').foo)");
       expect(segments.length).toEqual(1);
       expectOutputTokenSegment(segments[0], 'a', OutputSource.Body, 'foo', 'outputs.$.body.foo', 'byte', true);
     });

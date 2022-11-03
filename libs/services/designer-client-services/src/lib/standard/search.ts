@@ -128,7 +128,7 @@ export class StandardSearchService implements ISearchService {
   }
 
   private async getAllAzureOperations(): Promise<DiscoveryOpArray> {
-    const traceId = LoggerService()?.startTrace({
+    const traceId = LoggerService().startTrace({
       name: 'Get All Azure Operations',
       action: 'getAllAzureOperations',
       source: 'connection.ts',
@@ -146,7 +146,7 @@ export class StandardSearchService implements ISearchService {
 
     const operations = await this.batchAzureResourceRequests(uri, queryParameters);
 
-    LoggerService()?.endTrace(traceId);
+    LoggerService().endTrace(traceId);
     return operations;
   }
 

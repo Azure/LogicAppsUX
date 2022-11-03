@@ -77,7 +77,7 @@ export const initializeOperationMetadata = async (
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
 
-  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, triggerNodeId);
+  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId);
   dispatch(
     initializeNodes(
       allNodeData.map((data) => {
@@ -234,6 +234,7 @@ const updateTokenMetadataInParameters = (
   nodes: NodeDataWithOperationMetadata[],
   operations: Operations,
   workflowParameters: Record<string, WorkflowParameter>,
+  nodesMetadata: NodesMetadata,
   triggerNodeId: string
 ) => {
   const nodesData = map(nodes, 'id');
@@ -250,7 +251,16 @@ const updateTokenMetadataInParameters = (
       if (segments && segments.length) {
         parameter.value = segments.map((segment) => {
           if (isTokenValueSegment(segment)) {
-            return updateTokenMetadata(segment, actionNodes, triggerNodeId, nodesData, operations, workflowParameters, parameter.type);
+            return updateTokenMetadata(
+              segment,
+              actionNodes,
+              triggerNodeId,
+              nodesData,
+              operations,
+              workflowParameters,
+              nodesMetadata,
+              parameter.type
+            );
           }
 
           return segment;

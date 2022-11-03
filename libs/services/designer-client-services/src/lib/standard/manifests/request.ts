@@ -72,9 +72,7 @@ export default {
     outputs: {
       type: 'object',
       properties: {
-        body: {
-          title: 'Body',
-        },
+        body: {},
         headers: {
           type: 'object',
           title: 'Headers',
