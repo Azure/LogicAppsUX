@@ -20,13 +20,16 @@ export enum ToolboxPanelTabs {
 
 const generalToolboxPanelProps = {
   xPos: '16px',
-  yPos: '76px',
+  yPos: '60px',
   width: '250px',
-  minHeight: '450px',
-  maxHeight: '450px',
+  minHeight: '200px',
 } as FloatingPanelProps;
 
-export const CanvasToolbox = () => {
+interface CanvasToolboxProps {
+  canvasBlockHeight: number;
+}
+
+export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
@@ -112,18 +115,26 @@ export const CanvasToolbox = () => {
     [toolboxTabToDisplay, onTabSelect, hideSourceSchemaLoc, showSourceSchemaLoc, hideFunctionsLoc, showFunctionsLoc]
   );
 
+  const floatingPanelHeight = useMemo(() => `${canvasBlockHeight - 150}px`, [canvasBlockHeight]);
+
   return (
     <>
       <ButtonPivot {...toolboxButtonPivotProps} />
 
       {toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree && sourceSchema && (
-        <FloatingPanel {...generalToolboxPanelProps} title={sourceSchemaLoc} subtitle={sourceSchema.name} onClose={closeToolbox}>
+        <FloatingPanel
+          {...generalToolboxPanelProps}
+          height={floatingPanelHeight}
+          title={sourceSchemaLoc}
+          subtitle={sourceSchema.name}
+          onClose={closeToolbox}
+        >
           <SchemaTree schema={sourceSchema} toggledNodes={currentSourceSchemaNodes} onNodeClick={onSourceSchemaItemClick} />
         </FloatingPanel>
       )}
 
       {toolboxTabToDisplay === ToolboxPanelTabs.functionsList && (
-        <FloatingPanel {...generalToolboxPanelProps} title={functionLoc} onClose={closeToolbox}>
+        <FloatingPanel {...generalToolboxPanelProps} height={floatingPanelHeight} title={functionLoc} onClose={closeToolbox}>
           <FunctionList />
         </FloatingPanel>
       )}
