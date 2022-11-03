@@ -187,8 +187,10 @@ export const FunctionList = () => {
           const functionOutputType = functionNode.outputValueType;
 
           return (
-            (inputNormalizedOutputType === NormalizedDataType.Any || functionInputTypes.includes(inputNormalizedOutputType)) &&
-            (functionOutputType === NormalizedDataType.Any || outputNormalizedInputTypes.includes(functionOutputType))
+            (inputNormalizedOutputType === NormalizedDataType.Any ||
+              functionInputTypes.some((type) => type === NormalizedDataType.Any || type === inputNormalizedOutputType)) &&
+            (functionOutputType === NormalizedDataType.Any ||
+              outputNormalizedInputTypes.some((type) => type === NormalizedDataType.Any || type === functionOutputType))
           );
         });
       }
