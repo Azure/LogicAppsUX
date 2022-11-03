@@ -21,6 +21,7 @@ export const RecommendationPanel: React.FC<PropsWithChildren<RecommendationPanel
       onDismiss={props.toggleCollapse}
       hasCloseButton={false}
       overlayProps={{ isDarkThemed: isInverted }}
+      layerProps={{ styles: { root: { zIndex: 999998 } } }}
     >
       {props.children}
     </Panel>

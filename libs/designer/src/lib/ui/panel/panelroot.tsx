@@ -235,6 +235,7 @@ export const PanelRoot = (): JSX.Element => {
       }}
       title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
+      layerProps={{ styles: { root: { zIndex: 999998 } } }}
     />
   );
 };
