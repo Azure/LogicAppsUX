@@ -225,7 +225,7 @@ export const FunctionList = () => {
             startIndex: startInd,
             name: getFunctionBrandingForCategory(value).displayName,
             count: numInGroup,
-            isCollapsed: true,
+            isCollapsed: functionCategoryGroups.find((group) => group.key === value)?.isCollapsed ?? true,
           };
 
           startInd += numInGroup;
@@ -244,6 +244,7 @@ export const FunctionList = () => {
     flattenedTargetSchema,
     inlineFunctionInputOutputKeys,
     isAddingInlineFunction,
+    functionCategoryGroups,
   ]);
 
   const getFunctionItemCell = (functionNode: FunctionData) => {
