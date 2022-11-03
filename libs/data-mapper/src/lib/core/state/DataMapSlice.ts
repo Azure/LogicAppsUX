@@ -13,7 +13,6 @@ import {
   getFunctionConnectionUnits,
   getTargetSchemaNodeConnections,
   isConnectionUnit,
-  isCustomValue,
   nodeHasSpecificInputEventually,
   updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
@@ -131,39 +130,12 @@ export const dataMapSlice = createSlice({
       const currentState = state.curDataMapOperation;
 
       if (currentState.sourceSchema && currentState.targetSchema) {
-        let newState: DataMapOperationState = {
+        const newState: DataMapOperationState = {
           ...currentState,
-          dataMapConnections: {},
+          dataMapConnections: incomingConnections ?? {},
           currentSourceSchemaNodes: [],
           currentTargetSchemaNode: currentState.targetSchema.schemaTreeRoot,
         };
-
-        if (incomingConnections) {
-          const topLevelSourceNodes: SchemaNodeExtended[] = [];
-
-          Object.values(incomingConnections).forEach((connection) => {
-            // TODO change to support functions
-
-            // NOTE: May not need any of this once overview has been fully implemented
-            // - a setCurrentTargetSchemaNode (see its functionality) should then always happen
-            // before we have to show any connections in the first place
-            flattenInputs(connection.inputs).forEach((input) => {
-              if (!input || isCustomValue(input)) {
-                return;
-              }
-
-              if (isSchemaNodeExtended(input.node) && input.node.pathToRoot.length < 2) {
-                topLevelSourceNodes.push(currentState.flattenedSourceSchema[input.reactFlowKey]);
-              }
-            });
-          });
-
-          newState = {
-            ...currentState,
-            currentSourceSchemaNodes: topLevelSourceNodes,
-            dataMapConnections: incomingConnections,
-          };
-        }
 
         state.curDataMapOperation = newState;
         state.pristineDataMap = newState;
