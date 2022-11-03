@@ -186,6 +186,15 @@ export const FunctionList = () => {
           const functionInputTypes = functionNode.inputs.flatMap((input) => input.allowedTypes);
           const functionOutputType = functionNode.outputValueType;
 
+          // NOTE: This case will only happen when the existing connection is to a Function node
+          // What would happen if we didn't return false here is that we'd be saying this potential new Function's output type
+          // matches one of the output Function's inputs' types, but for a different input slot than the existing one goes to
+          // - which raises the question - do we overwrite that new slot if there's something in it? Etc etc...
+          // So, TODO: figure out how we want to handle this case, and likely handle it here
+          if (functionNode.outputValueType !== inputNormalizedOutputType) {
+            return false;
+          }
+
           return (
             (inputNormalizedOutputType === NormalizedDataType.Any ||
               functionInputTypes.some((type) => type === NormalizedDataType.Any || type === inputNormalizedOutputType)) &&
