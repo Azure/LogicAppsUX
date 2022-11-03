@@ -93,7 +93,7 @@ export const SimpleButBigDefinition = () => <RenderedComponent workflow={BigWork
 export const ReadOnlyExample = () => <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true }} />;
 
 export const MonitoringViewExample = () => (
-  <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true, isMonitoringView: true }} />
+  <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true, isMonitoringView: true, isDarkMode: false }} />
 );
 
 export const ConnectionsExample = () => <RenderedComponent workflow={ConnectionsWorkflow.files as Workflow} options={{}} />;

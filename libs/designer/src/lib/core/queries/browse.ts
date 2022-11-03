@@ -57,7 +57,7 @@ export const useTriggerCapabilities = (allOperations?: DiscoveryOperation<Discov
       return new Promise((resolve) => {
         const ret: TriggerCapabilitiesType = {};
         for (const operation of allOperations ?? []) {
-          const isTrigger = !!operation.properties.trigger;
+          const isTrigger = !!operation.properties?.trigger;
           const id = operation.properties.api.id.toLowerCase();
           ret[id] = {
             ...ret[id],
