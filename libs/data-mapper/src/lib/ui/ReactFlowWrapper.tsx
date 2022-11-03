@@ -20,6 +20,7 @@ import {
   hideNotification,
   makeConnection,
   setCanvasToolboxTabToDisplay,
+  setInlineFunctionInputOutputKeys,
   setSelectedItem,
   setSourceNodeConnectionBeingDrawnFromId,
 } from '../core/state/DataMapSlice';
@@ -71,7 +72,7 @@ export const ReactFlowWrapper = () => {
     dispatch(setSelectedItem(undefined));
 
     // Cancel adding inline function
-    dispatch(setSourceNodeConnectionBeingDrawnFromId(undefined));
+    dispatch(setInlineFunctionInputOutputKeys(undefined));
 
     dispatch(setCanvasToolboxTabToDisplay(''));
   };

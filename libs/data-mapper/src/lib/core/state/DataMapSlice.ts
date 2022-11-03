@@ -373,14 +373,22 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    addFunctionNode: (state, action: PayloadAction<FunctionData>) => {
-      const functionData = action.payload;
+    addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         currentFunctionNodes: { ...state.curDataMapOperation.currentFunctionNodes },
       };
 
-      newState.currentFunctionNodes[createReactFlowFunctionKey(functionData)] = functionData;
+      // Default - just provide the FunctionData and the key will be handled under the hood
+      if (!('newReactFlowKey' in action.payload)) {
+        const functionData = action.payload;
+        newState.currentFunctionNodes[createReactFlowFunctionKey(functionData)] = functionData;
+      } else {
+        // Alternative - specify the key you want to use (needed for adding inline Functions)
+        const functionData = action.payload.functionData;
+        const functionKey = action.payload.newReactFlowKey;
+        newState.currentFunctionNodes[functionKey] = functionData;
+      }
 
       doDataMapOperation(state, newState);
     },
@@ -515,6 +523,7 @@ export const dataMapSlice = createSlice({
       state.sourceNodeConnectionBeingDrawnFromId = action.payload;
     },
 
+    // Will always be either [] or [inputKey, outputKey]
     setInlineFunctionInputOutputKeys: (state, action: PayloadAction<{ inputKey: string; outputKey: string } | undefined>) => {
       const newState: DataMapOperationState = { ...state.curDataMapOperation };
 

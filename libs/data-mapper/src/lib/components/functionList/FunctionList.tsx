@@ -1,8 +1,15 @@
-import { addFunctionNode } from '../../core/state/DataMapSlice';
+import { sourcePrefix, targetPrefix } from '../../constants/ReactFlowConstants';
+import {
+  addFunctionNode,
+  makeConnection,
+  setCanvasToolboxTabToDisplay,
+  setInlineFunctionInputOutputKeys,
+} from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
+import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { TreeHeader } from '../tree/TreeHeader';
 import FunctionListCell from './FunctionListCell';
 import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
@@ -48,6 +55,9 @@ export const FunctionList = () => {
 
   const functionData = useSelector((state: RootState) => state.function.availableFunctions);
   const inlineFunctionInputOutputKeys = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys);
+  const currentFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [sortedFunctionsByCategory, setSortedFunctionsByCategory] = useState<FunctionData[]>([]);
@@ -56,10 +66,44 @@ export const FunctionList = () => {
   const isAddingInlineFunction = useMemo(() => inlineFunctionInputOutputKeys.length === 2, [inlineFunctionInputOutputKeys]);
 
   const onFunctionItemClick = (selectedFunction: FunctionData) => {
-    dispatch(addFunctionNode(selectedFunction));
-
     if (isAddingInlineFunction) {
-      // TODO: make a connection using the keys in isAddingInlineFunction
+      const newReactFlowKey = createReactFlowFunctionKey(selectedFunction);
+      dispatch(addFunctionNode({ functionData: selectedFunction, newReactFlowKey }));
+
+      const reactFlowSource = inlineFunctionInputOutputKeys[0];
+      const reactFlowDestination = inlineFunctionInputOutputKeys[1];
+
+      const source = reactFlowSource.startsWith(sourcePrefix)
+        ? flattenedSourceSchema[reactFlowSource]
+        : currentFunctionNodes[reactFlowSource];
+      const destination = reactFlowDestination.startsWith(targetPrefix)
+        ? flattenedTargetSchema[reactFlowDestination]
+        : currentFunctionNodes[reactFlowDestination];
+
+      // Create connection between input and new function
+      dispatch(
+        makeConnection({
+          source,
+          reactFlowSource,
+          destination: selectedFunction,
+          reactFlowDestination: newReactFlowKey,
+        })
+      );
+
+      // Create connection between new function and output
+      dispatch(
+        makeConnection({
+          source: selectedFunction,
+          reactFlowSource: newReactFlowKey,
+          destination,
+          reactFlowDestination,
+        })
+      );
+
+      dispatch(setInlineFunctionInputOutputKeys(undefined));
+      dispatch(setCanvasToolboxTabToDisplay(''));
+    } else {
+      dispatch(addFunctionNode(selectedFunction));
     }
   };
 
