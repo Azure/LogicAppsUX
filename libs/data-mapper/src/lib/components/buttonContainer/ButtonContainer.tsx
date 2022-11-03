@@ -3,11 +3,12 @@ import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react
 import { bundleIcon } from '@fluentui/react-icons';
 import { useMemo } from 'react';
 import type { IconType } from 'react-icons/lib';
+import { floatingPanelZIndex } from '../floatingPanel/FloatingPanel';
 
 const useStyles = makeStyles({
   btnContainer: {
     position: 'absolute',
-    zIndex: 5,
+    zIndex: floatingPanelZIndex + 1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     boxShadow: tokens.shadow4,
     backgroundColor: tokens.colorNeutralBackground1,

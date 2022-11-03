@@ -206,7 +206,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                       }}
                     >
                       <ReactFlowProvider>
-                        <ReactFlowWrapper />
+                        <ReactFlowWrapper canvasBlockHeight={getCanvasAreaHeight()} />
                       </ReactFlowProvider>
                     </div>
 
