@@ -6,9 +6,10 @@ import {
   setInlineFunctionInputOutputKeys,
 } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
+import { NormalizedDataType } from '../../models';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
-import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
+import { getFunctionBrandingForCategory, isFunctionData } from '../../utils/Function.Utils';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { TreeHeader } from '../tree/TreeHeader';
 import FunctionListCell from './FunctionListCell';
@@ -108,11 +109,10 @@ export const FunctionList = () => {
   };
 
   useEffect(() => {
-    // TODO: If isAddingInlineFunction, filter out functions that don't have the correct input/output types
     if (functionData) {
+      let functionDataCopy = [...functionData];
       const categoriesArray: FunctionCategory[] = [];
       let newSortedFunctions: FunctionData[] = [];
-      let functionDataCopy = [...functionData];
 
       // If there's a search term, filter the function data
       if (searchTerm) {
@@ -160,10 +160,44 @@ export const FunctionList = () => {
         });
       }
 
+      // If isAddingInlineFunction, filter out functions by type validation
+      if (isAddingInlineFunction) {
+        const reactFlowSource = inlineFunctionInputOutputKeys[0];
+        const reactFlowDestination = inlineFunctionInputOutputKeys[1];
+        const source = reactFlowSource.startsWith(sourcePrefix)
+          ? flattenedSourceSchema[reactFlowSource]
+          : currentFunctionNodes[reactFlowSource];
+        const destination = reactFlowDestination.startsWith(targetPrefix)
+          ? flattenedTargetSchema[reactFlowDestination]
+          : currentFunctionNodes[reactFlowDestination];
+
+        // NOTE: Here, we can just flatMap all of a Function's inputs' types as all inputs
+        // are guaranteed to be empty as we're creating a new Function (as opposed to what the InputDropdown handles)
+
+        // Obtain input's normalized output type, and compare it against each function's inputs' allowedTypes
+        const inputNormalizedOutputType = isFunctionData(source) ? source.outputValueType : source.normalizedDataType;
+
+        // Obtain the output's normalized input type (schema node), or a list of its inputs' allowedTypes (function node), and compare it against each function's output type
+        const outputNormalizedInputTypes = isFunctionData(destination)
+          ? destination.inputs.flatMap((input) => input.allowedTypes)
+          : [destination.normalizedDataType];
+
+        newSortedFunctions = newSortedFunctions.filter((functionNode) => {
+          const functionInputTypes = functionNode.inputs.flatMap((input) => input.allowedTypes);
+          const functionOutputType = functionNode.outputValueType;
+
+          return (
+            (inputNormalizedOutputType === NormalizedDataType.Any || functionInputTypes.includes(inputNormalizedOutputType)) &&
+            (functionOutputType === NormalizedDataType.Any || outputNormalizedInputTypes.includes(functionOutputType))
+          );
+        });
+      }
+
       setSortedFunctionsByCategory(newSortedFunctions);
-      let startInd = 0;
 
       // Sort the functions into groups by their category
+      let startInd = 0;
+
       const newFunctionCategoryGroups = categoriesArray
         .map((value): IGroup => {
           let numInGroup = 0;
@@ -189,7 +223,15 @@ export const FunctionList = () => {
 
       setFunctionCategoryGroups(newFunctionCategoryGroups);
     }
-  }, [functionData, searchTerm]);
+  }, [
+    functionData,
+    searchTerm,
+    currentFunctionNodes,
+    flattenedSourceSchema,
+    flattenedTargetSchema,
+    inlineFunctionInputOutputKeys,
+    isAddingInlineFunction,
+  ]);
 
   const getFunctionItemCell = (functionNode: FunctionData) => {
     return <FunctionListCell functionData={functionNode} onFunctionClick={onFunctionItemClick} />;
