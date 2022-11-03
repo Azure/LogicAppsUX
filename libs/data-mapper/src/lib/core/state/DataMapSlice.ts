@@ -1,3 +1,4 @@
+import type { ToolboxPanelTabs } from '../../components/canvasToolbox/CanvasToolbox';
 import { NotificationTypes, deletedNotificationAutoHideDuration } from '../../components/notification/Notification';
 import type { NotificationData } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
@@ -19,8 +20,8 @@ import {
 import {
   addReactFlowPrefix,
   createReactFlowFunctionKey,
-  getDestinationIdFromReactFlowId,
-  getSourceIdFromReactFlowId,
+  getDestinationIdFromReactFlowConnectionId,
+  getSourceIdFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -34,6 +35,7 @@ export interface DataMapState {
   redoStack: DataMapOperationState[];
   notificationData?: NotificationData;
   sourceNodeConnectionBeingDrawnFromId?: string;
+  canvasToolboxTabToDisplay: ToolboxPanelTabs | '';
 }
 
 export interface DataMapOperationState {
@@ -47,6 +49,7 @@ export interface DataMapOperationState {
   currentFunctionNodes: FunctionDictionary;
   selectedItemKey?: string;
   xsltFilename: string;
+  inlineFunctionInputOutputKeys: string[];
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -56,6 +59,7 @@ const emptyPristineState: DataMapOperationState = {
   flattenedSourceSchema: {},
   flattenedTargetSchema: {},
   xsltFilename: '',
+  inlineFunctionInputOutputKeys: [],
 };
 
 const initialState: DataMapState = {
@@ -64,6 +68,7 @@ const initialState: DataMapState = {
   isDirty: false,
   undoStack: [],
   redoStack: [],
+  canvasToolboxTabToDisplay: '',
 };
 
 export interface InitialSchemaAction {
@@ -359,8 +364,8 @@ export const dataMapSlice = createSlice({
 
         deleteConnectionFromConnections(
           state.curDataMapOperation.dataMapConnections,
-          getSourceIdFromReactFlowId(selectedKey),
-          getDestinationIdFromReactFlowId(selectedKey)
+          getSourceIdFromReactFlowConnectionId(selectedKey),
+          getDestinationIdFromReactFlowConnectionId(selectedKey)
         );
 
         doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: state.curDataMapOperation.dataMapConnections });
@@ -509,6 +514,22 @@ export const dataMapSlice = createSlice({
     setSourceNodeConnectionBeingDrawnFromId: (state, action: PayloadAction<string | undefined>) => {
       state.sourceNodeConnectionBeingDrawnFromId = action.payload;
     },
+
+    setInlineFunctionInputOutputKeys: (state, action: PayloadAction<{ inputKey: string; outputKey: string } | undefined>) => {
+      const newState: DataMapOperationState = { ...state.curDataMapOperation };
+
+      if (!action.payload) {
+        newState.inlineFunctionInputOutputKeys = [];
+      } else {
+        newState.inlineFunctionInputOutputKeys = [action.payload.inputKey, action.payload.outputKey];
+      }
+
+      doDataMapOperation(state, newState);
+    },
+
+    setCanvasToolboxTabToDisplay: (state, action: PayloadAction<ToolboxPanelTabs | ''>) => {
+      state.canvasToolboxTabToDisplay = action.payload;
+    },
   },
 });
 
@@ -537,6 +558,8 @@ export const {
   showNotification,
   hideNotification,
   setSourceNodeConnectionBeingDrawnFromId,
+  setInlineFunctionInputOutputKeys,
+  setCanvasToolboxTabToDisplay,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
