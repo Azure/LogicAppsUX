@@ -10,7 +10,7 @@ export const EmptyContent: React.FC = () => {
   return (
     <div className="msla-panel-select-card-container-empty">
       <img src={EmptyPanel} alt="" role="presentation" />
-      <div className="msla-panel-empty-text">{emptyContentMessage}</div>
+      <p className="msla-panel-empty-text">{emptyContentMessage}</p>
     </div>
   );
 };

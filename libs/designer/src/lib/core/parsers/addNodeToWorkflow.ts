@@ -4,7 +4,14 @@ import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge, isRootNodeInGraph } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
-import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode } from './restructuringHelpers';
+import {
+  reassignEdgeSources,
+  reassignEdgeTargets,
+  addNewEdge,
+  applyIsRootNode,
+  removeEdge,
+  moveRunAfterTarget,
+} from './restructuringHelpers';
 import type { DiscoveryOperation, DiscoveryResultTypes, SubgraphType } from '@microsoft-logic-apps/utils';
 import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, isScopeOperation, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 
@@ -21,7 +28,7 @@ export const addNodeToWorkflow = (
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
-  const { nodeId: newNodeId } = payload;
+  const { nodeId: newNodeId, operation } = payload;
   const { graphId, parentId, childId } = payload.relationshipIds;
 
   // Add Node Data
@@ -35,7 +42,8 @@ export const addNodeToWorkflow = (
   if (workflowNode.id) workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
 
   // Update metadata
-  const isRoot = parentId ? parentId?.split('-#')[0] === graphId : true;
+  const isTrigger = !!operation.properties?.trigger;
+  const isRoot = isTrigger ?? (parentId ? parentId?.split('-#')[0] === graphId : false);
   const parentNodeId = graphId !== 'root' ? graphId : undefined;
   nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
 
@@ -47,6 +55,13 @@ export const addNodeToWorkflow = (
   // Parallel Branch creation, just add the singular node
   if (payload.isParallelBranch && parentId) {
     addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
+  }
+  // 1 parent, 1 child
+  else if (parentId && childId) {
+    addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
+    addNewEdge(state, newNodeId, childId, workflowGraph, shouldAddRunAfters);
+    moveRunAfterTarget(state, parentId, newNodeId);
+    removeEdge(state, parentId, childId, workflowGraph);
   }
   // X parents, 1 child
   else if (childId) {

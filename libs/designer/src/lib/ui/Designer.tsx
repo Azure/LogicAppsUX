@@ -16,6 +16,7 @@ import Minimap from './Minimap';
 import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
+import { setLayerHostSelector } from '@fluentui/react';
 import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
 import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft-logic-apps/utils';
 import { useCallback, useEffect, useState } from 'react';
@@ -131,6 +132,8 @@ export const Designer = () => {
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
+
+  useEffect(() => setLayerHostSelector('.msla-designer-canvas'), []);
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="msla-designer-canvas msla-panel-mode">
@@ -140,7 +143,6 @@ export const Designer = () => {
             nodes={nodesWithPlaceholder}
             edges={edges}
             onNodesChange={onNodesChange}
-            minZoom={0}
             nodesDraggable={false}
             edgeTypes={edgeTypes}
             panOnScroll={true}

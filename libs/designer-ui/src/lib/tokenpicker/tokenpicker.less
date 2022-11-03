@@ -98,7 +98,7 @@
 .msla-token-picker-section-options {
   padding: 0 12px;
   .msla-token-picker-section-option {
-    background-color: #fff;
+    background: none;
     border: none;
     border-bottom: 1px solid #afacac;
     cursor: pointer;
@@ -133,7 +133,6 @@
         justify-content: center;
         height: 34px;
         .msla-token-picker-option-title {
-          color: #000;
           font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
           font-size: 12px;
           font-weight: 600;
@@ -157,7 +156,6 @@
 .msla-token-picker-no-content {
   font-family: @font-family;
   padding: 12px;
-  color: #212121;
 
   a:visited,
   a:link,
@@ -216,4 +214,43 @@
   position: absolute;
   left: 17px;
   bottom: 5px;
+}
+
+body.dark {
+  .msla-token-picker {
+    background: @ms-color-secondaryBackground;
+  }
+  .msla-token-picker-option-title {
+    color: #fff;
+  }
+  .msla-token-picker-search,
+  .msla-token-picker-action-bar,
+  .msla-token-picker-expression {
+    background-color: @ms-color-primaryBackgroundHover;
+  }
+  .msla-token-picker-section-header {
+    background-color: @ms-color-primaryBackground;
+    span {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+  .msla-token-picker-section-header-button {
+    background-color: @ms-color-primaryBackground;
+    span {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+  .msla-token-picker-section-option {
+    border-bottom: 1px solid @ms-color-secondaryBorder;
+    &:hover {
+      background-color: @ms-color-primaryBackground;
+    }
+  }
+  .msla-token-picker-option-description {
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .ms-TextField-field {
+    background: none;
+  }
 }

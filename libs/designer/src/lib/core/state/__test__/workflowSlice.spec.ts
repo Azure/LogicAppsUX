@@ -13,7 +13,9 @@ describe('workflow slice reducers', () => {
       operation: {
         id: 'test-id',
         name: 'test-name',
-        properties: {} as any,
+        properties: {
+          trigger: 'test-trigger',
+        } as any,
         type: 'discovery',
       },
     };

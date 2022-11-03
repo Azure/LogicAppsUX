@@ -1,10 +1,10 @@
 import type { RootState } from '../state/store';
-import { setMonitoringView, setReadOnly } from '../state/workflowLoadingSlice';
+import { setDarkMode, setMonitoringView, setReadOnly } from '../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const ContextSettings = () => {
-  const { readOnly, monitoringView } = useSelector((state: RootState) => {
+  const { readOnly, monitoringView, darkMode } = useSelector((state: RootState) => {
     return state.workflowLoader;
   });
   const dispatch = useDispatch();
@@ -18,6 +18,7 @@ const ContextSettings = () => {
         onChange={(_, checked) => dispatch(setReadOnly(!!checked))}
       />
       <Checkbox label="Is Monitoring View" checked={monitoringView} onChange={(_, checked) => dispatch(setMonitoringView(!!checked))} />
+      <Checkbox label="Dark Mode" checked={darkMode} onChange={(_, checked) => dispatch(setDarkMode(!!checked))} />
     </div>
   );
 };

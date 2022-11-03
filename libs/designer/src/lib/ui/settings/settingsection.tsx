@@ -142,7 +142,6 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
     defaultMessage: 'Collapse',
     description: 'An accessible label for collapse toggle icon',
   });
-  const headerTextClassName = isInverted ? 'msla-setting-section-header-text-dark' : 'msla-setting-section-header-text';
 
   const internalSettings = (
     <>
@@ -194,7 +193,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
             iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
             styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
           />
-          <div className={headerTextClassName}>{title}</div>
+          <div className="msla-setting-section-header-text">{title}</div>
         </button>
         {internalSettings}
       </div>

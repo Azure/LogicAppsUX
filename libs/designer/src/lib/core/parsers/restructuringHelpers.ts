@@ -84,7 +84,7 @@ export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, n
   });
 };
 
-const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
+export const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
   if (!state) return;
   const targetRunAfter = (state.operations?.[oldTargetId] as any)?.runAfter;
   if (targetRunAfter) {

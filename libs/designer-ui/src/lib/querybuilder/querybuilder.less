@@ -89,6 +89,7 @@
     min-width: 550px;
     position: relative;
     margin: 5px 0px;
+    border-radius: 2px;
 
     &.collapsed {
       min-width: 0px;
@@ -145,4 +146,13 @@
   position: absolute;
   left: -1px;
   top: 16px;
+}
+
+body.dark {
+  .msla-querybuilder-group-content {
+    background-color: @ms-color-bodyBackground;
+  }
+  .msla-querybuilder-row-add-container:after {
+    background-color: @ms-color-bodyBackground;
+  }
 }
