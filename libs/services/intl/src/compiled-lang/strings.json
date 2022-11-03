@@ -2987,12 +2987,6 @@
       "value": "Triggers cannot be deleted."
     }
   ],
-  "R7v2iQ": [
-    {
-      "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
-    }
-  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -5011,6 +5005,12 @@
     {
       "type": 0,
       "value": "Run trigger"
+    }
+  ],
+  "lQNKUB": [
+    {
+      "type": 0,
+      "value": "A line for the parent element is added automatically."
     }
   ],
   "lV77P8": [

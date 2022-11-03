@@ -1,7 +1,6 @@
-import { addFunctionNode, addSourceSchemaNodes, removeSourceSchemaNodes } from '../../core/state/DataMapSlice';
+import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import type { FunctionData } from '../../models/Function';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../buttonPivot/ButtonPivot';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';
@@ -27,16 +26,11 @@ const generalToolboxPanelProps = {
   maxHeight: '450px',
 } as FloatingPanelProps;
 
-export interface CanvasToolboxProps {
-  toolboxTabToDisplay: ToolboxPanelTabs | '';
-  setToolboxTabToDisplay: (newTab: ToolboxPanelTabs | '') => void;
-}
-
-export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay }: CanvasToolboxProps) => {
+export const CanvasToolbox = () => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const functionData = useSelector((state: RootState) => state.function.availableFunctions);
+  const toolboxTabToDisplay = useSelector((state: RootState) => state.dataMap.canvasToolboxTabToDisplay);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
 
@@ -71,23 +65,19 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay }: C
   });
 
   const closeToolbox = useCallback(() => {
-    setToolboxTabToDisplay('');
-  }, [setToolboxTabToDisplay]);
+    dispatch(setCanvasToolboxTabToDisplay(''));
+  }, [dispatch]);
 
   const onTabSelect = useCallback(
     (_event: SelectTabEvent, data: SelectTabData) => {
       if (data.value === toolboxTabToDisplay) {
         closeToolbox();
       } else {
-        setToolboxTabToDisplay(data.value as ToolboxPanelTabs);
+        dispatch(setCanvasToolboxTabToDisplay(data.value as ToolboxPanelTabs));
       }
     },
-    [toolboxTabToDisplay, setToolboxTabToDisplay, closeToolbox]
+    [toolboxTabToDisplay, closeToolbox, dispatch]
   );
-
-  const onFunctionItemClick = (selectedFunction: FunctionData) => {
-    dispatch(addFunctionNode(selectedFunction));
-  };
 
   const onSourceSchemaItemClick = (selectedNode: SchemaNodeExtended) => {
     if (currentSourceSchemaNodes.some((node) => node.key === selectedNode.key)) {
@@ -134,7 +124,7 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay }: C
 
       {toolboxTabToDisplay === ToolboxPanelTabs.functionsList && (
         <FloatingPanel {...generalToolboxPanelProps} title={functionLoc} onClose={closeToolbox}>
-          <FunctionList functionData={functionData} onFunctionClick={onFunctionItemClick}></FunctionList>
+          <FunctionList />
         </FloatingPanel>
       )}
     </>

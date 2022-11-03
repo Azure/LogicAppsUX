@@ -115,7 +115,7 @@ export const Notification = (props: NotificationProps) => {
         description: 'Message on deleting connection',
       }),
       [NotificationTypes.ArrayConnectionAdded]: intl.formatMessage({
-        defaultMessage: 'A line between array elements is automatically created to indicate looping elements.',
+        defaultMessage: 'A line for the parent element is added automatically.',
         description: 'Describes connection being added',
       }),
       [NotificationTypes.CircularLogicError]: intl.formatMessage({
