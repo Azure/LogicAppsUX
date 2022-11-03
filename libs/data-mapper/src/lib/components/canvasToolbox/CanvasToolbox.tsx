@@ -1,7 +1,6 @@
-import { addFunctionNode, addSourceSchemaNodes, removeSourceSchemaNodes } from '../../core/state/DataMapSlice';
+import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import type { FunctionData } from '../../models/Function';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../buttonPivot/ButtonPivot';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';
@@ -21,22 +20,20 @@ export enum ToolboxPanelTabs {
 
 const generalToolboxPanelProps = {
   xPos: '16px',
-  yPos: '76px',
+  yPos: '60px',
   width: '250px',
-  minHeight: '450px',
-  maxHeight: '450px',
+  minHeight: '200px',
 } as FloatingPanelProps;
 
-export interface CanvasToolboxProps {
-  toolboxTabToDisplay: ToolboxPanelTabs | '';
-  setToolboxTabToDisplay: (newTab: ToolboxPanelTabs | '') => void;
+interface CanvasToolboxProps {
+  canvasBlockHeight: number;
 }
 
-export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay }: CanvasToolboxProps) => {
+export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const functionData = useSelector((state: RootState) => state.function.availableFunctions);
+  const toolboxTabToDisplay = useSelector((state: RootState) => state.dataMap.canvasToolboxTabToDisplay);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
 
@@ -71,23 +68,19 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay }: C
   });
 
   const closeToolbox = useCallback(() => {
-    setToolboxTabToDisplay('');
-  }, [setToolboxTabToDisplay]);
+    dispatch(setCanvasToolboxTabToDisplay(''));
+  }, [dispatch]);
 
   const onTabSelect = useCallback(
     (_event: SelectTabEvent, data: SelectTabData) => {
       if (data.value === toolboxTabToDisplay) {
         closeToolbox();
       } else {
-        setToolboxTabToDisplay(data.value as ToolboxPanelTabs);
+        dispatch(setCanvasToolboxTabToDisplay(data.value as ToolboxPanelTabs));
       }
     },
-    [toolboxTabToDisplay, setToolboxTabToDisplay, closeToolbox]
+    [toolboxTabToDisplay, closeToolbox, dispatch]
   );
-
-  const onFunctionItemClick = (selectedFunction: FunctionData) => {
-    dispatch(addFunctionNode(selectedFunction));
-  };
 
   const onSourceSchemaItemClick = (selectedNode: SchemaNodeExtended) => {
     if (currentSourceSchemaNodes.some((node) => node.key === selectedNode.key)) {
@@ -122,19 +115,27 @@ export const CanvasToolbox = ({ toolboxTabToDisplay, setToolboxTabToDisplay }: C
     [toolboxTabToDisplay, onTabSelect, hideSourceSchemaLoc, showSourceSchemaLoc, hideFunctionsLoc, showFunctionsLoc]
   );
 
+  const floatingPanelHeight = useMemo(() => `${canvasBlockHeight - 150}px`, [canvasBlockHeight]);
+
   return (
     <>
       <ButtonPivot {...toolboxButtonPivotProps} />
 
       {toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree && sourceSchema && (
-        <FloatingPanel {...generalToolboxPanelProps} title={sourceSchemaLoc} subtitle={sourceSchema.name} onClose={closeToolbox}>
+        <FloatingPanel
+          {...generalToolboxPanelProps}
+          height={floatingPanelHeight}
+          title={sourceSchemaLoc}
+          subtitle={sourceSchema.name}
+          onClose={closeToolbox}
+        >
           <SchemaTree schema={sourceSchema} toggledNodes={currentSourceSchemaNodes} onNodeClick={onSourceSchemaItemClick} />
         </FloatingPanel>
       )}
 
       {toolboxTabToDisplay === ToolboxPanelTabs.functionsList && (
-        <FloatingPanel {...generalToolboxPanelProps} title={functionLoc} onClose={closeToolbox}>
-          <FunctionList functionData={functionData} onFunctionClick={onFunctionItemClick}></FunctionList>
+        <FloatingPanel {...generalToolboxPanelProps} height={floatingPanelHeight} title={functionLoc} onClose={closeToolbox}>
+          <FunctionList />
         </FloatingPanel>
       )}
     </>
