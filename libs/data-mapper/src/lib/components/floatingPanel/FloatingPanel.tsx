@@ -29,13 +29,13 @@ export interface FloatingPanelProps {
   yPos: string;
   width: string;
   minHeight: string;
-  maxHeight?: string;
+  height?: string;
   panelOrdering?: number;
   children?: React.ReactNode;
 }
 
 export const FloatingPanel = (props: FloatingPanelProps) => {
-  const { title, subtitle, onClose, xPos, yPos, minHeight, maxHeight, width, panelOrdering, children } = props;
+  const { title, subtitle, onClose, xPos, yPos, minHeight, height, width, panelOrdering, children } = props;
   const styles = useStyles();
 
   const innerStyle: React.CSSProperties = useMemo(
@@ -49,11 +49,11 @@ export const FloatingPanel = (props: FloatingPanelProps) => {
       left: xPos,
       width,
       minHeight,
-      maxHeight,
+      height,
       backgroundColor: tokens.colorNeutralBackground1,
       overflowY: 'auto',
     }),
-    [xPos, yPos, width, minHeight, maxHeight, panelOrdering]
+    [xPos, yPos, width, minHeight, height, panelOrdering]
   );
 
   return (

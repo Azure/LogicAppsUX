@@ -29,7 +29,7 @@ import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type {
   Connection as ReactFlowConnection,
@@ -199,7 +199,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
       }}
       style={{
         backgroundImage: checkerboardBackgroundImage,
-        backgroundPosition: '0 0, 11px',
+        backgroundPosition: '0 0, 11px 11px',
         backgroundSize: '22px 22px',
         borderRadius: tokens.borderRadiusMedium,
       }}
@@ -210,7 +210,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
       fitViewOptions={{ maxZoom: defaultCanvasZoom }}
       fitView
     >
-      <CanvasToolbox />
+      <CanvasToolbox canvasBlockHeight={canvasBlockHeight} />
 
       <CanvasControls displayMiniMap={displayMiniMap} toggleDisplayMiniMap={toggleDisplayMiniMap} />
 
