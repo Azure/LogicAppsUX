@@ -1,5 +1,6 @@
-import { NotificationTypes, deletedNotificationAutoHideDuration } from '../../components/notification/Notification';
+import type { ToolboxPanelTabs } from '../../components/canvasToolbox/CanvasToolbox';
 import type { NotificationData } from '../../components/notification/Notification';
+import { deletedNotificationAutoHideDuration, NotificationTypes } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
@@ -12,15 +13,14 @@ import {
   getFunctionConnectionUnits,
   getTargetSchemaNodeConnections,
   isConnectionUnit,
-  isCustomValue,
   nodeHasSpecificInputEventually,
   updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
 import {
   addReactFlowPrefix,
   createReactFlowFunctionKey,
-  getDestinationIdFromReactFlowId,
-  getSourceIdFromReactFlowId,
+  getDestinationIdFromReactFlowConnectionId,
+  getSourceIdFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -34,6 +34,7 @@ export interface DataMapState {
   redoStack: DataMapOperationState[];
   notificationData?: NotificationData;
   sourceNodeConnectionBeingDrawnFromId?: string;
+  canvasToolboxTabToDisplay: ToolboxPanelTabs | '';
 }
 
 export interface DataMapOperationState {
@@ -47,6 +48,7 @@ export interface DataMapOperationState {
   currentFunctionNodes: FunctionDictionary;
   selectedItemKey?: string;
   xsltFilename: string;
+  inlineFunctionInputOutputKeys: string[];
 }
 
 const emptyPristineState: DataMapOperationState = {
@@ -56,6 +58,7 @@ const emptyPristineState: DataMapOperationState = {
   flattenedSourceSchema: {},
   flattenedTargetSchema: {},
   xsltFilename: '',
+  inlineFunctionInputOutputKeys: [],
 };
 
 const initialState: DataMapState = {
@@ -64,6 +67,7 @@ const initialState: DataMapState = {
   isDirty: false,
   undoStack: [],
   redoStack: [],
+  canvasToolboxTabToDisplay: '',
 };
 
 export interface InitialSchemaAction {
@@ -126,39 +130,12 @@ export const dataMapSlice = createSlice({
       const currentState = state.curDataMapOperation;
 
       if (currentState.sourceSchema && currentState.targetSchema) {
-        let newState: DataMapOperationState = {
+        const newState: DataMapOperationState = {
           ...currentState,
-          dataMapConnections: {},
+          dataMapConnections: incomingConnections ?? {},
           currentSourceSchemaNodes: [],
           currentTargetSchemaNode: currentState.targetSchema.schemaTreeRoot,
         };
-
-        if (incomingConnections) {
-          const topLevelSourceNodes: SchemaNodeExtended[] = [];
-
-          Object.values(incomingConnections).forEach((connection) => {
-            // TODO change to support functions
-
-            // NOTE: May not need any of this once overview has been fully implemented
-            // - a setCurrentTargetSchemaNode (see its functionality) should then always happen
-            // before we have to show any connections in the first place
-            flattenInputs(connection.inputs).forEach((input) => {
-              if (!input || isCustomValue(input)) {
-                return;
-              }
-
-              if (isSchemaNodeExtended(input.node) && input.node.pathToRoot.length < 2) {
-                topLevelSourceNodes.push(currentState.flattenedSourceSchema[input.reactFlowKey]);
-              }
-            });
-          });
-
-          newState = {
-            ...currentState,
-            currentSourceSchemaNodes: topLevelSourceNodes,
-            dataMapConnections: incomingConnections,
-          };
-        }
 
         state.curDataMapOperation = newState;
         state.pristineDataMap = newState;
@@ -359,8 +336,8 @@ export const dataMapSlice = createSlice({
 
         deleteConnectionFromConnections(
           state.curDataMapOperation.dataMapConnections,
-          getSourceIdFromReactFlowId(selectedKey),
-          getDestinationIdFromReactFlowId(selectedKey)
+          getSourceIdFromReactFlowConnectionId(selectedKey),
+          getDestinationIdFromReactFlowConnectionId(selectedKey)
         );
 
         doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: state.curDataMapOperation.dataMapConnections });
@@ -368,14 +345,22 @@ export const dataMapSlice = createSlice({
       }
     },
 
-    addFunctionNode: (state, action: PayloadAction<FunctionData>) => {
-      const functionData = action.payload;
+    addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         currentFunctionNodes: { ...state.curDataMapOperation.currentFunctionNodes },
       };
 
-      newState.currentFunctionNodes[createReactFlowFunctionKey(functionData)] = functionData;
+      // Default - just provide the FunctionData and the key will be handled under the hood
+      if (!('newReactFlowKey' in action.payload)) {
+        const functionData = action.payload;
+        newState.currentFunctionNodes[createReactFlowFunctionKey(functionData)] = functionData;
+      } else {
+        // Alternative - specify the key you want to use (needed for adding inline Functions)
+        const functionData = action.payload.functionData;
+        const functionKey = action.payload.newReactFlowKey;
+        newState.currentFunctionNodes[functionKey] = functionData;
+      }
 
       doDataMapOperation(state, newState);
     },
@@ -392,18 +377,44 @@ export const dataMapSlice = createSlice({
       // Add any repeating parent nodes as well
       const parentTargetNode = newState.currentTargetSchemaNode;
       const sourceNode = action.payload.source;
-      if (
-        parentTargetNode &&
-        parentTargetNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1 &&
-        isSchemaNodeExtended(sourceNode)
-      ) {
+      if (parentTargetNode && isSchemaNodeExtended(sourceNode)) {
         if (sourceNode.parentKey) {
+          const firstTargetNodeWithRepeatingPathItem = parentTargetNode.pathToRoot.find((pathItem) => pathItem.repeating);
+          const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
+
           const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
           const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
-          const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
+          const firstSourceNodeWithRepeatingPathItem = parentSourceNode.pathToRoot.find((pathItem) => pathItem.repeating);
+
+          if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
+            const parentPrefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
+            const parentSourceNode = newState.flattenedSourceSchema[parentPrefixedSourceKey];
+
+            const parentPrefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
+            const parentTargetNode = newState.flattenedTargetSchema[parentPrefixedTargetKey];
+
+            const parentsAlreadyConnected = nodeHasSpecificInputEventually(
+              parentPrefixedSourceKey,
+              newState.dataMapConnections[parentPrefixedTargetKey],
+              newState.dataMapConnections,
+              true
+            );
+
+            if (!parentsAlreadyConnected) {
+              addNodeToConnections(
+                newState.dataMapConnections,
+                parentSourceNode,
+                parentPrefixedSourceKey,
+                parentTargetNode,
+                parentPrefixedTargetKey
+              );
+              state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+            }
+          }
+
           if (
             parentSourceNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1 &&
-            !nodeHasSpecificInputEventually(
+            nodeHasSpecificInputEventually(
               prefixedSourceKey,
               newState.dataMapConnections[prefixedTargetKey],
               newState.dataMapConnections,
@@ -413,9 +424,6 @@ export const dataMapSlice = createSlice({
             if (!newState.currentSourceSchemaNodes.find((node) => node.key === parentSourceNode.key)) {
               newState.currentSourceSchemaNodes.push(parentSourceNode);
             }
-
-            addNodeToConnections(newState.dataMapConnections, parentSourceNode, prefixedSourceKey, parentTargetNode, prefixedTargetKey);
-            state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
           }
         }
       }
@@ -509,6 +517,23 @@ export const dataMapSlice = createSlice({
     setSourceNodeConnectionBeingDrawnFromId: (state, action: PayloadAction<string | undefined>) => {
       state.sourceNodeConnectionBeingDrawnFromId = action.payload;
     },
+
+    // Will always be either [] or [inputKey, outputKey]
+    setInlineFunctionInputOutputKeys: (state, action: PayloadAction<{ inputKey: string; outputKey: string } | undefined>) => {
+      const newState: DataMapOperationState = { ...state.curDataMapOperation };
+
+      if (!action.payload) {
+        newState.inlineFunctionInputOutputKeys = [];
+      } else {
+        newState.inlineFunctionInputOutputKeys = [action.payload.inputKey, action.payload.outputKey];
+      }
+
+      doDataMapOperation(state, newState);
+    },
+
+    setCanvasToolboxTabToDisplay: (state, action: PayloadAction<ToolboxPanelTabs | ''>) => {
+      state.canvasToolboxTabToDisplay = action.payload;
+    },
   },
 });
 
@@ -537,6 +562,8 @@ export const {
   showNotification,
   hideNotification,
   setSourceNodeConnectionBeingDrawnFromId,
+  setInlineFunctionInputOutputKeys,
+  setCanvasToolboxTabToDisplay,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;
