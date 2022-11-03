@@ -237,7 +237,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   return (
     <div className={classes.badgeContainer}>
-      {isNBadgeRequired && !isSourceSchemaNode && <NBadge />}
+      {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
 
       <div
         className={containerStyle}
@@ -291,7 +291,11 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   );
 };
 
-const NBadge = () => {
+interface NBadgeProps {
+  isOutput?: boolean;
+}
+
+const NBadge = ({ isOutput }: NBadgeProps) => {
   const intl = useIntl();
   const classes = useStyles();
 
@@ -303,7 +307,13 @@ const NBadge = () => {
   return (
     <div>
       <Tooltip content={arrayMappingTooltip} relationship="label">
-        <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
+        <Badge
+          className={isOutput ? classes.outputArrayBadge : classes.inputArrayBadge}
+          shape="rounded"
+          size="small"
+          appearance="tint"
+          color="informative"
+        >
           N
         </Badge>
       </Tooltip>
