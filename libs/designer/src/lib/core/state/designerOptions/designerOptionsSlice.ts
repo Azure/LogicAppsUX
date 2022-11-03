@@ -40,11 +40,11 @@ export const initializeServices = createAsyncThunk(
     if (process.env.NODE_ENV !== 'production') {
       loggerServices.push(new DevLogger());
     }
+    InitLoggerService(loggerServices);
     InitConnectionService(connectionService);
     InitOperationManifestService(operationManifestService);
     InitSearchService(searchService);
     InitOAuthService(oAuthService);
-    InitLoggerService(loggerServices);
     InitWorkflowService(workflowService);
 
     if (connectorService) {
