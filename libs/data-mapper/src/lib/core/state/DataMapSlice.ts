@@ -1,6 +1,6 @@
 import type { ToolboxPanelTabs } from '../../components/canvasToolbox/CanvasToolbox';
-import { NotificationTypes, deletedNotificationAutoHideDuration } from '../../components/notification/Notification';
 import type { NotificationData } from '../../components/notification/Notification';
+import { deletedNotificationAutoHideDuration, NotificationTypes } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
@@ -377,18 +377,44 @@ export const dataMapSlice = createSlice({
       // Add any repeating parent nodes as well
       const parentTargetNode = newState.currentTargetSchemaNode;
       const sourceNode = action.payload.source;
-      if (
-        parentTargetNode &&
-        parentTargetNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1 &&
-        isSchemaNodeExtended(sourceNode)
-      ) {
+      if (parentTargetNode && isSchemaNodeExtended(sourceNode)) {
         if (sourceNode.parentKey) {
+          const firstTargetNodeWithRepeatingPathItem = parentTargetNode.pathToRoot.find((pathItem) => pathItem.repeating);
+          const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
+
           const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
           const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
-          const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
+          const firstSourceNodeWithRepeatingPathItem = parentSourceNode.pathToRoot.find((pathItem) => pathItem.repeating);
+
+          if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
+            const parentPrefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
+            const parentSourceNode = newState.flattenedSourceSchema[parentPrefixedSourceKey];
+
+            const parentPrefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
+            const parentTargetNode = newState.flattenedTargetSchema[parentPrefixedTargetKey];
+
+            const parentsAlreadyConnected = nodeHasSpecificInputEventually(
+              parentPrefixedSourceKey,
+              newState.dataMapConnections[parentPrefixedTargetKey],
+              newState.dataMapConnections,
+              true
+            );
+
+            if (!parentsAlreadyConnected) {
+              addNodeToConnections(
+                newState.dataMapConnections,
+                parentSourceNode,
+                parentPrefixedSourceKey,
+                parentTargetNode,
+                parentPrefixedTargetKey
+              );
+              state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+            }
+          }
+
           if (
             parentSourceNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1 &&
-            !nodeHasSpecificInputEventually(
+            nodeHasSpecificInputEventually(
               prefixedSourceKey,
               newState.dataMapConnections[prefixedTargetKey],
               newState.dataMapConnections,
@@ -398,9 +424,6 @@ export const dataMapSlice = createSlice({
             if (!newState.currentSourceSchemaNodes.find((node) => node.key === parentSourceNode.key)) {
               newState.currentSourceSchemaNodes.push(parentSourceNode);
             }
-
-            addNodeToConnections(newState.dataMapConnections, parentSourceNode, prefixedSourceKey, parentTargetNode, prefixedTargetKey);
-            state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
           }
         }
       }
