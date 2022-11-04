@@ -8,4 +8,5 @@ export interface OperationActionData {
   brandColor?: string;
   iconUri?: string;
   isTrigger: boolean;
+  isBuiltIn?: boolean;
 }

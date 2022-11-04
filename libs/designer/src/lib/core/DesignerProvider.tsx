@@ -12,7 +12,6 @@ import React, { useEffect } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 
 export interface DesignerProviderProps {
-  themeName?: 'light' | 'dark';
   locale?: string;
   options: Omit<DesignerOptionsState, 'servicesInitialized'> & { services: ServiceOptions };
   children: React.ReactNode;
@@ -29,15 +28,15 @@ const OptionsStateSet = ({ options, children }: any) => {
   return <>{children}</>;
 };
 
-export const DesignerProvider = ({ themeName = 'light', locale = 'en', options, children }: DesignerProviderProps) => {
-  const isDark = themeName === 'light' ? false : true;
-  const azTheme = isDark ? AzureThemeDark : AzureThemeLight;
-  const webTheme = !isDark ? webLightTheme : webDarkTheme;
+export const DesignerProvider = ({ locale = 'en', options, children }: DesignerProviderProps) => {
+  const { isDarkMode } = options;
+  const azTheme = isDarkMode ? AzureThemeDark : AzureThemeLight;
+  const webTheme = !isDarkMode ? webLightTheme : webDarkTheme;
   useEffect(() => {
-    document.body.classList.add(!isDark ? 'light' : 'dark');
-    document.body.classList.remove(!isDark ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-color-scheme', !isDark ? 'light' : 'dark');
-  }, [isDark, themeName]);
+    document.body.classList.add(!isDarkMode ? 'light' : 'dark');
+    document.body.classList.remove(!isDarkMode ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-color-scheme', !isDarkMode ? 'light' : 'dark');
+  }, [isDarkMode]);
 
   return (
     <ReduxProvider store={store}>
