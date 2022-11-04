@@ -2053,12 +2053,6 @@
       "value": "Add a target schema"
     }
   ],
-  "IgNz8Y": [
-    {
-      "type": 0,
-      "value": "Action"
-    }
-  ],
   "IjZFjQ": [
     {
       "type": 0,
@@ -3385,6 +3379,12 @@
     {
       "type": 0,
       "value": "Expand"
+    }
+  ],
+  "VJa7sh": [
+    {
+      "type": 0,
+      "value": "Browse operations"
     }
   ],
   "VKAk5g": [
@@ -5303,12 +5303,6 @@
     {
       "type": 0,
       "value": "Content Transfer"
-    }
-  ],
-  "oM6q96": [
-    {
-      "type": 0,
-      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
