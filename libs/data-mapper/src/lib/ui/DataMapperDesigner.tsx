@@ -49,6 +49,9 @@ const useStaticStyles = makeStaticStyles({
     borderRadius: '10000px',
     backgroundColor: tokens.colorScrollbarOverlay,
   },
+  '.react-flow svg': {
+    overflow: 'visible !important',
+  },
 });
 
 const useStyles = makeStyles({
@@ -257,8 +260,7 @@ const useCenterViewHeight = () => {
     window.addEventListener('resize', handleCenterViewHeight);
 
     // NOTE: Not the nicest, but it's required to ensure we get the actual final height after the initial render
-    // TODO: 96% chance this will a better solution around Fit/Finish time
-    setTimeout(handleCenterViewHeight, 75);
+    setTimeout(handleCenterViewHeight, 125);
 
     return () => window.removeEventListener('resize', handleCenterViewHeight);
   }, []);

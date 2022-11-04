@@ -52,7 +52,7 @@ export const TreeHeader = ({ onSearch, onClear }: TreeHeaderProps) => {
         onClear={onClear}
         styles={searchBoxStyles}
         placeholder={searchLoc}
-      ></SearchBox>
+      />
     </span>
   );
 };

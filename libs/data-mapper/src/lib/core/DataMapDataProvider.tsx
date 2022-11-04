@@ -2,7 +2,7 @@ import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { Schema } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { convertFromMapDefinition } from '../utils/DataMap.Utils';
-import { convertSchemaToSchemaExtended, flattenSchema } from '../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { getFunctions } from './queries/functions';
 import { setInitialDataMap, setInitialSchema, setXsltFilename } from './state/DataMapSlice';
@@ -41,7 +41,9 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
   useEffect(() => {
     if (mapDefinition && extendedSourceSchema && extendedTargetSchema) {
       const connections = convertFromMapDefinition(mapDefinition, extendedSourceSchema, extendedTargetSchema, functions);
-      dispatch(setInitialDataMap(connections));
+      dispatch(
+        setInitialDataMap({ sourceSchema: extendedSourceSchema, targetSchema: extendedTargetSchema, dataMapConnections: connections })
+      );
     }
   }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, functions]);
 
@@ -51,7 +53,6 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
         setInitialSchema({
           schema: extendedSourceSchema,
           schemaType: SchemaType.Source,
-          flattenedSchema: flattenSchema(extendedSourceSchema, SchemaType.Source),
         })
       );
     }
@@ -63,7 +64,6 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
         setInitialSchema({
           schema: extendedTargetSchema,
           schemaType: SchemaType.Target,
-          flattenedSchema: flattenSchema(extendedTargetSchema, SchemaType.Target),
         })
       );
     }
@@ -76,9 +76,9 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
   }, [dispatch, availableSchemas]);
 
   useEffect(() => {
-    async function fetchFunctions() {
+    const fetchFunctions = async () => {
       dispatch(loadFunctions(await getFunctions()));
-    }
+    };
 
     fetchFunctions();
   }, [dispatch]);

@@ -143,6 +143,7 @@ export const iconForSchemaNodeDataType = (
       break;
     }
     case SchemaNodeDataType.AnyUri:
+    case SchemaNodeDataType.Attribute:
     case SchemaNodeDataType.Id:
     case SchemaNodeDataType.Idref:
     case SchemaNodeDataType.Language:
