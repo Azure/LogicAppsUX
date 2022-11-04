@@ -5,7 +5,7 @@ import { store } from '../../core/state/Store';
 import type { Schema, SchemaExtended } from '../../models/Schema';
 import { SchemaType } from '../../models/Schema';
 import { noChildrenMockSchema, simpleMockSchema } from '../../models/__mocks__';
-import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { ConfigPanel } from './ConfigPanel';
 import type { ConfigPanelProps } from './ConfigPanel';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -23,14 +23,12 @@ const MockStore = ({ mockState, children }) => {
   const sourceAction: InitialSchemaAction = {
     schema: extendedSourceSchema,
     schemaType: SchemaType.Source,
-    flattenedSchema: flattenSchema(extendedSourceSchema, SchemaType.Source),
   };
 
   const extendedTargetSchema = convertSchemaToSchemaExtended(mockState.targetSchema);
   const targetAction: InitialSchemaAction = {
     schema: extendedTargetSchema,
     schemaType: SchemaType.Target,
-    flattenedSchema: flattenSchema(extendedTargetSchema, SchemaType.Target),
   };
 
   store.dispatch(setAvailableSchemas(mockState.availableSchemas));

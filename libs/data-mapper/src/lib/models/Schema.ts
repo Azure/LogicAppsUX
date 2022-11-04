@@ -43,6 +43,7 @@ export enum SchemaNodeProperty {
 export enum SchemaNodeDataType {
   AnyAtomicType = 'AnyAtomicType',
   AnyUri = 'AnyUri',
+  Attribute = 'Attribute',
   Base64Binary = 'Base64Binary',
   Boolean = 'Boolean',
   Byte = 'Byte',
