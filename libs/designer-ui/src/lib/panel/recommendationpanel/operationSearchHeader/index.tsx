@@ -90,8 +90,8 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
   });
 
   const browseNavText = intl.formatMessage({
-    defaultMessage: 'Browse Operations',
-    description: 'Text for the Browse Operations page navigation heading',
+    defaultMessage: 'Browse operations',
+    description: 'Text for the Browse operations page navigation heading',
   });
 
   const returnToBrowseText = intl.formatMessage({
