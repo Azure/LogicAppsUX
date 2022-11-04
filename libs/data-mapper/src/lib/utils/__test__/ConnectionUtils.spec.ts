@@ -5,6 +5,10 @@ import type { FunctionData, FunctionInput } from '../../models/Function';
 import { functionMock } from '../../models/Function';
 import { createConnectionEntryIfNeeded, isValidInputToFunctionNode, newConnectionWillHaveCircularLogic } from '../Connection.Utils';
 
+// TODO: nodeHasSourceNodeEventually
+// TODO: nodeHasSpecificInputEventually
+// TODO: collectNodesForConnectionChain ?
+
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
     name: 'Value',
