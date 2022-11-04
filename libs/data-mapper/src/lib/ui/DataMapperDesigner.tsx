@@ -49,6 +49,9 @@ const useStaticStyles = makeStaticStyles({
     borderRadius: '10000px',
     backgroundColor: tokens.colorScrollbarOverlay,
   },
+  '.react-flow svg': {
+    overflow: 'visible !important',
+  },
 });
 
 const useStyles = makeStyles({
