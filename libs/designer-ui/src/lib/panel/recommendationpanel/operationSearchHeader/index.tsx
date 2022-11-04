@@ -152,7 +152,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
           </div>
           {searchTerm ? (
             <div className="msla-flex-row">
-              <span className="msla-search-heading-text">{searchResultsText}</span>
+              {/* <span className="msla-search-heading-text">{searchResultsText}</span> */}
               <Checkbox label={groupByConnectorLabelText} onChange={onGroupToggleChange} checked={isGrouped} />
             </div>
           ) : null}
