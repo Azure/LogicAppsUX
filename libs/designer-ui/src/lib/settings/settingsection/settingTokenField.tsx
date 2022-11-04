@@ -164,7 +164,6 @@ const TokenField = ({
       );
 
     case 'authentication':
-      // TODO - This requires update
       return (
         <AuthenticationEditor
           initialValue={value}
