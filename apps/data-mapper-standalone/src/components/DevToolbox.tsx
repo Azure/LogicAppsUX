@@ -59,6 +59,22 @@ export const DevToolbox: React.FC = () => {
   const changeMapDefinitionResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption<string> | undefined) => {
       dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(item ?? ({} as IDropdownOption<string>)));
+      let inputRscPath = '';
+      let outputRscPath = '';
+
+      if (item?.key === 'demoScriptMapDefinition') {
+        inputRscPath = schemaFileOptions[0];
+        outputRscPath = schemaFileOptions[1];
+      } else if (item?.key === 'customerOrderMapDefinition') {
+        inputRscPath = schemaFileOptions[2];
+        outputRscPath = schemaFileOptions[3];
+      }
+
+      dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(inputRscPath));
+      dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath(outputRscPath));
+      dispatch(loadSourceSchema());
+      dispatch(loadTargetSchema());
+
       dispatch(loadDataMap());
     },
     [dispatch]
