@@ -9,8 +9,6 @@ import { generateMapDefinitionBody, generateMapDefinitionHeader, splitKeyIntoChi
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 
-// TODO attribute $value
-
 describe('Map definition conversions', () => {
   describe('generateMapDefinitionHeader', () => {
     const sourceSchema: Schema = sourceMockSchema;
@@ -76,6 +74,50 @@ describe('Map definition conversions', () => {
       expect(employeeChildren[0][1]).toEqual('/ns0:Root/DirectTranslation/EmployeeID');
       expect(employeeChildren[1][0]).toEqual('Name');
       expect(employeeChildren[1][1]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
+    });
+
+    it('Generates body with value object', async () => {
+      const sourceNode = extendedSourceSchema.schemaTreeRoot.children[1].children[0];
+      const targetNode = extendedTargetSchema.schemaTreeRoot.children[1].children[0];
+      const mapDefinition: MapDefinitionEntry = {};
+      const connections: ConnectionDictionary = {};
+
+      addNodeToConnections(
+        connections,
+        sourceNode.children[2],
+        addReactFlowPrefix(sourceNode.children[2].key, SchemaType.Source),
+        targetNode.children[0],
+        addReactFlowPrefix(targetNode.children[0].key, SchemaType.Target)
+      );
+
+      addNodeToConnections(
+        connections,
+        sourceNode.children[0],
+        addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
+        targetNode,
+        addReactFlowPrefix(targetNode.key, SchemaType.Target)
+      );
+      generateMapDefinitionBody(mapDefinition, connections);
+
+      expect(Object.keys(mapDefinition).length).toEqual(1);
+      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      expect(rootChildren.length).toEqual(1);
+      expect(rootChildren[0][0]).toEqual('DataTranslation');
+      expect(rootChildren[0][1]).not.toBe('string');
+
+      const dataTranslationObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['DataTranslation'] as MapDefinitionEntry;
+      const dataTranslationChildren = Object.entries(dataTranslationObject);
+      expect(dataTranslationChildren.length).toEqual(1);
+      expect(dataTranslationChildren[0][0]).toEqual('EmployeeName');
+      expect(dataTranslationChildren[0][1]).not.toBe('string');
+
+      const employeeNameObject = dataTranslationObject['EmployeeName'] as MapDefinitionEntry;
+      const employeeNameChildren = Object.entries(employeeNameObject);
+      expect(employeeNameChildren.length).toEqual(2);
+      expect(employeeNameChildren[0][0]).toEqual('$@RegularFulltime');
+      expect(employeeNameChildren[0][1]).toEqual('/ns0:Root/DataTranslation/Employee/EmploymentStatus');
+      expect(employeeNameChildren[1][0]).toEqual('$value');
+      expect(employeeNameChildren[1][1]).toEqual('/ns0:Root/DataTranslation/Employee/FirstName');
     });
 
     it('Generates body with function', async () => {
