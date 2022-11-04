@@ -31,6 +31,7 @@ export const createConnectionEntryIfNeeded = (
   }
 };
 
+// Primarily used for drawn connections
 export const addNodeToConnections = (
   connections: ConnectionDictionary,
   sourceNode: SchemaNodeExtended | FunctionData,
@@ -84,6 +85,7 @@ export const addNodeToConnections = (
   }
 };
 
+// Primarily used by PropPane InputDropdowns
 export const updateConnectionInputValue = (
   connections: ConnectionDictionary,
   { targetNode, targetNodeReactFlowKey, inputIndex, value, isUnboundedInput }: UpdateConnectionInputAction
