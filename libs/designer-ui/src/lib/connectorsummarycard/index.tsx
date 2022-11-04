@@ -1,5 +1,6 @@
 import { InfoDot } from '../infoDot';
 import { Text, css } from '@fluentui/react';
+import { isBuiltInConnector } from '@microsoft-logic-apps/utils';
 
 export interface ConnectorSummaryCardProps {
   id: string;
@@ -21,6 +22,8 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
     <img className={css('msla-connector-summary-image', !isCard && 'large')} alt={connectorName} src={iconUrl} />
   );
 
+  const isBuiltIn = isBuiltInConnector(id);
+
   const Content = () => (
     <>
       <div className="msla-connector-summary-header">
@@ -28,7 +31,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
         <Text className="msla-connector-summary-title">{connectorName}</Text>
         <InfoDot title={connectorName} description={description} style={!isCard ? { marginRight: '8px' } : undefined} />
       </div>
-      <div className="msla-connector-summary-labels">{category ? <Text className="msla-psuedo-badge">{category}</Text> : null}</div>
+      <div className="msla-connector-summary-labels">{isBuiltIn ? <Text className="msla-psuedo-badge">{category}</Text> : null}</div>
     </>
   );
 

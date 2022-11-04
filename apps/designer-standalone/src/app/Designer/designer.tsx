@@ -75,14 +75,13 @@ export const DesignerWrapper = () => {
     isMonitoringView: monitoringView,
     isDarkMode: darkMode,
   };
-  const themeName = darkMode ? 'dark' : 'light';
 
   useEffect(() => document.body.classList.add('is-standalone'), []);
 
   return (
     <>
       <SettingsBox />
-      <DesignerProvider locale="en-US" options={{ ...designerProviderProps }} themeName={themeName}>
+      <DesignerProvider locale="en-US" options={{ ...designerProviderProps }}>
         {workflowDefinition ? (
           <BJSWorkflowProvider
             workflow={{
