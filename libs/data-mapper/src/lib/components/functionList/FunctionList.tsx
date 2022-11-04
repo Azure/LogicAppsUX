@@ -5,6 +5,7 @@ import {
   setCanvasToolboxTabToDisplay,
   setInlineFunctionInputOutputKeys,
 } from '../../core/state/DataMapSlice';
+import { store } from '../../core/state/Store';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { NormalizedDataType } from '../../models';
 import type { FunctionData } from '../../models/Function';
@@ -17,7 +18,7 @@ import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunction
 import { GroupedList } from '@fluentui/react';
 import { tokens, typographyStyles } from '@fluentui/react-components';
 import Fuse from 'fuse.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
@@ -60,19 +61,11 @@ export const FunctionList = () => {
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
-  const [searchTerm, setSearchTerm] = useState<string | undefined>(undefined);
-  const [sortedFunctionsByCategory, setSortedFunctionsByCategory] = useState<FunctionData[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [functionsList, setFunctionsList] = useState<FunctionData[]>([]);
   const [functionCategoryGroups, setFunctionCategoryGroups] = useState<IGroup[]>([]);
 
-  const isAddingInlineFunction = useMemo(() => inlineFunctionInputOutputKeys.length === 2, [inlineFunctionInputOutputKeys]);
-
-  const updateSearchTerm = (newSearchTerm: string) => {
-    if (newSearchTerm !== searchTerm) {
-      setSearchTerm(newSearchTerm);
-
-      compileFunctionsAndCategoryGroups();
-    }
-  };
+  const isAddingInlineFunction = inlineFunctionInputOutputKeys.length === 2;
 
   const onFunctionItemClick = (selectedFunction: FunctionData) => {
     if (isAddingInlineFunction) {
@@ -116,158 +109,35 @@ export const FunctionList = () => {
     }
   };
 
-  const compileFunctionsAndCategoryGroups = useCallback(() => {
+  const compileFunctionsAndCategoryGroups = () => {
     if (functionData) {
-      let functionDataCopy = [...functionData];
-      const categoriesArray: FunctionCategory[] = [];
-      let newSortedFunctions: FunctionData[] = [];
-
-      // If there's a search term, filter the function data
-      if (searchTerm) {
-        const options: Fuse.IFuseOptions<FunctionData> = {
-          includeScore: true,
-          minMatchCharLength: 2,
-          includeMatches: true,
-          threshold: 0.4,
-          keys: [
-            {
-              name: 'key',
-            },
-            {
-              name: 'functionName',
-            },
-            {
-              name: 'displayName',
-            },
-          ],
-        };
-
-        const fuse = new Fuse(functionData, options);
-        const results = fuse.search(searchTerm);
-
-        functionDataCopy = results.map((fuse) => {
-          return { ...fuse.item, matchIndices: fuse.matches };
-        });
-
-        functionDataCopy.forEach((functionNode) => {
-          if (!categoriesArray.find((category) => category === functionNode.category)) categoriesArray.push(functionNode.category);
-        });
-
-        // Sort categories and functions alphabetically
-        categoriesArray.sort((a, b) => a.localeCompare(b));
-        newSortedFunctions = functionDataCopy.sort((a, b) => a.category.localeCompare(b.category));
-      } else {
-        // If no search term, sort the function data by category
-        Object.values(FunctionCategory).forEach((category) => categoriesArray.push(category));
-
-        newSortedFunctions = functionDataCopy.sort((a, b) => {
-          const categorySort = a.category.localeCompare(b.category);
-          if (categorySort !== 0) {
-            return categorySort;
-          } else {
-            return a.key.localeCompare(b.key);
-          }
-        });
-      }
+      let functionCategories: FunctionCategory[] = [];
+      let newFunctionsList: FunctionData[] = [...functionData];
 
       // If isAddingInlineFunction, filter out functions by type validation
       if (isAddingInlineFunction) {
-        const reactFlowSource = inlineFunctionInputOutputKeys[0];
-        const reactFlowDestination = inlineFunctionInputOutputKeys[1];
-        const source = reactFlowSource.startsWith(sourcePrefix)
-          ? flattenedSourceSchema[reactFlowSource]
-          : currentFunctionNodes[reactFlowSource];
-        const destination = reactFlowDestination.startsWith(targetPrefix)
-          ? flattenedTargetSchema[reactFlowDestination]
-          : currentFunctionNodes[reactFlowDestination];
-
-        // NOTE: Here, we can just flatMap all of a Function's inputs' types as all inputs
-        // are guaranteed to be empty as we're creating a new Function (as opposed to what the InputDropdown handles)
-
-        // Obtain input's normalized output type, and compare it against each function's inputs' allowedTypes
-        const inputNormalizedOutputType = isFunctionData(source) ? source.outputValueType : source.normalizedDataType;
-
-        // Obtain the output's normalized input type (schema node), or a list of its inputs' allowedTypes (function node), and compare it against each function's output type
-        const outputNormalizedInputTypes = isFunctionData(destination)
-          ? destination.inputs.flatMap((input) => input.allowedTypes)
-          : [destination.normalizedDataType];
-
-        newSortedFunctions = newSortedFunctions.filter((functionNode) => {
-          // In Function manifest, Functions without any inputs won't even have a the inputs property
-          // Either way, Functions with no inputs shouldn't be shown when adding inline functions
-          if (!functionNode.inputs) {
-            return false;
-          }
-
-          const functionInputTypes = functionNode.inputs.flatMap((input) => input.allowedTypes);
-          const functionOutputType = functionNode.outputValueType;
-
-          // NOTE: This case will only happen when the existing connection is to a Function node
-          // What would happen if we didn't return false here is that we'd be saying this potential new Function's output type
-          // matches one of the output Function's inputs' types, but for a different input slot than the existing one goes to
-          // - which raises the question - do we overwrite that new slot if there's something in it? Etc etc...
-          // So, TODO: figure out how we want to handle this case, and likely handle it here
-          if (functionNode.outputValueType !== inputNormalizedOutputType) {
-            return false;
-          }
-
-          return (
-            (inputNormalizedOutputType === NormalizedDataType.Any ||
-              functionInputTypes.some((type) => type === NormalizedDataType.Any || type === inputNormalizedOutputType)) &&
-            (functionOutputType === NormalizedDataType.Any ||
-              outputNormalizedInputTypes.some((type) => type === NormalizedDataType.Any || type === functionOutputType))
-          );
-        });
+        newFunctionsList = typeValidatePotentialInlineFunctions(newFunctionsList);
       }
 
-      setSortedFunctionsByCategory(newSortedFunctions);
+      if (searchTerm) {
+        const { searchedFunctions, sortedCategories } = performFunctionSearch(searchTerm, newFunctionsList, functionCategories);
+        newFunctionsList = searchedFunctions;
+        functionCategories = sortedCategories;
+      } else {
+        functionCategories = Object.values(FunctionCategory);
+        sortAllFunctionsByCategory(newFunctionsList);
+      }
 
-      // Sort the functions into groups by their category
-      let startInd = 0;
+      setFunctionsList(newFunctionsList);
 
-      const newFunctionCategoryGroups = categoriesArray
-        .map((value): IGroup => {
-          let numInGroup = 0;
-          newSortedFunctions.forEach((functionNode) => {
-            if (functionNode.category === value) {
-              numInGroup++;
-            }
-          });
-
-          const functionCategoryGroup: IGroup = {
-            key: value,
-            startIndex: startInd,
-            name: getFunctionBrandingForCategory(value).displayName,
-            count: numInGroup,
-            isCollapsed: functionCategoryGroups.find((group) => group.key === value)?.isCollapsed ?? true,
-          };
-
-          startInd += numInGroup;
-
-          return functionCategoryGroup;
-        })
-        .filter((group) => group.count > 0);
-
+      const newFunctionCategoryGroups = getFunctionCategoryGroups(newFunctionsList, functionCategories, functionCategoryGroups);
       setFunctionCategoryGroups(newFunctionCategoryGroups);
     }
-  }, [
-    functionData,
-    searchTerm,
-    currentFunctionNodes,
-    flattenedSourceSchema,
-    flattenedTargetSchema,
-    inlineFunctionInputOutputKeys,
-    isAddingInlineFunction,
-    functionCategoryGroups,
-  ]);
+  };
 
-  useEffect(() => {
-    // Compile list on first load
-    if (searchTerm === undefined) {
-      compileFunctionsAndCategoryGroups();
-      setSearchTerm('');
-    }
-  }, [searchTerm, compileFunctionsAndCategoryGroups]);
+  // Compile functions list on first load, anytime searchTerm is changed, and anytime we change our inline function state
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(compileFunctionsAndCategoryGroups, [inlineFunctionInputOutputKeys, searchTerm]);
 
   const getFunctionItemCell = (functionNode: FunctionData) => {
     return <FunctionListCell functionData={functionNode} onFunctionClick={onFunctionItemClick} />;
@@ -275,17 +145,156 @@ export const FunctionList = () => {
 
   return (
     <>
-      <TreeHeader onSearch={updateSearchTerm} onClear={() => updateSearchTerm('')} />
+      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} />
       <div>
         <GroupedList
           onShouldVirtualize={() => false}
           groups={functionCategoryGroups}
           styles={headerStyle}
-          items={sortedFunctionsByCategory}
-          onRenderCell={(_depth, item) => getFunctionItemCell(item)}
+          items={functionsList}
+          onRenderCell={(_depth, functionNode: FunctionData) => getFunctionItemCell(functionNode)}
           selectionMode={0}
         />
       </div>
     </>
   );
+};
+
+// Returns copy of sorted functions list and function categories
+const performFunctionSearch = (
+  searchTerm: string,
+  functionsToSearch: FunctionData[],
+  functionCategories: FunctionCategory[]
+): { searchedFunctions: FunctionData[]; sortedCategories: FunctionCategory[] } => {
+  const fuseSearchOptions: Fuse.IFuseOptions<FunctionData> = {
+    includeScore: true,
+    minMatchCharLength: 2,
+    includeMatches: true,
+    threshold: 0.4,
+    keys: [
+      {
+        name: 'key',
+      },
+      {
+        name: 'functionName',
+      },
+      {
+        name: 'displayName',
+      },
+    ],
+  };
+
+  const fuse = new Fuse(functionsToSearch, fuseSearchOptions);
+  const results = fuse.search(searchTerm);
+
+  const searchedFunctions = results.map((fuse) => ({ ...fuse.item, matchIndices: fuse.matches }));
+
+  searchedFunctions.forEach((functionNode) => {
+    if (!functionCategories.some((category) => category === functionNode.category)) {
+      functionCategories.push(functionNode.category);
+    }
+  });
+
+  // Sort categories and functions alphabetically
+  return {
+    searchedFunctions: searchedFunctions.sort((a, b) => a.category.localeCompare(b.category)),
+    sortedCategories: functionCategories.sort((a, b) => a.localeCompare(b)),
+  };
+};
+
+// Sorts in-place
+const sortAllFunctionsByCategory = (functionsToSort: FunctionData[]): void => {
+  functionsToSort.sort((a, b) => {
+    const categorySort = a.category.localeCompare(b.category);
+    if (categorySort !== 0) {
+      return categorySort;
+    } else {
+      return a.key.localeCompare(b.key);
+    }
+  });
+};
+
+// Returns copy of type-validated array
+const typeValidatePotentialInlineFunctions = (functionsToTypeValidate: FunctionData[]): FunctionData[] => {
+  const inlineFunctionInputOutputKeys = store.getState().dataMap.curDataMapOperation.inlineFunctionInputOutputKeys;
+  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
+  const currentFunctionNodes = store.getState().dataMap.curDataMapOperation.currentFunctionNodes;
+  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
+
+  const reactFlowSource = inlineFunctionInputOutputKeys[0];
+  const reactFlowDestination = inlineFunctionInputOutputKeys[1];
+  const source = reactFlowSource.startsWith(sourcePrefix) ? flattenedSourceSchema[reactFlowSource] : currentFunctionNodes[reactFlowSource];
+  const destination = reactFlowDestination.startsWith(targetPrefix)
+    ? flattenedTargetSchema[reactFlowDestination]
+    : currentFunctionNodes[reactFlowDestination];
+
+  // NOTE: Here, we can just flatMap all of a Function's inputs' types as all inputs
+  // are guaranteed to be empty as we're creating a new Function (as opposed to what the InputDropdown handles)
+
+  // Obtain input's normalized output type, and compare it against each function's inputs' allowedTypes
+  const inputNormalizedOutputType = isFunctionData(source) ? source.outputValueType : source.normalizedDataType;
+
+  // Obtain the output's normalized input type (schema node), or a list of its inputs' allowedTypes (function node), and compare it against each function's output type
+  const outputNormalizedInputTypes = isFunctionData(destination)
+    ? destination.inputs.flatMap((input) => input.allowedTypes)
+    : [destination.normalizedDataType];
+
+  return functionsToTypeValidate.filter((functionNode) => {
+    // In Function manifest, Functions without any inputs won't even have a the inputs property
+    // Either way, Functions with no inputs shouldn't be shown when adding inline functions
+    if (!functionNode.inputs) {
+      return false;
+    }
+
+    const functionInputTypes = functionNode.inputs.flatMap((input) => input.allowedTypes);
+    const functionOutputType = functionNode.outputValueType;
+
+    // NOTE: This case will only happen when the existing connection is to a Function node
+    // What would happen if we didn't return false here is that we'd be saying this potential new Function's output type
+    // matches one of the output Function's inputs' types, but for a different input slot than the existing one goes to
+    // - which raises the question - do we overwrite that new slot if there's something in it? Etc etc...
+    // So, TODO: figure out how we want to handle this case, and likely handle it here
+    if (functionNode.outputValueType !== inputNormalizedOutputType) {
+      return false;
+    }
+
+    return (
+      (inputNormalizedOutputType === NormalizedDataType.Any ||
+        functionInputTypes.some((type) => type === NormalizedDataType.Any || type === inputNormalizedOutputType)) &&
+      (functionOutputType === NormalizedDataType.Any ||
+        outputNormalizedInputTypes.some((type) => type === NormalizedDataType.Any || type === functionOutputType))
+    );
+  });
+};
+
+const getFunctionCategoryGroups = (
+  functionsList: FunctionData[],
+  functionCategories: FunctionCategory[],
+  previousFunctionCategoryGroups: IGroup[]
+): IGroup[] => {
+  // Sort the functions into groups by their category
+  let startInd = 0;
+
+  return functionCategories
+    .map((value): IGroup => {
+      let numInGroup = 0;
+      functionsList.forEach((functionNode) => {
+        if (functionNode.category === value) {
+          numInGroup++;
+        }
+      });
+
+      const functionCategoryGroup: IGroup = {
+        key: value,
+        startIndex: startInd,
+        name: getFunctionBrandingForCategory(value).displayName,
+        count: numInGroup,
+        isCollapsed: previousFunctionCategoryGroups.find((group) => group.key === value)?.isCollapsed ?? true,
+      };
+
+      startInd += numInGroup;
+
+      return functionCategoryGroup;
+    })
+    .filter((group) => group.count > 0);
 };
