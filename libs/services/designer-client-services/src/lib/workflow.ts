@@ -1,3 +1,4 @@
+import type { ManagedIdentity } from '@microsoft-logic-apps/utils';
 import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/utils';
 
 export interface CallbackInfo {
@@ -10,6 +11,11 @@ export interface IWorkflowService {
    * Gets callback url for manual trigger.
    */
   getCallbackUrl(triggerName: string): Promise<CallbackInfo>;
+
+  /**
+   * Gets managed identity associated with workflow app.
+   */
+  getAppIdentity?(): ManagedIdentity | undefined;
 }
 
 let service: IWorkflowService;

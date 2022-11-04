@@ -44,6 +44,7 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
+import { WorkflowService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type {
   DynamicParameters,
@@ -300,6 +301,7 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
   let type = inputParameter.editor;
   let editorViewModel;
   let schema = inputParameter.schema;
+  let editorOptions = inputParameter.editorOptions;
   const { dynamicValues } = inputParameter;
   if (
     !type &&
@@ -313,9 +315,10 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
   } else if (type === constants.EDITOR.DICTIONARY) {
     editorViewModel = toDictionaryViewModel(inputParameter.value);
   } else if (type === constants.EDITOR.TABLE) {
-    editorViewModel = toTableViewModel(inputParameter.value, inputParameter.editorOptions);
+    editorViewModel = toTableViewModel(inputParameter.value, editorOptions);
   } else if (type === constants.EDITOR.AUTHENTICATION) {
     editorViewModel = toAuthenticationViewModel(inputParameter.value);
+    editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (type === constants.EDITOR.CONDITION) {
     editorViewModel = toConditionViewModel(inputParameter.value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
@@ -324,7 +327,7 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
 
   return {
     type,
-    options: !type ? undefined : inputParameter.editorOptions,
+    options: !type ? undefined : editorOptions,
     viewModel: editorViewModel,
     schema,
   };
