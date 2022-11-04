@@ -276,7 +276,7 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
   return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
 };
 
-/* Deserialize yml */
+/* Deserialize yml */ // danielle maybe separate from serialization
 export const convertFromMapDefinition = (
   mapDefinition: MapDefinitionEntry,
   sourceSchema: SchemaExtended,
