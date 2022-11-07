@@ -46,14 +46,49 @@ const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
   const srcSchemaPath = path.join(schemasFolder, mapDefinition.$sourceSchema);
   const tgtSchemaPath = path.join(schemasFolder, mapDefinition.$targetSchema);
 
+  const attemptToResolveMissingSchemaFile = async (schemaName: string, schemaPath: string): Promise<boolean> => {
+    const findSchemaFileButton = 'Find schema file';
+    const clickedButton = await window.showErrorMessage(
+      `Error loading map definition: ${schemaName} was not found in the Schemas folder!`,
+      findSchemaFileButton
+    );
+
+    if (clickedButton && clickedButton === findSchemaFileButton) {
+      const fileUris = await window.showOpenDialog({
+        canSelectMany: false,
+        canSelectFiles: true,
+        canSelectFolders: false,
+        filters: { 'XML Schema Definition': ['xsd'] },
+      });
+
+      if (fileUris && fileUris.length > 0) {
+        // Copy the schema file they selected to the Schemas folder (can safely continue map definition loading)
+        await fs.copyFile(fileUris[0].fsPath, schemaPath);
+        return true;
+      }
+    }
+
+    // If user doesn't select a file, or doesn't click the above action, just return (cancel loading the MapDef)
+    return false;
+  };
+
+  // If schema file doesn't exist, prompt to find/select it
   if (!fileExists(srcSchemaPath)) {
-    DataMapperExt.showError('Loading data map definition failed: the defined source schema file was not found in the Schemas folder!');
-    return;
+    const successfullyFoundAndCopiedSchemaFile = await attemptToResolveMissingSchemaFile(mapDefinition.$sourceSchema, srcSchemaPath);
+
+    if (!successfullyFoundAndCopiedSchemaFile) {
+      DataMapperExt.showError('No source schema file was selected. Aborting load...');
+      return;
+    }
   }
 
   if (!fileExists(tgtSchemaPath)) {
-    DataMapperExt.showError('Loading data map definition failed: the defined target schema file was not found in the Schemas folder!');
-    return;
+    const successfullyFoundAndCopiedSchemaFile = await attemptToResolveMissingSchemaFile(mapDefinition.$targetSchema, tgtSchemaPath);
+
+    if (!successfullyFoundAndCopiedSchemaFile) {
+      DataMapperExt.showError('No target schema file was selected. Aborting load...');
+      return;
+    }
   }
 
   DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
