@@ -56,7 +56,8 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         changeXsltFilenameCB(msg.data);
         break;
       default:
-        console.error(`Unexpected message received: ${msg}`);
+        console.warn(`Unexpected message received:`);
+        console.warn(msg);
     }
   });
 
