@@ -35,21 +35,21 @@ describe('utils/Functions', () => {
     it('Generates loop index value less than 26 children', () => {
       const indexValue = calculateIndexValue(parentNodeUnder26);
 
-      expect(indexValue).toEqual('$y');
+      expect(indexValue).toEqual('$x');
     });
 
     it('Generates loop index value for more than 26 children', () => {
       const indexValue = calculateIndexValue(correctParentNodeOver26);
 
-      expect(indexValue).toEqual('$zc');
+      expect(indexValue).toEqual('$zb');
     });
 
     it('Generates same loop index value for more than same level children', () => {
       const indexValueA = calculateIndexValue(correctParentNodeOver26.children[0]);
       const indexValueB = calculateIndexValue(correctParentNodeOver26.children[1]);
 
-      expect(indexValueA).toEqual('$zd');
-      expect(indexValueB).toEqual('$zd');
+      expect(indexValueA).toEqual('$zc');
+      expect(indexValueB).toEqual('$zc');
       expect(indexValueA).toEqual(indexValueB);
     });
   });
