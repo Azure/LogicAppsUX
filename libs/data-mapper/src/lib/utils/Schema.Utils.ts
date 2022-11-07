@@ -1,3 +1,4 @@
+import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaNodeProperty, SchemaType } from '../models';
@@ -69,7 +70,13 @@ const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[]
 export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;
 
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
-  if (schemaNode.key === nodeKey) {
+  let tempKey = nodeKey;
+  if (tempKey.includes(mapNodeParams.for)) {
+    const forRegex = new RegExp(/\$for\([^)]+\)\//); // /\$for\([^)])\//   this works /\$for\(/
+    tempKey = nodeKey.replace(forRegex, '');
+  }
+  if (schemaNode.key === tempKey) {
+    // /ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name
     return schemaNode;
   }
 
@@ -77,7 +84,7 @@ export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended):
   if (schemaNode.children) {
     schemaNode.children.forEach((childNode) => {
       // found this issue in test, children can be undefined? Ask Reid maybe
-      const tempResult = findNodeForKey(nodeKey, childNode);
+      const tempResult = findNodeForKey(tempKey, childNode);
 
       if (tempResult) {
         result = tempResult;

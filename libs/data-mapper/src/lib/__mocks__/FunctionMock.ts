@@ -50,3 +50,24 @@ export const greaterThanFunction: FunctionData = {
   category: FunctionCategory.Logical,
   description: 'Checks whether the first value is greater than the second value.',
 };
+
+export const conditionalFunction: FunctionData = {
+  category: FunctionCategory.Logical,
+  description: 'Evaluates the condition of the input value.',
+  key: 'Condition',
+  maxNumberOfInputs: 1,
+  outputValueType: NormalizedDataType.Any,
+  type: 'TransformationControlFunction',
+  displayName: 'Condition',
+  functionName: '$if',
+  iconFileName: 'dm_category_logical.svg',
+  inputs: [
+    {
+      allowCustomInput: true,
+      allowedTypes: [NormalizedDataType.Boolean],
+      isOptional: false,
+      name: 'Condition',
+      placeHolder: 'The condition to evaluate.',
+    },
+  ],
+};

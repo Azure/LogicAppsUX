@@ -1,6 +1,7 @@
 import { sourceMockSchema, targetMockSchema } from '../../__mocks__';
-import { concatFunction } from '../../__mocks__/FunctionMock';
+import { concatFunction, conditionalFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
 import type { MapDefinitionEntry } from '../../models';
+import type { ConnectionUnit } from '../../models/Connection';
 import { convertFromMapDefinition } from '../DataMap.Utils';
 import { convertSchemaToSchemaExtended } from '../Schema.Utils';
 
@@ -42,10 +43,45 @@ describe('utils/DataMap', () => {
       },
     };
     const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [concatFunction]);
-    console.log(result);
-    expect(result['target-/ns0:Root/DirectTranslation/Employee/Name']).toBeTruthy();
-    expect(result['source-/ns0:Root/DirectTranslation/EmployeeName']).toBeTruthy();
-    expect(Object.keys(result).some((key) => key.includes('concat')));
-    expect(result).toBeTruthy();
+    // target lists function as input
+    const targetInput = result['target-/ns0:Root/DirectTranslation/Employee/Name'].inputs['0'][0] as ConnectionUnit;
+    expect(targetInput.reactFlowKey).toContain('Concat'); // danielle get input utility?
+
+    // source lists function as output
+    const sourceOutput = result['source-/ns0:Root/DirectTranslation/EmployeeName'].outputs[0];
+    expect(sourceOutput.reactFlowKey).toContain('Concat');
+
+    // function lists source as input
+
+    // function lists target as output
+    //console.log(result['target-/ns0:Root/DirectTranslation/Employee/Name'].outputs);
+    //console.log(result['source-/ns0:Root/DirectTranslation/EmployeeName'].outputs);
+    expect(Object.keys(result).some((key) => key.includes('Concat')));
+  });
+
+  it('creates a conditional connection', () => {
+    simpleMap['ns0:Root'] = {
+      DirectTranslation: {
+        Employee: {
+          Name: '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemPrice, /ns0:Root/ConditionalMapping/ItemQuantity))',
+        },
+      },
+    };
+    const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [greaterThanFunction, conditionalFunction]);
+    console.log(JSON.stringify(result));
+  });
+
+  it('creates a loop connection', () => {
+    simpleMap['ns0:Root'] = {
+      Looping: {
+        '$for(/ns0:Root/Looping/Employee)': {
+          Person: {
+            Name: 'TelephoneNumber',
+          },
+        },
+      },
+    };
+    const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [greaterThanFunction, conditionalFunction]);
+    console.log(JSON.stringify(result));
   });
 });

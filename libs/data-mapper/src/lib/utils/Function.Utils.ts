@@ -7,6 +7,7 @@ import {
   utilityBranding,
   conversionBranding,
 } from '../constants/FunctionConstants';
+import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import type { SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
@@ -40,6 +41,14 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
       return utilityBranding;
     }
   }
+};
+
+export const isFor = (nodeKey: string) => {
+  return nodeKey.startsWith(mapNodeParams.for);
+};
+
+export const isIf = (nodeKey: string) => {
+  return nodeKey.startsWith(mapNodeParams.if);
 };
 
 export const findFunctionForFunctionName = (nodeKey: string, functions: FunctionData[]): FunctionData | undefined =>

@@ -292,7 +292,299 @@ export const convertFromMapDefinition = (
     parseDefinitionToConnection(mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, {}, sourceSchema, targetSchema, functions);
   }
 
-  return connections;
+  const test = {
+    'target-/ns0:Root/DirectTranslation/Employee/Name': {
+      self: {
+        node: {
+          key: '/ns0:Root/DirectTranslation/Employee/Name',
+          name: 'Name',
+          schemaNodeDataType: 'String',
+          normalizedDataType: 'String',
+          properties: 'NotSpecified',
+          fullName: 'Name',
+          parentKey: '/ns0:Root/DirectTranslation/Employee',
+          nodeProperties: ['NotSpecified'],
+          children: [],
+          pathToRoot: [
+            { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
+            { key: '/ns0:Root/DirectTranslation', name: 'DirectTranslation', fullName: 'DirectTranslation', repeating: false },
+            { key: '/ns0:Root/DirectTranslation/Employee', name: 'Employee', fullName: 'Employee', repeating: false },
+            { key: '/ns0:Root/DirectTranslation/Employee/Name', name: 'Name', fullName: 'Name', repeating: false },
+          ],
+        },
+        reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee/Name',
+      },
+      inputs: {
+        '0': [
+          {
+            node: {
+              category: 'Logical',
+              description: 'Evaluates the condition of the input value.',
+              key: 'Condition',
+              maxNumberOfInputs: 1,
+              outputValueType: 'Any',
+              type: 'TransformationControlFunction',
+              displayName: 'Condition',
+              functionName: '$if',
+              iconFileName: 'dm_category_logical.svg',
+              inputs: [
+                {
+                  allowCustomInput: true,
+                  allowedTypes: ['Bool'],
+                  isOptional: false,
+                  name: 'Condition',
+                  placeHolder: 'The condition to evaluate.',
+                },
+              ],
+            },
+            reactFlowKey: 'Condition-C0EFBEFC-6411-474F-BA59-7E86982EF286',
+          },
+        ],
+      },
+      outputs: [],
+    },
+    'Condition-C0EFBEFC-6411-474F-BA59-7E86982EF286': {
+      self: {
+        node: {
+          category: 'Logical',
+          description: 'Evaluates the condition of the input value.',
+          key: 'Condition',
+          maxNumberOfInputs: 1,
+          outputValueType: 'Any',
+          type: 'TransformationControlFunction',
+          displayName: 'Condition',
+          functionName: '$if',
+          iconFileName: 'dm_category_logical.svg',
+          inputs: [
+            {
+              allowCustomInput: true,
+              allowedTypes: ['Bool'],
+              isOptional: false,
+              name: 'Condition',
+              placeHolder: 'The condition to evaluate.',
+            },
+          ],
+        },
+        reactFlowKey: 'Condition-C0EFBEFC-6411-474F-BA59-7E86982EF286',
+      },
+      inputs: {
+        '0': [
+          {
+            node: {
+              key: 'IsGreater',
+              maxNumberOfInputs: 2,
+              type: 'TransformationFunction',
+              functionName: 'is-greater-than',
+              outputValueType: 'Bool',
+              inputs: [
+                { name: 'Value', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: 'The value to check.' },
+                { name: '', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: '' },
+              ],
+              displayName: 'Greater',
+              category: 'Logical',
+              description: 'Checks whether the first value is greater than the second value.',
+            },
+            reactFlowKey: 'IsGreater-5E509445-E280-492F-BE9F-73F964A99339',
+          },
+        ],
+      },
+      outputs: [
+        {
+          node: {
+            key: '/ns0:Root/DirectTranslation/Employee/Name',
+            name: 'Name',
+            schemaNodeDataType: 'String',
+            normalizedDataType: 'String',
+            properties: 'NotSpecified',
+            fullName: 'Name',
+            parentKey: '/ns0:Root/DirectTranslation/Employee',
+            nodeProperties: ['NotSpecified'],
+            children: [],
+            pathToRoot: [
+              { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
+              { key: '/ns0:Root/DirectTranslation', name: 'DirectTranslation', fullName: 'DirectTranslation', repeating: false },
+              { key: '/ns0:Root/DirectTranslation/Employee', name: 'Employee', fullName: 'Employee', repeating: false },
+              { key: '/ns0:Root/DirectTranslation/Employee/Name', name: 'Name', fullName: 'Name', repeating: false },
+            ],
+          },
+          reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee/Name',
+        },
+      ],
+    },
+    'IsGreater-5E509445-E280-492F-BE9F-73F964A99339': {
+      self: {
+        node: {
+          key: 'IsGreater',
+          maxNumberOfInputs: 2,
+          type: 'TransformationFunction',
+          functionName: 'is-greater-than',
+          outputValueType: 'Bool',
+          inputs: [
+            { name: 'Value', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: 'The value to check.' },
+            { name: '', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: '' },
+          ],
+          displayName: 'Greater',
+          category: 'Logical',
+          description: 'Checks whether the first value is greater than the second value.',
+        },
+        reactFlowKey: 'IsGreater-5E509445-E280-492F-BE9F-73F964A99339',
+      },
+      inputs: {
+        '0': [
+          {
+            node: {
+              key: '/ns0:Root/ConditionalMapping/ItemPrice',
+              name: 'ItemPrice',
+              schemaNodeDataType: 'Decimal',
+              normalizedDataType: 'Decimal',
+              properties: 'NotSpecified',
+              fullName: 'ItemPrice',
+              parentKey: '/ns0:Root/ConditionalMapping',
+              nodeProperties: ['NotSpecified'],
+              children: [],
+              pathToRoot: [
+                { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
+                { key: '/ns0:Root/ConditionalMapping', name: 'ConditionalMapping', fullName: 'ConditionalMapping', repeating: false },
+                { key: '/ns0:Root/ConditionalMapping/ItemPrice', name: 'ItemPrice', fullName: 'ItemPrice', repeating: false },
+              ],
+            },
+            reactFlowKey: 'source-/ns0:Root/ConditionalMapping/ItemPrice',
+          },
+        ],
+        '1': [
+          {
+            node: {
+              key: '/ns0:Root/ConditionalMapping/ItemQuantity',
+              name: 'ItemQuantity',
+              schemaNodeDataType: 'Decimal',
+              normalizedDataType: 'Decimal',
+              properties: 'NotSpecified',
+              fullName: 'ItemQuantity',
+              parentKey: '/ns0:Root/ConditionalMapping',
+              nodeProperties: ['NotSpecified'],
+              children: [],
+              pathToRoot: [
+                { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
+                { key: '/ns0:Root/ConditionalMapping', name: 'ConditionalMapping', fullName: 'ConditionalMapping', repeating: false },
+                { key: '/ns0:Root/ConditionalMapping/ItemQuantity', name: 'ItemQuantity', fullName: 'ItemQuantity', repeating: false },
+              ],
+            },
+            reactFlowKey: 'source-/ns0:Root/ConditionalMapping/ItemQuantity',
+          },
+        ],
+      },
+      outputs: [
+        {
+          node: {
+            category: 'Logical',
+            description: 'Evaluates the condition of the input value.',
+            key: 'Condition',
+            maxNumberOfInputs: 1,
+            outputValueType: 'Any',
+            type: 'TransformationControlFunction',
+            displayName: 'Condition',
+            functionName: '$if',
+            iconFileName: 'dm_category_logical.svg',
+            inputs: [
+              {
+                allowCustomInput: true,
+                allowedTypes: ['Bool'],
+                isOptional: false,
+                name: 'Condition',
+                placeHolder: 'The condition to evaluate.',
+              },
+            ],
+          },
+          reactFlowKey: 'Condition-C0EFBEFC-6411-474F-BA59-7E86982EF286',
+        },
+      ],
+    },
+    'source-/ns0:Root/ConditionalMapping/ItemPrice': {
+      self: {
+        node: {
+          key: '/ns0:Root/ConditionalMapping/ItemPrice',
+          name: 'ItemPrice',
+          schemaNodeDataType: 'Decimal',
+          normalizedDataType: 'Decimal',
+          properties: 'NotSpecified',
+          fullName: 'ItemPrice',
+          parentKey: '/ns0:Root/ConditionalMapping',
+          nodeProperties: ['NotSpecified'],
+          children: [],
+          pathToRoot: [
+            { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
+            { key: '/ns0:Root/ConditionalMapping', name: 'ConditionalMapping', fullName: 'ConditionalMapping', repeating: false },
+            { key: '/ns0:Root/ConditionalMapping/ItemPrice', name: 'ItemPrice', fullName: 'ItemPrice', repeating: false },
+          ],
+        },
+        reactFlowKey: 'source-/ns0:Root/ConditionalMapping/ItemPrice',
+      },
+      inputs: { '0': [] },
+      outputs: [
+        {
+          node: {
+            key: 'IsGreater',
+            maxNumberOfInputs: 2,
+            type: 'TransformationFunction',
+            functionName: 'is-greater-than',
+            outputValueType: 'Bool',
+            inputs: [
+              { name: 'Value', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: 'The value to check.' },
+              { name: '', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: '' },
+            ],
+            displayName: 'Greater',
+            category: 'Logical',
+            description: 'Checks whether the first value is greater than the second value.',
+          },
+          reactFlowKey: 'IsGreater-5E509445-E280-492F-BE9F-73F964A99339',
+        },
+      ],
+    },
+    'source-/ns0:Root/ConditionalMapping/ItemQuantity': {
+      self: {
+        node: {
+          key: '/ns0:Root/ConditionalMapping/ItemQuantity',
+          name: 'ItemQuantity',
+          schemaNodeDataType: 'Decimal',
+          normalizedDataType: 'Decimal',
+          properties: 'NotSpecified',
+          fullName: 'ItemQuantity',
+          parentKey: '/ns0:Root/ConditionalMapping',
+          nodeProperties: ['NotSpecified'],
+          children: [],
+          pathToRoot: [
+            { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
+            { key: '/ns0:Root/ConditionalMapping', name: 'ConditionalMapping', fullName: 'ConditionalMapping', repeating: false },
+            { key: '/ns0:Root/ConditionalMapping/ItemQuantity', name: 'ItemQuantity', fullName: 'ItemQuantity', repeating: false },
+          ],
+        },
+        reactFlowKey: 'source-/ns0:Root/ConditionalMapping/ItemQuantity',
+      },
+      inputs: { '0': [] },
+      outputs: [
+        {
+          node: {
+            key: 'IsGreater',
+            maxNumberOfInputs: 2,
+            type: 'TransformationFunction',
+            functionName: 'is-greater-than',
+            outputValueType: 'Bool',
+            inputs: [
+              { name: 'Value', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: 'The value to check.' },
+              { name: '', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: '' },
+            ],
+            displayName: 'Greater',
+            category: 'Logical',
+            description: 'Checks whether the first value is greater than the second value.',
+          },
+          reactFlowKey: 'IsGreater-5E509445-E280-492F-BE9F-73F964A99339',
+        },
+      ],
+    },
+  };
+  console.log(test);
+
+  return connections; //test as unknown as ConnectionDictionary;
 };
 
 const parseDefinitionToConnection = (
