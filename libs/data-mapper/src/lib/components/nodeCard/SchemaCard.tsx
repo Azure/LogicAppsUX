@@ -8,7 +8,7 @@ import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { flattenInputs } from '../../utils/Connection.Utils';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
-import { ItemToggledState } from '../tree/SchemaTreeItem';
+import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
 import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import type { CardProps } from './NodeCard';
@@ -189,9 +189,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   );
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
 
-  const shouldDisplaySourceHandle =
-    (displayHandle && sourceNodeConnectionBeingDrawnFromId === reactFlowId) ||
-    (!sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected));
+  const shouldDisplaySourceHandle = displayHandle && !sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected);
   const shouldDisplayTargetHandle = displayHandle && !!sourceNodeConnectionBeingDrawnFromId;
 
   // NOTE: This isn't memo'd to play nice with the element refs
@@ -237,7 +235,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   return (
     <div className={classes.badgeContainer}>
-      {isNBadgeRequired && !isSourceSchemaNode && <NBadge />}
+      {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
 
       <div
         className={containerStyle}
@@ -279,7 +277,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             className={classes.cardChevron}
             onClick={outputChevronOnClick}
             icon={<ChevronIcon filled={isChevronHovered ? true : undefined} />}
-            appearance={'transparent'}
+            appearance="transparent"
             onMouseEnter={() => setIsChevronHovered(true)}
             onMouseLeave={() => setIsChevronHovered(false)}
           />
@@ -291,7 +289,11 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   );
 };
 
-const NBadge = () => {
+interface NBadgeProps {
+  isOutput?: boolean;
+}
+
+const NBadge = ({ isOutput }: NBadgeProps) => {
   const intl = useIntl();
   const classes = useStyles();
 
@@ -303,7 +305,13 @@ const NBadge = () => {
   return (
     <div>
       <Tooltip content={arrayMappingTooltip} relationship="label">
-        <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
+        <Badge
+          className={isOutput ? classes.outputArrayBadge : classes.inputArrayBadge}
+          shape="rounded"
+          size="small"
+          appearance="tint"
+          color="important"
+        >
           N
         </Badge>
       </Tooltip>

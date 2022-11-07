@@ -1,10 +1,10 @@
 import { getSelectedSchema } from '../../core';
-import { setInitialDataMap, setInitialSchema } from '../../core/state/DataMapSlice';
+import { setInitialSchema } from '../../core/state/DataMapSlice';
 import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { Schema } from '../../models';
 import { SchemaType } from '../../models';
-import { convertSchemaToSchemaExtended, flattenSchema } from '../../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
 import { DefaultConfigView } from './DefaultConfigView';
@@ -105,10 +105,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
     (schema: Schema) => {
       if (schemaType) {
         const extendedSchema = convertSchemaToSchemaExtended(schema);
-        dispatch(
-          setInitialSchema({ schema: extendedSchema, schemaType: schemaType, flattenedSchema: flattenSchema(extendedSchema, schemaType) })
-        );
-        dispatch(setInitialDataMap(undefined));
+        dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
       }
     },
     [dispatch, schemaType]

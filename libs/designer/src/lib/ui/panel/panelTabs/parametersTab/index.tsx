@@ -26,7 +26,7 @@ import { Spinner, SpinnerSize } from '@fluentui/react';
 import { equals } from '@microsoft-logic-apps/utils';
 import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const ParametersTab = () => {
@@ -91,7 +91,7 @@ const ParameterSection = ({
   expressionGroup: TokenGroup[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-
+  const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
   const {
     isTrigger,
     nodeInputs,
@@ -245,8 +245,15 @@ const ParameterSection = ({
     );
   };
 
-  const settings: Settings[] =
-    group?.parameters.filter((x) => !x.hideInUI).map((param) => {
+  const onExpandSection = (sectionName: string) => {
+    if (sectionName) {
+      setSectionExpanded(!sectionExpanded);
+    }
+  };
+
+  const settings: Settings[] = group?.parameters
+    .filter((x) => !x.hideInUI)
+    .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData } = param;
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
@@ -264,7 +271,7 @@ const ParameterSection = ({
             ...v.token,
             actionName: newId,
             value,
-          }
+          },
         } as ValueSegment;
       });
 
@@ -296,7 +303,16 @@ const ParameterSection = ({
     });
 
   return (
-    <SettingsSection id={group.id} title={group.description} settings={settings} showHeading={!!group.description} showSeparator={false} />
+    <SettingsSection
+      id={group.id}
+      sectionName={group.description}
+      title={group.description}
+      settings={settings}
+      showHeading={!!group.description}
+      expanded={sectionExpanded}
+      onHeaderClick={onExpandSection}
+      showSeparator={false}
+    />
   );
 };
 

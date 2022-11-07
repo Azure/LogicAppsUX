@@ -95,19 +95,15 @@ export class UncastingUtility {
   }
 
   private _uncastOnce(expression: Expression): UncastResult[] | null {
-    // TODO: Remove decodebase64 and encodebase64 functions once all existing definitions are updated.
     if (isFunction(expression)) {
       switch (expression.name.toUpperCase()) {
         case 'BASE64':
-        case 'ENCODEBASE64':
           return this._uncastBase64(expression);
         case 'CONCAT':
           return this._uncastConcat(expression);
         case 'BASE64TOBINARY':
           return this._uncastSingleFunction(expression, 'byte');
         case 'BASE64TOSTRING':
-          return this._uncastSingleFunction(expression, 'byte');
-        case 'DECODEBASE64':
           return this._uncastSingleFunction(expression, 'byte');
         case 'STRING':
           return this._uncastSingleFunction(expression, '');

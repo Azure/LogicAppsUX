@@ -18,11 +18,12 @@ import {
   updateNodeParameters,
 } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokensSlice';
-import type { Operations as Actions } from '../../state/workflow/workflowInterfaces';
+import type { NodesMetadata, Operations as Actions } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { initializeArrayViewModel } from '../editors/array';
-import { getTriggerNodeId } from '../graph';
+import { getAllParentsForNode, getFirstParentOfType, getTriggerNodeId } from '../graph';
+import { getParentArrayKey, isForeachActionNameForLoopsource } from '../loops';
 import { loadDynamicOutputsInNode } from '../outputs';
 import { hasSecureOutputs } from '../setting';
 import { convertWorkflowParameterTypeToSwaggerType } from '../tokens';
@@ -43,6 +44,7 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
+import { WorkflowService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import type {
   DynamicParameters,
@@ -58,6 +60,7 @@ import type {
   SwaggerParser,
 } from '@microsoft-logic-apps/parsers';
 import {
+  getKnownTitles,
   isLegacyDynamicValuesExtension,
   ParameterLocations,
   ExpressionType,
@@ -130,6 +133,10 @@ export const FxIcon =
 export const VariableBrandColor = '#770bd6';
 export const VariableIcon =
   'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzJweCIgaGVpZ2h0PSIzMnB4IiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAzMiAzMiIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMzIgMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+DQogPHJlY3Qgd2lkdGg9IjMyIiBoZWlnaHQ9IjMyIiBmaWxsPSIjNzcwQkQ2Ii8+DQogPGcgZmlsbD0iI2ZmZiI+DQogIDxwYXRoIGQ9Ik02Ljc2MywxMy42ODV2LTMuMjA4QzYuNzYzLDguNzQ4LDcuNzYyLDgsMTAsOHYxLjA3Yy0xLDAtMiwwLjMyNS0yLDEuNDA3djMuMTg4ICAgIEM4LDE0LjgzNiw2LjUxMiwxNiw1LjUxMiwxNkM2LjUxMiwxNiw4LDE3LjE2NCw4LDE4LjMzNVYyMS41YzAsMS4wODIsMSwxLjQyOSwyLDEuNDI5VjI0Yy0yLjIzOCwwLTMuMjM4LTAuNzcyLTMuMjM4LTIuNXYtMy4xNjUgICAgYzAtMS4xNDktMC44OTMtMS41MjktMS43NjMtMS41ODV2LTEuNUM1Ljg3LDE1LjE5NCw2Ljc2MywxNC44MzQsNi43NjMsMTMuNjg1eiIvPg0KICA8cGF0aCBkPSJtMjUuMjM4IDEzLjY4NXYtMy4yMDhjMC0xLjcyOS0xLTIuNDc3LTMuMjM4LTIuNDc3djEuMDdjMSAwIDIgMC4zMjUgMiAxLjQwN3YzLjE4OGMwIDEuMTcxIDEuNDg4IDIuMzM1IDIuNDg4IDIuMzM1LTEgMC0yLjQ4OCAxLjE2NC0yLjQ4OCAyLjMzNXYzLjE2NWMwIDEuMDgyLTEgMS40MjktMiAxLjQyOXYxLjA3MWMyLjIzOCAwIDMuMjM4LTAuNzcyIDMuMjM4LTIuNXYtMy4xNjVjMC0xLjE0OSAwLjg5My0xLjUyOSAxLjc2Mi0xLjU4NXYtMS41Yy0wLjg3LTAuMDU2LTEuNzYyLTAuNDE2LTEuNzYyLTEuNTY1eiIvPg0KICA8cGF0aCBkPSJtMTUuODE1IDE2LjUxMmwtMC4yNDItMC42NDFjLTAuMTc3LTAuNDUzLTAuMjczLTAuNjk4LTAuMjg5LTAuNzM0bC0wLjM3NS0wLjgzNmMtMC4yNjYtMC41OTktMC41MjEtMC44OTgtMC43NjYtMC44OTgtMC4zNyAwLTAuNjYyIDAuMzQ3LTAuODc1IDEuMDM5LTAuMTU2LTAuMDU3LTAuMjM0LTAuMTQxLTAuMjM0LTAuMjUgMC0wLjMyMyAwLjE4OC0wLjY5MiAwLjU2Mi0xLjEwOSAwLjM3NS0wLjQxNyAwLjcxLTAuNjI1IDEuMDA3LTAuNjI1IDAuNTgzIDAgMS4xODYgMC44MzkgMS44MTEgMi41MTZsMC4xNjEgMC40MTQgMC4xOC0wLjI4OWMxLjEwOC0xLjc2IDIuMDQ0LTIuNjQxIDIuODA0LTIuNjQxIDAuMTk4IDAgMC40MyAwLjA1OCAwLjY5NSAwLjE3MmwtMC45NDYgMC45OTJjLTAuMTI1LTAuMDM2LTAuMjE0LTAuMDU1LTAuMjY2LTAuMDU1LTAuNTczIDAtMS4yNTYgMC42NTktMi4wNDggMS45NzdsLTAuMjI3IDAuMzc5IDAuMTc5IDAuNDhjMC42ODQgMS44OTEgMS4yNDkgMi44MzYgMS42OTQgMi44MzYgMC40MDggMCAwLjcyLTAuMjkyIDAuOTM1LTAuODc1IDAuMTQ2IDAuMDk0IDAuMjE5IDAuMTkgMC4yMTkgMC4yODkgMCAwLjI2MS0wLjIwOCAwLjU3My0wLjYyNSAwLjkzOHMtMC43NzYgMC41NDctMS4wNzggMC41NDdjLTAuNjA0IDAtMS4yMjEtMC44NTItMS44NTEtMi41NTVsLTAuMjE5LTAuNTc4LTAuMjI3IDAuMzk4Yy0xLjA2MiAxLjgyMy0yLjA3OCAyLjczNC0zLjA0NyAyLjczNC0wLjM2NSAwLTAuNjc1LTAuMDkxLTAuOTMtMC4yNzFsMC45MDYtMC44ODVjMC4xNTYgMC4xNTYgMC4zMzggMC4yMzQgMC41NDcgMC4yMzQgMC41ODggMCAxLjI1LTAuNTk2IDEuOTg0LTEuNzg2bDAuNDA2LTAuNjU4IDAuMTU1LTAuMjU5eiIvPg0KICA8ZWxsaXBzZSB0cmFuc2Zvcm09Im1hdHJpeCguMDUzNiAtLjk5ODYgLjk5ODYgLjA1MzYgNS40OTI1IDMyLjI0NSkiIGN4PSIxOS43NTciIGN5PSIxMy4yMjUiIHJ4PSIuNzc4IiByeT0iLjc3OCIvPg0KICA8ZWxsaXBzZSB0cmFuc2Zvcm09Im1hdHJpeCguMDUzNiAtLjk5ODYgLjk5ODYgLjA1MzYgLTcuNTgzOSAzMC42MjkpIiBjeD0iMTIuMzY2IiBjeT0iMTkuMzE1IiByeD0iLjc3OCIgcnk9Ii43NzgiLz4NCiA8L2c+DQo8L3N2Zz4NCg==';
+
+export const ItemBrandColor = '#486991';
+export const ItemIcon =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzQ4Njk5MSIvPg0KIDxwYXRoIGQ9Ik0xMSAyMGg3LjJsMSAxaC05LjJ2LTguM2wtMS4zIDEuMy0uNy0uNyAyLjUtMi41IDIuNSAyLjUtLjcuNy0xLjMtMS4zem0xMi4zLTJsLjcuNy0yLjUgMi41LTIuNS0yLjUuNy0uNyAxLjMgMS4zdi03LjNoLTcuMmwtMS0xaDkuMnY4LjN6IiBmaWxsPSIjZmZmIi8+DQo8L3N2Zz4NCg==';
 
 export const ParameterGroupKeys = {
   DEFAULT: 'default',
@@ -294,6 +301,7 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
   let type = inputParameter.editor;
   let editorViewModel;
   let schema = inputParameter.schema;
+  let editorOptions = inputParameter.editorOptions;
   const { dynamicValues } = inputParameter;
   if (
     !type &&
@@ -307,9 +315,10 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
   } else if (type === constants.EDITOR.DICTIONARY) {
     editorViewModel = toDictionaryViewModel(inputParameter.value);
   } else if (type === constants.EDITOR.TABLE) {
-    editorViewModel = toTableViewModel(inputParameter.value, inputParameter.editorOptions);
+    editorViewModel = toTableViewModel(inputParameter.value, editorOptions);
   } else if (type === constants.EDITOR.AUTHENTICATION) {
     editorViewModel = toAuthenticationViewModel(inputParameter.value);
+    editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
   } else if (type === constants.EDITOR.CONDITION) {
     editorViewModel = toConditionViewModel(inputParameter.value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
@@ -318,7 +327,7 @@ export function getParameterEditorProps(inputParameter: InputParameter, shouldIg
 
   return {
     type,
-    options: !type ? undefined : inputParameter.editorOptions,
+    options: !type ? undefined : editorOptions,
     viewModel: editorViewModel,
     schema,
   };
@@ -502,7 +511,6 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
 export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
   const valueObject = parameter.isNotificationUrl ? `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}` : parameter.value;
 
-  // TODO - Might need more parsing for Javascript code editor
   let valueSegments = convertToValueSegments(valueObject, undefined /* repetitionContext */, !parameter.suppressCasting /* shouldUncast */);
 
   // TODO - Need to set value display name correctly from metadata for file/folder picker.
@@ -680,14 +688,17 @@ export function getTokenValueFromToken(tokenType: TokenType, functionArguments: 
 }
 
 export function getTokenExpressionValue(token: SegmentToken, currentValue?: string): string {
-  const { name } = token;
+  const { name, arrayDetails, actionName } = token;
 
   if (isExpressionToken(token) || isParameterToken(token) || isVariableToken(token) || isIterationIndexToken(token)) {
     return currentValue as string;
   } else if (isItemToken(token)) {
-    // TODO - Update when array item tokens are correctly created
     if (currentValue) {
       return currentValue as string;
+    } else if (arrayDetails?.loopSource) {
+      return `items(${convertToStringLiteral(arrayDetails.loopSource)})`;
+    } else if (actionName) {
+      return `items(${convertToStringLiteral(actionName)})`;
     } else {
       return `${constants.ITEM}`;
     }
@@ -1461,9 +1472,8 @@ async function loadDynamicContentForInputsInNode(
           schema: input,
         })) as ParameterInfo[];
 
-        // TODO - Initialize Editor View for dynamic inputs
         updateTokenMetadataInParameters(inputParameters, rootState);
-        dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters }));
+        dispatch(addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs }));
       }
     }
   }
@@ -1784,7 +1794,7 @@ function getClosestRepetitionReference(repetitionContext: RepetitionContext): Re
 
 export function updateTokenMetadataInParameters(parameters: ParameterInfo[], rootState: RootState): void {
   const {
-    workflow: { operations },
+    workflow: { operations, nodesMetadata },
     operations: { operationMetadata, outputParameters, settings },
     workflowParameters: { definitions },
   } = rootState;
@@ -1811,7 +1821,16 @@ export function updateTokenMetadataInParameters(parameters: ParameterInfo[], roo
     if (segments && segments.length) {
       parameter.value = segments.map((segment) => {
         if (isTokenValueSegment(segment)) {
-          return updateTokenMetadata(segment, actionNodes, triggerNodeId, nodesData, operations, definitions, parameter.type);
+          return updateTokenMetadata(
+            segment,
+            actionNodes,
+            triggerNodeId,
+            nodesData,
+            operations,
+            definitions,
+            nodesMetadata,
+            parameter.type
+          );
         }
 
         return segment;
@@ -1826,7 +1845,9 @@ export function updateTokenMetadata(
   nodes: Record<string, Partial<NodeDataWithOperationMetadata>>,
   operations: Actions,
   workflowParameters: Record<string, WorkflowParameter | WorkflowParameterDefinition>,
-  parameterType?: string
+  nodesMetadata: NodesMetadata,
+  parameterType?: string,
+  parameterNodeId?: string
 ): ValueSegment {
   const token = valueSegment.token as SegmentToken;
   switch (token?.tokenType) {
@@ -1847,7 +1868,7 @@ export function updateTokenMetadata(
       return valueSegment;
 
     case TokenType.ITERATIONINDEX:
-      // TODO - Need implementation for loops
+      // TODO - Need implementation for until
       break;
     default:
       break;
@@ -1857,7 +1878,8 @@ export function updateTokenMetadata(
   const tokenNodeId = actionName ? getPropertyValue(actionNodes, actionName) : triggerNodeId;
 
   if (arrayDetails?.loopSource) {
-    // TODO - Item token details
+    // TODO - If the token comes from foreach with literal value, need to update tokenNodeId with foreach branding.
+    // Need to store repetition context in store to avoid re-calculation everytime.
   }
 
   const { settings, nodeOutputs, operationMetadata } = nodes[tokenNodeId] ?? {};
@@ -1865,28 +1887,40 @@ export function updateTokenMetadata(
   const nodeType = tokenNodeOperation?.type;
   const isSecure = hasSecureOutputs(nodeType, settings ?? {});
   const nodeOutputInfo = getOutputByTokenInfo(unmap(nodeOutputs?.outputs), valueSegment.token as SegmentToken, parameterType);
+  const brandColor = token.tokenType === TokenType.ITEM ? ItemBrandColor : operationMetadata?.brandColor;
+  const iconUri = token.tokenType === TokenType.ITEM ? ItemIcon : operationMetadata?.iconUri;
 
-  const brandColor = token.tokenType === TokenType.ITEM ? '#486991' : operationMetadata?.brandColor;
+  let outputInsideForeach = false;
+  if (parameterNodeId) {
+    const nodeParents = getAllParentsForNode(parameterNodeId, nodesMetadata);
+    const parentForeachNodeId = getFirstParentOfType(tokenNodeId, constants.NODE.TYPE.FOREACH, nodesMetadata, operations);
+    outputInsideForeach = !!parentForeachNodeId && nodeParents.indexOf(parentForeachNodeId) === -1;
+  }
 
-  const iconUri =
-    token.tokenType === TokenType.ITEM
-      ? 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDMyIDMyIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPg0KIDxwYXRoIGQ9Im0wIDBoMzJ2MzJoLTMyeiIgZmlsbD0iIzQ4Njk5MSIvPg0KIDxwYXRoIGQ9Ik0xMSAyMGg3LjJsMSAxaC05LjJ2LTguM2wtMS4zIDEuMy0uNy0uNyAyLjUtMi41IDIuNSAyLjUtLjcuNy0xLjMtMS4zem0xMi4zLTJsLjcuNy0yLjUgMi41LTIuNS0yLjUuNy0uNyAxLjMgMS4zdi03LjNoLTcuMmwtMS0xaDkuMnY4LjN6IiBmaWxsPSIjZmZmIi8+DQo8L3N2Zz4NCg=='
-      : operationMetadata?.iconUri;
+  const parentArrayKey = token.arrayDetails?.parentArrayKey;
+  const parentArrayKeyForParentArray = parentArrayKey ? getParentArrayKey(parentArrayKey) : undefined;
+  const parentArrayOutput = getOutputByTokenInfo(
+    unmap(nodeOutputs?.outputs),
+    {
+      actionName,
+      name: getNormalizedName(token.arrayDetails?.parentArrayName ?? ''),
+      key: token.arrayDetails?.parentArrayKey,
+      source: token.source,
+      arrayDetails: parentArrayKeyForParentArray ?? undefined,
+    } as SegmentToken,
+    constants.SWAGGER.TYPE.ARRAY
+  );
 
-  // TODO - Code to get parent array name for item tokens.
-
-  // If we do not get any nodeOutputInfo, we need to check if it is a body parameter, compose parameter, or not
+  // If we do not get any nodeOutputInfo, we need to check if it is a body parameter or not
   if (!nodeOutputInfo) {
     if (!name) {
-      token.title = 'Body';
-    } else if (equals(nodeType, constants.NODE.TYPE.COMPOSE)) {
-      token.title = 'Outputs';
+      token.title = getKnownTitles(OutputKeys.Body);
     } else if (token.tokenType === TokenType.ITEM) {
       // TODO: Remove this and other parts in this method when the Feature flag (foreach tokens) is removed.
       token.title = 'Current item';
       token.type = constants.SWAGGER.TYPE.ANY;
     } else {
-      token.title = getTitleFromTokenName(name, '');
+      token.title = getTitleFromTokenName(name, arrayDetails?.parentArrayName ?? '', parentArrayOutput?.title);
     }
   } else {
     if (!nodeOutputInfo.title && name) {
@@ -1902,7 +1936,7 @@ export function updateTokenMetadata(
     token.description = nodeOutputInfo.description;
     token.required = token.required !== undefined ? token.required : nodeOutputInfo.required;
 
-    if (arrayDetails) {
+    if (arrayDetails || outputInsideForeach) {
       token.arrayDetails = {
         ...token.arrayDetails,
         parentArrayName: nodeOutputInfo.parentArray,
@@ -1910,8 +1944,16 @@ export function updateTokenMetadata(
       };
     }
 
-    if (!!nodeOutputInfo.parentArray && valueSegment.token?.arrayDetails && !valueSegment.token.arrayDetails.loopSource) {
-      // TODO - Update parent array and loop source in case of foreach or item tokens
+    if (token.arrayDetails && !!nodeOutputInfo.parentArray && !token.arrayDetails.loopSource) {
+      const parentArrayKey = getParentArrayKey(nodeOutputInfo.key);
+      token.arrayDetails.parentArrayKey = parentArrayKey;
+      if (
+        parameterNodeId &&
+        parentArrayKey &&
+        isForeachActionNameForLoopsource(parameterNodeId, parentArrayKey, nodes, operations, nodesMetadata)
+      ) {
+        token.arrayDetails.loopSource = actionName;
+      }
     }
   }
 
@@ -1987,9 +2029,9 @@ function getOutputsByType(allOutputs: OutputInfo[], type = constants.SWAGGER.TYP
 
 export function getTitleFromTokenName(tokenName: string, parentArray: string, parentArrayTitle?: string): string {
   if (equals(tokenName, OutputKeys.Body)) {
-    return 'Body';
+    return getKnownTitles(OutputKeys.Body);
   } else if (equals(tokenName, OutputKeys.Headers)) {
-    return 'Headers';
+    return getKnownTitles(OutputKeys.Headers);
   } else if (
     equals(tokenName, OutputKeys.Item) ||
     (!!parentArray && equals(tokenName, `${getNormalizedName(parentArray)}-${OutputKeys.Item}`))
@@ -2001,13 +2043,14 @@ export function getTitleFromTokenName(tokenName: string, parentArray: string, pa
       parentArrayDisplayName = parentArrayName ? parentArrayName.map((property) => property.replace(/'/g, '')).join('.') : undefined;
     }
 
-    return parentArrayDisplayName ? format('{0} - Item', parentArrayDisplayName) : 'Item';
+    const itemToken = getKnownTitles(OutputKeys.Item);
+    return parentArrayDisplayName ? format(`{0} - ${itemToken}`, parentArrayDisplayName) : itemToken;
   } else if (equals(tokenName, OutputKeys.Outputs)) {
-    return 'Outputs';
+    return getKnownTitles(OutputKeys.Outputs);
   } else if (equals(tokenName, OutputKeys.StatusCode)) {
-    return 'Status Code';
+    return getKnownTitles(OutputKeys.StatusCode);
   } else if (equals(tokenName, OutputKeys.Queries)) {
-    return 'Queries';
+    return getKnownTitles(OutputKeys.Queries);
   } else {
     // Remove all the '?' from token name.
     const tokenNameWithoutOptionalOperator = tokenName.replace(/\?/g, '');

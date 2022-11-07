@@ -6,7 +6,7 @@ import { initializeOperationDetailsForManifest } from '../actions/bjsworkflow/op
 import { getOperationManifest } from '../queries/operation';
 import type { NodeInputs, NodeOperation, NodeOutputs, OperationMetadataState } from '../state/operation/operationMetadataSlice';
 import { initializeNodes } from '../state/operation/operationMetadataSlice';
-import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
+import type { NodesMetadata, Operations } from '../state/workflow/workflowInterfaces';
 import { addImplicitForeachNode } from '../state/workflow/workflowSlice';
 import type { RootState } from '../store';
 import { getAllParentsForNode, getNewNodeId, getTriggerNodeId } from './graph';
@@ -271,6 +271,40 @@ export const getForeachActionName = (
   return foreachAction?.actionName;
 };
 
+export const isForeachActionNameForLoopsource = (
+  nodeId: string,
+  expression: string,
+  nodes: Record<string, Partial<NodeDataWithOperationMetadata>>,
+  operations: Operations,
+  nodesMetadata: NodesMetadata
+): boolean => {
+  const operationInfos = Object.keys(operations).reduce(
+    (result: Record<string, NodeOperation>, operationId) => ({
+      ...result,
+      [operationId]: {
+        type: operations[operationId]?.type,
+        kind: operations[operationId]?.kind,
+        connectorId: '',
+        operationId: '',
+      },
+    }),
+    {}
+  );
+  const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos);
+  const sanitizedPath = sanitizeKey(expression);
+  const foreachAction = first((item) => {
+    const operation = operationInfos[item];
+    const parameter = nodes[item]?.nodeInputs ? getParameterFromName(nodes[item].nodeInputs as NodeInputs, 'foreach') : undefined;
+    const foreachValue =
+      operation && (operation as any).foreach
+        ? (operation as any).foreach
+        : parameter && parameter.value.length === 1 && parameter.value[0].token?.key;
+    return equals(operation?.type, Constants.NODE.TYPE.FOREACH) && equals(foreachValue, sanitizedPath);
+  }, repetitionNodeIds);
+
+  return !!foreachAction;
+};
+
 const getRepetitionReference = async (
   nodeId: string,
   state: OperationMetadataState,
@@ -482,7 +516,7 @@ const buildSegmentPath = (dereferences: Dereference[]): string => {
   return dereferences.map((dereference) => `['${(dereference.expression as ExpressionLiteral).value}']`).join('');
 };
 
-const getParentArrayKey = (key: string): string | undefined => {
+export const getParentArrayKey = (key: string): string | undefined => {
   const segments = parseEx(key);
   if (segments.length > 1) {
     for (let index = segments.length - 1; index >= 0; index--) {
@@ -565,6 +599,7 @@ const updateTokenMetadataInForeachInputs = (inputs: NodeInputs, token: OutputTok
             nodesData,
             { [tokenOwnerNodeId]: rootState.workflow.operations[tokenOwnerNodeId] },
             rootState.workflowParameters.definitions,
+            rootState.workflow.nodesMetadata,
             parameter.type
           );
         }

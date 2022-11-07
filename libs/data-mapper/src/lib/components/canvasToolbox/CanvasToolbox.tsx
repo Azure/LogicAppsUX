@@ -6,7 +6,8 @@ import { ButtonPivot } from '../buttonPivot/ButtonPivot';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FunctionList } from '../functionList/FunctionList';
-import { SchemaTree } from '../tree/SchemaTree';
+import SourceSchemaTreeItem from '../tree/SourceSchemaTreeItem';
+import Tree from '../tree/Tree';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo } from 'react';
@@ -22,7 +23,7 @@ const generalToolboxPanelProps = {
   xPos: '16px',
   yPos: '60px',
   width: '250px',
-  minHeight: '200px',
+  minHeight: '240px',
 } as FloatingPanelProps;
 
 interface CanvasToolboxProps {
@@ -129,7 +130,16 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
           subtitle={sourceSchema.name}
           onClose={closeToolbox}
         >
-          <SchemaTree schema={sourceSchema} toggledNodes={currentSourceSchemaNodes} onNodeClick={onSourceSchemaItemClick} />
+          <Tree<SchemaNodeExtended>
+            treeRoot={sourceSchema.schemaTreeRoot}
+            nodeContent={(node: SchemaNodeExtended) => (
+              <SourceSchemaTreeItem
+                node={node}
+                isNodeAdded={currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)}
+                onClick={() => onSourceSchemaItemClick(node)}
+              />
+            )}
+          />
         </FloatingPanel>
       )}
 

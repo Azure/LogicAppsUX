@@ -77,9 +77,9 @@ export const ConnectionEdge = (props: EdgeProps) => {
     () => ({
       sourcePosition,
       targetPosition,
-      sourceX: sourceX + 10,
+      sourceX: sourceX,
       sourceY,
-      targetX: targetX - 10,
+      targetX: targetX,
       targetY,
     }),
     [sourcePosition, targetPosition, sourceX, sourceY, targetX, targetY]

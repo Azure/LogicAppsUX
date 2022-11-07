@@ -22,7 +22,7 @@ import {
   getDestinationIdFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
-import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import { flattenSchema, isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -73,7 +73,12 @@ const initialState: DataMapState = {
 export interface InitialSchemaAction {
   schema: SchemaExtended;
   schemaType: SchemaType.Source | SchemaType.Target;
-  flattenedSchema: SchemaNodeDictionary;
+}
+
+export interface InitialDataMapAction {
+  sourceSchema: SchemaExtended;
+  targetSchema: SchemaExtended;
+  dataMapConnections: ConnectionDictionary;
 }
 
 export interface ConnectionAction {
@@ -110,36 +115,43 @@ export const dataMapSlice = createSlice({
     },
 
     setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
+      const flattenedSchema = flattenSchema(action.payload.schema, action.payload.schemaType);
+
       if (action.payload.schemaType === SchemaType.Source) {
         state.curDataMapOperation.sourceSchema = action.payload.schema;
-        state.curDataMapOperation.flattenedSourceSchema = action.payload.flattenedSchema;
+        state.curDataMapOperation.flattenedSourceSchema = flattenedSchema;
         state.pristineDataMap.sourceSchema = action.payload.schema;
-        state.pristineDataMap.flattenedSourceSchema = action.payload.flattenedSchema;
+        state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
       } else {
         state.curDataMapOperation.targetSchema = action.payload.schema;
-        state.curDataMapOperation.flattenedTargetSchema = action.payload.flattenedSchema;
+        state.curDataMapOperation.flattenedTargetSchema = flattenedSchema;
         state.curDataMapOperation.currentTargetSchemaNode = action.payload.schema.schemaTreeRoot;
         state.pristineDataMap.targetSchema = action.payload.schema;
-        state.pristineDataMap.flattenedTargetSchema = action.payload.flattenedSchema;
+        state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.currentTargetSchemaNode = action.payload.schema.schemaTreeRoot;
       }
     },
 
-    setInitialDataMap: (state, action: PayloadAction<ConnectionDictionary | undefined>) => {
-      const incomingConnections = action.payload;
+    setInitialDataMap: (state, action: PayloadAction<InitialDataMapAction>) => {
+      const { sourceSchema, targetSchema, dataMapConnections } = action.payload;
       const currentState = state.curDataMapOperation;
 
-      if (currentState.sourceSchema && currentState.targetSchema) {
-        const newState: DataMapOperationState = {
-          ...currentState,
-          dataMapConnections: incomingConnections ?? {},
-          currentSourceSchemaNodes: [],
-          currentTargetSchemaNode: currentState.targetSchema.schemaTreeRoot,
-        };
+      const flattenedSourceSchema = flattenSchema(sourceSchema, SchemaType.Source);
+      const flattenedTargetSchema = flattenSchema(targetSchema, SchemaType.Target);
 
-        state.curDataMapOperation = newState;
-        state.pristineDataMap = newState;
-      }
+      const newState: DataMapOperationState = {
+        ...currentState,
+        sourceSchema,
+        targetSchema,
+        flattenedSourceSchema,
+        flattenedTargetSchema,
+        dataMapConnections: dataMapConnections ?? {},
+        currentSourceSchemaNodes: [],
+        currentTargetSchemaNode: targetSchema.schemaTreeRoot,
+      };
+
+      state.curDataMapOperation = newState;
+      state.pristineDataMap = newState;
     },
 
     changeSourceSchema: (state, action: PayloadAction<DataMapOperationState | undefined>) => {
@@ -278,10 +290,14 @@ export const dataMapSlice = createSlice({
       }
 
       // Reset currentSourceSchema/FunctionNodes, and add back any nodes part of complete connection chains on the new target schema level
-
       const newTargetSchemaNodeConnections = getTargetSchemaNodeConnections(newTargetSchemaNode, cleanConnections);
 
-      const newFullyConnectedSourceSchemaNodes = getConnectedSourceSchemaNodes(newTargetSchemaNodeConnections, cleanConnections);
+      // Get all the unique source nodes
+      const newFullyConnectedSourceSchemaNodes = getConnectedSourceSchemaNodes(newTargetSchemaNodeConnections, cleanConnections).filter(
+        (node, index, self) => {
+          return self.findIndex((subNode) => subNode.key === node.key) === index;
+        }
+      );
       const newFullyConnectedFunctions: FunctionDictionary = {};
       getFunctionConnectionUnits(newTargetSchemaNodeConnections, cleanConnections).forEach((conUnit) => {
         newFullyConnectedFunctions[conUnit.reactFlowKey] = conUnit.node as FunctionData;
@@ -373,7 +389,6 @@ export const dataMapSlice = createSlice({
 
       addConnection(newState.dataMapConnections, action.payload);
 
-      // TODO Bug here that if you add the connection one level above, then we still make the auto connection when you navigate down and add children
       // Add any repeating parent nodes as well
       const parentTargetNode = newState.currentTargetSchemaNode;
       const sourceNode = action.payload.source;

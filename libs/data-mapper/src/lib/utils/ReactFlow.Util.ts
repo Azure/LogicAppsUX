@@ -1,7 +1,7 @@
 import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
-import type { NodeToggledStateDictionary } from '../components/tree/SchemaTreeItem';
+import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
 import { childTargetNodeCardIndent, schemaNodeCardHeight } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
@@ -263,20 +263,23 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 };
 
 export const convertToReactFlowEdges = (connections: ConnectionDictionary, selectedItemKey: string | undefined): ReactFlowEdge[] => {
-  return Object.values(connections).flatMap((connection) => {
-    const nodeInputs = flattenInputs(connection.inputs).filter(isConnectionUnit);
+  return Object.values(connections)
+    .flatMap((connection) => {
+      const nodeInputs = flattenInputs(connection.inputs).filter(isConnectionUnit);
 
-    return nodeInputs.map((input) => {
-      const id = createReactFlowConnectionId(input.reactFlowKey, connection.self.reactFlowKey);
-      return {
-        id,
-        source: input.reactFlowKey,
-        target: connection.self.reactFlowKey,
-        type: ReactFlowEdgeType.ConnectionEdge,
-        selected: selectedItemKey === id,
-      };
-    });
-  });
+      // Sort the resulting edges so that the selected edge is rendered last and thus on top of all other edges
+      return nodeInputs.map((input) => {
+        const id = createReactFlowConnectionId(input.reactFlowKey, connection.self.reactFlowKey);
+        return {
+          id,
+          source: input.reactFlowKey,
+          target: connection.self.reactFlowKey,
+          type: ReactFlowEdgeType.ConnectionEdge,
+          selected: selectedItemKey === id,
+        };
+      });
+    })
+    .sort((a, b) => (!a.selected && b.selected ? -1 : a.selected && b.selected ? 0 : 1));
 };
 
 export const useOverviewLayout = (

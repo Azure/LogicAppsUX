@@ -9,8 +9,6 @@ import { generateMapDefinitionBody, generateMapDefinitionHeader, splitKeyIntoChi
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 
-// TODO attribute $value
-
 describe('Map definition conversions', () => {
   describe('generateMapDefinitionHeader', () => {
     const sourceSchema: Schema = sourceMockSchema;
@@ -76,6 +74,50 @@ describe('Map definition conversions', () => {
       expect(employeeChildren[0][1]).toEqual('/ns0:Root/DirectTranslation/EmployeeID');
       expect(employeeChildren[1][0]).toEqual('Name');
       expect(employeeChildren[1][1]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
+    });
+
+    it('Generates body with value object', async () => {
+      const sourceNode = extendedSourceSchema.schemaTreeRoot.children[1].children[0];
+      const targetNode = extendedTargetSchema.schemaTreeRoot.children[1].children[0];
+      const mapDefinition: MapDefinitionEntry = {};
+      const connections: ConnectionDictionary = {};
+
+      addNodeToConnections(
+        connections,
+        sourceNode.children[2],
+        addReactFlowPrefix(sourceNode.children[2].key, SchemaType.Source),
+        targetNode.children[0],
+        addReactFlowPrefix(targetNode.children[0].key, SchemaType.Target)
+      );
+
+      addNodeToConnections(
+        connections,
+        sourceNode.children[0],
+        addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
+        targetNode,
+        addReactFlowPrefix(targetNode.key, SchemaType.Target)
+      );
+      generateMapDefinitionBody(mapDefinition, connections);
+
+      expect(Object.keys(mapDefinition).length).toEqual(1);
+      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      expect(rootChildren.length).toEqual(1);
+      expect(rootChildren[0][0]).toEqual('DataTranslation');
+      expect(rootChildren[0][1]).not.toBe('string');
+
+      const dataTranslationObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['DataTranslation'] as MapDefinitionEntry;
+      const dataTranslationChildren = Object.entries(dataTranslationObject);
+      expect(dataTranslationChildren.length).toEqual(1);
+      expect(dataTranslationChildren[0][0]).toEqual('EmployeeName');
+      expect(dataTranslationChildren[0][1]).not.toBe('string');
+
+      const employeeNameObject = dataTranslationObject['EmployeeName'] as MapDefinitionEntry;
+      const employeeNameChildren = Object.entries(employeeNameObject);
+      expect(employeeNameChildren.length).toEqual(2);
+      expect(employeeNameChildren[0][0]).toEqual('$@RegularFulltime');
+      expect(employeeNameChildren[0][1]).toEqual('/ns0:Root/DataTranslation/Employee/EmploymentStatus');
+      expect(employeeNameChildren[1][0]).toEqual('$value');
+      expect(employeeNameChildren[1][1]).toEqual('/ns0:Root/DataTranslation/Employee/FirstName');
     });
 
     it('Generates body with function', async () => {
@@ -475,10 +517,10 @@ describe('Map definition conversions', () => {
       const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
       const loopingEntries = Object.entries(loopObject);
       expect(loopingEntries.length).toEqual(1);
-      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $i)');
+      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $a)');
       expect(loopingEntries[0][1]).not.toBe('string');
 
-      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $i)'] as MapDefinitionEntry;
+      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $a)'] as MapDefinitionEntry;
       const employeeForLoopEntries = Object.entries(employeeForObject);
       expect(employeeForLoopEntries.length).toEqual(1);
       expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -541,10 +583,10 @@ describe('Map definition conversions', () => {
       const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
       const loopingEntries = Object.entries(loopObject);
       expect(loopingEntries.length).toEqual(1);
-      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $i)');
+      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $a)');
       expect(loopingEntries[0][1]).not.toBe('string');
 
-      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $i)'] as MapDefinitionEntry;
+      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $a)'] as MapDefinitionEntry;
       const employeeForLoopEntries = Object.entries(employeeForObject);
       expect(employeeForLoopEntries.length).toEqual(1);
       expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -554,7 +596,7 @@ describe('Map definition conversions', () => {
       const employeeObjectEntries = Object.entries(employeeObject);
       expect(employeeObjectEntries.length).toEqual(1);
       expect(employeeObjectEntries[0][0]).toEqual('Name');
-      expect(employeeObjectEntries[0][1]).toEqual('$i');
+      expect(employeeObjectEntries[0][1]).toEqual('$a');
     });
 
     it('Generates body with function and index loop', async () => {
@@ -624,10 +666,10 @@ describe('Map definition conversions', () => {
       const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
       const loopingEntries = Object.entries(loopObject);
       expect(loopingEntries.length).toEqual(1);
-      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $i)');
+      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $a)');
       expect(loopingEntries[0][1]).not.toBe('string');
 
-      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $i)'] as MapDefinitionEntry;
+      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $a)'] as MapDefinitionEntry;
       const employeeForLoopEntries = Object.entries(employeeForObject);
       expect(employeeForLoopEntries.length).toEqual(1);
       expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -639,7 +681,102 @@ describe('Map definition conversions', () => {
       expect(employeeObjectEntries[0][0]).toEqual('Address');
       expect(employeeObjectEntries[0][1]).toEqual('TelephoneNumber');
       expect(employeeObjectEntries[1][0]).toEqual('Name');
-      expect(employeeObjectEntries[1][1]).toEqual('concat(Name, $i)');
+      expect(employeeObjectEntries[1][1]).toEqual('concat(Name, $a)');
+    });
+
+    it('Generates body with conditional looping', async () => {
+      const sourceNode = extendedSourceSchema.schemaTreeRoot.children[5].children[0].children[0];
+      const targetNode = extendedTargetSchema.schemaTreeRoot.children[6].children[0];
+      const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
+      const greaterThanId = createReactFlowFunctionKey(greaterThanFunction);
+      const mapDefinition: MapDefinitionEntry = {};
+      const connections: ConnectionDictionary = {};
+
+      // Source to greater than
+      addNodeToConnections(
+        connections,
+        sourceNode.children[0],
+        addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
+        greaterThanFunction,
+        greaterThanId
+      );
+      addNodeToConnections(
+        connections,
+        sourceNode.children[1],
+        addReactFlowPrefix(sourceNode.children[1].key, SchemaType.Source),
+        greaterThanFunction,
+        greaterThanId
+      );
+
+      // Inputs to conditional
+      addNodeToConnections(connections, greaterThanFunction, greaterThanId, ifPseudoFunction, ifFunctionId);
+      addNodeToConnections(
+        connections,
+        sourceNode.children[0],
+        addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
+        ifPseudoFunction,
+        ifFunctionId
+      );
+
+      //Conditional to target
+      addNodeToConnections(
+        connections,
+        ifPseudoFunction,
+        ifFunctionId,
+        targetNode.children[0].children[0],
+        addReactFlowPrefix(targetNode.children[0].children[0].key, SchemaType.Target)
+      );
+
+      //Add parents
+      addNodeToConnections(
+        connections,
+        sourceNode,
+        addReactFlowPrefix(sourceNode.key, SchemaType.Source),
+        targetNode,
+        addReactFlowPrefix(targetNode.key, SchemaType.Target)
+      );
+
+      generateMapDefinitionBody(mapDefinition, connections);
+
+      expect(Object.keys(mapDefinition).length).toEqual(1);
+      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      expect(rootChildren.length).toEqual(1);
+      expect(rootChildren[0][0]).toEqual('ConditionalLooping');
+      expect(rootChildren[0][1]).not.toBe('string');
+
+      const conditionalLoopingObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['ConditionalLooping'] as MapDefinitionEntry;
+      const conditionalLoopingChildren = Object.entries(conditionalLoopingObject);
+      expect(conditionalLoopingChildren.length).toEqual(1);
+      expect(conditionalLoopingChildren[0][0]).toEqual('$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)');
+      expect(conditionalLoopingChildren[0][1]).not.toBe('string');
+
+      const forObject = conditionalLoopingObject['$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)'] as MapDefinitionEntry;
+      const forChildren = Object.entries(forObject);
+      expect(forChildren.length).toEqual(1);
+      expect(forChildren[0][0]).toEqual('CategorizedCatalog');
+      expect(forChildren[0][1]).not.toBe('string');
+
+      const categorizedCatalogObject = forObject['CategorizedCatalog'] as MapDefinitionEntry;
+      const categorizedCatalogChildren = Object.entries(categorizedCatalogObject);
+      expect(categorizedCatalogChildren.length).toEqual(1);
+      expect(categorizedCatalogChildren[0][0]).toEqual('PetProduct');
+      expect(categorizedCatalogChildren[0][1]).not.toBe('string');
+
+      const petProductObject = categorizedCatalogObject['PetProduct'] as MapDefinitionEntry;
+      const petProductChildren = Object.entries(petProductObject);
+      expect(petProductChildren.length).toEqual(1);
+      expect(petProductChildren[0][0]).toEqual(
+        '$if(is-greater-than(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/Name, /ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU))'
+      );
+      expect(petProductChildren[0][1]).not.toBe('string');
+
+      const ifObject = petProductObject[
+        '$if(is-greater-than(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/Name, /ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU))'
+      ] as MapDefinitionEntry;
+      const ifChildren = Object.entries(ifObject);
+      expect(ifChildren.length).toEqual(1);
+      expect(ifChildren[0][0]).toEqual('Name');
+      expect(ifChildren[0][1]).toEqual('Name');
     });
   });
 
