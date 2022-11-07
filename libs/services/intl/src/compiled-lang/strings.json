@@ -1917,6 +1917,12 @@
       "value": "See Less"
     }
   ],
+  "Gi7czD": [
+    {
+      "type": 0,
+      "value": "Source schema element"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -2777,12 +2783,6 @@
       "value": "Required. The number to add to Summand 1."
     }
   ],
-  "PMMNKR": [
-    {
-      "type": 0,
-      "value": "Source schema node"
-    }
-  ],
   "PP63jY": [
     {
       "type": 0,
@@ -3261,6 +3261,12 @@
     {
       "type": 0,
       "value": "Collapse/Expand"
+    }
+  ],
+  "U086AA": [
+    {
+      "type": 0,
+      "value": "Target schema element"
     }
   ],
   "U1NiVg": [
@@ -6445,12 +6451,6 @@
     {
       "type": 0,
       "value": "Clear custom value"
-    }
-  ],
-  "zUs2yb": [
-    {
-      "type": 0,
-      "value": "Target schema node"
     }
   ],
   "zbtUQ/": [

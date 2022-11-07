@@ -189,9 +189,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   );
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
 
-  const shouldDisplaySourceHandle =
-    (displayHandle && sourceNodeConnectionBeingDrawnFromId === reactFlowId) ||
-    (!sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected));
+  const shouldDisplaySourceHandle = displayHandle && !sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected);
   const shouldDisplayTargetHandle = displayHandle && !!sourceNodeConnectionBeingDrawnFromId;
 
   // NOTE: This isn't memo'd to play nice with the element refs
@@ -279,7 +277,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             className={classes.cardChevron}
             onClick={outputChevronOnClick}
             icon={<ChevronIcon filled={isChevronHovered ? true : undefined} />}
-            appearance={'transparent'}
+            appearance="transparent"
             onMouseEnter={() => setIsChevronHovered(true)}
             onMouseLeave={() => setIsChevronHovered(false)}
           />

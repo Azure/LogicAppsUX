@@ -75,12 +75,12 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
   const [initialDragHeight, setInitialDragHeight] = useState<number | undefined>(undefined);
 
   const sourceSchemaNodeLoc = intl.formatMessage({
-    defaultMessage: 'Source schema node',
+    defaultMessage: 'Source schema element',
     description: 'Label for source schema node',
   });
 
   const targetSchemaNodeLoc = intl.formatMessage({
-    defaultMessage: 'Target schema node',
+    defaultMessage: 'Target schema element',
     description: 'Label for target schema node',
   });
 
