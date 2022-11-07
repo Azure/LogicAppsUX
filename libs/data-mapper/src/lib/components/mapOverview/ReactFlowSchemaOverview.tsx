@@ -6,7 +6,7 @@ import { nodeTypes } from '../../ui/ReactFlowWrapper';
 import { useOverviewLayout } from '../../utils/ReactFlow.Util';
 import { checkNodeStatuses } from '../targetSchemaPane/TargetSchemaPane';
 import type { TargetNodesWithConnectionsDictionary } from '../targetSchemaPane/TargetSchemaPane';
-import type { NodeToggledStateDictionary } from '../tree/SchemaTreeItem';
+import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import { Badge, makeStyles, shorthands } from '@fluentui/react-components';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
