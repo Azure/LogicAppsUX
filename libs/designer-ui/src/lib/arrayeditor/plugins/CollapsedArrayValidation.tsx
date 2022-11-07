@@ -1,4 +1,4 @@
-import type { SimpleArrayItem, ComplexArrayItem } from '..';
+import type { SimpleArrayItem, ComplexArrayItems } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
@@ -16,9 +16,9 @@ export interface CollapsedArrayValidationProps {
   defaultErrorMessage: string;
   isValid: boolean;
   collapsedValue?: ValueSegment[];
-  itemSchema?: string | string[];
+  itemSchema?: any;
   setIsValid: (b: boolean) => void;
-  setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItem[]) => void);
+  setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setCollapsedValue: (val: ValueSegment[]) => void;
 }
 
@@ -48,8 +48,8 @@ export const CollapsedArrayValidation = ({
         newValiditity = isValidArray(editorString, itemSchema, setErrorMessage);
         setIsValid(newValiditity);
         if (newValiditity) {
-          if (Array.isArray(itemSchema)) {
-            serializeComplexArray(editor, setItems as (simpleItems: ComplexArrayItem[]) => void);
+          if (itemSchema) {
+            serializeComplexArray(editor, setItems as (simpleItems: ComplexArrayItems[]) => void);
           } else {
             serializeSimpleArray(editor, setItems as (simpleItems: SimpleArrayItem[]) => void);
           }

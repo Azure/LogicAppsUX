@@ -1,6 +1,7 @@
 import type { SimpleArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
+import { notEqual } from '../../editor/base/utils/helper';
 import { parseSegments } from '../../editor/base/utils/parsesegments';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
@@ -39,21 +40,4 @@ export const EditorChange = ({ item, items, index, setItems }: updateStateProps)
     }
   };
   return <OnChangePlugin onChange={onChange} />;
-};
-
-const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
-  if (a.length !== b.length) {
-    return true;
-  }
-  for (let i = 0; i < a.length; i++) {
-    const newA = { token: a[i].token, value: a[i].value };
-    const newB = { token: b[i].token, value: b[i].value };
-    if (a[i].type !== b[i].type) {
-      return true;
-    }
-    if (JSON.stringify(newA, Object.keys(newA).sort()) !== JSON.stringify(b[i], Object.keys(newB).sort())) {
-      return true;
-    }
-  }
-  return false;
 };

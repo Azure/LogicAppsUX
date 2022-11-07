@@ -182,30 +182,70 @@ export const ScratchTab = () => {
         />
 
         <ArrayEditor
-          itemSchema={['Attachments Name', 'Attachments Content']}
+          itemSchema={{
+            content: { type: 'integer' },
+            name: { type: 'string' },
+            object: { p1: { type: 'string' }, p2: { type: 'string' } },
+          }}
           type={ArrayType.COMPLEX}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialItems={[
             {
-              key: 'test',
-              value: [
-                [
-                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
-                  testTokenSegment,
-                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
-                ],
-                [
-                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
-                  testTokenSegment,
-                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
-                ],
+              key: guid(),
+              items: [
+                {
+                  title: 'content',
+                  value: [
+                    { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
+                    testTokenSegment,
+                    { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
+                  ],
+                },
+                {
+                  title: 'name',
+                  value: [
+                    { id: guid(), type: ValueSegmentType.LITERAL, value: 'A name' },
+                    testTokenSegment,
+                    { id: guid(), type: ValueSegmentType.LITERAL, value: 'for a name' },
+                  ],
+                },
+                {
+                  title: 'p1',
+                  value: [
+                    { id: guid(), type: ValueSegmentType.LITERAL, value: 'object 1' },
+                    testTokenSegment,
+                    { id: guid(), type: ValueSegmentType.LITERAL, value: 'for a name' },
+                  ],
+                },
+                {
+                  title: 'p2',
+                  value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'object2' }, testTokenSegment],
+                },
               ],
             },
             {
-              key: 'test2',
-              value: [
-                [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' }],
-                [testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'HELLOOOO' }],
+              key: guid(),
+              items: [
+                {
+                  title: 'content',
+                  value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' }],
+                },
+                {
+                  title: 'name',
+                  value: [testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'for a name' }],
+                },
+                {
+                  title: 'p1',
+                  value: [
+                    { id: guid(), type: ValueSegmentType.LITERAL, value: 'object 1' },
+                    testTokenSegment,
+                    { id: guid(), type: ValueSegmentType.LITERAL, value: 'for a name' },
+                  ],
+                },
+                {
+                  title: 'p2',
+                  value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'object2' }, testTokenSegment],
+                },
               ],
             },
           ]}

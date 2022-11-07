@@ -347,3 +347,20 @@ function checkForInvalidValues(authentication: any): string {
   }
   return errorMessages.length > 0 ? errorMessages.join(' ') : '';
 }
+
+export const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
+  if (a.length !== b.length) {
+    return true;
+  }
+  for (let i = 0; i < a.length; i++) {
+    const newA = { token: a[i].token, value: a[i].value };
+    const newB = { token: b[i].token, value: b[i].value };
+    if (a[i].type !== b[i].type) {
+      return true;
+    }
+    if (JSON.stringify(newA, Object.keys(newA).sort()) !== JSON.stringify(b[i], Object.keys(newB).sort())) {
+      return true;
+    }
+  }
+  return false;
+};

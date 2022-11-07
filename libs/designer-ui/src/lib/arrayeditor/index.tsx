@@ -7,16 +7,22 @@ import { CollapsedArray } from './collapsedarray';
 import { ExpandedComplexArray } from './expandedcomplexarray';
 import { ExpandedSimpleArray } from './expandedsimplearray';
 import { parseComplexItems, parseSimpleItems } from './util/serializecollapsedarray';
+import { getOneDimensionalSchema } from './util/util';
 import { useState } from 'react';
 
 export enum ArrayType {
   COMPLEX = 'complex',
   SIMPLE = 'simple',
 }
+
 export interface ComplexArrayItem {
+  title: string;
+  value: ValueSegment[];
+}
+export interface ComplexArrayItems {
   key: string;
   visibility?: string;
-  value: ValueSegment[][];
+  items: ComplexArrayItem[];
 }
 
 export interface SimpleArrayItem {
@@ -30,18 +36,17 @@ interface BaseArrayEditorProps extends BaseEditorProps {
   canDeleteLastItem?: boolean;
   disableToggle?: boolean;
   labelProps: LabelProps;
+  itemSchema?: any;
 }
 export type ArrayEditorProps = BaseArrayEditorProps &
   (
     | {
         type: ArrayType.COMPLEX;
-        initialItems: ComplexArrayItem[];
-        itemSchema: string[];
+        initialItems: ComplexArrayItems[];
       }
     | {
         type: ArrayType.SIMPLE;
         initialItems: SimpleArrayItem[];
-        itemSchema?: string;
       }
   );
 
@@ -65,9 +70,14 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     initialItems
       ? type === ArrayType.SIMPLE
         ? parseSimpleItems(initialItems as SimpleArrayItem[])
-        : parseComplexItems(initialItems as ComplexArrayItem[], itemSchema)
+        : parseComplexItems(initialItems as ComplexArrayItems[], itemSchema)
       : initialValue
   );
+  let dimensionalSchema: any[] = [];
+
+  if (type === ArrayType.COMPLEX) {
+    dimensionalSchema = getOneDimensionalSchema(itemSchema);
+  }
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -83,7 +93,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     }
   };
 
-  const updateComplexItems = (newItems: ComplexArrayItem[]) => {
+  const updateComplexItems = (newItems: ComplexArrayItems[]) => {
     setItems(newItems);
     if (type === ArrayType.COMPLEX) {
       const objectValue = parseComplexItems(newItems, itemSchema);
@@ -108,6 +118,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           isTrigger={baseEditorProps.isTrigger}
           readOnly={baseEditorProps.readonly}
           itemSchema={itemSchema}
+          dimensionalSchema={dimensionalSchema}
           setItems={type === ArrayType.SIMPLE ? updateSimpleItems : updateComplexItems}
           setIsValid={setIsValid}
           tokenPickerHandler={tokenPickerHandler}
@@ -116,7 +127,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
         />
       ) : type === ArrayType.SIMPLE ? (
         <ExpandedSimpleArray
-          itemSchema={itemSchema}
           items={items as SimpleArrayItem[]}
           labelProps={labelProps}
           readOnly={baseEditorProps.readonly}
@@ -127,11 +137,9 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
         />
       ) : (
         <ExpandedComplexArray
-          itemSchema={itemSchema}
-          items={items as ComplexArrayItem[]}
-          labelProps={labelProps}
+          dimensionalSchema={dimensionalSchema}
+          allItems={items as ComplexArrayItems[]}
           readOnly={baseEditorProps.readonly}
-          isTrigger={baseEditorProps.isTrigger}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateComplexItems}
           tokenPickerHandler={tokenPickerHandler}

@@ -16,6 +16,7 @@ export default {
           title: 'Content',
           required: true,
           description: 'Content to create schema from',
+          'x-ms-editor': 'array',
         },
         schema: {
           type: 'object',
