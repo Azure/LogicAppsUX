@@ -263,14 +263,12 @@ const ParameterSection = ({
         const oldId = v.token?.actionName ?? '';
         const newId = idReplacements[oldId] ?? '';
         if (!newId) return v;
-        const value = v.value?.replace(`'${oldId}'`, `'${newId}'`) ?? '';
+        const remappedValue = v.value?.replace(`'${oldId}'`, `'${newId}'`) ?? '';
         return {
           ...v,
-          value,
           token: {
             ...v.token,
-            actionName: newId,
-            value,
+            remappedValue,
           },
         } as ValueSegment;
       });

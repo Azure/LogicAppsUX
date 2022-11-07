@@ -273,12 +273,11 @@ export const createValueSegmentFromToken = async (
       }
     }
 
-    // if (tokenValueSegment.token) {
-    //   const oldId = tokenValueSegment.token.actionName ?? '';
-    //   const newId = rootState.workflow.idReplacements[oldId] ?? oldId;
-    //   tokenValueSegment.value = tokenValueSegment.value.replace(oldId, newId);
-    //   tokenValueSegment.token.actionName = newId;
-    // }
+    if (tokenValueSegment.token) {
+      const oldId = tokenValueSegment.token.actionName ?? '';
+      const newId = rootState.workflow.idReplacements[oldId] ?? oldId;
+      tokenValueSegment.token.remappedValue = tokenValueSegment.value.replace(oldId, newId);
+    }
 
     return shouldAdd ? { segment: tokenValueSegment, foreachDetails: { arrayValue: parentArrayValue } } : { segment: tokenValueSegment };
   }
