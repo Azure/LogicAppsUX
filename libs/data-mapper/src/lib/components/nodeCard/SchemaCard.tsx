@@ -277,7 +277,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             className={classes.cardChevron}
             onClick={outputChevronOnClick}
             icon={<ChevronIcon filled={isChevronHovered ? true : undefined} />}
-            appearance={'transparent'}
+            appearance="transparent"
             onMouseEnter={() => setIsChevronHovered(true)}
             onMouseLeave={() => setIsChevronHovered(false)}
           />
