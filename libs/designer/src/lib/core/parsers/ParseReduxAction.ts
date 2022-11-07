@@ -22,7 +22,7 @@ export const initializeGraphState = createAsyncThunk<DeserializedWorkflow, Workf
       getConnectionsQuery();
       const { definition, connectionReferences, parameters } = workflowDefinition;
       const deserializedWorkflow = BJSDeserialize(definition);
-      thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {})); // danielle I think we need
+      thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
       parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
       const operationMetadataPromise = initializeOperationMetadata(
         deserializedWorkflow,

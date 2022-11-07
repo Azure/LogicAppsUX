@@ -276,7 +276,7 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
   return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
 };
 
-/* Deserialize yml */ // danielle maybe separate from serialization
+/* Deserialize yml */
 export const convertFromMapDefinition = (
   mapDefinition: MapDefinitionEntry,
   sourceSchema: SchemaExtended,
@@ -292,299 +292,108 @@ export const convertFromMapDefinition = (
     parseDefinitionToConnection(mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, {}, sourceSchema, targetSchema, functions);
   }
 
-  const test = {
-    'target-/ns0:Root/DirectTranslation/Employee/Name': {
+  const testLoop = {
+    'target-/ns0:Root/Looping/Person/Name': {
       self: {
         node: {
-          key: '/ns0:Root/DirectTranslation/Employee/Name',
+          key: '/ns0:Root/Looping/Person/Name',
           name: 'Name',
           schemaNodeDataType: 'String',
           normalizedDataType: 'String',
           properties: 'NotSpecified',
           fullName: 'Name',
-          parentKey: '/ns0:Root/DirectTranslation/Employee',
+          parentKey: '/ns0:Root/Looping/Person',
           nodeProperties: ['NotSpecified'],
           children: [],
           pathToRoot: [
             { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-            { key: '/ns0:Root/DirectTranslation', name: 'DirectTranslation', fullName: 'DirectTranslation', repeating: false },
-            { key: '/ns0:Root/DirectTranslation/Employee', name: 'Employee', fullName: 'Employee', repeating: false },
-            { key: '/ns0:Root/DirectTranslation/Employee/Name', name: 'Name', fullName: 'Name', repeating: false },
+            { key: '/ns0:Root/Looping', name: 'Looping', fullName: 'Looping', repeating: false },
+            { key: '/ns0:Root/Looping/Person', name: 'Person', fullName: 'Person', repeating: true },
+            { key: '/ns0:Root/Looping/Person/Name', name: 'Name', fullName: 'Name', repeating: false },
           ],
         },
-        reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee/Name',
+        reactFlowKey: 'target-/ns0:Root/Looping/Person/Name',
       },
       inputs: {
         '0': [
           {
             node: {
-              category: 'Logical',
-              description: 'Evaluates the condition of the input value.',
-              key: 'Condition',
-              maxNumberOfInputs: 1,
-              outputValueType: 'Any',
-              type: 'TransformationControlFunction',
-              displayName: 'Condition',
-              functionName: '$if',
-              iconFileName: 'dm_category_logical.svg',
-              inputs: [
+              key: '/ns0:Root/Looping/Employee/TelephoneNumber',
+              name: 'TelephoneNumber',
+              schemaNodeDataType: 'String',
+              normalizedDataType: 'String',
+              properties: 'NotSpecified',
+              fullName: 'TelephoneNumber',
+              parentKey: '/ns0:Root/Looping/Employee',
+              nodeProperties: ['NotSpecified'],
+              children: [],
+              pathToRoot: [
+                { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
+                { key: '/ns0:Root/Looping', name: 'Looping', fullName: 'Looping', repeating: false },
+                { key: '/ns0:Root/Looping/Employee', name: 'Employee', fullName: 'Employee', repeating: true },
                 {
-                  allowCustomInput: true,
-                  allowedTypes: ['Bool'],
-                  isOptional: false,
-                  name: 'Condition',
-                  placeHolder: 'The condition to evaluate.',
+                  key: '/ns0:Root/Looping/Employee/TelephoneNumber',
+                  name: 'TelephoneNumber',
+                  fullName: 'TelephoneNumber',
+                  repeating: false,
                 },
               ],
             },
-            reactFlowKey: 'Condition-C0EFBEFC-6411-474F-BA59-7E86982EF286',
+            reactFlowKey: 'source-/ns0:Root/Looping/Employee/TelephoneNumber',
           },
         ],
       },
       outputs: [],
     },
-    'Condition-C0EFBEFC-6411-474F-BA59-7E86982EF286': {
+    'source-/ns0:Root/Looping/Employee/TelephoneNumber': {
       self: {
         node: {
-          category: 'Logical',
-          description: 'Evaluates the condition of the input value.',
-          key: 'Condition',
-          maxNumberOfInputs: 1,
-          outputValueType: 'Any',
-          type: 'TransformationControlFunction',
-          displayName: 'Condition',
-          functionName: '$if',
-          iconFileName: 'dm_category_logical.svg',
-          inputs: [
-            {
-              allowCustomInput: true,
-              allowedTypes: ['Bool'],
-              isOptional: false,
-              name: 'Condition',
-              placeHolder: 'The condition to evaluate.',
-            },
+          key: '/ns0:Root/Looping/Employee/TelephoneNumber',
+          name: 'TelephoneNumber',
+          schemaNodeDataType: 'String',
+          normalizedDataType: 'String',
+          properties: 'NotSpecified',
+          fullName: 'TelephoneNumber',
+          parentKey: '/ns0:Root/Looping/Employee',
+          nodeProperties: ['NotSpecified'],
+          children: [],
+          pathToRoot: [
+            { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
+            { key: '/ns0:Root/Looping', name: 'Looping', fullName: 'Looping', repeating: false },
+            { key: '/ns0:Root/Looping/Employee', name: 'Employee', fullName: 'Employee', repeating: true },
+            { key: '/ns0:Root/Looping/Employee/TelephoneNumber', name: 'TelephoneNumber', fullName: 'TelephoneNumber', repeating: false },
           ],
         },
-        reactFlowKey: 'Condition-C0EFBEFC-6411-474F-BA59-7E86982EF286',
+        reactFlowKey: 'source-/ns0:Root/Looping/Employee/TelephoneNumber',
       },
-      inputs: {
-        '0': [
-          {
-            node: {
-              key: 'IsGreater',
-              maxNumberOfInputs: 2,
-              type: 'TransformationFunction',
-              functionName: 'is-greater-than',
-              outputValueType: 'Bool',
-              inputs: [
-                { name: 'Value', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: 'The value to check.' },
-                { name: '', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: '' },
-              ],
-              displayName: 'Greater',
-              category: 'Logical',
-              description: 'Checks whether the first value is greater than the second value.',
-            },
-            reactFlowKey: 'IsGreater-5E509445-E280-492F-BE9F-73F964A99339',
-          },
-        ],
-      },
+      inputs: { '0': [] },
       outputs: [
         {
           node: {
-            key: '/ns0:Root/DirectTranslation/Employee/Name',
+            key: '/ns0:Root/Looping/Person/Name',
             name: 'Name',
             schemaNodeDataType: 'String',
             normalizedDataType: 'String',
             properties: 'NotSpecified',
             fullName: 'Name',
-            parentKey: '/ns0:Root/DirectTranslation/Employee',
+            parentKey: '/ns0:Root/Looping/Person',
             nodeProperties: ['NotSpecified'],
             children: [],
             pathToRoot: [
               { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-              { key: '/ns0:Root/DirectTranslation', name: 'DirectTranslation', fullName: 'DirectTranslation', repeating: false },
-              { key: '/ns0:Root/DirectTranslation/Employee', name: 'Employee', fullName: 'Employee', repeating: false },
-              { key: '/ns0:Root/DirectTranslation/Employee/Name', name: 'Name', fullName: 'Name', repeating: false },
+              { key: '/ns0:Root/Looping', name: 'Looping', fullName: 'Looping', repeating: false },
+              { key: '/ns0:Root/Looping/Person', name: 'Person', fullName: 'Person', repeating: true },
+              { key: '/ns0:Root/Looping/Person/Name', name: 'Name', fullName: 'Name', repeating: false },
             ],
           },
-          reactFlowKey: 'target-/ns0:Root/DirectTranslation/Employee/Name',
-        },
-      ],
-    },
-    'IsGreater-5E509445-E280-492F-BE9F-73F964A99339': {
-      self: {
-        node: {
-          key: 'IsGreater',
-          maxNumberOfInputs: 2,
-          type: 'TransformationFunction',
-          functionName: 'is-greater-than',
-          outputValueType: 'Bool',
-          inputs: [
-            { name: 'Value', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: 'The value to check.' },
-            { name: '', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: '' },
-          ],
-          displayName: 'Greater',
-          category: 'Logical',
-          description: 'Checks whether the first value is greater than the second value.',
-        },
-        reactFlowKey: 'IsGreater-5E509445-E280-492F-BE9F-73F964A99339',
-      },
-      inputs: {
-        '0': [
-          {
-            node: {
-              key: '/ns0:Root/ConditionalMapping/ItemPrice',
-              name: 'ItemPrice',
-              schemaNodeDataType: 'Decimal',
-              normalizedDataType: 'Decimal',
-              properties: 'NotSpecified',
-              fullName: 'ItemPrice',
-              parentKey: '/ns0:Root/ConditionalMapping',
-              nodeProperties: ['NotSpecified'],
-              children: [],
-              pathToRoot: [
-                { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-                { key: '/ns0:Root/ConditionalMapping', name: 'ConditionalMapping', fullName: 'ConditionalMapping', repeating: false },
-                { key: '/ns0:Root/ConditionalMapping/ItemPrice', name: 'ItemPrice', fullName: 'ItemPrice', repeating: false },
-              ],
-            },
-            reactFlowKey: 'source-/ns0:Root/ConditionalMapping/ItemPrice',
-          },
-        ],
-        '1': [
-          {
-            node: {
-              key: '/ns0:Root/ConditionalMapping/ItemQuantity',
-              name: 'ItemQuantity',
-              schemaNodeDataType: 'Decimal',
-              normalizedDataType: 'Decimal',
-              properties: 'NotSpecified',
-              fullName: 'ItemQuantity',
-              parentKey: '/ns0:Root/ConditionalMapping',
-              nodeProperties: ['NotSpecified'],
-              children: [],
-              pathToRoot: [
-                { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-                { key: '/ns0:Root/ConditionalMapping', name: 'ConditionalMapping', fullName: 'ConditionalMapping', repeating: false },
-                { key: '/ns0:Root/ConditionalMapping/ItemQuantity', name: 'ItemQuantity', fullName: 'ItemQuantity', repeating: false },
-              ],
-            },
-            reactFlowKey: 'source-/ns0:Root/ConditionalMapping/ItemQuantity',
-          },
-        ],
-      },
-      outputs: [
-        {
-          node: {
-            category: 'Logical',
-            description: 'Evaluates the condition of the input value.',
-            key: 'Condition',
-            maxNumberOfInputs: 1,
-            outputValueType: 'Any',
-            type: 'TransformationControlFunction',
-            displayName: 'Condition',
-            functionName: '$if',
-            iconFileName: 'dm_category_logical.svg',
-            inputs: [
-              {
-                allowCustomInput: true,
-                allowedTypes: ['Bool'],
-                isOptional: false,
-                name: 'Condition',
-                placeHolder: 'The condition to evaluate.',
-              },
-            ],
-          },
-          reactFlowKey: 'Condition-C0EFBEFC-6411-474F-BA59-7E86982EF286',
-        },
-      ],
-    },
-    'source-/ns0:Root/ConditionalMapping/ItemPrice': {
-      self: {
-        node: {
-          key: '/ns0:Root/ConditionalMapping/ItemPrice',
-          name: 'ItemPrice',
-          schemaNodeDataType: 'Decimal',
-          normalizedDataType: 'Decimal',
-          properties: 'NotSpecified',
-          fullName: 'ItemPrice',
-          parentKey: '/ns0:Root/ConditionalMapping',
-          nodeProperties: ['NotSpecified'],
-          children: [],
-          pathToRoot: [
-            { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-            { key: '/ns0:Root/ConditionalMapping', name: 'ConditionalMapping', fullName: 'ConditionalMapping', repeating: false },
-            { key: '/ns0:Root/ConditionalMapping/ItemPrice', name: 'ItemPrice', fullName: 'ItemPrice', repeating: false },
-          ],
-        },
-        reactFlowKey: 'source-/ns0:Root/ConditionalMapping/ItemPrice',
-      },
-      inputs: { '0': [] },
-      outputs: [
-        {
-          node: {
-            key: 'IsGreater',
-            maxNumberOfInputs: 2,
-            type: 'TransformationFunction',
-            functionName: 'is-greater-than',
-            outputValueType: 'Bool',
-            inputs: [
-              { name: 'Value', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: 'The value to check.' },
-              { name: '', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: '' },
-            ],
-            displayName: 'Greater',
-            category: 'Logical',
-            description: 'Checks whether the first value is greater than the second value.',
-          },
-          reactFlowKey: 'IsGreater-5E509445-E280-492F-BE9F-73F964A99339',
-        },
-      ],
-    },
-    'source-/ns0:Root/ConditionalMapping/ItemQuantity': {
-      self: {
-        node: {
-          key: '/ns0:Root/ConditionalMapping/ItemQuantity',
-          name: 'ItemQuantity',
-          schemaNodeDataType: 'Decimal',
-          normalizedDataType: 'Decimal',
-          properties: 'NotSpecified',
-          fullName: 'ItemQuantity',
-          parentKey: '/ns0:Root/ConditionalMapping',
-          nodeProperties: ['NotSpecified'],
-          children: [],
-          pathToRoot: [
-            { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-            { key: '/ns0:Root/ConditionalMapping', name: 'ConditionalMapping', fullName: 'ConditionalMapping', repeating: false },
-            { key: '/ns0:Root/ConditionalMapping/ItemQuantity', name: 'ItemQuantity', fullName: 'ItemQuantity', repeating: false },
-          ],
-        },
-        reactFlowKey: 'source-/ns0:Root/ConditionalMapping/ItemQuantity',
-      },
-      inputs: { '0': [] },
-      outputs: [
-        {
-          node: {
-            key: 'IsGreater',
-            maxNumberOfInputs: 2,
-            type: 'TransformationFunction',
-            functionName: 'is-greater-than',
-            outputValueType: 'Bool',
-            inputs: [
-              { name: 'Value', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: 'The value to check.' },
-              { name: '', allowedTypes: ['Any'], isOptional: false, allowCustomInput: true, placeHolder: '' },
-            ],
-            displayName: 'Greater',
-            category: 'Logical',
-            description: 'Checks whether the first value is greater than the second value.',
-          },
-          reactFlowKey: 'IsGreater-5E509445-E280-492F-BE9F-73F964A99339',
+          reactFlowKey: 'target-/ns0:Root/Looping/Person/Name',
         },
       ],
     },
   };
-  console.log(test);
+  //console.log(test);
 
-  return connections; //test as unknown as ConnectionDictionary;
+  return testLoop as unknown as ConnectionDictionary;
 };
 
 const parseDefinitionToConnection = (
@@ -598,24 +407,25 @@ const parseDefinitionToConnection = (
 ) => {
   if (typeof sourceNodeObject === 'string') {
     const sourceEndOfFunction = sourceNodeObject.indexOf('(');
+    const amendedSourceKey = targetKey.includes(mapNodeParams.for) ? getSourceValueFromLoop(sourceNodeObject, targetKey) : sourceNodeObject;
     const sourceNode =
       sourceEndOfFunction > -1
-        ? findFunctionForFunctionName(sourceNodeObject.substring(0, sourceEndOfFunction), functions)
-        : findNodeForKey(sourceNodeObject, sourceSchema.schemaTreeRoot);
+        ? findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions)
+        : findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
     const sourceKey =
       sourceNode && isFunctionData(sourceNode)
-        ? createdNodes[sourceNodeObject]
-          ? createdNodes[sourceNodeObject]
+        ? createdNodes[amendedSourceKey]
+          ? createdNodes[amendedSourceKey]
           : createReactFlowFunctionKey(sourceNode)
-        : `${sourcePrefix}${sourceNodeObject}`;
-    createdNodes[sourceNodeObject] = sourceKey;
+        : `${sourcePrefix}${amendedSourceKey}`;
+    createdNodes[amendedSourceKey] = sourceKey;
 
     const destinationFunctionKey = targetKey.slice(0, targetKey.indexOf('-'));
     const destinationFunctionGuid = targetKey.slice(targetKey.indexOf('-') + 1);
     const destinationNode = isAGuid(destinationFunctionGuid)
       ? findFunctionForKey(destinationFunctionKey, functions)
       : findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
-    const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${targetKey}`;
+    const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${destinationNode?.key}`;
 
     if (sourceNode && destinationNode) {
       addNodeToConnections(connections, sourceNode, sourceKey, destinationNode, destinationKey);
@@ -707,6 +517,25 @@ const yamlReplacer = (key: string, value: any) => {
   }
 
   return value;
+};
+
+export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
+  // danielle check for nested loops too next
+  let constructedSourceKey = '';
+  const matchArr = targetKey.match(/\$for\([^)]+\)\//);
+  let match = matchArr?.[0];
+  match = match?.replace('$for(', '');
+  match = match?.replace(')', '');
+  const endOfLastFunctionIndex = sourceKey.lastIndexOf('('); // what if no function?
+  if (endOfLastFunctionIndex > 0) {
+    constructedSourceKey =
+      sourceKey.substring(0, sourceKey.lastIndexOf('(') + 1) +
+      match +
+      sourceKey.substring(sourceKey.lastIndexOf('(') + 1, sourceKey.length + 1);
+  } else {
+    constructedSourceKey = match + sourceKey;
+  }
+  return constructedSourceKey;
 };
 
 const formatCustomValue = (customValue: string) => customValueQuoteToken + customValue + customValueQuoteToken;

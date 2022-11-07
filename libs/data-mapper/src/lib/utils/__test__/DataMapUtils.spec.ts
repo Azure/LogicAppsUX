@@ -2,7 +2,7 @@ import { sourceMockSchema, targetMockSchema } from '../../__mocks__';
 import { concatFunction, conditionalFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
 import type { MapDefinitionEntry } from '../../models';
 import type { ConnectionUnit } from '../../models/Connection';
-import { convertFromMapDefinition } from '../DataMap.Utils';
+import { convertFromMapDefinition, getSourceValueFromLoop } from '../DataMap.Utils';
 import { convertSchemaToSchemaExtended } from '../Schema.Utils';
 
 describe('utils/DataMap', () => {
@@ -45,7 +45,7 @@ describe('utils/DataMap', () => {
     const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [concatFunction]);
     // target lists function as input
     const targetInput = result['target-/ns0:Root/DirectTranslation/Employee/Name'].inputs['0'][0] as ConnectionUnit;
-    expect(targetInput.reactFlowKey).toContain('Concat'); // danielle get input utility?
+    expect(targetInput.reactFlowKey).toContain('Concat');
 
     // source lists function as output
     const sourceOutput = result['source-/ns0:Root/DirectTranslation/EmployeeName'].outputs[0];
@@ -83,5 +83,17 @@ describe('utils/DataMap', () => {
     };
     const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [greaterThanFunction, conditionalFunction]);
     console.log(JSON.stringify(result));
+  });
+
+  it('gets the source key from a looped target string', () => {
+    const result = getSourceValueFromLoop('TelephoneNumber', '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name');
+    console.log(result);
+    expect(result).toEqual('/ns0:Root/Looping/Employee/TelephoneNumber');
+  });
+
+  it('gets the source key from a looped target string with a function', () => {
+    const result = getSourceValueFromLoop('lower-case(TelephoneNumber)', '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name');
+    console.log(result);
+    expect(result).toEqual('lower-case(/ns0:Root/Looping/Employee/TelephoneNumber)');
   });
 });

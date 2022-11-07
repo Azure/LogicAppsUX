@@ -72,8 +72,14 @@ export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNod
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
   let tempKey = nodeKey;
   if (tempKey.includes(mapNodeParams.for)) {
-    const forRegex = new RegExp(/\$for\([^)]+\)\//); // /\$for\([^)])\//   this works /\$for\(/
-    tempKey = nodeKey.replace(forRegex, '');
+    // change this to 'starts with' in order to make the parent connection
+    const matchArr = tempKey.match(/\$for\([^)]+\)\//);
+    let match = matchArr?.[0];
+    console.log(match);
+    match = match?.replace('$for(', '');
+    match = match?.replace(')', '');
+    const forRegex = new RegExp(/\$for\([^)]+\)\//);
+    tempKey = nodeKey.replace(forRegex, ''); // concatenate onto the source piece? what about for functions?
   }
   if (schemaNode.key === tempKey) {
     // /ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name

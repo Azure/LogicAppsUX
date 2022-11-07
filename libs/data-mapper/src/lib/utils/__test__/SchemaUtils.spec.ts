@@ -28,7 +28,6 @@ describe('utils/Schema', () => {
 
     it('finds loop value for key', () => {
       const node = findNodeForKey('/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name', extendedTarget.schemaTreeRoot);
-      console.log(node);
       expect(node?.key).toEqual('/ns0:Root/Looping/Person/Name');
     });
 
