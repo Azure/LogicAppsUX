@@ -1,16 +1,18 @@
 import {
   collectionBranding,
+  conversionBranding,
   dateTimeBranding,
   logicalBranding,
   mathBranding,
   stringBranding,
   utilityBranding,
-  conversionBranding,
 } from '../constants/FunctionConstants';
 import type { SchemaNodeExtended } from '../models';
-import type { ConnectionDictionary } from '../models/Connection';
+import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { FunctionCategory } from '../models/Function';
+import { isConnectionUnit } from './Connection.Utils';
+import { isSchemaNodeExtended } from './Schema.Utils';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {
@@ -65,4 +67,33 @@ export const getFunctionOutputValue = (inputValues: string[], functionName: stri
 export const functionInputHasInputs = (fnInputReactFlowKey: string, connections: ConnectionDictionary): boolean => {
   const fnInputConnection = connections[fnInputReactFlowKey];
   return !!fnInputConnection && Object.values(fnInputConnection.inputs).some((inputConArr) => inputConArr.length > 0);
+};
+
+export const getIndexValueForCurrentConnection = (currentConnection: Connection): string => {
+  const inputNode =
+    isConnectionUnit(currentConnection.inputs[0][0]) && isSchemaNodeExtended(currentConnection.inputs[0][0].node)
+      ? currentConnection.inputs[0][0].node
+      : undefined;
+  if (inputNode) {
+    return calculateIndexValue(inputNode);
+  } else {
+    console.error(`Didn't find inputNode to make index value: ${inputNode}`);
+    return '';
+  }
+};
+
+export const calculateIndexValue = (currentNode: SchemaNodeExtended): string => {
+  let repeatedNodes = currentNode.pathToRoot.reduce((acc, { repeating }) => acc + (repeating ? 1 : 0), 0);
+  let result = '$';
+  while (repeatedNodes > 0) {
+    if (repeatedNodes >= 26) {
+      result += 'z';
+      repeatedNodes -= 26;
+    } else {
+      result += String.fromCharCode(96 + repeatedNodes);
+      break;
+    }
+  }
+
+  return result;
 };

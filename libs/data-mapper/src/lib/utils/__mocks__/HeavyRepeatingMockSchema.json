@@ -1,0 +1,335 @@
+{
+  "name": "Source.xsd",
+  "type": "XML",
+  "targetNamespace": "http://tempuri.org/source.xsd",
+  "namespaces": { "ns0": "http://tempuri.org/source.xsd", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "schemaTreeRoot": {
+    "key": "/ns0:Root",
+    "name": "Root",
+    "namespacePrefix": "ns0",
+    "namespaceUri": "http://tempuri.org/source.xsd",
+    "schemaNodeDataType": "None",
+    "normalizedDataType": "ComplexType",
+    "properties": "Repeating",
+    "children": [
+      {
+        "key": "/ns0:Root/Loop1",
+        "name": "Loop1",
+        "schemaNodeDataType": "None",
+        "normalizedDataType": "ComplexType",
+        "properties": "Repeating",
+        "children": [
+          {
+            "key": "/ns0:Root/Loop2",
+            "name": "Loop2",
+            "schemaNodeDataType": "None",
+            "normalizedDataType": "ComplexType",
+            "properties": "Repeating",
+            "children": [
+              {
+                "key": "/ns0:Root/Loop3",
+                "name": "Loop3",
+                "schemaNodeDataType": "None",
+                "normalizedDataType": "ComplexType",
+                "properties": "Repeating",
+                "children": [
+                  {
+                    "key": "/ns0:Root/Loop4",
+                    "name": "Loop4",
+                    "schemaNodeDataType": "None",
+                    "normalizedDataType": "ComplexType",
+                    "properties": "Repeating",
+                    "children": [
+                      {
+                        "key": "/ns0:Root/Loop5",
+                        "name": "Loop5",
+                        "schemaNodeDataType": "None",
+                        "normalizedDataType": "ComplexType",
+                        "properties": "Repeating",
+                        "children": [
+                          {
+                            "key": "/ns0:Root/Loop6",
+                            "name": "Loop6",
+                            "schemaNodeDataType": "None",
+                            "normalizedDataType": "ComplexType",
+                            "properties": "Repeating",
+                            "children": [
+                              {
+                                "key": "/ns0:Root/Loop7",
+                                "name": "Loop7",
+                                "schemaNodeDataType": "None",
+                                "normalizedDataType": "ComplexType",
+                                "properties": "Repeating",
+                                "children": [
+                                  {
+                                    "key": "/ns0:Root/Loop8",
+                                    "name": "Loop8",
+                                    "schemaNodeDataType": "None",
+                                    "normalizedDataType": "ComplexType",
+                                    "properties": "Repeating",
+                                    "children": [
+                                      {
+                                        "key": "/ns0:Root/Loop9",
+                                        "name": "Loop9",
+                                        "schemaNodeDataType": "None",
+                                        "normalizedDataType": "ComplexType",
+                                        "properties": "Repeating",
+                                        "children": [
+                                          {
+                                            "key": "/ns0:Root/Loop10",
+                                            "name": "Loop10",
+                                            "schemaNodeDataType": "None",
+                                            "normalizedDataType": "ComplexType",
+                                            "properties": "Repeating",
+                                            "children": [
+                                              {
+                                                "key": "/ns0:Root/Loop11",
+                                                "name": "Loop11",
+                                                "schemaNodeDataType": "None",
+                                                "normalizedDataType": "ComplexType",
+                                                "properties": "Repeating",
+                                                "children": [
+                                                  {
+                                                    "key": "/ns0:Root/Loop12",
+                                                    "name": "Loop12",
+                                                    "schemaNodeDataType": "None",
+                                                    "normalizedDataType": "ComplexType",
+                                                    "properties": "Repeating",
+                                                    "children": [
+                                                      {
+                                                        "key": "/ns0:Root/Loop13",
+                                                        "name": "Loop13",
+                                                        "schemaNodeDataType": "None",
+                                                        "normalizedDataType": "ComplexType",
+                                                        "properties": "Repeating",
+                                                        "children": [
+                                                          {
+                                                            "key": "/ns0:Root/Loop14",
+                                                            "name": "Loop14",
+                                                            "schemaNodeDataType": "None",
+                                                            "normalizedDataType": "ComplexType",
+                                                            "properties": "Repeating",
+                                                            "children": [
+                                                              {
+                                                                "key": "/ns0:Root/Loop15",
+                                                                "name": "Loop15",
+                                                                "schemaNodeDataType": "None",
+                                                                "normalizedDataType": "ComplexType",
+                                                                "properties": "Repeating",
+                                                                "children": [
+                                                                  {
+                                                                    "key": "/ns0:Root/Loop16",
+                                                                    "name": "Loop16",
+                                                                    "schemaNodeDataType": "None",
+                                                                    "normalizedDataType": "ComplexType",
+                                                                    "properties": "Repeating",
+                                                                    "children": [
+                                                                      {
+                                                                        "key": "/ns0:Root/Loop17",
+                                                                        "name": "Loop17",
+                                                                        "schemaNodeDataType": "None",
+                                                                        "normalizedDataType": "ComplexType",
+                                                                        "properties": "Repeating",
+                                                                        "children": [
+                                                                          {
+                                                                            "key": "/ns0:Root/Loop18",
+                                                                            "name": "Loop18",
+                                                                            "schemaNodeDataType": "None",
+                                                                            "normalizedDataType": "ComplexType",
+                                                                            "properties": "Repeating",
+                                                                            "children": [
+                                                                              {
+                                                                                "key": "/ns0:Root/Loop19",
+                                                                                "name": "Loop19",
+                                                                                "schemaNodeDataType": "None",
+                                                                                "normalizedDataType": "ComplexType",
+                                                                                "properties": "Repeating",
+                                                                                "children": [
+                                                                                  {
+                                                                                    "key": "/ns0:Root/Loop20",
+                                                                                    "name": "Loop20",
+                                                                                    "schemaNodeDataType": "None",
+                                                                                    "normalizedDataType": "ComplexType",
+                                                                                    "properties": "Repeating",
+                                                                                    "children": [
+                                                                                      {
+                                                                                        "key": "/ns0:Root/Loop21",
+                                                                                        "name": "Loop21",
+                                                                                        "schemaNodeDataType": "None",
+                                                                                        "normalizedDataType": "ComplexType",
+                                                                                        "properties": "Repeating",
+                                                                                        "children": [
+                                                                                          {
+                                                                                            "key": "/ns0:Root/Loop22",
+                                                                                            "name": "Loop22",
+                                                                                            "schemaNodeDataType": "None",
+                                                                                            "normalizedDataType": "ComplexType",
+                                                                                            "properties": "Repeating",
+                                                                                            "children": [
+                                                                                              {
+                                                                                                "key": "/ns0:Root/Loop23",
+                                                                                                "name": "Loop23",
+                                                                                                "schemaNodeDataType": "None",
+                                                                                                "normalizedDataType": "ComplexType",
+                                                                                                "properties": "Repeating",
+                                                                                                "children": [
+                                                                                                  {
+                                                                                                    "key": "/ns0:Root/Loop24",
+                                                                                                    "name": "Loop24",
+                                                                                                    "schemaNodeDataType": "None",
+                                                                                                    "normalizedDataType": "ComplexType",
+                                                                                                    "properties": "Repeating",
+                                                                                                    "children": [
+                                                                                                      {
+                                                                                                        "key": "/ns0:Root/Loop25",
+                                                                                                        "name": "Loop25",
+                                                                                                        "schemaNodeDataType": "None",
+                                                                                                        "normalizedDataType": "ComplexType",
+                                                                                                        "properties": "Repeating",
+                                                                                                        "children": [
+                                                                                                          {
+                                                                                                            "key": "/ns0:Root/Loop26",
+                                                                                                            "name": "Loop26",
+                                                                                                            "schemaNodeDataType": "None",
+                                                                                                            "normalizedDataType": "ComplexType",
+                                                                                                            "properties": "Repeating",
+                                                                                                            "children": [
+                                                                                                              {
+                                                                                                                "key": "/ns0:Root/Loop27",
+                                                                                                                "name": "Loop27",
+                                                                                                                "schemaNodeDataType": "None",
+                                                                                                                "normalizedDataType": "ComplexType",
+                                                                                                                "properties": "Repeating",
+                                                                                                                "children": [
+                                                                                                                  {
+                                                                                                                    "key": "/ns0:Root/Loop28a",
+                                                                                                                    "name": "Loop28a",
+                                                                                                                    "schemaNodeDataType": "None",
+                                                                                                                    "normalizedDataType": "ComplexType",
+                                                                                                                    "properties": "Repeating",
+                                                                                                                    "children": [],
+                                                                                                                    "fullName": "Loop28a",
+                                                                                                                    "parentKey": "/ns0:Root"
+                                                                                                                  },
+                                                                                                                  {
+                                                                                                                    "key": "/ns0:Root/Loop28b",
+                                                                                                                    "name": "Loop28b",
+                                                                                                                    "schemaNodeDataType": "None",
+                                                                                                                    "normalizedDataType": "ComplexType",
+                                                                                                                    "properties": "Repeating",
+                                                                                                                    "children": [],
+                                                                                                                    "fullName": "Loop28b",
+                                                                                                                    "parentKey": "/ns0:Root"
+                                                                                                                  }
+                                                                                                                ],
+                                                                                                                "fullName": "Loo27",
+                                                                                                                "parentKey": "/ns0:Root"
+                                                                                                              }
+                                                                                                            ],
+                                                                                                            "fullName": "Loop26",
+                                                                                                            "parentKey": "/ns0:Root"
+                                                                                                          }
+                                                                                                        ],
+                                                                                                        "fullName": "Loop25",
+                                                                                                        "parentKey": "/ns0:Root"
+                                                                                                      }
+                                                                                                    ],
+                                                                                                    "fullName": "Loop24",
+                                                                                                    "parentKey": "/ns0:Root"
+                                                                                                  }
+                                                                                                ],
+                                                                                                "fullName": "Loop23",
+                                                                                                "parentKey": "/ns0:Root"
+                                                                                              }
+                                                                                            ],
+                                                                                            "fullName": "Loop22",
+                                                                                            "parentKey": "/ns0:Root"
+                                                                                          }
+                                                                                        ],
+                                                                                        "fullName": "Loop21",
+                                                                                        "parentKey": "/ns0:Root"
+                                                                                      }
+                                                                                    ],
+                                                                                    "fullName": "Loop20",
+                                                                                    "parentKey": "/ns0:Root"
+                                                                                  }
+                                                                                ],
+                                                                                "fullName": "Loop19",
+                                                                                "parentKey": "/ns0:Root"
+                                                                              }
+                                                                            ],
+                                                                            "fullName": "Loop18",
+                                                                            "parentKey": "/ns0:Root"
+                                                                          }
+                                                                        ],
+                                                                        "fullName": "Loop17",
+                                                                        "parentKey": "/ns0:Root"
+                                                                      }
+                                                                    ],
+                                                                    "fullName": "Loop16",
+                                                                    "parentKey": "/ns0:Root"
+                                                                  }
+                                                                ],
+                                                                "fullName": "Loop15",
+                                                                "parentKey": "/ns0:Root"
+                                                              }
+                                                            ],
+                                                            "fullName": "Loop14",
+                                                            "parentKey": "/ns0:Root"
+                                                          }
+                                                        ],
+                                                        "fullName": "Loop13",
+                                                        "parentKey": "/ns0:Root"
+                                                      }
+                                                    ],
+                                                    "fullName": "Loop12",
+                                                    "parentKey": "/ns0:Root"
+                                                  }
+                                                ],
+                                                "fullName": "Loop11",
+                                                "parentKey": "/ns0:Root"
+                                              }
+                                            ],
+                                            "fullName": "Loop10",
+                                            "parentKey": "/ns0:Root"
+                                          }
+                                        ],
+                                        "fullName": "Loop9",
+                                        "parentKey": "/ns0:Root"
+                                      }
+                                    ],
+                                    "fullName": "Loop9",
+                                    "parentKey": "/ns0:Root"
+                                  }
+                                ],
+                                "fullName": "Loop8",
+                                "parentKey": "/ns0:Root"
+                              }
+                            ],
+                            "fullName": "Loop7",
+                            "parentKey": "/ns0:Root"
+                          }
+                        ],
+                        "fullName": "Loop6",
+                        "parentKey": "/ns0:Root"
+                      }
+                    ],
+                    "fullName": "Loop5",
+                    "parentKey": "/ns0:Root"
+                  }
+                ],
+                "fullName": "Loop4",
+                "parentKey": "/ns0:Root"
+              }
+            ],
+            "fullName": "Loop3",
+            "parentKey": "/ns0:Root"
+          }
+        ],
+        "fullName": "Loop2",
+        "parentKey": "/ns0:Root"
+      }
+    ],
+    "fullName": "ns0:Root"
+  }
+}
