@@ -1,6 +1,9 @@
+import type { Schema, SchemaExtended } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
-import { functionInputHasInputs, getFunctionOutputValue } from '../Function.Utils';
+import { calculateIndexValue, functionInputHasInputs, getFunctionOutputValue } from '../Function.Utils';
+import { convertSchemaToSchemaExtended } from '../Schema.Utils';
+import { heavyRepeatingMockSchema } from '../__mocks__';
 
 describe('utils/Functions', () => {
   describe('getFunctionOutputValue', () => {
@@ -13,6 +16,41 @@ describe('utils/Functions', () => {
 
     it('Test correct output value with arguments', () => {
       expect(getFunctionOutputValue(inputArgs, functionName)).toEqual(`${functionName}(${inputArgs[0]}, ${inputArgs[1]}, ${inputArgs[2]})`);
+    });
+  });
+
+  describe('calculateIndexValue', () => {
+    const sourceSchema: Schema = heavyRepeatingMockSchema;
+    const extendedSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceSchema);
+
+    const parentNodeUnder26 =
+      extendedSourceSchema.schemaTreeRoot.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0]
+        .children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0]
+        .children[0].children[0].children[0].children[0];
+    const correctParentNodeOver26 =
+      extendedSourceSchema.schemaTreeRoot.children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0]
+        .children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0]
+        .children[0].children[0].children[0].children[0].children[0].children[0].children[0].children[0];
+
+    it('Generates loop index value less than 26 children', () => {
+      const indexValue = calculateIndexValue(parentNodeUnder26);
+
+      expect(indexValue).toEqual('$y');
+    });
+
+    it('Generates loop index value for more than 26 children', () => {
+      const indexValue = calculateIndexValue(correctParentNodeOver26);
+
+      expect(indexValue).toEqual('$zc');
+    });
+
+    it('Generates same loop index value for more than same level children', () => {
+      const indexValueA = calculateIndexValue(correctParentNodeOver26.children[0]);
+      const indexValueB = calculateIndexValue(correctParentNodeOver26.children[1]);
+
+      expect(indexValueA).toEqual('$zd');
+      expect(indexValueB).toEqual('$zd');
+      expect(indexValueA).toEqual(indexValueB);
     });
   });
 
@@ -31,7 +69,7 @@ describe('utils/Functions', () => {
       },
     };
 
-    it('Test function input that doesnt have inputs', () => {
+    it('Test function input that does not have inputs', () => {
       expect(functionInputHasInputs(mockReactFlowKey, mockConnections)).toEqual(false);
     });
 
