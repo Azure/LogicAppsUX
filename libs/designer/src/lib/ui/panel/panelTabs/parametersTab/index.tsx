@@ -24,7 +24,7 @@ import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { equals } from '@microsoft-logic-apps/utils';
-import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
+import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -91,6 +91,7 @@ const ParameterSection = ({
   expressionGroup: TokenGroup[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+
   const {
     isTrigger,
     nodeInputs,
@@ -244,28 +245,42 @@ const ParameterSection = ({
     );
   };
 
-  const settings: Settings[] = group?.parameters
-    .filter((x) => !x.hideInUI)
-    .map((param) => {
+  const settings: Settings[] =
+    group?.parameters.filter((x) => !x.hideInUI).map((param) => {
+      const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData } = param;
+      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
+
+      const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
+        if (v.type !== ValueSegmentType.TOKEN) return v;
+        const oldId = v.token?.actionName ?? '';
+        const newId = idReplacements[oldId] ?? '';
+        if (!newId) return v;
+        const value = v.value?.replace(`'${oldId}'`, `'${newId}'`) ?? '';
+        return {
+          ...v,
+          value,
+          token: {
+            ...v.token,
+            actionName: newId,
+            value,
+          }
+        } as ValueSegment;
+      });
+
       return {
         settingType: 'SettingTokenField',
         settingProp: {
+          ...paramSubset,
           readOnly,
-          id: param.id,
-          label: param.label,
-          value: param.value,
-          required: param.required,
+          value: remappedValues,
           editor,
           editorOptions,
-          editorViewModel: param.editorViewModel,
-          placeholder: param.placeholder,
           tokenEditor: true,
-          isTrigger: isTrigger,
-          isLoading: param.dynamicData?.status === DynamicCallStatus.STARTED,
-          errorDetails: param.dynamicData?.error ? { message: param.dynamicData.error.message } : undefined,
-          showTokens: param.showTokens,
-          onValueChange: (newState: ChangeState) => onValueChange(param.id, newState),
+          isTrigger,
+          isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
+          errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
+          onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           tokenPickerHandler: {
             getTokenPicker: (
@@ -273,7 +288,7 @@ const ParameterSection = ({
               labelId: string,
               tokenPickerFocused?: (b: boolean) => void,
               tokenClicked?: (token: ValueSegment) => void
-            ) => getTokenPicker(param.id, editorId, labelId, tokenPickerFocused, tokenClicked),
+            ) => getTokenPicker(id, editorId, labelId, tokenPickerFocused, tokenClicked),
             tokenPickerProps: { tokenPickerVisibility, showTokenPickerSwitch },
           },
         },
