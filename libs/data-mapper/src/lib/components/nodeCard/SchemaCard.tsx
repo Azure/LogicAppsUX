@@ -8,7 +8,7 @@ import type { Connection } from '../../models/Connection';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { flattenInputs } from '../../utils/Connection.Utils';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
-import { ItemToggledState } from '../tree/SchemaTreeItem';
+import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import HandleWrapper from './HandleWrapper';
 import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import type { CardProps } from './NodeCard';
@@ -312,7 +312,7 @@ const NBadge = ({ isOutput }: NBadgeProps) => {
           shape="rounded"
           size="small"
           appearance="tint"
-          color="informative"
+          color="important"
         >
           N
         </Badge>

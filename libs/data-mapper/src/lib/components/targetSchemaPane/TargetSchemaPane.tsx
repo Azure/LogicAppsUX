@@ -2,9 +2,9 @@ import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { NormalizedDataType, SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaTree } from '../tree/SchemaTree';
-import type { NodeToggledStateDictionary } from '../tree/SchemaTreeItem';
-import { ItemToggledState } from '../tree/SchemaTreeItem';
+import TargetSchemaTreeItem, { ItemToggledState } from '../tree/TargetSchemaTreeItem';
+import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
+import Tree from '../tree/Tree';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular } from '@fluentui/react-icons';
@@ -116,13 +116,13 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         )}
       </Stack>
 
-      {isExpanded && targetSchema && (
+      {isExpanded && targetSchema && toggledStatesDictionary && (
         <div style={{ margin: 8, marginLeft: 40, width: 290, flex: '1 1 1px', overflowY: 'auto' }}>
-          <SchemaTree
-            schema={targetSchema}
-            toggledStatesDictionary={toggledStatesDictionary}
-            onNodeClick={handleItemClick}
-            isTargetSchema
+          <Tree<SchemaNodeExtended>
+            treeRoot={targetSchema.schemaTreeRoot}
+            nodeContent={(node: SchemaNodeExtended) => (
+              <TargetSchemaTreeItem node={node} status={toggledStatesDictionary[node.key]} onClick={() => handleItemClick(node)} />
+            )}
           />
         </div>
       )}
