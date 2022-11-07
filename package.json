@@ -95,7 +95,7 @@
     "react-remark": "2.1.0",
     "react-router-dom": "6.3.0",
     "react-use": "17.4.0",
-    "reactflow": "^11.0.0",
+    "reactflow": "^11.2.0",
     "regenerator-runtime": "0.13.9",
     "stream-http": "^3.2.0",
     "tiny-invariant": "1.2.0",
