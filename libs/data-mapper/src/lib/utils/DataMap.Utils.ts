@@ -21,7 +21,7 @@ import {
   nodeHasSourceNodeEventually,
   nodeHasSpecificInputEventually,
 } from './Connection.Utils';
-import { findFunctionForFunctionName, findFunctionForKey, isFunctionData } from './Function.Utils';
+import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
 import { addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft-logic-apps/utils';
@@ -160,15 +160,18 @@ const generateForSection = (
   // Local loop variables use current working directory './' instead of '$'
   const formattedPathLocation = pathLocation.startsWith('@') ? `./${pathLocation}` : pathLocation;
 
-  // TODO allow for nested loops
-  const forEntry = nodeHasSpecificInputEventually(
-    indexPseudoFunctionKey,
-    connections[addTargetReactFlowPrefix(path[0].key)],
-    connections,
-    false
-  )
-    ? `${mapNodeParams.for}(${loopValue}, $i)`
-    : `${mapNodeParams.for}(${loopValue})`;
+  const currentConnection = connections[addTargetReactFlowPrefix(path[0].key)];
+  const loopHasIndex = nodeHasSpecificInputEventually(indexPseudoFunctionKey, currentConnection, connections, false);
+
+  let forEntry: string;
+  if (loopHasIndex) {
+    const indexFunctionKey = (isConnectionUnit(currentConnection.inputs[0][0]) && currentConnection.inputs[0][0].reactFlowKey) || '';
+    const indexFunctionInput = connections[indexFunctionKey];
+    forEntry = `${mapNodeParams.for}(${loopValue}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
+  } else {
+    forEntry = `${mapNodeParams.for}(${loopValue})`;
+  }
+
   if (!mapDefinition[forEntry]) {
     mapDefinition[forEntry] = {};
   }
@@ -207,7 +210,7 @@ const generateIfSection = (
 const collectFunctionValue = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
   // Special case where the index is used directly
   if (currentConnection.self.node.key === indexPseudoFunctionKey) {
-    return '$i';
+    return getIndexValueForCurrentConnection(currentConnection);
   }
 
   const inputValues = getInputValues(currentConnection, connections);
@@ -240,7 +243,7 @@ const getInputValues = (currentConnection: Connection | undefined, connections: 
             return input.node.fullName.startsWith('@') ? `$${input.node.key}` : input.node.key;
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
-              return '$i';
+              return getIndexValueForCurrentConnection(currentConnection);
             } else {
               return collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
             }
