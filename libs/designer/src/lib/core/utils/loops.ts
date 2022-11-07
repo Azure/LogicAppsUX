@@ -154,7 +154,9 @@ export const getRepetitionContext = async (nodeId: string, state: RootState, inc
       : undefined;
 
   const repetitionReferences = (
-    await Promise.all(repetitionNodeIds.map((repetitionNodeId) => getRepetitionReference(repetitionNodeId, state.operations)))
+    await Promise.all(
+      repetitionNodeIds.map((repetitionNodeId) => getRepetitionReference(repetitionNodeId, state.operations, state.workflow.idReplacements))
+    )
   ).filter((reference) => !!reference) as RepetitionReference[];
 
   const parentReferences: RepetitionReference[] = [];
@@ -269,7 +271,11 @@ export const getForeachActionName = (
   return foreachAction?.actionName;
 };
 
-const getRepetitionReference = async (nodeId: string, state: OperationMetadataState): Promise<RepetitionReference | undefined> => {
+const getRepetitionReference = async (
+  nodeId: string,
+  state: OperationMetadataState,
+  idReplacements: Record<string, string>
+): Promise<RepetitionReference | undefined> => {
   const operationInfo = state.operationInfo[nodeId];
   const service = OperationManifestService();
   if (service.isSupported(operationInfo.type, operationInfo.kind)) {
@@ -277,7 +283,10 @@ const getRepetitionReference = async (nodeId: string, state: OperationMetadataSt
     const parameterName = manifest.properties.repetition?.loopParameter;
     const parameter = parameterName ? getParameterFromName(state.inputParameters[nodeId], parameterName) : undefined;
     if (parameter) {
-      const repetitionValue = getJSONValueFromString(parameterValueToString(parameter, /* isDefinitionValue */ true), parameter.type);
+      const repetitionValue = getJSONValueFromString(
+        parameterValueToString(parameter, /* isDefinitionValue */ true, idReplacements),
+        parameter.type
+      );
       return {
         actionName: nodeId,
         actionType: operationInfo.type,

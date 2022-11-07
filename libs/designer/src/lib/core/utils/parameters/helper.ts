@@ -1478,7 +1478,8 @@ export async function loadDynamicValuesForParameter(
   nodeInputs: NodeInputs,
   dependencies: NodeDependencies,
   showErrorWhenNotReady: boolean,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  idReplacements: Record<string, string> = {}
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
   const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
@@ -1503,7 +1504,7 @@ export async function loadDynamicValuesForParameter(
       );
 
       try {
-        const dynamicValues = await getDynamicValues(dependencyInfo, nodeInputs, operationInfo, connectionReference);
+        const dynamicValues = await getDynamicValues(dependencyInfo, nodeInputs, operationInfo, connectionReference, idReplacements);
 
         dispatch(
           updateNodeParameters({
@@ -2047,8 +2048,37 @@ export function getInterpolatedExpression(expression: string, parameterType: str
   }
 }
 
-export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitionValue: boolean): string | undefined {
-  const preservedValue = parameterInfo.preservedValue;
+export function parameterValueToString(
+  parameterInfo: ParameterInfo,
+  isDefinitionValue: boolean,
+  idReplacements?: Record<string, string>
+): string | undefined {
+  let didRemap = false;
+  const remappedParameterInfo = idReplacements
+    ? {
+        ...parameterInfo,
+        value: parameterInfo.value.map((val) => {
+          const oldId = val.token?.actionName ?? '';
+          if (val.token && idReplacements[oldId]) {
+            const newId = idReplacements[oldId];
+            didRemap = true;
+            return {
+              ...val,
+              value: val.value?.replace(`'${oldId}'`, `'${newId}'`),
+              token: {
+                ...val.token,
+                actionName: newId,
+              },
+            };
+          }
+          return val;
+        }),
+      }
+    : parameterInfo;
+
+  if (didRemap) delete remappedParameterInfo.preservedValue;
+
+  const preservedValue = remappedParameterInfo.preservedValue;
   if (preservedValue !== undefined && isDefinitionValue) {
     switch (typeof preservedValue) {
       case 'string':
@@ -2058,12 +2088,12 @@ export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitio
     }
   }
 
-  const valueFromEditor = getStringifiedValueFromEditorViewModel(parameterInfo, isDefinitionValue);
+  const valueFromEditor = getStringifiedValueFromEditorViewModel(remappedParameterInfo, isDefinitionValue);
   if (valueFromEditor !== undefined) {
     return valueFromEditor;
   }
 
-  const parameter = { ...parameterInfo };
+  const parameter = { ...remappedParameterInfo };
   const isPathParameter = parameter.info.in === ParameterLocations.Path;
   const value = parameter.value.filter((segment) => segment.value !== '');
 
@@ -2081,7 +2111,7 @@ export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitio
 
   const parameterType = getInferredParameterType(value, parameter.type);
   const parameterFormat = parameter.info.format ?? '';
-  const parameterSuppressesCasting = !!parameterInfo.suppressCasting;
+  const parameterSuppressesCasting = !!remappedParameterInfo.suppressCasting;
 
   const shouldCast = requiresCast(parameterType, parameterFormat, value, parameterSuppressesCasting);
   if (!isPathParameter && shouldCast) {
@@ -2096,7 +2126,9 @@ export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitio
     return parameterValueToJSONString(value, /* applyCasting */ !parameterSuppressesCasting);
   }
 
-  const segmentsAfterCasting = parameterInfo.suppressCasting ? value : castTokenSegmentsInValue(value, parameterType, parameterFormat);
+  const segmentsAfterCasting = remappedParameterInfo.suppressCasting
+    ? value
+    : castTokenSegmentsInValue(value, parameterType, parameterFormat);
 
   // Note: Path parameter values are always enclosed inside encodeComponent function if specified.
   if (isPathParameter && isDefinitionValue) {
@@ -2123,7 +2155,7 @@ export function parameterValueToString(parameterInfo: ParameterInfo, isDefinitio
             // Note: Token segment should be auto casted using interpolation if token type is
             // non string and referred in a string parameter.
             expressionValue =
-              !parameterInfo.suppressCasting && parameterType === 'string' && segment.token?.type !== 'string'
+              !remappedParameterInfo.suppressCasting && parameterType === 'string' && segment.token?.type !== 'string'
                 ? `@{${expressionValue}}`
                 : `@${expressionValue}`;
           }

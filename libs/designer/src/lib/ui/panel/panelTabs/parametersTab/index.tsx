@@ -10,7 +10,7 @@ import {
 } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
 import { updateVariableInfo } from '../../../../core/state/tokensSlice';
-import { useNodeMetadata } from '../../../../core/state/workflow/workflowSelectors';
+import { useNodeMetadata, useReplacedIds } from '../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
@@ -44,7 +44,8 @@ export const ParametersTab = () => {
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
 
-  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState);
+  const replacedIds = useReplacedIds();
+  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
   const expressionGroup = getExpressionTokenSections();
 
   if (!operationInfo && !nodeMetadata?.subgraphType) {
@@ -101,6 +102,7 @@ const ParameterSection = ({
     operationDefinition,
     connectionReference,
     tokenPickerVisibility,
+    idReplacements,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
@@ -113,6 +115,7 @@ const ParameterSection = ({
       operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
       connectionReference: getConnectionReference(state.connections, nodeId),
       tokenPickerVisibility: state.panel.tokenPickerVisibility,
+      idReplacements: state.workflow.idReplacements,
     };
   });
   const rootState = useSelector((state: RootState) => state);
@@ -190,7 +193,8 @@ const ParameterSection = ({
         nodeInputs,
         dependencies,
         true /* showErrorWhenNotReady */,
-        dispatch
+        dispatch,
+        idReplacements
       );
     }
   };
