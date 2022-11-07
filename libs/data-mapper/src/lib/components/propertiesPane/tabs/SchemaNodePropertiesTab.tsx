@@ -121,7 +121,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
             <InputDropdown currentNode={currentNode} inputValue={inputValue} inputStyles={{ gridColumn: gridColumnSpan2 }} inputIndex={0} />
           </div>
 
-          <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px', marginLeft: -12 }}>
+          <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px', marginLeft: '-12px' }}>
             <AccordionItem value="1">
               <AccordionHeader>{advOptLoc}</AccordionHeader>
               <AccordionPanel>
