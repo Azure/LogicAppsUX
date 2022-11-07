@@ -23,7 +23,7 @@ const generalToolboxPanelProps = {
   xPos: '16px',
   yPos: '60px',
   width: '250px',
-  minHeight: '200px',
+  minHeight: '240px',
 } as FloatingPanelProps;
 
 interface CanvasToolboxProps {
