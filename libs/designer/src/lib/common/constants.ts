@@ -175,6 +175,7 @@ export default {
     AUTHENTICATION: 'authentication',
     CODE: 'code',
     CONDITION: 'condition',
+    COMBOBOX: 'combobox',
     COPYABLE: 'copyable',
     DICTIONARY: 'dictionary',
     DROPDOWN: 'dropdown',

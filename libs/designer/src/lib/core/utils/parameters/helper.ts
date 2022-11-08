@@ -100,6 +100,7 @@ import {
 } from '@microsoft-logic-apps/utils';
 import type {
   AuthProps,
+  ComboboxItem,
   DictionaryEditorItemProps,
   GroupItemProps,
   OutputToken,
@@ -260,14 +261,14 @@ export function createParameterInfo(
   _metadata?: Record<string, string>,
   shouldIgnoreDefaultValue = false
 ): ParameterInfo {
-  const editor = getParameterEditorProps(parameter, shouldIgnoreDefaultValue);
+  const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue);
   const parameterInfo: ParameterInfo = {
     alternativeKey: parameter.alternativeKey,
     id: guid(),
     dynamicData: parameter.dynamicValues ? { status: DynamicCallStatus.NOTSTARTED } : undefined,
-    editor: editor.type,
-    editorOptions: editor.options,
-    editorViewModel: editor.viewModel,
+    editor,
+    editorOptions,
+    editorViewModel,
     info: {
       alias: parameter.alias,
       encode: parameter.encode,
@@ -277,14 +278,14 @@ export function createParameterInfo(
       isUnknown: parameter.isUnknown,
       serialization: parameter.serialization,
     },
-    hideInUI: parameter?.hideInUI ?? equals(parameter.visibility, 'hideInUI'),
+    hideInUI: shouldHideInUI(parameter),
     label: parameter.title || parameter.summary || parameter.name,
     parameterKey: parameter.key,
     parameterName: parameter.name,
     placeholder: parameter.description,
     preservedValue: getPreservedValue(parameter),
     required: !!parameter.required,
-    schema: editor.schema,
+    schema,
     showErrors: false,
     showTokens: parameter?.schema?.['x-ms-editor'] === 'string' ? false : true,
     suppressCasting: parameter.suppressCasting,
@@ -296,41 +297,40 @@ export function createParameterInfo(
   return parameterInfo;
 }
 
+function shouldHideInUI(parameter: ResolvedParameter): boolean {
+  return parameter?.hideInUI || equals(parameter.visibility, 'hideInUI') || equals(parameter.visibility, Visibility.Internal);
+}
+
 // TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor
-export function getParameterEditorProps(inputParameter: InputParameter, shouldIgnoreDefaultValue = false): ParameterEditorProps {
-  let type = inputParameter.editor;
+export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreDefaultValue = false): ParameterEditorProps {
+  const { dynamicValues, type, itemSchema, visibility, value } = parameter;
+  let { editor, editorOptions, schema } = parameter;
   let editorViewModel;
-  let schema = inputParameter.schema;
-  let editorOptions = inputParameter.editorOptions;
-  const { dynamicValues } = inputParameter;
-  if (
-    !type &&
-    inputParameter.type === constants.SWAGGER.TYPE.ARRAY &&
-    !!inputParameter.itemSchema &&
-    !equals(inputParameter.visibility, Visibility.Internal)
-  ) {
-    type = constants.EDITOR.ARRAY;
-    editorViewModel = initializeArrayViewModel(inputParameter, shouldIgnoreDefaultValue);
+  if (!editor && type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
+    editor = constants.EDITOR.ARRAY;
+    editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
     schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.ARRAY } };
-  } else if (type === constants.EDITOR.DICTIONARY) {
-    editorViewModel = toDictionaryViewModel(inputParameter.value);
-  } else if (type === constants.EDITOR.TABLE) {
-    editorViewModel = toTableViewModel(inputParameter.value, editorOptions);
-  } else if (type === constants.EDITOR.AUTHENTICATION) {
-    editorViewModel = toAuthenticationViewModel(inputParameter.value);
+  } else if (!editor && schema?.enum && !equals(visibility, Visibility.Internal)) {
+    console.log('schemaCompare', itemSchema, schema);
+    editor = constants.EDITOR.COMBOBOX;
+    schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.COMBOBOX } };
+    editorOptions = { ...editorOptions, options: schema.enum.map((val: ComboboxItem) => ({ key: val, value: val, displayName: val })) };
+  } else if (editor === constants.EDITOR.DICTIONARY) {
+    editorViewModel = toDictionaryViewModel(value);
+  } else if (editor === constants.EDITOR.TABLE) {
+    editorViewModel = toTableViewModel(value, editorOptions);
+  } else if (editor === constants.EDITOR.AUTHENTICATION) {
+    editorViewModel = toAuthenticationViewModel(value);
     editorOptions = { ...editorOptions, identity: WorkflowService().getAppIdentity?.() };
-  } else if (type === constants.EDITOR.CONDITION) {
-    editorViewModel = toConditionViewModel(inputParameter.value);
+  } else if (editor === constants.EDITOR.CONDITION) {
+    editorViewModel = toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
-    type = undefined;
+    editor = undefined;
   }
 
-  return {
-    type,
-    options: !type ? undefined : editorOptions,
-    viewModel: editorViewModel,
-    schema,
-  };
+  if (!editor) editorOptions = undefined;
+
+  return { editor, editorOptions, editorViewModel, schema };
 }
 
 const toConditionViewModel = (input: any): { items: GroupItemProps } => {
@@ -494,9 +494,9 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
 }
 
 interface ParameterEditorProps {
-  type?: string;
-  options?: Record<string, any>;
-  viewModel?: any;
+  editor?: string;
+  editorOptions?: Record<string, any>;
+  editorViewModel?: any;
   schema: any;
 }
 
