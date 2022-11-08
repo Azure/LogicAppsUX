@@ -14,7 +14,7 @@ const useStyles = makeStyles({
     ...typographyStyles.body1,
     color: tokens.colorNeutralForeground2,
     paddingLeft: '4px',
-    maxWidth: '115px',
+    maxWidth: '110px',
     ...shorthands.overflow('hidden'),
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',

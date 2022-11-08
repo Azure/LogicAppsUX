@@ -1,10 +1,12 @@
+import type { RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { useSchemaTreeItemStyles } from './SourceSchemaTreeItem';
 import { Stack } from '@fluentui/react';
-import { mergeClasses, Text, tokens } from '@fluentui/react-components';
+import { mergeClasses, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular } from '@fluentui/react-icons';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export type NodeToggledStateDictionary = { [key: string]: ItemToggledState };
 export enum ItemToggledState {
@@ -22,6 +24,12 @@ interface TargetSchemaTreeItemProps {
 const TargetSchemaTreeItem = ({ node, status, onClick }: TargetSchemaTreeItemProps) => {
   const styles = useSchemaTreeItemStyles();
 
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
+
+  const [isContainerHovered, setIsContainerHovered] = useState(false);
+
+  const isItemCurrentNode = useMemo(() => currentTargetSchemaNode?.key === node.key, [currentTargetSchemaNode, node]);
+
   const statusIcon = useMemo(() => {
     switch (status) {
       case ItemToggledState.Completed:
@@ -35,17 +43,33 @@ const TargetSchemaTreeItem = ({ node, status, onClick }: TargetSchemaTreeItemPro
     }
   }, [status]);
 
-  const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, false, node.nodeProperties);
+  const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, true, node.nodeProperties);
 
   return (
-    <Stack className={mergeClasses(styles.nodeContainer, styles.targetSchemaNode)} onClick={onClick} horizontal verticalAlign="center">
-      <div style={{ marginRight: '4px', marginTop: '2px' }}>{statusIcon}</div>
+    <Stack
+      className={mergeClasses(styles.nodeContainer, styles.targetSchemaNode)}
+      style={{ backgroundColor: isItemCurrentNode ? tokens.colorNeutralBackground4Selected : undefined }}
+      onClick={onClick}
+      onMouseEnter={() => setIsContainerHovered(true)}
+      onMouseLeave={() => setIsContainerHovered(false)}
+      horizontal
+      verticalAlign="center"
+    >
+      <div className={styles.indicator} style={{ visibility: isItemCurrentNode ? 'visible' : 'hidden' }} />
 
-      <div>
-        <BundledTypeIcon style={{ display: 'flex', paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} />
+      <span style={{ marginRight: '4px', marginTop: '2px' }}>{statusIcon}</span>
+
+      <div style={{ display: 'flex' }}>
+        <BundledTypeIcon
+          className={styles.dataTypeIcon}
+          style={{ color: isItemCurrentNode ? tokens.colorBrandForeground1 : undefined }}
+          filled={isItemCurrentNode ? true : undefined}
+        />
       </div>
 
-      <Text className={styles.nodeName}>{node.name}</Text>
+      <Text className={styles.nodeName} style={isContainerHovered ? { ...typographyStyles.caption1Strong } : undefined}>
+        {node.name}
+      </Text>
     </Stack>
   );
 };
