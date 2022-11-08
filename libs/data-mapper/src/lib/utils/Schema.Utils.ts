@@ -97,7 +97,7 @@ export const searchSchemaTreeFromRoot = (
   }
 
   const searchChildren = (result: SchemaNodeExtended[], node: SchemaNodeExtended) => {
-    if (node.key.includes(nodeKeySearchTerm)) {
+    if (node.key.toLowerCase().includes(nodeKeySearchTerm.toLowerCase())) {
       result.push({ ...node });
       return result;
     }
