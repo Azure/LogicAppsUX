@@ -3,9 +3,11 @@ import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
 import { makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
+import { useState } from 'react';
 
 export const useSchemaTreeItemStyles = makeStyles({
   nodeContainer: {
+    minWidth: 0,
     width: '100%',
     height: '28px',
     ...shorthands.padding('4px', '6px'),
@@ -26,13 +28,25 @@ export const useSchemaTreeItemStyles = makeStyles({
       backgroundColor: tokens.colorNeutralBackground4Hover,
     },
   },
+  dataTypeIcon: {
+    color: tokens.colorNeutralForeground1,
+    paddingLeft: tokens.spacingHorizontalXS,
+    paddingRight: tokens.spacingHorizontalXS,
+  },
   nodeName: {
+    color: tokens.colorNeutralForeground1,
     ...typographyStyles.caption1,
-    marginRight: '8px',
     width: '100%',
-    ':hover': {
-      ...typographyStyles.caption1Strong,
-    },
+    ...shorthands.overflow('hidden'),
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+  },
+  indicator: {
+    height: '16px',
+    width: '2px',
+    ...shorthands.borderRadius(tokens.borderRadiusSmall),
+    backgroundColor: tokens.colorBrandForeground1,
+    marginRight: '4px',
   },
 });
 
@@ -44,16 +58,31 @@ interface SourceSchemaTreeItemProps {
 
 const SourceSchemaTreeItem = ({ node, isNodeAdded, onClick }: SourceSchemaTreeItemProps) => {
   const styles = useSchemaTreeItemStyles();
+  const [isContainerHovered, setIsContainerHovered] = useState(false);
 
-  const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, false, node.nodeProperties);
+  const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, true, node.nodeProperties);
 
   return (
-    <Stack className={mergeClasses(styles.nodeContainer, styles.sourceSchemaNode)} onClick={onClick} horizontal verticalAlign="center">
-      <BundledTypeIcon style={{ paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} />
+    <Stack
+      className={mergeClasses(styles.nodeContainer, styles.sourceSchemaNode)}
+      style={{ backgroundColor: isNodeAdded ? tokens.colorBrandBackground2 : undefined }}
+      onClick={onClick}
+      onMouseEnter={() => setIsContainerHovered(true)}
+      onMouseLeave={() => setIsContainerHovered(false)}
+      horizontal
+      verticalAlign="center"
+    >
+      <BundledTypeIcon
+        className={styles.dataTypeIcon}
+        style={{ color: isNodeAdded ? tokens.colorBrandForeground1 : undefined }}
+        filled={isNodeAdded ? true : undefined}
+      />
 
-      <Text className={styles.nodeName}>{node.name}</Text>
+      <Text className={styles.nodeName} style={isContainerHovered ? { ...typographyStyles.caption1Strong } : undefined}>
+        {node.name}
+      </Text>
 
-      <span style={{ display: 'flex', marginLeft: 'auto', marginRight: '4px' }}>
+      <span style={{ display: 'flex', position: 'sticky', right: 10 }}>
         {isNodeAdded ? (
           <CheckmarkCircle16Filled primaryFill={tokens.colorBrandForeground1} />
         ) : (
