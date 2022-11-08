@@ -7,6 +7,7 @@ import { useState } from 'react';
 
 export const useSchemaTreeItemStyles = makeStyles({
   nodeContainer: {
+    minWidth: 0,
     width: '100%',
     height: '28px',
     ...shorthands.padding('4px', '6px'),
@@ -35,8 +36,10 @@ export const useSchemaTreeItemStyles = makeStyles({
   nodeName: {
     color: tokens.colorNeutralForeground1,
     ...typographyStyles.caption1,
-    marginRight: '8px',
     width: '100%',
+    ...shorthands.overflow('hidden'),
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
   },
   indicator: {
     height: '16px',
@@ -79,7 +82,7 @@ const SourceSchemaTreeItem = ({ node, isNodeAdded, onClick }: SourceSchemaTreeIt
         {node.name}
       </Text>
 
-      <span style={{ display: 'flex', position: 'sticky', right: '4px' }}>
+      <span style={{ display: 'flex', position: 'sticky', right: 10 }}>
         {isNodeAdded ? (
           <CheckmarkCircle16Filled primaryFill={tokens.colorBrandForeground1} />
         ) : (
