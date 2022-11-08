@@ -10,7 +10,7 @@ import {
 } from '../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../core/state/tokensSlice';
 import { updateVariableInfo } from '../../../../core/state/tokensSlice';
-import { useNodeMetadata } from '../../../../core/state/workflow/workflowSelectors';
+import { useNodeMetadata, useReplacedIds } from '../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../core/store';
 import { getConnectionReference } from '../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../core/utils/graph';
@@ -24,7 +24,7 @@ import type { Settings } from '../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import { equals } from '@microsoft-logic-apps/utils';
-import { DynamicCallStatus, TokenPicker } from '@microsoft/designer-ui';
+import { DynamicCallStatus, TokenPicker, ValueSegmentType } from '@microsoft/designer-ui';
 import type { ChangeState, PanelTab, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -44,7 +44,8 @@ export const ParametersTab = () => {
   const operationInfo = useOperationInfo(selectedNodeId);
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
 
-  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState);
+  const replacedIds = useReplacedIds();
+  const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
   const expressionGroup = getExpressionTokenSections();
 
   if (!operationInfo && !nodeMetadata?.subgraphType) {
@@ -90,7 +91,7 @@ const ParameterSection = ({
   expressionGroup: TokenGroup[];
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [ sectionExpanded, setSectionExpanded] = useState<boolean>(false);
+  const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
   const {
     isTrigger,
     nodeInputs,
@@ -102,6 +103,7 @@ const ParameterSection = ({
     operationDefinition,
     connectionReference,
     tokenPickerVisibility,
+    idReplacements,
   } = useSelector((state: RootState) => {
     return {
       isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
@@ -114,6 +116,7 @@ const ParameterSection = ({
       operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
       connectionReference: getConnectionReference(state.connections, nodeId),
       tokenPickerVisibility: state.panel.tokenPickerVisibility,
+      idReplacements: state.workflow.idReplacements,
     };
   });
   const rootState = useSelector((state: RootState) => state);
@@ -191,7 +194,8 @@ const ParameterSection = ({
         nodeInputs,
         dependencies,
         true /* showErrorWhenNotReady */,
-        dispatch
+        dispatch,
+        idReplacements
       );
     }
   };
@@ -250,25 +254,38 @@ const ParameterSection = ({
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI)
     .map((param) => {
+      const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData } = param;
+      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
+
+      const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
+        if (v.type !== ValueSegmentType.TOKEN) return v;
+        const oldId = v.token?.actionName ?? '';
+        const newId = idReplacements[oldId] ?? '';
+        if (!newId) return v;
+        const remappedValue = v.value?.replace(`'${oldId}'`, `'${newId}'`) ?? '';
+        return {
+          ...v,
+          token: {
+            ...v.token,
+            remappedValue,
+          },
+        } as ValueSegment;
+      });
+
       return {
         settingType: 'SettingTokenField',
         settingProp: {
+          ...paramSubset,
           readOnly,
-          id: param.id,
-          label: param.label,
-          value: param.value,
-          required: param.required,
+          value: remappedValues,
           editor,
           editorOptions,
-          editorViewModel: param.editorViewModel,
-          placeholder: param.placeholder,
           tokenEditor: true,
-          isTrigger: isTrigger,
-          isLoading: param.dynamicData?.status === DynamicCallStatus.STARTED,
-          errorDetails: param.dynamicData?.error ? { message: param.dynamicData.error.message } : undefined,
-          showTokens: param.showTokens,
-          onValueChange: (newState: ChangeState) => onValueChange(param.id, newState),
+          isTrigger,
+          isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
+          errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
+          onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           tokenPickerHandler: {
             getTokenPicker: (
@@ -276,15 +293,14 @@ const ParameterSection = ({
               labelId: string,
               tokenPickerFocused?: (b: boolean) => void,
               tokenClicked?: (token: ValueSegment) => void
-            ) => getTokenPicker(param.id, editorId, labelId, tokenPickerFocused, tokenClicked),
+            ) => getTokenPicker(id, editorId, labelId, tokenPickerFocused, tokenClicked),
             tokenPickerProps: { tokenPickerVisibility, showTokenPickerSwitch },
           },
         },
       };
     });
 
-  
-    return (
+  return (
     <SettingsSection
       id={group.id}
       sectionName={group.description}

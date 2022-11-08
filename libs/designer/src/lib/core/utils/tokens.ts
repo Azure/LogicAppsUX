@@ -26,7 +26,7 @@ import { OperationManifestService } from '@microsoft-logic-apps/designer-client-
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { getKnownTitles, OutputKeys } from '@microsoft-logic-apps/parsers';
 import type { BuiltInOutput, OperationManifest } from '@microsoft-logic-apps/utils';
-import { unmap, equals, labelCase } from '@microsoft-logic-apps/utils';
+import { labelCase, unmap, equals } from '@microsoft-logic-apps/utils';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
 
@@ -165,7 +165,8 @@ export const getOutputTokenSections = (
   nodeId: string,
   nodeType: string,
   tokenState: TokensState,
-  workflowParametersState: WorkflowParametersState
+  workflowParametersState: WorkflowParametersState,
+  replacementIds: Record<string, string>
 ): TokenGroup[] => {
   const { definitions } = workflowParametersState;
   const { variables, outputTokens } = tokenState;
@@ -186,14 +187,17 @@ export const getOutputTokenSections = (
       label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),
       tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
         ...token,
-        value: getExpressionValueForOutputToken(token, nodeType),
+        value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
       })),
     });
 
     const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
       let tokens = outputTokens[upstreamNodeId].tokens;
       tokens = tokens.map((token) => {
-        return { ...token, value: getExpressionValueForOutputToken(token, nodeType) };
+        return {
+          ...token,
+          value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+        };
       });
 
       if (!tokens.length) {
@@ -202,7 +206,7 @@ export const getOutputTokenSections = (
 
       return {
         id: upstreamNodeId,
-        label: labelCase(upstreamNodeId),
+        label: labelCase(replacementIds[upstreamNodeId] ?? upstreamNodeId),
         tokens,
         hasAdvanced: tokens.some((token) => token.isAdvanced),
         showAdvanced: false,
@@ -267,6 +271,12 @@ export const createValueSegmentFromToken = async (
       } else {
         ensureExpressionValue(tokenValueSegment);
       }
+    }
+
+    if (tokenValueSegment.token) {
+      const oldId = tokenValueSegment.token.actionName ?? '';
+      const newId = rootState.workflow.idReplacements[oldId] ?? oldId;
+      tokenValueSegment.token.remappedValue = tokenValueSegment.value.replace(oldId, newId);
     }
 
     return shouldAdd ? { segment: tokenValueSegment, foreachDetails: { arrayValue: parentArrayValue } } : { segment: tokenValueSegment };
@@ -365,4 +375,8 @@ export const convertWorkflowParameterTypeToSwaggerType = (type: string | undefin
     default:
       return Constants.SWAGGER.TYPE.ANY;
   }
+};
+
+const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
+  return value.replace(id, replacementIds[id] ?? id);
 };
