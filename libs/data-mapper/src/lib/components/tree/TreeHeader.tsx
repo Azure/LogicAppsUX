@@ -1,6 +1,6 @@
 import type { ISearchBoxStyleProps, ISearchBoxStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { SearchBox } from '@fluentui/react';
-import { tokens } from '@fluentui/react-components';
+import { tokens, typographyStyles } from '@fluentui/react-components';
 import { useDebouncedCallback } from '@react-hookz/web';
 import { useIntl } from 'react-intl';
 
@@ -26,6 +26,11 @@ const searchBoxStyles: IStyleFunctionOrObject<ISearchBoxStyleProps, ISearchBoxSt
     borderBottomColor: tokens.colorNeutralStrokeAccessible,
     borderRadius: tokens.borderRadiusMedium,
     marginBottom: '6px',
+    backgroundColor: tokens.colorNeutralBackground1,
+  },
+  field: {
+    color: tokens.colorNeutralForeground1,
+    ...typographyStyles.caption1,
   },
 };
 
