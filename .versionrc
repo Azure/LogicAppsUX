@@ -2,17 +2,21 @@
   "header": "# Logic Apps Designer",
   "infile": "CHANGELOG.md",
   "types": [
-    {
+  {
       "type": "feat",
       "section": "Features"
     },
     {
-      "type": "fix",
-      "section": "Bug Fixes"
+      "type": "dmfeat",
+      "section": "Data Mapper Changes"
     },
     {
-      "type": "breaking",
-      "section": "Potential Breaking Changes"
+      "type": "lafeat",
+      "section": "Logic Apps Designer Changes"
+    },
+    {
+      "type": "vscfeat",
+      "section": "Visual Studio Code Extension Changes"
     }
   ],
   "bumpFiles": [
