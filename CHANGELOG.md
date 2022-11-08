@@ -1,4 +1,19 @@
 # Logic Apps Designer
+### [0.2.10](https://github.com/Azure/LogicAppsUX/compare/v0.2.9...v0.2.10) (2022-11-08)
+
+### [0.2.9](https://github.com/Azure/LogicAppsUX/compare/v0.2.8...v0.2.9) (2022-11-08)
+
+
+### Features
+
+* Add support for interaction with the mini map ([#1270](https://github.com/Azure/LogicAppsUX/issues/1270)) ([8162142](https://github.com/Azure/LogicAppsUX/commit/8162142c17e55e8f4fb17f510373c47d13572ef7))
+
+### [0.2.8](https://github.com/Azure/LogicAppsUX/compare/v0.2.7...v0.2.8) (2022-11-07)
+
+### [0.2.7](https://github.com/Azure/LogicAppsUX/compare/v0.2.6...v0.2.7) (2022-11-06)
+
+### [0.2.6](https://github.com/Azure/LogicAppsUX/compare/v0.2.5...v0.2.6) (2022-11-05)
+
 ### [0.2.5](https://github.com/Azure/LogicAppsUX/compare/v0.2.4...v0.2.5) (2022-11-04)
 
 ### [0.2.4](https://github.com/Azure/LogicAppsUX/compare/v0.2.3...v0.2.4) (2022-11-03)

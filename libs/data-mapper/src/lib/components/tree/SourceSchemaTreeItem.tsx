@@ -1,36 +1,67 @@
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaTreeItem, SharedTreeItemContent } from './SchemaTreeItem';
-import { tokens } from '@fluentui/react-components';
+import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { Stack } from '@fluentui/react';
+import { makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
-import React from 'react';
 
-export type SourceSchemaFastTreeItemProps = {
-  childNode: SchemaNodeExtended;
-  toggledNodes?: SchemaNodeExtended[];
-  onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
-};
+export const useSchemaTreeItemStyles = makeStyles({
+  nodeContainer: {
+    width: '100%',
+    height: '28px',
+    ...shorthands.padding('4px', '6px'),
+    ...shorthands.borderRadius(`${tokens.borderRadiusMedium}`),
+    ':hover': {
+      cursor: 'pointer',
+    },
+  },
+  sourceSchemaNode: {
+    backgroundColor: tokens.colorNeutralBackground1,
+    ':hover': {
+      backgroundColor: tokens.colorNeutralBackground1Hover,
+    },
+  },
+  targetSchemaNode: {
+    backgroundColor: tokens.colorNeutralBackground4,
+    ':hover': {
+      backgroundColor: tokens.colorNeutralBackground4Hover,
+    },
+  },
+  nodeName: {
+    ...typographyStyles.caption1,
+    marginRight: '8px',
+    width: '100%',
+    ':hover': {
+      ...typographyStyles.caption1Strong,
+    },
+  },
+});
 
-export const SourceSchemaFastTreeItem = (props: SourceSchemaFastTreeItemProps) => {
-  return <SchemaTreeItem {...props} />;
-};
-
-export interface SourceTreeItemContentProps {
+interface SourceSchemaTreeItemProps {
   node: SchemaNodeExtended;
-  isSelected: boolean;
-  children?: React.ReactNode;
+  isNodeAdded: boolean;
+  onClick: () => void;
 }
 
-export const SourceTreeItemContent = ({ node, isSelected, children }: SourceTreeItemContentProps) => {
-  const filledIcon = <CheckmarkCircle16Filled primaryFill={tokens.colorBrandForeground1} />;
-  const restIcon = <Circle16Regular primaryFill={tokens.colorNeutralForeground3} />;
+const SourceSchemaTreeItem = ({ node, isNodeAdded, onClick }: SourceSchemaTreeItemProps) => {
+  const styles = useSchemaTreeItemStyles();
+
+  const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, false, node.nodeProperties);
 
   return (
-    <>
-      {SharedTreeItemContent(node, isSelected)}
-      <span style={{ marginRight: '8px', width: '100%' }}>{children}</span>
-      <span style={{ display: 'flex', marginRight: '4px' }} slot="end">
-        {isSelected ? filledIcon : restIcon}
+    <Stack className={mergeClasses(styles.nodeContainer, styles.sourceSchemaNode)} onClick={onClick} horizontal verticalAlign="center">
+      <BundledTypeIcon style={{ paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} />
+
+      <Text className={styles.nodeName}>{node.name}</Text>
+
+      <span style={{ display: 'flex', marginLeft: 'auto', marginRight: '4px' }}>
+        {isNodeAdded ? (
+          <CheckmarkCircle16Filled primaryFill={tokens.colorBrandForeground1} />
+        ) : (
+          <Circle16Regular primaryFill={tokens.colorNeutralForeground3} />
+        )}
       </span>
-    </>
+    </Stack>
   );
 };
+
+export default SourceSchemaTreeItem;

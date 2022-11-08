@@ -1,34 +1,31 @@
 import type { SchemaNodeExtended } from '../../models';
-import { ItemToggledState, SchemaTreeItem, SharedTreeItemContent } from './SchemaTreeItem';
-import type { NodeToggledStateDictionary } from './SchemaTreeItem';
-import { tokens } from '@fluentui/react-components';
+import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { useSchemaTreeItemStyles } from './SourceSchemaTreeItem';
+import { Stack } from '@fluentui/react';
+import { mergeClasses, Text, tokens } from '@fluentui/react-components';
 import { CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular } from '@fluentui/react-icons';
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
-export type TargetSchemaFastTreeItemProps = {
-  childNode: SchemaNodeExtended;
-  toggledStatesDictionary?: NodeToggledStateDictionary;
-  onLeafNodeClick: (schemaNode: SchemaNodeExtended) => void;
-};
-
-export const TargetSchemaFastTreeItem = (props: TargetSchemaFastTreeItemProps) => {
-  return <SchemaTreeItem {...props} isTargetSchemaItem />;
-};
-
-export interface TargetTreeItemContentProps {
-  node: SchemaNodeExtended;
-  isSelected: boolean;
-  children?: React.ReactNode;
-  status: ItemToggledState;
+export type NodeToggledStateDictionary = { [key: string]: ItemToggledState };
+export enum ItemToggledState {
+  Completed = 'Completed',
+  InProgress = 'InProgress',
+  NotStarted = 'NotStarted',
 }
 
-export const TargetTreeItemContent = ({ node, isSelected, children, status }: TargetTreeItemContentProps) => {
+interface TargetSchemaTreeItemProps {
+  node: SchemaNodeExtended;
+  status: ItemToggledState;
+  onClick: () => void;
+}
+
+const TargetSchemaTreeItem = ({ node, status, onClick }: TargetSchemaTreeItemProps) => {
+  const styles = useSchemaTreeItemStyles();
+
   const statusIcon = useMemo(() => {
     switch (status) {
       case ItemToggledState.Completed:
-        return (
-          <CheckmarkCircle12Filled style={{ display: 'flex', marginRight: '4px' }} primaryFill={tokens.colorPaletteGreenForeground1} />
-        );
+        return <CheckmarkCircle12Filled primaryFill={tokens.colorPaletteGreenForeground1} />;
       case ItemToggledState.InProgress:
         return <CircleHalfFill12Regular primaryFill={tokens.colorPaletteYellowForeground1} />;
       case ItemToggledState.NotStarted:
@@ -38,13 +35,19 @@ export const TargetTreeItemContent = ({ node, isSelected, children, status }: Ta
     }
   }, [status]);
 
+  const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, false, node.nodeProperties);
+
   return (
-    <>
-      <span style={{ display: 'flex', marginRight: '4px', marginTop: '2px' }} slot="start">
-        {statusIcon}
-      </span>
-      {SharedTreeItemContent(node, isSelected)}
-      <span style={{ marginRight: '8px', width: '100%' }}>{children}</span>
-    </>
+    <Stack className={mergeClasses(styles.nodeContainer, styles.targetSchemaNode)} onClick={onClick} horizontal verticalAlign="center">
+      <div style={{ marginRight: '4px', marginTop: '2px' }}>{statusIcon}</div>
+
+      <div>
+        <BundledTypeIcon style={{ display: 'flex', paddingLeft: tokens.spacingHorizontalXS, paddingRight: tokens.spacingHorizontalXS }} />
+      </div>
+
+      <Text className={styles.nodeName}>{node.name}</Text>
+    </Stack>
   );
 };
+
+export default TargetSchemaTreeItem;

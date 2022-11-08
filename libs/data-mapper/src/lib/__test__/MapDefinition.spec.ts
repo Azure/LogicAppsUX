@@ -517,10 +517,10 @@ describe('Map definition conversions', () => {
       const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
       const loopingEntries = Object.entries(loopObject);
       expect(loopingEntries.length).toEqual(1);
-      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $i)');
+      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $a)');
       expect(loopingEntries[0][1]).not.toBe('string');
 
-      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $i)'] as MapDefinitionEntry;
+      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $a)'] as MapDefinitionEntry;
       const employeeForLoopEntries = Object.entries(employeeForObject);
       expect(employeeForLoopEntries.length).toEqual(1);
       expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -583,10 +583,10 @@ describe('Map definition conversions', () => {
       const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
       const loopingEntries = Object.entries(loopObject);
       expect(loopingEntries.length).toEqual(1);
-      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $i)');
+      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $a)');
       expect(loopingEntries[0][1]).not.toBe('string');
 
-      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $i)'] as MapDefinitionEntry;
+      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $a)'] as MapDefinitionEntry;
       const employeeForLoopEntries = Object.entries(employeeForObject);
       expect(employeeForLoopEntries.length).toEqual(1);
       expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -596,7 +596,7 @@ describe('Map definition conversions', () => {
       const employeeObjectEntries = Object.entries(employeeObject);
       expect(employeeObjectEntries.length).toEqual(1);
       expect(employeeObjectEntries[0][0]).toEqual('Name');
-      expect(employeeObjectEntries[0][1]).toEqual('$i');
+      expect(employeeObjectEntries[0][1]).toEqual('$a');
     });
 
     it('Generates body with function and index loop', async () => {
@@ -666,10 +666,10 @@ describe('Map definition conversions', () => {
       const loopObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['Looping'] as MapDefinitionEntry;
       const loopingEntries = Object.entries(loopObject);
       expect(loopingEntries.length).toEqual(1);
-      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $i)');
+      expect(loopingEntries[0][0]).toEqual('$for(/ns0:Root/Looping/Employee, $a)');
       expect(loopingEntries[0][1]).not.toBe('string');
 
-      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $i)'] as MapDefinitionEntry;
+      const employeeForObject = loopObject['$for(/ns0:Root/Looping/Employee, $a)'] as MapDefinitionEntry;
       const employeeForLoopEntries = Object.entries(employeeForObject);
       expect(employeeForLoopEntries.length).toEqual(1);
       expect(employeeForLoopEntries[0][0]).toEqual('Person');
@@ -681,7 +681,7 @@ describe('Map definition conversions', () => {
       expect(employeeObjectEntries[0][0]).toEqual('Address');
       expect(employeeObjectEntries[0][1]).toEqual('TelephoneNumber');
       expect(employeeObjectEntries[1][0]).toEqual('Name');
-      expect(employeeObjectEntries[1][1]).toEqual('concat(Name, $i)');
+      expect(employeeObjectEntries[1][1]).toEqual('concat(Name, $a)');
     });
 
     it('Generates body with conditional looping', async () => {

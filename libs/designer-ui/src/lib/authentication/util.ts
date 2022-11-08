@@ -287,9 +287,9 @@ export const PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE: Record<string, AuthProperty
  * @param {ManagedIdentity} identity - The managed identity.
  * @return {boolean} - If the managed identity contains a user assigned identity or not.
  */
-export function containsUserAssignedIdentities(identity: ManagedIdentity): boolean {
+export function containsUserAssignedIdentities(identity: ManagedIdentity | undefined): boolean {
   return (
-    identity &&
+    !!identity &&
     !!identity.type &&
     (equals(identity.type, ResourceIdentityType.USER_ASSIGNED) ||
       equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) &&
