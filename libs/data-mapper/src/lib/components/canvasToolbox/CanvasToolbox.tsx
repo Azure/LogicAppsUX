@@ -1,6 +1,7 @@
 import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
+import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../buttonPivot/ButtonPivot';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';
@@ -8,9 +9,10 @@ import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FunctionList } from '../functionList/FunctionList';
 import SourceSchemaTreeItem from '../tree/SourceSchemaTreeItem';
 import Tree from '../tree/Tree';
+import { TreeHeader } from '../tree/TreeHeader';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -37,6 +39,8 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   const toolboxTabToDisplay = useSelector((state: RootState) => state.dataMap.canvasToolboxTabToDisplay);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
+
+  const [sourceSchemaSearchTerm, setSourceSchemaSearchTerm] = useState<string>('');
 
   const showSourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Show source schema',
@@ -91,6 +95,18 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     }
   };
 
+  const searchedSourceSchemaTreeRoot = useMemo<SchemaNodeExtended | undefined>(() => {
+    if (!sourceSchema) {
+      return undefined;
+    }
+
+    if (!sourceSchemaSearchTerm) {
+      return { ...sourceSchema.schemaTreeRoot };
+    } else {
+      return searchSchemaTreeFromRoot(sourceSchema.schemaTreeRoot, sourceSchemaSearchTerm);
+    }
+  }, [sourceSchema, sourceSchemaSearchTerm]);
+
   const toolboxButtonPivotProps: ButtonPivotProps = useMemo(
     () => ({
       buttons: [
@@ -122,7 +138,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     <>
       <ButtonPivot {...toolboxButtonPivotProps} />
 
-      {toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree && sourceSchema && (
+      {toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree && sourceSchema && searchedSourceSchemaTreeRoot && (
         <FloatingPanel
           {...generalToolboxPanelProps}
           height={floatingPanelHeight}
@@ -130,8 +146,10 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
           subtitle={sourceSchema.name}
           onClose={closeToolbox}
         >
+          <TreeHeader onSearch={setSourceSchemaSearchTerm} onClear={() => setSourceSchemaSearchTerm('')} />
+
           <Tree<SchemaNodeExtended>
-            treeRoot={sourceSchema.schemaTreeRoot}
+            treeRoot={searchedSourceSchemaTreeRoot}
             nodeContent={(node: SchemaNodeExtended) => (
               <SourceSchemaTreeItem
                 node={node}

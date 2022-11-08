@@ -85,4 +85,34 @@ export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended):
   return result;
 };
 
+// Search key will be the node's key
+// Returns nodes that include the search key in their node.key (while maintaining the tree/schema's structure)
+export const searchSchemaTreeFromRoot = (
+  schemaTreeRoot: SchemaNodeExtended,
+  nodeKeySearchTerm: string,
+  minSearchCharacters = 2
+): SchemaNodeExtended => {
+  if (nodeKeySearchTerm.length < minSearchCharacters) {
+    return { ...schemaTreeRoot };
+  }
+
+  const searchChildren = (result: SchemaNodeExtended[], node: SchemaNodeExtended) => {
+    if (node.key.includes(nodeKeySearchTerm)) {
+      result.push({ ...node });
+      return result;
+    }
+
+    if (node.children.length > 0) {
+      const childNodes = node.children.reduce(searchChildren, []);
+      if (childNodes.length) {
+        result.push({ ...node, children: childNodes });
+      }
+    }
+
+    return result;
+  };
+
+  return { ...schemaTreeRoot, children: schemaTreeRoot.children.reduce(searchChildren, []) };
+};
+
 export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended => 'pathToRoot' in node;
