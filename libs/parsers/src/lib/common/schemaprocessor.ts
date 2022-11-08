@@ -2,7 +2,14 @@
 import type { SchemaProperty } from '../models/operation';
 import * as SwaggerConstants from './constants';
 import * as ParameterKeyUtility from './helpers/keysutility';
-import { dereferenceRefSchema, getEnum, getKnownTitles, getKnownTitlesFromKey, getParameterDynamicSchema, getParameterDynamicValues } from './helpers/utils';
+import {
+  dereferenceRefSchema,
+  getEnum,
+  getKnownTitles,
+  getKnownTitlesFromKey,
+  getParameterDynamicSchema,
+  getParameterDynamicValues,
+} from './helpers/utils';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
@@ -472,7 +479,11 @@ export class SchemaProcessor {
     const readOnly = schema.readOnly;
     const recommended = schema[SwaggerConstants.ExtensionProperties.SchedulerRecommendation];
     const required = $required;
-    let title = this._getTitle(schema.title || schema[SwaggerConstants.ExtensionProperties.Summary], this.options.currentKey as string, keyPrefix);
+    let title = this._getTitle(
+      schema.title || schema[SwaggerConstants.ExtensionProperties.Summary],
+      this.options.currentKey as string,
+      keyPrefix
+    );
     const summary = this._getSummary(schema[SwaggerConstants.ExtensionProperties.Summary], '');
     const type = (schema.type as string) || SwaggerConstants.Types.Any;
     const visibility = this._getVisibility(schema);

@@ -18,9 +18,15 @@ export const parseSegments = (value: ValueSegment[], tokensEnabled?: boolean): R
   value.forEach((segment) => {
     const segmentValue = segment.value;
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
-      const { brandColor, icon, title, name } = segment.token;
+      const { brandColor, icon, title, name, remappedValue } = segment.token;
       if (title || name) {
-        const token = $createTokenNode({ title: title ?? name, data: segment, brandColor, icon: icon, value: segmentValue });
+        const token = $createTokenNode({
+          title: title ?? name,
+          data: segment,
+          brandColor,
+          icon: icon,
+          value: remappedValue ?? segmentValue,
+        });
         tokensEnabled && paragraph.append(token);
       } else {
         throw new Error('Token Node is missing title or name');

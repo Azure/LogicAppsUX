@@ -255,7 +255,7 @@ export const workflowSlice = createSlice({
     },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
       const { originalId, newId } = action.payload;
-      state.idReplacements[originalId] = newId.replaceAll(' ', '_');
+      state.idReplacements[originalId] = newId.replaceAll(' ', '_').replaceAll('#', '');
     },
   },
   extraReducers: (builder) => {

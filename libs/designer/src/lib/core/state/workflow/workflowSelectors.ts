@@ -16,6 +16,22 @@ export const useNodeDisplayName = (id?: string) => {
   );
 };
 
+export const useNodeReplacedId = (id?: string) => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return id && state.idReplacements[id] ? state.idReplacements[id] : id;
+    })
+  );
+};
+
+export const useReplacedIds = () => {
+  return useSelector(
+    createSelector(getWorkflowState, (state: WorkflowState) => {
+      return state.idReplacements;
+    })
+  );
+};
+
 export const useNodeMetadata = (id?: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.nodesMetadata[id] : undefined)));
 
