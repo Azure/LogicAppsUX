@@ -1,3 +1,4 @@
+import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import { SchemaNodeProperty, SchemaType } from '../models';
@@ -69,13 +70,19 @@ const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExtended[]
 export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;
 
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
-  if (schemaNode.key === nodeKey) {
+  let tempKey = nodeKey;
+  if (tempKey.includes(mapNodeParams.for)) {
+    const forRegex = new RegExp(/\$for\([^)]+\)\//);
+    tempKey = nodeKey.replace(forRegex, '');
+  }
+  if (schemaNode.key === tempKey) {
     return schemaNode;
   }
 
   let result: SchemaNodeExtended | undefined = undefined;
   schemaNode.children.forEach((childNode) => {
-    const tempResult = findNodeForKey(nodeKey, childNode);
+    // found this issue in test, children can be undefined? Ask Reid maybe
+    const tempResult = findNodeForKey(tempKey, childNode);
 
     if (tempResult) {
       result = tempResult;

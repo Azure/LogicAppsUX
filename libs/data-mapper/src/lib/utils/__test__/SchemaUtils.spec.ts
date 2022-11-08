@@ -1,5 +1,6 @@
+import { targetMockSchema } from '../../__mocks__';
 import { SchemaNodeProperty } from '../../models';
-import { parsePropertiesIntoNodeProperties } from '../Schema.Utils';
+import { convertSchemaToSchemaExtended, findNodeForKey, parsePropertiesIntoNodeProperties } from '../Schema.Utils';
 
 describe('utils/Schema', () => {
   describe('parsePropertiesIntoNodeProperties', () => {
@@ -19,6 +20,20 @@ describe('utils/Schema', () => {
       expect(nodeProperties.length).toEqual(2);
       expect(nodeProperties[0]).toEqual(SchemaNodeProperty.Optional);
       expect(nodeProperties[1]).toEqual(SchemaNodeProperty.Repeating);
+    });
+  });
+
+  describe('findNodeForKey', () => {
+    const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
+
+    it('finds loop value for key', () => {
+      const node = findNodeForKey('/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name', extendedTarget.schemaTreeRoot);
+      expect(node?.key).toEqual('/ns0:Root/Looping/Person/Name');
+    });
+
+    it('finds node for key', () => {
+      const node = findNodeForKey('/ns0:Root/Looping/Person/Name', extendedTarget.schemaTreeRoot);
+      expect(node?.key).toEqual('/ns0:Root/Looping/Person/Name');
     });
   });
 });

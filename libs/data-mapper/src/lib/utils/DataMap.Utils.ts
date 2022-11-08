@@ -309,24 +309,25 @@ const parseDefinitionToConnection = (
 ) => {
   if (typeof sourceNodeObject === 'string') {
     const sourceEndOfFunction = sourceNodeObject.indexOf('(');
+    const amendedSourceKey = targetKey.includes(mapNodeParams.for) ? getSourceValueFromLoop(sourceNodeObject, targetKey) : sourceNodeObject;
     const sourceNode =
       sourceEndOfFunction > -1
-        ? findFunctionForFunctionName(sourceNodeObject.substring(0, sourceEndOfFunction), functions)
-        : findNodeForKey(sourceNodeObject, sourceSchema.schemaTreeRoot);
+        ? findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions)
+        : findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
     const sourceKey =
       sourceNode && isFunctionData(sourceNode)
-        ? createdNodes[sourceNodeObject]
-          ? createdNodes[sourceNodeObject]
+        ? createdNodes[amendedSourceKey]
+          ? createdNodes[amendedSourceKey]
           : createReactFlowFunctionKey(sourceNode)
-        : `${sourcePrefix}${sourceNodeObject}`;
-    createdNodes[sourceNodeObject] = sourceKey;
+        : `${sourcePrefix}${amendedSourceKey}`;
+    createdNodes[amendedSourceKey] = sourceKey;
 
     const destinationFunctionKey = targetKey.slice(0, targetKey.indexOf('-'));
     const destinationFunctionGuid = targetKey.slice(targetKey.indexOf('-') + 1);
     const destinationNode = isAGuid(destinationFunctionGuid)
       ? findFunctionForKey(destinationFunctionKey, functions)
       : findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
-    const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${targetKey}`;
+    const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${destinationNode?.key}`;
 
     if (sourceNode && destinationNode) {
       addNodeToConnections(connections, sourceNode, sourceKey, destinationNode, destinationKey);
@@ -418,6 +419,25 @@ const yamlReplacer = (key: string, value: any) => {
   }
 
   return value;
+};
+
+export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
+  // danielle will account for nested loops in next PR
+  let constructedSourceKey = '';
+  const matchArr = targetKey.match(/\$for\([^)]+\)\//);
+  let match = matchArr?.[0];
+  match = match?.replace('$for(', '');
+  match = match?.replace(')', '');
+  const endOfLastFunctionIndex = sourceKey.lastIndexOf('(');
+  if (endOfLastFunctionIndex > 0) {
+    constructedSourceKey =
+      sourceKey.substring(0, sourceKey.lastIndexOf('(') + 1) +
+      match +
+      sourceKey.substring(sourceKey.lastIndexOf('(') + 1, sourceKey.length + 1);
+  } else {
+    constructedSourceKey = match + sourceKey;
+  }
+  return constructedSourceKey;
 };
 
 const formatCustomValue = (customValue: string) => customValueQuoteToken + customValue + customValueQuoteToken;
