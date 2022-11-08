@@ -45,7 +45,7 @@ export const SourceSchemaPlaceholder = ({ onClickSelectElement }: SourceSchemaPl
       onClick={onClickSelectElement}
       style={{
         position: 'absolute',
-        zIndex: 5,
+        zIndex: 4,
         top: reactFlowViewport.y,
         left: reactFlowViewport.x,
         transform: `scale(${reactFlowViewport.zoom}) translate(0, +5%)`,

@@ -52,6 +52,22 @@ const useStaticStyles = makeStaticStyles({
   '.react-flow svg': {
     overflow: 'visible !important',
   },
+  '.react-flow__minimap': {
+    borderRadius: tokens.borderRadiusMedium,
+    overflow: 'hidden',
+    boxShadow: tokens.shadow8,
+    backgroundColor: tokens.colorNeutralBackground1,
+    '& svg': {
+      width: '100%',
+      height: '100%',
+    },
+  },
+  '.react-flow__minimap-mask': {
+    stroke: tokens.colorBrandStroke1,
+    strokeWidth: '6px',
+    strokeLinejoin: 'round',
+    fillOpacity: '0',
+  },
 });
 
 const useStyles = makeStyles({
