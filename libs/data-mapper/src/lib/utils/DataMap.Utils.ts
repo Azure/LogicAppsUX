@@ -292,108 +292,7 @@ export const convertFromMapDefinition = (
     parseDefinitionToConnection(mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, {}, sourceSchema, targetSchema, functions);
   }
 
-  const testLoop = {
-    'target-/ns0:Root/Looping/Person/Name': {
-      self: {
-        node: {
-          key: '/ns0:Root/Looping/Person/Name',
-          name: 'Name',
-          schemaNodeDataType: 'String',
-          normalizedDataType: 'String',
-          properties: 'NotSpecified',
-          fullName: 'Name',
-          parentKey: '/ns0:Root/Looping/Person',
-          nodeProperties: ['NotSpecified'],
-          children: [],
-          pathToRoot: [
-            { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-            { key: '/ns0:Root/Looping', name: 'Looping', fullName: 'Looping', repeating: false },
-            { key: '/ns0:Root/Looping/Person', name: 'Person', fullName: 'Person', repeating: true },
-            { key: '/ns0:Root/Looping/Person/Name', name: 'Name', fullName: 'Name', repeating: false },
-          ],
-        },
-        reactFlowKey: 'target-/ns0:Root/Looping/Person/Name',
-      },
-      inputs: {
-        '0': [
-          {
-            node: {
-              key: '/ns0:Root/Looping/Employee/TelephoneNumber',
-              name: 'TelephoneNumber',
-              schemaNodeDataType: 'String',
-              normalizedDataType: 'String',
-              properties: 'NotSpecified',
-              fullName: 'TelephoneNumber',
-              parentKey: '/ns0:Root/Looping/Employee',
-              nodeProperties: ['NotSpecified'],
-              children: [],
-              pathToRoot: [
-                { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-                { key: '/ns0:Root/Looping', name: 'Looping', fullName: 'Looping', repeating: false },
-                { key: '/ns0:Root/Looping/Employee', name: 'Employee', fullName: 'Employee', repeating: true },
-                {
-                  key: '/ns0:Root/Looping/Employee/TelephoneNumber',
-                  name: 'TelephoneNumber',
-                  fullName: 'TelephoneNumber',
-                  repeating: false,
-                },
-              ],
-            },
-            reactFlowKey: 'source-/ns0:Root/Looping/Employee/TelephoneNumber',
-          },
-        ],
-      },
-      outputs: [],
-    },
-    'source-/ns0:Root/Looping/Employee/TelephoneNumber': {
-      self: {
-        node: {
-          key: '/ns0:Root/Looping/Employee/TelephoneNumber',
-          name: 'TelephoneNumber',
-          schemaNodeDataType: 'String',
-          normalizedDataType: 'String',
-          properties: 'NotSpecified',
-          fullName: 'TelephoneNumber',
-          parentKey: '/ns0:Root/Looping/Employee',
-          nodeProperties: ['NotSpecified'],
-          children: [],
-          pathToRoot: [
-            { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-            { key: '/ns0:Root/Looping', name: 'Looping', fullName: 'Looping', repeating: false },
-            { key: '/ns0:Root/Looping/Employee', name: 'Employee', fullName: 'Employee', repeating: true },
-            { key: '/ns0:Root/Looping/Employee/TelephoneNumber', name: 'TelephoneNumber', fullName: 'TelephoneNumber', repeating: false },
-          ],
-        },
-        reactFlowKey: 'source-/ns0:Root/Looping/Employee/TelephoneNumber',
-      },
-      inputs: { '0': [] },
-      outputs: [
-        {
-          node: {
-            key: '/ns0:Root/Looping/Person/Name',
-            name: 'Name',
-            schemaNodeDataType: 'String',
-            normalizedDataType: 'String',
-            properties: 'NotSpecified',
-            fullName: 'Name',
-            parentKey: '/ns0:Root/Looping/Person',
-            nodeProperties: ['NotSpecified'],
-            children: [],
-            pathToRoot: [
-              { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-              { key: '/ns0:Root/Looping', name: 'Looping', fullName: 'Looping', repeating: false },
-              { key: '/ns0:Root/Looping/Person', name: 'Person', fullName: 'Person', repeating: true },
-              { key: '/ns0:Root/Looping/Person/Name', name: 'Name', fullName: 'Name', repeating: false },
-            ],
-          },
-          reactFlowKey: 'target-/ns0:Root/Looping/Person/Name',
-        },
-      ],
-    },
-  };
-  //console.log(test);
-
-  return testLoop as unknown as ConnectionDictionary;
+  return connections;
 };
 
 const parseDefinitionToConnection = (
@@ -520,13 +419,13 @@ const yamlReplacer = (key: string, value: any) => {
 };
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
-  // danielle check for nested loops too next
+  // danielle will account for nested loops in next PR
   let constructedSourceKey = '';
   const matchArr = targetKey.match(/\$for\([^)]+\)\//);
   let match = matchArr?.[0];
   match = match?.replace('$for(', '');
   match = match?.replace(')', '');
-  const endOfLastFunctionIndex = sourceKey.lastIndexOf('('); // what if no function?
+  const endOfLastFunctionIndex = sourceKey.lastIndexOf('(');
   if (endOfLastFunctionIndex > 0) {
     constructedSourceKey =
       sourceKey.substring(0, sourceKey.lastIndexOf('(') + 1) +

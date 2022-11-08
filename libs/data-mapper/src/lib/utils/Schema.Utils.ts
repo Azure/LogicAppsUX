@@ -72,31 +72,22 @@ export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNod
 export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
   let tempKey = nodeKey;
   if (tempKey.includes(mapNodeParams.for)) {
-    // change this to 'starts with' in order to make the parent connection
-    const matchArr = tempKey.match(/\$for\([^)]+\)\//);
-    let match = matchArr?.[0];
-    console.log(match);
-    match = match?.replace('$for(', '');
-    match = match?.replace(')', '');
     const forRegex = new RegExp(/\$for\([^)]+\)\//);
-    tempKey = nodeKey.replace(forRegex, ''); // concatenate onto the source piece? what about for functions?
+    tempKey = nodeKey.replace(forRegex, '');
   }
   if (schemaNode.key === tempKey) {
-    // /ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name
     return schemaNode;
   }
 
   let result: SchemaNodeExtended | undefined = undefined;
-  if (schemaNode.children) {
-    schemaNode.children.forEach((childNode) => {
-      // found this issue in test, children can be undefined? Ask Reid maybe
-      const tempResult = findNodeForKey(tempKey, childNode);
+  schemaNode.children.forEach((childNode) => {
+    // found this issue in test, children can be undefined? Ask Reid maybe
+    const tempResult = findNodeForKey(tempKey, childNode);
 
-      if (tempResult) {
-        result = tempResult;
-      }
-    });
-  }
+    if (tempResult) {
+      result = tempResult;
+    }
+  });
 
   return result;
 };

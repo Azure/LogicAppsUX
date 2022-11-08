@@ -54,8 +54,7 @@ describe('utils/DataMap', () => {
     // function lists source as input
 
     // function lists target as output
-    //console.log(result['target-/ns0:Root/DirectTranslation/Employee/Name'].outputs);
-    //console.log(result['source-/ns0:Root/DirectTranslation/EmployeeName'].outputs);
+
     expect(Object.keys(result).some((key) => key.includes('Concat')));
   });
 
@@ -68,7 +67,8 @@ describe('utils/DataMap', () => {
       },
     };
     const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [greaterThanFunction, conditionalFunction]);
-    console.log(JSON.stringify(result));
+    expect(result).toBeTruthy();
+    // console.log(JSON.stringify(result));  // danielle need to find a way to better verify this
   });
 
   it('creates a loop connection', () => {
@@ -82,18 +82,17 @@ describe('utils/DataMap', () => {
       },
     };
     const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, [greaterThanFunction, conditionalFunction]);
-    console.log(JSON.stringify(result));
+    expect(result).toBeTruthy();
+    // console.log(JSON.stringify(result));  // danielle need to find a way to better verify this
   });
 
   it('gets the source key from a looped target string', () => {
     const result = getSourceValueFromLoop('TelephoneNumber', '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name');
-    console.log(result);
     expect(result).toEqual('/ns0:Root/Looping/Employee/TelephoneNumber');
   });
 
   it('gets the source key from a looped target string with a function', () => {
     const result = getSourceValueFromLoop('lower-case(TelephoneNumber)', '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name');
-    console.log(result);
     expect(result).toEqual('lower-case(/ns0:Root/Looping/Employee/TelephoneNumber)');
   });
 });
