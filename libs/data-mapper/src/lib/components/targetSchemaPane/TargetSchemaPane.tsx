@@ -2,9 +2,11 @@ import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import { NormalizedDataType, SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
+import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import TargetSchemaTreeItem, { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import Tree from '../tree/Tree';
+import { TreeHeader } from '../tree/TreeHeader';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular } from '@fluentui/react-icons';
@@ -45,6 +47,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
   const [toggledStatesDictionary, setToggledStatesDictionary] = useState<NodeToggledStateDictionary | undefined>({});
+  const [targetSchemaSearchTerm, setTargetSchemaSearchTerm] = useState<string>('');
 
   const targetSchemaLoc = intl.formatMessage({
     defaultMessage: 'Target schema',
@@ -66,6 +69,18 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
     return nodesWithConnections;
   }, [connectionDictionary, targetSchemaDictionary]);
+
+  const searchedTargetSchemaTreeRoot = useMemo<SchemaNodeExtended | undefined>(() => {
+    if (!targetSchema) {
+      return undefined;
+    }
+
+    if (!targetSchemaSearchTerm) {
+      return { ...targetSchema.schemaTreeRoot };
+    } else {
+      return searchSchemaTreeFromRoot(targetSchema.schemaTreeRoot, targetSchemaSearchTerm);
+    }
+  }, [targetSchema, targetSchemaSearchTerm]);
 
   useEffect(() => {
     if (!targetSchema || !connectionDictionary) {
@@ -116,10 +131,12 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         )}
       </Stack>
 
-      {isExpanded && targetSchema && toggledStatesDictionary && (
+      {isExpanded && targetSchema && toggledStatesDictionary && searchedTargetSchemaTreeRoot && (
         <div style={{ margin: 8, marginLeft: 40, width: 290, flex: '1 1 1px', overflowY: 'auto' }}>
+          <TreeHeader onSearch={setTargetSchemaSearchTerm} onClear={() => setTargetSchemaSearchTerm('')} />
+
           <Tree<SchemaNodeExtended>
-            treeRoot={targetSchema.schemaTreeRoot}
+            treeRoot={searchedTargetSchemaTreeRoot}
             nodeContent={(node: SchemaNodeExtended) => (
               <TargetSchemaTreeItem node={node} status={toggledStatesDictionary[node.key]} onClick={() => handleItemClick(node)} />
             )}

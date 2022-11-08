@@ -171,17 +171,7 @@ const performFunctionSearch = (
     minMatchCharLength: 2,
     includeMatches: true,
     threshold: 0.4,
-    keys: [
-      {
-        name: 'key',
-      },
-      {
-        name: 'functionName',
-      },
-      {
-        name: 'displayName',
-      },
-    ],
+    keys: ['key', 'functionName', 'displayName'],
   };
 
   const fuse = new Fuse(functionsToSearch, fuseSearchOptions);
