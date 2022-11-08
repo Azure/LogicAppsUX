@@ -18,6 +18,7 @@ export const CodeViewTab = () => {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
+    staleTime: 0,
   });
 
   const content = queryData.isLoading
