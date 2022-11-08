@@ -1,8 +1,9 @@
 import { useShowMinimap } from '../core/state/designerView/designerViewSelectors';
 import { useTheme } from '@fluentui/react';
 import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
-import { useMemo } from 'react';
-import { MiniMap } from 'reactflow';
+import { useMemo, useCallback } from 'react';
+import type { XYPosition } from 'reactflow';
+import { MiniMap, useReactFlow } from 'reactflow';
 
 const nodeColorsLight: Record<WorkflowNodeType, any> = {
   OPERATION_NODE: { fill: '#ECECEC', stroke: '#A19F9D' },
@@ -26,7 +27,13 @@ const nodeColorsDark: Record<WorkflowNodeType, any> = {
 
 const Minimap = () => {
   const showMinimap = useShowMinimap();
-
+  const { setCenter } = useReactFlow();
+  const onClick = useCallback(
+    (_event: unknown, position: XYPosition) => {
+      setCenter(position.x, position.y);
+    },
+    [setCenter]
+  );
   const { isInverted } = useTheme();
   const nodeColors = useMemo(() => (isInverted ? nodeColorsDark : nodeColorsLight), [isInverted]);
 
@@ -35,7 +42,17 @@ const Minimap = () => {
   const nodeColor = (node: any) => nodeColors[node.type as WorkflowNodeType].fill;
   const nodeStrokeColor = (node: any) => nodeColors[node.type as WorkflowNodeType].stroke;
 
-  return <MiniMap nodeColor={nodeColor} nodeStrokeColor={nodeStrokeColor} nodeStrokeWidth={3} nodeBorderRadius={0} />;
+  return (
+    <MiniMap
+      nodeColor={nodeColor}
+      nodeStrokeColor={nodeStrokeColor}
+      nodeStrokeWidth={3}
+      nodeBorderRadius={0}
+      pannable
+      zoomable
+      onClick={onClick}
+    />
+  );
 };
 
 export default Minimap;
