@@ -175,7 +175,7 @@ const processScopeActions = (
     subgraphType: SubgraphType,
     subGraphLocation: string | undefined
   ) => {
-    const [graph, operations, metadata] = processNestedActions(subgraphId, subgraphId, actions, true);
+    const [graph, operations, metadata] = processNestedActions(subgraphId, graphId, actions, true);
     if (!graph?.edges) graph.edges = [];
 
     graph.subGraphLocation = subGraphLocation;
@@ -226,6 +226,7 @@ const processScopeActions = (
       [graphId]: {
         graphId: rootGraphId,
         subgraphType: SUBGRAPH_TYPES.UNTIL_DO,
+        parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId,
         actionCount:
           graph.children?.filter(
             (node) =>
@@ -256,11 +257,25 @@ const processScopeActions = (
     }
     applySubgraphActions(actionName, `${actionName}-addCase`, undefined, SUBGRAPH_TYPES.SWITCH_ADD_CASE, undefined /* subGraphLocation */);
     applySubgraphActions(actionName, `${actionName}-defaultCase`, action.default?.actions, SUBGRAPH_TYPES.SWITCH_DEFAULT, 'default');
-    nodesMetadata = { ...nodesMetadata, [actionName]: { graphId: rootGraphId, actionCount: Object.entries(action.cases || {}).length } };
+    nodesMetadata = {
+      ...nodesMetadata,
+      [actionName]: {
+        graphId: rootGraphId,
+        actionCount: Object.entries(action.cases || {}).length,
+        parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId
+      }
+    };
   } else if (isIfAction(action)) {
     applySubgraphActions(actionName, `${actionName}-actions`, action.actions, SUBGRAPH_TYPES.CONDITIONAL_TRUE, 'actions');
     applySubgraphActions(actionName, `${actionName}-elseActions`, action.else?.actions, SUBGRAPH_TYPES.CONDITIONAL_FALSE, 'else');
-    nodesMetadata = { ...nodesMetadata, [actionName]: { graphId: actionName, actionCount: 2 } };
+    nodesMetadata = {
+      ...nodesMetadata,
+      [actionName]: {
+        graphId: rootGraphId,
+        actionCount: 2,
+        parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId
+      }
+    };
   } else if (isUntilAction(action)) {
     applyUntilActions(actionName, action.actions);
   } else {
