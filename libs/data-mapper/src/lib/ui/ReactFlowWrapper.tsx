@@ -158,7 +158,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
         borderRadius: tokens.borderRadiusMedium,
       }}
       onEdgeClick={onEdgeClick}
-      fitViewOptions={{ maxZoom: defaultCanvasZoom }}
+      fitViewOptions={{ maxZoom: defaultCanvasZoom, includeHiddenNodes: true }}
       fitView
     >
       <CanvasToolbox canvasBlockHeight={canvasBlockHeight} />
