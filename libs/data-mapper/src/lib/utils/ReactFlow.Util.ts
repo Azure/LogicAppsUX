@@ -299,7 +299,7 @@ export const useOverviewLayout = (
         schemaNode: parentSchemaNode,
         schemaType,
         displayHandle: false,
-        displayChevron: false,
+        displayChevron: schemaType === SchemaType.Target && !!shouldTargetSchemaDisplayChevrons,
         isLeaf: false,
         isChild: false,
         disabled: false,

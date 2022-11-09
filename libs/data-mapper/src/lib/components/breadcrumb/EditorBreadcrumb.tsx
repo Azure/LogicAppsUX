@@ -125,7 +125,7 @@ const convertToBreadcrumbItems = (
     key: schema.name,
     text: schema.name,
     onClick: () => {
-      dispatch(setCurrentTargetSchemaNode(schema.schemaTreeRoot));
+      dispatch(setCurrentTargetSchemaNode(undefined));
     },
   };
 
@@ -151,11 +151,8 @@ const convertToBreadcrumbItems = (
     });
   }
 
-  // When in overview (at schemaTreeRoot), don't show the root node in the breadcrumb
-  if (breadcrumbItems.length === 2) {
-    breadcrumbItems.pop();
-
-    // Instead, show placeholder text
+  // When in overview (at schema root, NOT schemaTreeRoot), show placeholder text
+  if (breadcrumbItems.length === 1) {
     breadcrumbItems.push({
       key: 'placeholder',
       text: breadcrumbPlaceholder,

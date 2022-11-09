@@ -128,7 +128,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   }, [currentConnections, sourceSchema, targetSchema]);
 
   const showMapOverview = useMemo<boolean>(
-    () => !sourceSchema || !targetSchema || (!!currentTargetSchemaNode && currentTargetSchemaNode.key === targetSchema.schemaTreeRoot.key),
+    () => !sourceSchema || !targetSchema || !currentTargetSchemaNode,
     [sourceSchema, targetSchema, currentTargetSchemaNode]
   );
 
