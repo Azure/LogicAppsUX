@@ -1,4 +1,4 @@
-import type { AppDispatch } from '../../../core';
+import type { AppDispatch, RootState } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
@@ -10,7 +10,7 @@ import { useDebouncedEffect } from '@react-hookz/web';
 import Fuse from 'fuse.js';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -30,6 +30,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const relationshipIds = useRelationshipIds();
   const isParallelBranch = useIsParallelBranch();
+  const isTrigger = useSelector((state: RootState) => state.panel.addingTrigger);
 
   const [searchResults, setSearchResults] = useState<SearchResults>([]);
   const [isLoadingSearchResults, setIsLoadingSearchResults] = useState<boolean>(false);
@@ -107,7 +108,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
   const onOperationClick = (id: string) => {
     const operation = searchResults.map((result) => result.item).find((o: any) => o.id === id);
     const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
-    dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch }));
+    dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
   };
 
   const loadingText = intl.formatMessage({

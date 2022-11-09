@@ -20,6 +20,7 @@ export interface AddNodePayload {
   nodeId: string;
   relationshipIds: RelationshipIds;
   isParallelBranch?: boolean;
+  isTrigger?: boolean;
 }
 
 export const addNodeToWorkflow = (

@@ -18,6 +18,21 @@ import { useEffect, useState } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 import { Position } from 'reactflow';
 
+// Hidden dummy node placed at 0,0 (same as source schema block) to allow initial load fitView to center diagram
+// NOTE: Not documented, but hidden nodes need a width/height to properly affect fitView when includeHiddenNodes option is true
+const placeholderReactFlowNode: ReactFlowNode = {
+  id: 'layouting-&-Placeholder',
+  hidden: true,
+  sourcePosition: Position.Right,
+  data: null,
+  width: 10,
+  height: 10,
+  position: {
+    x: 0,
+    y: 0,
+  },
+};
+
 export const useLayout = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
   allSourceSchemaNodes: SchemaNodeDictionary,
@@ -53,9 +68,16 @@ export const useLayout = (
         .then((layoutedElkTree) => {
           // Convert newly-calculated ELK node data to React Flow nodes
           // NOTE: edges were only used to aid ELK in layout calculation, ReactFlow still handles creating/routing/etc them
-          setReactFlowNodes(
-            convertToReactFlowNodes(layoutedElkTree, sortedSourceSchemaNodes, currentFunctionNodes, currentTargetSchemaNode, connections)
-          );
+          setReactFlowNodes([
+            placeholderReactFlowNode,
+            ...convertToReactFlowNodes(
+              layoutedElkTree,
+              sortedSourceSchemaNodes,
+              currentFunctionNodes,
+              currentTargetSchemaNode,
+              connections
+            ),
+          ]);
         })
         .catch((error) => {
           console.error(`Elk Layout Error: ${error}`);
@@ -299,7 +321,7 @@ export const useOverviewLayout = (
         schemaNode: parentSchemaNode,
         schemaType,
         displayHandle: false,
-        displayChevron: false,
+        displayChevron: schemaType === SchemaType.Target && !!shouldTargetSchemaDisplayChevrons,
         isLeaf: false,
         isChild: false,
         disabled: false,

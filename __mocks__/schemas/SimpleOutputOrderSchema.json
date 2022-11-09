@@ -37,12 +37,12 @@
             "parentKey": "/ns0:OutputRecord/Identity"
           },
           {
-            "key": "/ns0:OutputRecord/Identity/NumCoffeesButAsADecimal",
-            "name": "NumCoffeesButAsADecimal",
+            "key": "/ns0:OutputRecord/Identity/NumCoffeesButAsADecimalOhAndAlsoThisNameWillBeReallyLongForTesting",
+            "name": "NumCoffeesButAsADecimalOhAndAlsoThisNameWillBeReallyLongForTesting",
             "schemaNodeDataType": "Decimal",
             "normalizedDataType": "Decimal",
             "properties": "NotSpecified",
-            "fullName": "NumCoffeesButAsADecimal",
+            "fullName": "NumCoffeesButAsADecimalOhAndAlsoThisNameWillBeReallyLongForTesting",
             "parentKey": "/ns0:OutputRecord/Identity"
           },
           {
