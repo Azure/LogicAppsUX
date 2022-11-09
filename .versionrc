@@ -17,6 +17,22 @@
     {
       "type": "vscfeat",
       "section": "Visual Studio Code Extension Changes"
+    },
+    {
+      "type": "fix",
+      "section": "General Bug Fixes"
+    },
+    {
+      "type": "dmfix",
+      "section": "Data Mapper Bug Fixes"
+    },
+    {
+      "type": "lafix",
+      "section": "Logic Apps Designer Bug Fixes"
+    },
+    {
+      "type": "vscfeat",
+      "section": "Visual Studio Code Extension Bug Fixes"
     }
   ],
   "bumpFiles": [
