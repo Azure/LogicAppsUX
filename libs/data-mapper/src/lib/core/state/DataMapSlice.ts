@@ -446,6 +446,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    /* DEPRECATED: Will be removed in the near future once it's certain it won't be used again elsewhere
     // NOTE: Specifically for dragging existing connection to a new target
     changeConnection: (state, action: PayloadAction<ConnectionAction & DeleteConnectionAction>) => {
       const newState: DataMapOperationState = {
@@ -458,6 +459,7 @@ export const dataMapSlice = createSlice({
 
       doDataMapOperation(state, newState);
     },
+    */
 
     updateConnectionInput: (state, action: PayloadAction<UpdateConnectionInputAction>) => {
       const newState: DataMapOperationState = {
@@ -470,6 +472,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    /* DEPRECATED: Will be removed in the near future once it's certain it won't be used again elsewhere
     deleteConnection: (state, action: PayloadAction<DeleteConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -481,6 +484,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
       state.notificationData = { type: NotificationTypes.ConnectionDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
     },
+    */
 
     undoDataMapOperation: (state) => {
       const lastDataMap = state.undoStack.pop();
@@ -566,9 +570,7 @@ export const {
   setSelectedItem,
   addFunctionNode,
   makeConnection,
-  changeConnection,
   updateConnectionInput,
-  deleteConnection,
   undoDataMapOperation,
   redoDataMapOperation,
   saveDataMap,
