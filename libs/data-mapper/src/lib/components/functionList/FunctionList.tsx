@@ -10,47 +10,29 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import { NormalizedDataType } from '../../models';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
-import { getFunctionBrandingForCategory, isFunctionData } from '../../utils/Function.Utils';
+import { isFunctionData } from '../../utils/Function.Utils';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
+import Tree from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
-import FunctionListCell from './FunctionListCell';
-import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
-import { GroupedList } from '@fluentui/react';
-import { tokens, typographyStyles } from '@fluentui/react-components';
+import FunctionListHeader from './FunctionListHeader';
+import FunctionListItem from './FunctionListItem';
 import Fuse from 'fuse.js';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
-  root: {
-    '.ms-GroupHeader': {
-      height: '28px',
-      width: '100%',
-      display: 'flex',
-      'div:first-child': {
-        height: '28px',
-      },
-      borderRadius: tokens.borderRadiusMedium,
-    },
-    '.ms-GroupHeader-title': {
-      ...typographyStyles.caption1,
-      'span:nth-of-type(2)': {
-        display: 'none',
-      },
-    },
-    '.ms-GroupHeader-expand': {
-      height: '28px',
-      width: '16px',
-      paddingLeft: tokens.spacingHorizontalXS,
-      ':hover': {
-        backgroundColor: 'inherit',
-      },
-    },
-    '.ms-GroupedList-group': {
-      paddingBottom: '8px',
-    },
-  },
+const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
+  includeScore: true,
+  minMatchCharLength: 2,
+  includeMatches: true,
+  threshold: 0.4,
+  keys: ['key', 'functionName', 'displayName'],
 };
+
+export const functionCategoryItemKeyPrefix = 'category&';
+
+interface FunctionDataTreeItem extends FunctionData {
+  children: FunctionDataTreeItem[];
+}
 
 export const FunctionList = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -62,8 +44,6 @@ export const FunctionList = () => {
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
 
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [functionsList, setFunctionsList] = useState<FunctionData[]>([]);
-  const [functionCategoryGroups, setFunctionCategoryGroups] = useState<IGroup[]>([]);
 
   const isAddingInlineFunction = inlineFunctionInputOutputKeys.length === 2;
 
@@ -109,99 +89,64 @@ export const FunctionList = () => {
     }
   };
 
-  const compileFunctionsAndCategoryGroups = () => {
-    if (functionData) {
-      let functionCategories: FunctionCategory[] = [];
-      let newFunctionsList: FunctionData[] = [...functionData];
+  const functionListTree = useMemo(() => {
+    // Can safely typecast as we just use the root's children[]
+    const newFunctionListTree = {} as FunctionDataTreeItem;
+    newFunctionListTree.children = [];
 
-      // If isAddingInlineFunction, filter out functions by type validation
-      if (isAddingInlineFunction) {
-        newFunctionsList = typeValidatePotentialInlineFunctions(newFunctionsList);
+    if (functionData) {
+      const functionCategoryDictionary: { [key: string]: FunctionDataTreeItem } = {};
+      let functionsList: FunctionData[] = [...functionData];
+      functionsList.sort((a, b) => a.key.localeCompare(b.key)); // Alphabetically sort Functions
+
+      // Create dictionary for Function Categories
+      Object.values(FunctionCategory).forEach((category) => {
+        const categoryItem = {} as FunctionDataTreeItem;
+        categoryItem.children = [];
+        categoryItem.key = `${functionCategoryItemKeyPrefix}${category}`;
+
+        functionCategoryDictionary[category] = categoryItem;
+      });
+
+      // Filter out functions if we're adding an inline function and/or have a searchTerm
+      if (inlineFunctionInputOutputKeys.length === 2) {
+        // NOTE: Explicitly use this instead of isAddingInlineFunction to non-warningly add inlineFunction...Keys to dependencies to track value changes
+        functionsList = typeValidatePotentialInlineFunctions(functionsList);
       }
 
       if (searchTerm) {
-        const { searchedFunctions, sortedCategories } = performFunctionSearch(searchTerm, newFunctionsList, functionCategories);
-        newFunctionsList = searchedFunctions;
-        functionCategories = sortedCategories;
-      } else {
-        functionCategories = Object.values(FunctionCategory);
-        sortAllFunctionsByCategory(newFunctionsList);
+        const fuse = new Fuse(functionsList, fuseFunctionSearchOptions);
+        functionsList = fuse.search(searchTerm).map((result) => result.item);
       }
 
-      setFunctionsList(newFunctionsList);
+      // Add functions to their respective categories
+      functionsList.forEach((functionData) => {
+        functionCategoryDictionary[functionData.category].children.push({ ...functionData, children: [] });
+      });
 
-      const newFunctionCategoryGroups = getFunctionCategoryGroups(newFunctionsList, functionCategories, functionCategoryGroups);
-      setFunctionCategoryGroups(newFunctionCategoryGroups);
+      // Add function categories as children to the tree root, filtering out any that don't have any children
+      newFunctionListTree.children = Object.values(functionCategoryDictionary).filter((category) => category.children.length > 0);
     }
-  };
 
-  // Compile functions list on first load, anytime searchTerm is changed, and anytime we change our inline function state
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(compileFunctionsAndCategoryGroups, [inlineFunctionInputOutputKeys, searchTerm]);
-
-  const getFunctionItemCell = (functionNode: FunctionData) => {
-    return <FunctionListCell functionData={functionNode} onFunctionClick={onFunctionItemClick} />;
-  };
+    return newFunctionListTree;
+  }, [functionData, searchTerm, inlineFunctionInputOutputKeys]);
 
   return (
     <>
       <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} />
-      <div>
-        <GroupedList
-          onShouldVirtualize={() => false}
-          groups={functionCategoryGroups}
-          styles={headerStyle}
-          items={functionsList}
-          onRenderCell={(_depth, functionNode: FunctionData) => getFunctionItemCell(functionNode)}
-          selectionMode={0}
-        />
-      </div>
+
+      <Tree<FunctionDataTreeItem>
+        treeRoot={functionListTree}
+        nodeContent={(node: FunctionDataTreeItem) =>
+          node.key.startsWith(functionCategoryItemKeyPrefix) ? (
+            <FunctionListHeader category={node.key.replace(functionCategoryItemKeyPrefix, '') as FunctionCategory} />
+          ) : (
+            <FunctionListItem functionData={node} onFunctionClick={onFunctionItemClick} />
+          )
+        }
+      />
     </>
   );
-};
-
-// Returns copy of sorted functions list and function categories
-const performFunctionSearch = (
-  searchTerm: string,
-  functionsToSearch: FunctionData[],
-  functionCategories: FunctionCategory[]
-): { searchedFunctions: FunctionData[]; sortedCategories: FunctionCategory[] } => {
-  const fuseSearchOptions: Fuse.IFuseOptions<FunctionData> = {
-    includeScore: true,
-    minMatchCharLength: 2,
-    includeMatches: true,
-    threshold: 0.4,
-    keys: ['key', 'functionName', 'displayName'],
-  };
-
-  const fuse = new Fuse(functionsToSearch, fuseSearchOptions);
-  const results = fuse.search(searchTerm);
-
-  const searchedFunctions = results.map((fuse) => ({ ...fuse.item, matchIndices: fuse.matches }));
-
-  searchedFunctions.forEach((functionNode) => {
-    if (!functionCategories.some((category) => category === functionNode.category)) {
-      functionCategories.push(functionNode.category);
-    }
-  });
-
-  // Sort categories and functions alphabetically
-  return {
-    searchedFunctions: searchedFunctions.sort((a, b) => a.category.localeCompare(b.category)),
-    sortedCategories: functionCategories.sort((a, b) => a.localeCompare(b)),
-  };
-};
-
-// Sorts in-place
-const sortAllFunctionsByCategory = (functionsToSort: FunctionData[]): void => {
-  functionsToSort.sort((a, b) => {
-    const categorySort = a.category.localeCompare(b.category);
-    if (categorySort !== 0) {
-      return categorySort;
-    } else {
-      return a.key.localeCompare(b.key);
-    }
-  });
 };
 
 // Returns copy of type-validated array
@@ -255,36 +200,4 @@ const typeValidatePotentialInlineFunctions = (functionsToTypeValidate: FunctionD
         outputNormalizedInputTypes.some((type) => type === NormalizedDataType.Any || type === functionOutputType))
     );
   });
-};
-
-const getFunctionCategoryGroups = (
-  functionsList: FunctionData[],
-  functionCategories: FunctionCategory[],
-  previousFunctionCategoryGroups: IGroup[]
-): IGroup[] => {
-  // Sort the functions into groups by their category
-  let startInd = 0;
-
-  return functionCategories
-    .map((value): IGroup => {
-      let numInGroup = 0;
-      functionsList.forEach((functionNode) => {
-        if (functionNode.category === value) {
-          numInGroup++;
-        }
-      });
-
-      const functionCategoryGroup: IGroup = {
-        key: value,
-        startIndex: startInd,
-        name: getFunctionBrandingForCategory(value).displayName,
-        count: numInGroup,
-        isCollapsed: previousFunctionCategoryGroups.find((group) => group.key === value)?.isCollapsed ?? true,
-      };
-
-      startInd += numInGroup;
-
-      return functionCategoryGroup;
-    })
-    .filter((group) => group.count > 0);
 };

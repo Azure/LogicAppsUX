@@ -5,18 +5,28 @@ import { getIconForFunction } from '../../utils/Icon.Utils';
 import { DMTooltip } from '../tooltip/tooltip';
 import { Button, Caption1, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 
+const fnIconSize = '28px';
+
 const useCardStyles = makeStyles({
   button: {
-    width: '100%',
     height: '40px',
     backgroundColor: tokens.colorNeutralBackground1,
     display: 'flex',
-    justifyContent: 'left',
     ...shorthands.border('0px'),
     ...shorthands.padding('1px 4px 1px 4px'),
     ':hover': {
       backgroundColor: tokens.colorNeutralBackground1Hover,
     },
+  },
+  iconContainer: {
+    height: fnIconSize,
+    flexShrink: '0 !important',
+    flexBasis: fnIconSize,
+    ...shorthands.borderRadius(tokens.borderRadiusCircular),
+    color: tokens.colorNeutralBackground1,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text: {
     width: '180px',
@@ -29,16 +39,17 @@ const useCardStyles = makeStyles({
   },
 });
 
-const fnIconSize = '28px';
-
-interface FunctionListCellProps {
+interface FunctionListItemProps {
   functionData: FunctionData;
   onFunctionClick: (functionNode: FunctionData) => void;
 }
 
-const FunctionListCell = ({ functionData, onFunctionClick }: FunctionListCellProps) => {
+const FunctionListItem = ({ functionData, onFunctionClick }: FunctionListItemProps) => {
   const cardStyles = useCardStyles();
-  const branding = getFunctionBrandingForCategory(functionData.category);
+
+  const fnBranding = getFunctionBrandingForCategory(functionData.category);
+  // TODO: undefined -> functionData.iconFileName once all SVGs in
+  const fnIcon = getIconForFunction(functionData.displayName, undefined, fnBranding);
 
   return (
     <Button
@@ -49,32 +60,19 @@ const FunctionListCell = ({ functionData, onFunctionClick }: FunctionListCellPro
         onFunctionClick(functionData);
       }}
     >
-      <span
-        style={{
-          backgroundColor: customTokens[branding.colorTokenName],
-          height: fnIconSize,
-          width: fnIconSize,
-          borderRadius: '50%',
-        }}
-      >
-        <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1 }}>
-          {
-            getIconForFunction(
-              functionData.displayName,
-              undefined,
-              branding
-            ) /* TODO: undefined -> functionData.iconFileName once all SVGs in */
-          }
-        </div>
-      </span>
+      <div className={cardStyles.iconContainer} style={{ backgroundColor: customTokens[fnBranding.colorTokenName] }}>
+        {fnIcon}
+      </div>
+
       <Caption1 truncate block className={cardStyles.text}>
         {functionData.displayName}
       </Caption1>
-      <span style={{ justifyContent: 'right' }}>
+
+      <span style={{ marginLeft: 'auto' }}>
         <DMTooltip text={functionData.description} />
       </span>
     </Button>
   );
 };
 
-export default FunctionListCell;
+export default FunctionListItem;
