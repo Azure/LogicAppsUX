@@ -212,7 +212,7 @@ const Setting = ({
   const dispatch = useDispatch();
   const nodeId = useSelectedNodeId();
 
-  const conditionalVisibilityHiddenSettings = useMemo(
+  const conditionallyInvisibleSettings = useMemo(
     () => settings.filter((setting) => (setting.settingProp as any).conditionalVisibility === false),
     [settings]
   );
@@ -223,11 +223,9 @@ const Setting = ({
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
         const { settingType, settingProp, visible = true } = setting;
-        const parameterId = (settingProp as any).id;
-        const conditionalVisibility = (settingProp as any).conditionalVisibility;
-        if (!settingProp.readOnly) {
-          settingProp.readOnly = isReadOnly;
-        }
+        const { parameterId, conditionalVisibility, readOnly } = settingProp as any;
+        if (!readOnly) settingProp.readOnly = isReadOnly;
+
         const getClassName = (): string =>
           settingType === 'RunAfter'
             ? 'msla-setting-section-run-after-setting'
@@ -268,7 +266,6 @@ const Setting = ({
         };
 
         const removeParamCallback = () => {
-          // Remove parameter value from state
           dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: false }));
         };
 
@@ -300,11 +297,11 @@ const Setting = ({
         ) : null;
       })}
 
-      {conditionalVisibilityHiddenSettings.length > 0 ? (
+      {conditionallyInvisibleSettings.length > 0 ? (
         <Dropdown
           placeholder="Add new parameters"
           multiSelect
-          options={conditionalVisibilityHiddenSettings.map((setting) => ({
+          options={conditionallyInvisibleSettings.map((setting) => ({
             key: (setting.settingProp as any).id,
             text: (setting.settingProp as any).label,
           }))}
