@@ -41,7 +41,9 @@ const TreeBranch = <T extends ITreeNode<T>>({ level, node, nodeContent, nodeCont
 
       {hasChildren &&
         isExpanded &&
-        node.children?.map((childNode) => <TreeBranch<T> key={node.key} node={childNode} level={level + 1} nodeContent={nodeContent} />)}
+        node.children?.map((childNode) => (
+          <TreeBranch<T> key={childNode.key} node={childNode} level={level + 1} nodeContent={nodeContent} />
+        ))}
     </>
   );
 };
