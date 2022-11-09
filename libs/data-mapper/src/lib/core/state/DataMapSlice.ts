@@ -125,10 +125,8 @@ export const dataMapSlice = createSlice({
       } else {
         state.curDataMapOperation.targetSchema = action.payload.schema;
         state.curDataMapOperation.flattenedTargetSchema = flattenedSchema;
-        state.curDataMapOperation.currentTargetSchemaNode = action.payload.schema.schemaTreeRoot;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
-        state.pristineDataMap.currentTargetSchemaNode = action.payload.schema.schemaTreeRoot;
       }
     },
 
@@ -147,7 +145,7 @@ export const dataMapSlice = createSlice({
         flattenedTargetSchema,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: [],
-        currentTargetSchemaNode: targetSchema.schemaTreeRoot,
+        currentTargetSchemaNode: undefined,
       };
 
       state.curDataMapOperation = newState;
@@ -241,7 +239,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
-    setCurrentTargetSchemaNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
+    setCurrentTargetSchemaNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {
       const currentTargetSchemaNode = state.curDataMapOperation.currentTargetSchemaNode;
       const newTargetSchemaNode = action.payload;
 

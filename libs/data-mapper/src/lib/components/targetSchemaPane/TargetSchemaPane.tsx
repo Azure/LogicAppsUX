@@ -136,7 +136,9 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
           <TreeHeader onSearch={setTargetSchemaSearchTerm} onClear={() => setTargetSchemaSearchTerm('')} />
 
           <Tree<SchemaNodeExtended>
-            treeRoot={searchedTargetSchemaTreeRoot}
+            // Add one extra root layer so schemaTreeRoot is shown as well
+            // Can safely typecast as only the children[] are used from root
+            treeRoot={{ children: [searchedTargetSchemaTreeRoot] } as SchemaNodeExtended}
             nodeContent={(node: SchemaNodeExtended) => (
               <TargetSchemaTreeItem node={node} status={toggledStatesDictionary[node.key]} onClick={() => handleItemClick(node)} />
             )}

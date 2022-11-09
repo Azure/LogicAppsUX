@@ -149,7 +149,9 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
           <TreeHeader onSearch={setSourceSchemaSearchTerm} onClear={() => setSourceSchemaSearchTerm('')} />
 
           <Tree<SchemaNodeExtended>
-            treeRoot={searchedSourceSchemaTreeRoot}
+            // Add one extra root layer so schemaTreeRoot is shown as well
+            // Can safely typecast as only the children[] are used from root
+            treeRoot={{ children: [searchedSourceSchemaTreeRoot] } as SchemaNodeExtended}
             nodeContent={(node: SchemaNodeExtended) => (
               <SourceSchemaTreeItem
                 node={node}
