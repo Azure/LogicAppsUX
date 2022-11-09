@@ -13,10 +13,14 @@ export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
   return !!nodesMetadata[nodeId]?.isRoot;
 };
 
-export const getTriggerNodeId = (state: WorkflowState): string => {
+export const getTriggerNode = (state: WorkflowState): WorkflowNode => {
   const rootGraph = state.graph as WorkflowNode;
   const rootNode = rootGraph.children?.find((child) => isRootNode(child.id, state.nodesMetadata)) as WorkflowNode;
-  return rootNode.id;
+  return rootNode;
+};
+
+export const getTriggerNodeId = (state: WorkflowState): string => {
+  return getTriggerNode(state).id;
 };
 
 export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
