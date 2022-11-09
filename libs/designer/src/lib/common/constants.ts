@@ -879,6 +879,7 @@ export default {
   VARIABLE_TYPE,
   VISIBILITY: {
     ADVANCED: 'advanced',
+    IMPORTANT: 'important',
     INTERNAL: 'internal',
   },
   INCREMENT_VARIABLE_SUPPORTED_TYPES: [VARIABLE_TYPE.FLOAT, VARIABLE_TYPE.INTEGER],

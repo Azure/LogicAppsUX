@@ -279,6 +279,7 @@ export function createParameterInfo(
       serialization: parameter.serialization,
     },
     hideInUI: shouldHideInUI(parameter),
+    conditionalVisibility: isConditionallyVisible(parameter) ? false : undefined,
     label: parameter.title || parameter.summary || parameter.name,
     parameterKey: parameter.key,
     parameterName: parameter.name,
@@ -299,6 +300,10 @@ export function createParameterInfo(
 
 function shouldHideInUI(parameter: ResolvedParameter): boolean {
   return parameter?.hideInUI || equals(parameter.visibility, 'hideInUI') || equals(parameter.visibility, Visibility.Internal);
+}
+
+function isConditionallyVisible(parameter: ResolvedParameter): boolean {
+  return !parameter.required && parameter.visibility !== constants.VISIBILITY.IMPORTANT;
 }
 
 // TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor
