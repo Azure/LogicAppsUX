@@ -405,6 +405,7 @@ const parseDefinitionToConnection = (
   if (typeof sourceNodeObject === 'string') {
     const sourceEndOfFunction = sourceNodeObject.indexOf('(');
     const amendedSourceKey = targetKey.includes(mapNodeParams.for) ? getSourceValueFromLoop(sourceNodeObject, targetKey) : sourceNodeObject;
+    // if has for, add parent connection
     const sourceNode =
       sourceEndOfFunction > -1
         ? findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions)

@@ -636,3 +636,52 @@ export const deleteConnectionFromConnections = (connections: ConnectionDictionar
       ))
   );
 };
+
+// danielle can this return the additional connections? removing the reliance on state
+// const addParentConnectionForRepeatingElements = (parentTargetNode: SchemaNodeExtended | undefined, sourceNode: SchemaNodeExtended) => {
+//   if (parentTargetNode && isSchemaNodeExtended(sourceNode)) {
+//     if (sourceNode.parentKey) {
+//       const firstTargetNodeWithRepeatingPathItem = parentTargetNode.pathToRoot.find((pathItem) => pathItem.repeating);
+//       const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
+
+//       const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
+//       const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
+//       const firstSourceNodeWithRepeatingPathItem = parentSourceNode.pathToRoot.find((pathItem) => pathItem.repeating);
+
+//       if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
+//         const parentPrefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
+//         const parentSourceNode = newState.flattenedSourceSchema[parentPrefixedSourceKey];
+
+//         const parentPrefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
+//         const parentTargetNode = newState.flattenedTargetSchema[parentPrefixedTargetKey];
+
+//         const parentsAlreadyConnected = nodeHasSpecificInputEventually(
+//           parentPrefixedSourceKey,
+//           newState.dataMapConnections[parentPrefixedTargetKey],
+//           newState.dataMapConnections,
+//           true
+//         );
+
+//         if (!parentsAlreadyConnected) {
+//           addNodeToConnections(
+//             newState.dataMapConnections,
+//             parentSourceNode,
+//             parentPrefixedSourceKey,
+//             parentTargetNode,
+//             parentPrefixedTargetKey
+//           );
+//           state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+//         }
+//       }
+
+//       if (
+//         parentSourceNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1 &&
+//         nodeHasSpecificInputEventually(prefixedSourceKey, newState.dataMapConnections[prefixedTargetKey], newState.dataMapConnections, true)
+//       ) {
+//         if (!newState.currentSourceSchemaNodes.find((node) => node.key === parentSourceNode.key)) {
+//           newState.currentSourceSchemaNodes.push(parentSourceNode);
+//         }
+//       }
+//     }
+//   }
+// };

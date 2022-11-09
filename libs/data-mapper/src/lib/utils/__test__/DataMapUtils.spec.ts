@@ -87,7 +87,6 @@ describe('utils/DataMap', () => {
   });
 
   it('creates a nested loop connection', () => {
-    // danielle only test for parent connection
     const extendedLoopSource = convertSchemaToSchemaExtended(simpleLoopSource);
     const extendedLoopTarget = convertSchemaToSchemaExtended(simpleLoopTarget);
     simpleMap['ns0:Root'] = {
@@ -122,7 +121,6 @@ describe('utils/DataMap', () => {
 
     it('gets the source key from a nested looped target string', () => {
       const result = getSourceValueFromLoop('Day', '/ns0:Root/Ano/$for(/ns0:Root/Year)/Mes/$for(/ns0:Root/Year/Month)/Dia');
-      console.log(result);
       expect(result).toEqual('/ns0:Root/Year/Month/Day');
     });
   });
