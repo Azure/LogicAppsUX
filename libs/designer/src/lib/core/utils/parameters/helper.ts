@@ -262,6 +262,9 @@ export function createParameterInfo(
   shouldIgnoreDefaultValue = false
 ): ParameterInfo {
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, shouldIgnoreDefaultValue);
+  const value = loadParameterValue(parameter);
+  const { alias, encode, format, isDynamic, isUnknown, serialization } = parameter;
+  const info = { alias, encode, format, in: parameter.in, isDynamic: !!isDynamic, isUnknown, serialization };
   const parameterInfo: ParameterInfo = {
     alternativeKey: parameter.alternativeKey,
     id: guid(),
@@ -269,17 +272,9 @@ export function createParameterInfo(
     editor,
     editorOptions,
     editorViewModel,
-    info: {
-      alias: parameter.alias,
-      encode: parameter.encode,
-      format: parameter.format,
-      in: parameter.in,
-      isDynamic: !!parameter.isDynamic,
-      isUnknown: parameter.isUnknown,
-      serialization: parameter.serialization,
-    },
+    info,
     hideInUI: shouldHideInUI(parameter),
-    conditionalVisibility: isConditionallyVisible(parameter) ? false : undefined,
+    conditionalVisibility: shouldSoftHide(parameter) ? hasValue(parameter) : undefined,
     label: parameter.title || parameter.summary || parameter.name,
     parameterKey: parameter.key,
     parameterName: parameter.name,
@@ -288,10 +283,10 @@ export function createParameterInfo(
     required: !!parameter.required,
     schema,
     showErrors: false,
-    showTokens: parameter?.schema?.['x-ms-editor'] === 'string' ? false : true,
+    showTokens: parameter?.schema?.['x-ms-editor'] !== 'string',
     suppressCasting: parameter.suppressCasting,
     type: parameter.type,
-    value: loadParameterValue(parameter),
+    value,
     visibility: parameter.visibility,
   };
 
@@ -302,8 +297,12 @@ function shouldHideInUI(parameter: ResolvedParameter): boolean {
   return parameter?.hideInUI || equals(parameter.visibility, 'hideInUI') || equals(parameter.visibility, Visibility.Internal);
 }
 
-function isConditionallyVisible(parameter: ResolvedParameter): boolean {
+function shouldSoftHide(parameter: ResolvedParameter): boolean {
   return !parameter.required && parameter.visibility !== constants.VISIBILITY.IMPORTANT;
+}
+
+function hasValue(parameter: ResolvedParameter): boolean {
+  return parameter.value.some((v: any) => v.value !== undefined);
 }
 
 // TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor

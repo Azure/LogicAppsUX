@@ -212,19 +212,19 @@ const Setting = ({
   const dispatch = useDispatch();
   const nodeId = useSelectedNodeId();
 
-  const conVisHiddenSettings = useMemo(
+  const conditionalVisibilityHiddenSettings = useMemo(
     () => settings.filter((setting) => (setting.settingProp as any).conditionalVisibility === false),
     [settings]
   );
 
-  const [conVisTempArray, setConVisTempArray] = useState<string[]>([]);
+  const [conditionalVisibilityTempArray, setConditionalVisibilityTempArray] = useState<string[]>([]);
 
   return (
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
         const { settingType, settingProp, visible = true } = setting;
         const parameterId = (settingProp as any).id;
-        const isConVis = (settingProp as any).conditionalVisibility;
+        const conditionalVisibility = (settingProp as any).conditionalVisibility;
         if (!settingProp.readOnly) {
           settingProp.readOnly = isReadOnly;
         }
@@ -281,7 +281,7 @@ const Setting = ({
         );
 
         const RemoveConditionalParameter = () => {
-          return isConVis === true ? (
+          return conditionalVisibility === true ? (
             <div style={{ marginTop: '30px' }}>
               <TooltipHost content={removeParamTooltip}>
                 <IconButton iconProps={{ iconName: 'Cancel' }} onClick={removeParamCallback} />
@@ -290,7 +290,7 @@ const Setting = ({
           ) : null;
         };
 
-        return visible && isConVis !== false ? (
+        return visible && conditionalVisibility !== false ? (
           <div key={i} style={{ display: 'flex', gap: '4px' }}>
             <div className={getClassName()} style={{ flex: '1 1 auto' }}>
               {renderSetting()}
@@ -300,24 +300,24 @@ const Setting = ({
         ) : null;
       })}
 
-      {conVisHiddenSettings.length > 0 ? (
+      {conditionalVisibilityHiddenSettings.length > 0 ? (
         <Dropdown
           placeholder="Add new parameters"
           multiSelect
-          options={conVisHiddenSettings.map((setting) => ({
+          options={conditionalVisibilityHiddenSettings.map((setting) => ({
             key: (setting.settingProp as any).id,
             text: (setting.settingProp as any).label,
           }))}
           style={{ marginTop: '24px' }}
-          selectedKeys={conVisTempArray}
+          selectedKeys={conditionalVisibilityTempArray}
           onChange={(_e: any, item: any) => {
-            if (item?.key) setConVisTempArray([...conVisTempArray, item.key]);
+            if (item?.key) setConditionalVisibilityTempArray([...conditionalVisibilityTempArray, item.key]);
           }}
           onDismiss={() => {
-            conVisTempArray.forEach((parameterId) => {
+            conditionalVisibilityTempArray.forEach((parameterId) => {
               dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: true }));
             });
-            setConVisTempArray([]);
+            setConditionalVisibilityTempArray([]);
           }}
         />
       ) : null}
