@@ -24,7 +24,7 @@ templateExpressionLanguage.parameters = {
 export const javascript = Template.bind({});
 javascript.args = {
   language: EditorLanguage.javascript,
-  value: "// First line\nfunction hello() {\n\talert('Hello world!');\n}\n// Last line",
+  value: "// First line\nfunction hello() {\n    alert('Hello world!');\n}\n// Last line",
 };
 javascript.parameters = {
   axe: {

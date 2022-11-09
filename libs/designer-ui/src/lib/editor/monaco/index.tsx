@@ -244,6 +244,8 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
               minimap: { enabled: minimapEnabled },
               scrollBeyondLastLine: scrollBeyondLastLine,
               lineNumbersMinChars: lineNumbersMinChars,
+              unicodeHighlight: { invisibleCharacters: false, nonBasicASCII: false, ambiguousCharacters: false },
+              renderWhitespace: 'none',
               ...options,
             }}
             value={value}
