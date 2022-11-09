@@ -14,8 +14,6 @@ import {
   targetPrefix,
 } from '../constants/ReactFlowConstants';
 import {
-  changeConnection,
-  deleteConnection,
   deleteCurrentlySelectedItem,
   hideNotification,
   makeConnection,
@@ -29,7 +27,7 @@ import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import React, { useCallback, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type {
   Connection as ReactFlowConnection,
@@ -65,7 +63,6 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
 
   const reactFlowRef = useRef<HTMLDivElement>(null);
-  const edgeUpdateSuccessful = useRef(true);
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
@@ -114,49 +111,6 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
     dispatch(setSourceNodeConnectionBeingDrawnFromId(undefined));
   };
 
-  const onEdgeUpdateStart = useCallback(() => {
-    edgeUpdateSuccessful.current = false;
-  }, []);
-
-  const onEdgeUpdate = useCallback(
-    (oldEdge: ReactFlowEdge, newConnection: ReactFlowConnection) => {
-      edgeUpdateSuccessful.current = true;
-      if (newConnection.target && newConnection.source && oldEdge.target) {
-        const source = newConnection.source.startsWith(sourcePrefix)
-          ? flattenedSourceSchema[newConnection.source]
-          : currentFunctionNodes[newConnection.source];
-        const destination = newConnection.target.startsWith(targetPrefix)
-          ? flattenedTargetSchema[newConnection.target]
-          : currentFunctionNodes[newConnection.target];
-
-        dispatch(
-          changeConnection({
-            destination,
-            source,
-            reactFlowDestination: newConnection.target,
-            reactFlowSource: newConnection.source,
-            connectionKey: oldEdge.target,
-            inputKey: oldEdge.source,
-          })
-        );
-      }
-    },
-    [dispatch, flattenedSourceSchema, flattenedTargetSchema, currentFunctionNodes]
-  );
-
-  const onEdgeUpdateEnd = useCallback(
-    (_: any, edge: ReactFlowEdge) => {
-      if (!edgeUpdateSuccessful.current) {
-        if (edge.target) {
-          dispatch(deleteConnection({ connectionKey: edge.target, inputKey: edge.source }));
-        }
-      }
-
-      edgeUpdateSuccessful.current = true;
-    },
-    [dispatch]
-  );
-
   const onEdgeClick = (_event: React.MouseEvent, node: ReactFlowEdge) => {
     dispatch(setSelectedItem(node.id));
   };
@@ -203,11 +157,8 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
         backgroundSize: '22px 22px',
         borderRadius: tokens.borderRadiusMedium,
       }}
-      onEdgeUpdate={onEdgeUpdate}
-      onEdgeUpdateStart={onEdgeUpdateStart}
-      onEdgeUpdateEnd={onEdgeUpdateEnd}
       onEdgeClick={onEdgeClick}
-      fitViewOptions={{ maxZoom: defaultCanvasZoom }}
+      fitViewOptions={{ maxZoom: defaultCanvasZoom, includeHiddenNodes: true }}
       fitView
     >
       <CanvasToolbox canvasBlockHeight={canvasBlockHeight} />
