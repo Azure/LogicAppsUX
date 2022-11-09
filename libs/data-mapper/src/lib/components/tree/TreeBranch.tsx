@@ -1,39 +1,71 @@
 import { useTreeStyles } from './Tree';
-import type { ITreeNode } from './Tree';
+import type { ITreeNode, CoreTreeProps } from './Tree';
 import { Stack } from '@fluentui/react';
 import { Button, mergeClasses } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import { ChevronDown20Regular, ChevronRight20Regular } from '@fluentui/react-icons';
-import { useMemo } from 'react';
-import type { ReactNode } from 'react';
+import React, { useMemo } from 'react';
 
-interface TreeBranchProps<T> {
+const defaultChildPadding = 16;
+
+interface TreeBranchProps<T> extends CoreTreeProps<T> {
   level: number;
   node: T;
-  nodeContent: (node: T) => ReactNode;
-  nodeContainerClassName?: string;
 }
 
-const TreeBranch = <T extends ITreeNode<T>>({ level, node, nodeContent, nodeContainerClassName }: TreeBranchProps<T>) => {
+const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
+  const {
+    level,
+    node,
+    nodeContent,
+    nodeContainerClassName,
+    nodeContainerStyle,
+    childPadding = defaultChildPadding,
+    onClickItem,
+    parentItemClickShouldExpand,
+  } = props;
   const styles = useTreeStyles();
   const [isExpanded, { toggle: toggleExpanded }] = useBoolean(false);
 
   const hasChildren = useMemo<boolean>(() => !!(node.children && node.children.length > 0), [node]);
 
+  const handleItemClick = () => {
+    if (hasChildren && parentItemClickShouldExpand) {
+      toggleExpanded();
+    }
+
+    if (onClickItem) {
+      onClickItem(node);
+    }
+  };
+
+  const handleChevronClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    toggleExpanded();
+  };
+
   return (
     <>
       <Stack
         className={mergeClasses(styles.nodeContainer, nodeContainerClassName)}
-        style={{ paddingLeft: `${level * 16}px` }}
+        style={{
+          ...(nodeContainerStyle ? nodeContainerStyle(node) : {}),
+          paddingLeft: `${level * childPadding}px`,
+          cursor: onClickItem || !!parentItemClickShouldExpand ? 'pointer' : undefined,
+        }}
         horizontal
         verticalAlign="center"
+        onClick={handleItemClick}
       >
         <Button
-          appearance="subtle"
+          appearance="transparent"
           size="small"
           icon={isExpanded ? <ChevronDown20Regular /> : <ChevronRight20Regular />}
-          onClick={toggleExpanded}
-          style={{ visibility: hasChildren ? 'visible' : 'hidden' }}
+          onClick={handleChevronClick}
+          style={{
+            visibility: hasChildren ? 'visible' : 'hidden',
+            display: childPadding === 0 && !hasChildren ? 'none' : undefined,
+          }}
         />
 
         {nodeContent(node)}
@@ -41,9 +73,7 @@ const TreeBranch = <T extends ITreeNode<T>>({ level, node, nodeContent, nodeCont
 
       {hasChildren &&
         isExpanded &&
-        node.children?.map((childNode) => (
-          <TreeBranch<T> key={childNode.key} node={childNode} level={level + 1} nodeContent={nodeContent} />
-        ))}
+        node.children?.map((childNode) => <TreeBranch<T> {...props} key={childNode.key} node={childNode} level={level + 1} />)}
     </>
   );
 };

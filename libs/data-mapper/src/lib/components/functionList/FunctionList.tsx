@@ -141,9 +141,12 @@ export const FunctionList = () => {
           node.key.startsWith(functionCategoryItemKeyPrefix) ? (
             <FunctionListHeader category={node.key.replace(functionCategoryItemKeyPrefix, '') as FunctionCategory} />
           ) : (
-            <FunctionListItem functionData={node} onFunctionClick={onFunctionItemClick} />
+            <FunctionListItem functionData={node} />
           )
         }
+        childPadding={0}
+        onClickItem={(node) => !node.key.startsWith(functionCategoryItemKeyPrefix) && onFunctionItemClick(node)}
+        parentItemClickShouldExpand
       />
     </>
   );

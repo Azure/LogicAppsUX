@@ -7,6 +7,8 @@ const useStyles = makeStyles({
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     color: tokens.colorNeutralForeground1,
     paddingLeft: tokens.spacingHorizontalXS,
+    marginTop: '8px',
+    marginBottom: '8px',
   },
 });
 

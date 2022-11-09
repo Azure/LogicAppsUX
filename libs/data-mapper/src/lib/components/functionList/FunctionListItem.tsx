@@ -17,6 +17,9 @@ const useCardStyles = makeStyles({
     ':hover': {
       backgroundColor: tokens.colorNeutralBackground1Hover,
     },
+    '&:hover .fui-Text': {
+      ...typographyStyles.caption1Strong,
+    },
   },
   iconContainer: {
     height: fnIconSize,
@@ -33,18 +36,14 @@ const useCardStyles = makeStyles({
     paddingLeft: '4px',
     paddingRight: '4px',
     ...shorthands.overflow('hidden'),
-    ':hover': {
-      ...typographyStyles.caption1Strong,
-    },
   },
 });
 
 interface FunctionListItemProps {
   functionData: FunctionData;
-  onFunctionClick: (functionNode: FunctionData) => void;
 }
 
-const FunctionListItem = ({ functionData, onFunctionClick }: FunctionListItemProps) => {
+const FunctionListItem = ({ functionData }: FunctionListItemProps) => {
   const cardStyles = useCardStyles();
 
   const fnBranding = getFunctionBrandingForCategory(functionData.category);
@@ -52,14 +51,7 @@ const FunctionListItem = ({ functionData, onFunctionClick }: FunctionListItemPro
   const fnIcon = getIconForFunction(functionData.displayName, undefined, fnBranding);
 
   return (
-    <Button
-      key={functionData.key}
-      alt-text={functionData.displayName}
-      className={cardStyles.button}
-      onClick={() => {
-        onFunctionClick(functionData);
-      }}
-    >
+    <Button key={functionData.key} alt-text={functionData.displayName} className={cardStyles.button}>
       <div className={cardStyles.iconContainer} style={{ backgroundColor: customTokens[fnBranding.colorTokenName] }}>
         {fnIcon}
       </div>
