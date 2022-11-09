@@ -7,12 +7,14 @@ import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { ActionButton, Callout, DirectionalHint } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { css } from '@fluentui/utilities';
-import { guid } from '@microsoft-logic-apps/utils';
+import { guid, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from '../../core';
+import { getTriggerNode } from '../../core/utils/graph';
 
 export interface DropZoneProps {
   graphId: string;
@@ -23,7 +25,10 @@ export interface DropZoneProps {
 export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }) => {
   const intl = useIntl();
   const dispatch = useDispatch();
-
+  const isAddingTrigger = useSelector((state: RootState) => {
+    const triggerNode = getTriggerNode(state.workflow);
+    return triggerNode.type === WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE;
+  });
   const [showCallout, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
 
   const newActionText = intl.formatMessage({
@@ -89,7 +94,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId }
           {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
         </div>
       )}
-      {!isOver && (
+      {!isOver && !isAddingTrigger && (
         <>
           <ActionButtonV2 id={buttonId} title={tooltipText} onClick={actionButtonClick} />
           {showCallout && (

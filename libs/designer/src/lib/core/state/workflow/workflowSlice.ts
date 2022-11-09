@@ -1,8 +1,9 @@
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { addSwitchCaseToWorkflow, addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
-import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
-import { deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
+import type { DeleteNodePayload} from '../../parsers/deleteNodeFromWorkflow';
+import { deleteWorkflowNode , deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
+import { addNewEdge } from '../../parsers/restructuringHelpers';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
@@ -11,7 +12,7 @@ import { getImmediateSourceNodeIds } from '../../utils/graph';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
-import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
+import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'reactflow';
@@ -33,6 +34,7 @@ export const initialWorkflowState: WorkflowState = {
   newlyAddedOperations: {},
 };
 
+const placeholderNodeId = 'builtin:newWorkflowTrigger';
 export const workflowSlice = createSlice({
   name: 'workflow',
   initialState: initialWorkflowState,
@@ -51,7 +53,23 @@ export const workflowSlice = createSlice({
       const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
       if (!graph) throw new Error('graph not set');
 
+      if (action.payload.isTrigger) {
+        deleteWorkflowNode(placeholderNodeId, graph);
+        delete state.nodesMetadata[placeholderNodeId];
+
+        if (graph.edges?.length) {
+          graph.edges = graph.edges.map(edge => {
+            if (equals(edge.source, placeholderNodeId)) {
+              // eslint-disable-next-line no-param-reassign
+              edge.source = action.payload.nodeId;
+            }
+            return edge;
+          });
+        }
+      }
+
       addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
+
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
@@ -100,11 +118,31 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const graphId = state.nodesMetadata[action.payload.nodeId]?.graphId;
+      const { nodeId, isTrigger } = action.payload;
+      const graphId = state.nodesMetadata[nodeId]?.graphId;
       const graph = getWorkflowNodeFromGraphState(state, graphId);
       if (!graph) throw new Error('graph not set');
 
-      deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
+      if (isTrigger) {
+        const placeholderNode = {
+          id: placeholderNodeId,
+          width: 200,
+          height: 44,
+          type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
+        };
+        const existingChildren = graph.edges?.filter(edge => equals(edge.source, nodeId)).map(edge => edge.target) ?? [];
+
+        deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
+
+        graph.children = [...(graph?.children ?? []), placeholderNode];
+        state.nodesMetadata[placeholderNodeId] = { graphId, isRoot: true };
+        for (const childId of existingChildren) {
+          addNewEdge(state, placeholderNodeId, childId, graph);
+        }
+      } else {
+        deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
+      }
+
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',

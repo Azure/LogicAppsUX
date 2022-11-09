@@ -13,6 +13,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 type DeleteOperationPayload = {
   nodeId: string;
+  isTrigger: boolean;
 };
 
 export type DeleteGraphPayload = {
@@ -55,10 +56,10 @@ export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayl
       if (child.type === WORKFLOW_NODE_TYPES.GRAPH_NODE || child.type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) {
         recursiveGraphDelete(child);
       } else {
-        dispatch(deleteOperation({ nodeId: child.id }));
+        dispatch(deleteOperation({ nodeId: child.id, isTrigger: false }));
       }
     });
-    dispatch(deleteOperation({ nodeId: graph.id }));
+    dispatch(deleteOperation({ nodeId: graph.id, isTrigger: false }));
   };
 
   recursiveGraphDelete(graphNode);

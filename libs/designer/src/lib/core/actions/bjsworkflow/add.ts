@@ -39,6 +39,7 @@ type AddOperationPayload = {
   relationshipIds: RelationshipIds;
   nodeId: string;
   isParallelBranch?: boolean;
+  isTrigger?: boolean;
 };
 
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {

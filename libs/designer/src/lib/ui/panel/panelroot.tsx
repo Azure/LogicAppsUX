@@ -173,7 +173,7 @@ export const PanelRoot = (): JSX.Element => {
 
     options.push({
       key: deleteDescription,
-      disabled: readOnly || isTriggerNode,
+      disabled: readOnly,
       disabledReason: disabledDeleteAction,
       iconName: 'Delete',
       title: deleteDescription,
@@ -193,7 +193,7 @@ export const PanelRoot = (): JSX.Element => {
   };
 
   const handleDelete = (): void => {
-    dispatch(deleteOperation({ nodeId: selectedNode }));
+    dispatch(deleteOperation({ nodeId: selectedNode, isTrigger: isTriggerNode }));
     // TODO: 12798935 Analytics (event logging)
   };
 

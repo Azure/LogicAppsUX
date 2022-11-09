@@ -99,7 +99,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteClick = () => setShowDeleteModal(true);
-  const handleDelete = () => dispatch(deleteOperation({ nodeId: id }));
+  const handleDelete = () => dispatch(deleteOperation({ nodeId: id, isTrigger: !!isTrigger }));
 
   const getDeleteMenuItem = () => {
     const deleteDescription = intl.formatMessage({
@@ -114,7 +114,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
     return {
       key: deleteDescription,
-      disabled: readOnly || isTrigger,
+      disabled: readOnly,
       disabledReason: disableTriggerDeleteText,
       iconName: 'Delete',
       title: deleteDescription,
