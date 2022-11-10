@@ -110,7 +110,7 @@ export const panelSlice = createSlice({
         };
       }
     },
-    showDefaultTabs: (state, action: PayloadAction<boolean | undefined>) => {
+    showDefaultTabs: (state, action: PayloadAction<{ isScopeNode?: boolean } | undefined>) => {
       const defaultTabs = [
         constants.PANEL_TAB_NAMES.PARAMETERS,
         constants.PANEL_TAB_NAMES.ABOUT,
@@ -118,7 +118,7 @@ export const panelSlice = createSlice({
         constants.PANEL_TAB_NAMES.SETTINGS,
         constants.PANEL_TAB_NAMES.SCRATCH,
       ];
-      if (action.payload) {
+      if (action.payload?.isScopeNode) {
         defaultTabs.shift();
       }
       Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {

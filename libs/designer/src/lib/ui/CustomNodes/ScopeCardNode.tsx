@@ -81,7 +81,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const label = useNodeDisplayName(scopeId);
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
-    dispatch(showDefaultTabs(isScopeNode));
+    dispatch(showDefaultTabs({ isScopeNode }));
   }, [dispatch, isScopeNode, scopeId]);
 
   const graphCollapsed = useIsGraphCollapsed(scopeId);
