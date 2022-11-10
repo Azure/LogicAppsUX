@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [0.2.12](https://github.com/Azure/LogicAppsUX/compare/v0.2.11...v0.2.12) (2022-11-10)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Fixing upstream node calculations for nested scope nodes ([#1281](https://github.com/Azure/LogicAppsUX/issues/1281)) ([c7c6ad9](https://github.com/Azure/LogicAppsUX/commit/c7c6ad9da49bd6d850c2dcf49dc3e5fb54e220db))
+
 ### [0.2.11](https://github.com/Azure/LogicAppsUX/compare/v0.2.10...v0.2.11) (2022-11-09)
 
 
