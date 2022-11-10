@@ -94,38 +94,47 @@ export const FunctionList = () => {
     const newFunctionListTree = {} as FunctionDataTreeItem;
     newFunctionListTree.children = [];
 
-    if (functionData) {
-      const functionCategoryDictionary: { [key: string]: FunctionDataTreeItem } = {};
-      let functionsList: FunctionData[] = [...functionData];
-      functionsList.sort((a, b) => a.key.localeCompare(b.key)); // Alphabetically sort Functions
+    // Try/catch here to for critical Function-related errors to be caught by us & telemetry
+    try {
+      if (functionData) {
+        const functionCategoryDictionary: { [key: string]: FunctionDataTreeItem } = {};
+        let functionsList: FunctionData[] = [...functionData];
+        functionsList.sort((a, b) => a.key.localeCompare(b.key)); // Alphabetically sort Functions
 
-      // Create dictionary for Function Categories
-      Object.values(FunctionCategory).forEach((category) => {
-        const categoryItem = {} as FunctionDataTreeItem;
-        categoryItem.children = [];
-        categoryItem.key = `${functionCategoryItemKeyPrefix}${category}`;
+        // Create dictionary for Function Categories
+        Object.values(FunctionCategory).forEach((category) => {
+          const categoryItem = {} as FunctionDataTreeItem;
+          categoryItem.children = [];
+          categoryItem.key = `${functionCategoryItemKeyPrefix}${category}`;
 
-        functionCategoryDictionary[category] = categoryItem;
-      });
+          functionCategoryDictionary[category] = categoryItem;
+        });
 
-      // Filter out functions if we're adding an inline function and/or have a searchTerm
-      if (inlineFunctionInputOutputKeys.length === 2) {
-        // NOTE: Explicitly use this instead of isAddingInlineFunction to non-warningly add inlineFunction...Keys to dependencies to track value changes
-        functionsList = typeValidatePotentialInlineFunctions(functionsList);
+        // Filter out functions if we're adding an inline function and/or have a searchTerm
+        if (inlineFunctionInputOutputKeys.length === 2) {
+          // NOTE: Explicitly use this instead of isAddingInlineFunction to non-warningly add inlineFunction...Keys to dependencies to track value changes
+          functionsList = typeValidatePotentialInlineFunctions(functionsList);
+        }
+
+        if (searchTerm) {
+          const fuse = new Fuse(functionsList, fuseFunctionSearchOptions);
+          functionsList = fuse.search(searchTerm).map((result) => result.item);
+        }
+
+        // Add functions to their respective categories
+        functionsList.forEach((functionData) => {
+          functionCategoryDictionary[functionData.category].children.push({ ...functionData, children: [] });
+        });
+
+        // Add function categories as children to the tree root, filtering out any that don't have any children
+        newFunctionListTree.children = Object.values(functionCategoryDictionary).filter((category) => category.children.length > 0);
       }
-
-      if (searchTerm) {
-        const fuse = new Fuse(functionsList, fuseFunctionSearchOptions);
-        functionsList = fuse.search(searchTerm).map((result) => result.item);
+    } catch (error) {
+      if (typeof error === 'string') {
+        throw new Error(`Function List Error: ${error}`);
+      } else if (error instanceof Error) {
+        throw new Error(`Function List Error: ${error.message}`);
       }
-
-      // Add functions to their respective categories
-      functionsList.forEach((functionData) => {
-        functionCategoryDictionary[functionData.category].children.push({ ...functionData, children: [] });
-      });
-
-      // Add function categories as children to the tree root, filtering out any that don't have any children
-      newFunctionListTree.children = Object.values(functionCategoryDictionary).filter((category) => category.children.length > 0);
     }
 
     return newFunctionListTree;
@@ -178,9 +187,8 @@ const typeValidatePotentialInlineFunctions = (functionsToTypeValidate: FunctionD
     : [destination.normalizedDataType];
 
   return functionsToTypeValidate.filter((functionNode) => {
-    // In Function manifest, Functions without any inputs won't even have a the inputs property
-    // Either way, Functions with no inputs shouldn't be shown when adding inline functions
-    if (!functionNode.inputs) {
+    // Functions with no inputs shouldn't be shown when adding inline functions
+    if (functionNode.inputs.length === 0) {
       return false;
     }
 
