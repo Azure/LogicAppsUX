@@ -22,6 +22,7 @@ import {
 } from '../../utils/Connection.Utils';
 import {
   addReactFlowPrefix,
+  addSourceReactFlowPrefix,
   createReactFlowFunctionKey,
   getDestinationIdFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
@@ -211,19 +212,12 @@ export const dataMapSlice = createSlice({
 
       doDataMapOperation(state, newState);
     },
-
     removeSourceSchemaNodes: (state, action: PayloadAction<SchemaNodeExtended[]>) => {
-      let nodes = [...state.curDataMapOperation.currentSourceSchemaNodes];
-      nodes = state.curDataMapOperation.currentSourceSchemaNodes.filter((currentNode) =>
-        action.payload.every((payloadNode) => payloadNode.key !== currentNode.key)
-      );
-
-      const newState: DataMapOperationState = {
-        ...state.curDataMapOperation,
-        currentSourceSchemaNodes: nodes,
-      };
-
-      doDataMapOperation(state, newState);
+      // TODO: So far we only ever remove one node at a time, but if that changes, we need to alter this
+      // as currently each node deletion will generate a new undo/redo state
+      action.payload.forEach((srcSchemaNode) => {
+        deleteNodeWithKey(state, addSourceReactFlowPrefix(srcSchemaNode.key));
+      });
     },
 
     toggleSourceSchemaNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
@@ -324,53 +318,7 @@ export const dataMapSlice = createSlice({
       const selectedKey = state.curDataMapOperation.selectedItemKey;
 
       if (selectedKey) {
-        if (state.curDataMapOperation.flattenedTargetSchema[selectedKey]) {
-          return;
-        }
-
-        const sourceNode = state.curDataMapOperation.flattenedSourceSchema[selectedKey];
-        if (sourceNode) {
-          // Check if it has outputs - if so, cancel it and show notification
-          const potentialSrcSchemaNodeConnection = state.curDataMapOperation.dataMapConnections[selectedKey];
-          if (potentialSrcSchemaNodeConnection && potentialSrcSchemaNodeConnection.outputs.length > 0) {
-            state.notificationData = {
-              type: NotificationTypes.SourceNodeRemoveFailed,
-              msgParam: sourceNode.name,
-              autoHideDurationMs: errorNotificationAutoHideDuration,
-            };
-            return;
-          }
-
-          const removedNodes = state.curDataMapOperation.currentSourceSchemaNodes.filter((node) => node.key !== sourceNode.key);
-          deleteNodeFromConnections(state.curDataMapOperation.dataMapConnections, selectedKey);
-
-          state.curDataMapOperation.selectedItemKey = undefined;
-          doDataMapOperation(state, { ...state.curDataMapOperation, currentSourceSchemaNodes: removedNodes });
-          state.notificationData = { type: NotificationTypes.SourceNodeRemoved, autoHideDurationMs: deletedNotificationAutoHideDuration };
-          return;
-        }
-
-        const functionNode = state.curDataMapOperation.currentFunctionNodes[selectedKey];
-        if (functionNode) {
-          const newFunctionsState = { ...state.curDataMapOperation.currentFunctionNodes };
-          delete newFunctionsState[selectedKey];
-
-          deleteNodeFromConnections(state.curDataMapOperation.dataMapConnections, selectedKey);
-
-          state.curDataMapOperation.selectedItemKey = undefined;
-          doDataMapOperation(state, { ...state.curDataMapOperation, currentFunctionNodes: newFunctionsState });
-          state.notificationData = { type: NotificationTypes.FunctionNodeDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
-          return;
-        }
-
-        deleteConnectionFromConnections(
-          state.curDataMapOperation.dataMapConnections,
-          getSourceIdFromReactFlowConnectionId(selectedKey),
-          getDestinationIdFromReactFlowConnectionId(selectedKey)
-        );
-
-        doDataMapOperation(state, { ...state.curDataMapOperation, dataMapConnections: state.curDataMapOperation.dataMapConnections });
-        state.notificationData = { type: NotificationTypes.ConnectionDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
+        deleteNodeWithKey(state, selectedKey);
       }
     },
 
@@ -605,6 +553,7 @@ export const {
 
 export default dataMapSlice.reducer;
 
+/* eslint-disable no-param-reassign */
 const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperationState) => {
   state.undoStack = state.undoStack.slice(-19);
   state.undoStack.push(state.curDataMapOperation);
@@ -624,7 +573,6 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
     // Step through all the connected inputs and delete the selected key from their outputs
     flattenInputs(connections[keyToDelete].inputs).forEach((input) => {
       if (isConnectionUnit(input)) {
-        // eslint-disable-next-line no-param-reassign
         connections[input.reactFlowKey].outputs = connections[input.reactFlowKey].outputs.filter(
           (output) => output.reactFlowKey !== keyToDelete
         );
@@ -634,7 +582,6 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
     // Step through all the outputs and delete the selected key from their inputs
     connections[keyToDelete].outputs.forEach((outputConnection) => {
       Object.values(connections[outputConnection.reactFlowKey].inputs).forEach((outputConnectionInput, index) => {
-        // eslint-disable-next-line no-param-reassign
         connections[outputConnection.reactFlowKey].inputs[index] = outputConnectionInput.filter((input) =>
           isConnectionUnit(input) ? input.reactFlowKey !== keyToDelete : true
         );
@@ -642,19 +589,82 @@ export const deleteNodeFromConnections = (connections: ConnectionDictionary, key
     });
   }
 
-  // eslint-disable-next-line no-param-reassign
   delete connections[keyToDelete];
 };
 
 export const deleteConnectionFromConnections = (connections: ConnectionDictionary, inputKey: string, outputKey: string) => {
-  // eslint-disable-next-line no-param-reassign
   connections[inputKey].outputs = connections[inputKey].outputs.filter((output) => output.reactFlowKey !== outputKey);
 
   Object.entries(connections[outputKey].inputs).forEach(
     ([key, input]) =>
-      // eslint-disable-next-line no-param-reassign
       (connections[outputKey].inputs[key] = input.filter((inputEntry) =>
         isConnectionUnit(inputEntry) ? inputEntry.reactFlowKey !== inputKey : true
       ))
   );
+};
+
+export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: string) => {
+  if (curDataMapState.curDataMapOperation.flattenedTargetSchema[reactFlowKey]) {
+    return;
+  }
+
+  // Handle deleting source schema node
+  const sourceNode = curDataMapState.curDataMapOperation.flattenedSourceSchema[reactFlowKey];
+  if (sourceNode) {
+    // Check if it has outputs - if so, cancel it and show notification
+    const potentialSrcSchemaNodeConnection = curDataMapState.curDataMapOperation.dataMapConnections[reactFlowKey];
+    if (potentialSrcSchemaNodeConnection && potentialSrcSchemaNodeConnection.outputs.length > 0) {
+      curDataMapState.notificationData = {
+        type: NotificationTypes.SourceNodeRemoveFailed,
+        msgParam: sourceNode.name,
+        autoHideDurationMs: errorNotificationAutoHideDuration,
+      };
+      return;
+    }
+
+    const filteredCurrentSrcSchemaNodes = curDataMapState.curDataMapOperation.currentSourceSchemaNodes.filter(
+      (node) => node.key !== sourceNode.key
+    );
+    deleteNodeFromConnections(curDataMapState.curDataMapOperation.dataMapConnections, reactFlowKey);
+
+    curDataMapState.curDataMapOperation.selectedItemKey = undefined;
+    doDataMapOperation(curDataMapState, {
+      ...curDataMapState.curDataMapOperation,
+      currentSourceSchemaNodes: filteredCurrentSrcSchemaNodes,
+    });
+    curDataMapState.notificationData = {
+      type: NotificationTypes.SourceNodeRemoved,
+      autoHideDurationMs: deletedNotificationAutoHideDuration,
+    };
+    return;
+  }
+
+  // Handle deleting function node
+  const functionNode = curDataMapState.curDataMapOperation.currentFunctionNodes[reactFlowKey];
+  if (functionNode) {
+    const newFunctionsState = { ...curDataMapState.curDataMapOperation.currentFunctionNodes };
+    delete newFunctionsState[reactFlowKey];
+
+    deleteNodeFromConnections(curDataMapState.curDataMapOperation.dataMapConnections, reactFlowKey);
+
+    curDataMapState.curDataMapOperation.selectedItemKey = undefined;
+    doDataMapOperation(curDataMapState, { ...curDataMapState.curDataMapOperation, currentFunctionNodes: newFunctionsState });
+    curDataMapState.notificationData = {
+      type: NotificationTypes.FunctionNodeDeleted,
+      autoHideDurationMs: deletedNotificationAutoHideDuration,
+    };
+    return;
+  }
+
+  deleteConnectionFromConnections(
+    curDataMapState.curDataMapOperation.dataMapConnections,
+    getSourceIdFromReactFlowConnectionId(reactFlowKey),
+    getDestinationIdFromReactFlowConnectionId(reactFlowKey)
+  );
+
+  doDataMapOperation(curDataMapState, {
+    ...curDataMapState.curDataMapOperation,
+    dataMapConnections: { ...curDataMapState.curDataMapOperation.dataMapConnections },
+  });
+  curDataMapState.notificationData = { type: NotificationTypes.ConnectionDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
 };
