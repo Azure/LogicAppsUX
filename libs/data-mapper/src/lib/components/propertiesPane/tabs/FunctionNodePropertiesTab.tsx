@@ -276,7 +276,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       console.error(
                         `inputValueArrays had value-array for an unspecified input on Function ${functionData.functionName} at idx ${
                           idx + 1
-                        }: ${inputValueArray.map((inputVal) => (!inputVal ? 'undefined' : inputVal)).toString()}`
+                        }: ${inputValueArray.map((inputVal) => (inputVal === undefined ? 'undefined' : `'${inputVal}'`)).toString()}`
                       )
                     )
                 )}
