@@ -13,6 +13,7 @@ const useStyles = makeStyles({
   },
   placeholderText: {
     ...typographyStyles.body1Strong,
+    color: tokens.colorNeutralForeground2,
     maxWidth: '80%',
     textAlign: 'center',
   },
