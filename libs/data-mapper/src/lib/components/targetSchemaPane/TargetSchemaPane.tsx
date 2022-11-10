@@ -3,12 +3,13 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import { NormalizedDataType, SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
+import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import TargetSchemaTreeItem, { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import Tree from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
 import { Stack } from '@fluentui/react';
-import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular } from '@fluentui/react-icons';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -40,11 +41,13 @@ export type TargetSchemaPaneProps = {
 export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPaneProps) => {
   const intl = useIntl();
   const styles = useStyles();
+  const schemaNodeItemStyles = useSchemaTreeItemStyles();
   const dispatch = useDispatch<AppDispatch>();
 
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
 
   const [toggledStatesDictionary, setToggledStatesDictionary] = useState<NodeToggledStateDictionary | undefined>({});
   const [targetSchemaSearchTerm, setTargetSchemaSearchTerm] = useState<string>('');
@@ -54,7 +57,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     description: 'Target schema',
   });
 
-  const handleItemClick = (schemaNode: SchemaNodeExtended) => {
+  const onTargetSchemaItemClick = (schemaNode: SchemaNodeExtended) => {
     dispatch(setCurrentTargetSchemaNode(schemaNode));
   };
 
@@ -139,9 +142,16 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
             // Add one extra root layer so schemaTreeRoot is shown as well
             // Can safely typecast as only the children[] are used from root
             treeRoot={{ children: [searchedTargetSchemaTreeRoot] } as SchemaNodeExtended}
-            nodeContent={(node: SchemaNodeExtended) => (
-              <TargetSchemaTreeItem node={node} status={toggledStatesDictionary[node.key]} onClick={() => handleItemClick(node)} />
-            )}
+            nodeContent={(node: SchemaNodeExtended) => <TargetSchemaTreeItem node={node} status={toggledStatesDictionary[node.key]} />}
+            onClickItem={(node) => onTargetSchemaItemClick(node)}
+            nodeContainerClassName={mergeClasses(schemaNodeItemStyles.nodeContainer, schemaNodeItemStyles.targetSchemaNode)}
+            nodeContainerStyle={(node) =>
+              node.key === currentTargetSchemaNode?.key
+                ? {
+                    backgroundColor: tokens.colorNeutralBackground4Selected,
+                  }
+                : {}
+            }
           />
         </div>
       )}

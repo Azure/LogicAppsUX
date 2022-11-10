@@ -17,28 +17,28 @@ export const useTreeStyles = makeStyles({
   },
 });
 
-interface TreeProps<T> {
-  treeRoot: T;
+export interface CoreTreeProps<T> {
   nodeContent: (node: T) => ReactNode;
-  treeContainerClassName?: string;
   nodeContainerClassName?: string;
+  nodeContainerStyle?: (node: T) => React.CSSProperties;
+  childPadding?: number; // 0 will also not render hidden chevrons (meaning the space is recouped) - used in FxList
+  onClickItem?: (node: T) => void;
+  parentItemClickShouldExpand?: boolean;
 }
 
-const Tree = <T extends ITreeNode<T>>({ treeRoot, nodeContent, treeContainerClassName, nodeContainerClassName }: TreeProps<T>) => {
+interface TreeProps<T> extends CoreTreeProps<T> {
+  treeRoot: T;
+  treeContainerClassName?: string;
+}
+
+const Tree = <T extends ITreeNode<T>>(props: TreeProps<T>) => {
+  const { treeRoot, treeContainerClassName } = props;
   const styles = useTreeStyles();
 
   return (
     <div className={mergeClasses(styles.treeContainer, treeContainerClassName)}>
       {treeRoot.children &&
-        treeRoot.children.map((childNode) => (
-          <TreeBranch<T>
-            key={childNode.key}
-            level={0}
-            node={childNode}
-            nodeContent={nodeContent}
-            nodeContainerClassName={nodeContainerClassName}
-          />
-        ))}
+        treeRoot.children.map((childNode) => <TreeBranch<T> {...props} key={childNode.key} level={0} node={childNode} />)}
     </div>
   );
 };
