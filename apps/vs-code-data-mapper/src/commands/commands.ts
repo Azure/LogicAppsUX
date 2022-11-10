@@ -1,25 +1,27 @@
 import DataMapperExt from '../DataMapperExt';
 import { startBackendRuntime } from '../FxWorkflowRuntime';
 import { schemasPath } from '../extensionConfig';
+import { registerCommand } from '@microsoft/vscode-azext-utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
-import { commands, window, workspace } from 'vscode';
-import type { ExtensionContext, Uri } from 'vscode';
+import { window, workspace } from 'vscode';
+import type { Uri } from 'vscode';
 
-export const registerCommands = (context: ExtensionContext) => {
-  context.subscriptions.push(commands.registerCommand('azureDataMapper.openDataMapper', () => openDataMapperCmd(context)));
-  context.subscriptions.push(commands.registerCommand('azureDataMapper.createNewDataMap', () => createNewDataMapCmd(context)));
-  context.subscriptions.push(commands.registerCommand('azureDataMapper.loadDataMapFile', (uri: Uri) => loadDataMapFileCmd(uri, context)));
+export const registerCommands = () => {
+  registerCommand('azureDataMapper.openDataMapper', () => openDataMapperCmd());
+  registerCommand('azureDataMapper.createNewDataMap', () => createNewDataMapCmd());
+  registerCommand('azureDataMapper.loadDataMapFile', (context: IActionContext, uri: Uri) => loadDataMapFileCmd(uri));
 };
 
-const openDataMapperCmd = async (context: ExtensionContext) => {
+const openDataMapperCmd = async () => {
   await startBackendRuntime(DataMapperExt.getWorkspaceFolderFsPath());
 
-  DataMapperExt.createOrShow(context);
+  DataMapperExt.createOrShow();
 };
 
-const createNewDataMapCmd = (context: ExtensionContext) => {
+const createNewDataMapCmd = () => {
   // TODO: Data map name validation
   window.showInputBox({ prompt: 'Data Map name: ' }).then(async (newDatamapName) => {
     if (!newDatamapName) {
@@ -28,13 +30,13 @@ const createNewDataMapCmd = (context: ExtensionContext) => {
 
     DataMapperExt.currentDataMapName = newDatamapName;
 
-    await openDataMapperCmd(context);
+    await openDataMapperCmd();
 
     DataMapperExt.currentPanel.sendMsgToWebview({ command: 'loadNewDataMap', data: {} });
   });
 };
 
-const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
+const loadDataMapFileCmd = async (uri: Uri) => {
   const mapDefinition = yaml.load(await fs.readFile(uri.fsPath, 'utf-8')) as {
     $sourceSchema: string;
     $targetSchema: string;
@@ -93,7 +95,7 @@ const loadDataMapFileCmd = async (uri: Uri, context: ExtensionContext) => {
 
   DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
 
-  await openDataMapperCmd(context);
+  await openDataMapperCmd();
 
   DataMapperExt.currentPanel.sendMsgToWebview({
     command: 'loadDataMap',

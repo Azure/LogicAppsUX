@@ -7,11 +7,12 @@ import {
   schemasPath,
   webviewTitle,
 } from './extensionConfig';
+import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { ChildProcess } from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
-import type { WebviewPanel, ExtensionContext, OutputChannel } from 'vscode';
+import type { WebviewPanel, ExtensionContext } from 'vscode';
 
 type SchemaType = 'source' | 'target';
 type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string };
@@ -38,16 +39,16 @@ type ReceivingMessageTypes =
 
 export default class DataMapperExt {
   public static currentPanel: DataMapperExt | undefined;
-  public static outputChannel: OutputChannel | undefined;
+  public static outputChannel: IAzExtOutputChannel | undefined;
   public static readonly viewType = 'dataMapperWebview';
-  public static extensionContext: ExtensionContext | undefined;
+  public static context: ExtensionContext | undefined;
   public static currentDataMapName: string | undefined;
   public static backendRuntimeChildProcess: ChildProcess | undefined;
 
   private readonly _panel: WebviewPanel;
   private readonly _extensionPath: string;
 
-  public static createOrShow(context: ExtensionContext) {
+  public static createOrShow() {
     // If a panel has already been created, re-show it
     if (DataMapperExt.currentPanel) {
       DataMapperExt.currentPanel._panel.reveal(ViewColumn.Active);
@@ -66,7 +67,7 @@ export default class DataMapperExt {
       }
     );
 
-    this.currentPanel = new DataMapperExt(panel, context.extensionPath);
+    this.currentPanel = new DataMapperExt(panel, DataMapperExt.context.extensionPath);
   }
 
   public sendMsgToWebview(msg: SendingMessageTypes) {
@@ -76,19 +77,19 @@ export default class DataMapperExt {
   private constructor(panel: WebviewPanel, extPath: string) {
     this._panel = panel;
     this._extensionPath = extPath;
-    DataMapperExt.extensionContext?.subscriptions.push(panel);
+    DataMapperExt.context?.subscriptions.push(panel);
 
     this._setWebviewHtml();
 
     // Handle messages from the webview (Data Mapper component)
-    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.extensionContext?.subscriptions);
+    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.context?.subscriptions);
 
     this._panel.onDidDispose(
       () => {
         DataMapperExt.currentPanel = undefined;
       },
       null,
-      DataMapperExt.extensionContext?.subscriptions
+      DataMapperExt.context?.subscriptions
     );
   }
 
