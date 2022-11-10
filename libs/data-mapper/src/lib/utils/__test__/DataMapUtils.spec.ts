@@ -1,9 +1,17 @@
-import { simpleLoopSource, simpleLoopTarget, sourceMockSchema, targetMockSchema } from '../../__mocks__';
+import {
+  layeredLoopSourceMockSchema,
+  layeredLoopTargetMockSchema,
+  simpleLoopSource,
+  simpleLoopTarget,
+  sourceMockSchema,
+  targetMockSchema,
+} from '../../__mocks__';
 import { concatFunction, conditionalFunction, greaterThanFunction } from '../../__mocks__/FunctionMock';
 import type { MapDefinitionEntry } from '../../models';
-import type { ConnectionUnit } from '../../models/Connection';
-import { convertFromMapDefinition, getSourceValueFromLoop } from '../DataMap.Utils';
-import { convertSchemaToSchemaExtended } from '../Schema.Utils';
+import { SchemaType } from '../../models';
+import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
+import { addParentConnectionForRepeatingElementsNested, convertFromMapDefinition, getSourceValueFromLoop } from '../DataMap.Utils';
+import { convertSchemaToSchemaExtended, flattenSchema } from '../Schema.Utils';
 
 describe('utils/DataMap', () => {
   const simpleMap: MapDefinitionEntry = {
@@ -122,6 +130,26 @@ describe('utils/DataMap', () => {
     it('gets the source key from a nested looped target string', () => {
       const result = getSourceValueFromLoop('Day', '/ns0:Root/Ano/$for(/ns0:Root/Year)/Mes/$for(/ns0:Root/Year/Month)/Dia');
       expect(result).toEqual('/ns0:Root/Year/Month/Day');
+    });
+  });
+
+  describe('addParentConnectionForRepeatingElementsNested', () => {
+    const extendedLoopSource = convertSchemaToSchemaExtended(layeredLoopSourceMockSchema);
+    const extendedLoopTarget = convertSchemaToSchemaExtended(layeredLoopTargetMockSchema);
+    const flattenedLoopSource = flattenSchema(extendedLoopSource, SchemaType.Source);
+    const flattenedLoopTarget = flattenSchema(extendedLoopTarget, SchemaType.Target);
+    const sourceNodeParent = flattenedLoopSource['source-/ns0:Root/ManyToMany/Year/Month/Day'];
+    const targetNodeParent = flattenedLoopTarget['target-/ns0:Root/ManyToMany/Year/Month/Day'];
+    it('adds parent connections for nested loops', () => {
+      const connectionsDict: ConnectionDictionary = {};
+      addParentConnectionForRepeatingElementsNested(
+        sourceNodeParent,
+        targetNodeParent,
+        flattenedLoopSource,
+        flattenedLoopTarget,
+        connectionsDict
+      );
+      console.log(JSON.stringify(connectionsDict));
     });
   });
 });

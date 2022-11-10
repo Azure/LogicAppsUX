@@ -680,13 +680,13 @@ export const addParentConnectionForRepeatingElements = (
 ) => {
   if (isSchemaNodeExtended(sourceNode) && isSchemaNodeExtended(targetNode)) {
     // if it isn't we still have to do this lol
+
     if (sourceNode.parentKey) {
-      const firstTargetNodeWithRepeatingPathItem = targetNode.pathToRoot.find((pathItem) => pathItem.repeating);
-      // const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
+      const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
 
       const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
       const parentSourceNode = flattenedSourceSchema[prefixedSourceKey];
-      const firstSourceNodeWithRepeatingPathItem = parentSourceNode.pathToRoot.find((pathItem) => pathItem.repeating);
+      const firstSourceNodeWithRepeatingPathItem = findLast(parentSourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
       if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
         const parentPrefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
@@ -704,18 +704,8 @@ export const addParentConnectionForRepeatingElements = (
 
         if (!parentsAlreadyConnected) {
           addNodeToConnections(dataMapConnections, parentSourceNode, parentPrefixedSourceKey, parentTargetNode, parentPrefixedTargetKey);
-          // state.notificationData = { type: NotificationTypes.ArrayConnectionAdded }; danielle move this
         }
       }
-
-      // if ( danielle do later
-      //   parentSourceNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1 &&
-      //   nodeHasSpecificInputEventually(prefixedSourceKey, newState.dataMapConnections[prefixedTargetKey], newState.dataMapConnections, true)
-      // ) {
-      //   if (!newState.currentSourceSchemaNodes.find((node) => node.key === parentSourceNode.key)) {
-      //     newState.currentSourceSchemaNodes.push(parentSourceNode);
-      //   }
-      // }
     }
   }
 };

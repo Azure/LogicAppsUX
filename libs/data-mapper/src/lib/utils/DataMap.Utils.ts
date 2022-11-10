@@ -12,8 +12,9 @@ import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
-import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
+import type { PathItem, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeProperty, SchemaType } from '../models/Schema';
+import { findLast } from './Array.Utils';
 import {
   addNodeToConnections,
   flattenInputs,
@@ -23,7 +24,7 @@ import {
   nodeHasSpecificInputEventually,
 } from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
-import { addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
+import { addReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, flattenSchema, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft-logic-apps/utils';
 import yaml from 'js-yaml';
@@ -296,6 +297,8 @@ export const convertFromMapDefinition = (
     parseDefinitionToConnection(mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, {}, sourceSchema, targetSchema, functions);
   }
 
+  // const test =
+
   return connections;
 };
 
@@ -454,6 +457,52 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): st
     constructedSourceKey = match + sourceKey;
   }
   return constructedSourceKey;
+};
+
+export const addParentConnectionForRepeatingElementsNested = (
+  targetNode: FunctionData | SchemaNodeExtended,
+  sourceNode: FunctionData | SchemaNodeExtended,
+  flattenedSourceSchema: SchemaNodeDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary,
+  dataMapConnections: ConnectionDictionary
+) => {
+  if (isSchemaNodeExtended(sourceNode) && isSchemaNodeExtended(targetNode)) {
+    // if it isn't we still have to do this lol
+
+    if (sourceNode.parentKey) {
+      const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
+
+      //const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
+      const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
+
+      if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
+        const parentPrefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
+        const parentSourceNode = flattenedSourceSchema[parentPrefixedSourceKey];
+
+        const parentPrefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
+        const parentTargetNode = flattenedTargetSchema[parentPrefixedTargetKey];
+
+        const parentsAlreadyConnected = nodeHasSpecificInputEventually(
+          parentPrefixedSourceKey,
+          dataMapConnections[parentPrefixedTargetKey],
+          dataMapConnections,
+          true
+        );
+
+        if (!parentsAlreadyConnected) {
+          addNodeToConnections(dataMapConnections, parentSourceNode, parentPrefixedSourceKey, parentTargetNode, parentPrefixedTargetKey);
+        }
+
+        addParentConnectionForRepeatingElementsNested(
+          flattenedSourceSchema[parentPrefixedSourceKey],
+          flattenedTargetSchema[parentPrefixedTargetKey],
+          flattenedSourceSchema,
+          flattenedTargetSchema,
+          dataMapConnections
+        );
+      }
+    }
+  }
 };
 
 const formatCustomValue = (customValue: string) => customValueQuoteToken + customValue + customValueQuoteToken;
