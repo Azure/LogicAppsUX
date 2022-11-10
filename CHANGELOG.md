@@ -1,4 +1,21 @@
 # Logic Apps Designer
+### [0.2.11](https://github.com/Azure/LogicAppsUX/compare/v0.2.10...v0.2.11) (2022-11-09)
+
+
+### Logic Apps Designer Changes
+
+* Fixing node renaming / token data inconsistencies ([#1265](https://github.com/Azure/LogicAppsUX/issues/1265)) ([ad3a476](https://github.com/Azure/LogicAppsUX/commit/ad3a4761cce12a0a88276c8be727ee129edabf4f))
+
+
+### Data Mapper Changes
+
+* testing deserialization and beginning support for loops ([#1273](https://github.com/Azure/LogicAppsUX/issues/1273)) ([a62cbd2](https://github.com/Azure/LogicAppsUX/commit/a62cbd24f257709e53761ff23606f30b6add06c6))
+
+
+### Logic Apps Designer Bug Fixes
+
+* Allow trigger deletion and replacing them ([#1280](https://github.com/Azure/LogicAppsUX/issues/1280)) ([e0ae4cf](https://github.com/Azure/LogicAppsUX/commit/e0ae4cf2e992b8ec15787a5083e03b2e8d97c49b))
+* Hide yellow warnings about unicode characters in code editor ([#1279](https://github.com/Azure/LogicAppsUX/issues/1279)) ([c38206f](https://github.com/Azure/LogicAppsUX/commit/c38206f788f2282aa044837380e314dd0ddee88a))
 
 ### [0.2.10](https://github.com/Azure/LogicAppsUX/compare/v0.2.9...v0.2.10) (2022-11-08)
 

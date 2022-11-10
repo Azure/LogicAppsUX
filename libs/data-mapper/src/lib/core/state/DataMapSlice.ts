@@ -125,10 +125,8 @@ export const dataMapSlice = createSlice({
       } else {
         state.curDataMapOperation.targetSchema = action.payload.schema;
         state.curDataMapOperation.flattenedTargetSchema = flattenedSchema;
-        state.curDataMapOperation.currentTargetSchemaNode = action.payload.schema.schemaTreeRoot;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
-        state.pristineDataMap.currentTargetSchemaNode = action.payload.schema.schemaTreeRoot;
       }
     },
 
@@ -147,7 +145,7 @@ export const dataMapSlice = createSlice({
         flattenedTargetSchema,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: [],
-        currentTargetSchemaNode: targetSchema.schemaTreeRoot,
+        currentTargetSchemaNode: undefined,
       };
 
       state.curDataMapOperation = newState;
@@ -241,7 +239,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
-    setCurrentTargetSchemaNode: (state, action: PayloadAction<SchemaNodeExtended>) => {
+    setCurrentTargetSchemaNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {
       const currentTargetSchemaNode = state.curDataMapOperation.currentTargetSchemaNode;
       const newTargetSchemaNode = action.payload;
 
@@ -446,6 +444,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    /* DEPRECATED: Will be removed in the near future once it's certain it won't be used again elsewhere
     // NOTE: Specifically for dragging existing connection to a new target
     changeConnection: (state, action: PayloadAction<ConnectionAction & DeleteConnectionAction>) => {
       const newState: DataMapOperationState = {
@@ -458,6 +457,7 @@ export const dataMapSlice = createSlice({
 
       doDataMapOperation(state, newState);
     },
+    */
 
     updateConnectionInput: (state, action: PayloadAction<UpdateConnectionInputAction>) => {
       const newState: DataMapOperationState = {
@@ -470,6 +470,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    /* DEPRECATED: Will be removed in the near future once it's certain it won't be used again elsewhere
     deleteConnection: (state, action: PayloadAction<DeleteConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -481,6 +482,7 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
       state.notificationData = { type: NotificationTypes.ConnectionDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
     },
+    */
 
     undoDataMapOperation: (state) => {
       const lastDataMap = state.undoStack.pop();
@@ -566,9 +568,7 @@ export const {
   setSelectedItem,
   addFunctionNode,
   makeConnection,
-  changeConnection,
   updateConnectionInput,
-  deleteConnection,
   undoDataMapOperation,
   redoDataMapOperation,
   saveDataMap,
