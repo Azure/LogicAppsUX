@@ -157,7 +157,7 @@ const initializeOperationDetails = async (
   dispatch(updateNodeSettings({ id: nodeId, settings }));
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
-  dispatch(showDefaultTabs());
+  dispatch(showDefaultTabs(operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE));
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {

@@ -110,7 +110,7 @@ export const panelSlice = createSlice({
         };
       }
     },
-    showDefaultTabs: (state) => {
+    showDefaultTabs: (state, action: PayloadAction<boolean | undefined>) => {
       const defaultTabs = [
         constants.PANEL_TAB_NAMES.PARAMETERS,
         constants.PANEL_TAB_NAMES.ABOUT,
@@ -118,6 +118,9 @@ export const panelSlice = createSlice({
         constants.PANEL_TAB_NAMES.SETTINGS,
         constants.PANEL_TAB_NAMES.SCRATCH,
       ];
+      if (action.payload) {
+        defaultTabs.shift();
+      }
       Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
         if (state.registeredTabs[tab.name.toLowerCase()]) {
           state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: defaultTabs.includes(tab.name) };
