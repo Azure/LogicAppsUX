@@ -23,13 +23,18 @@ export const createConnectionEntryIfNeeded = (
       outputs: [],
     };
 
-    if (isFunctionData(node) && node.maxNumberOfInputs !== -1) {
-      for (let index = 0; index < node.maxNumberOfInputs; index++) {
-        connections[reactFlowKey].inputs[index] = [];
+    if (isFunctionData(node)) {
+      if (node.maxNumberOfInputs !== -1) {
+        for (let index = 0; index < node.maxNumberOfInputs; index++) {
+          connections[reactFlowKey].inputs[index] = [];
+        }
+      } else {
+        // Start unbounded inputs off with two empty fields (instead of no fields at all)
+        connections[reactFlowKey].inputs[0] = [undefined, undefined];
       }
     } else {
-      // Start unbounded inputs off with two empty fields (instead of no fields at all)
-      connections[reactFlowKey].inputs[0] = [undefined, undefined];
+      // Schema nodes start with a single empty inputValArray
+      connections[reactFlowKey].inputs[0] = [];
     }
   }
 };
