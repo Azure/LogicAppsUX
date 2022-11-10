@@ -302,7 +302,7 @@ function shouldSoftHide(parameter: ResolvedParameter): boolean {
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
-  return parameter.value.some((v: any) => v.value !== undefined);
+  return !!parameter?.value;
 }
 
 // TODO - Need to figure out a way to get the managedIdentity for the app for authentication editor

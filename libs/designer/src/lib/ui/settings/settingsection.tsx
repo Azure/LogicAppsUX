@@ -223,7 +223,7 @@ const Setting = ({
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
         const { settingType, settingProp, visible = true } = setting;
-        const { parameterId, conditionalVisibility, readOnly } = settingProp as any;
+        const { id: parameterId, conditionalVisibility, readOnly } = settingProp as any;
         if (!readOnly) settingProp.readOnly = isReadOnly;
 
         const getClassName = (): string =>
