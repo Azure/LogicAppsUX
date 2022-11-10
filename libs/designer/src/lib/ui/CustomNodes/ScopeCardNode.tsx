@@ -1,10 +1,11 @@
+import constants from '../../common/constants';
 import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
-import { useBrandColor, useIconUri } from '../../core/state/selectors/actionMetadataSelector';
+import { useBrandColor, useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
@@ -75,12 +76,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
+  const isScopeNode = useOperationInfo(scopeId).type.toLowerCase() === constants.NODE.TYPE.SCOPE;
 
   const label = useNodeDisplayName(scopeId);
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
-    dispatch(showDefaultTabs());
-  }, [dispatch, scopeId]);
+    dispatch(showDefaultTabs({ isScopeNode }));
+  }, [dispatch, isScopeNode, scopeId]);
 
   const graphCollapsed = useIsGraphCollapsed(scopeId);
   const handleGraphCollapse = useCallback(() => {
