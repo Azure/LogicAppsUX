@@ -239,9 +239,9 @@ const isFunctionTypeSupported = (inputNodeType: NormalizedDataType, tgtInputs: F
 export const flattenInputs = (inputs: InputConnectionDictionary): InputConnection[] => Object.values(inputs).flatMap((value) => value);
 
 export const isCustomValue = (connectionInput: InputConnection): connectionInput is string =>
-  !!connectionInput && typeof connectionInput === 'string';
+  connectionInput !== undefined && typeof connectionInput === 'string';
 export const isConnectionUnit = (connectionInput: InputConnection): connectionInput is ConnectionUnit =>
-  !!connectionInput && typeof connectionInput !== 'string';
+  connectionInput !== undefined && typeof connectionInput !== 'string';
 
 const onlyUniqueConnections = (value: ConnectionUnit, index: number, self: ConnectionUnit[]) => {
   return self.findIndex((selfValue) => selfValue.reactFlowKey === value.reactFlowKey) === index;

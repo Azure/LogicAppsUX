@@ -122,7 +122,6 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
       newInputValueArrays = functionData.inputs.map((_input) => []);
 
       if (connection?.inputs) {
-        console.log(Object.values(connection.inputs));
         Object.values(connection.inputs).forEach((inputValueArray, idx) => {
           if (!(idx in newInputValueArrays)) {
             console.error('Connection inputs had more input-value-arrays than its Function had input slots - connection.inputs ->');
@@ -131,7 +130,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
           }
 
           inputValueArray.forEach((inputValue) => {
-            if (!inputValue) {
+            if (inputValue === undefined) {
               newInputValueArrays[idx].push(undefined);
             } else if (isCustomValue(inputValue)) {
               newInputValueArrays[idx].push(inputValue);
