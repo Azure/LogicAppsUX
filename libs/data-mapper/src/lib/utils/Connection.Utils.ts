@@ -9,6 +9,8 @@ import { isFunctionData } from './Function.Utils';
 import { addReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 
+// NOTE: This method should be the gateway for anything getting into dataMapConnections
+// - meaning all default inputs/etc can safely be managed in this singular spot
 export const createConnectionEntryIfNeeded = (
   connections: ConnectionDictionary,
   node: SchemaNodeExtended | FunctionData,
@@ -26,7 +28,8 @@ export const createConnectionEntryIfNeeded = (
         connections[reactFlowKey].inputs[index] = [];
       }
     } else {
-      connections[reactFlowKey].inputs[0] = [];
+      // Start unbounded inputs off with two empty fields (instead of no fields at all)
+      connections[reactFlowKey].inputs[0] = [undefined, undefined];
     }
   }
 };
