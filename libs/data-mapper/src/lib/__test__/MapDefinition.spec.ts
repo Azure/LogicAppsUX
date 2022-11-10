@@ -1,4 +1,4 @@
-import { sourceMockSchema, targetMockSchema } from '../__mocks__';
+import { layeredLoopSourceMockSchema, layeredLoopTargetMockSchema, sourceMockSchema, targetMockSchema } from '../__mocks__';
 import { concatFunction, greaterThanFunction } from '../__mocks__/FunctionMock';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '../models';
 import { SchemaType } from '../models';
@@ -378,6 +378,100 @@ describe('Map definition conversions', () => {
       expect(dayEntries.length).toEqual(1);
       expect(dayEntries[0][0]).toEqual('Pressure');
       expect(dayEntries[0][1]).toEqual('./@Pressure');
+    });
+
+    it.skip('Generates body with nested loops', async () => {
+      const loopSourceSchema: Schema = layeredLoopSourceMockSchema;
+      const extendedLoopSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(loopSourceSchema);
+
+      const loopTargetSchema: Schema = layeredLoopTargetMockSchema;
+      const extendedLoopTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(loopTargetSchema);
+
+      const sourceNode = extendedLoopSourceSchema.schemaTreeRoot.children[0];
+      const targetNode = extendedLoopTargetSchema.schemaTreeRoot.children[0];
+      const mapDefinition: MapDefinitionEntry = {};
+      const connections: ConnectionDictionary = {};
+
+      const sourceChildNode = sourceNode.children[0];
+      const targetChildNode = targetNode.children[0];
+
+      addNodeToConnections(
+        connections,
+        sourceChildNode,
+        addReactFlowPrefix(sourceChildNode.key, SchemaType.Source),
+        targetChildNode,
+        addReactFlowPrefix(targetChildNode.key, SchemaType.Target)
+      );
+      addNodeToConnections(
+        connections,
+        sourceChildNode.children[0],
+        addReactFlowPrefix(sourceChildNode.children[0].key, SchemaType.Source),
+        targetChildNode.children[0],
+        addReactFlowPrefix(targetChildNode.children[0].key, SchemaType.Target)
+      );
+      addNodeToConnections(
+        connections,
+        sourceChildNode.children[0].children[0],
+        addReactFlowPrefix(sourceChildNode.children[0].children[0].key, SchemaType.Source),
+        targetChildNode.children[0].children[0],
+        addReactFlowPrefix(targetChildNode.children[0].children[0].key, SchemaType.Target)
+      );
+      addNodeToConnections(
+        connections,
+        sourceChildNode.children[0].children[0].children[0],
+        addReactFlowPrefix(sourceChildNode.children[0].children[0].children[0].key, SchemaType.Source),
+        targetChildNode.children[0].children[0].children[0],
+        addReactFlowPrefix(targetChildNode.children[0].children[0].children[0].key, SchemaType.Target)
+      );
+      generateMapDefinitionBody(mapDefinition, connections);
+
+      expect(Object.keys(mapDefinition).length).toEqual(1);
+      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      expect(rootChildren.length).toEqual(1);
+      expect(rootChildren[0][0]).toEqual('ManyToMany');
+      expect(rootChildren[0][1]).not.toBe('string');
+
+      const manyToManyObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['ManyToMany'] as MapDefinitionEntry;
+      const manyToManyEntries = Object.entries(manyToManyObject);
+      expect(manyToManyEntries.length).toEqual(1);
+      expect(manyToManyEntries[0][0]).toEqual('$for(/ns0:Root/ManyToMany/Year)');
+      expect(manyToManyEntries[0][1]).not.toBe('string');
+
+      const yearForObject = manyToManyObject['$for(/ns0:Root/ManyToMany/Year)'] as MapDefinitionEntry;
+      const yearForLoopEntries = Object.entries(yearForObject);
+      expect(yearForLoopEntries.length).toEqual(1);
+      expect(yearForLoopEntries[0][0]).toEqual('Year');
+      expect(yearForLoopEntries[0][1]).not.toBe('string');
+
+      const yearObject = yearForObject['Year'] as MapDefinitionEntry;
+      const yearEntries = Object.entries(yearObject);
+      expect(yearEntries.length).toEqual(1);
+      expect(yearEntries[0][0]).toEqual('$for(/ns0:Root/ManyToMany/Year/Month)');
+      expect(yearEntries[0][1]).not.toBe('string');
+
+      const monthForObject = yearObject['$for(/ns0:Root/ManyToMany/Year/Month)'] as MapDefinitionEntry;
+      const monthForLoopEntries = Object.entries(monthForObject);
+      expect(monthForLoopEntries.length).toEqual(1);
+      expect(monthForLoopEntries[0][0]).toEqual('Month');
+      expect(monthForLoopEntries[0][1]).not.toBe('string');
+
+      const monthObject = monthForObject['Month'] as MapDefinitionEntry;
+      const monthEntries = Object.entries(monthObject);
+      expect(monthEntries.length).toEqual(1);
+      expect(monthEntries[0][0]).toEqual('$for(/ns0:Root/ManyToMany/Year/Month/Day)');
+      expect(monthEntries[0][1]).not.toBe('string');
+
+      const dayForObject = monthObject['$for(/ns0:Root/ManyToMany/Year/Month/Day)'] as MapDefinitionEntry;
+      const dayForLoopEntries = Object.entries(dayForObject);
+      expect(dayForLoopEntries.length).toEqual(1);
+      expect(dayForLoopEntries[0][0]).toEqual('Day');
+      expect(dayForLoopEntries[0][1]).not.toBe('string');
+
+      const dayObject = dayForObject['Day'] as MapDefinitionEntry;
+      const dayEntries = Object.entries(dayObject);
+      expect(dayEntries.length).toEqual(1);
+      expect(dayEntries[0][0]).toEqual('Date');
+      expect(dayEntries[0][1]).toEqual('Date'); // TODO This line generates incorrectly
     });
 
     it('Generates body with function loop', async () => {

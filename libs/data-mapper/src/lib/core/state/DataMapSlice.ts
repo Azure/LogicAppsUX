@@ -9,6 +9,7 @@ import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '.
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
+import { findLast } from '../../utils/Array.Utils';
 import {
   addNodeToConnections,
   createConnectionEntryIfNeeded,
@@ -362,12 +363,12 @@ export const dataMapSlice = createSlice({
       const sourceNode = action.payload.source;
       if (parentTargetNode && isSchemaNodeExtended(sourceNode)) {
         if (sourceNode.parentKey) {
-          const firstTargetNodeWithRepeatingPathItem = parentTargetNode.pathToRoot.find((pathItem) => pathItem.repeating);
+          const firstTargetNodeWithRepeatingPathItem = findLast(parentTargetNode.pathToRoot, (pathItem) => pathItem.repeating);
           const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
 
           const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
           const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
-          const firstSourceNodeWithRepeatingPathItem = parentSourceNode.pathToRoot.find((pathItem) => pathItem.repeating);
+          const firstSourceNodeWithRepeatingPathItem = findLast(parentSourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
           if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
             const parentPrefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
