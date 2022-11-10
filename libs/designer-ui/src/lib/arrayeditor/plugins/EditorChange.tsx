@@ -33,7 +33,7 @@ export const EditorChange = ({ item, items, index, setItems }: updateStateProps)
   const onChange = (editorState: EditorState) => {
     const newValue = serializeEditorState(editorState);
     if (notEqual(item, newValue)) {
-      const newItems = [...items];
+      const newItems = JSON.parse(JSON.stringify(items));
       newItems[index].value = newValue;
       setItems(newItems);
       editor.focus();

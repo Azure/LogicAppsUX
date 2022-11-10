@@ -31,24 +31,15 @@ export interface SimpleArrayItem {
   value: ValueSegment[];
 }
 
-interface BaseArrayEditorProps extends BaseEditorProps {
+interface ArrayEditorProps extends BaseEditorProps {
   isCollapsed?: boolean;
   canDeleteLastItem?: boolean;
   disableToggle?: boolean;
   labelProps: LabelProps;
   itemSchema?: any;
+  type: ArrayType.COMPLEX | ArrayType.SIMPLE;
+  initialItems: ComplexArrayItems[] | SimpleArrayItem[];
 }
-export type ArrayEditorProps = BaseArrayEditorProps &
-  (
-    | {
-        type: ArrayType.COMPLEX;
-        initialItems: ComplexArrayItems[];
-      }
-    | {
-        type: ArrayType.SIMPLE;
-        initialItems: SimpleArrayItem[];
-      }
-  );
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   isCollapsed = false,
@@ -65,7 +56,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState(isCollapsed);
   const [items, setItems] = useState(initialItems);
-  const [isValid, setIsValid] = useState<boolean>(initializeArrayValidation(initialValue));
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(
     initialItems
       ? type === ArrayType.SIMPLE
@@ -73,6 +63,8 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
         : parseComplexItems(initialItems as ComplexArrayItems[], itemSchema)
       : initialValue
   );
+  const [isValid, setIsValid] = useState<boolean>(initializeArrayValidation(collapsedValue));
+
   let dimensionalSchema: any[] = [];
 
   if (type === ArrayType.COMPLEX) {
