@@ -254,8 +254,8 @@ const ParameterSection = ({
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI)
     .map((param) => {
-      const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData } = param;
-      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel };
+      const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility } = param;
+      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(param, upstreamNodeIds ?? [], variables);
 
       const remappedValues: ValueSegment[] = value.map((v: ValueSegment) => {
