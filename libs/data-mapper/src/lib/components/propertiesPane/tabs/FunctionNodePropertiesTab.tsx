@@ -122,13 +122,11 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
       newInputValueArrays = functionData.inputs.map((_input) => []);
 
       if (connection?.inputs) {
+        console.log(Object.values(connection.inputs));
         Object.values(connection.inputs).forEach((inputValueArray, idx) => {
           if (!(idx in newInputValueArrays)) {
-            console.error(
-              `Connection inputs had more input-value-arrays than its Function had input slots - connection.inputs -> ${Object.values(
-                connection.inputs
-              ).map((input) => (!input ? 'undefined' : input.toString()))}`
-            );
+            console.error('Connection inputs had more input-value-arrays than its Function had input slots - connection.inputs ->');
+            console.error(Object.values(connection.inputs));
             return;
           }
 
@@ -202,7 +200,9 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       currentNode={functionData}
                       label={input.name}
                       placeholder={input.placeHolder}
-                      inputValue={inputValueArrays && idx in inputValueArrays && 0 in inputValueArrays[idx] ? inputValueArrays[idx][0] : ''}
+                      inputValue={
+                        inputValueArrays && idx in inputValueArrays && 0 in inputValueArrays[idx] ? inputValueArrays[idx][0] : undefined
+                      }
                       inputIndex={idx}
                       inputStyles={{ width: '100%' }}
                     />
@@ -266,7 +266,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       console.error(
                         `inputValueArrays had value-array for an unspecified input on Function ${functionData.functionName} at idx ${
                           idx + 1
-                        }: ${inputValueArray.toString()}`
+                        }: ${inputValueArray.map((inputVal) => (!inputVal ? 'undefined' : inputVal)).toString()}`
                       )
                     )
                 )}
