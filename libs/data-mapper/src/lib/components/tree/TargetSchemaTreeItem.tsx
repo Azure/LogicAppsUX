@@ -3,9 +3,9 @@ import type { SchemaNodeExtended } from '../../models';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { useSchemaTreeItemStyles } from './SourceSchemaTreeItem';
 import { Stack } from '@fluentui/react';
-import { mergeClasses, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Text, tokens } from '@fluentui/react-components';
 import { CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular } from '@fluentui/react-icons';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 export type NodeToggledStateDictionary = { [key: string]: ItemToggledState };
@@ -18,15 +18,12 @@ export enum ItemToggledState {
 interface TargetSchemaTreeItemProps {
   node: SchemaNodeExtended;
   status: ItemToggledState;
-  onClick: () => void;
 }
 
-const TargetSchemaTreeItem = ({ node, status, onClick }: TargetSchemaTreeItemProps) => {
+const TargetSchemaTreeItem = ({ node, status }: TargetSchemaTreeItemProps) => {
   const styles = useSchemaTreeItemStyles();
 
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
-
-  const [isContainerHovered, setIsContainerHovered] = useState(false);
 
   const isItemCurrentNode = useMemo(() => currentTargetSchemaNode?.key === node.key, [currentTargetSchemaNode, node]);
 
@@ -46,15 +43,7 @@ const TargetSchemaTreeItem = ({ node, status, onClick }: TargetSchemaTreeItemPro
   const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, true, node.nodeProperties);
 
   return (
-    <Stack
-      className={mergeClasses(styles.nodeContainer, styles.targetSchemaNode)}
-      style={{ backgroundColor: isItemCurrentNode ? tokens.colorNeutralBackground4Selected : undefined }}
-      onClick={onClick}
-      onMouseEnter={() => setIsContainerHovered(true)}
-      onMouseLeave={() => setIsContainerHovered(false)}
-      horizontal
-      verticalAlign="center"
-    >
+    <Stack horizontal verticalAlign="center">
       <div className={styles.indicator} style={{ visibility: isItemCurrentNode ? 'visible' : 'hidden' }} />
 
       <span style={{ marginRight: '4px', marginTop: '2px' }}>{statusIcon}</span>
@@ -67,9 +56,7 @@ const TargetSchemaTreeItem = ({ node, status, onClick }: TargetSchemaTreeItemPro
         />
       </div>
 
-      <Text className={styles.nodeName} style={isContainerHovered ? { ...typographyStyles.caption1Strong } : undefined}>
-        {node.name}
-      </Text>
+      <Text className={styles.nodeName}>{node.name}</Text>
     </Stack>
   );
 };
