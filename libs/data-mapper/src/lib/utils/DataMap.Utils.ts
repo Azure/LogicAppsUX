@@ -7,12 +7,13 @@ import {
   reservedMapDefinitionKeysArray,
 } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { SchemaNodeProperty } from '../models/Schema';
+import { SchemaNodeProperty, SchemaType } from '../models/Schema';
 import {
   addNodeToConnections,
   flattenInputs,
@@ -23,7 +24,7 @@ import {
 } from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
 import { addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
-import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
+import { findNodeForKey, flattenSchema, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft-logic-apps/utils';
 import yaml from 'js-yaml';
 
@@ -295,102 +296,7 @@ export const convertFromMapDefinition = (
     parseDefinitionToConnection(mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, {}, sourceSchema, targetSchema, functions);
   }
 
-  const testNested = {
-    'target-/ns0:Root/Ano/Mes/Dia': {
-      self: {
-        node: {
-          key: '/ns0:Root/Ano/Mes/Dia',
-          name: 'Dia',
-          schemaNodeDataType: 'String',
-          normalizedDataType: 'String',
-          properties: 'NotSpecified',
-          fullName: 'Dia',
-          parentKey: '/ns0:Root/Ano/Mes',
-          nodeProperties: ['NotSpecified'],
-          children: [],
-          pathToRoot: [
-            { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-            { key: '/ns0:Root/Ano', name: 'Ano', fullName: 'Ano', repeating: true },
-            { key: '/ns0:Root/Ano/Mes', name: 'Mes', fullName: 'Mes', repeating: true },
-            { key: '/ns0:Root/Ano/Mes/Dia', name: 'Dia', fullName: 'Dia', repeating: false },
-          ],
-        },
-        reactFlowKey: 'target-/ns0:Root/Ano/Mes/Dia',
-      },
-      inputs: {
-        '0': [
-          {
-            node: {
-              key: '/ns0:Root/Year/Month/Day',
-              name: 'Day',
-              schemaNodeDataType: 'String',
-              normalizedDataType: 'String',
-              properties: 'NotSpecified',
-              fullName: 'Day',
-              parentKey: '/ns0:Root/Year/Month',
-              nodeProperties: ['NotSpecified'],
-              children: [],
-              pathToRoot: [
-                { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-                { key: '/ns0:Root/Year', name: 'Year', fullName: 'Year', repeating: false },
-                { key: '/ns0:Root/Year/Month', name: 'Month', fullName: 'Month', repeating: true },
-                { key: '/ns0:Root/Year/Month/Day', name: 'Day', fullName: 'Day', repeating: false },
-              ],
-            },
-            reactFlowKey: 'source-/ns0:Root/Year/Month/Day',
-          },
-        ],
-      },
-      outputs: [],
-    },
-    'source-/ns0:Root/Year/Month/Day': {
-      self: {
-        node: {
-          key: '/ns0:Root/Year/Month/Day',
-          name: 'Day',
-          schemaNodeDataType: 'String',
-          normalizedDataType: 'String',
-          properties: 'NotSpecified',
-          fullName: 'Day',
-          parentKey: '/ns0:Root/Year/Month',
-          nodeProperties: ['NotSpecified'],
-          children: [],
-          pathToRoot: [
-            { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-            { key: '/ns0:Root/Year', name: 'Year', fullName: 'Year', repeating: false },
-            { key: '/ns0:Root/Year/Month', name: 'Month', fullName: 'Month', repeating: true },
-            { key: '/ns0:Root/Year/Month/Day', name: 'Day', fullName: 'Day', repeating: false },
-          ],
-        },
-        reactFlowKey: 'source-/ns0:Root/Year/Month/Day',
-      },
-      inputs: { '0': [] },
-      outputs: [
-        {
-          node: {
-            key: '/ns0:Root/Ano/Mes/Dia',
-            name: 'Dia',
-            schemaNodeDataType: 'String',
-            normalizedDataType: 'String',
-            properties: 'NotSpecified',
-            fullName: 'Dia',
-            parentKey: '/ns0:Root/Ano/Mes',
-            nodeProperties: ['NotSpecified'],
-            children: [],
-            pathToRoot: [
-              { key: '/ns0:Root', name: 'Root', fullName: 'ns0:Root', repeating: false },
-              { key: '/ns0:Root/Ano', name: 'Ano', fullName: 'Ano', repeating: true },
-              { key: '/ns0:Root/Ano/Mes', name: 'Mes', fullName: 'Mes', repeating: true },
-              { key: '/ns0:Root/Ano/Mes/Dia', name: 'Dia', fullName: 'Dia', repeating: false },
-            ],
-          },
-          reactFlowKey: 'target-/ns0:Root/Ano/Mes/Dia',
-        },
-      ],
-    },
-  };
-
-  return testNested as unknown as ConnectionDictionary;
+  return connections;
 };
 
 const parseDefinitionToConnection = (
@@ -405,7 +311,7 @@ const parseDefinitionToConnection = (
   if (typeof sourceNodeObject === 'string') {
     const sourceEndOfFunction = sourceNodeObject.indexOf('(');
     const amendedSourceKey = targetKey.includes(mapNodeParams.for) ? getSourceValueFromLoop(sourceNodeObject, targetKey) : sourceNodeObject;
-    // if has for, add parent connection
+
     const sourceNode =
       sourceEndOfFunction > -1
         ? findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions)
@@ -424,6 +330,21 @@ const parseDefinitionToConnection = (
       ? findFunctionForKey(destinationFunctionKey, functions)
       : findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
     const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${destinationNode?.key}`;
+
+    if (targetKey.includes(mapNodeParams.for)) {
+      // if has for, add parent connection
+      const sourceFlattened = flattenSchema(sourceSchema, SchemaType.Source);
+      const targetFlattened = flattenSchema(targetSchema, SchemaType.Target);
+      if (sourceNode && destinationNode) {
+        addParentConnectionForRepeatingElements(
+          destinationNode as SchemaNodeExtended,
+          sourceNode as SchemaNodeExtended,
+          sourceFlattened,
+          targetFlattened,
+          connections
+        ); // danielle fix typing
+      }
+    }
 
     if (sourceNode && destinationNode) {
       addNodeToConnections(connections, sourceNode, sourceKey, destinationNode, destinationKey);
@@ -518,7 +439,6 @@ const yamlReplacer = (key: string, value: any) => {
 };
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
-  // danielle will account for nested loops in next PR
   let constructedSourceKey = '';
   const matchArr = targetKey.match(/\$for\([^)]+\)\//g);
   let match = matchArr?.[matchArr.length - 1];
