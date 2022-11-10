@@ -175,6 +175,7 @@ export default {
     AUTHENTICATION: 'authentication',
     CODE: 'code',
     CONDITION: 'condition',
+    COMBOBOX: 'combobox',
     COPYABLE: 'copyable',
     DICTIONARY: 'dictionary',
     DROPDOWN: 'dropdown',
@@ -878,6 +879,7 @@ export default {
   VARIABLE_TYPE,
   VISIBILITY: {
     ADVANCED: 'advanced',
+    IMPORTANT: 'important',
     INTERNAL: 'internal',
   },
   INCREMENT_VARIABLE_SUPPORTED_TYPES: [VARIABLE_TYPE.FLOAT, VARIABLE_TYPE.INTEGER],

@@ -15,7 +15,7 @@ import TokenPickerButton from './plugins/TokenPickerButton';
 import { TreeView } from './plugins/TreeView';
 import EditorTheme from './themes/editorTheme';
 import { parseSegments } from './utils/parsesegments';
-import { css, DirectionalHint, TooltipHost } from '@fluentui/react';
+import { css } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import { AutoLinkNode, LinkNode } from '@lexical/link';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
@@ -163,7 +163,7 @@ export const BaseEditor = ({
         {toolBar ? <Toolbar /> : null}
         <RichTextPlugin
           contentEditable={<ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabel={editorInputLabel} />}
-          placeholder={<span className="editor-placeholder"> {createPlaceholder(placeholder)} </span>}
+          placeholder={<span className="editor-placeholder"> {placeholder} </span>}
         />
         {treeView ? <TreeView /> : null}
         {autoFocus ? <AutoFocus /> : null}
@@ -195,10 +195,3 @@ export const BaseEditor = ({
     </LexicalComposer>
   );
 };
-function createPlaceholder(placeholder?: string): JSX.Element {
-  return (
-    <TooltipHost content={placeholder} directionalHint={DirectionalHint.rightCenter}>
-      {placeholder}
-    </TooltipHost>
-  );
-}

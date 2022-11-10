@@ -515,6 +515,7 @@ const serializeSubGraph = async (
     serializeOperation(rootState, nestedNode.id)
   ) as Promise<LogicAppsV2.OperationDefinition>[];
   const nestedActions = await Promise.all(nestedActionsPromises);
+  const idReplacements = rootState.workflow.idReplacements;
 
   safeSetObjectPropertyValue(
     result,
@@ -523,7 +524,7 @@ const serializeSubGraph = async (
       if (!isNullOrEmpty(action)) {
         return {
           ...actions,
-          [nestedNodes[index].id]: action,
+          [idReplacements[nestedNodes[index].id] ?? [nestedNodes[index].id]]: action,
         };
       }
 
