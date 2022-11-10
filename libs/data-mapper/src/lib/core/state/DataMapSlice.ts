@@ -1,6 +1,10 @@
 import type { ToolboxPanelTabs } from '../../components/canvasToolbox/CanvasToolbox';
 import type { NotificationData } from '../../components/notification/Notification';
-import { deletedNotificationAutoHideDuration, NotificationTypes } from '../../components/notification/Notification';
+import {
+  deletedNotificationAutoHideDuration,
+  NotificationTypes,
+  errorNotificationAutoHideDuration,
+} from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
@@ -326,7 +330,18 @@ export const dataMapSlice = createSlice({
 
         const sourceNode = state.curDataMapOperation.flattenedSourceSchema[selectedKey];
         if (sourceNode) {
-          const removedNodes = state.curDataMapOperation.currentSourceSchemaNodes.filter((node) => node.name !== sourceNode.name);
+          // Check if it has outputs - if so, cancel it and show notification
+          const potentialSrcSchemaNodeConnection = state.curDataMapOperation.dataMapConnections[selectedKey];
+          if (potentialSrcSchemaNodeConnection && potentialSrcSchemaNodeConnection.outputs.length > 0) {
+            state.notificationData = {
+              type: NotificationTypes.SourceNodeRemoveFailed,
+              msgParam: sourceNode.name,
+              autoHideDurationMs: errorNotificationAutoHideDuration,
+            };
+            return;
+          }
+
+          const removedNodes = state.curDataMapOperation.currentSourceSchemaNodes.filter((node) => node.key !== sourceNode.key);
           deleteNodeFromConnections(state.curDataMapOperation.dataMapConnections, selectedKey);
 
           state.curDataMapOperation.selectedItemKey = undefined;
