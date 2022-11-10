@@ -3,6 +3,7 @@ import type { Exception } from '@microsoft-logic-apps/utils';
 
 export interface ParameterInfo {
   alternativeKey?: string;
+  conditionalVisibility?: boolean;
   dynamicData?: {
     error?: Exception;
     status: DynamicCallStatus;

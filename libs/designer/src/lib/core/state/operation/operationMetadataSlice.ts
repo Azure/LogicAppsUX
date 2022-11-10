@@ -244,11 +244,22 @@ export const operationMetadataSlice = createSlice({
         state.dependencies[nodeId].outputs = { ...state.dependencies[nodeId].outputs, ...dependencies.outputs };
       }
     },
+    updateParameterConditionalVisibility: (
+      state,
+      action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; value?: boolean }>
+    ) => {
+      const { nodeId, groupId, parameterId, value } = action.payload;
+      const index = state.inputParameters[nodeId].parameterGroups[groupId].parameters.findIndex(
+        (parameter) => parameter.id === parameterId
+      );
+      if (index > -1) {
+        state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].conditionalVisibility = value;
+        if (value === false) state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].value = [];
+      }
+    },
     updateOutputs: (state, action: PayloadAction<{ id: string; nodeOutputs: NodeOutputs }>) => {
       const { id, nodeOutputs } = action.payload;
-      if (state.outputParameters[id]) {
-        state.outputParameters[id] = nodeOutputs;
-      }
+      if (state.outputParameters[id]) state.outputParameters[id] = nodeOutputs;
     },
     deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
@@ -276,6 +287,7 @@ export const {
   clearDynamicInputs,
   clearDynamicOutputs,
   updateNodeSettings,
+  updateParameterConditionalVisibility,
   updateOutputs,
   deinitializeOperationInfo,
   deinitializeNodes,

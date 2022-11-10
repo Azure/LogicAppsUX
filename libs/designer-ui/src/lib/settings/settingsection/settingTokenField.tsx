@@ -74,14 +74,12 @@ const TokenField = ({
       return <CopyInputControl placeholder={placeholder} text={value[0].value} />;
 
     case 'dropdown':
-      // eslint-disable-next-line no-case-declarations
-      const { options, multiSelect } = editorOptions;
       return (
         <DropdownEditor
           readonly={readOnly}
           initialValue={value}
-          options={options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
-          multiSelect={!!multiSelect}
+          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          multiSelect={!!editorOptions?.multiSelect}
           onChange={onValueChange}
         />
       );
