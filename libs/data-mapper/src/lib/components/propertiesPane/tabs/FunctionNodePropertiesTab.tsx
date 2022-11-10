@@ -22,29 +22,38 @@ import { useDispatch, useSelector } from 'react-redux';
 const fnIconContainerSize = 28;
 
 const useStyles = makeStyles({
-  inputOutputContentStyle: {
+  inputOutputContent: {
     display: 'flex',
     paddingTop: '16px',
     paddingBottom: '16px',
   },
-  inputOutputStackStyle: {
+  inputOutputStack: {
     width: '100%',
   },
-  dividerStyle: {
+  divider: {
     maxWidth: '12px',
     color: tokens.colorNeutralStroke2,
   },
-  titleStyle: {
-    ...typographyStyles.body1Strong,
+  functionNameTitle: {
+    ...typographyStyles.subtitle2,
+    color: tokens.colorNeutralForeground1,
   },
-  codeExStyle: {
+  bodyText: {
+    ...typographyStyles.body1,
+    color: tokens.colorNeutralForeground1,
+  },
+  codeEx: {
     marginTop: '8px',
     display: 'block',
     fontFamily: tokens.fontFamilyMonospace,
   },
-  fnNameStyle: {
+  fnName: {
     color: tokens.colorBrandForeground2,
     fontFamily: tokens.fontFamilyMonospace,
+  },
+  inputOutputStackTitle: {
+    ...typographyStyles.body1Strong,
+    color: tokens.colorNeutralForeground1,
   },
 });
 
@@ -124,16 +133,13 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
       if (connection?.inputs) {
         Object.values(connection.inputs).forEach((inputValueArray, idx) => {
           if (!(idx in newInputValueArrays)) {
-            console.error(
-              `Connection inputs had more input-value-arrays than its Function had input slots - connection.inputs -> ${Object.values(
-                connection.inputs
-              ).map((input) => (!input ? 'undefined' : input.toString()))}`
-            );
+            console.error('Connection inputs had more input-value-arrays than its Function had input slots - connection.inputs ->');
+            console.error(Object.values(connection.inputs));
             return;
           }
 
           inputValueArray.forEach((inputValue) => {
-            if (!inputValue) {
+            if (inputValue === undefined) {
               newInputValueArrays[idx].push(undefined);
             } else if (isCustomValue(inputValue)) {
               newInputValueArrays[idx].push(inputValue);
@@ -174,23 +180,25 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
             </div>
           </span>
 
-          <Text className={styles.titleStyle} style={{ marginLeft: '8px' }}>
+          <Text className={styles.functionNameTitle} style={{ marginLeft: '8px' }}>
             {functionData.displayName}
           </Text>
         </Stack>
 
-        <Text>{functionData.description}</Text>
-        <Text className={styles.codeExStyle}>
-          <Text className={styles.fnNameStyle}>{functionData.functionName}</Text>()
+        <Text className={styles.bodyText}>{functionData.description}</Text>
+        <Text className={styles.codeEx}>
+          <Text className={styles.fnName}>{functionData.functionName}</Text>()
         </Text>
       </div>
 
-      <Stack horizontal className={styles.inputOutputContentStyle}>
-        <Stack className={styles.inputOutputStackStyle}>
-          <Text className={styles.titleStyle}>{inputLoc}</Text>
+      <Stack horizontal className={styles.inputOutputContent}>
+        <Stack className={styles.inputOutputStack}>
+          <Text className={styles.inputOutputStackTitle}>{inputLoc}</Text>
 
           {functionData.maxNumberOfInputs === 0 && ( // Functions with no inputs
-            <Text style={{ marginTop: '16px' }}>{functionNoReqInputLoc}</Text>
+            <Text className={styles.bodyText} style={{ marginTop: '16px' }}>
+              {functionNoReqInputLoc}
+            </Text>
           )}
 
           {functionData.maxNumberOfInputs > 0 && ( // Functions with bounded inputs
@@ -202,7 +210,9 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       currentNode={functionData}
                       label={input.name}
                       placeholder={input.placeHolder}
-                      inputValue={inputValueArrays && idx in inputValueArrays && 0 in inputValueArrays[idx] ? inputValueArrays[idx][0] : ''}
+                      inputValue={
+                        inputValueArrays && idx in inputValueArrays && 0 in inputValueArrays[idx] ? inputValueArrays[idx][0] : undefined
+                      }
                       inputIndex={idx}
                       inputStyles={{ width: '100%' }}
                     />
@@ -266,7 +276,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                       console.error(
                         `inputValueArrays had value-array for an unspecified input on Function ${functionData.functionName} at idx ${
                           idx + 1
-                        }: ${inputValueArray.toString()}`
+                        }: ${inputValueArray.map((inputVal) => (inputVal === undefined ? 'undefined' : `'${inputVal}'`)).toString()}`
                       )
                     )
                 )}
@@ -276,14 +286,16 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
 
         <Divider
           vertical
-          className={styles.dividerStyle}
+          className={styles.divider}
           style={{ margin: '0 16px 0 16px', paddingTop: 12, paddingBottom: 12, flex: '1 1 1px' }}
         />
 
-        <Stack className={styles.inputOutputStackStyle}>
-          <Text className={styles.titleStyle}>{expressionLoc}</Text>
+        <Stack className={styles.inputOutputStack}>
+          <Text className={styles.inputOutputStackTitle}>{expressionLoc}</Text>
 
-          <Text style={{ marginTop: 16 }}>{outputValue}</Text>
+          <Text className={styles.bodyText} style={{ marginTop: 16 }}>
+            {outputValue}
+          </Text>
         </Stack>
       </Stack>
     </div>

@@ -11,7 +11,7 @@ import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../notification/Notification';
 import { Dropdown, SelectableOptionMenuItemType, Stack, TextField } from '@fluentui/react';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
-import { Button, makeStyles, Tooltip } from '@fluentui/react-components';
+import { Button, makeStyles, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Dismiss20Regular } from '@fluentui/react-icons';
 import { useDebouncedCallback } from '@react-hookz/web';
 import { useEffect, useMemo, useState } from 'react';
@@ -39,6 +39,10 @@ type InputOptionDictionary = {
 const useStyles = makeStyles({
   inputStyles: {
     width: '100%',
+  },
+  inputLabel: {
+    ...typographyStyles.body1,
+    color: tokens.colorNeutralForeground1,
   },
 });
 
@@ -356,7 +360,12 @@ export const InputDropdown = (props: InputDropdownProps) => {
           label={label}
           placeholder={placeholder}
           className={styles.inputStyles}
-          styles={{ root: { ...inputStyles } }}
+          styles={{
+            root: { ...inputStyles },
+            subComponentStyles: {
+              label: { root: { ...typographyStyles.body1, color: tokens.colorNeutralForeground1 } },
+            },
+          }}
           onRenderTitle={onRenderTitle}
           onRenderOption={onRenderOption}
         />
@@ -368,7 +377,13 @@ export const InputDropdown = (props: InputDropdownProps) => {
             label={label}
             placeholder={placeholder}
             className={styles.inputStyles}
-            styles={{ root: { ...inputStyles } }}
+            styles={{
+              root: { ...inputStyles },
+              field: { ...typographyStyles.body1, color: tokens.colorNeutralForeground1, backgroundColor: tokens.colorNeutralBackground1 },
+              subComponentStyles: {
+                label: { root: { ...typographyStyles.body1, color: tokens.colorNeutralForeground1 } },
+              },
+            }}
           />
           <Tooltip relationship="label" content={clearCustomValueLoc}>
             <Button

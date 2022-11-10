@@ -38,6 +38,11 @@ const useStyles = makeStyles({
   },
   title: {
     ...typographyStyles.body1Strong,
+    color: tokens.colorNeutralForeground1,
+  },
+  titleDivider: {
+    maxWidth: '24px',
+    color: tokens.colorNeutralStroke2,
   },
   paneContent: {
     ...shorthands.padding('8px', '24px', '24px', '24px'),
@@ -222,7 +227,7 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
         ) : (
           <>
             <Text className={styles.title}>{paneTitle}</Text>
-            <Divider vertical style={{ maxWidth: 24 }} />
+            <Divider className={styles.titleDivider} vertical />
             <TabList
               selectedValue={tabToDisplay}
               onTabSelect={(_: unknown, data) => onSelectTab(data.value as PropertiesPaneTabs)}
