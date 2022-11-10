@@ -7,9 +7,10 @@ import { ButtonPivot } from '../buttonPivot/ButtonPivot';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FunctionList } from '../functionList/FunctionList';
-import SourceSchemaTreeItem from '../tree/SourceSchemaTreeItem';
+import SourceSchemaTreeItem, { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import Tree from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
+import { mergeClasses, tokens } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo, useState } from 'react';
@@ -35,6 +36,7 @@ interface CanvasToolboxProps {
 export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
+  const schemaNodeItemStyles = useSchemaTreeItemStyles();
 
   const toolboxTabToDisplay = useSelector((state: RootState) => state.dataMap.canvasToolboxTabToDisplay);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
@@ -156,9 +158,15 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
               <SourceSchemaTreeItem
                 node={node}
                 isNodeAdded={currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)}
-                onClick={() => onSourceSchemaItemClick(node)}
               />
             )}
+            onClickItem={(node) => onSourceSchemaItemClick(node)}
+            nodeContainerClassName={mergeClasses(schemaNodeItemStyles.nodeContainer, schemaNodeItemStyles.sourceSchemaNode)}
+            nodeContainerStyle={(node) => ({
+              backgroundColor: currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)
+                ? tokens.colorBrandBackground2
+                : undefined,
+            })}
           />
         </FloatingPanel>
       )}
