@@ -35,8 +35,6 @@ const createNewDataMapCmd = () => {
     DataMapperExt.currentDataMapName = newDatamapName;
 
     await openDataMapperCmd();
-
-    DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'loadNewDataMap', data: {} });
   });
 };
 

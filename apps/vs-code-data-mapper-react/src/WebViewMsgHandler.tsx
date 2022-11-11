@@ -1,4 +1,11 @@
-import { dataMapDataLoaderSlice } from './state/DataMapDataLoader';
+import {
+  changeMapDefinition,
+  changeRuntimePort,
+  changeSchemaList,
+  changeSourceSchema,
+  changeTargetSchema,
+  changeXsltFilename,
+} from './state/DataMapDataLoader';
 import type { AppDispatch } from './state/Store';
 import type { MapDefinitionEntry, Schema } from '@microsoft/logic-apps-data-mapper';
 import { getSelectedSchema } from '@microsoft/logic-apps-data-mapper';
@@ -8,10 +15,10 @@ import type { WebviewApi } from 'vscode-webview';
 
 type ReceivingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: 'source' | 'target' } }
-  | { command: 'loadNewDataMap'; data: MapDefinitionEntry }
   | { command: 'loadDataMap'; data: { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string } }
   | { command: 'showAvailableSchemas'; data: string[] }
-  | { command: 'setXsltFilename'; data: string };
+  | { command: 'setXsltFilename'; data: string }
+  | { command: 'setRuntimePort'; data: string };
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = createContext(vscode);
@@ -25,6 +32,9 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
     const msg = event.data;
 
     switch (msg.command) {
+      case 'setRuntimePort':
+        dispatch(changeRuntimePort(msg.data));
+        break;
       case 'fetchSchema':
         getSelectedSchema(msg.data.fileName).then((schema) => {
           if (msg.data.type === 'source') {
@@ -34,14 +44,11 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
           }
         });
         break;
-      case 'loadNewDataMap':
-        changeMapDefinitionCB(msg.data);
-        break;
       case 'loadDataMap':
         Promise.all([getSelectedSchema(msg.data.sourceSchemaFileName), getSelectedSchema(msg.data.targetSchemaFileName)]).then((values) => {
           setSchemasBeforeSettingDataMap(values[0], values[1])
             .then(() => {
-              changeMapDefinitionCB(msg.data.mapDefinition);
+              dispatch(changeMapDefinition(msg.data.mapDefinition));
             })
             .catch((error) => {
               console.error(`Error loading data map:`);
@@ -50,10 +57,10 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         });
         break;
       case 'showAvailableSchemas':
-        showAvailableSchemas(msg.data);
+        dispatch(changeSchemaList(msg.data));
         break;
       case 'setXsltFilename':
-        changeXsltFilenameCB(msg.data);
+        dispatch(changeXsltFilename(msg.data));
         break;
       default:
         console.warn(`Unexpected message received:`);
@@ -63,35 +70,14 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const changeSourceSchemaCB = useCallback(
     (newSchema: Schema) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeSourceSchema(newSchema));
+      dispatch(changeSourceSchema(newSchema));
     },
     [dispatch]
   );
 
   const changeTargetSchemaCB = useCallback(
     (newSchema: Schema) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeTargetSchema(newSchema));
-    },
-    [dispatch]
-  );
-
-  const changeXsltFilenameCB = useCallback(
-    (newFilename: string) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeXsltFilename(newFilename));
-    },
-    [dispatch]
-  );
-
-  const changeMapDefinitionCB = useCallback(
-    (newMapDefinition: MapDefinitionEntry) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeMapDefinition(newMapDefinition));
-    },
-    [dispatch]
-  );
-
-  const showAvailableSchemas = useCallback(
-    (files: string[]) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeSchemaList(files));
+      dispatch(changeTargetSchema(newSchema));
     },
     [dispatch]
   );

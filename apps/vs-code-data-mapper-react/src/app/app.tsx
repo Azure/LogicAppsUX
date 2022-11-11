@@ -1,7 +1,13 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
 import type { RootState } from '../state/Store';
-import { DataMapDataProvider, DataMapperDesigner, DataMapperDesignerProvider } from '@microsoft/logic-apps-data-mapper';
-import { useCallback, useContext, useState } from 'react';
+import {
+  DataMapDataProvider,
+  DataMapperDesigner,
+  DataMapperDesignerProvider,
+  defaultDataMapperApiServiceOptions,
+  InitDataMapperApiService,
+} from '@microsoft/logic-apps-data-mapper';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 enum VsCodeThemeType {
@@ -27,6 +33,8 @@ export const App = (): JSX.Element => {
   const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
+
+  const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
   /*
   // Monitor document.body for VS Code theme changes
@@ -68,6 +76,14 @@ export const App = (): JSX.Element => {
       data: dataMapXslt,
     });
   };
+
+  // Init runtime API service
+  useEffect(() => {
+    InitDataMapperApiService({
+      ...defaultDataMapperApiServiceOptions,
+      port: runtimePort ?? defaultDataMapperApiServiceOptions.port,
+    });
+  }, [runtimePort]);
 
   return (
     <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>

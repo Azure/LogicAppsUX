@@ -3,6 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DataMapLoadingState {
+  runtimePort?: string;
   armToken?: string;
   loadingMethod: 'file' | 'arm';
   mapDefinition?: MapDefinitionEntry;
@@ -21,6 +22,9 @@ export const dataMapDataLoaderSlice = createSlice({
   name: 'dataMapDataLoader',
   initialState,
   reducers: {
+    changeRuntimePort: (state, action: PayloadAction<string>) => {
+      state.runtimePort = action.payload;
+    },
     changeArmToken: (state, action: PayloadAction<string>) => {
       state.armToken = action.payload;
     },
@@ -44,3 +48,16 @@ export const dataMapDataLoaderSlice = createSlice({
     },
   },
 });
+
+export const {
+  changeRuntimePort,
+  changeArmToken,
+  changeLoadingMethod,
+  changeXsltFilename,
+  changeMapDefinition,
+  changeSourceSchema,
+  changeTargetSchema,
+  changeSchemaList,
+} = dataMapDataLoaderSlice.actions;
+
+export default dataMapDataLoaderSlice.reducer;

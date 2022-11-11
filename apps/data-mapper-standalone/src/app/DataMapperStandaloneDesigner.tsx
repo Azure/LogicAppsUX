@@ -8,6 +8,7 @@ import {
   defaultDataMapperApiServiceOptions,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 const workflowSchemaFilenames = ['Source.xsd', 'Target.xsd'];
@@ -22,17 +23,20 @@ export const DataMapperStandaloneDesigner = () => {
 
   const armToken = useSelector((state: RootState) => state.dataMapDataLoader.armToken);
 
-  InitDataMapperApiService({
-    baseUrl: defaultDataMapperApiServiceOptions.baseUrl,
-    accessToken: armToken,
-  });
-
   const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
     console.log('Map Definition\n===============');
     console.log(dataMapDefinition);
     console.log('\nXSLT\n===============');
     console.log(dataMapXslt);
   };
+
+  useEffect(() => {
+    // Standalone uses default/dev runtime settings - can just run 'func host start' in the workflow root
+    InitDataMapperApiService({
+      ...defaultDataMapperApiServiceOptions,
+      accessToken: armToken,
+    });
+  }, [armToken]);
 
   return (
     <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>

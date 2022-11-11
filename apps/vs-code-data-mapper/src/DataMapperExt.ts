@@ -20,10 +20,10 @@ type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string };
 
 type SendingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: SchemaType } }
-  | { command: 'loadNewDataMap'; data: MapDefinitionEntry }
   | { command: 'loadDataMap'; data: { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string } }
   | { command: 'showAvailableSchemas'; data: string[] }
-  | { command: 'setXsltFilename'; data: string };
+  | { command: 'setXsltFilename'; data: string }
+  | { command: 'setRuntimePort'; data: string };
 type ReceivingMessageTypes =
   | {
       command: 'addSchemaFromFile' | 'readLocalFileOptions';
@@ -70,6 +70,9 @@ export default class DataMapperExt {
     );
 
     this.currentPanel = new DataMapperExt(panel, DataMapperExt.context.extensionPath);
+
+    // Send runtime port to webview
+    this.currentPanel.sendMsgToWebview({ command: 'setRuntimePort', data: `${this.backendRuntimePort}` });
   }
 
   public sendMsgToWebview(msg: SendingMessageTypes) {
