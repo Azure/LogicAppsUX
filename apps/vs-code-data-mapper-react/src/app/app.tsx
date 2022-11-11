@@ -1,14 +1,16 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
-import type { RootState } from '../state/Store';
+import { dataMapDataLoaderSlice } from '../state/DataMapDataLoader';
+import type { AppDispatch, RootState } from '../state/Store';
 import {
   DataMapDataProvider,
   DataMapperDesigner,
   DataMapperDesignerProvider,
   defaultDataMapperApiServiceOptions,
+  getFunctions,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 enum VsCodeThemeType {
   VsCodeLight = 'vscode-light',
@@ -21,7 +23,8 @@ interface SchemaFile {
   type: 'source' | 'target';
 }
 
-export const App = (): JSX.Element => {
+export const App = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const vscode = useContext(VSCodeContext);
   // const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
 
@@ -33,6 +36,7 @@ export const App = (): JSX.Element => {
   const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
+  const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
@@ -79,11 +83,17 @@ export const App = (): JSX.Element => {
 
   // Init runtime API service
   useEffect(() => {
+    const fetchFunctionList = async () => {
+      dispatch(dataMapDataLoaderSlice.actions.changeFetchedFunctions(await getFunctions()));
+    };
+
     InitDataMapperApiService({
       ...defaultDataMapperApiServiceOptions,
       port: runtimePort ?? defaultDataMapperApiServiceOptions.port,
     });
-  }, [runtimePort]);
+
+    fetchFunctionList();
+  }, [dispatch, runtimePort]);
 
   return (
     <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>
@@ -93,6 +103,7 @@ export const App = (): JSX.Element => {
         sourceSchema={sourceSchema}
         targetSchema={targetSchema}
         availableSchemas={schemaFileList}
+        fetchedFunctions={fetchedFunctions}
       >
         <DataMapperDesigner
           saveStateCall={saveStateCall}
