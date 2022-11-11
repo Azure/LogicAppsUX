@@ -6,13 +6,16 @@ import {
   hostFileName,
   settingsFileContent,
   settingsFileName,
+  workflowDesignTimeDir,
   workflowMgmtApi,
 } from './extensionConfig';
 import * as cp from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
+import merge from 'lodash.merge';
 import fetch from 'node-fetch';
 import * as os from 'os';
 import * as path from 'path';
+import * as portfinder from 'portfinder';
 import { ProgressLocation, Uri, window } from 'vscode';
 
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
@@ -23,8 +26,14 @@ import { ProgressLocation, Uri, window } from 'vscode';
 // Azure Functions Core Tools (so no need to repeat here)
 
 export async function startBackendRuntime(projectPath: string): Promise<void> {
+  const runtimeWorkingDir = path.join(projectPath, workflowDesignTimeDir);
+
+  if (!DataMapperExt.backendRuntimePort) {
+    DataMapperExt.backendRuntimePort = await portfinder.getPortPromise();
+  }
+
   // Note: Must append operationGroups as it's a valid endpoint to ping
-  const url = `${backendRuntimeBaseUrl}${workflowMgmtApi}operationGroups`;
+  const url = `${backendRuntimeBaseUrl}${DataMapperExt.backendRuntimePort}${workflowMgmtApi}operationGroups`;
 
   await window.withProgress({ location: ProgressLocation.Notification }, async (progress) => {
     progress.report({ message: 'Starting backend runtime, this may take a few seconds...' });
@@ -34,12 +43,16 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
       return;
     }
 
-    try {
-      if (projectPath) {
-        await createJsonFile(projectPath, hostFileName, hostFileContent);
-        await createJsonFile(projectPath, settingsFileName, settingsFileContent);
+    const modifiedSettingsFileContent = { ...settingsFileContent };
+    modifiedSettingsFileContent.Values.ProjectDirectoryPath = projectPath;
 
-        startBackendRuntimeProcess(projectPath, 'func', 'host', 'start');
+    try {
+      if (runtimeWorkingDir) {
+        await createDesignTimeDirectory(runtimeWorkingDir);
+        await createJsonFile(runtimeWorkingDir, hostFileName, hostFileContent);
+        await createJsonFile(runtimeWorkingDir, settingsFileName, modifiedSettingsFileContent);
+
+        startBackendRuntimeProcess(runtimeWorkingDir, 'func', 'host', 'start', '--port', `${DataMapperExt.backendRuntimePort}`);
 
         await waitForBackendRuntimeStartUp(url, new Date().getTime());
       } else {
@@ -50,6 +63,14 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
       window.showErrorMessage('Backend runtime could not be started');
     }
   });
+}
+
+async function createDesignTimeDirectory(path: string): Promise<void> {
+  // Check if directory exists at path, and create it if it doesn't
+  if (!fileExists(path)) {
+    // Create directory
+    await fs.mkdir(path, { recursive: true });
+  }
 }
 
 async function createJsonFile(
@@ -67,7 +88,7 @@ async function createJsonFile(
   else {
     const fileJson = JSON.parse(await fs.readFile(filePath.fsPath, 'utf-8'));
 
-    await fs.writeFile(filePath.fsPath, JSON.stringify({ ...fileJson, ...fileContent }, null, 2), 'utf-8');
+    await fs.writeFile(filePath.fsPath, JSON.stringify(merge(fileJson, fileContent), null, 2), 'utf-8');
   }
 }
 
@@ -103,15 +124,14 @@ function startBackendRuntimeProcess(workingDirectory: string | undefined, comman
     shell: true,
   };
 
+  DataMapperExt.log(`Running command: "${command} ${formattedArgs}"...`);
   DataMapperExt.backendRuntimeChildProcess = cp.spawn(command, args, options);
 
-  DataMapperExt.log(`Running command: "${command} ${formattedArgs}"...`);
-
-  DataMapperExt.backendRuntimeChildProcess.stdout.on('data', (data: string | Buffer) => {
+  DataMapperExt.backendRuntimeChildProcess.stdout?.on('data', (data: string | Buffer) => {
     DataMapperExt.outputChannel.append(data.toString());
   });
 
-  DataMapperExt.backendRuntimeChildProcess.stderr.on('data', (data: string | Buffer) => {
+  DataMapperExt.backendRuntimeChildProcess.stderr?.on('data', (data: string | Buffer) => {
     DataMapperExt.outputChannel.append(data.toString());
   });
 }
