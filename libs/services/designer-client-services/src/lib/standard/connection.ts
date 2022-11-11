@@ -509,28 +509,47 @@ export class StandardConnectionService implements IConnectionService {
   }
 
   private async testConnection(connection: Connection): Promise<void> {
-    const testLinks = connection.properties.testLinks;
-    if (!testLinks || testLinks.length < 1) return Promise.resolve();
-
+    let response: HttpResponse<any> | undefined = undefined;
     try {
-      const { httpClient } = this.options;
-      const { method: httpMethod, requestUri: uri } = testLinks[0];
-      const method = httpMethod.toUpperCase() as HTTP_METHODS;
-
-      let response: HttpResponse<any> | undefined = undefined;
-      const requestOptions: HttpRequestOptions<any> = { uri };
-      if (method === HTTP_METHODS.GET) response = await httpClient.get<any>(requestOptions);
-      else if (method === HTTP_METHODS.POST) response = await httpClient.post<any, any>(requestOptions);
-      else if (method === HTTP_METHODS.PUT) response = await httpClient.put<any, any>(requestOptions);
-      else if (method === HTTP_METHODS.DELETE) response = await httpClient.delete<any>(requestOptions);
-      // console.log('Test connection response', response);
-      // if (!response) throw new Error('Invalid test link method');
-
-      this.handleTestConnectionResponse(response);
+      // Service Provider Connection
+      if (connection.properties.testConnectionUrl) response = await this.requestTestServiceProviderConnection(connection);
+      // Other Connections
+      const testLinks = connection.properties.testLinks;
+      if (testLinks && testLinks.length > 0) response = await this.requestTestOtherConnections(connection);
+      // Handle Response
+      if (response) this.handleTestConnectionResponse(response);
     } catch (error: any) {
       console.error('Failed to test connection', this.tryParseErrorMessage(error));
       Promise.reject(error);
     }
+  }
+
+  private async requestTestOtherConnections(connection: Connection): Promise<HttpResponse<any>> {
+    const testLinks = connection.properties.testLinks;
+    if (!testLinks || testLinks.length === 0) return Promise.reject('No test links found');
+    const { httpClient } = this.options;
+    const { method: httpMethod, requestUri: uri } = testLinks[0];
+    const method = httpMethod.toUpperCase() as HTTP_METHODS;
+
+    let response: HttpResponse<any> | undefined = undefined;
+    const requestOptions: HttpRequestOptions<any> = { uri };
+    if (method === HTTP_METHODS.GET) response = await httpClient.get<any>(requestOptions);
+    else if (method === HTTP_METHODS.POST) response = await httpClient.post<any, any>(requestOptions);
+    else if (method === HTTP_METHODS.PUT) response = await httpClient.put<any, any>(requestOptions);
+    else if (method === HTTP_METHODS.DELETE) response = await httpClient.delete<any>(requestOptions);
+    if (!response) return Promise.reject('Failed to test connection');
+    return response;
+  }
+
+  private async requestTestServiceProviderConnection(connection: Connection): Promise<HttpResponse<any>> {
+    const uri = connection.properties.testConnectionUrl;
+    if (!uri) return Promise.reject();
+    const { httpClient, baseUrl, apiVersion } = this.options;
+
+    const requestOptions: HttpRequestOptions<any> = { uri: `${uri}/${baseUrl}`, queryParameters: { 'api-version': apiVersion } };
+    const response = await httpClient.post<any, any>(requestOptions);
+    if (!response) return Promise.reject('Failed to test connection');
+    return response;
   }
 
   private handleTestConnectionResponse(response?: HttpResponse<any>): void {
@@ -538,12 +557,9 @@ export class StandardConnectionService implements IConnectionService {
     const defaultErrorResponse = 'Please check your account info and/or permissions and try again.';
     if (response.status >= 400 && response.status < 500 && response.status !== 429) {
       let errorMessage = defaultErrorResponse;
-      if (response.body && typeof response.body === 'string') {
+      if (response.body && typeof response.body === 'string')
         errorMessage = this.tryParseErrorMessage(JSON.parse(response.body), defaultErrorResponse);
-      }
-
-      const exception = new UserException(UserErrorCode.TEST_CONNECTION_FAILED, errorMessage);
-      throw exception;
+      throw new UserException(UserErrorCode.TEST_CONNECTION_FAILED, errorMessage);
     }
   }
 
