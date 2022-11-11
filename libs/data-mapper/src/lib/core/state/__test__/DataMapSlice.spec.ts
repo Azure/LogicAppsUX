@@ -8,6 +8,8 @@ import { deleteConnectionFromConnections, deleteNodeFromConnections } from '../D
 import { simpleMockSchema } from '../__mocks__';
 import { concatFunction } from '../__mocks__/FunctionMock';
 
+// NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by default
+
 describe('DataMapSlice', () => {
   const schema: Schema = simpleMockSchema;
   const extendedSchema: SchemaExtended = convertSchemaToSchemaExtended(schema);
@@ -51,7 +53,7 @@ describe('DataMapSlice', () => {
       expect(connections[functionId]).toBeDefined();
       expect(connections[functionId].self).toBeDefined();
       expect(connections[functionId].outputs.length).toEqual(1);
-      expect(flattenInputs(connections[functionId].inputs).length).toEqual(1);
+      expect(flattenInputs(connections[functionId].inputs).length).toEqual(2);
 
       expect(connections[destinationId]).toBeDefined();
       expect(connections[destinationId].self).toBeDefined();
@@ -76,7 +78,7 @@ describe('DataMapSlice', () => {
       expect(connections[functionId]).toBeDefined();
       expect(connections[functionId].self).toBeDefined();
       expect(connections[functionId].outputs.length).toEqual(1);
-      expect(flattenInputs(connections[functionId].inputs).length).toEqual(1);
+      expect(flattenInputs(connections[functionId].inputs).length).toEqual(2);
 
       expect(connections[destinationId]).toBeDefined();
       expect(connections[destinationId].self).toBeDefined();
@@ -172,7 +174,7 @@ describe('DataMapSlice', () => {
       expect(connections[functionId]).toBeDefined();
       expect(connections[functionId].self).toBeDefined();
       expect(connections[functionId].outputs.length).toEqual(0);
-      expect(flattenInputs(connections[functionId].inputs).length).toEqual(1);
+      expect(flattenInputs(connections[functionId].inputs).length).toEqual(2);
 
       expect(connections[destinationId]).toBeDefined();
       expect(connections[destinationId].self).toBeDefined();

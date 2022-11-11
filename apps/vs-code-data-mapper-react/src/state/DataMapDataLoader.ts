@@ -1,15 +1,19 @@
-import type { MapDefinitionEntry, Schema } from '@microsoft/logic-apps-data-mapper';
+import type { FunctionData, MapDefinitionEntry, Schema } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DataMapLoadingState {
+  runtimePort?: string;
   armToken?: string;
   loadingMethod: 'file' | 'arm';
   mapDefinition?: MapDefinitionEntry;
+  sourceSchemaFilename?: string;
   sourceSchema?: Schema;
+  targetSchemaFilename?: string;
   targetSchema?: Schema;
   schemaFileList?: string[];
   xsltFilename: string;
+  fetchedFunctions?: FunctionData[];
 }
 
 const initialState: DataMapLoadingState = {
@@ -21,6 +25,9 @@ export const dataMapDataLoaderSlice = createSlice({
   name: 'dataMapDataLoader',
   initialState,
   reducers: {
+    changeRuntimePort: (state, action: PayloadAction<string>) => {
+      state.runtimePort = action.payload;
+    },
     changeArmToken: (state, action: PayloadAction<string>) => {
       state.armToken = action.payload;
     },
@@ -33,8 +40,14 @@ export const dataMapDataLoaderSlice = createSlice({
     changeMapDefinition: (state, action: PayloadAction<MapDefinitionEntry>) => {
       state.mapDefinition = action.payload;
     },
+    changeSourceSchemaFilename: (state, action: PayloadAction<string>) => {
+      state.sourceSchemaFilename = action.payload;
+    },
     changeSourceSchema: (state, action: PayloadAction<Schema>) => {
       state.sourceSchema = action.payload;
+    },
+    changeTargetSchemaFilename: (state, action: PayloadAction<string>) => {
+      state.targetSchemaFilename = action.payload;
     },
     changeTargetSchema: (state, action: PayloadAction<Schema>) => {
       state.targetSchema = action.payload;
@@ -42,5 +55,24 @@ export const dataMapDataLoaderSlice = createSlice({
     changeSchemaList: (state, action: PayloadAction<string[]>) => {
       state.schemaFileList = action.payload;
     },
+    changeFetchedFunctions: (state, action: PayloadAction<FunctionData[]>) => {
+      state.fetchedFunctions = action.payload;
+    },
   },
 });
+
+export const {
+  changeRuntimePort,
+  changeArmToken,
+  changeLoadingMethod,
+  changeXsltFilename,
+  changeMapDefinition,
+  changeSourceSchemaFilename,
+  changeSourceSchema,
+  changeTargetSchemaFilename,
+  changeTargetSchema,
+  changeSchemaList,
+  changeFetchedFunctions,
+} = dataMapDataLoaderSlice.actions;
+
+export default dataMapDataLoaderSlice.reducer;

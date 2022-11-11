@@ -6,7 +6,18 @@ import { iconForSchemaNodeDataType } from '../../../utils/Icon.Utils';
 import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
-import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Checkbox, Input, makeStyles, Text } from '@fluentui/react-components';
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionItem,
+  AccordionPanel,
+  Checkbox,
+  Input,
+  makeStyles,
+  Text,
+  tokens,
+  typographyStyles,
+} from '@fluentui/react-components';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -23,6 +34,10 @@ const useStyles = makeStyles({
     gridTemplateColumns: 'repeat(6, 1fr)',
     alignItems: 'center',
     justifyContent: 'start',
+  },
+  bodyText: {
+    ...typographyStyles.body1,
+    color: tokens.colorNeutralForeground1,
   },
 });
 
@@ -101,41 +116,57 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   return (
     <div>
       <div className={styles.nodeInfoGridContainer}>
-        <Text style={{ gridColumn: gridColumnSpan1 }}>{nameLoc}</Text>
-        <Text style={{ gridColumn: gridColumnSpan2 }}>{currentNode?.name}</Text>
+        <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
+          {nameLoc}
+        </Text>
+        <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan2 }}>
+          {currentNode?.name}
+        </Text>
 
-        <Text style={{ gridColumn: gridColumnSpan1 }}>{fullPathLoc}</Text>
-        <Text style={{ gridColumn: gridColumnSpan2 }}>{currentNode?.key}</Text>
+        <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
+          {fullPathLoc}
+        </Text>
+        <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan2 }}>
+          {currentNode?.key}
+        </Text>
 
-        <Text style={{ gridColumn: gridColumnSpan1 }}>{dataTypeLoc}</Text>
+        <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
+          {dataTypeLoc}
+        </Text>
         <Stack horizontal verticalAlign="center" style={{ gridColumn: gridColumnSpan2 }}>
           <DataTypeIcon style={{ marginRight: '5px' }} />
-          <Text>{currentNode?.schemaNodeDataType}</Text>
+          <Text className={styles.bodyText}>{currentNode?.schemaNodeDataType}</Text>
         </Stack>
       </div>
 
       {isTargetSchemaNode && (
         <div>
           <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-            <Text style={{ gridColumn: gridColumnSpan1 }}>{inputLoc}</Text>
+            <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
+              {inputLoc}
+            </Text>
             <InputDropdown currentNode={currentNode} inputValue={inputValue} inputStyles={{ gridColumn: gridColumnSpan2 }} inputIndex={0} />
           </div>
 
-          <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px', marginLeft: '-12px' }}>
-            <AccordionItem value="1">
-              <AccordionHeader>{advOptLoc}</AccordionHeader>
-              <AccordionPanel>
-                <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-                  <Text style={{ gridColumn: gridColumnSpan1 }}>{defValLoc}</Text>
-                  <Input style={{ gridColumn: gridColumnSpan2 }} />
-                </div>
+          {false && ( // Hiding advanced options until implemented
+            <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px', marginLeft: '-12px' }}>
+              <AccordionItem value="1">
+                <AccordionHeader className={styles.bodyText}>{advOptLoc}</AccordionHeader>
+                <AccordionPanel>
+                  <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
+                    <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
+                      {defValLoc}
+                    </Text>
+                    <Input style={{ gridColumn: gridColumnSpan2 }} />
+                  </div>
 
-                <Stack>
-                  <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
-                </Stack>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
+                  <Stack>
+                    <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
+                  </Stack>
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
+          )}
         </div>
       )}
     </div>
