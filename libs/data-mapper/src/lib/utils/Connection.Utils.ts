@@ -9,6 +9,8 @@ import { isFunctionData } from './Function.Utils';
 import { addReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 
+// NOTE: This method should be the gateway for anything getting into dataMapConnections
+// - meaning all default inputs/etc can safely be managed in this singular spot
 export const createConnectionEntryIfNeeded = (
   connections: ConnectionDictionary,
   node: SchemaNodeExtended | FunctionData,
@@ -21,16 +23,23 @@ export const createConnectionEntryIfNeeded = (
       outputs: [],
     };
 
-    if (isFunctionData(node) && node.maxNumberOfInputs !== -1) {
-      for (let index = 0; index < node.maxNumberOfInputs; index++) {
-        connections[reactFlowKey].inputs[index] = [];
+    if (isFunctionData(node)) {
+      if (node.maxNumberOfInputs !== -1) {
+        for (let index = 0; index < node.maxNumberOfInputs; index++) {
+          connections[reactFlowKey].inputs[index] = [];
+        }
+      } else {
+        // Start unbounded inputs off with two empty fields (instead of no fields at all)
+        connections[reactFlowKey].inputs[0] = [undefined, undefined];
       }
     } else {
+      // Schema nodes start with a single empty inputValArray
       connections[reactFlowKey].inputs[0] = [];
     }
   }
 };
 
+// Primarily used for drawn connections
 export const addNodeToConnections = (
   connections: ConnectionDictionary,
   sourceNode: SchemaNodeExtended | FunctionData,
@@ -84,6 +93,7 @@ export const addNodeToConnections = (
   }
 };
 
+// Primarily used by PropPane InputDropdowns
 export const updateConnectionInputValue = (
   connections: ConnectionDictionary,
   { targetNode, targetNodeReactFlowKey, inputIndex, value, isUnboundedInput }: UpdateConnectionInputAction
@@ -234,9 +244,9 @@ const isFunctionTypeSupported = (inputNodeType: NormalizedDataType, tgtInputs: F
 export const flattenInputs = (inputs: InputConnectionDictionary): InputConnection[] => Object.values(inputs).flatMap((value) => value);
 
 export const isCustomValue = (connectionInput: InputConnection): connectionInput is string =>
-  !!connectionInput && typeof connectionInput === 'string';
+  connectionInput !== undefined && typeof connectionInput === 'string';
 export const isConnectionUnit = (connectionInput: InputConnection): connectionInput is ConnectionUnit =>
-  !!connectionInput && typeof connectionInput !== 'string';
+  connectionInput !== undefined && typeof connectionInput !== 'string';
 
 const onlyUniqueConnections = (value: ConnectionUnit, index: number, self: ConnectionUnit[]) => {
   return self.findIndex((selfValue) => selfValue.reactFlowKey === value.reactFlowKey) === index;

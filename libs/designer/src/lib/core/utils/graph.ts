@@ -1,8 +1,8 @@
 import { isWorkflowGraph } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode } from '../parsers/models/workflowNode';
-import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
+import type { NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft-logic-apps/utils';
-import { WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
+import { equals, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
 
 export const isRootNodeInGraph = (nodeId: string, graphId: string, nodesMetadata: NodesMetadata): boolean => {
@@ -13,10 +13,14 @@ export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
   return !!nodesMetadata[nodeId]?.isRoot;
 };
 
-export const getTriggerNodeId = (state: WorkflowState): string => {
+export const getTriggerNode = (state: WorkflowState): WorkflowNode => {
   const rootGraph = state.graph as WorkflowNode;
   const rootNode = rootGraph.children?.find((child) => isRootNode(child.id, state.nodesMetadata)) as WorkflowNode;
-  return rootNode.id;
+  return rootNode;
+};
+
+export const getTriggerNodeId = (state: WorkflowState): string => {
+  return getTriggerNode(state).id;
 };
 
 export const isLeafNodeFromEdges = (edges: WorkflowEdge[]) => {
@@ -160,4 +164,25 @@ export const getAllNodesInsideNode = (nodeId: string, graph: WorkflowNode, opera
   }
 
   return result;
+};
+
+export const getFirstParentOfType = (
+  nodeId: string,
+  type: string,
+  nodesMetadata: NodesMetadata,
+  operations: Operations
+): string | undefined => {
+  const parentNodeId = nodesMetadata[nodeId]?.parentNodeId;
+
+  if (parentNodeId) {
+    if (equals(operations[parentNodeId]?.type, type)) {
+      return parentNodeId;
+    }
+
+    return nodesMetadata[parentNodeId]?.parentNodeId
+      ? getFirstParentOfType(nodesMetadata[parentNodeId].parentNodeId as string, type, nodesMetadata, operations)
+      : getFirstParentOfType(parentNodeId, type, nodesMetadata, operations);
+  }
+
+  return undefined;
 };

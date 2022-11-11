@@ -4,6 +4,7 @@ import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
 import { List, Spinner, SpinnerSize, Text } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
+import { isBuiltInConnector } from '@microsoft-logic-apps/utils';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -112,5 +113,6 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   iconUri: operation.properties.api.iconUri,
   connectorName: operation.properties.api.displayName,
   category: getConnectorCategoryString(operation.properties.api.id),
-  isTrigger: !!operation.properties.trigger,
+  isTrigger: !!operation.properties?.trigger,
+  isBuiltIn: isBuiltInConnector(operation.properties.api.id),
 });

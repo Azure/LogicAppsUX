@@ -1,3 +1,4 @@
+import { floatingPanelZIndex } from '../floatingPanel/FloatingPanel';
 import { Stack, StackItem } from '@fluentui/react';
 import { Button, makeStyles, shorthands, tokens, Tooltip } from '@fluentui/react-components';
 import { bundleIcon } from '@fluentui/react-icons';
@@ -7,10 +8,17 @@ import type { IconType } from 'react-icons/lib';
 const useStyles = makeStyles({
   btnContainer: {
     position: 'absolute',
-    zIndex: 5,
+    zIndex: floatingPanelZIndex + 1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
     boxShadow: tokens.shadow4,
     backgroundColor: tokens.colorNeutralBackground1,
+  },
+  button: {
+    ...shorthands.border('0'),
+    ...shorthands.borderRadius('0'),
+    ':hover, :active': {
+      color: tokens.colorBrandForeground1,
+    },
   },
 });
 
@@ -38,12 +46,12 @@ export const ButtonContainer = (props: ButtonContainerProps) => {
     return buttons.map((buttonProps, index) => {
       const BundledIcon = bundleIcon(buttonProps.filledIcon, buttonProps.regularIcon);
 
-      // TODO - Theme buttons on hover
       return (
         <StackItem key={index}>
           <Tooltip content={buttonProps.tooltip} relationship="label">
             <Button
-              style={{ border: '0px', borderRadius: '0px', color: buttonProps.filled ? tokens.colorBrandForeground1 : undefined }}
+              className={styles.button}
+              style={{ color: buttonProps.filled ? tokens.colorBrandForeground1 : undefined }}
               // True/undefined below to stop errors about native elements having boolean values until FluentUI fixes
               icon={<BundledIcon filled={buttonProps.filled ? true : undefined} />}
               onClick={buttonProps.onClick}
@@ -53,7 +61,7 @@ export const ButtonContainer = (props: ButtonContainerProps) => {
         </StackItem>
       );
     });
-  }, [buttons]);
+  }, [buttons, styles.button]);
 
   const stackStyle: React.CSSProperties = {
     left: xPos,

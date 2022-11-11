@@ -16,7 +16,8 @@ export const mapDefinitionDropdownOptions: IDropdownOption<string>[] = [
   { key: 'demoScriptMapDefinition', text: 'Demo Script Map Definition', data: demoScriptMapDefinition },
   { key: 'customerOrderMapDefinition', text: 'Simple Schema Map Definition', data: customerOrderMapDefinition },
 ];
-export const schemaFileOptions = ['SourceSchema.json', 'TargetSchema.json', 'SimpleInputOrderSchema.json', 'SimpleOutputOrderSchema.json'];
+export const sourceSchemaFileOptions = ['SourceSchema.json', 'SimpleInputOrderSchema.json', 'LayeredLoopSourceSchema.json'];
+export const targetSchemaFileOptions = ['TargetSchema.json', 'SimpleOutputOrderSchema.json', 'LayeredLoopTargetSchema.json'];
 
 export const DevToolbox: React.FC = () => {
   const { theme, rawDefinition, armToken, loadingMethod, xsltFilename } = useSelector((state: RootState) => {
@@ -59,6 +60,22 @@ export const DevToolbox: React.FC = () => {
   const changeMapDefinitionResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption<string> | undefined) => {
       dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(item ?? ({} as IDropdownOption<string>)));
+      let inputRscPath = '';
+      let outputRscPath = '';
+
+      if (item?.key === 'demoScriptMapDefinition') {
+        inputRscPath = sourceSchemaFileOptions[0];
+        outputRscPath = targetSchemaFileOptions[0];
+      } else if (item?.key === 'customerOrderMapDefinition') {
+        inputRscPath = sourceSchemaFileOptions[1];
+        outputRscPath = targetSchemaFileOptions[1];
+      }
+
+      dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(inputRscPath));
+      dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath(outputRscPath));
+      dispatch(loadSourceSchema());
+      dispatch(loadTargetSchema());
+
       dispatch(loadDataMap());
     },
     [dispatch]
@@ -112,7 +129,8 @@ export const DevToolbox: React.FC = () => {
   const toolboxItems = useMemo(() => {
     const newToolboxItems = [];
 
-    const schemaDropdownOptions = schemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
+    const sourceSchemaDropdownOptions = sourceSchemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
+    const targetSchemaDropdownOptions = targetSchemaFileOptions.map((fileName) => ({ key: fileName, text: fileName }));
 
     if (loadingMethod === 'file') {
       newToolboxItems.push(
@@ -133,7 +151,7 @@ export const DevToolbox: React.FC = () => {
             selectedKey={inputResourcePath}
             onChange={changeSourceSchemaResourcePathDropdownCB}
             placeholder="Select a source schema"
-            options={schemaDropdownOptions}
+            options={sourceSchemaDropdownOptions}
           />
         </StackItem>
       );
@@ -144,7 +162,7 @@ export const DevToolbox: React.FC = () => {
             selectedKey={outputResourcePath}
             onChange={changeTargetSchemaResourcePathDropdownCB}
             placeholder="Select a target schema"
-            options={schemaDropdownOptions}
+            options={targetSchemaDropdownOptions}
           />
         </StackItem>
       );

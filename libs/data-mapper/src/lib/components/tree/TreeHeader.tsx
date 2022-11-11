@@ -1,7 +1,10 @@
 import type { ISearchBoxStyleProps, ISearchBoxStyles, IStyleFunctionOrObject } from '@fluentui/react';
 import { SearchBox } from '@fluentui/react';
-import { tokens } from '@fluentui/react-components';
+import { tokens, typographyStyles } from '@fluentui/react-components';
+import { useDebouncedCallback } from '@react-hookz/web';
 import { useIntl } from 'react-intl';
+
+const searchDebounceDelay = 300;
 
 const searchBoxStyles: IStyleFunctionOrObject<ISearchBoxStyleProps, ISearchBoxStyles> = {
   root: {
@@ -23,6 +26,11 @@ const searchBoxStyles: IStyleFunctionOrObject<ISearchBoxStyleProps, ISearchBoxSt
     borderBottomColor: tokens.colorNeutralStrokeAccessible,
     borderRadius: tokens.borderRadiusMedium,
     marginBottom: '6px',
+    backgroundColor: tokens.colorNeutralBackground1,
+  },
+  field: {
+    color: tokens.colorNeutralForeground1,
+    ...typographyStyles.caption1,
   },
 };
 
@@ -39,9 +47,17 @@ export const TreeHeader = ({ onSearch, onClear }: TreeHeaderProps) => {
     description: 'Search',
   });
 
+  const onChangeSearchValueDebounced = useDebouncedCallback(onSearch, [], searchDebounceDelay);
+
   return (
     <span>
-      <SearchBox onSearch={onSearch} onClear={onClear} styles={searchBoxStyles} placeholder={searchLoc}></SearchBox>
+      <SearchBox
+        onChange={(_e, newSearchTerm) => onChangeSearchValueDebounced(newSearchTerm ?? '')}
+        onSearch={onSearch}
+        onClear={onClear}
+        styles={searchBoxStyles}
+        placeholder={searchLoc}
+      />
     </span>
   );
 };

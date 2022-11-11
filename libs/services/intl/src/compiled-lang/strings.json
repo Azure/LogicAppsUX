@@ -747,6 +747,12 @@
       "value": "Required. The number of days to add. Can be negative to subtract days."
     }
   ],
+  "4Ekn9t": [
+    {
+      "type": 0,
+      "value": "Undo"
+    }
+  ],
   "4IS4yp": [
     {
       "type": 0,
@@ -1911,6 +1917,12 @@
       "value": "See Less"
     }
   ],
+  "Gi7czD": [
+    {
+      "type": 0,
+      "value": "Source schema element"
+    }
+  ],
   "Gmya+V": [
     {
       "type": 0,
@@ -2005,6 +2017,20 @@
       "value": " Install Gateway"
     }
   ],
+  "Hyp0Ao": [
+    {
+      "type": 0,
+      "value": "Remove parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" and its value"
+    }
+  ],
   "HzS2gJ": [
     {
       "type": 0,
@@ -2045,12 +2071,6 @@
     {
       "type": 0,
       "value": "Add a target schema"
-    }
-  ],
-  "IgNz8Y": [
-    {
-      "type": 0,
-      "value": "Action"
     }
   ],
   "IjZFjQ": [
@@ -2777,12 +2797,6 @@
       "value": "Required. The number to add to Summand 1."
     }
   ],
-  "PMMNKR": [
-    {
-      "type": 0,
-      "value": "Source schema node"
-    }
-  ],
   "PP63jY": [
     {
       "type": 0,
@@ -2979,12 +2993,6 @@
     {
       "type": 0,
       "value": "Triggers cannot be deleted."
-    }
-  ],
-  "R7v2iQ": [
-    {
-      "type": 0,
-      "value": "A line between array elements is automatically created to indicate looping elements."
     }
   ],
   "RFjYpH": [
@@ -3269,6 +3277,12 @@
       "value": "Collapse/Expand"
     }
   ],
+  "U086AA": [
+    {
+      "type": 0,
+      "value": "Target schema element"
+    }
+  ],
   "U1NiVg": [
     {
       "type": 0,
@@ -3385,6 +3399,12 @@
     {
       "type": 0,
       "value": "Expand"
+    }
+  ],
+  "VJa7sh": [
+    {
+      "type": 0,
+      "value": "Browse operations"
     }
   ],
   "VKAk5g": [
@@ -5007,6 +5027,12 @@
       "value": "Run trigger"
     }
   ],
+  "lQNKUB": [
+    {
+      "type": 0,
+      "value": "A line for the parent element is added automatically."
+    }
+  ],
   "lV77P8": [
     {
       "type": 0,
@@ -5297,12 +5323,6 @@
     {
       "type": 0,
       "value": "Content Transfer"
-    }
-  ],
-  "oM6q96": [
-    {
-      "type": 0,
-      "value": "Browse Operations"
     }
   ],
   "oRvVIW": [
@@ -6445,12 +6465,6 @@
     {
       "type": 0,
       "value": "Clear custom value"
-    }
-  ],
-  "zUs2yb": [
-    {
-      "type": 0,
-      "value": "Target schema node"
     }
   ],
   "zbtUQ/": [

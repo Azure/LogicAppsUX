@@ -3,6 +3,7 @@ import type { Exception } from '@microsoft-logic-apps/utils';
 
 export interface ParameterInfo {
   alternativeKey?: string;
+  conditionalVisibility?: boolean;
   dynamicData?: {
     error?: Exception;
     status: DynamicCallStatus;
@@ -83,6 +84,7 @@ export interface Token {
   tokenType: TokenType;
   type?: string;
   value?: string;
+  remappedValue?: string;
 }
 
 export enum TokenType {

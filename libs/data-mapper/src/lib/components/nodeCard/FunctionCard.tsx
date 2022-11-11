@@ -91,7 +91,7 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
     maxNumberOfInputs !== 0 &&
     !!sourceNodeConnectionBeingDrawnFromId &&
     sourceNodeConnectionBeingDrawnFromId !== reactFlowId;
-  const shouldDisplaySourceHandle = displayHandle && (sourceNodeConnectionBeingDrawnFromId === reactFlowId || shouldDisplayHandles);
+  const shouldDisplaySourceHandle = displayHandle && shouldDisplayHandles;
 
   return (
     <div className={classes.container} onMouseEnter={() => setIsCardHovered(true)} onMouseLeave={() => setIsCardHovered(false)}>

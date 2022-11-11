@@ -1,8 +1,11 @@
+import { undoDataMapOperation } from '../../core/state/DataMapSlice';
+import type { AppDispatch } from '../../core/state/Store';
 import { Stack } from '@fluentui/react';
-import { makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { Delete20Regular, DismissCircle20Filled, Dismiss20Regular } from '@fluentui/react-icons';
+import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Delete20Regular, DismissCircle20Filled, Dismiss20Regular, Info20Filled } from '@fluentui/react-icons';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 export enum NotificationTypes {
   SaveFailed = 'saveFailed',
@@ -19,7 +22,12 @@ export interface NotificationData {
   type: NotificationTypes;
   msgParam?: any;
   msgBody?: string;
+  autoHideDurationMs?: number;
 }
+
+const defaultNotificationAutoHideDuration = 5000; // ms
+export const deletedNotificationAutoHideDuration = 3000;
+export const errorNotificationAutoHideDuration = 7000;
 
 const useStyles = makeStyles({
   toastStyles: {
@@ -49,7 +57,8 @@ export interface NotificationProps extends NotificationData {
 }
 
 export const Notification = (props: NotificationProps) => {
-  const { type, msgParam, msgBody, autoHideDuration = 5000, onClose } = props;
+  const { type, msgParam, msgBody, autoHideDuration = defaultNotificationAutoHideDuration, onClose } = props;
+  const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
   const intl = useIntl();
 
@@ -61,11 +70,22 @@ export const Notification = (props: NotificationProps) => {
       case NotificationTypes.CircularLogicError:
         return <DismissCircle20Filled style={{ color: tokens.colorPaletteRedBackground3, marginRight: 8 }} />;
 
-      // Default icon
-      default:
+      // Delete icon
+      case NotificationTypes.SourceNodeRemoved:
+      case NotificationTypes.ConnectionDeleted:
+      case NotificationTypes.FunctionNodeDeleted:
         return <Delete20Regular style={{ color: tokens.colorNeutralForeground1, marginRight: 8 }} />;
+
+      // Default icon (info)
+      default:
+        return <Info20Filled style={{ color: tokens.colorNeutralForeground2, marginRight: 8 }} />;
     }
   }, [type]);
+
+  const undoLoc = intl.formatMessage({
+    defaultMessage: 'Undo',
+    description: 'Undo',
+  });
 
   const LocResources = useMemo<{ [key: string]: string }>(
     () => ({
@@ -95,7 +115,7 @@ export const Notification = (props: NotificationProps) => {
         description: 'Message on deleting connection',
       }),
       [NotificationTypes.ArrayConnectionAdded]: intl.formatMessage({
-        defaultMessage: 'A line between array elements is automatically created to indicate looping elements.',
+        defaultMessage: 'A line for the parent element is added automatically.',
         description: 'Describes connection being added',
       }),
       [NotificationTypes.CircularLogicError]: intl.formatMessage({
@@ -110,6 +130,10 @@ export const Notification = (props: NotificationProps) => {
     [intl, msgParam]
   );
 
+  const handleDataMapUndo = () => {
+    dispatch(undoDataMapOperation());
+  };
+
   useEffect(() => {
     const timer = setTimeout(onClose, autoHideDuration);
 
@@ -118,7 +142,7 @@ export const Notification = (props: NotificationProps) => {
 
   return (
     <div className={styles.toastStyles}>
-      <Stack horizontal verticalAlign="start">
+      <Stack horizontal verticalAlign="center">
         {notificationIcon}
 
         <Stack style={{ marginRight: 12 }}>
@@ -130,7 +154,15 @@ export const Notification = (props: NotificationProps) => {
           )}
         </Stack>
 
-        <Dismiss20Regular style={{ marginLeft: 'auto', cursor: 'pointer' }} onClick={onClose} />
+        <div style={{ marginLeft: 'auto' }}>
+          {type === NotificationTypes.ElementsAndMappingsRemoved ? (
+            <Button appearance="transparent" onClick={handleDataMapUndo}>
+              {undoLoc}
+            </Button>
+          ) : (
+            <Dismiss20Regular style={{ cursor: 'pointer' }} onClick={onClose} />
+          )}
+        </div>
       </Stack>
     </div>
   );

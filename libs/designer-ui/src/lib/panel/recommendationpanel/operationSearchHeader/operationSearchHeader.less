@@ -1,7 +1,6 @@
 .msla-search-heading-container {
   margin: 0px -24px 12px;
   padding: 24px 24px 12px;
-  background: #fff;
   z-index: 1;
   position: sticky;
   top: 0px;
@@ -9,9 +8,14 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
+  background-color: #fff;
 
   .msla-search-box {
     margin: 0px;
+
+    .ms-SearchBox-iconContainer {
+      max-width: 24px;
+    }
   }
 
   .msla-flex-row {
@@ -26,5 +30,11 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+  }
+}
+
+body.dark {
+  .msla-search-heading-container {
+    background-color: @ms-color-secondaryBackground;
   }
 }

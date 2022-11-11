@@ -74,12 +74,13 @@ export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
   nodeInputs: NodeInputs,
   operationInfo: OperationInfo,
-  connectionReference: ConnectionReference | undefined
+  connectionReference: ConnectionReference | undefined,
+  idReplacements: Record<string, string>
 ): Promise<ListDynamicValue[]> {
   const { definition, parameter } = dependencyInfo;
   if (isDynamicListExtension(definition)) {
     const { dynamicState, parameters } = definition.extension;
-    const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs);
+    const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements);
 
     return getListDynamicValues(
       connectionReference?.connection.id,
@@ -93,7 +94,7 @@ export async function getDynamicValues(
     const { connectorId } = operationInfo;
     const connectionId = connectionReference?.connection.id as string;
     const { parameters, operationId } = definition.extension;
-    const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs);
+    const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs, idReplacements);
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     const { method, path } = parsedSwagger.getOperationByOperationId(operationId as string);
     const inputs = buildOperationDetailsFromControls(
@@ -136,7 +137,8 @@ export async function getDynamicSchema(
   nodeInputs: NodeInputs,
   operationInfo: OperationInfo,
   connectionReference: ConnectionReference | undefined,
-  variables: VariableDeclaration[] = []
+  variables: VariableDeclaration[] = [],
+  idReplacements: Record<string, string> = {}
 ): Promise<OpenAPIV2.SchemaObject | null> {
   const { parameter, definition } = dependencyInfo;
   const emptySchema = {
@@ -147,7 +149,7 @@ export async function getDynamicSchema(
   try {
     if (isDynamicPropertiesExtension(definition)) {
       const { dynamicState, parameters } = definition.extension;
-      const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs);
+      const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements);
       let schema: OpenAPIV2.SchemaObject;
 
       switch (dynamicState?.extension?.builtInOperation) {
@@ -175,7 +177,7 @@ export async function getDynamicSchema(
     } else {
       const { connectorId } = operationInfo;
       const { parameters, operationId } = definition.extension;
-      const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs);
+      const operationParameters = getParametersForDynamicInvoke(parameters, nodeInputs, idReplacements);
       const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
       const { method, path } = parsedSwagger.getOperationByOperationId(operationId as string);
       const inputs = buildOperationDetailsFromControls(
@@ -296,19 +298,26 @@ export async function getDynamicInputsFromSchema(
   }
 }
 
-function getParameterValuesForDynamicInvoke(referenceParameters: DynamicParameters, nodeInputs: NodeInputs): Record<string, any> {
-  return getParametersForDynamicInvoke(referenceParameters, nodeInputs).reduce(
+function getParameterValuesForDynamicInvoke(
+  referenceParameters: DynamicParameters,
+  nodeInputs: NodeInputs,
+  idReplacements: Record<string, string>
+): Record<string, any> {
+  return getParametersForDynamicInvoke(referenceParameters, nodeInputs, idReplacements).reduce(
     (result: Record<string, any>, parameter: SerializedParameter) => ({ ...result, [parameter.parameterName]: parameter.value }),
     {}
   );
 }
 
-function getParametersForDynamicInvoke(referenceParameters: DynamicParameters, nodeInputs: NodeInputs): SerializedParameter[] {
+function getParametersForDynamicInvoke(
+  referenceParameters: DynamicParameters,
+  nodeInputs: NodeInputs,
+  idReplacements: Record<string, string>
+): SerializedParameter[] {
   const intl = getIntl();
   const operationParameters: SerializedParameter[] = [];
 
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
-    // TODO: <2337657> Verify nested dependency parameters work once dynamic values available on api.
     const referenceParameterName = (parameter.parameterReference ?? parameter.parameter) as string;
     const referencedParameter = getParameterFromName(nodeInputs, referenceParameterName);
 
@@ -345,7 +354,10 @@ function getParametersForDynamicInvoke(referenceParameters: DynamicParameters, n
     operationParameters.push({
       ...referencedParameter,
       parameterName,
-      value: getJSONValueFromString(parameterValueToString(referencedParameter, false /* isDefinitionValue */), referencedParameter.type),
+      value: getJSONValueFromString(
+        parameterValueToString(referencedParameter, false /* isDefinitionValue */, idReplacements),
+        referencedParameter.type
+      ),
     });
   }
 

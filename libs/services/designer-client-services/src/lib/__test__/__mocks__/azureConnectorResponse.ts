@@ -41,7 +41,7 @@ export const AzureConnectorMock: { value: any[] } = {
           displayName: 'Eduframe',
           description:
             'Eduframe is a complete solution for commercial training providers & business schools to attract more students, manage & automate the course administration, and deliver the ultimate learning experience. Eduframe seamlessly integrates with Canvas LMS. The connector opens up the opportunity to easily integrate your existing software applications with Eduframe, like your CRM and accounting software.',
-          //releaseTag: 'Preview', // danielle can we use this
+          //releaseTag: 'Preview',
           //   tier: 'Premium',
         },
         capabilities: ['actions'],

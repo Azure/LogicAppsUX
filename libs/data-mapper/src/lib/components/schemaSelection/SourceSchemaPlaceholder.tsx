@@ -13,6 +13,7 @@ const useStyles = makeStyles({
   },
   placeholderText: {
     ...typographyStyles.body1Strong,
+    color: tokens.colorNeutralForeground2,
     maxWidth: '80%',
     textAlign: 'center',
   },
@@ -45,10 +46,10 @@ export const SourceSchemaPlaceholder = ({ onClickSelectElement }: SourceSchemaPl
       onClick={onClickSelectElement}
       style={{
         position: 'absolute',
-        zIndex: 5,
+        zIndex: 4,
         top: reactFlowViewport.y,
         left: reactFlowViewport.x,
-        transform: `scale(${reactFlowViewport.zoom}) translate(+100%, +50%)`,
+        transform: `scale(${reactFlowViewport.zoom}) translate(0, +5%)`,
         transformOrigin: 'top left',
       }}
     >

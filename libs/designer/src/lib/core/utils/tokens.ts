@@ -24,9 +24,9 @@ import { hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import { OutputKeys, parseEx } from '@microsoft-logic-apps/parsers';
+import { getKnownTitles, OutputKeys } from '@microsoft-logic-apps/parsers';
 import type { BuiltInOutput, OperationManifest } from '@microsoft-logic-apps/utils';
-import { unmap, equals } from '@microsoft-logic-apps/utils';
+import { labelCase, unmap, equals } from '@microsoft-logic-apps/utils';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
 
@@ -165,7 +165,8 @@ export const getOutputTokenSections = (
   nodeId: string,
   nodeType: string,
   tokenState: TokensState,
-  workflowParametersState: WorkflowParametersState
+  workflowParametersState: WorkflowParametersState,
+  replacementIds: Record<string, string>
 ): TokenGroup[] => {
   const { definitions } = workflowParametersState;
   const { variables, outputTokens } = tokenState;
@@ -186,14 +187,17 @@ export const getOutputTokenSections = (
       label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),
       tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
         ...token,
-        value: getExpressionValueForOutputToken(token, nodeType),
+        value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
       })),
     });
 
     const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
       let tokens = outputTokens[upstreamNodeId].tokens;
       tokens = tokens.map((token) => {
-        return { ...token, value: getExpressionValueForOutputToken(token, nodeType) };
+        return {
+          ...token,
+          value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+        };
       });
 
       if (!tokens.length) {
@@ -202,7 +206,7 @@ export const getOutputTokenSections = (
 
       return {
         id: upstreamNodeId,
-        label: upstreamNodeId, // TODO: get friendly name for this node.
+        label: labelCase(replacementIds[upstreamNodeId] ?? upstreamNodeId),
         tokens,
         hasAdvanced: tokens.some((token) => token.isAdvanced),
         showAdvanced: false,
@@ -269,6 +273,12 @@ export const createValueSegmentFromToken = async (
       }
     }
 
+    if (tokenValueSegment.token) {
+      const oldId = tokenValueSegment.token.actionName ?? '';
+      const newId = rootState.workflow.idReplacements[oldId] ?? oldId;
+      tokenValueSegment.token.remappedValue = tokenValueSegment.value.replace(oldId, newId);
+    }
+
     return shouldAdd ? { segment: tokenValueSegment, foreachDetails: { arrayValue: parentArrayValue } } : { segment: tokenValueSegment };
   }
 
@@ -318,39 +328,12 @@ const getTokenTitle = (output: OutputInfo): string => {
     return output.title;
   }
 
-  const intl = getIntl();
-  const itemToken = intl.formatMessage({ defaultMessage: 'Item', description: 'Display name for item output' });
+  const itemToken = getKnownTitles(OutputKeys.Item);
   if (output.isInsideArray) {
     return output.parentArray ? `${output.parentArray} - ${itemToken}` : itemToken;
   }
 
-  if (output.name) {
-    switch (output.name) {
-      case OutputKeys.Body:
-        return intl.formatMessage({ defaultMessage: 'Body', description: 'Display name for body outputs' });
-      case OutputKeys.Headers:
-        return intl.formatMessage({ defaultMessage: 'Headers', description: 'Display name for headers in outputs' });
-      case OutputKeys.Outputs:
-        return intl.formatMessage({ defaultMessage: 'Outputs', description: 'Display name for operation outputs' });
-      case OutputKeys.Queries:
-        return intl.formatMessage({ defaultMessage: 'Queries', description: 'Display name for queries in outputs' });
-      case OutputKeys.StatusCode:
-        return intl.formatMessage({ defaultMessage: 'Status Code', description: 'Display name for status code in outputs' });
-      case OutputKeys.Item:
-        return itemToken;
-      case OutputKeys.PathParameters:
-        return intl.formatMessage({
-          defaultMessage: 'Path Parameters',
-          description: 'Display name for relative path parameters in trigger outputs',
-        });
-      default:
-        // eslint-disable-next-line no-case-declarations
-        const segments = parseEx(output.name);
-        return String(segments[segments.length - 1].value);
-    }
-  }
-
-  return 'Body';
+  return output.name ? getKnownTitles(output.name) : getKnownTitles(OutputKeys.Body);
 };
 
 const getWorkflowParameterTokens = (definitions: Record<string, WorkflowParameterDefinition>): OutputToken[] => {
@@ -392,4 +375,8 @@ export const convertWorkflowParameterTypeToSwaggerType = (type: string | undefin
     default:
       return Constants.SWAGGER.TYPE.ANY;
   }
+};
+
+const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
+  return value.replace(id, replacementIds[id] ?? id);
 };

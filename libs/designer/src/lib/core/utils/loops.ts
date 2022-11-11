@@ -6,7 +6,7 @@ import { initializeOperationDetailsForManifest } from '../actions/bjsworkflow/op
 import { getOperationManifest } from '../queries/operation';
 import type { NodeInputs, NodeOperation, NodeOutputs, OperationMetadataState } from '../state/operation/operationMetadataSlice';
 import { initializeNodes } from '../state/operation/operationMetadataSlice';
-import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
+import type { NodesMetadata, Operations } from '../state/workflow/workflowInterfaces';
 import { addImplicitForeachNode } from '../state/workflow/workflowSlice';
 import type { RootState } from '../store';
 import { getAllParentsForNode, getNewNodeId, getTriggerNodeId } from './graph';
@@ -154,7 +154,9 @@ export const getRepetitionContext = async (nodeId: string, state: RootState, inc
       : undefined;
 
   const repetitionReferences = (
-    await Promise.all(repetitionNodeIds.map((repetitionNodeId) => getRepetitionReference(repetitionNodeId, state.operations)))
+    await Promise.all(
+      repetitionNodeIds.map((repetitionNodeId) => getRepetitionReference(repetitionNodeId, state.operations, state.workflow.idReplacements))
+    )
   ).filter((reference) => !!reference) as RepetitionReference[];
 
   const parentReferences: RepetitionReference[] = [];
@@ -269,7 +271,45 @@ export const getForeachActionName = (
   return foreachAction?.actionName;
 };
 
-const getRepetitionReference = async (nodeId: string, state: OperationMetadataState): Promise<RepetitionReference | undefined> => {
+export const isForeachActionNameForLoopsource = (
+  nodeId: string,
+  expression: string,
+  nodes: Record<string, Partial<NodeDataWithOperationMetadata>>,
+  operations: Operations,
+  nodesMetadata: NodesMetadata
+): boolean => {
+  const operationInfos = Object.keys(operations).reduce(
+    (result: Record<string, NodeOperation>, operationId) => ({
+      ...result,
+      [operationId]: {
+        type: operations[operationId]?.type,
+        kind: operations[operationId]?.kind,
+        connectorId: '',
+        operationId: '',
+      },
+    }),
+    {}
+  );
+  const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos);
+  const sanitizedPath = sanitizeKey(expression);
+  const foreachAction = first((item) => {
+    const operation = operationInfos[item];
+    const parameter = nodes[item]?.nodeInputs ? getParameterFromName(nodes[item].nodeInputs as NodeInputs, 'foreach') : undefined;
+    const foreachValue =
+      operation && (operation as any).foreach
+        ? (operation as any).foreach
+        : parameter && parameter.value.length === 1 && parameter.value[0].token?.key;
+    return equals(operation?.type, Constants.NODE.TYPE.FOREACH) && equals(foreachValue, sanitizedPath);
+  }, repetitionNodeIds);
+
+  return !!foreachAction;
+};
+
+const getRepetitionReference = async (
+  nodeId: string,
+  state: OperationMetadataState,
+  idReplacements: Record<string, string>
+): Promise<RepetitionReference | undefined> => {
   const operationInfo = state.operationInfo[nodeId];
   const service = OperationManifestService();
   if (service.isSupported(operationInfo.type, operationInfo.kind)) {
@@ -277,7 +317,10 @@ const getRepetitionReference = async (nodeId: string, state: OperationMetadataSt
     const parameterName = manifest.properties.repetition?.loopParameter;
     const parameter = parameterName ? getParameterFromName(state.inputParameters[nodeId], parameterName) : undefined;
     if (parameter) {
-      const repetitionValue = getJSONValueFromString(parameterValueToString(parameter, /* isDefinitionValue */ true), parameter.type);
+      const repetitionValue = getJSONValueFromString(
+        parameterValueToString(parameter, /* isDefinitionValue */ true, idReplacements),
+        parameter.type
+      );
       return {
         actionName: nodeId,
         actionType: operationInfo.type,
@@ -473,7 +516,7 @@ const buildSegmentPath = (dereferences: Dereference[]): string => {
   return dereferences.map((dereference) => `['${(dereference.expression as ExpressionLiteral).value}']`).join('');
 };
 
-const getParentArrayKey = (key: string): string | undefined => {
+export const getParentArrayKey = (key: string): string | undefined => {
   const segments = parseEx(key);
   if (segments.length > 1) {
     for (let index = segments.length - 1; index >= 0; index--) {
@@ -556,6 +599,7 @@ const updateTokenMetadataInForeachInputs = (inputs: NodeInputs, token: OutputTok
             nodesData,
             { [tokenOwnerNodeId]: rootState.workflow.operations[tokenOwnerNodeId] },
             rootState.workflowParameters.definitions,
+            rootState.workflow.nodesMetadata,
             parameter.type
           );
         }

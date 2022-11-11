@@ -9,7 +9,7 @@ import {
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
-import { indexPseudoFunctionKey } from '../models/Function';
+import { ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
 import { SchemaNodeProperty } from '../models/Schema';
@@ -21,7 +21,7 @@ import {
   nodeHasSourceNodeEventually,
   nodeHasSpecificInputEventually,
 } from './Connection.Utils';
-import { findFunctionForFunctionName, findFunctionForKey, isFunctionData } from './Function.Utils';
+import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
 import { addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft-logic-apps/utils';
@@ -79,8 +79,16 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
         } else if (isSchemaNodeExtended(input.node)) {
           applyValueAtPath(input.node.key, mapDefinition, selfNode, selfNode.pathToRoot, connections);
         } else {
-          const value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
-          applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
+          if (input.node.key.startsWith(ifPseudoFunctionKey)) {
+            const values = collectConditionalValues(connections[input.reactFlowKey], connections);
+            const modifiedPathItems = selfNode.pathToRoot.slice(0, -1);
+            modifiedPathItems.push({ key: ifPseudoFunctionKey, name: values[1], fullName: values[0], repeating: false });
+            modifiedPathItems.push(...selfNode.pathToRoot.slice(-1));
+            applyValueAtPath(values[1], mapDefinition, selfNode, modifiedPathItems, connections);
+          } else {
+            const value = collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
+            applyValueAtPath(value, mapDefinition, selfNode, selfNode.pathToRoot, connections);
+          }
         }
       }
     });
@@ -98,7 +106,9 @@ const applyValueAtPath = (
   const formattedPathLocation = pathLocation.startsWith('@') ? `$${pathLocation}` : pathLocation;
 
   if (path.length > 1) {
-    if (path[0].repeating) {
+    if (path[0].key === ifPseudoFunctionKey) {
+      generateIfSection(path[0].fullName, value, mapDefinition, destinationNode, path, connections);
+    } else if (path[0].repeating) {
       // Assumption for now that there is only 1 source node in a loop chain
       const parentTargetConnection = connections[addTargetReactFlowPrefix(path[0].key)];
       const parentSourceNode = parentTargetConnection.inputs[0][0];
@@ -150,15 +160,18 @@ const generateForSection = (
   // Local loop variables use current working directory './' instead of '$'
   const formattedPathLocation = pathLocation.startsWith('@') ? `./${pathLocation}` : pathLocation;
 
-  // TODO allow for nested loops
-  const forEntry = nodeHasSpecificInputEventually(
-    indexPseudoFunctionKey,
-    connections[addTargetReactFlowPrefix(path[0].key)],
-    connections,
-    false
-  )
-    ? `${mapNodeParams.for}(${loopValue}, $i)`
-    : `${mapNodeParams.for}(${loopValue})`;
+  const currentConnection = connections[addTargetReactFlowPrefix(path[0].key)];
+  const loopHasIndex = nodeHasSpecificInputEventually(indexPseudoFunctionKey, currentConnection, connections, false);
+
+  let forEntry: string;
+  if (loopHasIndex) {
+    const indexFunctionKey = (isConnectionUnit(currentConnection.inputs[0][0]) && currentConnection.inputs[0][0].reactFlowKey) || '';
+    const indexFunctionInput = connections[indexFunctionKey];
+    forEntry = `${mapNodeParams.for}(${loopValue}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
+  } else {
+    forEntry = `${mapNodeParams.for}(${loopValue})`;
+  }
+
   if (!mapDefinition[forEntry]) {
     mapDefinition[forEntry] = {};
   }
@@ -178,13 +191,46 @@ const generateForSection = (
   applyValueAtPath(loopLocalValue, mapDefinition[formattedPathLocation] as MapDefinitionEntry, destinationNode, path.slice(1), connections);
 };
 
+const generateIfSection = (
+  conditionalValue: string,
+  value: string,
+  mapDefinition: MapDefinitionEntry,
+  destinationNode: SchemaNodeExtended,
+  path: PathItem[],
+  connections: ConnectionDictionary
+) => {
+  const ifEntry = `${mapNodeParams.if}(${conditionalValue})`;
+  if (!mapDefinition[ifEntry]) {
+    mapDefinition[ifEntry] = {};
+  }
+
+  applyValueAtPath(value, mapDefinition[ifEntry] as MapDefinitionEntry, destinationNode, path.slice(1), connections);
+};
+
 const collectFunctionValue = (node: FunctionData, currentConnection: Connection, connections: ConnectionDictionary): string => {
   // Special case where the index is used directly
   if (currentConnection.self.node.key === indexPseudoFunctionKey) {
-    return '$i';
+    return getIndexValueForCurrentConnection(currentConnection);
   }
 
-  const inputValues = currentConnection
+  const inputValues = getInputValues(currentConnection, connections);
+
+  // Special case for conditionals
+  if (currentConnection.self.node.key === ifPseudoFunctionKey) {
+    return inputValues[0];
+  }
+
+  return combineFunctionAndInputs(node, inputValues);
+};
+
+const collectConditionalValues = (currentConnection: Connection, connections: ConnectionDictionary): [string, string] => {
+  const inputValues = getInputValues(currentConnection, connections);
+
+  return [inputValues[0], inputValues[1]];
+};
+
+const getInputValues = (currentConnection: Connection | undefined, connections: ConnectionDictionary): string[] => {
+  return currentConnection
     ? (flattenInputs(currentConnection.inputs)
         .flatMap((input) => {
           if (!input) {
@@ -197,7 +243,7 @@ const collectFunctionValue = (node: FunctionData, currentConnection: Connection,
             return input.node.fullName.startsWith('@') ? `$${input.node.key}` : input.node.key;
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
-              return '$i';
+              return getIndexValueForCurrentConnection(currentConnection);
             } else {
               return collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
             }
@@ -205,8 +251,6 @@ const collectFunctionValue = (node: FunctionData, currentConnection: Connection,
         })
         .filter((mappedInput) => !!mappedInput) as string[])
     : [];
-
-  return combineFunctionAndInputs(node, inputValues);
 };
 
 const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]): string => {
@@ -216,16 +260,23 @@ const combineFunctionAndInputs = (functionData: FunctionData, inputs: string[]):
 export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): boolean => {
   // All functions connections must eventually terminate into the source
   const connectionsArray = Object.entries(connections);
-  if (
-    !connectionsArray
-      .filter(([key, _connection]) => key.startsWith(targetPrefix))
-      .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections))
-  ) {
-    return false;
-  }
+  const allNodesTerminateIntoSource = connectionsArray
+    .filter(([key, _connection]) => key.startsWith(targetPrefix))
+    .every(([_key, targetConnection]) => nodeHasSourceNodeEventually(targetConnection, connections));
+
+  const allRequiredInputsFilledOut = connectionsArray.every(([_key, targetConnection]) => {
+    const selfNode = targetConnection.self.node;
+    if (isFunctionData(selfNode)) {
+      return selfNode.inputs.every((nodeInput, index) => {
+        return nodeInput.isOptional || targetConnection.inputs[index].length > 0;
+      });
+    }
+
+    return true;
+  });
 
   // Is valid to generate the map definition
-  return true;
+  return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
 };
 
 /* Deserialize yml */
@@ -258,24 +309,25 @@ const parseDefinitionToConnection = (
 ) => {
   if (typeof sourceNodeObject === 'string') {
     const sourceEndOfFunction = sourceNodeObject.indexOf('(');
+    const amendedSourceKey = targetKey.includes(mapNodeParams.for) ? getSourceValueFromLoop(sourceNodeObject, targetKey) : sourceNodeObject;
     const sourceNode =
       sourceEndOfFunction > -1
-        ? findFunctionForFunctionName(sourceNodeObject.substring(0, sourceEndOfFunction), functions)
-        : findNodeForKey(sourceNodeObject, sourceSchema.schemaTreeRoot);
+        ? findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions)
+        : findNodeForKey(amendedSourceKey, sourceSchema.schemaTreeRoot);
     const sourceKey =
       sourceNode && isFunctionData(sourceNode)
-        ? createdNodes[sourceNodeObject]
-          ? createdNodes[sourceNodeObject]
+        ? createdNodes[amendedSourceKey]
+          ? createdNodes[amendedSourceKey]
           : createReactFlowFunctionKey(sourceNode)
-        : `${sourcePrefix}${sourceNodeObject}`;
-    createdNodes[sourceNodeObject] = sourceKey;
+        : `${sourcePrefix}${amendedSourceKey}`;
+    createdNodes[amendedSourceKey] = sourceKey;
 
     const destinationFunctionKey = targetKey.slice(0, targetKey.indexOf('-'));
     const destinationFunctionGuid = targetKey.slice(targetKey.indexOf('-') + 1);
     const destinationNode = isAGuid(destinationFunctionGuid)
       ? findFunctionForKey(destinationFunctionKey, functions)
       : findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
-    const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${targetKey}`;
+    const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${destinationNode?.key}`;
 
     if (sourceNode && destinationNode) {
       addNodeToConnections(connections, sourceNode, sourceKey, destinationNode, destinationKey);
@@ -367,6 +419,25 @@ const yamlReplacer = (key: string, value: any) => {
   }
 
   return value;
+};
+
+export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
+  // danielle will account for nested loops in next PR
+  let constructedSourceKey = '';
+  const matchArr = targetKey.match(/\$for\([^)]+\)\//);
+  let match = matchArr?.[0];
+  match = match?.replace('$for(', '');
+  match = match?.replace(')', '');
+  const endOfLastFunctionIndex = sourceKey.lastIndexOf('(');
+  if (endOfLastFunctionIndex > 0) {
+    constructedSourceKey =
+      sourceKey.substring(0, sourceKey.lastIndexOf('(') + 1) +
+      match +
+      sourceKey.substring(sourceKey.lastIndexOf('(') + 1, sourceKey.length + 1);
+  } else {
+    constructedSourceKey = match + sourceKey;
+  }
+  return constructedSourceKey;
 };
 
 const formatCustomValue = (customValue: string) => customValueQuoteToken + customValue + customValueQuoteToken;

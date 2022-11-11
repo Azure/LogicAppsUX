@@ -258,11 +258,12 @@ export interface SerializedParameter extends ParameterInfo {
 }
 
 const getOperationInputsToSerialize = (rootState: RootState, operationId: string): SerializedParameter[] => {
+  const idReplacements = rootState.workflow.idReplacements;
   return getOperationInputParameters(rootState, operationId)
     .filter((input) => !input.info.serialization?.skip)
     .map((input) => ({
       ...input,
-      value: parameterValueToString(input, true /* isDefinitionValue */),
+      value: parameterValueToString(input, true /* isDefinitionValue */, idReplacements),
     }));
 };
 
@@ -514,6 +515,7 @@ const serializeSubGraph = async (
     serializeOperation(rootState, nestedNode.id)
   ) as Promise<LogicAppsV2.OperationDefinition>[];
   const nestedActions = await Promise.all(nestedActionsPromises);
+  const idReplacements = rootState.workflow.idReplacements;
 
   safeSetObjectPropertyValue(
     result,
@@ -522,7 +524,7 @@ const serializeSubGraph = async (
       if (!isNullOrEmpty(action)) {
         return {
           ...actions,
-          [nestedNodes[index].id]: action,
+          [idReplacements[nestedNodes[index].id] ?? [nestedNodes[index].id]]: action,
         };
       }
 

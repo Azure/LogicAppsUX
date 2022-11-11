@@ -39,9 +39,14 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         break;
       case 'loadDataMap':
         Promise.all([getSelectedSchema(msg.data.sourceSchemaFileName), getSelectedSchema(msg.data.targetSchemaFileName)]).then((values) => {
-          setSchemasBeforeSettingDataMap(values[0], values[1]).then(() => {
-            changeMapDefinitionCB(msg.data.mapDefinition);
-          });
+          setSchemasBeforeSettingDataMap(values[0], values[1])
+            .then(() => {
+              changeMapDefinitionCB(msg.data.mapDefinition);
+            })
+            .catch((error) => {
+              console.error(`Error loading data map:`);
+              console.error(error);
+            });
         });
         break;
       case 'showAvailableSchemas':
@@ -51,7 +56,8 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         changeXsltFilenameCB(msg.data);
         break;
       default:
-        console.error(`Unexpected message received: ${msg}`);
+        console.warn(`Unexpected message received:`);
+        console.warn(msg);
     }
   });
 
@@ -90,11 +96,9 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
     [dispatch]
   );
 
-  const setSchemasBeforeSettingDataMap = (newSourceSchema: Schema, newTargetSchema: Schema) => {
+  const setSchemasBeforeSettingDataMap = async (newSourceSchema: Schema, newTargetSchema: Schema) => {
     changeSourceSchemaCB(newSourceSchema);
     changeTargetSchemaCB(newTargetSchema);
-
-    return Promise.resolve();
   };
 
   return <VSCodeContext.Provider value={vscode}>{children}</VSCodeContext.Provider>;

@@ -1,7 +1,7 @@
 import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
-import type { NodeToggledStateDictionary } from '../components/tree/SchemaTreeItem';
+import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
 import { childTargetNodeCardIndent, schemaNodeCardHeight } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
@@ -17,6 +17,21 @@ import type { ElkNode } from 'elkjs';
 import { useEffect, useState } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 import { Position } from 'reactflow';
+
+// Hidden dummy node placed at 0,0 (same as source schema block) to allow initial load fitView to center diagram
+// NOTE: Not documented, but hidden nodes need a width/height to properly affect fitView when includeHiddenNodes option is true
+const placeholderReactFlowNode: ReactFlowNode = {
+  id: 'layouting-&-Placeholder',
+  hidden: true,
+  sourcePosition: Position.Right,
+  data: null,
+  width: 10,
+  height: 10,
+  position: {
+    x: 0,
+    y: 0,
+  },
+};
 
 export const useLayout = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
@@ -53,9 +68,16 @@ export const useLayout = (
         .then((layoutedElkTree) => {
           // Convert newly-calculated ELK node data to React Flow nodes
           // NOTE: edges were only used to aid ELK in layout calculation, ReactFlow still handles creating/routing/etc them
-          setReactFlowNodes(
-            convertToReactFlowNodes(layoutedElkTree, sortedSourceSchemaNodes, currentFunctionNodes, currentTargetSchemaNode, connections)
-          );
+          setReactFlowNodes([
+            placeholderReactFlowNode,
+            ...convertToReactFlowNodes(
+              layoutedElkTree,
+              sortedSourceSchemaNodes,
+              currentFunctionNodes,
+              currentTargetSchemaNode,
+              connections
+            ),
+          ]);
         })
         .catch((error) => {
           console.error(`Elk Layout Error: ${error}`);
@@ -263,20 +285,23 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
 };
 
 export const convertToReactFlowEdges = (connections: ConnectionDictionary, selectedItemKey: string | undefined): ReactFlowEdge[] => {
-  return Object.values(connections).flatMap((connection) => {
-    const nodeInputs = flattenInputs(connection.inputs).filter(isConnectionUnit);
+  return Object.values(connections)
+    .flatMap((connection) => {
+      const nodeInputs = flattenInputs(connection.inputs).filter(isConnectionUnit);
 
-    return nodeInputs.map((input) => {
-      const id = createReactFlowConnectionId(input.reactFlowKey, connection.self.reactFlowKey);
-      return {
-        id,
-        source: input.reactFlowKey,
-        target: connection.self.reactFlowKey,
-        type: ReactFlowEdgeType.ConnectionEdge,
-        selected: selectedItemKey === id,
-      };
-    });
-  });
+      // Sort the resulting edges so that the selected edge is rendered last and thus on top of all other edges
+      return nodeInputs.map((input) => {
+        const id = createReactFlowConnectionId(input.reactFlowKey, connection.self.reactFlowKey);
+        return {
+          id,
+          source: input.reactFlowKey,
+          target: connection.self.reactFlowKey,
+          type: ReactFlowEdgeType.ConnectionEdge,
+          selected: selectedItemKey === id,
+        };
+      });
+    })
+    .sort((a, b) => (!a.selected && b.selected ? -1 : a.selected && b.selected ? 0 : 1));
 };
 
 export const useOverviewLayout = (
@@ -296,7 +321,7 @@ export const useOverviewLayout = (
         schemaNode: parentSchemaNode,
         schemaType,
         displayHandle: false,
-        displayChevron: false,
+        displayChevron: schemaType === SchemaType.Target && !!shouldTargetSchemaDisplayChevrons,
         isLeaf: false,
         isChild: false,
         disabled: false,
@@ -352,12 +377,13 @@ const getConnectionsForNode = (connections: ConnectionDictionary, nodeKey: strin
 
 export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
 
-export const createReactFlowConnectionId = (sourceId: string, targetId: string): string => `${sourceId}-to-${targetId}`;
-
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
 export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
 
-export const getSourceIdFromReactFlowId = (reactFlowId: string): string => reactFlowId.split('-to-')[0];
-
-export const getDestinationIdFromReactFlowId = (reactFlowId: string): string => reactFlowId.split('-to-')[1];
+export const reactFlowConnectionIdSeparator = '-to-';
+export const createReactFlowConnectionId = (sourceId: string, targetId: string): string =>
+  `${sourceId}${reactFlowConnectionIdSeparator}${targetId}`;
+export const getSourceIdFromReactFlowConnectionId = (reactFlowId: string): string => reactFlowId.split(reactFlowConnectionIdSeparator)[0];
+export const getDestinationIdFromReactFlowConnectionId = (reactFlowId: string): string =>
+  reactFlowId.split(reactFlowConnectionIdSeparator)[1];

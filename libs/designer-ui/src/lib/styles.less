@@ -113,6 +113,13 @@
   }
 }
 
+body.dark {
+  .msla-designer-canvas,
+  .msla-monitor-canvas {
+    background-color: @ms-color-bodyBackground;
+  }
+}
+
 .msla-connectionwizard-canvas {
   min-width: 100%;
   margin: 0 auto;
@@ -421,4 +428,12 @@ body.dark {
 
 .hidden {
   visibility: hidden;
+}
+
+body.dark {
+  .ms-Panel-main {
+    background-color: @ms-color-secondaryBackground;
+    box-shadow: none;
+    border-left: 1px solid @ms-color-secondaryBorder;
+  }
 }
