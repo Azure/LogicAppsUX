@@ -146,7 +146,7 @@ const TokenField = ({
       );
 
     case 'array':
-      return editorViewModel.itemSchema ? (
+      return editorViewModel?.itemSchema ? (
         <ArrayEditor
           type={ArrayType.COMPLEX}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
