@@ -1,5 +1,5 @@
 import { VSCodeContext } from '../WebViewMsgHandler';
-import { dataMapDataLoaderSlice } from '../state/DataMapDataLoader';
+import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema } from '../state/DataMapDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
 import {
   DataMapDataProvider,
@@ -7,6 +7,7 @@ import {
   DataMapperDesignerProvider,
   defaultDataMapperApiServiceOptions,
   getFunctions,
+  getSelectedSchema,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
 import { useCallback, useContext, useEffect, useState } from 'react';
@@ -33,7 +34,9 @@ export const App = () => {
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
+  const sourceSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchemaFilename);
   const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
+  const targetSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.targetSchemaFilename);
   const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
@@ -81,10 +84,20 @@ export const App = () => {
     });
   };
 
-  // Init runtime API service
+  // Init runtime API service and make calls
   useEffect(() => {
     const fetchFunctionList = async () => {
-      dispatch(dataMapDataLoaderSlice.actions.changeFetchedFunctions(await getFunctions()));
+      dispatch(changeFetchedFunctions(await getFunctions()));
+    };
+
+    const getSelectedSchemaTrees = async () => {
+      if (sourceSchemaFilename) {
+        dispatch(changeSourceSchema(await getSelectedSchema(sourceSchemaFilename)));
+      }
+
+      if (targetSchemaFilename) {
+        dispatch(changeTargetSchema(await getSelectedSchema(targetSchemaFilename)));
+      }
     };
 
     if (runtimePort) {
@@ -94,8 +107,9 @@ export const App = () => {
       });
 
       fetchFunctionList();
+      getSelectedSchemaTrees();
     }
-  }, [dispatch, runtimePort]);
+  }, [dispatch, runtimePort, sourceSchemaFilename, targetSchemaFilename]);
 
   return (
     <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>

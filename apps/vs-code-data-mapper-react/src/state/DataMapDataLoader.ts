@@ -7,7 +7,9 @@ export interface DataMapLoadingState {
   armToken?: string;
   loadingMethod: 'file' | 'arm';
   mapDefinition?: MapDefinitionEntry;
+  sourceSchemaFilename?: string;
   sourceSchema?: Schema;
+  targetSchemaFilename?: string;
   targetSchema?: Schema;
   schemaFileList?: string[];
   xsltFilename: string;
@@ -38,8 +40,14 @@ export const dataMapDataLoaderSlice = createSlice({
     changeMapDefinition: (state, action: PayloadAction<MapDefinitionEntry>) => {
       state.mapDefinition = action.payload;
     },
+    changeSourceSchemaFilename: (state, action: PayloadAction<string>) => {
+      state.sourceSchemaFilename = action.payload;
+    },
     changeSourceSchema: (state, action: PayloadAction<Schema>) => {
       state.sourceSchema = action.payload;
+    },
+    changeTargetSchemaFilename: (state, action: PayloadAction<string>) => {
+      state.targetSchemaFilename = action.payload;
     },
     changeTargetSchema: (state, action: PayloadAction<Schema>) => {
       state.targetSchema = action.payload;
@@ -59,9 +67,12 @@ export const {
   changeLoadingMethod,
   changeXsltFilename,
   changeMapDefinition,
+  changeSourceSchemaFilename,
   changeSourceSchema,
+  changeTargetSchemaFilename,
   changeTargetSchema,
   changeSchemaList,
+  changeFetchedFunctions,
 } = dataMapDataLoaderSlice.actions;
 
 export default dataMapDataLoaderSlice.reducer;

@@ -2,14 +2,13 @@ import {
   changeMapDefinition,
   changeRuntimePort,
   changeSchemaList,
-  changeSourceSchema,
-  changeTargetSchema,
+  changeSourceSchemaFilename,
+  changeTargetSchemaFilename,
   changeXsltFilename,
 } from './state/DataMapDataLoader';
 import type { AppDispatch } from './state/Store';
-import type { MapDefinitionEntry, Schema } from '@microsoft/logic-apps-data-mapper';
-import { getSelectedSchema } from '@microsoft/logic-apps-data-mapper';
-import React, { createContext, useCallback } from 'react';
+import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
+import React, { createContext } from 'react';
 import { useDispatch } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 
@@ -31,30 +30,23 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
   window.addEventListener('message', (event: MessageEvent<ReceivingMessageTypes>) => {
     const msg = event.data;
 
+    // NOTE: app.tsx handles all API calls (GET schemaTree, GET functions) as it's where DmApiService is initialized
     switch (msg.command) {
       case 'setRuntimePort':
         dispatch(changeRuntimePort(msg.data));
         break;
       case 'fetchSchema':
-        getSelectedSchema(msg.data.fileName).then((schema) => {
-          if (msg.data.type === 'source') {
-            changeSourceSchemaCB(schema as Schema);
-          } else {
-            changeTargetSchemaCB(schema as Schema);
-          }
-        });
+        if (msg.data.type === 'source') {
+          dispatch(changeSourceSchemaFilename(msg.data.fileName));
+        } else {
+          dispatch(changeTargetSchemaFilename(msg.data.fileName));
+        }
         break;
       case 'loadDataMap':
-        Promise.all([getSelectedSchema(msg.data.sourceSchemaFileName), getSelectedSchema(msg.data.targetSchemaFileName)]).then((values) => {
-          setSchemasBeforeSettingDataMap(values[0], values[1])
-            .then(() => {
-              dispatch(changeMapDefinition(msg.data.mapDefinition));
-            })
-            .catch((error) => {
-              console.error(`Error loading data map:`);
-              console.error(error);
-            });
-        });
+        // NOTE: DataMapDataProvider ensures the functions and schemas are loaded before loading the mapDefinition connections
+        dispatch(changeSourceSchemaFilename(msg.data.sourceSchemaFileName));
+        dispatch(changeTargetSchemaFilename(msg.data.targetSchemaFileName));
+        dispatch(changeMapDefinition(msg.data.mapDefinition));
         break;
       case 'showAvailableSchemas':
         dispatch(changeSchemaList(msg.data));
@@ -67,25 +59,6 @@ export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ chi
         console.warn(msg);
     }
   });
-
-  const changeSourceSchemaCB = useCallback(
-    (newSchema: Schema) => {
-      dispatch(changeSourceSchema(newSchema));
-    },
-    [dispatch]
-  );
-
-  const changeTargetSchemaCB = useCallback(
-    (newSchema: Schema) => {
-      dispatch(changeTargetSchema(newSchema));
-    },
-    [dispatch]
-  );
-
-  const setSchemasBeforeSettingDataMap = async (newSourceSchema: Schema, newTargetSchema: Schema) => {
-    changeSourceSchemaCB(newSourceSchema);
-    changeTargetSchemaCB(newTargetSchema);
-  };
 
   return <VSCodeContext.Provider value={vscode}>{children}</VSCodeContext.Provider>;
 };

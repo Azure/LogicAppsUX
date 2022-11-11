@@ -12,7 +12,7 @@ import type { Uri } from 'vscode';
 export const registerCommands = () => {
   registerCommand('azureDataMapper.openDataMapper', () => openDataMapperCmd());
   registerCommand('azureDataMapper.createNewDataMap', () => createNewDataMapCmd());
-  registerCommand('azureDataMapper.loadDataMapFile', (context: IActionContext, uri: Uri) => loadDataMapFileCmd(uri));
+  registerCommand('azureDataMapper.loadDataMapFile', (_context: IActionContext, uri: Uri) => loadDataMapFileCmd(uri));
 };
 
 const openDataMapperCmd = async () => {
@@ -49,7 +49,6 @@ const loadDataMapFileCmd = async (uri: Uri) => {
   const workflowFolder = DataMapperExt.getWorkspaceFolderFsPath();
   if (!workflowFolder) {
     throw new Error('No workflow folder found onLoadDataMapFile');
-    return;
   }
 
   const schemasFolder = path.join(workflowFolder, schemasPath);
