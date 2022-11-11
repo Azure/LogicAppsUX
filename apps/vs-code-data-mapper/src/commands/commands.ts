@@ -1,7 +1,7 @@
 import DataMapperExt from '../DataMapperExt';
 import { startBackendRuntime } from '../FxWorkflowRuntime';
 import { schemasPath } from '../extensionConfig';
-import { callWithTelemetryAndErrorHandlingSync, registerCommand } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as yaml from 'js-yaml';
@@ -56,7 +56,7 @@ const loadDataMapFileCmd = async (uri: Uri) => {
   const tgtSchemaPath = path.join(schemasFolder, mapDefinition.$targetSchema);
 
   const attemptToResolveMissingSchemaFile = async (schemaName: string, schemaPath: string): Promise<boolean> => {
-    return !!callWithTelemetryAndErrorHandlingSync(
+    return !!(await callWithTelemetryAndErrorHandling(
       'azureDataMapper.attemptToResolveMissingSchemaFile',
       async (_context: IActionContext) => {
         const findSchemaFileButton = 'Find schema file';
@@ -83,7 +83,7 @@ const loadDataMapFileCmd = async (uri: Uri) => {
         // If user doesn't select a file, or doesn't click the above action, just return (cancel loading the MapDef)
         return false;
       }
-    );
+    ));
   };
 
   // If schema file doesn't exist, prompt to find/select it
