@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [0.2.13](https://github.com/Azure/LogicAppsUX/compare/v0.2.12...v0.2.13) (2022-11-11)
+
+
+### Logic Apps Designer Changes
+
+* Improved Conditional Parameter Visibility Logic ([#1288](https://github.com/Azure/LogicAppsUX/issues/1288)) ([db011cd](https://github.com/Azure/LogicAppsUX/commit/db011cd6ed244c9c57719d484eae92ba35f3dfc6))
+
+
+### Logic Apps Designer Bug Fixes
+
+* Remove Parameters Tab in Scope Nodes and Allow Action Namechange Within Subgraphs ([#1291](https://github.com/Azure/LogicAppsUX/issues/1291)) ([93edb7d](https://github.com/Azure/LogicAppsUX/commit/93edb7db86524892b397a4ec54ef1590fd60cef9))
+
 ### [0.2.12](https://github.com/Azure/LogicAppsUX/compare/v0.2.11...v0.2.12) (2022-11-10)
 
 
