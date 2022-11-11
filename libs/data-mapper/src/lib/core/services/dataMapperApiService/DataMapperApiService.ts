@@ -3,11 +3,11 @@ import type { FunctionManifest } from '../../../models/Function';
 
 export interface DataMapperApiServiceOptions {
   baseUrl: string;
+  port: string;
   accessToken?: string;
 }
 
 export class DataMapperApiService {
-  // TODO: add back when questions answered
   private options: DataMapperApiServiceOptions;
 
   constructor(options: DataMapperApiServiceOptions) {
@@ -31,6 +31,7 @@ export class DataMapperApiService {
       'api-version': '2019-10-01-edge-preview',
     });
   };
+
   private getHeaders = () => {
     return new Headers({
       Accept: 'application/json',
@@ -39,32 +40,38 @@ export class DataMapperApiService {
     });
   };
 
+  private getBaseUri = () => {
+    return `${this.options.baseUrl}:${this.options.port}`;
+  };
+
   private getSchemasUri = () => {
-    return `${this.options.baseUrl}/hostruntime/admin/vfs/Artifacts/Schemas?api-version=2018-11-01&relativepath=1`;
+    return `${this.getBaseUri()}/hostruntime/admin/vfs/Artifacts/Schemas?api-version=2018-11-01&relativepath=1`;
   };
 
   private getSchemaFileUri = (xmlName: string) => {
-    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`;
+    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/schemas/${xmlName}/contents/schemaTree`;
   };
 
   private getFunctionsManifestUri = () => {
-    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=2019-10-01-edge-preview`;
+    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=2019-10-01-edge-preview`;
   };
 
   private getGenerateXsltUri = () => {
-    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/generateXslt?api-version=2019-10-01-edge-preview`;
+    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/generateXslt?api-version=2019-10-01-edge-preview`;
   };
 
   private getTestMapUri = (xsltFilename: string) => {
-    return `${this.options.baseUrl}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=2019-10-01-edge-preview`;
+    return `${this.getBaseUri()}/runtime/webhooks/workflow/api/management/maps/${xsltFilename}/testMap?api-version=2019-10-01-edge-preview`;
   };
 
   async getFunctionsManifest(): Promise<FunctionManifest> {
     const uri = this.getFunctionsManifestUri();
     const response = await fetch(uri, { method: 'GET' });
+
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
+
     const functions = await response.json();
     return functions;
   }

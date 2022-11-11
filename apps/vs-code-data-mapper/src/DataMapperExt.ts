@@ -7,21 +7,23 @@ import {
   schemasPath,
   webviewTitle,
 } from './extensionConfig';
+import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
+import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { ChildProcess } from 'child_process';
 import { promises as fs, existsSync as fileExists } from 'fs';
 import * as path from 'path';
 import { Uri, ViewColumn, window, workspace } from 'vscode';
-import type { WebviewPanel, ExtensionContext, OutputChannel } from 'vscode';
+import type { WebviewPanel, ExtensionContext } from 'vscode';
 
 type SchemaType = 'source' | 'target';
 type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string };
 
 type SendingMessageTypes =
   | { command: 'fetchSchema'; data: { fileName: string; type: SchemaType } }
-  | { command: 'loadNewDataMap'; data: MapDefinitionEntry }
   | { command: 'loadDataMap'; data: { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string } }
   | { command: 'showAvailableSchemas'; data: string[] }
-  | { command: 'setXsltFilename'; data: string };
+  | { command: 'setXsltFilename'; data: string }
+  | { command: 'setRuntimePort'; data: string };
 type ReceivingMessageTypes =
   | {
       command: 'addSchemaFromFile' | 'readLocalFileOptions';
@@ -38,18 +40,20 @@ type ReceivingMessageTypes =
 
 export default class DataMapperExt {
   public static currentPanel: DataMapperExt | undefined;
-  public static outputChannel: OutputChannel | undefined;
+  public static outputChannel: IAzExtOutputChannel;
   public static readonly viewType = 'dataMapperWebview';
-  public static extensionContext: ExtensionContext | undefined;
-  public static currentDataMapName: string | undefined;
+  public static context: ExtensionContext;
+  public static currentDataMapName: string;
+  public static backendRuntimePort: number;
   public static backendRuntimeChildProcess: ChildProcess | undefined;
 
   private readonly _panel: WebviewPanel;
   private readonly _extensionPath: string;
 
-  public static createOrShow(context: ExtensionContext) {
+  public static createOrShow() {
     // If a panel has already been created, re-show it
     if (DataMapperExt.currentPanel) {
+      DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
       DataMapperExt.currentPanel._panel.reveal(ViewColumn.Active);
       return;
     }
@@ -66,7 +70,10 @@ export default class DataMapperExt {
       }
     );
 
-    this.currentPanel = new DataMapperExt(panel, context.extensionPath);
+    this.currentPanel = new DataMapperExt(panel, DataMapperExt.context.extensionPath);
+
+    // Send runtime port to webview
+    this.currentPanel.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
   }
 
   public sendMsgToWebview(msg: SendingMessageTypes) {
@@ -76,19 +83,19 @@ export default class DataMapperExt {
   private constructor(panel: WebviewPanel, extPath: string) {
     this._panel = panel;
     this._extensionPath = extPath;
-    DataMapperExt.extensionContext?.subscriptions.push(panel);
+    DataMapperExt.context?.subscriptions.push(panel);
 
     this._setWebviewHtml();
 
     // Handle messages from the webview (Data Mapper component)
-    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.extensionContext?.subscriptions);
+    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.context?.subscriptions);
 
     this._panel.onDidDispose(
       () => {
         DataMapperExt.currentPanel = undefined;
       },
       null,
-      DataMapperExt.extensionContext?.subscriptions
+      DataMapperExt.context?.subscriptions
     );
   }
 
@@ -116,17 +123,19 @@ export default class DataMapperExt {
   private _handleWebviewMsg(msg: ReceivingMessageTypes) {
     switch (msg.command) {
       case 'addSchemaFromFile': {
-        DataMapperExt.currentPanel.addSchemaFromFile(msg.data.path, msg.data.type);
+        DataMapperExt.currentPanel?.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
       }
       case 'readLocalFileOptions': {
-        const folderPath = DataMapperExt.getWorkspaceFolderFsPath();
-        fs.readdir(path.join(folderPath, schemasPath)).then((result) => {
-          DataMapperExt.currentPanel?.sendMsgToWebview({
-            command: 'showAvailableSchemas',
-            data: result.filter((file) => path.extname(file).toLowerCase() === '.xsd'),
+        const workflowFolderPath = DataMapperExt.getWorkspaceFolderFsPath();
+        if (workflowFolderPath) {
+          fs.readdir(path.join(workflowFolderPath, schemasPath)).then((result) => {
+            DataMapperExt.currentPanel?.sendMsgToWebview({
+              command: 'showAvailableSchemas',
+              data: result.filter((file) => path.extname(file).toLowerCase() === '.xsd'),
+            });
           });
-        });
+        }
         break;
       }
       case 'saveDataMapDefinition': {
@@ -141,19 +150,27 @@ export default class DataMapperExt {
   }
 
   public addSchemaFromFile(filePath: string, schemaType: 'source' | 'target') {
-    // NOTE: .xsd files are utf-16 encoded
-    fs.readFile(filePath, 'utf16le').then((text: string) => {
-      // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call
-      const schemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
-      const expectedSchemaPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, schemaFileName);
+    callWithTelemetryAndErrorHandlingSync('azureDataMapper.addSchemaFromFile', (_context: IActionContext) => {
+      // NOTE: .xsd files are utf-16 encoded
+      fs.readFile(filePath, 'utf16le').then((text: string) => {
+        // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call
+        const folderPath = DataMapperExt.getWorkspaceFolderFsPath();
+        if (folderPath) {
+          const schemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
+          const expectedSchemaPath = path.join(folderPath, schemasPath, schemaFileName);
 
-      if (!fileExists(expectedSchemaPath)) {
-        fs.writeFile(expectedSchemaPath, text, 'utf16le').then(() => {
-          DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
-        });
-      } else {
-        DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
-      }
+          if (!fileExists(expectedSchemaPath)) {
+            fs.writeFile(expectedSchemaPath, text, 'utf16le').then(() => {
+              DataMapperExt.currentPanel?.sendMsgToWebview({
+                command: 'fetchSchema',
+                data: { fileName: schemaFileName, type: schemaType },
+              });
+            });
+          } else {
+            DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
+          }
+        }
+      });
     });
   }
 
@@ -177,51 +194,56 @@ export default class DataMapperExt {
   }
 
   public static saveDataMap(isDefinition: boolean, fileContents: string) {
-    if (!DataMapperExt.currentDataMapName) {
-      DataMapperExt.currentDataMapName = defaultDatamapFilename;
-    }
+    callWithTelemetryAndErrorHandlingSync('azureDataMapper.saveDataMap', (_context: IActionContext) => {
+      if (!DataMapperExt.currentDataMapName) {
+        DataMapperExt.currentDataMapName = defaultDatamapFilename;
+      }
 
-    const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? mapDefinitionExtension : mapXsltExtension}`;
-    const folderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), isDefinition ? dataMapDefinitionsPath : dataMapsPath);
-    const filePath = path.join(folderPath, fileName);
+      const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? mapDefinitionExtension : mapXsltExtension}`;
+      const workflowFolderPath = DataMapperExt.getWorkspaceFolderFsPath();
+      if (workflowFolderPath) {
+        const dataMapFolderPath = path.join(workflowFolderPath, isDefinition ? dataMapDefinitionsPath : dataMapsPath);
+        const filePath = path.join(dataMapFolderPath, fileName);
 
-    // Mkdir as extra insurance that directory exists so file can be written
-    // - harmless if directory already exists
-    fs.mkdir(folderPath, { recursive: true })
-      .then(() => {
-        fs.writeFile(filePath, fileContents, 'utf8').then(() => {
-          if (!isDefinition) {
-            // If XSLT, show notification and re-check/set xslt filename
-            const openMapBtnText = `Open ${fileName}`;
-            window.showInformationMessage('Map saved and .XSLT file generated.', openMapBtnText).then((clickedButton?: string) => {
-              if (clickedButton && clickedButton === openMapBtnText) {
-                workspace.openTextDocument(filePath).then(window.showTextDocument);
+        // Mkdir as extra insurance that directory exists so file can be written
+        // - harmless if directory already exists
+        fs.mkdir(dataMapFolderPath, { recursive: true })
+          .then(() => {
+            fs.writeFile(filePath, fileContents, 'utf8').then(() => {
+              if (!isDefinition) {
+                // If XSLT, show notification and re-check/set xslt filename
+                const openMapBtnText = `Open ${fileName}`;
+                window.showInformationMessage('Map saved and .XSLT file generated.', openMapBtnText).then((clickedButton?: string) => {
+                  if (clickedButton && clickedButton === openMapBtnText) {
+                    workspace.openTextDocument(filePath).then(window.showTextDocument);
+                  }
+                });
+
+                DataMapperExt.checkForAndSetXsltFilename();
               }
             });
-
-            DataMapperExt.checkForAndSetXsltFilename();
-          }
-        });
-      })
-      .catch(DataMapperExt.showError);
+          })
+          .catch(DataMapperExt.showError);
+      }
+    });
   }
 
   public static checkForAndSetXsltFilename() {
-    const expectedXsltPath = path.join(
-      DataMapperExt.getWorkspaceFolderFsPath(),
-      dataMapsPath,
-      `${DataMapperExt.currentDataMapName}${mapXsltExtension}`
-    );
+    const workflowFolderPath = DataMapperExt.getWorkspaceFolderFsPath();
 
-    if (fileExists(expectedXsltPath)) {
-      DataMapperExt.currentPanel.sendMsgToWebview({
-        command: 'setXsltFilename',
-        data: DataMapperExt.currentDataMapName,
-      });
-    } else {
-      DataMapperExt.showError(
-        `XSLT data map file not detected for ${DataMapperExt.currentDataMapName} - save your data map to generate it`
-      );
+    if (workflowFolderPath) {
+      const expectedXsltPath = path.join(workflowFolderPath, dataMapsPath, `${DataMapperExt.currentDataMapName}${mapXsltExtension}`);
+
+      if (fileExists(expectedXsltPath)) {
+        DataMapperExt.currentPanel?.sendMsgToWebview({
+          command: 'setXsltFilename',
+          data: DataMapperExt.currentDataMapName,
+        });
+      } else {
+        DataMapperExt.showError(
+          `XSLT data map file not detected for ${DataMapperExt.currentDataMapName} - save your data map to generate it`
+        );
+      }
     }
   }
 }
