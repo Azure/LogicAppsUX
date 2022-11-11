@@ -94,7 +94,7 @@ async function createJsonFile(
 
 async function waitForBackendRuntimeStartUp(url: string, initialTime: number): Promise<void> {
   while (!(await isBackendRuntimeUp(url)) && new Date().getTime() - initialTime < backendRuntimeTimeout) {
-    await delay(2000);
+    await delay(1000); // Re-poll every X ms
   }
 
   if (await isBackendRuntimeUp(url)) {

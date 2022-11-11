@@ -8,9 +8,9 @@ import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { setInitialDataMap, setInitialSchema, setXsltFilename } from './state/DataMapSlice';
 import { loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
-import type { AppDispatch, RootState } from './state/Store';
+import type { AppDispatch } from './state/Store';
 import React, { useContext, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export interface DataMapDataProviderProps {
   xsltFilename?: string;
@@ -33,8 +33,6 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const loadedFunctions = useSelector((state: RootState) => state.function.availableFunctions);
-
   const extendedSourceSchema = useMemo(() => sourceSchema && convertSchemaToSchemaExtended(sourceSchema), [sourceSchema]);
   const extendedTargetSchema = useMemo(() => targetSchema && convertSchemaToSchemaExtended(targetSchema), [targetSchema]);
 
@@ -43,13 +41,13 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
   }, [dispatch, xsltFilename]);
 
   useEffect(() => {
-    if (mapDefinition && extendedSourceSchema && extendedTargetSchema) {
-      const connections = convertFromMapDefinition(mapDefinition, extendedSourceSchema, extendedTargetSchema, loadedFunctions);
+    if (mapDefinition && extendedSourceSchema && extendedTargetSchema && fetchedFunctions) {
+      const connections = convertFromMapDefinition(mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions);
       dispatch(
         setInitialDataMap({ sourceSchema: extendedSourceSchema, targetSchema: extendedTargetSchema, dataMapConnections: connections })
       );
     }
-  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, loadedFunctions]);
+  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions]);
 
   useEffect(() => {
     if (extendedSourceSchema) {

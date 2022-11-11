@@ -53,6 +53,7 @@ export default class DataMapperExt {
   public static createOrShow() {
     // If a panel has already been created, re-show it
     if (DataMapperExt.currentPanel) {
+      DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
       DataMapperExt.currentPanel._panel.reveal(ViewColumn.Active);
       return;
     }
@@ -72,7 +73,7 @@ export default class DataMapperExt {
     this.currentPanel = new DataMapperExt(panel, DataMapperExt.context.extensionPath);
 
     // Send runtime port to webview
-    this.currentPanel.sendMsgToWebview({ command: 'setRuntimePort', data: `${this.backendRuntimePort}` });
+    this.currentPanel.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
   }
 
   public sendMsgToWebview(msg: SendingMessageTypes) {

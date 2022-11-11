@@ -67,9 +67,11 @@ export class DataMapperApiService {
   async getFunctionsManifest(): Promise<FunctionManifest> {
     const uri = this.getFunctionsManifestUri();
     const response = await fetch(uri, { method: 'GET' });
+
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
+
     const functions = await response.json();
     return functions;
   }

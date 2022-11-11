@@ -87,12 +87,14 @@ export const App = () => {
       dispatch(dataMapDataLoaderSlice.actions.changeFetchedFunctions(await getFunctions()));
     };
 
-    InitDataMapperApiService({
-      ...defaultDataMapperApiServiceOptions,
-      port: runtimePort ?? defaultDataMapperApiServiceOptions.port,
-    });
+    if (runtimePort) {
+      InitDataMapperApiService({
+        ...defaultDataMapperApiServiceOptions,
+        port: runtimePort ?? defaultDataMapperApiServiceOptions.port,
+      });
 
-    fetchFunctionList();
+      fetchFunctionList();
+    }
   }, [dispatch, runtimePort]);
 
   return (
