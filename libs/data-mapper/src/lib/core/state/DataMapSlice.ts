@@ -679,7 +679,7 @@ export const addParentConnectionForRepeatingElements = (
   dataMapConnections: ConnectionDictionary
 ) => {
   if (isSchemaNodeExtended(sourceNode) && isSchemaNodeExtended(targetNode)) {
-    // if it isn't we still have to do this lol
+    // if it isn't we still have to do this, right?
 
     if (sourceNode.parentKey) {
       const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
