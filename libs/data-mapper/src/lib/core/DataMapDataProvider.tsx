@@ -5,6 +5,8 @@ import { SchemaType } from '../models/Schema';
 import { convertFromMapDefinition } from '../utils/DataMap.Utils';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
+import type { ThemeType } from './DataMapperDesignerProvider';
+import { changeTheme } from './state/AppSlice';
 import { setInitialDataMap, setInitialSchema, setXsltFilename } from './state/DataMapSlice';
 import { loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
@@ -19,22 +21,28 @@ export interface DataMapDataProviderProps {
   targetSchema?: Schema;
   availableSchemas?: string[];
   fetchedFunctions?: FunctionData[];
+  theme?: ThemeType;
   children?: React.ReactNode;
 }
 
-const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
+const DataProviderInner = ({
   xsltFilename,
   mapDefinition,
   sourceSchema,
   targetSchema,
   availableSchemas,
   fetchedFunctions,
+  theme = 'light',
   children,
-}) => {
+}: DataMapDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const extendedSourceSchema = useMemo(() => sourceSchema && convertSchemaToSchemaExtended(sourceSchema), [sourceSchema]);
   const extendedTargetSchema = useMemo(() => targetSchema && convertSchemaToSchemaExtended(targetSchema), [targetSchema]);
+
+  useEffect(() => {
+    dispatch(changeTheme(theme));
+  }, [dispatch, theme]);
 
   useEffect(() => {
     dispatch(setXsltFilename(xsltFilename ?? ''));

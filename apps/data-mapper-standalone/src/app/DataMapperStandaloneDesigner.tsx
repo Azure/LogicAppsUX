@@ -64,6 +64,7 @@ export const DataMapperStandaloneDesigner = () => {
             targetSchema={targetSchema}
             availableSchemas={workflowSchemaFilenames}
             fetchedFunctions={fetchedFunctions}
+            theme={theme === 'Light' ? 'light' : 'dark'}
           >
             <DataMapperDesigner saveStateCall={saveStateCall} />
           </DataMapDataProvider>

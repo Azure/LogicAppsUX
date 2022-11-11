@@ -120,6 +120,8 @@ export const App = () => {
         targetSchema={targetSchema}
         availableSchemas={schemaFileList}
         fetchedFunctions={fetchedFunctions}
+        // Passed in here too so it can be managed in the Redux store so components can track the current theme
+        theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'}
       >
         <DataMapperDesigner
           saveStateCall={saveStateCall}

@@ -1,3 +1,4 @@
+import appReducer from './AppSlice';
 import dataMapReducer from './DataMapSlice';
 import functionReducer from './FunctionSlice';
 import modalReducer from './ModalSlice';
@@ -12,6 +13,7 @@ export const store = configureStore({
     panel: panelReducer,
     modal: modalReducer,
     dataMap: dataMapReducer,
+    app: appReducer,
   },
 });
 

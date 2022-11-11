@@ -37,8 +37,10 @@ const extendedWebDarkTheme: ExtendedTheme = {
 
 export const customTokens = themeToTokensObject(extendedWebLightTheme);
 
+export type ThemeType = 'light' | 'dark';
+
 export interface DataMapperDesignerProviderProps {
-  theme?: 'light' | 'dark';
+  theme?: ThemeType;
   locale?: string;
   options: DataMapperDesignerContext;
   children: React.ReactNode;

@@ -1,13 +1,15 @@
 import { openAddSourceSchemaPanelView, openAddTargetSchemaPanelView } from '../../core/state/PanelSlice';
-import type { AppDispatch } from '../../core/state/Store';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import { SchemaType } from '../../models';
 import CardOnHover from './card_onHover.svg';
+import CardOnHoverDark from './card_onHover_dark.svg';
 import CardOnRest from './card_onRest.svg';
+import CardOnRestDark from './card_onRest_dark.svg';
 import { Image, Stack } from '@fluentui/react';
-import { makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import { makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const selectSchemaCardHeight = 260;
 export const selectSchemaCardWidth = 200;
@@ -28,6 +30,10 @@ const useStyles = makeStyles({
       ...shorthands.border(tokens.strokeWidthThick, 'solid', tokens.colorBrandStroke1),
     },
   },
+  selectSchemaText: {
+    ...typographyStyles.body1Strong,
+    color: tokens.colorNeutralForeground1,
+  },
 });
 
 export interface SelectSchemaCardProps {
@@ -38,6 +44,8 @@ export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
+
+  const currentTheme = useSelector((state: RootState) => state.app.theme);
 
   const [isHovering, setIsHovering] = useState(false);
 
@@ -54,6 +62,14 @@ export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
       });
     }
   }, [intl, schemaType]);
+
+  const [cardOnRestSvg, cardOnHoverSvg] = useMemo(() => {
+    if (currentTheme === 'dark') {
+      return [CardOnRestDark, CardOnHoverDark];
+    } else {
+      return [CardOnRest, CardOnHover];
+    }
+  }, [currentTheme]);
 
   const onClickSchemaCard = () => {
     if (schemaType === SchemaType.Source) {
@@ -72,8 +88,9 @@ export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      <Image src={isHovering ? CardOnHover : CardOnRest} alt="Empty schema card svg" style={{ paddingBottom: '28px' }} />
-      {selectSchemaMsg}
+      <Image src={isHovering ? cardOnHoverSvg : cardOnRestSvg} alt="Schema selection card" style={{ paddingBottom: '28px' }} />
+
+      <Text className={styles.selectSchemaText}>{selectSchemaMsg}</Text>
     </Stack>
   );
 };
