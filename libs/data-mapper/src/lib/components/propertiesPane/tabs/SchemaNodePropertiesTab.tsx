@@ -148,23 +148,25 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
             <InputDropdown currentNode={currentNode} inputValue={inputValue} inputStyles={{ gridColumn: gridColumnSpan2 }} inputIndex={0} />
           </div>
 
-          <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px', marginLeft: '-12px' }}>
-            <AccordionItem value="1">
-              <AccordionHeader className={styles.bodyText}>{advOptLoc}</AccordionHeader>
-              <AccordionPanel>
-                <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-                  <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
-                    {defValLoc}
-                  </Text>
-                  <Input style={{ gridColumn: gridColumnSpan2 }} />
-                </div>
+          {false && ( // Hiding advanced options until implemented
+            <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px', marginLeft: '-12px' }}>
+              <AccordionItem value="1">
+                <AccordionHeader className={styles.bodyText}>{advOptLoc}</AccordionHeader>
+                <AccordionPanel>
+                  <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
+                    <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
+                      {defValLoc}
+                    </Text>
+                    <Input style={{ gridColumn: gridColumnSpan2 }} />
+                  </div>
 
-                <Stack>
-                  <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
-                </Stack>
-              </AccordionPanel>
-            </AccordionItem>
-          </Accordion>
+                  <Stack>
+                    <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
+                  </Stack>
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
+          )}
         </div>
       )}
     </div>

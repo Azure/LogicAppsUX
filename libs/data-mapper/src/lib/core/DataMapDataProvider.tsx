@@ -1,16 +1,16 @@
+import type { FunctionData } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
 import type { Schema } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { convertFromMapDefinition } from '../utils/DataMap.Utils';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
-import { getFunctions } from './queries/functions';
 import { setInitialDataMap, setInitialSchema, setXsltFilename } from './state/DataMapSlice';
 import { loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
-import type { AppDispatch, RootState } from './state/Store';
+import type { AppDispatch } from './state/Store';
 import React, { useContext, useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export interface DataMapDataProviderProps {
   xsltFilename?: string;
@@ -18,6 +18,7 @@ export interface DataMapDataProviderProps {
   sourceSchema?: Schema;
   targetSchema?: Schema;
   availableSchemas?: string[];
+  fetchedFunctions?: FunctionData[];
   children?: React.ReactNode;
 }
 
@@ -27,25 +28,26 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
   sourceSchema,
   targetSchema,
   availableSchemas,
+  fetchedFunctions,
   children,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
+
   const extendedSourceSchema = useMemo(() => sourceSchema && convertSchemaToSchemaExtended(sourceSchema), [sourceSchema]);
   const extendedTargetSchema = useMemo(() => targetSchema && convertSchemaToSchemaExtended(targetSchema), [targetSchema]);
-  const functions = useSelector((state: RootState) => state.function.availableFunctions);
 
   useEffect(() => {
     dispatch(setXsltFilename(xsltFilename ?? ''));
   }, [dispatch, xsltFilename]);
 
   useEffect(() => {
-    if (mapDefinition && extendedSourceSchema && extendedTargetSchema) {
-      const connections = convertFromMapDefinition(mapDefinition, extendedSourceSchema, extendedTargetSchema, functions);
+    if (mapDefinition && extendedSourceSchema && extendedTargetSchema && fetchedFunctions) {
+      const connections = convertFromMapDefinition(mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions);
       dispatch(
         setInitialDataMap({ sourceSchema: extendedSourceSchema, targetSchema: extendedTargetSchema, dataMapConnections: connections })
       );
     }
-  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, functions]);
+  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions]);
 
   useEffect(() => {
     if (extendedSourceSchema) {
@@ -76,12 +78,10 @@ const DataProviderInner: React.FC<DataMapDataProviderProps> = ({
   }, [dispatch, availableSchemas]);
 
   useEffect(() => {
-    const fetchFunctions = async () => {
-      dispatch(loadFunctions(await getFunctions()));
-    };
-
-    fetchFunctions();
-  }, [dispatch]);
+    if (fetchedFunctions) {
+      dispatch(loadFunctions(fetchedFunctions ?? []));
+    }
+  }, [dispatch, fetchedFunctions]);
 
   return <>{children}</>;
 };

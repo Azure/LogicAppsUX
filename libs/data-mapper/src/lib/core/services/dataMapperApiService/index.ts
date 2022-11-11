@@ -6,7 +6,8 @@ import { AssertionErrorCode, AssertionException } from '@microsoft-logic-apps/ut
 let service: IDataMapperApiService;
 
 export const defaultDataMapperApiServiceOptions = {
-  baseUrl: 'http://localhost:7071',
+  baseUrl: 'http://localhost',
+  port: '7071',
   accessToken: '',
 };
 
