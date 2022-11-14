@@ -609,7 +609,6 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   if (targetNode) {
     curDataMapState.notificationData = {
       type: NotificationTypes.TargetNodeCannotDelete,
-      msgParam: targetNode.name,
       autoHideDurationMs: errorNotificationAutoHideDuration,
     };
     return;
