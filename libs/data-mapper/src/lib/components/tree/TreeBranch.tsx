@@ -29,6 +29,7 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
   const [isHovered, { setFalse: setNotHovered, setTrue: setIsHovered }] = useBoolean(false);
 
   const hasChildren = useMemo<boolean>(() => !!(node.children && node.children.length > 0), [node]);
+  const isNodeExpanded = useMemo<boolean>(() => (node.isExpanded === undefined ? isExpanded : node.isExpanded), [node, isExpanded]);
 
   const handleItemClick = () => {
     if (hasChildren && parentItemClickShouldExpand) {
@@ -63,7 +64,7 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
         <Button
           appearance="transparent"
           size="small"
-          icon={isExpanded ? <ChevronDown20Regular /> : <ChevronRight20Regular />}
+          icon={isNodeExpanded ? <ChevronDown20Regular /> : <ChevronRight20Regular />}
           onClick={handleChevronClick}
           style={{
             visibility: hasChildren ? 'visible' : 'hidden',
@@ -75,7 +76,7 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
       </Stack>
 
       {hasChildren &&
-        isExpanded &&
+        isNodeExpanded &&
         node.children?.map((childNode) => <TreeBranch<T> {...props} key={childNode.key} node={childNode} level={level + 1} />)}
     </>
   );

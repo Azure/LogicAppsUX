@@ -7,6 +7,7 @@ import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import TargetSchemaTreeItem, { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import Tree from '../tree/Tree';
+import type { ITreeNode } from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
@@ -73,7 +74,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     return nodesWithConnections;
   }, [connectionDictionary, targetSchemaDictionary]);
 
-  const searchedTargetSchemaTreeRoot = useMemo<SchemaNodeExtended | undefined>(() => {
+  const searchedTargetSchemaTreeRoot = useMemo<ITreeNode<ITreeNode<SchemaNodeExtended>> | undefined>(() => {
     if (!targetSchema) {
       return undefined;
     }

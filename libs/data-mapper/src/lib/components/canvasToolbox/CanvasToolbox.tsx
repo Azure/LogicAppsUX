@@ -9,6 +9,7 @@ import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FunctionList } from '../functionList/FunctionList';
 import SourceSchemaTreeItem, { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import Tree from '../tree/Tree';
+import type { ITreeNode } from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
 import { mergeClasses, tokens } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
@@ -97,7 +98,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     }
   };
 
-  const searchedSourceSchemaTreeRoot = useMemo<SchemaNodeExtended | undefined>(() => {
+  const searchedSourceSchemaTreeRoot = useMemo<ITreeNode<ITreeNode<SchemaNodeExtended>> | undefined>(() => {
     if (!sourceSchema) {
       return undefined;
     }

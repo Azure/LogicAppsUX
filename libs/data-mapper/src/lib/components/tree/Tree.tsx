@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 
 export interface ITreeNode<T> {
   key: string | number;
+  isExpanded?: boolean;
   children?: T[];
   [key: string]: any;
 }
