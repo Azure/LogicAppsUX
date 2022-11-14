@@ -1,37 +1,37 @@
 import type { ValueSegment } from '../editor';
-import type { ChangeHandler } from '../editor/base';
+import type { ChangeHandler, TokenPickerHandler } from '../editor/base';
 import { StringEditor } from '../editor/string';
-import { Label } from '../label';
 import type { AuthProperty } from './util';
+import { Label } from '@fluentui/react';
 
 interface AuthenticationPropertyProps {
   AuthProperty: AuthProperty;
   initialValue?: ValueSegment[];
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  tokenPickerHandler: TokenPickerHandler;
   onBlur?: ChangeHandler;
 }
 
 export const AuthenticationProperty = ({
   initialValue = [],
   AuthProperty,
-  GetTokenPicker,
+  tokenPickerHandler,
   onBlur,
 }: AuthenticationPropertyProps): JSX.Element => {
   return (
     <div className="msla-authentication-editor-expanded-item">
-      <Label
-        className="msla-authentication-editor-expanded-item-label"
-        text={AuthProperty.displayName}
-        isRequiredField={AuthProperty.isRequired}
-      />
+      <div className="msla-input-parameter-label">
+        <Label className={'msla-label'} required={AuthProperty.isRequired}>
+          {AuthProperty.displayName}
+        </Label>
+      </div>
       <div className="msla-authentication-editor-expanded-editor-container">
         <StringEditor
+          className="msla-authentication-editor-expanded-editor"
           initialValue={initialValue}
-          GetTokenPicker={GetTokenPicker}
           placeholder={AuthProperty.placeHolder}
           BasePlugins={{ tokens: true }}
           singleLine={true}
-          tokenPickerButtonProps={{ buttonClassName: 'msla-editor-tokenpicker-button' }}
+          tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { buttonClassName: 'msla-editor-tokenpicker-button' } }}
           onChange={onBlur}
         />
       </div>

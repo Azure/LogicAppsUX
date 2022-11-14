@@ -5,7 +5,7 @@ import React from 'react';
 
 export default {
   component: DMTooltip,
-  title: 'Data Mapper Component/Tooltip',
+  title: 'Data Mapper Components/Tooltip',
 } as ComponentMeta<typeof DMTooltip>;
 
 const Template: ComponentStory<typeof DMTooltip> = (args: DMTooltipProps) => <DMTooltip {...args} />;

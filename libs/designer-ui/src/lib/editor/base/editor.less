@@ -13,12 +13,17 @@
     line-height: 30px;
     caret-color: #444;
     padding-inline-start: 5px;
+    &.readonly {
+      background-color: rgba(128, 128, 128, 0.1);
+    }
   }
   .editor-placeholder {
     color: #696969;
     overflow: hidden;
     position: absolute;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 95%;
     margin-top: -28px;
     margin-left: 5px;
     font-size: 15px;
@@ -50,6 +55,9 @@
     outline: 0;
     padding: 15px 10px;
     caret-color: #444;
+    &.readonly {
+      background-color: rgba(128, 128, 128, 0.1);
+    }
   }
 
   .editor-placeholder {
@@ -57,6 +65,8 @@
     overflow: hidden;
     position: absolute;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 95%;
     top: 30px;
     left: 10px;
     font-size: 15px;

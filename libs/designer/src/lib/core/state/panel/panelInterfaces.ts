@@ -5,11 +5,13 @@ export interface PanelState {
   selectedNode: string;
   isDiscovery: boolean;
   isParallelBranch: boolean;
+  isWorkflowParameters: boolean;
   relationshipIds: RelationshipIds;
   registeredTabs: Record<string, PanelTab>;
   selectedTabName: string | undefined;
   selectedOperationGroupId: string;
   addingTrigger: boolean;
+  tokenPickerVisibility: boolean;
 }
 
 export interface RelationshipIds {

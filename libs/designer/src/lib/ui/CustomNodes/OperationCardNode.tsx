@@ -4,7 +4,7 @@ import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode } from '../../core/state/panel/panelSlice';
+import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
 import {
   useBrandColor,
   useIconUri,
@@ -74,12 +74,14 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
-  const nodeClick = useCallback(() => dispatch(changePanelNode(id)), [dispatch, id]);
+  const nodeClick = useCallback(() => {
+    dispatch(changePanelNode(id));
+    dispatch(showDefaultTabs());
+  }, [dispatch, id]);
 
-  const brandColorResult = useBrandColor(operationInfo);
-  const iconUriResult = useIconUri(operationInfo);
+  const brandColor = useBrandColor(id);
+  const iconUri = useIconUri(id);
 
-  const brandColor = brandColorResult.result;
   const comment = useMemo(
     () =>
       nodeComment
@@ -97,7 +99,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const handleDeleteClick = () => setShowDeleteModal(true);
-  const handleDelete = () => dispatch(deleteOperation({ nodeId: id }));
+  const handleDelete = () => dispatch(deleteOperation({ nodeId: id, isTrigger: !!isTrigger }));
 
   const getDeleteMenuItem = () => {
     const deleteDescription = intl.formatMessage({
@@ -112,7 +114,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
     return {
       key: deleteDescription,
-      disabled: readOnly || isTrigger,
+      disabled: readOnly,
       disabledReason: disableTriggerDeleteText,
       iconName: 'Delete',
       title: deleteDescription,
@@ -123,13 +125,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
+  const isLoading = useMemo(() => !brandColor || !iconUri || connectionResult.isLoading, [brandColor, iconUri, connectionResult.isLoading]);
+
   return (
     <>
       <div className="nopan">
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
           title={label}
-          icon={iconUriResult.result}
+          icon={iconUri}
           draggable={!readOnly && !isTrigger}
           brandColor={brandColor}
           id={id}
@@ -139,7 +143,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           drag={drag}
           dragPreview={dragPreview}
           isDragging={isDragging}
-          isLoading={iconUriResult.isLoading}
+          isLoading={isLoading}
           isMonitoringView={isMonitoringView}
           readOnly={readOnly}
           onClick={nodeClick}

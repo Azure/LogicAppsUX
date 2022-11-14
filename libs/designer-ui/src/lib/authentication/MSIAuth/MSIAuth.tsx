@@ -1,5 +1,5 @@
 import type { AuthProps, MSIProps } from '..';
-import type { ChangeState } from '../../editor/base';
+import type { ChangeState, TokenPickerHandler } from '../../editor/base';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES, containsUserAssignedIdentities } from '../util';
@@ -9,12 +9,13 @@ import type { ManagedIdentity } from '@microsoft-logic-apps/utils';
 import { ResourceIdentityType, equals } from '@microsoft-logic-apps/utils';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
+import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 
 interface MSIAuthenticationProps {
   msiProps: MSIProps;
   identity?: ManagedIdentity;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  tokenPickerHandler: TokenPickerHandler;
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
@@ -22,20 +23,71 @@ interface MSIAuthenticationProps {
 export const MSIAuthentication = ({
   identity,
   msiProps,
-  GetTokenPicker,
+  tokenPickerHandler,
   onManagedIdentityChange,
   setCurrentProps,
 }: MSIAuthenticationProps): JSX.Element => {
   const intl = useIntl();
-  const [errorMessage, setErrorMessage] = useState('');
-  const [managedIdentityDropdownOptions, setManagedIdentityDropdownOptions] = useState<IDropdownOption[]>([]);
+  const { options, errorMessage: error } = getManagedIdentityData(identity, msiProps.msiIdentity, intl);
+  const [errorMessage] = useState(error);
+  const [managedIdentityDropdownOptions] = useState<IDropdownOption[]>(options);
 
   const updateMsiAudience = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      msiProps: { ...prevState.msiProps, MSIAudience: newState.value },
+      msi: { ...prevState.msi, msiAudience: newState.value },
     }));
   };
+
+  const MSIAuthLabel = intl.formatMessage({
+    defaultMessage: 'Managed identity',
+    description: 'Managed Identity Label',
+  });
+  const MSIAuthPlaceholder = intl.formatMessage({
+    defaultMessage: 'Please select an identity',
+    description: 'Placehodler text for dropdown',
+  });
+
+  const { msiAudience, msiIdentity } = msiProps;
+
+  return (
+    <div className="msla-authentication-editor-MSI-container">
+      {identity?.type ? (
+        <>
+          <AuthenticationDropdown
+            dropdownLabel={MSIAuthLabel}
+            dropdownPlaceholder={MSIAuthPlaceholder}
+            errorMessage={errorMessage}
+            selectedKey={msiIdentity ?? ResourceIdentityType.SYSTEM_ASSIGNED}
+            options={managedIdentityDropdownOptions}
+            onChange={onManagedIdentityChange}
+          />
+          <AuthenticationProperty
+            initialValue={msiAudience}
+            AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
+            tokenPickerHandler={tokenPickerHandler}
+            onBlur={updateMsiAudience}
+          />
+        </>
+      ) : (
+        <MSIAuthenticationDefault
+          msiProps={msiProps}
+          tokenPickerHandler={tokenPickerHandler}
+          onManagedIdentityChange={onManagedIdentityChange}
+          onBlur={updateMsiAudience}
+        />
+      )}
+    </div>
+  );
+};
+
+const getManagedIdentityData = (
+  identity: ManagedIdentity | undefined,
+  selectedManagedIdentityKey: string | undefined,
+  intl: IntlShape
+): { options: IDropdownOption<any>[]; errorMessage?: string } => {
+  const identityOptions: IDropdownOption<any>[] = [];
+  let errorMessage: string | undefined;
 
   const invalidUserAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'The entered identity is not associated with this Logic App.',
@@ -49,94 +101,40 @@ export const MSIAuthentication = ({
     defaultMessage: 'User identity is not supported when Logic App has system assigned managed identity enabled.',
     description: 'error message for unspported identity',
   });
-
-  const MSIAuthLabel = intl.formatMessage({
-    defaultMessage: 'Managed identity',
-    description: 'Managed Identity Label',
-  });
-  const MSIAuthPlaceholder = intl.formatMessage({
-    defaultMessage: 'Please select an identity',
-    description: 'Placehodler text for dropdown',
-  });
-
-  const selectedManagedIdentityKey = msiProps.MSIIdentity;
-  const { MSIAudience } = msiProps;
-
+  const userAssignedIdentities = containsUserAssignedIdentities(identity) ? getUserAssignedIdentities(identity) : undefined;
   if (identity?.type) {
-    const userAssignedIdentities = containsUserAssignedIdentities(identity) ? getUserAssignedIdentities(identity) : undefined;
     if (
       equals(identity.type, ResourceIdentityType.USER_ASSIGNED) ||
       equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
     ) {
       if (userAssignedIdentities) {
-        setManagedIdentityDropdownOptions(userAssignedIdentities);
+        identityOptions.push(...userAssignedIdentities);
       }
+
       if (selectedManagedIdentityKey && userAssignedIdentities?.find((userIdentity) => userIdentity.key === selectedManagedIdentityKey)) {
-        setManagedIdentityDropdownOptions([
-          ...managedIdentityDropdownOptions,
-          { key: selectedManagedIdentityKey, text: getIdentityDisplayName(selectedManagedIdentityKey) },
-        ]);
-        setErrorMessage(invalidUserAssignedManagedIdentity);
+        identityOptions.push({ key: selectedManagedIdentityKey, text: getIdentityDisplayName(selectedManagedIdentityKey) });
+        errorMessage = invalidUserAssignedManagedIdentity;
       }
     }
     if (
       equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED) ||
       equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
     ) {
-      setManagedIdentityDropdownOptions([
-        ...managedIdentityDropdownOptions,
-        {
-          key: ResourceIdentityType.SYSTEM_ASSIGNED,
-          text: systemAssignedManagedIdentity,
-        },
-      ]);
+      identityOptions.push({ key: ResourceIdentityType.SYSTEM_ASSIGNED, text: systemAssignedManagedIdentity });
+
       if (selectedManagedIdentityKey && equals(identity.type, ResourceIdentityType.SYSTEM_ASSIGNED)) {
-        setManagedIdentityDropdownOptions([
-          ...managedIdentityDropdownOptions,
-          {
-            key: selectedManagedIdentityKey,
-            text: getIdentityDisplayName(selectedManagedIdentityKey),
-          },
-        ]);
-        setErrorMessage(userIdentityNotSupported);
+        identityOptions.push({ key: selectedManagedIdentityKey, text: getIdentityDisplayName(selectedManagedIdentityKey) });
+        errorMessage = userIdentityNotSupported;
       }
     }
   }
 
-  return (
-    <div className="msla-authentication-editor-MSI-container">
-      {identity?.type ? (
-        <>
-          <AuthenticationDropdown
-            dropdownLabel={MSIAuthLabel}
-            dropdownPlaceholder={MSIAuthPlaceholder}
-            errorMessage={errorMessage}
-            selectedKey={selectedManagedIdentityKey ?? ResourceIdentityType.SYSTEM_ASSIGNED}
-            options={managedIdentityDropdownOptions}
-            onChange={onManagedIdentityChange}
-          />
-          <AuthenticationProperty
-            initialValue={MSIAudience}
-            AuthProperty={AUTHENTICATION_PROPERTIES.MSI_AUDIENCE}
-            GetTokenPicker={GetTokenPicker}
-            onBlur={updateMsiAudience}
-          />
-        </>
-      ) : (
-        <MSIAuthenticationDefault
-          msiProps={msiProps}
-          GetTokenPicker={GetTokenPicker}
-          onManagedIdentityChange={onManagedIdentityChange}
-          onBlur={updateMsiAudience}
-        />
-      )}
-    </div>
-  );
+  return { options: identityOptions, errorMessage };
 };
 
-function getUserAssignedIdentities(identity: ManagedIdentity): IDropdownOption[] {
+const getUserAssignedIdentities = (identity: ManagedIdentity | undefined): IDropdownOption[] => {
   const options: IDropdownOption[] = [];
-  if (identity.userAssignedIdentities) {
+  if (identity?.userAssignedIdentities) {
     for (const userAssignedIdentity of Object.keys(identity.userAssignedIdentities)) {
       options.push({
         key: userAssignedIdentity,
@@ -145,8 +143,8 @@ function getUserAssignedIdentities(identity: ManagedIdentity): IDropdownOption[]
     }
   }
   return options;
-}
+};
 
-function getIdentityDisplayName(msiIdentity: string): string {
+const getIdentityDisplayName = (msiIdentity: string): string => {
   return msiIdentity.split('/').slice(-1)[0];
-}
+};

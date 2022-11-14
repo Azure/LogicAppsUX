@@ -12,16 +12,24 @@ const initialState: PanelState = {
   },
   isDiscovery: false,
   isParallelBranch: false,
+  isWorkflowParameters: false,
   registeredTabs: {},
   selectedTabName: undefined,
   selectedOperationGroupId: '',
   addingTrigger: false,
+  tokenPickerVisibility: true,
 };
 
 export const panelSlice = createSlice({
   name: 'panel',
   initialState,
   reducers: {
+    showTokenPicker: (state) => {
+      state.tokenPickerVisibility = true;
+    },
+    hideTokenPicker: (state) => {
+      state.tokenPickerVisibility = false;
+    },
     expandPanel: (state) => {
       state.collapsed = false;
     },
@@ -31,6 +39,8 @@ export const panelSlice = createSlice({
     },
     clearPanel: (state) => {
       state.collapsed = true;
+      state.isDiscovery = false;
+      state.isWorkflowParameters = false;
       state.selectedNode = '';
       state.selectedOperationGroupId = '';
     },
@@ -39,6 +49,8 @@ export const panelSlice = createSlice({
       if (state.collapsed) state.collapsed = false;
       state.selectedNode = action.payload;
       state.isDiscovery = false;
+      state.isWorkflowParameters = false;
+      state.selectedOperationGroupId = '';
     },
     expandDiscoveryPanel: (
       state,
@@ -46,6 +58,7 @@ export const panelSlice = createSlice({
     ) => {
       state.collapsed = false;
       state.isDiscovery = true;
+      state.isWorkflowParameters = false;
       state.relationshipIds = action.payload.relationshipIds;
       state.selectedNode = action.payload.nodeId;
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
@@ -55,18 +68,23 @@ export const panelSlice = createSlice({
       state.selectedOperationGroupId = action.payload;
     },
     switchToOperationPanel: (state, action: PayloadAction<string>) => {
-      showDefaultTabs();
       state.selectedNode = action.payload;
       state.isDiscovery = false;
+      state.isWorkflowParameters = false;
       state.selectedOperationGroupId = '';
     },
-
+    switchToWorkflowParameters: (state) => {
+      state.collapsed = false;
+      state.isWorkflowParameters = true;
+      state.isDiscovery = false;
+      state.selectedNode = '';
+      state.selectedOperationGroupId = '';
+    },
     registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
       action.payload.forEach((tab) => {
         state.registeredTabs[tab.name.toLowerCase()] = tab;
       });
     },
-
     setTabError: (state, action: PayloadAction<{ tabName: string; hasErrors: boolean; nodeId: string }>) => {
       const tabName = action.payload.tabName.toLowerCase();
       const { nodeId, hasErrors } = action.payload;
@@ -80,7 +98,6 @@ export const panelSlice = createSlice({
         };
       }
     },
-
     unregisterPanelTab: (state, action: PayloadAction<string>) => {
       delete state.registeredTabs[action.payload];
     },
@@ -93,7 +110,7 @@ export const panelSlice = createSlice({
         };
       }
     },
-    showDefaultTabs: (state) => {
+    showDefaultTabs: (state, action: PayloadAction<{ isScopeNode?: boolean } | undefined>) => {
       const defaultTabs = [
         constants.PANEL_TAB_NAMES.PARAMETERS,
         constants.PANEL_TAB_NAMES.ABOUT,
@@ -101,6 +118,9 @@ export const panelSlice = createSlice({
         constants.PANEL_TAB_NAMES.SETTINGS,
         constants.PANEL_TAB_NAMES.SCRATCH,
       ];
+      if (action.payload?.isScopeNode) {
+        defaultTabs.shift();
+      }
       Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
         if (state.registeredTabs[tab.name.toLowerCase()]) {
           state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: defaultTabs.includes(tab.name) };
@@ -113,7 +133,6 @@ export const panelSlice = createSlice({
       });
       state.selectedTabName = action.payload;
     },
-
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabName = action.payload;
     },
@@ -122,6 +141,8 @@ export const panelSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+  showTokenPicker,
+  hideTokenPicker,
   expandPanel,
   collapsePanel,
   clearPanel,
@@ -136,6 +157,7 @@ export const {
   isolateTab,
   selectPanelTab,
   setTabError,
+  switchToWorkflowParameters,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

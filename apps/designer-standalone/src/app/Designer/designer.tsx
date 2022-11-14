@@ -6,9 +6,11 @@ import {
   StandardOperationManifestService,
   StandardSearchService,
   StandardOAuthService,
+  StandardGatewayService,
 } from '@microsoft-logic-apps/designer-client-services';
 import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
@@ -26,6 +28,7 @@ const connectionService = new StandardConnectionService({
   workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
   readConnections: () => Promise.resolve({}),
 });
+
 const operationManifestService = new StandardOperationManifestService({
   apiVersion: '2018-11-01',
   baseUrl: '/url',
@@ -53,13 +56,27 @@ const oAuthService = new StandardOAuthService({
   location: '',
 });
 
+const gatewayService = new StandardGatewayService({
+  baseUrl: '/url',
+  httpClient,
+  apiVersions: {
+    subscription: '2018-11-01',
+    gateway: '2016-06-01',
+  },
+});
+
+const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
+
 export const DesignerWrapper = () => {
-  const { workflowDefinition, readOnly, monitoringView, connections } = useSelector((state: RootState) => state.workflowLoader);
+  const { workflowDefinition, readOnly, monitoringView, darkMode, connections } = useSelector((state: RootState) => state.workflowLoader);
   const designerProviderProps = {
-    services: { connectionService, operationManifestService, searchService, oAuthService },
+    services: { connectionService, operationManifestService, searchService, oAuthService, gatewayService, workflowService },
     readOnly,
     isMonitoringView: monitoringView,
+    isDarkMode: darkMode,
   };
+
+  useEffect(() => document.body.classList.add('is-standalone'), []);
 
   return (
     <>

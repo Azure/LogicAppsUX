@@ -1,10 +1,10 @@
 import { EditorBreadcrumb } from '../components/breadcrumb/EditorBreadcrumb';
 import { CodeView } from '../components/codeView/CodeView';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-import type { SchemaFile } from '../components/configPanel/ChangeSchemaView';
-import { EditorConfigPanel } from '../components/configPanel/EditorConfigPanel';
+import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
+import { ConfigPanel } from '../components/configPanel/ConfigPanel';
 import { MapOverview } from '../components/mapOverview/MapOverview';
-import { NotificationTypes } from '../components/notification/Notification';
+import { errorNotificationAutoHideDuration, NotificationTypes } from '../components/notification/Notification';
 import {
   basePropPaneContentHeight,
   canvasAreaAndPropPaneMargin,
@@ -21,36 +21,56 @@ import { convertToMapDefinition } from '../utils/DataMap.Utils';
 import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
-import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactFlowProvider } from 'reactflow';
 
-const useCenterViewHeight = () => {
-  const [centerViewHeight, setCenterViewHeight] = useState(0);
+const centerViewId = 'centerView';
 
-  const handleCenterViewHeight = () => {
-    const centerView = document.getElementById('centerView');
-
-    if (centerView?.clientHeight) {
-      setCenterViewHeight(centerView.clientHeight);
-    }
-  };
-
-  useLayoutEffect(() => {
-    window.addEventListener('resize', handleCenterViewHeight);
-
-    // NOTE: Not the nicest, but it's required to ensure we get the actual final height after the initial render
-    // TODO: 96% chance this will a better solution around Fit/Finish time
-    setTimeout(handleCenterViewHeight, 75);
-
-    return () => window.removeEventListener('resize', handleCenterViewHeight);
-  }, []);
-
-  return centerViewHeight;
-};
+const useStaticStyles = makeStaticStyles({
+  // Firefox who's trying to early-adopt a WIP CSS standard (as of 11/2/2022)
+  '*': {
+    scrollbarColor: `${tokens.colorScrollbarOverlay} ${tokens.colorNeutralBackground1Hover}`,
+    scrollbarWidth: 'thin',
+  },
+  // Any WebKit browsers (essentially every other browser) - supposedly will eventually deprecate to the above
+  '*::-webkit-scrollbar': {
+    height: '8px',
+    width: '8px',
+  },
+  '*::-webkit-scrollbar-track:active': {
+    backgroundColor: tokens.colorNeutralBackground1Hover,
+    border: `0.5px solid ${tokens.colorNeutralStroke2}`,
+  },
+  '*::-webkit-scrollbar-thumb': {
+    backgroundClip: 'content-box',
+    border: '2px solid transparent',
+    borderRadius: '10000px',
+    backgroundColor: tokens.colorScrollbarOverlay,
+  },
+  '.react-flow svg': {
+    overflow: 'visible !important',
+  },
+  '.react-flow__minimap': {
+    borderRadius: tokens.borderRadiusMedium,
+    overflow: 'hidden',
+    boxShadow: tokens.shadow8,
+    backgroundColor: tokens.colorNeutralBackground1,
+    '& svg': {
+      width: '100%',
+      height: '100%',
+    },
+  },
+  '.react-flow__minimap-mask': {
+    stroke: tokens.colorBrandStroke1,
+    strokeWidth: '6px',
+    strokeLinejoin: 'round',
+    fillOpacity: '0',
+  },
+});
 
 const useStyles = makeStyles({
   dataMapperShell: {
@@ -76,27 +96,43 @@ export interface DataMapperDesignerProps {
 
 export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }) => {
   const dispatch = useDispatch<AppDispatch>();
+  useStaticStyles();
   const styles = useStyles();
 
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const currentConnections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  const currentlySelectedNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentlySelectedNode);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
 
   const centerViewHeight = useCenterViewHeight();
-  const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!currentlySelectedNode);
+  const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!selectedItemKey);
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
-  const [isOutputPaneExpanded, setIsOutputPaneExpanded] = useState(false);
+  const [isTargetSchemaPaneExpanded, setIsTargetSchemaPaneExpanded] = useState(false);
 
-  const dataMapDefinition = useMemo((): string => {
+  const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
-      return convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+      try {
+        return convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+      } catch (error) {
+        // NOTE: Doing it this way so that the error, whatever it is, just gets formatted/logged on its own
+        // - can and maybe should change if we add more infrastructure around error classes/types
+        console.error(`-----------------Error generating map definition-----------------`);
+        console.error(error);
+
+        return '';
+      }
     }
 
     return '';
   }, [currentConnections, sourceSchema, targetSchema]);
+
+  const showMapOverview = useMemo<boolean>(
+    () => !sourceSchema || !targetSchema || !currentTargetSchemaNode,
+    [sourceSchema, targetSchema, currentTargetSchemaNode]
+  );
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
     if (addSchemaFromFile) {
@@ -118,7 +154,13 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         );
       })
       .catch((error: Error) => {
-        dispatch(showNotification({ type: NotificationTypes.SaveFailed, msgBody: error.message }));
+        dispatch(
+          showNotification({
+            type: NotificationTypes.SaveFailed,
+            msgBody: error.message,
+            autoHideDurationMs: errorNotificationAutoHideDuration,
+          })
+        );
       });
   };
 
@@ -148,6 +190,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const getCanvasAreaHeight = () => {
+    // PropPane isn't shown when in Overview, so canvas can use full height
+    if (showMapOverview) {
+      return centerViewHeight - 8;
+    }
+
     if (isPropPaneExpanded) {
       return centerViewHeight - getExpandedPropPaneTotalHeight();
     } else {
@@ -164,7 +211,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           <div id="centerViewWithBreadcrumb" style={{ display: 'flex', flexDirection: 'column', flex: '1 1 1px' }}>
             <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
 
-            <div id="centerView" style={{ minHeight: 400, flex: '1 1 1px' }}>
+            <div id={centerViewId} style={{ minHeight: 400, flex: '1 1 1px' }}>
               <div
                 style={{
                   height: getCanvasAreaHeight(),
@@ -172,7 +219,9 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                   boxSizing: 'border-box',
                 }}
               >
-                {sourceSchema && targetSchema ? (
+                {showMapOverview ? (
+                  <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
+                ) : (
                   <Stack horizontal style={{ height: '100%' }}>
                     <div
                       className={styles.canvasWrapper}
@@ -183,7 +232,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                       }}
                     >
                       <ReactFlowProvider>
-                        <ReactFlowWrapper sourceSchema={sourceSchema} />
+                        <ReactFlowWrapper canvasBlockHeight={getCanvasAreaHeight()} />
                       </ReactFlowProvider>
                     </div>
 
@@ -194,29 +243,51 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                       canvasAreaHeight={getCanvasAreaHeight()}
                     />
                   </Stack>
-                ) : (
-                  <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
                 )}
               </div>
 
-              <PropertiesPane
-                currentNode={currentlySelectedNode}
-                isExpanded={isPropPaneExpanded}
-                setIsExpanded={setIsPropPaneExpanded}
-                centerViewHeight={centerViewHeight}
-                contentHeight={propPaneExpandedHeight}
-                setContentHeight={setPropPaneExpandedHeight}
-              />
+              {!showMapOverview && (
+                <PropertiesPane
+                  selectedItemKey={selectedItemKey ?? ''}
+                  isExpanded={isPropPaneExpanded}
+                  setIsExpanded={setIsPropPaneExpanded}
+                  centerViewHeight={centerViewHeight}
+                  contentHeight={propPaneExpandedHeight}
+                  setContentHeight={setPropPaneExpandedHeight}
+                />
+              )}
             </div>
           </div>
 
-          <TargetSchemaPane isExpanded={isOutputPaneExpanded} setIsExpanded={setIsOutputPaneExpanded} />
+          <TargetSchemaPane isExpanded={isTargetSchemaPaneExpanded} setIsExpanded={setIsTargetSchemaPaneExpanded} />
         </div>
 
         <WarningModal />
-        <EditorConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
+        <ConfigPanel onSubmitSchemaFileSelection={onSubmitSchemaFileSelection} readCurrentSchemaOptions={readCurrentSchemaOptions} />
         <TestMapPanel isOpen={isTestMapPanelOpen} onClose={() => setIsTestMapPanelOpen(false)} />
       </div>
     </DndProvider>
   );
+};
+
+const useCenterViewHeight = () => {
+  const [centerViewHeight, setCenterViewHeight] = useState(0);
+
+  useEffect(() => {
+    const centerViewElement = document.getElementById(centerViewId);
+
+    const centerViewResizeObserver = new ResizeObserver((entries) => {
+      if (entries.length && entries.length > 0) {
+        setCenterViewHeight(entries[0].contentRect.height);
+      }
+    });
+
+    if (centerViewElement) {
+      centerViewResizeObserver.observe(centerViewElement);
+    }
+
+    return () => centerViewResizeObserver.disconnect();
+  }, []);
+
+  return centerViewHeight;
 };

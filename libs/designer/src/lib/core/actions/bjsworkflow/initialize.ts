@@ -1,25 +1,34 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
+import type { WorkflowParameter } from '../../../common/models/workflow';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
-import { updateTokens } from '../../state/tokensSlice';
+import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
+import type { UpdateUpstreamNodesPayload } from '../../state/tokensSlice';
+import { updateTokens, updateUpstreamNodes } from '../../state/tokensSlice';
+import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
+import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
+import type { RootState } from '../../store';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
-import { getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
+import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
+import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSpiltOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
   getDependentParameters,
   getInputsValueFromDefinitionForManifest,
+  getParameterFromName,
   getParametersSortedByVisibility,
   loadParameterValuesFromDefault,
   ParameterGroupKeys,
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../../utils/parameters/helper';
+import { createLiteralValueSegment } from '../../utils/parameters/segment';
 import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
-import { convertOutputsToTokens, getBuiltInTokens } from '../../utils/tokens';
+import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
 import type { Settings } from './settings';
 import type {
@@ -27,14 +36,10 @@ import type {
   IOperationManifestService,
   ISearchService,
   IOAuthService,
+  IWorkflowService,
 } from '@microsoft-logic-apps/designer-client-services';
-import {
-  InitConnectionService,
-  InitOperationManifestService,
-  InitSearchService,
-  InitOAuthService,
-  OperationManifestService,
-} from '@microsoft-logic-apps/designer-client-services';
+import { WorkflowService, LoggerService, LogEntryLevel, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
+import { getIntl } from '@microsoft-logic-apps/intl';
 import type { SchemaProperty, InputParameter } from '@microsoft-logic-apps/parsers';
 import {
   isDynamicListExtension,
@@ -46,8 +51,8 @@ import {
   PropertyName,
 } from '@microsoft-logic-apps/parsers';
 import type { OperationManifest } from '@microsoft-logic-apps/utils';
-import { ConnectionReferenceKeyFormat, unmap } from '@microsoft-logic-apps/utils';
-import type { OutputToken } from '@microsoft/designer-ui';
+import { clone, equals, ConnectionReferenceKeyFormat, unmap } from '@microsoft-logic-apps/utils';
+import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -55,13 +60,21 @@ export interface ServiceOptions {
   operationManifestService: IOperationManifestService;
   searchService: ISearchService;
   oAuthService: IOAuthService;
+  workflowService: IWorkflowService;
 }
 
-export const InitializeServices = ({ connectionService, operationManifestService, searchService, oAuthService }: ServiceOptions) => {
-  InitConnectionService(connectionService);
-  InitOperationManifestService(operationManifestService);
-  InitSearchService(searchService);
-  InitOAuthService(oAuthService);
+export const parseWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
+  dispatch(
+    initializeParameters(
+      Object.keys(parameters).reduce(
+        (result: Record<string, WorkflowParameterDefinition>, currentKey: string) => ({
+          ...result,
+          [currentKey]: { name: currentKey, isEditable: false, ...parameters[currentKey] },
+        }),
+        {}
+      )
+    )
+  );
 };
 
 export const getInputParametersFromManifest = (
@@ -109,14 +122,14 @@ export const getInputParametersFromManifest = (
       getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], stepDefinition),
       '',
       primaryInputParametersInArray,
-      true /* createInvisibleParameter */,
+      !inputsLocation || !!inputsLocation.length /* createInvisibleParameter */,
       false /* useDefault */
     );
   } else {
     loadParameterValuesFromDefault(primaryInputParameters);
   }
 
-  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition, nodeId);
+  const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);
   const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
   // TODO (14490585)- Initialize editor view models for array
@@ -145,12 +158,27 @@ export const getOutputParametersFromManifest = (
   splitOnValue?: string
 ): NodeOutputsWithDependencies => {
   let manifestToParse = manifest;
+  let originalOutputs: Record<string, OutputInfo> | undefined;
 
   if (manifest.properties.outputsSchema) {
     manifestToParse = getUpdatedManifestForSchemaDependency(manifest, inputs);
   }
 
   if (isTrigger) {
+    const originalOperationOutputs = new ManifestParser(manifestToParse).getOutputParameters(
+      true /* includeParentObject */,
+      Constants.MAX_INTEGER_NUMBER /* expandArrayOutputsDepth */,
+      false /* expandOneOf */,
+      undefined /* data */,
+      true /* selectAllOneOfSchemas */
+    );
+    originalOutputs = Object.values(originalOperationOutputs).reduce((result: Record<string, OutputInfo>, output: SchemaProperty) => {
+      return {
+        ...result,
+        [output.key]: toOutputInfo(output),
+      };
+    }, {});
+
     manifestToParse = getUpdatedManifestForSpiltOn(manifestToParse, splitOnValue);
   }
 
@@ -204,7 +232,10 @@ export const getOutputParametersFromManifest = (
     }
   }
 
-  return { outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs }, dependencies };
+  return {
+    outputs: { dynamicLoadStatus: dynamicOutput ? DynamicLoadStatus.NOTSTARTED : undefined, outputs: nodeOutputs, originalOutputs },
+    dependencies,
+  };
 };
 
 export const updateOutputsAndTokens = async (
@@ -213,7 +244,8 @@ export const updateOutputsAndTokens = async (
   dispatch: Dispatch,
   isTrigger: boolean,
   inputs: NodeInputs,
-  settings: Settings
+  settings: Settings,
+  shouldProcessSettings = false
 ): Promise<void> => {
   const { type, kind, connectorId } = operationInfo;
   const supportsManifest = OperationManifestService().isSupported(type, kind);
@@ -235,7 +267,7 @@ export const updateOutputsAndTokens = async (
     ];
   } else {
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-    nodeOutputs = getOutputParametersFromSwagger(parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
+    nodeOutputs = getOutputParametersFromSwagger(isTrigger, parsedSwagger, operationInfo, inputs, splitOnValue).outputs;
     tokens = convertOutputsToTokens(
       isTrigger ? undefined : nodeId,
       type,
@@ -247,6 +279,14 @@ export const updateOutputsAndTokens = async (
 
   dispatch(updateOutputs({ id: nodeId, nodeOutputs }));
   dispatch(updateTokens({ id: nodeId, tokens }));
+
+  // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
+  if (shouldProcessSettings && isTrigger) {
+    const isSplitOnSupported = getSplitOnOptions(nodeOutputs).length > 0;
+    if (settings.splitOn?.isSupported !== isSplitOnSupported) {
+      dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
+    }
+  }
 };
 
 export const getInputDependencies = (nodeInputs: NodeInputs, allInputs: InputParameter[]): Record<string, DependencyInfo> => {
@@ -275,4 +315,75 @@ export const getInputDependencies = (nodeInputs: NodeInputs, allInputs: InputPar
   }
 
   return dependencies;
+};
+
+export const updateCallbackUrl = async (rootState: RootState, dispatch: Dispatch): Promise<void> => {
+  const trigger = getTriggerNodeId(rootState.workflow);
+  const operationInfo = rootState.operations.operationInfo[trigger];
+  const nodeInputs = clone(rootState.operations.inputParameters[trigger]);
+  const updatedParameter = await updateCallbackUrlInInputs(trigger, operationInfo, nodeInputs);
+
+  if (updatedParameter) {
+    dispatch(
+      updateNodeParameters({
+        nodeId: trigger,
+        parameters: [{ groupId: ParameterGroupKeys.DEFAULT, parameterId: updatedParameter.id, propertiesToUpdate: updatedParameter }],
+      })
+    );
+  }
+};
+
+export const updateCallbackUrlInInputs = async (
+  nodeId: string,
+  { type, kind }: NodeOperation,
+  nodeInputs: NodeInputs
+): Promise<ParameterInfo | undefined> => {
+  if (equals(type, Constants.NODE.TYPE.REQUEST) && equals(kind, Constants.NODE.KIND.HTTP)) {
+    try {
+      const callbackInfo = await WorkflowService().getCallbackUrl(nodeId);
+      const parameter = getParameterFromName(nodeInputs, 'callbackUrl');
+
+      if (parameter && callbackInfo) {
+        parameter.label = getIntl().formatMessage(
+          { defaultMessage: 'HTTP {method} URL', description: 'Callback url method' },
+          { method: callbackInfo.method }
+        );
+        parameter.value = [createLiteralValueSegment(callbackInfo.value)];
+
+        return parameter;
+      }
+    } catch (error) {
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'CallbackUrl_Update',
+        message: `Unable to initialize callback url for manual trigger, error ${error}`,
+      });
+    }
+  }
+
+  return;
+};
+
+export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): void => {
+  const allOperations = state.workflow.operations;
+  const payload: UpdateUpstreamNodesPayload = {};
+  const nodeMap = Object.keys(allOperations).reduce(
+    (actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }),
+    {}
+  );
+
+  for (const nodeId of Object.keys(allOperations)) {
+    if (!isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata)) {
+      payload[nodeId] = getTokenNodeIds(
+        nodeId,
+        state.workflow.graph as WorkflowNode,
+        state.workflow.nodesMetadata,
+        {},
+        state.operations.operationInfo,
+        nodeMap
+      );
+    }
+  }
+
+  dispatch(updateUpstreamNodes(payload));
 };

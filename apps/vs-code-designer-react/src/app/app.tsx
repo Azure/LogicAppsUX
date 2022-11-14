@@ -2,6 +2,7 @@ import type { RootState } from '../state/Store';
 import { HttpClient } from './httpClient';
 import {
   StandardConnectionService,
+  StandardGatewayService,
   StandardOAuthService,
   StandardOperationManifestService,
   StandardSearchService,
@@ -21,27 +22,23 @@ export const App = () => {
     baseUrl,
     apiVersion: '2018-11-01',
     httpClient,
-    apiHubServiceDetails: apiHubServiceDetails,
+    apiHubServiceDetails,
     workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
     readConnections: () => Promise.resolve({}),
-  });
-
-  const searchService = new StandardSearchService({
-    baseUrl,
-    apiVersion: '2018-11-01',
-    httpClient,
-    apiHubServiceDetails: {
-      apiVersion: '2018-07-01-preview',
-      subscriptionId: '',
-      location: '',
-    },
-    isDev: true,
   });
 
   const operationManifestService = new StandardOperationManifestService({
     apiVersion: '2018-11-01',
     baseUrl,
     httpClient,
+  });
+
+  const searchService = new StandardSearchService({
+    baseUrl,
+    apiVersion: '2018-11-01',
+    httpClient,
+    apiHubServiceDetails,
+    isDev: true,
   });
 
   const oAuthService = new StandardOAuthService({
@@ -53,6 +50,17 @@ export const App = () => {
     location: '',
   });
 
+  const gatewayService = new StandardGatewayService({
+    baseUrl,
+    httpClient,
+    apiVersions: {
+      subscription: '2018-11-01',
+      gateway: '2016-06-01',
+    },
+  });
+
+  const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
+
   return (
     <DesignerProvider
       locale="en-US"
@@ -62,6 +70,8 @@ export const App = () => {
           operationManifestService,
           searchService,
           oAuthService,
+          gatewayService,
+          workflowService,
         },
       }}
     >

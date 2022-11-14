@@ -1,22 +1,34 @@
+import { undoDataMapOperation } from '../../core/state/DataMapSlice';
+import type { AppDispatch } from '../../core/state/Store';
 import { Stack } from '@fluentui/react';
-import { makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { Delete20Regular, DismissCircle20Filled, Dismiss20Regular } from '@fluentui/react-icons';
+import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Delete20Regular, DismissCircle20Filled, Dismiss20Regular, Info20Filled } from '@fluentui/react-icons';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 export enum NotificationTypes {
   SaveFailed = 'saveFailed',
   SourceNodeRemoved = 'sourceNodeRemoved',
   SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
+  TargetNodeCannotDelete = 'targetNodeCannotDelete',
   FunctionNodeDeleted = 'functionNodeDeleted',
   ConnectionDeleted = 'connectionDeleted',
+  ArrayConnectionAdded = 'arrayConnectionAdded',
+  CircularLogicError = 'circularLogicError',
+  ElementsAndMappingsRemoved = 'elementsMappingsRemoved',
 }
 
 export interface NotificationData {
   type: NotificationTypes;
   msgParam?: any;
   msgBody?: string;
+  autoHideDurationMs?: number;
 }
+
+const defaultNotificationAutoHideDuration = 5000; // ms
+export const deletedNotificationAutoHideDuration = 3000;
+export const errorNotificationAutoHideDuration = 7000;
 
 const useStyles = makeStyles({
   toastStyles: {
@@ -46,68 +58,87 @@ export interface NotificationProps extends NotificationData {
 }
 
 export const Notification = (props: NotificationProps) => {
-  const { type, msgParam, msgBody, autoHideDuration = 5000, onClose } = props;
+  const { type, msgParam, msgBody, autoHideDuration = defaultNotificationAutoHideDuration, onClose } = props;
+  const dispatch = useDispatch<AppDispatch>();
   const styles = useStyles();
   const intl = useIntl();
 
   const notificationIcon = useMemo(() => {
     switch (type) {
+      // Error icon
       case NotificationTypes.SaveFailed:
       case NotificationTypes.SourceNodeRemoveFailed:
+      case NotificationTypes.CircularLogicError:
+      case NotificationTypes.TargetNodeCannotDelete:
         return <DismissCircle20Filled style={{ color: tokens.colorPaletteRedBackground3, marginRight: 8 }} />;
 
-      default:
+      // Delete icon
+      case NotificationTypes.SourceNodeRemoved:
+      case NotificationTypes.ConnectionDeleted:
+      case NotificationTypes.FunctionNodeDeleted:
         return <Delete20Regular style={{ color: tokens.colorNeutralForeground1, marginRight: 8 }} />;
+
+      // Default icon (info)
+      default:
+        return <Info20Filled style={{ color: tokens.colorNeutralForeground2, marginRight: 8 }} />;
     }
   }, [type]);
 
-  const notificationMsg = useMemo(() => {
-    const saveFailedLoc = intl.formatMessage({
-      defaultMessage: 'Failed to save.',
-      description: 'Message on failed save',
-    });
+  const undoLoc = intl.formatMessage({
+    defaultMessage: 'Undo',
+    description: 'Undo',
+  });
 
-    const sourceNodeRemovedLoc = intl.formatMessage({
-      defaultMessage: 'Source node removed from view.',
-      description: 'Message on removing source node',
-    });
+  const LocResources = useMemo<{ [key: string]: string }>(
+    () => ({
+      [NotificationTypes.SaveFailed]: intl.formatMessage({
+        defaultMessage: 'Failed to save.',
+        description: 'Message on failed save',
+      }),
+      [NotificationTypes.SourceNodeRemoved]: intl.formatMessage({
+        defaultMessage: 'Source element removed from view.',
+        description: 'Message on removing source node',
+      }),
+      [NotificationTypes.SourceNodeRemoveFailed]: intl.formatMessage(
+        {
+          defaultMessage: `Remove all references to element ' {nodeName} ' before you remove the element.`,
+          description: 'Message on failure to remove source node',
+        },
+        {
+          nodeName: msgParam ?? '',
+        }
+      ),
+      [NotificationTypes.TargetNodeCannotDelete]: intl.formatMessage({
+        defaultMessage: `Target schema element cannot be deleted.`,
+        description: 'Message informing that target element cannot be removed',
+      }),
+      [NotificationTypes.FunctionNodeDeleted]: intl.formatMessage({
+        defaultMessage: `Function deleted.`,
+        description: 'Message on deleting connection',
+      }),
+      [NotificationTypes.ConnectionDeleted]: intl.formatMessage({
+        defaultMessage: `Line deleted.`,
+        description: 'Message on deleting connection',
+      }),
+      [NotificationTypes.ArrayConnectionAdded]: intl.formatMessage({
+        defaultMessage: 'A line for the parent element is added automatically.',
+        description: 'Describes connection being added',
+      }),
+      [NotificationTypes.CircularLogicError]: intl.formatMessage({
+        defaultMessage: 'Invalid connection, mapping must not form a closed loop.',
+        description: 'Error message for circular logic connection validation',
+      }),
+      [NotificationTypes.ElementsAndMappingsRemoved]: intl.formatMessage({
+        defaultMessage: 'Elements and mappings not connected to a target element are removed.',
+        description: 'Message on switching levels with nodes/mappings not connected to a target schema node',
+      }),
+    }),
+    [intl, msgParam]
+  );
 
-    const sourceNodeRemoveFailedLoc = intl.formatMessage(
-      {
-        defaultMessage: `Remove all references to node ' {nodeName} ' before you remove the node.`,
-        description: 'Message on failure to remove source node',
-      },
-      {
-        nodeName: msgParam ?? '',
-      }
-    );
-
-    const functionNodeDeletedLoc = intl.formatMessage({
-      defaultMessage: `Function deleted.`,
-      description: 'Message on deleting connection',
-    });
-
-    const connectionDeletedLoc = intl.formatMessage({
-      defaultMessage: `Connection deleted.`,
-      description: 'Message on deleting connection',
-    });
-
-    switch (type) {
-      case NotificationTypes.SaveFailed:
-        return saveFailedLoc;
-      case NotificationTypes.SourceNodeRemoved:
-        return sourceNodeRemovedLoc;
-      case NotificationTypes.SourceNodeRemoveFailed:
-        return sourceNodeRemoveFailedLoc;
-      case NotificationTypes.FunctionNodeDeleted:
-        return functionNodeDeletedLoc;
-      case NotificationTypes.ConnectionDeleted:
-        return connectionDeletedLoc;
-
-      default:
-        return null;
-    }
-  }, [type, intl, msgParam]);
+  const handleDataMapUndo = () => {
+    dispatch(undoDataMapOperation());
+  };
 
   useEffect(() => {
     const timer = setTimeout(onClose, autoHideDuration);
@@ -117,11 +148,11 @@ export const Notification = (props: NotificationProps) => {
 
   return (
     <div className={styles.toastStyles}>
-      <Stack horizontal verticalAlign="start">
+      <Stack horizontal verticalAlign="center">
         {notificationIcon}
 
         <Stack style={{ marginRight: 12 }}>
-          <Text className={styles.msgTitleStyles}>{notificationMsg}</Text>
+          <Text className={styles.msgTitleStyles}>{LocResources[type]}</Text>
           {msgBody && (
             <Text className={styles.msgBodyStyles} style={{ marginTop: 4 }}>
               {msgBody}
@@ -129,7 +160,15 @@ export const Notification = (props: NotificationProps) => {
           )}
         </Stack>
 
-        <Dismiss20Regular style={{ marginLeft: 'auto', cursor: 'pointer' }} onClick={onClose} />
+        <div style={{ marginLeft: 'auto' }}>
+          {type === NotificationTypes.ElementsAndMappingsRemoved ? (
+            <Button appearance="transparent" onClick={handleDataMapUndo}>
+              {undoLoc}
+            </Button>
+          ) : (
+            <Dismiss20Regular style={{ cursor: 'pointer' }} onClick={onClose} />
+          )}
+        </div>
       </Stack>
     </div>
   );

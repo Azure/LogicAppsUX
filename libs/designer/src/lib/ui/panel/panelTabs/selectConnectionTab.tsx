@@ -1,7 +1,8 @@
 import constants from '../../../common/constants';
+import type { AppDispatch } from '../../../core';
+import { updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../core/queries/connections';
 import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
-import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, selectPanelTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useNodeConnectionId } from '../../../core/state/selectors/actionMetadataSelector';
@@ -11,11 +12,13 @@ import type { Connection } from '@microsoft-logic-apps/utils';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { SelectConnection } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 export const SelectConnectionTab = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
+  const intl = useIntl();
   const selectedNodeId = useSelectedNodeId();
   const currentConnectionId = useNodeConnectionId(selectedNodeId);
 
@@ -43,7 +46,7 @@ export const SelectConnectionTab = () => {
     (connection?: Connection) => {
       if (!connection) return;
       dispatch(
-        changeConnectionMapping({ nodeId: selectedNodeId, connectionId: connection?.id as string, connectorId: connector?.id as string })
+        updateNodeConnection({ nodeId: selectedNodeId, connectionId: connection?.id as string, connectorId: connector?.id as string })
       );
       ConnectionService().createConnectionAclIfNeeded(connection);
       hideConnectionTabs();
@@ -55,10 +58,15 @@ export const SelectConnectionTab = () => {
     hideConnectionTabs();
   }, [hideConnectionTabs]);
 
+  const loadingText = intl.formatMessage({
+    defaultMessage: 'Loading connection data...',
+    description: 'Message to show under the loading icon when loading connection parameters',
+  });
+
   if (connectionQuery.isLoading)
     return (
       <div className="msla-loading-container">
-        <Spinner size={SpinnerSize.large} />
+        <Spinner size={SpinnerSize.large} label={loadingText} />
       </div>
     );
 

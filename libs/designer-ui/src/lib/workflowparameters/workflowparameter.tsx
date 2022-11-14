@@ -25,18 +25,17 @@ export type WorkflowParameterDeleteHandler = EventHandler<WorkflowParameterDelet
 export type RegisterLanguageHandler = () => void;
 
 export interface WorkflowParameterDefinition {
-  defaultValue?: string;
+  value?: string;
   id: string;
   isEditable?: boolean;
   name?: string;
-  type?: string;
-  value?: string;
+  type: string;
 }
 
 export interface WorkflowParameterProps {
   definition: WorkflowParameterDefinition;
   isReadOnly?: boolean;
-  validationErrors?: Record<string, string>;
+  validationErrors?: Record<string, string | undefined>;
   isInverted?: boolean;
   onChange?: WorkflowParameterUpdateHandler;
   onDelete?: WorkflowParameterDeleteHandler;

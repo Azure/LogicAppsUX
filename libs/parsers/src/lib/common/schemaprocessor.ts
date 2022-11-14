@@ -2,7 +2,14 @@
 import type { SchemaProperty } from '../models/operation';
 import * as SwaggerConstants from './constants';
 import * as ParameterKeyUtility from './helpers/keysutility';
-import { dereferenceRefSchema, getEnum, getParameterDynamicSchema, getParameterDynamicValues } from './helpers/utils';
+import {
+  dereferenceRefSchema,
+  getEnum,
+  getKnownTitles,
+  getKnownTitlesFromKey,
+  getParameterDynamicSchema,
+  getParameterDynamicValues,
+} from './helpers/utils';
 import { getIntl } from '@microsoft-logic-apps/intl';
 import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
@@ -305,7 +312,7 @@ export class SchemaProcessor {
     if (this.options.includeParentObject && !isReadOnlyInputParameter) {
       const name = this._getName() as string;
       const dynamicValues = getParameterDynamicValues(schema);
-
+      const key = keyPrefix || this.options.keyPrefix || '$';
       schemaProperties.push({
         alias: schema[SwaggerConstants.ExtensionProperties.Alias],
         default: schema.default,
@@ -318,7 +325,7 @@ export class SchemaProcessor {
         isInsideArray: this.options.parentProperty && this.options.parentProperty.isArray,
         isNested: this.options.isNested,
         isNotificationUrl: schema[SwaggerConstants.ExtensionProperties.NotificationUrl],
-        key: keyPrefix || this.options.keyPrefix || '$',
+        key,
         parentArray: this.options.parentProperty && this.options.parentProperty.arrayName,
         permission,
         name,
@@ -327,7 +334,7 @@ export class SchemaProcessor {
         required: this.options.required,
         schema,
         summary: this._getSummary(summary, ''),
-        title: this._getTitle(schema.title || schema[SwaggerConstants.ExtensionProperties.Summary], this.options.currentKey as string),
+        title: this._getTitle(schema.title || schema[SwaggerConstants.ExtensionProperties.Summary], this.options.currentKey as string, key),
         type: SwaggerConstants.Types.Object,
         visibility: this._getVisibility(schema),
       });
@@ -472,7 +479,11 @@ export class SchemaProcessor {
     const readOnly = schema.readOnly;
     const recommended = schema[SwaggerConstants.ExtensionProperties.SchedulerRecommendation];
     const required = $required;
-    let title = this._getTitle(schema.title || schema[SwaggerConstants.ExtensionProperties.Summary], this.options.currentKey as string);
+    let title = this._getTitle(
+      schema.title || schema[SwaggerConstants.ExtensionProperties.Summary],
+      this.options.currentKey as string,
+      keyPrefix
+    );
     const summary = this._getSummary(schema[SwaggerConstants.ExtensionProperties.Summary], '');
     const type = (schema.type as string) || SwaggerConstants.Types.Any;
     const visibility = this._getVisibility(schema);
@@ -529,13 +540,13 @@ export class SchemaProcessor {
     return summaryPrefix && summaryText ? `${summaryPrefix} ${summaryText}` : summaryText;
   }
 
-  private _getTitle(title: string, key: string): string {
+  private _getTitle(title: string, key: string, keyPrefix: string): string {
     const intl = getIntl();
     const titleText = title
       ? title
       : key === ParameterKeyUtility.WildIndexSegment
       ? intl.formatMessage({ defaultMessage: 'Item', description: 'Label for single item inside an array.' })
-      : key;
+      : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(key);
     const titlePrefix = this.options.titlePrefix || this.options.summaryPrefix;
 
     return titlePrefix && titleText ? `${titlePrefix} ${titleText}` : titleText;

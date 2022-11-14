@@ -2,7 +2,6 @@
 
 @comboboxItemPadding: 5px 0px 5px 15px;
 .msla-combobox-container {
-  padding-bottom: 20px;
   .msla-combobox-label {
     font-size: 14px;
     padding-left: 5px;
@@ -46,6 +45,9 @@
         position: relative;
         padding-inline-start: 10px;
         box-sizing: border-box;
+        &.readonly {
+          background-color: rgba(128, 128, 128, 0.1);
+        }
         p {
           margin: 0;
           line-height: 30px;
@@ -57,6 +59,8 @@
         overflow: hidden;
         position: absolute;
         text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 95%;
         margin-top: -23px;
         margin-left: 13px;
         font-size: 13px;
@@ -74,4 +78,13 @@
 }
 .msla-combobox-custom-option {
   color: rgb(0, 120, 212);
+}
+
+.msla-combobox-loading {
+  display: flex;
+}
+
+.msla-combobox-loading-text {
+  color: rgb(40 38 38);
+  padding-left: 8px;
 }

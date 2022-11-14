@@ -1,5 +1,5 @@
 import type { AuthProps, ClientCertificateProps } from '.';
-import type { ChangeState } from '../editor/base';
+import type { ChangeState, TokenPickerHandler } from '../editor/base';
 import { AuthenticationProperty } from './AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from './util';
 import type { Dispatch, SetStateAction } from 'react';
@@ -7,14 +7,14 @@ import type { Dispatch, SetStateAction } from 'react';
 interface CertificateAuthenticationProps {
   clientCertificateProps: ClientCertificateProps;
   isOAuth?: boolean;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  tokenPickerHandler: TokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
 export const CertificateAuthentication = ({
   clientCertificateProps,
   isOAuth = false,
-  GetTokenPicker,
+  tokenPickerHandler,
   setCurrentProps,
 }: CertificateAuthenticationProps): JSX.Element => {
   const { clientCertificatePfx, clientCertificatePassword } = clientCertificateProps;
@@ -22,28 +22,28 @@ export const CertificateAuthentication = ({
   const updateClientCertificatePfx = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      clientCertificateProps: { ...prevState.clientCertificateProps, clientCertificatePfx: newState.value },
+      clientCertificate: { ...prevState.clientCertificate, clientCertificatePfx: newState.value },
     }));
   };
 
   const updateClientCertificatePassword = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      clientCertificateProps: { ...prevState.clientCertificateProps, clientCertificatePassword: newState.value },
+      clientCertificate: { ...prevState.clientCertificate, clientCertificatePassword: newState.value },
     }));
   };
 
   const updateOAuthTypeCertificatePfx = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthTypeCertificatePfx: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthTypeCertificatePfx: newState.value },
     }));
   };
 
   const updateOAuthTypeCertificatePassword = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthTypeCertificatePassword: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthTypeCertificatePassword: newState.value },
     }));
   };
   return (
@@ -51,13 +51,13 @@ export const CertificateAuthentication = ({
       <AuthenticationProperty
         initialValue={clientCertificatePfx}
         AuthProperty={AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX}
-        GetTokenPicker={GetTokenPicker}
+        tokenPickerHandler={tokenPickerHandler}
         onBlur={isOAuth ? updateOAuthTypeCertificatePfx : updateClientCertificatePfx}
       />
       <AuthenticationProperty
         initialValue={clientCertificatePassword}
         AuthProperty={AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD}
-        GetTokenPicker={GetTokenPicker}
+        tokenPickerHandler={tokenPickerHandler}
         onBlur={isOAuth ? updateOAuthTypeCertificatePassword : updateClientCertificatePassword}
       />
     </div>

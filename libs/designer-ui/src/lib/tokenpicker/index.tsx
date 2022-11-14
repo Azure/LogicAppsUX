@@ -5,6 +5,7 @@ import TokenPickerHandler from './plugins/TokenPickerHandler';
 import UpdateTokenNode from './plugins/UpdateTokenNode';
 import { TokenPickerMode, TokenPickerPivot } from './tokenpickerpivot';
 import { TokenPickerSearch } from './tokenpickersearch/tokenpickersearch';
+import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { ICalloutContentStyles, PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
@@ -29,12 +30,15 @@ export type SearchTextChangedEventHandler = (e: string) => void;
 export interface TokenPickerProps {
   editorId: string;
   labelId: string;
+  getValueSegmentFromToken: GetValueSegmentHandler;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   initialMode?: TokenPickerMode;
   tokenPickerFocused?: (b: boolean) => void;
   onSearchTextChanged?: SearchTextChangedEventHandler;
   tokenClickedCallback?: (token: ValueSegment) => void;
+  tokenPickerHide?: () => void;
+  showTokenPickerSwitch?: (show?: boolean) => void;
 }
 export function TokenPicker({
   editorId,
@@ -44,7 +48,10 @@ export function TokenPicker({
   initialMode,
   tokenPickerFocused,
   onSearchTextChanged,
+  getValueSegmentFromToken,
   tokenClickedCallback,
+  tokenPickerHide,
+  showTokenPickerSwitch,
 }: TokenPickerProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
@@ -67,7 +74,7 @@ export function TokenPicker({
         endColumn: 1,
       });
       expressionEditorRef.current?.focus();
-    }, 50);
+    }, 100);
   };
 
   const handleSelectKey = (item?: PivotItem) => {
@@ -117,7 +124,7 @@ export function TokenPicker({
         ariaLabelledBy={labelId}
         gapSpace={gapSpace}
         target={`#${editorId}`}
-        isBeakVisible={true}
+        isBeakVisible={tokenPickerHide ? false : true}
         beakWidth={beakWidth}
         directionalHint={directionalHint}
         onMouseDown={() => {
@@ -133,7 +140,12 @@ export function TokenPicker({
       >
         <div className="msla-token-picker-container">
           <div className="msla-token-picker">
-            <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
+            <TokenPickerPivot
+              selectedKey={selectedKey}
+              selectKey={handleSelectKey}
+              hideExpressions={!!tokenClickedCallback}
+              tokenPickerHide={tokenPickerHide}
+            />
             <TokenPickerSearch
               selectedKey={selectedKey}
               searchQuery={searchQuery}
@@ -145,6 +157,7 @@ export function TokenPicker({
               isEditing={isEditing}
               resetTokenPicker={resetTokenPicker}
               isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
+              showTokenPickerSwitch={showTokenPickerSwitch}
             />
 
             <TokenPickerSection
@@ -157,6 +170,7 @@ export function TokenPicker({
               editMode={updatingExpression !== null || isEditing || selectedKey === TokenPickerMode.EXPRESSION}
               setExpression={setExpression}
               isDynamicContentAvailable={isDynamicContentAvailable(tokenGroup ?? [])}
+              getValueSegmentFromToken={getValueSegmentFromToken}
               tokenClickedCallback={tokenClickedCallback}
             />
           </div>

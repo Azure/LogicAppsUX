@@ -1,5 +1,6 @@
 import type { DictionaryEditorItemProps } from '.';
 import constants from '../constants';
+import type { TokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
 import type { ButtonOffSet } from '../editor/base/plugins/TokenPickerButton';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
@@ -20,7 +21,7 @@ export interface ExpandedDictionaryProps {
   keyTitle?: string;
   valueTitle?: string;
   setItems: (items: DictionaryEditorItemProps[]) => void;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  tokenPickerHandler: TokenPickerHandler;
 }
 
 export const ExpandedDictionary = ({
@@ -29,7 +30,7 @@ export const ExpandedDictionary = ({
   readonly,
   keyTitle,
   valueTitle,
-  GetTokenPicker,
+  tokenPickerHandler,
   setItems,
 }: ExpandedDictionaryProps): JSX.Element => {
   const intl = useIntl();
@@ -98,11 +99,8 @@ export const ExpandedDictionary = ({
                 isTrigger={isTrigger}
                 readonly={readonly}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
+                tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { buttonOffset: pickerOffset } }}
                 onFocus={() => addItem(index, ExpandedDictionaryEditorType.KEY)}
-                tokenPickerButtonProps={{
-                  buttonOffset: pickerOffset,
-                }}
-                GetTokenPicker={GetTokenPicker}
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary
@@ -122,11 +120,8 @@ export const ExpandedDictionary = ({
                 isTrigger={isTrigger}
                 readonly={readonly}
                 BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
-                tokenPickerButtonProps={{
-                  buttonOffset: pickerOffset,
-                }}
+                tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { buttonOffset: pickerOffset } }}
                 onFocus={() => addItem(index, ExpandedDictionaryEditorType.VALUE)}
-                GetTokenPicker={GetTokenPicker}
               >
                 <OnChangePlugin onChange={onChange} />
                 <SerializeExpandedDictionary

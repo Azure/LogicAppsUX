@@ -38,12 +38,12 @@
             "parentKey": "/ns0:InputRecord/Identity"
           },
           {
-            "key": "/ns0:InputRecord/Identity/NumCoffeesButAsADecimal",
-            "name": "NumCoffeesButAsADecimal",
+            "key": "/ns0:InputRecord/Identity/NumCoffeesButAsADecimalOhAndAlsoThisNameWillBeReallyLongForTesting",
+            "name": "NumCoffeesButAsADecimalOhAndAlsoThisNameWillBeReallyLongForTesting",
             "schemaNodeDataType": "Decimal",
             "normalizedDataType": "Decimal",
             "properties": "NotSpecified",
-            "fullName": "NumCoffeesButAsADecimal",
+            "fullName": "NumCoffeesButAsADecimalOhAndAlsoThisNameWillBeReallyLongForTesting",
             "parentKey": "/ns0:InputRecord/Identity"
           },
           {
@@ -91,7 +91,9 @@
             "fullName": "Birthday",
             "parentKey": "/ns0:InputRecord/Identity"
           }
-        ]
+        ],
+        "fullName": "Identity",
+        "parentKey": "/ns0:InputRecord"
       },
       {
         "key": "/ns0:InputRecord/Address",
@@ -158,12 +160,14 @@
             "key": "/ns0:InputRecord/Address/CountryCode",
             "name": "CountryCode",
             "schemaNodeDataType": "Integer",
-            "normalizedDataType": "TODO",
+            "normalizedDataType": "Integer",
             "properties": "NotSpecified",
             "fullName": "CountryCode",
             "parentKey": "/ns0:InputRecord/Address"
           }
-        ]
+        ],
+        "fullName": "Identity",
+        "parentKey": "/ns0:InputRecord"
       },
       {
         "key": "/ns0:InputRecord/ContactInfo",
@@ -199,8 +203,11 @@
             "fullName": "CellPhone",
             "parentKey": "/ns0:InputRecord/ContactInfo"
           }
-        ]
+        ],
+        "fullName": "Identity",
+        "parentKey": "/ns0:InputRecord"
       }
-    ]
+    ],
+    "fullName": "ns0:InputRecord"
   }
 }

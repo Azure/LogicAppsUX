@@ -2,21 +2,34 @@ import Constants from '../../common/constants';
 import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../actions/bjsworkflow/settings';
 import type { WorkflowNode } from '../parsers/models/workflowNode';
-import type { OutputInfo } from '../state/operation/operationMetadataSlice';
+import type { NodeOperation, OutputInfo } from '../state/operation/operationMetadataSlice';
 import type { TokensState } from '../state/tokensSlice';
 import type { NodesMetadata } from '../state/workflow/workflowInterfaces';
-import { getAllNodesInsideNode, getUpstreamNodeIds } from './graph';
-import { getExpressionValueForOutputToken, getRepetitionContext, shouldIncludeSelfForRepetitionReference } from './parameters/helper';
+import type { WorkflowParameterDefinition, WorkflowParametersState } from '../state/workflowparameters/workflowparametersSlice';
+import type { RootState } from '../store';
+import { getAllNodesInsideNode, getTriggerNodeId, getUpstreamNodeIds } from './graph';
+import { getForeachActionName, getRepetitionNodeIds, getTokenExpressionValueForManifestBasedOperation, shouldAddForeach } from './loops';
+import {
+  ensureExpressionValue,
+  FxBrandColor,
+  FxIcon,
+  getExpressionValueForOutputToken,
+  getTokenValueFromToken,
+  ParameterBrandColor,
+  ParameterIcon,
+  shouldIncludeSelfForRepetitionReference,
+} from './parameters/helper';
+import { createTokenValueSegment } from './parameters/segment';
 import { hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
+import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { getIntl } from '@microsoft-logic-apps/intl';
-import { OutputKeys, parseEx } from '@microsoft-logic-apps/parsers';
+import { getKnownTitles, OutputKeys } from '@microsoft-logic-apps/parsers';
 import type { BuiltInOutput, OperationManifest } from '@microsoft-logic-apps/utils';
-import type { FunctionDefinition, OutputToken } from '@microsoft/designer-ui';
-import { TemplateFunctions, TokenType } from '@microsoft/designer-ui';
+import { labelCase, unmap, equals } from '@microsoft-logic-apps/utils';
+import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
+import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
 
-const FxIcon =
-  'data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzNCAzNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiA8cmVjdCB3aWR0aD0iMzQiIGhlaWdodD0iMzQiIGZpbGw9IiNhZDAwOGMiLz4NCiA8cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMTMuNDg3LDEzLjI0OGE3LjA1NCw3LjA1NCwwLDAsMSwxLjg0OS0zLjY5QTUuMyw1LjMsMCwwLDEsMTguNTkzLDcuOWMuOTg1LDAsMS40NjcuNTg1LDEuNDQ3LDEuMDY5YTEuNTUxLDEuNTUxLDAsMCwxLS43NDQsMS4xNDkuNDA2LjQwNiwwLDAsMS0uNTQzLS4wNjFjLS41NDMtLjY2NS0xLjAwNS0xLjA2OS0xLjM2Ny0xLjA2OS0uNC0uMDItLjc2NC4yODItMS40MDcsNC4yNTVoMi4zMzJsLS40MjIuODA3LTIuMDkuMTYxYy0uMzQyLDEuODM1LS42LDMuNjMtMS4xNDYsNS45MDgtLjc4NCwzLjMyNy0xLjY4OCw0LjY1OC0zLjEsNS44MjdBMy43NDYsMy43NDYsMCwwLDEsOS4zNDcsMjdDOC42ODMsMjcsOCwyNi41NTYsOCwyNi4wMzJhMS42OTIsMS42OTIsMCwwLDEsLjcyNC0xLjE0OWMuMTYxLS4xMjEuMjgxLS4xNDEuNDIyLS4wNGEyLjg3MywyLjg3MywwLDAsMCwxLjU2OC43MDYuNjc1LjY3NSwwLDAsMCwuNjYzLS41LDI3LjQyNywyNy40MjcsMCwwLDAsLjg0NC00LjE3NGMuNDYyLTIuNzYyLjc0NC00LjY1OCwxLjA4NS02LjY1NEgxMS43bC0uMS0uMi42ODMtLjc2NloiLz4NCiA8cGF0aCBmaWxsPSIjZmZmZmZmIiBkPSJNMTcuMzIxLDE4LjljLjgxMi0xLjE4MywxLjY1NC0xLjg3NCwyLjIzNi0xLjg3NC40OSwwLC43MzUuNTIyLDEuMDU3LDEuNDlsLjIzLjcyMmMxLjE2NC0xLjY3NSwxLjczMS0yLjIxMiwyLjQtMi4yMTJhLjc0Mi43NDIsMCwwLDEsLjc1MS44NDUuOTIyLjkyMiwwLDAsMS0uOC44NzYuNDE0LjQxNCwwLDAsMS0uMjkxLS4xNjkuNDc3LjQ3NywwLDAsMC0uMzY4LS4xODRjLS4xNTMsMC0uMzM3LjEwOC0uNjEzLjM4NGE4LjU0Nyw4LjU0NywwLDAsMC0uODczLDEuMDc1bC42MTMsMS45NjZjLjE4NC42My4zNjcuOTUyLjU2Ny45NTIuMTg0LDAsLjUwNi0uMjQ2LDEuMDQyLS44OTFsLjMyMi4zODRjLS45LDEuNDI5LTEuNzYxLDEuOTItMi4zNDMsMS45Mi0uNTIxLDAtLjg1OC0uNDMtMS4xOC0xLjQ5bC0uMzUyLTEuMTY4Yy0xLjE3OSwxLjkyLTEuNzQ2LDIuNjU4LTIuNTQzLDIuNjU4YS44MTUuODE1LDAsMCwxLS44MTItLjg3NS45LjksMCwwLDEsLjc2Ni0uOTIyLjQ5My40OTMsMCwwLDEsLjI5MS4xNTQuNTE0LjUxNCwwLDAsMCwuMzY4LjE2OWMuMzM3LDAsLjk1LS42NzYsMS43MTUtMS44NTlsLS40LTEuMzY3Yy0uMjc2LS45MDYtLjQxNC0xLjAxNC0uNTY3LTEuMDE0LS4xMzgsMC0uNDE0LjItLjg4OC44MTRaIi8+DQo8L3N2Zz4NCg==';
 export interface TokenGroup {
   id: string;
   label: string;
@@ -25,13 +38,14 @@ export interface TokenGroup {
   showAdvanced?: boolean;
 }
 
-export function getTokenNodeIds(
+export const getTokenNodeIds = (
   nodeId: string,
   graph: WorkflowNode,
   nodesMetadata: NodesMetadata,
   nodesManifest: Record<string, NodeDataWithOperationMetadata>,
+  operationInfos: Record<string, NodeOperation>,
   operationMap: Record<string, string>
-): string[] {
+): string[] => {
   const tokenNodes = getUpstreamNodeIds(nodeId, graph, nodesMetadata, operationMap);
   const manifest = nodesManifest[nodeId]?.manifest;
 
@@ -39,17 +53,14 @@ export function getTokenNodeIds(
     // Should include itself as repetition reference if nodes can reference its outputs
     // generated by its inputs like Query, Select and Table operations.
     const includeSelf = shouldIncludeSelfForRepetitionReference(manifest);
-    const repetitionContext = getRepetitionContext(includeSelf);
+    const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, includeSelf);
 
-    if (repetitionContext && repetitionContext.repetitionReferences) {
-      for (const repetitionReference of repetitionContext.repetitionReferences) {
-        const { actionName } = repetitionReference;
-        const nodeManifest = nodesManifest[actionName]?.manifest;
-        // If repetition is set for a node but not set for self reference,
-        // then nodes having this type as repetition can reference its outputs like Foreach and Until
-        if (nodeManifest?.properties.repetition && !nodeManifest.properties.repetition.self) {
-          tokenNodes.push(actionName);
-        }
+    for (const repetitionNodeId of repetitionNodeIds) {
+      const nodeManifest = nodesManifest[repetitionNodeId]?.manifest;
+      // If repetition is set for a node but not set for self reference,
+      // then nodes having this type as repetition can reference its outputs like Foreach and Until
+      if (nodeManifest?.properties.repetition && !nodeManifest.properties.repetition.self) {
+        tokenNodes.push(repetitionNodeId);
       }
     }
 
@@ -60,9 +71,9 @@ export function getTokenNodeIds(
   }
 
   return tokenNodes;
-}
+};
 
-export function getBuiltInTokens(manifest?: OperationManifest): OutputToken[] {
+export const getBuiltInTokens = (manifest?: OperationManifest): OutputToken[] => {
   if (!manifest) {
     return [];
   }
@@ -83,15 +94,15 @@ export function getBuiltInTokens(manifest?: OperationManifest): OutputToken[] {
       required,
     },
   }));
-}
+};
 
-export function convertOutputsToTokens(
+export const convertOutputsToTokens = (
   nodeId: string | undefined,
   nodeType: string,
   outputs: Record<string, OutputInfo>,
   operationMetadata: { iconUri: string; brandColor: string },
   settings?: Settings
-): OutputToken[] {
+): OutputToken[] => {
   const { iconUri: icon, brandColor } = operationMetadata;
   const isSecure = hasSecureOutputs(nodeType, settings);
 
@@ -119,15 +130,15 @@ export function convertOutputsToTokens(
       },
     };
   });
-}
+};
 
-export function getExpressionTokenSections(): TokenGroup[] {
+export const getExpressionTokenSections = (): TokenGroup[] => {
   return TemplateFunctions.map((functionGroup) => {
     const { id, name, functions } = functionGroup;
     const hasAdvanced = functions.some((func) => func.isAdvanced);
     const tokens = functions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
       key: name,
-      brandColor: '#AD008C',
+      brandColor: FxBrandColor,
       icon: FxIcon,
       title: defaultSignature,
       name,
@@ -148,64 +159,224 @@ export function getExpressionTokenSections(): TokenGroup[] {
       tokens,
     };
   });
-}
+};
 
-export function getOutputTokenSections(state: TokensState, nodeId: string, nodeType: string): TokenGroup[] {
-  const { variables, outputTokens } = state;
+export const getOutputTokenSections = (
+  nodeId: string,
+  nodeType: string,
+  tokenState: TokensState,
+  workflowParametersState: WorkflowParametersState,
+  replacementIds: Record<string, string>
+): TokenGroup[] => {
+  const { definitions } = workflowParametersState;
+  const { variables, outputTokens } = tokenState;
   const nodeTokens = outputTokens[nodeId];
-  if (!nodeTokens) return [];
-  const variableTokenGroup = {
-    id: 'variables',
-    label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),
-    tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
-      ...token,
-      value: getExpressionValueForOutputToken(token, nodeType),
-    })),
-  };
+  const tokenGroups: TokenGroup[] = [];
 
-  const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
-    let tokens = outputTokens[upstreamNodeId].tokens;
-    tokens = tokens.map((token) => {
-      return { ...token, value: getExpressionValueForOutputToken(token, nodeType) };
+  if (Object.keys(definitions).length) {
+    tokenGroups.push({
+      id: 'workflowparameters',
+      label: getIntl().formatMessage({ description: 'Heading section for Parameter tokens', defaultMessage: 'Parameters' }),
+      tokens: getWorkflowParameterTokens(definitions),
+    });
+  }
+
+  if (nodeTokens) {
+    tokenGroups.push({
+      id: 'variables',
+      label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),
+      tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
+        ...token,
+        value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+      })),
     });
 
-    if (!tokens.length) {
-      return undefined;
+    const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
+      let tokens = outputTokens[upstreamNodeId].tokens;
+      tokens = tokens.map((token) => {
+        return {
+          ...token,
+          value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+        };
+      });
+
+      if (!tokens.length) {
+        return undefined;
+      }
+
+      return {
+        id: upstreamNodeId,
+        label: labelCase(replacementIds[upstreamNodeId] ?? upstreamNodeId),
+        tokens,
+        hasAdvanced: tokens.some((token) => token.isAdvanced),
+        showAdvanced: false,
+      };
+    });
+
+    tokenGroups.push(...(outputTokenGroups.filter((group) => !!group) as TokenGroup[]));
+  }
+
+  return tokenGroups;
+};
+
+export const createValueSegmentFromToken = async (
+  nodeId: string,
+  parameterId: string,
+  token: OutputToken,
+  addImplicitForeachIfNeeded: boolean,
+  rootState: RootState
+): Promise<{ segment: ValueSegment; foreachDetails?: { arrayValue: string | undefined } }> => {
+  const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
+  const nodeType = rootState.operations.operationInfo[tokenOwnerNodeId].type;
+  const tokenValueSegment = convertTokenToValueSegment(token, nodeType);
+
+  if (!addImplicitForeachIfNeeded) {
+    return { segment: tokenValueSegment };
+  }
+
+  if (tokenValueSegment.token?.tokenType !== TokenType.PARAMETER && tokenValueSegment.token?.tokenType !== TokenType.VARIABLE) {
+    const tokenOwnerActionName = token.outputInfo.actionName;
+    const tokenOwnerOperationInfo = rootState.operations.operationInfo[tokenOwnerNodeId];
+    const { shouldAdd, parentArrayKey, parentArrayValue, repetitionContext } = await shouldAddForeach(
+      nodeId,
+      parameterId,
+      token,
+      rootState
+    );
+
+    if (parentArrayKey && repetitionContext) {
+      (tokenValueSegment.token as Token).arrayDetails = {
+        ...tokenValueSegment.token?.arrayDetails,
+        loopSource: getForeachActionName(repetitionContext, parentArrayKey, tokenOwnerActionName),
+      };
     }
 
-    return {
-      id: upstreamNodeId,
-      label: upstreamNodeId, // TODO: get friendly name for this node.
-      tokens,
-      hasAdvanced: tokens.some((token) => token.isAdvanced),
-      showAdvanced: false,
-    };
-  });
+    if (equals(tokenOwnerOperationInfo.type, Constants.NODE.TYPE.FOREACH)) {
+      (tokenValueSegment.token as Token).arrayDetails = {
+        ...tokenValueSegment.token?.arrayDetails,
+        loopSource: tokenOwnerActionName,
+      };
+    }
 
-  return [variableTokenGroup, ...(outputTokenGroups.filter((group) => !!group) as TokenGroup[])];
-}
+    if (tokenValueSegment.token?.arrayDetails?.loopSource) {
+      // NOTE: The foreach 'loopSource' may have been updated above.
+      // Evaluate the expression value again to make sure the latest 'loopSource' is picked up.
+      if (OperationManifestService().isSupported(tokenOwnerOperationInfo.type, tokenOwnerOperationInfo.kind)) {
+        tokenValueSegment.value = getTokenExpressionValueForManifestBasedOperation(
+          token.key,
+          !!tokenValueSegment.token?.arrayDetails,
+          tokenValueSegment.token?.arrayDetails?.loopSource,
+          tokenOwnerActionName
+        );
+      } else {
+        ensureExpressionValue(tokenValueSegment);
+      }
+    }
 
-function getTokenTitle(output: OutputInfo): string {
+    if (tokenValueSegment.token) {
+      const oldId = tokenValueSegment.token.actionName ?? '';
+      const newId = rootState.workflow.idReplacements[oldId] ?? oldId;
+      tokenValueSegment.token.remappedValue = tokenValueSegment.value.replace(oldId, newId);
+    }
+
+    return shouldAdd ? { segment: tokenValueSegment, foreachDetails: { arrayValue: parentArrayValue } } : { segment: tokenValueSegment };
+  }
+
+  return { segment: tokenValueSegment };
+};
+
+const convertTokenToValueSegment = (token: OutputToken, nodeType: string): ValueSegment => {
+  const tokenType = equals(nodeType, Constants.NODE.TYPE.FOREACH)
+    ? TokenType.ITEM
+    : token.outputInfo?.functionName
+    ? equals(token.outputInfo.functionName, Constants.FUNCTION_NAME.PARAMETERS)
+      ? TokenType.PARAMETER
+      : TokenType.VARIABLE
+    : TokenType.OUTPUTS;
+
+  const { key, brandColor, icon, title, description, name, type, outputInfo } = token;
+  const { actionName, required, format, source, isSecure, arrayDetails } = outputInfo;
+  const segmentToken: Token = {
+    key,
+    name,
+    type,
+    title,
+    brandColor,
+    icon,
+    description,
+    tokenType,
+    actionName,
+    required,
+    format,
+    isSecure,
+    source,
+    arrayDetails: arrayDetails
+      ? {
+          parentArrayName: arrayDetails.parentArray,
+          itemSchema: arrayDetails.itemSchema,
+          loopSource: equals(nodeType, Constants.NODE.TYPE.UNTIL) ? actionName : undefined,
+        }
+      : undefined,
+    value: getExpressionValueForOutputToken(token, nodeType),
+  };
+
+  return createTokenValueSegment(segmentToken, segmentToken.value as string, format);
+};
+
+const getTokenTitle = (output: OutputInfo): string => {
   if (output.title) {
     return output.title;
   }
 
+  const itemToken = getKnownTitles(OutputKeys.Item);
   if (output.isInsideArray) {
-    return output.parentArray ? `${output.parentArray} - Item` : 'Item';
+    return output.parentArray ? `${output.parentArray} - ${itemToken}` : itemToken;
   }
 
-  if (output.name) {
-    switch (output.name) {
-      case OutputKeys.Item:
-        return 'Item';
-      case OutputKeys.PathParameters:
-        return 'Path Parameters';
-      default:
-        // eslint-disable-next-line no-case-declarations
-        const segments = parseEx(output.name);
-        return String(segments[segments.length - 1].value);
-    }
-  }
+  return output.name ? getKnownTitles(output.name) : getKnownTitles(OutputKeys.Body);
+};
 
-  return 'Body';
-}
+const getWorkflowParameterTokens = (definitions: Record<string, WorkflowParameterDefinition>): OutputToken[] => {
+  return unmap(definitions).map(({ name, type }: WorkflowParameterDefinition) => {
+    return {
+      key: `parameters:${name}`,
+      brandColor: ParameterBrandColor,
+      icon: ParameterIcon,
+      title: name,
+      name,
+      type: convertWorkflowParameterTypeToSwaggerType(type),
+      isAdvanced: false,
+      outputInfo: {
+        type: TokenType.PARAMETER,
+        functionName: Constants.FUNCTION_NAME.PARAMETERS,
+        functionArguments: [name],
+      },
+      value: getTokenValueFromToken(TokenType.PARAMETER, [name]),
+    };
+  });
+};
+
+export const convertWorkflowParameterTypeToSwaggerType = (type: string | undefined): string => {
+  switch (type?.toLowerCase()) {
+    case UIConstants.WORKFLOW_PARAMETER_TYPE.FLOAT:
+      return Constants.SWAGGER.TYPE.NUMBER;
+    case UIConstants.WORKFLOW_PARAMETER_TYPE.INTEGER:
+    case UIConstants.WORKFLOW_PARAMETER_TYPE.INT:
+      return Constants.SWAGGER.TYPE.INTEGER;
+    case UIConstants.WORKFLOW_PARAMETER_TYPE.BOOLEAN:
+    case UIConstants.WORKFLOW_PARAMETER_TYPE.BOOL:
+      return Constants.SWAGGER.TYPE.BOOLEAN;
+    case UIConstants.WORKFLOW_PARAMETER_TYPE.STRING:
+      return Constants.SWAGGER.TYPE.STRING;
+    case UIConstants.WORKFLOW_PARAMETER_TYPE.ARRAY:
+      return Constants.SWAGGER.TYPE.ARRAY;
+    case UIConstants.WORKFLOW_PARAMETER_TYPE.OBJECT:
+      return Constants.SWAGGER.TYPE.OBJECT;
+    default:
+      return Constants.SWAGGER.TYPE.ANY;
+  }
+};
+
+const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
+  return value.replace(id, replacementIds[id] ?? id);
+};

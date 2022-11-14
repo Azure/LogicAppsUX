@@ -1,4 +1,4 @@
-import { openDiscardWarning } from '../../core/state/ModalSlice';
+import { openDiscardWarningModal } from '../../core/state/ModalSlice';
 import { store } from '../../core/state/Store';
 import { WarningModal } from './WarningModal';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -6,13 +6,13 @@ import React from 'react';
 import { Provider } from 'react-redux';
 
 const MockStore = ({ children }) => {
-  store.dispatch(openDiscardWarning());
+  store.dispatch(openDiscardWarningModal());
   return <Provider store={store}>{children}</Provider>;
 };
 
 export default {
   component: WarningModal,
-  title: 'Data Mapper Component/Modal/Warning',
+  title: 'Data Mapper Components/Modal/Warning',
 } as ComponentMeta<typeof WarningModal>;
 
 const Template: ComponentStory<typeof WarningModal> = () => <WarningModal />;

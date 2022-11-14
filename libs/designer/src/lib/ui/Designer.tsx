@@ -16,13 +16,14 @@ import Minimap from './Minimap';
 import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
+import { setLayerHostSelector } from '@fluentui/react';
 import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
 import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft-logic-apps/utils';
 import { useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
-import ReactFlow, { ReactFlowProvider, useNodes, useReactFlow, useStore } from 'reactflow';
+import { ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { NodeChange } from 'reactflow';
 
 export interface DesignerProps {
@@ -45,7 +46,7 @@ const nodeTypes: NodeTypesObj = {
 const edgeTypes = {
   BUTTON_EDGE: ButtonEdge,
   HEADING_EDGE: ButtonEdge, // This is functionally the same as a button edge
-  // ONLY_EDGE: undefined,
+  ONLY_EDGE: BezierEdge, // Setting it as default React Flow Edge, can be changed as needed
   HIDDEN_EDGE: HiddenEdge,
 };
 export const CanvasFinder = () => {
@@ -131,6 +132,8 @@ export const Designer = () => {
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
+
+  useEffect(() => setLayerHostSelector('.msla-designer-canvas'), []);
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="msla-designer-canvas msla-panel-mode">
@@ -140,7 +143,6 @@ export const Designer = () => {
             nodes={nodesWithPlaceholder}
             edges={edges}
             onNodesChange={onNodesChange}
-            minZoom={0}
             nodesDraggable={false}
             edgeTypes={edgeTypes}
             panOnScroll={true}
@@ -154,8 +156,8 @@ export const Designer = () => {
             <PanelRoot />
           </ReactFlow>
           <div className="msla-designer-tools">
-            <Minimap />
             <Controls />
+            <Minimap />
           </div>
           <CanvasFinder />
         </ReactFlowProvider>

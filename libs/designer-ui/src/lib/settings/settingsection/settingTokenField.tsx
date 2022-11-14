@@ -1,13 +1,17 @@
 import { ArrayEditor, ArrayType } from '../../arrayeditor';
+import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
 import { Combobox } from '../../combobox';
+import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
-import type { CallbackHandler, ChangeHandler } from '../../editor/base';
+import type { CallbackHandler, ChangeHandler, TokenPickerHandler } from '../../editor/base';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
+import { QueryBuilderEditor } from '../../querybuilder';
 import { SchemaEditor } from '../../schemaeditor';
+import { TableEditor } from '../../table';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
@@ -16,6 +20,8 @@ import React from 'react';
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
   value: ValueSegment[];
+  isLoading?: boolean;
+  errorDetails?: { message: string };
   editor?: string;
   editorOptions?: any;
   editorViewModel?: any;
@@ -25,17 +31,13 @@ export interface SettingTokenFieldProps extends SettingProps {
   readOnly?: boolean;
   tokenEditor: true;
   required?: boolean;
+  showTokens?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
   isTrigger?: boolean;
-  GetTokenPicker: (
-    editorId: string,
-    labelId: string,
-    onClick?: (b: boolean) => void,
-    tokenClicked?: (token: ValueSegment) => void
-  ) => JSX.Element;
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
+  tokenPickerHandler: TokenPickerHandler;
 }
 
 export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
@@ -43,7 +45,7 @@ export const SettingTokenField: React.FC<SettingTokenFieldProps> = (props) => {
     <>
       <div className="msla-input-parameter-label">
         <Label className="msla-label" required={props.required}>
-          {props.label.toUpperCase()}
+          {props.label}
         </Label>
       </div>
       <TokenField {...props} />
@@ -59,20 +61,25 @@ const TokenField = ({
   readOnly,
   value,
   isTrigger,
-  GetTokenPicker,
+  isLoading,
+  errorDetails,
+  showTokens,
+  label,
   onValueChange,
   onComboboxMenuOpen,
+  tokenPickerHandler,
 }: SettingTokenFieldProps) => {
   switch (editor?.toLowerCase()) {
+    case 'copyable':
+      return <CopyInputControl placeholder={placeholder} text={value[0].value} />;
+
     case 'dropdown':
-      // eslint-disable-next-line no-case-declarations
-      const { options, multiSelect } = editorOptions;
       return (
         <DropdownEditor
           readonly={readOnly}
           initialValue={value}
-          options={options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
-          multiSelect={!!multiSelect}
+          options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          multiSelect={!!editorOptions?.multiSelect}
           onChange={onValueChange}
         />
       );
@@ -81,7 +88,7 @@ const TokenField = ({
       return (
         <CodeEditor
           initialValue={value}
-          GetTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
           language={EditorLanguage.javascript}
           onChange={onValueChange}
           isTrigger={isTrigger}
@@ -98,7 +105,9 @@ const TokenField = ({
           options={editorOptions.options.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
           useOption={true}
           isTrigger={isTrigger}
-          GetTokenPicker={GetTokenPicker}
+          isLoading={isLoading}
+          errorDetails={errorDetails}
+          tokenPickerHandler={tokenPickerHandler}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
         />
@@ -115,24 +124,62 @@ const TokenField = ({
           initialValue={value}
           initialItems={editorViewModel.items}
           isTrigger={isTrigger}
-          GetTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
+          onChange={onValueChange}
+        />
+      );
+
+    case 'table':
+      return (
+        <TableEditor
+          readonly={readOnly}
+          initialValue={value}
+          initialItems={editorViewModel.items}
+          columnMode={editorViewModel.columnMode}
+          columns={editorOptions.columns.count}
+          titles={editorOptions.columns.titles}
+          keys={editorOptions.columns.keys}
+          isTrigger={isTrigger}
+          tokenPickerHandler={tokenPickerHandler}
           onChange={onValueChange}
         />
       );
 
     case 'array':
-      // TODO - This requires update
       return (
         <ArrayEditor
           type={ArrayType.SIMPLE}
-          labelProps={{ text: '' }}
+          labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          initialItems={editorViewModel.items}
+          initialItems={editorViewModel?.items}
+          itemSchema={label ? `${label} Item` : 'Array Item'}
           isTrigger={isTrigger}
-          GetTokenPicker={GetTokenPicker}
+          tokenPickerHandler={tokenPickerHandler}
           onChange={onValueChange}
+        />
+      );
+
+    case 'authentication':
+      return (
+        <AuthenticationEditor
+          initialValue={value}
+          options={editorOptions}
+          type={editorViewModel.type}
+          authenticationValue={editorViewModel.authenticationValue}
+          tokenPickerHandler={tokenPickerHandler}
+          onChange={onValueChange}
+          BasePlugins={{ tokens: showTokens }}
+        />
+      );
+
+    case 'condition':
+      return (
+        <QueryBuilderEditor
+          groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
+          onChange={onValueChange}
+          tokenPickerHandler={tokenPickerHandler}
         />
       );
 
@@ -141,12 +188,12 @@ const TokenField = ({
         <StringEditor
           className="msla-setting-token-editor-container"
           placeholder={placeholder}
-          BasePlugins={{ tokens: true }}
+          BasePlugins={{ tokens: showTokens }}
           readonly={readOnly}
           isTrigger={isTrigger}
           initialValue={value}
-          GetTokenPicker={GetTokenPicker}
-          onChange={onValueChange}
+          editorBlur={onValueChange}
+          tokenPickerHandler={tokenPickerHandler}
         />
       );
   }

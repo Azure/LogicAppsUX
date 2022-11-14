@@ -1,5 +1,6 @@
 import type { RootState } from './Store';
-import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
+import type { IDropdownOption } from '@fluentui/react';
+import type { MapDefinitionEntry, FunctionData } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import * as yaml from 'js-yaml';
@@ -9,16 +10,17 @@ export type ThemeType = 'Light' | 'Dark';
 export interface DataMapLoadingState {
   theme: ThemeType;
   armToken?: string;
-  rawDefinition: string;
+  rawDefinition: IDropdownOption<string>;
   loadingMethod: 'file' | 'arm';
   mapDefinition: MapDefinitionEntry;
   xsltFilename: string;
+  fetchedFunctions?: FunctionData[];
 }
 
 const initialState: DataMapLoadingState = {
   theme: 'Light',
   loadingMethod: 'file',
-  rawDefinition: '',
+  rawDefinition: {} as IDropdownOption<string>,
   mapDefinition: {},
   xsltFilename: '',
 };
@@ -31,7 +33,7 @@ export const loadDataMap = createAsyncThunk('loadDataMap', async (_: void, thunk
     return null;
   } else {
     try {
-      const mapDefinition = yaml.load(currentState.dataMapDataLoader.rawDefinition) as MapDefinitionEntry;
+      const mapDefinition = yaml.load(currentState.dataMapDataLoader.rawDefinition.data ?? '') as MapDefinitionEntry;
       return mapDefinition;
     } catch {
       return null;
@@ -49,7 +51,7 @@ export const dataMapDataLoaderSlice = createSlice({
     changeArmToken: (state, action: PayloadAction<string>) => {
       state.armToken = action.payload;
     },
-    changeRawDefinition: (state, action: PayloadAction<string>) => {
+    changeRawDefinition: (state, action: PayloadAction<IDropdownOption<string>>) => {
       state.rawDefinition = action.payload;
     },
     changeLoadingMethod: (state, action: PayloadAction<'file' | 'arm'>) => {
@@ -57,6 +59,9 @@ export const dataMapDataLoaderSlice = createSlice({
     },
     changeXsltFilename: (state, action: PayloadAction<string>) => {
       state.xsltFilename = action.payload;
+    },
+    changeFetchedFunctions: (state, action: PayloadAction<FunctionData[]>) => {
+      state.fetchedFunctions = action.payload;
     },
   },
   extraReducers: (builder) => {

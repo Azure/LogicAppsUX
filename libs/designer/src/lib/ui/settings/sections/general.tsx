@@ -3,7 +3,7 @@ import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { getSplitOnOptions } from '../../../core/utils/outputs';
-import type { SettingSectionProps } from '../settingsection';
+import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection, SettingLabel } from '../settingsection';
 import type { DropdownSelectionChangeHandler, ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
@@ -114,7 +114,7 @@ export const General = ({
     <SettingLabel labelText={triggerConditionsTitle} infoTooltipText={triggerConditionsTooltipText} isChild={false} />
   );
 
-  const generalSectionProps: SettingSectionProps = {
+  const generalSectionProps: SettingsSectionProps = {
     id: 'general',
     title: generalTitle,
     sectionName: constants.SETTINGSECTIONS.GENERAL,
@@ -137,7 +137,7 @@ export const General = ({
         settingType: 'SettingDropdown',
         settingProp: {
           id: 'arrayValue',
-          readOnly,
+          readOnly: readOnly || !splitOn?.value?.enabled,
           items: getSplitOnOptions(nodeOutputs).map((option) => ({ title: option, value: option })),
           selectedValue: splitOn?.value?.value,
           onSelectionChanged: onSplitOnSelectionChanged,

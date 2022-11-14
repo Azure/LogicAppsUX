@@ -1,19 +1,27 @@
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
-import { addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
+import { addSwitchCaseToWorkflow, addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
 import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
-import { deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
+import { deleteWorkflowNode, deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
+import { addNewEdge } from '../../parsers/restructuringHelpers';
+import { getImmediateSourceNodeIds } from '../../utils/graph';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft-logic-apps/designer-client-services';
-import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/utils';
+import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'reactflow';
+
+export interface AddImplicitForeachPayload {
+  nodeId: string;
+  foreachNodeId: string;
+  operation: any;
+}
 
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
@@ -23,8 +31,10 @@ export const initialWorkflowState: WorkflowState = {
   collapsedGraphIds: {},
   edgeIdsBySource: {},
   idReplacements: {},
+  newlyAddedOperations: {},
 };
 
+const placeholderNodeId = 'builtin:newWorkflowTrigger';
 export const workflowSlice = createSlice({
   name: 'workflow',
   initialState: initialWorkflowState,
@@ -43,13 +53,52 @@ export const workflowSlice = createSlice({
       const graph = getWorkflowNodeFromGraphState(state, action.payload.relationshipIds.graphId);
       if (!graph) throw new Error('graph not set');
 
+      if (action.payload.isTrigger) {
+        deleteWorkflowNode(placeholderNodeId, graph);
+        delete state.nodesMetadata[placeholderNodeId];
+
+        if (graph.edges?.length) {
+          graph.edges = graph.edges.map((edge) => {
+            if (equals(edge.source, placeholderNodeId)) {
+              // eslint-disable-next-line no-param-reassign
+              edge.source = action.payload.nodeId;
+            }
+            return edge;
+          });
+        }
+      }
+
       addNodeToWorkflow(action.payload, graph, state.nodesMetadata, state);
+
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
         message: 'New Action Node Added',
         args: [action.payload],
       });
+    },
+    addImplicitForeachNode: (state: WorkflowState, action: PayloadAction<AddImplicitForeachPayload>) => {
+      const { nodeId, foreachNodeId, operation } = action.payload;
+      const currentNodeToBeReplaced = getWorkflowNodeFromGraphState(state, nodeId) as WorkflowNode;
+      const graphId = state.nodesMetadata[nodeId].graphId;
+      const currentGraph = (graphId === 'root' ? state.graph : getWorkflowNodeFromGraphState(state, graphId)) as WorkflowNode;
+      const parentId = getImmediateSourceNodeIds(currentGraph, nodeId)[0];
+      addNodeToWorkflow(
+        { nodeId: foreachNodeId, relationshipIds: { graphId, parentId, childId: nodeId }, operation },
+        currentGraph,
+        state.nodesMetadata,
+        state
+      );
+      state.operations[foreachNodeId] = { ...state.operations[foreachNodeId], ...operation };
+      const foreachNode = getWorkflowNodeFromGraphState(state, foreachNodeId) as WorkflowNode;
+      moveNodeInWorkflow(
+        currentNodeToBeReplaced,
+        currentGraph,
+        foreachNode,
+        { graphId: foreachNode?.id, parentId: foreachNode.children?.[0].id },
+        state.nodesMetadata,
+        state
+      );
     },
     moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
       if (!state.graph) {
@@ -69,17 +118,40 @@ export const workflowSlice = createSlice({
       if (!state.graph) {
         return; // log exception
       }
-      const graphId = state.nodesMetadata[action.payload.nodeId].graphId;
+      const { nodeId, isTrigger } = action.payload;
+      const graphId = state.nodesMetadata[nodeId]?.graphId;
       const graph = getWorkflowNodeFromGraphState(state, graphId);
       if (!graph) throw new Error('graph not set');
 
-      deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
+      if (isTrigger) {
+        const placeholderNode = {
+          id: placeholderNodeId,
+          width: 200,
+          height: 44,
+          type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
+        };
+        const existingChildren = graph.edges?.filter((edge) => equals(edge.source, nodeId)).map((edge) => edge.target) ?? [];
+
+        deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
+
+        graph.children = [...(graph?.children ?? []), placeholderNode];
+        state.nodesMetadata[placeholderNodeId] = { graphId, isRoot: true };
+        for (const childId of existingChildren) {
+          addNewEdge(state, placeholderNodeId, childId, graph);
+        }
+      } else {
+        deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
+      }
+
       LoggerService().log({
         level: LogEntryLevel.Verbose,
         area: 'Designer:Workflow Slice',
         message: 'Action Node Deleted',
         args: [action.payload],
       });
+    },
+    deleteSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
+      delete (state.operations?.[action.payload.nodeId] as any).cases?.[action.payload.caseId];
     },
     setFocusNode: (state: WorkflowState, action: PayloadAction<string>) => {
       state.focusedCanvasNodeId = action.payload;
@@ -119,6 +191,15 @@ export const workflowSlice = createSlice({
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
       if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
       else state.collapsedGraphIds[action.payload] = true;
+    },
+    addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
+      if (!state.graph) {
+        return; // log exception
+      }
+      const { caseId, nodeId } = action.payload;
+      const node = getWorkflowNodeFromGraphState(state, state.nodesMetadata[nodeId].graphId);
+      if (!node) throw new Error('node not set');
+      addSwitchCaseToWorkflow(caseId, node, state.nodesMetadata, state);
     },
     discardAllChanges: (_state: WorkflowState) => {
       // Will implement later, currently here to test host dispatch
@@ -212,7 +293,7 @@ export const workflowSlice = createSlice({
     },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {
       const { originalId, newId } = action.payload;
-      state.idReplacements[originalId] = newId.replaceAll(' ', '_');
+      state.idReplacements[originalId] = newId.replaceAll(' ', '_').replaceAll('#', '');
     },
   },
   extraReducers: (builder) => {
@@ -234,10 +315,12 @@ export const {
   addNode,
   moveNode,
   deleteNode,
+  deleteSwitchCase,
   updateNodeSizes,
   setNodeDescription,
   setCollapsedGraphIds,
   toggleCollapsedGraphId,
+  addSwitchCase,
   discardAllChanges,
   buildEdgeIdsBySource,
   updateRunAfter,
@@ -246,6 +329,7 @@ export const {
   clearFocusNode,
   setFocusNode,
   replaceId,
+  addImplicitForeachNode,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

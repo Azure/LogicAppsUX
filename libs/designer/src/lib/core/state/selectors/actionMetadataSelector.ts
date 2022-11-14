@@ -16,6 +16,7 @@ interface QueryResult {
 
 export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   const result = useOperationManifest(operationInfo);
+  if (result.isLoading || !result.isFetched || result.isPlaceholderData) return false;
   const manifest = result.data;
   return manifest ? isConnectionRequiredForOperation(manifest) : true;
   // else case needs to be implemented: work item 14936435
@@ -68,6 +69,7 @@ export const useOperationManifest = (operationInfo: NodeOperation) => {
         : undefined,
     {
       enabled: !!connectorId && !!operationId,
+      placeholderData: undefined,
     }
   );
 };
@@ -96,12 +98,16 @@ const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: stri
   };
 };
 
-export const useBrandColor = (operationInfo: NodeOperation) => {
-  return useNodeAttribute(operationInfo, ['brandColor'], ['metadata', 'brandColor']);
+export const useBrandColor = (nodeId: string) => {
+  return useSelector((state: RootState) => {
+    return state.operations.operationMetadata[nodeId]?.brandColor ?? '';
+  });
 };
 
-export const useIconUri = (operationInfo: NodeOperation) => {
-  return useNodeAttribute(operationInfo, ['iconUri'], ['iconUrl']);
+export const useIconUri = (nodeId: string) => {
+  return useSelector((state: RootState) => {
+    return state.operations.operationMetadata[nodeId]?.iconUri ?? '';
+  });
 };
 
 export const useConnectorName = (operationInfo: NodeOperation) => {

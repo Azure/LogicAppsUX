@@ -26,6 +26,7 @@ import { useDispatch, useSelector } from 'react-redux';
 export type ToggleHandler = (checked: boolean) => void;
 export type TextChangeHandler = (newVal: string) => void;
 export type NumberChangeHandler = (newVal: number) => void;
+export type DropdownSelectionChangeHandler = (selectedOption: IDropdownOption) => void;
 
 export interface SectionProps extends Settings {
   readOnly: boolean | undefined;
@@ -51,9 +52,9 @@ export const SettingsPanel = (): JSX.Element => {
 };
 
 function GeneralSettings(): JSX.Element | null {
-  const { validate: triggerValidation, validationErrors } = useValidate();
   const dispatch = useDispatch();
   const nodeId = useSelectedNodeId();
+  const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const { expandedSections, isTrigger, nodeInputs, operationInfo, settings, operations } = useSelector((state: RootState) => {
     return {
       expandedSections: state.settings.expandedSections,
@@ -66,7 +67,7 @@ function GeneralSettings(): JSX.Element | null {
   });
 
   const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions } = useSelector(
-    (state: RootState) => state.operations.settings[nodeId] ?? {}
+    (state: RootState) => state.operations.settings?.[nodeId] ?? {}
   );
 
   useEffect(() => {
@@ -358,11 +359,36 @@ function DataHandlingSettings(): JSX.Element | null {
 }
 
 function NetworkingSettings(): JSX.Element | null {
-  const { validate: triggerValidation, validationErrors } = useValidate();
+  const nodeId = useSelectedNodeId();
+  const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelectedNodeId(),
-    {
+  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
+  const {
+    asynchronous,
+    disableAsyncPattern,
+    suppressWorkflowHeaders,
+    suppressWorkflowHeadersOnResponse,
+    requestOptions,
+    retryPolicy,
+    uploadChunk,
+    paging,
+    downloadChunkSize,
+    operations,
+  } = useSelector((state: RootState) => {
+    const { operations } = state;
+    const operationSettings = operations.settings?.[nodeId];
+    const {
+      asynchronous,
+      disableAsyncPattern,
+      suppressWorkflowHeaders,
+      suppressWorkflowHeadersOnResponse,
+      requestOptions,
+      retryPolicy,
+      uploadChunk,
+      paging,
+      downloadChunkSize,
+    } = operationSettings ?? {};
+    return {
       asynchronous,
       disableAsyncPattern,
       suppressWorkflowHeaders,
@@ -373,141 +399,144 @@ function NetworkingSettings(): JSX.Element | null {
       paging,
       downloadChunkSize,
       operations,
-    } = useSelector((state: RootState) => {
-      const { operations } = state;
-      const operationSettings = operations.settings[nodeId];
-      const {
-        asynchronous,
-        disableAsyncPattern,
-        suppressWorkflowHeaders,
-        suppressWorkflowHeadersOnResponse,
-        requestOptions,
-        retryPolicy,
-        uploadChunk,
-        paging,
-        downloadChunkSize,
-      } = operationSettings;
-      return {
-        asynchronous,
-        disableAsyncPattern,
-        suppressWorkflowHeaders,
-        suppressWorkflowHeadersOnResponse,
-        requestOptions,
-        retryPolicy,
-        uploadChunk,
-        paging,
-        downloadChunkSize,
-        operations,
-      };
-    });
+    };
+  });
 
   useEffect(() => {
     const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
     dispatch(setTabError({ tabName: 'settings', hasErrors, nodeId }));
   }, [dispatch, nodeId, operations, triggerValidation]);
 
+  const updateSettings = (settings: Settings): void => {
+    dispatch(updateNodeSettings({ id: nodeId, settings }));
+  };
+
   const onAsyncPatternToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          disableAsyncPattern: {
-            isSupported: !!disableAsyncPattern?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
+    updateSettings({
+      disableAsyncPattern: {
+        isSupported: !!disableAsyncPattern?.isSupported,
+        value: checked,
+      },
+    });
   };
 
   const onAsyncResponseToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          asynchronous: {
-            isSupported: !!asynchronous?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
+    updateSettings({
+      asynchronous: {
+        isSupported: !!asynchronous?.isSupported,
+        value: checked,
+      },
+    });
   };
 
   const onRequestOptionsChange = (newVal: string): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          requestOptions: {
-            isSupported: !!requestOptions?.isSupported,
-            value: { timeout: newVal },
-          },
-        },
-      })
-    );
+    updateSettings({
+      requestOptions: {
+        isSupported: !!requestOptions?.isSupported,
+        value: { timeout: newVal },
+      },
+    });
   };
 
   const onSuppressHeadersToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          suppressWorkflowHeaders: {
-            isSupported: !!suppressWorkflowHeaders?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
+    updateSettings({
+      suppressWorkflowHeaders: {
+        isSupported: !!suppressWorkflowHeaders?.isSupported,
+        value: checked,
+      },
+    });
   };
 
   const onPaginationValueChange = (newVal: string): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          paging: {
-            isSupported: !!paging?.isSupported,
-            value: {
-              enabled: !!paging?.value?.enabled,
-              value: Number(newVal),
-            },
-          },
+    updateSettings({
+      paging: {
+        isSupported: !!paging?.isSupported,
+        value: {
+          enabled: !!paging?.value?.enabled,
+          value: Number(newVal),
         },
-      })
-    );
+      },
+    });
   };
 
   const onHeadersOnResponseToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          suppressWorkflowHeadersOnResponse: {
-            isSupported: !!suppressWorkflowHeadersOnResponse?.isSupported,
-            value: checked,
-          },
-        },
-      })
-    );
+    updateSettings({
+      suppressWorkflowHeadersOnResponse: {
+        isSupported: !!suppressWorkflowHeadersOnResponse?.isSupported,
+        value: checked,
+      },
+    });
   };
 
   const onContentTransferToggle = (checked: boolean): void => {
-    dispatch(
-      updateNodeSettings({
-        id: nodeId,
-        settings: {
-          uploadChunk: {
-            isSupported: !uploadChunk?.isSupported,
-            value: {
-              ...uploadChunk?.value,
-              transferMode: checked ? constants.SETTINGS.TRANSFER_MODE.CHUNKED : undefined,
-            },
-          },
+    updateSettings({
+      uploadChunk: {
+        isSupported: !uploadChunk?.isSupported,
+        value: {
+          ...uploadChunk?.value,
+          transferMode: checked ? constants.SETTINGS.TRANSFER_MODE.CHUNKED : undefined,
         },
-      })
-    );
+      },
+    });
+  };
+
+  const onRetryPolicyChange = (selectedOption: IDropdownOption): void => {
+    updateSettings({
+      retryPolicy: {
+        isSupported: !!retryPolicy?.isSupported,
+        value: {
+          type: selectedOption.key.toString(),
+        },
+      },
+    });
+  };
+
+  const onRetryCountChange = (newVal: string): void => {
+    updateSettings({
+      retryPolicy: {
+        isSupported: !!retryPolicy?.isSupported,
+        value: {
+          ...(retryPolicy?.value as any),
+          count: Number(newVal),
+        },
+      },
+    });
+  };
+
+  const onRetryIntervalChange = (newVal: string): void => {
+    updateSettings({
+      retryPolicy: {
+        isSupported: !!retryPolicy?.isSupported,
+        value: {
+          ...(retryPolicy?.value as any),
+          interval: newVal,
+        },
+      },
+    });
+  };
+
+  const onRetryMinIntervalChange = (newVal: string): void => {
+    updateSettings({
+      retryPolicy: {
+        isSupported: !!retryPolicy?.isSupported,
+        value: {
+          ...(retryPolicy?.value as any),
+          minimumInterval: newVal,
+        },
+      },
+    });
+  };
+
+  const onRetryMaxIntervalChange = (newVal: string): void => {
+    updateSettings({
+      retryPolicy: {
+        isSupported: !!retryPolicy?.isSupported,
+        value: {
+          ...(retryPolicy?.value as any),
+          maximumInterval: newVal,
+        },
+      },
+    });
   };
 
   const networkingProps: NetworkingSectionProps = {
@@ -532,9 +561,17 @@ function NetworkingSettings(): JSX.Element | null {
     onRequestOptionsChange,
     onHeadersOnResponseToggle,
     onSuppressHeadersToggle,
-    validationErrors: validationErrors.filter(({ key }) => {
-      return key === ValidationErrorKeys.PAGING_COUNT;
-    }),
+    validationErrors: validationErrors.filter(
+      ({ key }) =>
+        key === ValidationErrorKeys.PAGING_COUNT ||
+        key === ValidationErrorKeys.RETRY_COUNT_INVALID ||
+        key === ValidationErrorKeys.RETRY_INTERVAL_INVALID
+    ),
+    onRetryPolicyChange,
+    onRetryCountChange,
+    onRetryIntervalChange,
+    onRetryMinIntervalChange,
+    onRetryMaxIntervalChange,
   };
   if (
     retryPolicy?.isSupported ||
@@ -552,12 +589,12 @@ function NetworkingSettings(): JSX.Element | null {
 }
 
 function RunAfterSettings(): JSX.Element | null {
-  const { validate: triggerValidation, validationErrors } = useValidate();
+  const nodeId = useSelectedNodeId();
+  const { validate: triggerValidation, validationErrors } = useValidate(nodeId);
   const dispatch = useDispatch();
-  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections),
-    nodeId = useSelectedNodeId(),
-    operations = useSelector((state: RootState) => state.operations),
-    { runAfter } = operations.settings[nodeId];
+  const expandedSections = useSelector((state: RootState) => state.settings.expandedSections);
+  const operations = useSelector((state: RootState) => state.operations);
+  const { runAfter } = operations.settings?.[nodeId] ?? {};
 
   useEffect(() => {
     const hasErrors = !!triggerValidation('operations', operations, nodeId).length;
@@ -586,7 +623,7 @@ function SecuritySettings(): JSX.Element | null {
     settings: { secureInputs, secureOutputs },
     operationInfo,
   } = useSelector((state: RootState) => ({
-    settings: state.operations.settings[nodeId] ?? {},
+    settings: state.operations.settings?.[nodeId] ?? {},
     operationInfo: state.operations.operationInfo[nodeId],
   }));
   const onSecureInputsChange = (checked: boolean): void => {

@@ -1,23 +1,25 @@
 import constants from '../../../common/constants';
-import type { RootState } from '../../../core';
-import { getConnectionMetadata, needsAuth } from '../../../core/actions/bjsworkflow/connections';
+import type { AppDispatch, RootState } from '../../../core';
+import { getConnectionMetadata, needsOAuth, updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
-import { useConnectorByNodeId } from '../../../core/state/connection/connectionSelector';
-import { changeConnectionMapping } from '../../../core/state/connection/connectionSlice';
+import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { isolateTab, showDefaultTabs } from '../../../core/state/panel/panelSlice';
 import { useOperationInfo, useOperationManifest } from '../../../core/state/selectors/actionMetadataSelector';
+import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft-logic-apps/designer-client-services';
 import { LogEntryLevel, LoggerService, ConnectionService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connection, ConnectionParameterSet, ConnectionParameterSetValues, ConnectionType } from '@microsoft-logic-apps/utils';
 import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useCallback, useMemo, useState } from 'react';
+import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CreateConnectionTab = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
+  const intl = useIntl();
   const nodeId: string = useSelectedNodeId();
   const connector = useConnectorByNodeId(nodeId);
   const operationInfo = useOperationInfo(nodeId);
@@ -25,19 +27,35 @@ const CreateConnectionTab = () => {
   const connectionMetadata = getConnectionMetadata(operationManifest);
   const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
 
+  const subscriptionsQuery = useSubscriptions();
+  const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState('');
+  const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
+  const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined);
 
   const applyNewConnection = useCallback(
     (newConnection: Connection, _newName: string) => {
-      dispatch(changeConnectionMapping({ nodeId, connectionId: newConnection?.id, connectorId: connector?.id ?? '' }));
+      dispatch(updateNodeConnection({ nodeId, connectionId: newConnection?.id, connectorId: connector?.id ?? '' }));
     },
     [connector?.id, dispatch, nodeId]
   );
 
   const createConnectionCallback = useCallback(
-    async (displayName: string, selectedParameterSet?: ConnectionParameterSet, parameterValues: Record<string, any> = {}) => {
+    async (
+      displayName?: string,
+      selectedParameterSet?: ConnectionParameterSet,
+      parameterValues: Record<string, any> = {},
+      isOAuthConnection?: boolean
+    ) => {
+      if (!connector?.id) return;
+
+      setIsLoading(true);
+      setErrorMessage(undefined);
+
       const connectionParameterSetValues: ConnectionParameterSetValues = {
         name: selectedParameterSet?.name ?? '',
         values: Object.keys(parameterValues).reduce((acc: any, key) => {
@@ -58,66 +76,56 @@ const CreateConnectionTab = () => {
         connectionParameters: selectedParameterSet?.parameters ?? connector?.properties.connectionParameters,
       };
 
-      setIsLoading(true);
-      const connectorId = connector?.id as string;
-      const uniqueConnectionName = await getUniqueConnectionName(connectorId);
-      const newConnection = await ConnectionService().createConnection(
-        uniqueConnectionName,
-        connectorId,
-        connectionInfo,
-        parametersMetadata
-      );
+      try {
+        let connection, err;
 
-      applyNewConnection(newConnection, uniqueConnectionName);
-      dispatch(showDefaultTabs());
+        const newName = await getUniqueConnectionName(connector.id);
+        if (isOAuthConnection) {
+          await ConnectionService()
+            .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
+            .then(({ connection: c, errorMessage }) => {
+              connection = c;
+              err = errorMessage;
+            })
+            .catch((errorMessage) => (err = errorMessage));
+        } else {
+          await ConnectionService()
+            .createConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
+            .then((c) => (connection = c))
+            .catch((errorMessage) => (err = errorMessage));
+        }
+
+        if (connection) {
+          applyNewConnection(connection, newName);
+          dispatch(showDefaultTabs());
+        } else if (err) {
+          setErrorMessage(err);
+        }
+      } catch (error: any) {
+        setErrorMessage(error.responseText);
+        const message = `Failed to create OAuth connection: ${error}`;
+        LoggerService().log({ level: LogEntryLevel.Error, area: 'create connection tab', message });
+      }
       setIsLoading(false);
     },
-    [applyNewConnection, connectionMetadata, connector, dispatch]
+    [applyNewConnection, connectionMetadata?.type, connector, dispatch]
   );
-
-  const needsAuthentication = useMemo(() => needsAuth(connector), [connector]);
-  const authClickCallback = useCallback(async () => {
-    if (!connector?.id) return;
-
-    setIsLoading(true);
-    setErrorMessage(undefined);
-
-    const newName = await getUniqueConnectionName(connector.id);
-    const connectionInfo: ConnectionCreationInfo = {
-      displayName: newName,
-      connectionParametersSet: undefined,
-      connectionParameters: undefined,
-    };
-
-    try {
-      const { connection, errorMessage: e } = await ConnectionService().createAndAuthorizeOAuthConnection(
-        newName,
-        connector?.id ?? '',
-        connectionInfo
-      );
-      if (connection) {
-        applyNewConnection(connection, newName);
-        dispatch(showDefaultTabs());
-      } else if (e) {
-        setErrorMessage(e);
-      }
-    } catch (error) {
-      const errorMessage = `Failed to create OAuth connection: ${error}`;
-      LoggerService().log({
-        level: LogEntryLevel.Error,
-        area: 'create connection tab',
-        message: errorMessage,
-      });
-    }
-    setIsLoading(false);
-  }, [applyNewConnection, connector?.id, dispatch]);
 
   const cancelCallback = useCallback(() => {
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
   }, [dispatch]);
 
-  // By the time you get to this component, there should always be a connector associated
-  if (connector?.properties === undefined) return <p></p>;
+  const loadingText = intl.formatMessage({
+    defaultMessage: 'Loading connection data...',
+    description: 'Message to show under the loading icon when loading connection parameters',
+  });
+
+  if (connector?.properties === undefined)
+    return (
+      <div className="msla-loading-container">
+        <Spinner size={SpinnerSize.large} label={loadingText} />
+      </div>
+    );
 
   return (
     <CreateConnection
@@ -128,9 +136,15 @@ const CreateConnectionTab = () => {
       isLoading={isLoading}
       cancelCallback={cancelCallback}
       hideCancelButton={!hasExistingConnection}
-      needsAuth={needsAuthentication}
-      authClickCallback={authClickCallback}
       errorMessage={errorMessage}
+      clearErrorCallback={() => setErrorMessage(undefined)}
+      selectSubscriptionCallback={(subscriptionId: string) => {
+        setSelectedSubscriptionId(subscriptionId);
+      }}
+      selectedSubscriptionId={selectedSubscriptionId}
+      availableSubscriptions={subscriptions}
+      availableGateways={availableGateways}
+      checkOAuthCallback={needsOAuth}
     />
   );
 };

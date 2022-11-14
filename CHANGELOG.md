@@ -1,4 +1,120 @@
 # Logic Apps Designer
+
+### [0.2.16](https://github.com/Azure/LogicAppsUX/compare/v0.2.15...v0.2.16) (2022-11-14)
+
+### [0.2.15](https://github.com/Azure/LogicAppsUX/compare/v0.2.14...v0.2.15) (2022-11-13)
+
+### [0.2.14](https://github.com/Azure/LogicAppsUX/compare/v0.2.13...v0.2.14) (2022-11-12)
+
+### [0.2.13](https://github.com/Azure/LogicAppsUX/compare/v0.2.12...v0.2.13) (2022-11-11)
+
+### Logic Apps Designer Changes
+
+- Improved Conditional Parameter Visibility Logic ([#1288](https://github.com/Azure/LogicAppsUX/issues/1288)) ([db011cd](https://github.com/Azure/LogicAppsUX/commit/db011cd6ed244c9c57719d484eae92ba35f3dfc6))
+
+### Logic Apps Designer Bug Fixes
+
+- Remove Parameters Tab in Scope Nodes and Allow Action Namechange Within Subgraphs ([#1291](https://github.com/Azure/LogicAppsUX/issues/1291)) ([93edb7d](https://github.com/Azure/LogicAppsUX/commit/93edb7db86524892b397a4ec54ef1590fd60cef9))
+
+### [0.2.12](https://github.com/Azure/LogicAppsUX/compare/v0.2.11...v0.2.12) (2022-11-10)
+
+### Logic Apps Designer Bug Fixes
+
+- Fixing upstream node calculations for nested scope nodes ([#1281](https://github.com/Azure/LogicAppsUX/issues/1281)) ([c7c6ad9](https://github.com/Azure/LogicAppsUX/commit/c7c6ad9da49bd6d850c2dcf49dc3e5fb54e220db))
+
+### [0.2.11](https://github.com/Azure/LogicAppsUX/compare/v0.2.10...v0.2.11) (2022-11-09)
+
+### Logic Apps Designer Changes
+
+- Fixing node renaming / token data inconsistencies ([#1265](https://github.com/Azure/LogicAppsUX/issues/1265)) ([ad3a476](https://github.com/Azure/LogicAppsUX/commit/ad3a4761cce12a0a88276c8be727ee129edabf4f))
+
+### Data Mapper Changes
+
+- testing deserialization and beginning support for loops ([#1273](https://github.com/Azure/LogicAppsUX/issues/1273)) ([a62cbd2](https://github.com/Azure/LogicAppsUX/commit/a62cbd24f257709e53761ff23606f30b6add06c6))
+
+### Logic Apps Designer Bug Fixes
+
+- Allow trigger deletion and replacing them ([#1280](https://github.com/Azure/LogicAppsUX/issues/1280)) ([e0ae4cf](https://github.com/Azure/LogicAppsUX/commit/e0ae4cf2e992b8ec15787a5083e03b2e8d97c49b))
+- Hide yellow warnings about unicode characters in code editor ([#1279](https://github.com/Azure/LogicAppsUX/issues/1279)) ([c38206f](https://github.com/Azure/LogicAppsUX/commit/c38206f788f2282aa044837380e314dd0ddee88a))
+
+### [0.2.10](https://github.com/Azure/LogicAppsUX/compare/v0.2.9...v0.2.10) (2022-11-08)
+
+### [0.2.9](https://github.com/Azure/LogicAppsUX/compare/v0.2.8...v0.2.9) (2022-11-08)
+
+### Features
+
+- Add support for interaction with the mini map ([#1270](https://github.com/Azure/LogicAppsUX/issues/1270)) ([8162142](https://github.com/Azure/LogicAppsUX/commit/8162142c17e55e8f4fb17f510373c47d13572ef7))
+
+### [0.2.8](https://github.com/Azure/LogicAppsUX/compare/v0.2.7...v0.2.8) (2022-11-07)
+
+### [0.2.7](https://github.com/Azure/LogicAppsUX/compare/v0.2.6...v0.2.7) (2022-11-06)
+
+### [0.2.6](https://github.com/Azure/LogicAppsUX/compare/v0.2.5...v0.2.6) (2022-11-05)
+
+### [0.2.5](https://github.com/Azure/LogicAppsUX/compare/v0.2.4...v0.2.5) (2022-11-04)
+
+### [0.2.4](https://github.com/Azure/LogicAppsUX/compare/v0.2.3...v0.2.4) (2022-11-03)
+
+### [0.2.3](https://github.com/Azure/LogicAppsUX/compare/v0.2.2...v0.2.3) (2022-11-03)
+
+### [0.2.2](https://github.com/Azure/LogicAppsUX/compare/v0.2.1...v0.2.2) (2022-11-02)
+
+### [0.2.1](https://github.com/Azure/LogicAppsUX/compare/v0.1.51...v0.2.1) (2022-11-01)
+
+### [0.1.51](https://github.com/Azure/LogicAppsUX/compare/v0.1.50...v0.1.51) (2022-11-01)
+
+### [0.1.50](https://github.com/Azure/LogicAppsUX/compare/v0.1.49...v0.1.50) (2022-11-01)
+
+### [0.1.49](https://github.com/Azure/LogicAppsUX/compare/v0.1.48...v0.1.49) (2022-10-29)
+
+### [0.1.48](https://github.com/Azure/LogicAppsUX/compare/v0.1.47...v0.1.48) (2022-10-27)
+
+### [0.1.47](https://github.com/Azure/LogicAppsUX/compare/v0.1.46...v0.1.47) (2022-10-27)
+
+### [0.1.46](https://github.com/Azure/LogicAppsUX/compare/v0.1.45...v0.1.46) (2022-10-27)
+
+### [0.1.45](https://github.com/Azure/LogicAppsUX/compare/v0.1.44...v0.1.45) (2022-10-27)
+
+### [0.1.44](https://github.com/Azure/LogicAppsUX/compare/v0.1.43...v0.1.44) (2022-10-26)
+
+### [0.1.43](https://github.com/Azure/logic_apps_designer/compare/v0.1.42...v0.1.43) (2022-10-21)
+
+### [0.1.42](https://github.com/Azure/logic_apps_designer/compare/v0.1.41...v0.1.42) (2022-10-21)
+
+### [0.1.41](https://github.com/Azure/logic_apps_designer/compare/v0.1.40...v0.1.41) (2022-10-21)
+
+### [0.1.40](https://github.com/Azure/logic_apps_designer/compare/v0.1.39...v0.1.40) (2022-10-20)
+
+### [0.1.39](https://github.com/Azure/logic_apps_designer/compare/v0.1.38...v0.1.39) (2022-10-19)
+
+### [0.1.38](https://github.com/Azure/logic_apps_designer/compare/v0.1.37...v0.1.38) (2022-10-18)
+
+### [0.1.37](https://github.com/Azure/logic_apps_designer/compare/v0.1.36...v0.1.37) (2022-10-17)
+
+### [0.1.36](https://github.com/Azure/logic_apps_designer/compare/v0.1.35...v0.1.36) (2022-10-16)
+
+### [0.1.35](https://github.com/Azure/logic_apps_designer/compare/v0.1.34...v0.1.35) (2022-10-15)
+
+### [0.1.34](https://github.com/Azure/logic_apps_designer/compare/v0.1.33...v0.1.34) (2022-10-14)
+
+### [0.1.33](https://github.com/Azure/logic_apps_designer/compare/v0.1.32...v0.1.33) (2022-10-13)
+
+### [0.1.32](https://github.com/Azure/logic_apps_designer/compare/v0.1.31...v0.1.32) (2022-10-13)
+
+### [0.1.31](https://github.com/Azure/logic_apps_designer/compare/v0.1.30...v0.1.31) (2022-10-12)
+
+### [0.1.30](https://github.com/Azure/logic_apps_designer/compare/v0.1.29...v0.1.30) (2022-10-11)
+
+### [0.1.29](https://github.com/Azure/logic_apps_designer/compare/v0.1.28...v0.1.29) (2022-10-10)
+
+### [0.1.28](https://github.com/Azure/logic_apps_designer/compare/v0.1.27...v0.1.28) (2022-10-09)
+
+### [0.1.27](https://github.com/Azure/logic_apps_designer/compare/v0.1.26...v0.1.27) (2022-10-08)
+
+### [0.1.26](https://github.com/Azure/logic_apps_designer/compare/v0.1.25...v0.1.26) (2022-10-07)
+
+### [0.1.25](https://github.com/Azure/logic_apps_designer/compare/v0.1.24...v0.1.25) (2022-10-06)
+
 ### [0.1.24](https://github.com/Azure/logic_apps_designer/compare/v0.1.23...v0.1.24) (2022-10-05)
 
 ### [0.1.23](https://github.com/Azure/logic_apps_designer/compare/v0.1.22...v0.1.23) (2022-10-04)

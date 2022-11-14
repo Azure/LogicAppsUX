@@ -8,6 +8,7 @@ import BigWorkflow from './storybookWorkflows/simpleBigworkflow.json';
 import SimpleWorkflow from './storybookWorkflows/simpleSmallWorkflow.json';
 import {
   StandardConnectionService,
+  StandardOAuthService,
   StandardOperationManifestService,
   StandardSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
@@ -68,6 +69,15 @@ const RenderedComponent = (props: ComponentProps) => (
             },
             isDev: true,
           }),
+          oAuthService: new StandardOAuthService({
+            baseUrl: '/url',
+            apiVersion: '2018-11-01',
+            httpClient,
+            subscriptionId: '',
+            resourceGroup: '',
+            location: '',
+          }),
+          workflowService: { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) },
         },
       }}
     >
@@ -83,7 +93,7 @@ export const SimpleButBigDefinition = () => <RenderedComponent workflow={BigWork
 export const ReadOnlyExample = () => <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true }} />;
 
 export const MonitoringViewExample = () => (
-  <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true, isMonitoringView: true }} />
+  <RenderedComponent workflow={SimpleWorkflow as Workflow} options={{ readOnly: true, isMonitoringView: true, isDarkMode: false }} />
 );
 
 export const ConnectionsExample = () => <RenderedComponent workflow={ConnectionsWorkflow.files as Workflow} options={{}} />;

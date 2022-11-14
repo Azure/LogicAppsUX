@@ -1,10 +1,4 @@
 {
-  "+1GH4O": [
-    {
-      "type": 0,
-      "value": "OK"
-    }
-  ],
   "+20fdv": [
     {
       "type": 0,
@@ -181,6 +175,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Bakoe"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Opslaan"
     }
   ],
   "0FzNJV": [
@@ -421,12 +421,6 @@
       "value": "5"
     }
   ],
-  "1yiiWM": [
-    {
-      "type": 0,
-      "value": "Upload of selecteer een doelschema dat voor de toewijzing moet worden gebruikt."
-    }
-  ],
   "1zgFh1": [
     {
       "type": 0,
@@ -497,6 +491,12 @@
     {
       "type": 0,
       "value": "Beheerde identiteit"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Bestaande selecteren"
     }
   ],
   "2b1yD3": [
@@ -595,6 +595,12 @@
       "value": "(UTC+02:00) Chisinau"
     }
   ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Als u een bestaand schema vervangt door een incompatibel schema, kunnen er fouten in uw kaart worden veroorzaakt."
+    }
+  ],
   "3TD2V5": [
     {
       "type": 0,
@@ -689,6 +695,12 @@
     {
       "type": 0,
       "value": "(UTC+04:00) Jerevan"
+    }
+  ],
+  "438H98": [
+    {
+      "type": 0,
+      "value": "Wijzigingen negeren"
     }
   ],
   "45ubha": [
@@ -811,12 +823,6 @@
       "value": "Indien een object, matrix of tekenreeks leeg is, wordt Waar geretourneerd"
     }
   ],
-  "5bE93I": [
-    {
-      "type": 0,
-      "value": "Bronschema toevoegen"
-    }
-  ],
   "5cPiWA": [
     {
       "type": 0,
@@ -863,6 +869,12 @@
     {
       "type": 0,
       "value": "Testkaart"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Annuleren"
     }
   ],
   "6XR3FS": [
@@ -1167,6 +1179,12 @@
       "value": "Annuleren"
     }
   ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Sluiten"
+    }
+  ],
   "9JuvQ4": [
     {
       "type": 0,
@@ -1291,10 +1309,10 @@
       "value": "Vereist. De tekenreeks die moet worden gecodeerd naar de Base 64-indeling."
     }
   ],
-  "AwwPJC": [
+  "Az0QvG": [
     {
       "type": 0,
-      "value": "Het doelschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het doelschema?"
+      "value": "Automatisch"
     }
   ],
   "B/JzwK": [
@@ -1409,6 +1427,12 @@
       "value": "Statustype:"
     }
   ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Samenvouwen"
+    }
+  ],
   "BuYrD3": [
     {
       "type": 0,
@@ -1433,12 +1457,6 @@
       "value": "Een verbinding is vereist"
     }
   ],
-  "CSoHMf": [
-    {
-      "type": 0,
-      "value": "Bestaand schema vervangen"
-    }
-  ],
   "Ciol6I": [
     {
       "type": 0,
@@ -1448,7 +1466,7 @@
   "CkfIxl": [
     {
       "type": 0,
-      "value": "Source node removed from view."
+      "value": "Bronknooppunt is verwijderd uit weergave."
     }
   ],
   "CsPY74": [
@@ -1559,10 +1577,16 @@
       "value": "Antwoord"
     }
   ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Make Group"
+    }
+  ],
   "EV9iRu": [
     {
       "type": 0,
-      "value": "Failed to save."
+      "value": "Opslaan is mislukt."
     }
   ],
   "EYqGxA": [
@@ -1761,6 +1785,12 @@
       "value": "Status"
     }
   ],
+  "FuXqJI": [
+    {
+      "type": 0,
+      "value": "Doelschema bijwerken"
+    }
+  ],
   "G/CC5/": [
     {
       "type": 0,
@@ -1799,12 +1829,6 @@
       "value": "Vereist. Het object dat in de verzameling Binnen moet worden gevonden."
     }
   ],
-  "GWpB4z": [
-    {
-      "type": 0,
-      "value": "Bronschema"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -1817,10 +1841,10 @@
       "value": "Indien de parameters onwaar zijn, wordt Waar geretourneerd"
     }
   ],
-  "GdnEhu": [
+  "GdGm4T": [
     {
       "type": 0,
-      "value": "Upload of selecteer een bronschema dat voor de toewijzing moet worden gebruikt."
+      "value": "Meer opdrachten"
     }
   ],
   "Gi72X5": [
@@ -1863,6 +1887,12 @@
     {
       "type": 0,
       "value": "Vereist. De tekenreeks die moet worden gesegmenteerd."
+    }
+  ],
+  "H7t3Pm": [
+    {
+      "type": 0,
+      "value": "Het doelschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het doelschema?"
     }
   ],
   "H8bEUn": [
@@ -1909,6 +1939,16 @@
       "value": "Selecteer een kaart om de inhoud weer te geven"
     }
   ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Gateway installeren"
+    }
+  ],
   "HzS2gJ": [
     {
       "type": 0,
@@ -1943,6 +1983,12 @@
     {
       "type": 0,
       "value": "Hiermee wordt een tekenreekstijdstempel die is ingevoerd vanuit een UTC-tijdzone geconverteerd naar een doeltijdzone"
+    }
+  ],
+  "Ie4sUt": [
+    {
+      "type": 0,
+      "value": "Configureren"
     }
   ],
   "IgNz8Y": [
@@ -2179,12 +2225,6 @@
       "value": "Werkstroomgrafiek verwijderen"
     }
   ],
-  "LCUU5q": [
-    {
-      "type": 0,
-      "value": "Waarschuwing"
-    }
-  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -2389,6 +2429,12 @@
       "value": "Onverwachte fout"
     }
   ],
+  "MnThTq": [
+    {
+      "type": 0,
+      "value": "Functie invoegen"
+    }
+  ],
   "N0pS6Y": [
     {
       "type": 0,
@@ -2417,6 +2463,12 @@
     {
       "type": 0,
       "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "Nn/DN4": [
+    {
+      "type": 0,
+      "value": "This connection would introduce circular logic."
     }
   ],
   "NnD8gF": [
@@ -2452,7 +2504,7 @@
   "NtY1mD": [
     {
       "type": 0,
-      "value": "Remove all references to node ' "
+      "value": "Verwijder alle verwijzingen naar knooppunt "
     },
     {
       "type": 1,
@@ -2460,7 +2512,7 @@
     },
     {
       "type": 0,
-      "value": " ' before you remove the node."
+      "value": " voordat u het knooppunt verwijdert."
     }
   ],
   "NvANon": [
@@ -2553,6 +2605,12 @@
       "value": "Verbindingsnaam"
     }
   ],
+  "OL5S5H": [
+    {
+      "type": 0,
+      "value": "Aangepaste waarde invoeren"
+    }
+  ],
   "OOUSLP": [
     {
       "type": 0,
@@ -2583,10 +2641,10 @@
       "value": "Hiermee worden de resultaten geretourneerd van de acties op het hoogste niveau in de opgegeven actie met bereik, zoals een For_each-, Until- of Scope-actie."
     }
   ],
-  "OcJdKG": [
+  "OdNhwc": [
     {
       "type": 0,
-      "value": "Al het niet-opgeslagen werk gaat verloren. Wilt u doorgaan met het verwijderen van alles?"
+      "value": "Groep opheffen"
     }
   ],
   "Oib1mL": [
@@ -2787,10 +2845,10 @@
       "value": "De invoer naar het waardetype JSON converteren"
     }
   ],
-  "QGuYOg": [
+  "QGbUXX": [
     {
       "type": 0,
-      "value": "Mag null zijn"
+      "value": "Statuscode"
     }
   ],
   "QQYzHC": [
@@ -2877,6 +2935,12 @@
       "value": "Triggers kunnen niet worden verwijderd."
     }
   ],
+  "R7v2iQ": [
+    {
+      "type": 0,
+      "value": "Er wordt automatisch een lijn tussen matrixelementen gemaakt om luselementen aan te geven."
+    }
+  ],
   "RFjYpH": [
     {
       "type": 0,
@@ -2937,6 +3001,12 @@
     {
       "type": 0,
       "value": "6"
+    }
+  ],
+  "Rno87I": [
+    {
+      "type": 0,
+      "value": "Wilt u alle niet-opgeslagen wijzigingen negeren?"
     }
   ],
   "S8P4N5": [
@@ -3099,6 +3169,12 @@
       "value": "Naam"
     }
   ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Onbewerkt"
+    }
+  ],
   "Tb2QLA": [
     {
       "type": 0,
@@ -3109,6 +3185,12 @@
     {
       "type": 0,
       "value": "Tags"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Aangepast"
     }
   ],
   "ToPmjE": [
@@ -3515,6 +3597,12 @@
       "value": "Vereist. De naam van de actie met de gewenste hoofdtekstuitvoer."
     }
   ],
+  "XylNMU": [
+    {
+      "type": 0,
+      "value": "Het bronschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het bronschema?"
+    }
+  ],
   "Y/bcmG": [
     {
       "type": 0,
@@ -3605,12 +3693,6 @@
       "value": "Uitzoomen"
     }
   ],
-  "Z4QLEf": [
-    {
-      "type": 0,
-      "value": "Configuratie"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -3669,12 +3751,6 @@
     {
       "type": 0,
       "value": "Niet-ondersteunde in-waarde: {value} in parameter"
-    }
-  ],
-  "a64zhX": [
-    {
-      "type": 0,
-      "value": "Negeren"
     }
   ],
   "a7j3gS": [
@@ -3739,10 +3815,10 @@
       "value": "PFX invoeren"
     }
   ],
-  "ajAro8": [
+  "auUI93": [
     {
       "type": 0,
-      "value": "Toevoegen"
+      "value": "Voeg een bronschema toe of selecteer dit om te gebruiken voor uw kaart."
     }
   ],
   "b9/1dK": [
@@ -3761,10 +3837,28 @@
       "value": "controls"
     }
   ],
+  "bCQ6JT": [
+    {
+      "type": 0,
+      "value": "Matrixtoewijzing"
+    }
+  ],
   "bG9rjv": [
     {
       "type": 0,
       "value": "Acties"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Verwijderen"
+    }
+  ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Abonnement"
     }
   ],
   "bS5DyV": [
@@ -3897,6 +3991,12 @@
       "value": "(UTC+02:00) Tripoli"
     }
   ],
+  "cbL6Gv": [
+    {
+      "type": 0,
+      "value": "Uw schema's toevoegen of vervangen."
+    }
+  ],
   "cgq/+y": [
     {
       "type": 0,
@@ -3939,6 +4039,12 @@
       "value": "Vereist. De verzameling waarin de objecten van de eerste telling moeten worden overgeslagen."
     }
   ],
+  "d32jcW": [
+    {
+      "type": 0,
+      "value": "Waarschuwing"
+    }
+  ],
   "d3bSQA": [
     {
       "type": 0,
@@ -3954,7 +4060,7 @@
   "dA6SUc": [
     {
       "type": 0,
-      "value": "Connection deleted."
+      "value": "De verbinding is verwijderd."
     }
   ],
   "dDYCuU": [
@@ -4061,6 +4167,12 @@
       "value": "Niet opgegeven"
     }
   ],
+  "eCkaMR": [
+    {
+      "type": 0,
+      "value": "Bronschema bijwerken"
+    }
+  ],
   "eGa1Wa": [
     {
       "type": 0,
@@ -4071,12 +4183,6 @@
     {
       "type": 0,
       "value": "Vereist. De naam van de variabele met de gewenste waarde."
-    }
-  ],
-  "eRoJ/H": [
-    {
-      "type": 0,
-      "value": "Doelschema"
     }
   ],
   "eRvGw3": [
@@ -4157,10 +4263,30 @@
       "value": "Het aantal pagineringen overschrijdt de maximumwaarde"
     }
   ],
+  "fLSetk": [
+    {
+      "type": 0,
+      "value": "Bronschema"
+    }
+  ],
   "faSDuD": [
     {
       "type": 0,
       "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -4401,12 +4527,6 @@
       "value": "Doelgroep"
     }
   ],
-  "hwngB3": [
-    {
-      "type": 0,
-      "value": "Het bronschema wordt vervangen en u kunt niet teruggaan naar eerdere wijzigingen. Wilt u doorgaan met het wijzigen van het bronschema?"
-    }
-  ],
   "i/SguY": [
     {
       "type": 0,
@@ -4507,6 +4627,12 @@
       "value": "Voor deze actie zijn tests geconfigureerd."
     }
   ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Beheerde identiteit"
+    }
+  ],
   "iU1OJh": [
     {
       "type": 0,
@@ -4569,6 +4695,12 @@
     {
       "type": 0,
       "value": "Retourneert de waarde van de opgegeven variabele."
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Voeg een doelschema toe of selecteer dit om te gebruiken voor uw kaart."
     }
   ],
   "jHHF/u": [
@@ -4635,6 +4767,12 @@
     {
       "type": 0,
       "value": "Duur"
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
     }
   ],
   "k/oqFL": [
@@ -4793,6 +4931,12 @@
       "value": "Vorige"
     }
   ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Groep toevoegen"
+    }
+  ],
   "lcVG4C": [
     {
       "type": 0,
@@ -4850,7 +4994,7 @@
   "mE7w9G": [
     {
       "type": 0,
-      "value": "Function deleted."
+      "value": "Functie is verwijderd."
     }
   ],
   "mGUdCO": [
@@ -4949,6 +5093,12 @@
       "value": "Vereist. De waarde die wordt geconverteerd naar een drijvend-kommagetal."
     }
   ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
+    }
+  ],
   "n7wxxN": [
     {
       "type": 0,
@@ -4965,6 +5115,12 @@
     {
       "type": 0,
       "value": "Vereist. Het aantal tijdseenheden waarmee de gewenste tijd in de toekomst wordt opgegeven."
+    }
+  ],
+  "nQxMfu": [
+    {
+      "type": 0,
+      "value": "Clear custom value and reselect"
     }
   ],
   "nSan4V": [
@@ -5065,6 +5221,12 @@
       "value": "Voer de uitvoerings-id in om de uitvoering te openen"
     }
   ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Hoofdtekst van de reactie"
+    }
+  ],
   "ol+TkT": [
     {
       "type": 0,
@@ -5110,7 +5272,15 @@
   "p7YGxW": [
     {
       "type": 0,
-      "value": "Error executing the api {parameters}."
+      "value": "Fout bij het uitvoeren van de API "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "pC2nr2": [
@@ -5413,6 +5583,12 @@
       "value": "(UTC-06:00) Central Time (VS en Canada)"
     }
   ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Nieuwe toevoegen"
+    }
+  ],
   "s5RV9B": [
     {
       "type": 0,
@@ -5503,6 +5679,12 @@
       "value": "Bladeren"
     }
   ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Clientcertificaat"
+    }
+  ],
   "t+XCkg": [
     {
       "type": 0,
@@ -5567,6 +5749,12 @@
     {
       "type": 0,
       "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basis"
     }
   ],
   "tZj2Xn": [
@@ -5937,6 +6125,12 @@
       "value": "Er wordt een weergave van een tekenreeks met URI-codering geretourneerd"
     }
   ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Rij toevoegen"
+    }
+  ],
   "xN3GEX": [
     {
       "type": 0,
@@ -6033,6 +6227,12 @@
       "value": "8"
     }
   ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Een waarde kiezen"
+    }
+  ],
   "yoCi15": [
     {
       "type": 0,
@@ -6049,12 +6249,6 @@
     {
       "type": 0,
       "value": "Datum- en tijdfuncties"
-    }
-  ],
-  "yrWKLF": [
-    {
-      "type": 0,
-      "value": "Doelschema toevoegen"
     }
   ],
   "ysoumb": [
@@ -6103,6 +6297,12 @@
     {
       "type": 0,
       "value": "Waarde invoeren"
+    }
+  ],
+  "zGRgUE": [
+    {
+      "type": 0,
+      "value": "Doelschema"
     }
   ],
   "zIDVd9": [

@@ -19,7 +19,7 @@
         "Scope": {
           "actions": {},
           "runAfter": {
-            "Get_Hourly_Forecasts": ["Succeeded"]
+            "Get_Hourly_Forecasts": ["SUCCEEDED"]
           },
           "type": "Scope"
         }

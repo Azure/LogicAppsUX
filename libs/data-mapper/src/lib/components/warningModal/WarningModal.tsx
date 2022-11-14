@@ -1,80 +1,71 @@
-import { closeAllWarning, setOkClicked, WarningModalState } from '../../core/state/ModalSlice';
+import { closeModal, setModalOkClicked } from '../../core/state/ModalSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { Dialog, DialogFooter, DefaultButton, PrimaryButton } from '@fluentui/react';
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogBody,
+  DialogContent,
+  DialogSurface,
+  DialogTitle,
+  DialogTrigger,
+} from '@fluentui/react-components';
 import { useCallback } from 'react';
 import type { FunctionComponent } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const WarningModal: FunctionComponent = () => {
-  const isWarningModalOpen = useSelector((state: RootState) => state.modal.isWarningModalOpen);
-  const warningModalType = useSelector((state: RootState) => state.modal.warningModalType);
-
-  const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
 
-  const warningHeader = intl.formatMessage({
-    defaultMessage: 'Warning',
-    description: 'Header text for warning the user for not being allowed to go back to make changes',
+  const isWarningModalOpen = useSelector((state: RootState) => state.modal.isWarningModalOpen);
+
+  const discardChangesTitleLoc = intl.formatMessage({
+    defaultMessage: 'Discard changes',
+    description: 'Title for discard modal',
   });
-  const warningMessage =
-    warningModalType === WarningModalState.DiscardWarning
-      ? intl.formatMessage({
-          defaultMessage: 'All unsaved work will be gone. Do you want to proceed to discard everything?',
-          description:
-            'Message to inform users that they will not be able to revert back to previous changes and to ask if they want to proceed.',
-        })
-      : warningModalType === WarningModalState.ChangeSourceWarning
-      ? intl.formatMessage({
-          defaultMessage:
-            'Source schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change source schema?',
-          description:
-            'Message to inform users that they will not be able to revert back to previous changes after changing source schema and to ask if they still want to proceed',
-        })
-      : warningModalType === WarningModalState.ChangeTargetWarning
-      ? intl.formatMessage({
-          defaultMessage:
-            'Target schema will be replaced and you will not be able to go back to previous changes. Do you want to proceed to change target schema?',
-          description:
-            'Message to inform users that they will not be able to revert back to previous changes after changing target schema and to ask if they still want to proceed',
-        })
-      : '';
-  const okMessage = intl.formatMessage({
-    defaultMessage: 'OK',
-    description: 'Button text for OK to proceed with agreeing to the warning displayed',
+
+  const discardChangesMessageLoc = intl.formatMessage({
+    defaultMessage: 'Do you want to discard all unsaved changes?',
+    description: 'Discard warning message',
   });
-  const cancelMessage = intl.formatMessage({
+
+  const cancelLoc = intl.formatMessage({
     defaultMessage: 'Cancel',
-    description: 'Button text for Cancel to stop proceeding by reading the warning displayed',
+    description: 'Cancel',
   });
 
-  const closeWarningModal = useCallback(() => {
-    dispatch(closeAllWarning());
+  const discardLoc = intl.formatMessage({
+    defaultMessage: 'Discard',
+    description: 'Discard',
+  });
+
+  const onClickOk = useCallback(() => {
+    dispatch(setModalOkClicked());
   }, [dispatch]);
 
-  const dialogContentProps = {
-    title: warningHeader,
-    subText: warningMessage,
-  };
+  const closeWarningModal = useCallback(() => {
+    dispatch(closeModal());
+  }, [dispatch]);
 
   return (
-    <div>
-      <Dialog
-        hidden={!isWarningModalOpen}
-        onDismiss={closeWarningModal}
-        dialogContentProps={dialogContentProps}
-        modalProps={{ isBlocking: true }}
-      >
-        <DialogFooter>
-          <PrimaryButton
-            onClick={() => {
-              dispatch(setOkClicked());
-            }}
-            text={okMessage}
-          />
-          <DefaultButton onClick={closeWarningModal} text={cancelMessage} />
-        </DialogFooter>
-      </Dialog>
-    </div>
+    <Dialog modalType="alert" open={isWarningModalOpen}>
+      <DialogSurface>
+        <DialogBody>
+          <DialogTitle>{discardChangesTitleLoc}</DialogTitle>
+          <DialogContent>{discardChangesMessageLoc}</DialogContent>
+
+          <DialogActions>
+            <DialogTrigger>
+              <Button onClick={closeWarningModal}>{cancelLoc}</Button>
+            </DialogTrigger>
+            <Button appearance="primary" onClick={onClickOk}>
+              {discardLoc}
+            </Button>
+          </DialogActions>
+        </DialogBody>
+      </DialogSurface>
+    </Dialog>
   );
 };

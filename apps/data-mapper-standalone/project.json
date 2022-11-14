@@ -52,7 +52,11 @@
       "configurations": {
         "production": {
           "buildTarget": "data-mapper-standalone:build:production",
-          "hmr": false
+          "hmr": false,
+          "host": "localhost",
+          "ssl": true,
+          "sslKey": "local-key.pem",
+          "sslCert": "local-cert.pem"
         },
         "development": {
           "buildTarget": "data-mapper-standalone:build:development"

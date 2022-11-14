@@ -1,5 +1,5 @@
 import type { AuthProps, OAuthProps } from '..';
-import type { ChangeState } from '../../editor/base';
+import type { ChangeState, TokenPickerHandler } from '../../editor/base';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
@@ -16,54 +16,54 @@ export enum AuthenticationOAuthType {
 
 interface ActiveDirectoryAuthenticationProps {
   OauthProps: OAuthProps;
-  GetTokenPicker: (editorId: string, labelId: string, onClick?: (b: boolean) => void) => JSX.Element;
+  tokenPickerHandler: TokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
 }
 
 export const ActiveDirectoryAuthentication = ({
   OauthProps,
-  GetTokenPicker,
+  tokenPickerHandler,
   setCurrentProps,
 }: ActiveDirectoryAuthenticationProps): JSX.Element => {
   const intl = useIntl();
   const {
-    OAuthTenant,
-    OAuthAudience,
-    OAuthAuthority,
-    OAuthClientId,
-    OAuthType = AuthenticationOAuthType.SECRET,
-    OAuthTypeSecret,
-    OAuthTypeCertificatePfx,
-    OAuthTypeCertificatePassword,
+    oauthTenant,
+    oauthAudience,
+    oauthAuthority,
+    oauthClientId,
+    oauthType = AuthenticationOAuthType.SECRET,
+    oauthTypeSecret,
+    oauthTypeCertificatePfx,
+    oauthTypeCertificatePassword,
   } = OauthProps;
 
-  const [oauthType, setOauthType] = useState<string | number>(OAuthType);
+  const [type, setOauthType] = useState<string | number>(oauthType);
 
   const updateOAuthAuthority = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthAuthority: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthAuthority: newState.value },
     }));
   };
 
   const updateOAuthTenant = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthTenant: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthTenant: newState.value },
     }));
   };
 
   const updateOAuthAudience = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthAudience: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthAudience: newState.value },
     }));
   };
 
   const updateOAuthClientId = (newState: ChangeState) => {
     setCurrentProps((prevState: AuthProps) => ({
       ...prevState,
-      aadOAuthProps: { ...prevState.aadOAuthProps, OAuthClientId: newState.value },
+      aadOAuth: { ...prevState.aadOAuth, oauthClientId: newState.value },
     }));
   };
 
@@ -78,7 +78,7 @@ export const ActiveDirectoryAuthentication = ({
       setOauthType(newKey);
       setCurrentProps((prevState: AuthProps) => ({
         ...prevState,
-        aadOAuthProps: { ...prevState.aadOAuthProps, OAuthType: item.key as AuthenticationOAuthType },
+        aadOAuth: { ...prevState.aadOAuth, oauthType: item.key as AuthenticationOAuthType },
       }));
     }
   };
@@ -100,40 +100,40 @@ export const ActiveDirectoryAuthentication = ({
   return (
     <div className="msla-authentication-editor-OAuth-container">
       <AuthenticationProperty
-        initialValue={OAuthAuthority}
+        initialValue={oauthAuthority}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY}
-        GetTokenPicker={GetTokenPicker}
+        tokenPickerHandler={tokenPickerHandler}
         onBlur={updateOAuthAuthority}
       />
       <AuthenticationProperty
-        initialValue={OAuthTenant}
+        initialValue={oauthTenant}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT}
-        GetTokenPicker={GetTokenPicker}
+        tokenPickerHandler={tokenPickerHandler}
         onBlur={updateOAuthTenant}
       />
       <AuthenticationProperty
-        initialValue={OAuthAudience}
+        initialValue={oauthAudience}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE}
-        GetTokenPicker={GetTokenPicker}
+        tokenPickerHandler={tokenPickerHandler}
         onBlur={updateOAuthAudience}
       />
       <AuthenticationProperty
-        initialValue={OAuthClientId}
+        initialValue={oauthClientId}
         AuthProperty={AUTHENTICATION_PROPERTIES.AAD_OAUTH_CLIENT_ID}
-        GetTokenPicker={GetTokenPicker}
+        tokenPickerHandler={tokenPickerHandler}
         onBlur={updateOAuthClientId}
       />
       <AuthenticationDropdown
         dropdownLabel={oAuthTypeLabel}
-        selectedKey={oauthType as string}
+        selectedKey={type as string}
         options={aadOAuthCredentialTypes}
         onChange={onAuthenticationTypeDropdownChange}
       />
       <AadOAuthCredentials
-        selectedCredTypeKey={oauthType as string}
-        secret={OAuthTypeSecret}
-        clientCertificateProps={{ clientCertificatePfx: OAuthTypeCertificatePfx, clientCertificatePassword: OAuthTypeCertificatePassword }}
-        GetTokenPicker={GetTokenPicker}
+        selectedCredTypeKey={type as string}
+        secret={oauthTypeSecret}
+        clientCertificateProps={{ clientCertificatePfx: oauthTypeCertificatePfx, clientCertificatePassword: oauthTypeCertificatePassword }}
+        tokenPickerHandler={tokenPickerHandler}
         setCurrentProps={setCurrentProps}
       />
     </div>

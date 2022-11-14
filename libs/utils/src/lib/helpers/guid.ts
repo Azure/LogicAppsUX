@@ -40,3 +40,12 @@ export function guid(): string {
     oct.substr(19, 12)
   );
 }
+
+/**
+ * Checks to see if the string is in the xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx.
+ *
+ * @return Boolean on if a string is a guid.
+ */
+export function isAGuid(potentialGuid: string): boolean {
+  return !!potentialGuid.match('^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$');
+}

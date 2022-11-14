@@ -1,8 +1,12 @@
 import Constants from '../../../common/constants';
 import { getOperationManifest } from '../../queries/operation';
-import { initializeConnectionsMappings } from '../../state/connection/connectionSlice';
+import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
 import type { Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
+import { getConnectionReference } from '../../utils/connectors/connections';
+import { isRootNodeInGraph } from '../../utils/graph';
+import { updateDynamicDataInNode } from '../../utils/parameters/helper';
+import { getAllVariables } from '../../utils/variables';
 import type { IOperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import { OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { ConnectionParameter, Connector, OperationManifest } from '@microsoft-logic-apps/utils';
@@ -16,6 +20,31 @@ import {
   ConnectionReferenceKeyFormat,
 } from '@microsoft-logic-apps/utils';
 import type { Dispatch } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
+export const updateNodeConnection = createAsyncThunk(
+  'updateNodeConnection',
+  async (payload: { nodeId: string; connectorId: string; connectionId: string }, { dispatch, getState }): Promise<void> => {
+    const { nodeId, connectionId, connectorId } = payload;
+    dispatch(changeConnectionMapping({ nodeId, connectionId, connectorId }));
+
+    const newState = getState() as RootState;
+
+    return updateDynamicDataInNode(
+      nodeId,
+      isRootNodeInGraph(nodeId, 'root', newState.workflow.nodesMetadata),
+      newState.operations.operationInfo[nodeId],
+      getConnectionReference(newState.connections, nodeId),
+      newState.operations.dependencies[nodeId],
+      newState.operations.inputParameters[nodeId],
+      newState.operations.settings[nodeId],
+      getAllVariables(newState.tokens.variables),
+      dispatch,
+      newState,
+      newState.workflow.newlyAddedOperations[nodeId] ? undefined : newState.workflow.operations[nodeId]
+    );
+  }
+);
 
 export async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
   let connectionsMapping: Record<string, string> = {};
@@ -131,7 +160,18 @@ export function needsConnection(connector: Connector | undefined): boolean {
   );
 }
 
-export function needsAuth(connector?: Connector): boolean {
+export function needsOAuth(connectionParameters: Record<string, ConnectionParameter>): boolean {
+  return (
+    Object.keys(connectionParameters || {})
+      .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
+      .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
+      .filter((connectionParameter) => equals(connectionParameter.type, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]))
+      .length > 0
+  );
+}
+
+// This only checks if this connector has any OAuth connection, it can be just part of Multi Auth
+function needsAuth(connector?: Connector): boolean {
   if (!connector) return false;
   return getConnectionParametersWithType(connector, ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]).length > 0;
 }

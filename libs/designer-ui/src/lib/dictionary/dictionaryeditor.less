@@ -5,7 +5,6 @@
 
 .msla-dictionary-editor-container {
   display: flex;
-  padding-bottom: 15px;
 
   .msla-dictionary-commands {
     margin-top: @padding;
@@ -54,6 +53,9 @@
           line-height: 30px;
           caret-color: #444;
           padding-inline-start: 5px;
+          &.readonly {
+            background-color: rgba(128, 128, 128, 0.1);
+          }
           &:focus {
             border: 1px solid rgb(0, 120, 212);
           }
@@ -67,6 +69,8 @@
           overflow: hidden;
           position: absolute;
           text-overflow: ellipsis;
+          white-space: nowrap;
+          width: 95%;
           margin-top: -75px;
           margin-left: 5px;
           font-size: 15px;
@@ -98,6 +102,9 @@
             line-height: 26px;
             caret-color: #444;
             padding-inline-start: 5px;
+            &.readonly {
+              background-color: rgba(128, 128, 128, 0.1);
+            }
             p {
               margin: 0;
             }
@@ -122,7 +129,8 @@
           width: 49%;
           padding-bottom: 5px;
           padding-left: 5px;
-          font-size: 18px;
+          font-size: 12px;
+          font-weight: bold;
         }
         .msla-dictionary-item-delete {
           width: 25px;

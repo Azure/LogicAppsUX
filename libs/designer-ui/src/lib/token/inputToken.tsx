@@ -1,6 +1,7 @@
 import { getBrandColorRgbA } from '../card/utils';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
 import { CHANGE_TOKENPICKER_EXPRESSION } from '../tokenpicker/plugins/TokenPickerHandler';
+import iconSvg from './icon/icon.svg';
 import { Icon } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { NodeKey } from 'lexical';
@@ -10,29 +11,42 @@ export interface InputTokenProps {
   brandColor?: string;
   value?: string;
   disableFiltering?: boolean;
-  icon: string;
+  icon?: string;
   isAdvanced?: boolean;
   isSecure?: boolean;
   readOnly?: boolean;
   required?: boolean;
   title: string;
   nodeKey?: NodeKey;
+  showTokenPickerSwitch?: (show?: boolean) => void;
 }
 
 export const DELETE = '\u00D7';
-export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readOnly, title, nodeKey }) => {
+export const InputToken: React.FC<InputTokenProps> = ({
+  value,
+  brandColor,
+  icon,
+  isSecure,
+  readOnly,
+  title,
+  nodeKey,
+  showTokenPickerSwitch,
+}) => {
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
 
   const handleTokenClicked = () => {
     if (nodeKey) {
-      editor.dispatchCommand(CHANGE_TOKENPICKER_EXPRESSION, nodeKey);
+      showTokenPickerSwitch?.(true);
+      setTimeout(() => {
+        editor.dispatchCommand(CHANGE_TOKENPICKER_EXPRESSION, nodeKey);
+      }, 50);
     }
   };
 
   const tokenStyle = {
-    backgroundColor: getBrandColorRgbA(brandColor),
-    backgroundImage: icon,
+    backgroundColor: brandColor ? getBrandColorRgbA(brandColor) : 'rgba(71, 71, 71, 0.15)',
+    backgroundImage: icon ?? `url(${iconSvg})`,
   };
 
   const tokenDelete = intl.formatMessage({

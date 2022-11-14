@@ -2,6 +2,7 @@ import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
+export type UpdateUpstreamNodesPayload = Record<string, string[]>;
 export interface NodeTokens {
   isLoading?: boolean;
   tokens: Token[];
@@ -46,6 +47,22 @@ export const tokensSlice = createSlice({
       // delete state.outputTokens[id]; // TODO: This causes lots of errors as tokens are not null-safe
       delete state.variables[id];
     },
+    updateVariableInfo: (state, action: PayloadAction<{ id: string; name?: string; type?: string }>) => {
+      const { id, name, type } = action.payload;
+      if (state.variables[id]) {
+        if (name) {
+          state.variables[id] = state.variables[id].map((variable) => ({
+            ...variable,
+            name: name,
+          }));
+        } else if (type) {
+          state.variables[id] = state.variables[id].map((variable) => ({
+            ...variable,
+            type: type,
+          }));
+        }
+      }
+    },
     updateTokens: (state, action: PayloadAction<{ id: string; tokens: Token[] }>) => {
       const { id, tokens } = action.payload;
       if (state.outputTokens[id]) {
@@ -76,11 +93,23 @@ export const tokensSlice = createSlice({
         state.outputTokens[nodeId].tokens = newTokens;
       }
     },
+    updateUpstreamNodes: (state, action: PayloadAction<UpdateUpstreamNodesPayload>) => {
+      for (const nodeId of Object.keys(action.payload)) {
+        state.outputTokens[nodeId].upstreamNodeIds = action.payload[nodeId];
+      }
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { initializeTokensAndVariables, deinitializeTokensAndVariables, addDynamicTokens, updateTokens, updateTokenSecureStatus } =
-  tokensSlice.actions;
+export const {
+  initializeTokensAndVariables,
+  deinitializeTokensAndVariables,
+  addDynamicTokens,
+  updateVariableInfo,
+  updateTokens,
+  updateTokenSecureStatus,
+  updateUpstreamNodes,
+} = tokensSlice.actions;
 
 export default tokensSlice.reducer;

@@ -1,23 +1,36 @@
 import type { ConnectionReference } from '../../../common/models/workflow';
 import type { RootState } from '../../store';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
-import { ConnectionService } from '@microsoft-logic-apps/designer-client-services';
+import { ConnectionService, GatewayService } from '@microsoft-logic-apps/designer-client-services';
 import type { Connector } from '@microsoft-logic-apps/utils';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 export const useConnector = (connectorId: string) => {
-  const connectionService = ConnectionService();
   return useQuery(
     ['apiWithSwaggers', { connectorId }],
     async () => {
-      const { connector } = await connectionService.getConnectorAndSwagger(connectorId);
+      const { connector } = await ConnectionService().getConnectorAndSwagger(connectorId);
       return connector;
     },
     {
       enabled: !!connectorId,
     }
   );
+};
+
+export const useGateways = (subscriptionId: string, connectorName: string) => {
+  return useQuery(
+    ['gateways', { subscriptionId }, { connectorName }],
+    async () => GatewayService().getGateways(subscriptionId, connectorName),
+    {
+      enabled: !!connectorName,
+    }
+  );
+};
+
+export const useSubscriptions = () => {
+  return useQuery('subscriptions', async () => GatewayService().getSubscriptions());
 };
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
@@ -31,4 +44,9 @@ export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
 export const useConnectionRefsByConnectorId = (connectorId?: string) => {
   const allConnectonReferences = useSelector((state: RootState) => Object.values(state.connections.connectionReferences));
   return allConnectonReferences.filter((ref: ConnectionReference) => ref.api.id === connectorId);
+};
+
+export const useIsOperationMissingConnection = (nodeId: string) => {
+  const connectionsMapping = useSelector((state: RootState) => state.connections.connectionsMapping);
+  return Object.keys(connectionsMapping).includes(nodeId) && connectionsMapping[nodeId] === null;
 };

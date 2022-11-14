@@ -72,9 +72,7 @@ export default {
     outputs: {
       type: 'object',
       properties: {
-        body: {
-          title: 'Body',
-        },
+        body: {},
         headers: {
           type: 'object',
           title: 'Headers',
@@ -118,6 +116,9 @@ export default {
     settings: {
       secureData: {},
       concurrency: {
+        scopes: [SettingScope.Trigger],
+      },
+      correlation: {
         scopes: [SettingScope.Trigger],
       },
       operationOptions: {

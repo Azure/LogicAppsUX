@@ -1,8 +1,11 @@
 import constants from '../../common/constants';
+import type { AppDispatch, RootState } from '../../core';
+import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsDiscovery,
   useIsPanelCollapsed,
+  useIsWorkflowParametersMode,
   useRegisteredPanelTabs,
   useSelectedNodeId,
   useSelectedPanelTabName,
@@ -16,38 +19,42 @@ import {
   registerPanelTabs,
   selectPanelTab,
   setTabVisibility,
-  showDefaultTabs,
 } from '../../core/state/panel/panelSlice';
 import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
-import { deleteNode, replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
+import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
+import { isRootNodeInGraph } from '../../core/utils/graph';
 import { aboutTab } from './panelTabs/aboutTab';
 import { codeViewTab } from './panelTabs/codeViewTab';
 import { createConnectionTab } from './panelTabs/createConnectionTab';
+import { loadingTab } from './panelTabs/loadingTab';
 import { monitoringTab } from './panelTabs/monitoringTab';
 import { parametersTab } from './panelTabs/parametersTab';
 import { scratchTab } from './panelTabs/scratchTab';
 import { selectConnectionTab } from './panelTabs/selectConnectionTab';
 import { SettingsTab } from './panelTabs/settingsTab';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
+import { WorkflowParametersPanel } from './workflowparameterspanel';
 import { isNullOrUndefined, SUBGRAPH_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { MenuItemType, PanelContainer, PanelHeaderControlType, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const PanelRoot = (): JSX.Element => {
   const intl = useIntl();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
   const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
+  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
   const isDiscovery = useIsDiscovery();
+  const isWorkflowParameters = useIsWorkflowParametersMode();
 
   const [width, setWidth] = useState(PanelSize.Auto);
 
@@ -56,13 +63,13 @@ export const PanelRoot = (): JSX.Element => {
   const selectedPanelTab = useSelectedPanelTabName();
 
   const comment = useNodeDescription(selectedNode);
-  const operationInfo = useOperationInfo(selectedNode);
-  const iconUriResult = useIconUri(operationInfo);
+  const iconUri = useIconUri(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
+  const operationInfo = useOperationInfo(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
-    const tabs = [monitoringTab, parametersTab, aboutTab, codeViewTab, SettingsTab, scratchTab, createConnectionTab, selectConnectionTab];
+    const tabs = [monitoringTab, parametersTab, SettingsTab, codeViewTab, createConnectionTab, selectConnectionTab, aboutTab, loadingTab];
     if (process.env.NODE_ENV !== 'production') {
       tabs.push(scratchTab);
     }
@@ -79,6 +86,15 @@ export const PanelRoot = (): JSX.Element => {
   }, [dispatch, isMonitoringView]);
 
   useEffect(() => {
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.MONITORING,
+        visible: operationInfo?.type.toLowerCase() !== constants.NODE.TYPE.SCOPE,
+      })
+    );
+  }, [dispatch, operationInfo]);
+
+  useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))
       dispatch(selectPanelTab(visibleTabs[0]?.name.toLowerCase()));
   }, [dispatch, visibleTabs, selectedPanelTab]);
@@ -90,8 +106,6 @@ export const PanelRoot = (): JSX.Element => {
   useEffect(() => {
     if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
       dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
-    } else {
-      dispatch(showDefaultTabs());
     }
     dispatch(
       setTabVisibility({
@@ -100,15 +114,6 @@ export const PanelRoot = (): JSX.Element => {
       })
     );
   }, [dispatch, selectedNode, nodeMetaData, isMonitoringView]);
-
-  useEffect(() => {
-    dispatch(
-      setTabVisibility({
-        tabName: constants.PANEL_TAB_NAMES.PARAMETERS,
-        visible: isMonitoringView || operationInfo?.type !== 'Scope',
-      })
-    );
-  }, [dispatch, isMonitoringView, operationInfo]);
 
   useEffect(() => {
     collapsed ? setWidth(PanelSize.Auto) : setWidth(PanelSize.Medium);
@@ -171,7 +176,6 @@ export const PanelRoot = (): JSX.Element => {
       description: 'Delete text',
     });
     // TODO: 13067650 Disabled reason/description tobe implemented when panel actions gets built
-    const canDelete = true;
     const disabledDeleteAction = intl.formatMessage({
       defaultMessage: 'This operation has already been deleted.',
       description: 'Text to tell users why delete is disabled',
@@ -179,7 +183,7 @@ export const PanelRoot = (): JSX.Element => {
 
     options.push({
       key: deleteDescription,
-      disabled: readOnly || !canDelete,
+      disabled: readOnly,
       disabledReason: disabledDeleteAction,
       iconName: 'Delete',
       title: deleteDescription,
@@ -199,23 +203,30 @@ export const PanelRoot = (): JSX.Element => {
   };
 
   const handleDelete = (): void => {
-    dispatch(deleteNode({ nodeId: selectedNode }));
-    dispatch(clearPanel());
+    dispatch(deleteOperation({ nodeId: selectedNode, isTrigger: isTriggerNode }));
     // TODO: 12798935 Analytics (event logging)
   };
 
   const togglePanel = (): void => (!collapsed ? collapse() : expand());
+  const dismissPanel = () => dispatch(clearPanel());
 
-  return isDiscovery ? (
-    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={togglePanel} width={width} key={selectedNode} />
+  const isLoading = useMemo(() => {
+    if (nodeMetaData?.subgraphType) return false;
+    return !iconUri;
+  }, [iconUri, nodeMetaData?.subgraphType]);
+
+  return isWorkflowParameters ? (
+    <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} />
+  ) : isDiscovery ? (
+    <RecommendationPanelContext isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} key={selectedNode} />
   ) : (
     <PanelContainer
-      cardIcon={iconUriResult.result}
+      cardIcon={iconUri}
       comment={comment}
       panelLocation={PanelLocation.Right}
       isCollapsed={collapsed}
       noNodeSelected={!selectedNode}
-      isLoading={iconUriResult.isLoading}
+      isLoading={isLoading}
       panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}
       panelHeaderMenu={getPanelHeaderMenu()}
@@ -234,6 +245,7 @@ export const PanelRoot = (): JSX.Element => {
       }}
       title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
+      layerProps={{ styles: { root: { zIndex: 999998 } } }}
     />
   );
 };

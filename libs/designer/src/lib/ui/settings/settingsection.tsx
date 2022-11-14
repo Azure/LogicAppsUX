@@ -1,11 +1,12 @@
 import type { HeaderClickHandler } from '.';
 import constants from '../../common/constants';
+import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
+import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { type ValidationError, ValidationWarningKeys } from '../../core/state/settingSlice';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
-import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
-import type { IIconStyles, IIconProps } from '@fluentui/react';
+import { Separator, useTheme, Icon, IconButton, TooltipHost, Dropdown } from '@fluentui/react';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import { guid } from '@microsoft-logic-apps/utils';
 import {
@@ -38,7 +39,9 @@ import type {
   SettingDropdownProps,
 } from '@microsoft/designer-ui';
 import type { FC } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useDispatch } from 'react-redux';
 
 type SettingBase = {
   visible?: boolean;
@@ -101,7 +104,7 @@ export type Settings = SettingBase &
   );
 
 type WarningDismissHandler = (key?: string, message?: string) => void;
-export interface SettingSectionProps {
+export interface SettingsSectionProps {
   id?: string;
   title?: string;
   sectionName?: string;
@@ -115,7 +118,8 @@ export interface SettingSectionProps {
   onWarningDismiss?: WarningDismissHandler;
 }
 
-export const SettingsSection: FC<SettingSectionProps> = ({
+export const SettingsSection: FC<SettingsSectionProps> = ({
+  id,
   title = 'Settings',
   sectionName,
   showHeading = true,
@@ -142,24 +146,16 @@ export const SettingsSection: FC<SettingSectionProps> = ({
     defaultMessage: 'Collapse',
     description: 'An accessible label for collapse toggle icon',
   });
-  const headerTextClassName = isInverted ? 'msla-setting-section-header-text-dark' : 'msla-setting-section-header-text';
 
   const internalSettings = (
     <>
-      {expanded || !showHeading ? <Setting isReadOnly={isReadOnly} settings={settings} /> : null}
+      {expanded || !showHeading ? <Setting id={id} isReadOnly={isReadOnly} settings={settings} /> : null}
       {expanded
         ? (validationErrors ?? []).map(({ key: errorKey, message }) => {
-            if (errorKey === ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION) {
-              return (
-                <CustomizableMessageBar
-                  key={guid()}
-                  type={MessageBarType.warning}
-                  message={message}
-                  onWarningDismiss={() => onWarningDismiss?.(errorKey)}
-                />
-              );
-            }
-            if (errorKey === ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS) {
+            if (
+              errorKey === ValidationWarningKeys.CANNOT_DELETE_LAST_ACTION ||
+              errorKey === ValidationWarningKeys.CANNOT_DELETE_LAST_STATUS
+            ) {
               return (
                 <CustomizableMessageBar
                   key={guid()}
@@ -194,7 +190,7 @@ export const SettingsSection: FC<SettingSectionProps> = ({
             iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
             styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
           />
-          <div className={headerTextClassName}>{title}</div>
+          <div className="msla-setting-section-header-text">{title}</div>
         </button>
         {internalSettings}
       </div>
@@ -203,31 +199,39 @@ export const SettingsSection: FC<SettingSectionProps> = ({
 };
 
 const Setting = ({
+  id,
   settings,
   isReadOnly,
 }: {
+  id?: string;
   settings: Settings[];
   isReadOnly?: boolean;
   validationErrors?: ValidationError[];
 }): JSX.Element => {
+  const intl = useIntl();
+  const dispatch = useDispatch();
+  const nodeId = useSelectedNodeId();
+
+  const conditionallyInvisibleSettings = useMemo(
+    () => settings.filter((setting) => (setting.settingProp as any).conditionalVisibility === false),
+    [settings]
+  );
+
+  const [conditionalVisibilityTempArray, setConditionalVisibilityTempArray] = useState<string[]>([]);
+
   return (
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
         const { settingType, settingProp, visible = true } = setting;
-        if (!settingProp.readOnly) {
-          settingProp.readOnly = isReadOnly;
-        }
-        const getClassName = (): string => {
-          let className = 'msla-setting-section-setting';
-          if (settingType === 'RunAfter') {
-            className = 'msla-setting-section-run-after-setting';
-            return className;
-          } else if (settingType === 'MultiAddExpressionEditor') {
-            className = 'msla-setting-section-expression-field';
-            return className;
-          }
-          return className;
-        };
+        const { id: parameterId, conditionalVisibility, readOnly } = settingProp as any;
+        if (!readOnly) settingProp.readOnly = isReadOnly;
+
+        const getClassName = (): string =>
+          settingType === 'RunAfter'
+            ? 'msla-setting-section-run-after-setting'
+            : settingType === 'MultiAddExpressionEditor'
+            ? 'msla-setting-section-expression-field'
+            : 'msla-setting-section-setting';
         const renderSetting = (): JSX.Element | null => {
           switch (settingType) {
             case 'MultiSelectSetting':
@@ -260,12 +264,60 @@ const Setting = ({
               return null;
           }
         };
-        return visible ? (
-          <div key={i} className={getClassName()}>
-            {renderSetting()}
+
+        const removeParamCallback = () => {
+          dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: false }));
+        };
+
+        const removeParamTooltip = intl.formatMessage(
+          {
+            defaultMessage: 'Remove parameter "{parameterName}" and its value',
+            description: 'Tooltip for remove parameter button',
+          },
+          { parameterName: (settingProp as any).label }
+        );
+
+        const RemoveConditionalParameter = () => {
+          return conditionalVisibility === true ? (
+            <div style={{ marginTop: '30px' }}>
+              <TooltipHost content={removeParamTooltip}>
+                <IconButton iconProps={{ iconName: 'Cancel' }} onClick={removeParamCallback} />
+              </TooltipHost>
+            </div>
+          ) : null;
+        };
+
+        return visible && conditionalVisibility !== false ? (
+          <div key={i} style={{ display: 'flex', gap: '4px' }}>
+            <div className={getClassName()} style={{ flex: '1 1 auto' }}>
+              {renderSetting()}
+            </div>
+            <RemoveConditionalParameter />
           </div>
         ) : null;
       })}
+
+      {conditionallyInvisibleSettings.length > 0 ? (
+        <Dropdown
+          placeholder="Add new parameters"
+          multiSelect
+          options={conditionallyInvisibleSettings.map((setting) => ({
+            key: (setting.settingProp as any).id,
+            text: (setting.settingProp as any).label,
+          }))}
+          style={{ marginTop: '24px' }}
+          selectedKeys={conditionalVisibilityTempArray}
+          onChange={(_e: any, item: any) => {
+            if (item?.key) setConditionalVisibilityTempArray([...conditionalVisibilityTempArray, item.key]);
+          }}
+          onDismiss={() => {
+            conditionalVisibilityTempArray.forEach((parameterId) => {
+              dispatch(updateParameterConditionalVisibility({ nodeId, groupId: id ?? '', parameterId, value: true }));
+            });
+            setConditionalVisibilityTempArray([]);
+          }}
+        />
+      ) : null}
     </div>
   );
 };
@@ -276,16 +328,6 @@ export interface SettingLabelProps {
   isChild: boolean;
 }
 
-const infoIconProps: IIconProps = {
-  iconName: 'Info',
-};
-
-const infoIconStyles: IIconStyles = {
-  root: {
-    color: '#8d8686',
-  },
-};
-
 export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLabelProps): JSX.Element {
   const className = isChild ? 'msla-setting-section-row-child-label' : 'msla-setting-section-row-label';
   if (infoTooltipText) {
@@ -293,7 +335,11 @@ export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLab
       <div className={className}>
         <div className="msla-setting-section-row-text">{labelText}</div>
         <TooltipHost hostClassName="msla-setting-section-row-info" content={infoTooltipText}>
-          <IconButton iconProps={infoIconProps} styles={infoIconStyles} className="msla-setting-section-row-info-icon" />
+          <IconButton
+            className="msla-setting-section-row-info-icon"
+            iconProps={{ iconName: 'Info' }}
+            styles={{ root: { color: '#8d8686' } }}
+          />
         </TooltipHost>
       </div>
     );

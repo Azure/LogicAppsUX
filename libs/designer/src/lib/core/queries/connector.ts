@@ -1,5 +1,5 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
-import type { ListDynamicValue } from '@microsoft-logic-apps/designer-client-services';
+import type { ListDynamicValue, ManagedIdentityRequestProperties } from '@microsoft-logic-apps/designer-client-services';
 import { ConnectorService } from '@microsoft-logic-apps/designer-client-services';
 import type { LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft-logic-apps/parsers';
 
@@ -10,7 +10,7 @@ export const getLegacyDynamicValues = async (
   extension: LegacyDynamicValuesExtension,
   parameterArrayType: string,
   isManagedIdentityTypeConnection?: boolean,
-  data?: any
+  managedIdentityProperties?: ManagedIdentityRequestProperties
 ): Promise<ListDynamicValue[]> => {
   const queryClient = getReactQueryClient();
   const service = ConnectorService();
@@ -31,12 +31,12 @@ export const getLegacyDynamicValues = async (
         extension,
         parameterArrayType,
         isManagedIdentityTypeConnection,
-        data
+        managedIdentityProperties
       )
   );
 };
 export const getListDynamicValues = async (
-  connectionId: string,
+  connectionId: string | undefined,
   connectorId: string,
   operationId: string,
   parameterAlias: string | undefined,
@@ -49,7 +49,7 @@ export const getListDynamicValues = async (
   return queryClient.fetchQuery(
     [
       'listdynamicvalues',
-      connectionId.toLowerCase(),
+      (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),
@@ -64,7 +64,7 @@ export const getLegacyDynamicSchema = async (
   parameters: Record<string, any>,
   extension: LegacyDynamicSchemaExtension,
   isManagedIdentityTypeConnection?: boolean,
-  data?: any
+  managedIdentityProperties?: ManagedIdentityRequestProperties
 ): Promise<OpenAPIV2.SchemaObject | null> => {
   const queryClient = getReactQueryClient();
   const service = ConnectorService();
@@ -77,12 +77,20 @@ export const getLegacyDynamicSchema = async (
       extension.operationId?.toLowerCase(),
       getParametersKey(parameters).toLowerCase(),
     ],
-    () => service.getLegacyDynamicSchema(connectionId, connectorId, parameters, extension, isManagedIdentityTypeConnection, data)
+    () =>
+      service.getLegacyDynamicSchema(
+        connectionId,
+        connectorId,
+        parameters,
+        extension,
+        isManagedIdentityTypeConnection,
+        managedIdentityProperties
+      )
   );
 };
 
 export const getDynamicSchemaProperties = async (
-  connectionId: string,
+  connectionId: string | undefined,
   connectorId: string,
   operationId: string,
   parameterAlias: string | undefined,
@@ -95,7 +103,7 @@ export const getDynamicSchemaProperties = async (
   return queryClient.fetchQuery(
     [
       'dynamicschemaproperties',
-      connectionId.toLowerCase(),
+      (connectionId ?? '').toLowerCase(),
       connectorId.toLowerCase(),
       operationId.toLowerCase(),
       getParametersKey(parameters),

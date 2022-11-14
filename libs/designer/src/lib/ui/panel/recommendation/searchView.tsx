@@ -1,4 +1,4 @@
-import type { AppDispatch } from '../../../core';
+import type { AppDispatch, RootState } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch } from '../../../core/state/panel/panelSelectors';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
@@ -6,10 +6,11 @@ import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft-logic-apps/utils';
 import { isBuiltInConnector, guid } from '@microsoft-logic-apps/utils';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
+import { useDebouncedEffect } from '@react-hookz/web';
 import Fuse from 'fuse.js';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 type SearchViewProps = {
   searchTerm: string;
@@ -29,8 +30,10 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const relationshipIds = useRelationshipIds();
   const isParallelBranch = useIsParallelBranch();
+  const isTrigger = useSelector((state: RootState) => state.panel.addingTrigger);
 
   const [searchResults, setSearchResults] = useState<SearchResults>([]);
+  const [isLoadingSearchResults, setIsLoadingSearchResults] = useState<boolean>(false);
 
   const filterItems = useCallback(
     (searchResult: SearchResult): boolean => {
@@ -55,9 +58,8 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
     [filters]
   );
 
-  useEffect(() => {
-    if (!allOperations) return;
-    const options = {
+  const searchOptions = useMemo(
+    () => ({
       includeScore: true,
       threshold: 0.4,
       keys: [
@@ -80,13 +82,24 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
           weight: 1.9,
         },
       ],
-    };
-    if (allOperations) {
-      const fuse = new Fuse(allOperations, options);
-      const searchResults = fuse.search(searchTerm).filter(filterItems);
-      setSearchResults(searchResults.slice(0, 199));
-    }
-  }, [searchTerm, allOperations, filterItems]);
+    }),
+    []
+  );
+
+  useEffect(() => {
+    if (searchTerm !== '') setIsLoadingSearchResults(true);
+  }, [searchTerm]);
+
+  useDebouncedEffect(
+    () => {
+      if (!allOperations) return;
+      const fuse = new Fuse(allOperations, searchOptions);
+      setSearchResults(fuse.search(searchTerm, { limit: 200 }).filter(filterItems));
+      setIsLoadingSearchResults(false);
+    },
+    [searchTerm, allOperations, filterItems, searchOptions],
+    300
+  );
 
   const onConnectorClick = (connectorId: string) => {
     dispatch(selectOperationGroupId(connectorId));
@@ -95,7 +108,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
   const onOperationClick = (id: string) => {
     const operation = searchResults.map((result) => result.item).find((o: any) => o.id === id);
     const newNodeId = (operation?.properties?.summary ?? operation?.name ?? guid()).replaceAll(' ', '_');
-    dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch }));
+    dispatch(addOperation({ operation, relationshipIds, nodeId: newNodeId, isParallelBranch, isTrigger }));
   };
 
   const loadingText = intl.formatMessage({
@@ -112,6 +125,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   return (
     <SearchResultsGrid
+      isLoading={isLoadingSearchResults}
       searchTerm={searchTerm}
       onConnectorClick={onConnectorClick}
       onOperationClick={onOperationClick}

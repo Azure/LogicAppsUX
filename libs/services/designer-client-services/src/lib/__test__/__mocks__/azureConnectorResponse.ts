@@ -41,7 +41,7 @@ export const AzureConnectorMock: { value: any[] } = {
           displayName: 'Eduframe',
           description:
             'Eduframe is a complete solution for commercial training providers & business schools to attract more students, manage & automate the course administration, and deliver the ultimate learning experience. Eduframe seamlessly integrates with Canvas LMS. The connector opens up the opportunity to easily integrate your existing software applications with Eduframe, like your CRM and accounting software.',
-          //releaseTag: 'Preview', // danielle can we use this
+          //releaseTag: 'Preview',
           //   tier: 'Premium',
         },
         capabilities: ['actions'],
@@ -141,6 +141,42 @@ export const AzureConnectorMock: { value: any[] } = {
       },
       id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/egoi',
       name: 'egoi',
+      type: 'Microsoft.Web/locations/managedApis',
+      location: 'centralus',
+    },
+    {
+      properties: {
+        name: 'testconnector',
+        connectionParameters: {
+          api_key: {
+            type: 'securestring',
+            uiDefinition: {
+              displayName: 'API Key',
+              description: 'The API Key for this api',
+              tooltip: 'Provide your API Key',
+              constraints: {
+                tabIndex: 2,
+                clearText: false,
+                required: 'true',
+              },
+            },
+          },
+        },
+        metadata: {
+          source: 'marketplace',
+          brandColor: '#00AEDA',
+        },
+        runtimeUrls: ['https://logic-apis-centralus.azure-apim.net/apim/egoi'],
+        generalInformation: {
+          iconUrl: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1570/1.0.1570.2764/egoi/icon.png',
+          displayName: 'Test Connector',
+          description: 'This is a Test Connector',
+        },
+        capabilities: ['actions', 'triggers'],
+        isExportSupported: true,
+      },
+      id: '/subscriptions/4201f397-837b-48ea-8943-980767f294ac/providers/Microsoft.Web/locations/centralus/managedApis/testConnector',
+      name: 'testConnector',
       type: 'Microsoft.Web/locations/managedApis',
       location: 'centralus',
     },

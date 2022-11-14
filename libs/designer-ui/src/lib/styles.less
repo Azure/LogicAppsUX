@@ -57,6 +57,7 @@
 @import './editor/monaco/monaco.less';
 @import './editor/base/tokenpicker.less';
 @import './editor/base/editor.less';
+@import './querybuilder/querybuilder.less';
 @import './peek/peek.less';
 @import './expressioneditor/expressioneditor.less';
 @import './rulescontrol/rulescontrol.less';
@@ -109,6 +110,13 @@
 
   img {
     vertical-align: baseline;
+  }
+}
+
+body.dark {
+  .msla-designer-canvas,
+  .msla-monitor-canvas {
+    background-color: @ms-color-bodyBackground;
   }
 }
 
@@ -394,7 +402,7 @@ body.dark {
 
 .msla-psuedo-badge {
   height: 18px;
-  font-size: 12px;
+  font-size: 11px;
   line-height: 16px;
   font-weight: 600;
   flex: 0 0 auto;
@@ -420,4 +428,12 @@ body.dark {
 
 .hidden {
   visibility: hidden;
+}
+
+body.dark {
+  .ms-Panel-main {
+    background-color: @ms-color-secondaryBackground;
+    box-shadow: none;
+    border-left: 1px solid @ms-color-secondaryBorder;
+  }
 }

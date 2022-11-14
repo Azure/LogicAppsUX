@@ -1,4 +1,5 @@
 import type { RepetitionContext } from './helper';
+import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helper';
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
@@ -340,6 +341,7 @@ export function createOutputToken(key: string, actionName: string | undefined, s
     required,
     tokenType: TokenType.OUTPUTS,
     title: name,
+    value: name,
   };
 
   return token;
@@ -357,6 +359,8 @@ export function createExpressionToken(expression: Expression): Token {
     expression,
     key: guid(),
     title: (expression as ExpressionFunction).name,
+    brandColor: '#AD008C',
+    icon: FxIcon,
   };
 }
 
@@ -368,10 +372,14 @@ export function createExpressionToken(expression: Expression): Token {
  */
 export function createVariableToken(variableName: string): Token {
   return {
-    tokenType: TokenType.VARIABLE,
+    description: variableName,
+    value: variableName,
+    key: variableName,
     title: variableName,
     name: variableName,
-    key: variableName,
+    brandColor: VariableBrandColor,
+    icon: VariableIcon,
+    tokenType: TokenType.VARIABLE,
   };
 }
 
@@ -387,6 +395,8 @@ export function createParameterToken(parameterName: string): Token {
     title: parameterName,
     name: parameterName,
     key: parameterName,
+    brandColor: '#916F6F',
+    icon: ParameterIcon,
   };
 }
 

@@ -1,14 +1,17 @@
-import { childTargetNodeCardWidth, nodeCardWidth } from '../../constants/NodeConstants';
-import { setCurrentTargetNode } from '../../core/state/DataMapSlice';
-import type { AppDispatch } from '../../core/state/Store';
-import { store } from '../../core/state/Store';
+import { childTargetNodeCardWidth, schemaNodeCardHeight, schemaNodeCardWidth } from '../../constants/NodeConstants';
+import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
+import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
-import { SchemaTypes, SchemaNodeProperties } from '../../models';
+import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { Connection } from '../../models/Connection';
-import { icon24ForSchemaNodeType } from '../../utils/Icon.Utils';
+import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
+import { flattenInputs } from '../../utils/Connection.Utils';
+import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
+import { ItemToggledState } from '../tree/TargetSchemaTreeItem';
+import HandleWrapper from './HandleWrapper';
+import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import type { CardProps } from './NodeCard';
-import { getStylesForSharedState } from './NodeCard';
-import { Text } from '@fluentui/react';
 import {
   Badge,
   Button,
@@ -17,23 +20,26 @@ import {
   mergeClasses,
   shorthands,
   tokens,
+  Tooltip,
   typographyStyles,
 } from '@fluentui/react-components';
-import { bundleIcon, ChevronRight16Regular, Important12Filled } from '@fluentui/react-icons';
-import type { FunctionComponent } from 'react';
-import { useDispatch } from 'react-redux';
-import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
-import { Handle, Position } from 'reactflow';
+import {
+  bundleIcon,
+  ChevronRight16Filled,
+  ChevronRight16Regular,
+  Important12Filled,
+  CheckmarkCircle12Filled,
+  CircleHalfFill12Regular,
+  Circle12Regular,
+} from '@fluentui/react-icons';
+import { useMemo, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
+import { useDispatch, useSelector } from 'react-redux';
+import type { NodeProps } from 'reactflow';
+import { Position } from 'reactflow';
 
-export type SchemaCardProps = {
-  schemaNode: SchemaNodeExtended;
-  schemaType: SchemaTypes;
-  displayHandle: boolean;
-  displayChevron: boolean;
-  isLeaf: boolean;
-  isChild: boolean;
-  relatedConnections: Connection[];
-} & CardProps;
+const badgeContainerWidth = schemaNodeCardWidth + 72;
+const contentBtnWidth = schemaNodeCardWidth - 30;
 
 const useStyles = makeStyles({
   container: {
@@ -41,9 +47,10 @@ const useStyles = makeStyles({
     backgroundColor: tokens.colorNeutralBackground1,
     display: 'flex',
     flexDirection: 'row',
-    height: '48px',
+    height: `${schemaNodeCardHeight}px`,
+    width: `${schemaNodeCardWidth}px`,
     opacity: 1,
-    width: `${nodeCardWidth}px`,
+    float: 'right',
     alignItems: 'center',
     justifyContent: 'left',
     ...shorthands.gap('8px'),
@@ -58,11 +65,7 @@ const useStyles = makeStyles({
       },
     },
     '&:focus-within': {
-      outlineWidth: tokens.strokeWidthThick,
-      outlineColor: tokens.colorBrandStroke1,
-      outlineStyle: 'solid',
-      opacity: 1,
-      boxShadow: tokens.shadow4,
+      ...selectedCardStyles,
     },
   },
   errorBadge: {
@@ -74,10 +77,12 @@ const useStyles = makeStyles({
   badgeContainer: {
     display: 'flex',
     alignItems: 'center',
+    float: 'right',
+    width: `${badgeContainerWidth}px`,
   },
   contentButton: {
     height: '48px',
-    width: '170px',
+    width: `${contentBtnWidth}px`,
     ...shorthands.border('0px'),
     ...shorthands.padding('0px'),
     marginRight: '0px',
@@ -87,7 +92,7 @@ const useStyles = makeStyles({
     width: '48px',
     borderStartStartRadius: tokens.borderRadiusMedium,
     borderEndStartRadius: tokens.borderRadiusMedium,
-    color: tokens.colorBrandForeground1,
+    color: tokens.colorBrandForeground2,
     fontSize: '24px',
     lineHeight: '48px',
     textAlign: 'center',
@@ -102,7 +107,9 @@ const useStyles = makeStyles({
     alignSelf: 'center',
     color: tokens.colorNeutralForeground1,
     textAlign: 'left',
-    width: '100%',
+    ...shorthands.overflow('hidden'),
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
   },
   cardChevron: {
     color: tokens.colorNeutralForeground3,
@@ -110,11 +117,17 @@ const useStyles = makeStyles({
     fontSize: '16px',
     flexBasis: '48px',
     justifyContent: 'right',
+    '&:hover': {
+      color: tokens.colorNeutralForeground3,
+    },
+    '&:active': {
+      color: `${tokens.colorNeutralForeground3} !important`,
+    },
   },
   disabled: {
     opacity: 0.38,
   },
-  outputChildCard: {
+  schemaChildCard: {
     width: `${childTargetNodeCardWidth}px`,
   },
 
@@ -125,110 +138,183 @@ const useStyles = makeStyles({
   }),
   inputArrayBadge: {
     marginLeft: '6px',
+    marginBottom: '30px',
   },
   outputArrayBadge: {
     marginRight: '6px',
+    marginLeft: '-22px',
+    marginBottom: '30px',
   },
 });
 
-const cardInputText = makeStyles({
-  cardText: {
-    width: '136px',
-  },
-});
+export interface SchemaCardProps extends CardProps {
+  schemaNode: SchemaNodeExtended;
+  schemaType: SchemaType;
+  displayHandle: boolean;
+  displayChevron: boolean;
+  isLeaf: boolean;
+  isChild: boolean;
+  relatedConnections: Connection[];
+  connectionStatus?: ItemToggledState;
+}
 
-const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
-
-const isValidConnection = (connection: ReactFlowConnection): boolean => {
-  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
-  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
-
-  if (connection.source && connection.target && flattenedSourceSchema && flattenedTargetSchema) {
-    const sourceNode = flattenedSourceSchema[connection.source];
-    const targetNode = flattenedTargetSchema[connection.target];
-
-    // If we have no targetNode that means it's an function and just allow the connection for now
-    // TODO validate function allowed input types
-    return !targetNode || sourceNode.schemaNodeDataType === targetNode.schemaNodeDataType;
-  }
-
-  return false;
-};
-
-export const SchemaCard: FunctionComponent<NodeProps<SchemaCardProps>> = (props: NodeProps<SchemaCardProps>) => {
-  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, relatedConnections } =
-    props.data;
+export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
+  const reactFlowId = props.id;
+  const { schemaNode, schemaType, isLeaf, isChild, onClick, disabled, error, displayHandle, displayChevron, connectionStatus } = props.data;
   const dispatch = useDispatch<AppDispatch>();
-  const classes = useStyles();
   const sharedStyles = getStylesForSharedState();
-  const mergedInputText = mergeClasses(classes.cardText, cardInputText().cardText);
+  const classes = useStyles();
 
-  const isOutputChildNode = schemaType === SchemaTypes.Target && isChild;
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
+  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
 
-  const containerStyleClasses = [sharedStyles.root, classes.container];
-  if (isOutputChildNode) {
-    containerStyleClasses.push(classes.outputChildCard);
-  }
+  const schemaNameTextRef = useRef<HTMLDivElement>(null);
+  const [isCardHovered, setIsCardHovered] = useState<boolean>(false);
+  const [isChevronHovered, setIsChevronHovered] = useState<boolean>(false);
+  const [isTooltipEnabled, setIsTooltipEnabled] = useState<boolean>(false);
 
-  if (disabled) {
-    containerStyleClasses.push(classes.disabled);
-  }
+  const isNodeConnected = useMemo(
+    () =>
+      connections[reactFlowId] &&
+      (connections[reactFlowId].outputs.length > 0 || flattenInputs(connections[reactFlowId].inputs).length > 0),
+    [connections, reactFlowId]
+  );
 
-  const containerStyle = mergeClasses(...containerStyleClasses);
+  const isSourceSchemaNode = useMemo(() => schemaType === SchemaType.Source, [schemaType]);
+  const showOutputChevron = useMemo(() => !isSourceSchemaNode && !isLeaf && displayChevron, [isSourceSchemaNode, displayChevron, isLeaf]);
+  const isNBadgeRequired = useMemo(
+    () => isNodeConnected && schemaNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1,
+    [isNodeConnected, schemaNode]
+  );
+  const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
 
-  const showOutputChevron = schemaType === SchemaTypes.Target && !isLeaf && displayChevron;
+  const shouldDisplaySourceHandle = displayHandle && !sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected);
+  const shouldDisplayTargetHandle = displayHandle && !!sourceNodeConnectionBeingDrawnFromId;
 
-  const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
-  const BundledTypeIcon = icon24ForSchemaNodeType(schemaNode.schemaNodeDataType, schemaNode.properties);
+  // NOTE: This isn't memo'd to play nice with the element refs
+  const shouldNameTooltipDisplay: boolean = schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false;
 
-  const outputChevronOnClick = (newCurrentSchemaNode: SchemaNodeExtended) => {
-    dispatch(setCurrentTargetNode({ schemaNode: newCurrentSchemaNode, resetSelectedSourceNodes: true }));
+  const containerStyle = useMemo(() => {
+    const newContStyles = [sharedStyles.root, classes.container];
+
+    // Need to style both source and target schema child nodes on overview
+    // - doesn't seem to affect canvas source schema nodes
+    if (isChild) {
+      newContStyles.push(classes.schemaChildCard);
+    }
+
+    if (disabled) {
+      newContStyles.push(classes.disabled);
+    }
+
+    return mergeClasses(...newContStyles);
+  }, [isChild, disabled, classes, sharedStyles]);
+
+  const connectionStatusIcon = useMemo(() => {
+    switch (connectionStatus) {
+      case ItemToggledState.Completed:
+        return <CheckmarkCircle12Filled primaryFill={tokens.colorPaletteGreenForeground1} />;
+      case ItemToggledState.InProgress:
+        return <CircleHalfFill12Regular primaryFill={tokens.colorPaletteYellowForeground1} />;
+      case ItemToggledState.NotStarted:
+        return <Circle12Regular primaryFill={tokens.colorNeutralForegroundDisabled} />;
+      default:
+        return null;
+    }
+  }, [connectionStatus]);
+
+  const outputChevronOnClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(setCurrentTargetSchemaNode(schemaNode));
   };
 
-  const isNBadgeRequired = relatedConnections.length > 0 && schemaNode.properties === SchemaNodeProperties.Repeating;
+  const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
+  const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
+  const BundledTypeIcon = iconForSchemaNodeDataType(schemaNode.schemaNodeDataType, 24, false, schemaNode.nodeProperties);
 
   return (
     <div className={classes.badgeContainer}>
-      {isNBadgeRequired && schemaType === SchemaTypes.Target && (
-        <Badge className={classes.outputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
-          N
-        </Badge>
-      )}
-      <div className={containerStyle}>
-        {displayHandle ? (
-          <Handle
-            type={schemaType === SchemaTypes.Source ? 'source' : 'target'}
-            position={schemaType === SchemaTypes.Source ? Position.Right : Position.Left}
-            style={handleStyle}
-            isValidConnection={isValidConnection}
-          />
-        ) : null}
-        {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}{' '}
+      {isNBadgeRequired && !isSourceSchemaNode && <NBadge isOutput />}
+
+      <div
+        className={containerStyle}
+        style={isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId ? selectedCardStyles : undefined}
+        onMouseLeave={() => setIsCardHovered(false)}
+        onMouseEnter={() => setIsCardHovered(true)}
+      >
+        <HandleWrapper
+          type={isSourceSchemaNode ? 'source' : 'target'}
+          position={isSourceSchemaNode ? Position.Right : Position.Left}
+          nodeReactFlowType={ReactFlowNodeType.SchemaNode}
+          nodeReactFlowId={reactFlowId}
+          shouldDisplay={isSourceSchemaNode ? shouldDisplaySourceHandle : shouldDisplayTargetHandle}
+        />
+        {error && <Badge size="small" icon={<ExclamationIcon />} color="danger" className={classes.errorBadge}></Badge>}
+        {connectionStatusIcon && <span style={{ position: 'absolute', right: -16, top: 0 }}>{connectionStatusIcon}</span>}
         <Button disabled={!!disabled} onClick={onClick} appearance={'transparent'} className={classes.contentButton}>
           <span className={classes.cardIcon}>
             <BundledTypeIcon />
           </span>
-          <Text className={schemaType === SchemaTypes.Target ? classes.cardText : mergedInputText} block={true} nowrap={true}>
-            {schemaNode.name}
-          </Text>
+
+          <Tooltip
+            relationship="label"
+            content={schemaNode.name}
+            visible={shouldNameTooltipDisplay && isTooltipEnabled}
+            onVisibleChange={(_ev, data) => setIsTooltipEnabled(data.visible)}
+          >
+            <div
+              ref={schemaNameTextRef}
+              className={classes.cardText}
+              style={{ width: !isSourceSchemaNode ? `${contentBtnWidth}px` : '136px' }}
+            >
+              {schemaNode.name}
+            </div>
+          </Tooltip>
         </Button>
         {showOutputChevron && (
           <Button
             className={classes.cardChevron}
-            onClick={(e) => {
-              e.stopPropagation();
-              outputChevronOnClick(schemaNode);
-            }}
-            icon={<ChevronRight16Regular />}
-            appearance={'transparent'}
+            onClick={outputChevronOnClick}
+            icon={<ChevronIcon filled={isChevronHovered ? true : undefined} />}
+            appearance="transparent"
+            onMouseEnter={() => setIsChevronHovered(true)}
+            onMouseLeave={() => setIsChevronHovered(false)}
           />
         )}
       </div>
-      {isNBadgeRequired && schemaType === SchemaTypes.Source && (
-        <Badge className={classes.inputArrayBadge} shape="rounded" size="small" appearance="tint" color="informative">
+
+      {isNBadgeRequired && isSourceSchemaNode && <NBadge />}
+    </div>
+  );
+};
+
+interface NBadgeProps {
+  isOutput?: boolean;
+}
+
+const NBadge = ({ isOutput }: NBadgeProps) => {
+  const intl = useIntl();
+  const classes = useStyles();
+
+  const arrayMappingTooltip = intl.formatMessage({
+    defaultMessage: 'Array Mapping',
+    description: 'Label for array connection',
+  });
+
+  return (
+    <div>
+      <Tooltip content={arrayMappingTooltip} relationship="label">
+        <Badge
+          className={isOutput ? classes.outputArrayBadge : classes.inputArrayBadge}
+          shape="rounded"
+          size="small"
+          appearance="tint"
+          color="important"
+        >
           N
         </Badge>
-      )}
+      </Tooltip>
     </div>
   );
 };

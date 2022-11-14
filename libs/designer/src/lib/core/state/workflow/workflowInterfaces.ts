@@ -23,4 +23,5 @@ export interface WorkflowState {
   collapsedGraphIds: Record<string, boolean>;
   edgeIdsBySource: Record<string, string[]>;
   idReplacements: Record<string, string>;
+  newlyAddedOperations: Record<string, string>;
 }

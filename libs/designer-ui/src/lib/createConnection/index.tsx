@@ -1,14 +1,28 @@
 import { filterRecord } from '../utils';
-import { ConnectionAuth } from './auth';
+import GatewayPicker from './gatewayPicker';
 import type { IDropdownOption } from '@fluentui/react';
-import { DefaultButton, Dropdown, Icon, Label, PrimaryButton, TextField, TooltipHost } from '@fluentui/react';
+import {
+  MessageBarType,
+  MessageBar,
+  Checkbox,
+  DefaultButton,
+  Dropdown,
+  Icon,
+  Label,
+  PrimaryButton,
+  TextField,
+  TooltipHost,
+} from '@fluentui/react';
 import type {
   ConnectionParameter,
   ConnectionParameterAllowedValue,
   ConnectionParameterSet,
   ConnectionParameterSetParameter,
   ConnectionParameterSets,
+  Gateway,
+  Subscription,
 } from '@microsoft-logic-apps/utils';
+import { ConnectionParameterTypes } from '@microsoft-logic-apps/utils';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -19,15 +33,20 @@ export interface CreateConnectionProps {
   connectionParameterSets?: ConnectionParameterSets;
   isLoading?: boolean;
   createConnectionCallback?: (
-    newName: string,
+    newName?: string,
     selectedParameterSet?: ConnectionParameterSet,
-    parameterValues?: Record<string, any>
+    parameterValues?: Record<string, any>,
+    isOAuthConnection?: boolean
   ) => void;
   cancelCallback?: () => void;
-  authClickCallback?: () => void;
   hideCancelButton?: boolean;
-  needsAuth?: boolean;
   errorMessage?: string;
+  clearErrorCallback?: () => void;
+  selectSubscriptionCallback?: (subscriptionId: string) => void;
+  selectedSubscriptionId?: string;
+  availableSubscriptions?: Subscription[];
+  availableGateways?: Gateway[];
+  checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
 }
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
@@ -40,13 +59,19 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     isLoading,
     createConnectionCallback,
     cancelCallback,
-    authClickCallback,
     hideCancelButton = false,
-    needsAuth = false,
     errorMessage,
+    clearErrorCallback,
+    selectSubscriptionCallback,
+    selectedSubscriptionId,
+    availableSubscriptions,
+    availableGateways,
+    checkOAuthCallback,
   } = props;
 
   const intl = useIntl();
+
+  const [parameterValues, setParameterValues] = useState<Record<string, any>>({});
 
   const [selectedParamSetIndex, setSelectedParamSetIndex] = useState<number>(0);
   const onAuthDropdownChange = useCallback(
@@ -59,35 +84,58 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     [selectedParamSetIndex]
   );
 
-  const singleAuthParams = connectionParameters;
-  const multiAuthParams = useMemo(
-    () => connectionParameterSets?.values[selectedParamSetIndex].parameters,
-    [connectionParameterSets, selectedParamSetIndex]
-  );
-  const parameters = useMemo(() => multiAuthParams ?? singleAuthParams ?? {}, [multiAuthParams, singleAuthParams]);
-
-  const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
-  const [parameterValues, setParameterValues] = useState<Record<string, string | undefined>>({});
-
   const isParamVisible = useCallback(
     (parameter: ParamType) => {
-      const data = parameter?.uiDefinition;
-      if (data?.constraints?.hidden || data?.constraints?.hideInUI) return false;
-      const dependencyParam = data?.constraints?.dependentParameter;
+      const constraints = parameter?.uiDefinition?.constraints;
+      if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
+      const dependencyParam = constraints?.dependentParameter;
       if (dependencyParam && parameterValues[dependencyParam.parameter] !== dependencyParam.value) return false;
+      if (parameter.type === ConnectionParameterTypes[ConnectionParameterTypes.oauthSetting]) return false;
       return true;
     },
     [parameterValues]
   );
 
-  const validParams = useMemo(() => {
-    return Object.entries(parameters).every(
-      ([key, parameter]) =>
-        parameter?.uiDefinition?.constraints?.required !== 'true' || !isParamVisible(parameter) || !!parameterValues[key]
-    );
-  }, [isParamVisible, parameterValues, parameters]);
+  const singleAuthParams = useMemo(() => connectionParameters ?? {}, [connectionParameters]);
+  const multiAuthParams = useMemo(
+    () => connectionParameterSets?.values[selectedParamSetIndex].parameters ?? {},
+    [connectionParameterSets, selectedParamSetIndex]
+  );
+  const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 1, [connectionParameterSets?.values]);
+  const parameters = useMemo(() => {
+    const params = (isMultiAuth ? { ...multiAuthParams } : { ...singleAuthParams }) ?? {};
+    return filterRecord<any>(params, (_key, value) => isParamVisible(value));
+  }, [isMultiAuth, isParamVisible, multiAuthParams, singleAuthParams]);
+  const hasOAuth = useMemo(
+    () => checkOAuthCallback(isMultiAuth ? multiAuthParams : singleAuthParams),
+    [checkOAuthCallback, isMultiAuth, multiAuthParams, singleAuthParams]
+  );
 
-  const canSubmit = !isLoading && !!connectionDisplayName && validParams;
+  const showNameInput = useMemo(() => isMultiAuth || Object.keys(parameters).length > 0, [isMultiAuth, parameters]);
+
+  const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
+  const validParams = useMemo(() => {
+    if (showNameInput && !connectionDisplayName) return false;
+    if (Object.keys(parameters).length === 0) return true;
+    return Object.entries(parameters).every(
+      ([key, parameter]) => parameter?.uiDefinition?.constraints?.required !== 'true' || !!parameterValues[key]
+    );
+  }, [connectionDisplayName, parameterValues, parameters, showNameInput]);
+
+  const canSubmit = useMemo(() => {
+    return !isLoading && validParams;
+  }, [isLoading, validParams]);
+
+  const submitCallback = useCallback(() => {
+    return createConnectionCallback?.(
+      connectionDisplayName,
+      connectionParameterSets?.values[selectedParamSetIndex],
+      parameterValues,
+      hasOAuth
+    );
+  }, [createConnectionCallback, connectionDisplayName, connectionParameterSets?.values, selectedParamSetIndex, parameterValues, hasOAuth]);
+
+  // INTL STRINGS
 
   const inputConnectionDisplayNameLabel = intl.formatMessage({
     defaultMessage: 'Connection Name',
@@ -124,7 +172,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     description: 'aria label description for cancel button',
   });
 
-  const componentSimpleDescription = intl.formatMessage(
+  const simpleDescriptionText = intl.formatMessage(
     {
       defaultMessage: 'Create a connection for {connectorName}.',
       description: 'Create a connection for selected connector',
@@ -134,74 +182,88 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     }
   );
 
-  const getVisibleParameterValues = useCallback(() => {
-    return filterRecord(parameterValues, ([key]) => isParamVisible(parameters[key]));
-  }, [isParamVisible, parameterValues, parameters]);
+  const authDescriptionText = intl.formatMessage(
+    {
+      defaultMessage: 'Sign in to create a connection to {connectorDisplayName}.',
+      description: 'Description for creating an externally authenticated connection.',
+    },
+    { connectorDisplayName }
+  );
 
-  const submitCallback = useCallback(() => {
-    return createConnectionCallback?.(
-      connectionDisplayName,
-      connectionParameterSets?.values[selectedParamSetIndex],
-      getVisibleParameterValues()
-    );
-  }, [createConnectionCallback, connectionDisplayName, connectionParameterSets?.values, selectedParamSetIndex, getVisibleParameterValues]);
+  const signInButtonText = intl.formatMessage({
+    defaultMessage: 'Sign in',
+    description: 'Text for sign in button.',
+  });
 
-  // AuthorizedConnector Component
-  if (needsAuth)
-    return (
-      <ConnectionAuth
-        connectorDisplayName={connectorDisplayName}
-        isLoading={isLoading}
-        authClickCallback={authClickCallback}
-        cancelCallback={cancelCallback}
-        hideCancelButton={hideCancelButton}
-        errorMessage={errorMessage}
-      />
-    );
+  const signInButtonAria = intl.formatMessage({
+    defaultMessage: 'Sign in to connector',
+    description: 'Aria label description for sign in button.',
+  });
 
-  // SimpleConnector component
-  if (!(Object.keys(singleAuthParams ?? {}).length > 0 || Object.keys(multiAuthParams ?? {}).length > 0)) {
-    return (
-      <div className="msla-create-connection-container">
-        <div>{componentSimpleDescription}</div>
+  const signInButtonLoadingText = intl.formatMessage({
+    defaultMessage: 'Signing in...',
+    description: 'Text for sign in button while loading.',
+  });
 
-        <div className="msla-create-connection-actions-container">
-          <PrimaryButton
-            disabled={isLoading}
-            text={isLoading ? createButtonLoadingText : createButtonText}
-            ariaLabel={createButtonAria}
-            onClick={submitCallback}
-          />
-        </div>
-      </div>
-    );
-  }
+  const closeErrorButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close',
+    description: 'Close button aria label',
+  });
 
-  // AssistedConnector Component
-  // if (false) return <p>TODO:</p>
+  const connectorDescription = useMemo(() => {
+    if (hasOAuth) return authDescriptionText;
+    if (Object.keys(parameters ?? {}).length === 0) return simpleDescriptionText;
+    return '';
+  }, [authDescriptionText, hasOAuth, parameters, simpleDescriptionText]);
 
-  // Configurable connector component
+  const submitButtonText = useMemo(() => {
+    if (isLoading) return hasOAuth ? signInButtonLoadingText : createButtonLoadingText;
+    return hasOAuth ? signInButtonText : createButtonText;
+  }, [createButtonLoadingText, createButtonText, isLoading, hasOAuth, signInButtonLoadingText, signInButtonText]);
+
+  const submitButtonAriaLabel = useMemo(() => {
+    return hasOAuth ? signInButtonAria : createButtonAria;
+  }, [hasOAuth, signInButtonAria, createButtonAria]);
+
+  // RENDER
+
   return (
     <div className="msla-create-connection-container">
+      {/* Error Bar */}
+      {errorMessage && (
+        <MessageBar
+          messageBarType={MessageBarType.error}
+          isMultiline={true}
+          onDismiss={clearErrorCallback}
+          dismissButtonAriaLabel={closeErrorButtonAriaLabel}
+        >
+          {errorMessage}
+        </MessageBar>
+      )}
+
+      {/* Parameters */}
       <div className="connection-params-container">
-        <div className="param-row">
-          <Label className="label" required htmlFor={'connection-display-name-input'} disabled={isLoading}>
-            {inputConnectionDisplayNameLabel}
-          </Label>
-          <TextField
-            id={'connection-display-name-input'}
-            className="connection-parameter-input"
-            disabled={isLoading}
-            autoComplete="off"
-            aria-label={inputConnectionDisplayNamePlaceholder}
-            placeholder={inputConnectionDisplayNamePlaceholder}
-            value={connectionDisplayName}
-            onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
-          />
-        </div>
+        {/* Name */}
+        {showNameInput && (
+          <div className="param-row">
+            <Label className="label" required htmlFor={'connection-display-name-input'} disabled={isLoading}>
+              {inputConnectionDisplayNameLabel}
+            </Label>
+            <TextField
+              id={'connection-display-name-input'}
+              className="connection-parameter-input"
+              disabled={isLoading}
+              autoComplete="off"
+              aria-label={inputConnectionDisplayNamePlaceholder}
+              placeholder={inputConnectionDisplayNamePlaceholder}
+              value={connectionDisplayName}
+              onChange={(e: any, val?: string) => setConnectionDisplayName(val ?? '')}
+            />
+          </div>
+        )}
 
         {/* Authentication Selection */}
-        {Object.keys(multiAuthParams ?? {}).length > 0 && multiAuthParams && (
+        {isMultiAuth && (
           <div className="param-row">
             <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
               {connectionParameterSets?.uiDefinition?.displayName}
@@ -225,71 +287,103 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
         )}
 
         {/* Connector Parameters */}
-        {Object.entries(multiAuthParams ?? singleAuthParams ?? [])?.map(
-          ([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
-            if (!isParamVisible(parameter)) return null;
+        {Object.entries(parameters)?.map(([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
+          const data = parameter?.uiDefinition;
+          const constraints = parameter?.uiDefinition?.constraints;
+          let inputComponent = undefined;
 
-            const data = parameter?.uiDefinition;
-            let inputComponent = undefined;
-            if ((data?.constraints?.allowedValues?.length ?? 0) > 0) {
-              // Dropdown Parameter
-              inputComponent = (
-                <Dropdown
-                  id={`connection-param-${key}`}
-                  className="connection-parameter-input"
-                  selectedKey={data?.constraints?.allowedValues?.findIndex((value) => value.text === parameterValues[key])}
-                  onChange={(e: any, newVal?: IDropdownOption) => {
-                    setParameterValues({ ...parameterValues, [key]: newVal?.text });
-                  }}
-                  disabled={isLoading}
-                  ariaLabel={data?.description}
-                  placeholder={data?.description}
-                  options={(data?.constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
-                    key: index,
-                    text: allowedValue.text ?? '',
-                  }))}
-                />
-              );
-            } else {
-              // Text Input Parameter
-              inputComponent = (
-                <TextField
-                  id={key}
-                  className="connection-parameter-input"
-                  disabled={isLoading}
-                  autoComplete="off"
-                  // onNotifyValidationResult
-                  ariaLabel={data?.description}
-                  placeholder={data?.description}
-                  value={parameterValues[key]}
-                  onChange={(e: any, newVal?: string) => setParameterValues({ ...parameterValues, [key]: newVal })}
-                />
-              );
-            }
-
-            return (
-              <div key={key} className="param-row">
-                <Label className="label" required={data?.constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
-                  {data?.displayName}
-                  <TooltipHost content={data?.tooltip}>
-                    <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-                  </TooltipHost>
-                </Label>
-                {inputComponent}
-              </div>
+          // Gateway setting parameter
+          if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.gatewaySetting]) {
+            inputComponent = (
+              <GatewayPicker
+                key={key}
+                selectedSubscriptionId={selectedSubscriptionId}
+                selectSubscriptionCallback={selectSubscriptionCallback}
+                availableGateways={availableGateways}
+                availableSubscriptions={availableSubscriptions}
+                isLoading={isLoading}
+                setParameterValues={setParameterValues}
+                parameterValues={parameterValues}
+              />
             );
           }
-        )}
+
+          // Boolean parameter
+          else if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.bool]) {
+            inputComponent = (
+              <Checkbox
+                checked={parameterValues[key]}
+                onChange={(e: any, checked?: boolean) => {
+                  setParameterValues({ ...parameterValues, [key]: checked });
+                }}
+                label={data?.description}
+              />
+            );
+          }
+
+          // Dropdown Parameter
+          else if ((constraints?.allowedValues?.length ?? 0) > 0) {
+            inputComponent = (
+              <Dropdown
+                id={`connection-param-${key}`}
+                className="connection-parameter-input"
+                selectedKey={constraints?.allowedValues?.findIndex((value) => value.text === parameterValues[key])}
+                onChange={(e: any, newVal?: IDropdownOption) => {
+                  setParameterValues({ ...parameterValues, [key]: newVal?.text });
+                }}
+                disabled={isLoading}
+                ariaLabel={data?.description}
+                placeholder={data?.description}
+                options={(constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
+                  key: index,
+                  text: allowedValue.text ?? '',
+                }))}
+              />
+            );
+          }
+
+          // Text Input Parameter
+          else {
+            const isSecure = parameter.type === 'securestring' && !constraints?.clearText;
+            const type = isSecure ? 'password' : 'text';
+
+            inputComponent = (
+              <TextField
+                id={key}
+                className="connection-parameter-input"
+                disabled={isLoading}
+                autoComplete="off"
+                type={type}
+                canRevealPassword
+                ariaLabel={data?.description}
+                placeholder={data?.description}
+                value={parameterValues[key]}
+                onChange={(e: any, newVal?: string) => setParameterValues({ ...parameterValues, [key]: newVal })}
+              />
+            );
+          }
+
+          return (
+            <div key={key} className="param-row">
+              <Label className="label" required={constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
+                {data?.displayName}
+                <TooltipHost content={data?.tooltip}>
+                  <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
+                </TooltipHost>
+              </Label>
+              {inputComponent}
+            </div>
+          );
+        })}
       </div>
+
+      {/* Descriptor text for simple and oauth */}
+      <div>{connectorDescription}</div>
+      {/* {needsAuth && <IFrameTermsOfService url={termsOfServiceUrl} />} */}
 
       {/* Action Buttons */}
       <div className="msla-create-connection-actions-container">
-        <PrimaryButton
-          disabled={!canSubmit}
-          text={isLoading ? createButtonLoadingText : createButtonText}
-          ariaLabel={createButtonAria}
-          onClick={submitCallback}
-        />
+        <PrimaryButton disabled={!canSubmit} text={submitButtonText} ariaLabel={submitButtonAriaLabel} onClick={submitCallback} />
         {!hideCancelButton ? (
           <DefaultButton disabled={isLoading} text={cancelButtonText} ariaLabel={cancelButtonAria} onClick={cancelCallback} />
         ) : null}

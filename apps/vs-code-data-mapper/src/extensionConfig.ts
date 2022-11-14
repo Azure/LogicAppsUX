@@ -1,13 +1,15 @@
 export const webviewTitle = 'Data Mapper';
 export const outputChannelTitle = webviewTitle;
+export const outputChannelPrefix = 'azureLogicAppsDataMapper';
 
-export const supportedDataMapFileExts = ['.yml'];
+export const supportedDataMapDefinitionFileExts = ['.yml'];
 export const supportedSchemaFileExts = ['.xsd'];
 
 const artifactsPath = '/Artifacts/';
 export const schemasPath = `${artifactsPath}/Schemas`;
 export const dataMapsPath = `${artifactsPath}/Maps`;
 export const dataMapDefinitionsPath = `${artifactsPath}/MapDefinitions`;
+export const workflowDesignTimeDir = '/workflow-designtime';
 
 export const defaultDatamapFilename = 'default';
 export const mapDefinitionExtension = '.yml';
@@ -34,9 +36,10 @@ export const settingsFileContent = {
   Values: {
     AzureWebJobsSecretStorageType: 'Files',
     FUNCTIONS_WORKER_RUNTIME: 'dotnet-isolated',
+    ProjectDirectoryPath: 'should/be/set/by/code',
   },
 };
 
-export const backendRuntimeBaseUrl = 'http://localhost:7071';
+export const backendRuntimeBaseUrl = 'http://localhost:';
 export const workflowMgmtApi = '/runtime/webhooks/workflow/api/management/';
 export const backendRuntimeTimeout = 60000;

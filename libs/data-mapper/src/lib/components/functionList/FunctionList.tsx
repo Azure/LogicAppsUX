@@ -1,223 +1,221 @@
-import { getFunctions } from '../../core/queries/functions';
+import { sourcePrefix, targetPrefix } from '../../constants/ReactFlowConstants';
+import {
+  addFunctionNode,
+  makeConnection,
+  setCanvasToolboxTabToDisplay,
+  setInlineFunctionInputOutputKeys,
+} from '../../core/state/DataMapSlice';
+import { store } from '../../core/state/Store';
+import type { AppDispatch, RootState } from '../../core/state/Store';
+import { NormalizedDataType } from '../../models';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
-import { getFunctionBrandingForCategory } from '../../utils/Function.Utils';
-import { getIconForFunction } from '../../utils/Icon.Utils';
-import { DMTooltip } from '../tooltip/tooltip';
+import { isFunctionData } from '../../utils/Function.Utils';
+import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
+import Tree from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
-import type { IGroup, IGroupedListStyleProps, IGroupedListStyles, IStyleFunctionOrObject } from '@fluentui/react';
-import { GroupedList } from '@fluentui/react';
-import { Button, Caption1, makeStyles, mergeClasses, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
+import FunctionListHeader from './FunctionListHeader';
+import FunctionListItem from './FunctionListItem';
 import Fuse from 'fuse.js';
-import { useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useMemo, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-export interface FunctionListProps {
-  onFunctionClick: (functionNode: FunctionData) => void;
+const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
+  includeScore: true,
+  minMatchCharLength: 2,
+  includeMatches: true,
+  threshold: 0.4,
+  keys: ['key', 'functionName', 'displayName'],
+};
+
+export const functionCategoryItemKeyPrefix = 'category&';
+
+interface FunctionDataTreeItem extends FunctionData {
+  isExpanded?: boolean;
+  children: FunctionDataTreeItem[];
 }
 
-const buttonHoverStyles = makeStyles({
-  button: {
-    backgroundColor: tokens.colorNeutralBackground1Hover,
-  },
-});
+export const FunctionList = () => {
+  const dispatch = useDispatch<AppDispatch>();
 
-export const FunctionList: React.FC<FunctionListProps> = (props: FunctionListProps) => {
-  const functionListData = useQuery<FunctionData[]>(['functions'], () => getFunctions());
+  const functionData = useSelector((state: RootState) => state.function.availableFunctions);
+  const inlineFunctionInputOutputKeys = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys);
+  const currentFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [sortedFunctionsByCategory, setSortedFunctionsByCategory] = useState<FunctionData[]>([]);
-  const [groups, setGroups] = useState<IGroup[]>([]);
 
-  useEffect(() => {
-    if (functionListData.data) {
-      const categoriesArray: FunctionCategory[] = [];
-      let newSortedFunctions: FunctionData[] = [];
-      let dataCopy = functionListData.data;
-      if (searchTerm) {
-        const options: Fuse.IFuseOptions<FunctionData> = {
-          includeScore: true,
-          minMatchCharLength: 2,
-          includeMatches: true,
-          threshold: 0.4,
-          keys: [
-            {
-              name: 'key',
-            },
-            {
-              name: 'functionName',
-            },
-            {
-              name: 'displayName',
-            },
-          ],
-        };
+  const isAddingInlineFunction = inlineFunctionInputOutputKeys.length === 2;
 
-        const fuse = new Fuse(functionListData.data, options);
-        const results = fuse.search(searchTerm);
+  const onFunctionItemClick = (selectedFunction: FunctionData) => {
+    if (isAddingInlineFunction) {
+      const newReactFlowKey = createReactFlowFunctionKey(selectedFunction);
+      dispatch(addFunctionNode({ functionData: selectedFunction, newReactFlowKey }));
 
-        dataCopy = results.map((fuse) => {
-          return { ...fuse.item, matchIndices: fuse.matches };
+      const reactFlowSource = inlineFunctionInputOutputKeys[0];
+      const reactFlowDestination = inlineFunctionInputOutputKeys[1];
+
+      const source = reactFlowSource.startsWith(sourcePrefix)
+        ? flattenedSourceSchema[reactFlowSource]
+        : currentFunctionNodes[reactFlowSource];
+      const destination = reactFlowDestination.startsWith(targetPrefix)
+        ? flattenedTargetSchema[reactFlowDestination]
+        : currentFunctionNodes[reactFlowDestination];
+
+      // Create connection between input and new function
+      dispatch(
+        makeConnection({
+          source,
+          reactFlowSource,
+          destination: selectedFunction,
+          reactFlowDestination: newReactFlowKey,
+        })
+      );
+
+      // Create connection between new function and output
+      dispatch(
+        makeConnection({
+          source: selectedFunction,
+          reactFlowSource: newReactFlowKey,
+          destination,
+          reactFlowDestination,
+        })
+      );
+
+      dispatch(setInlineFunctionInputOutputKeys(undefined));
+      dispatch(setCanvasToolboxTabToDisplay(''));
+    } else {
+      dispatch(addFunctionNode(selectedFunction));
+    }
+  };
+
+  const functionListTree = useMemo(() => {
+    // Can safely typecast as we just use the root's children[]
+    const newFunctionListTree = {} as FunctionDataTreeItem;
+    newFunctionListTree.children = [];
+
+    // Try/catch here to for critical Function-related errors to be caught by us & telemetry
+    try {
+      if (functionData) {
+        const functionCategoryDictionary: { [key: string]: FunctionDataTreeItem } = {};
+        let functionsList: FunctionData[] = [...functionData];
+        functionsList.sort((a, b) => a.key.localeCompare(b.key)); // Alphabetically sort Functions
+
+        // Create dictionary for Function Categories
+        Object.values(FunctionCategory).forEach((category) => {
+          const categoryItem = {} as FunctionDataTreeItem;
+          categoryItem.children = [];
+          categoryItem.key = `${functionCategoryItemKeyPrefix}${category}`;
+
+          functionCategoryDictionary[category] = categoryItem;
         });
 
-        dataCopy.forEach((functionNode) => {
-          if (!categoriesArray.find((category) => category === functionNode.category)) categoriesArray.push(functionNode.category);
-        });
+        // Filter out functions if we're adding an inline function and/or have a searchTerm
+        if (inlineFunctionInputOutputKeys.length === 2) {
+          // NOTE: Explicitly use this instead of isAddingInlineFunction to non-warningly add inlineFunction...Keys to dependencies to track value changes
+          functionsList = typeValidatePotentialInlineFunctions(functionsList);
+        }
 
-        newSortedFunctions = dataCopy.sort((a, b) => a.category.localeCompare(b.category));
-      } else {
-        dataCopy = functionListData.data;
+        if (searchTerm) {
+          const fuse = new Fuse(functionsList, fuseFunctionSearchOptions);
+          functionsList = fuse.search(searchTerm).map((result) => result.item);
+        }
 
-        Object.values(FunctionCategory).forEach((category) => categoriesArray.push(category));
+        // Add functions to their respective categories
+        functionsList.forEach((functionData) => {
+          functionCategoryDictionary[functionData.category].children.push({ ...functionData, children: [] });
 
-        newSortedFunctions = dataCopy.sort((a, b) => {
-          const categorySort = a.category.localeCompare(b.category);
-          if (categorySort !== 0) {
-            return categorySort;
-          } else {
-            return a.key.localeCompare(b.key);
+          // If there's a search term, all present categories should be expanded as
+          // they only show when they have Functions that match the search
+          if (searchTerm) {
+            functionCategoryDictionary[functionData.category].isExpanded = true;
           }
         });
+
+        // Add function categories as children to the tree root, filtering out any that don't have any children
+        newFunctionListTree.children = Object.values(functionCategoryDictionary).filter((category) => category.children.length > 0);
       }
-
-      setSortedFunctionsByCategory(newSortedFunctions);
-      let startInd = 0;
-
-      const newGroups = categoriesArray
-        .map((value): IGroup => {
-          let numInGroup = 0;
-          newSortedFunctions.forEach((functionNode) => {
-            if (functionNode.category === value) {
-              numInGroup++;
-            }
-          });
-
-          const group: IGroup = {
-            key: value,
-            startIndex: startInd,
-            name: getFunctionBrandingForCategory(value).displayName,
-            count: numInGroup,
-          };
-
-          startInd += numInGroup;
-
-          return group;
-        })
-        .filter((group) => group.count > 0);
-
-      setGroups(newGroups);
+    } catch (error) {
+      if (typeof error === 'string') {
+        throw new Error(`Function List Error: ${error}`);
+      } else if (error instanceof Error) {
+        throw new Error(`Function List Error: ${error.message}`);
+      }
     }
-  }, [functionListData.data, searchTerm]);
 
-  const cell = (functionNode: FunctionData, onFunctionClick: (functionNode: FunctionData) => void) => {
-    return <FunctionListCell functionData={functionNode} onFunctionClick={onFunctionClick}></FunctionListCell>;
-  };
-
-  const headerStyle: IStyleFunctionOrObject<IGroupedListStyleProps, IGroupedListStyles> = {
-    root: {
-      '.ms-GroupHeader': {
-        height: '28px',
-        width: '100%',
-        display: 'flex',
-        'div:first-child': {
-          height: '28px',
-        },
-        borderRadius: tokens.borderRadiusMedium,
-      },
-      '.ms-GroupHeader-title': {
-        ...typographyStyles.caption1,
-        'span:nth-of-type(2)': {
-          display: 'none',
-        },
-      },
-      '.ms-GroupHeader-expand': {
-        height: '28px',
-        width: '16px',
-        paddingLeft: tokens.spacingHorizontalXS,
-        ':hover': {
-          backgroundColor: 'inherit',
-        },
-      },
-      '.ms-GroupedList-group': {
-        paddingBottom: '8px',
-      },
-    },
-  };
+    return newFunctionListTree;
+  }, [functionData, searchTerm, inlineFunctionInputOutputKeys]);
 
   return (
     <>
-      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} title="Function"></TreeHeader>
-      <div>
-        <GroupedList
-          onShouldVirtualize={() => false}
-          groups={groups}
-          styles={headerStyle}
-          items={sortedFunctionsByCategory}
-          onRenderCell={(depth, item) => cell(item, props.onFunctionClick)}
-          selectionMode={0}
-        ></GroupedList>
-      </div>
+      <TreeHeader onSearch={setSearchTerm} onClear={() => setSearchTerm('')} />
+
+      <Tree<FunctionDataTreeItem>
+        treeRoot={functionListTree}
+        nodeContent={(node) =>
+          node.key.startsWith(functionCategoryItemKeyPrefix) ? (
+            <FunctionListHeader category={node.key.replace(functionCategoryItemKeyPrefix, '') as FunctionCategory} />
+          ) : (
+            <FunctionListItem functionData={node as FunctionData} />
+          )
+        }
+        childPadding={0}
+        onClickItem={(node) => !node.key.startsWith(functionCategoryItemKeyPrefix) && onFunctionItemClick(node as FunctionData)}
+        parentItemClickShouldExpand
+      />
     </>
   );
 };
 
-interface FunctionListCellProps {
-  functionData: FunctionData;
-  onFunctionClick: (functionNode: FunctionData) => void;
-}
+// Returns copy of type-validated array
+const typeValidatePotentialInlineFunctions = (functionsToTypeValidate: FunctionData[]): FunctionData[] => {
+  const inlineFunctionInputOutputKeys = store.getState().dataMap.curDataMapOperation.inlineFunctionInputOutputKeys;
+  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
+  const currentFunctionNodes = store.getState().dataMap.curDataMapOperation.currentFunctionNodes;
+  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
 
-const cardStyles = makeStyles({
-  button: {
-    width: '100%',
-    height: '40px',
-    backgroundColor: tokens.colorNeutralBackground1,
-    display: 'flex',
-    justifyContent: 'left',
-    ...shorthands.border('0px'),
-    ...shorthands.padding('1px 4px 1px 4px'),
-  },
-  text: {
-    width: '180px',
-    paddingLeft: '4px',
-    paddingRight: '4px',
-    ...shorthands.overflow('hidden'),
-  },
-});
+  const reactFlowSource = inlineFunctionInputOutputKeys[0];
+  const reactFlowDestination = inlineFunctionInputOutputKeys[1];
+  const source = reactFlowSource.startsWith(sourcePrefix) ? flattenedSourceSchema[reactFlowSource] : currentFunctionNodes[reactFlowSource];
+  const destination = reactFlowDestination.startsWith(targetPrefix)
+    ? flattenedTargetSchema[reactFlowDestination]
+    : currentFunctionNodes[reactFlowDestination];
 
-const FunctionListCell: React.FC<FunctionListCellProps> = ({ functionData, onFunctionClick }) => {
-  const [isHover, setIsHover] = useState<boolean>(false);
-  const cardStyle = cardStyles();
-  const buttonHovered = mergeClasses(cardStyle.button, buttonHoverStyles().button);
-  const brand = getFunctionBrandingForCategory(functionData.category);
+  // NOTE: Here, we can just flatMap all of a Function's inputs' types as all inputs
+  // are guaranteed to be empty as we're creating a new Function (as opposed to what the InputDropdown handles)
 
-  return (
-    <Button
-      onMouseEnter={() => setIsHover(true)}
-      onMouseLeave={() => setIsHover(false)}
-      key={functionData.key}
-      alt-text={functionData.displayName}
-      className={isHover ? buttonHovered : cardStyle.button}
-      onClick={() => {
-        onFunctionClick(functionData);
-      }}
-    >
-      <span
-        style={{
-          backgroundColor: brand.colorLight /* need to add this to theme task no. 15544832*/,
-          height: '28px',
-          width: '28px',
-          borderRadius: '14px',
-        }}
-      >
-        <div style={{ paddingTop: '4px', color: tokens.colorNeutralBackground1 }}>
-          {getIconForFunction(functionData.displayName, functionData.iconFileName, brand)}
-        </div>
-      </span>
-      <Caption1 truncate block className={cardStyle.text} style={isHover ? { ...typographyStyles.caption1Strong } : {}}>
-        {functionData.displayName}
-      </Caption1>
-      <span style={{ justifyContent: 'right' }}>
-        <DMTooltip text={functionData.description}></DMTooltip>
-      </span>
-    </Button>
-  );
+  // Obtain input's normalized output type, and compare it against each function's inputs' allowedTypes
+  const inputNormalizedOutputType = isFunctionData(source) ? source.outputValueType : source.normalizedDataType;
+
+  // Obtain the output's normalized input type (schema node), or a list of its inputs' allowedTypes (function node), and compare it against each function's output type
+  const outputNormalizedInputTypes = isFunctionData(destination)
+    ? destination.inputs.flatMap((input) => input.allowedTypes)
+    : [destination.normalizedDataType];
+
+  return functionsToTypeValidate.filter((functionNode) => {
+    // Functions with no inputs shouldn't be shown when adding inline functions
+    if (functionNode.inputs.length === 0) {
+      return false;
+    }
+
+    const functionInputTypes = functionNode.inputs.flatMap((input) => input.allowedTypes);
+    const functionOutputType = functionNode.outputValueType;
+
+    // NOTE: This case will only happen when the existing connection is to a Function node
+    // What would happen if we didn't return false here is that we'd be saying this potential new Function's output type
+    // matches one of the output Function's inputs' types, but for a different input slot than the existing one goes to
+    // - which raises the question - do we overwrite that new slot if there's something in it? Etc etc...
+    // So, TODO: figure out how we want to handle this case, and likely handle it here
+    if (functionNode.outputValueType !== inputNormalizedOutputType) {
+      return false;
+    }
+
+    return (
+      (inputNormalizedOutputType === NormalizedDataType.Any ||
+        functionInputTypes.some((type) => type === NormalizedDataType.Any || type === inputNormalizedOutputType)) &&
+      (functionOutputType === NormalizedDataType.Any ||
+        outputNormalizedInputTypes.some((type) => type === NormalizedDataType.Any || type === functionOutputType))
+    );
+  });
 };

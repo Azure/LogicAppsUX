@@ -1,9 +1,13 @@
 import type { FunctionGroupBranding } from '../../constants/FunctionConstants';
-import { store } from '../../core/state/Store';
+import { functionNodeCardSize } from '../../constants/NodeConstants';
+import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
+import { customTokens } from '../../core';
+import type { RootState } from '../../core/state/Store';
 import type { FunctionInput } from '../../models/Function';
 import { getIconForFunction } from '../../utils/Icon.Utils';
+import HandleWrapper from './HandleWrapper';
+import { getStylesForSharedState, selectedCardStyles } from './NodeCard';
 import type { CardProps } from './NodeCard';
-import { getStylesForSharedState } from './NodeCard';
 import {
   Button,
   createFocusOutlineStyle,
@@ -15,65 +19,43 @@ import {
   tokens,
   Tooltip,
 } from '@fluentui/react-components';
-import type { FunctionComponent } from 'react';
-import type { Connection as ReactFlowConnection, NodeProps } from 'reactflow';
-import { Handle, Position } from 'reactflow';
+import { useMemo, useState } from 'react';
+import { useSelector } from 'react-redux';
+import type { NodeProps } from 'reactflow';
+import { Position } from 'reactflow';
 
-export type FunctionCardProps = {
-  functionName: string;
-  maxNumberOfInputs: number;
-  inputs: FunctionInput[];
-  iconFileName?: string;
-  functionBranding: FunctionGroupBranding;
-} & CardProps;
+const sharedHalfCardSize = functionNodeCardSize / 2;
 
 const useStyles = makeStyles({
   root: {
     ...shorthands.borderRadius(tokens.borderRadiusCircular),
-    backgroundColor: '#8764b8',
-    color: tokens.colorNeutralForegroundInverted,
+    color: tokens.colorNeutralBackground1,
     fontSize: '20px',
-    height: '32px',
+    height: `${sharedHalfCardSize}px`,
+    width: `${sharedHalfCardSize}px`,
+    minWidth: `${sharedHalfCardSize}px`,
     textAlign: 'center',
-    width: '32px',
-    minWidth: '32px',
     position: 'relative',
     justifyContent: 'center',
     ...shorthands.padding('0px'),
     ...shorthands.margin(tokens.strokeWidthThick),
-
-    '&:disabled': {
-      '&:hover': {
-        backgroundColor: '#8764b8',
-        color: tokens.colorNeutralForegroundInverted,
-      },
+    '&:hover': {
+      color: tokens.colorNeutralBackground1,
     },
-
-    '&:enabled': {
-      '&:hover': {
-        backgroundColor: '#8764b8',
-        color: 'white',
-      },
-      '&:focus': {
-        backgroundColor: '#8764b8',
-        color: 'white',
-      },
+    '&:active': {
+      // Not sure what was overwriting the base color, but the important overwrites the overwrite
+      color: `${tokens.colorNeutralBackground1} !important`,
     },
   },
-
   badge: {
     position: 'absolute',
     top: '1px',
     right: '-2px',
     zIndex: '1',
   },
-
   container: {
-    height: '32px',
-    width: '32px',
     position: 'relative',
   },
-
   focusIndicator: createFocusOutlineStyle({
     selector: 'focus-within',
     style: {
@@ -82,53 +64,74 @@ const useStyles = makeStyles({
   }),
 });
 
-const handleStyle: React.CSSProperties = { zIndex: 5, width: '10px', height: '10px' };
+export interface FunctionCardProps extends CardProps {
+  functionName: string;
+  maxNumberOfInputs: number;
+  inputs: FunctionInput[];
+  iconFileName?: string;
+  functionBranding: FunctionGroupBranding;
+}
 
-const isValidConnection = (connection: ReactFlowConnection, inputs: FunctionInput[]): boolean => {
-  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
-
-  if (connection.source && connection.target && flattenedSourceSchema) {
-    const sourceNode = flattenedSourceSchema[connection.source];
-
-    // For now just allow all function to function
-    // TODO validate express to function connections
-    return (
-      !sourceNode || inputs.some((input) => input.allowedTypes.some((acceptableType) => acceptableType === sourceNode.normalizedDataType))
-    );
-  }
-
-  return false;
-};
-
-export const FunctionCard: FunctionComponent<NodeProps<FunctionCardProps>> = (props: NodeProps<FunctionCardProps>) => {
-  const { functionName, maxNumberOfInputs, inputs, disabled, error, functionBranding, iconFileName, displayHandle, onClick } = props.data;
+export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
+  const reactFlowId = props.id;
+  const { functionName, maxNumberOfInputs, disabled, error, functionBranding, displayHandle, onClick } = props.data; // iconFileName
   const classes = useStyles();
   const mergedClasses = mergeClasses(getStylesForSharedState().root, classes.root);
 
-  return (
-    <div className={classes.container}>
-      {displayHandle && maxNumberOfInputs !== 0 ? (
-        <Handle
-          type={'target'}
-          position={Position.Left}
-          style={handleStyle}
-          isValidConnection={(connection) => isValidConnection(connection, inputs)}
-        />
-      ) : null}
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
+  const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
 
-      {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge}></PresenceBadge>}
+  const [isCardHovered, setIsCardHovered] = useState<boolean>(false);
+
+  const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
+
+  const shouldDisplayHandles = !sourceNodeConnectionBeingDrawnFromId && (isCardHovered || isCurrentNodeSelected);
+  const shouldDisplayTargetHandle =
+    displayHandle &&
+    maxNumberOfInputs !== 0 &&
+    !!sourceNodeConnectionBeingDrawnFromId &&
+    sourceNodeConnectionBeingDrawnFromId !== reactFlowId;
+  const shouldDisplaySourceHandle = displayHandle && shouldDisplayHandles;
+
+  return (
+    <div className={classes.container} onMouseEnter={() => setIsCardHovered(true)} onMouseLeave={() => setIsCardHovered(false)}>
+      <HandleWrapper
+        type="target"
+        position={Position.Left}
+        shouldDisplay={shouldDisplayTargetHandle}
+        nodeReactFlowType={ReactFlowNodeType.FunctionNode}
+        nodeReactFlowId={reactFlowId}
+      />
+
+      {error && <PresenceBadge size="extra-small" status="busy" className={classes.badge} />}
+
       <Tooltip
         content={{
           children: <Text size={200}>{functionName}</Text>,
         }}
         relationship="label"
       >
-        {/* TODO light vs dark theming on function branding */}
-        <Button onClick={onClick} color={functionBranding.colorLight} className={mergedClasses} disabled={!!disabled}>
-          {getIconForFunction(functionName, iconFileName, functionBranding)}
+        <Button
+          onClick={onClick}
+          className={mergedClasses}
+          style={
+            isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId
+              ? { ...selectedCardStyles, backgroundColor: customTokens[functionBranding.colorTokenName] }
+              : { backgroundColor: customTokens[functionBranding.colorTokenName] }
+          }
+          disabled={!!disabled}
+        >
+          {getIconForFunction(functionName, undefined, functionBranding) /* TODO: undefined -> iconFileName once all SVGs in */}
         </Button>
       </Tooltip>
-      {displayHandle ? <Handle type={'source'} position={Position.Right} style={handleStyle} /> : null}
+
+      <HandleWrapper
+        type="source"
+        position={Position.Right}
+        shouldDisplay={shouldDisplaySourceHandle}
+        nodeReactFlowType={ReactFlowNodeType.FunctionNode}
+        nodeReactFlowId={reactFlowId}
+      />
     </div>
   );
 };

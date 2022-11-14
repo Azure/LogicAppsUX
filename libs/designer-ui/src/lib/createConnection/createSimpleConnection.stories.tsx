@@ -31,5 +31,6 @@ SimpleExample.args = {
   connectionParameters: mockSimpleConnector.properties.connectionParameters,
   connectionParameterSets: mockSimpleConnector.properties.connectionParameterSets,
   isLoading: false,
+  checkOAuthCallback: () => false,
   createConnectionCallback,
 };

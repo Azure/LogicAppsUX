@@ -1,3 +1,4 @@
+import { ParameterIcon, VariableIcon } from '../helper';
 import { ValueSegmentConvertor } from '../segment';
 import { convertToStringLiteral, OutputSource } from '@microsoft-logic-apps/parsers';
 import type { ValueSegment } from '@microsoft/designer-ui';
@@ -55,7 +56,7 @@ describe('core/utils/parameters/segment', () => {
         shouldUncast: true,
         rawModeEnabled: true,
       });
-      const segments = convertor.convertToValueSegments("@decodebase64(actionBody('a').foo)");
+      const segments = convertor.convertToValueSegments("@base64ToBinary(actionBody('a').foo)");
       expect(segments.length).toEqual(1);
       expectOutputTokenSegment(segments[0], 'a', OutputSource.Body, 'foo', 'outputs.$.body.foo', 'byte', true);
     });
@@ -262,14 +263,30 @@ export function expectVariableTokenSegment(segment: ValueSegment | undefined | n
   expect(segment).toBeDefined();
   expect(segment).not.toBeNull();
   expect(segment?.type).toEqual(ValueSegmentType.TOKEN);
-  expect(segment.value).toEqual(value ? value : `variables(${convertToStringLiteral(variableName)})`);
-  expect(segment?.token).toEqual({ tokenType: TokenType.VARIABLE, key: variableName, name: variableName, title: variableName });
+  expect(segment?.value).toEqual(value ? value : `variables(${convertToStringLiteral(variableName)})`);
+  expect(segment?.token).toEqual({
+    tokenType: TokenType.VARIABLE,
+    key: variableName,
+    name: variableName,
+    title: variableName,
+    value: variableName,
+    description: variableName,
+    brandColor: '#770bd6',
+    icon: VariableIcon,
+  });
 }
 
 export function expectParameterTokenSegment(segment: ValueSegment | undefined | null, parameterName: string, value?: string): void {
   expect(segment).toBeDefined();
   expect(segment).not.toBeNull();
   expect(segment?.type).toEqual(ValueSegmentType.TOKEN);
-  expect(segment.value).toEqual(value ? value : `parameters(${convertToStringLiteral(parameterName)})`);
-  expect(segment?.token).toEqual({ tokenType: TokenType.PARAMETER, key: parameterName, name: parameterName, title: parameterName });
+  expect(segment?.value).toEqual(value ? value : `parameters(${convertToStringLiteral(parameterName)})`);
+  expect(segment?.token).toEqual({
+    tokenType: TokenType.PARAMETER,
+    key: parameterName,
+    name: parameterName,
+    title: parameterName,
+    brandColor: '#916F6F',
+    icon: ParameterIcon,
+  });
 }

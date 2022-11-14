@@ -10,16 +10,6 @@
             },
             "runAfter": {},
             "type": "Terminate"
-          },
-          "Increment_variable_4": {
-            "inputs": {
-              "name": "var1",
-              "value": 1
-            },
-            "runAfter": {
-              "Terminate": ["Failed"]
-            },
-            "type": "IncrementVariable"
           }
         },
         "else": {
@@ -38,28 +28,38 @@
           }
         },
         "expression": {
-          "and": [
+          "or": [
             {
-              "equals": ["@body('Get_a_goal')['name']", "@variables('goalName')"]
+              "equals": ["abc@microsoft.com", "@variables('goalOwner')"]
             },
             {
-              "equals": ["@body('Get_a_goal')?['owner']", "@variables('goalOwner')"]
+              "equals": ["test", "@variables('goalOwner')"]
             },
             {
-              "equals": ["@body('Get_a_goal')?['currentValue']", "@variables('goalValue')"]
+              "not": {
+                "equals": ["test", "@variables('goalOwner')"]
+              }
             },
             {
-              "equals": ["@body('Get_a_goal')?['targetValue']", "@variables('goalTarget')"]
-            },
-            {
-              "equals": ["@body('Get_a_goal')?['status']", "On track"]
+              "and": [
+                {
+                  "not": {
+                    "endsWith": ["g", "@variables('goalOwner')"]
+                  }
+                },
+                {
+                  "equals": ["test", "@variables('goalOwner')"]
+                }
+              ]
             }
           ]
         },
-        "runAfter": {},
+        "runAfter": {
+          "Initialize_variable": ["Succeeded"]
+        },
         "type": "If"
       },
-      "Initialize_owner": {
+      "Initialize_variable": {
         "inputs": {
           "variables": [
             {
@@ -69,9 +69,7 @@
             }
           ]
         },
-        "runAfter": {
-          "Condition": ["Succeeded"]
-        },
+        "runAfter": {},
         "type": "InitializeVariable"
       }
     },
@@ -80,7 +78,7 @@
     "triggers": {
       "Recurrence": {
         "recurrence": {
-          "frequency": "Day",
+          "frequency": "Month",
           "interval": 1
         },
         "type": "Recurrence"

@@ -1,3 +1,4 @@
+import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { InputParameter, OutputParameter } from '@microsoft-logic-apps/parsers';
 import type { OperationInfo } from '@microsoft-logic-apps/utils';
@@ -45,6 +46,7 @@ export interface NodeInputs {
 export interface NodeOutputs {
   dynamicLoadStatus?: DynamicLoadStatus;
   outputs: Record<string, OutputInfo>;
+  originalOutputs?: Record<string, OutputInfo>;
 }
 
 type DependencyType = 'StaticSchema' | 'ApiSchema' | 'ListValues';
@@ -65,12 +67,18 @@ export interface NodeDependencies {
   outputs: Record<string, DependencyInfo>;
 }
 
+export interface OperationMetadata {
+  iconUri: string;
+  brandColor: string;
+}
+
 export interface OperationMetadataState {
   operationInfo: Record<string, NodeOperation>;
   inputParameters: Record<string, NodeInputs>;
   outputParameters: Record<string, NodeOutputs>;
   settings: Record<string, Settings>;
   dependencies: Record<string, NodeDependencies>;
+  operationMetadata: Record<string, OperationMetadata>;
 }
 
 const initialState: OperationMetadataState = {
@@ -79,6 +87,7 @@ const initialState: OperationMetadataState = {
   outputParameters: {},
   dependencies: {},
   settings: {},
+  operationMetadata: {},
 };
 
 export interface AddNodeOperationPayload extends NodeOperation {
@@ -96,7 +105,9 @@ export interface NodeData {
   nodeOutputs: NodeOutputs;
   nodeDependencies: NodeDependencies;
   settings?: Settings;
+  operationMetadata: OperationMetadata;
 }
+
 interface AddSettingsPayload {
   id: string;
   settings: Settings;
@@ -111,6 +122,7 @@ interface AddDynamicInputsPayload {
   nodeId: string;
   groupId: string;
   inputs: ParameterInfo[];
+  newInputs: InputParameter[];
 }
 
 export interface UpdateParametersPayload {
@@ -137,10 +149,11 @@ export const operationMetadataSlice = createSlice({
           return;
         }
 
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings } = nodeData;
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata } = nodeData;
         state.inputParameters[id] = nodeInputs;
         state.outputParameters[id] = nodeOutputs;
         state.dependencies[id] = nodeDependencies;
+        state.operationMetadata[id] = operationMetadata;
 
         if (settings) {
           state.settings[id] = settings;
@@ -148,7 +161,7 @@ export const operationMetadataSlice = createSlice({
       }
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
-      const { nodeId, groupId, inputs } = action.payload;
+      const { nodeId, groupId, inputs, newInputs: rawInputs } = action.payload;
       if (state.inputParameters[nodeId] && state.inputParameters[nodeId].parameterGroups[groupId]) {
         const { parameters } = state.inputParameters[nodeId].parameterGroups[groupId];
         const newParameters = [...parameters];
@@ -161,6 +174,11 @@ export const operationMetadataSlice = createSlice({
           }
         }
         state.inputParameters[nodeId].parameterGroups[groupId].parameters = newParameters;
+      }
+
+      const dependencies = getInputDependencies(state.inputParameters[nodeId], rawInputs);
+      if (dependencies) {
+        state.dependencies[nodeId].inputs = { ...state.dependencies[nodeId].inputs, ...dependencies };
       }
     },
     addDynamicOutputs: (state, action: PayloadAction<AddDynamicOutputsPayload>) => {
@@ -218,15 +236,30 @@ export const operationMetadataSlice = createSlice({
         }
       }
 
-      if (dependencies) {
-        state.dependencies[nodeId] = dependencies;
+      if (dependencies?.inputs) {
+        state.dependencies[nodeId].inputs = { ...state.dependencies[nodeId].inputs, ...dependencies.inputs };
+      }
+
+      if (dependencies?.outputs) {
+        state.dependencies[nodeId].outputs = { ...state.dependencies[nodeId].outputs, ...dependencies.outputs };
+      }
+    },
+    updateParameterConditionalVisibility: (
+      state,
+      action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; value?: boolean }>
+    ) => {
+      const { nodeId, groupId, parameterId, value } = action.payload;
+      const index = state.inputParameters[nodeId].parameterGroups[groupId].parameters.findIndex(
+        (parameter) => parameter.id === parameterId
+      );
+      if (index > -1) {
+        state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].conditionalVisibility = value;
+        if (value === false) state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].value = [];
       }
     },
     updateOutputs: (state, action: PayloadAction<{ id: string; nodeOutputs: NodeOutputs }>) => {
       const { id, nodeOutputs } = action.payload;
-      if (state.outputParameters[id]) {
-        state.outputParameters[id] = nodeOutputs;
-      }
+      if (state.outputParameters[id]) state.outputParameters[id] = nodeOutputs;
     },
     deinitializeOperationInfo: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
@@ -238,6 +271,7 @@ export const operationMetadataSlice = createSlice({
         delete state.outputParameters[id];
         delete state.dependencies[id];
         delete state.settings[id];
+        delete state.operationMetadata[id];
       }
     },
   },
@@ -253,6 +287,7 @@ export const {
   clearDynamicInputs,
   clearDynamicOutputs,
   updateNodeSettings,
+  updateParameterConditionalVisibility,
   updateOutputs,
   deinitializeOperationInfo,
   deinitializeNodes,

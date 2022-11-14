@@ -1,4 +1,4 @@
-import { SchemaNodeDataType, SchemaNodeProperties, SchemaTypes } from '../../models';
+import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty, SchemaType } from '../../models';
 import type { SchemaCardProps } from './SchemaCard';
 import { SchemaCard } from './SchemaCard';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -23,17 +23,22 @@ Standard.args = {
     schemaNode: {
       key: 'key',
       name: 'Name',
+      fullName: 'key',
       namespacePrefix: '',
       namespaceUri: '',
       schemaNodeDataType: SchemaNodeDataType.String,
-      properties: SchemaNodeProperties.NotSpecified,
+      normalizedDataType: NormalizedDataType.String,
+      properties: SchemaNodeProperty.NotSpecified,
+      nodeProperties: [SchemaNodeProperty.NotSpecified],
       children: [],
       pathToRoot: [],
     },
-    schemaType: SchemaTypes.Source,
+    schemaType: SchemaType.Source,
     displayHandle: false,
     isLeaf: false,
     isChild: false,
+    displayChevron: false,
+    relatedConnections: [],
     onClick: () => console.log('Schema card clicked'),
     disabled: false,
     error: false,

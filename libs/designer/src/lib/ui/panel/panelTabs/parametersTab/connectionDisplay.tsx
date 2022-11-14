@@ -1,7 +1,10 @@
 import constants from '../../../../common/constants';
+import { useIsOperationMissingConnection } from '../../../../core/state/connection/connectionSelector';
 import { isolateTab } from '../../../../core/state/panel/panelSlice';
+import { useIsConnectionRequired, useOperationInfo } from '../../../../core/state/selectors/actionMetadataSelector';
+import '../../../../core/utils/connectors/connections';
 import { Label, Link } from '@fluentui/react';
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -11,14 +14,25 @@ interface ConnectionDisplayProps {
 }
 
 export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
-  const { connectionName } = props;
+  const { connectionName, nodeId } = props;
 
   const intl = useIntl();
   const dispatch = useDispatch();
 
+  const isOperationMissingConnection = useIsOperationMissingConnection(nodeId);
+
   const openChangeConnectionCallback = useCallback(() => {
     dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
   }, [dispatch]);
+
+  const operationInfo = useOperationInfo(nodeId);
+  const requiresConnection = useIsConnectionRequired(operationInfo);
+
+  useEffect(() => {
+    if (requiresConnection && isOperationMissingConnection) {
+      openChangeConnectionCallback();
+    }
+  }, [isOperationMissingConnection, openChangeConnectionCallback, requiresConnection]);
 
   const connectionDisplayText = intl.formatMessage(
     {

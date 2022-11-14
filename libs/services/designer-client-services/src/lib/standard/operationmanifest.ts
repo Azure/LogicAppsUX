@@ -55,6 +55,8 @@ import type { OperationInfo, OperationManifest, SplitOn } from '@microsoft-logic
 
 type SchemaObject = OpenAPIV2.SchemaObject;
 
+const as2Encode = 'as2encode';
+const as2Decode = 'as2decode';
 const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
 const compose = 'compose';
@@ -121,6 +123,8 @@ const variableConnectorId = 'connectionProviders/variable';
 const supportedManifestTypes = [
   appendtoarrayvariable,
   appendtostringvariable,
+  as2Encode,
+  as2Decode,
   compose,
   condition,
   decrementvariable,
@@ -338,6 +342,8 @@ function isServiceProviderOperation(definition: any): boolean {
 
 function isBuiltInOperation(definition: any): boolean {
   switch (definition?.type?.toLowerCase()) {
+    case as2Decode:
+    case as2Encode:
     case appendtoarrayvariable:
     case appendtostringvariable:
     case compose:
@@ -509,6 +515,14 @@ const inBuiltOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: variableConnectorId,
     operationId: appendtostringvariable,
   },
+  [as2Encode]: {
+    connectorId: 'connectionProviders/as2Operations',
+    operationId: as2Encode,
+  },
+  [as2Decode]: {
+    connectorId: 'connectionProviders/as2Operations',
+    operationId: as2Decode,
+  },
   [compose]: {
     connectorId: dataOperationConnectorId,
     operationId: 'composeNew',
@@ -657,3 +671,9 @@ const supportedManifestObjects = new Map<string, OperationManifest>([
   [terminate, terminateManifest],
   [until, untilManifest],
 ]);
+
+export const foreachOperationInfo = {
+  type: foreach,
+  connectorId: controlConnectorId,
+  operationId: foreach,
+};

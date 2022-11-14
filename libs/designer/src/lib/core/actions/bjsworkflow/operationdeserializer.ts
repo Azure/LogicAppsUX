@@ -1,32 +1,25 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
-import type { ConnectionReferences } from '../../../common/models/workflow';
+import type { ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { ConnectorWithParsedSwagger } from '../../queries/connections';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import { getOperationInfo, getOperationManifest } from '../../queries/operation';
-import type { DependencyInfo, NodeData, NodeInputs, NodeOutputs } from '../../state/operation/operationMetadataSlice';
+import type { DependencyInfo, NodeData, NodeInputs, NodeOperation, NodeOutputs } from '../../state/operation/operationMetadataSlice';
 import { initializeOperationInfo, initializeNodes } from '../../state/operation/operationMetadataSlice';
-import { clearPanel } from '../../state/panel/panelSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokensSlice';
 import type { NodesMetadata, Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
-import { getConnectionId } from '../../utils/connectors/connections';
+import { getConnectionReference } from '../../utils/connectors/connections';
 import { isRootNodeInGraph } from '../../utils/graph';
-import {
-  getAllInputParameters,
-  getGroupAndParameterFromParameterKey,
-  loadDynamicData,
-  loadDynamicValuesForParameter,
-  updateTokenMetadata,
-} from '../../utils/parameters/helper';
+import { getAllInputParameters, updateDynamicDataInNode, updateTokenMetadata } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
-import { getInputParametersFromManifest, getOutputParametersFromManifest } from './initialize';
+import { getInputParametersFromManifest, getOutputParametersFromManifest, updateCallbackUrlInInputs } from './initialize';
 import { getOperationSettings } from './settings';
 import { LogEntryLevel, LoggerService, OperationManifestService } from '@microsoft-logic-apps/designer-client-services';
 import type { InputParameter, OutputParameter } from '@microsoft-logic-apps/parsers';
@@ -36,8 +29,7 @@ import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
   manifest?: OperationManifest;
-  iconUri: string;
-  brandColor: string;
+  operationInfo?: NodeOperation;
 }
 
 export interface NodeInputsWithDependencies {
@@ -60,6 +52,7 @@ export interface OperationMetadata {
 export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
+  workflowParameters: Record<string, WorkflowParameter>,
   dispatch: Dispatch
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
@@ -84,13 +77,12 @@ export const initializeOperationMetadata = async (
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
 
-  updateTokenMetadataInParameters(allNodeData, operations, triggerNodeId);
-  dispatch(clearPanel());
+  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId);
   dispatch(
     initializeNodes(
       allNodeData.map((data) => {
-        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings } = data;
-        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings };
+        const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata } = data;
+        return { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata };
       })
     )
   );
@@ -122,7 +114,7 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
   return (await Promise.all(connectorPromises)).filter((result) => !!result) as ConnectorWithParsedSwagger[];
 };
 
-const initializeOperationDetailsForManifest = async (
+export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
@@ -138,19 +130,36 @@ const initializeOperationDetailsForManifest = async (
 
       dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
 
-      const settings = getOperationSettings(isTrigger, nodeOperationInfo, manifest, undefined /* swagger */, operation);
       const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, operation);
+
+      if (isTrigger) {
+        await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
+      }
+
       const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
         manifest,
         isTrigger,
         nodeInputs,
-        settings.splitOn?.value?.enabled ? settings.splitOn.value.value : undefined
+        isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, undefined /* swagger */, operation);
 
       const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
 
-      return [{ id: nodeId, nodeInputs, nodeOutputs, nodeDependencies, settings, manifest, iconUri, brandColor }, ...childGraphInputs];
+      return [
+        {
+          id: nodeId,
+          nodeInputs,
+          nodeOutputs,
+          nodeDependencies,
+          settings,
+          operationInfo: nodeOperationInfo,
+          manifest,
+          operationMetadata: { iconUri, brandColor },
+        },
+        ...childGraphInputs,
+      ];
     }
 
     return;
@@ -192,9 +201,9 @@ const processChildGraphAndItsInputs = (
               nodeInputs: subNodeInputs,
               nodeOutputs: subNodeOutputs,
               nodeDependencies: { inputs: subNodeInputDependencies, outputs: {} },
+              operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
               manifest: subManifest,
-              iconUri: '',
-              brandColor: '',
+              operationMetadata: { iconUri: '', brandColor: '' },
             });
           }
         }
@@ -210,9 +219,9 @@ const processChildGraphAndItsInputs = (
           nodeInputs,
           nodeOutputs,
           nodeDependencies: { inputs: inputDependencies, outputs: {} },
+          operationInfo: { type: '', kind: '', connectorId: '', operationId: '' },
           manifest: subManifest,
-          iconUri: '',
-          brandColor: '',
+          operationMetadata: { iconUri: '', brandColor: '' },
         });
       }
     }
@@ -221,7 +230,13 @@ const processChildGraphAndItsInputs = (
   return nodesData;
 };
 
-const updateTokenMetadataInParameters = (nodes: NodeDataWithOperationMetadata[], operations: Operations, triggerNodeId: string) => {
+const updateTokenMetadataInParameters = (
+  nodes: NodeDataWithOperationMetadata[],
+  operations: Operations,
+  workflowParameters: Record<string, WorkflowParameter>,
+  nodesMetadata: NodesMetadata,
+  triggerNodeId: string
+) => {
   const nodesData = map(nodes, 'id');
   const actionNodes = nodes
     .map((node) => node.id)
@@ -236,7 +251,16 @@ const updateTokenMetadataInParameters = (nodes: NodeDataWithOperationMetadata[],
       if (segments && segments.length) {
         parameter.value = segments.map((segment) => {
           if (isTokenValueSegment(segment)) {
-            segment = updateTokenMetadata(segment, actionNodes, triggerNodeId, nodesData, operations, parameter.type);
+            return updateTokenMetadata(
+              segment,
+              actionNodes,
+              triggerNodeId,
+              nodesData,
+              operations,
+              workflowParameters,
+              nodesMetadata,
+              parameter.type
+            );
           }
 
           return segment;
@@ -260,16 +284,27 @@ const initializeOutputTokensForOperations = (
     }),
     {}
   );
+  const operationInfos = allNodesData.reduce(
+    (result: Record<string, NodeOperation>, nodeData: NodeDataWithOperationMetadata) => ({
+      ...result,
+      [nodeData.id]: nodeData.operationInfo as NodeOperation,
+    }),
+    {}
+  );
 
   const result: Record<string, NodeTokens> = {};
 
   for (const operationId of Object.keys(operations)) {
-    const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithData, nodeMap);
+    const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithData, operationInfos, nodeMap);
     const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds };
 
     try {
       const nodeData = nodesWithData[operationId];
-      const { manifest, nodeOutputs, iconUri, brandColor } = nodeData;
+      const {
+        manifest,
+        nodeOutputs,
+        operationMetadata: { iconUri, brandColor },
+      } = nodeData;
 
       nodeTokens.tokens.push(...getBuiltInTokens(manifest));
       nodeTokens.tokens.push(
@@ -327,45 +362,29 @@ export const updateDynamicDataInNodes = async (
     workflow: { nodesMetadata, operations },
     operations: { inputParameters, settings, dependencies, operationInfo },
     tokens: { variables },
+    connections,
   } = rootState;
+  const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
     const nodeDependencies = dependencies[nodeId];
     const nodeInputs = inputParameters[nodeId];
     const nodeSettings = settings[nodeId];
-    const connectionId = getConnectionId(rootState.connections, nodeId);
     const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
     const nodeOperationInfo = operationInfo[nodeId];
+    const connectionReference = getConnectionReference(connections, nodeId);
 
-    loadDynamicData(
+    updateDynamicDataInNode(
       nodeId,
       isTrigger,
       nodeOperationInfo,
-      connectionId,
+      connectionReference,
       nodeDependencies,
       nodeInputs,
       nodeSettings,
-      getAllVariables(variables),
+      allVariables,
       dispatch,
+      rootState,
       operation
     );
-
-    for (const parameterKey of Object.keys(nodeDependencies.inputs)) {
-      const dependencyInfo = nodeDependencies.inputs[parameterKey];
-      if (dependencyInfo.dependencyType === 'ListValues') {
-        const details = getGroupAndParameterFromParameterKey(nodeInputs, parameterKey);
-        if (details) {
-          loadDynamicValuesForParameter(
-            nodeId,
-            details.groupId,
-            details.parameter.id,
-            nodeOperationInfo,
-            connectionId,
-            nodeInputs,
-            nodeDependencies,
-            dispatch
-          );
-        }
-      }
-    }
   }
 };

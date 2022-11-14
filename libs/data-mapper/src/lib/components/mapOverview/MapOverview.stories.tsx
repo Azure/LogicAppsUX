@@ -1,5 +1,5 @@
 import type { SchemaExtended } from '../../models/Schema';
-import { SchemaNodeDataType, SchemaNodeProperties, SchemaType } from '../../models/Schema';
+import { NormalizedDataType, SchemaFileFormat, SchemaNodeDataType, SchemaNodeProperty } from '../../models/Schema';
 import type { MapOverviewProps } from './MapOverview';
 import { MapOverview } from './MapOverview';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
@@ -7,41 +7,50 @@ import React from 'react';
 
 export default {
   component: MapOverview,
-  title: 'Data Mapper Component/Map Overview',
+  title: 'Data Mapper Components/Map Overview',
 } as ComponentMeta<typeof MapOverview>;
 
 const schema: SchemaExtended = {
   name: 'Sample',
-  type: SchemaType.XML,
+  type: SchemaFileFormat.XML,
   targetNamespace: '',
   namespaces: {},
   schemaTreeRoot: {
     key: 'root',
     name: 'Root',
+    fullName: 'Root',
     pathToRoot: [],
     namespacePrefix: '',
     namespaceUri: '',
     schemaNodeDataType: SchemaNodeDataType.None,
-    properties: SchemaNodeProperties.NotSpecified,
+    normalizedDataType: NormalizedDataType.ComplexType,
+    properties: SchemaNodeProperty.NotSpecified,
+    nodeProperties: [SchemaNodeProperty.NotSpecified],
     children: [
       {
         key: 'child1',
         name: 'Child 1',
+        fullName: 'Child 1',
         pathToRoot: [],
         namespacePrefix: '',
         namespaceUri: '',
         schemaNodeDataType: SchemaNodeDataType.String,
-        properties: SchemaNodeProperties.NotSpecified,
+        normalizedDataType: NormalizedDataType.String,
+        properties: SchemaNodeProperty.NotSpecified,
+        nodeProperties: [SchemaNodeProperty.NotSpecified],
         children: [],
       },
       {
         key: 'child2',
         name: 'Child 2',
+        fullName: 'Child 2',
         pathToRoot: [],
         namespacePrefix: '',
         namespaceUri: '',
         schemaNodeDataType: SchemaNodeDataType.Integer,
-        properties: SchemaNodeProperties.NotSpecified,
+        normalizedDataType: NormalizedDataType.Integer,
+        properties: SchemaNodeProperty.NotSpecified,
+        nodeProperties: [SchemaNodeProperty.NotSpecified],
         children: [],
       },
     ],

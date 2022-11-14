@@ -6,7 +6,7 @@ import { RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft-logic-apps/uti
 ///////////////////////////////////////////////////////////
 // EDGES
 
-export const addNewEdge = (state: WorkflowState, source: string, target: string, graph: WorkflowNode) => {
+export const addNewEdge = (state: WorkflowState, source: string, target: string, graph: WorkflowNode, addRunAfter = true) => {
   const workflowEdge: WorkflowEdge = {
     id: `${source}-${target}`,
     source,
@@ -17,7 +17,7 @@ export const addNewEdge = (state: WorkflowState, source: string, target: string,
   graph?.edges.push(workflowEdge);
 
   const targetOp = state.operations?.[target] as any;
-  if (targetOp) (state.operations?.[target] as any).runAfter = { [source]: [RUN_AFTER_STATUS.SUCCEEDED] };
+  if (targetOp && addRunAfter) (state.operations?.[target] as any).runAfter = { [source]: [RUN_AFTER_STATUS.SUCCEEDED] };
 };
 
 export const removeEdge = (state: WorkflowState, sourceId: string, targetId: string, graph: WorkflowNode) => {
@@ -43,12 +43,29 @@ const setEdgeTarget = (edge: WorkflowEdge, newTarget: string) => {
 // Reassign edge source ids to new node id
 //   /|\   =>   |
 //             /|\
-export const reassignEdgeSources = (state: WorkflowState, oldSourceId: string, newSourceId: string, graph: WorkflowNode) => {
+export const reassignEdgeSources = (
+  state: WorkflowState,
+  oldSourceId: string,
+  newSourceId: string,
+  graph: WorkflowNode,
+  isOldSourceTrigger: boolean,
+  isNewSourceTrigger: boolean
+) => {
   if (!state) return;
+
+  // Remove would-be duplicate edges
+  const targetEdges = graph.edges?.filter((edge) => edge.source === oldSourceId) ?? [];
+  targetEdges.forEach((tEdge) => {
+    if (graph.edges?.some((aEdge) => aEdge.source === newSourceId && aEdge.target === tEdge.target)) {
+      removeEdge(state, oldSourceId, tEdge.target, graph);
+      moveRunAfterSource(state, tEdge.target, oldSourceId, newSourceId, isOldSourceTrigger, isNewSourceTrigger);
+    }
+  });
+
   graph.edges = graph.edges?.map((edge) => {
     if (edge.source === oldSourceId) {
       setEdgeSource(edge, newSourceId);
-      moveRunAfterSource(state, edge.target, oldSourceId, newSourceId);
+      moveRunAfterSource(state, edge.target, oldSourceId, newSourceId, isOldSourceTrigger, isNewSourceTrigger);
     }
     return edge;
   });
@@ -67,7 +84,7 @@ export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, n
   });
 };
 
-const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
+export const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
   if (!state) return;
   const targetRunAfter = (state.operations?.[oldTargetId] as any)?.runAfter;
   if (targetRunAfter) {
@@ -76,10 +93,20 @@ const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: strin
   }
 };
 
-const moveRunAfterSource = (state: WorkflowState | undefined, nodeId: string, oldSourceId: string, newSourceId: string) => {
+const moveRunAfterSource = (
+  state: WorkflowState | undefined,
+  nodeId: string,
+  oldSourceId: string,
+  newSourceId: string,
+  isOldSourceTrigger: boolean,
+  isNewSourceTrigger: boolean
+) => {
   if (!state) return;
   const targetRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
-  targetRunAfter[newSourceId] = targetRunAfter[oldSourceId];
+  if (!isNewSourceTrigger && !targetRunAfter?.[newSourceId]) {
+    targetRunAfter[newSourceId] = isOldSourceTrigger ? [RUN_AFTER_STATUS.SUCCEEDED] : targetRunAfter[oldSourceId];
+  }
+
   delete targetRunAfter[oldSourceId];
 };
 

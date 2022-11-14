@@ -1,6 +1,6 @@
 export interface Schema {
   name: string;
-  type: SchemaType;
+  type: SchemaFileFormat;
   targetNamespace: string;
   namespaces?: NamespaceDictionary;
   schemaTreeRoot: SchemaNode;
@@ -10,33 +10,40 @@ export interface SchemaNode {
   key: string;
   name: string;
   fullName: string;
+  parentKey?: string;
   namespacePrefix?: string;
-  namespaceUri: string;
+  namespaceUri?: string;
   normalizedDataType: NormalizedDataType;
   schemaNodeDataType: SchemaNodeDataType;
-  properties: SchemaNodeProperties;
-  optional?: boolean;
-  repeating?: boolean;
-  attribute?: boolean;
+
+  /**
+   * @deprecated Do not use, but do not remove. Is parsed on the extended node - nodeProperties
+   * @see SchemaNodeExtended
+   */
+  properties: string;
   children: SchemaNode[];
 }
 
-export enum SchemaType {
+export enum SchemaFileFormat {
   NotSpecified = 'NotSpecified',
   XML = 'XML',
   JSON = 'JSON',
 }
 
-export enum SchemaNodeProperties {
+export enum SchemaNodeProperty {
   NotSpecified = 'NotSpecified',
   Optional = 'Optional',
   Repeating = 'Repeating',
   Attribute = 'Attribute',
+  ComplexTypeSimpleContent = 'ComplexTypeSimpleContent',
+  MaximumDepthLimit = 'MaximumDepthLimit',
+  CyclicTypeReference = 'CyclicTypeReference',
 }
 
 export enum SchemaNodeDataType {
   AnyAtomicType = 'AnyAtomicType',
   AnyUri = 'AnyUri',
+  Attribute = 'Attribute',
   Base64Binary = 'Base64Binary',
   Boolean = 'Boolean',
   Byte = 'Byte',
@@ -100,6 +107,7 @@ export interface SchemaExtended extends Schema {
 
 export interface SchemaNodeExtended extends SchemaNode {
   children: SchemaNodeExtended[];
+  nodeProperties: SchemaNodeProperty[];
   // Inclusive of the current node
   pathToRoot: PathItem[];
 }
@@ -108,9 +116,10 @@ export interface PathItem {
   key: string;
   name: string;
   fullName: string;
+  repeating: boolean;
 }
 
-export enum SchemaTypes {
+export enum SchemaType {
   Source = 'source',
   Target = 'target',
 }

@@ -54,9 +54,9 @@ export class ApiService implements IApiService {
         };
       }
       case ResourceType.workflows: {
-        const subscriptionId = properties!.selectedSubscription;
-        const selectedIse = properties!.selectedIse;
-        const skipToken = properties!.skipToken ?? '';
+        const subscriptionId = properties?.selectedSubscription;
+        const selectedIse = properties?.selectedIse;
+        const skipToken = properties?.skipToken ?? '';
         const location = properties?.location;
 
         return {

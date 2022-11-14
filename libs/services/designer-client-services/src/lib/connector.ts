@@ -8,6 +8,18 @@ export interface ListDynamicValue {
   disabled?: boolean;
 }
 
+export interface ManagedIdentityRequestProperties {
+  connection: {
+    id: string;
+  };
+  connectionRuntimeUrl: string;
+  connectionProperties: Record<string, any>;
+  authentication: {
+    type: string;
+    identity?: string;
+  };
+}
+
 export interface IConnectorService {
   /**
    * Gets the item dynamic values for azure operations.
@@ -17,7 +29,7 @@ export interface IConnectorService {
    * @arg {LegacyDynamicValuesExtension} extension - Dynamic value extension.
    * @arg {string} parameterArrayType - Dynamic values parameter collection array type.
    * @arg {boolean} isManagedIdentityTypeConnection - If connection is a managed identity connection.
-   * @arg {any} data - Data to be sent in request payload for managed identity connections.
+   * @arg {ManagedIdentityRequestProperties} managedIdentityProperties - Data to be sent in request payload for managed identity connections.
    * @return {Promise<ListDynamicValue[]>}
    */
   getLegacyDynamicValues(
@@ -27,12 +39,12 @@ export interface IConnectorService {
     extension: LegacyDynamicValuesExtension,
     parameterArrayType: string,
     isManagedIdentityTypeConnection?: boolean,
-    data?: any
+    managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<ListDynamicValue[]>;
 
   /**
    * Gets the item dynamic values for manifest based operations.
-   * @arg {string} connectionId - The connection id.
+   * @arg {string | undefined} connectionId - The connection id.
    * @arg {string} connectorId - The connector id.
    * @arg {string} operationId - The operation id.
    * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic values must be fetched.
@@ -41,7 +53,7 @@ export interface IConnectorService {
    * @return {Promise<ListDynamicValue[]>}
    */
   getListDynamicValues(
-    connectionId: string,
+    connectionId: string | undefined,
     connectorId: string,
     operationId: string,
     parameterAlias: string | undefined,
@@ -56,7 +68,7 @@ export interface IConnectorService {
    * @arg {Record<string, any>} parameters - The operation parameters. Keyed by parameter name.
    * @arg {LegacyDynamicSchemaExtension} extension - Dynamic schema extension.
    * @arg {boolean} isManagedIdentityTypeConnection - If connection is a managed identity connection.
-   * @arg {any} data - Data to be sent in request payload for managed identity connections.
+   * @arg {ManagedIdentityRequestProperties} managedIdentityProperties - Data to be sent in request payload for managed identity connections.
    * @return {Promise<OpenAPIV2.SchemaObject | null>}
    */
   getLegacyDynamicSchema(
@@ -65,12 +77,12 @@ export interface IConnectorService {
     parameters: Record<string, any>,
     extension: LegacyDynamicSchemaExtension,
     isManagedIdentityTypeConnection?: boolean,
-    data?: any
+    managedIdentityProperties?: ManagedIdentityRequestProperties
   ): Promise<OpenAPIV2.SchemaObject | null>;
 
   /**
    * Gets the dynamic schema for a parameter in manifest based operations.
-   * @arg {string} connectionId - The connection id.
+   * @arg {string | undefined} connectionId - The connection id.
    * @arg {string} connectorId - The connector id.
    * @arg {string} operationId - The operation id.
    * @arg {string} parameterAlias - The parameter alias for the parameter whose dynamic schema must be fetched.
@@ -79,7 +91,7 @@ export interface IConnectorService {
    * @return {Promise<OpenAPIV2.SchemaObject>}
    */
   getDynamicSchema(
-    connectionId: string,
+    connectionId: string | undefined,
     connectorId: string,
     operationId: string,
     parameterAlias: string | undefined,
