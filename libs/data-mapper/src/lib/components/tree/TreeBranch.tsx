@@ -10,7 +10,7 @@ const defaultChildPadding = 16;
 
 interface TreeBranchProps<T> extends CoreTreeProps<T> {
   level: number;
-  node: T;
+  node: ITreeNode<T>;
 }
 
 const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
@@ -77,7 +77,7 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
 
       {hasChildren &&
         isNodeExpanded &&
-        node.children?.map((childNode) => <TreeBranch<T> {...props} key={childNode.key} node={childNode} level={level + 1} />)}
+        node.children?.map((childNode) => <TreeBranch<ITreeNode<T>> {...props} key={childNode.key} node={childNode} level={level + 1} />)}
     </>
   );
 };

@@ -153,15 +153,15 @@ export const FunctionList = () => {
 
       <Tree<FunctionDataTreeItem>
         treeRoot={functionListTree}
-        nodeContent={(node: FunctionDataTreeItem) =>
+        nodeContent={(node) =>
           node.key.startsWith(functionCategoryItemKeyPrefix) ? (
             <FunctionListHeader category={node.key.replace(functionCategoryItemKeyPrefix, '') as FunctionCategory} />
           ) : (
-            <FunctionListItem functionData={node} />
+            <FunctionListItem functionData={node as FunctionData} />
           )
         }
         childPadding={0}
-        onClickItem={(node) => !node.key.startsWith(functionCategoryItemKeyPrefix) && onFunctionItemClick(node)}
+        onClickItem={(node) => !node.key.startsWith(functionCategoryItemKeyPrefix) && onFunctionItemClick(node as FunctionData)}
         parentItemClickShouldExpand
       />
     </>
