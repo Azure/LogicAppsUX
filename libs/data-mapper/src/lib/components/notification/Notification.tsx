@@ -11,6 +11,7 @@ export enum NotificationTypes {
   SaveFailed = 'saveFailed',
   SourceNodeRemoved = 'sourceNodeRemoved',
   SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
+  TargetNodeCannotDelete = 'targetNodeCannotDelete',
   FunctionNodeDeleted = 'functionNodeDeleted',
   ConnectionDeleted = 'connectionDeleted',
   ArrayConnectionAdded = 'arrayConnectionAdded',
@@ -68,6 +69,7 @@ export const Notification = (props: NotificationProps) => {
       case NotificationTypes.SaveFailed:
       case NotificationTypes.SourceNodeRemoveFailed:
       case NotificationTypes.CircularLogicError:
+      case NotificationTypes.TargetNodeCannotDelete:
         return <DismissCircle20Filled style={{ color: tokens.colorPaletteRedBackground3, marginRight: 8 }} />;
 
       // Delete icon
@@ -106,6 +108,10 @@ export const Notification = (props: NotificationProps) => {
           nodeName: msgParam ?? '',
         }
       ),
+      [NotificationTypes.TargetNodeCannotDelete]: intl.formatMessage({
+        defaultMessage: `Target schema element cannot be deleted.`,
+        description: 'Message informing that target element cannot be removed',
+      }),
       [NotificationTypes.FunctionNodeDeleted]: intl.formatMessage({
         defaultMessage: `Function deleted.`,
         description: 'Message on deleting connection',
