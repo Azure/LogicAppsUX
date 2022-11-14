@@ -43,13 +43,6 @@ export const App = () => {
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
-  /*
-  // Monitor document.body for VS Code theme changes
-  new MutationObserver(() => {
-    setVsCodeTheme(getVscodeTheme());
-  }).observe(document.body, { attributes: true });
-  */
-
   const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
     saveDataMapDefinition(dataMapDefinition);
 
@@ -83,6 +76,17 @@ export const App = () => {
       data: dataMapXslt,
     });
   };
+
+  /*
+  // Monitor document.body for VS Code theme changes
+  useEffect(() => {
+    const themeMutationObserver = new MutationObserver(() => {
+      setVsCodeTheme(getVscodeTheme());
+    }).observe(document.body, { attributes: true });
+
+    return () => themeMutationObserver.disconnect();
+  }, []);
+  */
 
   // Init runtime API service and make calls
   useEffect(() => {

@@ -31,6 +31,7 @@ const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
 export const functionCategoryItemKeyPrefix = 'category&';
 
 interface FunctionDataTreeItem extends FunctionData {
+  isExpanded?: boolean;
   children: FunctionDataTreeItem[];
 }
 
@@ -124,6 +125,12 @@ export const FunctionList = () => {
         // Add functions to their respective categories
         functionsList.forEach((functionData) => {
           functionCategoryDictionary[functionData.category].children.push({ ...functionData, children: [] });
+
+          // If there's a search term, all present categories should be expanded as
+          // they only show when they have Functions that match the search
+          if (searchTerm) {
+            functionCategoryDictionary[functionData.category].isExpanded = true;
+          }
         });
 
         // Add function categories as children to the tree root, filtering out any that don't have any children
@@ -146,15 +153,15 @@ export const FunctionList = () => {
 
       <Tree<FunctionDataTreeItem>
         treeRoot={functionListTree}
-        nodeContent={(node: FunctionDataTreeItem) =>
+        nodeContent={(node) =>
           node.key.startsWith(functionCategoryItemKeyPrefix) ? (
             <FunctionListHeader category={node.key.replace(functionCategoryItemKeyPrefix, '') as FunctionCategory} />
           ) : (
-            <FunctionListItem functionData={node} />
+            <FunctionListItem functionData={node as FunctionData} />
           )
         }
         childPadding={0}
-        onClickItem={(node) => !node.key.startsWith(functionCategoryItemKeyPrefix) && onFunctionItemClick(node)}
+        onClickItem={(node) => !node.key.startsWith(functionCategoryItemKeyPrefix) && onFunctionItemClick(node as FunctionData)}
         parentItemClickShouldExpand
       />
     </>
