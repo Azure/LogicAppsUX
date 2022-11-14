@@ -1,6 +1,6 @@
 import type { DataMapperDesignerContext } from './DataMapperDesignerContext';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
-import reactPlugin from './services/appInsights/AppInsights';
+import { reactPlugin } from './services/appInsights/AppInsights';
 import { store } from './state/Store';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';

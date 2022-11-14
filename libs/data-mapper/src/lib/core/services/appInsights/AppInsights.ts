@@ -1,7 +1,8 @@
 import { ReactPlugin } from '@microsoft/applicationinsights-react-js';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 
-const reactPlugin = new ReactPlugin();
+export const reactPlugin = new ReactPlugin();
+
 const appInsights = new ApplicationInsights({
   config: {
     connectionString:
@@ -13,4 +14,4 @@ const appInsights = new ApplicationInsights({
 
 appInsights.loadAppInsights();
 
-export default reactPlugin;
+export default appInsights;
