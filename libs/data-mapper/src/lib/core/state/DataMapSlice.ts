@@ -605,7 +605,13 @@ export const deleteConnectionFromConnections = (connections: ConnectionDictionar
 };
 
 export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: string) => {
-  if (curDataMapState.curDataMapOperation.flattenedTargetSchema[reactFlowKey]) {
+  const targetNode = curDataMapState.curDataMapOperation.flattenedTargetSchema[reactFlowKey];
+  if (targetNode) {
+    curDataMapState.notificationData = {
+      type: NotificationTypes.TargetNodeCannotDelete,
+      msgParam: targetNode.name,
+      autoHideDurationMs: errorNotificationAutoHideDuration,
+    };
     return;
   }
 

@@ -963,6 +963,12 @@
       "value": "Required. The number to multiply Multiplicand 2 with."
     }
   ],
+  "6rL+R7": [
+    {
+      "type": 0,
+      "value": "Target Schema element cannot be deleted"
+    }
+  ],
   "73iM9+": [
     {
       "type": 0,
