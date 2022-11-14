@@ -464,7 +464,7 @@ export const addParentConnectionForRepeatingElementsNested = (
   dataMapConnections: ConnectionDictionary
 ) => {
   if (isSchemaNodeExtended(sourceNode) && isSchemaNodeExtended(targetNode)) {
-    // if it isn't we still have to do this lol
+    // Danielle: we still need to do this even if both are not schema nodes
 
     if (sourceNode.parentKey) {
       const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
