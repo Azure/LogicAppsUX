@@ -27,9 +27,9 @@ jobs:
           node-version: 16
 
       - name: 'Set DM VSIX aiKey in package.json'
-        run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' ./apps/vs-code-data-mapper/package.json`" > ./apps/vs-code-data-mapper/package.json
+        run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-data-mapper/src/package.json`" > apps/vs-code-data-mapper/src/package.json
 
-      - run: cat ./apps/vs-code-data-mapper/package.json
+      - run: cat apps/vs-code-data-mapper/src/package.json
 
       - run: npm ci
 
