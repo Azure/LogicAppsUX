@@ -29,7 +29,7 @@ jobs:
       - run: npm ci
 
       - name: 'Set DM VSIX aiKey in package.json'
-        run: echo "`jq '.aiKey="$AI_KEY"' package.json`" > package.json
+        run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' package.json`" > package.json
 
       - run: cat package.json
 
