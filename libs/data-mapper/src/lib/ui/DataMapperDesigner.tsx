@@ -94,7 +94,7 @@ export interface DataMapperDesignerProps {
   readCurrentSchemaOptions?: () => void;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }) => {
+export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }: DataMapperDesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   useStaticStyles();
   const styles = useStyles();
