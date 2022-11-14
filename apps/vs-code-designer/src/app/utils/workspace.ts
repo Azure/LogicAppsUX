@@ -12,3 +12,14 @@ export function getContainingWorkspace(fsPath: string): vscode.WorkspaceFolder |
     return fsUtils.isPathEqual(f.uri.fsPath, fsPath) || fsUtils.isSubpath(f.uri.fsPath, fsPath);
   });
 }
+
+export const getWorkflowNode = (node: vscode.Uri | undefined): vscode.Uri | undefined => {
+  if (node === undefined) {
+    const activeFile = vscode?.window?.activeTextEditor?.document;
+    if (activeFile?.fileName.endsWith('workflow.json')) {
+      return activeFile.uri;
+    }
+  }
+
+  return node;
+};
