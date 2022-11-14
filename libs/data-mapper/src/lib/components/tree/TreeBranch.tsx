@@ -26,6 +26,7 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
   } = props;
   const styles = useTreeStyles();
   const [isExpanded, { toggle: toggleExpanded }] = useBoolean(false);
+  const [isHovered, { setFalse: setNotHovered, setTrue: setIsHovered }] = useBoolean(false);
 
   const hasChildren = useMemo<boolean>(() => !!(node.children && node.children.length > 0), [node]);
 
@@ -56,6 +57,8 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
         horizontal
         verticalAlign="center"
         onClick={handleItemClick}
+        onMouseEnter={setIsHovered}
+        onMouseLeave={setNotHovered}
       >
         <Button
           appearance="transparent"
@@ -68,7 +71,7 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
           }}
         />
 
-        {nodeContent(node)}
+        {nodeContent(node, isHovered)}
       </Stack>
 
       {hasChildren &&

@@ -154,10 +154,11 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
             // Add one extra root layer so schemaTreeRoot is shown as well
             // Can safely typecast as only the children[] are used from root
             treeRoot={{ children: [searchedSourceSchemaTreeRoot] } as SchemaNodeExtended}
-            nodeContent={(node: SchemaNodeExtended) => (
+            nodeContent={(node: SchemaNodeExtended, isHovered: boolean) => (
               <SourceSchemaTreeItem
                 node={node}
                 isNodeAdded={currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)}
+                isNodeHovered={isHovered}
               />
             )}
             onClickItem={(node) => onSourceSchemaItemClick(node)}

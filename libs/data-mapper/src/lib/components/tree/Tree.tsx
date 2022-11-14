@@ -18,7 +18,7 @@ export const useTreeStyles = makeStyles({
 });
 
 export interface CoreTreeProps<T> {
-  nodeContent: (node: T) => ReactNode;
+  nodeContent: (node: T, isHovered: boolean) => ReactNode;
   nodeContainerClassName?: string;
   nodeContainerStyle?: (node: T) => React.CSSProperties;
   childPadding?: number; // 0 will also not render hidden chevrons (meaning the space is recouped) - used in FxList
