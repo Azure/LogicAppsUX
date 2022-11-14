@@ -22,11 +22,13 @@ import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
 import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactFlowProvider } from 'reactflow';
+
+const centerViewId = 'centerView';
 
 const useStaticStyles = makeStaticStyles({
   // Firefox who's trying to early-adopt a WIP CSS standard (as of 11/2/2022)
@@ -108,7 +110,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
-  const [isOutputPaneExpanded, setIsOutputPaneExpanded] = useState(false);
+  const [isTargetSchemaPaneExpanded, setIsTargetSchemaPaneExpanded] = useState(false);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
@@ -188,6 +190,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const getCanvasAreaHeight = () => {
+    // PropPane isn't shown when in Overview, so canvas can use full height
+    if (showMapOverview) {
+      return centerViewHeight - 8;
+    }
+
     if (isPropPaneExpanded) {
       return centerViewHeight - getExpandedPropPaneTotalHeight();
     } else {
@@ -204,7 +211,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           <div id="centerViewWithBreadcrumb" style={{ display: 'flex', flexDirection: 'column', flex: '1 1 1px' }}>
             <EditorBreadcrumb isCodeViewOpen={isCodeViewOpen} setIsCodeViewOpen={setIsCodeViewOpen} />
 
-            <div id="centerView" style={{ minHeight: 400, flex: '1 1 1px' }}>
+            <div id={centerViewId} style={{ minHeight: 400, flex: '1 1 1px' }}>
               <div
                 style={{
                   height: getCanvasAreaHeight(),
@@ -239,18 +246,20 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                 )}
               </div>
 
-              <PropertiesPane
-                selectedItemKey={selectedItemKey ?? ''}
-                isExpanded={isPropPaneExpanded}
-                setIsExpanded={setIsPropPaneExpanded}
-                centerViewHeight={centerViewHeight}
-                contentHeight={propPaneExpandedHeight}
-                setContentHeight={setPropPaneExpandedHeight}
-              />
+              {!showMapOverview && (
+                <PropertiesPane
+                  selectedItemKey={selectedItemKey ?? ''}
+                  isExpanded={isPropPaneExpanded}
+                  setIsExpanded={setIsPropPaneExpanded}
+                  centerViewHeight={centerViewHeight}
+                  contentHeight={propPaneExpandedHeight}
+                  setContentHeight={setPropPaneExpandedHeight}
+                />
+              )}
             </div>
           </div>
 
-          <TargetSchemaPane isExpanded={isOutputPaneExpanded} setIsExpanded={setIsOutputPaneExpanded} />
+          <TargetSchemaPane isExpanded={isTargetSchemaPaneExpanded} setIsExpanded={setIsTargetSchemaPaneExpanded} />
         </div>
 
         <WarningModal />
@@ -264,21 +273,20 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
 const useCenterViewHeight = () => {
   const [centerViewHeight, setCenterViewHeight] = useState(0);
 
-  const handleCenterViewHeight = () => {
-    const centerView = document.getElementById('centerView');
+  useEffect(() => {
+    const centerViewElement = document.getElementById(centerViewId);
 
-    if (centerView?.clientHeight) {
-      setCenterViewHeight(centerView.clientHeight);
+    const centerViewResizeObserver = new ResizeObserver((entries) => {
+      if (entries.length && entries.length > 0) {
+        setCenterViewHeight(entries[0].contentRect.height);
+      }
+    });
+
+    if (centerViewElement) {
+      centerViewResizeObserver.observe(centerViewElement);
     }
-  };
 
-  useLayoutEffect(() => {
-    window.addEventListener('resize', handleCenterViewHeight);
-
-    // NOTE: Not the nicest, but it's required to ensure we get the actual final height after the initial render
-    setTimeout(handleCenterViewHeight, 125);
-
-    return () => window.removeEventListener('resize', handleCenterViewHeight);
+    return () => centerViewResizeObserver.disconnect();
   }, []);
 
   return centerViewHeight;

@@ -1,3 +1,4 @@
+import type { ITreeNode } from '../components/tree/Tree';
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
@@ -98,28 +99,32 @@ export const searchSchemaTreeFromRoot = (
   schemaTreeRoot: SchemaNodeExtended,
   nodeKeySearchTerm: string,
   minSearchCharacters = 2
-): SchemaNodeExtended => {
+): ITreeNode<ITreeNode<SchemaNodeExtended>> => {
   if (nodeKeySearchTerm.length < minSearchCharacters) {
     return { ...schemaTreeRoot };
   }
 
-  const searchChildren = (result: SchemaNodeExtended[], node: SchemaNodeExtended) => {
-    if (node.key.toLowerCase().includes(nodeKeySearchTerm.toLowerCase())) {
+  const searchChildren = (result: ITreeNode<ITreeNode<SchemaNodeExtended>>[], node: ITreeNode<ITreeNode<SchemaNodeExtended>>) => {
+    if (node.key.toString().toLowerCase().includes(nodeKeySearchTerm.toLowerCase())) {
       result.push({ ...node });
       return result;
     }
 
-    if (node.children.length > 0) {
+    if (node.children && node.children.length > 0) {
       const childNodes = node.children.reduce(searchChildren, []);
       if (childNodes.length) {
-        result.push({ ...node, children: childNodes });
+        result.push({ ...node, isExpanded: true, children: childNodes } as ITreeNode<ITreeNode<SchemaNodeExtended>>);
       }
     }
 
     return result;
   };
 
-  return { ...schemaTreeRoot, children: schemaTreeRoot.children.reduce(searchChildren, []) };
+  return {
+    ...schemaTreeRoot,
+    isExpanded: true,
+    children: schemaTreeRoot.children.reduce(searchChildren, []) as ITreeNode<SchemaNodeExtended>[],
+  };
 };
 
 export const isSchemaNodeExtended = (node: SchemaNodeExtended | FunctionData): node is SchemaNodeExtended => 'pathToRoot' in node;
