@@ -5,13 +5,15 @@ export const reactPlugin = new ReactPlugin();
 
 const appInsights = new ApplicationInsights({
   config: {
-    connectionString:
-      'InstrumentationKey=19a4f2b3-bf0a-4a6b-bd56-aa9d2cd85a75;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/',
+    connectionString: process.env.NX_AI_CON_STR,
     enableAutoRouteTracking: true, // Shouldn't matter either way with DM as it's an SPA
     extensions: [reactPlugin],
   },
 });
 
-appInsights.loadAppInsights();
+// Don't bother loading AI if we don't have a connection string
+if (process.env.NX_AI_CON_STR) {
+  appInsights.loadAppInsights();
+}
 
 export default appInsights;
