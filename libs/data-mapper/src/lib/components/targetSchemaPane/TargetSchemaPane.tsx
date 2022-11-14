@@ -86,16 +86,16 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
       return undefined;
     }
 
-    let newTargetSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = { ...targetSchema.schemaTreeRoot };
-
-    if (targetSchemaSearchTerm) {
-      newTargetSchemaTreeRoot = searchSchemaTreeFromRoot(targetSchema.schemaTreeRoot, targetSchemaSearchTerm);
-    }
-
     // Format extra top layers to show schema name and schemaTreeRoot
     // Can safely typecast with the root node(s) as we only use the properties defined here
     const schemaRoot = {} as ITreeNode<SchemaNodeExtended>;
     const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
+
+    let newTargetSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = { ...targetSchema.schemaTreeRoot };
+    if (targetSchemaSearchTerm) {
+      schemaRoot.isExpanded = true;
+      newTargetSchemaTreeRoot = searchSchemaTreeFromRoot(targetSchema.schemaTreeRoot, targetSchemaSearchTerm);
+    }
 
     schemaNameRoot.key = schemaRootKey;
     schemaNameRoot.name = targetSchema.name;

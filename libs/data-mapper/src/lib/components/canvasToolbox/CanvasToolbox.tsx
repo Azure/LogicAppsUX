@@ -110,16 +110,16 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
       return undefined;
     }
 
-    let newSourceSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = { ...sourceSchema.schemaTreeRoot };
-
-    if (sourceSchemaSearchTerm) {
-      newSourceSchemaTreeRoot = searchSchemaTreeFromRoot(sourceSchema.schemaTreeRoot, sourceSchemaSearchTerm);
-    }
-
     // Format extra top layers to show schema name and schemaTreeRoot
     // Can safely typecast with the root node(s) as we only use the properties defined here
     const schemaRoot = {} as ITreeNode<SchemaNodeExtended>;
     const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
+
+    let newSourceSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = { ...sourceSchema.schemaTreeRoot };
+    if (sourceSchemaSearchTerm) {
+      schemaRoot.isExpanded = true;
+      newSourceSchemaTreeRoot = searchSchemaTreeFromRoot(sourceSchema.schemaTreeRoot, sourceSchemaSearchTerm);
+    }
 
     schemaNameRoot.key = schemaRootKey;
     schemaNameRoot.name = sourceSchema.name;
