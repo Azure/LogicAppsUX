@@ -31,6 +31,14 @@ jobs:
       - name: 'Set DM VSIX aiKey in package.json'
         run: echo "`jq '.aiKey="$AI_KEY"' package.json`" > package.json
 
+      - run: cat package.json
+
       - run: npx nx build vs-code-data-mapper
       - run: npx nx build vs-code-data-mapper-react
       - run: npm run vscode:data-mapper:pack
+
+      - name: Archive VSIX
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            dist/apps/vs-code-data-mapper/*.vsix
