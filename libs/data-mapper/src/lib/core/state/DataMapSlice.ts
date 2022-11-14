@@ -669,3 +669,40 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   });
   curDataMapState.notificationData = { type: NotificationTypes.ConnectionDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
 };
+
+export const addParentConnectionForRepeatingElements = (
+  targetNode: FunctionData | SchemaNodeExtended,
+  sourceNode: FunctionData | SchemaNodeExtended,
+  flattenedSourceSchema: SchemaNodeDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary,
+  dataMapConnections: ConnectionDictionary
+) => {
+  if (isSchemaNodeExtended(sourceNode) && isSchemaNodeExtended(targetNode)) {
+    if (sourceNode.parentKey) {
+      const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
+
+      const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
+      const parentSourceNode = flattenedSourceSchema[prefixedSourceKey];
+      const firstSourceNodeWithRepeatingPathItem = findLast(parentSourceNode.pathToRoot, (pathItem) => pathItem.repeating);
+
+      if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
+        const parentPrefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
+        const parentSourceNode = flattenedSourceSchema[parentPrefixedSourceKey];
+
+        const parentPrefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
+        const parentTargetNode = flattenedTargetSchema[parentPrefixedTargetKey];
+
+        const parentsAlreadyConnected = nodeHasSpecificInputEventually(
+          parentPrefixedSourceKey,
+          dataMapConnections[parentPrefixedTargetKey],
+          dataMapConnections,
+          true
+        );
+
+        if (!parentsAlreadyConnected) {
+          addNodeToConnections(dataMapConnections, parentSourceNode, parentPrefixedSourceKey, parentTargetNode, parentPrefixedTargetKey);
+        }
+      }
+    }
+  }
+};

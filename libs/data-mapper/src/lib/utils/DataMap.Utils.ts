@@ -7,12 +7,14 @@ import {
   reservedMapDefinitionKeysArray,
 } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import { addParentConnectionForRepeatingElements } from '../core/state/DataMapSlice';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import { ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
 import type { MapDefinitionEntry } from '../models/MapDefinition';
-import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { SchemaNodeProperty } from '../models/Schema';
+import type { PathItem, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
+import { SchemaNodeProperty, SchemaType } from '../models/Schema';
+import { findLast } from './Array.Utils';
 import {
   addNodeToConnections,
   flattenInputs,
@@ -22,8 +24,8 @@ import {
   nodeHasSpecificInputEventually,
 } from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
-import { addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
-import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
+import { addReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
+import { findNodeForKey, flattenSchema, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft-logic-apps/utils';
 import yaml from 'js-yaml';
 
@@ -294,7 +296,6 @@ export const convertFromMapDefinition = (
   if (rootNodeKey) {
     parseDefinitionToConnection(mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, {}, sourceSchema, targetSchema, functions);
   }
-
   return connections;
 };
 
@@ -310,6 +311,7 @@ const parseDefinitionToConnection = (
   if (typeof sourceNodeObject === 'string') {
     const sourceEndOfFunction = sourceNodeObject.indexOf('(');
     const amendedSourceKey = targetKey.includes(mapNodeParams.for) ? getSourceValueFromLoop(sourceNodeObject, targetKey) : sourceNodeObject;
+
     const sourceNode =
       sourceEndOfFunction > -1
         ? findFunctionForFunctionName(amendedSourceKey.substring(0, sourceEndOfFunction), functions)
@@ -328,6 +330,21 @@ const parseDefinitionToConnection = (
       ? findFunctionForKey(destinationFunctionKey, functions)
       : findNodeForKey(targetKey, targetSchema.schemaTreeRoot);
     const destinationKey = isAGuid(destinationFunctionGuid) ? targetKey : `${targetPrefix}${destinationNode?.key}`;
+
+    if (targetKey.includes(mapNodeParams.for)) {
+      // if has for, add parent connection
+      const sourceFlattened = flattenSchema(sourceSchema, SchemaType.Source);
+      const targetFlattened = flattenSchema(targetSchema, SchemaType.Target);
+      if (sourceNode && destinationNode) {
+        addParentConnectionForRepeatingElements(
+          destinationNode as SchemaNodeExtended,
+          sourceNode as SchemaNodeExtended,
+          sourceFlattened,
+          targetFlattened,
+          connections
+        ); // danielle fix typing
+      }
+    }
 
     if (sourceNode && destinationNode) {
       addNodeToConnections(connections, sourceNode, sourceKey, destinationNode, destinationKey);
@@ -422,10 +439,9 @@ const yamlReplacer = (key: string, value: any) => {
 };
 
 export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): string => {
-  // danielle will account for nested loops in next PR
   let constructedSourceKey = '';
-  const matchArr = targetKey.match(/\$for\([^)]+\)\//);
-  let match = matchArr?.[0];
+  const matchArr = targetKey.match(/\$for\([^)]+\)\//g);
+  let match = matchArr?.[matchArr.length - 1];
   match = match?.replace('$for(', '');
   match = match?.replace(')', '');
   const endOfLastFunctionIndex = sourceKey.lastIndexOf('(');
@@ -438,6 +454,56 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): st
     constructedSourceKey = match + sourceKey;
   }
   return constructedSourceKey;
+};
+
+export const addParentConnectionForRepeatingElementsNested = (
+  targetNode: FunctionData | SchemaNodeExtended,
+  sourceNode: FunctionData | SchemaNodeExtended,
+  flattenedSourceSchema: SchemaNodeDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary,
+  dataMapConnections: ConnectionDictionary
+) => {
+  if (isSchemaNodeExtended(sourceNode) && isSchemaNodeExtended(targetNode)) {
+    // Danielle: we still need to do this even if both are not schema nodes
+
+    if (sourceNode.parentKey) {
+      const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
+      const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
+
+      if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
+        const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
+        const firstRepeatingSourceNode = flattenedSourceSchema[prefixedSourceKey];
+
+        const prefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
+        const firstRepeatingTargetNode = flattenedTargetSchema[prefixedTargetKey];
+
+        const parentsAlreadyConnected = nodeHasSpecificInputEventually(
+          prefixedSourceKey,
+          dataMapConnections[prefixedTargetKey],
+          dataMapConnections,
+          true
+        );
+
+        if (!parentsAlreadyConnected) {
+          addNodeToConnections(
+            dataMapConnections,
+            firstRepeatingSourceNode,
+            prefixedSourceKey,
+            firstRepeatingTargetNode,
+            prefixedTargetKey
+          );
+        }
+
+        addParentConnectionForRepeatingElementsNested(
+          flattenedSourceSchema[addReactFlowPrefix(firstRepeatingSourceNode.parentKey ?? '', SchemaType.Source)],
+          flattenedTargetSchema[addReactFlowPrefix(firstRepeatingTargetNode.parentKey ?? '', SchemaType.Target)],
+          flattenedSourceSchema,
+          flattenedTargetSchema,
+          dataMapConnections
+        );
+      }
+    }
+  }
 };
 
 const formatCustomValue = (customValue: string) => customValueQuoteToken + customValue + customValueQuoteToken;

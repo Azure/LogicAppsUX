@@ -1,5 +1,5 @@
+import { nestedLoopMapDefinition } from '../../../../__mocks__/mapDefinitions/NestedLoopMapDefinition';
 import { customerOrderMapDefinition } from '../../../../__mocks__/mapDefinitions/SimpleCustomerOrder';
-import { demoScriptMapDefinition } from '../../../../__mocks__/mapDefinitions/TranscriptMapDefinitions';
 import { dataMapDataLoaderSlice, loadDataMap, type ThemeType } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
@@ -13,11 +13,21 @@ const themeOptions = ['Light', 'Dark'];
 const themeDropdownOptions = themeOptions.map((theme) => ({ key: theme, text: theme }));
 
 export const mapDefinitionDropdownOptions: IDropdownOption<string>[] = [
-  { key: 'demoScriptMapDefinition', text: 'Demo Script Map Definition', data: demoScriptMapDefinition },
+  { key: 'NestedLoopMapDefinition', text: 'Nested Map Definition', data: nestedLoopMapDefinition },
   { key: 'customerOrderMapDefinition', text: 'Simple Schema Map Definition', data: customerOrderMapDefinition },
 ];
-export const sourceSchemaFileOptions = ['SourceSchema.json', 'SimpleInputOrderSchema.json', 'LayeredLoopSourceSchema.json'];
-export const targetSchemaFileOptions = ['TargetSchema.json', 'SimpleOutputOrderSchema.json', 'LayeredLoopTargetSchema.json'];
+export const sourceSchemaFileOptions = [
+  'SourceSchema.json',
+  'SimpleInputOrderSchema.json',
+  'LayeredLoopSourceSchema.json',
+  'SimpleLoopSource.json',
+];
+export const targetSchemaFileOptions = [
+  'TargetSchema.json',
+  'SimpleOutputOrderSchema.json',
+  'LayeredLoopTargetSchema.json',
+  'SimpleLoopTarget.json',
+];
 
 export const DevToolbox: React.FC = () => {
   const { theme, rawDefinition, armToken, loadingMethod, xsltFilename } = useSelector((state: RootState) => {
