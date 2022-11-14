@@ -670,7 +670,6 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   curDataMapState.notificationData = { type: NotificationTypes.ConnectionDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
 };
 
-// danielle can this return the additional connections? removing the reliance on state
 export const addParentConnectionForRepeatingElements = (
   targetNode: FunctionData | SchemaNodeExtended,
   sourceNode: FunctionData | SchemaNodeExtended,
@@ -679,8 +678,6 @@ export const addParentConnectionForRepeatingElements = (
   dataMapConnections: ConnectionDictionary
 ) => {
   if (isSchemaNodeExtended(sourceNode) && isSchemaNodeExtended(targetNode)) {
-    // if it isn't we still have to do this, right?
-
     if (sourceNode.parentKey) {
       const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
 
@@ -709,58 +706,3 @@ export const addParentConnectionForRepeatingElements = (
     }
   }
 };
-
-// duplicate that still works for other
-// export const addParentConnectionForRepeatingElements = (
-//   parentTargetNode: SchemaNodeExtended | undefined,
-//   sourceNode: SchemaNodeExtended,
-//   flattenedSourceSchema: SchemaNodeDictionary,
-//   flattenedTargetSchema: SchemaNodeDictionary,
-//   dataMapConnections: ConnectionDictionary,
-// ) => {
-//   if (parentTargetNode && isSchemaNodeExtended(sourceNode)) {
-//     if (sourceNode.parentKey) {
-//       const firstTargetNodeWithRepeatingPathItem = parentTargetNode.pathToRoot.find((pathItem) => pathItem.repeating);
-//       // const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
-
-//       const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
-//       const parentSourceNode = flattenedSourceSchema[prefixedSourceKey];
-//       const firstSourceNodeWithRepeatingPathItem = parentSourceNode.pathToRoot.find((pathItem) => pathItem.repeating);
-
-//       if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
-//         const parentPrefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
-//         const parentSourceNode = flattenedSourceSchema[parentPrefixedSourceKey];
-
-//         const parentPrefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
-//         const parentTargetNode = flattenedTargetSchema[parentPrefixedTargetKey];
-
-//         const parentsAlreadyConnected = nodeHasSpecificInputEventually(
-//           parentPrefixedSourceKey,
-//           dataMapConnections[parentPrefixedTargetKey],
-//           dataMapConnections,
-//           true
-//         );
-
-//         if (!parentsAlreadyConnected) {
-//           addNodeToConnections(
-//             dataMapConnections,
-//             parentSourceNode,
-//             parentPrefixedSourceKey,
-//             parentTargetNode,
-//             parentPrefixedTargetKey
-//           );
-//           // state.notificationData = { type: NotificationTypes.ArrayConnectionAdded }; danielle move this
-//         }
-//       }
-
-//       // if ( danielle do later
-//       //   parentSourceNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1 &&
-//       //   nodeHasSpecificInputEventually(prefixedSourceKey, newState.dataMapConnections[prefixedTargetKey], newState.dataMapConnections, true)
-//       // ) {
-//       //   if (!newState.currentSourceSchemaNodes.find((node) => node.key === parentSourceNode.key)) {
-//       //     newState.currentSourceSchemaNodes.push(parentSourceNode);
-//       //   }
-//       // }
-//     }
-//   }
-// };
