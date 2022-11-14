@@ -117,7 +117,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
 
     let newSourceSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = { ...sourceSchema.schemaTreeRoot };
     if (sourceSchemaSearchTerm) {
-      schemaRoot.isExpanded = true;
+      schemaNameRoot.isExpanded = true;
       newSourceSchemaTreeRoot = searchSchemaTreeFromRoot(sourceSchema.schemaTreeRoot, sourceSchemaSearchTerm);
     }
 

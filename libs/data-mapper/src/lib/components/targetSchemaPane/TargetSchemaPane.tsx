@@ -93,7 +93,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
 
     let newTargetSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = { ...targetSchema.schemaTreeRoot };
     if (targetSchemaSearchTerm) {
-      schemaRoot.isExpanded = true;
+      schemaNameRoot.isExpanded = true;
       newTargetSchemaTreeRoot = searchSchemaTreeFromRoot(targetSchema.schemaTreeRoot, targetSchemaSearchTerm);
     }
 
