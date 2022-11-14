@@ -127,12 +127,6 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         >
           {targetSchemaLoc}
         </Text>
-
-        {isExpanded && targetSchema && (
-          <Text className={styles.subtitle} style={{ marginLeft: 4 }}>
-            {targetSchema.name}
-          </Text>
-        )}
       </Stack>
 
       {isExpanded && targetSchema && toggledStatesDictionary && searchedTargetSchemaTreeRoot && (

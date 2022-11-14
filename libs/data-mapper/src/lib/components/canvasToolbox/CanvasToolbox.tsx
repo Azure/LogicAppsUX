@@ -142,13 +142,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
       <ButtonPivot {...toolboxButtonPivotProps} />
 
       {toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree && sourceSchema && searchedSourceSchemaTreeRoot && (
-        <FloatingPanel
-          {...generalToolboxPanelProps}
-          height={floatingPanelHeight}
-          title={sourceSchemaLoc}
-          subtitle={sourceSchema.name}
-          onClose={closeToolbox}
-        >
+        <FloatingPanel {...generalToolboxPanelProps} height={floatingPanelHeight} title={sourceSchemaLoc} onClose={closeToolbox}>
           <TreeHeader onSearch={setSourceSchemaSearchTerm} onClear={() => setSourceSchemaSearchTerm('')} />
 
           <Tree<SchemaNodeExtended>

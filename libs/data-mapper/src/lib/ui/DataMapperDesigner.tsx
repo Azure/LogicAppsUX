@@ -110,7 +110,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   const [propPaneExpandedHeight, setPropPaneExpandedHeight] = useState(basePropPaneContentHeight);
   const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
-  const [isOutputPaneExpanded, setIsOutputPaneExpanded] = useState(false);
+  const [isTargetSchemaPaneExpanded, setIsTargetSchemaPaneExpanded] = useState(false);
 
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
@@ -190,6 +190,11 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
   };
 
   const getCanvasAreaHeight = () => {
+    // PropPane isn't shown when in Overview, so canvas can use full height
+    if (showMapOverview) {
+      return centerViewHeight - 8;
+    }
+
     if (isPropPaneExpanded) {
       return centerViewHeight - getExpandedPropPaneTotalHeight();
     } else {
@@ -241,18 +246,20 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                 )}
               </div>
 
-              <PropertiesPane
-                selectedItemKey={selectedItemKey ?? ''}
-                isExpanded={isPropPaneExpanded}
-                setIsExpanded={setIsPropPaneExpanded}
-                centerViewHeight={centerViewHeight}
-                contentHeight={propPaneExpandedHeight}
-                setContentHeight={setPropPaneExpandedHeight}
-              />
+              {!showMapOverview && (
+                <PropertiesPane
+                  selectedItemKey={selectedItemKey ?? ''}
+                  isExpanded={isPropPaneExpanded}
+                  setIsExpanded={setIsPropPaneExpanded}
+                  centerViewHeight={centerViewHeight}
+                  contentHeight={propPaneExpandedHeight}
+                  setContentHeight={setPropPaneExpandedHeight}
+                />
+              )}
             </div>
           </div>
 
-          <TargetSchemaPane isExpanded={isOutputPaneExpanded} setIsExpanded={setIsOutputPaneExpanded} />
+          <TargetSchemaPane isExpanded={isTargetSchemaPaneExpanded} setIsExpanded={setIsTargetSchemaPaneExpanded} />
         </div>
 
         <WarningModal />
