@@ -34,7 +34,7 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.AUTOMATION_PAT }}
-          branch: ${{ github.ref }}
+          branch: ${GITHUB_REF}
 
   build:
     runs-on: ubuntu-latest
