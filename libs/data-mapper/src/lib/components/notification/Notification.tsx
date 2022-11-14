@@ -109,7 +109,7 @@ export const Notification = (props: NotificationProps) => {
         }
       ),
       [NotificationTypes.TargetNodeCannotDelete]: intl.formatMessage({
-        defaultMessage: `Target Schema element cannot be deleted`,
+        defaultMessage: `Target schema element cannot be deleted`,
         description: 'Message informing that target element cannot be removed',
       }),
       [NotificationTypes.FunctionNodeDeleted]: intl.formatMessage({
