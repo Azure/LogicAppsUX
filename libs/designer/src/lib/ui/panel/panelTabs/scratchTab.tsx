@@ -151,7 +151,6 @@ export const ScratchTab = () => {
         {/* <AuthenticationEditor initialValue={[]} tokenPickerHandler={tokenPickerHandler} AuthenticationEditorOptions={{}} authProps={{}} /> */}
         <ArrayEditor
           type={ArrayType.SIMPLE}
-          itemSchema={'test'}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialValue={[
             { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' },
