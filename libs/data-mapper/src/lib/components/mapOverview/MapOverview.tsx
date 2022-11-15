@@ -11,7 +11,7 @@ const useStyles = makeStyles({
   mapOverviewStyles: {
     height: '100%',
     width: '100%',
-    backgroundColor: '#edebe9',
+    backgroundColor: tokens.colorNeutralBackground6,
     minHeight: 0,
     ...shorthands.overflow('hidden'),
     display: 'flex',
