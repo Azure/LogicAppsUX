@@ -1,4 +1,5 @@
 import { sourcePrefix, targetPrefix } from '../../constants/ReactFlowConstants';
+import appInsights from '../../core/services/appInsights/AppInsights';
 import {
   addFunctionNode,
   makeConnection,
@@ -138,8 +139,10 @@ export const FunctionList = () => {
       }
     } catch (error) {
       if (typeof error === 'string') {
+        appInsights.trackException({ exception: new Error(error) });
         throw new Error(`Function List Error: ${error}`);
       } else if (error instanceof Error) {
+        appInsights.trackException({ exception: error });
         throw new Error(`Function List Error: ${error.message}`);
       }
     }

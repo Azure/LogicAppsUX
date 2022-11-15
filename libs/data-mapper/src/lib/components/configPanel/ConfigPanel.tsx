@@ -1,4 +1,5 @@
 import { getSelectedSchema } from '../../core';
+import appInsights from '../../core/services/appInsights/AppInsights';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
 import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
@@ -114,6 +115,20 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
   const addOrUpdateSchema = useCallback(
     (isAddSchema?: boolean) => {
       if (schemaType === undefined) {
+        return;
+      }
+
+      // Catch specific errors from GET schemaTree or otherwise
+      const schemaLoadError = schemaType === SchemaType.Source ? fetchedSourceSchema.error : fetchedTargetSchema.error;
+      if (schemaLoadError) {
+        if (typeof schemaLoadError === 'string') {
+          appInsights.trackException({ exception: new Error(schemaLoadError) });
+          setErrorMessage(schemaLoadError);
+        } else if (schemaLoadError instanceof Error) {
+          appInsights.trackException({ exception: schemaLoadError });
+          setErrorMessage(schemaLoadError.message);
+        }
+
         return;
       }
 

@@ -15,6 +15,7 @@ import { TargetSchemaPane } from '../components/targetSchemaPane/TargetSchemaPan
 import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
+import appInsights from '../core/services/appInsights/AppInsights';
 import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
@@ -94,7 +95,7 @@ export interface DataMapperDesignerProps {
   readCurrentSchemaOptions?: () => void;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }) => {
+export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }: DataMapperDesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   useStaticStyles();
   const styles = useStyles();
@@ -121,6 +122,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         // - can and maybe should change if we add more infrastructure around error classes/types
         console.error(`-----------------Error generating map definition-----------------`);
         console.error(error);
+
+        if (typeof error === 'string') {
+          appInsights.trackException({ exception: new Error(error) });
+        } else if (error instanceof Error) {
+          appInsights.trackException({ exception: error });
+        }
 
         return '';
       }
