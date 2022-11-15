@@ -243,16 +243,42 @@ export class StandardConnectionService implements IConnectionService {
 
   async createConnection(
     connectionId: string,
-    connectorId: string,
+    connector: Connector,
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<Connection> {
     const connectionName = connectionId.split('/').at(-1) as string;
-    const connection = isArmResourceId(connectorId)
-      ? await this.createConnectionInApiHub(connectionName, connectorId, connectionInfo)
-      : await this.createConnectionInLocal(connectionName, connectorId, connectionInfo, parametersMetadata as ConnectionParametersMetadata);
 
-    return connection;
+    try {
+      const logId = LoggerService().startTrace({
+        action: 'createConnection',
+        name: 'Creating Connection',
+        source: 'connection.ts',
+      });
+
+      if (connector.properties.testConnectionUrl) await this.pretestServiceProviderConnection(connector, connectionInfo);
+
+      const connection = isArmResourceId(connector.id)
+        ? await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo)
+        : await this.createConnectionInLocal(
+            connectionName,
+            connector.id,
+            connectionInfo,
+            parametersMetadata as ConnectionParametersMetadata
+          );
+      await this.testConnection(connection);
+      LoggerService().endTrace(logId);
+      return connection;
+    } catch (error) {
+      this.deleteConnection(connectionId);
+      const errorMessage = `Failed to create connection: ${this.tryParseErrorMessage(error)}`;
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'createConnection',
+        message: errorMessage,
+      });
+      return Promise.reject(errorMessage);
+    }
   }
 
   async createConnectionAclIfNeeded(connection: Connection): Promise<void> {
@@ -334,8 +360,6 @@ export class StandardConnectionService implements IConnectionService {
       );
       throw error;
     }
-
-    await this.testConnection(connection);
 
     return connection;
   }
@@ -475,7 +499,8 @@ export class StandardConnectionService implements IConnectionService {
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult> {
-    const connection = await this.createConnection(connectionId, connectorId, connectionInfo, parametersMetadata);
+    const connector = await this.getConnector(connectorId);
+    const connection = await this.createConnection(connectionId, connector, connectionInfo, parametersMetadata);
     const oAuthService = OAuthService();
     let oAuthPopupInstance: IOAuthPopup | undefined;
 
@@ -511,15 +536,10 @@ export class StandardConnectionService implements IConnectionService {
   private async testConnection(connection: Connection): Promise<void> {
     let response: HttpResponse<any> | undefined = undefined;
     try {
-      // Service Provider Connection
-      if (connection.properties.testConnectionUrl) response = await this.requestTestServiceProviderConnection(connection);
-      // Other Connections
       const testLinks = connection.properties.testLinks;
       if (testLinks && testLinks.length > 0) response = await this.requestTestOtherConnections(connection);
-      // Handle Response
       if (response) this.handleTestConnectionResponse(response);
     } catch (error: any) {
-      console.error('Failed to test connection', this.tryParseErrorMessage(error));
       Promise.reject(error);
     }
   }
@@ -541,15 +561,43 @@ export class StandardConnectionService implements IConnectionService {
     return response;
   }
 
-  private async requestTestServiceProviderConnection(connection: Connection): Promise<HttpResponse<any>> {
-    const uri = connection.properties.testConnectionUrl;
-    if (!uri) return Promise.reject();
-    const { httpClient, baseUrl, apiVersion } = this.options;
+  private async pretestServiceProviderConnection(connector: Connector, connectionInfo: ConnectionCreationInfo): Promise<HttpResponse<any>> {
+    try {
+      const { testConnectionUrl } = connector.properties;
+      if (!testConnectionUrl) return Promise.reject();
+      const { httpClient, baseUrl, apiVersion } = this.options;
+      const queryParameters = { 'api-version': apiVersion };
+      const { connectionParameters = {}, connectionParametersSet } = connectionInfo;
 
-    const requestOptions: HttpRequestOptions<any> = { uri: `${uri}/${baseUrl}`, queryParameters: { 'api-version': apiVersion } };
-    const response = await httpClient.post<any, any>(requestOptions);
-    if (!response) return Promise.reject('Failed to test connection');
-    return response;
+      let content: any = {
+        parameterSetName: connectionParametersSet?.name,
+        serviceProvider: { id: connector.id },
+      };
+
+      if (connectionParametersSet?.name === 'connectionString') {
+        content = { ...content, parameterValues: { ...connectionParameters } };
+      } else {
+        content = {
+          ...content,
+          parameterValues: {
+            authProvider: {
+              type: connectionParametersSet?.name,
+              ...connectionParameters,
+            },
+            fullyQualifiedNamespace: connectionParameters?.['fullyQualifiedNamespace'],
+          },
+        };
+      }
+
+      const uri = `${baseUrl.replace('/runtime/webhooks/workflow/api/management', '')}${testConnectionUrl}`;
+      const requestOptions: HttpRequestOptions<any> = { uri, queryParameters, content };
+      const response = await httpClient.post<any, any>(requestOptions);
+
+      if (!response || response.status < 200 || response.status >= 300) throw response;
+      return response;
+    } catch (e: any) {
+      return Promise.reject(JSON.parse(e?.responseText));
+    }
   }
 
   private handleTestConnectionResponse(response?: HttpResponse<any>): void {
@@ -564,9 +612,7 @@ export class StandardConnectionService implements IConnectionService {
   }
 
   private tryParseErrorMessage(error: any, defaultErrorMessage?: string): string {
-    if (error?.message) return error.message;
-    else if (error?.error?.message) error.error.message;
-    return defaultErrorMessage ?? 'Unknown error';
+    return error?.message ?? error?.Message ?? error?.error?.message ?? error?.responseText ?? defaultErrorMessage ?? 'Unknown error';
   }
 
   private getConnectionsConfiguration(

@@ -52,8 +52,6 @@ export interface ConnectionProperties {
   accountName?: string;
   api: Api;
   connectionRuntimeUrl?: string;
-  testConnectionUrl?: string;
-  testConnectionOperationName?: string;
 }
 
 export type Connection = ArmResource<ConnectionProperties>;
