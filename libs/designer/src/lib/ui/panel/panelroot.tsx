@@ -20,7 +20,7 @@ import {
   selectPanelTab,
   setTabVisibility,
 } from '../../core/state/panel/panelSlice';
-import { useIconUri } from '../../core/state/selectors/actionMetadataSelector';
+import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
@@ -65,6 +65,7 @@ export const PanelRoot = (): JSX.Element => {
   const comment = useNodeDescription(selectedNode);
   const iconUri = useIconUri(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
+  const operationInfo = useOperationInfo(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
 
   useEffect(() => {
@@ -83,6 +84,15 @@ export const PanelRoot = (): JSX.Element => {
       })
     );
   }, [dispatch, isMonitoringView]);
+
+  useEffect(() => {
+    dispatch(
+      setTabVisibility({
+        tabName: constants.PANEL_TAB_NAMES.MONITORING,
+        visible: operationInfo?.type.toLowerCase() !== constants.NODE.TYPE.SCOPE,
+      })
+    );
+  }, [dispatch, operationInfo]);
 
   useEffect(() => {
     if (!visibleTabs?.map((tab) => tab.name.toLowerCase())?.includes(selectedPanelTab ?? ''))

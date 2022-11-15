@@ -1,9 +1,10 @@
 import DataMapperExt from './DataMapperExt';
 import { stopBackendRuntime } from './FxWorkflowRuntime';
 import { registerCommands } from './commands/commands';
-import { outputChannelTitle, supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './extensionConfig';
+import { outputChannelPrefix, outputChannelTitle, supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './extensionConfig';
+import { createAzExtOutputChannel, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
 import type { ExtensionContext } from 'vscode';
-import { window, commands } from 'vscode';
+import { commands } from 'vscode';
 
 export function activate(context: ExtensionContext) {
   // Set supported file extensions for context menu detection
@@ -14,9 +15,15 @@ export function activate(context: ExtensionContext) {
     ...supportedSchemaFileExts,
   ]);
 
-  DataMapperExt.outputChannel = window.createOutputChannel(outputChannelTitle);
+  DataMapperExt.context = context;
+  DataMapperExt.outputChannel = createAzExtOutputChannel(outputChannelTitle, outputChannelPrefix);
+  registerUIExtensionVariables(DataMapperExt);
 
-  registerCommands(context);
+  // This is where we would: validateFuncCoreToolsIsLatest();
+
+  // This is where we could registerEvent on vscode.workspace.onDidChangeWorkspaceFolders to verifyVSCodeConfigOnActivate
+
+  registerCommands();
 
   DataMapperExt.log('Data Mapper extension is loaded');
 }

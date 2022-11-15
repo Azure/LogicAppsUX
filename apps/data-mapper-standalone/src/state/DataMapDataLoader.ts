@@ -1,6 +1,6 @@
 import type { RootState } from './Store';
 import type { IDropdownOption } from '@fluentui/react';
-import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
+import type { MapDefinitionEntry, FunctionData } from '@microsoft/logic-apps-data-mapper';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import * as yaml from 'js-yaml';
@@ -14,6 +14,7 @@ export interface DataMapLoadingState {
   loadingMethod: 'file' | 'arm';
   mapDefinition: MapDefinitionEntry;
   xsltFilename: string;
+  fetchedFunctions?: FunctionData[];
 }
 
 const initialState: DataMapLoadingState = {
@@ -58,6 +59,9 @@ export const dataMapDataLoaderSlice = createSlice({
     },
     changeXsltFilename: (state, action: PayloadAction<string>) => {
       state.xsltFilename = action.payload;
+    },
+    changeFetchedFunctions: (state, action: PayloadAction<FunctionData[]>) => {
+      state.fetchedFunctions = action.payload;
     },
   },
   extraReducers: (builder) => {
