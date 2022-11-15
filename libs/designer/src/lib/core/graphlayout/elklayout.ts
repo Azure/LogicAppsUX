@@ -149,18 +149,18 @@ export const useLayout = (): [Node[], Edge[]] => {
     () => {
       if (!workflowGraph) return;
       const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
-      // const traceId = LoggerService().startTrace({
-      //   action: 'useLayout',
-      //   actionModifier: 'run Elk Layout',
-      //   name: 'Elk Layout',
-      //   source: 'elklayout.ts',
-      // });
+      const traceId = LoggerService().startTrace({
+        action: 'useLayout',
+        actionModifier: 'run Elk Layout',
+        name: 'Elk Layout',
+        source: 'elklayout.ts',
+      });
       elkLayout(elkGraph, readOnly)
         .then((g) => {
           const [n, e] = convertElkGraphToReactFlow(g);
           setReactFlowNodes(n);
           setReactFlowEdges(e);
-          // LoggerService().endTrace(traceId);
+          LoggerService().endTrace(traceId);
         })
         .catch((err) => {
           LoggerService().log({
