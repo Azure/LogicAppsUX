@@ -10,7 +10,7 @@ const defaultChildPadding = 16;
 
 interface TreeBranchProps<T> extends CoreTreeProps<T> {
   level: number;
-  node: T;
+  node: ITreeNode<T>;
 }
 
 const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
@@ -26,8 +26,10 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
   } = props;
   const styles = useTreeStyles();
   const [isExpanded, { toggle: toggleExpanded }] = useBoolean(false);
+  const [isHovered, { setFalse: setNotHovered, setTrue: setIsHovered }] = useBoolean(false);
 
   const hasChildren = useMemo<boolean>(() => !!(node.children && node.children.length > 0), [node]);
+  const isNodeExpanded = useMemo<boolean>(() => (node.isExpanded === undefined ? isExpanded : node.isExpanded), [node, isExpanded]);
 
   const handleItemClick = () => {
     if (hasChildren && parentItemClickShouldExpand) {
@@ -56,11 +58,13 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
         horizontal
         verticalAlign="center"
         onClick={handleItemClick}
+        onMouseEnter={setIsHovered}
+        onMouseLeave={setNotHovered}
       >
         <Button
           appearance="transparent"
           size="small"
-          icon={isExpanded ? <ChevronDown20Regular /> : <ChevronRight20Regular />}
+          icon={isNodeExpanded ? <ChevronDown20Regular /> : <ChevronRight20Regular />}
           onClick={handleChevronClick}
           style={{
             visibility: hasChildren ? 'visible' : 'hidden',
@@ -68,12 +72,12 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
           }}
         />
 
-        {nodeContent(node)}
+        {nodeContent(node, isHovered)}
       </Stack>
 
       {hasChildren &&
-        isExpanded &&
-        node.children?.map((childNode) => <TreeBranch<T> {...props} key={childNode.key} node={childNode} level={level + 1} />)}
+        isNodeExpanded &&
+        node.children?.map((childNode) => <TreeBranch<ITreeNode<T>> {...props} key={childNode.key} node={childNode} level={level + 1} />)}
     </>
   );
 };

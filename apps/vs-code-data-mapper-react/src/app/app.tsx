@@ -43,13 +43,6 @@ export const App = () => {
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
-  /*
-  // Monitor document.body for VS Code theme changes
-  new MutationObserver(() => {
-    setVsCodeTheme(getVscodeTheme());
-  }).observe(document.body, { attributes: true });
-  */
-
   const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
     saveDataMapDefinition(dataMapDefinition);
 
@@ -84,19 +77,65 @@ export const App = () => {
     });
   };
 
+  const handleRscLoadError = useCallback(
+    (error: unknown) => {
+      let errorMsg: string;
+
+      if (error instanceof Error) {
+        errorMsg = error.message;
+      } else if (typeof error === 'string') {
+        errorMsg = error;
+      } else {
+        errorMsg = 'Unknown error';
+      }
+
+      vscode.postMessage({
+        command: 'webviewRscLoadError',
+        data: errorMsg,
+      });
+    },
+    [vscode]
+  );
+
+  // Notify VS Code that webview is loaded
+  useEffect(() => {
+    vscode.postMessage({
+      command: 'webviewLoaded',
+    });
+  }, [vscode]);
+
+  /*
+  // Monitor document.body for VS Code theme changes
+  useEffect(() => {
+    const themeMutationObserver = new MutationObserver(() => {
+      setVsCodeTheme(getVscodeTheme());
+    }).observe(document.body, { attributes: true });
+
+    return () => themeMutationObserver.disconnect();
+  }, []);
+  */
+
   // Init runtime API service and make calls
   useEffect(() => {
     const fetchFunctionList = async () => {
-      dispatch(changeFetchedFunctions(await getFunctions()));
+      try {
+        dispatch(changeFetchedFunctions(await getFunctions()));
+      } catch (error) {
+        handleRscLoadError(error);
+      }
     };
 
     const getSelectedSchemaTrees = async () => {
-      if (sourceSchemaFilename) {
-        dispatch(changeSourceSchema(await getSelectedSchema(sourceSchemaFilename)));
-      }
+      try {
+        if (sourceSchemaFilename) {
+          dispatch(changeSourceSchema(await getSelectedSchema(sourceSchemaFilename)));
+        }
 
-      if (targetSchemaFilename) {
-        dispatch(changeTargetSchema(await getSelectedSchema(targetSchemaFilename)));
+        if (targetSchemaFilename) {
+          dispatch(changeTargetSchema(await getSelectedSchema(targetSchemaFilename)));
+        }
+      } catch (error) {
+        handleRscLoadError(error);
       }
     };
 
@@ -109,7 +148,7 @@ export const App = () => {
       fetchFunctionList();
       getSelectedSchemaTrees();
     }
-  }, [dispatch, runtimePort, sourceSchemaFilename, targetSchemaFilename]);
+  }, [dispatch, runtimePort, sourceSchemaFilename, targetSchemaFilename, handleRscLoadError]);
 
   return (
     <DataMapperDesignerProvider locale="en-US" theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'} options={{}}>
@@ -120,6 +159,8 @@ export const App = () => {
         targetSchema={targetSchema}
         availableSchemas={schemaFileList}
         fetchedFunctions={fetchedFunctions}
+        // Passed in here too so it can be managed in the Redux store so components can track the current theme
+        theme={vsCodeTheme === VsCodeThemeType.VsCodeLight ? 'light' : 'dark'}
       >
         <DataMapperDesigner
           saveStateCall={saveStateCall}
