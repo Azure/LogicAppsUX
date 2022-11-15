@@ -90,7 +90,7 @@ const CreateConnectionTab = () => {
             .catch((errorMessage) => (err = errorMessage));
         } else {
           await ConnectionService()
-            .createConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
+            .createConnection(newName, connector, connectionInfo, parametersMetadata)
             .then((c) => (connection = c))
             .catch((errorMessage) => (err = errorMessage));
         }
