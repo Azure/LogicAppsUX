@@ -6,6 +6,7 @@ import {
   mapXsltExtension,
   schemasPath,
   webviewTitle,
+  webviewType,
 } from './extensionConfig';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
@@ -17,10 +18,12 @@ import type { WebviewPanel, ExtensionContext } from 'vscode';
 
 type SchemaType = 'source' | 'target';
 type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string };
+type FetchSchemaData = { fileName: string; type: SchemaType };
+type MapDefinitionData = { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string };
 
 type SendingMessageTypes =
-  | { command: 'fetchSchema'; data: { fileName: string; type: SchemaType } }
-  | { command: 'loadDataMap'; data: { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string } }
+  | { command: 'fetchSchema'; data: FetchSchemaData }
+  | { command: 'loadDataMap'; data: MapDefinitionData }
   | { command: 'showAvailableSchemas'; data: string[] }
   | { command: 'setXsltFilename'; data: string }
   | { command: 'setRuntimePort'; data: string };
@@ -36,16 +39,20 @@ type ReceivingMessageTypes =
   | {
       command: 'saveDataMapXslt';
       data: string;
+    }
+  | {
+      command: 'webviewLoaded';
     };
 
 export default class DataMapperExt {
   public static currentPanel: DataMapperExt | undefined;
   public static outputChannel: IAzExtOutputChannel;
-  public static readonly viewType = 'dataMapperWebview';
   public static context: ExtensionContext;
-  public static currentDataMapName: string;
   public static backendRuntimePort: number;
   public static backendRuntimeChildProcess: ChildProcess | undefined;
+
+  public static currentDataMapName: string;
+  public static loadMapDefinitionData: MapDefinitionData | undefined;
 
   private readonly _panel: WebviewPanel;
   private readonly _extensionPath: string;
@@ -53,13 +60,17 @@ export default class DataMapperExt {
   public static createOrShow() {
     // If a panel has already been created, re-show it
     if (DataMapperExt.currentPanel) {
-      DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
+      // NOTE: Shouldn't need to re-send runtime port if webview has already been loaded/set up
+
+      // IF loading a data map, handle that + xslt filename
+      DataMapperExt.handleLoadMapDefinitionIfAny();
+
       DataMapperExt.currentPanel._panel.reveal(ViewColumn.Active);
       return;
     }
 
     const panel = window.createWebviewPanel(
-      DataMapperExt.viewType, // Key used to reference the panel
+      webviewType, // Key used to reference the panel
       webviewTitle, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
       {
@@ -72,8 +83,7 @@ export default class DataMapperExt {
 
     this.currentPanel = new DataMapperExt(panel, DataMapperExt.context.extensionPath);
 
-    // Send runtime port to webview
-    this.currentPanel.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
+    // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }
 
   public sendMsgToWebview(msg: SendingMessageTypes) {
@@ -122,8 +132,16 @@ export default class DataMapperExt {
 
   private _handleWebviewMsg(msg: ReceivingMessageTypes) {
     switch (msg.command) {
+      case 'webviewLoaded':
+        // Send runtime port to webview
+        DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
+
+        // IF loading a data map, handle that + xslt filename
+        DataMapperExt.handleLoadMapDefinitionIfAny();
+
+        break;
       case 'addSchemaFromFile': {
-        DataMapperExt.currentPanel?.addSchemaFromFile(msg.data.path, msg.data.type);
+        DataMapperExt.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
       }
       case 'readLocalFileOptions': {
@@ -149,7 +167,20 @@ export default class DataMapperExt {
     }
   }
 
-  public addSchemaFromFile(filePath: string, schemaType: 'source' | 'target') {
+  public static handleLoadMapDefinitionIfAny() {
+    if (DataMapperExt.loadMapDefinitionData) {
+      DataMapperExt.currentPanel?.sendMsgToWebview({
+        command: 'loadDataMap',
+        data: DataMapperExt.loadMapDefinitionData,
+      });
+
+      DataMapperExt.checkForAndSetXsltFilename();
+
+      DataMapperExt.loadMapDefinitionData = undefined;
+    }
+  }
+
+  public static addSchemaFromFile(filePath: string, schemaType: 'source' | 'target') {
     callWithTelemetryAndErrorHandlingSync('azureDataMapper.addSchemaFromFile', (_context: IActionContext) => {
       // NOTE: .xsd files are utf-16 encoded
       fs.readFile(filePath, 'utf16le').then((text: string) => {

@@ -77,6 +77,13 @@ export const App = () => {
     });
   };
 
+  // Notify VS Code that webview is loaded
+  useEffect(() => {
+    vscode.postMessage({
+      command: 'webviewLoaded',
+    });
+  }, [vscode]);
+
   /*
   // Monitor document.body for VS Code theme changes
   useEffect(() => {
