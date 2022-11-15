@@ -1,4 +1,5 @@
 import type { GenerateXsltResponse, SchemaInfoProperties, TestMapResponse } from '.';
+import type { Schema } from '../../../models';
 import type { FunctionManifest } from '../../../models/Function';
 
 export interface DataMapperApiServiceOptions {
@@ -90,7 +91,7 @@ export class DataMapperApiService {
     return schemaInfosResponse;
   }
 
-  async getSchemaFile(xmlName: string): Promise<any> {
+  async getSchemaFile(xmlName: string): Promise<Schema> {
     const schemaFileUri = this.getSchemaFileUri(xmlName.split('.')[0]);
     const response = await fetch(schemaFileUri, { method: 'GET' });
 
@@ -98,7 +99,7 @@ export class DataMapperApiService {
       throw new Error(`${response.status} ${response.statusText}`);
     }
 
-    const schemaFileResponse: string = await response.json();
+    const schemaFileResponse: Schema = await response.json();
 
     return schemaFileResponse;
   }
