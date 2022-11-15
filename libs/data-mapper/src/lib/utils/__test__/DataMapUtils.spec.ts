@@ -12,7 +12,16 @@ import { SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import { addParentConnectionForRepeatingElementsNested, convertFromMapDefinition, getSourceValueFromLoop } from '../DataMap.Utils';
 import { convertSchemaToSchemaExtended, flattenSchema } from '../Schema.Utils';
-import { connection1, connection1Id, connection2, connection2Id } from '../__mocks__';
+import {
+  manyToManyConnectionFromSource,
+  manyToManyConnectionFromTarget,
+  manyToManyConnectionSourceName,
+  manyToManyConnectionTargetName,
+  manyToOneConnectionFromSource,
+  manyToOneConnectionFromTarget,
+  manyToOneConnectionSourceName,
+  manyToOneConnectionTargetName,
+} from '../__mocks__';
 
 describe('utils/DataMap', () => {
   const simpleMap: MapDefinitionEntry = {
@@ -139,11 +148,32 @@ describe('utils/DataMap', () => {
     const extendedLoopTarget = convertSchemaToSchemaExtended(layeredLoopTargetMockSchema);
     const flattenedLoopSource = flattenSchema(extendedLoopSource, SchemaType.Source);
     const flattenedLoopTarget = flattenSchema(extendedLoopTarget, SchemaType.Target);
-    const sourceNodeParent = flattenedLoopSource['source-/ns0:Root/ManyToMany/Year/Month/Day'];
-    const targetNodeParent = flattenedLoopTarget['target-/ns0:Root/ManyToMany/Year/Month/Day'];
 
     it('adds parent connections for nested loops', () => {
-      const connectionsDict: ConnectionDictionary = { [connection1Id]: connection1, [connection2Id]: connection2 };
+      const sourceNodeParent = flattenedLoopSource[manyToManyConnectionSourceName];
+      const targetNodeParent = flattenedLoopTarget[manyToManyConnectionTargetName];
+      const connectionsDict: ConnectionDictionary = {
+        [manyToManyConnectionSourceName]: manyToManyConnectionFromSource,
+        [manyToManyConnectionTargetName]: manyToManyConnectionFromTarget,
+      };
+      addParentConnectionForRepeatingElementsNested(
+        sourceNodeParent,
+        targetNodeParent,
+        flattenedLoopSource,
+        flattenedLoopTarget,
+        connectionsDict
+      );
+      console.log(JSON.stringify(connectionsDict));
+      expect(Object.keys(connectionsDict).length).toEqual(8);
+    });
+
+    it('adds parent connections for many-to-one', () => {
+      const sourceNodeParent = flattenedLoopSource[manyToOneConnectionSourceName];
+      const targetNodeParent = flattenedLoopTarget[manyToOneConnectionTargetName];
+      const connectionsDict: ConnectionDictionary = {
+        [manyToOneConnectionSourceName]: manyToOneConnectionFromSource,
+        [manyToOneConnectionTargetName]: manyToOneConnectionFromTarget,
+      };
       addParentConnectionForRepeatingElementsNested(
         sourceNodeParent,
         targetNodeParent,

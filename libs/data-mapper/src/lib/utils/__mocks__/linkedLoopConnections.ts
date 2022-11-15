@@ -1,10 +1,13 @@
 import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary } from '../../models/Connection';
 
-export const connection1Id = 'target-/ns0:Root/ManyToMany/Year/Month/Day/Date';
-export const connection2Id = 'source-/ns0:Root/ManyToMany/Year/Month/Day/Date';
+export const manyToManyConnectionSourceName = 'source-/ns0:Root/ManyToMany/Year/Month/Day/Date';
+export const manyToManyConnectionTargetName = 'target-/ns0:Root/ManyToMany/Year/Month/Day/Date';
 
-export const connection1: Connection = {
+export const manyToOneConnectionSourceName = 'source-/ns0:Root/ManyToOne/Year/Month/Day/Date';
+export const manyToOneConnectionTargetName = 'target-/ns0:Root/ManyToOne/Date/DayName';
+
+export const manyToManyConnectionFromSource: Connection = {
   self: {
     node: {
       key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
@@ -116,7 +119,7 @@ export const connection1: Connection = {
   outputs: [],
 };
 
-export const connection2: Connection = {
+export const manyToManyConnectionFromTarget: Connection = {
   self: {
     node: {
       key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
@@ -224,6 +227,206 @@ export const connection2: Connection = {
         ],
       },
       reactFlowKey: 'target-/ns0:Root/ManyToMany/Year/Month/Day/Date',
+    },
+  ],
+};
+
+export const manyToOneConnectionFromTarget: Connection = {
+  self: {
+    node: {
+      key: '/ns0:Root/ManyToOne/Date/DayName',
+      name: 'DayName',
+      schemaNodeDataType: SchemaNodeDataType.String,
+      normalizedDataType: NormalizedDataType.String,
+      properties: 'NotSpecified',
+      children: [],
+      fullName: 'DayName',
+      parentKey: '/ns0:Root/ManyToOne/Date',
+      nodeProperties: [SchemaNodeProperty.NotSpecified],
+      pathToRoot: [
+        {
+          key: '/ns0:Root',
+          name: 'Root',
+          fullName: 'ns0:Root',
+          repeating: false,
+        },
+        {
+          key: '/ns0:Root/ManyToOne',
+          name: 'ManyToOne',
+          fullName: 'ManyToOne',
+          repeating: false,
+        },
+        {
+          key: '/ns0:Root/ManyToOne/Date',
+          name: 'Date',
+          fullName: 'Date',
+          repeating: true,
+        },
+        {
+          key: '/ns0:Root/ManyToOne/Date/DayName',
+          name: 'DayName',
+          fullName: 'DayName',
+          repeating: false,
+        },
+      ],
+    },
+    reactFlowKey: 'target-/ns0:Root/ManyToOne/Date/DayName',
+  },
+  inputs: {
+    '0': [
+      {
+        node: {
+          key: '/ns0:Root/ManyToOne/Year/Month/Day/Date',
+          name: 'Date',
+          schemaNodeDataType: SchemaNodeDataType.String,
+          normalizedDataType: NormalizedDataType.String,
+          properties: 'NotSpecified',
+          fullName: 'Date',
+          parentKey: '/ns0:Root/ManyToOne/Year/Month/Day',
+          nodeProperties: [SchemaNodeProperty.NotSpecified],
+          children: [],
+          pathToRoot: [
+            {
+              key: '/ns0:Root',
+              name: 'Root',
+              fullName: 'ns0:Root',
+              repeating: false,
+            },
+            {
+              key: '/ns0:Root/ManyToOne',
+              name: 'ManyToOne',
+              fullName: 'ManyToOne',
+              repeating: false,
+            },
+            {
+              key: '/ns0:Root/ManyToOne/Year',
+              name: 'Year',
+              fullName: 'Year',
+              repeating: true,
+            },
+            {
+              key: '/ns0:Root/ManyToOne/Year/Month',
+              name: 'Month',
+              fullName: 'Month',
+              repeating: true,
+            },
+            {
+              key: '/ns0:Root/ManyToOne/Year/Month/Day',
+              name: 'Day',
+              fullName: 'Day',
+              repeating: true,
+            },
+            {
+              key: '/ns0:Root/ManyToOne/Year/Month/Day/Date',
+              name: 'Date',
+              fullName: 'Date',
+              repeating: false,
+            },
+          ],
+        },
+        reactFlowKey: 'source-/ns0:Root/ManyToOne/Year/Month/Day/Date',
+      },
+    ],
+  },
+  outputs: [],
+};
+
+export const manyToOneConnectionFromSource: Connection = {
+  self: {
+    node: {
+      key: '/ns0:Root/ManyToOne/Year/Month/Day/Date',
+      name: 'Date',
+      schemaNodeDataType: SchemaNodeDataType.String,
+      normalizedDataType: NormalizedDataType.String,
+      properties: 'NotSpecified',
+      fullName: 'Date',
+      parentKey: '/ns0:Root/ManyToOne/Year/Month/Day',
+      nodeProperties: [SchemaNodeProperty.NotSpecified],
+      children: [],
+      pathToRoot: [
+        {
+          key: '/ns0:Root',
+          name: 'Root',
+          fullName: 'ns0:Root',
+          repeating: false,
+        },
+        {
+          key: '/ns0:Root/ManyToOne',
+          name: 'ManyToOne',
+          fullName: 'ManyToOne',
+          repeating: false,
+        },
+        {
+          key: '/ns0:Root/ManyToOne/Year',
+          name: 'Year',
+          fullName: 'Year',
+          repeating: true,
+        },
+        {
+          key: '/ns0:Root/ManyToOne/Year/Month',
+          name: 'Month',
+          fullName: 'Month',
+          repeating: true,
+        },
+        {
+          key: '/ns0:Root/ManyToOne/Year/Month/Day',
+          name: 'Day',
+          fullName: 'Day',
+          repeating: true,
+        },
+        {
+          key: '/ns0:Root/ManyToOne/Year/Month/Day/Date',
+          name: 'Date',
+          fullName: 'Date',
+          repeating: false,
+        },
+      ],
+    },
+    reactFlowKey: 'source-/ns0:Root/ManyToOne/Year/Month/Day/Date',
+  },
+  inputs: {
+    '0': [],
+  },
+  outputs: [
+    {
+      node: {
+        key: '/ns0:Root/ManyToOne/Date/DayName',
+        name: 'DayName',
+        schemaNodeDataType: SchemaNodeDataType.String,
+        normalizedDataType: NormalizedDataType.String,
+        properties: 'NotSpecified',
+        children: [],
+        fullName: 'DayName',
+        parentKey: '/ns0:Root/ManyToOne/Date',
+        nodeProperties: [SchemaNodeProperty.NotSpecified],
+        pathToRoot: [
+          {
+            key: '/ns0:Root',
+            name: 'Root',
+            fullName: 'ns0:Root',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/ManyToOne',
+            name: 'ManyToOne',
+            fullName: 'ManyToOne',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/ManyToOne/Date',
+            name: 'Date',
+            fullName: 'Date',
+            repeating: true,
+          },
+          {
+            key: '/ns0:Root/ManyToOne/Date/DayName',
+            name: 'DayName',
+            fullName: 'DayName',
+            repeating: false,
+          },
+        ],
+      },
+      reactFlowKey: 'target-/ns0:Root/ManyToOne/Date/DayName',
     },
   ],
 };
