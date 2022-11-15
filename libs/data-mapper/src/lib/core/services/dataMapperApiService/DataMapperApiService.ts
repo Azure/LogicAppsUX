@@ -2,6 +2,8 @@ import type { GenerateXsltResponse, SchemaInfoProperties, TestMapResponse } from
 import type { Schema } from '../../../models';
 import type { FunctionManifest } from '../../../models/Function';
 
+type DmErrorResponse = { code: string; message: string };
+
 export interface DataMapperApiServiceOptions {
   baseUrl: string;
   port: string;
@@ -96,7 +98,8 @@ export class DataMapperApiService {
     const response = await fetch(schemaFileUri, { method: 'GET' });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorResponse: DmErrorResponse = (await response.json()).error;
+      throw new Error(`${response.status} - ${errorResponse.code}: ${errorResponse.message}`);
     }
 
     const schemaFileResponse: Schema = await response.json();
@@ -116,7 +119,8 @@ export class DataMapperApiService {
     });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorResponse: DmErrorResponse = (await response.json()).error;
+      throw new Error(`${response.status} - ${errorResponse.code}: ${errorResponse.message}`);
     }
 
     const dataMapXsltResponse: GenerateXsltResponse = await response.json();
@@ -145,7 +149,10 @@ export class DataMapperApiService {
       statusText: response.statusText,
     };
 
-    if (response.ok) {
+    if (!response.ok) {
+      const errorResponse: DmErrorResponse = (await response.json()).error;
+      testMapResponse.statusText = `${errorResponse.code}: ${errorResponse.message}`;
+    } else {
       const respJson = await response.json();
       // Decode base64 response content
       respJson.outputInstance.$content = Buffer.from(respJson.outputInstance.$content, 'base64').toString('utf-8');
