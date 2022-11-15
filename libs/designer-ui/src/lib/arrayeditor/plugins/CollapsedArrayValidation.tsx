@@ -14,7 +14,7 @@ export interface CollapsedArrayValidationProps {
   defaultErrorMessage: string;
   isValid: boolean;
   collapsedValue?: ValueSegment[];
-  itemSchema?: any;
+  itemSchema?: unknown;
   setIsValid: (b: boolean) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setCollapsedValue: (val: ValueSegment[]) => void;

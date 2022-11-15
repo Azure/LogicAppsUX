@@ -99,14 +99,14 @@ export const validationAndSerializeSimpleArray = (
 
 export const initializeComplexArrayItems = (
   initialValue: ValueSegment[],
-  itemSchema: any,
+  dimensionalSchema: unknown[],
   setItems: (items: ComplexArrayItems[]) => void,
   setIsValid: (b: boolean) => void,
   setCollapsed: (b: boolean) => void
 ): void => {
   const nodeMap = new Map<string, ValueSegment>();
   const stringifiedCollapsedValue = convertSegmentsToString(initialValue, nodeMap);
-  validationAndSerializeComplexArray(stringifiedCollapsedValue, nodeMap, itemSchema, setItems, setIsValid, setCollapsed);
+  validationAndSerializeComplexArray(stringifiedCollapsedValue, nodeMap, dimensionalSchema, setItems, setIsValid, setCollapsed);
 };
 
 export const validationAndSerializeComplexArray = (
@@ -130,7 +130,7 @@ export const validationAndSerializeComplexArray = (
     } else {
       const jsonEditor = JSON.parse(editorString);
       const returnItems: ComplexArrayItems[] = [];
-      jsonEditor.forEach((jsonEditorItem: any, index: number) => {
+      jsonEditor.forEach((jsonEditorItem: unknown, index: number) => {
         const flatJSON = flattenObject(jsonEditorItem);
         const returnVal = Object.keys(flatJSON).map((key) => {
           if (!dimensionalSchema.map((item) => item.title).includes(key)) {

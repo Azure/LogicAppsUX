@@ -34,7 +34,7 @@ interface ArrayEditorProps extends BaseEditorProps {
   canDeleteLastItem?: boolean;
   disableToggle?: boolean;
   labelProps: LabelProps;
-  itemSchema?: any;
+  itemSchema?: unknown;
   type: ArrayType.COMPLEX | ArrayType.SIMPLE;
 }
 
@@ -53,7 +53,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
   const [items, setItems] = useState<ComplexArrayItems[] | SimpleArrayItem[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
-  let dimensionalSchema: any[] = [];
+  let dimensionalSchema: unknown[] = [];
   if (type === ArrayType.COMPLEX) {
     dimensionalSchema = getOneDimensionalSchema(itemSchema);
   }

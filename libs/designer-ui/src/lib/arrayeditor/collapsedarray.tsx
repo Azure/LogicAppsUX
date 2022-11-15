@@ -13,8 +13,8 @@ export interface CollapsedArrayProps {
   collapsedValue: ValueSegment[];
   readOnly?: boolean;
   isTrigger?: boolean;
-  itemSchema?: string[];
-  dimensionalSchema: any[];
+  itemSchema?: unknown;
+  dimensionalSchema: unknown[];
   setCollapsedValue: (val: ValueSegment[]) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
