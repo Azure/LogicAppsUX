@@ -43,7 +43,7 @@ export interface IConnectionService {
   getConnections(connectorId?: string): Promise<Connection[]>;
   createConnection(
     connectionId: string,
-    connectorId: string,
+    connector: Connector,
     connectionInfo: ConnectionCreationInfo,
     parametersMetadata?: ConnectionParametersMetadata
   ): Promise<Connection>;
