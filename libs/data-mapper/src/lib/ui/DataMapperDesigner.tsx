@@ -180,7 +180,6 @@ export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurre
   };
 
   const onTestClick = () => {
-    appInsights.trackEvent({ name: 'TestMapButtonClicked' });
     setIsTestMapPanelOpen(true);
   };
 
