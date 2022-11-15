@@ -457,8 +457,8 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): st
 };
 
 export const addParentConnectionForRepeatingElementsNested = (
-  targetNode: FunctionData | SchemaNodeExtended,
   sourceNode: FunctionData | SchemaNodeExtended,
+  targetNode: FunctionData | SchemaNodeExtended,
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
   dataMapConnections: ConnectionDictionary
@@ -473,6 +473,9 @@ export const addParentConnectionForRepeatingElementsNested = (
       if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
         const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
         const firstRepeatingSourceNode = flattenedSourceSchema[prefixedSourceKey];
+        if (!firstRepeatingSourceNode) {
+          return;
+        }
 
         const prefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
         const firstRepeatingTargetNode = flattenedTargetSchema[prefixedTargetKey];
