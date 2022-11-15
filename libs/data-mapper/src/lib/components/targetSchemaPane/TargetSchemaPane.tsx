@@ -168,6 +168,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
                   }
                 : {}
             }
+            shouldShowIndicator={(node) => node.key === currentTargetSchemaNode?.key}
           />
         </div>
       )}

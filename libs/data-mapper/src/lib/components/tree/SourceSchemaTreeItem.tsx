@@ -42,14 +42,6 @@ export const useSchemaTreeItemStyles = makeStyles({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
   },
-  indicator: {
-    height: '16px',
-    width: '2px',
-    flexShrink: `0 !important`,
-    ...shorthands.borderRadius(tokens.borderRadiusSmall),
-    backgroundColor: tokens.colorBrandForeground1,
-    marginRight: '4px',
-  },
 });
 
 interface SourceSchemaTreeItemProps {
