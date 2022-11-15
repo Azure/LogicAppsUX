@@ -1,4 +1,5 @@
 import { getSelectedSchema } from '../../core';
+import appInsights from '../../core/services/appInsights/AppInsights';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
 import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
@@ -14,6 +15,12 @@ import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+
+const generalQuerySettings = {
+  staleTime: 1000 * 60 * 5,
+  cacheTime: 1000 * 60 * 5,
+  retry: false, // Don't retry as it stops error from making its way through
+};
 
 export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
@@ -34,17 +41,23 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
-  const fetchedSourceSchema = useQuery([selectedSourceSchema?.text], () => getSelectedSchema(selectedSourceSchema?.text ?? ''), {
-    enabled: selectedSourceSchema !== undefined,
-    staleTime: 1000 * 60 * 5,
-    cacheTime: 1000 * 60 * 5,
-  });
+  const fetchedSourceSchema = useQuery(
+    [selectedSourceSchema?.text],
+    async () => await getSelectedSchema(selectedSourceSchema?.text ?? ''),
+    {
+      ...generalQuerySettings,
+      enabled: selectedSourceSchema !== undefined,
+    }
+  );
 
-  const fetchedTargetSchema = useQuery([selectedTargetSchema?.text], () => getSelectedSchema(selectedTargetSchema?.text ?? ''), {
-    enabled: selectedTargetSchema !== undefined,
-    staleTime: 1000 * 60 * 5,
-    cacheTime: 1000 * 60 * 5,
-  });
+  const fetchedTargetSchema = useQuery(
+    [selectedTargetSchema?.text],
+    async () => await getSelectedSchema(selectedTargetSchema?.text ?? ''),
+    {
+      ...generalQuerySettings,
+      enabled: selectedTargetSchema !== undefined,
+    }
+  );
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',
@@ -114,6 +127,20 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
   const addOrUpdateSchema = useCallback(
     (isAddSchema?: boolean) => {
       if (schemaType === undefined) {
+        return;
+      }
+
+      // Catch specific errors from GET schemaTree or otherwise
+      const schemaLoadError = schemaType === SchemaType.Source ? fetchedSourceSchema.error : fetchedTargetSchema.error;
+      if (schemaLoadError) {
+        if (typeof schemaLoadError === 'string') {
+          appInsights.trackException({ exception: new Error(schemaLoadError) });
+          setErrorMessage(schemaLoadError);
+        } else if (schemaLoadError instanceof Error) {
+          appInsights.trackException({ exception: schemaLoadError });
+          setErrorMessage(schemaLoadError.message);
+        }
+
         return;
       }
 

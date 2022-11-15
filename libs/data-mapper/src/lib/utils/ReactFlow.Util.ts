@@ -4,6 +4,7 @@ import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
 import { childTargetNodeCardIndent, schemaNodeCardHeight } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import appInsights from '../core/services/appInsights/AppInsights';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
@@ -81,6 +82,7 @@ export const useLayout = (
         })
         .catch((error) => {
           console.error(`Elk Layout Error: ${error}`);
+          appInsights.trackException({ exception: error });
         });
     } else {
       setReactFlowNodes([]);

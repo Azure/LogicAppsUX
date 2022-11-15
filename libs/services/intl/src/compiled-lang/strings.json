@@ -3663,6 +3663,12 @@
       "value": "Count"
     }
   ],
+  "Xj0Gr/": [
+    {
+      "type": 0,
+      "value": "Target schema element cannot be deleted."
+    }
+  ],
   "XkBxv5": [
     {
       "type": 0,

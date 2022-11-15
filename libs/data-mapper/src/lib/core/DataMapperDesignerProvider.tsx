@@ -1,11 +1,13 @@
 import type { DataMapperDesignerContext } from './DataMapperDesignerContext';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
+import { reactPlugin } from './services/appInsights/AppInsights';
 import { store } from './state/Store';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme, themeToTokensObject } from '@fluentui/react-components';
 import type { Theme } from '@fluentui/react-components';
 import { IntlProvider } from '@microsoft-logic-apps/intl';
+import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 
@@ -37,8 +39,10 @@ const extendedWebDarkTheme: ExtendedTheme = {
 
 export const customTokens = themeToTokensObject(extendedWebLightTheme);
 
+export type ThemeType = 'light' | 'dark';
+
 export interface DataMapperDesignerProviderProps {
-  theme?: 'light' | 'dark';
+  theme?: ThemeType;
   locale?: string;
   options: DataMapperDesignerContext;
   children: React.ReactNode;
@@ -47,28 +51,30 @@ export interface DataMapperDesignerProviderProps {
 // NOTE: Leaving ThemeProvider here as we still use Fluent V8 components
 export const DataMapperDesignerProvider = ({ theme = 'light', locale = 'en', options, children }: DataMapperDesignerProviderProps) => {
   return (
-    <ReduxProvider store={store}>
-      <DataMapperWrappedContext.Provider value={options}>
-        <FluentProvider
-          theme={theme === 'light' ? extendedWebLightTheme : extendedWebDarkTheme}
-          style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
-        >
-          <ThemeProvider theme={AzureThemeLight} style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
-            <IntlProvider
-              locale={locale}
-              defaultLocale={locale}
-              onError={(err) => {
-                if (err.code === 'MISSING_TRANSLATION') {
-                  return;
-                }
-                throw err;
-              }}
-            >
-              {children}
-            </IntlProvider>
-          </ThemeProvider>
-        </FluentProvider>
-      </DataMapperWrappedContext.Provider>
-    </ReduxProvider>
+    <AppInsightsContext.Provider value={reactPlugin}>
+      <ReduxProvider store={store}>
+        <DataMapperWrappedContext.Provider value={options}>
+          <FluentProvider
+            theme={theme === 'light' ? extendedWebLightTheme : extendedWebDarkTheme}
+            style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
+          >
+            <ThemeProvider theme={AzureThemeLight} style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
+              <IntlProvider
+                locale={locale}
+                defaultLocale={locale}
+                onError={(err) => {
+                  if (err.code === 'MISSING_TRANSLATION') {
+                    return;
+                  }
+                  throw err;
+                }}
+              >
+                {children}
+              </IntlProvider>
+            </ThemeProvider>
+          </FluentProvider>
+        </DataMapperWrappedContext.Provider>
+      </ReduxProvider>
+    </AppInsightsContext.Provider>
   );
 };

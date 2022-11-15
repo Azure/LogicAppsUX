@@ -1,5 +1,6 @@
 import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
+import { SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
@@ -7,8 +8,10 @@ import { ButtonPivot } from '../buttonPivot/ButtonPivot';
 import { FloatingPanel } from '../floatingPanel/FloatingPanel';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FunctionList } from '../functionList/FunctionList';
+import { schemaRootKey } from '../targetSchemaPane/TargetSchemaPane';
 import SourceSchemaTreeItem, { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import Tree from '../tree/Tree';
+import type { ITreeNode } from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
 import { mergeClasses, tokens } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
@@ -90,6 +93,11 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   );
 
   const onSourceSchemaItemClick = (selectedNode: SchemaNodeExtended) => {
+    // If click schema name, just return (don't do anything)
+    if (selectedNode.key === schemaRootKey) {
+      return;
+    }
+
     if (currentSourceSchemaNodes.some((node) => node.key === selectedNode.key)) {
       dispatch(removeSourceSchemaNodes([selectedNode]));
     } else {
@@ -97,16 +105,30 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     }
   };
 
-  const searchedSourceSchemaTreeRoot = useMemo<SchemaNodeExtended | undefined>(() => {
+  const searchedSourceSchemaTreeRoot = useMemo<ITreeNode<SchemaNodeExtended> | undefined>(() => {
     if (!sourceSchema) {
       return undefined;
     }
 
-    if (!sourceSchemaSearchTerm) {
-      return { ...sourceSchema.schemaTreeRoot };
-    } else {
-      return searchSchemaTreeFromRoot(sourceSchema.schemaTreeRoot, sourceSchemaSearchTerm);
+    // Format extra top layers to show schema name and schemaTreeRoot
+    // Can safely typecast with the root node(s) as we only use the properties defined here
+    const schemaRoot = {} as ITreeNode<SchemaNodeExtended>;
+    const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
+
+    let newSourceSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = { ...sourceSchema.schemaTreeRoot };
+    if (sourceSchemaSearchTerm) {
+      schemaNameRoot.isExpanded = true;
+      newSourceSchemaTreeRoot = searchSchemaTreeFromRoot(sourceSchema.schemaTreeRoot, sourceSchemaSearchTerm);
     }
+
+    schemaNameRoot.key = schemaRootKey;
+    schemaNameRoot.name = sourceSchema.name;
+    schemaNameRoot.schemaNodeDataType = SchemaNodeDataType.None;
+    schemaNameRoot.children = [newSourceSchemaTreeRoot];
+
+    schemaRoot.children = [schemaNameRoot];
+
+    return schemaRoot;
   }, [sourceSchema, sourceSchemaSearchTerm]);
 
   const toolboxButtonPivotProps: ButtonPivotProps = useMemo(
@@ -141,26 +163,21 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
       <ButtonPivot {...toolboxButtonPivotProps} />
 
       {toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree && sourceSchema && searchedSourceSchemaTreeRoot && (
-        <FloatingPanel
-          {...generalToolboxPanelProps}
-          height={floatingPanelHeight}
-          title={sourceSchemaLoc}
-          subtitle={sourceSchema.name}
-          onClose={closeToolbox}
-        >
+        <FloatingPanel {...generalToolboxPanelProps} height={floatingPanelHeight} title={sourceSchemaLoc} onClose={closeToolbox}>
           <TreeHeader onSearch={setSourceSchemaSearchTerm} onClear={() => setSourceSchemaSearchTerm('')} />
 
           <Tree<SchemaNodeExtended>
             // Add one extra root layer so schemaTreeRoot is shown as well
             // Can safely typecast as only the children[] are used from root
-            treeRoot={{ children: [searchedSourceSchemaTreeRoot] } as SchemaNodeExtended}
-            nodeContent={(node: SchemaNodeExtended) => (
+            treeRoot={searchedSourceSchemaTreeRoot}
+            nodeContent={(node, isHovered) => (
               <SourceSchemaTreeItem
-                node={node}
+                node={node as SchemaNodeExtended}
                 isNodeAdded={currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)}
+                isNodeHovered={isHovered}
               />
             )}
-            onClickItem={(node) => onSourceSchemaItemClick(node)}
+            onClickItem={(node) => onSourceSchemaItemClick(node as SchemaNodeExtended)}
             nodeContainerClassName={mergeClasses(schemaNodeItemStyles.nodeContainer, schemaNodeItemStyles.sourceSchemaNode)}
             nodeContainerStyle={(node) => ({
               backgroundColor: currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)

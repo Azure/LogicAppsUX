@@ -13,6 +13,7 @@ import {
   AccordionPanel,
   Checkbox,
   Input,
+  Label,
   makeStyles,
   Text,
   tokens,
@@ -116,25 +117,19 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   return (
     <div>
       <div className={styles.nodeInfoGridContainer}>
-        <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
-          {nameLoc}
-        </Text>
+        <Label style={{ gridColumn: gridColumnSpan1 }}>{nameLoc}</Label>
         <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan2 }}>
           {currentNode?.name}
         </Text>
 
-        <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
-          {fullPathLoc}
-        </Text>
+        <Label style={{ gridColumn: gridColumnSpan1 }}>{fullPathLoc}</Label>
         <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan2 }}>
           {currentNode?.key}
         </Text>
 
-        <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
-          {dataTypeLoc}
-        </Text>
+        <Label style={{ gridColumn: gridColumnSpan1 }}>{dataTypeLoc}</Label>
         <Stack horizontal verticalAlign="center" style={{ gridColumn: gridColumnSpan2 }}>
-          <DataTypeIcon style={{ marginRight: '5px' }} />
+          <DataTypeIcon style={{ marginRight: '5px', color: tokens.colorNeutralForeground1 }} />
           <Text className={styles.bodyText}>{currentNode?.schemaNodeDataType}</Text>
         </Stack>
       </div>
@@ -142,9 +137,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
       {isTargetSchemaNode && (
         <div>
           <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-            <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
-              {inputLoc}
-            </Text>
+            <Label style={{ gridColumn: gridColumnSpan1 }}>{inputLoc}</Label>
             <InputDropdown currentNode={currentNode} inputValue={inputValue} inputStyles={{ gridColumn: gridColumnSpan2 }} inputIndex={0} />
           </div>
 
@@ -154,9 +147,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
                 <AccordionHeader className={styles.bodyText}>{advOptLoc}</AccordionHeader>
                 <AccordionPanel>
                   <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-                    <Text className={styles.bodyText} style={{ gridColumn: gridColumnSpan1 }}>
-                      {defValLoc}
-                    </Text>
+                    <Label style={{ gridColumn: gridColumnSpan1 }}>{defValLoc}</Label>
                     <Input style={{ gridColumn: gridColumnSpan2 }} />
                   </div>
 
