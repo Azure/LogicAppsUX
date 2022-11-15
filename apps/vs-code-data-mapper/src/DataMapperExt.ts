@@ -42,6 +42,10 @@ type ReceivingMessageTypes =
     }
   | {
       command: 'webviewLoaded';
+    }
+  | {
+      command: 'webviewRscLoadError';
+      data: string;
     };
 
 export default class DataMapperExt {
@@ -139,6 +143,10 @@ export default class DataMapperExt {
         // IF loading a data map, handle that + xslt filename
         DataMapperExt.handleLoadMapDefinitionIfAny();
 
+        break;
+      case 'webviewRscLoadError':
+        // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
+        DataMapperExt.showError(`Error loading Data Mapper resource: ${msg.data}`);
         break;
       case 'addSchemaFromFile': {
         DataMapperExt.addSchemaFromFile(msg.data.path, msg.data.type);
