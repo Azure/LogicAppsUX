@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { targetPrefix } from '../constants/ReactFlowConstants';
-import type { UpdateConnectionInputAction } from '../core/state/DataMapSlice';
+import type { DataMapOperationState, UpdateConnectionInputAction } from '../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../models';
 import { NormalizedDataType, SchemaNodeDataType, SchemaType } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
@@ -8,6 +8,7 @@ import type { FunctionData, FunctionInput } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
 import { addReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
+import type { WritableDraft } from 'immer/dist/internal';
 
 // NOTE: This method should be the gateway for anything getting into dataMapConnections
 // - meaning all default inputs/etc can safely be managed in this singular spot
@@ -377,4 +378,25 @@ export const getFunctionConnectionUnits = (
   return targetSchemaNodeConnections
     .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
     .filter((connectionUnit) => isFunctionData(connectionUnit.node));
+};
+
+export const bringInParentSourceNodesForRepeating = (
+  parentTargetNode: WritableDraft<SchemaNodeExtended> | undefined,
+  newState: DataMapOperationState
+) => {
+  if (parentTargetNode) {
+    const inputsToParentTarget = newState.dataMapConnections['target-' + parentTargetNode?.key].inputs; // do I need to add prefix
+    // Danielle: is it possible that there can be a function in between that we need to pull in?
+    console.log(JSON.stringify(inputsToParentTarget));
+    Object.keys(inputsToParentTarget).forEach((key) => {
+      const inputObj = inputsToParentTarget[key][0];
+      if (inputObj && typeof inputObj !== 'string') {
+        const inputSrc = inputObj.node;
+        if (isSchemaNodeExtended(inputSrc)) {
+          newState.currentSourceSchemaNodes.push(inputSrc);
+          console.log(JSON.stringify(inputObj));
+        }
+      }
+    });
+  }
 };

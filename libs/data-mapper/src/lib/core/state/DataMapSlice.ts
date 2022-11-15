@@ -12,6 +12,7 @@ import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import { findLast } from '../../utils/Array.Utils';
 import {
   addNodeToConnections,
+  bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
   flattenInputs,
   getConnectedSourceSchemaNodes,
@@ -368,56 +369,16 @@ export const dataMapSlice = createSlice({
         newState.flattenedTargetSchema,
         newState.dataMapConnections
       );
-      // if (parentTargetNode && isSchemaNodeExtended(sourceNode)) {
-      //   if (sourceNode.parentKey) {
-      //     const firstTargetNodeWithRepeatingPathItem = findLast(parentTargetNode.pathToRoot, (pathItem) => pathItem.repeating);
-      //     const prefixedTargetKey = addReactFlowPrefix(parentTargetNode.key, SchemaType.Target);
 
-      //     const prefixedSourceKey = addReactFlowPrefix(sourceNode.parentKey, SchemaType.Source);
-      //     const parentSourceNode = newState.flattenedSourceSchema[prefixedSourceKey];
-      //     const firstSourceNodeWithRepeatingPathItem = findLast(parentSourceNode.pathToRoot, (pathItem) => pathItem.repeating);
+      // if new parent connection has been made
+      if (Object.keys(newState.dataMapConnections).length !== Object.keys(state.curDataMapOperation.dataMapConnections).length) {
+        state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+      }
 
-      //     if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
-      //       const parentPrefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
-      //       const parentSourceNode = newState.flattenedSourceSchema[parentPrefixedSourceKey];
-
-      //       const parentPrefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
-      //       const parentTargetNode = newState.flattenedTargetSchema[parentPrefixedTargetKey];
-
-      //       const parentsAlreadyConnected = nodeHasSpecificInputEventually(
-      //         parentPrefixedSourceKey,
-      //         newState.dataMapConnections[parentPrefixedTargetKey],
-      //         newState.dataMapConnections,
-      //         true
-      //       );
-
-      //       if (!parentsAlreadyConnected) {
-      //         addNodeToConnections(
-      //           newState.dataMapConnections,
-      //           parentSourceNode,
-      //           parentPrefixedSourceKey,
-      //           parentTargetNode,
-      //           parentPrefixedTargetKey
-      //         );
-      //         state.notificationData = { type: NotificationTypes.ArrayConnectionAdded }; // danielle this sends notification
-      //       }
-      //     }
-
-      //     if (  // danielle this pushes parent node if needed
-      //       parentSourceNode.nodeProperties.indexOf(SchemaNodeProperty.Repeating) > -1 &&
-      //       nodeHasSpecificInputEventually(
-      //         prefixedSourceKey,
-      //         newState.dataMapConnections[prefixedTargetKey],
-      //         newState.dataMapConnections,
-      //         true
-      //       )
-      //     ) {
-      //       if (!newState.currentSourceSchemaNodes.find((node) => node.key === parentSourceNode.key)) {
-      //         newState.currentSourceSchemaNodes.push(parentSourceNode);
-      //       }
-      //     }
-      //   }
-      // }
+      // bring in correct source nodes
+      // loop through parent nodes connected to
+      const parentTargetNode = state.curDataMapOperation.currentTargetSchemaNode;
+      bringInParentSourceNodesForRepeating(parentTargetNode, newState);
 
       doDataMapOperation(state, newState);
     },

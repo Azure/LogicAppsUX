@@ -1,3 +1,4 @@
+import type { DataMapOperationState } from '../../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../../models';
 import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
@@ -5,12 +6,14 @@ import type { FunctionData, FunctionInput } from '../../models/Function';
 import { functionMock, FunctionCategory } from '../../models/Function';
 import {
   addNodeToConnections,
+  bringInParentSourceNodesForRepeating,
   createConnectionEntryIfNeeded,
   isCustomValue,
   isValidInputToFunctionNode,
   newConnectionWillHaveCircularLogic,
   updateConnectionInputValue,
 } from '../Connection.Utils';
+import { fullMapForSimplifiedLoop } from '../__mocks__';
 
 // TODO: nodeHasSourceNodeEventually
 // TODO: nodeHasSpecificInputEventually
@@ -332,4 +335,108 @@ describe('utils/Connections', () => {
       expect(newConnectionWillHaveCircularLogic(currentNodeKey, desiredInputKey, mockConnectionsWithImpendingCircularLogic)).toEqual(true);
     });
   });
+
+  describe('bringInParentSourceNodesForRepeating', () => {
+    const dmState: Partial<DataMapOperationState> = {
+      dataMapConnections: fullMapForSimplifiedLoop,
+      currentSourceSchemaNodes: [],
+    };
+    it('brings in one parent node for many to many scenario', () => {
+      bringInParentSourceNodesForRepeating(parentTargetNode, dmState as DataMapOperationState);
+    });
+  });
 });
+
+const parentTargetNode: SchemaNodeExtended = {
+  key: '/ns0:Root/ManyToMany/Year/Month/Day',
+  name: 'Day',
+  schemaNodeDataType: SchemaNodeDataType.None,
+  normalizedDataType: NormalizedDataType.ComplexType,
+  properties: 'Repeating',
+  children: [
+    {
+      key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
+      name: 'Date',
+      schemaNodeDataType: SchemaNodeDataType.String,
+      normalizedDataType: NormalizedDataType.String,
+      properties: 'NotSpecified',
+      fullName: 'Date',
+      parentKey: '/ns0:Root/ManyToMany/Year/Month/Day',
+      nodeProperties: [SchemaNodeProperty.NotSpecified],
+      children: [],
+      pathToRoot: [
+        {
+          key: '/ns0:Root',
+          name: 'Root',
+          fullName: 'ns0:Root',
+          repeating: false,
+        },
+        {
+          key: '/ns0:Root/ManyToMany',
+          name: 'ManyToMany',
+          fullName: 'ManyToMany',
+          repeating: false,
+        },
+        {
+          key: '/ns0:Root/ManyToMany/Year',
+          name: 'Year',
+          fullName: 'Year',
+          repeating: true,
+        },
+        {
+          key: '/ns0:Root/ManyToMany/Year/Month',
+          name: 'Month',
+          fullName: 'Month',
+          repeating: true,
+        },
+        {
+          key: '/ns0:Root/ManyToMany/Year/Month/Day',
+          name: 'Day',
+          fullName: 'Day',
+          repeating: true,
+        },
+        {
+          key: '/ns0:Root/ManyToMany/Year/Month/Day/Date',
+          name: 'Date',
+          fullName: 'Date',
+          repeating: false,
+        },
+      ],
+    },
+  ],
+  fullName: 'Day',
+  parentKey: '/ns0:Root/ManyToMany/Year/Month',
+  nodeProperties: [SchemaNodeProperty.Repeating],
+  pathToRoot: [
+    {
+      key: '/ns0:Root',
+      name: 'Root',
+      fullName: 'ns0:Root',
+      repeating: false,
+    },
+    {
+      key: '/ns0:Root/ManyToMany',
+      name: 'ManyToMany',
+      fullName: 'ManyToMany',
+      repeating: false,
+    },
+    {
+      key: '/ns0:Root/ManyToMany/Year',
+      name: 'Year',
+      fullName: 'Year',
+      repeating: true,
+    },
+    {
+      key: '/ns0:Root/ManyToMany/Year/Month',
+      name: 'Month',
+      fullName: 'Month',
+      repeating: true,
+    },
+    {
+      key: '/ns0:Root/ManyToMany/Year/Month/Day',
+      name: 'Day',
+      fullName: 'Day',
+      repeating: true,
+    },
+  ],
+};
