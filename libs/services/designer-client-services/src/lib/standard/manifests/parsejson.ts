@@ -16,26 +16,6 @@ export default {
           title: 'Content',
           required: true,
           description: 'Content to create schema from',
-          type: 'array',
-          // itemSchema: {
-          //   type: 'object',
-          //   properties: {
-          //     address: {
-          //       type: 'string',
-          //     },
-          //     name: {
-          //       type: 'object',
-          //       properties: {
-          //         p1: {
-          //           type: 'string',
-          //         },
-          //         p2: {
-          //           type: 'string',
-          //         },
-          //       },
-          //     },
-          //   },
-          // },
         },
         schema: {
           type: 'object',
