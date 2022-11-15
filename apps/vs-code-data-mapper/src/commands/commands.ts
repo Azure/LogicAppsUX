@@ -34,7 +34,7 @@ const createNewDataMapCmd = () => {
 
     DataMapperExt.currentDataMapName = newDatamapName;
 
-    await openDataMapperCmd();
+    openDataMapperCmd();
   });
 };
 
@@ -107,15 +107,12 @@ const loadDataMapFileCmd = async (uri: Uri) => {
 
   DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
 
-  await openDataMapperCmd();
+  openDataMapperCmd();
 
-  DataMapperExt.currentPanel?.sendMsgToWebview({
-    command: 'loadDataMap',
-    data: {
-      mapDefinition: mapDefinition,
-      sourceSchemaFileName: path.basename(srcSchemaPath),
-      targetSchemaFileName: path.basename(tgtSchemaPath),
-    },
-  });
-  DataMapperExt.checkForAndSetXsltFilename();
+  // Set map definition data to be loaded once webview sends webviewLoaded msg\
+  DataMapperExt.loadMapDefinitionData = {
+    mapDefinition: mapDefinition,
+    sourceSchemaFileName: path.basename(srcSchemaPath),
+    targetSchemaFileName: path.basename(tgtSchemaPath),
+  };
 };

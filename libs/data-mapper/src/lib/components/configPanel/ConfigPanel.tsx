@@ -16,6 +16,12 @@ import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
+const generalQuerySettings = {
+  staleTime: 1000 * 60 * 5,
+  cacheTime: 1000 * 60 * 5,
+  retry: false, // Don't retry as it stops error from making its way through
+};
+
 export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
@@ -35,17 +41,23 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
-  const fetchedSourceSchema = useQuery([selectedSourceSchema?.text], () => getSelectedSchema(selectedSourceSchema?.text ?? ''), {
-    enabled: selectedSourceSchema !== undefined,
-    staleTime: 1000 * 60 * 5,
-    cacheTime: 1000 * 60 * 5,
-  });
+  const fetchedSourceSchema = useQuery(
+    [selectedSourceSchema?.text],
+    async () => await getSelectedSchema(selectedSourceSchema?.text ?? ''),
+    {
+      ...generalQuerySettings,
+      enabled: selectedSourceSchema !== undefined,
+    }
+  );
 
-  const fetchedTargetSchema = useQuery([selectedTargetSchema?.text], () => getSelectedSchema(selectedTargetSchema?.text ?? ''), {
-    enabled: selectedTargetSchema !== undefined,
-    staleTime: 1000 * 60 * 5,
-    cacheTime: 1000 * 60 * 5,
-  });
+  const fetchedTargetSchema = useQuery(
+    [selectedTargetSchema?.text],
+    async () => await getSelectedSchema(selectedTargetSchema?.text ?? ''),
+    {
+      ...generalQuerySettings,
+      enabled: selectedTargetSchema !== undefined,
+    }
+  );
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',
