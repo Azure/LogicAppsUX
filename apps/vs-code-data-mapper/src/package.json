@@ -1,5 +1,7 @@
 {
   "name": "microsoft-data-mapper-vscode-extension",
+  "displayName": "Azure Logic Apps - Data Mapper",
+  "description": "Create mappings between schemas",
   "version": "0.2.16",
   "main": "main.js",
   "repository": "https://github.com/Azure/logic_apps_designer",
@@ -98,7 +100,7 @@
   "preview": false,
   "publisher": "ms-azuretools",
   "icon": "assets/logicapp.png",
-  "aiKey": "19a4f2b3-bf0a-4a6b-bd56-aa9d2cd85a75",
+  "aiKey": "setInGitHubBuild",
   "dependencies": {
     "tslib": "^2.0.0"
   }
