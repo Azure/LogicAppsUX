@@ -65,6 +65,7 @@ export const CollapsedArray = ({
           className="msla-collapsed-editor-container"
           BasePlugins={{
             tokens: true,
+            tabbable: true,
           }}
           readonly={readOnly}
           isTrigger={isTrigger}

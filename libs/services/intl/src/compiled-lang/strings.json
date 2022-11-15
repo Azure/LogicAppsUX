@@ -1195,6 +1195,24 @@
       "value": "Value"
     }
   ],
+  "92OUl9": [
+    {
+      "type": 0,
+      "value": "Array Element "
+    },
+    {
+      "type": 1,
+      "value": "index"
+    },
+    {
+      "type": 0,
+      "value": " is missing required property "
+    },
+    {
+      "type": 1,
+      "value": "property"
+    }
+  ],
   "93svjx": [
     {
       "type": 0,
@@ -5081,6 +5099,24 @@
     {
       "type": 0,
       "value": "Shorthand for actions('actionName').outputs.body"
+    }
+  ],
+  "lzBHHT": [
+    {
+      "type": 0,
+      "value": "Array Element "
+    },
+    {
+      "type": 1,
+      "value": "index"
+    },
+    {
+      "type": 0,
+      "value": " has unknown property "
+    },
+    {
+      "type": 1,
+      "value": "property"
     }
   ],
   "m7Y6Qf": [

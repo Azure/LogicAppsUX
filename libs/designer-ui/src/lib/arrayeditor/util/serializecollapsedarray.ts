@@ -3,54 +3,34 @@ import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
 import { getChildrenNodes } from '../../editor/base/utils/helper';
-import { convertComplexItemtoSchema, flattenObject } from './util';
+import { convertComplexItemtoSchema, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
 import { guid } from '@microsoft-logic-apps/utils';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
-export const serializeSimpleArray = (editor: LexicalEditor, setItems: (items: SimpleArrayItem[]) => void) => {
+export const serializeSimpleArray = (
+  editor: LexicalEditor,
+  setItems: (items: SimpleArrayItem[]) => void,
+  setIsValid: (b: boolean) => void
+) => {
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
-    let jsonEditor;
-    try {
-      jsonEditor = JSON.parse(editorString);
-    } catch (e) {
-      console.log(e);
-    }
-    const returnItems: SimpleArrayItem[] = [];
-
-    for (const [, value] of Object.entries(jsonEditor)) {
-      returnItems.push({
-        value: convertStringToSegments(value as string, true, nodeMap),
-        key: guid(),
-      });
-    }
-    setItems(returnItems);
+    validationAndSerializeSimpleArray(editorString, nodeMap, setItems, setIsValid);
   });
 };
 
-export const serializeComplexArray = (editor: LexicalEditor, setItems: (items: ComplexArrayItems[]) => void) => {
+export const serializeComplexArray = (
+  editor: LexicalEditor,
+  dimensionalSchema: any[],
+  setItems: (items: ComplexArrayItems[]) => void,
+  setIsValid: (b: boolean) => void,
+  setErrorMessage: (s: string) => void
+) => {
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
-    let jsonEditor;
-    try {
-      jsonEditor = JSON.parse(editorString);
-    } catch (e) {
-      console.log(e);
-    }
-
-    const returnItems: ComplexArrayItems[] = [];
-    jsonEditor.forEach((jsonEditorItem: any) => {
-      const flatJSON = flattenObject(jsonEditorItem);
-      const returnVal = Object.keys(flatJSON).map((key) => {
-        return { title: key, value: convertStringToSegments(flatJSON[key], true, nodeMap) };
-      });
-
-      returnItems.push({ key: guid(), items: returnVal });
-    });
-    setItems(returnItems);
+    validationAndSerializeComplexArray(editorString, nodeMap, dimensionalSchema, setItems, setIsValid, undefined, setErrorMessage);
   });
 };
 

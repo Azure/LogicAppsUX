@@ -32,7 +32,15 @@
       },
       "Parse_JSON": {
         "inputs": {
-          "content": "@triggerBody()",
+          "content": [
+            {
+              "address": "ead",
+              "name": {
+                "p1": "asd@{variables('IntegerVar')}",
+                "p2": "asdf"
+              }
+            }
+          ],
           "schema": {
             "properties": {
               "a": {
