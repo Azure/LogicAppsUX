@@ -15,6 +15,7 @@ export async function activate(context: ExtensionContext) {
 
   await callWithTelemetryAndErrorHandling('logicAppsExtension.activate', async () => {
     ext.azureAccountTreeItem = new AzureAccountTreeItemWithProjects();
+    context.subscriptions.push(ext.azureAccountTreeItem);
 
     registerCommands();
   });

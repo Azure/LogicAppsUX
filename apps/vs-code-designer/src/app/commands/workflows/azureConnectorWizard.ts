@@ -9,6 +9,7 @@ import {
   workflowSubscriptionIdKey,
   workflowTenantIdKey,
 } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../funcConfig/local.settings';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
@@ -50,7 +51,8 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
   public async getSubWizard(context: IAzureConnectorsContext): Promise<IWizardOptions<IAzureConnectorsContext> | undefined> {
     if (context.enabled) {
       const azurePromptSteps: AzureWizardPromptStep<IActionContext>[] = [];
-      const subscriptionPromptStep: AzureWizardPromptStep<IActionContext> | undefined = undefined;
+      const subscriptionPromptStep: AzureWizardPromptStep<IActionContext> | undefined =
+        await ext.azureAccountTreeItem.getSubscriptionPromptStep(context);
       if (subscriptionPromptStep) {
         azurePromptSteps.push(subscriptionPromptStep);
       }

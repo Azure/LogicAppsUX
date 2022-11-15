@@ -76,7 +76,7 @@ export const App = () => {
       }}
     >
       {codelessApp ? (
-        <BJSWorkflowProvider workflow={{ definition: codelessApp.definition, connectionReferences: connectionReferences }}>
+        <BJSWorkflowProvider workflow={{ definition: codelessApp.definition, connectionReferences }}>
           <Designer></Designer>
         </BJSWorkflowProvider>
       ) : null}
