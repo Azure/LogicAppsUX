@@ -8,7 +8,8 @@ import {
   StandardSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
 import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
+import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver, Theme } from '@microsoft/logic-apps-designer';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
@@ -17,6 +18,12 @@ export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
   const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails } = vscodeState;
   const codelessApp = panelMetaData?.codelessApp;
+
+  const [theme, setTheme] = useState<Theme>(getTheme(document.body));
+
+  useThemeObserver(document.body, theme, setTheme, {
+    attributes: true,
+  });
 
   const connectionService = new StandardConnectionService({
     baseUrl,
@@ -65,6 +72,7 @@ export const App = () => {
     <DesignerProvider
       locale="en-US"
       options={{
+        isDarkMode: theme === Theme.Dark,
         services: {
           connectionService,
           operationManifestService,
