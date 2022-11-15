@@ -24,13 +24,7 @@ export const removeFirstAndLast = (segments: ValueSegment[], removeFirst?: strin
 };
 
 export const showCollapsedValidation = (collapsedValue: ValueSegment[]): boolean => {
-  return (
-    collapsedValue?.length === 1 &&
-    (collapsedValue[0].type === ValueSegmentType.TOKEN ||
-      (collapsedValue[0].type === ValueSegmentType.LITERAL &&
-        collapsedValue[0].value.trim().startsWith('"') &&
-        collapsedValue[0].value.trim().endsWith('"')))
-  );
+  return collapsedValue?.length === 1;
 };
 
 export const initializeDictionaryValidation = (initialValue?: ValueSegment[]): boolean => {

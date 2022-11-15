@@ -78,6 +78,9 @@ export const validationAndSerializeSimpleArray = (
       setItems([]);
     } else {
       const jsonEditor = JSON.parse(editorString);
+      if (typeof jsonEditor === 'number' || typeof jsonEditor === 'string' || typeof jsonEditor === 'boolean') {
+        throw Error();
+      }
       const returnItems: SimpleArrayItem[] = [];
       for (const [, value] of Object.entries(jsonEditor)) {
         returnItems.push({
