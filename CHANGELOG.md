@@ -1,5 +1,13 @@
 # Logic Apps Designer
 
+### [0.2.20](https://github.com/Azure/LogicAppsUX/compare/v0.2.19...v0.2.20) (2022-11-16)
+
+### Logic Apps Designer Changes
+
+- Added service provider connection test support ([#1296](https://github.com/Azure/LogicAppsUX/issues/1296)) ([3adc0bb](https://github.com/Azure/LogicAppsUX/commit/3adc0bb49b01d98251f0440a44f8a7a74ce04c69))
+
+### [0.2.19](https://github.com/Azure/LogicAppsUX/compare/v0.2.16...v0.2.19) (2022-11-15)
+
 ### [0.2.16](https://github.com/Azure/LogicAppsUX/compare/v0.2.15...v0.2.16) (2022-11-14)
 
 ### [0.2.15](https://github.com/Azure/LogicAppsUX/compare/v0.2.14...v0.2.15) (2022-11-13)
