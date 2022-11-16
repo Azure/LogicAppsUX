@@ -1,7 +1,7 @@
 import type { FunctionData } from './Function';
 import type { SchemaNodeExtended } from './Schema';
 
-export type ConnectionDictionary = { [key: string]: Connection }; // key = "{(target)||(source/target)}-{nodeId}"
+export type ConnectionDictionary = { [key: string]: Connection }; // key = "{(target)||(source)}-{nodeId}"
 export type InputConnectionDictionary = { [inputNumber: string]: InputConnection[] };
 export type InputConnection = ConnectionUnit | string | undefined; // undefined for unbounded input value arrays
 
