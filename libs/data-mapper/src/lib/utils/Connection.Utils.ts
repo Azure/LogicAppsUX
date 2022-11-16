@@ -392,13 +392,15 @@ export const bringInParentSourceNodesForRepeating = (
     const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)].inputs;
     // Danielle: is it possible that there can be a function in between that we need to pull in?
     Object.keys(inputsToParentTarget).forEach((key) => {
-      const inputObj = inputsToParentTarget[key][0];
-      if (inputObj && typeof inputObj !== 'string') {
-        const inputSrc = inputObj.node;
-        if (isSchemaNodeExtended(inputSrc)) {
-          newState.currentSourceSchemaNodes.push(inputSrc);
+      const inputs = inputsToParentTarget[key];
+      inputs.forEach((input) => {
+        if (input && typeof input !== 'string') {
+          const inputSrc = input.node;
+          if (isSchemaNodeExtended(inputSrc)) {
+            newState.currentSourceSchemaNodes.push(inputSrc);
+          }
         }
-      }
+      });
     });
   }
 };

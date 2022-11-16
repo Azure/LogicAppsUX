@@ -182,6 +182,7 @@ describe('utils/DataMap', () => {
         connectionsDict
       );
       console.log(JSON.stringify(connectionsDict));
+      // target-date should be connected to src-yr, src-month, src-day
       expect(Object.keys(connectionsDict).length).toEqual(8);
     });
   });

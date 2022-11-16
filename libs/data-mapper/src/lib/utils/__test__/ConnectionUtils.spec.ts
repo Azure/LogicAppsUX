@@ -13,7 +13,7 @@ import {
   newConnectionWillHaveCircularLogic,
   updateConnectionInputValue,
 } from '../Connection.Utils';
-import { fullMapForSimplifiedLoop } from '../__mocks__';
+import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
 
 // TODO: nodeHasSourceNodeEventually
 // TODO: nodeHasSpecificInputEventually
@@ -343,9 +343,86 @@ describe('utils/Connections', () => {
     };
     it('brings in one parent node for many to many scenario', () => {
       bringInParentSourceNodesForRepeating(parentTargetNode, dmState as DataMapOperationState);
+      expect(dmState.currentSourceSchemaNodes?.length).toEqual(1);
+    });
+
+    it('brings in all of the parent source nodes for many to one scenario', () => {
+      dmState.dataMapConnections = fullConnectionDictionaryForOneToManyLoop;
+      bringInParentSourceNodesForRepeating(parentManyToOneTargetNode, dmState as DataMapOperationState);
+      expect(dmState.currentSourceSchemaNodes?.length).toEqual(3);
     });
   });
 });
+
+const parentManyToOneTargetNode: SchemaNodeExtended = {
+  key: '/ns0:Root/ManyToOne/Date',
+  name: 'Date',
+  schemaNodeDataType: SchemaNodeDataType.None,
+  normalizedDataType: NormalizedDataType.ComplexType,
+  properties: 'Repeating',
+  children: [
+    {
+      key: '/ns0:Root/ManyToOne/Date/DayName',
+      name: 'DayName',
+      schemaNodeDataType: SchemaNodeDataType.String,
+      normalizedDataType: NormalizedDataType.String,
+      properties: 'NotSpecified',
+      children: [],
+      fullName: 'DayName',
+      parentKey: '/ns0:Root/ManyToOne/Date',
+      nodeProperties: [SchemaNodeProperty.Repeating],
+      pathToRoot: [
+        {
+          key: '/ns0:Root',
+          name: 'Root',
+          fullName: 'ns0:Root',
+          repeating: false,
+        },
+        {
+          key: '/ns0:Root/ManyToOne',
+          name: 'ManyToOne',
+          fullName: 'ManyToOne',
+          repeating: false,
+        },
+        {
+          key: '/ns0:Root/ManyToOne/Date',
+          name: 'Date',
+          fullName: 'Date',
+          repeating: true,
+        },
+        {
+          key: '/ns0:Root/ManyToOne/Date/DayName',
+          name: 'DayName',
+          fullName: 'DayName',
+          repeating: false,
+        },
+      ],
+    },
+  ],
+  fullName: 'Date',
+  parentKey: '/ns0:Root/ManyToOne',
+  nodeProperties: [SchemaNodeProperty.Repeating],
+  pathToRoot: [
+    {
+      key: '/ns0:Root',
+      name: 'Root',
+      fullName: 'ns0:Root',
+      repeating: false,
+    },
+    {
+      key: '/ns0:Root/ManyToOne',
+      name: 'ManyToOne',
+      fullName: 'ManyToOne',
+      repeating: false,
+    },
+    {
+      key: '/ns0:Root/ManyToOne/Date',
+      name: 'Date',
+      fullName: 'Date',
+      repeating: true,
+    },
+  ],
+};
 
 const parentTargetNode: SchemaNodeExtended = {
   key: '/ns0:Root/ManyToMany/Year/Month/Day',
