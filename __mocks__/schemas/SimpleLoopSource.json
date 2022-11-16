@@ -21,7 +21,7 @@
         "name": "Year",
         "schemaNodeDataType": "None",
         "normalizedDataType": "ComplexType",
-        "properties": "NotSpecified",
+        "properties": "Repeating",
         "children": [
           {
             "key": "/ns0:Root/Year/Month",
