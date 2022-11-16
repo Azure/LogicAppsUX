@@ -163,7 +163,6 @@ describe('utils/DataMap', () => {
         flattenedLoopTarget,
         connectionsDict
       );
-      console.log(JSON.stringify(connectionsDict));
       expect(Object.keys(connectionsDict).length).toEqual(8);
     });
 
@@ -181,7 +180,6 @@ describe('utils/DataMap', () => {
         flattenedLoopTarget,
         connectionsDict
       );
-      console.log(JSON.stringify(connectionsDict));
       // target-date should be connected to src-yr, src-month, src-day
       const parentTarget = connectionsDict['target-/ns0:Root/ManyToOne/Date'];
       const input0 = parentTarget.inputs['0'][0] as ConnectionUnit;
