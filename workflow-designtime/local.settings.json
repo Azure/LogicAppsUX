@@ -1,8 +1,0 @@
-{
-  "IsEncrypted": false,
-  "Values": {
-    "AzureWebJobsSecretStorageType": "Files",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    "ProjectDirectoryPath": "c:\\Users\\nicolaslayne\\Desktop\\LogicAppsUX"
-  }
-}
