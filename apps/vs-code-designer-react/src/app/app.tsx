@@ -1,4 +1,5 @@
 import type { RootState } from '../state/Store';
+import { DesignerCommandBar } from './DesignerCommandBar';
 import { HttpClient } from './httpClient';
 import {
   StandardConnectionService,
@@ -68,6 +69,10 @@ export const App = () => {
 
   const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
+  const testFunction = () => {
+    return true;
+  };
+
   return (
     <DesignerProvider
       locale="en-US"
@@ -85,7 +90,8 @@ export const App = () => {
     >
       {codelessApp ? (
         <BJSWorkflowProvider workflow={{ definition: codelessApp.definition, connectionReferences }}>
-          <Designer></Designer>
+          <DesignerCommandBar onSave={testFunction} onParameters={testFunction} />
+          <Designer />
         </BJSWorkflowProvider>
       ) : null}
     </DesignerProvider>
