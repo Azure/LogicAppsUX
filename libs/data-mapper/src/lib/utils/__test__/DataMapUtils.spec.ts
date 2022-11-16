@@ -183,7 +183,14 @@ describe('utils/DataMap', () => {
       );
       console.log(JSON.stringify(connectionsDict));
       // target-date should be connected to src-yr, src-month, src-day
-      expect(Object.keys(connectionsDict).length).toEqual(8);
+      const parentTarget = connectionsDict['target-/ns0:Root/ManyToOne/Date'];
+      const input0 = parentTarget.inputs['0'][0] as ConnectionUnit;
+      const input1 = parentTarget.inputs['0'][1] as ConnectionUnit;
+      const input2 = parentTarget.inputs['0'][2] as ConnectionUnit;
+
+      expect(input0.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/Year/Month/Day');
+      expect(input1.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/Year/Month');
+      expect(input2.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/Year');
     });
   });
 });
