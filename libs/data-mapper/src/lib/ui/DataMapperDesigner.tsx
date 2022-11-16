@@ -227,7 +227,7 @@ export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurre
                 }}
               >
                 {showMapOverview ? (
-                  <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
+                  <MapOverview />
                 ) : (
                   <Stack horizontal style={{ height: '100%' }}>
                     <div

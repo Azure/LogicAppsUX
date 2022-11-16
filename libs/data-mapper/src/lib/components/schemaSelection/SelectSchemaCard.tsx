@@ -18,6 +18,7 @@ const useStyles = makeStyles({
   selectSchemaCard: {
     width: `${selectSchemaCardWidth}px`,
     height: `${selectSchemaCardHeight}px`,
+    zIndex: 10,
     backgroundColor: tokens.colorNeutralBackground1,
     color: tokens.colorNeutralForeground1,
     ...shorthands.borderRadius(tokens.borderRadiusMedium),
@@ -38,9 +39,10 @@ const useStyles = makeStyles({
 
 export interface SelectSchemaCardProps {
   schemaType: SchemaType;
+  style?: React.CSSProperties;
 }
 
-export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
+export const SelectSchemaCard = ({ schemaType, style }: SelectSchemaCardProps) => {
   const intl = useIntl();
   const styles = useStyles();
   const dispatch = useDispatch<AppDispatch>();
@@ -87,6 +89,7 @@ export const SelectSchemaCard = ({ schemaType }: SelectSchemaCardProps) => {
       onClick={onClickSchemaCard}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
+      style={style}
     >
       <Image src={isHovering ? cardOnHoverSvg : cardOnRestSvg} alt="Schema selection card" style={{ paddingBottom: '28px' }} />
 

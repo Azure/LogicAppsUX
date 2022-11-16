@@ -1,6 +1,5 @@
 import type { SchemaExtended } from '../../models/Schema';
 import { NormalizedDataType, SchemaFileFormat, SchemaNodeDataType, SchemaNodeProperty } from '../../models/Schema';
-import type { MapOverviewProps } from './MapOverview';
 import { MapOverview } from './MapOverview';
 import type { ComponentMeta, ComponentStory } from '@storybook/react';
 import React from 'react';
@@ -57,18 +56,7 @@ const schema: SchemaExtended = {
   },
 };
 
-export const Standard: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
-Standard.args = {
-  sourceSchema: schema,
-  targetSchema: schema,
-};
+// Will be used once storybook properly updated
+console.log(schema);
 
-export const SourceOnly: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
-SourceOnly.args = {
-  sourceSchema: schema,
-};
-
-export const TargetOnly: ComponentStory<typeof MapOverview> = (args: MapOverviewProps) => <MapOverview {...args} />;
-TargetOnly.args = {
-  targetSchema: schema,
-};
+export const Standard: ComponentStory<typeof MapOverview> = () => <MapOverview />;
