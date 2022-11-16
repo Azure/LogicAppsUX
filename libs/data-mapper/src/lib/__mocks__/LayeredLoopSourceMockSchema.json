@@ -20,45 +20,45 @@
         "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:Root/ManyToMany/Year",
-            "name": "Year",
+            "key": "/ns0:Root/ManyToMany/SourceYear",
+            "name": "SourceYear",
             "schemaNodeDataType": "None",
             "normalizedDataType": "ComplexType",
             "properties": "Repeating",
             "children": [
               {
-                "key": "/ns0:Root/ManyToMany/Year/Month",
-                "name": "Month",
+                "key": "/ns0:Root/ManyToMany/SourceYear/SourceMonth",
+                "name": "SourceMonth",
                 "schemaNodeDataType": "None",
                 "normalizedDataType": "ComplexType",
                 "properties": "Repeating",
                 "children": [
                   {
-                    "key": "/ns0:Root/ManyToMany/Year/Month/Day",
-                    "name": "Day",
+                    "key": "/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay",
+                    "name": "SourceDay",
                     "schemaNodeDataType": "None",
                     "normalizedDataType": "ComplexType",
                     "properties": "Repeating",
                     "children": [
                       {
-                        "key": "/ns0:Root/ManyToMany/Year/Month/Day/Date",
-                        "name": "Date",
+                        "key": "/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate",
+                        "name": "SourceDate",
                         "schemaNodeDataType": "String",
                         "normalizedDataType": "String",
                         "properties": "NotSpecified",
-                        "fullName": "Date",
-                        "parentKey": "/ns0:Root/ManyToMany/Year/Month/Day"
+                        "fullName": "SourceDate",
+                        "parentKey": "/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay"
                       }
                     ],
-                    "fullName": "Day",
-                    "parentKey": "/ns0:Root/ManyToMany/Year/Month"
+                    "fullName": "SourceDay",
+                    "parentKey": "/ns0:Root/ManyToMany/SourceYear/SourceMonth"
                   }
                 ],
-                "fullName": "Month",
-                "parentKey": "/ns0:Root/ManyToMany/Year"
+                "fullName": "SourceMonth",
+                "parentKey": "/ns0:Root/ManyToMany/SourceYear"
               }
             ],
-            "fullName": "Year",
+            "fullName": "SourceYear",
             "parentKey": "/ns0:Root/ManyToMany"
           }
         ],
@@ -73,45 +73,45 @@
         "properties": "NotSpecified",
         "children": [
           {
-            "key": "/ns0:Root/ManyToOne/Year",
-            "name": "Year",
+            "key": "/ns0:Root/ManyToOne/SourceYear",
+            "name": "SourceYear",
             "schemaNodeDataType": "None",
             "normalizedDataType": "ComplexType",
             "properties": "Repeating",
             "children": [
               {
-                "key": "/ns0:Root/ManyToOne/Year/Month",
-                "name": "Month",
+                "key": "/ns0:Root/ManyToOne/SourceYear/SourceMonth",
+                "name": "SourceMonth",
                 "schemaNodeDataType": "None",
                 "normalizedDataType": "ComplexType",
                 "properties": "Repeating",
                 "children": [
                   {
-                    "key": "/ns0:Root/ManyToOne/Year/Month/Day",
-                    "name": "Day",
+                    "key": "/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay",
+                    "name": "SourceDay",
                     "schemaNodeDataType": "None",
                     "normalizedDataType": "ComplexType",
                     "properties": "Repeating",
                     "children": [
                       {
-                        "key": "/ns0:Root/ManyToOne/Year/Month/Day/Date",
-                        "name": "Date",
+                        "key": "/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate",
+                        "name": "SourceDate",
                         "schemaNodeDataType": "String",
                         "normalizedDataType": "String",
                         "properties": "NotSpecified",
-                        "fullName": "Date",
-                        "parentKey": "/ns0:Root/ManyToOne/Year/Month/Day"
+                        "fullName": "SourceDate",
+                        "parentKey": "/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay"
                       }
                     ],
-                    "fullName": "Day",
-                    "parentKey": "/ns0:Root/ManyToOne/Year/Month"
+                    "fullName": "SourceDay",
+                    "parentKey": "/ns0:Root/ManyToOne/SourceYear/SourceMonth"
                   }
                 ],
-                "fullName": "Month",
-                "parentKey": "/ns0:Root/ManyToOne/Year"
+                "fullName": "SourceMonth",
+                "parentKey": "/ns0:Root/ManyToOne/SourceYear"
               }
             ],
-            "fullName": "Year",
+            "fullName": "SourceYear",
             "parentKey": "/ns0:Root/ManyToOne"
           }
         ],
