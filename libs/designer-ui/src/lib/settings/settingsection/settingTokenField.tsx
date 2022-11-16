@@ -148,15 +148,14 @@ const TokenField = ({
     case 'array':
       return (
         <ArrayEditor
-          type={ArrayType.SIMPLE}
+          type={editorViewModel.schema ? ArrayType.COMPLEX : ArrayType.SIMPLE}
           labelProps={{ text: label ? `${label} Item` : 'Array Item' }}
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          initialItems={editorViewModel?.items}
-          itemSchema={label ? `${label} Item` : 'Array Item'}
           isTrigger={isTrigger}
           tokenPickerHandler={tokenPickerHandler}
+          itemSchema={editorViewModel?.schema}
           onChange={onValueChange}
         />
       );
