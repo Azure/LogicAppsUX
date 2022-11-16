@@ -320,8 +320,10 @@ export const InputDropdown = (props: InputDropdownProps) => {
         // If not type Any, check if any possible input options were found/compiled for provided type
         addTypeMatchedOptions(typeSortedInputOptions[type]);
 
-        // Also add any options whose output type is Any
-        addTypeMatchedOptions(typeSortedInputOptions[NormalizedDataType.Any]);
+        // Also add any options whose output type is Any - if there are any
+        if (typeSortedInputOptions[NormalizedDataType.Any]) {
+          addTypeMatchedOptions(typeSortedInputOptions[NormalizedDataType.Any]);
+        }
       }
     };
 
