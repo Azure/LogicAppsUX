@@ -7,6 +7,7 @@ import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import TargetSchemaTreeItem, { ItemToggledState } from '../tree/TargetSchemaTreeItem';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import Tree from '../tree/Tree';
+import type { ITreeNode } from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
@@ -14,6 +15,8 @@ import { ChevronDoubleLeft20Regular, ChevronDoubleRight20Regular } from '@fluent
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
+
+export const schemaRootKey = 'schemaRoot';
 
 const useStyles = makeStyles({
   outputPane: {
@@ -58,7 +61,12 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
   });
 
   const onTargetSchemaItemClick = (schemaNode: SchemaNodeExtended) => {
-    dispatch(setCurrentTargetSchemaNode(schemaNode));
+    // If click schema name, return to Overview
+    if (schemaNode.key === schemaRootKey) {
+      dispatch(setCurrentTargetSchemaNode(undefined));
+    } else {
+      dispatch(setCurrentTargetSchemaNode(schemaNode));
+    }
   };
 
   const targetNodesWithConnections = useMemo<TargetNodesWithConnectionsDictionary>(() => {
@@ -73,16 +81,30 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     return nodesWithConnections;
   }, [connectionDictionary, targetSchemaDictionary]);
 
-  const searchedTargetSchemaTreeRoot = useMemo<SchemaNodeExtended | undefined>(() => {
+  const searchedTargetSchemaTreeRoot = useMemo<ITreeNode<SchemaNodeExtended> | undefined>(() => {
     if (!targetSchema) {
       return undefined;
     }
 
-    if (!targetSchemaSearchTerm) {
-      return { ...targetSchema.schemaTreeRoot };
-    } else {
-      return searchSchemaTreeFromRoot(targetSchema.schemaTreeRoot, targetSchemaSearchTerm);
+    // Format extra top layers to show schema name and schemaTreeRoot
+    // Can safely typecast with the root node(s) as we only use the properties defined here
+    const schemaRoot = {} as ITreeNode<SchemaNodeExtended>;
+    const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
+
+    let newTargetSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = { ...targetSchema.schemaTreeRoot };
+    if (targetSchemaSearchTerm) {
+      schemaNameRoot.isExpanded = true;
+      newTargetSchemaTreeRoot = searchSchemaTreeFromRoot(targetSchema.schemaTreeRoot, targetSchemaSearchTerm);
     }
+
+    schemaNameRoot.key = schemaRootKey;
+    schemaNameRoot.name = targetSchema.name;
+    schemaNameRoot.schemaNodeDataType = SchemaNodeDataType.None;
+    schemaNameRoot.children = [newTargetSchemaTreeRoot];
+
+    schemaRoot.children = [schemaNameRoot];
+
+    return schemaRoot;
   }, [targetSchema, targetSchemaSearchTerm]);
 
   useEffect(() => {
@@ -126,12 +148,6 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         >
           {targetSchemaLoc}
         </Text>
-
-        {isExpanded && targetSchema && (
-          <Text className={styles.subtitle} style={{ marginLeft: 4 }}>
-            {targetSchema.name}
-          </Text>
-        )}
       </Stack>
 
       {isExpanded && targetSchema && toggledStatesDictionary && searchedTargetSchemaTreeRoot && (
@@ -141,9 +157,9 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
           <Tree<SchemaNodeExtended>
             // Add one extra root layer so schemaTreeRoot is shown as well
             // Can safely typecast as only the children[] are used from root
-            treeRoot={{ children: [searchedTargetSchemaTreeRoot] } as SchemaNodeExtended}
-            nodeContent={(node: SchemaNodeExtended) => <TargetSchemaTreeItem node={node} status={toggledStatesDictionary[node.key]} />}
-            onClickItem={(node) => onTargetSchemaItemClick(node)}
+            treeRoot={searchedTargetSchemaTreeRoot}
+            nodeContent={(node) => <TargetSchemaTreeItem node={node as SchemaNodeExtended} status={toggledStatesDictionary[node.key]} />}
+            onClickItem={(node) => onTargetSchemaItemClick(node as SchemaNodeExtended)}
             nodeContainerClassName={mergeClasses(schemaNodeItemStyles.nodeContainer, schemaNodeItemStyles.targetSchemaNode)}
             nodeContainerStyle={(node) =>
               node.key === currentTargetSchemaNode?.key
@@ -152,6 +168,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
                   }
                 : {}
             }
+            shouldShowIndicator={(node) => node.key === currentTargetSchemaNode?.key}
           />
         </div>
       )}

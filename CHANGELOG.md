@@ -1,40 +1,43 @@
 # Logic Apps Designer
-### [0.2.13](https://github.com/Azure/LogicAppsUX/compare/v0.2.12...v0.2.13) (2022-11-11)
 
+### [0.2.19](https://github.com/Azure/LogicAppsUX/compare/v0.2.16...v0.2.19) (2022-11-15)
+
+### [0.2.16](https://github.com/Azure/LogicAppsUX/compare/v0.2.15...v0.2.16) (2022-11-14)
+
+### [0.2.15](https://github.com/Azure/LogicAppsUX/compare/v0.2.14...v0.2.15) (2022-11-13)
+
+### [0.2.14](https://github.com/Azure/LogicAppsUX/compare/v0.2.13...v0.2.14) (2022-11-12)
+
+### [0.2.13](https://github.com/Azure/LogicAppsUX/compare/v0.2.12...v0.2.13) (2022-11-11)
 
 ### Logic Apps Designer Changes
 
-* Improved Conditional Parameter Visibility Logic ([#1288](https://github.com/Azure/LogicAppsUX/issues/1288)) ([db011cd](https://github.com/Azure/LogicAppsUX/commit/db011cd6ed244c9c57719d484eae92ba35f3dfc6))
-
+- Improved Conditional Parameter Visibility Logic ([#1288](https://github.com/Azure/LogicAppsUX/issues/1288)) ([db011cd](https://github.com/Azure/LogicAppsUX/commit/db011cd6ed244c9c57719d484eae92ba35f3dfc6))
 
 ### Logic Apps Designer Bug Fixes
 
-* Remove Parameters Tab in Scope Nodes and Allow Action Namechange Within Subgraphs ([#1291](https://github.com/Azure/LogicAppsUX/issues/1291)) ([93edb7d](https://github.com/Azure/LogicAppsUX/commit/93edb7db86524892b397a4ec54ef1590fd60cef9))
+- Remove Parameters Tab in Scope Nodes and Allow Action Namechange Within Subgraphs ([#1291](https://github.com/Azure/LogicAppsUX/issues/1291)) ([93edb7d](https://github.com/Azure/LogicAppsUX/commit/93edb7db86524892b397a4ec54ef1590fd60cef9))
 
 ### [0.2.12](https://github.com/Azure/LogicAppsUX/compare/v0.2.11...v0.2.12) (2022-11-10)
 
-
 ### Logic Apps Designer Bug Fixes
 
-* Fixing upstream node calculations for nested scope nodes ([#1281](https://github.com/Azure/LogicAppsUX/issues/1281)) ([c7c6ad9](https://github.com/Azure/LogicAppsUX/commit/c7c6ad9da49bd6d850c2dcf49dc3e5fb54e220db))
+- Fixing upstream node calculations for nested scope nodes ([#1281](https://github.com/Azure/LogicAppsUX/issues/1281)) ([c7c6ad9](https://github.com/Azure/LogicAppsUX/commit/c7c6ad9da49bd6d850c2dcf49dc3e5fb54e220db))
 
 ### [0.2.11](https://github.com/Azure/LogicAppsUX/compare/v0.2.10...v0.2.11) (2022-11-09)
 
-
 ### Logic Apps Designer Changes
 
-* Fixing node renaming / token data inconsistencies ([#1265](https://github.com/Azure/LogicAppsUX/issues/1265)) ([ad3a476](https://github.com/Azure/LogicAppsUX/commit/ad3a4761cce12a0a88276c8be727ee129edabf4f))
-
+- Fixing node renaming / token data inconsistencies ([#1265](https://github.com/Azure/LogicAppsUX/issues/1265)) ([ad3a476](https://github.com/Azure/LogicAppsUX/commit/ad3a4761cce12a0a88276c8be727ee129edabf4f))
 
 ### Data Mapper Changes
 
-* testing deserialization and beginning support for loops ([#1273](https://github.com/Azure/LogicAppsUX/issues/1273)) ([a62cbd2](https://github.com/Azure/LogicAppsUX/commit/a62cbd24f257709e53761ff23606f30b6add06c6))
-
+- testing deserialization and beginning support for loops ([#1273](https://github.com/Azure/LogicAppsUX/issues/1273)) ([a62cbd2](https://github.com/Azure/LogicAppsUX/commit/a62cbd24f257709e53761ff23606f30b6add06c6))
 
 ### Logic Apps Designer Bug Fixes
 
-* Allow trigger deletion and replacing them ([#1280](https://github.com/Azure/LogicAppsUX/issues/1280)) ([e0ae4cf](https://github.com/Azure/LogicAppsUX/commit/e0ae4cf2e992b8ec15787a5083e03b2e8d97c49b))
-* Hide yellow warnings about unicode characters in code editor ([#1279](https://github.com/Azure/LogicAppsUX/issues/1279)) ([c38206f](https://github.com/Azure/LogicAppsUX/commit/c38206f788f2282aa044837380e314dd0ddee88a))
+- Allow trigger deletion and replacing them ([#1280](https://github.com/Azure/LogicAppsUX/issues/1280)) ([e0ae4cf](https://github.com/Azure/LogicAppsUX/commit/e0ae4cf2e992b8ec15787a5083e03b2e8d97c49b))
+- Hide yellow warnings about unicode characters in code editor ([#1279](https://github.com/Azure/LogicAppsUX/issues/1279)) ([c38206f](https://github.com/Azure/LogicAppsUX/commit/c38206f788f2282aa044837380e314dd0ddee88a))
 
 ### [0.2.10](https://github.com/Azure/LogicAppsUX/compare/v0.2.9...v0.2.10) (2022-11-08)
 

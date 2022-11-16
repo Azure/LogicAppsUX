@@ -1,4 +1,5 @@
 export const webviewTitle = 'Data Mapper';
+export const webviewType = 'dataMapperWebview';
 export const outputChannelTitle = webviewTitle;
 export const outputChannelPrefix = 'azureLogicAppsDataMapper';
 

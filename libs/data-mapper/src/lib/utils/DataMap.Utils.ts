@@ -296,7 +296,6 @@ export const convertFromMapDefinition = (
   if (rootNodeKey) {
     parseDefinitionToConnection(mapDefinition[rootNodeKey], `/${rootNodeKey}`, connections, {}, sourceSchema, targetSchema, functions);
   }
-
   return connections;
 };
 

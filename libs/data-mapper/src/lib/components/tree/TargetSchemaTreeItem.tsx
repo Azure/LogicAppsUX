@@ -44,8 +44,6 @@ const TargetSchemaTreeItem = ({ node, status }: TargetSchemaTreeItemProps) => {
 
   return (
     <Stack horizontal verticalAlign="center">
-      <div className={styles.indicator} style={{ visibility: isItemCurrentNode ? 'visible' : 'hidden' }} />
-
       <span style={{ marginRight: '4px', marginTop: '2px' }}>{statusIcon}</span>
 
       <div style={{ display: 'flex' }}>

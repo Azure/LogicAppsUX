@@ -315,7 +315,6 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
     editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
     schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.ARRAY } };
   } else if (!editor && schema?.enum && !equals(visibility, Visibility.Internal)) {
-    console.log('schemaCompare', itemSchema, schema);
     editor = constants.EDITOR.COMBOBOX;
     schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.COMBOBOX } };
     editorOptions = { ...editorOptions, options: schema.enum.map((val: ComboboxItem) => ({ key: val, value: val, displayName: val })) };

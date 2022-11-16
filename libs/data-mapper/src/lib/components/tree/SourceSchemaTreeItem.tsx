@@ -2,7 +2,7 @@ import type { SchemaNodeExtended } from '../../models';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { CheckmarkCircle16Filled, Circle16Regular } from '@fluentui/react-icons';
+import { CheckmarkCircle16Filled, Circle16Regular, AddCircle16Regular } from '@fluentui/react-icons';
 
 export const useSchemaTreeItemStyles = makeStyles({
   nodeContainer: {
@@ -42,22 +42,15 @@ export const useSchemaTreeItemStyles = makeStyles({
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
   },
-  indicator: {
-    height: '16px',
-    width: '2px',
-    flexShrink: `0 !important`,
-    ...shorthands.borderRadius(tokens.borderRadiusSmall),
-    backgroundColor: tokens.colorBrandForeground1,
-    marginRight: '4px',
-  },
 });
 
 interface SourceSchemaTreeItemProps {
   node: SchemaNodeExtended;
   isNodeAdded: boolean;
+  isNodeHovered: boolean;
 }
 
-const SourceSchemaTreeItem = ({ node, isNodeAdded }: SourceSchemaTreeItemProps) => {
+const SourceSchemaTreeItem = ({ node, isNodeAdded, isNodeHovered }: SourceSchemaTreeItemProps) => {
   const styles = useSchemaTreeItemStyles();
 
   const BundledTypeIcon = iconForSchemaNodeDataType(node.schemaNodeDataType, 16, true, node.nodeProperties);
@@ -75,6 +68,8 @@ const SourceSchemaTreeItem = ({ node, isNodeAdded }: SourceSchemaTreeItemProps) 
       <span style={{ display: 'flex', position: 'sticky', right: 10 }}>
         {isNodeAdded ? (
           <CheckmarkCircle16Filled primaryFill={tokens.colorBrandForeground1} />
+        ) : isNodeHovered ? (
+          <AddCircle16Regular primaryFill={tokens.colorNeutralForeground3} />
         ) : (
           <Circle16Regular primaryFill={tokens.colorNeutralForeground3} />
         )}

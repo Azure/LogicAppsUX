@@ -18,7 +18,7 @@ import { Meta } from '@storybook/addon-docs';
 - Logic Apps workflow (folder - w/ schemas) - see steps to create below:
   1.  In Azure Tools extension tab under Logic Apps (Standard), click the 'Create New Project' icon, and choose where you want the project folder
   2.  Open that folder in VS Code, then go back to Logic Apps (Standard), and click 'Create New Workflow' -> Stateless -> Press Enter
-  3.  Make sure that ./Artifacts/Schemas exists within the project folder, and add an .xsd template schema for testing (ask the DM/LA team for some)
+  3.  Make sure that ./Artifacts/Schemas exists within the project folder, and add an .xsd schema for testing (see the DM Overview doc for test data)
 
 ### Daily .VSIX Build
 
@@ -33,12 +33,11 @@ In order to utilize the above file once downloaded:
 
 You're all set! See the section on usage/functionality at the bottom to help you get started!
 
-**NOTE (9/15/2022):** Leaving this here for now until completely sure that public workflow extension bundle has necessary endpoints - if
-you're having issues, you may still have to follow the 'Backend Runtime Setup' instructions below
+**NOTE (11/15/2022):** Data Mapper's API endpoints will be in the public workflow extension bundle soon (at which time this note will be updated to reflect that) - in the meantime, see the 'Backend Runtime Setup' instructions below
 
 ### Build (Dev/Debug)
 
-To build, run the following commands in order (from the root of the repo folder):
+To build, run the following commands _in order_ (from the root of the repo folder):
 
 ```bash
 nx build vs-code-data-mapper
@@ -75,6 +74,5 @@ The extension will activate/initialize automatically upon viewing the Azure Tool
 
 Listed below are different ways you can kick off your usage/flow of Data Mapper:
 
-- Context menu - load data map
-- Azure Tools view - create new data map
-- Within Data Mapper component - ConfigPane (choosing schemas) for existing schema files; save data maps to filesystem
+- Create a new data map: open the Azure Tools extension tab, find the Data Mapper sub-view, and click either 'Create new data map' button
+- Load a data map: right-click on a .yml map definition
