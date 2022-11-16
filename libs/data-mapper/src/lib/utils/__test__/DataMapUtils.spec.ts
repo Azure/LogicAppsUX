@@ -184,9 +184,9 @@ describe('utils/DataMap', () => {
       const input1 = parentTarget.inputs['0'][1] as ConnectionUnit;
       const input2 = parentTarget.inputs['0'][2] as ConnectionUnit;
 
-      expect(input0.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/Year/Month/Day');
-      expect(input1.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/Year/Month');
-      expect(input2.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/Year');
+      expect(input0.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay');
+      expect(input1.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/SourceYear/SourceMonth');
+      expect(input2.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/SourceYear');
     });
   });
 });
