@@ -112,7 +112,7 @@ export const initializeComplexArrayItems = (
 export const validationAndSerializeComplexArray = (
   editorString: string,
   nodeMap: Map<string, ValueSegment>,
-  dimensionalSchema: any[],
+  itemSchema: any,
   setItems: (items: ComplexArrayItems[]) => void,
   setIsValid: (b: boolean) => void,
   setCollapsed?: (b: boolean) => void,
@@ -133,7 +133,11 @@ export const validationAndSerializeComplexArray = (
       jsonEditor.forEach((jsonEditorItem: unknown, index: number) => {
         const flatJSON = flattenObject(jsonEditorItem);
         const returnVal = Object.keys(flatJSON).map((key) => {
-          if (!dimensionalSchema.map((item) => item.title).includes(key)) {
+          if (
+            !getOneDimensionalSchema(itemSchema)
+              .map((item) => item.title)
+              .includes(key)
+          ) {
             const intl = getIntl();
             const errorMessage = intl.formatMessage(
               {
@@ -147,7 +151,7 @@ export const validationAndSerializeComplexArray = (
           }
           return { title: key, value: convertStringToSegments(flatJSON[key], true, nodeMap) };
         });
-        if (!validateComplexArrayItem(dimensionalSchema, returnVal, index, setErrorMessage)) {
+        if (!validateComplexArrayItem(itemSchema, returnVal, index, setErrorMessage)) {
           throw Error;
         }
         returnItems.push({ key: guid(), items: returnVal });
@@ -163,12 +167,13 @@ export const validationAndSerializeComplexArray = (
 };
 
 const validateComplexArrayItem = (
-  dimensionalSchema: any[],
+  itemSchema: any,
   complexArrayItem: ComplexArrayItem[],
   index: number,
   setErrorMessage?: (s: string) => void
 ): boolean => {
   const items = complexArrayItem.map((item) => item.title);
+  const dimensionalSchema = getOneDimensionalSchema(itemSchema);
   for (let i = 0; i < dimensionalSchema.length; i++) {
     if (dimensionalSchema[i].isRequired && !items.includes(dimensionalSchema[i].title)) {
       const intl = getIntl();

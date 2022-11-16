@@ -22,7 +22,7 @@ export const serializeSimpleArray = (
 
 export const serializeComplexArray = (
   editor: LexicalEditor,
-  dimensionalSchema: any[],
+  itemSchema: unknown,
   setItems: (items: ComplexArrayItems[]) => void,
   setIsValid: (b: boolean) => void,
   setErrorMessage: (s: string) => void
@@ -30,7 +30,7 @@ export const serializeComplexArray = (
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
-    validationAndSerializeComplexArray(editorString, nodeMap, dimensionalSchema, setItems, setIsValid, undefined, setErrorMessage);
+    validationAndSerializeComplexArray(editorString, nodeMap, itemSchema, setItems, setIsValid, undefined, setErrorMessage);
   });
 };
 

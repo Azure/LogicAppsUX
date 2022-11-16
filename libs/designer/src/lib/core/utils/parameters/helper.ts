@@ -310,7 +310,6 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
   const { dynamicValues, type, itemSchema, visibility, value } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel;
-  // console.log(parameter);
   if (!editor && type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
     editor = constants.EDITOR.ARRAY;
     editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
@@ -350,7 +349,7 @@ const destructureSchema = (schema: any): any => {
     return;
   }
   if (schema.type && schema.type !== 'object') {
-    return { ...schema, isRequired: true };
+    return { ...schema };
   }
   if (schema.type === 'object' && schema.properties) {
     return destructureSchema(schema.properties);

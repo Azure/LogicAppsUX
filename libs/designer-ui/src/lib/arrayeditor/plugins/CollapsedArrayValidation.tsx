@@ -3,7 +3,6 @@ import type { ValueSegment } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
 import { showCollapsedValidation } from '../../editor/base/utils/helper';
 import { serializeSimpleArray, serializeComplexArray } from '../util/serializecollapsedarray';
-import { getOneDimensionalSchema } from '../util/util';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
@@ -36,13 +35,7 @@ export const CollapsedArrayValidation = ({
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       if (itemSchema) {
-        serializeComplexArray(
-          editor,
-          getOneDimensionalSchema(itemSchema),
-          setItems as (simpleItems: ComplexArrayItems[]) => void,
-          setIsValid,
-          setErrorMessage
-        );
+        serializeComplexArray(editor, itemSchema, setItems as (complexItems: ComplexArrayItems[]) => void, setIsValid, setErrorMessage);
       } else {
         serializeSimpleArray(editor, setItems as (simpleItems: SimpleArrayItem[]) => void, setIsValid);
       }
