@@ -389,17 +389,19 @@ export const bringInParentSourceNodesForRepeating = (
   newState: DataMapOperationState
 ) => {
   if (parentTargetNode) {
-    const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)].inputs;
-    Object.keys(inputsToParentTarget).forEach((key) => {
-      const inputs = inputsToParentTarget[key];
-      inputs.forEach((input) => {
-        if (input && typeof input !== 'string') {
-          const inputSrc = input.node;
-          if (isSchemaNodeExtended(inputSrc)) {
-            newState.currentSourceSchemaNodes.push(inputSrc);
+    const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)]?.inputs;
+    if (inputsToParentTarget) {
+      Object.keys(inputsToParentTarget).forEach((key) => {
+        const inputs = inputsToParentTarget[key];
+        inputs.forEach((input) => {
+          if (input && typeof input !== 'string') {
+            const inputSrc = input.node;
+            if (isSchemaNodeExtended(inputSrc)) {
+              newState.currentSourceSchemaNodes.push(inputSrc);
+            }
           }
-        }
+        });
       });
-    });
+    }
   }
 };
