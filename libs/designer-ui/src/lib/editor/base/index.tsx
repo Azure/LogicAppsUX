@@ -81,6 +81,7 @@ export interface BasePlugins {
   tokens?: boolean;
   treeView?: boolean;
   toolBar?: boolean;
+  tabbable?: boolean;
 }
 
 const onError = (error: Error) => {
@@ -121,7 +122,7 @@ export const BaseEditor = ({
       }),
   };
 
-  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, toolBar } = BasePlugins;
+  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, toolBar, tabbable } = BasePlugins;
 
   const editorInputLabel = intl.formatMessage({
     defaultMessage: 'Editor Input',
@@ -187,7 +188,7 @@ export const BaseEditor = ({
         <OnBlur command={handleBlur} />
         <OnFocus command={handleFocus} />
         <ReadOnly readonly={readonly} />
-        <IgnoreTab />
+        {tabbable ? null : <IgnoreTab />}
         {tokens ? <InsertTokenNode /> : null}
         {tokens ? <DeleteTokenNode /> : null}
         {children}

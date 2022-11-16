@@ -1,13 +1,13 @@
 import { initializeGraphState } from '../../parsers/ParseReduxAction';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import { addSwitchCaseToWorkflow, addNodeToWorkflow } from '../../parsers/addNodeToWorkflow';
-import type { DeleteNodePayload} from '../../parsers/deleteNodeFromWorkflow';
-import { deleteWorkflowNode , deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
-import { addNewEdge } from '../../parsers/restructuringHelpers';
+import type { DeleteNodePayload } from '../../parsers/deleteNodeFromWorkflow';
+import { deleteWorkflowNode, deleteNodeFromWorkflow } from '../../parsers/deleteNodeFromWorkflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
+import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { getImmediateSourceNodeIds } from '../../utils/graph';
 import type { SpecTypes, WorkflowState } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
@@ -58,7 +58,7 @@ export const workflowSlice = createSlice({
         delete state.nodesMetadata[placeholderNodeId];
 
         if (graph.edges?.length) {
-          graph.edges = graph.edges.map(edge => {
+          graph.edges = graph.edges.map((edge) => {
             if (equals(edge.source, placeholderNodeId)) {
               // eslint-disable-next-line no-param-reassign
               edge.source = action.payload.nodeId;
@@ -130,7 +130,7 @@ export const workflowSlice = createSlice({
           height: 44,
           type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
         };
-        const existingChildren = graph.edges?.filter(edge => equals(edge.source, nodeId)).map(edge => edge.target) ?? [];
+        const existingChildren = graph.edges?.filter((edge) => equals(edge.source, nodeId)).map((edge) => edge.target) ?? [];
 
         deleteNodeFromWorkflow(action.payload, graph, state.nodesMetadata, state);
 

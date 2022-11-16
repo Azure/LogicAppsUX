@@ -8,11 +8,6 @@ import { format } from '@microsoft-logic-apps/utils';
 import type { ElementNode } from 'lexical';
 import { $getNodeByKey, $isElementNode, $isTextNode } from 'lexical';
 
-interface jsonItemObject {
-  key: string;
-  value: string;
-}
-
 export const removeFirstAndLast = (segments: ValueSegment[], removeFirst?: string, removeLast?: string): ValueSegment[] => {
   const n = segments.length - 1;
   segments.forEach((segment, i) => {
@@ -29,49 +24,7 @@ export const removeFirstAndLast = (segments: ValueSegment[], removeFirst?: strin
 };
 
 export const showCollapsedValidation = (collapsedValue: ValueSegment[]): boolean => {
-  return (
-    collapsedValue?.length === 1 &&
-    (collapsedValue[0].type === ValueSegmentType.TOKEN ||
-      (collapsedValue[0].type === ValueSegmentType.LITERAL &&
-        collapsedValue[0].value.trim().startsWith('"') &&
-        collapsedValue[0].value.trim().endsWith('"')))
-  );
-};
-
-export const initializeArrayValidation = (initialValue?: ValueSegment[]): boolean => {
-  const editorString = initialValue?.map((segment) => segment.value).join('');
-  return !editorString || isValidArray(editorString);
-};
-
-export const isValidArray = (s: string, itemSchema?: string | string[], setErrorMessage?: (error: string) => void): boolean => {
-  return (
-    s.startsWith('[') &&
-    s.endsWith(']') &&
-    validateArrayStrings(s) &&
-    (Array.isArray(itemSchema) ? validateComplexArray(s, itemSchema, setErrorMessage) : true)
-  );
-};
-
-export const validateArrayStrings = (s: string): boolean => {
-  try {
-    JSON.parse(s);
-  } catch (e) {
-    return false;
-  }
-  return true;
-};
-
-const validateComplexArray = (s: string, itemSchema: string[], setErrorMessage?: (error: string) => void): boolean => {
-  const currItems = JSON.parse(s);
-  for (const [index, [, item]] of Object.entries(Object.entries(currItems))) {
-    for (let i = 0; i < itemSchema.length; i++) {
-      if (!(itemSchema[i] in (item as jsonItemObject))) {
-        setErrorMessage?.(`Array Item ${index} is missing property ${itemSchema[i]}`);
-        return false;
-      }
-    }
-  }
-  return true;
+  return collapsedValue?.length === 1;
 };
 
 export const initializeDictionaryValidation = (initialValue?: ValueSegment[]): boolean => {
@@ -347,3 +300,20 @@ function checkForInvalidValues(authentication: any): string {
   }
   return errorMessages.length > 0 ? errorMessages.join(' ') : '';
 }
+
+export const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
+  if (a.length !== b.length) {
+    return true;
+  }
+  for (let i = 0; i < a.length; i++) {
+    const newA = { token: a[i].token, value: a[i].value };
+    const newB = { token: b[i].token, value: b[i].value };
+    if (a[i].type !== b[i].type) {
+      return true;
+    }
+    if (JSON.stringify(newA, Object.keys(newA).sort()) !== JSON.stringify(b[i], Object.keys(newB).sort())) {
+      return true;
+    }
+  }
+  return false;
+};

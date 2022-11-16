@@ -26,7 +26,6 @@ const menuButtonStyles: IIconStyles = {
   },
 };
 export interface ExpandedSimpleArrayProps {
-  itemSchema?: string;
   labelProps: LabelProps;
   items: SimpleArrayItem[];
   canDeleteLastItem: boolean;
@@ -37,7 +36,6 @@ export interface ExpandedSimpleArrayProps {
 }
 
 export const ExpandedSimpleArray = ({
-  itemSchema,
   labelProps,
   items,
   canDeleteLastItem,
@@ -63,7 +61,7 @@ export const ExpandedSimpleArray = ({
         return (
           <div key={index} className="msla-array-item">
             <div className="msla-array-item-header">
-              {renderLabel(index, labelProps, itemSchema)}
+              {renderLabel(index, labelProps.text, true)}
               <div className="msla-array-item-commands">
                 <ItemMenuButton
                   disabled={!!readOnly}
@@ -97,11 +95,10 @@ export const ExpandedSimpleArray = ({
   );
 };
 
-export const renderLabel = (index: number, labelProps: LabelProps, labelName?: string): JSX.Element => {
-  const { text, isRequiredField } = labelProps as LabelProps;
+export const renderLabel = (index: number, labelName: string, isRequired?: boolean): JSX.Element => {
   return (
     <div className="msla-array-editor-label">
-      <Label text={(labelName ? labelName : text) + ' - ' + (index + 1)} isRequiredField={isRequiredField} />
+      <Label text={labelName + ' - ' + (index + 1)} isRequiredField={isRequired ?? false} />
     </div>
   );
 };
