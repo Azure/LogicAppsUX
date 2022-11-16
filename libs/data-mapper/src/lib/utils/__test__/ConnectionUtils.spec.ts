@@ -348,6 +348,7 @@ describe('utils/Connections', () => {
 
     it('brings in all of the parent source nodes for many to one scenario', () => {
       dmState.dataMapConnections = fullConnectionDictionaryForOneToManyLoop;
+      dmState.currentSourceSchemaNodes = [];
       bringInParentSourceNodesForRepeating(parentManyToOneTargetNode, dmState as DataMapOperationState);
       expect(dmState.currentSourceSchemaNodes?.length).toEqual(3);
     });

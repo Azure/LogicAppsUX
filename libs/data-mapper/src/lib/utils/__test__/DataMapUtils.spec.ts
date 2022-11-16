@@ -101,7 +101,6 @@ describe('utils/DataMap', () => {
     };
     const result = convertFromMapDefinition(simpleMap, extendedSource, extendedTarget, []);
     expect(result).toBeTruthy();
-    console.log(JSON.stringify(result)); // danielle need to find a way to better verify this
   });
 
   it('creates a nested loop connection', () => {
@@ -120,7 +119,6 @@ describe('utils/DataMap', () => {
     };
     const result = convertFromMapDefinition(simpleMap, extendedLoopSource, extendedLoopTarget, []);
     expect(result).toBeTruthy();
-    console.log(JSON.stringify(result));
   });
 
   describe('getSourceValueFromLoop', () => {
