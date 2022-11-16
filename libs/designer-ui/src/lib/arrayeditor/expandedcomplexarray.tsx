@@ -1,9 +1,8 @@
-import type { ComplexArrayItem } from '..';
-import type { TokenPickerHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
-import type { LabelProps } from '../label';
+import type { ComplexArrayItems, ValueSegment } from '..';
+import { StringEditor } from '..';
+import type { ChangeState, TokenPickerHandler } from '../editor/base';
+import { notEqual } from '../editor/base/utils/helper';
 import { ItemMenuButton, renderLabel } from './expandedsimplearray';
-import { EditorChangeComplex } from './plugins/EditorChangeComplex';
 import type { IIconProps } from '@fluentui/react';
 import { DefaultButton } from '@fluentui/react';
 import { guid } from '@microsoft-logic-apps/utils';
@@ -14,23 +13,19 @@ const addItemButtonIconProps: IIconProps = {
 };
 
 export interface ExpandedComplexArrayProps {
-  itemSchema: string[];
-  labelProps: LabelProps;
-  items: ComplexArrayItem[];
+  dimensionalSchema: any[];
+  allItems: ComplexArrayItems[];
   canDeleteLastItem: boolean;
   readOnly?: boolean;
-  isTrigger?: boolean;
   tokenPickerHandler: TokenPickerHandler;
-  setItems: (newItems: ComplexArrayItem[]) => void;
+  setItems: (newItems: ComplexArrayItems[]) => void;
 }
 
 export const ExpandedComplexArray = ({
-  itemSchema,
-  labelProps,
-  items,
+  dimensionalSchema,
+  allItems,
   canDeleteLastItem,
   readOnly,
-  isTrigger,
   tokenPickerHandler,
   setItems,
 }: ExpandedComplexArrayProps): JSX.Element => {
@@ -42,42 +37,47 @@ export const ExpandedComplexArray = ({
   });
 
   const deleteItem = (index: number): void => {
-    setItems(items.filter((_, i) => i !== index));
+    setItems(allItems.filter((_, i) => i !== index));
+  };
+
+  const handleArrayElementSaved = (prevVal: ValueSegment[], newState: ChangeState, index: number, innerIndex: number) => {
+    if (notEqual(prevVal, newState.value)) {
+      const newItems = [...allItems];
+      newItems[index].items[innerIndex].value = newState.value;
+      setItems(newItems);
+    }
   };
 
   return (
     <div className="msla-array-container msla-array-item-container">
-      {items.map((item, index) => {
+      {allItems.map((item, index) => {
         return (
           <div key={index} className="msla-array-item">
-            {item.value.map((complexItems, i) => {
+            {item.items.map((complexItems, i) => {
               return (
                 <div key={item.key + i}>
                   <div className="msla-array-item-header">
-                    {renderLabel(index, labelProps, itemSchema[i])}
+                    {renderLabel(index, dimensionalSchema[i].title, dimensionalSchema[i].isRequired)}
                     {i === 0 ? (
                       <div className="msla-array-item-commands">
                         <ItemMenuButton
                           disabled={!!readOnly}
                           itemKey={index}
-                          visible={canDeleteLastItem || items.length > 1}
+                          visible={canDeleteLastItem || allItems.length > 1}
                           onDeleteItem={(index) => deleteItem(index)}
                         />
                       </div>
                     ) : null}
                   </div>
-                  <BaseEditor
+                  <StringEditor
                     className="msla-array-editor-container-expanded"
-                    initialValue={complexItems ?? []}
-                    BasePlugins={{ tokens: true, clearEditor: true }}
-                    isTrigger={isTrigger}
+                    initialValue={complexItems.value ?? []}
                     tokenPickerHandler={{
                       ...tokenPickerHandler,
                       tokenPickerButtonProps: { buttonClassName: `msla-editor-tokenpicker-button` },
                     }}
-                  >
-                    <EditorChangeComplex item={complexItems ?? []} items={items} setItems={setItems} index={index} innerIndex={i} />
-                  </BaseEditor>
+                    editorBlur={(newState) => handleArrayElementSaved(complexItems.value, newState, index, i)}
+                  />
                 </div>
               );
             })}
@@ -89,7 +89,17 @@ export const ExpandedComplexArray = ({
           className="msla-array-add-item-button"
           iconProps={addItemButtonIconProps}
           text={addItemButtonLabel}
-          onClick={() => setItems([...items, { value: Array.from(Array(itemSchema.length), () => []), key: guid() }])}
+          onClick={() =>
+            setItems([
+              ...allItems,
+              {
+                key: guid(),
+                items: dimensionalSchema.map((item) => {
+                  return { title: item.title, value: [] };
+                }),
+              },
+            ])
+          }
         />
       </div>
     </div>

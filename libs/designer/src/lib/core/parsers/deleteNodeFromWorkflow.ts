@@ -31,7 +31,7 @@ export const deleteNodeFromWorkflow = (
 
   // Adjust edges
   if (isTrigger) {
-    workflowGraph.edges = (workflowGraph.edges ?? []).filter(edge => edge.source !== nodeId);
+    workflowGraph.edges = (workflowGraph.edges ?? []).filter((edge) => edge.source !== nodeId);
   } else if (multipleParents) {
     const childId = (workflowGraph.edges ?? []).find((edge) => edge.source === nodeId)?.target ?? '';
     reassignEdgeTargets(state, nodeId, childId, workflowGraph);

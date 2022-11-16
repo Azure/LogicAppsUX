@@ -47,6 +47,7 @@ export const CollapsedDictionary = ({
           className="msla-collapsed-editor-container"
           BasePlugins={{
             tokens: true,
+            tabbable: true,
           }}
           placeholder={editorPlaceHolder}
           initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}

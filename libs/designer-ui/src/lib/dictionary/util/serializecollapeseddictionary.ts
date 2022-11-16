@@ -18,9 +18,11 @@ export const serializeDictionary = (editor: LexicalEditor, setItems: (items: Dic
     const returnItems: DictionaryEditorItemProps[] = [];
 
     for (const [key, value] of Object.entries(jsonEditor)) {
+      const newKey = key.toString();
+      const newValue = (value as string).toString();
       returnItems.push({
-        key: convertStringToSegments(key as string, true, nodeMap),
-        value: convertStringToSegments(value as string, true, nodeMap),
+        key: convertStringToSegments(newKey as string, true, nodeMap),
+        value: convertStringToSegments(newValue as string, true, nodeMap),
       });
     }
     setItems(returnItems);

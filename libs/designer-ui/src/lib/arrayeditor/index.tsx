@@ -1,22 +1,27 @@
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import { initializeArrayValidation } from '../editor/base/utils/helper';
 import type { LabelProps } from '../label';
 import { CollapsedArray } from './collapsedarray';
 import { ExpandedComplexArray } from './expandedcomplexarray';
 import { ExpandedSimpleArray } from './expandedsimplearray';
 import { parseComplexItems, parseSimpleItems } from './util/serializecollapsedarray';
-import { useState } from 'react';
+import { getOneDimensionalSchema, initializeComplexArrayItems, initializeSimpleArrayItems } from './util/util';
+import { useEffect, useState } from 'react';
 
 export enum ArrayType {
   COMPLEX = 'complex',
   SIMPLE = 'simple',
 }
+
 export interface ComplexArrayItem {
+  title: string;
+  value: ValueSegment[];
+}
+export interface ComplexArrayItems {
   key: string;
   visibility?: string;
-  value: ValueSegment[][];
+  items: ComplexArrayItem[];
 }
 
 export interface SimpleArrayItem {
@@ -25,49 +30,40 @@ export interface SimpleArrayItem {
   value: ValueSegment[];
 }
 
-interface BaseArrayEditorProps extends BaseEditorProps {
-  isCollapsed?: boolean;
+interface ArrayEditorProps extends BaseEditorProps {
   canDeleteLastItem?: boolean;
   disableToggle?: boolean;
   labelProps: LabelProps;
+  itemSchema?: unknown;
+  type: ArrayType.COMPLEX | ArrayType.SIMPLE;
 }
-export type ArrayEditorProps = BaseArrayEditorProps &
-  (
-    | {
-        type: ArrayType.COMPLEX;
-        initialItems: ComplexArrayItem[];
-        itemSchema: string[];
-      }
-    | {
-        type: ArrayType.SIMPLE;
-        initialItems: SimpleArrayItem[];
-        itemSchema?: string;
-      }
-  );
 
 export const ArrayEditor: React.FC<ArrayEditorProps> = ({
-  isCollapsed = false,
   canDeleteLastItem = true,
   disableToggle = false,
   initialValue,
   type,
-  initialItems = [],
   labelProps,
   itemSchema,
   tokenPickerHandler,
   onChange,
   ...baseEditorProps
 }): JSX.Element => {
-  const [collapsed, setCollapsed] = useState(isCollapsed);
-  const [items, setItems] = useState(initialItems);
-  const [isValid, setIsValid] = useState<boolean>(initializeArrayValidation(initialValue));
-  const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(
-    initialItems
-      ? type === ArrayType.SIMPLE
-        ? parseSimpleItems(initialItems as SimpleArrayItem[])
-        : parseComplexItems(initialItems as ComplexArrayItem[], itemSchema)
-      : initialValue
-  );
+  const [collapsed, setCollapsed] = useState(false);
+  const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
+  const [items, setItems] = useState<ComplexArrayItems[] | SimpleArrayItem[]>([]);
+  const [isValid, setIsValid] = useState<boolean>(false);
+  let dimensionalSchema: unknown[] = [];
+  if (type === ArrayType.COMPLEX) {
+    dimensionalSchema = getOneDimensionalSchema(itemSchema);
+  }
+
+  useEffect(() => {
+    type === ArrayType.COMPLEX
+      ? initializeComplexArrayItems(initialValue, dimensionalSchema, setItems, setIsValid, setCollapsed)
+      : initializeSimpleArrayItems(initialValue, setItems, setIsValid, setCollapsed);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -79,28 +75,28 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
     setCollapsedValue(objectValue);
 
     if (!collapsed) {
-      onChange?.({ value: objectValue, viewModel: { items: newItems } });
+      onChange?.({ value: objectValue });
     }
   };
 
-  const updateComplexItems = (newItems: ComplexArrayItem[]) => {
+  const updateComplexItems = (newItems: ComplexArrayItems[]) => {
     setItems(newItems);
     if (type === ArrayType.COMPLEX) {
       const objectValue = parseComplexItems(newItems, itemSchema);
       setCollapsedValue(objectValue);
       if (!collapsed) {
-        onChange?.({ value: objectValue, viewModel: { items: newItems } });
+        onChange?.({ value: objectValue });
       }
     }
   };
 
   const handleBlur = (): void => {
-    onChange?.({ value: collapsedValue, viewModel: { items: isValid ? items : undefined } });
+    onChange?.({ value: collapsedValue });
   };
 
   return (
     <div className="msla-array-editor-container">
-      {collapsed || !initialItems ? (
+      {collapsed ? (
         <CollapsedArray
           labelProps={labelProps}
           isValid={isValid}
@@ -108,6 +104,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
           isTrigger={baseEditorProps.isTrigger}
           readOnly={baseEditorProps.readonly}
           itemSchema={itemSchema}
+          dimensionalSchema={dimensionalSchema}
           setItems={type === ArrayType.SIMPLE ? updateSimpleItems : updateComplexItems}
           setIsValid={setIsValid}
           tokenPickerHandler={tokenPickerHandler}
@@ -116,7 +113,6 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
         />
       ) : type === ArrayType.SIMPLE ? (
         <ExpandedSimpleArray
-          itemSchema={itemSchema}
           items={items as SimpleArrayItem[]}
           labelProps={labelProps}
           readOnly={baseEditorProps.readonly}
@@ -127,11 +123,9 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
         />
       ) : (
         <ExpandedComplexArray
-          itemSchema={itemSchema}
-          items={items as ComplexArrayItem[]}
-          labelProps={labelProps}
+          dimensionalSchema={dimensionalSchema}
+          allItems={items as ComplexArrayItems[]}
           readOnly={baseEditorProps.readonly}
-          isTrigger={baseEditorProps.isTrigger}
           canDeleteLastItem={canDeleteLastItem}
           setItems={updateComplexItems}
           tokenPickerHandler={tokenPickerHandler}
@@ -139,7 +133,11 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
       )}
       <div className="msla-array-commands">
         {!disableToggle ? (
-          <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || baseEditorProps.readonly} toggleCollapsed={toggleCollapsed} />
+          <EditorCollapseToggle
+            collapsed={collapsed}
+            disabled={(!isValid || baseEditorProps.readonly) && collapsed}
+            toggleCollapsed={toggleCollapsed}
+          />
         ) : null}
       </div>
     </div>

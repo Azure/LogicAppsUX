@@ -1,10 +1,10 @@
 import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
 import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
-import { notEqual } from '../dictionary/plugins/SerializeExpandedDictionary';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeState, TokenPickerHandler } from '../editor/base';
+import { notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
 import type { MoveOption } from './Group';
 import { RowDropdown } from './RowDropdown';

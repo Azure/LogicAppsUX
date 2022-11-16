@@ -1,4 +1,4 @@
-import type { SimpleArrayItem, ComplexArrayItem } from '.';
+import type { SimpleArrayItem, ComplexArrayItems } from '.';
 import type { ValueSegment } from '../editor';
 import type { TokenPickerHandler } from '../editor/base';
 import { BaseEditor } from '../editor/base';
@@ -13,9 +13,10 @@ export interface CollapsedArrayProps {
   collapsedValue: ValueSegment[];
   readOnly?: boolean;
   isTrigger?: boolean;
-  itemSchema?: string | string[];
+  itemSchema?: unknown;
+  dimensionalSchema: unknown[];
   setCollapsedValue: (val: ValueSegment[]) => void;
-  setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItem[]) => void);
+  setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
   onBlur?: () => void;
   tokenPickerHandler: TokenPickerHandler;
@@ -64,6 +65,7 @@ export const CollapsedArray = ({
           className="msla-collapsed-editor-container"
           BasePlugins={{
             tokens: true,
+            tabbable: true,
           }}
           readonly={readOnly}
           isTrigger={isTrigger}
