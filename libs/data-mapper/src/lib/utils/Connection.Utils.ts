@@ -390,7 +390,6 @@ export const bringInParentSourceNodesForRepeating = (
 ) => {
   if (parentTargetNode) {
     const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)].inputs;
-    // Danielle: is it possible that there can be a function in between that we need to pull in?
     Object.keys(inputsToParentTarget).forEach((key) => {
       const inputs = inputsToParentTarget[key];
       inputs.forEach((input) => {
