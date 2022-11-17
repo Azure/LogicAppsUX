@@ -396,7 +396,7 @@ export const bringInParentSourceNodesForRepeating = (
         inputs.forEach((input) => {
           if (input && typeof input !== 'string') {
             const inputSrc = input.node;
-            if (isSchemaNodeExtended(inputSrc)) {
+            if (isSchemaNodeExtended(inputSrc) && !newState.currentSourceSchemaNodes.find((node) => node.key === inputSrc.key)) {
               newState.currentSourceSchemaNodes.push(inputSrc);
             }
           }
