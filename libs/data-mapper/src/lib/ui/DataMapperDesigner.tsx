@@ -171,11 +171,10 @@ export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurre
       });
   }, [dispatch, dataMapDefinition, saveStateCall, sourceSchema, targetSchema]);
 
-  const ctrlSPressed = useKeyPress(['Meta+s']);
+  const ctrlSPressed = useKeyPress(['Meta+s', 'ctrl+s']);
   useEffect(() => {
     if (ctrlSPressed) {
       onSaveClick();
-      console.log('S');
     }
   }, [ctrlSPressed, onSaveClick]);
 

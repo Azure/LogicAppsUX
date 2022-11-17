@@ -48,7 +48,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
   const dispatch = useDispatch<AppDispatch>();
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
-  const ctrlZPressed = useKeyPress('Meta+z'); // 'Meta+s', 'Strg+s',
+  const ctrlZPressed = useKeyPress(['Meta+z', 'ctrl+z']);
   useEffect(() => {
     if (ctrlZPressed) {
       dispatch(undoDataMapOperation());
@@ -56,7 +56,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
     }
   }, [ctrlZPressed, dispatch]);
 
-  const ctrlYPressed = useKeyPress(['Meta+y']);
+  const ctrlYPressed = useKeyPress(['Meta+y', 'ctrl+y']);
   useEffect(() => {
     if (ctrlYPressed) {
       dispatch(redoDataMapOperation());
