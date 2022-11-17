@@ -191,7 +191,8 @@ const typeValidatePotentialInlineFunctions = (functionsToTypeValidate: FunctionD
   // Obtain input's normalized output type, and compare it against each function's inputs' allowedTypes
   const inputNormalizedOutputType = isFunctionData(source) ? source.outputValueType : source.normalizedDataType;
 
-  // Obtain the output's normalized input type (schema node), or a list of its inputs' allowedTypes (function node), and compare it against each function's output type
+  // Obtain the output's normalized input type (schema node), or a list of its inputs' allowedTypes (function node)
+  // and compare it against each function's output type
   const outputNormalizedInputTypes = isFunctionData(destination)
     ? destination.inputs.flatMap((input) => input.allowedTypes)
     : [destination.normalizedDataType];
@@ -210,7 +211,11 @@ const typeValidatePotentialInlineFunctions = (functionsToTypeValidate: FunctionD
     // matches one of the output Function's inputs' types, but for a different input slot than the existing one goes to
     // - which raises the question - do we overwrite that new slot if there's something in it? Etc etc...
     // So, TODO: figure out how we want to handle this case, and likely handle it here
-    if (functionNode.outputValueType !== inputNormalizedOutputType) {
+    if (
+      functionOutputType !== inputNormalizedOutputType &&
+      functionOutputType !== NormalizedDataType.Any &&
+      inputNormalizedOutputType !== NormalizedDataType.Any
+    ) {
       return false;
     }
 
