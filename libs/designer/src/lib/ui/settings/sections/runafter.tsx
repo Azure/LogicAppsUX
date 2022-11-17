@@ -2,7 +2,7 @@ import type { SectionProps } from '../';
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
 import type { WorkflowEdge } from '../../../core/parsers/models/workflowNode';
-import { type ValidationError, ValidationWarningKeys } from '../../../core/state/settingSlice';
+import { type ValidationError, ValidationWarningKeys } from '../../../core/state/setting/settingSlice';
 import { addEdgeFromRunAfter, removeEdgeFromRunAfter, updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';

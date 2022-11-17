@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import type { OperationMetadataState } from '../../../core/state/operation/operationMetadataSlice';
-import { setValidationError, ValidationErrorKeys, type ValidationError } from '../../../core/state/settingSlice';
+import { setValidationError, ValidationErrorKeys, type ValidationError } from '../../../core/state/setting/settingSlice';
 import { isISO8601 } from '../../../core/utils/validation';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';

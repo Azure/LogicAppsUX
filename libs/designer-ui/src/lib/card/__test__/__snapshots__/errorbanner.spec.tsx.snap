@@ -2,43 +2,47 @@
 
 exports[`lib/card/errorbanner should render 1`] = `
 <div
-  className="panel-card-error severeWarning"
+  className="ms-TooltipHost root-109"
+  onBlurCapture={[Function]}
+  onFocusCapture={[Function]}
+  onKeyDown={[Function]}
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+  role="none"
 >
-  <i
-    aria-hidden={true}
-    className="panel-card-error-icon root-111"
-    data-icon-name="Warning"
-  >
-    
-  </i>
   <div
-    className="ms-TooltipHost root-112"
-    onBlurCapture={[Function]}
-    onFocusCapture={[Function]}
-    onKeyDown={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="none"
+    className="panel-card-error severeWarning"
   >
-    errorMessage
-    <div
-      hidden={true}
-      id="tooltip0"
-      style={
-        Object {
-          "border": 0,
-          "height": 1,
-          "margin": -1,
-          "overflow": "hidden",
-          "padding": 0,
-          "position": "absolute",
-          "whiteSpace": "nowrap",
-          "width": 1,
-        }
-      }
+    <i
+      aria-hidden={true}
+      className="panel-card-error-icon root-112"
+      data-icon-name="Warning"
+    >
+      
+    </i>
+    <p
+      className="panel-card-error-text"
     >
       errorMessage
-    </div>
+    </p>
+  </div>
+  <div
+    hidden={true}
+    id="tooltip0"
+    style={
+      Object {
+        "border": 0,
+        "height": 1,
+        "margin": -1,
+        "overflow": "hidden",
+        "padding": 0,
+        "position": "absolute",
+        "whiteSpace": "nowrap",
+        "width": 1,
+      }
+    }
+  >
+    errorMessage
   </div>
 </div>
 `;

@@ -2,7 +2,7 @@ import type { HeaderClickHandler } from '.';
 import constants from '../../common/constants';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
-import { type ValidationError, ValidationWarningKeys } from '../../core/state/settingSlice';
+import { type ValidationError, ValidationWarningKeys } from '../../core/state/setting/settingSlice';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
