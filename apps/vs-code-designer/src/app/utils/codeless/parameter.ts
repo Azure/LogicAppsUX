@@ -1,7 +1,12 @@
 import { parametersFileName } from '../../../constants';
 import { localize } from '../../../localize';
+import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
+import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
-import type { Parameter } from '@microsoft-logic-apps/utils';
+import { getFunctionProjectRoot } from './connection';
+import { addNewFileInCSharpProject } from './updateBuildFile';
+import type { Parameter, WorkflowParameter } from '@microsoft-logic-apps/utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -21,4 +26,20 @@ export async function getParametersJson(workflowFilePath: string): Promise<Recor
   }
 
   return {};
+}
+
+export async function saveParameters(context: IActionContext, workflowFilePath: string, parameters: WorkflowParameter): Promise<void> {
+  const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
+  const parametersFilePath = path.join(projectPath!, parametersFileName);
+  const parametersFileExists = fse.pathExistsSync(parametersFilePath);
+
+  if (parameters && Object.keys(parameters).length) {
+    await writeFormattedJson(parametersFilePath, parameters);
+
+    if (!parametersFileExists && (await isCSharpProject(context, projectPath!))) {
+      await addNewFileInCSharpProject(context, parametersFileName, projectPath!);
+    }
+  } else if (parametersFileExists) {
+    await writeFormattedJson(parametersFilePath, parameters);
+  }
 }

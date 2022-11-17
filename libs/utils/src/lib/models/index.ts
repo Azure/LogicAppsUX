@@ -1,7 +1,6 @@
 export * from './armresource';
 export * from './connection';
 export * from './connector';
-export * from './extensioncommand';
 export * from './managedidentity';
 export * from './operation';
 export * from './operationDiscoveryResults';

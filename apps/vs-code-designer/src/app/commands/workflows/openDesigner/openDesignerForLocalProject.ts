@@ -9,17 +9,26 @@ import {
   getCodelessAppData,
   removeWebviewPanelFromCache,
 } from '../../../utils/codeless/common';
-import { getConnectionsFromFile, getFunctionProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
+import {
+  containsApiHubConnectionReference,
+  getConnectionsAndSettingsToUpdate,
+  getConnectionsFromFile,
+  getFunctionProjectRoot,
+  getParametersFromFile,
+  saveConectionReferences,
+} from '../../../utils/codeless/connection';
+import { saveParameters } from '../../../utils/codeless/parameter';
 import { startDesignTimeApi } from '../../../utils/codeless/startDesignTimeApi';
+import { sendRequest } from '../../../utils/requestUtils';
 import { OpenDesignerBase } from './openDesignerBase';
-import { ExtensionCommand } from '@microsoft-logic-apps/utils';
+import { ExtensionCommand, HTTP_METHODS } from '@microsoft-logic-apps/utils';
 import type { IDesignerPanelMetadata, AzureConnectorDetails, Parameter } from '@microsoft-logic-apps/utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { readFileSync } from 'fs';
+import { writeFileSync, readFileSync } from 'fs';
 import * as path from 'path';
 import * as requestP from 'request-promise';
-import { Uri, ViewColumn, window, workspace } from 'vscode';
-import type { WebviewPanel } from 'vscode';
+import { ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
+import type { WebviewPanel, ProgressOptions } from 'vscode';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private migrationOptions: Record<string, any>;
@@ -76,7 +85,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       azureDetails: this.panelMetadata.azureDetails,
     });
 
-    this.panel.webview.onDidReceiveMessage(async (message) => this._handleWebviewMsg(message), ext.context.subscriptions);
+    this.panel.webview.onDidReceiveMessage(async (message) => await this._handleWebviewMsg(message), ext.context.subscriptions);
 
     this.panel.onDidDispose(
       () => {
@@ -94,9 +103,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     this.panel.webview.postMessage(msg);
   }
 
-  private _handleWebviewMsg(msg: any) {
+  private async _handleWebviewMsg(msg: any) {
     switch (msg.command) {
-      case ExtensionCommand.initialize:
+      case ExtensionCommand.initialize: {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
@@ -107,8 +116,91 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           },
         });
         break;
+      }
+      case ExtensionCommand.save: {
+        await this.saveWorkflow(
+          this.workflowFilePath,
+          this.panelMetadata.workflowContent,
+          msg,
+          this.panelMetadata.azureDetails?.tenantId,
+          this.panelMetadata.azureDetails?.workflowManagementBaseUrl
+        );
+        await this.validateWorkflow(this.panelMetadata.workflowContent);
+        break;
+      }
       default:
         break;
+    }
+  }
+
+  private async saveWorkflow(
+    filePath: string,
+    workflow: any,
+    workflowToSave: any,
+    azureTenantId?: string,
+    workflowBaseManagementUri?: string
+  ): Promise<void> {
+    const options: ProgressOptions = {
+      location: ProgressLocation.Notification,
+      title: localize('azureFunctions.savingWorkflow', 'Saving Workflow...'),
+    };
+
+    await window.withProgress(options, async () => {
+      try {
+        const { definition, parameters } = workflowToSave;
+
+        const definitionToSave: any = JSON.parse(definition);
+        const parametersFromDefinition = definitionToSave.parameters;
+        if (parametersFromDefinition) {
+          delete parametersFromDefinition.$connections;
+          for (const parameterKey of Object.keys(parametersFromDefinition)) {
+            const parameter = parametersFromDefinition[parameterKey];
+            parameter.value = parameter.defaultValue;
+            delete parameter.defaultValue;
+          }
+          delete definitionToSave.parameters;
+          await saveParameters(this.context, filePath, parametersFromDefinition);
+        }
+
+        workflow.definition = definitionToSave; // eslint-disable-line no-param-reassign
+
+        if (parameters?.$connections?.value) {
+          const connectionsAndSettingsToUpdate = await getConnectionsAndSettingsToUpdate(
+            this.context,
+            filePath,
+            parameters.$connections.value,
+            azureTenantId!,
+            workflowBaseManagementUri!
+          );
+          await saveConectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
+
+          if (containsApiHubConnectionReference(parameters.$connections.value)) {
+            window.showInformationMessage(localize('keyValidity', 'The connection will be valid for 7 days only.'), 'OK');
+          }
+        }
+
+        writeFileSync(filePath, JSON.stringify(workflow, null, 4));
+      } catch (error) {
+        window.showErrorMessage(`${localize('saveFailure', 'Workflow not saved.')} ${error.message}`, localize('OK', 'OK'));
+        throw error;
+      }
+    });
+  }
+
+  private async validateWorkflow(workflow: any): Promise<void> {
+    const url = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}/workflows/${this.workflowName}/validate?api-version=${this.apiVersion}`;
+    try {
+      await sendRequest(this.context, {
+        url,
+        method: HTTP_METHODS.POST,
+        headers: { ['Content-Type']: 'application/json' },
+        body: JSON.stringify({ properties: workflow }),
+      });
+    } catch (error) {
+      if (error.statusCode !== 404) {
+        const errorMessage = localize('workflowValidationFailed', 'Workflow validation failed: ') + error.message;
+        await window.showErrorMessage(errorMessage, localize('OK', 'OK'));
+      }
     }
   }
 
@@ -182,22 +274,22 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private _getMigrationOptions(baseUrl: string): Promise<Record<string, any>> {
     const flatFileEncodingPromise = requestP({
       json: true,
-      method: 'GET',
+      method: HTTP_METHODS.GET,
       uri: `${baseUrl}/operationGroups/flatFileOperations/operations/flatFileEncoding?api-version=2019-10-01-edge-preview&$expand=properties/manifest`,
     });
     const liquidJsonToJsonPromise = requestP({
       json: true,
-      method: 'GET',
+      method: HTTP_METHODS.GET,
       uri: `${baseUrl}/operationGroups/liquidOperations/operations/liquidJsonToJson?api-version=2019-10-01-edge-preview&$expand=properties/manifest`,
     });
     const xmlValidationPromise = requestP({
       json: true,
-      method: 'GET',
+      method: HTTP_METHODS.GET,
       uri: `${baseUrl}/operationGroups/xmlOperations/operations/xmlValidation?api-version=2019-10-01-edge-preview&$expand=properties/manifest`,
     });
     const xsltPromise = requestP({
       json: true,
-      method: 'GET',
+      method: HTTP_METHODS.GET,
       uri: `${baseUrl}/operationGroups/xmlOperations/operations/xmlTransform?api-version=2019-10-01-edge-preview&$expand=properties/manifest`,
     });
 

@@ -5,7 +5,7 @@
 import { localize } from './localize';
 
 export const projectLanguageSetting = 'projectLanguage';
-export const funcVersionSetting = 'projectRuntime'; // Using this name for the sake of backwards compatability even though it's not the most accurate
+export const funcVersionSetting = 'projectRuntime';
 export const projectSubpathSetting = 'projectSubpath';
 export const templateFilterSetting = 'templateFilter';
 export const deploySubpathSetting = 'deploySubpath';
@@ -15,35 +15,6 @@ export const projectOpenBehaviorSetting = 'projectOpenBehavior';
 export const projectTemplateKeySetting = 'projectTemplateKey';
 export const pomXmlFileName = 'pom.xml';
 export const javaBuildTool = 'javaBuildTool';
-
-export enum JavaBuildTool {
-  maven = 'maven',
-  gradle = 'gradle',
-}
-
-export enum ProjectLanguage {
-  CSharp = 'C#',
-  CSharpScript = 'C#Script',
-  FSharp = 'F#',
-  FSharpScript = 'F#Script',
-  Java = 'Java',
-  JavaScript = 'JavaScript',
-  PowerShell = 'PowerShell',
-  TypeScript = 'TypeScript',
-  Python = 'Python',
-  Custom = 'Custom',
-}
-
-export enum WorkflowProjectType {
-  Nuget = 'Nuget',
-  Bundle = 'Bundle',
-}
-
-export enum TemplateFilter {
-  All = 'All',
-  Core = 'Core',
-  Verified = 'Verified',
-}
 
 export const hostFileName = 'host.json';
 export const localSettingsFileName = 'local.settings.json';
@@ -57,19 +28,7 @@ export const requirementsFileName = 'requirements.txt';
 export const connectionsFileName = 'connections.json';
 export const parametersFileName = 'parameters.json';
 export const funcignoreFileName = '.funcignore';
-
-export enum PackageManager {
-  npm = 'npm',
-  brew = 'brew',
-}
-
 export const funcPackageName = 'azure-functions-core-tools';
-
-export enum ScmType {
-  None = 'None', // default scmType
-  LocalGit = 'LocalGit',
-  GitHub = 'GitHub',
-}
 
 export const functionAppKind = 'functionapp';
 export const logicAppKind = 'workflowapp';
@@ -127,8 +86,3 @@ export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolG
 
 export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
 export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
-
-export const functionFilter = {
-  type: 'microsoft.web/sites',
-  kind: 'functionapp',
-};

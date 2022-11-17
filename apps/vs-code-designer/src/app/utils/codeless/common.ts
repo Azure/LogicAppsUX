@@ -11,9 +11,8 @@ import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import { getLocalSettingsJson } from '../../funcConfig/local.settings';
 import { getAuthorizationToken } from './getAuthorizationToken';
-import type { WorkflowParameter } from './types';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import type { Parameter, CodelessApp, Artifacts, AzureConnectorDetails } from '@microsoft-logic-apps/utils';
+import type { Parameter, CodelessApp, Artifacts, AzureConnectorDetails, WorkflowParameter } from '@microsoft-logic-apps/utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as os from 'os';
