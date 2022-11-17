@@ -3,14 +3,17 @@ import { updateConnectionInput } from '../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../core/state/Store';
 import type { Connection, InputConnection } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
-import { isCustomValue } from '../../../utils/Connection.Utils';
+import { indexPseudoFunctionKey } from '../../../models/Function';
+import { isConnectionUnit, isCustomValue } from '../../../utils/Connection.Utils';
 import {
+  calculateIndexValue,
   functionInputHasInputs,
   getFunctionBrandingForCategory,
   getFunctionOutputValue,
   isFunctionData,
 } from '../../../utils/Function.Utils';
 import { getIconForFunction } from '../../../utils/Icon.Utils';
+import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, makeStyles, Text, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
@@ -160,7 +163,19 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
     }
 
     setInputValueArrays(newInputValueArrays);
-    setOutputValue(getFunctionOutputValue(newInputNameArrays, functionData.functionName));
+
+    const indexFunctionSourceNode =
+      functionData.key === indexPseudoFunctionKey &&
+      connection &&
+      connection.inputs[0][0] &&
+      isConnectionUnit(connection.inputs[0][0]) &&
+      isSchemaNodeExtended(connection.inputs[0][0].node) &&
+      connection.inputs[0][0].node;
+
+    const newOutputValue = indexFunctionSourceNode
+      ? calculateIndexValue(indexFunctionSourceNode)
+      : getFunctionOutputValue(newInputNameArrays, functionData.functionName);
+    setOutputValue(newOutputValue);
   }, [functionData, connection, connectionDictionary]);
 
   return (
@@ -186,9 +201,11 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
         </Stack>
 
         <Text className={styles.bodyText}>{functionData.description}</Text>
-        <Text className={styles.codeEx}>
-          <Text className={styles.fnName}>{functionData.functionName}</Text>()
-        </Text>
+        {functionData.functionName ?? (
+          <Text className={styles.codeEx}>
+            <Text className={styles.fnName}>{functionData.functionName}</Text>()
+          </Text>
+        )}
       </div>
 
       <Stack horizontal className={styles.inputOutputContent}>
