@@ -12,7 +12,7 @@ import {
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { ChildProcess } from 'child_process';
-import { promises as fs, existsSync as fileExists } from 'fs';
+import { promises as fs, existsSync as fileExistsSync, copyFileSync } from 'fs';
 import * as path from 'path';
 import { RelativePattern, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ExtensionContext } from 'vscode';
@@ -201,22 +201,44 @@ export default class DataMapperExt {
 
   public static addSchemaFromFile(filePath: string, schemaType: 'source' | 'target') {
     callWithTelemetryAndErrorHandlingSync('azureDataMapper.addSchemaFromFile', (_context: IActionContext) => {
-      // NOTE: .xsd files are utf-16 encoded
-      fs.readFile(filePath, 'utf16le').then((text: string) => {
-        // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call
-        const schemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
-        const expectedSchemaPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, schemaFileName);
+      fs.readFile(filePath, 'utf8').then((text: string) => {
+        const primarySchemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
+        const expectedPrimarySchemaPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, primarySchemaFileName);
 
-        if (!fileExists(expectedSchemaPath)) {
-          fs.writeFile(expectedSchemaPath, text, 'utf16le').then(() => {
-            DataMapperExt.currentPanel?.sendMsgToWebview({
-              command: 'fetchSchema',
-              data: { fileName: schemaFileName, type: schemaType },
-            });
-          });
-        } else {
-          DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'fetchSchema', data: { fileName: schemaFileName, type: schemaType } });
+        // Examine the loaded text for the 'schemaLocation' attribute to auto-load in any dependencies too
+        // NOTE: We only check in the same directory as the primary schema file (also, it doesn't attempt to deal with complicated paths/URLs, just filenames)
+        const schemaFileDependencies = [...text.matchAll(/schemaLocation="[A-Za-z.]*"/g)].map((schemaFileAttributeMatch) => {
+          // Trim down to just the filename
+          return schemaFileAttributeMatch[0].split('"')[1];
+        });
+
+        schemaFileDependencies.forEach((schemaFile) => {
+          const schemaFilePath = path.join(path.dirname(filePath), schemaFile);
+
+          // Check that the schema file dependency exists in the same directory as the primary schema file
+          if (!fileExistsSync(schemaFilePath)) {
+            DataMapperExt.showError(
+              `Schema loading error: couldn't find schema file dependency ${schemaFile} in the same directory as ${primarySchemaFileName}. ${primarySchemaFileName} will still be copied to the Schemas folder.`
+            );
+            return;
+          }
+
+          // Check that the schema file dependency doesn't already exist in the Schemas folder
+          const expectedSchemaFilePath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, schemaFile);
+          if (!fileExistsSync(expectedSchemaFilePath)) {
+            copyFileSync(schemaFilePath, expectedSchemaFilePath);
+          }
+        });
+
+        // Check if in Artifacts/Schemas, and if not, create it and send it to DM for API call
+        if (!fileExistsSync(expectedPrimarySchemaPath)) {
+          copyFileSync(filePath, expectedPrimarySchemaPath);
         }
+
+        DataMapperExt.currentPanel?.sendMsgToWebview({
+          command: 'fetchSchema',
+          data: { fileName: primarySchemaFileName, type: schemaType },
+        });
       });
     });
   }
@@ -279,7 +301,7 @@ export default class DataMapperExt {
       `${DataMapperExt.currentDataMapName}${mapXsltExtension}`
     );
 
-    if (fileExists(expectedXsltPath)) {
+    if (fileExistsSync(expectedXsltPath)) {
       DataMapperExt.currentPanel?.sendMsgToWebview({
         command: 'setXsltFilename',
         data: DataMapperExt.currentDataMapName,

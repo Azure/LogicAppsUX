@@ -58,9 +58,11 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
       } else {
         throw new Error("Workflow folder doesn't exist");
       }
-    } catch (ex) {
-      DataMapperExt.log(`Backend runtime failed to start: ${ex}`);
+    } catch (error) {
       window.showErrorMessage('Backend runtime could not be started');
+
+      const errMsg = error instanceof Error ? error.message : typeof error === 'string' ? error : 'Unknown error';
+      DataMapperExt.log(`Backend runtime failed to start: ${errMsg}`);
     }
   });
 }
