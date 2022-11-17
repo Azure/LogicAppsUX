@@ -201,14 +201,13 @@ export default class DataMapperExt {
 
   public static addSchemaFromFile(filePath: string, schemaType: 'source' | 'target') {
     callWithTelemetryAndErrorHandlingSync('azureDataMapper.addSchemaFromFile', (_context: IActionContext) => {
-      // NOTE: .xsd files are utf-16 encoded
-      fs.readFile(filePath, 'utf16le').then((text: string) => {
+      fs.readFile(filePath, 'utf8').then((text: string) => {
         // Check if in workspace/Artifacts/Schemas, and if not, create it and send it to DM for API call
         const schemaFileName = path.basename(filePath); // Ex: inpSchema.xsd
         const expectedSchemaPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath, schemaFileName);
 
         if (!fileExists(expectedSchemaPath)) {
-          fs.writeFile(expectedSchemaPath, text, 'utf16le').then(() => {
+          fs.writeFile(expectedSchemaPath, text, 'utf8').then(() => {
             DataMapperExt.currentPanel?.sendMsgToWebview({
               command: 'fetchSchema',
               data: { fileName: schemaFileName, type: schemaType },
