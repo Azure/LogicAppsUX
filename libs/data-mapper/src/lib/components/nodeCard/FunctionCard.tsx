@@ -94,7 +94,11 @@ export const FunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const shouldDisplaySourceHandle = displayHandle && shouldDisplayHandles;
 
   return (
-    <div className={classes.container} onMouseEnter={() => setIsCardHovered(true)} onMouseLeave={() => setIsCardHovered(false)}>
+    <div
+      className={mergeClasses(classes.container, 'nopan')}
+      onMouseEnter={() => setIsCardHovered(true)}
+      onMouseLeave={() => setIsCardHovered(false)}
+    >
       <HandleWrapper
         type="target"
         position={Position.Left}
