@@ -23,11 +23,11 @@ import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
 import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
-import { ReactFlowProvider } from 'reactflow';
+import { ReactFlowProvider, useKeyPress } from 'reactflow';
 
 const centerViewId = 'centerView';
 
@@ -148,7 +148,7 @@ export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurre
     }
   };
 
-  const onSaveClick = () => {
+  const onSaveClick = useCallback(() => {
     generateDataMapXslt(dataMapDefinition)
       .then((xsltStr) => {
         saveStateCall(dataMapDefinition, xsltStr);
@@ -169,7 +169,15 @@ export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurre
           })
         );
       });
-  };
+  }, [dispatch, dataMapDefinition, saveStateCall, sourceSchema, targetSchema]);
+
+  const ctrlSPressed = useKeyPress(['Meta+s']);
+  useEffect(() => {
+    if (ctrlSPressed) {
+      onSaveClick();
+      console.log('S');
+    }
+  }, [ctrlSPressed, onSaveClick]);
 
   const onUndoClick = () => {
     dispatch(undoDataMapOperation());
