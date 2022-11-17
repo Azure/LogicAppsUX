@@ -921,6 +921,12 @@
       "value": "(UTC+09:30) Adelaide"
     }
   ],
+  "6grB5C": [
+    {
+      "type": 0,
+      "value": "Invalid node settings"
+    }
+  ],
   "6jiO7t": [
     {
       "type": 0,
@@ -1999,6 +2005,12 @@
     {
       "type": 0,
       "value": "Please select a card to see the content"
+    }
+  ],
+  "HmcHoE": [
+    {
+      "type": 0,
+      "value": "Error fetching manifest"
     }
   ],
   "HoQiVa": [

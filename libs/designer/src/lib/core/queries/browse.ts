@@ -7,54 +7,25 @@ import { useQuery } from 'react-query';
 // or close to ready by the time they are needed. This call is very heavy.
 export const preloadOperationsQuery = () => {
   const client = getReactQueryClient();
-  client.fetchQuery(['allOperations'], () => {
-    const searchService = SearchService();
-    return searchService.preloadOperations();
-  });
-  client.fetchQuery(['browseResult'], () => {
-    return SearchService().getAllConnectors();
-  });
+  client.fetchQuery(['allOperations'], () => SearchService().preloadOperations());
+  client.fetchQuery(['browseResult'], () => SearchService().getAllConnectors());
 };
 
-export const useAllOperations = () => {
-  return useQuery(
-    ['allOperations'],
-    () => {
-      const searchService = SearchService();
-      return searchService.preloadOperations();
-    },
-    {
-      retry: false,
-      cacheTime: 1000 * 60 * 60 * 24,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
+const queryOpts = {
+  cacheTime: 1000 * 60 * 60 * 24,
+  refetchOnMount: false,
+  refetchOnWindowFocus: false,
+  refetchOnReconnect: false,
 };
-
-export const useAllConnectors = () => {
-  return useQuery(
-    ['browseResult'],
-    () => {
-      return SearchService().getAllConnectors();
-    },
-    {
-      retry: false,
-      cacheTime: 1000 * 60 * 60 * 24,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-};
+export const useAllOperations = () => useQuery(['allOperations'], () => SearchService().preloadOperations(), queryOpts);
+export const useAllConnectors = () => useQuery(['browseResult'], () => SearchService().getAllConnectors(), queryOpts);
 
 type TriggerCapabilitiesType = Record<string, { trigger?: boolean; action?: boolean }>;
 export const useTriggerCapabilities = (allOperations?: DiscoveryOperation<DiscoveryResultTypes>[]) => {
   return useQuery<TriggerCapabilitiesType>(
     ['triggerCapabilities'],
-    () => {
-      return new Promise((resolve) => {
+    () =>
+      new Promise((resolve) => {
         const ret: TriggerCapabilitiesType = {};
         for (const operation of allOperations ?? []) {
           const isTrigger = !!operation.properties?.trigger;
@@ -65,14 +36,10 @@ export const useTriggerCapabilities = (allOperations?: DiscoveryOperation<Discov
           };
         }
         resolve(ret ?? {});
-      });
-    },
+      }),
     {
+      ...queryOpts,
       retry: false,
-      cacheTime: 1000 * 60 * 60 * 24,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
       enabled: !!allOperations,
     }
   );

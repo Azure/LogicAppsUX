@@ -11,9 +11,12 @@ import {
   useIsConnectionRequired,
   useNodeConnectionName,
   useOperationInfo,
+  useOperationQuery,
 } from '../../core/state/selectors/actionMetadataSelector';
+import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import { useIsLeafNode, useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
+import { MessageBarType } from '@fluentui/react';
 import { WORKFLOW_NODE_TYPES } from '@microsoft-logic-apps/utils';
 import type { MenuItemOption } from '@microsoft/designer-ui';
 import { Card, MenuItemType, DeleteNodeModal } from '@microsoft/designer-ui';
@@ -125,7 +128,35 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
 
-  const isLoading = useMemo(() => !brandColor || !iconUri || connectionResult.isLoading, [brandColor, iconUri, connectionResult.isLoading]);
+  const opQuery = useOperationQuery(id);
+
+  // const isLoading = useMemo(() => !brandColor || !iconUri || connectionResult.isLoading, [brandColor, iconUri, connectionResult.isLoading]);
+  const isLoading = useMemo(() => opQuery.isLoading || connectionResult.isLoading, [opQuery.isLoading, connectionResult.isLoading]);
+
+  const opManifestErrorText = intl.formatMessage({
+    defaultMessage: 'Error fetching manifest',
+    description: 'Error message when manifest fails to load',
+  });
+
+  // const parameterValidationErrors = useParameterValidationErrors(id);
+  // const parameterValidationErrorText = intl.formatMessage({
+  //   defaultMessage: 'Invalid node parameters',
+  //   description: 'Text to explain that there are invalid parameters for this node',
+  // });
+
+  const settingValidationErrors = useSettingValidationErrors(id);
+  const settingValidationErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid node settings',
+    description: 'Text to explain that there are invalid settings for this node',
+  });
+
+  const { errorMessage, errorLevel } = useMemo(() => {
+    if (opQuery?.isError) return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
+    // if (parameterValidationErrors?.length)
+    //   return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    if (settingValidationErrors?.length) return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    return { errorMessage: undefined, errorLevel: undefined };
+  }, [opQuery?.isError, opManifestErrorText, settingValidationErrorText, settingValidationErrors?.length]);
 
   return (
     <>
@@ -142,6 +173,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           commentBox={comment}
           drag={drag}
           dragPreview={dragPreview}
+          errorMessage={errorMessage}
+          errorLevel={errorLevel}
           isDragging={isDragging}
           isLoading={isLoading}
           isMonitoringView={isMonitoringView}
