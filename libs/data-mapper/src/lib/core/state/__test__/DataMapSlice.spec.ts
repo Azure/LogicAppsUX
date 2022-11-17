@@ -1,10 +1,10 @@
-import type { Schema, SchemaExtended } from '../../../models';
-import { SchemaType } from '../../../models';
+import type { Schema, SchemaExtended, SchemaNodeExtended } from '../../../models';
+import { SchemaType, SchemaNodeProperty } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import { addNodeToConnections, flattenInputs } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../../utils/Schema.Utils';
-import { deleteConnectionFromConnections, deleteNodeFromConnections } from '../DataMapSlice';
+import { canDeleteConnection, deleteConnectionFromConnections, deleteNodeFromConnections } from '../DataMapSlice';
 import { simpleMockSchema } from '../__mocks__';
 import { concatFunction } from '../__mocks__/FunctionMock';
 
@@ -182,4 +182,22 @@ describe('DataMapSlice', () => {
       expect(flattenInputs(connections[destinationId].inputs).length).toEqual(0);
     });
   });
+
+  describe('canDeleteConnection', () => {
+    it('returns true with non-repeating connection', () => {
+      const connections: ConnectionDictionary = {};
+      const source = 'abc';
+      const target = '';
+      const canDelete = canDeleteConnection(connections, source, target, { abc: simpleSourceNode }, {});
+      expect(canDelete).toBeTruthy();
+    });
+  });
 });
+
+const simpleSourceNode: SchemaNodeExtended = {
+  children: [],
+  nodeProperties: [SchemaNodeProperty.NotSpecified],
+  pathToRoot: [],
+  key: 'abc',
+  fullName: 'ABC',
+} as unknown as SchemaNodeExtended;

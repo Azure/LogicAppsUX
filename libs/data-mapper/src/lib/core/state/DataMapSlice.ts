@@ -6,7 +6,7 @@ import {
   errorNotificationAutoHideDuration,
 } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
-import { SchemaType } from '../../models';
+import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import { findLast } from '../../utils/Array.Utils';
@@ -572,6 +572,37 @@ export const deleteConnectionFromConnections = (connections: ConnectionDictionar
   );
 };
 
+export const canDeleteConnection = (
+  connections: ConnectionDictionary,
+  sourceNodeId: string,
+  targetNodeId: string,
+  sourceSchema: SchemaNodeDictionary,
+  _targetSchema: SchemaNodeDictionary
+) => {
+  const sourceNode = sourceSchema[sourceNodeId];
+  if (sourceNode) {
+    // if connection source is not repeating, can delete
+    if (!sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+      return true;
+    } else {
+      // source node is repeating
+      // if child is connected, and connection is completed
+    }
+  }
+  return false;
+};
+
+export const parentHasChildConnection = (connections: ConnectionDictionary, nodeKey: string) => {
+  const node = connections[nodeKey].self.node as SchemaNodeExtended;
+  if (!node.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+    // node not repeating, and has connection? or connection to end
+    if (connections) {
+      console.log(connections);
+    }
+  }
+  //const children = node.children;
+};
+
 export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: string) => {
   const targetNode = curDataMapState.curDataMapOperation.flattenedTargetSchema[reactFlowKey];
   if (targetNode) {
@@ -629,6 +660,18 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
     };
     return;
   }
+
+  // item to be deleted is a connection
+  const sourceId = getSourceIdFromReactFlowConnectionId(reactFlowKey);
+  const targetId = getDestinationIdFromReactFlowConnectionId(reactFlowKey);
+  const canDelete = canDeleteConnection(
+    curDataMapState.curDataMapOperation.dataMapConnections,
+    sourceId,
+    targetId,
+    curDataMapState.curDataMapOperation.flattenedSourceSchema,
+    curDataMapState.curDataMapOperation.flattenedTargetSchema
+  );
+  console.log(canDelete);
 
   deleteConnectionFromConnections(
     curDataMapState.curDataMapOperation.dataMapConnections,
