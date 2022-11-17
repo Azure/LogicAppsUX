@@ -8,6 +8,7 @@ import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
 import { PanelPivot } from './panelpivot';
 import type { ILayerProps } from '@fluentui/react';
+import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles } from '@fluentui/react/lib/Panel';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import React, { useCallback } from 'react';
@@ -136,6 +137,11 @@ export const PanelContainer = ({
     description: 'label for panel component',
   });
 
+  const panelErrorMessage = intl.formatMessage({
+    defaultMessage: 'Error loading operation data',
+    description: 'label for panel error',
+  });
+
   return (
     <Panel
       aria-label={panelLabel}
@@ -155,6 +161,12 @@ export const PanelContainer = ({
         <>
           {noNodeSelected && panelScope === PanelScope.CardLevel ? (
             <EmptyContent />
+          ) : isLoading ? (
+            <div className="msla-loading-container">
+              <Spinner size={SpinnerSize.large} />
+            </div>
+          ) : isError ? (
+            <MessageBar messageBarType={MessageBarType.error}>{panelErrorMessage}</MessageBar>
           ) : (
             <div className="msla-panel-page">
               <PanelPivot
