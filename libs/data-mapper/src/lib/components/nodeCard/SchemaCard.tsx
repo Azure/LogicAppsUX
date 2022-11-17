@@ -196,7 +196,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const shouldNameTooltipDisplay: boolean = schemaNameTextRef?.current ? isTextUsingEllipsis(schemaNameTextRef.current) : false;
 
   const containerStyle = useMemo(() => {
-    const newContStyles = [sharedStyles.root, classes.container];
+    const newContStyles = [sharedStyles.root, classes.container, 'nopan'];
 
     // Need to style both source and target schema child nodes on overview
     // - doesn't seem to affect canvas source schema nodes
