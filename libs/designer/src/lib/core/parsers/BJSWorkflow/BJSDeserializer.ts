@@ -262,8 +262,8 @@ const processScopeActions = (
       [actionName]: {
         graphId: rootGraphId,
         actionCount: Object.entries(action.cases || {}).length,
-        parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId
-      }
+        parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId,
+      },
     };
   } else if (isIfAction(action)) {
     applySubgraphActions(actionName, `${actionName}-actions`, action.actions, SUBGRAPH_TYPES.CONDITIONAL_TRUE, 'actions');
@@ -273,8 +273,8 @@ const processScopeActions = (
       [actionName]: {
         graphId: rootGraphId,
         actionCount: 2,
-        parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId
-      }
+        parentNodeId: rootGraphId === 'root' ? undefined : rootGraphId,
+      },
     };
   } else if (isUntilAction(action)) {
     applyUntilActions(actionName, action.actions);

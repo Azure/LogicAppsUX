@@ -5,18 +5,21 @@ import { guid } from '@microsoft-logic-apps/utils';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isTextNode } from 'lexical';
 
-export function serializeEditorState(editorState: EditorState, trimLiteral?: boolean): ValueSegment[] {
+export function serializeEditorState(editorState: EditorState, trimLiteral = false): ValueSegment[] {
   const segments: ValueSegment[] = [];
   editorState.read(() => {
-    getChildrenNodesToSegments($getRoot(), segments, trimLiteral ?? false);
+    getChildrenNodesToSegments($getRoot(), segments, trimLiteral);
   });
   return segments;
 }
 
-const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[], trimLiteral: boolean): void => {
-  node.__children.forEach((child) => {
+const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[], trimLiteral = false): void => {
+  node.__children.forEach((child, index) => {
     const childNode = $getNodeByKey(child);
     if (childNode && $isElementNode(childNode)) {
+      if (!trimLiteral && /* ignore first paragraph node */ index > 0) {
+        segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '\n' });
+      }
       return getChildrenNodesToSegments(childNode, segments, trimLiteral);
     }
     if ($isTextNode(childNode)) {
