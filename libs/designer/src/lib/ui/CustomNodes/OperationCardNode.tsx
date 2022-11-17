@@ -130,19 +130,12 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const opQuery = useOperationQuery(id);
 
-  // const isLoading = useMemo(() => !brandColor || !iconUri || connectionResult.isLoading, [brandColor, iconUri, connectionResult.isLoading]);
   const isLoading = useMemo(() => opQuery.isLoading || connectionResult.isLoading, [opQuery.isLoading, connectionResult.isLoading]);
 
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',
     description: 'Error message when manifest fails to load',
   });
-
-  // const parameterValidationErrors = useParameterValidationErrors(id);
-  // const parameterValidationErrorText = intl.formatMessage({
-  //   defaultMessage: 'Invalid node parameters',
-  //   description: 'Text to explain that there are invalid parameters for this node',
-  // });
 
   const settingValidationErrors = useSettingValidationErrors(id);
   const settingValidationErrorText = intl.formatMessage({
@@ -152,8 +145,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const { errorMessage, errorLevel } = useMemo(() => {
     if (opQuery?.isError) return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
-    // if (parameterValidationErrors?.length)
-    //   return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
     if (settingValidationErrors?.length) return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
     return { errorMessage: undefined, errorLevel: undefined };
   }, [opQuery?.isError, opManifestErrorText, settingValidationErrorText, settingValidationErrors?.length]);
