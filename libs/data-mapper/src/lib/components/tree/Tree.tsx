@@ -41,7 +41,7 @@ export interface CoreTreeProps<T> {
 }
 
 interface TreeProps<T> extends CoreTreeProps<T> {
-  treeRoot: ITreeNode<T>;
+  treeRoot?: ITreeNode<T>;
   treeContainerClassName?: string;
 }
 
@@ -51,8 +51,9 @@ const Tree = <T extends ITreeNode<T>>(props: TreeProps<T>) => {
 
   return (
     <div className={mergeClasses(styles.treeContainer, treeContainerClassName)}>
-      {treeRoot.children &&
-        treeRoot.children.map((childNode) => <TreeBranch<ITreeNode<T>> {...props} key={childNode.key} level={0} node={childNode} />)}
+      {treeRoot?.children?.map((childNode) => (
+        <TreeBranch<ITreeNode<T>> {...props} key={childNode.key} level={0} node={childNode} />
+      ))}
     </div>
   );
 };
