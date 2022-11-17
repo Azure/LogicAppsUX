@@ -70,22 +70,29 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
     className="msla-panel-card-header"
   >
     <div
+      className="ms-Spinner msla-card-header-spinner root-121"
+    >
+      <div
+        className="ms-Spinner-circle ms-Spinner--medium circle-122"
+      />
+    </div>
+    <div
       className="msla-panel-card-title-container"
       hidden={false}
     >
       <div
-        className="ms-TextField ms-TextField--borderless msla-card-title root-121"
+        className="ms-TextField ms-TextField--borderless msla-card-title root-125"
       >
         <div
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-122"
+            className="ms-TextField-fieldGroup fieldGroup-126"
           >
             <input
               aria-invalid={false}
               aria-label="Card Title"
-              className="ms-TextField-field field-123"
+              className="ms-TextField-field field-127"
               maxLength={80}
               onBlur={[Function]}
               onChange={[Function]}
@@ -177,22 +184,29 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
     className="msla-panel-card-header"
   >
     <div
+      className="ms-Spinner msla-card-header-spinner root-121"
+    >
+      <div
+        className="ms-Spinner-circle ms-Spinner--medium circle-122"
+      />
+    </div>
+    <div
       className="msla-panel-card-title-container"
       hidden={false}
     >
       <div
-        className="ms-TextField ms-TextField--borderless msla-card-title root-121"
+        className="ms-TextField ms-TextField--borderless msla-card-title root-125"
       >
         <div
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-122"
+            className="ms-TextField-fieldGroup fieldGroup-126"
           >
             <input
               aria-invalid={false}
               aria-label="Card Title"
-              className="ms-TextField-field field-123"
+              className="ms-TextField-field field-127"
               maxLength={80}
               onBlur={[Function]}
               onChange={[Function]}

@@ -5,7 +5,7 @@ import type { WorkflowEdge } from '../../core/parsers/models/workflowNode';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { setTabError } from '../../core/state/panel/panelSlice';
-import { setExpandedSections, ValidationErrorKeys, type ValidationError } from '../../core/state/settingSlice';
+import { setExpandedSections, ValidationErrorKeys, type ValidationError } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokensSlice';
 import { useEdgesBySource } from '../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../core/store';

@@ -8,13 +8,14 @@ import { IconButton } from '@fluentui/react/lib/Button';
 import type { ICalloutProps } from '@fluentui/react/lib/Callout';
 import { DirectionalHint } from '@fluentui/react/lib/Callout';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
+import { Icon } from '@fluentui/react/lib/Icon';
 import type { IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react/lib/OverflowSet';
 import { OverflowSet } from '@fluentui/react/lib/OverflowSet';
 import { FontSizes } from '@fluentui/react/lib/Styling';
 import type { ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { css } from '@fluentui/react/lib/Utilities';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 export const handleOnEscapeDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
@@ -28,6 +29,7 @@ export interface PanelHeaderProps {
   cardIcon?: string;
   comment?: string;
   titleId?: string;
+  isError?: boolean;
   isLoading?: boolean;
   panelHeaderControlType?: PanelHeaderControlType;
   panelHeaderMenu: MenuItemOption[];
@@ -88,6 +90,7 @@ export const PanelHeader = ({
   cardIcon,
   comment,
   noNodeSelected,
+  isError,
   isLoading,
   panelScope,
   titleId,
@@ -121,14 +124,24 @@ export const PanelHeader = ({
 
   const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
 
-  const iconComponent = isLoading ? (
-    <div className="msla-panel-card-icon">
-      <Spinner size={SpinnerSize.medium} style={{ padding: '6px' }} />
-    </div>
-  ) : cardIcon ? (
-    <img className="msla-panel-card-icon" src={cardIcon} hidden={isCollapsed} alt="panel card icon" />
-  ) : // Occurs both during loading new nodes and on Switch Case Nodes
-  null;
+  // collapsed -> loading -> connector icon -> error -> backup loading
+  const iconComponent = useMemo(
+    () =>
+      isCollapsed ? null : isLoading ? (
+        <div className="msla-panel-card-icon">
+          <Spinner size={SpinnerSize.medium} style={{ padding: '6px' }} />
+        </div>
+      ) : cardIcon ? (
+        <img className="msla-panel-card-icon" src={cardIcon} alt="panel card icon" />
+      ) : isError ? (
+        <div className="msla-panel-card-icon default">
+          <Icon iconName="PlugDisconnected" style={{ fontSize: '20px', textAlign: 'center', color: 'white' }} />
+        </div>
+      ) : (
+        <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
+      ),
+    [isLoading, cardIcon, isCollapsed, isError]
+  );
 
   const getPanelHeaderMenu = (): JSX.Element => {
     const panelHeaderMenuItems = panelHeaderMenu.map((item) => ({

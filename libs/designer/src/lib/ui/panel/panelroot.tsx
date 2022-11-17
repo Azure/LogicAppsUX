@@ -20,7 +20,7 @@ import {
   selectPanelTab,
   setTabVisibility,
 } from '../../core/state/panel/panelSlice';
-import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { useIconUri, useOperationInfo, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph } from '../../core/utils/graph';
@@ -210,10 +210,12 @@ export const PanelRoot = (): JSX.Element => {
   const togglePanel = (): void => (!collapsed ? collapse() : expand());
   const dismissPanel = () => dispatch(clearPanel());
 
+  const opQuery = useOperationQuery(selectedNode);
+
   const isLoading = useMemo(() => {
     if (nodeMetaData?.subgraphType) return false;
-    return !iconUri;
-  }, [iconUri, nodeMetaData?.subgraphType]);
+    return opQuery.isLoading;
+  }, [nodeMetaData?.subgraphType, opQuery.isLoading]);
 
   return isWorkflowParameters ? (
     <WorkflowParametersPanel isCollapsed={collapsed} toggleCollapse={dismissPanel} width={width} />
@@ -226,6 +228,7 @@ export const PanelRoot = (): JSX.Element => {
       panelLocation={PanelLocation.Right}
       isCollapsed={collapsed}
       noNodeSelected={!selectedNode}
+      isError={opQuery?.isError}
       isLoading={isLoading}
       panelScope={PanelScope.CardLevel}
       panelHeaderControlType={getPanelHeaderControlType() ? PanelHeaderControlType.DISMISS_BUTTON : PanelHeaderControlType.MENU}

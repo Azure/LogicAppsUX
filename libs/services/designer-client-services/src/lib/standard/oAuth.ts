@@ -37,7 +37,6 @@ export class OAuthPopup implements IOAuthPopup {
     });
 
     this.loginPromise.then((authorizationResult) => {
-      console.log('RESULT OF LOGIN PROMISE', JSON.stringify(authorizationResult));
       clearInterval(authorizationResult.timerId);
       oAuthWindow?.close();
     });

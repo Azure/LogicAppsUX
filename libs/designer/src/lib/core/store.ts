@@ -3,7 +3,7 @@ import designerOptionsReducer from './state/designerOptions/designerOptionsSlice
 import designerViewReducer from './state/designerView/designerViewSlice';
 import operationMetadataReducer from './state/operation/operationMetadataSlice';
 import panelReducer from './state/panel/panelSlice';
-import settingsReducer from './state/settingSlice';
+import settingsReducer from './state/setting/settingSlice';
 import tokens from './state/tokensSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';

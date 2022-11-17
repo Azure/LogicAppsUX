@@ -1,6 +1,5 @@
 import { EmptyContent } from '../card/emptycontent';
 import type { MenuItemOption } from '../card/types';
-import constants from '../constants';
 import type { PageActionTelemetryData } from '../telemetry/models';
 import type { CommonPanelProps, PanelTab } from './panelUtil';
 import { PanelScope, PanelLocation } from './panelUtil';
@@ -9,6 +8,7 @@ import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
 import { PanelPivot } from './panelpivot';
 import type { ILayerProps } from '@fluentui/react';
+import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles } from '@fluentui/react/lib/Panel';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import React, { useCallback } from 'react';
@@ -31,6 +31,7 @@ export type PanelContainerProps = {
   comment?: string;
   panelLocation: PanelLocation;
   noNodeSelected: boolean;
+  isError?: boolean;
   isLoading?: boolean;
   panelScope: PanelScope;
   pivotDisabled?: boolean;
@@ -58,6 +59,7 @@ export const PanelContainer = ({
   isCollapsed,
   panelLocation,
   noNodeSelected,
+  isError,
   isLoading,
   panelScope,
   panelHeaderControlType,
@@ -87,7 +89,7 @@ export const PanelContainer = ({
     (_props?: IPanelProps, _defaultrender?: IPanelHeaderRenderer, headerTextId?: string): JSX.Element => {
       return (
         <PanelHeader
-          cardIcon={cardIcon ?? constants.PANEL.DEFAULT_ICON}
+          cardIcon={cardIcon}
           isCollapsed={isCollapsed}
           headerLocation={panelLocation}
           showCommentBox={showCommentBox}
@@ -100,6 +102,7 @@ export const PanelContainer = ({
           titleId={headerTextId}
           title={title}
           includeTitle={true}
+          isError={isError}
           isLoading={isLoading}
           comment={comment}
           commentChange={onCommentChange}
@@ -110,7 +113,6 @@ export const PanelContainer = ({
     },
     [
       cardIcon,
-      onTitleChange,
       isCollapsed,
       panelLocation,
       showCommentBox,
@@ -121,16 +123,23 @@ export const PanelContainer = ({
       panelHeaderControlType,
       readOnlyMode,
       title,
+      isError,
       isLoading,
       comment,
       onCommentChange,
       toggleCollapse,
+      onTitleChange,
     ]
   );
 
   const panelLabel = intl.formatMessage({
     defaultMessage: 'panel',
     description: 'label for panel component',
+  });
+
+  const panelErrorMessage = intl.formatMessage({
+    defaultMessage: 'Error loading operation data',
+    description: 'label for panel error',
   });
 
   return (
@@ -152,6 +161,12 @@ export const PanelContainer = ({
         <>
           {noNodeSelected && panelScope === PanelScope.CardLevel ? (
             <EmptyContent />
+          ) : isLoading ? (
+            <div className="msla-loading-container">
+              <Spinner size={SpinnerSize.large} />
+            </div>
+          ) : isError ? (
+            <MessageBar messageBarType={MessageBarType.error}>{panelErrorMessage}</MessageBar>
           ) : (
             <div className="msla-panel-page">
               <PanelPivot

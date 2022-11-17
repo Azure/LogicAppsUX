@@ -886,6 +886,14 @@ body.dark {
             height: 24px;
             width: 24px;
             border-radius: 2px;
+
+            &.default {
+              background-color: rgb(71, 71, 71);
+              color: white;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
           }
         }
 
@@ -927,11 +935,18 @@ body.dark {
     }
 
     .panel-card-error {
-      margin: -2px 10px 8px 12px;
-      text-overflow: ellipsis;
-      overflow: hidden;
+      margin: -4px 12px 6px;
       text-align: left;
-      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .panel-card-error-text {
+        margin: 0px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
 
       &.error,
       &.blocked {
@@ -954,9 +969,10 @@ body.dark {
   }
 
   .panel-card-content-gripper-section {
-    padding: 12px 4px 10px; // This should be '12px 4px' but our svg is rendering too high
+    min-width: 12px;
     text-align: center;
     visibility: hidden;
+    padding-top: 11px; // The svg renders a little off
   }
 
   .panel-card-bottom-toolbar {

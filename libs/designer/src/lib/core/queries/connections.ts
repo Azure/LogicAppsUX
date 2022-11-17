@@ -57,21 +57,16 @@ export const useConnectionById = (connectionId: string, connectorId: string) => 
 };
 
 export const useAllConnections = () => {
-  return useQuery([connectionKey], () => {
-    const connectionService = ConnectionService();
-    return connectionService.getConnections();
+  return useQuery([connectionKey], () => ConnectionService().getConnections(), {
+    cacheTime: 0,
+    staleTime: 0,
   });
 };
 
 export const useConnectionsForConnector = (connectorId: string) => {
-  return useQuery(
-    [connectionKey, connectorId?.toLowerCase()],
-    () => {
-      const connectionService = ConnectionService();
-      return connectionService.getConnections(connectorId);
-    },
-    { enabled: !!connectorId }
-  );
+  return useQuery([connectionKey, connectorId?.toLowerCase()], () => ConnectionService().getConnections(connectorId), {
+    enabled: !!connectorId,
+  });
 };
 
 export const getConnectionsForConnector = async (connectorId: string) => {
