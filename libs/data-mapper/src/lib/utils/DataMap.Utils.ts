@@ -103,7 +103,14 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
     if (pathItem.repeating) {
       // Looping schema node
       const rootTargetConnection = connections[addTargetReactFlowPrefix(pathItem.key)];
-      const rootSourceNodes = rootTargetConnection.inputs[0];
+      const rootSourceNodes = [...rootTargetConnection.inputs[0]];
+      rootSourceNodes.sort((nodeA, nodeB) => {
+        if (isConnectionUnit(nodeA) && isConnectionUnit(nodeB)) {
+          return nodeA.reactFlowKey.localeCompare(nodeB.reactFlowKey);
+        }
+        return 0;
+      });
+
       rootSourceNodes.forEach((sourceNode) => {
         let loopValue = '';
         if (sourceNode && isConnectionUnit(sourceNode)) {
@@ -169,7 +176,6 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
           }
         }
 
-        // TODO Handle Many to One
         const rootTargetConnection = connections[addTargetReactFlowPrefix(pathItem.key)];
         const rootSourceNodes = rootTargetConnection.inputs[0];
         const sourceNode = rootSourceNodes[0];
