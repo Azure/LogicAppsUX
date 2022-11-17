@@ -29,7 +29,7 @@ export const CollapsedAuthentication = ({
       <BaseEditor
         initialValue={collapsedValue}
         tokenPickerHandler={{ ...tokenPickerHandler, tokenPickerButtonProps: { buttonClassName: 'msla-editor-tokenpicker-button' } }}
-        BasePlugins={{ tokens: true }}
+        BasePlugins={{ tokens: true, tabbable: true }}
       >
         <CollapsedAuthenticationValidation
           className={'msla-auth-editor-validation'}

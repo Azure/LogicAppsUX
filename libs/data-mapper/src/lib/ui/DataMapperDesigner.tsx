@@ -226,31 +226,31 @@ export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurre
                   boxSizing: 'border-box',
                 }}
               >
-                {showMapOverview ? (
-                  <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
-                ) : (
-                  <Stack horizontal style={{ height: '100%' }}>
-                    <div
-                      className={styles.canvasWrapper}
-                      style={{
-                        width: isCodeViewOpen ? '75%' : '100%',
-                        marginRight: isCodeViewOpen ? '8px' : 0,
-                        backgroundColor: tokens.colorNeutralBackground4,
-                      }}
-                    >
+                <Stack horizontal style={{ height: '100%' }}>
+                  <div
+                    className={styles.canvasWrapper}
+                    style={{
+                      width: isCodeViewOpen ? '75%' : '100%',
+                      marginRight: isCodeViewOpen ? '8px' : 0,
+                      backgroundColor: tokens.colorNeutralBackground4,
+                    }}
+                  >
+                    {showMapOverview ? (
+                      <MapOverview />
+                    ) : (
                       <ReactFlowProvider>
                         <ReactFlowWrapper canvasBlockHeight={getCanvasAreaHeight()} />
                       </ReactFlowProvider>
-                    </div>
+                    )}
+                  </div>
 
-                    <CodeView
-                      dataMapDefinition={dataMapDefinition}
-                      isCodeViewOpen={isCodeViewOpen}
-                      setIsCodeViewOpen={setIsCodeViewOpen}
-                      canvasAreaHeight={getCanvasAreaHeight()}
-                    />
-                  </Stack>
-                )}
+                  <CodeView
+                    dataMapDefinition={dataMapDefinition}
+                    isCodeViewOpen={isCodeViewOpen}
+                    setIsCodeViewOpen={setIsCodeViewOpen}
+                    canvasAreaHeight={getCanvasAreaHeight()}
+                  />
+                </Stack>
               </div>
 
               {!showMapOverview && (

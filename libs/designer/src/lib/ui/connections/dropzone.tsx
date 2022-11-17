@@ -1,5 +1,7 @@
+import type { RootState } from '../../core';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useAllGraphParents } from '../../core/state/workflow/workflowSelectors';
+import { getTriggerNode } from '../../core/utils/graph';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
@@ -13,8 +15,6 @@ import { useCallback } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from '../../core';
-import { getTriggerNode } from '../../core/utils/graph';
 
 export interface DropZoneProps {
   graphId: string;
