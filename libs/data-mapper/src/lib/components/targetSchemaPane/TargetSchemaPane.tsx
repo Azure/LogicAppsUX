@@ -4,7 +4,7 @@ import { NormalizedDataType, SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
-import TargetSchemaTreeItem, { ItemToggledState } from '../tree/TargetSchemaTreeItem';
+import TargetSchemaTreeItem, { ItemToggledState, TargetSchemaTreeHeader } from '../tree/TargetSchemaTreeItem';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import Tree from '../tree/Tree';
 import type { ITreeNode } from '../tree/Tree';
@@ -92,15 +92,6 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
       targetSchemaSearchTerm
     );
 
-    // Format extra top layers to show schema name and schemaTreeRoot
-    // Can safely typecast with the root node(s) as we only use the properties defined here
-    const schemaRoot = {} as ITreeNode<SchemaNodeExtended>;
-    const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
-    schemaNameRoot.key = schemaRootKey;
-    schemaNameRoot.name = targetSchema.name;
-    schemaNameRoot.schemaNodeDataType = SchemaNodeDataType.None;
-    schemaNameRoot.isExpanded = true;
-
     // Search searched-tree for currentNode, and expand path to that node if present
     const findAndExpandPathToCurrentNode = (
       currentNode: ITreeNode<SchemaNodeExtended>,
@@ -129,11 +120,12 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
       newTargetSchemaTreeRoot = findAndExpandPathToCurrentNode(newTargetSchemaTreeRoot, currentTargetSchemaNode.key);
     }
 
-    newTargetSchemaTreeRoot.isExpanded = true;
+    // Format extra top layer to show schemaTreeRoot
+    // Can safely typecast with the root node(s) as we only use the properties defined here
+    const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
     schemaNameRoot.children = [newTargetSchemaTreeRoot];
-    schemaRoot.children = [schemaNameRoot];
 
-    return schemaRoot;
+    return schemaNameRoot;
   }, [targetSchema, targetSchemaSearchTerm, currentTargetSchemaNode]);
 
   useEffect(() => {
@@ -192,6 +184,10 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         }}
       >
         <TreeHeader onSearch={setTargetSchemaSearchTerm} onClear={() => setTargetSchemaSearchTerm('')} />
+
+        <TargetSchemaTreeHeader
+          status={toggledStatesDictionary && targetSchema ? toggledStatesDictionary[targetSchema.schemaTreeRoot.key] : undefined}
+        />
 
         <Tree<SchemaNodeExtended>
           // Add one extra root layer so schemaTreeRoot is shown as well
