@@ -90,6 +90,7 @@ const useStyles = makeStyles({
 
 export interface DataMapperDesignerProps {
   saveStateCall: (dataMapDefinition: string, dataMapXslt: string) => void;
+  saveDraftStateCall?: (dataMapDefinition: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
@@ -97,6 +98,7 @@ export interface DataMapperDesignerProps {
 
 export const DataMapperDesigner = ({
   saveStateCall,
+  saveDraftStateCall,
   addSchemaFromFile,
   readCurrentSchemaOptions,
   setIsMapStateDirty,
@@ -122,7 +124,13 @@ export const DataMapperDesigner = ({
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
       try {
-        return convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+        const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+
+        if (saveDraftStateCall) {
+          saveDraftStateCall(newDataMapDefinition);
+        }
+
+        return newDataMapDefinition;
       } catch (error) {
         // NOTE: Doing it this way so that the error, whatever it is, just gets formatted/logged on its own
         // - can and maybe should change if we add more infrastructure around error classes/types
@@ -140,7 +148,7 @@ export const DataMapperDesigner = ({
     }
 
     return '';
-  }, [currentConnections, sourceSchema, targetSchema]);
+  }, [currentConnections, sourceSchema, targetSchema, saveDraftStateCall]);
 
   const showMapOverview = useMemo<boolean>(
     () => !sourceSchema || !targetSchema || !currentTargetSchemaNode,

@@ -2,6 +2,7 @@ import {
   dataMapDefinitionsPath,
   dataMapsPath,
   defaultDatamapFilename,
+  draftMapDefinitionSuffix,
   mapDefinitionExtension,
   mapXsltExtension,
   schemasPath,
@@ -11,7 +12,7 @@ import {
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { ChildProcess } from 'child_process';
-import { promises as fs, existsSync as fileExistsSync, copyFileSync } from 'fs';
+import { promises as fs, existsSync as fileExistsSync, copyFileSync, unlinkSync as removeFileSync } from 'fs';
 import * as path from 'path';
 import { RelativePattern, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ExtensionContext } from 'vscode';
@@ -33,11 +34,7 @@ type ReceivingMessageTypes =
       data: { path: string; type: SchemaType };
     }
   | {
-      command: 'saveDataMapDefinition';
-      data: string;
-    }
-  | {
-      command: 'saveDataMapXslt';
+      command: 'saveDataMapDefinition' | 'saveDraftDataMapDefinition' | 'saveDataMapXslt';
       data: string;
     }
   | {
@@ -60,6 +57,7 @@ export default class DataMapperExt {
   public static backendRuntimeChildProcess: ChildProcess | undefined;
 
   public static currentDataMapName: string;
+  public static currentDataMapStateIsDirty: boolean;
   public static loadMapDefinitionData: MapDefinitionData | undefined;
 
   private readonly _panel: WebviewPanel;
@@ -72,7 +70,7 @@ export default class DataMapperExt {
 
       // IF loading a data map, handle that + xslt filename
       DataMapperExt.handleLoadMapDefinitionIfAny();
-      DataMapperExt.updateWebviewPanelTitle(false);
+      DataMapperExt.updateWebviewPanelTitle();
 
       DataMapperExt.currentPanel._panel.reveal(ViewColumn.Active);
       return;
@@ -91,7 +89,7 @@ export default class DataMapperExt {
     );
 
     this.currentPanel = new DataMapperExt(panel, DataMapperExt.context.extensionPath);
-    DataMapperExt.updateWebviewPanelTitle(false);
+    DataMapperExt.updateWebviewPanelTitle();
 
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }
@@ -179,20 +177,30 @@ export default class DataMapperExt {
         DataMapperExt.saveDataMap(false, msg.data);
         break;
       }
+      case 'saveDraftDataMapDefinition': {
+        if (DataMapperExt.currentDataMapStateIsDirty) {
+          DataMapperExt.saveDraftDataMapDefinition(msg.data);
+        }
+        break;
+      }
       case 'setIsMapStateDirty': {
         DataMapperExt.handleUpdateMapDirtyState(msg.data);
+        break;
       }
     }
   }
 
-  public static updateWebviewPanelTitle(isDirty: boolean) {
+  public static updateWebviewPanelTitle() {
     if (DataMapperExt.currentPanel) {
-      DataMapperExt.currentPanel._panel.title = `${DataMapperExt.currentDataMapName ?? 'Untitled'} ${isDirty ? '●' : ''}`;
+      DataMapperExt.currentPanel._panel.title = `${DataMapperExt.currentDataMapName ?? 'Untitled'} ${
+        DataMapperExt.currentDataMapStateIsDirty ? '●' : ''
+      }`;
     }
   }
 
   public static handleUpdateMapDirtyState(isMapStateDirty: boolean) {
-    DataMapperExt.updateWebviewPanelTitle(isMapStateDirty);
+    DataMapperExt.currentDataMapStateIsDirty = isMapStateDirty;
+    DataMapperExt.updateWebviewPanelTitle();
   }
 
   public static handleLoadMapDefinitionIfAny() {
@@ -286,6 +294,18 @@ export default class DataMapperExt {
         DataMapperExt.currentDataMapName = defaultDatamapFilename;
       }
 
+      // If mapDef, check for and delete *draft* map definition as it's no longer needed
+      if (isDefinition) {
+        const draftMapDefinitionPath = path.join(
+          DataMapperExt.getWorkspaceFolderFsPath(),
+          dataMapDefinitionsPath,
+          `${DataMapperExt.currentDataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`
+        );
+        if (fileExistsSync(draftMapDefinitionPath)) {
+          removeFileSync(draftMapDefinitionPath);
+        }
+      }
+
       const fileName = `${DataMapperExt.currentDataMapName}${isDefinition ? mapDefinitionExtension : mapXsltExtension}`;
       const dataMapFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), isDefinition ? dataMapDefinitionsPath : dataMapsPath);
       const filePath = path.join(dataMapFolderPath, fileName);
@@ -310,6 +330,24 @@ export default class DataMapperExt {
         })
         .catch(DataMapperExt.showError);
     });
+  }
+
+  public static saveDraftDataMapDefinition(mapDefFileContents: string) {
+    if (!DataMapperExt.currentDataMapName) {
+      DataMapperExt.currentDataMapName = defaultDatamapFilename;
+    }
+
+    const mapDefileName = `${DataMapperExt.currentDataMapName}${draftMapDefinitionSuffix}${mapDefinitionExtension}`;
+    const dataMapDefFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), dataMapDefinitionsPath);
+    const filePath = path.join(dataMapDefFolderPath, mapDefileName);
+
+    // Mkdir as extra insurance that directory exists so file can be written
+    // - harmless if directory already exists
+    fs.mkdir(dataMapDefFolderPath, { recursive: true })
+      .then(() => {
+        fs.writeFile(filePath, mapDefFileContents, 'utf8');
+      })
+      .catch(DataMapperExt.showError);
   }
 
   public static checkForAndSetXsltFilename() {
