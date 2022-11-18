@@ -62,7 +62,6 @@ export const App = () => {
     });
   }, [vscode]);
 
-  // TODO: May combine the below two functions - will revisit when touched on again in future
   const saveDataMapDefinition = (dataMapDefinition: string) => {
     vscode.postMessage({
       command: 'saveDataMapDefinition',
@@ -74,6 +73,20 @@ export const App = () => {
     vscode.postMessage({
       command: 'saveDataMapXslt',
       data: dataMapXslt,
+    });
+  };
+
+  const saveDraftDataMapDefinition = (dataMapDefinition: string) => {
+    vscode.postMessage({
+      command: 'saveDraftDataMapDefinition',
+      data: dataMapDefinition,
+    });
+  };
+
+  const setIsMapStateDirty = (isMapStateDirty: boolean) => {
+    vscode.postMessage({
+      command: 'setIsMapStateDirty',
+      data: isMapStateDirty,
     });
   };
 
@@ -164,8 +177,10 @@ export const App = () => {
       >
         <DataMapperDesigner
           saveStateCall={saveStateCall}
+          saveDraftStateCall={saveDraftDataMapDefinition}
           addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalFileOptions}
+          setIsMapStateDirty={setIsMapStateDirty}
         />
       </DataMapDataProvider>
     </DataMapperDesignerProvider>
