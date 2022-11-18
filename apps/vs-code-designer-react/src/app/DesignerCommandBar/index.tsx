@@ -37,8 +37,8 @@ export const DesignerCommandBar: React.FC = () => {
   const items: ICommandBarItemProps[] = [
     {
       ariaLabel: Resources.DESIGNER_SAVE,
-      iconProps: { iconName: 'Refresh' },
-      key: 'Refresh',
+      iconProps: { iconName: 'Save' },
+      key: 'Save',
       name: Resources.DESIGNER_SAVE,
       onClick: () => {
         onSave();
