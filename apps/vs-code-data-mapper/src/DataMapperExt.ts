@@ -89,6 +89,7 @@ export default class DataMapperExt {
     );
 
     this.currentPanel = new DataMapperExt(panel, DataMapperExt.context.extensionPath);
+    this.currentPanel._panel.iconPath = Uri.file(path.join(this.context.extensionPath, 'assets', 'logicapp.png'));
     DataMapperExt.updateWebviewPanelTitle();
 
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
