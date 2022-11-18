@@ -1,6 +1,6 @@
 import DataMapperExt from '../DataMapperExt';
 import { startBackendRuntime } from '../FxWorkflowRuntime';
-import { schemasPath } from '../extensionConfig';
+import { draftMapDefinitionSuffix, schemasPath } from '../extensionConfig';
 import { callWithTelemetryAndErrorHandling, registerCommand } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs, existsSync as fileExists } from 'fs';
@@ -105,7 +105,7 @@ const loadDataMapFileCmd = async (uri: Uri) => {
     }
   }
 
-  DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)); // Gets filename w/o ext
+  DataMapperExt.currentDataMapName = path.basename(uri.fsPath, path.extname(uri.fsPath)).replace(draftMapDefinitionSuffix, ''); // Gets filename w/o ext (and w/o draft suffix)
 
   openDataMapperCmd();
 
