@@ -1,4 +1,5 @@
 import type { RootState } from '../state/Store';
+import { VSCodeContext } from '../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import { HttpClient } from './httpClient';
 import {
@@ -8,15 +9,17 @@ import {
   StandardOperationManifestService,
   StandardSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
-import { ResourceIdentityType } from '@microsoft-logic-apps/utils';
+import { ExtensionCommand, ResourceIdentityType } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver, Theme } from '@microsoft/logic-apps-designer';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
 
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
+  const vscode = useContext(VSCodeContext);
+
   const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails } = vscodeState;
   const codelessApp = panelMetaData?.codelessApp;
 
@@ -73,6 +76,14 @@ export const App = () => {
     return true;
   };
 
+  const onSave = () => {
+    vscode.postMessage({
+      command: ExtensionCommand.save,
+      definition: {},
+      parameters: {},
+    });
+  };
+
   return (
     <DesignerProvider
       locale="en-US"
@@ -90,7 +101,7 @@ export const App = () => {
     >
       {codelessApp ? (
         <BJSWorkflowProvider workflow={{ definition: codelessApp.definition, connectionReferences }}>
-          <DesignerCommandBar onSave={testFunction} onParameters={testFunction} />
+          <DesignerCommandBar onSave={onSave} onParameters={testFunction} />
           <Designer />
         </BJSWorkflowProvider>
       ) : null}
