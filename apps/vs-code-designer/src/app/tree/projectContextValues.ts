@@ -4,37 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 const contextValueSeparator = ';';
-const contextValuePrefix = 'azFunc';
 
 export enum ProjectSource {
   Remote = 'Remote',
   Local = 'Local',
-}
-
-export enum ProjectAccess {
-  ReadOnly = 'ReadOnly',
-  ReadWrite = 'ReadWrite',
-}
-
-export enum ProjectResource {
-  Functions = 'Functions',
-  Function = 'Function',
-  Workflows = 'Workflows',
-  Workflow = 'Workflow',
-  Configurations = 'Configurations',
-  Connections = 'Connections',
-  Connection = 'Connection',
-  Parameters = 'Parameters',
-  Parameter = 'Parameter',
-}
-
-export function getProjectContextValue(
-  source: ProjectSource,
-  access: ProjectAccess,
-  resource: ProjectResource,
-  ...parts: string[]
-): string {
-  return [contextValuePrefix, source, access, resource, ...parts].join(contextValueSeparator) + contextValueSeparator;
 }
 
 export function isProjectCV(contextValue: string | RegExp): boolean {

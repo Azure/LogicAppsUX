@@ -10,11 +10,6 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem, WorkspaceFolder } from 'vscode';
 
-/**
- * Describes what to do if multiple projects are found
- */
-export type MultiProjectPromptBehavior = 'silent' | 'prompt' | 'modalPrompt';
-
 const projectSubpathKey = 'projectSubpath';
 
 // Use 'host.json' as an indicator that this is a functions project

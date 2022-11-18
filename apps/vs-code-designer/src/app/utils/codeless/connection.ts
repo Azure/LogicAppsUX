@@ -1,12 +1,10 @@
 import { connectionsFileName } from '../../../constants';
-import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
 import { addOrUpdateLocalAppSettings } from '../../funcConfig/local.settings';
 import * as fsUtil from '../fs';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson } from './parameter';
-import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS } from '@microsoft-logic-apps/utils';
 import type { Parameter } from '@microsoft-logic-apps/utils';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
@@ -185,14 +183,9 @@ export async function saveConectionReferences(
   const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
   const { connections, settings } = connectionAndSettingsToUpdate;
   const connectionsFilePath = path.join(projectPath!, connectionsFileName);
-  const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
 
   if (connections && Object.keys(connections).length) {
     await fsUtil.writeFormattedJson(connectionsFilePath, connections);
-
-    if (!connectionsFileExists && (await isCSharpProject(context, projectPath!))) {
-      await addNewFileInCSharpProject(context, connectionsFileName, projectPath!);
-    }
   }
 
   if (Object.keys(settings).length) {

@@ -59,14 +59,6 @@ export function getCodelessAppData(workflowName: string, workflow: any, paramete
   };
 }
 
-export function getTriggerName(definition: any): string | undefined {
-  const { triggers } = definition;
-  const triggerNames = Object.keys(triggers);
-
-  // NOTE(psamband): Since we only support single trigger in Standard LA, we default to first trigger.
-  return triggerNames.length === 1 ? triggerNames[0] : undefined;
-}
-
 function getWorkflowParameters(parameters: Record<string, Parameter>): Record<string, WorkflowParameter> {
   const workflowParameters: Record<string, WorkflowParameter> = {};
   for (const parameterKey of Object.keys(parameters)) {
