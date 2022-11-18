@@ -6,64 +6,13 @@ import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson } from './parameter';
 import { HTTP_METHODS } from '@microsoft-logic-apps/utils';
+import type { ConnectionAndSettings, ConnectionReferenceModel } from '@microsoft-logic-apps/utils';
 import type { Parameter } from '@microsoft-logic-apps/utils';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as requestP from 'request-promise';
-
-export interface ConnectionReferenceModel {
-  connection: {
-    id: string;
-  };
-  api: {
-    id: string;
-  };
-  connectionRuntimeUrl: string;
-  authentication: {
-    type: string;
-    audience?: string;
-    credentialType?: string;
-    clientId?: string;
-    tenant?: string;
-    secret?: string;
-    scheme?: string;
-    parameter?: string;
-  };
-}
-
-export interface FunctionConnectionModel {
-  function: {
-    id: string;
-  };
-  triggerUrl: string;
-  authentication: {
-    type: string;
-    name: string;
-    value: string;
-  };
-  displayName?: string;
-}
-
-export interface ServiceProviderConnectionModel {
-  parameterValues: Record<string, any>;
-  serviceProvider: {
-    id: string;
-  };
-  displayName?: string;
-}
-
-export interface ConnectionsData {
-  functionConnections?: Record<string, FunctionConnectionModel>;
-  managedApiConnections?: Record<string, ConnectionReferenceModel>;
-  serviceProviderConnections?: Record<string, ServiceProviderConnectionModel>;
-}
-
-interface ConnectionAndSettings {
-  connections: ConnectionsData;
-  settings: Record<string, string>;
-}
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
   const projectRoot: string = await getFunctionProjectRoot(context, workflowFilePath);
