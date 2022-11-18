@@ -1,6 +1,5 @@
 import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
@@ -9,7 +8,7 @@ import { FloatingPanel } from '../floatingPanel/FloatingPanel';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FunctionList } from '../functionList/FunctionList';
 import { schemaRootKey } from '../targetSchemaPane/TargetSchemaPane';
-import SourceSchemaTreeItem, { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
+import SourceSchemaTreeItem, { SourceSchemaTreeHeader, useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import Tree from '../tree/Tree';
 import type { ITreeNode } from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
@@ -110,12 +109,6 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
       return undefined;
     }
 
-    // Format extra top layers to show schema name and schemaTreeRoot
-    // Can safely typecast with the root node(s) as we only use the properties defined here
-    const schemaRoot = {} as ITreeNode<SchemaNodeExtended>;
-    const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
-    schemaNameRoot.isExpanded = true;
-
     // Search tree (maintain parent tree structure for matched nodes - returns whole tree if no/too-small search term)
     const newSourceSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = searchSchemaTreeFromRoot(
       sourceSchema.schemaTreeRoot,
@@ -123,14 +116,13 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     );
     newSourceSchemaTreeRoot.isExpanded = true;
 
-    schemaNameRoot.key = schemaRootKey;
-    schemaNameRoot.name = sourceSchema.name;
-    schemaNameRoot.schemaNodeDataType = SchemaNodeDataType.None;
+    // Format extra top layer to show schemaTreeRoot
+    // Can safely typecast with the root node(s) as we only use the properties defined here
+    const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
+    schemaNameRoot.isExpanded = true;
     schemaNameRoot.children = [newSourceSchemaTreeRoot];
 
-    schemaRoot.children = [schemaNameRoot];
-
-    return schemaRoot;
+    return schemaNameRoot;
   }, [sourceSchema, sourceSchemaSearchTerm]);
 
   const toolboxButtonPivotProps: ButtonPivotProps = useMemo(
@@ -179,6 +171,8 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
         onClose={closeToolbox}
       >
         <TreeHeader onSearch={setSourceSchemaSearchTerm} onClear={() => setSourceSchemaSearchTerm('')} />
+
+        <SourceSchemaTreeHeader />
 
         <Tree<SchemaNodeExtended>
           // Add one extra root layer so schemaTreeRoot is shown as well
