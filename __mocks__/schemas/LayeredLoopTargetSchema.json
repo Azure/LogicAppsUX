@@ -1,5 +1,5 @@
 {
-  "name": "Target.xsd",
+  "name": "LayeredLoopTargetSchema.xsd",
   "type": "XML",
   "targetNamespace": "http://tempuri.org/Target.xsd",
   "namespaces": {
