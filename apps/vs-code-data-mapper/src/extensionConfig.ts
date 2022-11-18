@@ -12,7 +12,7 @@ export const dataMapDefinitionsPath = `${artifactsPath}/MapDefinitions`;
 export const workflowDesignTimeDir = '/workflow-designtime';
 
 export const defaultDatamapFilename = 'default';
-export const draftMapDefinitionSuffix = '-draft';
+export const draftMapDefinitionSuffix = '.draft';
 export const mapDefinitionExtension = '.yml';
 export const mapXsltExtension = '.xslt';
 

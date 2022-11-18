@@ -3,7 +3,7 @@ import type { ITreeNode, CoreTreeProps } from './Tree';
 import { Stack } from '@fluentui/react';
 import { Button, mergeClasses } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
-import { bundleIcon, ChevronDown20Regular, ChevronDown20Filled, ChevronRight20Regular, ChevronRight20Filled } from '@fluentui/react-icons';
+import { bundleIcon, ChevronDown12Regular, ChevronDown12Filled, ChevronRight12Regular, ChevronRight12Filled } from '@fluentui/react-icons';
 import React, { useMemo } from 'react';
 
 const defaultChildPadding = 16;
@@ -48,8 +48,8 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
     toggleExpanded();
   };
 
-  const BundledChevronDownIcon = bundleIcon(ChevronDown20Filled, ChevronDown20Regular);
-  const BundledChevronRightIcon = bundleIcon(ChevronRight20Filled, ChevronRight20Regular);
+  const BundledChevronDownIcon = bundleIcon(ChevronDown12Filled, ChevronDown12Regular);
+  const BundledChevronRightIcon = bundleIcon(ChevronRight12Filled, ChevronRight12Regular);
 
   return (
     <>

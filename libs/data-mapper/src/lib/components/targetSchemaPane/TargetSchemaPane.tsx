@@ -129,6 +129,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
       newTargetSchemaTreeRoot = findAndExpandPathToCurrentNode(newTargetSchemaTreeRoot, currentTargetSchemaNode.key);
     }
 
+    newTargetSchemaTreeRoot.isExpanded = true;
     schemaNameRoot.children = [newTargetSchemaTreeRoot];
     schemaRoot.children = [schemaNameRoot];
 
