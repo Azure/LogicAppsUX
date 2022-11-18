@@ -270,7 +270,7 @@ const getInputValues = (currentConnection: Connection | undefined, connections: 
             return input.node.fullName.startsWith('@') ? `$${input.node.key}` : input.node.key;
           } else {
             if (input.node.key === indexPseudoFunctionKey) {
-              return getIndexValueForCurrentConnection(currentConnection);
+              return getIndexValueForCurrentConnection(connections[input.reactFlowKey]);
             } else {
               return collectFunctionValue(input.node, connections[input.reactFlowKey], connections);
             }
