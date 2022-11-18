@@ -84,22 +84,30 @@ const useStyles = makeStyles({
     ...shorthands.flex(1, 1, '1px'),
   },
   canvasWrapper: {
-    backgroundColor: '#edebe9',
     height: '100%',
   },
 });
 
 export interface DataMapperDesignerProps {
   saveStateCall: (dataMapDefinition: string, dataMapXslt: string) => void;
+  saveDraftStateCall?: (dataMapDefinition: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
+  setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({
+  saveStateCall,
+  saveDraftStateCall,
+  addSchemaFromFile,
+  readCurrentSchemaOptions,
+  setIsMapStateDirty,
+}: DataMapperDesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   useStaticStyles();
   const styles = useStyles();
 
+  const isMapStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
@@ -116,7 +124,13 @@ export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurre
   const dataMapDefinition = useMemo<string>(() => {
     if (sourceSchema && targetSchema) {
       try {
-        return convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+        const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema);
+
+        if (saveDraftStateCall) {
+          saveDraftStateCall(newDataMapDefinition);
+        }
+
+        return newDataMapDefinition;
       } catch (error) {
         // NOTE: Doing it this way so that the error, whatever it is, just gets formatted/logged on its own
         // - can and maybe should change if we add more infrastructure around error classes/types
@@ -134,7 +148,7 @@ export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurre
     }
 
     return '';
-  }, [currentConnections, sourceSchema, targetSchema]);
+  }, [currentConnections, sourceSchema, targetSchema, saveDraftStateCall]);
 
   const showMapOverview = useMemo<boolean>(
     () => !sourceSchema || !targetSchema || !currentTargetSchemaNode,
@@ -170,6 +184,13 @@ export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurre
         );
       });
   }, [dispatch, dataMapDefinition, saveStateCall, sourceSchema, targetSchema]);
+
+  // NOTE: Putting this useEffect here for vis next to onSave
+  useEffect(() => {
+    if (setIsMapStateDirty) {
+      setIsMapStateDirty(isMapStateDirty);
+    }
+  }, [isMapStateDirty, setIsMapStateDirty]);
 
   const ctrlSPressed = useKeyPress(['Meta+s', 'ctrl+s']);
   useEffect(() => {
