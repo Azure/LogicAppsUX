@@ -2,10 +2,11 @@ import type { DataMapperDesignerContext } from './DataMapperDesignerContext';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { reactPlugin } from './services/appInsights/AppInsights';
 import { store } from './state/Store';
+import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 import { ThemeProvider } from '@fluentui/react';
-import { FluentProvider, webDarkTheme, webLightTheme, themeToTokensObject } from '@fluentui/react-components';
 import type { Theme } from '@fluentui/react-components';
+import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { IntlProvider } from '@microsoft-logic-apps/intl';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import React from 'react';
@@ -58,7 +59,10 @@ export const DataMapperDesignerProvider = ({ theme = 'light', locale = 'en', opt
             theme={theme === 'light' ? extendedWebLightTheme : extendedWebDarkTheme}
             style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
           >
-            <ThemeProvider theme={AzureThemeLight} style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
+            <ThemeProvider
+              theme={theme === 'light' ? AzureThemeLight : AzureThemeDark}
+              style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
+            >
               <IntlProvider
                 locale={locale}
                 defaultLocale={locale}
