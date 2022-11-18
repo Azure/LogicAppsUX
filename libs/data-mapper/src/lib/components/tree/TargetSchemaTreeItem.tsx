@@ -92,7 +92,8 @@ export const TargetSchemaTreeHeader = ({ status }: TargetSchemaTreeHeaderProps) 
       className={mergeClasses(styles.nodeContainer, styles.targetSchemaNode)}
       style={{
         position: 'relative',
-        paddingLeft: '28px',
+        paddingLeft: '8px',
+        marginBottom: 0,
         cursor: 'pointer',
         backgroundColor: !currentTargetSchemaNode ? tokens.colorNeutralBackground4Selected : undefined,
       }}

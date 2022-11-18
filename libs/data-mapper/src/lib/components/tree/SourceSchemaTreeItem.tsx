@@ -90,7 +90,7 @@ export const SourceSchemaTreeHeader = () => {
       horizontal
       verticalAlign="center"
       className={mergeClasses(styles.nodeContainer, styles.sourceSchemaNode)}
-      style={{ width: '100%', minWidth: 0, paddingLeft: '28px' }}
+      style={{ width: '100%', minWidth: 0, paddingLeft: '8px', marginBottom: 0 }}
     >
       <Document20Regular />
 
