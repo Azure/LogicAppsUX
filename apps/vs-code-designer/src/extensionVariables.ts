@@ -20,15 +20,11 @@ export namespace ext {
 
   export const prefix = 'azureLogicAppsStandard';
 
-  export const openWebviewPanels: Record<string, Record<string, WebviewPanel>> = {
-    designerLocal: {},
-    monitoring: {},
-    overview: {},
-    designerAzure: {},
-    export: {},
-  };
-
   export enum webViewKey {
     designerLocal = 'designerLocal',
   }
+
+  export const openWebviewPanels: Record<string, Record<string, WebviewPanel>> = {
+    [webViewKey.designerLocal]: {},
+  };
 }

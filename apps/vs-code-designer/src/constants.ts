@@ -7,22 +7,10 @@ import { localize } from './localize';
 export const projectLanguageSetting = 'projectLanguage';
 export const funcVersionSetting = 'projectRuntime';
 export const projectSubpathSetting = 'projectSubpath';
-export const templateFilterSetting = 'templateFilter';
-export const deploySubpathSetting = 'deploySubpath';
-export const templateVersionSetting = 'templateVersion';
-export const preDeployTaskSetting = 'preDeployTask';
-export const projectOpenBehaviorSetting = 'projectOpenBehavior';
-export const projectTemplateKeySetting = 'projectTemplateKey';
-export const pomXmlFileName = 'pom.xml';
-export const javaBuildTool = 'javaBuildTool';
 
 export const hostFileName = 'host.json';
 export const localSettingsFileName = 'local.settings.json';
-export const functionJsonFileName = 'function.json';
-export const tasksFileName = 'tasks.json';
-export const launchFileName = 'launch.json';
 export const settingsFileName = 'settings.json';
-export const vscodeFolderName = '.vscode';
 export const gitignoreFileName = '.gitignore';
 export const requirementsFileName = 'requirements.txt';
 export const connectionsFileName = 'connections.json';
@@ -30,39 +18,9 @@ export const parametersFileName = 'parameters.json';
 export const funcignoreFileName = '.funcignore';
 export const funcPackageName = 'azure-functions-core-tools';
 
-export const functionAppKind = 'functionapp';
-export const logicAppKind = 'workflowapp';
-export const logicAppKindAppSetting = 'workflowApp';
-export const dotnetPublishTaskLabel = 'publish';
-export const javaPackageTaskLabel = 'package';
-export const kubernetesKind = 'kubernetes';
-
 export const func = 'func';
-export const extInstallCommand = 'extensions install';
-export const extInstallTaskName = `${func}: ${extInstallCommand}`;
 
-export const hostStartCommand = 'host start';
-export const hostStartTaskName = `${func}: ${hostStartCommand}`;
-
-export const packCommand = 'pack';
-export const buildNativeDeps = '--build-native-deps';
-export const packTaskName = `${func}: ${packCommand}`;
-
-export const funcWatchProblemMatcher = '$func-watch';
-
-export const localhost = '127.0.0.1';
-
-export const workflowAppApiVersion = '2018-11-01';
-
-export const tsDefaultOutDir = 'dist';
-export const tsConfigFileName = 'tsconfig.json';
-
-export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
-
-export const workerRuntimeKey = 'FUNCTIONS_WORKER_RUNTIME';
-export const extensionVersionKey = 'FUNCTIONS_EXTENSION_VERSION';
-
-export const webhookRedirectHostUri = 'Workflows.WebhookRedirectHostUri';
+// Workflow
 export const workflowLocationKey = 'WORKFLOWS_LOCATION_NAME';
 export const workflowResourceGroupNameKey = 'WORKFLOWS_RESOURCE_GROUP_NAME';
 export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
@@ -71,18 +29,7 @@ export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
 
 export const viewOutput = localize('viewOutput', 'View Output');
 
-export const workflowAppAADClientId = 'WORKFLOWAPP_AAD_CLIENTID';
-export const workflowAppAADObjectId = 'WORKFLOWAPP_AAD_OBJECTID';
-export const workflowAppAADTenantId = 'WORKFLOWAPP_AAD_TENANTID';
-export const workflowAppAADClientSecret = 'WORKFLOWAPP_AAD_CLIENTSECRET';
-
+// Designer
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
 export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';
-
-export const workflowappRuntime = 'node|14';
-
 export const workflowDesignerLoadTimeout = 300000;
-export const debugSymbolDll = 'Microsoft.Azure.Workflows.BuildTasks.DebugSymbolGenerator.dll';
-
-export const azureWebJobsSecretStorageTypeKey = 'AzureWebJobsSecretStorageType';
-export const sqlStorageConnectionStringKey = 'Workflows.Sql.ConnectionString';
