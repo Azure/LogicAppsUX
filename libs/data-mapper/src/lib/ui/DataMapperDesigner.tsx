@@ -84,7 +84,6 @@ const useStyles = makeStyles({
     ...shorthands.flex(1, 1, '1px'),
   },
   canvasWrapper: {
-    backgroundColor: '#edebe9',
     height: '100%',
   },
 });
@@ -93,13 +92,20 @@ export interface DataMapperDesignerProps {
   saveStateCall: (dataMapDefinition: string, dataMapXslt: string) => void;
   addSchemaFromFile?: (selectedSchemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
+  setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }: DataMapperDesignerProps) => {
+export const DataMapperDesigner = ({
+  saveStateCall,
+  addSchemaFromFile,
+  readCurrentSchemaOptions,
+  setIsMapStateDirty,
+}: DataMapperDesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   useStaticStyles();
   const styles = useStyles();
 
+  const isMapStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
@@ -170,6 +176,13 @@ export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurre
         );
       });
   }, [dispatch, dataMapDefinition, saveStateCall, sourceSchema, targetSchema]);
+
+  // NOTE: Putting this useEffect here for vis next to onSave
+  useEffect(() => {
+    if (setIsMapStateDirty) {
+      setIsMapStateDirty(isMapStateDirty);
+    }
+  }, [isMapStateDirty, setIsMapStateDirty]);
 
   const ctrlSPressed = useKeyPress(['Meta+s', 'ctrl+s']);
   useEffect(() => {

@@ -1,6 +1,5 @@
-export const webviewTitle = 'Data Mapper';
 export const webviewType = 'dataMapperWebview';
-export const outputChannelTitle = webviewTitle;
+export const outputChannelTitle = 'Data Mapper';
 export const outputChannelPrefix = 'azureLogicAppsDataMapper';
 
 export const supportedDataMapDefinitionFileExts = ['.yml'];

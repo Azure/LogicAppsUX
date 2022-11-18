@@ -6,7 +6,6 @@ import {
   mapXsltExtension,
   schemasPath,
   supportedSchemaFileExts,
-  webviewTitle,
   webviewType,
 } from './extensionConfig';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
@@ -47,6 +46,10 @@ type ReceivingMessageTypes =
   | {
       command: 'webviewRscLoadError';
       data: string;
+    }
+  | {
+      command: 'setIsMapStateDirty';
+      data: boolean;
     };
 
 export default class DataMapperExt {
@@ -69,6 +72,7 @@ export default class DataMapperExt {
 
       // IF loading a data map, handle that + xslt filename
       DataMapperExt.handleLoadMapDefinitionIfAny();
+      DataMapperExt.updateWebviewPanelTitle(false);
 
       DataMapperExt.currentPanel._panel.reveal(ViewColumn.Active);
       return;
@@ -76,7 +80,7 @@ export default class DataMapperExt {
 
     const panel = window.createWebviewPanel(
       webviewType, // Key used to reference the panel
-      webviewTitle, // Title display in the tab
+      'Data Mapper', // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
       {
         enableScripts: true,
@@ -87,6 +91,7 @@ export default class DataMapperExt {
     );
 
     this.currentPanel = new DataMapperExt(panel, DataMapperExt.context.extensionPath);
+    DataMapperExt.updateWebviewPanelTitle(false);
 
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }
@@ -174,7 +179,20 @@ export default class DataMapperExt {
         DataMapperExt.saveDataMap(false, msg.data);
         break;
       }
+      case 'setIsMapStateDirty': {
+        DataMapperExt.handleUpdateMapDirtyState(msg.data);
+      }
     }
+  }
+
+  public static updateWebviewPanelTitle(isDirty: boolean) {
+    if (DataMapperExt.currentPanel) {
+      DataMapperExt.currentPanel._panel.title = `${DataMapperExt.currentDataMapName ?? 'Untitled'} ${isDirty ? '●' : ''}`;
+    }
+  }
+
+  public static handleUpdateMapDirtyState(isMapStateDirty: boolean) {
+    DataMapperExt.updateWebviewPanelTitle(isMapStateDirty);
   }
 
   public static handleLoadMapDefinitionIfAny() {

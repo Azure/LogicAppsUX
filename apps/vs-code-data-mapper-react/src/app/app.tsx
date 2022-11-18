@@ -77,6 +77,13 @@ export const App = () => {
     });
   };
 
+  const setIsMapStateDirty = (isMapStateDirty: boolean) => {
+    vscode.postMessage({
+      command: 'setIsMapStateDirty',
+      data: isMapStateDirty,
+    });
+  };
+
   const handleRscLoadError = useCallback(
     (error: unknown) => {
       let errorMsg: string;
@@ -166,6 +173,7 @@ export const App = () => {
           saveStateCall={saveStateCall}
           addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalFileOptions}
+          setIsMapStateDirty={setIsMapStateDirty}
         />
       </DataMapDataProvider>
     </DataMapperDesignerProvider>
