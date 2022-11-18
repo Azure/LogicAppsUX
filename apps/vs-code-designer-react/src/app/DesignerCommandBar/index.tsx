@@ -1,14 +1,27 @@
+import { VSCodeContext } from '../../webviewCommunication';
 import type { ICommandBarItemProps } from '@fluentui/react';
 import { CommandBar } from '@fluentui/react';
+import { ExtensionCommand } from '@microsoft-logic-apps/utils';
+import { serializeWorkflow as serializeBJSWorkflow, store as DesignerStore } from '@microsoft/logic-apps-designer';
+import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface DesignerCommandBarProps {
-  onSave(): void;
-  onParameters(): void;
-}
-
-export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ onSave, onParameters }) => {
+export const DesignerCommandBar: React.FC = () => {
   const intl = useIntl();
+  const vscode = useContext(VSCodeContext);
+
+  const onSave = async () => {
+    const designerState = DesignerStore.getState();
+    const { definition, parameters } = await serializeBJSWorkflow(designerState, {
+      skipValidation: true,
+      ignoreNonCriticalErrors: true,
+    });
+    vscode.postMessage({
+      command: ExtensionCommand.save,
+      definition,
+      parameters,
+    });
+  };
 
   const Resources = {
     DESIGNER_SAVE: intl.formatMessage({
@@ -27,14 +40,18 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ onSave, 
       iconProps: { iconName: 'Refresh' },
       key: 'Refresh',
       name: Resources.DESIGNER_SAVE,
-      onClick: onSave,
+      onClick: () => {
+        onSave();
+      },
     },
     {
       ariaLabel: Resources.DESIGNER_PARAMETERS,
       iconProps: { iconName: 'Parameter' },
       key: 'Parameter',
       name: Resources.DESIGNER_PARAMETERS,
-      onClick: onParameters,
+      onClick: () => {
+        return true;
+      },
     },
   ];
 

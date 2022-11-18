@@ -149,7 +149,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       try {
         const { definition, parameters } = workflowToSave;
 
-        const definitionToSave: any = JSON.parse(definition);
+        const definitionToSave: any = definition;
         const parametersFromDefinition = definitionToSave.parameters;
         if (parametersFromDefinition) {
           delete parametersFromDefinition.$connections;

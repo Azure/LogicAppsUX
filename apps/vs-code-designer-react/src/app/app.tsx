@@ -1,5 +1,4 @@
 import type { RootState } from '../state/Store';
-import { VSCodeContext } from '../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import { HttpClient } from './httpClient';
 import {
@@ -9,19 +8,17 @@ import {
   StandardOperationManifestService,
   StandardSearchService,
 } from '@microsoft-logic-apps/designer-client-services';
-import { ExtensionCommand, ResourceIdentityType } from '@microsoft-logic-apps/utils';
+import { HTTP_METHODS, ResourceIdentityType } from '@microsoft-logic-apps/utils';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver, Theme } from '@microsoft/logic-apps-designer';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
 
 export const App = () => {
   const vscodeState = useSelector((state: RootState) => state.designer);
-  const vscode = useContext(VSCodeContext);
-
   const { panelMetaData, connectionReferences, baseUrl, apiHubServiceDetails } = vscodeState;
-  const codelessApp = panelMetaData?.codelessApp;
+  const codelessApp = panelMetaData?.workflowContent;
 
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
 
@@ -70,19 +67,7 @@ export const App = () => {
     },
   });
 
-  const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
-
-  const testFunction = () => {
-    return true;
-  };
-
-  const onSave = () => {
-    vscode.postMessage({
-      command: ExtensionCommand.save,
-      definition: {},
-      parameters: {},
-    });
-  };
+  const workflowService = { getCallbackUrl: () => Promise.resolve({ method: HTTP_METHODS.POST, value: 'Dummy url' }) };
 
   return (
     <DesignerProvider
@@ -101,7 +86,7 @@ export const App = () => {
     >
       {codelessApp ? (
         <BJSWorkflowProvider workflow={{ definition: codelessApp.definition, connectionReferences }}>
-          <DesignerCommandBar onSave={onSave} onParameters={testFunction} />
+          <DesignerCommandBar />
           <Designer />
         </BJSWorkflowProvider>
       ) : null}
