@@ -1,6 +1,6 @@
 {
   "name": "microsoft-logic-apps",
-  "version": "0.2.16",
+  "version": "0.2.20",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -52,6 +52,7 @@
     "@fluentui/theme": "2.6.12",
     "@fluentui/web-components": "^2.5.4",
     "@microsoft/applicationinsights-react-js": "^3.4.0",
+    "@microsoft/applicationinsights-web": "^2.8.9",
     "@microsoft/fast-components": "^2.30.6",
     "@microsoft/fast-element": "^1.10.5",
     "@microsoft/fast-foundation": "^2.46.12",

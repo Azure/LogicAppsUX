@@ -96,6 +96,7 @@ export const getInputParametersFromManifest = (
 
   if (stepDefinition) {
     const { inputsLocation } = manifest.properties;
+    const operationData = clone(stepDefinition);
 
     // In the case of retry policy, it is treated as an input
     // avoid pushing a parameter for it as it is already being
@@ -104,22 +105,22 @@ export const getInputParametersFromManifest = (
     if (
       manifest.properties.settings &&
       manifest.properties.settings.retryPolicy &&
-      stepDefinition.inputs &&
-      stepDefinition.inputs[PropertyName.RETRYPOLICY]
+      operationData.inputs &&
+      operationData.inputs[PropertyName.RETRYPOLICY]
     ) {
-      delete stepDefinition.inputs.retryPolicy;
+      delete operationData.inputs.retryPolicy;
     }
 
     if (
       manifest.properties.connectionReference &&
       manifest.properties.connectionReference.referenceKeyFormat === ConnectionReferenceKeyFormat.Function
     ) {
-      delete stepDefinition.inputs.function;
+      delete operationData.inputs.function;
     }
 
     primaryInputParametersInArray = updateParameterWithValues(
       'inputs.$',
-      getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], stepDefinition),
+      getInputsValueFromDefinitionForManifest(inputsLocation ?? ['inputs'], operationData),
       '',
       primaryInputParametersInArray,
       !inputsLocation || !!inputsLocation.length /* createInvisibleParameter */,
@@ -131,8 +132,6 @@ export const getInputParametersFromManifest = (
 
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);
   const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
-
-  // TODO (14490585)- Initialize editor view models for array
 
   const defaultParameterGroup = {
     id: ParameterGroupKeys.DEFAULT,

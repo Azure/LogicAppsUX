@@ -315,10 +315,12 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
     editorViewModel = initializeArrayViewModel(parameter, shouldIgnoreDefaultValue);
     schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.ARRAY } };
   } else if (!editor && schema?.enum && !equals(visibility, Visibility.Internal)) {
-    console.log('schemaCompare', itemSchema, schema);
     editor = constants.EDITOR.COMBOBOX;
     schema = { ...schema, ...{ 'x-ms-editor': constants.EDITOR.COMBOBOX } };
     editorOptions = { ...editorOptions, options: schema.enum.map((val: ComboboxItem) => ({ key: val, value: val, displayName: val })) };
+  } else if (type === constants.SWAGGER.TYPE.ARRAY) {
+    editorViewModel = toArrayViewModel(schema);
+    editor = constants.EDITOR.ARRAY;
   } else if (editor === constants.EDITOR.DICTIONARY) {
     editorViewModel = toDictionaryViewModel(value);
   } else if (editor === constants.EDITOR.TABLE) {
@@ -336,6 +338,28 @@ export function getParameterEditorProps(parameter: InputParameter, shouldIgnoreD
 
   return { editor, editorOptions, editorViewModel, schema };
 }
+
+const toArrayViewModel = (input: any): { schema: any } => {
+  const schema: any = destructureSchema(input.itemSchema);
+  return { schema };
+};
+
+const destructureSchema = (schema: any): any => {
+  if (!schema) {
+    return;
+  }
+  if (schema.type && schema.type !== 'object') {
+    return { ...schema };
+  }
+  if (schema.type === 'object' && schema.properties) {
+    return destructureSchema(schema.properties);
+  }
+  const newSchema: any = {};
+  for (const schemaItem of Object.keys(schema)) {
+    newSchema[schemaItem] = destructureSchema(schema[schemaItem]);
+  }
+  return newSchema;
+};
 
 const toConditionViewModel = (input: any): { items: GroupItemProps } => {
   const getConditionOption = getConditionalSelectedOption(input);

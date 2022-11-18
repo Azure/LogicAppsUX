@@ -96,24 +96,21 @@ export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended):
 // Search key will be the node's key
 // Returns nodes that include the search key in their node.key (while maintaining the tree/schema's structure)
 export const searchSchemaTreeFromRoot = (
-  schemaTreeRoot: SchemaNodeExtended,
-  nodeKeySearchTerm: string,
+  schemaTreeRoot: ITreeNode<SchemaNodeExtended>,
+  nodeKeySearchTerm?: string,
   minSearchCharacters = 2
-): ITreeNode<ITreeNode<SchemaNodeExtended>> => {
-  if (nodeKeySearchTerm.length < minSearchCharacters) {
+): ITreeNode<SchemaNodeExtended> => {
+  if (!nodeKeySearchTerm || nodeKeySearchTerm.length < minSearchCharacters) {
     return { ...schemaTreeRoot };
   }
 
-  const searchChildren = (result: ITreeNode<ITreeNode<SchemaNodeExtended>>[], node: ITreeNode<ITreeNode<SchemaNodeExtended>>) => {
+  const searchChildren = (result: ITreeNode<SchemaNodeExtended>[], node: ITreeNode<SchemaNodeExtended>) => {
     if (node.key.toString().toLowerCase().includes(nodeKeySearchTerm.toLowerCase())) {
       result.push({ ...node });
-      return result;
-    }
-
-    if (node.children && node.children.length > 0) {
+    } else if (node.children && node.children.length > 0) {
       const childNodes = node.children.reduce(searchChildren, []);
       if (childNodes.length) {
-        result.push({ ...node, isExpanded: true, children: childNodes } as ITreeNode<ITreeNode<SchemaNodeExtended>>);
+        result.push({ ...node, isExpanded: true, children: childNodes } as ITreeNode<SchemaNodeExtended>);
       }
     }
 
@@ -123,7 +120,7 @@ export const searchSchemaTreeFromRoot = (
   return {
     ...schemaTreeRoot,
     isExpanded: true,
-    children: schemaTreeRoot.children.reduce(searchChildren, []) as ITreeNode<SchemaNodeExtended>[],
+    children: schemaTreeRoot.children ? schemaTreeRoot.children.reduce<ITreeNode<SchemaNodeExtended>[]>(searchChildren, []) : [],
   };
 };
 

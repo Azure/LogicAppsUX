@@ -18,7 +18,7 @@ import { Meta } from '@storybook/addon-docs';
 - Logic Apps workflow (folder - w/ schemas) - see steps to create below:
   1.  In Azure Tools extension tab under Logic Apps (Standard), click the 'Create New Project' icon, and choose where you want the project folder
   2.  Open that folder in VS Code, then go back to Logic Apps (Standard), and click 'Create New Workflow' -> Stateless -> Press Enter
-  3.  Make sure that ./Artifacts/Schemas exists within the project folder, and add an .xsd template schema for testing (ask the DM/LA team for some)
+  3.  Make sure that ./Artifacts/Schemas exists within the project folder, and add an .xsd schema for testing (see the DM Overview doc for test data)
 
 ### Daily .VSIX Build
 
@@ -33,12 +33,9 @@ In order to utilize the above file once downloaded:
 
 You're all set! See the section on usage/functionality at the bottom to help you get started!
 
-**NOTE (9/15/2022):** Leaving this here for now until completely sure that public workflow extension bundle has necessary endpoints - if
-you're having issues, you may still have to follow the 'Backend Runtime Setup' instructions below
-
 ### Build (Dev/Debug)
 
-To build, run the following commands in order (from the root of the repo folder):
+To build, run the following commands _in order_ (from the root of the repo folder):
 
 ```bash
 nx build vs-code-data-mapper
@@ -50,7 +47,7 @@ nx build vs-code-data-mapper-react
 
 ### Run (Dev/Debug)
 
-**NOTE:** If this is your first time running the Data Mapper extension, follow the backend setup instructions below
+**NOTE:** As of 11/16/2022, Data Mapper's API endpoints are in the public workflow extension bundle, so no further action needs to be taken to utilize DM
 
 To run the VS Code extension (in debug mode):
 
@@ -58,16 +55,12 @@ To run the VS Code extension (in debug mode):
 2.  Click the 'Run and Debug' tab on the left (Activity) bar
 3.  Select 'Run Data Mapper Extension...' in the dropdown at the top, then click the 'Start debugging' icon
 
-### Backend Runtime Setup - \***\*ONLY for first time setup or new extension bundle version\*\***
+### Backend Runtime / Workflow Extension Bundle Setup
 
-1. Once the Data Mapper extension has been run, wait until you see that 'func host start' has acquired a lease in the output log.
-   This is so that the necessary path/folder get generated for us to change out the runtime. Close the VS Code window running the Data Mapper extension once this is complete.
-2. Download/Set-up the latest workflow extension bundle (https://msazure.visualstudio.com/One/_build?definitionId=161889&_a=summary&repositoryFilter=2318&branchFilter=1673047)
-   - Click the latest run -> Click 'Associated Pipelines' -> Click the latest run -> On the 'build' stage, click 'x artifacts' -> Expand the '...Windows' dropdown -> Download the '...any-any.zip'
-   - Go to `yourRootUsernameFolder/.azure-functions-core-tools/Functions/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows`
-   - Rename the current version folder (Ex: backup-1.1.16)
-   - Replace it with the extracted folder you just downloaded (renaming it to the same version as the one you replaced)
-3. You can now run the Data Mapper extension with its latest backend runtime!
+**NOTE:** These steps are only if you need to use a custom/dev bundle
+
+To use a custom bundle, all you have to do is add the setting `"FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI"` to your workflow's root _and_ workflow-designtime `local.settings.json` files inside `Values`
+with the value being the URI for the bundle .zip file
 
 ## Usage / Supported Functionality
 
@@ -75,6 +68,5 @@ The extension will activate/initialize automatically upon viewing the Azure Tool
 
 Listed below are different ways you can kick off your usage/flow of Data Mapper:
 
-- Context menu - load data map
-- Azure Tools view - create new data map
-- Within Data Mapper component - ConfigPane (choosing schemas) for existing schema files; save data maps to filesystem
+- Create a new data map: open the Azure Tools extension tab, find the Data Mapper sub-view, and click either 'Create new data map' button
+- Load a data map: right-click on a .yml map definition

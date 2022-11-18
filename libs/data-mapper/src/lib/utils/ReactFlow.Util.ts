@@ -2,8 +2,9 @@ import type { FunctionCardProps } from '../components/nodeCard/FunctionCard';
 import type { CardProps } from '../components/nodeCard/NodeCard';
 import type { SchemaCardProps } from '../components/nodeCard/SchemaCard';
 import type { NodeToggledStateDictionary } from '../components/tree/TargetSchemaTreeItem';
-import { childTargetNodeCardIndent, schemaNodeCardHeight } from '../constants/NodeConstants';
+import { childTargetNodeCardIndent, schemaNodeCardHeight, schemaNodeCardWidth } from '../constants/NodeConstants';
 import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import appInsights from '../core/services/appInsights/AppInsights';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
 import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
@@ -18,6 +19,8 @@ import { useEffect, useState } from 'react';
 import type { Edge as ReactFlowEdge, Node as ReactFlowNode } from 'reactflow';
 import { Position } from 'reactflow';
 
+export const overviewTgtSchemaX = 600;
+
 // Hidden dummy node placed at 0,0 (same as source schema block) to allow initial load fitView to center diagram
 // NOTE: Not documented, but hidden nodes need a width/height to properly affect fitView when includeHiddenNodes option is true
 const placeholderReactFlowNode: ReactFlowNode = {
@@ -25,7 +28,7 @@ const placeholderReactFlowNode: ReactFlowNode = {
   hidden: true,
   sourcePosition: Position.Right,
   data: null,
-  width: 10,
+  width: schemaNodeCardWidth,
   height: 10,
   position: {
     x: 0,
@@ -81,6 +84,7 @@ export const useLayout = (
         })
         .catch((error) => {
           console.error(`Elk Layout Error: ${error}`);
+          appInsights.trackException({ exception: error });
         });
     } else {
       setReactFlowNodes([]);
@@ -160,7 +164,7 @@ const convertSourceToReactFlowParentAndChildNodes = (
       type: ReactFlowNodeType.SchemaNode,
       sourcePosition: Position.Right,
       position: {
-        x: sourceSchemaElkTree.x + elkNode.x,
+        x: 0,
         y: elkNode.y,
       },
     });
@@ -305,62 +309,115 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary, selec
 };
 
 export const useOverviewLayout = (
-  parentSchemaNode: SchemaNodeExtended,
-  schemaType: SchemaType,
+  srcSchemaTreeRoot?: SchemaNodeExtended,
+  tgtSchemaTreeRoot?: SchemaNodeExtended,
   shouldTargetSchemaDisplayChevrons?: boolean,
-  toggledStatesDictionary?: NodeToggledStateDictionary
+  tgtSchemaToggledStatesDictionary?: NodeToggledStateDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode<SchemaCardProps>[]>([]);
 
   useEffect(() => {
     const newReactFlowNodes: ReactFlowNode<SchemaCardProps>[] = [];
 
-    newReactFlowNodes.push({
-      id: addReactFlowPrefix(parentSchemaNode.key, schemaType),
-      data: {
-        schemaNode: parentSchemaNode,
-        schemaType,
-        displayHandle: false,
-        displayChevron: schemaType === SchemaType.Target && !!shouldTargetSchemaDisplayChevrons,
-        isLeaf: false,
-        isChild: false,
-        disabled: false,
-        error: false,
-        relatedConnections: [],
-        connectionStatus: toggledStatesDictionary ? toggledStatesDictionary[parentSchemaNode.key] : undefined,
-      },
-      type: ReactFlowNodeType.SchemaNode,
-      position: {
-        x: 0,
-        y: 0,
-      },
-    });
+    const baseSchemaNodeData = {
+      displayHandle: false,
+      disabled: false,
+      error: false,
+      relatedConnections: [],
+    };
 
-    parentSchemaNode.children?.forEach((childNode, idx) => {
+    // Dummy source schema node
+    newReactFlowNodes.push({ ...placeholderReactFlowNode });
+
+    // Source schema nodes
+    if (srcSchemaTreeRoot) {
+      const baseSrcSchemaNodeData = {
+        ...baseSchemaNodeData,
+        schemaType: SchemaType.Source,
+        displayChevron: false,
+      };
+
       newReactFlowNodes.push({
-        id: addReactFlowPrefix(childNode.key, schemaType),
+        id: addSourceReactFlowPrefix(srcSchemaTreeRoot.key),
         data: {
-          schemaNode: childNode,
-          schemaType,
-          displayHandle: false,
-          displayChevron: schemaType === SchemaType.Target && !!shouldTargetSchemaDisplayChevrons,
-          isLeaf: isLeafNode(childNode),
-          isChild: true,
-          disabled: false,
-          error: false,
-          relatedConnections: [],
-          connectionStatus: toggledStatesDictionary ? toggledStatesDictionary[childNode.key] : undefined,
+          ...baseSrcSchemaNodeData,
+          schemaNode: srcSchemaTreeRoot,
+          isLeaf: false,
+          isChild: false,
         },
         type: ReactFlowNodeType.SchemaNode,
         position: {
-          x: childTargetNodeCardIndent,
-          y: (idx + 1) * (schemaNodeCardHeight + 10),
+          x: 0,
+          y: 0,
         },
       });
-    });
+
+      srcSchemaTreeRoot.children?.forEach((childNode, idx) => {
+        newReactFlowNodes.push({
+          id: addSourceReactFlowPrefix(childNode.key),
+          data: {
+            ...baseSrcSchemaNodeData,
+            schemaNode: childNode,
+            isLeaf: isLeafNode(childNode),
+            isChild: true,
+          },
+          type: ReactFlowNodeType.SchemaNode,
+          position: {
+            x: childTargetNodeCardIndent,
+            y: (idx + 1) * (schemaNodeCardHeight + 10),
+          },
+        });
+      });
+    }
+
+    // Dummy target schema node
+    newReactFlowNodes.push({ ...placeholderReactFlowNode, position: { x: overviewTgtSchemaX, y: 0 }, id: 'layouting-&-Placeholder-Tgt' });
+
+    // Target schema nodes
+    if (tgtSchemaTreeRoot) {
+      const baseTgtSchemaNodeData = {
+        ...baseSchemaNodeData,
+        schemaType: SchemaType.Target,
+        displayChevron: !!shouldTargetSchemaDisplayChevrons,
+      };
+
+      newReactFlowNodes.push({
+        id: addTargetReactFlowPrefix(tgtSchemaTreeRoot.key),
+        data: {
+          ...baseTgtSchemaNodeData,
+          schemaNode: tgtSchemaTreeRoot,
+          isLeaf: false,
+          isChild: false,
+          connectionStatus: tgtSchemaToggledStatesDictionary ? tgtSchemaToggledStatesDictionary[tgtSchemaTreeRoot.key] : undefined,
+        },
+        type: ReactFlowNodeType.SchemaNode,
+        position: {
+          x: overviewTgtSchemaX,
+          y: 0,
+        },
+      });
+
+      tgtSchemaTreeRoot.children?.forEach((childNode, idx) => {
+        newReactFlowNodes.push({
+          id: addTargetReactFlowPrefix(childNode.key),
+          data: {
+            ...baseTgtSchemaNodeData,
+            schemaNode: childNode,
+            isLeaf: isLeafNode(childNode),
+            isChild: true,
+            connectionStatus: tgtSchemaToggledStatesDictionary ? tgtSchemaToggledStatesDictionary[childNode.key] : undefined,
+          },
+          type: ReactFlowNodeType.SchemaNode,
+          position: {
+            x: overviewTgtSchemaX + childTargetNodeCardIndent,
+            y: (idx + 1) * (schemaNodeCardHeight + 10),
+          },
+        });
+      });
+    }
 
     setReactFlowNodes(newReactFlowNodes);
-  }, [parentSchemaNode, schemaType, shouldTargetSchemaDisplayChevrons, toggledStatesDictionary]);
+  }, [srcSchemaTreeRoot, tgtSchemaTreeRoot, shouldTargetSchemaDisplayChevrons, tgtSchemaToggledStatesDictionary]);
 
   return reactFlowNodes;
 };

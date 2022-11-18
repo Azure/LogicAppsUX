@@ -3,7 +3,7 @@ import type { ITreeNode, CoreTreeProps } from './Tree';
 import { Stack } from '@fluentui/react';
 import { Button, mergeClasses } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
-import { ChevronDown20Regular, ChevronRight20Regular } from '@fluentui/react-icons';
+import { bundleIcon, ChevronDown20Regular, ChevronDown20Filled, ChevronRight20Regular, ChevronRight20Filled } from '@fluentui/react-icons';
 import React, { useMemo } from 'react';
 
 const defaultChildPadding = 16;
@@ -22,11 +22,13 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
     nodeContainerStyle,
     childPadding = defaultChildPadding,
     onClickItem,
+    shouldShowIndicator,
     parentItemClickShouldExpand,
   } = props;
   const styles = useTreeStyles();
   const [isExpanded, { toggle: toggleExpanded }] = useBoolean(false);
   const [isHovered, { setFalse: setNotHovered, setTrue: setIsHovered }] = useBoolean(false);
+  const [isChevronHovered, { setFalse: setChevronNotHovered, setTrue: setChevronIsHovered }] = useBoolean(false);
 
   const hasChildren = useMemo<boolean>(() => !!(node.children && node.children.length > 0), [node]);
   const isNodeExpanded = useMemo<boolean>(() => (node.isExpanded === undefined ? isExpanded : node.isExpanded), [node, isExpanded]);
@@ -46,6 +48,9 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
     toggleExpanded();
   };
 
+  const BundledChevronDownIcon = bundleIcon(ChevronDown20Filled, ChevronDown20Regular);
+  const BundledChevronRightIcon = bundleIcon(ChevronRight20Filled, ChevronRight20Regular);
+
   return (
     <>
       <Stack
@@ -54,6 +59,7 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
           ...(nodeContainerStyle ? nodeContainerStyle(node) : {}),
           paddingLeft: `${level * childPadding}px`,
           cursor: onClickItem || !!parentItemClickShouldExpand ? 'pointer' : undefined,
+          position: 'relative',
         }}
         horizontal
         verticalAlign="center"
@@ -61,15 +67,29 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
         onMouseEnter={setIsHovered}
         onMouseLeave={setNotHovered}
       >
+        <div
+          className={styles.indicator}
+          style={{ position: 'absolute', left: 4, visibility: shouldShowIndicator && shouldShowIndicator(node) ? 'visible' : 'hidden' }}
+        />
+
         <Button
           appearance="transparent"
           size="small"
-          icon={isNodeExpanded ? <ChevronDown20Regular /> : <ChevronRight20Regular />}
+          icon={
+            isNodeExpanded ? (
+              <BundledChevronDownIcon filled={isChevronHovered ? true : undefined} />
+            ) : (
+              <BundledChevronRightIcon filled={isChevronHovered ? true : undefined} />
+            )
+          }
           onClick={handleChevronClick}
+          className={styles.chevron}
           style={{
             visibility: hasChildren ? 'visible' : 'hidden',
             display: childPadding === 0 && !hasChildren ? 'none' : undefined,
           }}
+          onMouseEnter={setChevronIsHovered}
+          onMouseLeave={setChevronNotHovered}
         />
 
         {nodeContent(node, isHovered)}

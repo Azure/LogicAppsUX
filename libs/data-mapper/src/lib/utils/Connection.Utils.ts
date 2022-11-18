@@ -1,13 +1,14 @@
 /* eslint-disable no-param-reassign */
 import { targetPrefix } from '../constants/ReactFlowConstants';
-import type { UpdateConnectionInputAction } from '../core/state/DataMapSlice';
+import type { DataMapOperationState, UpdateConnectionInputAction } from '../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../models';
-import { NormalizedDataType, SchemaNodeDataType, SchemaType } from '../models';
+import { NormalizedDataType, SchemaNodeDataType, SchemaType, SchemaNodeProperty } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionInput } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
-import { addReactFlowPrefix } from './ReactFlow.Util';
+import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
+import type { WritableDraft } from 'immer/dist/internal';
 
 // NOTE: This method should be the gateway for anything getting into dataMapConnections
 // - meaning all default inputs/etc can safely be managed in this singular spot
@@ -52,9 +53,13 @@ export const addNodeToConnections = (
     const currentConnectionInputs = connections[selfReactFlowKey].inputs;
     const newInputValue = { node: sourceNode, reactFlowKey: sourceReactFlowKey };
 
-    // Schema nodes can only ever have 1 input
+    // Schema nodes can only ever have 1 input as long as it is not repeating
     if (isSchemaNodeExtended(self)) {
-      currentConnectionInputs[0] = [newInputValue];
+      if (self.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+        currentConnectionInputs[0].push(newInputValue);
+      } else {
+        currentConnectionInputs[0] = [newInputValue];
+      }
     } else {
       // If the destination has unlimited inputs, all should go on the first input
       if (self.maxNumberOfInputs === -1) {
@@ -377,4 +382,26 @@ export const getFunctionConnectionUnits = (
   return targetSchemaNodeConnections
     .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
     .filter((connectionUnit) => isFunctionData(connectionUnit.node));
+};
+
+export const bringInParentSourceNodesForRepeating = (
+  parentTargetNode: WritableDraft<SchemaNodeExtended> | undefined,
+  newState: DataMapOperationState
+) => {
+  if (parentTargetNode) {
+    const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)]?.inputs;
+    if (inputsToParentTarget) {
+      Object.keys(inputsToParentTarget).forEach((key) => {
+        const inputs = inputsToParentTarget[key];
+        inputs.forEach((input) => {
+          if (input && typeof input !== 'string') {
+            const inputSrc = input.node;
+            if (isSchemaNodeExtended(inputSrc) && !newState.currentSourceSchemaNodes.find((node) => node.key === inputSrc.key)) {
+              newState.currentSourceSchemaNodes.push(inputSrc);
+            }
+          }
+        });
+      });
+    }
+  }
 };

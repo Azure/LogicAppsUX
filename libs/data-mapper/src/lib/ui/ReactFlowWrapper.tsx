@@ -4,6 +4,7 @@ import { ConnectionEdge } from '../components/edge/ConnectionEdge';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
 import { Notification } from '../components/notification/Notification';
+import { SchemaNameBadge } from '../components/schemaSelection/SchemaNameBadge';
 import { SourceSchemaPlaceholder } from '../components/schemaSelection/SourceSchemaPlaceholder';
 import {
   checkerboardBackgroundImage,
@@ -17,29 +18,25 @@ import {
   deleteCurrentlySelectedItem,
   hideNotification,
   makeConnection,
+  redoDataMapOperation,
   setCanvasToolboxTabToDisplay,
   setInlineFunctionInputOutputKeys,
   setSelectedItem,
   setSourceNodeConnectionBeingDrawnFromId,
+  undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
+import { SchemaType } from '../models';
 import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import React, { useRef } from 'react';
+import React, { useRef, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type {
-  Connection as ReactFlowConnection,
-  Edge as ReactFlowEdge,
-  Node as ReactFlowNode,
-  OnConnectStartParams,
-  Viewport,
-} from 'reactflow';
+import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, OnConnectStartParams } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ConnectionLineType } from 'reactflow';
+import ReactFlow, { ConnectionLineType, useKeyPress } from 'reactflow';
 
-const defaultViewport: Viewport = { x: 0, y: 0, zoom: defaultCanvasZoom };
 export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
 export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
 
@@ -49,6 +46,23 @@ interface ReactFlowWrapperProps {
 
 export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const reactFlowRef = useRef<HTMLDivElement>(null);
+
+  const ctrlZPressed = useKeyPress(['Meta+z', 'ctrl+z']);
+  useEffect(() => {
+    if (ctrlZPressed) {
+      dispatch(undoDataMapOperation());
+      console.log('Z');
+    }
+  }, [ctrlZPressed, dispatch]);
+
+  const ctrlYPressed = useKeyPress(['Meta+y', 'ctrl+y']);
+  useEffect(() => {
+    if (ctrlYPressed) {
+      dispatch(redoDataMapOperation());
+      console.log('Y');
+    }
+  }, [ctrlYPressed, dispatch]);
 
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
@@ -56,13 +70,13 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
   // NOTE: Includes nodes added from toolbox, and nodes with connection chains to target schema nodes on the current target schema level
   const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
   const currentFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
 
   const [displayMiniMap, { toggle: toggleDisplayMiniMap }] = useBoolean(false);
-
-  const reactFlowRef = useRef<HTMLDivElement>(null);
 
   const onPaneClick = (_event: ReactMouseEvent | MouseEvent | TouchEvent): void => {
     // If user clicks on pane (empty canvas area), "deselect" node
@@ -98,7 +112,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
     }
   };
 
-  const onConnectStart = (event: React.MouseEvent, { nodeId, handleType }: OnConnectStartParams) => {
+  const onConnectStart = (_event: React.MouseEvent, { nodeId, handleType }: OnConnectStartParams) => {
     // handleType check prevents other nodes' handles being displayed when attempting to draw from right-to-left (currently not allowed)
     if (!nodeId || !handleType || handleType === 'target') {
       return;
@@ -130,6 +144,13 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
     selectedItemKey
   );
 
+  // Find first target schema node (should be schemaTreeRoot) to use its xPos for schema name badge
+  const tgtSchemaTreeRootXPos = useMemo(
+    () =>
+      nodes.find((reactFlowNode) => reactFlowNode.data?.schemaType && reactFlowNode.data.schemaType === SchemaType.Target)?.position.x ?? 0,
+    [nodes]
+  );
+
   return (
     <ReactFlow
       ref={reactFlowRef}
@@ -143,7 +164,6 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
       onConnectEnd={onConnectEnd}
       onPaneClick={onPaneClick}
       onNodeClick={onNodeSingleClick}
-      defaultViewport={defaultViewport}
       nodesDraggable={false}
       // With custom edge component, only affects appearance when drawing edge
       connectionLineType={ConnectionLineType.SmoothStep}
@@ -178,6 +198,9 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
       {currentSourceSchemaNodes.length === 0 && (
         <SourceSchemaPlaceholder onClickSelectElement={() => dispatch(setCanvasToolboxTabToDisplay(ToolboxPanelTabs.sourceSchemaTree))} />
       )}
+
+      {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} />}
+      {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} tgtSchemaTreeRootXPos={tgtSchemaTreeRootXPos} />}
     </ReactFlow>
   );
 };

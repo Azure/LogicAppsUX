@@ -15,6 +15,7 @@ import { TargetSchemaPane } from '../components/targetSchemaPane/TargetSchemaPan
 import { TestMapPanel } from '../components/testMapPanel/TestMapPanel';
 import { WarningModal } from '../components/warningModal/WarningModal';
 import { generateDataMapXslt } from '../core/queries/datamap';
+import appInsights from '../core/services/appInsights/AppInsights';
 import { redoDataMapOperation, saveDataMap, showNotification, undoDataMapOperation } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { convertToMapDefinition } from '../utils/DataMap.Utils';
@@ -22,11 +23,11 @@ import './ReactFlowStyleOverrides.css';
 import { ReactFlowWrapper } from './ReactFlowWrapper';
 import { Stack } from '@fluentui/react';
 import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
-import { ReactFlowProvider } from 'reactflow';
+import { ReactFlowProvider, useKeyPress } from 'reactflow';
 
 const centerViewId = 'centerView';
 
@@ -94,7 +95,7 @@ export interface DataMapperDesignerProps {
   readCurrentSchemaOptions?: () => void;
 }
 
-export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }) => {
+export const DataMapperDesigner = ({ saveStateCall, addSchemaFromFile, readCurrentSchemaOptions }: DataMapperDesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   useStaticStyles();
   const styles = useStyles();
@@ -122,6 +123,12 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
         console.error(`-----------------Error generating map definition-----------------`);
         console.error(error);
 
+        if (typeof error === 'string') {
+          appInsights.trackException({ exception: new Error(error) });
+        } else if (error instanceof Error) {
+          appInsights.trackException({ exception: error });
+        }
+
         return '';
       }
     }
@@ -141,7 +148,7 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
     }
   };
 
-  const onSaveClick = () => {
+  const onSaveClick = useCallback(() => {
     generateDataMapXslt(dataMapDefinition)
       .then((xsltStr) => {
         saveStateCall(dataMapDefinition, xsltStr);
@@ -162,7 +169,14 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
           })
         );
       });
-  };
+  }, [dispatch, dataMapDefinition, saveStateCall, sourceSchema, targetSchema]);
+
+  const ctrlSPressed = useKeyPress(['Meta+s', 'ctrl+s']);
+  useEffect(() => {
+    if (ctrlSPressed) {
+      onSaveClick();
+    }
+  }, [ctrlSPressed, onSaveClick]);
 
   const onUndoClick = () => {
     dispatch(undoDataMapOperation());
@@ -219,31 +233,31 @@ export const DataMapperDesigner: React.FC<DataMapperDesignerProps> = ({ saveStat
                   boxSizing: 'border-box',
                 }}
               >
-                {showMapOverview ? (
-                  <MapOverview sourceSchema={sourceSchema} targetSchema={targetSchema} />
-                ) : (
-                  <Stack horizontal style={{ height: '100%' }}>
-                    <div
-                      className={styles.canvasWrapper}
-                      style={{
-                        width: isCodeViewOpen ? '75%' : '100%',
-                        marginRight: isCodeViewOpen ? '8px' : 0,
-                        backgroundColor: tokens.colorNeutralBackground4,
-                      }}
-                    >
+                <Stack horizontal style={{ height: '100%' }}>
+                  <div
+                    className={styles.canvasWrapper}
+                    style={{
+                      width: isCodeViewOpen ? '75%' : '100%',
+                      marginRight: isCodeViewOpen ? '8px' : 0,
+                      backgroundColor: tokens.colorNeutralBackground4,
+                    }}
+                  >
+                    {showMapOverview ? (
+                      <MapOverview />
+                    ) : (
                       <ReactFlowProvider>
                         <ReactFlowWrapper canvasBlockHeight={getCanvasAreaHeight()} />
                       </ReactFlowProvider>
-                    </div>
+                    )}
+                  </div>
 
-                    <CodeView
-                      dataMapDefinition={dataMapDefinition}
-                      isCodeViewOpen={isCodeViewOpen}
-                      setIsCodeViewOpen={setIsCodeViewOpen}
-                      canvasAreaHeight={getCanvasAreaHeight()}
-                    />
-                  </Stack>
-                )}
+                  <CodeView
+                    dataMapDefinition={dataMapDefinition}
+                    isCodeViewOpen={isCodeViewOpen}
+                    setIsCodeViewOpen={setIsCodeViewOpen}
+                    canvasAreaHeight={getCanvasAreaHeight()}
+                  />
+                </Stack>
               </div>
 
               {!showMapOverview && (

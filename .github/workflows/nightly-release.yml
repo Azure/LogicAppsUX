@@ -1,10 +1,14 @@
-name: Test Runner
+name: Nightly Release
 
 on:
   repository_dispatch:
     types: [release]
 #   schedule:
 #     - cron: '0 7 * * *' # run at 7 AM UTC
+
+env:
+  AI_KEY: 3cf0d6ae-3327-414a-b7c1-12f31ef45eff
+  NX_AI_CON_STR: InstrumentationKey=3cf0d6ae-3327-414a-b7c1-12f31ef45eff;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/
 
 jobs:
   bump-version:
@@ -52,6 +56,9 @@ jobs:
 
       - name: 'Local Version Bump'
         run: npm run bump -- --skip.commit --skip.tag
+
+      - name: 'Set DM VSIX aiKey in package.json'
+        run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-data-mapper/src/package.json`" > apps/vs-code-data-mapper/src/package.json
 
       - run: npx nx build vs-code-data-mapper
       - run: npx nx build vs-code-data-mapper-react

@@ -151,22 +151,7 @@ export const ScratchTab = () => {
         {/* <AuthenticationEditor initialValue={[]} tokenPickerHandler={tokenPickerHandler} AuthenticationEditorOptions={{}} authProps={{}} /> */}
         <ArrayEditor
           type={ArrayType.SIMPLE}
-          itemSchema={'test'}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
-          initialItems={[
-            {
-              key: 'test',
-              value: [
-                { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
-                testTokenSegment,
-                { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
-              ],
-            },
-            {
-              key: 'test',
-              value: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' }],
-            },
-          ]}
           initialValue={[
             { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' },
             { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
@@ -182,43 +167,20 @@ export const ScratchTab = () => {
         />
 
         <ArrayEditor
-          itemSchema={['Attachments Name', 'Attachments Content']}
+          itemSchema={{
+            content: { type: 'integer', isRequired: true },
+            name: { type: 'string', isRequired: true },
+            object: { p1: { type: 'string', isRequired: true }, p2: { type: 'string', isRequired: true } },
+          }}
           type={ArrayType.COMPLEX}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
-          initialItems={[
-            {
-              key: 'test',
-              value: [
-                [
-                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
-                  testTokenSegment,
-                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
-                ],
-                [
-                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
-                  testTokenSegment,
-                  { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
-                ],
-              ],
-            },
-            {
-              key: 'test2',
-              value: [
-                [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' }],
-                [testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'HELLOOOO' }],
-              ],
-            },
-          ]}
           initialValue={[
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n    {\n        "content": "test",\n        "name": "MoreTst' },
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n  "' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n        "object": {\n            "p1": "' },
             testTokenSegment,
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n]' },
+            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n            "p2": ""\n        }\n    }\n]' },
           ]}
           tokenPickerHandler={tokenPickerHandler}
         />

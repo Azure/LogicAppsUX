@@ -891,6 +891,12 @@
       "value": "Hybrid Connector"
     }
   ],
+  "62Ypnr": [
+    {
+      "type": 0,
+      "value": "Error loading operation data"
+    }
+  ],
   "63/zYN": [
     {
       "type": 0,
@@ -919,6 +925,12 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelaide"
+    }
+  ],
+  "6grB5C": [
+    {
+      "type": 0,
+      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -1193,6 +1205,24 @@
     {
       "type": 0,
       "value": "Value"
+    }
+  ],
+  "92OUl9": [
+    {
+      "type": 0,
+      "value": "Array Element "
+    },
+    {
+      "type": 1,
+      "value": "index"
+    },
+    {
+      "type": 0,
+      "value": " is missing required property "
+    },
+    {
+      "type": 1,
+      "value": "property"
     }
   ],
   "93svjx": [
@@ -1999,6 +2029,12 @@
     {
       "type": 0,
       "value": "Please select a card to see the content"
+    }
+  ],
+  "HmcHoE": [
+    {
+      "type": 0,
+      "value": "Error fetching manifest"
     }
   ],
   "HoQiVa": [
@@ -5087,6 +5123,24 @@
     {
       "type": 0,
       "value": "Shorthand for actions('actionName').outputs.body"
+    }
+  ],
+  "lzBHHT": [
+    {
+      "type": 0,
+      "value": "Array Element "
+    },
+    {
+      "type": 1,
+      "value": "index"
+    },
+    {
+      "type": 0,
+      "value": " has unknown property "
+    },
+    {
+      "type": 1,
+      "value": "property"
     }
   ],
   "m7Y6Qf": [
