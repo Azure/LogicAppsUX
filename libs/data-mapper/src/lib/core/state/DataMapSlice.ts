@@ -112,7 +112,6 @@ export interface DeleteConnectionAction {
 }
 
 // TODO: Go through and clean-up duplicate and un-used actions/reducers
-
 export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
@@ -133,6 +132,7 @@ export const dataMapSlice = createSlice({
       } else {
         state.curDataMapOperation.targetSchema = action.payload.schema;
         state.curDataMapOperation.flattenedTargetSchema = flattenedSchema;
+        state.curDataMapOperation.currentTargetSchemaNode = undefined;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
       }
