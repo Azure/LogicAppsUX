@@ -31,9 +31,8 @@ import { ProgressLocation, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ProgressOptions } from 'vscode';
 
 export default class OpenDesignerForLocalProject extends OpenDesignerBase {
-  private migrationOptions: Record<string, any>;
   private readonly workflowFilePath: string;
-  private readonly context: IActionContext;
+  private migrationOptions: Record<string, any>;
   private projectPath: string | undefined;
   private panelMetadata: IDesignerPanelMetadata;
 
@@ -43,9 +42,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const panelName = `${workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
 
-    super(workflowName, panelName, apiVersion, panelGroupKey);
+    super(context, workflowName, panelName, apiVersion, panelGroupKey);
+
     this.workflowFilePath = node.fsPath;
-    this.context = context;
   }
 
   public async createPanel(): Promise<void> {
@@ -68,6 +67,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     await startDesignTimeApi(this.projectPath);
 
     this.baseUrl = `http://localhost:${ext.workflowDesignTimePort}${managementApiPrefix}`;
+
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
       this.panelName, // Title display in the tab
@@ -97,10 +97,6 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
 
     cacheWebviewPanel(this.panelGroupKey, this.panelName, this.panel);
     ext.context.subscriptions.push(this.panel);
-  }
-
-  public sendMsgToWebview(msg: any) {
-    this.panel.webview.postMessage(msg);
   }
 
   private async _handleWebviewMsg(msg: any) {

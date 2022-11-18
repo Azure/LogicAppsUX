@@ -1,9 +1,10 @@
 import { ext } from '../../../../extensionVariables';
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
+import type { IAzureConnectorsContext } from '../azureConnectorWizard';
+import { ResolutionService } from '@microsoft-logic-apps/parsers';
 import type { Artifacts, AzureConnectorDetails, Parameter } from '@microsoft-logic-apps/utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs } from 'fs';
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import { ResolutionService } from 'libs/parsers/src/lib/resolution-service/resolution-service';
 import { join } from 'path';
 import { Uri } from 'vscode';
 import type { WebviewPanel } from 'vscode';
@@ -26,8 +27,16 @@ export abstract class OpenDesignerBase {
   protected connectionReferences: any;
   protected panel: WebviewPanel;
   protected apiHubServiceDetails: Record<string, any>;
+  protected readonly context: IActionContext | IAzureConnectorsContext;
 
-  protected constructor(workflowName: string, panelName: string, apiVersion: string, panelGroupKey: string) {
+  protected constructor(
+    context: IActionContext | IAzureConnectorsContext,
+    workflowName: string,
+    panelName: string,
+    apiVersion: string,
+    panelGroupKey: string
+  ) {
+    this.context = context;
     this.workflowName = workflowName;
     this.panelName = panelName;
     this.apiVersion = apiVersion;
@@ -38,6 +47,10 @@ export abstract class OpenDesignerBase {
 
   protected getExistingPanel(): WebviewPanel | undefined {
     return tryGetWebviewPanel(this.panelGroupKey, this.panelName);
+  }
+
+  protected sendMsgToWebview(msg: any) {
+    this.panel.webview.postMessage(msg);
   }
 
   protected async getWebviewContent(options: IDesingerOptions): Promise<string> {

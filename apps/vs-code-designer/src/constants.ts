@@ -8,15 +8,11 @@ export const projectLanguageSetting = 'projectLanguage';
 export const funcVersionSetting = 'projectRuntime';
 export const projectSubpathSetting = 'projectSubpath';
 
+// File names
 export const hostFileName = 'host.json';
 export const localSettingsFileName = 'local.settings.json';
-export const settingsFileName = 'settings.json';
-export const gitignoreFileName = '.gitignore';
-export const requirementsFileName = 'requirements.txt';
 export const connectionsFileName = 'connections.json';
 export const parametersFileName = 'parameters.json';
-export const funcignoreFileName = '.funcignore';
-export const funcPackageName = 'azure-functions-core-tools';
 
 export const func = 'func';
 
@@ -33,3 +29,8 @@ export const viewOutput = localize('viewOutput', 'View Output');
 export const managementApiPrefix = '/runtime/webhooks/workflow/api/management';
 export const designerStartApi = '/runtime/webhooks/workflow/api/management/operationGroups';
 export const workflowDesignerLoadTimeout = 300000;
+
+// Commands
+export enum extensionCommand {
+  openDesigner = 'logicAppsExtension.openDesigner',
+}

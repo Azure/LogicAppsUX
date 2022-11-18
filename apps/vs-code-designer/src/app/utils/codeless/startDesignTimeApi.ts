@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { designerStartApi, workflowDesignerLoadTimeout } from '../../../constants';
+import { designerStartApi, hostFileName, localSettingsFileName, workflowDesignerLoadTimeout } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { updateFuncIgnore } from '../codeless/common';
@@ -19,8 +19,6 @@ import type { MessageItem } from 'vscode';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   const designTimeDirectoryName = 'workflow-designtime';
-  const hostFileName = 'host.json';
-  const settingsFileName = 'local.settings.json';
   const hostFileContent: any = {
     version: '2.0',
     extensionBundle: {
@@ -59,7 +57,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
     const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
     if (designTimeDirectory) {
       await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
-      await createJsonFile(designTimeDirectory, settingsFileName, settingsFileContent);
+      await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
       await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
       const cwd: string = designTimeDirectory.fsPath;
       const portArgs = `--port ${ext.workflowDesignTimePort}`;

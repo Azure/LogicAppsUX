@@ -6,16 +6,15 @@ import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, registerUI
 import type { ExtensionContext } from 'vscode';
 
 export async function activate(context: ExtensionContext) {
-  ext.context = context;
-
-  ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
-  context.subscriptions.push(ext.outputChannel);
-
-  registerUIExtensionVariables(ext);
-
   await callWithTelemetryAndErrorHandling('logicAppsExtension.activate', async () => {
     ext.azureAccountTreeItem = new AzureAccountTreeItemWithProjects();
+    ext.context = context;
+    ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
+
+    registerUIExtensionVariables(ext);
+
     context.subscriptions.push(ext.azureAccountTreeItem);
+    context.subscriptions.push(ext.outputChannel);
 
     registerCommands();
   });
