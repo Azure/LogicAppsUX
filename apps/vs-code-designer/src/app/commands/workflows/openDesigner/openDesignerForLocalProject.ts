@@ -169,8 +169,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             this.context,
             filePath,
             parameters.$connections.value,
-            azureTenantId!,
-            workflowBaseManagementUri!
+            azureTenantId,
+            workflowBaseManagementUri
           );
           await saveConectionReferences(this.context, filePath, connectionsAndSettingsToUpdate);
 

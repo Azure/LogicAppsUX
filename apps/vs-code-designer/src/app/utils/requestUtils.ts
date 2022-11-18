@@ -22,7 +22,7 @@ export function isTimeoutError(error: unknown): boolean {
 export async function sendRequest(context: IActionContext, options: RequestPrepareOptions): Promise<string> {
   const client: ServiceClient = await createGenericClient(context, undefined);
   const response = await sendAndParseResponse(client, options);
-  return response.bodyAsText!;
+  return response.bodyAsText;
 }
 
 async function sendAndParseResponse(client: ServiceClient, options: RequestPrepareOptions): Promise<HttpOperationResponse> {

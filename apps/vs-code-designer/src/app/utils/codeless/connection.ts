@@ -131,7 +131,7 @@ export async function saveConectionReferences(
 ): Promise<void> {
   const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
   const { connections, settings } = connectionAndSettingsToUpdate;
-  const connectionsFilePath = path.join(projectPath!, connectionsFileName);
+  const connectionsFilePath = path.join(projectPath, connectionsFileName);
 
   if (connections && Object.keys(connections).length) {
     await fsUtil.writeFormattedJson(connectionsFilePath, connections);

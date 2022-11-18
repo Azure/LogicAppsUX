@@ -28,7 +28,7 @@ export async function getParametersJson(workflowFilePath: string): Promise<Recor
 
 export async function saveParameters(context: IActionContext, workflowFilePath: string, parameters: WorkflowParameter): Promise<void> {
   const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
-  const parametersFilePath = path.join(projectPath!, parametersFileName);
+  const parametersFilePath = path.join(projectPath, parametersFileName);
   const parametersFileExists = fse.pathExistsSync(parametersFilePath);
 
   if (parameters && Object.keys(parameters).length) {
