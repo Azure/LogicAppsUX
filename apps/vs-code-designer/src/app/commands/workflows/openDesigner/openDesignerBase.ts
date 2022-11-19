@@ -1,10 +1,11 @@
 import { ext } from '../../../../extensionVariables';
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { ResolutionService } from '@microsoft-logic-apps/parsers';
 import type { Artifacts, AzureConnectorDetails, Parameter } from '@microsoft-logic-apps/utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs } from 'fs';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import { ResolutionService } from 'libs/parsers/src/lib/resolution-service/resolution-service';
 import { join } from 'path';
 import { Uri } from 'vscode';
 import type { WebviewPanel } from 'vscode';
