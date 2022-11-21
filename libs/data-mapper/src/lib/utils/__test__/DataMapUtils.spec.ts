@@ -192,13 +192,11 @@ describe('utils/DataMap', () => {
     it('adds parent connections for indexed many-to-one', () => {
       const sourceNodeParent = flattenedLoopSource['source-/ns0:Root/ManyToOne/SourceYear'];
       const targetNodeParent = flattenedLoopTarget['target-/ns0:Root/ManyToOne/Date'];
-      // const connectionsDict = indexed;
 
       addParentConnectionForRepeatingElementsNested(sourceNodeParent, targetNodeParent, flattenedLoopSource, flattenedLoopTarget, indexed);
       const parentTarget = indexed['target-/ns0:Root/ManyToOne/Date'];
       const input0 = parentTarget.inputs['0'];
       expect(input0).toHaveLength(1);
-      // expect(input0[0])
     });
   });
 });
