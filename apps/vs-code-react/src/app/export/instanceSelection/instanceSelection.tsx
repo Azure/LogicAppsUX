@@ -129,7 +129,6 @@ export const InstanceSelection: React.FC = () => {
 
   const onChangeLocation = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption) {
-      console.log(JSON.stringify(selectedOption));
       const key = selectedOption.key as string;
       if (key.startsWith('ise:')) {
         dispatch(

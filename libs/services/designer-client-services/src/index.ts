@@ -10,7 +10,7 @@ export * from './lib/common/exceptions';
 export * from './lib/logger';
 export * from './lib/logging/devLogger';
 export * from './lib/logging/logEntry';
-export { StandardConnectionService } from './lib/standard/connection';
+export { StandardConnectionService, IApiHubServiceDetails } from './lib/standard/connection';
 export { StandardConnectorService } from './lib/standard/connector';
 export { StandardGatewayService } from './lib/standard/gateway';
 export { StandardOperationManifestService, foreachOperationInfo } from './lib/standard/operationmanifest';

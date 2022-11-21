@@ -21,7 +21,6 @@ export const Status: React.FC = () => {
     return <Text block>{status}</Text>;
   };
 
-  console.log('test');
   return (
     <div className="msla-export-status">
       <Text variant="xLarge" block>

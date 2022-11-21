@@ -1,6 +1,8 @@
 {
   "name": "microsoft-logic-app-vscode-extension",
+  "displayName": "Azure Logic Apps (Standard)",
   "version": "0.2.20",
+  "aiKey": "2fc394da-7c11-4c1c-b776-17763031415d",
   "main": "main.js",
   "engines": {
     "vscode": "^1.64.0"
@@ -8,16 +10,39 @@
   "contributes": {
     "commands": [
       {
-        "command": "logicAppsExtension.start",
-        "title": "Open New Designer"
+        "command": "logicAppsExtension.openDesigner",
+        "title": "Open New Designer",
+        "category": "Azure Logic Apps"
       }
-    ]
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "logicAppsExtension.openDesigner",
+          "when": "view == azLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "group": "1@2"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "logicAppsExtension.openDesigner",
+          "when": "resourceFilename==workflow.json",
+          "group": "navigation@3"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "logicAppsExtension.openDesigner",
+          "when": "resourceFilename==workflow.json"
+        }
+      ]
+    }
   },
   "extensionDependencies": [
     "ms-vscode.azure-account"
   ],
   "activationEvents": [
-    "onCommand:logicAppsExtension.start"
+    "onCommand:logicAppsExtension.openDesigner"
   ],
   "galleryBanner": {
     "color": "#015cda",

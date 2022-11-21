@@ -1,35 +1,26 @@
-import { promises as fs } from 'fs';
-import { join } from 'path';
+import { registerCommands } from './app/commands/registerCommands';
+import { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
+import { ext } from './extensionVariables';
+import { callWithTelemetryAndErrorHandling, createAzExtOutputChannel, registerUIExtensionVariables } from '@microsoft/vscode-azext-utils';
 import type { ExtensionContext } from 'vscode';
-import { commands, window, ViewColumn, Uri } from 'vscode';
 
-export function activate(context: ExtensionContext) {
-  // Register command "start"
-  commands.registerCommand('logicAppsExtension.start', async () => {
-    const panel = window.createWebviewPanel(
-      'webview', // Key used to reference the panel
-      'webview', // Title display in the tab
-      ViewColumn.Active, // Editor column to show the new webview panel in.
-      { enableScripts: true }
-    );
+export async function activate(context: ExtensionContext) {
+  await callWithTelemetryAndErrorHandling('logicAppsExtension.activate', async () => {
+    ext.azureAccountTreeItem = new AzureAccountTreeItemWithProjects();
+    ext.context = context;
+    ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
 
-    const indexPath = join(context.extensionPath, 'webview/index.html');
-    const html = await fs.readFile(indexPath, 'utf-8');
-    // 1. Get all link prefixed by href or src
-    const matchLinks = /(href|src)="([^"]*)"/g;
-    // 2. Transform the result of the regex into a vscode's URI format
-    const toUri = (_, prefix: 'href' | 'src', link: string) => {
-      // For
-      if (link === '#') {
-        return `${prefix}="${link}"`;
-      }
-      // For scripts & links
-      const path = join(context.extensionPath, 'webview', link);
-      const uri = Uri.file(path);
-      return `${prefix}="${panel.webview.asWebviewUri(uri)}"`;
-    };
-    panel.webview.html = html.replace(matchLinks, toUri);
+    registerUIExtensionVariables(ext);
 
-    context.subscriptions.push(panel);
+    context.subscriptions.push(ext.azureAccountTreeItem);
+    context.subscriptions.push(ext.outputChannel);
+
+    registerCommands();
   });
+}
+
+export function deactivateInternal(): Promise<any> {
+  stopDesignTimeApi();
+  return undefined;
 }
