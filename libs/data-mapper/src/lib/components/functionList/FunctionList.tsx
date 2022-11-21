@@ -3,6 +3,7 @@ import appInsights from '../../core/services/appInsights/AppInsights';
 import {
   addFunctionNode,
   makeConnection,
+  deleteConnection,
   setCanvasToolboxTabToDisplay,
   setInlineFunctionInputOutputKeys,
 } from '../../core/state/DataMapSlice';
@@ -63,6 +64,8 @@ export const FunctionList = () => {
       const destination = reactFlowDestination.startsWith(targetPrefix)
         ? flattenedTargetSchema[reactFlowDestination]
         : currentFunctionNodes[reactFlowDestination];
+
+      dispatch(deleteConnection({ inputKey: reactFlowSource, outputKey: reactFlowDestination }));
 
       // Create connection between input and new function
       dispatch(
