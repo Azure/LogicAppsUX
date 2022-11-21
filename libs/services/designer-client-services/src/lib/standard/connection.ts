@@ -72,6 +72,14 @@ interface ConnectionAndAppSetting<T> {
   pathLocation: string[];
 }
 
+export interface IApiHubServiceDetails {
+  apiVersion: string;
+  baseUrl: string;
+  subscriptionId: string;
+  resourceGroup: string;
+  location: string;
+}
+
 interface StandardConnectionServiceArgs {
   apiVersion: string;
   baseUrl: string;
@@ -84,13 +92,7 @@ interface StandardConnectionServiceArgs {
   };
   readConnections: ReadConnectionsFunc;
   writeConnection?: WriteConnectionFunc;
-  apiHubServiceDetails: {
-    apiVersion: string;
-    baseUrl: string;
-    subscriptionId: string;
-    resourceGroup: string;
-    location: string;
-  };
+  apiHubServiceDetails: IApiHubServiceDetails;
   httpClient: IHttpClient;
 }
 
