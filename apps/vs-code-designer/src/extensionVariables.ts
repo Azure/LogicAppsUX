@@ -21,6 +21,7 @@ export namespace ext {
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
   export let tree: AzExtTreeDataProvider;
   export let treeView: TreeView<AzExtTreeItem>;
+  export const treeViewName = 'newAzLogicApps';
 
   export const prefix = 'logicAppsExtension';
 

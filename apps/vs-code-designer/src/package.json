@@ -27,9 +27,9 @@
     "views": {
       "azure": [
         {
-          "id": "NewAzLogicApps",
+          "id": "newAzLogicApps",
           "name": "New Logic Apps (Standard)",
-          "when": "config.logicAppsExtension.showExplorer == true"
+          "when": "config.azureLogicAppsStandard.showExplorer == true"
         }
       ]
     },
@@ -37,7 +37,7 @@
       "view/item/context": [
         {
           "command": "logicAppsExtension.openDesigner",
-          "when": "view == azLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
+          "when": "view == azLogicApps2 && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@2"
         }
       ],

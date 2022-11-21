@@ -16,19 +16,20 @@ export async function activate(context: vscode.ExtensionContext) {
   ext.context = context;
 
   ext.outputChannel = createAzExtOutputChannel('New Azure Logic Apps (Standard)', ext.prefix);
-  context.subscriptions.push(ext.outputChannel);
 
   registerUIExtensionVariables(ext);
   registerAppServiceExtensionVariables(ext);
 
   await callWithTelemetryAndErrorHandling(extensionCommand.activate, async () => {
     ext.azureAccountTreeItem = new AzureAccountTreeItemWithProjects();
-    context.subscriptions.push(ext.azureAccountTreeItem);
     ext.tree = new AzExtTreeDataProvider(ext.azureAccountTreeItem, extensionCommand.loadMore);
-    ext.treeView = vscode.window.createTreeView('azLogicApps', {
+    ext.treeView = vscode.window.createTreeView(ext.treeViewName, {
       treeDataProvider: ext.tree,
       showCollapseAll: true,
     });
+
+    context.subscriptions.push(ext.outputChannel);
+    context.subscriptions.push(ext.azureAccountTreeItem);
     context.subscriptions.push(ext.treeView);
 
     registerCommands();
