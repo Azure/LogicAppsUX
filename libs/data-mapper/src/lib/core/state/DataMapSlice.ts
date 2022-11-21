@@ -352,7 +352,6 @@ export const dataMapSlice = createSlice({
     },
 
     deleteConnection: (state, action: PayloadAction<{ inputKey: string; outputKey: string }>) => {
-      // remove existing connection
       const newState = { ...state.curDataMapOperation };
       deleteConnectionFromConnections(newState.dataMapConnections, action.payload.inputKey, action.payload.outputKey);
 
@@ -360,6 +359,7 @@ export const dataMapSlice = createSlice({
     },
 
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
+      const numConnections = Object.keys(state.curDataMapOperation.dataMapConnections).length;
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
@@ -377,7 +377,7 @@ export const dataMapSlice = createSlice({
         newState.dataMapConnections
       );
       // if new parent connection has been made
-      if (Object.keys(newState.dataMapConnections).length !== Object.keys(state.curDataMapOperation.dataMapConnections).length + 1) {
+      if (Object.keys(newState.dataMapConnections).length !== numConnections + 2) {
         state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
       }
 
