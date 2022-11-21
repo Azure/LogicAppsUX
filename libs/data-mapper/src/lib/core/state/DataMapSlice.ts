@@ -92,7 +92,6 @@ export interface InitialDataMapAction {
 export interface ConnectionAction {
   source: SchemaNodeExtended | FunctionData;
   destination: SchemaNodeExtended | FunctionData;
-
   reactFlowSource: string;
   reactFlowDestination: string;
 }
@@ -352,6 +351,14 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    deleteConnection: (state, action: PayloadAction<{ inputKey: string; outputKey: string }>) => {
+      // remove existing connection
+      const newState = { ...state.curDataMapOperation };
+      deleteConnectionFromConnections(newState.dataMapConnections, action.payload.inputKey, action.payload.outputKey);
+
+      doDataMapOperation(state, newState);
+    },
+
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
@@ -369,9 +376,8 @@ export const dataMapSlice = createSlice({
         newState.flattenedTargetSchema,
         newState.dataMapConnections
       );
-
       // if new parent connection has been made
-      if (Object.keys(newState.dataMapConnections).length !== Object.keys(state.curDataMapOperation.dataMapConnections).length) {
+      if (Object.keys(newState.dataMapConnections).length !== Object.keys(state.curDataMapOperation.dataMapConnections).length + 1) {
         state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
       }
 
@@ -494,6 +500,7 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
+  deleteConnection,
   setXsltFilename,
   setInitialSchema,
   setInitialDataMap,

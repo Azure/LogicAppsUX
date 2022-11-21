@@ -188,5 +188,587 @@ describe('utils/DataMap', () => {
       expect(input1.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/SourceYear/SourceMonth');
       expect(input2.reactFlowKey).toEqual('source-/ns0:Root/ManyToOne/SourceYear');
     });
+
+    it('adds parent connections for indexed many-to-one', () => {
+      const sourceNodeParent = flattenedLoopSource['source-/ns0:Root/ManyToOne/SourceYear'];
+      const targetNodeParent = flattenedLoopTarget['target-/ns0:Root/ManyToOne/Date'];
+      // const connectionsDict = indexed;
+
+      addParentConnectionForRepeatingElementsNested(sourceNodeParent, targetNodeParent, flattenedLoopSource, flattenedLoopTarget, indexed);
+      const parentTarget = indexed['target-/ns0:Root/ManyToOne/Date'];
+      const input0 = parentTarget.inputs['0'];
+      expect(input0).toHaveLength(1);
+      // expect(input0[0])
+    });
   });
 });
+
+const indexed: ConnectionDictionary = {
+  'index-6034001E-DCD3-468D-B7B9-84A2E154DE62': {
+    self: {
+      node: {
+        key: 'index',
+        maxNumberOfInputs: 1,
+        type: 'PseudoFunction',
+        functionName: '',
+        outputValueType: 'Any',
+        inputs: [
+          {
+            name: 'Loop',
+            allowedTypes: ['ComplexType'],
+            isOptional: false,
+            allowCustomInput: false,
+            placeHolder: 'The source loop.',
+          },
+        ],
+        displayName: 'Index',
+        category: 'Collection',
+        description: 'Adds an index value to the loop',
+        children: [],
+      },
+      reactFlowKey: 'index-6034001E-DCD3-468D-B7B9-84A2E154DE62',
+    },
+    inputs: {
+      '0': [
+        {
+          node: {
+            key: '/ns0:Root/ManyToOne/SourceYear',
+            name: 'SourceYear',
+            schemaNodeDataType: 'None',
+            normalizedDataType: 'ComplexType',
+            properties: 'Repeating',
+            children: [
+              {
+                key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
+                name: 'SourceMonth',
+                schemaNodeDataType: 'None',
+                normalizedDataType: 'ComplexType',
+                properties: 'Repeating',
+                children: [
+                  {
+                    key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
+                    name: 'SourceDay',
+                    schemaNodeDataType: 'None',
+                    normalizedDataType: 'ComplexType',
+                    properties: 'Repeating',
+                    children: [
+                      {
+                        key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
+                        name: 'SourceDate',
+                        schemaNodeDataType: 'String',
+                        normalizedDataType: 'String',
+                        properties: 'NotSpecified',
+                        fullName: 'SourceDate',
+                        parentKey: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
+                        nodeProperties: ['NotSpecified'],
+                        children: [],
+                        pathToRoot: [
+                          {
+                            key: '/ns0:Root',
+                            name: 'Root',
+                            fullName: 'ns0:Root',
+                            repeating: false,
+                          },
+                          {
+                            key: '/ns0:Root/ManyToOne',
+                            name: 'ManyToOne',
+                            fullName: 'ManyToOne',
+                            repeating: false,
+                          },
+                          {
+                            key: '/ns0:Root/ManyToOne/SourceYear',
+                            name: 'SourceYear',
+                            fullName: 'SourceYear',
+                            repeating: true,
+                          },
+                          {
+                            key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
+                            name: 'SourceMonth',
+                            fullName: 'SourceMonth',
+                            repeating: true,
+                          },
+                          {
+                            key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
+                            name: 'SourceDay',
+                            fullName: 'SourceDay',
+                            repeating: true,
+                          },
+                          {
+                            key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
+                            name: 'SourceDate',
+                            fullName: 'SourceDate',
+                            repeating: false,
+                          },
+                        ],
+                      },
+                    ],
+                    fullName: 'SourceDay',
+                    parentKey: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
+                    nodeProperties: ['Repeating'],
+                    pathToRoot: [
+                      {
+                        key: '/ns0:Root',
+                        name: 'Root',
+                        fullName: 'ns0:Root',
+                        repeating: false,
+                      },
+                      {
+                        key: '/ns0:Root/ManyToOne',
+                        name: 'ManyToOne',
+                        fullName: 'ManyToOne',
+                        repeating: false,
+                      },
+                      {
+                        key: '/ns0:Root/ManyToOne/SourceYear',
+                        name: 'SourceYear',
+                        fullName: 'SourceYear',
+                        repeating: true,
+                      },
+                      {
+                        key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
+                        name: 'SourceMonth',
+                        fullName: 'SourceMonth',
+                        repeating: true,
+                      },
+                      {
+                        key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
+                        name: 'SourceDay',
+                        fullName: 'SourceDay',
+                        repeating: true,
+                      },
+                    ],
+                  },
+                ],
+                fullName: 'SourceMonth',
+                parentKey: '/ns0:Root/ManyToOne/SourceYear',
+                nodeProperties: ['Repeating'],
+                pathToRoot: [
+                  {
+                    key: '/ns0:Root',
+                    name: 'Root',
+                    fullName: 'ns0:Root',
+                    repeating: false,
+                  },
+                  {
+                    key: '/ns0:Root/ManyToOne',
+                    name: 'ManyToOne',
+                    fullName: 'ManyToOne',
+                    repeating: false,
+                  },
+                  {
+                    key: '/ns0:Root/ManyToOne/SourceYear',
+                    name: 'SourceYear',
+                    fullName: 'SourceYear',
+                    repeating: true,
+                  },
+                  {
+                    key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
+                    name: 'SourceMonth',
+                    fullName: 'SourceMonth',
+                    repeating: true,
+                  },
+                ],
+              },
+            ],
+            fullName: 'SourceYear',
+            parentKey: '/ns0:Root/ManyToOne',
+            nodeProperties: ['Repeating'],
+            pathToRoot: [
+              {
+                key: '/ns0:Root',
+                name: 'Root',
+                fullName: 'ns0:Root',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/ManyToOne',
+                name: 'ManyToOne',
+                fullName: 'ManyToOne',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/ManyToOne/SourceYear',
+                name: 'SourceYear',
+                fullName: 'SourceYear',
+                repeating: true,
+              },
+            ],
+          },
+          reactFlowKey: 'source-/ns0:Root/ManyToOne/SourceYear',
+        },
+      ],
+    },
+    outputs: [
+      {
+        node: {
+          key: '/ns0:Root/ManyToOne/Date',
+          name: 'Date',
+          schemaNodeDataType: 'None',
+          normalizedDataType: 'ComplexType',
+          properties: 'Repeating',
+          children: [
+            {
+              key: '/ns0:Root/ManyToOne/Date/DayName',
+              name: 'DayName',
+              schemaNodeDataType: 'String',
+              normalizedDataType: 'String',
+              properties: 'NotSpecified',
+              children: [],
+              fullName: 'DayName',
+              parentKey: '/ns0:Root/ManyToOne/Date',
+              nodeProperties: ['NotSpecified'],
+              pathToRoot: [
+                {
+                  key: '/ns0:Root',
+                  name: 'Root',
+                  fullName: 'ns0:Root',
+                  repeating: false,
+                },
+                {
+                  key: '/ns0:Root/ManyToOne',
+                  name: 'ManyToOne',
+                  fullName: 'ManyToOne',
+                  repeating: false,
+                },
+                {
+                  key: '/ns0:Root/ManyToOne/Date',
+                  name: 'Date',
+                  fullName: 'Date',
+                  repeating: true,
+                },
+                {
+                  key: '/ns0:Root/ManyToOne/Date/DayName',
+                  name: 'DayName',
+                  fullName: 'DayName',
+                  repeating: false,
+                },
+              ],
+            },
+          ],
+          fullName: 'Date',
+          parentKey: '/ns0:Root/ManyToOne',
+          nodeProperties: ['Repeating'],
+          pathToRoot: [
+            {
+              key: '/ns0:Root',
+              name: 'Root',
+              fullName: 'ns0:Root',
+              repeating: false,
+            },
+            {
+              key: '/ns0:Root/ManyToOne',
+              name: 'ManyToOne',
+              fullName: 'ManyToOne',
+              repeating: false,
+            },
+            {
+              key: '/ns0:Root/ManyToOne/Date',
+              name: 'Date',
+              fullName: 'Date',
+              repeating: true,
+            },
+          ],
+        },
+        reactFlowKey: 'target-/ns0:Root/ManyToOne/Date',
+      },
+    ],
+  },
+  'source-/ns0:Root/ManyToOne/SourceYear': {
+    self: {
+      node: {
+        key: '/ns0:Root/ManyToOne/SourceYear',
+        name: 'SourceYear',
+        schemaNodeDataType: 'None',
+        normalizedDataType: 'ComplexType',
+        properties: 'Repeating',
+        children: [
+          {
+            key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
+            name: 'SourceMonth',
+            schemaNodeDataType: 'None',
+            normalizedDataType: 'ComplexType',
+            properties: 'Repeating',
+            children: [
+              {
+                key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
+                name: 'SourceDay',
+                schemaNodeDataType: 'None',
+                normalizedDataType: 'ComplexType',
+                properties: 'Repeating',
+                children: [
+                  {
+                    key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
+                    name: 'SourceDate',
+                    schemaNodeDataType: 'String',
+                    normalizedDataType: 'String',
+                    properties: 'NotSpecified',
+                    fullName: 'SourceDate',
+                    parentKey: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
+                    nodeProperties: ['NotSpecified'],
+                    children: [],
+                    pathToRoot: [
+                      {
+                        key: '/ns0:Root',
+                        name: 'Root',
+                        fullName: 'ns0:Root',
+                        repeating: false,
+                      },
+                      {
+                        key: '/ns0:Root/ManyToOne',
+                        name: 'ManyToOne',
+                        fullName: 'ManyToOne',
+                        repeating: false,
+                      },
+                      {
+                        key: '/ns0:Root/ManyToOne/SourceYear',
+                        name: 'SourceYear',
+                        fullName: 'SourceYear',
+                        repeating: true,
+                      },
+                      {
+                        key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
+                        name: 'SourceMonth',
+                        fullName: 'SourceMonth',
+                        repeating: true,
+                      },
+                      {
+                        key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
+                        name: 'SourceDay',
+                        fullName: 'SourceDay',
+                        repeating: true,
+                      },
+                      {
+                        key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay/SourceDate',
+                        name: 'SourceDate',
+                        fullName: 'SourceDate',
+                        repeating: false,
+                      },
+                    ],
+                  },
+                ],
+                fullName: 'SourceDay',
+                parentKey: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
+                nodeProperties: ['Repeating'],
+                pathToRoot: [
+                  {
+                    key: '/ns0:Root',
+                    name: 'Root',
+                    fullName: 'ns0:Root',
+                    repeating: false,
+                  },
+                  {
+                    key: '/ns0:Root/ManyToOne',
+                    name: 'ManyToOne',
+                    fullName: 'ManyToOne',
+                    repeating: false,
+                  },
+                  {
+                    key: '/ns0:Root/ManyToOne/SourceYear',
+                    name: 'SourceYear',
+                    fullName: 'SourceYear',
+                    repeating: true,
+                  },
+                  {
+                    key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
+                    name: 'SourceMonth',
+                    fullName: 'SourceMonth',
+                    repeating: true,
+                  },
+                  {
+                    key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth/SourceDay',
+                    name: 'SourceDay',
+                    fullName: 'SourceDay',
+                    repeating: true,
+                  },
+                ],
+              },
+            ],
+            fullName: 'SourceMonth',
+            parentKey: '/ns0:Root/ManyToOne/SourceYear',
+            nodeProperties: ['Repeating'],
+            pathToRoot: [
+              {
+                key: '/ns0:Root',
+                name: 'Root',
+                fullName: 'ns0:Root',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/ManyToOne',
+                name: 'ManyToOne',
+                fullName: 'ManyToOne',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/ManyToOne/SourceYear',
+                name: 'SourceYear',
+                fullName: 'SourceYear',
+                repeating: true,
+              },
+              {
+                key: '/ns0:Root/ManyToOne/SourceYear/SourceMonth',
+                name: 'SourceMonth',
+                fullName: 'SourceMonth',
+                repeating: true,
+              },
+            ],
+          },
+        ],
+        fullName: 'SourceYear',
+        parentKey: '/ns0:Root/ManyToOne',
+        nodeProperties: ['Repeating'],
+        pathToRoot: [
+          {
+            key: '/ns0:Root',
+            name: 'Root',
+            fullName: 'ns0:Root',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/ManyToOne',
+            name: 'ManyToOne',
+            fullName: 'ManyToOne',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/ManyToOne/SourceYear',
+            name: 'SourceYear',
+            fullName: 'SourceYear',
+            repeating: true,
+          },
+        ],
+      },
+      reactFlowKey: 'source-/ns0:Root/ManyToOne/SourceYear',
+    },
+    inputs: {
+      '0': [],
+    },
+    outputs: [
+      {
+        node: {
+          key: 'index',
+          maxNumberOfInputs: 1,
+          type: 'PseudoFunction',
+          functionName: '',
+          outputValueType: 'Any',
+          inputs: [
+            {
+              name: 'Loop',
+              allowedTypes: ['ComplexType'],
+              isOptional: false,
+              allowCustomInput: false,
+              placeHolder: 'The source loop.',
+            },
+          ],
+          displayName: 'Index',
+          category: 'Collection',
+          description: 'Adds an index value to the loop',
+          children: [],
+        },
+        reactFlowKey: 'index-6034001E-DCD3-468D-B7B9-84A2E154DE62',
+      },
+    ],
+  },
+  'target-/ns0:Root/ManyToOne/Date': {
+    self: {
+      node: {
+        key: '/ns0:Root/ManyToOne/Date',
+        name: 'Date',
+        schemaNodeDataType: 'None',
+        normalizedDataType: 'ComplexType',
+        properties: 'Repeating',
+        children: [
+          {
+            key: '/ns0:Root/ManyToOne/Date/DayName',
+            name: 'DayName',
+            schemaNodeDataType: 'String',
+            normalizedDataType: 'String',
+            properties: 'NotSpecified',
+            children: [],
+            fullName: 'DayName',
+            parentKey: '/ns0:Root/ManyToOne/Date',
+            nodeProperties: ['NotSpecified'],
+            pathToRoot: [
+              {
+                key: '/ns0:Root',
+                name: 'Root',
+                fullName: 'ns0:Root',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/ManyToOne',
+                name: 'ManyToOne',
+                fullName: 'ManyToOne',
+                repeating: false,
+              },
+              {
+                key: '/ns0:Root/ManyToOne/Date',
+                name: 'Date',
+                fullName: 'Date',
+                repeating: true,
+              },
+              {
+                key: '/ns0:Root/ManyToOne/Date/DayName',
+                name: 'DayName',
+                fullName: 'DayName',
+                repeating: false,
+              },
+            ],
+          },
+        ],
+        fullName: 'Date',
+        parentKey: '/ns0:Root/ManyToOne',
+        nodeProperties: ['Repeating'],
+        pathToRoot: [
+          {
+            key: '/ns0:Root',
+            name: 'Root',
+            fullName: 'ns0:Root',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/ManyToOne',
+            name: 'ManyToOne',
+            fullName: 'ManyToOne',
+            repeating: false,
+          },
+          {
+            key: '/ns0:Root/ManyToOne/Date',
+            name: 'Date',
+            fullName: 'Date',
+            repeating: true,
+          },
+        ],
+      },
+      reactFlowKey: 'target-/ns0:Root/ManyToOne/Date',
+    },
+    inputs: {
+      '0': [
+        {
+          node: {
+            key: 'index',
+            maxNumberOfInputs: 1,
+            type: 'PseudoFunction',
+            functionName: '',
+            outputValueType: 'Any',
+            inputs: [
+              {
+                name: 'Loop',
+                allowedTypes: ['ComplexType'],
+                isOptional: false,
+                allowCustomInput: false,
+                placeHolder: 'The source loop.',
+              },
+            ],
+            displayName: 'Index',
+            category: 'Collection',
+            description: 'Adds an index value to the loop',
+            children: [],
+          },
+          reactFlowKey: 'index-6034001E-DCD3-468D-B7B9-84A2E154DE62',
+        },
+      ],
+    },
+    outputs: [],
+  },
+} as ConnectionDictionary;
