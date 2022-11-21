@@ -94,7 +94,35 @@ export const ifPseudoFunction: FunctionData = {
   description: 'Generate child values when condition is true',
 };
 
-export const pseudoFunctions: FunctionData[] = [indexPseudoFunction, ifPseudoFunction];
+export const directAccessPseudoFunctionKey = 'directAccess';
+export const directAccessPseudoFunction: FunctionData = {
+  key: directAccessPseudoFunctionKey,
+  maxNumberOfInputs: 2,
+  type: 'PseudoFunction',
+  functionName: 'TODO',
+  outputValueType: NormalizedDataType.Any,
+  inputs: [
+    {
+      name: 'Source Index',
+      allowedTypes: [NormalizedDataType.Any],
+      isOptional: false,
+      allowCustomInput: false,
+      placeHolder: 'The source index value',
+    },
+    {
+      name: 'Output property',
+      allowedTypes: [NormalizedDataType.Any],
+      isOptional: false,
+      allowCustomInput: false,
+      placeHolder: 'The value to generate',
+    },
+  ],
+  displayName: 'Direct Access',
+  category: FunctionCategory.Logical,
+  description: 'Directly access the value specified by the index and the given property',
+};
+
+export const pseudoFunctions: FunctionData[] = [indexPseudoFunction, ifPseudoFunction, directAccessPseudoFunction];
 
 // Temp until we get the manifest plugged in
 export const functionMock: FunctionData[] = [
@@ -307,6 +335,26 @@ export const functionMock: FunctionData[] = [
     category: FunctionCategory.Logical,
     iconFileName: 'dm_category_logical.svg',
     description: 'Checks whether the first value is greater than the second value.',
+  },
+  {
+    key: 'Multiply',
+    maxNumberOfInputs: -1,
+    type: 'TransformationFunction',
+    functionName: 'multiply',
+    outputValueType: NormalizedDataType.Number,
+    inputs: [
+      {
+        name: 'Multiplicand',
+        allowedTypes: [NormalizedDataType.Number, NormalizedDataType.Integer, NormalizedDataType.Decimal],
+        isOptional: false,
+        allowCustomInput: true,
+        placeHolder: 'The number to multiply',
+      },
+    ],
+    displayName: 'Multiply',
+    category: FunctionCategory.Math,
+    iconFileName: 'dm_category_math.svg',
+    description: 'Returns the product from multiplying two or more numbers.',
   },
   ...pseudoFunctions,
 ];
