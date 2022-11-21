@@ -33,4 +33,6 @@ export const workflowDesignerLoadTimeout = 300000;
 // Commands
 export enum extensionCommand {
   openDesigner = 'logicAppsExtension.openDesigner',
+  loadMore = 'logicAppsExtension.loadMore',
+  activate = 'logicAppsExtension.activate',
 }

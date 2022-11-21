@@ -15,6 +15,24 @@
         "category": "Azure Logic Apps"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "azure",
+          "title": "Azure",
+          "icon": "resources/azure.svg"
+        }
+      ]
+    },
+    "views": {
+      "azure": [
+        {
+          "id": "NewAzLogicApps",
+          "name": "New Logic Apps (Standard)",
+          "when": "config.logicAppsExtension.showExplorer == true"
+        }
+      ]
+    },
     "menus": {
       "view/item/context": [
         {

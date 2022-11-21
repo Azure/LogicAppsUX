@@ -41,6 +41,7 @@
   "private": true,
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
+    "@azure/ms-rest-js": "^2.2.1",
     "@fluentui/azure-themes": "8.4.22",
     "@fluentui/font-icons-mdl2": "8.4.8",
     "@fluentui/foundation-legacy": "8.2.15",
@@ -57,7 +58,9 @@
     "@microsoft/fast-element": "^1.10.5",
     "@microsoft/fast-foundation": "^2.46.12",
     "@microsoft/fast-react-wrapper": "^0.3.13",
-    "@microsoft/vscode-azext-utils": "^0.3.15",
+    "@microsoft/vscode-azext-azureappservice": "^0.7.6",
+    "@microsoft/vscode-azext-azureutils": "^0.3.5",
+    "@microsoft/vscode-azext-utils": "^0.3.12",
     "@monaco-editor/react": "4.4.5",
     "@react-hookz/web": "15.1.0",
     "@reduxjs/toolkit": "1.8.5",
@@ -101,6 +104,7 @@
     "react-use": "17.4.0",
     "reactflow": "^11.2.0",
     "regenerator-runtime": "0.13.9",
+    "request-promise": "^4.2.4",
     "stream-http": "^3.2.0",
     "tiny-invariant": "1.2.0",
     "to-title-case": "1.0.0",
@@ -108,12 +112,8 @@
     "tslib": "2.4.0",
     "url": "^0.11.0",
     "util": "^0.12.4",
-    "web-worker": "1.2.0",
-    "@microsoft/vscode-azext-utils": "^0.3.12",
-    "request-promise": "^4.2.4",
     "vscode-nls": "^4.1.1",
-    "@azure/ms-rest-js": "^2.2.1",
-    "@microsoft/vscode-azext-azureutils": "^0.3.5"
+    "web-worker": "1.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.18.13",
