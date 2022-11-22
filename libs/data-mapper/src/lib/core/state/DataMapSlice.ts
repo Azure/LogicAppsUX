@@ -572,36 +572,18 @@ export const deleteConnectionFromConnections = (connections: ConnectionDictionar
   );
 };
 
-export const canDeleteConnection = (
-  connections: ConnectionDictionary,
-  sourceNodeId: string,
-  targetNodeId: string,
-  sourceSchema: SchemaNodeDictionary,
-  _targetSchema: SchemaNodeDictionary
-) => {
+export const canDeleteConnection = (sourceNodeId: string, sourceSchema: SchemaNodeDictionary) => {
   const sourceNode = sourceSchema[sourceNodeId];
-  if (sourceNode) {
-    // if connection source is not repeating, can delete
-    if (!sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
-      return true;
-    } else {
-      // source node is repeating
-      // if child is connected, and connection is completed
-    }
+  if (sourceNode && !sourceNode.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
+    return true;
   }
   return false;
 };
 
-export const parentHasChildConnection = (connections: ConnectionDictionary, nodeKey: string) => {
-  const node = connections[nodeKey].self.node as SchemaNodeExtended;
-  if (!node.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
-    // node not repeating, and has connection? or connection to end
-    if (connections) {
-      console.log(connections);
-    }
-  }
-  //const children = node.children;
-};
+// export const parentHasChildConnection = (connections: ConnectionDictionary, nodeKey: string) => {
+//   const node = connections[nodeKey].self.node as SchemaNodeExtended;
+//   // if no
+// };
 
 export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: string) => {
   const targetNode = curDataMapState.curDataMapOperation.flattenedTargetSchema[reactFlowKey];
@@ -663,27 +645,32 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
 
   // item to be deleted is a connection
   const sourceId = getSourceIdFromReactFlowConnectionId(reactFlowKey);
-  const targetId = getDestinationIdFromReactFlowConnectionId(reactFlowKey);
-  const canDelete = canDeleteConnection(
-    curDataMapState.curDataMapOperation.dataMapConnections,
-    sourceId,
-    targetId,
-    curDataMapState.curDataMapOperation.flattenedSourceSchema,
-    curDataMapState.curDataMapOperation.flattenedTargetSchema
-  );
-  console.log(canDelete);
+  const sourceSchema = curDataMapState.curDataMapOperation.flattenedSourceSchema;
+  const canDelete = canDeleteConnection(sourceId, sourceSchema);
 
-  deleteConnectionFromConnections(
-    curDataMapState.curDataMapOperation.dataMapConnections,
-    getSourceIdFromReactFlowConnectionId(reactFlowKey),
-    getDestinationIdFromReactFlowConnectionId(reactFlowKey)
-  );
+  if (canDelete) {
+    deleteConnectionFromConnections(
+      curDataMapState.curDataMapOperation.dataMapConnections,
+      getSourceIdFromReactFlowConnectionId(reactFlowKey),
+      getDestinationIdFromReactFlowConnectionId(reactFlowKey)
+    );
+    curDataMapState.notificationData = {
+      type: NotificationTypes.ConnectionDeleted,
+      autoHideDurationMs: deletedNotificationAutoHideDuration,
+    };
+  } else {
+    const sourceNode = sourceSchema[sourceId];
+    curDataMapState.notificationData = {
+      type: NotificationTypes.RepeatingConnectionCannotDelete,
+      msgParam: sourceNode.name,
+      autoHideDurationMs: errorNotificationAutoHideDuration,
+    };
+  }
 
   doDataMapOperation(curDataMapState, {
     ...curDataMapState.curDataMapOperation,
     dataMapConnections: { ...curDataMapState.curDataMapOperation.dataMapConnections },
   });
-  curDataMapState.notificationData = { type: NotificationTypes.ConnectionDeleted, autoHideDurationMs: deletedNotificationAutoHideDuration };
 };
 
 export const addParentConnectionForRepeatingElements = (

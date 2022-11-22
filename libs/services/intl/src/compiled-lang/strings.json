@@ -5655,6 +5655,20 @@
       "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
     }
   ],
+  "qwn2o/": [
+    {
+      "type": 0,
+      "value": "Remove all mappings within source element `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "‘ first."
+    }
+  ],
   "r1FQhf": [
     {
       "type": 0,
