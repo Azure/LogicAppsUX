@@ -767,6 +767,42 @@ export class StandardConnectionService implements IConnectionService {
       .then(() => false)
       .catch(() => true);
   }
+
+  private getFunctionAppsRequestPath(): string {
+    const { subscriptionId } = this.options.apiHubServiceDetails;
+    return `/subscriptions/${subscriptionId}/providers/Microsoft.Web/sites`;
+  }
+
+  async fetchFunctionApps(): Promise<any> {
+    console.log('functionAppsResponse', this.getFunctionAppsRequestPath());
+
+    const functionAppsResponse = await this.options.httpClient.get<any>({
+      uri: this.getFunctionAppsRequestPath(),
+      queryParameters: { 'api-version': this.options.apiVersion },
+    });
+
+    const apps = functionAppsResponse.value.filter((app: any) => app.kind === 'functionapp');
+
+    console.log('functionApps', apps);
+    return apps;
+  }
+
+  private getFunctionAppFunctionsRequestPath(functionAppId: string): string {
+    const { subscriptionId } = this.options.apiHubServiceDetails;
+    return `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${
+      functionAppId.split('/')[4]
+    }/providers/Microsoft.Web/sites/${functionAppId.split('/')[8]}/functions`;
+  }
+
+  async fetchFunctionAppsFunctions(functionAppId: string) {
+    const functionsResponse = await this.options.httpClient.get<any>({
+      uri: this.getFunctionAppFunctionsRequestPath(functionAppId),
+      queryParameters: { 'api-version': this.options.apiVersion },
+    });
+
+    console.log('functionsResponse', functionsResponse);
+    return functionsResponse.value;
+  }
 }
 
 type ConnectionsResponse = {

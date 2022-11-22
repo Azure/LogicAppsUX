@@ -1,6 +1,11 @@
 import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
-import { getConnectionMetadata, needsOAuth, updateNodeConnection } from '../../../core/actions/bjsworkflow/connections';
+import {
+  getConnectionMetadata,
+  isAzureFunctionConnection,
+  needsOAuth,
+  updateNodeConnection,
+} from '../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../core/queries/connections';
 import { useConnectorByNodeId, useGateways, useSubscriptions } from '../../../core/state/connection/connectionSelector';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
@@ -14,6 +19,7 @@ import { CreateConnection } from '@microsoft/designer-ui';
 import type { PanelTab } from '@microsoft/designer-ui';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 const CreateConnectionTab = () => {
@@ -43,6 +49,8 @@ const CreateConnectionTab = () => {
     },
     [connector?.id, dispatch, nodeId]
   );
+
+  const needsAzureFunction = useMemo(() => (connector ? isAzureFunctionConnection(connector) : false), [connector]);
 
   const createConnectionCallback = useCallback(
     async (
@@ -120,6 +128,14 @@ const CreateConnectionTab = () => {
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 
+  const functionAppsQuery = useQuery(['functionApps'], async () => ConnectionService().fetchFunctionApps() ?? [], {
+    enabled: needsAzureFunction,
+    staleTime: 1000 * 60 * 60 * 24,
+  });
+
+  const [appId, setAppId] = useState<string | undefined>();
+  const [functionId, setFunctionId] = useState<string | undefined>();
+
   if (connector?.properties === undefined)
     return (
       <div className="msla-loading-container">
@@ -138,13 +154,24 @@ const CreateConnectionTab = () => {
       hideCancelButton={!hasExistingConnection}
       errorMessage={errorMessage}
       clearErrorCallback={() => setErrorMessage(undefined)}
-      selectSubscriptionCallback={(subscriptionId: string) => {
-        setSelectedSubscriptionId(subscriptionId);
-      }}
+      selectSubscriptionCallback={(subscriptionId: string) => setSelectedSubscriptionId(subscriptionId)}
       selectedSubscriptionId={selectedSubscriptionId}
       availableSubscriptions={subscriptions}
       availableGateways={availableGateways}
       checkOAuthCallback={needsOAuth}
+      needsAzureFunction={needsAzureFunction}
+      functionAppsQuery={functionAppsQuery}
+      selectedAppId={appId ?? ''}
+      selectAppCallback={(appId: string) => {
+        setAppId(appId);
+        setFunctionId(undefined);
+      }}
+      selectedFunctionId={functionId ?? ''}
+      fetchFunctionsCallback={(functionAppId: string) => ConnectionService().fetchFunctionAppsFunctions(functionAppId)}
+      selectFunctionCallback={(appFunction) => {
+        // Assign parameters
+        setFunctionId(appFunction?.id);
+      }}
     />
   );
 };
