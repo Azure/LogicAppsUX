@@ -1,8 +1,10 @@
+import type { RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { Stack } from '@fluentui/react';
-import { makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { CheckmarkCircle16Filled, Circle16Regular, AddCircle16Regular } from '@fluentui/react-icons';
+import { makeStyles, mergeClasses, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { CheckmarkCircle16Filled, Circle16Regular, AddCircle16Regular, Document20Regular } from '@fluentui/react-icons';
+import { useSelector } from 'react-redux';
 
 export const useSchemaTreeItemStyles = makeStyles({
   nodeContainer: {
@@ -74,6 +76,25 @@ const SourceSchemaTreeItem = ({ node, isNodeAdded, isNodeHovered }: SourceSchema
           <Circle16Regular primaryFill={tokens.colorNeutralForeground3} />
         )}
       </span>
+    </Stack>
+  );
+};
+
+export const SourceSchemaTreeHeader = () => {
+  const styles = useSchemaTreeItemStyles();
+
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
+
+  return (
+    <Stack
+      horizontal
+      verticalAlign="center"
+      className={mergeClasses(styles.nodeContainer, styles.sourceSchemaNode)}
+      style={{ width: '100%', minWidth: 0, paddingLeft: '8px', marginBottom: 0 }}
+    >
+      <Document20Regular />
+
+      <Text className={styles.nodeName}>{sourceSchema?.name}</Text>
     </Stack>
   );
 };

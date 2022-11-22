@@ -92,7 +92,6 @@ export interface InitialDataMapAction {
 export interface ConnectionAction {
   source: SchemaNodeExtended | FunctionData;
   destination: SchemaNodeExtended | FunctionData;
-
   reactFlowSource: string;
   reactFlowDestination: string;
 }
@@ -112,7 +111,6 @@ export interface DeleteConnectionAction {
 }
 
 // TODO: Go through and clean-up duplicate and un-used actions/reducers
-
 export const dataMapSlice = createSlice({
   name: 'dataMap',
   initialState,
@@ -133,6 +131,7 @@ export const dataMapSlice = createSlice({
       } else {
         state.curDataMapOperation.targetSchema = action.payload.schema;
         state.curDataMapOperation.flattenedTargetSchema = flattenedSchema;
+        state.curDataMapOperation.currentTargetSchemaNode = undefined;
         state.pristineDataMap.targetSchema = action.payload.schema;
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
       }
@@ -352,7 +351,15 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState);
     },
 
+    deleteConnection: (state, action: PayloadAction<{ inputKey: string; outputKey: string }>) => {
+      const newState = { ...state.curDataMapOperation };
+      deleteConnectionFromConnections(newState.dataMapConnections, action.payload.inputKey, action.payload.outputKey);
+
+      doDataMapOperation(state, newState);
+    },
+
     makeConnection: (state, action: PayloadAction<ConnectionAction>) => {
+      const numConnections = Object.keys(state.curDataMapOperation.dataMapConnections).length;
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
@@ -369,9 +376,8 @@ export const dataMapSlice = createSlice({
         newState.flattenedTargetSchema,
         newState.dataMapConnections
       );
-
       // if new parent connection has been made
-      if (Object.keys(newState.dataMapConnections).length !== Object.keys(state.curDataMapOperation.dataMapConnections).length) {
+      if (Object.keys(newState.dataMapConnections).length !== numConnections + 2) {
         state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
       }
 
@@ -494,6 +500,7 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
+  deleteConnection,
   setXsltFilename,
   setInitialSchema,
   setInitialDataMap,

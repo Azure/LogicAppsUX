@@ -27,10 +27,9 @@ interface SchemaFile {
 export const App = () => {
   const dispatch = useDispatch<AppDispatch>();
   const vscode = useContext(VSCodeContext);
-  // const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
 
-  // TODO (After theming): set initial value back to getVscodeTheme()
-  const [vsCodeTheme, _setVsCodeTheme] = useState<VsCodeThemeType>(VsCodeThemeType.VsCodeLight);
+  const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
+  const [vsCodeTheme, _setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
@@ -62,7 +61,6 @@ export const App = () => {
     });
   }, [vscode]);
 
-  // TODO: May combine the below two functions - will revisit when touched on again in future
   const saveDataMapDefinition = (dataMapDefinition: string) => {
     vscode.postMessage({
       command: 'saveDataMapDefinition',
@@ -74,6 +72,20 @@ export const App = () => {
     vscode.postMessage({
       command: 'saveDataMapXslt',
       data: dataMapXslt,
+    });
+  };
+
+  const saveDraftDataMapDefinition = (dataMapDefinition: string) => {
+    vscode.postMessage({
+      command: 'saveDraftDataMapDefinition',
+      data: dataMapDefinition,
+    });
+  };
+
+  const setIsMapStateDirty = (isMapStateDirty: boolean) => {
+    vscode.postMessage({
+      command: 'setIsMapStateDirty',
+      data: isMapStateDirty,
     });
   };
 
@@ -164,8 +176,10 @@ export const App = () => {
       >
         <DataMapperDesigner
           saveStateCall={saveStateCall}
+          saveDraftStateCall={saveDraftDataMapDefinition}
           addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalFileOptions}
+          setIsMapStateDirty={setIsMapStateDirty}
         />
       </DataMapDataProvider>
     </DataMapperDesignerProvider>
