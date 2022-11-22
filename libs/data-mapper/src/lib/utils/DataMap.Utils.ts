@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import {
-  customValueQuoteToken,
   mapDefinitionVersion,
   mapNodeParams,
   reservedMapDefinitionKeys,
@@ -45,7 +44,7 @@ export const convertToMapDefinition = (
     generateMapDefinitionHeader(mapDefinition, sourceSchema, targetSchema);
     generateMapDefinitionBody(mapDefinition, connections);
 
-    return yaml.dump(mapDefinition, { quotingType: `"`, replacer: yamlReplacer }).replaceAll(customValueQuoteToken, '"');
+    return yaml.dump(mapDefinition, { quotingType: '"', replacer: yamlReplacer }).replaceAll('\\"', '');
   }
 
   return '';
@@ -163,7 +162,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
         let value = '';
         if (input) {
           if (isCustomValue(input)) {
-            value = formatCustomValue(input);
+            value = input;
           } else if (isSchemaNodeExtended(input.node)) {
             value = input.node.key;
           } else {
@@ -265,7 +264,7 @@ const getInputValues = (currentConnection: Connection | undefined, connections: 
           }
 
           if (isCustomValue(input)) {
-            return formatCustomValue(input);
+            return input;
           } else if (isSchemaNodeExtended(input.node)) {
             return input.node.fullName.startsWith('@') ? `$${input.node.key}` : input.node.key;
           } else {
@@ -538,5 +537,3 @@ export const addParentConnectionForRepeatingElementsNested = (
     }
   }
 };
-
-const formatCustomValue = (customValue: string) => customValueQuoteToken + customValue + customValueQuoteToken;
