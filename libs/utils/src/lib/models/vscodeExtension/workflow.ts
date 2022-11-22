@@ -1,3 +1,13 @@
+import type { Artifacts } from './artifact';
+import type { Parameter } from './parameter';
+
+export interface ILocalSettingsJson {
+  IsEncrypted?: boolean;
+  Values?: { [key: string]: string };
+  Host?: { [key: string]: string };
+  ConnectionStrings?: { [key: string]: string };
+}
+
 export interface IDesignerPanelMetadata {
   appSettingNames?: string[];
   codelessApp: CodelessApp;
@@ -21,14 +31,6 @@ export interface CodelessApp {
   operationOptions: string;
 }
 
-export interface Parameter {
-  type: string;
-  metadata?: any;
-  description?: string;
-  allowedValues?: any[];
-  value: any;
-}
-
 export interface AzureConnectorDetails {
   enabled: boolean;
   accessToken?: string;
@@ -39,20 +41,16 @@ export interface AzureConnectorDetails {
   workflowManagementBaseUrl?: string;
 }
 
-export interface Artifacts {
-  maps: Record<string, FileDetails[]>;
-  schemas: FileDetails[];
-}
-
-interface FileDetails {
-  name: string;
-  fileName: string;
-  relativePath: string;
-}
-
 export interface WorkflowParameter {
   type: string;
   defaultValue: any;
   allowedValues?: any[];
   metadata?: any;
+}
+
+export interface IWorkflowFileContent {
+  name: string;
+  definition: Object;
+  kind: string;
+  isDisabled: boolean;
 }

@@ -6,8 +6,9 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { RestError } from '@azure/ms-rest-js';
 import type { HttpOperationResponse, RequestPrepareOptions, ServiceClient, WebResource } from '@azure/ms-rest-js';
+import { HTTP_METHODS, IIdentityWizardContext } from '@microsoft-logic-apps/utils';
 import { createGenericClient } from '@microsoft/vscode-azext-azureutils';
-import { parseError } from '@microsoft/vscode-azext-utils';
+import { ISubscriptionContext, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type * as requestP from 'request-promise';
 
@@ -17,6 +18,16 @@ export type Request = WebResource & requestP.RequestPromiseOptions;
 
 export function isTimeoutError(error: unknown): boolean {
   return parseError(error).errorType === 'REQUEST_ABORTED_ERROR';
+}
+
+export async function sendAzureRequest(
+  url: string,
+  context: IActionContext | IIdentityWizardContext,
+  method: HTTP_METHODS = 'GET',
+  subscriptionContext?: ISubscriptionContext
+): Promise<HttpOperationResponse> {
+  const client: ServiceClient = await createGenericClient(context, subscriptionContext);
+  return sendAndParseResponse(client, { url, method });
 }
 
 export async function sendRequest(context: IActionContext, options: RequestPrepareOptions): Promise<string> {

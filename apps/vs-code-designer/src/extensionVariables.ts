@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import { func } from './constants';
 import type { AzExtTreeDataProvider, AzExtTreeItem, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type * as cp from 'child_process';
 import type { ExtensionContext, TreeView, WebviewPanel } from 'vscode';
@@ -22,6 +23,10 @@ export namespace ext {
   export let tree: AzExtTreeDataProvider;
   export let treeView: TreeView<AzExtTreeItem>;
   export const treeViewName = 'newAzLogicApps';
+  export let deploymentFolderPath: string;
+
+  // Functions
+  export const funcCliPath: string = func;
 
   export const prefix = 'logicAppsExtension';
 

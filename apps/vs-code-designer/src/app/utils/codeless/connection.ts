@@ -5,7 +5,7 @@ import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson } from './parameter';
-import { HTTP_METHODS } from '@microsoft-logic-apps/utils';
+import { HTTP_METHODS, ServiceProviderConnectionModel } from '@microsoft-logic-apps/utils';
 import type { ConnectionAndSettings, ConnectionReferenceModel, Parameter } from '@microsoft-logic-apps/utils';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -155,4 +155,25 @@ export function containsApiHubConnectionReference(references: any): boolean {
 
 function isApiHubConnectionId(connectionId: any): boolean {
   return connectionId.startsWith('/subscriptions/');
+}
+
+// TODO - Need to understand where multi auth is being saved.
+export function resolveSettingsInConnection(
+  connectionInfo: ServiceProviderConnectionModel,
+  settings: Record<string, string>
+): ServiceProviderConnectionModel {
+  return connectionInfo.parameterValues
+    ? {
+        ...connectionInfo,
+        parameterValues: Object.keys(connectionInfo.parameterValues).reduce((result: Record<string, string>, parameterKey: string) => {
+          let value = connectionInfo.parameterValues[parameterKey];
+          if (value.startsWith("@appsetting('")) {
+            const settingKey = value.substring(13, value.lastIndexOf("')"));
+            value = settings[settingKey];
+          }
+
+          return { ...result, [parameterKey]: value };
+        }, {}),
+      }
+    : connectionInfo;
 }

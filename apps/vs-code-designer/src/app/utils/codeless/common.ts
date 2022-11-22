@@ -7,17 +7,25 @@ import {
   workflowManagementBaseURIKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import { getLocalSettingsJson } from '../../funcConfig/local.settings';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import type { Parameter, CodelessApp, Artifacts, AzureConnectorDetails, WorkflowParameter } from '@microsoft-logic-apps/utils';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type {
+  Parameter,
+  CodelessApp,
+  Artifacts,
+  AzureConnectorDetails,
+  WorkflowParameter,
+  ILocalSettingsJson,
+} from '@microsoft-logic-apps/utils';
+import { DialogResponses, IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import type { WebviewPanel } from 'vscode';
+import type { MessageItem, WebviewPanel } from 'vscode';
 
 export function tryGetWebviewPanel(category: string, name: string): WebviewPanel | undefined {
   const currentPanels = ext.openWebviewPanels[category];
@@ -183,4 +191,38 @@ export async function getAzureConnectorDetailsForLocalProject(
     tenantId: enabled ? tenantId : undefined,
     workflowManagementBaseUrl: enabled ? workflowManagementBaseUrl : undefined,
   };
+}
+
+export async function verifyDeploymentResourceGroup(
+  context: IActionContext,
+  workflowResourceGroupRemote: string,
+  originalDeployFsPath: string
+): Promise<void> {
+  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(originalDeployFsPath, localSettingsFileName));
+  const workflowResourceGroupLocal: string = localSettings.Values![workflowResourceGroupNameKey];
+
+  if (workflowResourceGroupLocal && workflowResourceGroupLocal.toLowerCase() !== workflowResourceGroupRemote.toLowerCase()) {
+    const warning: string = localize(
+      'resourceGroupMismatch',
+      'For optimal performance, put managed connections in the same resource group as your workflow. Are you sure you want to deploy?'
+    );
+    const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
+    await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
+  }
+}
+
+export function getRequestTriggerSchema(workflowContent: any): any {
+  const {
+    definition: { triggers },
+  } = workflowContent;
+  const triggerNames = Object.keys(triggers);
+
+  if (triggerNames.length === 1) {
+    const trigger = triggers[triggerNames[0]];
+    if (trigger.type.toLowerCase() === 'request') {
+      return trigger.inputs && trigger.inputs.schema ? trigger.inputs.schema : {};
+    }
+  }
+
+  return undefined;
 }

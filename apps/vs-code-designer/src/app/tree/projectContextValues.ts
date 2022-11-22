@@ -2,13 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { contextValuePrefix } from '../../constants';
+import { ProjectAccess, ProjectResource, ProjectSource } from '@microsoft-logic-apps/utils';
 
 const contextValueSeparator = ';';
-
-export enum ProjectSource {
-  Remote = 'Remote',
-  Local = 'Local',
-}
 
 export function isProjectCV(contextValue: string | RegExp): boolean {
   const data: string = normalizeContextValue(contextValue);
@@ -35,4 +32,13 @@ export function matchesAnyPart(contextValue: string | RegExp, ...parts: string[]
 function normalizeContextValue(contextValue: string | RegExp): string {
   const data: string = typeof contextValue === 'string' ? contextValue : contextValue.source;
   return data.toLowerCase();
+}
+
+export function getProjectContextValue(
+  source: ProjectSource,
+  access: ProjectAccess,
+  resource: ProjectResource,
+  ...parts: string[]
+): string {
+  return [contextValuePrefix, source, access, resource, ...parts].join(contextValueSeparator) + contextValueSeparator;
 }

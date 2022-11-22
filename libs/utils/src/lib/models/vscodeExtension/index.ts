@@ -4,3 +4,6 @@ export * from './functions';
 export * from './context';
 export * from './extensioncommand';
 export * from './connection';
+export * from './project';
+export * from './parameter';
+export * from './artifact';

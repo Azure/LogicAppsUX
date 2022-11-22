@@ -6,19 +6,13 @@ import { localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import * as fsUtil from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
+import { ILocalSettingsJson } from '@microsoft-logic-apps/utils';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import type { MessageItem } from 'vscode';
 
 import path = require('path');
-
-export interface ILocalSettingsJson {
-  IsEncrypted?: boolean;
-  Values?: { [key: string]: string };
-  Host?: { [key: string]: string };
-  ConnectionStrings?: { [key: string]: string };
-}
 
 export async function addOrUpdateLocalAppSettings(
   context: IActionContext,

@@ -2,30 +2,28 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { projectLanguageSetting, funcVersionSetting, projectSubpathSetting } from '../../constants';
+import { funcVersionSetting, projectLanguageSetting, projectSubpathSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
+import { SubscriptionTreeItem } from './SubscriptionTreeItem';
 import { isLocalProjectCV, isProjectCV, isRemoteProjectCV } from './projectContextValues';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { AzureAccountTreeItemBase } from '@microsoft/vscode-azext-azureutils';
-import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
-import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import { AzExtTreeItem, callWithTelemetryAndErrorHandling, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { commands, Disposable, extensions, workspace } from 'vscode';
 
 export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
   private _currentLoggedInSessions: any;
   private _projectDisposables: Disposable[] = [];
 
-  public constructor(testAccount?: Record<string, never>) {
+  public constructor(testAccount?: {}) {
     super(undefined, testAccount);
     this.disposables.push(
       workspace.onDidChangeWorkspaceFolders(async () => {
         await callWithTelemetryAndErrorHandling(
           'AzureAccountTreeItemWithProjects.onDidChangeWorkspaceFolders',
           async (context: IActionContext) => {
-            // eslint-disable-next-line no-param-reassign
             context.errorHandling.suppressDisplay = true;
-            // eslint-disable-next-line no-param-reassign
             context.telemetry.suppressIfSuccessful = true;
             await this.refresh(context);
           }
@@ -37,9 +35,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
         await callWithTelemetryAndErrorHandling(
           'AzureAccountTreeItemWithProjects.onDidChangeConfiguration',
           async (context: IActionContext) => {
-            // eslint-disable-next-line no-param-reassign
             context.errorHandling.suppressDisplay = true;
-            // eslint-disable-next-line no-param-reassign
             context.telemetry.suppressIfSuccessful = true;
             const settings: string[] = [projectLanguageSetting, funcVersionSetting, projectSubpathSetting];
             if (settings.some((s) => e.affectsConfiguration(`${ext.prefix}.${s}`))) {
@@ -56,9 +52,8 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
     Disposable.from(...this._projectDisposables).dispose();
   }
 
-  // Work to be done
-  public createSubscriptionTreeItem(): undefined {
-    return undefined;
+  public createSubscriptionTreeItem(root: ISubscriptionContext): SubscriptionTreeItem {
+    return new SubscriptionTreeItem(this, root);
   }
 
   public async getAccountCredentials(tenantId?: string): Promise<ServiceClientCredentials | undefined> {
@@ -88,8 +83,8 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
     return children;
   }
 
-  public compareChildrenImpl(_item1: AzExtTreeItem, _item2: AzExtTreeItem): number {
-    return -1;
+  public compareChildrenImpl(item1: AzExtTreeItem, item2: AzExtTreeItem): number {
+    return super.compareChildrenImpl(item1, item2);
   }
 
   public async pickTreeItemImpl(expectedContextValues: (string | RegExp)[]): Promise<AzExtTreeItem | undefined> {
