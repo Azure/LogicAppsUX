@@ -8,10 +8,11 @@ interface FunctionAppEntryProps {
   onAppSelect: (appId: string) => void;
   onFunctionSelect: (appFunction: any) => void;
   fetchFunctions: (appId: string) => Promise<any[]>;
+  isLoading?: boolean;
 }
 
 const FunctionAppEntry = (props: FunctionAppEntryProps) => {
-  const { functionApp, onAppSelect, onFunctionSelect, fetchFunctions } = props;
+  const { functionApp, onAppSelect, onFunctionSelect, fetchFunctions, isLoading = false } = props;
 
   const intl = useIntl();
 
@@ -38,6 +39,7 @@ const FunctionAppEntry = (props: FunctionAppEntryProps) => {
       <button
         className={css('msla-function-app-entry-heading', expanded && 'expanded')}
         onClick={() => onAppSelect(expanded ? '' : functionApp.id)}
+        disabled={isLoading}
       >
         <Text>{functionApp?.name}</Text>
         <Text>{functionApp?.properties?.resourceGroup}</Text>
@@ -53,6 +55,7 @@ const FunctionAppEntry = (props: FunctionAppEntryProps) => {
                 <Text style={{ margin: '16px', textAlign: 'center' }}>{noFunctionsText}</Text>
               ) : (
                 <ChoiceGroup
+                  disabled={isLoading}
                   options={(functionsQuery?.data ?? []).map((func) => ({ key: func?.id, text: func?.name.split('/')[1], data: func }))}
                   onChange={(_e: any, f: any) => onFunctionSelect(f.data)}
                   selectedKey={selectedFunctionId}

@@ -782,26 +782,23 @@ export class StandardConnectionService implements IConnectionService {
     });
 
     const apps = functionAppsResponse.value.filter((app: any) => app.kind === 'functionapp');
-
-    console.log('functionApps', apps);
     return apps;
-  }
-
-  private getFunctionAppFunctionsRequestPath(functionAppId: string): string {
-    const { subscriptionId } = this.options.apiHubServiceDetails;
-    return `https://management.azure.com/subscriptions/${subscriptionId}/resourceGroups/${
-      functionAppId.split('/')[4]
-    }/providers/Microsoft.Web/sites/${functionAppId.split('/')[8]}/functions`;
   }
 
   async fetchFunctionAppsFunctions(functionAppId: string) {
     const functionsResponse = await this.options.httpClient.get<any>({
-      uri: this.getFunctionAppFunctionsRequestPath(functionAppId),
+      uri: `https://management.azure.com/${functionAppId}/functions`,
       queryParameters: { 'api-version': this.options.apiVersion },
     });
+    return functionsResponse?.value ?? [];
+  }
 
-    console.log('functionsResponse', functionsResponse);
-    return functionsResponse.value;
+  async fetchFunctionKey(functionId: string) {
+    const keysResponse = await this.options.httpClient.post<any, any>({
+      uri: `https://management.azure.com/${functionId}/listkeys`,
+      queryParameters: { 'api-version': this.options.apiVersion },
+    });
+    return keysResponse?.default ?? 'NotFound';
   }
 }
 

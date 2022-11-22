@@ -135,11 +135,12 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
   const validParams = useMemo(() => {
     if (showNameInput && !connectionDisplayName) return false;
+    if (needsAzureFunction && !selectedFunctionId) return false;
     if (Object.keys(parameters).length === 0) return true;
     return Object.entries(parameters).every(
       ([key, parameter]) => parameter?.uiDefinition?.constraints?.required !== 'true' || !!parameterValues[key]
     );
-  }, [connectionDisplayName, parameterValues, parameters, showNameInput]);
+  }, [connectionDisplayName, needsAzureFunction, parameterValues, parameters, selectedFunctionId, showNameInput]);
 
   const canSubmit = useMemo(() => {
     return !isLoading && validParams;
@@ -437,6 +438,7 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
                     }))}
                     onRenderCell={(fApp) => (
                       <FunctionAppEntry
+                        isLoading={isLoading}
                         functionApp={fApp}
                         onAppSelect={selectAppCallback}
                         onFunctionSelect={selectFunctionCallback}
