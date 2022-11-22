@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [0.2.21](https://github.com/Azure/LogicAppsUX/compare/v0.2.20...v0.2.21) (2022-11-22)
+
+
+### Logic Apps Designer Bug Fixes
+
+* [#1282](https://github.com/Azure/LogicAppsUX/issues/1282) - Cloning action definition to avoid object mutation during deserialization ([#1319](https://github.com/Azure/LogicAppsUX/issues/1319)) ([094fc06](https://github.com/Azure/LogicAppsUX/commit/094fc066167628ebdec1727930de80a96c4a7395))
+
+
+### Logic Apps Designer Changes
+
+* Array Editor ([#1309](https://github.com/Azure/LogicAppsUX/issues/1309)) ([0ab696b](https://github.com/Azure/LogicAppsUX/commit/0ab696bd38812f463ef3943b847d56a7443d2455))
+* Nodes now show error state on canvas card ([#1324](https://github.com/Azure/LogicAppsUX/issues/1324)) ([24771af](https://github.com/Azure/LogicAppsUX/commit/24771afa2650b429ff57c524c609d6c27616daad))
 
 ### [0.2.20](https://github.com/Azure/LogicAppsUX/compare/v0.2.19...v0.2.20) (2022-11-16)
 
