@@ -8,10 +8,20 @@
     "vscode": "^1.64.0"
   },
   "contributes": {
+    "breakpoints": [
+      {
+        "language": "json"
+      }
+    ],
     "commands": [
       {
         "command": "logicAppsExtension.openDesigner",
         "title": "Open New Designer",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "logicAppsExtension.loadMore",
+        "title": "Load More",
         "category": "Azure Logic Apps"
       }
     ],
@@ -37,7 +47,7 @@
       "view/item/context": [
         {
           "command": "logicAppsExtension.openDesigner",
-          "when": "view == azLogicApps2 && viewItem =~ /Remote;.*;Workflow;/i",
+          "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@2"
         }
       ],
@@ -52,6 +62,10 @@
         {
           "command": "logicAppsExtension.openDesigner",
           "when": "resourceFilename==workflow.json"
+        },
+        {
+          "command": "azureLogicAppsStandard.loadMore",
+          "when": "never"
         }
       ]
     }
@@ -60,7 +74,10 @@
     "ms-vscode.azure-account"
   ],
   "activationEvents": [
-    "onCommand:logicAppsExtension.openDesigner"
+    "onCommand:logicAppsExtension.openDesigner",
+    "onCommand:logicAppsExtension.loadMore",
+    "onView:newAzLogicApps",
+    "onDebugInitialConfigurations"
   ],
   "galleryBanner": {
     "color": "#015cda",
