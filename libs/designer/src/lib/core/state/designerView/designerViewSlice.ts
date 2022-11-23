@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: DesignerViewState = {
   showMinimap: false,
+  clampPan: true,
 };
 
 export const designerViewSlice = createSlice({
@@ -12,9 +13,12 @@ export const designerViewSlice = createSlice({
     toggleMinimap: (state: DesignerViewState) => {
       state.showMinimap = !state.showMinimap;
     },
+    toggleClampPan: (state: DesignerViewState) => {
+      state.clampPan = !state.clampPan;
+    },
   },
 });
 
-export const { toggleMinimap } = designerViewSlice.actions;
+export const { toggleMinimap, toggleClampPan } = designerViewSlice.actions;
 
 export default designerViewSlice.reducer;

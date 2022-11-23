@@ -1,5 +1,6 @@
 import { useLayout } from '../core/graphlayout';
 import { useAllOperations, useAllConnectors } from '../core/queries/browse';
+import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
@@ -18,7 +19,7 @@ import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelroot';
 import { setLayerHostSelector } from '@fluentui/react';
 import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
-import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft-logic-apps/utils';
+import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft-logic-apps/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -125,6 +126,7 @@ export const Designer = () => {
       data: { label: 'newWorkflowTrigger' },
       parentNode: undefined,
       type: WORKFLOW_NODE_TYPES.PLACEHOLDER_NODE,
+      style: DEFAULT_NODE_SIZE,
     },
   ];
 
@@ -133,35 +135,23 @@ export const Designer = () => {
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
 
-  const tranlsateExtent = useMemo(() => {
-    const padding = 88;
-    const zoom = 1;
+  const clampPan = useClampPan();
+  const windowDimensions = useWindowDimensions();
 
+  const [zoom, setZoom] = useState(1);
+
+  const tranlsateExtent = useMemo((): [[number, number], [number, number]] => {
+    const padding = 64 + 24;
     const [flowWidth, flowHeight] = flowSize;
-    const frameWidth = document.body.scrollWidth;
-    const frameHeight = document.body.scrollHeight;
 
-    const { width: nodeWidth, height: nodeHeight } = DEFAULT_NODE_SIZE;
+    const xVal = windowDimensions.width / zoom - padding - DEFAULT_NODE_SIZE.width;
+    const yVal = windowDimensions.height / zoom - padding - DEFAULT_NODE_SIZE.height;
 
-    console.log('###', frameWidth, frameHeight, zoom);
-    console.log('^^^', flowWidth, flowHeight, zoom);
-
-    const xVal = frameWidth / zoom - padding - nodeWidth;
-    const yVal = frameHeight / zoom - padding - nodeHeight;
-
-    const bounds = [
-      [
-        -xVal + 32, // right
-        -yVal, // bottom
-      ],
-      [
-        xVal + flowWidth, // left
-        yVal + flowHeight - 30, // top
-      ],
-    ] as [[number, number], [number, number]];
-
-    return bounds;
-  }, [flowSize]);
+    return [
+      [-xVal + 32, -yVal],
+      [xVal + flowWidth, yVal + flowHeight - 30],
+    ];
+  }, [flowSize, windowDimensions, zoom]);
 
   useEffect(() => setLayerHostSelector('.msla-designer-canvas'), []);
   return (
@@ -178,7 +168,8 @@ export const Designer = () => {
             panOnScroll={true}
             deleteKeyCode={['Backspace', 'Delete']}
             zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
-            translateExtent={tranlsateExtent}
+            translateExtent={clampPan ? tranlsateExtent : undefined}
+            onMove={(_e, viewport) => setZoom(viewport.zoom)}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,

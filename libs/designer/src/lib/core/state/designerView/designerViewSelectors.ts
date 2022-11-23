@@ -4,3 +4,7 @@ import { useSelector } from 'react-redux';
 export const useShowMinimap = () => {
   return useSelector((state: RootState) => state.designerView.showMinimap);
 };
+
+export const useClampPan = () => {
+  return useSelector((state: RootState) => state.designerView.clampPan);
+};
