@@ -311,6 +311,12 @@
       "value": "Comment"
     }
   ],
+  "1ANUHk": [
+    {
+      "type": 0,
+      "value": "Loading functions..."
+    }
+  ],
   "1D047X": [
     {
       "type": 0,
@@ -2343,6 +2349,12 @@
       "value": "Delete Workflow Graph"
     }
   ],
+  "LCXZLM": [
+    {
+      "type": 0,
+      "value": "Loading Function Apps..."
+    }
+  ],
   "LJmfmK": [
     {
       "type": 0,
@@ -3711,6 +3723,12 @@
       "value": "Select a target schema"
     }
   ],
+  "Xkt2vD": [
+    {
+      "type": 0,
+      "value": "Select a function app function"
+    }
+  ],
   "Xnn0uj": [
     {
       "type": 0,
@@ -4803,6 +4821,12 @@
     {
       "type": 0,
       "value": "Elements and mappings not connected to a target element are removed."
+    }
+  ],
+  "ittN0l": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
     }
   ],
   "iy8rNf": [
