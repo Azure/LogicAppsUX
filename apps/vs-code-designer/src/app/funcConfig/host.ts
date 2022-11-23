@@ -11,7 +11,7 @@ class ParsedHostJsonV2 implements IParsedHostJson {
   public data: IHostJsonV2;
 
   public constructor(data: unknown) {
-    if (typeof data === 'object' && data !== null) {
+    if (isObject(data) && data !== null) {
       this.data = data as IHostJsonV2;
     } else {
       this.data = {};
@@ -43,7 +43,6 @@ class ParsedHostJsonV1 implements IParsedHostJson {
   }
 
   public get routePrefix(): string {
-    // NOTE: Explicitly checking against undefined (an empty string _is_ a valid route prefix)
     if (this.data.http && this.data.http.routePrefix !== undefined) {
       return this.data.http.routePrefix;
     } else {

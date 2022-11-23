@@ -1,6 +1,6 @@
 import { connectionsFileName } from '../../../constants';
-import { addOrUpdateLocalAppSettings } from '../../funcConfig/local.settings';
 import * as fsUtil from '../fs';
+import { addOrUpdateLocalAppSettings } from '../localSettings';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';

@@ -70,6 +70,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
 
   /* eslint-disable no-param-reassign */
   public async createChildImpl(context: ICreateFuntionAppContext): Promise<AzExtTreeItem> {
+    // Work to be done
     const version: FuncVersion = await getDefaultFuncVersion(context);
     context.telemetry.properties.projectRuntime = version;
     const language: string | undefined = getWorkspaceSettingFromAnyFolder(projectLanguageSetting);

@@ -5,9 +5,9 @@
 import { localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { parseHostJson } from '../funcConfig/host';
-import { getLocalSettingsJson } from '../funcConfig/local.settings';
 import { getFileOrFolderContent } from '../utils/codeless/apiUtils';
 import { tryParseFuncVersion } from '../utils/funcCoreTools/funcVersion';
+import { getLocalSettingsJson } from '../utils/localSettings';
 import { getIconPath } from '../utils/tree/assets';
 import { ArtifactsTreeItem } from './ArtifactsTreeItem';
 import { ConfigurationsTreeItem } from './ConfigurationsTreeItem';
@@ -245,7 +245,7 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   }
 
   public compareChildrenImpl(): number {
-    return 0; // already sorted
+    return 0;
   }
 
   public async isReadOnly(context: IActionContext): Promise<boolean> {

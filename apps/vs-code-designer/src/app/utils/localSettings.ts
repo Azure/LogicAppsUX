@@ -38,6 +38,7 @@ export async function getLocalSettingsJson(
 ): Promise<ILocalSettingsJson> {
   if (await fse.pathExists(localSettingsPath)) {
     const data: string = (await fse.readFile(localSettingsPath)).toString();
+
     if (/[^\s]/.test(data)) {
       try {
         return parseJson(data);

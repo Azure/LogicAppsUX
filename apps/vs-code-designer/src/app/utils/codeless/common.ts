@@ -10,7 +10,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
-import { getLocalSettingsJson } from '../../funcConfig/local.settings';
+import { getLocalSettingsJson } from '../localSettings';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type {
