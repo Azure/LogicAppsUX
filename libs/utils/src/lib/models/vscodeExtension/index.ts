@@ -7,3 +7,4 @@ export * from './connection';
 export * from './project';
 export * from './parameter';
 export * from './artifact';
+export * from './host';

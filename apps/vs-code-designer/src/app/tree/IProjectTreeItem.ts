@@ -2,8 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { IParsedHostJson } from '../funcConfig/host';
-import type { FuncVersion, ProjectSource } from '@microsoft-logic-apps/utils';
+import type { FuncVersion, IParsedHostJson, ProjectSource } from '@microsoft-logic-apps/utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 export type ApplicationSettings = { [propertyName: string]: string };

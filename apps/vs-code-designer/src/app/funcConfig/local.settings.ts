@@ -10,9 +10,8 @@ import type { ILocalSettingsJson } from '@microsoft-logic-apps/utils';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
+import * as path from 'path';
 import type { MessageItem } from 'vscode';
-
-import path = require('path');
 
 export async function addOrUpdateLocalAppSettings(
   context: IActionContext,

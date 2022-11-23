@@ -14,5 +14,5 @@ export function getThemedIconPath(iconName: string): TreeItemIconPath {
 }
 
 function getResourcesPath(): string {
-  return ext.context.asAbsolutePath('resources');
+  return ext.context.asAbsolutePath('assets');
 }

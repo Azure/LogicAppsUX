@@ -5,7 +5,6 @@
 import { localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { parseHostJson } from '../funcConfig/host';
-import type { IParsedHostJson } from '../funcConfig/host';
 import { getLocalSettingsJson } from '../funcConfig/local.settings';
 import { getFileOrFolderContent } from '../utils/codeless/apiUtils';
 import { tryParseFuncVersion } from '../utils/funcCoreTools/funcVersion';
@@ -17,7 +16,7 @@ import { ProxiesTreeItem } from './ProxiesTreeItem';
 import { ProxyTreeItem } from './ProxyTreeItem';
 import { RemoteWorkflowsTreeItem } from './remoteProject/RemoteWorkflowsTreeItem';
 import type { SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
-import type { FuncVersion, ILocalSettingsJson } from '@microsoft-logic-apps/utils';
+import type { FuncVersion, ILocalSettingsJson, IParsedHostJson } from '@microsoft-logic-apps/utils';
 import { latestGAVersion, ProjectSource } from '@microsoft-logic-apps/utils';
 import {
   AppSettingsTreeItem,
