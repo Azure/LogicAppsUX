@@ -276,13 +276,16 @@ export const SupportedServiceNames: Record<string, string> = {
   XSLTRANSFORM: 'xsltransform',
 };
 
-// TODO: Riley - This is temporary, be sure to update before use when implementing assisted connections
 export function isAssistedConnection(connector: Connector): boolean {
   if (isSharedManagedConnector(connector.id) || isManagedConnector(connector.id)) {
     const connectorName = getConnectorName(connector.id);
     return Object.keys(SupportedServiceNames).some((serviceKey) => equals(connectorName, SupportedServiceNames[serviceKey]));
   }
   return false;
+}
+
+export function isAzureFunctionConnection(connector: Connector): boolean {
+  return connector.properties.capabilities?.includes('azureConnection') ?? false;
 }
 
 export const SupportedConfigConnectionParameterTypes = [

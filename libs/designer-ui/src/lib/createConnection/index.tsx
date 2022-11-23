@@ -1,7 +1,10 @@
 import { filterRecord } from '../utils';
+import FunctionAppEntry from './functionAppEntry';
 import GatewayPicker from './gatewayPicker';
 import type { IDropdownOption } from '@fluentui/react';
 import {
+  Text,
+  List,
   MessageBarType,
   MessageBar,
   Checkbox,
@@ -12,6 +15,7 @@ import {
   PrimaryButton,
   TextField,
   TooltipHost,
+  Spinner,
 } from '@fluentui/react';
 import type {
   ConnectionParameter,
@@ -26,6 +30,7 @@ import { ConnectionParameterTypes } from '@microsoft-logic-apps/utils';
 import type { FormEvent } from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
+import type { UseQueryResult } from 'react-query';
 
 export interface CreateConnectionProps {
   connectorDisplayName: string;
@@ -47,6 +52,13 @@ export interface CreateConnectionProps {
   availableSubscriptions?: Subscription[];
   availableGateways?: Gateway[];
   checkOAuthCallback: (parameters: Record<string, ConnectionParameter>) => boolean;
+  needsAzureFunction: boolean;
+  functionAppsQuery: UseQueryResult;
+  selectedAppId: string;
+  selectedFunctionId: string;
+  selectAppCallback: (appId: string) => void;
+  fetchFunctionsCallback: (functionAppId: string) => Promise<any[]>;
+  selectFunctionCallback: (appFunction: any) => void;
 }
 
 type ParamType = ConnectionParameter | ConnectionParameterSetParameter;
@@ -67,6 +79,13 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     availableSubscriptions,
     availableGateways,
     checkOAuthCallback,
+    needsAzureFunction,
+    functionAppsQuery,
+    selectedAppId,
+    selectedFunctionId,
+    selectAppCallback,
+    fetchFunctionsCallback,
+    selectFunctionCallback,
   } = props;
 
   const intl = useIntl();
@@ -116,11 +135,12 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
   const validParams = useMemo(() => {
     if (showNameInput && !connectionDisplayName) return false;
+    if (needsAzureFunction && !selectedFunctionId) return false;
     if (Object.keys(parameters).length === 0) return true;
     return Object.entries(parameters).every(
       ([key, parameter]) => parameter?.uiDefinition?.constraints?.required !== 'true' || !!parameterValues[key]
     );
-  }, [connectionDisplayName, parameterValues, parameters, showNameInput]);
+  }, [connectionDisplayName, needsAzureFunction, parameterValues, parameters, selectedFunctionId, showNameInput]);
 
   const canSubmit = useMemo(() => {
     return !isLoading && validParams;
@@ -210,6 +230,16 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
     description: 'Close button aria label',
   });
 
+  const functionAppsLoadingText = intl.formatMessage({
+    defaultMessage: 'Loading Function Apps...',
+    description: 'Text for loading function apps',
+  });
+
+  const functionAppsLabel = intl.formatMessage({
+    defaultMessage: 'Select a function app function',
+    description: 'Label for function app selection',
+  });
+
   const connectorDescription = useMemo(() => {
     if (hasOAuth) return authDescriptionText;
     if (Object.keys(parameters ?? {}).length === 0) return simpleDescriptionText;
@@ -224,6 +254,13 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
   const submitButtonAriaLabel = useMemo(() => {
     return hasOAuth ? signInButtonAria : createButtonAria;
   }, [hasOAuth, signInButtonAria, createButtonAria]);
+
+  const functionApps = useMemo(
+    () => ((functionAppsQuery?.data ?? []) as any[]).sort((a, b) => a.name.localeCompare(b.name)),
+    [functionAppsQuery.data]
+  );
+
+  const showConfigParameters = useMemo(() => !functionApps, [functionApps]);
 
   // RENDER
 
@@ -287,94 +324,137 @@ export const CreateConnection = (props: CreateConnectionProps): JSX.Element => {
         )}
 
         {/* Connector Parameters */}
-        {Object.entries(parameters)?.map(([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
-          const data = parameter?.uiDefinition;
-          const constraints = parameter?.uiDefinition?.constraints;
-          let inputComponent = undefined;
+        {showConfigParameters &&
+          Object.entries(parameters)?.map(([key, parameter]: [string, ConnectionParameterSetParameter | ConnectionParameter]) => {
+            const data = parameter?.uiDefinition;
+            const constraints = parameter?.uiDefinition?.constraints;
+            let inputComponent = undefined;
 
-          // Gateway setting parameter
-          if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.gatewaySetting]) {
-            inputComponent = (
-              <GatewayPicker
-                key={key}
-                selectedSubscriptionId={selectedSubscriptionId}
-                selectSubscriptionCallback={selectSubscriptionCallback}
-                availableGateways={availableGateways}
-                availableSubscriptions={availableSubscriptions}
-                isLoading={isLoading}
-                setParameterValues={setParameterValues}
-                parameterValues={parameterValues}
-              />
+            // Gateway setting parameter
+            if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.gatewaySetting]) {
+              inputComponent = (
+                <GatewayPicker
+                  key={key}
+                  selectedSubscriptionId={selectedSubscriptionId}
+                  selectSubscriptionCallback={selectSubscriptionCallback}
+                  availableGateways={availableGateways}
+                  availableSubscriptions={availableSubscriptions}
+                  isLoading={isLoading}
+                  setParameterValues={setParameterValues}
+                  parameterValues={parameterValues}
+                />
+              );
+            }
+
+            // Boolean parameter
+            else if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.bool]) {
+              inputComponent = (
+                <Checkbox
+                  checked={parameterValues[key]}
+                  onChange={(e: any, checked?: boolean) => {
+                    setParameterValues({ ...parameterValues, [key]: checked });
+                  }}
+                  label={data?.description}
+                />
+              );
+            }
+
+            // Dropdown Parameter
+            else if ((constraints?.allowedValues?.length ?? 0) > 0) {
+              inputComponent = (
+                <Dropdown
+                  id={`connection-param-${key}`}
+                  className="connection-parameter-input"
+                  selectedKey={constraints?.allowedValues?.findIndex((value) => value.text === parameterValues[key])}
+                  onChange={(e: any, newVal?: IDropdownOption) => {
+                    setParameterValues({ ...parameterValues, [key]: newVal?.text });
+                  }}
+                  disabled={isLoading}
+                  ariaLabel={data?.description}
+                  placeholder={data?.description}
+                  options={(constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
+                    key: index,
+                    text: allowedValue.text ?? '',
+                  }))}
+                />
+              );
+            }
+
+            // Text Input Parameter
+            else {
+              const isSecure = parameter.type === 'securestring' && !constraints?.clearText;
+              const type = isSecure ? 'password' : 'text';
+
+              inputComponent = (
+                <TextField
+                  id={key}
+                  className="connection-parameter-input"
+                  disabled={isLoading}
+                  autoComplete="off"
+                  type={type}
+                  canRevealPassword
+                  ariaLabel={data?.description}
+                  placeholder={data?.description}
+                  value={parameterValues[key]}
+                  onChange={(e: any, newVal?: string) => setParameterValues({ ...parameterValues, [key]: newVal })}
+                />
+              );
+            }
+
+            return (
+              <div key={key} className="param-row">
+                <Label className="label" required={constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
+                  {data?.displayName}
+                  <TooltipHost content={data?.tooltip}>
+                    <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
+                  </TooltipHost>
+                </Label>
+                {inputComponent}
+              </div>
             );
-          }
+          })}
 
-          // Boolean parameter
-          else if (parameter?.type === ConnectionParameterTypes[ConnectionParameterTypes.bool]) {
-            inputComponent = (
-              <Checkbox
-                checked={parameterValues[key]}
-                onChange={(e: any, checked?: boolean) => {
-                  setParameterValues({ ...parameterValues, [key]: checked });
-                }}
-                label={data?.description}
-              />
-            );
-          }
-
-          // Dropdown Parameter
-          else if ((constraints?.allowedValues?.length ?? 0) > 0) {
-            inputComponent = (
-              <Dropdown
-                id={`connection-param-${key}`}
-                className="connection-parameter-input"
-                selectedKey={constraints?.allowedValues?.findIndex((value) => value.text === parameterValues[key])}
-                onChange={(e: any, newVal?: IDropdownOption) => {
-                  setParameterValues({ ...parameterValues, [key]: newVal?.text });
-                }}
-                disabled={isLoading}
-                ariaLabel={data?.description}
-                placeholder={data?.description}
-                options={(constraints?.allowedValues ?? []).map((allowedValue: ConnectionParameterAllowedValue, index) => ({
-                  key: index,
-                  text: allowedValue.text ?? '',
-                }))}
-              />
-            );
-          }
-
-          // Text Input Parameter
-          else {
-            const isSecure = parameter.type === 'securestring' && !constraints?.clearText;
-            const type = isSecure ? 'password' : 'text';
-
-            inputComponent = (
-              <TextField
-                id={key}
-                className="connection-parameter-input"
-                disabled={isLoading}
-                autoComplete="off"
-                type={type}
-                canRevealPassword
-                ariaLabel={data?.description}
-                placeholder={data?.description}
-                value={parameterValues[key]}
-                onChange={(e: any, newVal?: string) => setParameterValues({ ...parameterValues, [key]: newVal })}
-              />
-            );
-          }
-
-          return (
-            <div key={key} className="param-row">
-              <Label className="label" required={constraints?.required === 'true'} htmlFor={key} disabled={isLoading}>
-                {data?.displayName}
-                <TooltipHost content={data?.tooltip}>
-                  <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-                </TooltipHost>
-              </Label>
-              {inputComponent}
+        {/* Function Apps */}
+        {needsAzureFunction && (
+          <div>
+            <Label className="label" required>
+              {functionAppsLabel}
+            </Label>
+            <div className="msla-function-apps-container">
+              <div className="msla-function-app-list-header">
+                <Text>{'Name'}</Text>
+                <Text>{'Resource Group'}</Text>
+                <Text>{'Location'}</Text>
+              </div>
+              {functionAppsQuery?.isLoading ? (
+                <Spinner label={functionAppsLoadingText} style={{ margin: '16px' }} />
+              ) : functionAppsQuery?.isSuccess ? (
+                <div className="msla-function-apps-list-container" data-is-scrollable>
+                  <List
+                    items={functionApps.map((fApp) => ({
+                      ...fApp,
+                      selected: selectedAppId === fApp.id,
+                      selectedFunctionId,
+                    }))}
+                    onRenderCell={(fApp) => (
+                      <FunctionAppEntry
+                        isLoading={isLoading}
+                        functionApp={fApp}
+                        onAppSelect={selectAppCallback}
+                        onFunctionSelect={selectFunctionCallback}
+                        fetchFunctions={fetchFunctionsCallback}
+                      />
+                    )}
+                  />
+                </div>
+              ) : functionAppsQuery?.isError ? (
+                <MessageBar messageBarType={MessageBarType.error} style={{ margin: '16px' }}>
+                  {functionAppsQuery?.error as string}
+                </MessageBar>
+              ) : null}
             </div>
-          );
-        })}
+          </div>
+        )}
       </div>
 
       {/* Descriptor text for simple and oauth */}
