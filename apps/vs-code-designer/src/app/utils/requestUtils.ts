@@ -6,10 +6,10 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { RestError } from '@azure/ms-rest-js';
 import type { HttpOperationResponse, RequestPrepareOptions, ServiceClient, WebResource } from '@azure/ms-rest-js';
-import { HTTP_METHODS, IIdentityWizardContext } from '@microsoft-logic-apps/utils';
+import type { HTTP_METHODS, IIdentityWizardContext } from '@microsoft-logic-apps/utils';
 import { createGenericClient } from '@microsoft/vscode-azext-azureutils';
-import { ISubscriptionContext, parseError } from '@microsoft/vscode-azext-utils';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { parseError } from '@microsoft/vscode-azext-utils';
+import type { IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import type * as requestP from 'request-promise';
 
 const timeoutKey = 'requestTimeout';

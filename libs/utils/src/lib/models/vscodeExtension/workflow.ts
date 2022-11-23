@@ -50,7 +50,7 @@ export interface WorkflowParameter {
 
 export interface IWorkflowFileContent {
   name: string;
-  definition: Object;
+  definition: Record<string, any>;
   kind: string;
   isDisabled: boolean;
 }

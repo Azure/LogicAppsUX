@@ -2,132 +2,133 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
-import { AzExtParentTreeItem, AzExtTreeItem, IActionContext, TreeItemIconPath } from "@microsoft/vscode-azext-utils";
-import { isArray } from 'util';
 import { connectionsFileName, parametersFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { getAllArtifacts, getOptionalFileContent, listWorkflows } from '../../utils/codeless/apiUtils';
 import { getRequestTriggerSchema } from '../../utils/codeless/common';
-import { getProjectContextValue} from '../projectContextValues';
-import { SlotTreeItemBase } from '../SlotTreeItemBase';
+import { getThemedIconPath } from '../../utils/tree/resources';
+import type { SlotTreeItemBase } from '../SlotTreeItemBase';
+import { getProjectContextValue } from '../projectContextValues';
 import { RemoteWorkflowTreeItem } from './RemoteWorkflowTreeItem';
-import { Artifacts, isNullOrEmpty, Parameter, ProjectAccess, ProjectResource } from "@microsoft-logic-apps/utils";
-import { getThemedIconPath } from "../../utils/tree/resources";
+import { isNullOrEmpty, ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
+import type { Artifacts, Parameter } from '@microsoft-logic-apps/utils';
+import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
+import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
+import { isArray } from 'util';
 
 export class RemoteWorkflowsTreeItem extends AzExtParentTreeItem {
-    public readonly label: string = localize('Workflows', 'Workflows');
-    public readonly childTypeLabel: string = localize('Workflow', 'Workflow');
-    public readonly parent: SlotTreeItemBase;
-    public isReadOnly: boolean;
+  public readonly label: string = localize('Workflows', 'Workflows');
+  public readonly childTypeLabel: string = localize('Workflow', 'Workflow');
+  public readonly parent: SlotTreeItemBase;
+  public isReadOnly: boolean;
 
-    private _artifacts: Artifacts;
-    private _connectionsData: string;
-    private _parametersData: Record<string, Parameter>;
-    private _nextLink: string | undefined;
-    public readonly _context: IActionContext;
+  private _artifacts: Artifacts;
+  private _connectionsData: string;
+  private _parametersData: Record<string, Parameter>;
+  private _nextLink: string | undefined;
+  public readonly _context: IActionContext;
 
-    private constructor(context: IActionContext, parent: SlotTreeItemBase) {
-        super(parent);
-        this._context = context;
+  private constructor(context: IActionContext, parent: SlotTreeItemBase) {
+    super(parent);
+    this._context = context;
+  }
+
+  public static async createWorkflowsTreeItem(context: IActionContext, parent: SlotTreeItemBase): Promise<RemoteWorkflowsTreeItem> {
+    const ti: RemoteWorkflowsTreeItem = new RemoteWorkflowsTreeItem(context, parent);
+    // initialize
+    await ti.refreshImpl();
+    return ti;
+  }
+
+  public async refreshImpl(): Promise<void> {
+    this.isReadOnly = await this.parent.isReadOnly(this._context);
+  }
+
+  public hasMoreChildrenImpl(): boolean {
+    return this._nextLink !== undefined;
+  }
+
+  public get description(): string {
+    return this.isReadOnly ? localize('readOnly', 'Read-only') : '';
+  }
+
+  public get access(): ProjectAccess {
+    return this.isReadOnly ? ProjectAccess.ReadOnly : ProjectAccess.ReadWrite;
+  }
+
+  public get id(): string {
+    return 'workflows';
+  }
+
+  public get iconPath(): TreeItemIconPath {
+    return getThemedIconPath('list-unordered');
+  }
+
+  public get contextValue(): string {
+    return getProjectContextValue(this.parent.source, this.access, ProjectResource.Workflows);
+  }
+
+  public async loadMoreChildrenImpl(clearCache: boolean): Promise<AzExtTreeItem[]> {
+    if (clearCache) {
+      this._nextLink = undefined;
+    }
+    const workflows: any = await listWorkflows(this.parent, this._context);
+
+    // https://github.com/Azure/azure-functions-host/issues/3502
+    if (!isArray(workflows)) {
+      throw new Error(localize('failedToList', 'Failed to list workflows.'));
     }
 
-    public static async createWorkflowsTreeItem(context: IActionContext, parent: SlotTreeItemBase ): Promise<RemoteWorkflowsTreeItem> {
-        const ti: RemoteWorkflowsTreeItem = new RemoteWorkflowsTreeItem(context, parent);
-        // initialize
-        await ti.refreshImpl();
-        return ti;
+    return await this.createTreeItemsWithErrorHandling(
+      workflows,
+      'azFuncInvalidWorkflow',
+      async (workflow: any) => await RemoteWorkflowTreeItem.create(this, workflow),
+      (workflow: any) => {
+        return workflow.name;
+      }
+    );
+  }
+
+  public async getArtifacts(): Promise<Artifacts> {
+    if (!this._artifacts) {
+      this._artifacts = await getAllArtifacts(this._context, this.parent);
     }
 
-    public async refreshImpl(): Promise<void> {
-        this.isReadOnly = await this.parent.isReadOnly(this._context);
+    return this._artifacts;
+  }
+
+  public async getConnectionsData(): Promise<string> {
+    if (!this._connectionsData) {
+      this._connectionsData = await getOptionalFileContent(this._context, this.parent, connectionsFileName);
     }
 
-    public hasMoreChildrenImpl(): boolean {
-        return this._nextLink !== undefined;
+    return this._connectionsData;
+  }
+
+  public async getParametersData(): Promise<Record<string, Parameter>> {
+    if (!this._parametersData || isNullOrEmpty(this._parametersData)) {
+      const parametersJson: string = await getOptionalFileContent(this._context, this.parent, parametersFileName);
+      this._parametersData = parametersJson ? JSON.parse(parametersJson) : {};
     }
 
-    public get description(): string {
-        return this.isReadOnly ? localize('readOnly', 'Read-only') : '';
-    }
+    return this._parametersData;
+  }
 
-    public get access(): ProjectAccess {
-        return this.isReadOnly ? ProjectAccess.ReadOnly : ProjectAccess.ReadWrite;
-    }
+  public async getManualWorkflows(context: IActionContext, workflowToExclude: string): Promise<Record<string, any>> {
+    const workflows = await this.getCachedChildren(context);
+    const workflowDetails: Record<string, any> = {};
 
-    public get id(): string {
-        return 'workflows';
-    }
+    for (const workflow of workflows as RemoteWorkflowTreeItem[]) {
+      const { name, workflowFileContent } = workflow;
+      if (name !== workflowToExclude) {
+        const schema = getRequestTriggerSchema(workflowFileContent);
 
-    public get iconPath(): TreeItemIconPath {
-        return getThemedIconPath('list-unordered');
-    }
-
-    public get contextValue(): string {
-        return getProjectContextValue(this.parent.source, this.access, ProjectResource.Workflows);
-    }
-
-    public async loadMoreChildrenImpl(clearCache: boolean): Promise<AzExtTreeItem[]> {
-        if (clearCache) {
-            this._nextLink = undefined;
+        if (schema) {
+          workflowDetails[name] = schema;
         }
-        const workflows: any = await listWorkflows(this.parent, this._context);
-
-        // https://github.com/Azure/azure-functions-host/issues/3502
-        if (!isArray(workflows)) {
-            throw new Error(localize('failedToList', 'Failed to list workflows.'));
-        }
-
-        return await this.createTreeItemsWithErrorHandling(
-            workflows,
-            'azFuncInvalidWorkflow',
-            async (workflow: any) => await RemoteWorkflowTreeItem.create(this, workflow),
-            (workflow: any) => {
-                return workflow.name;
-            }
-        );
+      }
     }
 
-    public async getArtifacts(): Promise<Artifacts> {
-        if (!this._artifacts) {
-            this._artifacts = await getAllArtifacts(this._context, this.parent);
-        }
-
-        return this._artifacts;
-    }
-
-    public async getConnectionsData(): Promise<string> {
-        if (!this._connectionsData) {
-            this._connectionsData = await getOptionalFileContent(this._context, this.parent, connectionsFileName);
-        }
-
-        return this._connectionsData;
-    }
-
-    public async getParametersData(): Promise<Record<string, Parameter>> {
-        if (!this._parametersData || isNullOrEmpty(this._parametersData)) {
-            const parametersJson: string = await getOptionalFileContent(this._context, this.parent, parametersFileName);
-            this._parametersData = parametersJson ? JSON.parse(parametersJson) : {};
-        }
-
-        return this._parametersData;
-    }
-
-    public async getManualWorkflows(context: IActionContext, workflowToExclude: string): Promise<Record<string, any>> {
-        const workflows = await this.getCachedChildren(context);
-        const workflowDetails: Record<string, any> = {};
-
-        for (const workflow of workflows as RemoteWorkflowTreeItem[]) {
-            const { name, workflowFileContent } = workflow;
-            if (name !== workflowToExclude) {
-                const schema = getRequestTriggerSchema(workflowFileContent);
-
-                if (schema) {
-                    workflowDetails[name] = schema;
-                }
-            }
-        }
-
-        return workflowDetails;
-    }
+    return workflowDetails;
+  }
 }

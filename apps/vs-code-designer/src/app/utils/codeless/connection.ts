@@ -5,8 +5,13 @@ import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson } from './parameter';
-import { HTTP_METHODS, ServiceProviderConnectionModel } from '@microsoft-logic-apps/utils';
-import type { ConnectionAndSettings, ConnectionReferenceModel, Parameter } from '@microsoft-logic-apps/utils';
+import type {
+  ServiceProviderConnectionModel,
+  ConnectionAndSettings,
+  ConnectionReferenceModel,
+  Parameter,
+} from '@microsoft-logic-apps/utils';
+import { HTTP_METHODS } from '@microsoft-logic-apps/utils';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';

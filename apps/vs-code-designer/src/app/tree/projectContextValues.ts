@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { contextValuePrefix } from '../../constants';
-import { ProjectAccess, ProjectResource, ProjectSource } from '@microsoft-logic-apps/utils';
+import { ProjectSource } from '@microsoft-logic-apps/utils';
+import type { ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
 
 const contextValueSeparator = ';';
 

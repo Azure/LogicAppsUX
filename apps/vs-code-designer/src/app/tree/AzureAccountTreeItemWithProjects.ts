@@ -7,16 +7,18 @@ import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { SubscriptionTreeItem } from './SubscriptionTreeItem';
 import { isLocalProjectCV, isProjectCV, isRemoteProjectCV } from './projectContextValues';
-import { ServiceClientCredentials } from '@azure/ms-rest-js';
+import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { AzureAccountTreeItemBase } from '@microsoft/vscode-azext-azureutils';
-import { AzExtTreeItem, callWithTelemetryAndErrorHandling, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import type { AzExtTreeItem, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
+import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { commands, Disposable, extensions, workspace } from 'vscode';
 
 export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
   private _currentLoggedInSessions: any;
   private _projectDisposables: Disposable[] = [];
 
-  public constructor(testAccount?: {}) {
+  /* eslint-disable no-param-reassign */
+  public constructor(testAccount?: Record<string, any>) {
     super(undefined, testAccount);
     this.disposables.push(
       workspace.onDidChangeWorkspaceFolders(async () => {
@@ -46,6 +48,7 @@ export class AzureAccountTreeItemWithProjects extends AzureAccountTreeItemBase {
       })
     );
   }
+  /* eslint-enable no-param-reassign */
 
   public dispose(): void {
     super.dispose();

@@ -23,10 +23,10 @@ export const workflowResourceGroupNameKey = 'WORKFLOWS_RESOURCE_GROUP_NAME';
 export const workflowSubscriptionIdKey = 'WORKFLOWS_SUBSCRIPTION_ID';
 export const workflowTenantIdKey = 'WORKFLOWS_TENANT_ID';
 export const workflowManagementBaseURIKey = 'WORKFLOWS_MANAGEMENT_BASE_URI';
-export const workflowAppApiVersion: string = '2018-11-01';
+export const workflowAppApiVersion = '2018-11-01';
 
-export const logicAppKind: string = 'workflowapp';
-export const workflowappRuntime: string = 'node|14';
+export const logicAppKind = 'workflowapp';
+export const workflowappRuntime = 'node|14';
 
 export const viewOutput = localize('viewOutput', 'View Output');
 

@@ -21,7 +21,8 @@ import type {
   WorkflowParameter,
   ILocalSettingsJson,
 } from '@microsoft-logic-apps/utils';
-import { DialogResponses, IActionContext } from '@microsoft/vscode-azext-utils';
+import { DialogResponses } from '@microsoft/vscode-azext-utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -199,7 +200,7 @@ export async function verifyDeploymentResourceGroup(
   originalDeployFsPath: string
 ): Promise<void> {
   const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(originalDeployFsPath, localSettingsFileName));
-  const workflowResourceGroupLocal: string = localSettings.Values![workflowResourceGroupNameKey];
+  const workflowResourceGroupLocal: string = localSettings.Values[workflowResourceGroupNameKey];
 
   if (workflowResourceGroupLocal && workflowResourceGroupLocal.toLowerCase() !== workflowResourceGroupRemote.toLowerCase()) {
     const warning: string = localize(
