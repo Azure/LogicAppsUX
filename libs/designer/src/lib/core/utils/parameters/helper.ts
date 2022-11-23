@@ -158,27 +158,20 @@ export interface RepetitionReference {
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
-  const sortedParameters: ParameterInfo[] = parameters.filter((parameter) => parameter.required);
+  // Sorted by ( Required, Important, Advanced, Other )
+  return parameters.sort((a, b) => {
+    if (a.required && !b.required) return 1;
+    if (!a.required && b.required) return -1;
 
-  for (const parameter of parameters) {
-    if (!parameter.required && equals(parameter.visibility, Visibility.Important)) {
-      sortedParameters.push(parameter);
-    }
-  }
-
-  parameters.forEach((parameter) => {
-    if (!parameter.required && !equals(parameter.visibility, Visibility.Important) && !equals(parameter.visibility, Visibility.Advanced)) {
-      sortedParameters.push(parameter);
-    }
+    const aVisibility = getVisibility(a);
+    const bVisibility = getVisibility(b);
+    if (aVisibility === bVisibility) return 0;
+    if (aVisibility === Visibility.Important) return 1;
+    if (bVisibility === Visibility.Important) return -1;
+    if (aVisibility === Visibility.Advanced) return 1;
+    if (bVisibility === Visibility.Advanced) return -1;
+    return 0;
   });
-
-  parameters.forEach((parameter) => {
-    if (!parameter.required && equals(parameter.visibility, Visibility.Advanced)) {
-      sortedParameters.push(parameter);
-    }
-  });
-
-  return sortedParameters;
 }
 
 export function addRecurrenceParametersInGroup(
@@ -265,6 +258,7 @@ export function createParameterInfo(
   const value = loadParameterValue(parameter);
   const { alias, encode, format, isDynamic, isUnknown, serialization } = parameter;
   const info = { alias, encode, format, in: parameter.in, isDynamic: !!isDynamic, isUnknown, serialization };
+
   const parameterInfo: ParameterInfo = {
     alternativeKey: parameter.alternativeKey,
     id: guid(),
@@ -287,18 +281,24 @@ export function createParameterInfo(
     suppressCasting: parameter.suppressCasting,
     type: parameter.type,
     value,
-    visibility: parameter.visibility,
+    visibility: getVisibility(parameter),
   };
 
   return parameterInfo;
 }
 
+function getVisibility(parameter: any) {
+  // Riley - There's a typo in the response data, putting this here in case it gets fixed
+  return parameter?.schema?.['x-ms-visiblity'] ?? parameter?.schema?.['x-ms-visibility'] ?? parameter?.visibility;
+}
+
 function shouldHideInUI(parameter: ResolvedParameter): boolean {
-  return parameter?.hideInUI || equals(parameter.visibility, 'hideInUI') || equals(parameter.visibility, Visibility.Internal);
+  const visibility = getVisibility(parameter);
+  return parameter?.hideInUI || equals(visibility, 'hideInUI') || equals(visibility, Visibility.Internal);
 }
 
 function shouldSoftHide(parameter: ResolvedParameter): boolean {
-  return !parameter.required && parameter.visibility !== constants.VISIBILITY.IMPORTANT;
+  return !parameter.required && getVisibility(parameter) !== constants.VISIBILITY.IMPORTANT;
 }
 
 function hasValue(parameter: ResolvedParameter): boolean {
