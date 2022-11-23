@@ -5,7 +5,7 @@
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { parseJson } from '../utils/parseJson';
-import { getThemedIconPath } from '../utils/tree/resources';
+import { getThemedIconPath } from '../utils/tree/assets';
 import { ProxyTreeItem } from './ProxyTreeItem';
 import type { SlotTreeItemBase } from './SlotTreeItemBase';
 import { getFile, putFile } from '@microsoft/vscode-azext-azureappservice';

@@ -8,7 +8,7 @@ import { parseHostJson } from '../funcConfig/host';
 import { getLocalSettingsJson } from '../funcConfig/local.settings';
 import { getFileOrFolderContent } from '../utils/codeless/apiUtils';
 import { tryParseFuncVersion } from '../utils/funcCoreTools/funcVersion';
-import { getIconPath } from '../utils/tree/resources';
+import { getIconPath } from '../utils/tree/assets';
 import { ArtifactsTreeItem } from './ArtifactsTreeItem';
 import { ConfigurationsTreeItem } from './ConfigurationsTreeItem';
 import type { ApplicationSettings, FuncHostRequest, IProjectTreeItem } from './IProjectTreeItem';

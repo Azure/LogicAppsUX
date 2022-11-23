@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../localize';
-import { getThemedIconPath } from '../utils/tree/resources';
+import { getThemedIconPath } from '../utils/tree/assets';
 import { ConnectionsTreeItem } from './ConnectionsTreeItem';
 import { ParametersTreeItem } from './ParametersTreeItem';
 import type { SlotTreeItemBase } from './SlotTreeItemBase';

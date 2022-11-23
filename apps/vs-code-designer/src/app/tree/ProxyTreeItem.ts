@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { getIconPath } from '../utils/tree/resources';
+import { getIconPath } from '../utils/tree/assets';
 import type { ProxiesTreeItem } from './ProxiesTreeItem';
 import { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';

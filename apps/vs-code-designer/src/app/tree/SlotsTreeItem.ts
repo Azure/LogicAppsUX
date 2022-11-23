@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../localize';
-import { getIconPath } from '../utils/tree/resources';
+import { getIconPath } from '../utils/tree/assets';
 import type { ProductionSlotTreeItem } from './ProductionSlotTreeItem';
 import { SlotTreeItem } from './SlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';

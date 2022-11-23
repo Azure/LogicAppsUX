@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../localize';
 import { getConnections } from '../utils/codeless/apiUtils';
-import { getThemedIconPath } from '../utils/tree/resources';
+import { getThemedIconPath } from '../utils/tree/assets';
 import type { ConfigurationsTreeItem } from './ConfigurationsTreeItem';
 import { ConnectionTreeItem } from './ConnectionTreeItem';
 import { getProjectContextValue } from './projectContextValues';

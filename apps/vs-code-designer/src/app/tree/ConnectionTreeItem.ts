@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { getIconPath } from '../utils/tree/resources';
+import { getIconPath } from '../utils/tree/assets';
 import type { ConnectionsTreeItem } from './ConnectionsTreeItem';
 import { getProjectContextValue } from './projectContextValues';
 import { ProjectResource } from '@microsoft-logic-apps/utils';

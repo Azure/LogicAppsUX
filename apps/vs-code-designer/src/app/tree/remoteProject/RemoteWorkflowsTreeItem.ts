@@ -6,7 +6,7 @@ import { connectionsFileName, parametersFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { getAllArtifacts, getOptionalFileContent, listWorkflows } from '../../utils/codeless/apiUtils';
 import { getRequestTriggerSchema } from '../../utils/codeless/common';
-import { getThemedIconPath } from '../../utils/tree/resources';
+import { getThemedIconPath } from '../../utils/tree/assets';
 import type { SlotTreeItemBase } from '../SlotTreeItemBase';
 import { getProjectContextValue } from '../projectContextValues';
 import { RemoteWorkflowTreeItem } from './RemoteWorkflowTreeItem';
