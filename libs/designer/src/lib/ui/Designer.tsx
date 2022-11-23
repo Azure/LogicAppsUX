@@ -19,7 +19,7 @@ import { PanelRoot } from './panel/panelroot';
 import { setLayerHostSelector } from '@fluentui/react';
 import type { WorkflowNodeType } from '@microsoft-logic-apps/utils';
 import { WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft-logic-apps/utils';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
@@ -104,7 +104,7 @@ export const CanvasFinder = () => {
 };
 
 export const Designer = () => {
-  const [nodes, edges] = useLayout();
+  const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
   const dispatch = useDispatch();
 
@@ -133,6 +133,36 @@ export const Designer = () => {
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
 
+  const tranlsateExtent = useMemo(() => {
+    const padding = 88;
+    const zoom = 1;
+
+    const [flowWidth, flowHeight] = flowSize;
+    const frameWidth = document.body.scrollWidth;
+    const frameHeight = document.body.scrollHeight;
+
+    const { width: nodeWidth, height: nodeHeight } = DEFAULT_NODE_SIZE;
+
+    console.log('###', frameWidth, frameHeight, zoom);
+    console.log('^^^', flowWidth, flowHeight, zoom);
+
+    const xVal = frameWidth / zoom - padding - nodeWidth;
+    const yVal = frameHeight / zoom - padding - nodeHeight;
+
+    const bounds = [
+      [
+        -xVal + 32, // right
+        -yVal, // bottom
+      ],
+      [
+        xVal + flowWidth, // left
+        yVal + flowHeight - 30, // top
+      ],
+    ] as [[number, number], [number, number]];
+
+    return bounds;
+  }, [flowSize]);
+
   useEffect(() => setLayerHostSelector('.msla-designer-canvas'), []);
   return (
     <DndProvider backend={HTML5Backend}>
@@ -148,6 +178,7 @@ export const Designer = () => {
             panOnScroll={true}
             deleteKeyCode={['Backspace', 'Delete']}
             zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
+            translateExtent={tranlsateExtent}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
