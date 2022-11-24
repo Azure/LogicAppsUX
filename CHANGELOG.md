@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [0.2.23](https://github.com/Azure/LogicAppsUX/compare/v0.2.22...v0.2.23) (2022-11-24)
+
+
+### Logic Apps Designer Bug Fixes
+
+* Fixed operation parameter visibility / optional dropdown bugs ([#1346](https://github.com/Azure/LogicAppsUX/issues/1346)) ([2cf2f71](https://github.com/Azure/LogicAppsUX/commit/2cf2f713497f0fb69114114718ad1cc7f221a46a))
+
 ### [0.2.22](https://github.com/Azure/LogicAppsUX/compare/v0.2.21...v0.2.22) (2022-11-23)
 
 ### [0.2.21](https://github.com/Azure/LogicAppsUX/compare/v0.2.20...v0.2.21) (2022-11-22)
