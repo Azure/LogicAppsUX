@@ -16,6 +16,7 @@ import {
   createConnectionEntryIfNeeded,
   flattenInputs,
   getConnectedSourceSchemaNodes,
+  getConnectedTargetSchemaNodes,
   getFunctionConnectionUnits,
   getTargetSchemaNodeConnections,
   isConnectionUnit,
@@ -23,6 +24,7 @@ import {
   updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
 import { addParentConnectionForRepeatingElementsNested } from '../../utils/DataMap.Utils';
+import { isFunctionData } from '../../utils/Function.Utils';
 import {
   addReactFlowPrefix,
   addSourceReactFlowPrefix,
@@ -368,23 +370,53 @@ export const dataMapSlice = createSlice({
       addConnection(newState.dataMapConnections, action.payload);
 
       // Add any repeating parent nodes as well
-      const sourceNode = action.payload.source;
-      addParentConnectionForRepeatingElementsNested(
-        sourceNode,
-        action.payload.destination,
-        newState.flattenedSourceSchema,
-        newState.flattenedTargetSchema,
-        newState.dataMapConnections
-      );
-      // if new parent connection has been made
-      if (Object.keys(newState.dataMapConnections).length !== numConnections + 2) {
-        state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+      // Get all the source nodes in case we have sources from multiple source chains
+      const originalSourceNode = action.payload.source;
+      let actualSources: SchemaNodeExtended[];
+      if (isFunctionData(originalSourceNode)) {
+        const sourceNodes = getConnectedSourceSchemaNodes(
+          [newState.dataMapConnections[action.payload.reactFlowSource]],
+          newState.dataMapConnections
+        );
+        actualSources = sourceNodes;
+      } else {
+        actualSources = [originalSourceNode];
       }
 
-      // bring in correct source nodes
-      // loop through parent nodes connected to
-      const parentTargetNode = state.curDataMapOperation.currentTargetSchemaNode;
-      bringInParentSourceNodesForRepeating(parentTargetNode, newState);
+      // We'll only have one output node in this case
+      const originalTargetNode = action.payload.destination;
+      let actualTarget: SchemaNodeExtended[];
+      if (isFunctionData(originalTargetNode)) {
+        const targetNodes = getConnectedTargetSchemaNodes(
+          [newState.dataMapConnections[action.payload.reactFlowDestination]],
+          newState.dataMapConnections
+        );
+        actualTarget = targetNodes;
+      } else {
+        actualTarget = [originalTargetNode];
+      }
+
+      actualSources.forEach((sourceNode) => {
+        if (actualTarget.length > 0) {
+          addParentConnectionForRepeatingElementsNested(
+            sourceNode,
+            actualTarget[0],
+            newState.flattenedSourceSchema,
+            newState.flattenedTargetSchema,
+            newState.dataMapConnections
+          );
+
+          // If new parent connection has been made
+          if (Object.keys(newState.dataMapConnections).length !== numConnections + 2) {
+            state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+          }
+
+          // Bring in correct source nodes
+          // Loop through parent nodes connected to
+          const parentTargetNode = state.curDataMapOperation.currentTargetSchemaNode;
+          bringInParentSourceNodesForRepeating(parentTargetNode, newState);
+        }
+      });
 
       doDataMapOperation(state, newState);
     },

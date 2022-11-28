@@ -481,59 +481,49 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string): st
 };
 
 export const addParentConnectionForRepeatingElementsNested = (
-  sourceNode: FunctionData | SchemaNodeExtended,
-  targetNode: FunctionData | SchemaNodeExtended,
+  sourceNode: SchemaNodeExtended,
+  targetNode: SchemaNodeExtended,
   flattenedSourceSchema: SchemaNodeDictionary,
   flattenedTargetSchema: SchemaNodeDictionary,
   dataMapConnections: ConnectionDictionary
 ) => {
-  if (isSchemaNodeExtended(sourceNode) && isSchemaNodeExtended(targetNode)) {
-    // Danielle: we still need to do this even if both are not schema nodes
+  if (sourceNode.parentKey) {
+    const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
+    const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
-    if (sourceNode.parentKey) {
-      const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
-      const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
-
-      if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
-        const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
-        const firstRepeatingSourceNode = flattenedSourceSchema[prefixedSourceKey];
-        if (!firstRepeatingSourceNode) {
-          return;
-        }
-
-        const prefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
-        const firstRepeatingTargetNode = flattenedTargetSchema[prefixedTargetKey];
-
-        const parentsAlreadyConnected = nodeHasSpecificInputEventually(
-          prefixedSourceKey,
-          dataMapConnections[prefixedTargetKey],
-          dataMapConnections,
-          true
-        );
-
-        if (!parentsAlreadyConnected) {
-          addNodeToConnections(
-            dataMapConnections,
-            firstRepeatingSourceNode,
-            prefixedSourceKey,
-            firstRepeatingTargetNode,
-            prefixedTargetKey
-          );
-        }
-
-        let nextTargetNode = flattenedTargetSchema[addReactFlowPrefix(firstRepeatingTargetNode.parentKey ?? '', SchemaType.Target)];
-        if (!findLast(nextTargetNode.pathToRoot, (pathItem) => pathItem.repeating)) {
-          nextTargetNode = firstRepeatingTargetNode;
-        }
-
-        addParentConnectionForRepeatingElementsNested(
-          flattenedSourceSchema[addReactFlowPrefix(firstRepeatingSourceNode.parentKey ?? '', SchemaType.Source)],
-          nextTargetNode,
-          flattenedSourceSchema,
-          flattenedTargetSchema,
-          dataMapConnections
-        );
+    if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
+      const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
+      const firstRepeatingSourceNode = flattenedSourceSchema[prefixedSourceKey];
+      if (!firstRepeatingSourceNode) {
+        return;
       }
+
+      const prefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
+      const firstRepeatingTargetNode = flattenedTargetSchema[prefixedTargetKey];
+
+      const parentsAlreadyConnected = nodeHasSpecificInputEventually(
+        prefixedSourceKey,
+        dataMapConnections[prefixedTargetKey],
+        dataMapConnections,
+        true
+      );
+
+      if (!parentsAlreadyConnected) {
+        addNodeToConnections(dataMapConnections, firstRepeatingSourceNode, prefixedSourceKey, firstRepeatingTargetNode, prefixedTargetKey);
+      }
+
+      let nextTargetNode = flattenedTargetSchema[addReactFlowPrefix(firstRepeatingTargetNode.parentKey ?? '', SchemaType.Target)];
+      if (!findLast(nextTargetNode.pathToRoot, (pathItem) => pathItem.repeating)) {
+        nextTargetNode = firstRepeatingTargetNode;
+      }
+
+      addParentConnectionForRepeatingElementsNested(
+        flattenedSourceSchema[addReactFlowPrefix(firstRepeatingSourceNode.parentKey ?? '', SchemaType.Source)],
+        nextTargetNode,
+        flattenedSourceSchema,
+        flattenedTargetSchema,
+        dataMapConnections
+      );
     }
   }
 };
