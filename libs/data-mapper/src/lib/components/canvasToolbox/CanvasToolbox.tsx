@@ -164,8 +164,6 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
 
   const floatingPanelHeight = useMemo(() => `${canvasBlockHeight - 150}px`, [canvasBlockHeight]);
 
-  const functionListTabShouldDisplay = !!(toolboxTabToDisplay === ToolboxPanelTabs.functionsList);
-
   return (
     <>
       <ButtonPivot {...toolboxButtonPivotProps} />
@@ -219,7 +217,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
         {...generalToolboxPanelProps}
         height={floatingPanelHeight}
         title={functionLoc}
-        isOpen={functionListTabShouldDisplay}
+        isOpen={toolboxTabToDisplay === ToolboxPanelTabs.functionsList}
         onClose={closeToolbox}
       >
         <FunctionList />
