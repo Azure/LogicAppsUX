@@ -72,13 +72,7 @@ const OverviewReactFlowWrapper = () => {
     return newToggledStatesDictionary;
   }, [targetSchema, connectionDictionary, targetSchemaDictionary]);
 
-  const shouldTargetSchemaDisplayChevrons = !!sourceSchema && !!targetSchema;
-  const reactFlowNodes = useOverviewLayout(
-    sourceSchema?.schemaTreeRoot,
-    targetSchema?.schemaTreeRoot,
-    shouldTargetSchemaDisplayChevrons,
-    tgtSchemaToggledStatesDictionary
-  );
+  const reactFlowNodes = useOverviewLayout(sourceSchema?.schemaTreeRoot, targetSchema?.schemaTreeRoot, tgtSchemaToggledStatesDictionary);
 
   // Fit the canvas view any time a schema changes
   useEffect(() => {

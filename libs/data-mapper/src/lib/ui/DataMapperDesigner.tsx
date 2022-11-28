@@ -150,10 +150,7 @@ export const DataMapperDesigner = ({
     return '';
   }, [currentConnections, sourceSchema, targetSchema, saveDraftStateCall]);
 
-  const showMapOverview = useMemo<boolean>(
-    () => !sourceSchema || !targetSchema || !currentTargetSchemaNode,
-    [sourceSchema, targetSchema, currentTargetSchemaNode]
-  );
+  const showMapOverview = useMemo<boolean>(() => !targetSchema || !currentTargetSchemaNode, [targetSchema, currentTargetSchemaNode]);
 
   const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
     if (addSchemaFromFile) {

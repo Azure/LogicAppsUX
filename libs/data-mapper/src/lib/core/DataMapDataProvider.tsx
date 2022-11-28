@@ -94,7 +94,7 @@ const DataProviderInner = ({
   return <>{children}</>;
 };
 
-export const DataMapDataProvider: React.FC<DataMapDataProviderProps> = (props) => {
+export const DataMapDataProvider = (props: DataMapDataProviderProps) => {
   const wrapped = useContext(DataMapperWrappedContext);
   if (!wrapped) {
     throw new Error('DataMapDataProvider must be used inside of a DataMapperWrappedContext');
