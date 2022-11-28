@@ -146,7 +146,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
               newInputValueArrays[idx].push(undefined);
             } else if (isCustomValue(inputValue)) {
               newInputValueArrays[idx].push(inputValue);
-              newInputNameArrays.push(`"${inputValue}"`);
+              newInputNameArrays.push(inputValue);
             } else {
               newInputValueArrays[idx].push(inputValue.reactFlowKey);
               if (isFunctionData(inputValue.node)) {

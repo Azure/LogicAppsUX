@@ -5,12 +5,12 @@ import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
-import { isFunctionData, getFunctionOutputValue, functionInputHasInputs } from '../../utils/Function.Utils';
+import { functionInputHasInputs, getFunctionOutputValue, isFunctionData } from '../../utils/Function.Utils';
 import { iconForNormalizedDataType, iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../notification/Notification';
-import { Dropdown, SelectableOptionMenuItemType, Stack, TextField } from '@fluentui/react';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
+import { Dropdown, SelectableOptionMenuItemType, Stack, TextField } from '@fluentui/react';
 import { Button, makeStyles, tokens, Tooltip, typographyStyles } from '@fluentui/react-components';
 import { Dismiss20Regular } from '@fluentui/react-icons';
 import { useDebouncedCallback } from '@react-hookz/web';
@@ -260,7 +260,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
               return undefined;
             }
             if (isCustomValue(input)) {
-              return `"${input}"`;
+              return input;
             }
             if (isFunctionData(input.node)) {
               if (functionInputHasInputs(input.reactFlowKey, connectionDictionary)) {
