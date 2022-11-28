@@ -9,6 +9,7 @@ import {
   supportedSchemaFileExts,
   webviewType,
 } from './extensionConfig';
+import type { MapDefinitionData, MessageToVsix, MessageToWebview, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { ChildProcess } from 'child_process';
@@ -16,38 +17,6 @@ import { promises as fs, existsSync as fileExistsSync, copyFileSync, unlinkSync 
 import * as path from 'path';
 import { RelativePattern, Uri, ViewColumn, window, workspace } from 'vscode';
 import type { WebviewPanel, ExtensionContext } from 'vscode';
-
-type SchemaType = 'source' | 'target';
-type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string };
-type FetchSchemaData = { fileName: string; type: SchemaType };
-type MapDefinitionData = { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string };
-
-type SendingMessageTypes =
-  | { command: 'fetchSchema'; data: FetchSchemaData }
-  | { command: 'loadDataMap'; data: MapDefinitionData }
-  | { command: 'showAvailableSchemas'; data: string[] }
-  | { command: 'setXsltFilename'; data: string }
-  | { command: 'setRuntimePort'; data: string };
-type ReceivingMessageTypes =
-  | {
-      command: 'addSchemaFromFile' | 'readLocalFileOptions';
-      data: { path: string; type: SchemaType };
-    }
-  | {
-      command: 'saveDataMapDefinition' | 'saveDraftDataMapDefinition' | 'saveDataMapXslt';
-      data: string;
-    }
-  | {
-      command: 'webviewLoaded';
-    }
-  | {
-      command: 'webviewRscLoadError';
-      data: string;
-    }
-  | {
-      command: 'setIsMapStateDirty';
-      data: boolean;
-    };
 
 export default class DataMapperExt {
   public static currentPanel: DataMapperExt | undefined;
@@ -98,7 +67,7 @@ export default class DataMapperExt {
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }
 
-  public sendMsgToWebview(msg: SendingMessageTypes) {
+  public sendMsgToWebview(msg: MessageToWebview) {
     this._panel.webview.postMessage(msg);
   }
 
@@ -151,7 +120,7 @@ export default class DataMapperExt {
     this._panel.webview.html = html.replace(matchLinks, toUri);
   }
 
-  private _handleWebviewMsg(msg: ReceivingMessageTypes) {
+  private _handleWebviewMsg(msg: MessageToVsix) {
     switch (msg.command) {
       case 'webviewLoaded':
         // Send runtime port to webview
@@ -267,7 +236,7 @@ export default class DataMapperExt {
 
         DataMapperExt.currentPanel?.sendMsgToWebview({
           command: 'fetchSchema',
-          data: { fileName: primarySchemaFileName, type: schemaType },
+          data: { fileName: primarySchemaFileName, type: schemaType as SchemaType },
         });
       });
     });
