@@ -29,7 +29,7 @@ export const App = () => {
   const vscode = useContext(VSCodeContext);
 
   const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
-  const [vsCodeTheme, _setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
+  const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
@@ -116,16 +116,16 @@ export const App = () => {
     });
   }, [vscode]);
 
-  /*
   // Monitor document.body for VS Code theme changes
   useEffect(() => {
     const themeMutationObserver = new MutationObserver(() => {
       setVsCodeTheme(getVscodeTheme());
-    }).observe(document.body, { attributes: true });
+    });
+
+    themeMutationObserver.observe(document.body, { attributes: true });
 
     return () => themeMutationObserver.disconnect();
   }, []);
-  */
 
   // Init runtime API service and make calls
   useEffect(() => {
