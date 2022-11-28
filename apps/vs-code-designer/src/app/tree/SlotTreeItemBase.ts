@@ -11,8 +11,6 @@ import { getLocalSettingsJson } from '../utils/localSettings';
 import { getIconPath } from '../utils/tree/assets';
 import { ArtifactsTreeItem } from './ArtifactsTreeItem';
 import { ConfigurationsTreeItem } from './ConfigurationsTreeItem';
-import { ProxiesTreeItem } from './ProxiesTreeItem';
-import { ProxyTreeItem } from './ProxyTreeItem';
 import { RemoteWorkflowsTreeItem } from './remoteProject/RemoteWorkflowsTreeItem';
 import type { SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
 import type {
@@ -228,10 +226,6 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
       switch (expectedContextValue) {
         case ConfigurationsTreeItem.contextValue:
           return this.configurationsTreeItem;
-        case ProxiesTreeItem.contextValue:
-        case ProxyTreeItem.contextValue:
-        case ProxyTreeItem.readOnlyContextValue:
-          return this.appSettingsTreeItem;
         case DeploymentsTreeItem.contextValueConnected:
         case DeploymentsTreeItem.contextValueUnconnected:
         case DeploymentTreeItem.contextValue:
