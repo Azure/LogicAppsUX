@@ -14,7 +14,6 @@ import { isNullOrEmpty, ProjectAccess, ProjectResource } from '@microsoft-logic-
 import type { Artifacts, Parameter } from '@microsoft-logic-apps/utils';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
-import { isArray } from 'util';
 
 export class RemoteWorkflowsTreeItem extends AzExtParentTreeItem {
   public readonly label: string = localize('Workflows', 'Workflows');
@@ -72,10 +71,10 @@ export class RemoteWorkflowsTreeItem extends AzExtParentTreeItem {
     if (clearCache) {
       this._nextLink = undefined;
     }
-    const workflows: any = await listWorkflows(this.parent, this._context);
+    const workflows: Record<string, any>[] = await listWorkflows(this.parent, this._context);
 
     // https://github.com/Azure/azure-functions-host/issues/3502
-    if (!isArray(workflows)) {
+    if (!Array.isArray(workflows)) {
       throw new Error(localize('failedToList', 'Failed to list workflows.'));
     }
 

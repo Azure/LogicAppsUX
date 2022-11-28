@@ -7,7 +7,6 @@ import {
   workflowManagementBaseURIKey,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { localize } from '../../../localize';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
 import { getLocalSettingsJson } from '../localSettings';
@@ -19,14 +18,13 @@ import type {
   Artifacts,
   AzureConnectorDetails,
   WorkflowParameter,
-  ILocalSettingsJson,
+  IWorkflowFileContent,
 } from '@microsoft-logic-apps/utils';
-import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
-import type { MessageItem, WebviewPanel } from 'vscode';
+import type { WebviewPanel } from 'vscode';
 
 export function tryGetWebviewPanel(category: string, name: string): WebviewPanel | undefined {
   const currentPanels = ext.openWebviewPanels[category];
@@ -194,25 +192,7 @@ export async function getAzureConnectorDetailsForLocalProject(
   };
 }
 
-export async function verifyDeploymentResourceGroup(
-  context: IActionContext,
-  workflowResourceGroupRemote: string,
-  originalDeployFsPath: string
-): Promise<void> {
-  const localSettings: ILocalSettingsJson = await getLocalSettingsJson(context, path.join(originalDeployFsPath, localSettingsFileName));
-  const workflowResourceGroupLocal: string = localSettings.Values[workflowResourceGroupNameKey];
-
-  if (workflowResourceGroupLocal && workflowResourceGroupLocal.toLowerCase() !== workflowResourceGroupRemote.toLowerCase()) {
-    const warning: string = localize(
-      'resourceGroupMismatch',
-      'For optimal performance, put managed connections in the same resource group as your workflow. Are you sure you want to deploy?'
-    );
-    const deployButton: MessageItem = { title: localize('deploy', 'Deploy') };
-    await context.ui.showWarningMessage(warning, { modal: true }, deployButton, DialogResponses.cancel);
-  }
-}
-
-export function getRequestTriggerSchema(workflowContent: any): any {
+export function getRequestTriggerSchema(workflowContent: IWorkflowFileContent): any {
   const {
     definition: { triggers },
   } = workflowContent;

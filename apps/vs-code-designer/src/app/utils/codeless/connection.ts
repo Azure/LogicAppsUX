@@ -158,11 +158,10 @@ export function containsApiHubConnectionReference(references: any): boolean {
   return false;
 }
 
-function isApiHubConnectionId(connectionId: any): boolean {
+function isApiHubConnectionId(connectionId: string): boolean {
   return connectionId.startsWith('/subscriptions/');
 }
 
-// TODO - Need to understand where multi auth is being saved.
 export function resolveSettingsInConnection(
   connectionInfo: ServiceProviderConnectionModel,
   settings: Record<string, string>

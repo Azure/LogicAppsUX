@@ -2,10 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { defaultRoutePrefix } from '../../constants';
 import type { IBundleMetadata, IHostJsonV1, IHostJsonV2, IParsedHostJson } from '@microsoft-logic-apps/utils';
 import { FuncVersion, isObject } from '@microsoft-logic-apps/utils';
-
-const defaultRoutePrefix = 'api';
 
 class ParsedHostJsonV2 implements IParsedHostJson {
   public data: IHostJsonV2;

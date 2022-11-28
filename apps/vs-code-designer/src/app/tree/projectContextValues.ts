@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { contextValuePrefix } from '../../constants';
-import { ProjectSource } from '@microsoft-logic-apps/utils';
+import { isString, ProjectSource } from '@microsoft-logic-apps/utils';
 import type { ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
 
 const contextValueSeparator = ';';
@@ -31,7 +31,7 @@ export function matchesAnyPart(contextValue: string | RegExp, ...parts: string[]
 }
 
 function normalizeContextValue(contextValue: string | RegExp): string {
-  const data: string = typeof contextValue === 'string' ? contextValue : contextValue.source;
+  const data: string = isString(contextValue) ? contextValue : contextValue.source;
   return data.toLowerCase();
 }
 

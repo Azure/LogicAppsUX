@@ -1,3 +1,7 @@
+import type { FuncVersion } from './functions';
+import type { IParsedHostJson } from './host';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+
 export enum ProjectSource {
   Remote = 'Remote',
   Local = 'Local',
@@ -18,4 +22,17 @@ export enum ProjectResource {
   Connection = 'Connection',
   Parameters = 'Parameters',
   Parameter = 'Parameter',
+}
+
+export type ApplicationSettings = { [propertyName: string]: string };
+
+export type FuncHostRequest = { url: string; rejectUnauthorized?: boolean };
+
+export interface IProjectTreeItem {
+  source: ProjectSource;
+  getHostRequest(context: IActionContext): Promise<FuncHostRequest>;
+  getHostJson(context: IActionContext): Promise<IParsedHostJson>;
+  getVersion(context: IActionContext): Promise<FuncVersion>;
+  getApplicationSettings(context: IActionContext): Promise<ApplicationSettings>;
+  setApplicationSetting(context: IActionContext, key: string, value: string): Promise<void>;
 }

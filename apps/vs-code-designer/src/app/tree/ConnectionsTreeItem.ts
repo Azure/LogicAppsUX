@@ -24,7 +24,6 @@ export class ConnectionsTreeItem extends AzExtParentTreeItem {
 
   public static async createConnectionsTreeItem(parent: ConfigurationsTreeItem): Promise<ConnectionsTreeItem> {
     const ti: ConnectionsTreeItem = new ConnectionsTreeItem(parent);
-    // initialize
     await ti.refreshImpl();
     return ti;
   }

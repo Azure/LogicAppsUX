@@ -14,7 +14,7 @@ import type { RemoteWorkflowsTreeItem } from './RemoteWorkflowsTreeItem';
 import type { StringDictionary } from '@azure/arm-appservice';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { Artifacts, Parameter, IWorkflowFileContent, ServiceProviderConnectionModel } from '@microsoft-logic-apps/utils';
-import { ProjectResource } from '@microsoft-logic-apps/utils';
+import { ProjectResource, isEmptyString, HTTP_METHODS } from '@microsoft-logic-apps/utils';
 import { AzExtTreeItem, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { AzExtParentTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import { ProgressLocation, window } from 'vscode';
@@ -71,14 +71,12 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
   }
 
   public async deleteTreeItemImpl(): Promise<void> {
-    // TODO(vikanand): We need to call the delete cloud api's for this functionality.
     const message: string = localize('ConfirmDeleteWorkflow', 'Are you sure you want to delete workflow "{0}"?', this.name);
     const deleting: string = localize('DeletingWorkflow', 'Deleting function "{0}"...', this.name);
     const deleteSucceeded: string = localize('DeleteWorkflowSucceeded', 'Successfully deleted workflow "{0}".', this.name);
     await this.parent._context.ui.showWarningMessage(message, { modal: true }, DialogResponses.deleteResponse, DialogResponses.cancel);
     await window.withProgress({ location: ProgressLocation.Notification, title: deleting }, async (): Promise<void> => {
       ext.outputChannel.appendLog(deleting);
-      // await this.client.deleteWorkflow(this.name);
       window.showInformationMessage(deleteSucceeded);
       ext.outputChannel.appendLog(deleteSucceeded);
     });
@@ -99,7 +97,6 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
   public async getAppSettings(): Promise<Record<string, string>> {
     const client = await this.parent.parent.site.createClient(this.parent._context);
     const appSettings: StringDictionary = await client.listApplicationSettings();
-    // tslint:disable-next-line: strict-boolean-expressions
     return appSettings.properties || {};
   }
 
@@ -107,7 +104,7 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
     const url = `${this.parent.parent.id}/hostruntime${managementApiPrefix}/workflows/${this.name}/triggers/${triggerName}/listCallbackUrl?api-version=${workflowAppApiVersion}`;
 
     try {
-      const response = await sendAzureRequest(url, this.parent._context, 'POST', node.subscription);
+      const response = await sendAzureRequest(url, this.parent._context, HTTP_METHODS.POST, node.subscription);
       return response.parsedBody;
     } catch (error) {
       return undefined;
@@ -120,7 +117,7 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
 
   public async getConnectionConfiguration(connectionId: string): Promise<{ connection: ServiceProviderConnectionModel } | undefined> {
     const connectionsJsonString = await this.getConnectionsData();
-    const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
+    const connectionsJson = isEmptyString(connectionsJsonString) ? {} : JSON.parse(connectionsJsonString);
     const settings = await this.getAppSettings();
 
     const connectionName = connectionId.split('/').slice(-1)[0];

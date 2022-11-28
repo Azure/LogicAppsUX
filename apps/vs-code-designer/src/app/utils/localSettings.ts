@@ -21,7 +21,6 @@ export async function addOrUpdateLocalAppSettings(
   const localSettingsPath: string = path.join(functionAppPath, localSettingsFileName);
   const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
 
-  // tslint:disable-next-line:strict-boolean-expressions
   settings.Values = settings.Values || {};
   settings.Values = {
     ...settings.Values,

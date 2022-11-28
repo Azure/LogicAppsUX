@@ -44,3 +44,7 @@ export enum extensionCommand {
 
 // Context
 export const contextValuePrefix = 'azFunc';
+
+// API
+export const defaultRoutePrefix = 'api';
+export const timeoutKey = 'requestTimeout';

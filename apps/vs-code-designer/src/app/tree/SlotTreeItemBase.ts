@@ -11,13 +11,19 @@ import { getLocalSettingsJson } from '../utils/localSettings';
 import { getIconPath } from '../utils/tree/assets';
 import { ArtifactsTreeItem } from './ArtifactsTreeItem';
 import { ConfigurationsTreeItem } from './ConfigurationsTreeItem';
-import type { ApplicationSettings, FuncHostRequest, IProjectTreeItem } from './IProjectTreeItem';
 import { ProxiesTreeItem } from './ProxiesTreeItem';
 import { ProxyTreeItem } from './ProxyTreeItem';
 import { RemoteWorkflowsTreeItem } from './remoteProject/RemoteWorkflowsTreeItem';
 import type { SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
-import type { FuncVersion, ILocalSettingsJson, IParsedHostJson } from '@microsoft-logic-apps/utils';
-import { latestGAVersion, ProjectSource } from '@microsoft-logic-apps/utils';
+import type {
+  ApplicationSettings,
+  FuncHostRequest,
+  FuncVersion,
+  ILocalSettingsJson,
+  IParsedHostJson,
+  IProjectTreeItem,
+} from '@microsoft-logic-apps/utils';
+import { isString, latestGAVersion, ProjectSource } from '@microsoft-logic-apps/utils';
 import {
   AppSettingsTreeItem,
   DeleteLastServicePlanStep,
@@ -123,7 +129,6 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
   public async getHostJson(context: IActionContext): Promise<IParsedHostJson> {
     let result: IParsedHostJson | undefined = this._cachedHostJson;
     if (!result) {
-      // tslint:disable-next-line: no-any
       let data: any;
       try {
         data = JSON.parse((await getFile(context, this.site, 'site/wwwroot/host.json')).data);
@@ -232,7 +237,7 @@ export abstract class SlotTreeItemBase extends AzExtParentTreeItem implements IP
         case DeploymentTreeItem.contextValue:
           return this.deploymentsNode;
         default:
-          if (typeof expectedContextValue === 'string') {
+          if (isString(expectedContextValue)) {
             // DeploymentTreeItem.contextValue is a RegExp, but the passed in contextValue can be a string so check for a match
             if (DeploymentTreeItem.contextValue.test(expectedContextValue)) {
               return this.deploymentsNode;

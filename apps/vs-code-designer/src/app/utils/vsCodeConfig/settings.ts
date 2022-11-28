@@ -38,7 +38,7 @@ export function getWorkspaceSettingFromAnyFolder(key: string, prefix: string = e
   }
 }
 
-export function getFunctionsWorkerRuntime(language: string | undefined): string | undefined {
+export function getFunctionsWorkerRuntime(language: string | undefined): WorkerRuntime | undefined {
   switch (language) {
     case ProjectLanguage.JavaScript:
     case ProjectLanguage.TypeScript:

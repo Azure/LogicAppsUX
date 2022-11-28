@@ -30,7 +30,6 @@ export class ConfigurationsTreeItem extends AzExtParentTreeItem {
 
   public static async createConfigurationsTreeItem(parent: SlotTreeItemBase, context: IActionContext): Promise<ConfigurationsTreeItem> {
     const ti: ConfigurationsTreeItem = new ConfigurationsTreeItem(parent);
-    // initialize
     await ti.refreshImpl(context);
     return ti;
   }

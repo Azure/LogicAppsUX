@@ -24,7 +24,7 @@ export interface IDesignerPanelMetadata {
 
 export interface CodelessApp {
   statelessRunMode?: string;
-  definition: any;
+  definition: LogicAppsV2.WorkflowDefinition;
   name: string;
   stateful: boolean;
   kind: string;
