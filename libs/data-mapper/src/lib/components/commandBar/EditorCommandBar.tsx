@@ -80,6 +80,8 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
   const isStateDirty = useSelector((state: RootState) => state.dataMap.isDirty);
   const undoStack = useSelector((state: RootState) => state.dataMap.undoStack);
   const redoStack = useSelector((state: RootState) => state.dataMap.redoStack);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const xsltFilename = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltFilename);
   const isDiscardConfirmed = useSelector(
     (state: RootState) => state.modal.warningModalType === WarningModalState.DiscardWarning && state.modal.isOkClicked
@@ -159,7 +161,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         ariaLabel: Resources.SAVE,
         iconProps: { iconName: 'Save' },
         onClick: onSaveClick,
-        disabled: !isStateDirty,
+        disabled: !sourceSchema || !targetSchema ? true : !isStateDirty,
         buttonStyles: cmdBarButtonStyles,
         ...cmdBarItemBgStyles,
       },
@@ -234,6 +236,8 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
       onUndoClick,
       redoStack,
       undoStack,
+      sourceSchema,
+      targetSchema,
       xsltFilename,
     ]
   );

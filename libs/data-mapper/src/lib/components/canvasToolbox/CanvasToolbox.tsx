@@ -1,4 +1,5 @@
 import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
+import { openAddSourceSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
@@ -12,7 +13,8 @@ import SourceSchemaTreeItem, { SourceSchemaTreeHeader, useSchemaTreeItemStyles }
 import Tree from '../tree/Tree';
 import type { ITreeNode } from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
-import { mergeClasses, tokens } from '@fluentui/react-components';
+import { Stack } from '@fluentui/react';
+import { Button, mergeClasses, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo, useState } from 'react';
@@ -74,6 +76,16 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   const sourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Source schema',
     description: 'Source schema',
+  });
+
+  const addSrcSchemaLoc = intl.formatMessage({
+    defaultMessage: 'Add a source schema first, then select elements to build your map',
+    description: 'Message to add a source schema',
+  });
+
+  const addLoc = intl.formatMessage({
+    defaultMessage: 'Add',
+    description: 'Add',
   });
 
   const closeToolbox = useCallback(() => {
@@ -152,11 +164,6 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
 
   const floatingPanelHeight = useMemo(() => `${canvasBlockHeight - 150}px`, [canvasBlockHeight]);
 
-  const sourceSchemaTabShouldDisplay = !!(
-    toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree &&
-    sourceSchema &&
-    searchedSourceSchemaTreeRoot
-  );
   const functionListTabShouldDisplay = !!(toolboxTabToDisplay === ToolboxPanelTabs.functionsList);
 
   return (
@@ -167,32 +174,45 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
         {...generalToolboxPanelProps}
         height={floatingPanelHeight}
         title={sourceSchemaLoc}
-        isOpen={sourceSchemaTabShouldDisplay}
+        isOpen={toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree}
         onClose={closeToolbox}
       >
-        <TreeHeader onSearch={setSourceSchemaSearchTerm} onClear={() => setSourceSchemaSearchTerm('')} />
+        {sourceSchema && searchedSourceSchemaTreeRoot ? (
+          <>
+            <TreeHeader onSearch={setSourceSchemaSearchTerm} onClear={() => setSourceSchemaSearchTerm('')} />
 
-        <SourceSchemaTreeHeader />
+            <SourceSchemaTreeHeader />
 
-        <Tree<SchemaNodeExtended>
-          // Add one extra root layer so schemaTreeRoot is shown as well
-          // Can safely typecast as only the children[] are used from root
-          treeRoot={searchedSourceSchemaTreeRoot}
-          nodeContent={(node, isHovered) => (
-            <SourceSchemaTreeItem
-              node={node as SchemaNodeExtended}
-              isNodeAdded={currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)}
-              isNodeHovered={isHovered}
+            <Tree<SchemaNodeExtended>
+              // Add one extra root layer so schemaTreeRoot is shown as well
+              // Can safely typecast as only the children[] are used from root
+              treeRoot={searchedSourceSchemaTreeRoot}
+              nodeContent={(node, isHovered) => (
+                <SourceSchemaTreeItem
+                  node={node as SchemaNodeExtended}
+                  isNodeAdded={currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)}
+                  isNodeHovered={isHovered}
+                />
+              )}
+              onClickItem={(node) => onSourceSchemaItemClick(node as SchemaNodeExtended)}
+              nodeContainerClassName={mergeClasses(schemaNodeItemStyles.nodeContainer, schemaNodeItemStyles.sourceSchemaNode)}
+              nodeContainerStyle={(node) => ({
+                backgroundColor: currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)
+                  ? tokens.colorBrandBackground2
+                  : undefined,
+              })}
             />
-          )}
-          onClickItem={(node) => onSourceSchemaItemClick(node as SchemaNodeExtended)}
-          nodeContainerClassName={mergeClasses(schemaNodeItemStyles.nodeContainer, schemaNodeItemStyles.sourceSchemaNode)}
-          nodeContainerStyle={(node) => ({
-            backgroundColor: currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)
-              ? tokens.colorBrandBackground2
-              : undefined,
-          })}
-        />
+          </>
+        ) : (
+          <Stack style={{ height: '90%' }} verticalAlign="center" horizontalAlign="center">
+            <Text style={{ ...typographyStyles.body1Strong, width: '190px', textAlign: 'center', marginBottom: '28px' }}>
+              {addSrcSchemaLoc}
+            </Text>
+            <Button onClick={() => dispatch(openAddSourceSchemaPanelView())} size="small">
+              {addLoc}
+            </Button>
+          </Stack>
+        )}
       </FloatingPanel>
 
       <FloatingPanel
