@@ -9,7 +9,7 @@ import { getWorkflow } from '../../utils/codeless/apiUtils';
 import { resolveSettingsInConnection } from '../../utils/codeless/connection';
 import { sendAzureRequest } from '../../utils/requestUtils';
 import { getThemedIconPath } from '../../utils/tree/assets';
-import { getProjectContextValue } from '../projectContextValues';
+import { getProjectContextValue } from '../../utils/tree/projectContextValues';
 import type { RemoteWorkflowsTreeItem } from './RemoteWorkflowsTreeItem';
 import type { StringDictionary } from '@azure/arm-appservice';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';

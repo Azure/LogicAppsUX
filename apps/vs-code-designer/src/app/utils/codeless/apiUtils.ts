@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { connectionsFileName, managementApiPrefix, parametersFileName, workflowAppApiVersion } from '../../../constants';
 import { localize } from '../../../localize';
-import type { SlotTreeItemBase } from '../../tree/SlotTreeItemBase';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteProject/RemoteWorkflowTreeItem';
+import type { SlotTreeItemBase } from '../../tree/slotsTree/SlotTreeItemBase';
 import { sendAzureRequest } from '../requestUtils';
 import type {
   Artifacts,

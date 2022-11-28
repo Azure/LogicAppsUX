@@ -2,13 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcVersionSetting, logicAppKind, projectLanguageSetting, workflowappRuntime } from '../../constants';
-import { localize } from '../../localize';
-import { tryParseFuncVersion } from '../utils/funcCoreTools/funcVersion';
-import { tryGetLocalFuncVersion } from '../utils/funcCoreTools/tryGetLocalFuncVersion';
-import { getWorkspaceSettingFromAnyFolder } from '../utils/vsCodeConfig/settings';
-import { ProductionSlotTreeItem } from './ProductionSlotTreeItem';
-import { isProjectCV, isRemoteProjectCV } from './projectContextValues';
+import { funcVersionSetting, logicAppKind, projectLanguageSetting, workflowappRuntime } from '../../../constants';
+import { localize } from '../../../localize';
+import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { tryGetLocalFuncVersion } from '../../utils/funcCoreTools/tryGetLocalFuncVersion';
+import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextValues';
+import { getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
+import { ProductionSlotTreeItem } from '../slotsTree/ProductionSlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
 import { latestGAVersion } from '@microsoft-logic-apps/utils';
 import type { FuncVersion, IFunctionAppWizardContext } from '@microsoft-logic-apps/utils';

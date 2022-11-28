@@ -5,8 +5,8 @@
 import { funcVersionSetting, projectLanguageSetting, projectSubpathSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
-import { SubscriptionTreeItem } from './SubscriptionTreeItem';
-import { isLocalProjectCV, isProjectCV, isRemoteProjectCV } from './projectContextValues';
+import { isLocalProjectCV, isProjectCV, isRemoteProjectCV } from '../utils/tree/projectContextValues';
+import { SubscriptionTreeItem } from './subscriptionTree/SubscriptionTreeItem';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { AzureAccountTreeItemBase } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';

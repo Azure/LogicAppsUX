@@ -2,12 +2,12 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localize } from '../../localize';
-import { getThemedIconPath } from '../utils/tree/assets';
-import { ConnectionsTreeItem } from './ConnectionsTreeItem';
-import { ParametersTreeItem } from './ParametersTreeItem';
-import type { SlotTreeItemBase } from './SlotTreeItemBase';
-import { getProjectContextValue } from './projectContextValues';
+import { localize } from '../../../localize';
+import { getThemedIconPath } from '../../utils/tree/assets';
+import { getProjectContextValue } from '../../utils/tree/projectContextValues';
+import type { SlotTreeItemBase } from '../slotsTree/SlotTreeItemBase';
+import { ConnectionsTreeItem } from './connectionsTree/ConnectionsTreeItem';
+import { ParametersTreeItem } from './parametersTree/ParametersTreeItem';
 import { ProjectAccess, ProjectResource } from '@microsoft-logic-apps/utils';
 import { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';

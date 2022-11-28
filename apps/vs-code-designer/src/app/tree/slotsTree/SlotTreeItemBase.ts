@@ -2,16 +2,16 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { localSettingsFileName } from '../../constants';
-import { localize } from '../../localize';
-import { parseHostJson } from '../funcConfig/host';
-import { getFileOrFolderContent } from '../utils/codeless/apiUtils';
-import { tryParseFuncVersion } from '../utils/funcCoreTools/funcVersion';
-import { getLocalSettingsJson } from '../utils/localSettings';
-import { getIconPath } from '../utils/tree/assets';
-import { ArtifactsTreeItem } from './ArtifactsTreeItem';
-import { ConfigurationsTreeItem } from './ConfigurationsTreeItem';
-import { RemoteWorkflowsTreeItem } from './remoteProject/RemoteWorkflowsTreeItem';
+import { localSettingsFileName } from '../../../constants';
+import { localize } from '../../../localize';
+import { parseHostJson } from '../../funcConfig/host';
+import { getFileOrFolderContent } from '../../utils/codeless/apiUtils';
+import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { getLocalSettingsJson } from '../../utils/localSettings';
+import { getIconPath } from '../../utils/tree/assets';
+import { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
+import { RemoteWorkflowsTreeItem } from '../remoteProject/RemoteWorkflowsTreeItem';
+import { ArtifactsTreeItem } from './artifactsTree/ArtifactsTreeItem';
 import type { SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
 import type {
   ApplicationSettings,

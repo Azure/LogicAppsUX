@@ -48,3 +48,6 @@ export const contextValuePrefix = 'azFunc';
 // API
 export const defaultRoutePrefix = 'api';
 export const timeoutKey = 'requestTimeout';
+
+// Tree
+export const contextValueSeparator = ';';
