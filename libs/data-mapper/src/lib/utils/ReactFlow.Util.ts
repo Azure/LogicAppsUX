@@ -270,6 +270,7 @@ const convertFunctionsToReactFlowParentAndChildNodes = (
     reactFlowNodes.push({
       id: functionKey,
       data: {
+        displayName: fnNode.displayName,
         functionName: fnNode.functionName,
         displayHandle: true,
         maxNumberOfInputs: fnNode.maxNumberOfInputs,
@@ -313,7 +314,6 @@ export const convertToReactFlowEdges = (connections: ConnectionDictionary, selec
 export const useOverviewLayout = (
   srcSchemaTreeRoot?: SchemaNodeExtended,
   tgtSchemaTreeRoot?: SchemaNodeExtended,
-  shouldTargetSchemaDisplayChevrons?: boolean,
   tgtSchemaToggledStatesDictionary?: NodeToggledStateDictionary
 ): ReactFlowNode<SchemaCardProps>[] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode<SchemaCardProps>[]>([]);
@@ -380,7 +380,7 @@ export const useOverviewLayout = (
       const baseTgtSchemaNodeData = {
         ...baseSchemaNodeData,
         schemaType: SchemaType.Target,
-        displayChevron: !!shouldTargetSchemaDisplayChevrons,
+        displayChevron: true,
       };
 
       newReactFlowNodes.push({
@@ -419,7 +419,7 @@ export const useOverviewLayout = (
     }
 
     setReactFlowNodes(newReactFlowNodes);
-  }, [srcSchemaTreeRoot, tgtSchemaTreeRoot, shouldTargetSchemaDisplayChevrons, tgtSchemaToggledStatesDictionary]);
+  }, [srcSchemaTreeRoot, tgtSchemaTreeRoot, tgtSchemaToggledStatesDictionary]);
 
   return reactFlowNodes;
 };

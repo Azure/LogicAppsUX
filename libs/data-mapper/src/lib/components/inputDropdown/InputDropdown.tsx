@@ -1,6 +1,6 @@
 import { showNotification, updateConnectionInput } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeDataType, SchemaNodeExtended } from '../../models';
+import type { SchemaNodeDataType, SchemaNodeExtended, SchemaNodeProperty } from '../../models';
 import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
@@ -23,6 +23,7 @@ const customValueDebounceDelay = 300;
 
 interface SharedOptionData {
   isFunction: boolean;
+  nodeProperties?: SchemaNodeProperty[]; // Should just be source schema nodes
   schemaNodeDataType?: SchemaNodeDataType; // Will be preferentially used over normalized type if present (should just be source schema nodes)
   normalizedDataType: NormalizedDataType;
 }
@@ -92,7 +93,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
     }
 
     const TypeIcon = items[0].data.schemaNodeDataType
-      ? iconForSchemaNodeDataType(items[0].data.schemaNodeDataType, 16, false)
+      ? iconForSchemaNodeDataType(items[0].data.schemaNodeDataType, 16, false, items[0].data.nodeProperties)
       : iconForNormalizedDataType(items[0].data.normalizedDataType, 16, false);
 
     return (
@@ -116,7 +117,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
       }
 
       const TypeIcon = item.data.schemaNodeDataType
-        ? iconForSchemaNodeDataType(item.data.schemaNodeDataType, 16, false)
+        ? iconForSchemaNodeDataType(item.data.schemaNodeDataType, 16, false, item.data.nodeProperties)
         : iconForNormalizedDataType(item.data.normalizedDataType, 16, false);
 
       return (
@@ -233,6 +234,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
         nodeKey: addSourceReactFlowPrefix(srcNode.key),
         nodeName: srcNode.name,
         isFunction: false,
+        nodeProperties: srcNode.nodeProperties,
         schemaNodeDataType: srcNode.schemaNodeDataType,
         normalizedDataType: srcNode.normalizedDataType,
       });
@@ -280,7 +282,6 @@ export const InputDropdown = (props: InputDropdownProps) => {
         nodeKey: key,
         nodeName: getFunctionOutputValue(fnInputValues, node.functionName),
         isFunction: true,
-        schemaNodeDataType: undefined,
         normalizedDataType: node.outputValueType,
       });
     });
@@ -300,6 +301,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
           text: possibleOption.nodeName,
           data: {
             isFunction: possibleOption.isFunction,
+            nodeProperties: possibleOption.nodeProperties,
             schemaNodeDataType: possibleOption.schemaNodeDataType,
             normalizedDataType: possibleOption.normalizedDataType,
           },
