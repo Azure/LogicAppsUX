@@ -1,6 +1,6 @@
 import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../../models';
+import { NormalizedDataType, SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
@@ -73,7 +73,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     const nodesWithConnections: { [key: string]: true } = {};
 
     Object.values(connectionDictionary).forEach((connection) => {
-      if (connection.self.reactFlowKey in targetSchemaDictionary) {
+      if (connection.self.reactFlowKey in targetSchemaDictionary && connection.inputs[0] && connection.inputs[0].length > 0) {
         nodesWithConnections[connection.self.node.key] = true;
       }
     });
@@ -259,9 +259,9 @@ export const checkNodeStatuses = (
 
   if (
     (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) &&
-    !schemaNode.nodeProperties.includes(SchemaNodeProperty.Attribute)
+    schemaNode.children.length > 0
   ) {
-    // Object/parent/array-elements (with Attributes filtered out)
+    // Object/parent/array-elements (if they don't have children, treat them as leaf nodes (below))
     return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
   } else {
     // Node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
