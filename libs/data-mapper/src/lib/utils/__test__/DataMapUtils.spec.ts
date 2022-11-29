@@ -161,6 +161,7 @@ describe('utils/DataMap', () => {
         flattenedLoopTarget,
         connectionsDict
       );
+      console.log(JSON.stringify(connectionsDict));
       expect(Object.keys(connectionsDict).length).toEqual(8);
     });
 

@@ -72,6 +72,11 @@ export const generateMapDefinitionHeader = (
   }
 };
 
+export const getParentId = (id: string): string => {
+  const last = id.lastIndexOf('/');
+  return id.substring(0, last);
+};
+
 // Exported for testing purposes
 export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
   // Filter to just the target node connections, all the rest will be picked up be traversing up the chain

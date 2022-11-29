@@ -4,7 +4,13 @@ import type { ConnectionDictionary } from '../../../models/Connection';
 import { addNodeToConnections, flattenInputs } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../../utils/Schema.Utils';
-import { canDeleteConnection, deleteConnectionFromConnections, deleteNodeFromConnections } from '../DataMapSlice';
+import { fullMapForSimplifiedLoop, manyToManyConnectionSourceName } from '../../../utils/__mocks__';
+import {
+  canDeleteConnection,
+  deleteConnectionFromConnections,
+  deleteNodeFromConnections,
+  deleteParentRepeatingConnections,
+} from '../DataMapSlice';
 import { simpleMockSchema } from '../__mocks__';
 import { concatFunction } from '../__mocks__/FunctionMock';
 
@@ -191,6 +197,18 @@ describe('DataMapSlice', () => {
       const canDelete = canDeleteConnection(connections, source, target, { abc: simpleSourceNode }, {});
       expect(canDelete).toBeTruthy();
     });
+  });
+
+  describe('deleteParentRepeatingConnections', () => {
+    it('deletes all parent connections when selected deleted connection is only one', () => {
+      const connections = { ...fullMapForSimplifiedLoop };
+      delete connections['target-/ns0:Root/ManyToMany/Year/Month/Day/Date'];
+      delete connections['source-/ns0:Root/ManyToMany/SourceYear/SourceMonth/SourceDay/SourceDate'];
+      deleteParentRepeatingConnections(connections, manyToManyConnectionSourceName);
+    });
+  });
+  it('deleteParentRepeatingConnections', () => {
+    deleteParentRepeatingConnections(fullMapForSimplifiedLoop, node.key);
   });
 });
 
