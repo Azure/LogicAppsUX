@@ -886,19 +886,22 @@ describe('Map definition conversions', () => {
 
       // Inputs to conditional
       addNodeToConnections(connections, greaterThanFunction, greaterThanId, ifPseudoFunction, ifFunctionId);
-      addNodeToConnections(
-        connections,
-        sourceNode.children[0],
-        addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
-        ifPseudoFunction,
-        ifFunctionId
-      );
+      addNodeToConnections(connections, sourceNode, addReactFlowPrefix(sourceNode.key, SchemaType.Source), ifPseudoFunction, ifFunctionId);
 
       //Conditional to target
       addNodeToConnections(
         connections,
         ifPseudoFunction,
         ifFunctionId,
+        targetNode.children[0],
+        addReactFlowPrefix(targetNode.children[0].key, SchemaType.Target)
+      );
+
+      //Properties connection
+      addNodeToConnections(
+        connections,
+        sourceNode.children[0],
+        addReactFlowPrefix(sourceNode.children[0].key, SchemaType.Source),
         targetNode.children[0].children[0],
         addReactFlowPrefix(targetNode.children[0].children[0].key, SchemaType.Target)
       );
@@ -935,24 +938,21 @@ describe('Map definition conversions', () => {
       const categorizedCatalogObject = forObject['CategorizedCatalog'] as MapDefinitionEntry;
       const categorizedCatalogChildren = Object.entries(categorizedCatalogObject);
       expect(categorizedCatalogChildren.length).toEqual(1);
-      expect(categorizedCatalogChildren[0][0]).toEqual('PetProduct');
+      expect(categorizedCatalogChildren[0][0]).toEqual('$if(is-greater-than(Name, SKU))');
       expect(categorizedCatalogChildren[0][1]).not.toBe('string');
 
-      const petProductObject = categorizedCatalogObject['PetProduct'] as MapDefinitionEntry;
-      const petProductChildren = Object.entries(petProductObject);
-      expect(petProductChildren.length).toEqual(1);
-      expect(petProductChildren[0][0]).toEqual(
-        '$if(is-greater-than(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/Name, /ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU))'
-      );
-      expect(petProductChildren[0][1]).not.toBe('string');
-
-      const ifObject = petProductObject[
-        '$if(is-greater-than(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/Name, /ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product/SKU))'
-      ] as MapDefinitionEntry;
+      const ifObject = categorizedCatalogObject['$if(is-greater-than(Name, SKU))'] as MapDefinitionEntry;
       const ifChildren = Object.entries(ifObject);
       expect(ifChildren.length).toEqual(1);
-      expect(ifChildren[0][0]).toEqual('Name');
-      expect(ifChildren[0][1]).toEqual('Name');
+      expect(ifChildren[0][0]).toEqual('PetProduct');
+      expect(ifChildren[0][1]).not.toBe('string');
+
+      const petProductObject = ifObject['PetProduct'] as MapDefinitionEntry;
+      const petProductChildren = Object.entries(petProductObject);
+      expect(petProductChildren.length).toEqual(1);
+      expect(petProductChildren.length).toEqual(1);
+      expect(petProductChildren[0][0]).toEqual('Name');
+      expect(petProductChildren[0][1]).toEqual('Name');
     });
   });
 
