@@ -1,5 +1,5 @@
-import DataMapperExt from './src/DataMapperExt';
-import { schemasPath, supportedSchemaFileExts } from './src/extensionConfig';
+import DataMapperExt from './DataMapperExt';
+import { schemasPath, supportedSchemaFileExts } from './extensionConfig';
 import type { MessageToVsix, MessageToWebview } from '@microsoft/logic-apps-data-mapper';
 import { promises as fs } from 'fs';
 import * as path from 'path';

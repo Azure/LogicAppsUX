@@ -1,4 +1,4 @@
-import DataMapperPanel from '../DataMapperPanel';
+import DataMapperPanel from './DataMapperPanel';
 import {
   dataMapDefinitionsPath,
   dataMapsPath,
