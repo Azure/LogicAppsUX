@@ -8,12 +8,15 @@ export const getFunctions = (): Promise<FunctionData[]> => {
   return service
     .getFunctionsManifest()
     .then((response) => {
-      // Ensure Functions with no inputs from the manifest have an empty array instead of the property being undefined to match our FunctionData schema/assumptions
+      // Ensure Functions with no inputs from the manifest have an empty array instead of the property being undefined
+      // to match our FunctionData schema/assumptions
       const functionManifestFunctions = response.transformFunctions.map((manifestFunction) =>
         manifestFunction.inputs ? { ...manifestFunction } : { ...manifestFunction, inputs: [] }
       );
 
-      return [...functionManifestFunctions, ...pseudoFunctions];
+      const filteredFunctions = functionManifestFunctions.filter((manifestFunction) => !manifestFunction.functionName.startsWith('$'));
+
+      return [...filteredFunctions, ...pseudoFunctions];
     })
     .catch((error: Error) => {
       // Returning functionMock on expected failure to reach API for dev-ing w/o runtime
