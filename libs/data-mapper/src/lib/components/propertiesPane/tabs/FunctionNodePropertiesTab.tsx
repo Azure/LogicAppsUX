@@ -12,7 +12,7 @@ import {
   getFunctionOutputValue,
   isFunctionData,
 } from '../../../utils/Function.Utils';
-import { getIconForFunction } from '../../../utils/Icon.Utils';
+import { getIconForFunction, iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { isSchemaNodeExtended } from '../../../utils/Schema.Utils';
 import { InputDropdown } from '../../inputDropdown/InputDropdown';
 import { Stack } from '@fluentui/react';
@@ -119,6 +119,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
   };
 
   const functionBranding = useMemo(() => getFunctionBrandingForCategory(functionData.category), [functionData]);
+  const OutputValueTypeIcon = iconForNormalizedDataType(functionData.outputValueType, 16, false);
 
   const connection = useMemo<Connection | undefined>(
     () => connectionDictionary[selectedItemKey ?? ''],
@@ -201,7 +202,7 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
         </Stack>
 
         <Text className={styles.bodyText}>{functionData.description}</Text>
-        {functionData.functionName ?? (
+        {functionData.functionName && (
           <Text className={styles.codeEx}>
             <Text className={styles.fnName}>{functionData.functionName}</Text>()
           </Text>
@@ -310,9 +311,13 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
         <Stack className={styles.inputOutputStack}>
           <Text className={styles.inputOutputStackTitle}>{expressionLoc}</Text>
 
-          <Text className={styles.bodyText} style={{ marginTop: 16 }}>
-            {outputValue}
-          </Text>
+          <Stack horizontal verticalAlign="center" style={{ marginTop: 16 }}>
+            <OutputValueTypeIcon />
+
+            <Text className={styles.bodyText} style={{ marginLeft: 4 }}>
+              {outputValue}
+            </Text>
+          </Stack>
         </Stack>
       </Stack>
     </div>
