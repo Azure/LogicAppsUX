@@ -7,27 +7,24 @@ import {
   changeXsltFilename,
 } from './state/DataMapDataLoader';
 import type { AppDispatch } from './state/Store';
-import type { MapDefinitionEntry } from '@microsoft/logic-apps-data-mapper';
+import type { MessageToWebview } from '@microsoft/logic-apps-data-mapper';
 import React, { createContext } from 'react';
 import { useDispatch } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
 
-type ReceivingMessageTypes =
-  | { command: 'fetchSchema'; data: { fileName: string; type: 'source' | 'target' } }
-  | { command: 'loadDataMap'; data: { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string } }
-  | { command: 'showAvailableSchemas'; data: string[] }
-  | { command: 'setXsltFilename'; data: string }
-  | { command: 'setRuntimePort'; data: string };
-
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = createContext(vscode);
 
+interface WebViewMsgHandlerProps {
+  children: React.ReactNode;
+}
+
 // To post messages TO VS Code, vscode.postMessage()
-export const WebViewMsgHandler: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const WebViewMsgHandler = ({ children }: WebViewMsgHandlerProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   // Handle (JSON) messages FROM VS Code
-  window.addEventListener('message', (event: MessageEvent<ReceivingMessageTypes>) => {
+  window.addEventListener('message', (event: MessageEvent<MessageToWebview>) => {
     const msg = event.data;
 
     // NOTE: app.tsx handles all API calls (GET schemaTree, GET functions) as it's where DmApiService is initialized
