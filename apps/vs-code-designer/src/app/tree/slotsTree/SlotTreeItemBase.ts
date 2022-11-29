@@ -10,7 +10,7 @@ import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getLocalSettingsJson } from '../../utils/localSettings';
 import { getIconPath } from '../../utils/tree/assets';
 import { ConfigurationsTreeItem } from '../configurationsTree/ConfigurationsTreeItem';
-import { RemoteWorkflowsTreeItem } from '../remoteProject/RemoteWorkflowsTreeItem';
+import { RemoteWorkflowsTreeItem } from '../remoteWorkflowsTree/RemoteWorkflowsTreeItem';
 import { ArtifactsTreeItem } from './artifactsTree/ArtifactsTreeItem';
 import type { SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
 import type {
