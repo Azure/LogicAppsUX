@@ -58,16 +58,16 @@ const OverviewReactFlowWrapper = () => {
     }
 
     // Find target schema nodes with connections
-    const tgtSchemaodesWithConnections: TargetNodesWithConnectionsDictionary = {};
+    const tgtSchemaNodesWithConnections: TargetNodesWithConnectionsDictionary = {};
     Object.values(connectionDictionary).forEach((connection) => {
-      if (connection.self.reactFlowKey in targetSchemaDictionary) {
-        tgtSchemaodesWithConnections[connection.self.node.key] = true;
+      if (connection.self.reactFlowKey in targetSchemaDictionary && connection.inputs[0] && connection.inputs[0].length > 0) {
+        tgtSchemaNodesWithConnections[connection.self.node.key] = true;
       }
     });
 
     // Recursively traverse the schema tree to calculate connected statuses from the leaf nodes up
     const newToggledStatesDictionary: NodeToggledStateDictionary = {};
-    checkNodeStatuses(targetSchema.schemaTreeRoot, newToggledStatesDictionary, tgtSchemaodesWithConnections);
+    checkNodeStatuses(targetSchema.schemaTreeRoot, newToggledStatesDictionary, tgtSchemaNodesWithConnections);
 
     return newToggledStatesDictionary;
   }, [targetSchema, connectionDictionary, targetSchemaDictionary]);

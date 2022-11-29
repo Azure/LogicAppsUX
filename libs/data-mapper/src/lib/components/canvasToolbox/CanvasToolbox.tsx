@@ -163,6 +163,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   );
 
   const floatingPanelHeight = useMemo(() => `${canvasBlockHeight - 150}px`, [canvasBlockHeight]);
+  const floatingPanelContentHeight = useMemo(() => `${canvasBlockHeight - 185}px`, [canvasBlockHeight]);
 
   return (
     <>
@@ -171,6 +172,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
       <FloatingPanel
         {...generalToolboxPanelProps}
         height={floatingPanelHeight}
+        contentHeight={floatingPanelContentHeight}
         title={sourceSchemaLoc}
         isOpen={toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree}
         onClose={closeToolbox}
@@ -216,6 +218,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
       <FloatingPanel
         {...generalToolboxPanelProps}
         height={floatingPanelHeight}
+        contentHeight={floatingPanelContentHeight}
         title={functionLoc}
         isOpen={toolboxTabToDisplay === ToolboxPanelTabs.functionsList}
         onClose={closeToolbox}

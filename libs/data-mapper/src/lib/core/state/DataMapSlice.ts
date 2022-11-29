@@ -669,6 +669,7 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
     return;
   }
 
+  // Handle deleting edge
   deleteConnectionFromConnections(
     curDataMapState.curDataMapOperation.dataMapConnections,
     getSourceIdFromReactFlowConnectionId(reactFlowKey),

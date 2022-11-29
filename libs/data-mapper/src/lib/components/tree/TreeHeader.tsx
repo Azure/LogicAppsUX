@@ -50,7 +50,7 @@ export const TreeHeader = ({ onSearch, onClear }: TreeHeaderProps) => {
   const onChangeSearchValueDebounced = useDebouncedCallback(onSearch, [], searchDebounceDelay);
 
   return (
-    <span>
+    <span style={{ position: 'sticky', top: 0, zIndex: 2 }}>
       <SearchBox
         onChange={(_e, newSearchTerm) => onChangeSearchValueDebounced(newSearchTerm ?? '')}
         onSearch={onSearch}
