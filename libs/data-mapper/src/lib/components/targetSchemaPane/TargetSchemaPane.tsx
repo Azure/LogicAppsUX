@@ -1,6 +1,6 @@
 import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { NormalizedDataType, SchemaNodeDataType } from '../../models';
+import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
@@ -219,12 +219,12 @@ const handleObjectParentToggledState = (
   nodeChildrenToggledAmt: number,
   nodeChildrenAmt: number
 ) => {
-  if (nodeChildrenToggledAmt === nodeChildrenAmt) {
-    stateDict[nodeKey] = ItemToggledState.Completed;
-    return 1;
-  } else if (nodeChildrenToggledAmt === 0) {
+  if (nodeChildrenToggledAmt === 0) {
     stateDict[nodeKey] = ItemToggledState.NotStarted;
     return 0;
+  } else if (nodeChildrenToggledAmt === nodeChildrenAmt) {
+    stateDict[nodeKey] = ItemToggledState.Completed;
+    return 1;
   } else {
     stateDict[nodeKey] = ItemToggledState.InProgress;
     return 0.5;
@@ -246,21 +246,24 @@ const handleNodeWithValue = (
 };
 
 export const checkNodeStatuses = (
-  schemaNode: any,
+  schemaNode: SchemaNodeExtended,
   stateDict: NodeToggledStateDictionary,
   targetNodesWithConnections: TargetNodesWithConnectionsDictionary
 ) => {
   let numChildrenToggled = 0;
 
-  schemaNode.children.forEach((child: any) => {
+  schemaNode.children.forEach((child) => {
     numChildrenToggled += checkNodeStatuses(child, stateDict, targetNodesWithConnections);
   });
 
-  if (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) {
-    // Is object parent
+  if (
+    (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) &&
+    !schemaNode.nodeProperties.includes(SchemaNodeProperty.Attribute)
+  ) {
+    // Object/parent/array-elements (with Attributes filtered out)
     return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
   } else {
-    // Is node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
+    // Node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
     return handleNodeWithValue(stateDict, schemaNode.key, targetNodesWithConnections);
   }
 };
