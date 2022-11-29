@@ -16,6 +16,7 @@ import { SchemaNodeProperty, SchemaType } from '../models/Schema';
 import { findLast } from './Array.Utils';
 import {
   addNodeToConnections,
+  collectTargetNodesForConnectionChain,
   flattenInputs,
   isConnectionUnit,
   isCustomValue,
@@ -114,13 +115,41 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
         let loopValue = '';
         if (sourceNode && isConnectionUnit(sourceNode)) {
           if (isFunctionData(sourceNode.node)) {
-            // Loop with an index
-            const indexFunctionKey = sourceNode.reactFlowKey;
-            const sourceSchemaNodeConnection = connections[indexFunctionKey].inputs[0][0];
-            const sourceSchemaNodeKey = (isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.node.key) || '';
-            const indexFunctionInput = connections[indexFunctionKey];
+            if (sourceNode.node.key === ifPseudoFunctionKey) {
+              const sourceSchemaNodeConnection = connections[sourceNode.reactFlowKey].inputs[1][0];
+              const [sourceSchemaNodeReactFlowKey, sourceSchemaNodeKey] = (isConnectionUnit(sourceSchemaNodeConnection) && [
+                sourceSchemaNodeConnection.reactFlowKey,
+                sourceSchemaNodeConnection.node.key,
+              ]) || ['', ''];
 
-            loopValue = `${mapNodeParams.for}(${sourceSchemaNodeKey}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
+              const indexFunctions = collectTargetNodesForConnectionChain(connections[sourceSchemaNodeReactFlowKey], connections).filter(
+                (connection) => connection.node.key === indexPseudoFunctionKey
+              );
+
+              if (indexFunctions.length > 0) {
+                loopValue = `${mapNodeParams.for}(${sourceSchemaNodeKey}, ${getIndexValueForCurrentConnection(
+                  connections[indexFunctions[0].reactFlowKey]
+                )})`;
+              } else {
+                loopValue = `${mapNodeParams.for}(${loopValue})`;
+              }
+
+              // For entry
+              newPath.push({ key: loopValue });
+
+              addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
+            } else {
+              // Loop with an index
+              const indexFunctionKey = sourceNode.reactFlowKey;
+              const sourceSchemaNodeConnection = connections[indexFunctionKey].inputs[0][0];
+              const sourceSchemaNodeKey = (isConnectionUnit(sourceSchemaNodeConnection) && sourceSchemaNodeConnection.node.key) || '';
+              const indexFunctionInput = connections[indexFunctionKey];
+
+              loopValue = `${mapNodeParams.for}(${sourceSchemaNodeKey}, ${getIndexValueForCurrentConnection(indexFunctionInput)})`;
+
+              // For entry
+              newPath.push({ key: loopValue });
+            }
           } else {
             // Normal loop
             loopValue = sourceNode.node.key;
@@ -130,11 +159,11 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
             }
 
             loopValue = `${mapNodeParams.for}(${loopValue})`;
+
+            // For entry
+            newPath.push({ key: loopValue });
           }
         }
-
-        // For entry
-        newPath.push({ key: loopValue });
       });
 
       // Object within the loop
@@ -145,25 +174,8 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
         // Conditionals
         const rootSourceNodes = rootTargetConnection.inputs[0];
         const sourceNode = rootSourceNodes[0];
-
         if (sourceNode && isConnectionUnit(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
-          const values = collectConditionalValues(connections[sourceNode.reactFlowKey], connections);
-
-          let ifContents = values[0];
-          const latestLoopKey = findLast(newPath, (pathItem) => pathItem.key.startsWith(mapNodeParams.for))?.key;
-          if (latestLoopKey) {
-            // Need local variables for functions
-            const splitLoopKey = latestLoopKey.split(',');
-            const valueToTrim = splitLoopKey[0].substring(
-              mapNodeParams.for.length + 1,
-              splitLoopKey.length === 2 ? splitLoopKey[0].length : splitLoopKey[0].length - 1
-            );
-
-            ifContents = ifContents.replaceAll(`${valueToTrim}/`, '');
-          }
-
-          // If entry
-          newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });
+          addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
         }
       }
 
@@ -235,6 +247,26 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
   });
 
   return newPath;
+};
+
+const addConditionalToNewPathItems = (ifConnection: Connection, connections: ConnectionDictionary, newPath: OutputPathItem[]) => {
+  const values = collectConditionalValues(ifConnection, connections);
+
+  let ifContents = values[0];
+  const latestLoopKey = findLast(newPath, (pathItem) => pathItem.key.startsWith(mapNodeParams.for))?.key;
+  if (latestLoopKey) {
+    // Need local variables for functions
+    const splitLoopKey = latestLoopKey.split(',');
+    const valueToTrim = splitLoopKey[0].substring(
+      mapNodeParams.for.length + 1,
+      splitLoopKey.length === 2 ? splitLoopKey[0].length : splitLoopKey[0].length - 1
+    );
+
+    ifContents = ifContents.replaceAll(`${valueToTrim}/`, '');
+  }
+
+  // If entry
+  newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });
 };
 
 const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathItem[]) => {

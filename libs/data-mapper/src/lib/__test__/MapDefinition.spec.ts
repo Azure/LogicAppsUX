@@ -4,7 +4,7 @@ import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } f
 import { SchemaType } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { ifPseudoFunction, indexPseudoFunction } from '../models/Function';
-import { addNodeToConnections } from '../utils/Connection.Utils';
+import { addNodeToConnections, updateConnectionInputValue } from '../utils/Connection.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader, splitKeyIntoChildren } from '../utils/DataMap.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
@@ -950,9 +950,113 @@ describe('Map definition conversions', () => {
       const petProductObject = ifObject['PetProduct'] as MapDefinitionEntry;
       const petProductChildren = Object.entries(petProductObject);
       expect(petProductChildren.length).toEqual(1);
-      expect(petProductChildren.length).toEqual(1);
       expect(petProductChildren[0][0]).toEqual('Name');
       expect(petProductChildren[0][1]).toEqual('Name');
+    });
+
+    it('Generates body with and index and a conditional looping', async () => {
+      const sourceNode = extendedSourceSchema.schemaTreeRoot.children.find(
+        (child) => child.name === 'LoopingWithIndex'
+      ) as SchemaNodeExtended;
+      const targetNode = extendedTargetSchema.schemaTreeRoot.children.find(
+        (child) => child.name === 'LoopingWithIndex'
+      ) as SchemaNodeExtended;
+      const ifFunctionId = createReactFlowFunctionKey(ifPseudoFunction);
+      const greaterThanId = createReactFlowFunctionKey(greaterThanFunction);
+      const indexFunctionId = createReactFlowFunctionKey(indexPseudoFunction);
+      const mapDefinition: MapDefinitionEntry = {};
+      const connections: ConnectionDictionary = {};
+
+      // Just confirm the mock hasn't changed
+      expect(sourceNode).toBeDefined();
+      expect(targetNode).toBeDefined();
+
+      const parentSourceNode = sourceNode.children[0];
+      const parentTargetNode = targetNode.children[0].children[2];
+
+      // Parent source to index
+      addNodeToConnections(
+        connections,
+        parentSourceNode,
+        addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
+        indexPseudoFunction,
+        indexFunctionId
+      );
+
+      // Index to Greater than
+      addNodeToConnections(connections, indexPseudoFunction, indexFunctionId, greaterThanFunction, greaterThanId);
+      updateConnectionInputValue(connections, {
+        targetNode: greaterThanFunction,
+        targetNodeReactFlowKey: greaterThanId,
+        inputIndex: 1,
+        value: '10',
+      });
+
+      // Greater than and source parent to if
+      addNodeToConnections(connections, greaterThanFunction, greaterThanId, ifPseudoFunction, ifFunctionId);
+      addNodeToConnections(
+        connections,
+        parentSourceNode,
+        addReactFlowPrefix(parentSourceNode.key, SchemaType.Source),
+        ifPseudoFunction,
+        ifFunctionId
+      );
+
+      // If to parent target
+      addNodeToConnections(
+        connections,
+        ifPseudoFunction,
+        ifFunctionId,
+        parentTargetNode,
+        addReactFlowPrefix(parentTargetNode.key, SchemaType.Target)
+      );
+
+      // Property source to target
+      addNodeToConnections(
+        connections,
+        parentSourceNode.children[0],
+        addReactFlowPrefix(parentSourceNode.children[0].key, SchemaType.Source),
+        parentTargetNode.children[1],
+        addReactFlowPrefix(parentTargetNode.children[1].key, SchemaType.Target)
+      );
+
+      generateMapDefinitionBody(mapDefinition, connections);
+
+      expect(Object.keys(mapDefinition).length).toEqual(1);
+      const rootChildren = Object.entries(mapDefinition['ns0:Root']);
+      expect(rootChildren.length).toEqual(1);
+      expect(rootChildren[0][0]).toEqual('LoopingWithIndex');
+      expect(rootChildren[0][1]).not.toBe('string');
+
+      const loopingWithIndexObject = (mapDefinition['ns0:Root'] as MapDefinitionEntry)['LoopingWithIndex'] as MapDefinitionEntry;
+      const loopingWithIndexChildren = Object.entries(loopingWithIndexObject);
+      expect(loopingWithIndexChildren.length).toEqual(1);
+      expect(loopingWithIndexChildren[0][0]).toEqual('WeatherSummary');
+      expect(loopingWithIndexChildren[0][1]).not.toBe('string');
+
+      const weatherSummaryObject = loopingWithIndexObject['WeatherSummary'] as MapDefinitionEntry;
+      const weatherSummaryChildren = Object.entries(weatherSummaryObject);
+      expect(weatherSummaryChildren.length).toEqual(1);
+      expect(weatherSummaryChildren[0][0]).toEqual('$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)');
+      expect(weatherSummaryChildren[0][1]).not.toBe('string');
+
+      const forObject = weatherSummaryObject['$for(/ns0:Root/LoopingWithIndex/WeatherReport, $a)'] as MapDefinitionEntry;
+      const forChildren = Object.entries(forObject);
+      expect(forChildren.length).toEqual(1);
+      expect(forChildren[0][0]).toEqual('$if(is-greater-than($a, 10))');
+      expect(forChildren[0][1]).not.toBe('string');
+
+      const ifObject = forObject['$if(is-greater-than($a, 10))'] as MapDefinitionEntry;
+      const ifChildren = Object.entries(ifObject);
+      expect(ifChildren.length).toEqual(1);
+      expect(ifChildren[0][0]).toEqual('Day');
+      expect(ifChildren[0][1]).not.toBe('string');
+
+      const dayObject = ifObject['Day'] as MapDefinitionEntry;
+      const dayChildren = Object.entries(dayObject);
+      expect(dayChildren.length).toEqual(1);
+      expect(dayChildren[0][0]).toEqual('Pressure');
+      expect(dayChildren[0][1]).toEqual('./@Pressure');
     });
   });
 

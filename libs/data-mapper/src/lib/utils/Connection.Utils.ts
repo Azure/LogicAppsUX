@@ -309,6 +309,30 @@ export const nodeHasSpecificInputEventually = (
   );
 };
 
+export const nodeHasSpecificOutputEventually = (
+  sourceKey: string,
+  currentConnection: Connection,
+  connections: ConnectionDictionary,
+  exactMatch: boolean
+): boolean => {
+  if (!currentConnection) {
+    return false;
+  }
+
+  if (
+    (exactMatch && currentConnection.self.reactFlowKey === sourceKey) ||
+    (!exactMatch && currentConnection.self.reactFlowKey.indexOf(sourceKey) > -1)
+  ) {
+    return true;
+  }
+
+  const nonCustomOutputs: ConnectionUnit[] = currentConnection.outputs.filter(isConnectionUnit);
+
+  return nonCustomOutputs.some((output) =>
+    nodeHasSpecificOutputEventually(sourceKey, connections[output.reactFlowKey], connections, exactMatch)
+  );
+};
+
 export const collectSourceNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
   const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
 
