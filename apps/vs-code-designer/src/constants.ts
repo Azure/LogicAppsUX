@@ -40,6 +40,8 @@ export enum extensionCommand {
   openDesigner = 'logicAppsExtension.openDesigner',
   loadMore = 'logicAppsExtension.loadMore',
   activate = 'logicAppsExtension.activate',
+  selectSubscriptions = 'logicAppsExtension.selectSubscriptions',
+  azureSelectSubscriptions = 'azure-account.selectSubscriptions',
 }
 
 // Context

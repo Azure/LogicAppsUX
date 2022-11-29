@@ -10,7 +10,7 @@ import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextV
 import { getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
 import { ProductionSlotTreeItem } from '../slotsTree/ProductionSlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
-import { latestGAVersion } from '@microsoft-logic-apps/utils';
+import { isNullOrUndefined, latestGAVersion } from '@microsoft-logic-apps/utils';
 import type { FuncVersion, IFunctionAppWizardContext } from '@microsoft-logic-apps/utils';
 import { AppKind, createWebSiteClient, ParsedSite, WebsiteOS } from '@microsoft/vscode-azext-azureappservice';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
@@ -29,7 +29,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
   private _nextLink: string | undefined;
 
   public hasMoreChildrenImpl(): boolean {
-    return this._nextLink !== undefined;
+    return isNullOrUndefined(this._nextLink);
   }
 
   public async loadMoreChildrenImpl(clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {

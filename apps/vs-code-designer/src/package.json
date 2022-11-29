@@ -15,6 +15,14 @@
     ],
     "commands": [
       {
+        "command": "logicAppsExtension.selectSubscriptions",
+        "title": "Select Subscriptions...",
+        "icon": {
+          "light": "assets/light/filter.svg",
+          "dark": "assets/dark/filter.svg"
+        }
+      },
+      {
         "command": "logicAppsExtension.openDesigner",
         "title": "Open New Designer",
         "category": "Azure Logic Apps"
@@ -46,6 +54,11 @@
     "menus": {
       "view/item/context": [
         {
+          "command": "logicAppsExtension.selectSubscriptions",
+          "when": "view == newAzLogicApps && viewItem == azureextensionui.azureSubscription",
+          "group": "inline"
+        },
+        {
           "command": "logicAppsExtension.openDesigner",
           "when": "view == newAzLogicApps && viewItem =~ /Remote;.*;Workflow;/i",
           "group": "1@2"
@@ -59,6 +72,10 @@
         }
       ],
       "commandPalette": [
+        {
+          "command": "logicAppsExtension.selectSubscriptions",
+          "when": "never"
+        },
         {
           "command": "logicAppsExtension.openDesigner",
           "when": "resourceFilename==workflow.json"

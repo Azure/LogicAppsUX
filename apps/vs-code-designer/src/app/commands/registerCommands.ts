@@ -7,6 +7,7 @@ import { ext } from '../../extensionVariables';
 import { openDesigner } from './workflows/openDesigner/openDesigner';
 import { registerCommand } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
+import { commands } from 'vscode';
 
 export function registerCommands(): void {
   registerCommand(extensionCommand.openDesigner, openDesigner);
@@ -14,4 +15,5 @@ export function registerCommands(): void {
     extensionCommand.loadMore,
     async (context: IActionContext, node: AzExtTreeItem) => await ext.tree.loadMore(node, context)
   );
+  registerCommand(extensionCommand.selectSubscriptions, () => commands.executeCommand(extensionCommand.azureSelectSubscriptions));
 }
