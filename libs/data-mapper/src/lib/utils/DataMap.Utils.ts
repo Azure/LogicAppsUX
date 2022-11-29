@@ -149,8 +149,21 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
         if (sourceNode && isConnectionUnit(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
           const values = collectConditionalValues(connections[sourceNode.reactFlowKey], connections);
 
+          let ifContents = values[0];
+          const latestLoopKey = findLast(newPath, (pathItem) => pathItem.key.startsWith(mapNodeParams.for))?.key;
+          if (latestLoopKey) {
+            // Need local variables for functions
+            const splitLoopKey = latestLoopKey.split(',');
+            const valueToTrim = splitLoopKey[0].substring(
+              mapNodeParams.for.length + 1,
+              splitLoopKey.length === 2 ? splitLoopKey[0].length : splitLoopKey[0].length - 1
+            );
+
+            ifContents = ifContents.replaceAll(`${valueToTrim}/`, '');
+          }
+
           // If entry
-          newPath.push({ key: `${mapNodeParams.if}(${values[0]})` });
+          newPath.push({ key: `${mapNodeParams.if}(${ifContents})` });
         }
       }
 
@@ -188,7 +201,12 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
                 mapNodeParams.for.length + 1,
                 splitLoopKey.length === 2 ? splitLoopKey[0].length : splitLoopKey[0].length - 1
               );
-              value = value.replaceAll(`${valueToTrim}/`, '');
+
+              if (value === valueToTrim) {
+                value = '';
+              } else {
+                value = value.replaceAll(`${valueToTrim}/`, '');
+              }
             }
           } else {
             // Need local variables for non-functions
@@ -209,7 +227,7 @@ const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtend
           // Standard property to value
           newPath.push({
             key: isObjectValue ? mapNodeParams.value : pathItem.fullName.startsWith('@') ? `$${pathItem.fullName}` : pathItem.fullName,
-            value,
+            value: value ? value : undefined,
           });
         }
       }
