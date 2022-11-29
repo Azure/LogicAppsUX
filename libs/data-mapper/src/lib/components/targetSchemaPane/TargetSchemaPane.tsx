@@ -181,6 +181,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
           width: 290,
           flex: '1 1 1px',
           overflowY: 'auto',
+          position: 'relative',
         }}
       >
         <TreeHeader onSearch={setTargetSchemaSearchTerm} onClear={() => setTargetSchemaSearchTerm('')} />
