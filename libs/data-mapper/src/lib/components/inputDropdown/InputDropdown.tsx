@@ -4,10 +4,12 @@ import type { SchemaNodeDataType, SchemaNodeExtended, SchemaNodeProperty } from 
 import { NormalizedDataType } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
-import { isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
-import { functionInputHasInputs, getFunctionOutputValue, isFunctionData } from '../../utils/Function.Utils';
+import { indexPseudoFunctionKey } from '../../models/Function';
+import { isConnectionUnit, isCustomValue, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
+import { calculateIndexValue, functionInputHasInputs, getFunctionOutputValue, isFunctionData } from '../../utils/Function.Utils';
 import { iconForNormalizedDataType, iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { addSourceReactFlowPrefix } from '../../utils/ReactFlow.Util';
+import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import { errorNotificationAutoHideDuration, NotificationTypes } from '../notification/Notification';
 import type { IDropdownOption, IRawStyle } from '@fluentui/react';
 import { Dropdown, SelectableOptionMenuItemType, Stack, TextField } from '@fluentui/react';
@@ -261,10 +263,17 @@ export const InputDropdown = (props: InputDropdownProps) => {
             if (!input) {
               return undefined;
             }
+
             if (isCustomValue(input)) {
               return input;
             }
+
             if (isFunctionData(input.node)) {
+              if (input.node.key === indexPseudoFunctionKey) {
+                const sourceNode = connectionDictionary[input.reactFlowKey].inputs[0][0];
+                return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
+              }
+
               if (functionInputHasInputs(input.reactFlowKey, connectionDictionary)) {
                 return `${input.node.functionName}(...)`;
               } else {
@@ -278,9 +287,16 @@ export const InputDropdown = (props: InputDropdownProps) => {
           .filter((value) => !!value) as string[];
       }
 
+      const inputs = connectionDictionary[key].inputs[0];
+      const sourceNode = inputs && inputs[0];
+      const nodeName =
+        isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)
+          ? calculateIndexValue(sourceNode.node)
+          : getFunctionOutputValue(fnInputValues, node.functionName);
+
       newPossibleInputOptionsDictionary[node.outputValueType].push({
         nodeKey: key,
-        nodeName: getFunctionOutputValue(fnInputValues, node.functionName),
+        nodeName,
         isFunction: true,
         normalizedDataType: node.outputValueType,
       });
