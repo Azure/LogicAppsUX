@@ -1,3 +1,4 @@
+import DataMapperPanel from './DataMapperPanel';
 import {
   dataMapDefinitionsPath,
   dataMapsPath,
@@ -6,51 +7,19 @@ import {
   mapDefinitionExtension,
   mapXsltExtension,
   schemasPath,
-  supportedSchemaFileExts,
   webviewType,
 } from './extensionConfig';
+import type { MapDefinitionData, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { ChildProcess } from 'child_process';
 import { promises as fs, existsSync as fileExistsSync, copyFileSync, unlinkSync as removeFileSync } from 'fs';
 import * as path from 'path';
-import { RelativePattern, Uri, ViewColumn, window, workspace } from 'vscode';
-import type { WebviewPanel, ExtensionContext } from 'vscode';
-
-type SchemaType = 'source' | 'target';
-type MapDefinitionEntry = { [key: string]: MapDefinitionEntry | string };
-type FetchSchemaData = { fileName: string; type: SchemaType };
-type MapDefinitionData = { mapDefinition: MapDefinitionEntry; sourceSchemaFileName: string; targetSchemaFileName: string };
-
-type SendingMessageTypes =
-  | { command: 'fetchSchema'; data: FetchSchemaData }
-  | { command: 'loadDataMap'; data: MapDefinitionData }
-  | { command: 'showAvailableSchemas'; data: string[] }
-  | { command: 'setXsltFilename'; data: string }
-  | { command: 'setRuntimePort'; data: string };
-type ReceivingMessageTypes =
-  | {
-      command: 'addSchemaFromFile' | 'readLocalFileOptions';
-      data: { path: string; type: SchemaType };
-    }
-  | {
-      command: 'saveDataMapDefinition' | 'saveDraftDataMapDefinition' | 'saveDataMapXslt';
-      data: string;
-    }
-  | {
-      command: 'webviewLoaded';
-    }
-  | {
-      command: 'webviewRscLoadError';
-      data: string;
-    }
-  | {
-      command: 'setIsMapStateDirty';
-      data: boolean;
-    };
+import { Uri, ViewColumn, window, workspace } from 'vscode';
+import type { ExtensionContext } from 'vscode';
 
 export default class DataMapperExt {
-  public static currentPanel: DataMapperExt | undefined;
+  public static currentPanel: DataMapperPanel | undefined;
   public static outputChannel: IAzExtOutputChannel;
   public static context: ExtensionContext;
   public static backendRuntimePort: number;
@@ -59,9 +28,6 @@ export default class DataMapperExt {
   public static currentDataMapName: string;
   public static currentDataMapStateIsDirty: boolean;
   public static loadMapDefinitionData: MapDefinitionData | undefined;
-
-  private readonly _panel: WebviewPanel;
-  private readonly _extensionPath: string;
 
   public static createOrShow() {
     // If a panel has already been created, re-show it
@@ -72,7 +38,7 @@ export default class DataMapperExt {
       DataMapperExt.handleLoadMapDefinitionIfAny();
       DataMapperExt.updateWebviewPanelTitle();
 
-      DataMapperExt.currentPanel._panel.reveal(ViewColumn.Active);
+      DataMapperExt.currentPanel.panel.reveal(ViewColumn.Active);
       return;
     }
 
@@ -88,8 +54,8 @@ export default class DataMapperExt {
       }
     );
 
-    this.currentPanel = new DataMapperExt(panel, DataMapperExt.context.extensionPath);
-    this.currentPanel._panel.iconPath = {
+    this.currentPanel = new DataMapperPanel(panel, DataMapperExt.context.extensionPath);
+    this.currentPanel.panel.iconPath = {
       light: Uri.file(path.join(this.context.extensionPath, 'assets', 'wand-light.png')),
       dark: Uri.file(path.join(this.context.extensionPath, 'assets', 'wand-dark.png')),
     };
@@ -98,105 +64,9 @@ export default class DataMapperExt {
     // From here, VSIX will handle any other initial-load-time events once receive webviewLoaded msg
   }
 
-  public sendMsgToWebview(msg: SendingMessageTypes) {
-    this._panel.webview.postMessage(msg);
-  }
-
-  private constructor(panel: WebviewPanel, extPath: string) {
-    this._panel = panel;
-    this._extensionPath = extPath;
-    DataMapperExt.context?.subscriptions.push(panel);
-
-    this._setWebviewHtml();
-
-    // Watch Schemas folder for changes to update availabe schemas list within Data Mapper
-    const schemaFolderPath = path.join(DataMapperExt.getWorkspaceFolderFsPath(), schemasPath);
-    const schemaFolderWatcher = workspace.createFileSystemWatcher(
-      new RelativePattern(schemaFolderPath, `**/*${supportedSchemaFileExts[0]}`)
-    );
-    schemaFolderWatcher.onDidCreate(DataMapperExt.handleReadSchemaFileOptions);
-    schemaFolderWatcher.onDidDelete(DataMapperExt.handleReadSchemaFileOptions);
-
-    // Handle messages from the webview (Data Mapper component)
-    this._panel.webview.onDidReceiveMessage(this._handleWebviewMsg, undefined, DataMapperExt.context?.subscriptions);
-
-    this._panel.onDidDispose(
-      () => {
-        DataMapperExt.currentPanel = undefined;
-        schemaFolderWatcher.dispose();
-      },
-      null,
-      DataMapperExt.context?.subscriptions
-    );
-  }
-
-  private async _setWebviewHtml() {
-    // Get webview content, converting links to VS Code URIs
-    const indexPath = path.join(this._extensionPath, '/webview/index.html');
-    const html = await fs.readFile(indexPath, 'utf-8');
-    // 1. Get all links prefixed by href or src
-    const matchLinks = /(href|src)="([^"]*)"/g;
-    // 2. Transform the result of the regex into a vscode's URI format
-    const toUri = (_: unknown, prefix: 'href' | 'src', link: string) => {
-      // For HTML elements
-      if (link === '#') {
-        return `${prefix}="${link}"`;
-      }
-      // For scripts & links
-      const pth = path.join(this._extensionPath, '/webview/', link);
-      const uri = Uri.file(pth);
-      return `${prefix}="${this._panel.webview.asWebviewUri(uri)}"`;
-    };
-
-    this._panel.webview.html = html.replace(matchLinks, toUri);
-  }
-
-  private _handleWebviewMsg(msg: ReceivingMessageTypes) {
-    switch (msg.command) {
-      case 'webviewLoaded':
-        // Send runtime port to webview
-        DataMapperExt.currentPanel?.sendMsgToWebview({ command: 'setRuntimePort', data: `${DataMapperExt.backendRuntimePort}` });
-
-        // IF loading a data map, handle that + xslt filename
-        DataMapperExt.handleLoadMapDefinitionIfAny();
-
-        break;
-      case 'webviewRscLoadError':
-        // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
-        DataMapperExt.showError(`Error loading Data Mapper resource: ${msg.data}`);
-        break;
-      case 'addSchemaFromFile': {
-        DataMapperExt.addSchemaFromFile(msg.data.path, msg.data.type);
-        break;
-      }
-      case 'readLocalFileOptions': {
-        DataMapperExt.handleReadSchemaFileOptions();
-        break;
-      }
-      case 'saveDataMapDefinition': {
-        DataMapperExt.saveDataMap(true, msg.data);
-        break;
-      }
-      case 'saveDataMapXslt': {
-        DataMapperExt.saveDataMap(false, msg.data);
-        break;
-      }
-      case 'saveDraftDataMapDefinition': {
-        if (DataMapperExt.currentDataMapStateIsDirty) {
-          DataMapperExt.saveDraftDataMapDefinition(msg.data);
-        }
-        break;
-      }
-      case 'setIsMapStateDirty': {
-        DataMapperExt.handleUpdateMapDirtyState(msg.data);
-        break;
-      }
-    }
-  }
-
   public static updateWebviewPanelTitle() {
     if (DataMapperExt.currentPanel) {
-      DataMapperExt.currentPanel._panel.title = `${DataMapperExt.currentDataMapName ?? 'Untitled'} ${
+      DataMapperExt.currentPanel.panel.title = `${DataMapperExt.currentDataMapName ?? 'Untitled'} ${
         DataMapperExt.currentDataMapStateIsDirty ? '●' : ''
       }`;
     }
@@ -267,7 +137,7 @@ export default class DataMapperExt {
 
         DataMapperExt.currentPanel?.sendMsgToWebview({
           command: 'fetchSchema',
-          data: { fileName: primarySchemaFileName, type: schemaType },
+          data: { fileName: primarySchemaFileName, type: schemaType as SchemaType },
         });
       });
     });
