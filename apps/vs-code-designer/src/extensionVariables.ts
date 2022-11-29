@@ -17,6 +17,7 @@ export namespace ext {
   export let workflowDesignTimePort: number;
   export let workflowDesignChildProcess: cp.ChildProcess | undefined;
   export let outputChannel: IAzExtOutputChannel;
+  export const prefix = 'logicAppsExtension';
 
   // Tree item view
   export let azureAccountTreeItem: AzureAccountTreeItemWithProjects;
@@ -28,8 +29,7 @@ export namespace ext {
   // Functions
   export const funcCliPath: string = func;
 
-  export const prefix = 'logicAppsExtension';
-
+  // WebViews
   export enum webViewKey {
     designerLocal = 'designerLocal',
   }

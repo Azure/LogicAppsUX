@@ -2,18 +2,16 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcVersionSetting, logicAppKind, projectLanguageSetting, workflowappRuntime } from '../../../constants';
+import { logicAppKind, projectLanguageSetting, workflowappRuntime } from '../../../constants';
 import { localize } from '../../../localize';
-import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
-import { tryGetLocalFuncVersion } from '../../utils/funcCoreTools/tryGetLocalFuncVersion';
+import { getDefaultFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { isProjectCV, isRemoteProjectCV } from '../../utils/tree/projectContextValues';
 import { getWorkspaceSettingFromAnyFolder } from '../../utils/vsCodeConfig/settings';
 import { ProductionSlotTreeItem } from '../slotsTree/ProductionSlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
-import { isNullOrUndefined, latestGAVersion } from '@microsoft-logic-apps/utils';
+import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import type { FuncVersion, IFunctionAppWizardContext } from '@microsoft-logic-apps/utils';
-import { AppKind, createWebSiteClient, ParsedSite, WebsiteOS } from '@microsoft/vscode-azext-azureappservice';
-import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
+import { AppKind, createWebSiteClient, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { SubscriptionTreeItemBase, uiUtils } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, IActionContext, ICreateChildImplContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
@@ -93,34 +91,3 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     return !isProjectCV(contextValue) || isRemoteProjectCV(contextValue);
   }
 }
-
-/* eslint-disable no-param-reassign */
-export function setSiteOS(context: IAppServiceWizardContext): void {
-  if (context.customLocation) {
-    context.newSiteOS = WebsiteOS.linux;
-  } else {
-    context.newSiteOS = WebsiteOS.windows;
-  }
-}
-/* eslint-enable no-param-reassign */
-
-/* eslint-disable no-param-reassign */
-async function getDefaultFuncVersion(context: IActionContext): Promise<FuncVersion> {
-  // Try to get VS Code setting for version (aka if they have a project open)
-  let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSettingFromAnyFolder(funcVersionSetting));
-  context.telemetry.properties.runtimeSource = 'VSCodeSetting';
-
-  if (version === undefined) {
-    // Try to get the version that matches their local func cli
-    version = await tryGetLocalFuncVersion();
-    context.telemetry.properties.runtimeSource = 'LocalFuncCli';
-  }
-
-  if (version === undefined) {
-    version = latestGAVersion;
-    context.telemetry.properties.runtimeSource = 'Backup';
-  }
-
-  return version;
-}
-/* eslint-enable no-param-reassign */

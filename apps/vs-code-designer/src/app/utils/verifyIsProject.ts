@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { hostFileName } from '../../constants';
 import { localize } from '../../localize';
-import { getWorkspaceSetting, updateWorkspaceSetting } from '../../vsCodeConfig/settings';
+import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
