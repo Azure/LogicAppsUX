@@ -150,6 +150,7 @@ const convertSourceToReactFlowParentAndChildNodes = (
 
     reactFlowNodes.push({
       id: nodeReactFlowId,
+      zIndex: 101, // Just for schema nodes to render N-badge over edges
       data: {
         schemaNode: srcNode,
         schemaType: SchemaType.Source,
@@ -200,6 +201,7 @@ export const convertToReactFlowParentAndChildNodes = (
 
   reactFlowNodes.push({
     id: parentNodeReactFlowId,
+    zIndex: 101, // Just for schema nodes to render N-badge over edges
     data: {
       schemaNode: parentSchemaNode,
       schemaType,

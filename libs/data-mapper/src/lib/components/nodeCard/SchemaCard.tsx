@@ -138,12 +138,12 @@ const useStyles = makeStyles({
   }),
   inputArrayBadge: {
     marginLeft: '6px',
-    marginBottom: '30px',
+    marginBottom: '5px',
   },
   outputArrayBadge: {
     marginRight: '6px',
     marginLeft: '-22px',
-    marginBottom: '30px',
+    marginBottom: '5px',
   },
 });
 
