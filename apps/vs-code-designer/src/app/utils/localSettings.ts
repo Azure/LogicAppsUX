@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
-import * as fsUtil from '../utils/fs';
+import { writeFormattedJson } from '../utils/fs';
 import { parseJson } from '../utils/parseJson';
 import type { ILocalSettingsJson } from '@microsoft-logic-apps/utils';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
@@ -27,7 +27,7 @@ export async function addOrUpdateLocalAppSettings(
     ...settingsToAdd,
   };
 
-  await fsUtil.writeFormattedJson(localSettingsPath, settings);
+  await writeFormattedJson(localSettingsPath, settings);
 }
 
 export async function getLocalSettingsJson(

@@ -27,7 +27,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
   private _nextLink: string | undefined;
 
   public hasMoreChildrenImpl(): boolean {
-    return isNullOrUndefined(this._nextLink);
+    return !isNullOrUndefined(this._nextLink);
   }
 
   public async loadMoreChildrenImpl(clearCache: boolean, context: IActionContext): Promise<AzExtTreeItem[]> {

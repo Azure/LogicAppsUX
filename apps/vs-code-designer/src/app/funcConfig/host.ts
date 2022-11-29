@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 import { defaultRoutePrefix } from '../../constants';
 import type { IBundleMetadata, IHostJsonV1, IHostJsonV2, IParsedHostJson } from '@microsoft-logic-apps/utils';
-import { FuncVersion, isObject } from '@microsoft-logic-apps/utils';
+import { FuncVersion, isObject, isNullOrUndefined } from '@microsoft-logic-apps/utils';
 
 class ParsedHostJsonV2 implements IParsedHostJson {
   public data: IHostJsonV2;
 
   public constructor(data: unknown) {
-    if (isObject(data) && data !== null) {
+    if (!isNullOrUndefined(data) && isObject(data)) {
       this.data = data as IHostJsonV2;
     } else {
       this.data = {};
@@ -34,7 +34,7 @@ class ParsedHostJsonV1 implements IParsedHostJson {
   public data: IHostJsonV1;
 
   public constructor(data: unknown) {
-    if (isObject(data) && data !== null) {
+    if (!isNullOrUndefined(data) && isObject(data)) {
       this.data = data as IHostJsonV1;
     } else {
       this.data = {};

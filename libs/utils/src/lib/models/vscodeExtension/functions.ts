@@ -20,3 +20,5 @@ export interface ICommandResult {
   cmdOutputIncludingStderr: string;
   formattedArgs: string;
 }
+
+export type pathRelativeFunc = (fsPath1: string, fsPath2: string) => string;

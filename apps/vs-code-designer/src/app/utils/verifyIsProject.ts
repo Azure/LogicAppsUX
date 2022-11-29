@@ -5,6 +5,7 @@
 import { hostFileName } from '../../constants';
 import { localize } from '../../localize';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
+import { isString } from '@microsoft-logic-apps/utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -28,7 +29,7 @@ export async function tryGetFunctionProjectRoot(
   suppressPrompt = false
 ): Promise<string | undefined> {
   let subpath: string | undefined = getWorkspaceSetting(projectSubpathKey, workspaceFolder);
-  const folderPath = typeof workspaceFolder === 'string' ? workspaceFolder : workspaceFolder.uri.fsPath;
+  const folderPath = isString(workspaceFolder) ? workspaceFolder : workspaceFolder.uri.fsPath;
   if (!subpath) {
     if (!(await fse.pathExists(folderPath))) {
       return undefined;

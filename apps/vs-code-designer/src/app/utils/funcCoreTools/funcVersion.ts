@@ -1,7 +1,7 @@
 import { funcVersionSetting } from '../../../constants';
 import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
 import { tryGetLocalFuncVersion } from './tryGetLocalFuncVersion';
-import { FuncVersion, latestGAVersion } from '@microsoft-logic-apps/utils';
+import { FuncVersion, isNullOrUndefined, latestGAVersion } from '@microsoft-logic-apps/utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
 export function tryParseFuncVersion(data: string | undefined): FuncVersion | undefined {
@@ -26,12 +26,12 @@ export async function getDefaultFuncVersion(context: IActionContext): Promise<Fu
   let version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSettingFromAnyFolder(funcVersionSetting));
   context.telemetry.properties.runtimeSource = 'VSCodeSetting';
 
-  if (version === undefined) {
+  if (isNullOrUndefined(version)) {
     version = await tryGetLocalFuncVersion();
     context.telemetry.properties.runtimeSource = 'LocalFuncCli';
   }
 
-  if (version === undefined) {
+  if (isNullOrUndefined(version)) {
     version = latestGAVersion;
     context.telemetry.properties.runtimeSource = 'Backup';
   }

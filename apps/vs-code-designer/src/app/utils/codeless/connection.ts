@@ -1,5 +1,5 @@
 import { connectionsFileName } from '../../../constants';
-import * as fsUtil from '../fs';
+import { writeFormattedJson } from '../fs';
 import { addOrUpdateLocalAppSettings } from '../localSettings';
 import { tryGetFunctionProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
@@ -138,7 +138,7 @@ export async function saveConectionReferences(
   const connectionsFilePath = path.join(projectPath, connectionsFileName);
 
   if (connections && Object.keys(connections).length) {
-    await fsUtil.writeFormattedJson(connectionsFilePath, connections);
+    await writeFormattedJson(connectionsFilePath, connections);
   }
 
   if (Object.keys(settings).length) {
