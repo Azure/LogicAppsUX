@@ -34,6 +34,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
   const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
+  const currentTheme = useSelector((state: RootState) => state.app.theme);
 
   const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
   const [selectedSourceSchema, setSelectedSourceSchema] = useState<IDropdownOption>();
@@ -268,6 +269,7 @@ export const ConfigPanel = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelect
         closeButtonAriaLabel={closeLoc}
         onRenderFooterContent={onRenderFooterContent}
         isFooterAtBottom={true}
+        overlayProps={{ isDarkThemed: currentTheme === 'dark' }}
         isLightDismiss
       >
         {currentPanelView === ConfigPanelView.DefaultConfig && <DefaultConfigView />}
