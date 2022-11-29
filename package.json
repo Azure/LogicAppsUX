@@ -203,6 +203,7 @@
     "vsce": "^2.11.0",
     "webpack-cli": "4.10.0",
     "worker-loader": "3.0.8",
-    "yalc": "1.0.0-pre.53"
+    "yalc": "1.0.0-pre.53",
+    "jsonc-parser": "^2.3.1"
   }
 }

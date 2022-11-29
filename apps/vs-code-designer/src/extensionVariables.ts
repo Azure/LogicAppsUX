@@ -33,7 +33,6 @@ export namespace ext {
   export enum webViewKey {
     designerLocal = 'designerLocal',
   }
-
   export const openWebviewPanels: Record<string, Record<string, WebviewPanel>> = {
     [webViewKey.designerLocal]: {},
   };

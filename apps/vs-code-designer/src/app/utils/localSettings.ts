@@ -13,12 +13,18 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
 
+/**
+ * Updates local.settings.json file
+ * @param {IActionContext} context - Command context.
+ * @param {string} projectPath - Project path with local.settings.json file.
+ * @param {boolean} settingsToAdd - Settings data to updata.
+ */
 export async function addOrUpdateLocalAppSettings(
   context: IActionContext,
-  functionAppPath: string,
+  projectPath: string,
   settingsToAdd: Record<string, string>
 ): Promise<void> {
-  const localSettingsPath: string = path.join(functionAppPath, localSettingsFileName);
+  const localSettingsPath: string = path.join(projectPath, localSettingsFileName);
   const settings: ILocalSettingsJson = await getLocalSettingsJson(context, localSettingsPath);
 
   settings.Values = settings.Values || {};
@@ -30,6 +36,13 @@ export async function addOrUpdateLocalAppSettings(
   await writeFormattedJson(localSettingsPath, settings);
 }
 
+/**
+ * Gets local.settings.json file
+ * @param {IActionContext} context - Command context.
+ * @param {string} localSettingsPath - File path.
+ * @param {boolean} allowOverwrite - Allow overwrite on file.
+ * @returns {Promise<ILocalSettingsJson>} local.setting.json file.
+ */
 export async function getLocalSettingsJson(
   context: IActionContext,
   localSettingsPath: string,
