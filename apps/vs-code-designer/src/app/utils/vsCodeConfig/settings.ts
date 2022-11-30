@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
-import { ProjectLanguage, WorkerRuntime } from '@microsoft-logic-apps/utils';
+import { isString, ProjectLanguage, WorkerRuntime } from '@microsoft-logic-apps/utils';
 import { Uri, workspace } from 'vscode';
 import type { WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 
@@ -77,5 +77,5 @@ export function getWorkspaceSetting<T>(key: string, fsPath?: string | WorkspaceF
 }
 
 function getScope(fsPath: WorkspaceFolder | string | undefined): Uri | WorkspaceFolder | undefined {
-  return typeof fsPath === 'string' ? Uri.file(fsPath) : fsPath;
+  return isString(fsPath) ? Uri.file(fsPath) : fsPath;
 }

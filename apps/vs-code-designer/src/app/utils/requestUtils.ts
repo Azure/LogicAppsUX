@@ -12,6 +12,11 @@ import { createGenericClient } from '@microsoft/vscode-azext-azureutils';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 
+/**
+ * Checks if it is a timeout error.
+ * @param {unknown} error - Error object.
+ * @returns {boolean} True if error type is a timeout error.
+ */
 export function isTimeoutError(error: unknown): boolean {
   return parseError(error).errorType === 'REQUEST_ABORTED_ERROR';
 }
