@@ -3,7 +3,7 @@ import type { SchemaNodeExtended } from '../../models';
 import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import type { FunctionData, FunctionInput } from '../../models/Function';
-import { functionMock, FunctionCategory } from '../../models/Function';
+import { FunctionCategory, functionMock } from '../../models/Function';
 import {
   addNodeToConnections,
   bringInParentSourceNodesForRepeating,
@@ -161,7 +161,7 @@ describe('utils/Connections', () => {
 
   describe('updateConnectionInputValue (primarily InputDropdown connections)', () => {
     const currentNodeReactFlowKey = 'currentNodeKey';
-    const atypicalyMockFunctionNode: FunctionData = {
+    const atypicallyMockFunctionNode: FunctionData = {
       key: currentNodeReactFlowKey,
       functionName: 'Self',
       displayName: 'Self',
@@ -177,10 +177,10 @@ describe('utils/Connections', () => {
       oldCon: {
         self: { reactFlowKey: 'oldCon', node: {} as SchemaNodeExtended },
         inputs: {},
-        outputs: [{ reactFlowKey: currentNodeReactFlowKey, node: atypicalyMockFunctionNode }],
+        outputs: [{ reactFlowKey: currentNodeReactFlowKey, node: atypicallyMockFunctionNode }],
       },
       [currentNodeReactFlowKey]: {
-        self: { reactFlowKey: currentNodeReactFlowKey, node: atypicalyMockFunctionNode },
+        self: { reactFlowKey: currentNodeReactFlowKey, node: atypicallyMockFunctionNode },
         inputs: {
           0: [{ reactFlowKey: 'oldCon', node: {} as SchemaNodeExtended }],
           1: [],
@@ -191,7 +191,7 @@ describe('utils/Connections', () => {
 
     it('Test new input connection is made (and old connection is removed)', () => {
       updateConnectionInputValue(mockConnections, {
-        targetNode: atypicalyMockFunctionNode,
+        targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 0,
         value: { reactFlowKey: 'newCon', node: {} as SchemaNodeExtended },
@@ -203,7 +203,7 @@ describe('utils/Connections', () => {
 
     it('Test adding custom value input', () => {
       updateConnectionInputValue(mockConnections, {
-        targetNode: atypicalyMockFunctionNode,
+        targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 1,
         value: 'Test custom value',
@@ -214,7 +214,7 @@ describe('utils/Connections', () => {
 
     it('Test clear a custom value - bounded input', () => {
       updateConnectionInputValue(mockConnections, {
-        targetNode: atypicalyMockFunctionNode,
+        targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 1,
         value: undefined,
@@ -226,7 +226,7 @@ describe('utils/Connections', () => {
     it('Test adding an unbounded input or clearing its custom value', () => {
       // This call is just setup for the next test
       updateConnectionInputValue(mockConnections, {
-        targetNode: atypicalyMockFunctionNode,
+        targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 0,
         value: undefined,
@@ -234,7 +234,7 @@ describe('utils/Connections', () => {
       });
 
       updateConnectionInputValue(mockConnections, {
-        targetNode: atypicalyMockFunctionNode,
+        targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 1,
         value: undefined,
@@ -246,7 +246,7 @@ describe('utils/Connections', () => {
 
     it('Test delete unbounded input value', () => {
       updateConnectionInputValue(mockConnections, {
-        targetNode: atypicalyMockFunctionNode,
+        targetNode: atypicallyMockFunctionNode,
         targetNodeReactFlowKey: currentNodeReactFlowKey,
         inputIndex: 0,
         value: null,

@@ -2,8 +2,8 @@ import type { ToolboxPanelTabs } from '../../components/canvasToolbox/CanvasTool
 import type { NotificationData } from '../../components/notification/Notification';
 import {
   deletedNotificationAutoHideDuration,
-  NotificationTypes,
   errorNotificationAutoHideDuration,
+  NotificationTypes,
 } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaType } from '../../models';
@@ -16,6 +16,7 @@ import {
   createConnectionEntryIfNeeded,
   flattenInputs,
   getConnectedSourceSchemaNodes,
+  getConnectedTargetSchemaNodes,
   getFunctionConnectionUnits,
   getTargetSchemaNodeConnections,
   isConnectionUnit,
@@ -23,6 +24,7 @@ import {
   updateConnectionInputValue,
 } from '../../utils/Connection.Utils';
 import { addParentConnectionForRepeatingElementsNested } from '../../utils/DataMap.Utils';
+import { isFunctionData } from '../../utils/Function.Utils';
 import {
   addReactFlowPrefix,
   addSourceReactFlowPrefix,
@@ -30,7 +32,7 @@ import {
   getDestinationIdFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
-import { flattenSchema, isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -49,6 +51,7 @@ export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   sourceSchema?: SchemaExtended;
   flattenedSourceSchema: SchemaNodeDictionary;
+  sourceSchemaOrdering: string[];
   targetSchema?: SchemaExtended;
   flattenedTargetSchema: SchemaNodeDictionary;
   currentSourceSchemaNodes: SchemaNodeExtended[];
@@ -64,6 +67,7 @@ const emptyPristineState: DataMapOperationState = {
   currentSourceSchemaNodes: [],
   currentFunctionNodes: {},
   flattenedSourceSchema: {},
+  sourceSchemaOrdering: [],
   flattenedTargetSchema: {},
   xsltFilename: '',
   inlineFunctionInputOutputKeys: [],
@@ -121,13 +125,17 @@ export const dataMapSlice = createSlice({
     },
 
     setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
-      const flattenedSchema = flattenSchema(action.payload.schema, action.payload.schemaType);
+      const flattenedSchema = flattenSchemaIntoDictionary(action.payload.schema, action.payload.schemaType);
 
       if (action.payload.schemaType === SchemaType.Source) {
+        const schemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
+
         state.curDataMapOperation.sourceSchema = action.payload.schema;
         state.curDataMapOperation.flattenedSourceSchema = flattenedSchema;
+        state.curDataMapOperation.sourceSchemaOrdering = schemaSortArray;
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
+        state.pristineDataMap.sourceSchemaOrdering = schemaSortArray;
       } else {
         state.curDataMapOperation.targetSchema = action.payload.schema;
         state.curDataMapOperation.flattenedTargetSchema = flattenedSchema;
@@ -141,14 +149,16 @@ export const dataMapSlice = createSlice({
       const { sourceSchema, targetSchema, dataMapConnections } = action.payload;
       const currentState = state.curDataMapOperation;
 
-      const flattenedSourceSchema = flattenSchema(sourceSchema, SchemaType.Source);
-      const flattenedTargetSchema = flattenSchema(targetSchema, SchemaType.Target);
+      const flattenedSourceSchema = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
+      const schemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
+      const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
 
       const newState: DataMapOperationState = {
         ...currentState,
         sourceSchema,
         targetSchema,
         flattenedSourceSchema,
+        sourceSchemaOrdering: schemaSortArray,
         flattenedTargetSchema,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: [],
@@ -368,23 +378,53 @@ export const dataMapSlice = createSlice({
       addConnection(newState.dataMapConnections, action.payload);
 
       // Add any repeating parent nodes as well
-      const sourceNode = action.payload.source;
-      addParentConnectionForRepeatingElementsNested(
-        sourceNode,
-        action.payload.destination,
-        newState.flattenedSourceSchema,
-        newState.flattenedTargetSchema,
-        newState.dataMapConnections
-      );
-      // if new parent connection has been made
-      if (Object.keys(newState.dataMapConnections).length !== numConnections + 2) {
-        state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+      // Get all the source nodes in case we have sources from multiple source chains
+      const originalSourceNode = action.payload.source;
+      let actualSources: SchemaNodeExtended[];
+      if (isFunctionData(originalSourceNode)) {
+        const sourceNodes = getConnectedSourceSchemaNodes(
+          [newState.dataMapConnections[action.payload.reactFlowSource]],
+          newState.dataMapConnections
+        );
+        actualSources = sourceNodes;
+      } else {
+        actualSources = [originalSourceNode];
       }
 
-      // bring in correct source nodes
-      // loop through parent nodes connected to
-      const parentTargetNode = state.curDataMapOperation.currentTargetSchemaNode;
-      bringInParentSourceNodesForRepeating(parentTargetNode, newState);
+      // We'll only have one output node in this case
+      const originalTargetNode = action.payload.destination;
+      let actualTarget: SchemaNodeExtended[];
+      if (isFunctionData(originalTargetNode)) {
+        const targetNodes = getConnectedTargetSchemaNodes(
+          [newState.dataMapConnections[action.payload.reactFlowDestination]],
+          newState.dataMapConnections
+        );
+        actualTarget = targetNodes;
+      } else {
+        actualTarget = [originalTargetNode];
+      }
+
+      actualSources.forEach((sourceNode) => {
+        if (actualTarget.length > 0) {
+          addParentConnectionForRepeatingElementsNested(
+            sourceNode,
+            actualTarget[0],
+            newState.flattenedSourceSchema,
+            newState.flattenedTargetSchema,
+            newState.dataMapConnections
+          );
+
+          // If new parent connection has been made
+          if (Object.keys(newState.dataMapConnections).length !== numConnections + 2) {
+            state.notificationData = { type: NotificationTypes.ArrayConnectionAdded };
+          }
+
+          // Bring in correct source nodes
+          // Loop through parent nodes connected to
+          const parentTargetNode = state.curDataMapOperation.currentTargetSchemaNode;
+          bringInParentSourceNodesForRepeating(parentTargetNode, newState);
+        }
+      });
 
       doDataMapOperation(state, newState);
     },
@@ -637,6 +677,7 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
     return;
   }
 
+  // Handle deleting edge
   deleteConnectionFromConnections(
     curDataMapState.curDataMapOperation.dataMapConnections,
     getSourceIdFromReactFlowConnectionId(reactFlowKey),

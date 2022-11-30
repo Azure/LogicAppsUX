@@ -38,7 +38,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Position } from 'reactflow';
 
-const badgeContainerWidth = schemaNodeCardWidth + 72;
 const contentBtnWidth = schemaNodeCardWidth - 30;
 
 const useStyles = makeStyles({
@@ -78,7 +77,6 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     float: 'right',
-    width: `${badgeContainerWidth}px`,
   },
   contentButton: {
     height: '48px',
@@ -100,6 +98,11 @@ const useStyles = makeStyles({
     flexShrink: '0',
     flexBasis: '44px',
     marginRight: '8px',
+  },
+  nPopover: {
+    paddingTop: '5px',
+    paddingBottom: '7px',
+    zIndex: 4,
   },
   cardText: {
     ...typographyStyles.body1Strong,
@@ -138,12 +141,12 @@ const useStyles = makeStyles({
   }),
   inputArrayBadge: {
     marginLeft: '6px',
-    marginBottom: '30px',
+    marginBottom: '5px',
   },
   outputArrayBadge: {
     marginRight: '6px',
     marginLeft: '-22px',
-    marginBottom: '30px',
+    marginBottom: '5px',
   },
 });
 
@@ -297,14 +300,14 @@ const NBadge = ({ isOutput }: NBadgeProps) => {
   const intl = useIntl();
   const classes = useStyles();
 
-  const arrayMappingTooltip = intl.formatMessage({
-    defaultMessage: 'Array Mapping',
+  const arrayMappingLabel = intl.formatMessage({
+    defaultMessage: 'Repeating',
     description: 'Label for array connection',
   });
 
   return (
     <div>
-      <Tooltip content={arrayMappingTooltip} relationship="label">
+      <Tooltip relationship="label" withArrow appearance="inverted" content={arrayMappingLabel}>
         <Badge
           className={isOutput ? classes.outputArrayBadge : classes.inputArrayBadge}
           shape="rounded"
