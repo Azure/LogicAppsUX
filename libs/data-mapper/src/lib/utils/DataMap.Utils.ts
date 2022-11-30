@@ -25,7 +25,7 @@ import {
 } from './Connection.Utils';
 import { findFunctionForFunctionName, findFunctionForKey, getIndexValueForCurrentConnection, isFunctionData } from './Function.Utils';
 import { addReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from './ReactFlow.Util';
-import { findNodeForKey, flattenSchema, isSchemaNodeExtended } from './Schema.Utils';
+import { findNodeForKey, flattenSchemaIntoDictionary, isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid } from '@microsoft-logic-apps/utils';
 import yaml from 'js-yaml';
 
@@ -407,8 +407,8 @@ const parseDefinitionToConnection = (
 
     if (targetKey.includes(mapNodeParams.for)) {
       // if has for, add parent connection
-      const sourceFlattened = flattenSchema(sourceSchema, SchemaType.Source);
-      const targetFlattened = flattenSchema(targetSchema, SchemaType.Target);
+      const sourceFlattened = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
+      const targetFlattened = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       if (sourceNode && destinationNode) {
         addParentConnectionForRepeatingElements(
           destinationNode as SchemaNodeExtended,
