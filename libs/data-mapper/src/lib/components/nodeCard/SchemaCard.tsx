@@ -38,7 +38,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Position } from 'reactflow';
 
-const badgeContainerWidth = schemaNodeCardWidth + 72;
 const contentBtnWidth = schemaNodeCardWidth - 30;
 
 const useStyles = makeStyles({
@@ -78,7 +77,6 @@ const useStyles = makeStyles({
     display: 'flex',
     alignItems: 'center',
     float: 'right',
-    width: `${badgeContainerWidth}px`,
   },
   contentButton: {
     height: '48px',
