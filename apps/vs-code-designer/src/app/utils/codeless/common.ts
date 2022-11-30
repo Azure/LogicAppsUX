@@ -5,10 +5,12 @@ import {
   workflowResourceGroupNameKey,
   workflowLocationKey,
   workflowManagementBaseURIKey,
+  managementApiPrefix,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard';
 import type { IAzureConnectorsContext } from '../../commands/workflows/azureConnectorWizard';
+import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { getLocalSettingsJson } from '../localSettings';
 import { getAuthorizationToken } from './getAuthorizationToken';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
@@ -206,4 +208,12 @@ export function getRequestTriggerSchema(workflowContent: IWorkflowFileContent): 
   }
 
   return undefined;
+}
+
+export function getWorkflowManagementBaseURI(node: RemoteWorkflowTreeItem): string {
+  let resourceManagerUri: string = node.parent.subscription.environment.resourceManagerEndpointUrl;
+  if (resourceManagerUri.endsWith('/')) {
+    resourceManagerUri = resourceManagerUri.slice(0, -1);
+  }
+  return `${resourceManagerUri}${node.parent.parent.id}/hostruntime${managementApiPrefix}`;
 }

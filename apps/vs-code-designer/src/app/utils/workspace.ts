@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import type { RemoteWorkflowTreeItem } from '../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import { isPathEqual, isSubpath } from './fs';
 import { isNullOrUndefined } from '@microsoft-logic-apps/utils';
 import * as vscode from 'vscode';
@@ -23,7 +24,7 @@ export function getContainingWorkspace(fsPath: string): vscode.WorkspaceFolder |
  * @param {vscode.Uri | undefined} node - Workflow node.
  * @returns {vscode.Uri | undefined} Workflow node.
  */
-export const getWorkflowNode = (node: vscode.Uri | undefined): vscode.Uri | undefined => {
+export const getWorkflowNode = (node: vscode.Uri | RemoteWorkflowTreeItem | undefined): vscode.Uri | RemoteWorkflowTreeItem | undefined => {
   if (isNullOrUndefined(node)) {
     const activeFile = vscode?.window?.activeTextEditor?.document;
     if (activeFile?.fileName.endsWith('workflow.json')) {

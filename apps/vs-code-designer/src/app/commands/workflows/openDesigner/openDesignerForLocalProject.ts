@@ -72,8 +72,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       this.panelGroupKey, // Key used to reference the panel
       this.panelName, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in.
-      { enableScripts: true }
+      this.getPanelOptions()
     );
+
     this.migrationOptions = await this._getMigrationOptions(this.baseUrl);
     this.panelMetadata = await this._getDesignerPanelMetadata(this.migrationOptions);
 

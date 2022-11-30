@@ -7,7 +7,7 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { Uri } from 'vscode';
-import type { WebviewPanel } from 'vscode';
+import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 
 export interface IDesingerOptions {
   references?: any;
@@ -49,13 +49,19 @@ export abstract class OpenDesignerBase {
     return tryGetWebviewPanel(this.panelGroupKey, this.panelName);
   }
 
+  protected getPanelOptions(): WebviewOptions & WebviewPanelOptions {
+    return {
+      enableScripts: true,
+      retainContextWhenHidden: true,
+    };
+  }
+
   protected sendMsgToWebview(msg: any) {
     this.panel.webview.postMessage(msg);
   }
 
   protected async getWebviewContent(options: IDesingerOptions): Promise<string> {
     const { parametersData, localSettings, artifacts, azureDetails } = options;
-
     let { connectionsData } = options;
 
     const mapArtifacts = {};
