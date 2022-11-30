@@ -18,9 +18,6 @@ import {
   createFocusOutlineStyle,
   makeStyles,
   mergeClasses,
-  Popover,
-  PopoverSurface,
-  PopoverTrigger,
   shorthands,
   tokens,
   Tooltip,
@@ -312,20 +309,17 @@ const NBadge = ({ isOutput }: NBadgeProps) => {
 
   return (
     <div>
-      <Popover size="small" withArrow appearance="inverted" openOnHover={true} inline={true}>
-        <PopoverTrigger>
-          <Badge
-            className={isOutput ? classes.outputArrayBadge : classes.inputArrayBadge}
-            shape="rounded"
-            size="small"
-            appearance="tint"
-            color="important"
-          >
-            N
-          </Badge>
-        </PopoverTrigger>
-        <PopoverSurface className={classes.nPopover}>{arrayMappingLabel}</PopoverSurface>
-      </Popover>
+      <Tooltip relationship="label" withArrow appearance="inverted" content={arrayMappingLabel}>
+        <Badge
+          className={isOutput ? classes.outputArrayBadge : classes.inputArrayBadge}
+          shape="rounded"
+          size="small"
+          appearance="tint"
+          color="important"
+        >
+          N
+        </Badge>
+      </Tooltip>
     </div>
   );
 };
