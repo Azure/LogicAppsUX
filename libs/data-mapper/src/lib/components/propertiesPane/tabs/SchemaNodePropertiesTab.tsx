@@ -108,7 +108,7 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
     if (connection?.inputs && connection.inputs[0].length === 1) {
       const input = connection.inputs[0][0];
-      newInputValue = !input ? undefined : isCustomValue(input) ? input : input.reactFlowKey;
+      newInputValue = input === undefined ? undefined : isCustomValue(input) ? input : input.reactFlowKey;
     }
 
     setInputValue(newInputValue);
