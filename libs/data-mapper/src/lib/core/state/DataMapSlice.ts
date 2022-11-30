@@ -2,8 +2,8 @@ import type { ToolboxPanelTabs } from '../../components/canvasToolbox/CanvasTool
 import type { NotificationData } from '../../components/notification/Notification';
 import {
   deletedNotificationAutoHideDuration,
-  NotificationTypes,
   errorNotificationAutoHideDuration,
+  NotificationTypes,
 } from '../../components/notification/Notification';
 import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
 import { SchemaType } from '../../models';
@@ -32,7 +32,7 @@ import {
   getDestinationIdFromReactFlowConnectionId,
   getSourceIdFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
-import { flattenSchema, isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -51,6 +51,7 @@ export interface DataMapOperationState {
   dataMapConnections: ConnectionDictionary;
   sourceSchema?: SchemaExtended;
   flattenedSourceSchema: SchemaNodeDictionary;
+  sourceSchemaOrdering: string[];
   targetSchema?: SchemaExtended;
   flattenedTargetSchema: SchemaNodeDictionary;
   currentSourceSchemaNodes: SchemaNodeExtended[];
@@ -66,6 +67,7 @@ const emptyPristineState: DataMapOperationState = {
   currentSourceSchemaNodes: [],
   currentFunctionNodes: {},
   flattenedSourceSchema: {},
+  sourceSchemaOrdering: [],
   flattenedTargetSchema: {},
   xsltFilename: '',
   inlineFunctionInputOutputKeys: [],
@@ -123,13 +125,17 @@ export const dataMapSlice = createSlice({
     },
 
     setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
-      const flattenedSchema = flattenSchema(action.payload.schema, action.payload.schemaType);
+      const flattenedSchema = flattenSchemaIntoDictionary(action.payload.schema, action.payload.schemaType);
 
       if (action.payload.schemaType === SchemaType.Source) {
+        const schemaSortArray = flattenSchemaIntoSortArray(action.payload.schema.schemaTreeRoot);
+
         state.curDataMapOperation.sourceSchema = action.payload.schema;
         state.curDataMapOperation.flattenedSourceSchema = flattenedSchema;
+        state.curDataMapOperation.sourceSchemaOrdering = schemaSortArray;
         state.pristineDataMap.sourceSchema = action.payload.schema;
         state.pristineDataMap.flattenedSourceSchema = flattenedSchema;
+        state.pristineDataMap.sourceSchemaOrdering = schemaSortArray;
       } else {
         state.curDataMapOperation.targetSchema = action.payload.schema;
         state.curDataMapOperation.flattenedTargetSchema = flattenedSchema;
@@ -143,14 +149,16 @@ export const dataMapSlice = createSlice({
       const { sourceSchema, targetSchema, dataMapConnections } = action.payload;
       const currentState = state.curDataMapOperation;
 
-      const flattenedSourceSchema = flattenSchema(sourceSchema, SchemaType.Source);
-      const flattenedTargetSchema = flattenSchema(targetSchema, SchemaType.Target);
+      const flattenedSourceSchema = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
+      const schemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
+      const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
 
       const newState: DataMapOperationState = {
         ...currentState,
         sourceSchema,
         targetSchema,
         flattenedSourceSchema,
+        sourceSchemaOrdering: schemaSortArray,
         flattenedTargetSchema,
         dataMapConnections: dataMapConnections ?? {},
         currentSourceSchemaNodes: [],

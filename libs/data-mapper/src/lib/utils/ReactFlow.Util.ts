@@ -7,7 +7,7 @@ import { ReactFlowEdgeType, ReactFlowNodeType, sourcePrefix, targetPrefix } from
 import appInsights from '../core/services/appInsights/AppInsights';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../models/Function';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models/Schema';
+import type { SchemaNodeExtended } from '../models/Schema';
 import { SchemaType } from '../models/Schema';
 import { flattenInputs, isConnectionUnit } from './Connection.Utils';
 import { getFunctionBrandingForCategory } from './Function.Utils';
@@ -38,11 +38,11 @@ const placeholderReactFlowNode: ReactFlowNode = {
 
 export const useLayout = (
   currentSourceSchemaNodes: SchemaNodeExtended[],
-  allSourceSchemaNodes: SchemaNodeDictionary,
   currentFunctionNodes: FunctionDictionary,
   currentTargetSchemaNode: SchemaNodeExtended | undefined,
   connections: ConnectionDictionary,
-  selectedItemKey: string | undefined
+  selectedItemKey: string | undefined,
+  sourceSchemaOrdering: string[]
 ): [ReactFlowNode[], ReactFlowEdge[]] => {
   const [reactFlowNodes, setReactFlowNodes] = useState<ReactFlowNode[]>([]);
   const [reactFlowEdges, setReactFlowEdges] = useState<ReactFlowEdge[]>([]);
@@ -51,11 +51,8 @@ export const useLayout = (
   useEffect(() => {
     if (currentTargetSchemaNode) {
       // Sort source schema nodes according to their order in the schema
-      const flattenedKeys = Object.values(allSourceSchemaNodes).map((node) => node.key);
-      const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort((nodeA, nodeB) =>
-        nodeA.pathToRoot.length !== nodeB.pathToRoot.length
-          ? nodeA.pathToRoot.length - nodeB.pathToRoot.length
-          : flattenedKeys.indexOf(nodeA.key) - flattenedKeys.indexOf(nodeB.key)
+      const sortedSourceSchemaNodes = [...currentSourceSchemaNodes].sort(
+        (nodeA, nodeB) => sourceSchemaOrdering.indexOf(nodeA.key) - sourceSchemaOrdering.indexOf(nodeB.key)
       );
 
       // Build ELK node/edges data
@@ -89,7 +86,7 @@ export const useLayout = (
     } else {
       setReactFlowNodes([]);
     }
-  }, [currentTargetSchemaNode, currentSourceSchemaNodes, allSourceSchemaNodes, currentFunctionNodes, connections]);
+  }, [currentTargetSchemaNode, currentSourceSchemaNodes, currentFunctionNodes, connections, sourceSchemaOrdering]);
 
   // Edges
   useEffect(() => {
