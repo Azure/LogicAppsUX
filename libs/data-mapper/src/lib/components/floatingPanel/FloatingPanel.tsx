@@ -30,16 +30,19 @@ export interface FloatingPanelProps {
   width: string;
   minHeight: string;
   height?: string;
+  contentHeight?: string;
   panelOrdering?: number;
+  isOpen: boolean;
   children?: React.ReactNode;
 }
 
 export const FloatingPanel = (props: FloatingPanelProps) => {
-  const { title, subtitle, onClose, xPos, yPos, minHeight, height, width, panelOrdering, children } = props;
+  const { title, subtitle, onClose, xPos, yPos, minHeight, height, contentHeight, width, panelOrdering, isOpen, children } = props;
   const styles = useStyles();
 
   const innerStyle: React.CSSProperties = useMemo(
     () => ({
+      display: !isOpen ? 'none' : undefined,
       position: 'absolute',
       zIndex: panelOrdering ? floatingPanelZIndex + panelOrdering : floatingPanelZIndex,
       boxShadow: tokens.shadow4,
@@ -51,9 +54,8 @@ export const FloatingPanel = (props: FloatingPanelProps) => {
       minHeight,
       height,
       backgroundColor: tokens.colorNeutralBackground1,
-      overflowY: 'auto',
     }),
-    [xPos, yPos, width, minHeight, height, panelOrdering]
+    [xPos, yPos, width, minHeight, height, panelOrdering, isOpen]
   );
 
   return (
@@ -65,7 +67,7 @@ export const FloatingPanel = (props: FloatingPanelProps) => {
         <Button appearance="subtle" icon={<Dismiss20Regular />} onClick={onClose} style={{ marginLeft: 'auto' }} />
       </Stack>
 
-      {children}
+      <div style={{ maxHeight: contentHeight, overflowY: 'auto', position: 'relative' }}>{children}</div>
     </div>
   );
 };

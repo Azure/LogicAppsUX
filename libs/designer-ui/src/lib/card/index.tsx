@@ -7,7 +7,8 @@ import { Gripper } from './images/dynamicsvgs/gripper';
 import type { CommentBoxProps, MenuItemOption } from './types';
 import { getCardStyle } from './utils';
 import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
-import { Spinner, SpinnerSize, css } from '@fluentui/react';
+import { Icon, Spinner, SpinnerSize, css } from '@fluentui/react';
+import { useMemo } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 
 export interface CardProps {
@@ -80,13 +81,20 @@ export const Card: React.FC<CardProps> = ({
   const keyboardInteraction = useCardKeyboardInteraction(onClick, contextMenuOptions);
   const contextMenu = useCardContextMenu();
 
-  const cardIcon = isLoading ? (
-    <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
-  ) : icon ? (
-    <img className="panel-card-icon" src={icon} alt="" />
-  ) : (
-    // There is some race condition where the icon is not available yet but the loading state is off
-    <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
+  const cardIcon = useMemo(
+    () =>
+      isLoading ? (
+        <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
+      ) : icon ? (
+        <img className="panel-card-icon" src={icon} alt="" />
+      ) : errorMessage ? (
+        <div className="panel-card-icon default">
+          <Icon iconName="PlugDisconnected" style={{ fontSize: '16px', textAlign: 'center' }} />
+        </div>
+      ) : (
+        <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
+      ),
+    [icon, isLoading, errorMessage]
   );
 
   return (
@@ -121,7 +129,7 @@ export const Card: React.FC<CardProps> = ({
                 <div className="panel-msla-title">{title}</div>
               </div>
             </div>
-            <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} />
+            {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
           </div>
           <CardFooter
             commentBox={commentBox}

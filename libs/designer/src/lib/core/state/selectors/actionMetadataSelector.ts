@@ -70,31 +70,36 @@ export const useOperationManifest = (operationInfo: NodeOperation) => {
     {
       enabled: !!connectorId && !!operationId,
       placeholderData: undefined,
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     }
   );
+};
+
+export const useOperationQuery = (nodeId: string) => {
+  const operationInfo = useOperationInfo(nodeId);
+  const manifestQuery = useOperationManifest(operationInfo);
+  const connectorQuery = useConnector(operationInfo?.connectorId);
+
+  const operationManifestService = OperationManifestService();
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  return useManifest ? manifestQuery : connectorQuery;
 };
 
 const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: string[], propertyInConnector: string[]): QueryResult => {
   const { data: manifest, isLoading } = useOperationManifest(operationInfo);
   const { data: connector } = useConnector(operationInfo?.connectorId);
 
-  if (manifest) {
-    return {
-      isLoading,
-      result: getObjectPropertyValue(manifest.properties, propertyInManifest),
-    };
-  }
-
-  if (connector) {
-    return {
-      isLoading,
-      result: getObjectPropertyValue(connector.properties, propertyInConnector),
-    };
-  }
-
   return {
     isLoading,
-    result: '',
+    result: manifest
+      ? getObjectPropertyValue(manifest.properties, propertyInManifest)
+      : connector
+      ? getObjectPropertyValue(connector.properties, propertyInConnector)
+      : undefined,
   };
 };
 

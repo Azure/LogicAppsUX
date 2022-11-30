@@ -1,5 +1,5 @@
 import { CanvasControls } from '../components/canvasControls/CanvasControls';
-import { ToolboxPanelTabs, CanvasToolbox } from '../components/canvasToolbox/CanvasToolbox';
+import { CanvasToolbox, ToolboxPanelTabs } from '../components/canvasToolbox/CanvasToolbox';
 import { ConnectionEdge } from '../components/edge/ConnectionEdge';
 import { FunctionCard } from '../components/nodeCard/FunctionCard';
 import { SchemaCard } from '../components/nodeCard/SchemaCard';
@@ -18,10 +18,12 @@ import {
   deleteCurrentlySelectedItem,
   hideNotification,
   makeConnection,
+  redoDataMapOperation,
   setCanvasToolboxTabToDisplay,
   setInlineFunctionInputOutputKeys,
   setSelectedItem,
   setSourceNodeConnectionBeingDrawnFromId,
+  undoDataMapOperation,
 } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
 import { SchemaType } from '../models';
@@ -29,11 +31,11 @@ import { useLayout } from '../utils/ReactFlow.Util';
 import { tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import type { KeyboardEventHandler, MouseEvent as ReactMouseEvent } from 'react';
-import React, { useRef, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Connection as ReactFlowConnection, Edge as ReactFlowEdge, Node as ReactFlowNode, OnConnectStartParams } from 'reactflow';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ConnectionLineType } from 'reactflow';
+import ReactFlow, { ConnectionLineType, useKeyPress } from 'reactflow';
 
 export const nodeTypes = { [ReactFlowNodeType.SchemaNode]: SchemaCard, [ReactFlowNodeType.FunctionNode]: FunctionCard };
 export const edgeTypes = { [ReactFlowEdgeType.ConnectionEdge]: ConnectionEdge };
@@ -46,6 +48,22 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
   const dispatch = useDispatch<AppDispatch>();
   const reactFlowRef = useRef<HTMLDivElement>(null);
 
+  const ctrlZPressed = useKeyPress(['Meta+z', 'ctrl+z']);
+  useEffect(() => {
+    if (ctrlZPressed) {
+      dispatch(undoDataMapOperation());
+      console.log('Z');
+    }
+  }, [ctrlZPressed, dispatch]);
+
+  const ctrlYPressed = useKeyPress(['Meta+y', 'ctrl+y']);
+  useEffect(() => {
+    if (ctrlYPressed) {
+      dispatch(redoDataMapOperation());
+      console.log('Y');
+    }
+  }, [ctrlYPressed, dispatch]);
+
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
   const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
   const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
@@ -55,6 +73,7 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
   const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
   const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
+  const sourceSchemaOrdering = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchemaOrdering);
   const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
   const notificationData = useSelector((state: RootState) => state.dataMap.notificationData);
 
@@ -119,11 +138,11 @@ export const ReactFlowWrapper = ({ canvasBlockHeight }: ReactFlowWrapperProps) =
 
   const [nodes, edges] = useLayout(
     currentSourceSchemaNodes,
-    flattenedSourceSchema,
     currentFunctionNodes,
     currentTargetSchemaNode,
     connections,
-    selectedItemKey
+    selectedItemKey,
+    sourceSchemaOrdering
   );
 
   // Find first target schema node (should be schemaTreeRoot) to use its xPos for schema name badge

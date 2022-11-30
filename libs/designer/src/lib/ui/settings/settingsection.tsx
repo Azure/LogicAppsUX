@@ -2,7 +2,7 @@ import type { HeaderClickHandler } from '.';
 import constants from '../../common/constants';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
-import { type ValidationError, ValidationWarningKeys } from '../../core/state/settingSlice';
+import { type ValidationError, ValidationWarningKeys } from '../../core/state/setting/settingSlice';
 import type { RunAfterProps } from './sections/runafterconfiguration';
 import { RunAfter } from './sections/runafterconfiguration';
 import { CustomizableMessageBar } from './validation/errorbar';
@@ -219,6 +219,11 @@ const Setting = ({
 
   const [conditionalVisibilityTempArray, setConditionalVisibilityTempArray] = useState<string[]>([]);
 
+  const addNewParamText = intl.formatMessage({
+    defaultMessage: 'Add new parameters',
+    description: 'Text for add new parameter button',
+  });
+
   return (
     <div className="msla-setting-section-settings">
       {settings?.map((setting, i) => {
@@ -299,7 +304,7 @@ const Setting = ({
 
       {conditionallyInvisibleSettings.length > 0 ? (
         <Dropdown
-          placeholder="Add new parameters"
+          placeholder={addNewParamText}
           multiSelect
           options={conditionallyInvisibleSettings.map((setting) => ({
             key: (setting.settingProp as any).id,
@@ -308,7 +313,13 @@ const Setting = ({
           style={{ marginTop: '24px' }}
           selectedKeys={conditionalVisibilityTempArray}
           onChange={(_e: any, item: any) => {
-            if (item?.key) setConditionalVisibilityTempArray([...conditionalVisibilityTempArray, item.key]);
+            if (item?.key) {
+              setConditionalVisibilityTempArray(
+                conditionalVisibilityTempArray.includes(item.key)
+                  ? conditionalVisibilityTempArray.filter((key) => key !== item.key)
+                  : [...conditionalVisibilityTempArray, item.key]
+              );
+            }
           }}
           onDismiss={() => {
             conditionalVisibilityTempArray.forEach((parameterId) => {

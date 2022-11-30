@@ -10,6 +10,7 @@ import {
   getSelectedSchema,
   InitDataMapperApiService,
 } from '@microsoft/logic-apps-data-mapper';
+import type { MessageToVsix, SchemaType } from '@microsoft/logic-apps-data-mapper';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -27,10 +28,9 @@ interface SchemaFile {
 export const App = () => {
   const dispatch = useDispatch<AppDispatch>();
   const vscode = useContext(VSCodeContext);
-  // const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
 
-  // TODO (After theming): set initial value back to getVscodeTheme()
-  const [vsCodeTheme, _setVsCodeTheme] = useState<VsCodeThemeType>(VsCodeThemeType.VsCodeLight);
+  const getVscodeTheme = () => (document.body.dataset.vscodeThemeKind as VsCodeThemeType) ?? VsCodeThemeType.VsCodeLight;
+  const [vsCodeTheme, setVsCodeTheme] = useState<VsCodeThemeType>(getVscodeTheme());
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
   const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
@@ -43,6 +43,13 @@ export const App = () => {
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
+  const sendMsgToVsix = useCallback(
+    (msg: MessageToVsix) => {
+      vscode.postMessage(msg);
+    },
+    [vscode]
+  );
+
   const saveStateCall = (dataMapDefinition: string, dataMapXslt: string) => {
     saveDataMapDefinition(dataMapDefinition);
 
@@ -50,30 +57,43 @@ export const App = () => {
   };
 
   const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'addSchemaFromFile',
-      data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type },
+      data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type as SchemaType },
     });
   };
 
   const readLocalFileOptions = useCallback(() => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'readLocalFileOptions',
     });
-  }, [vscode]);
+  }, [sendMsgToVsix]);
 
-  // TODO: May combine the below two functions - will revisit when touched on again in future
   const saveDataMapDefinition = (dataMapDefinition: string) => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'saveDataMapDefinition',
       data: dataMapDefinition,
     });
   };
 
   const saveDataMap = (dataMapXslt: string) => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'saveDataMapXslt',
       data: dataMapXslt,
+    });
+  };
+
+  const saveDraftDataMapDefinition = (dataMapDefinition: string) => {
+    sendMsgToVsix({
+      command: 'saveDraftDataMapDefinition',
+      data: dataMapDefinition,
+    });
+  };
+
+  const setIsMapStateDirty = (isMapStateDirty: boolean) => {
+    sendMsgToVsix({
+      command: 'setIsMapStateDirty',
+      data: isMapStateDirty,
     });
   };
 
@@ -89,31 +109,31 @@ export const App = () => {
         errorMsg = 'Unknown error';
       }
 
-      vscode.postMessage({
+      sendMsgToVsix({
         command: 'webviewRscLoadError',
         data: errorMsg,
       });
     },
-    [vscode]
+    [sendMsgToVsix]
   );
 
   // Notify VS Code that webview is loaded
   useEffect(() => {
-    vscode.postMessage({
+    sendMsgToVsix({
       command: 'webviewLoaded',
     });
-  }, [vscode]);
+  }, [sendMsgToVsix]);
 
-  /*
   // Monitor document.body for VS Code theme changes
   useEffect(() => {
     const themeMutationObserver = new MutationObserver(() => {
       setVsCodeTheme(getVscodeTheme());
-    }).observe(document.body, { attributes: true });
+    });
+
+    themeMutationObserver.observe(document.body, { attributes: true });
 
     return () => themeMutationObserver.disconnect();
   }, []);
-  */
 
   // Init runtime API service and make calls
   useEffect(() => {
@@ -164,8 +184,10 @@ export const App = () => {
       >
         <DataMapperDesigner
           saveStateCall={saveStateCall}
+          saveDraftStateCall={saveDraftDataMapDefinition}
           addSchemaFromFile={addSchemaFromFile}
           readCurrentSchemaOptions={readLocalFileOptions}
+          setIsMapStateDirty={setIsMapStateDirty}
         />
       </DataMapDataProvider>
     </DataMapperDesignerProvider>

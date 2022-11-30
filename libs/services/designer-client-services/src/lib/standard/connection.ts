@@ -72,6 +72,14 @@ interface ConnectionAndAppSetting<T> {
   pathLocation: string[];
 }
 
+export interface IApiHubServiceDetails {
+  apiVersion: string;
+  baseUrl: string;
+  subscriptionId: string;
+  resourceGroup: string;
+  location: string;
+}
+
 interface StandardConnectionServiceArgs {
   apiVersion: string;
   baseUrl: string;
@@ -84,13 +92,7 @@ interface StandardConnectionServiceArgs {
   };
   readConnections: ReadConnectionsFunc;
   writeConnection?: WriteConnectionFunc;
-  apiHubServiceDetails: {
-    apiVersion: string;
-    baseUrl: string;
-    subscriptionId: string;
-    resourceGroup: string;
-    location: string;
-  };
+  apiHubServiceDetails: IApiHubServiceDetails;
   httpClient: IHttpClient;
 }
 
@@ -766,6 +768,39 @@ export class StandardConnectionService implements IConnectionService {
       .get<Connection>(request)
       .then(() => false)
       .catch(() => true);
+  }
+
+  private getFunctionAppsRequestPath(): string {
+    const { subscriptionId } = this.options.apiHubServiceDetails;
+    return `/subscriptions/${subscriptionId}/providers/Microsoft.Web/sites`;
+  }
+
+  async fetchFunctionApps(): Promise<any> {
+    console.log('functionAppsResponse', this.getFunctionAppsRequestPath());
+
+    const functionAppsResponse = await this.options.httpClient.get<any>({
+      uri: this.getFunctionAppsRequestPath(),
+      queryParameters: { 'api-version': this.options.apiVersion },
+    });
+
+    const apps = functionAppsResponse.value.filter((app: any) => app.kind === 'functionapp');
+    return apps;
+  }
+
+  async fetchFunctionAppsFunctions(functionAppId: string) {
+    const functionsResponse = await this.options.httpClient.get<any>({
+      uri: `https://management.azure.com/${functionAppId}/functions`,
+      queryParameters: { 'api-version': this.options.apiVersion },
+    });
+    return functionsResponse?.value ?? [];
+  }
+
+  async fetchFunctionKey(functionId: string) {
+    const keysResponse = await this.options.httpClient.post<any, any>({
+      uri: `https://management.azure.com/${functionId}/listkeys`,
+      queryParameters: { 'api-version': this.options.apiVersion },
+    });
+    return keysResponse?.default ?? 'NotFound';
   }
 }
 

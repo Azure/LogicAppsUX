@@ -1,12 +1,14 @@
-import type { RootState } from '../../core/state/Store';
+import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
+import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { SchemaNodeExtended } from '../../models';
 import { iconForSchemaNodeDataType } from '../../utils/Icon.Utils';
 import { useSchemaTreeItemStyles } from './SourceSchemaTreeItem';
+import { TreeIndicator } from './TreeBranch';
 import { Stack } from '@fluentui/react';
-import { Text, tokens } from '@fluentui/react-components';
-import { CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular } from '@fluentui/react-icons';
+import { mergeClasses, Text, tokens } from '@fluentui/react-components';
+import { CheckmarkCircle12Filled, CircleHalfFill12Regular, Circle12Regular, Document20Regular } from '@fluentui/react-icons';
 import { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 export type NodeToggledStateDictionary = { [key: string]: ItemToggledState };
 export enum ItemToggledState {
@@ -55,6 +57,55 @@ const TargetSchemaTreeItem = ({ node, status }: TargetSchemaTreeItemProps) => {
       </div>
 
       <Text className={styles.nodeName}>{node.name}</Text>
+    </Stack>
+  );
+};
+
+interface TargetSchemaTreeHeaderProps {
+  status?: ItemToggledState;
+}
+
+export const TargetSchemaTreeHeader = ({ status }: TargetSchemaTreeHeaderProps) => {
+  const styles = useSchemaTreeItemStyles();
+  const dispatch = useDispatch<AppDispatch>();
+
+  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
+
+  const statusIcon = useMemo(() => {
+    switch (status) {
+      case ItemToggledState.Completed:
+        return <CheckmarkCircle12Filled primaryFill={tokens.colorPaletteGreenForeground1} />;
+      case ItemToggledState.InProgress:
+        return <CircleHalfFill12Regular primaryFill={tokens.colorPaletteYellowForeground1} />;
+      case ItemToggledState.NotStarted:
+        return <Circle12Regular primaryFill={tokens.colorNeutralForegroundDisabled} />;
+      default:
+        return null;
+    }
+  }, [status]);
+
+  return (
+    <Stack
+      horizontal
+      verticalAlign="center"
+      className={mergeClasses(styles.nodeContainer, styles.targetSchemaNode)}
+      style={{
+        position: 'relative',
+        paddingLeft: '8px',
+        marginBottom: 0,
+        cursor: 'pointer',
+        backgroundColor: !currentTargetSchemaNode ? tokens.colorNeutralBackground4Selected : undefined,
+      }}
+      onClick={() => dispatch(setCurrentTargetSchemaNode(undefined))}
+    >
+      <TreeIndicator shouldShowIndicator={!currentTargetSchemaNode} />
+
+      <span style={{ marginRight: '4px', marginTop: '2px' }}>{statusIcon}</span>
+
+      <Document20Regular />
+
+      <Text className={styles.nodeName}>{targetSchema?.name}</Text>
     </Stack>
   );
 };

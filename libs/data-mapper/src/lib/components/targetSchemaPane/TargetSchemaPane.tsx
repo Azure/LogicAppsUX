@@ -4,7 +4,7 @@ import { NormalizedDataType, SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
-import TargetSchemaTreeItem, { ItemToggledState } from '../tree/TargetSchemaTreeItem';
+import TargetSchemaTreeItem, { ItemToggledState, TargetSchemaTreeHeader } from '../tree/TargetSchemaTreeItem';
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import Tree from '../tree/Tree';
 import type { ITreeNode } from '../tree/Tree';
@@ -73,7 +73,7 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
     const nodesWithConnections: { [key: string]: true } = {};
 
     Object.values(connectionDictionary).forEach((connection) => {
-      if (connection.self.reactFlowKey in targetSchemaDictionary) {
+      if (connection.self.reactFlowKey in targetSchemaDictionary && connection.inputs[0] && connection.inputs[0].length > 0) {
         nodesWithConnections[connection.self.node.key] = true;
       }
     });
@@ -86,26 +86,47 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
       return undefined;
     }
 
-    // Format extra top layers to show schema name and schemaTreeRoot
-    // Can safely typecast with the root node(s) as we only use the properties defined here
-    const schemaRoot = {} as ITreeNode<SchemaNodeExtended>;
-    const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
+    // Search tree (maintain parent tree structure for matched nodes - returns whole tree if no/too-short search term)
+    let newTargetSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = searchSchemaTreeFromRoot(
+      targetSchema.schemaTreeRoot,
+      targetSchemaSearchTerm
+    );
 
-    let newTargetSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = { ...targetSchema.schemaTreeRoot };
-    if (targetSchemaSearchTerm) {
-      schemaNameRoot.isExpanded = true;
-      newTargetSchemaTreeRoot = searchSchemaTreeFromRoot(targetSchema.schemaTreeRoot, targetSchemaSearchTerm);
+    // Search searched-tree for currentNode, and expand path to that node if present
+    const findAndExpandPathToCurrentNode = (
+      currentNode: ITreeNode<SchemaNodeExtended>,
+      desiredNodeKey: string
+    ): ITreeNode<SchemaNodeExtended> => {
+      const currentNodeCopy = { ...currentNode } as ITreeNode<SchemaNodeExtended>;
+
+      if (currentNodeCopy.key === desiredNodeKey) {
+        currentNodeCopy.isExpanded = true;
+      } else if (currentNodeCopy.children && currentNodeCopy.children.length > 0) {
+        currentNodeCopy.children = currentNodeCopy.children.map((childNode) => {
+          const newChildNode = findAndExpandPathToCurrentNode(childNode, desiredNodeKey);
+
+          if (newChildNode.key === desiredNodeKey || newChildNode.isExpanded) {
+            currentNodeCopy.isExpanded = true;
+          }
+
+          return newChildNode;
+        });
+      }
+
+      return currentNodeCopy;
+    };
+
+    if (currentTargetSchemaNode) {
+      newTargetSchemaTreeRoot = findAndExpandPathToCurrentNode(newTargetSchemaTreeRoot, currentTargetSchemaNode.key);
     }
 
-    schemaNameRoot.key = schemaRootKey;
-    schemaNameRoot.name = targetSchema.name;
-    schemaNameRoot.schemaNodeDataType = SchemaNodeDataType.None;
+    // Format extra top layer to show schemaTreeRoot
+    // Can safely typecast with the root node(s) as we only use the properties defined here
+    const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
     schemaNameRoot.children = [newTargetSchemaTreeRoot];
 
-    schemaRoot.children = [schemaNameRoot];
-
-    return schemaRoot;
-  }, [targetSchema, targetSchemaSearchTerm]);
+    return schemaNameRoot;
+  }, [targetSchema, targetSchemaSearchTerm, currentTargetSchemaNode]);
 
   useEffect(() => {
     if (!targetSchema || !connectionDictionary) {
@@ -116,6 +137,8 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
       setToggledStatesDictionary(newToggledStatesDictionary);
     }
   }, [connectionDictionary, targetSchema, targetNodesWithConnections]);
+
+  const shouldDisplayTree = !!(isExpanded && targetSchema && toggledStatesDictionary && searchedTargetSchemaTreeRoot);
 
   return (
     <div className={styles.outputPane} style={{ display: 'flex', flexDirection: 'column', flex: '0 1 1px' }}>
@@ -150,28 +173,42 @@ export const TargetSchemaPane = ({ isExpanded, setIsExpanded }: TargetSchemaPane
         </Text>
       </Stack>
 
-      {isExpanded && targetSchema && toggledStatesDictionary && searchedTargetSchemaTreeRoot && (
-        <div style={{ margin: 8, marginLeft: 40, width: 290, flex: '1 1 1px', overflowY: 'auto' }}>
-          <TreeHeader onSearch={setTargetSchemaSearchTerm} onClear={() => setTargetSchemaSearchTerm('')} />
+      <div
+        style={{
+          display: !shouldDisplayTree ? 'none' : undefined,
+          margin: 8,
+          marginLeft: 40,
+          width: 290,
+          flex: '1 1 1px',
+          overflowY: 'auto',
+          position: 'relative',
+        }}
+      >
+        <TreeHeader onSearch={setTargetSchemaSearchTerm} onClear={() => setTargetSchemaSearchTerm('')} />
 
-          <Tree<SchemaNodeExtended>
-            // Add one extra root layer so schemaTreeRoot is shown as well
-            // Can safely typecast as only the children[] are used from root
-            treeRoot={searchedTargetSchemaTreeRoot}
-            nodeContent={(node) => <TargetSchemaTreeItem node={node as SchemaNodeExtended} status={toggledStatesDictionary[node.key]} />}
-            onClickItem={(node) => onTargetSchemaItemClick(node as SchemaNodeExtended)}
-            nodeContainerClassName={mergeClasses(schemaNodeItemStyles.nodeContainer, schemaNodeItemStyles.targetSchemaNode)}
-            nodeContainerStyle={(node) =>
-              node.key === currentTargetSchemaNode?.key
-                ? {
-                    backgroundColor: tokens.colorNeutralBackground4Selected,
-                  }
-                : {}
-            }
-            shouldShowIndicator={(node) => node.key === currentTargetSchemaNode?.key}
-          />
-        </div>
-      )}
+        <TargetSchemaTreeHeader
+          status={toggledStatesDictionary && targetSchema ? toggledStatesDictionary[targetSchema.schemaTreeRoot.key] : undefined}
+        />
+
+        <Tree<SchemaNodeExtended>
+          // Add one extra root layer so schemaTreeRoot is shown as well
+          // Can safely typecast as only the children[] are used from root
+          treeRoot={searchedTargetSchemaTreeRoot}
+          nodeContent={(node) =>
+            toggledStatesDictionary && <TargetSchemaTreeItem node={node as SchemaNodeExtended} status={toggledStatesDictionary[node.key]} />
+          }
+          onClickItem={(node) => onTargetSchemaItemClick(node as SchemaNodeExtended)}
+          nodeContainerClassName={mergeClasses(schemaNodeItemStyles.nodeContainer, schemaNodeItemStyles.targetSchemaNode)}
+          nodeContainerStyle={(node) =>
+            node.key === currentTargetSchemaNode?.key
+              ? {
+                  backgroundColor: tokens.colorNeutralBackground4Selected,
+                }
+              : {}
+          }
+          shouldShowIndicator={(node) => node.key === currentTargetSchemaNode?.key}
+        />
+      </div>
     </div>
   );
 };
@@ -183,12 +220,12 @@ const handleObjectParentToggledState = (
   nodeChildrenToggledAmt: number,
   nodeChildrenAmt: number
 ) => {
-  if (nodeChildrenToggledAmt === nodeChildrenAmt) {
-    stateDict[nodeKey] = ItemToggledState.Completed;
-    return 1;
-  } else if (nodeChildrenToggledAmt === 0) {
+  if (nodeChildrenToggledAmt === 0) {
     stateDict[nodeKey] = ItemToggledState.NotStarted;
     return 0;
+  } else if (nodeChildrenToggledAmt === nodeChildrenAmt) {
+    stateDict[nodeKey] = ItemToggledState.Completed;
+    return 1;
   } else {
     stateDict[nodeKey] = ItemToggledState.InProgress;
     return 0.5;
@@ -210,21 +247,24 @@ const handleNodeWithValue = (
 };
 
 export const checkNodeStatuses = (
-  schemaNode: any,
+  schemaNode: SchemaNodeExtended,
   stateDict: NodeToggledStateDictionary,
   targetNodesWithConnections: TargetNodesWithConnectionsDictionary
 ) => {
   let numChildrenToggled = 0;
 
-  schemaNode.children.forEach((child: any) => {
+  schemaNode.children.forEach((child) => {
     numChildrenToggled += checkNodeStatuses(child, stateDict, targetNodesWithConnections);
   });
 
-  if (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) {
-    // Is object parent
+  if (
+    (schemaNode.schemaNodeDataType === SchemaNodeDataType.None || schemaNode.normalizedDataType === NormalizedDataType.ComplexType) &&
+    schemaNode.children.length > 0
+  ) {
+    // Object/parent/array-elements (if they don't have children, treat them as leaf nodes (below))
     return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
   } else {
-    // Is node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
+    // Node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
     return handleNodeWithValue(stateDict, schemaNode.key, targetNodesWithConnections);
   }
 };

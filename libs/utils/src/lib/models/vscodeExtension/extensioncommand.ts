@@ -9,4 +9,5 @@ export enum ExtensionCommand {
   export_package = 'export-package',
   add_status = 'add-status',
   set_final_status = 'set-final-status',
+  save = 'Save',
 }

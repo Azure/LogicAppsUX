@@ -15,6 +15,10 @@ export const useConnector = (connectorId: string) => {
     },
     {
       enabled: !!connectorId,
+      cacheTime: 1000 * 60 * 60 * 24,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
     }
   );
 };
@@ -29,9 +33,7 @@ export const useGateways = (subscriptionId: string, connectorName: string) => {
   );
 };
 
-export const useSubscriptions = () => {
-  return useQuery('subscriptions', async () => GatewayService().getSubscriptions());
-};
+export const useSubscriptions = () => useQuery('subscriptions', async () => GatewayService().getSubscriptions());
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   // TODO: Revisit trying to conditionally ask for the connector from the service

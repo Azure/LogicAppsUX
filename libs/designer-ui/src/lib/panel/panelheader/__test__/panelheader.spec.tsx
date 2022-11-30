@@ -86,6 +86,8 @@ describe('lib/panel/panelHeader/main', () => {
       renameTitleDisabled: false,
       showCommentBox: true,
       title: 'sample title',
+      isLoading: false,
+      cardIcon: 'sample icon url',
     };
     shallow.render(<PanelHeader {...props} />);
     const panelHeader = shallow.getRenderOutput();
@@ -104,7 +106,7 @@ describe('lib/panel/panelHeader/main', () => {
     expect(collapseExpandButton.props.iconProps).toEqual({ iconName: 'DoubleChevronRight8' });
 
     expect(cardHeader.props.className).toBe('msla-panel-card-header');
-    const [titleContainer, panelControls]: any[] = React.Children.toArray(cardHeader.props.children);
+    const [, titleContainer, panelControls]: any[] = React.Children.toArray(cardHeader.props.children);
 
     expect(titleContainer.props.className).toBe('msla-panel-card-title-container');
 
@@ -138,12 +140,14 @@ describe('lib/panel/panelHeader/main', () => {
       renameTitleDisabled: false,
       showCommentBox: true,
       title: 'sample title',
+      isLoading: false,
+      cardIcon: 'sample icon url',
     };
     shallow.render(<PanelHeader {...props} />);
     const panelHeader = shallow.getRenderOutput();
     const [, content]: any[] = React.Children.toArray(panelHeader.props.children);
     const [cardHeader]: any[] = React.Children.toArray(content.props.children);
-    const [, panelControls]: any[] = React.Children.toArray(cardHeader.props.children);
+    const [, , panelControls]: any[] = React.Children.toArray(cardHeader.props.children);
     expect(panelControls.props.className).toBe('msla-panel-header-controls');
 
     const dismiss = panelControls.props.children[1];

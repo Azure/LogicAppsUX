@@ -311,6 +311,12 @@
       "value": "Comment"
     }
   ],
+  "1ANUHk": [
+    {
+      "type": 0,
+      "value": "Loading functions..."
+    }
+  ],
   "1D047X": [
     {
       "type": 0,
@@ -891,6 +897,12 @@
       "value": "Hybrid Connector"
     }
   ],
+  "62Ypnr": [
+    {
+      "type": 0,
+      "value": "Error loading operation data"
+    }
+  ],
   "63/zYN": [
     {
       "type": 0,
@@ -919,6 +931,12 @@
     {
       "type": 0,
       "value": "(UTC+09:30) Adelaide"
+    }
+  ],
+  "6grB5C": [
+    {
+      "type": 0,
+      "value": "Invalid node settings"
     }
   ],
   "6jiO7t": [
@@ -2019,6 +2037,12 @@
       "value": "Please select a card to see the content"
     }
   ],
+  "HmcHoE": [
+    {
+      "type": 0,
+      "value": "Error fetching manifest"
+    }
+  ],
   "HoQiVa": [
     {
       "type": 0,
@@ -2323,6 +2347,12 @@
     {
       "type": 0,
       "value": "Delete Workflow Graph"
+    }
+  ],
+  "LCXZLM": [
+    {
+      "type": 0,
+      "value": "Loading Function Apps..."
     }
   ],
   "LJmfmK": [
@@ -3693,6 +3723,12 @@
       "value": "Select a target schema"
     }
   ],
+  "Xkt2vD": [
+    {
+      "type": 0,
+      "value": "Select a function app function"
+    }
+  ],
   "Xnn0uj": [
     {
       "type": 0,
@@ -3923,6 +3959,12 @@
       "value": "(UTC+05:00) Ashgabat, Tashkent"
     }
   ],
+  "aJxefp": [
+    {
+      "type": 0,
+      "value": "Add new parameters"
+    }
+  ],
   "aK4iLW": [
     {
       "type": 0,
@@ -3961,12 +4003,6 @@
     {
       "type": 1,
       "value": "controls"
-    }
-  ],
-  "bCQ6JT": [
-    {
-      "type": 0,
-      "value": "Array Mapping"
     }
   ],
   "bG9rjv": [
@@ -4551,6 +4587,12 @@
       "value": "Specify interval in ISO 8601 format."
     }
   ],
+  "h6vVbX": [
+    {
+      "type": 0,
+      "value": "Add a source schema first, then select elements to build your map"
+    }
+  ],
   "hBLPXK": [
     {
       "type": 0,
@@ -4787,6 +4829,12 @@
       "value": "Elements and mappings not connected to a target element are removed."
     }
   ],
+  "ittN0l": [
+    {
+      "type": 0,
+      "value": "No resources of this type found under this subscription."
+    }
+  ],
   "iy8rNf": [
     {
       "type": 0,
@@ -4809,6 +4857,12 @@
     {
       "type": 0,
       "value": "Returns the value of the variable specified."
+    }
+  ],
+  "j5z8Vd": [
+    {
+      "type": 0,
+      "value": "Repeating"
     }
   ],
   "jA6Wrp": [

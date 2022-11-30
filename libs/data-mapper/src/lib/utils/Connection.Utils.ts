@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-import { targetPrefix } from '../constants/ReactFlowConstants';
+import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import type { DataMapOperationState, UpdateConnectionInputAction } from '../core/state/DataMapSlice';
 import type { SchemaNodeExtended } from '../models';
-import { NormalizedDataType, SchemaNodeDataType, SchemaType, SchemaNodeProperty } from '../models';
+import { NormalizedDataType, SchemaNodeDataType, SchemaNodeProperty, SchemaType } from '../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection, InputConnectionDictionary } from '../models/Connection';
 import type { FunctionData, FunctionInput } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
@@ -309,13 +309,50 @@ export const nodeHasSpecificInputEventually = (
   );
 };
 
-export const collectNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
+export const nodeHasSpecificOutputEventually = (
+  sourceKey: string,
+  currentConnection: Connection,
+  connections: ConnectionDictionary,
+  exactMatch: boolean
+): boolean => {
+  if (!currentConnection) {
+    return false;
+  }
+
+  if (
+    (exactMatch && currentConnection.self.reactFlowKey === sourceKey) ||
+    (!exactMatch && currentConnection.self.reactFlowKey.indexOf(sourceKey) > -1)
+  ) {
+    return true;
+  }
+
+  const nonCustomOutputs: ConnectionUnit[] = currentConnection.outputs.filter(isConnectionUnit);
+
+  return nonCustomOutputs.some((output) =>
+    nodeHasSpecificOutputEventually(sourceKey, connections[output.reactFlowKey], connections, exactMatch)
+  );
+};
+
+export const collectSourceNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
   const connectionUnits: ConnectionUnit[] = flattenInputs(currentFunction.inputs).filter(isConnectionUnit);
 
   if (connectionUnits.length > 0) {
     return [
       currentFunction.self,
-      ...connectionUnits.flatMap((input) => collectNodesForConnectionChain(connections[input.reactFlowKey], connections)),
+      ...connectionUnits.flatMap((input) => collectSourceNodesForConnectionChain(connections[input.reactFlowKey], connections)),
+    ];
+  }
+
+  return [currentFunction.self];
+};
+
+export const collectTargetNodesForConnectionChain = (currentFunction: Connection, connections: ConnectionDictionary): ConnectionUnit[] => {
+  const connectionUnits: ConnectionUnit[] = currentFunction.outputs;
+
+  if (connectionUnits.length > 0) {
+    return [
+      currentFunction.self,
+      ...connectionUnits.flatMap((input) => collectTargetNodesForConnectionChain(connections[input.reactFlowKey], connections)),
     ];
   }
 
@@ -366,12 +403,22 @@ export const getTargetSchemaNodeConnections = (
 };
 
 export const getConnectedSourceSchemaNodes = (
-  targetSchemaNodeConnections: Connection[],
+  schemaNodeConnections: Connection[],
   connections: ConnectionDictionary
 ): SchemaNodeExtended[] => {
-  return targetSchemaNodeConnections
-    .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
-    .filter((connectedNode) => isSchemaNodeExtended(connectedNode.node) && !connectedNode.reactFlowKey.includes(targetPrefix))
+  return schemaNodeConnections
+    .flatMap((connectedNode) => collectSourceNodesForConnectionChain(connectedNode, connections))
+    .filter((connectedNode) => isSchemaNodeExtended(connectedNode.node) && connectedNode.reactFlowKey.includes(sourcePrefix))
+    .map((connectedNode) => connectedNode.node) as SchemaNodeExtended[];
+};
+
+export const getConnectedTargetSchemaNodes = (
+  schemaNodeConnections: Connection[],
+  connections: ConnectionDictionary
+): SchemaNodeExtended[] => {
+  return schemaNodeConnections
+    .flatMap((connectedNode) => collectTargetNodesForConnectionChain(connectedNode, connections))
+    .filter((connectedNode) => isSchemaNodeExtended(connectedNode.node) && connectedNode.reactFlowKey.includes(targetPrefix))
     .map((connectedNode) => connectedNode.node) as SchemaNodeExtended[];
 };
 
@@ -380,7 +427,7 @@ export const getFunctionConnectionUnits = (
   connections: ConnectionDictionary
 ): ConnectionUnit[] => {
   return targetSchemaNodeConnections
-    .flatMap((connectedNode) => collectNodesForConnectionChain(connectedNode, connections))
+    .flatMap((connectedNode) => collectSourceNodesForConnectionChain(connectedNode, connections))
     .filter((connectionUnit) => isFunctionData(connectionUnit.node));
 };
 
@@ -396,7 +443,7 @@ export const bringInParentSourceNodesForRepeating = (
         inputs.forEach((input) => {
           if (input && typeof input !== 'string') {
             const inputSrc = input.node;
-            if (isSchemaNodeExtended(inputSrc)) {
+            if (isSchemaNodeExtended(inputSrc) && !newState.currentSourceSchemaNodes.find((node) => node.key === inputSrc.key)) {
               newState.currentSourceSchemaNodes.push(inputSrc);
             }
           }

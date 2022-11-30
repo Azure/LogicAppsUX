@@ -1,6 +1,6 @@
 import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
+import { openAddSourceSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import { SchemaNodeDataType } from '../../models';
 import type { SchemaNodeExtended } from '../../models';
 import { searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
@@ -9,11 +9,12 @@ import { FloatingPanel } from '../floatingPanel/FloatingPanel';
 import type { FloatingPanelProps } from '../floatingPanel/FloatingPanel';
 import { FunctionList } from '../functionList/FunctionList';
 import { schemaRootKey } from '../targetSchemaPane/TargetSchemaPane';
-import SourceSchemaTreeItem, { useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
+import SourceSchemaTreeItem, { SourceSchemaTreeHeader, useSchemaTreeItemStyles } from '../tree/SourceSchemaTreeItem';
 import Tree from '../tree/Tree';
 import type { ITreeNode } from '../tree/Tree';
 import { TreeHeader } from '../tree/TreeHeader';
-import { mergeClasses, tokens } from '@fluentui/react-components';
+import { Stack } from '@fluentui/react';
+import { Button, mergeClasses, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
 import { useCallback, useMemo, useState } from 'react';
@@ -77,6 +78,16 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     description: 'Source schema',
   });
 
+  const addSrcSchemaLoc = intl.formatMessage({
+    defaultMessage: 'Add a source schema first, then select elements to build your map',
+    description: 'Message to add a source schema',
+  });
+
+  const addLoc = intl.formatMessage({
+    defaultMessage: 'Add',
+    description: 'Add',
+  });
+
   const closeToolbox = useCallback(() => {
     dispatch(setCanvasToolboxTabToDisplay(''));
   }, [dispatch]);
@@ -110,25 +121,20 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
       return undefined;
     }
 
-    // Format extra top layers to show schema name and schemaTreeRoot
+    // Search tree (maintain parent tree structure for matched nodes - returns whole tree if no/too-small search term)
+    const newSourceSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = searchSchemaTreeFromRoot(
+      sourceSchema.schemaTreeRoot,
+      sourceSchemaSearchTerm
+    );
+    newSourceSchemaTreeRoot.isExpanded = true;
+
+    // Format extra top layer to show schemaTreeRoot
     // Can safely typecast with the root node(s) as we only use the properties defined here
-    const schemaRoot = {} as ITreeNode<SchemaNodeExtended>;
     const schemaNameRoot = {} as ITreeNode<SchemaNodeExtended>;
-
-    let newSourceSchemaTreeRoot: ITreeNode<SchemaNodeExtended> = { ...sourceSchema.schemaTreeRoot };
-    if (sourceSchemaSearchTerm) {
-      schemaNameRoot.isExpanded = true;
-      newSourceSchemaTreeRoot = searchSchemaTreeFromRoot(sourceSchema.schemaTreeRoot, sourceSchemaSearchTerm);
-    }
-
-    schemaNameRoot.key = schemaRootKey;
-    schemaNameRoot.name = sourceSchema.name;
-    schemaNameRoot.schemaNodeDataType = SchemaNodeDataType.None;
+    schemaNameRoot.isExpanded = true;
     schemaNameRoot.children = [newSourceSchemaTreeRoot];
 
-    schemaRoot.children = [schemaNameRoot];
-
-    return schemaRoot;
+    return schemaNameRoot;
   }, [sourceSchema, sourceSchemaSearchTerm]);
 
   const toolboxButtonPivotProps: ButtonPivotProps = useMemo(
@@ -157,42 +163,68 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   );
 
   const floatingPanelHeight = useMemo(() => `${canvasBlockHeight - 150}px`, [canvasBlockHeight]);
+  const floatingPanelContentHeight = useMemo(() => `${canvasBlockHeight - 185}px`, [canvasBlockHeight]);
 
   return (
     <>
       <ButtonPivot {...toolboxButtonPivotProps} />
 
-      {toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree && sourceSchema && searchedSourceSchemaTreeRoot && (
-        <FloatingPanel {...generalToolboxPanelProps} height={floatingPanelHeight} title={sourceSchemaLoc} onClose={closeToolbox}>
-          <TreeHeader onSearch={setSourceSchemaSearchTerm} onClear={() => setSourceSchemaSearchTerm('')} />
+      <FloatingPanel
+        {...generalToolboxPanelProps}
+        height={floatingPanelHeight}
+        contentHeight={floatingPanelContentHeight}
+        title={sourceSchemaLoc}
+        isOpen={toolboxTabToDisplay === ToolboxPanelTabs.sourceSchemaTree}
+        onClose={closeToolbox}
+      >
+        {sourceSchema && searchedSourceSchemaTreeRoot ? (
+          <>
+            <TreeHeader onSearch={setSourceSchemaSearchTerm} onClear={() => setSourceSchemaSearchTerm('')} />
 
-          <Tree<SchemaNodeExtended>
-            // Add one extra root layer so schemaTreeRoot is shown as well
-            // Can safely typecast as only the children[] are used from root
-            treeRoot={searchedSourceSchemaTreeRoot}
-            nodeContent={(node, isHovered) => (
-              <SourceSchemaTreeItem
-                node={node as SchemaNodeExtended}
-                isNodeAdded={currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)}
-                isNodeHovered={isHovered}
-              />
-            )}
-            onClickItem={(node) => onSourceSchemaItemClick(node as SchemaNodeExtended)}
-            nodeContainerClassName={mergeClasses(schemaNodeItemStyles.nodeContainer, schemaNodeItemStyles.sourceSchemaNode)}
-            nodeContainerStyle={(node) => ({
-              backgroundColor: currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)
-                ? tokens.colorBrandBackground2
-                : undefined,
-            })}
-          />
-        </FloatingPanel>
-      )}
+            <SourceSchemaTreeHeader />
 
-      {toolboxTabToDisplay === ToolboxPanelTabs.functionsList && (
-        <FloatingPanel {...generalToolboxPanelProps} height={floatingPanelHeight} title={functionLoc} onClose={closeToolbox}>
-          <FunctionList />
-        </FloatingPanel>
-      )}
+            <Tree<SchemaNodeExtended>
+              // Add one extra root layer so schemaTreeRoot is shown as well
+              // Can safely typecast as only the children[] are used from root
+              treeRoot={searchedSourceSchemaTreeRoot}
+              nodeContent={(node, isHovered) => (
+                <SourceSchemaTreeItem
+                  node={node as SchemaNodeExtended}
+                  isNodeAdded={currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)}
+                  isNodeHovered={isHovered}
+                />
+              )}
+              onClickItem={(node) => onSourceSchemaItemClick(node as SchemaNodeExtended)}
+              nodeContainerClassName={mergeClasses(schemaNodeItemStyles.nodeContainer, schemaNodeItemStyles.sourceSchemaNode)}
+              nodeContainerStyle={(node) => ({
+                backgroundColor: currentSourceSchemaNodes.some((srcSchemaNode) => srcSchemaNode.key === node.key)
+                  ? tokens.colorBrandBackground2
+                  : undefined,
+              })}
+            />
+          </>
+        ) : (
+          <Stack style={{ height: '90%' }} verticalAlign="center" horizontalAlign="center">
+            <Text style={{ ...typographyStyles.body1Strong, width: '190px', textAlign: 'center', marginBottom: '28px' }}>
+              {addSrcSchemaLoc}
+            </Text>
+            <Button onClick={() => dispatch(openAddSourceSchemaPanelView())} size="small">
+              {addLoc}
+            </Button>
+          </Stack>
+        )}
+      </FloatingPanel>
+
+      <FloatingPanel
+        {...generalToolboxPanelProps}
+        height={floatingPanelHeight}
+        contentHeight={floatingPanelContentHeight}
+        title={functionLoc}
+        isOpen={toolboxTabToDisplay === ToolboxPanelTabs.functionsList}
+        onClose={closeToolbox}
+      >
+        <FunctionList />
+      </FloatingPanel>
     </>
   );
 };

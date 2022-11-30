@@ -54,6 +54,9 @@ export interface IConnectionService {
     parametersMetadata: ConnectionParametersMetadata
   ): Promise<CreateConnectionResult>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
+  fetchFunctionApps(): Promise<any>;
+  fetchFunctionAppsFunctions(functionAppId: string): Promise<any>;
+  fetchFunctionKey(functionId: string): Promise<any>;
 }
 
 let service: IConnectionService;
