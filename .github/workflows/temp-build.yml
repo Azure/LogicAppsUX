@@ -1,7 +1,6 @@
 name: Temp Build Maker
 
-on:
-  workflow_dispatch:
+on: workflow_dispatch
 
 env:
   AI_KEY: 3cf0d6ae-3327-414a-b7c1-12f31ef45eff
