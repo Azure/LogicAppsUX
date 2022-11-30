@@ -18,6 +18,9 @@ import {
   createFocusOutlineStyle,
   makeStyles,
   mergeClasses,
+  Popover,
+  PopoverSurface,
+  PopoverTrigger,
   shorthands,
   tokens,
   Tooltip,
@@ -100,6 +103,11 @@ const useStyles = makeStyles({
     flexShrink: '0',
     flexBasis: '44px',
     marginRight: '8px',
+  },
+  nPopover: {
+    paddingTop: '5px',
+    paddingBottom: '7px',
+    zIndex: 4,
   },
   cardText: {
     ...typographyStyles.body1Strong,
@@ -297,24 +305,34 @@ const NBadge = ({ isOutput }: NBadgeProps) => {
   const intl = useIntl();
   const classes = useStyles();
 
-  const arrayMappingTooltip = intl.formatMessage({
-    defaultMessage: 'Array Mapping',
+  const arrayMappingLabel = intl.formatMessage({
+    defaultMessage: 'Repeating',
     description: 'Label for array connection',
   });
 
   return (
     <div>
-      <Tooltip content={arrayMappingTooltip} relationship="label">
-        <Badge
-          className={isOutput ? classes.outputArrayBadge : classes.inputArrayBadge}
-          shape="rounded"
-          size="small"
-          appearance="tint"
-          color="important"
-        >
-          N
-        </Badge>
-      </Tooltip>
+      <Popover
+        size="small"
+        withArrow
+        appearance="inverted"
+        //openOnHover={true}
+        open={true}
+        inline={true}
+      >
+        <PopoverTrigger>
+          <Badge
+            className={isOutput ? classes.outputArrayBadge : classes.inputArrayBadge}
+            shape="rounded"
+            size="small"
+            appearance="tint"
+            color="important"
+          >
+            N
+          </Badge>
+        </PopoverTrigger>
+        <PopoverSurface className={classes.nPopover}>{arrayMappingLabel}</PopoverSurface>
+      </Popover>
     </div>
   );
 };

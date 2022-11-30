@@ -4005,12 +4005,6 @@
       "value": "controls"
     }
   ],
-  "bCQ6JT": [
-    {
-      "type": 0,
-      "value": "Array Mapping"
-    }
-  ],
   "bG9rjv": [
     {
       "type": 0,
@@ -4863,6 +4857,12 @@
     {
       "type": 0,
       "value": "Returns the value of the variable specified."
+    }
+  ],
+  "j5z8Vd": [
+    {
+      "type": 0,
+      "value": "Repeating"
     }
   ],
   "jA6Wrp": [
